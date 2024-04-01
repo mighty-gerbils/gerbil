@@ -196,6 +196,7 @@ namespace: gxc
        (set! (&!class-methods self) (list->hash-table-eq methods))))))
 
 (def (compute-class-fields where base-struct precedence-list direct-slots)
+  ;; TODO this has to become a base utility in :gerbil/runtime/c4
   (let* ((base-fields
           (if base-struct
             (!class-fields (optimizer-resolve-class where base-struct))

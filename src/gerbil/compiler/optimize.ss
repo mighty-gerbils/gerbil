@@ -204,13 +204,14 @@ namespace: gxc
         => (lambda (klass)
              (verbose "generate class decl" sym)
              ['begin
-               ['declare-class sym {typedecl klass}]
-               ['declare-type sym '(optimizer-resolve-class 'typedecl 'class::t)]]))
+               ['declare-class sym {klass.typedecl}]
+               ['declare-type sym '(optimizer-resolve-class '(typedecl ,sym) 'class::t)]]))
        ((optimizer-lookup-type sym)
         => (lambda (type)
-             (verbose "generate typedecl " sym)
-             (let (typedecl {typedecl type})
-               ['declare-type sym typedecl])))
+             (verbose "generate typedecl " sym " " type)
+             (if (!class? type)
+               ['declare-type sym `(optimizer-resolve-class '(typedecl ,sym) 'sym)]
+               ['declare-type sym {type.typedecl}])))
        (else '(begin)))))
 
   (ast-case stx ()

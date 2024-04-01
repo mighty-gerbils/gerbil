@@ -32,7 +32,7 @@ namespace: gxc
          (xform-call% self stx))
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-         (let (optimized {optimize-call rator-type self stx #'(rand ...)})
+         (let (optimized {rator-type.optimize-call self stx #'(rand ...)})
            (ast-case optimized (%#call %#ref)
              ((%#call (%#ref optimized-rator) arg ...)
               (let (optimized-rator-id (identifier-symbol #'optimized-rator))
@@ -70,14 +70,16 @@ namespace: gxc
 
 (defmethod {optimize-call !procedure}
   (lambda (self ctx stx args)
-    (if {check-arguments self ctx stx args}
+    (if {self.check-arguments ctx stx args}
       (let (signature (&!procedure-signature self))
         (cond
          ((!signature-unchecked signature)
           => (lambda (unchecked)
-               (xform-wrap-source
-                (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
-                stx)))
+               (if (symbol-in-local-scope? unchecked)
+                 (xform-wrap-source
+                  (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
+                  stx)
+                 (xform-call% ctx stx))))
          (else
           (xform-call% ctx stx))))
       (xform-call% ctx stx))))
@@ -298,7 +300,7 @@ namespace: gxc
 
 (defmethod {optimize-call !accessor}
   (lambda (self ctx stx args)
-    (let (arguments-ok? {check-arguments self ctx stx args})
+    (let (arguments-ok? {self.check-arguments ctx stx args})
       (ast-case args ()
         ((object)
          (let* ((klass (optimizer-resolve-class stx (!type-id self)))
@@ -363,7 +365,7 @@ namespace: gxc
 
 (defmethod {optimize-call !mutator}
   (lambda (self ctx stx args)
-    (let (arguments-ok? {check-arguments self ctx stx args})
+    (let (arguments-ok? {self.check-arguments ctx stx args})
       (ast-case args ()
         ((object value)
          (let* ((klass (optimizer-resolve-class stx (!type-id self)))
@@ -448,7 +450,7 @@ namespace: gxc
          (xform-wrap-source
           (inline stx)
           stx)))
-       (dispatch
+       ((and dispatch (symbol-in-local-scope? dispatch))
         (verbose "dispatch lambda => " dispatch)
         (compile-e
          ctx
@@ -463,7 +465,7 @@ namespace: gxc
     (let (clauses (&!case-lambda-clauses self))
       (cond
        ((find (cut !lambda-arity-match? <> args) clauses)
-        => (lambda (clause) {optimize-call clause ctx stx args}))
+        => (lambda (clause) {clause.optimize-call ctx stx args}))
        (else
         (raise-compile-error "Illegal case-lambda application; arity mismatch"
                              stx (map !lambda-arity clauses)))))))
@@ -479,71 +481,73 @@ namespace: gxc
 (defmethod {optimize-call !kw-lambda}
   (lambda (self ctx stx args)
     (with ((!kw-lambda _ _ table dispatch) self)
-      (match (optimizer-lookup-type dispatch)
-        ((!kw-lambda-primary _ keys main)
-         (let ((values pargs kwargs)
-               (!kw-lambda-split-args stx args))
-           (verbose "dispatch kw-lambda => " main)
-           (if table
-             (let (xargs
-                   (map (lambda (key)
-                          (cond
-                           ((assgetq key kwargs) => values)
-                           (else '(%#ref absent-value))))
-                        keys))
-               (for-each
-                 (lambda (kw)
-                   (unless (memq (car kw) keys)
-                     (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
-                                          stx keys kw)))
-                 kwargs)
-               (compile-e
-                ctx
-                (xform-wrap-source
-                 ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
-                 stx)))
-             (let* ((kwt (make-symbol (gensym '__kwt)))
-                    (kwvars
-                     (map (lambda (_) (make-symbol (gensym '__kw)))
-                          kwargs))
-                    (kwbind
-                     (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
-                          kwargs kwvars))
-                    (kwset
-                     (map (lambda (kw kwvar)
-                            ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
-                                     ['%#quote (car kw)]
-                                     ['%#ref kwvar]])
-                          kwargs kwvars))
-                    (xkwargs
-                     (map (lambda (kw kwvar)
-                            (cons (car kw) ['%#ref kwvar]))
-                          kwargs kwvars))
-                    (xargs
+      (if (symbol-in-local-scope? dispatch)
+        (match (optimizer-lookup-type dispatch)
+          ((!kw-lambda-primary _ keys main)
+           (let ((values pargs kwargs)
+                 (!kw-lambda-split-args stx args))
+             (verbose "dispatch kw-lambda => " main)
+             (if table
+               (let (xargs
                      (map (lambda (key)
                             (cond
-                             ((assgetq key xkwargs) => values)
+                             ((assgetq key kwargs) => values)
                              (else '(%#ref absent-value))))
-                          keys)))
-               (compile-e
-                ctx
-                (xform-wrap-source
-                 ['%#let-values kwbind
-                   ['%#let-values [[[kwt]
-                                    (xform-wrap-source
-                                     ['%#call '(%#ref make-symbolic-table)
-                                              ['%#quote (length kwargs)]
-                                              '(%#quote 0)]
-                                     stx)]]
-                     ['%#begin
-                      kwset ...
-                      (xform-wrap-source
-                       ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
-                       stx)]]]
-                 stx))))))
+                          keys))
+                 (for-each
+                   (lambda (kw)
+                     (unless (memq (car kw) keys)
+                       (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
+                                            stx keys kw)))
+                   kwargs)
+                 (compile-e
+                  ctx
+                  (xform-wrap-source
+                   ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                   stx)))
+               (let* ((kwt (make-symbol (gensym '__kwt)))
+                      (kwvars
+                       (map (lambda (_) (make-symbol (gensym '__kw)))
+                            kwargs))
+                      (kwbind
+                       (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
+                            kwargs kwvars))
+                      (kwset
+                       (map (lambda (kw kwvar)
+                              ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
+                                       ['%#quote (car kw)]
+                                       ['%#ref kwvar]])
+                            kwargs kwvars))
+                      (xkwargs
+                       (map (lambda (kw kwvar)
+                              (cons (car kw) ['%#ref kwvar]))
+                            kwargs kwvars))
+                      (xargs
+                       (map (lambda (key)
+                              (cond
+                               ((assgetq key xkwargs) => values)
+                               (else '(%#ref absent-value))))
+                            keys)))
+                 (compile-e
+                  ctx
+                  (xform-wrap-source
+                   ['%#let-values kwbind
+                                  ['%#let-values [[[kwt]
+                                                   (xform-wrap-source
+                                                    ['%#call '(%#ref make-symbolic-table)
+                                                             ['%#quote (length kwargs)]
+                                                             '(%#quote 0)]
+                                                    stx)]]
+                                                 ['%#begin
+                                                  kwset ...
+                                                  (xform-wrap-source
+                                                   ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                                                   stx)]]]
+                   stx))))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
-           (xform-call% ctx stx))))))
+           (xform-call% ctx stx)))
+        (xform-call% ctx stx)))))
 
 (def (!kw-lambda-split-args stx args)
   (let lp ((rest args) (pargs []) (kwargs []))

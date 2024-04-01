@@ -61,6 +61,10 @@ namespace: gxc
 (def current-compile-context
   (make-parameter #f))
 
+;; locally scoped identifiers
+(def current-compile-local-env
+  (make-parameter []))
+
 (defstruct symbol-table (gensyms bindings)
   id: gxc#symbol-table::t
   constructor: :init!)
@@ -108,3 +112,14 @@ namespace: gxc
              (recur rest)))
       ([] [])
       (tail (proc tail)))))
+
+(def (symbol-in-local-scope? sym)
+  (or ;; either not a gensym refernce (in which case it is global)
+    (not (gensym-reference? sym))
+    ;; or it should be in the local env
+    (memq sym (current-compile-local-env))))
+
+(def (gensym-reference? sym)
+  (let (str (symbol->string sym))
+    (and (string-prefix? "_%" str)
+         (string-suffix? "%_" str))))

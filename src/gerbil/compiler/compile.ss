@@ -389,7 +389,7 @@ namespace: gxc
                (ht (symbol-table-bindings (current-compile-symbol-table))))
            (cond
             ((interned-symbol? eid) eid)
-            ((hash-get ht eid) => values)
+            ((hash-get ht eid))
             ((local-binding? bind)
              (let (gid (generate-runtime-gensym-reference eid))
                (hash-put! ht eid gid)
@@ -422,11 +422,11 @@ namespace: gxc
 (def (generate-runtime-gensym-reference sym (quote? #f))
   (let (ht (symbol-table-gensyms (current-compile-symbol-table)))
     (cond
-     ((hash-get ht sym) => values)
+     ((hash-get ht sym))
      (else
       (let (g (if quote?
                 (make-symbol "__" sym "__" (current-compile-timestamp))
-                (make-symbol "_" sym "_")))
+                (make-symbol "_%" sym "%_")))
         (hash-put! ht sym g)
         g)))))
 

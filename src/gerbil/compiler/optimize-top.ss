@@ -88,7 +88,10 @@ namespace: gxc
 (defcompile-method (apply-extract-lambda-signature) (::extract-lambda-signature ::false) ()
   final:
   (%#begin            apply-last-begin%)
-  (%#begin-annotation extract-lambda-signature-begin-annotation%))
+  (%#begin-annotation extract-lambda-signature-begin-annotation%)
+  (%#let-values       apply-body-last-let-values%)
+  (%#letrec-values    apply-body-last-let-values%)
+  (%#letrec*-values   apply-body-last-let-values%))
 
 ;;; apply-collect-top-level-type-infp
 (def (collect-top-level-type-define-values% self stx)
