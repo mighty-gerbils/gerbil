@@ -154,26 +154,34 @@ namespace: #f
 (defshadow-class socket-info::t () (macro-type-socket-info))
 (defshadow-class address-info::t () (macro-type-address-info))
 
+(defsyntax (defpred stx)
+  (syntax-case stx (:-)
+    ((_ (id obj) :- type body ...)
+     (with-syntax ((klass::t (resolve-type->type-descriptor stx #'type)))
+       #'(def id
+           (begin-annotation (@predicate klass::t)
+             (lambda (obj) body ...)))))))
+
 ;; some utilities for the prelude part (meta-type definitions)
-(def (atom? obj)
+(defpred (atom? obj) :- :atom
   (and (immediate? obj)
        (not (char? obj))
        (not (fixnum? obj))))
 
-(def (special? obj)
-  (and (fx= (##type obj) 2)
+(defpred (special? obj) :- :special
+  (and (fx= (:- (##type obj) :fixnum) 2)
        (not (char? obj))
        (not (null? obj))
        (not (boolean? obj))
        (not (void? obj))
        (not (eof-object? obj))))
 
-(def (sequence? obj)
+(defpred (sequence? obj) :- :sequence
   (or (vector? obj)
       (string? obj)
       (hvector? obj)))
 
-(def (hvector? obj)
+(defpred (hvector? obj) :- :sequence
   (or (u8vector? obj)
       (s8vector? obj)
       (u16vector? obj)
@@ -185,35 +193,35 @@ namespace: #f
       (f32vector? obj)
       (f64vector? obj)))
 
-(def (weak? obj)
+(defpred (weak? obj) :- :weak
   (and (##subtyped? obj)
        (eq? (##subtype obj) (macro-subtype-weak))))
 
-(def (object-port? obj)
+(defpred (object-port? obj) :- :object-port
   (##structure-instance-of? obj (##type-id (macro-type-object-port))))
-(def (character-port? obj)
+(defpred (character-port? obj) :- :character-port
   (##structure-instance-of? obj (##type-id (macro-type-character-port))))
-(def (device-port? obj)
+(defpred (device-port? obj) :- :device-port
   (##structure-instance-of? obj (##type-id (macro-type-device-port))))
-(def (vector-port? obj)
+(defpred (vector-port? obj) :- :vector-port
   (##structure-instance-of? obj (##type-id (macro-type-vector-port))))
-(def (string-port? obj)
+(defpred (string-port? obj) :- :string-port
   (##structure-instance-of? obj (##type-id (macro-type-string-port))))
-(def (u8vector-port? obj)
+(defpred (u8vector-port? obj) :- :u8vector-port
   (##structure-instance-of? obj (##type-id (macro-type-u8vector-port))))
-(def (raw-device-port? obj)
+(defpred (raw-device-port? obj) :- :raw-device-port
   (##structure-instance-of? obj (##type-id (macro-type-raw-device-port))))
-(def (tcp-server-port? obj)
+(defpred (tcp-server-port? obj) :- :tcp-server-port
   (##structure-instance-of? obj (##type-id (macro-type-tcp-server-port))))
-(def (udp-port? obj)
+(defpred (udp-port? obj) :- :udp-port
   (##structure-instance-of? obj (##type-id (macro-type-udp-port))))
-(def (directory-port? obj)
+(defpred (directory-port? obj) :- :directory-port
   (##structure-instance-of? obj (##type-id (macro-type-directory-port))))
-(def (event-queue-port? obj)
+(defpred (event-queue-port? obj) :- :event-queue-port
   (##structure-instance-of? obj (##type-id (macro-type-event-queue-port))))
-(def (readenv? obj)
+(defpred (readenv? obj) :- :readenv
   (##structure-instance-of? obj (##type-id (macro-type-readenv))))
-(def (writeenv? obj)
+(defpred (writeenv? obj) :- :writeenv
   (##structure-instance-of? obj (##type-id (macro-type-writeenv))))
-(def (vm? obj)
+(defpred (vm? obj) :- :vm
   (##structure-instance-of? obj (##type-id (macro-type-vm))))
