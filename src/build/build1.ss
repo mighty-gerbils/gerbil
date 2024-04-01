@@ -60,6 +60,7 @@
     "gerbil/core/more-sugar.ss"
     "gerbil/core/more-syntax-sugar.ss"
     "gerbil/core/module-sugar.ss"
+    "gerbil/core/contract.ss"
     "gerbil/core.ss"))
 
 (def gerbil-prelude-gambit
