@@ -7,7 +7,8 @@ package: gerbil/core
 
 (import "runtime" "sugar"
         (phi: +1 "runtime" "expander" "sugar"))
-(export  (import: MOP-1 MOP-4 MOP-5)
+(export  #t
+         (import: MOP-1 MOP-4 MOP-5)
          (phi: +1 (import: MOP-1 MOP-2 MOP-3 MOP-4 MOP-5)))
 
 (module MOP-1
@@ -185,6 +186,7 @@ package: gerbil/core
     class-type-info?
     id: gerbil.core#class-type-info::t
     name: class-type-info
+    properties: '((print: name))
     slots:
     ((id ;; Symbol
       ;; the class's type id
@@ -198,6 +200,12 @@ package: gerbil/core
      (slots ;; ListOf Symbol
       ;; the class's direct slot list
       !class-type-slots !class-type-slots-set!)
+     (precedence-list ;; Maybe ListOf Identifier
+      ;; the class precedence list, lazily computed
+      !class-type-precedence-list !class-type-precedence-list-set!)
+     (ordered-slots ;; Maybe ListOf Symbol
+      ;; the class slot layout
+      !class-type-ordered-slots !class-type-ordered-slots-set!)
      (struct? ;; Boolean
       ;; #t if the class is a struct type
       !class-type-struct? !class-type-struct?-set!)
@@ -233,7 +241,13 @@ package: gerbil/core
       !class-type-unchecked-accessors !class-type-unchecked-accessors-set!)
      (unchecked-mutators ;; AListOf Symbol -> Identifier
       ;; the class's defined unchecked slot mutators
-      !class-type-unchecked-mutators !class-type-unchecked-mutators-set!)))
+      !class-type-unchecked-mutators !class-type-unchecked-mutators-set!)
+     (slot-types ;; Maybe AListOf Symbol -> type
+      !class-type-slot-types !class-type-slot-types-set!)
+     (slot-defaults ;; Maybe AListOf Symbol -> syntax
+      !class-type-slot-defaults !class-type-slot-defaults-set!)
+     (slot-contracts ;; Maybe AListOf Symbol -> syntax
+      !class-type-slot-contracts !class-type-slot-contracts-set!)))
 
   (def (class-type-info::apply-macro-expander self stx)
     (syntax-case stx ()
@@ -247,6 +261,31 @@ package: gerbil/core
 
   (bind-method! class-type-info::t 'apply-macro-expander
                 class-type-info::apply-macro-expander)
+
+  (def (!class-slot-type klass slot)
+    (cond
+     ((!class-type-slot-types klass)
+      => (lambda (slot-types)
+           (assgetq slot slot-types)))
+     (else #f)))
+
+  (def (!class-slot-default klass slot)
+    (cond
+     ((!class-type-slot-defaults klass)
+      => (lambda (slot-defaults)
+           (cond
+            ((assgetq slot slot-defaults) => syntax-local-introduce)
+            (else #f))))
+     (else #f)))
+
+  (def (!class-slot-contract klass slot)
+    (cond
+     ((!class-type-slot-defaults klass)
+      => (lambda (slot-defaults)
+           (cond
+            ((assgetq slot slot-defaults) => syntax-local-introduce)
+            (else #f))))
+     (else #f)))
 
   (def (syntax-local-class-type-info? stx (is? true))
     (and (identifier? stx)
@@ -264,12 +303,16 @@ package: gerbil/core
      id: 'gerbil.core#class-type-info::t
      name: 'class-type-info
      super: []
-     slots: '(id name super slots struct? final? system?
+     slots: '(id name super slots
+                 precedence-list
+                 ordered-slots
+                 struct? final? system?
                  metaclass
                  constructor-method
                  type-descriptor constructor predicate
                  accessors mutators
-                 unchecked-accessors unchecked-mutators)
+                 unchecked-accessors unchecked-mutators
+                 slot-types slot-defaults slot-contracts)
      struct?: #f
      final?: #f
      system?: #f
@@ -282,6 +325,8 @@ package: gerbil/core
       ['name :: (quote-syntax !class-type-name)]
       ['super :: (quote-syntax !class-type-super)]
       ['slots :: (quote-syntax !class-type-slots)]
+      ['precedence-list :: (quote-syntax !class-type-precedence-list)]
+      ['ordered-slots :: (quote-syntax !class-type-ordered-slots)]
       ['struct? :: (quote-syntax !class-type-struct?)]
       ['final? :: (quote-syntax !class-type-final?)]
       ['system? :: (quote-syntax !class-type-system?)]
@@ -293,12 +338,17 @@ package: gerbil/core
       ['accessors :: (quote-syntax !class-type-accessors)]
       ['mutators :: (quote-syntax !class-type-mutators)]
       ['unchecked-accessors :: (quote-syntax !class-type-unchecked-accessors)]
-      ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators)]]
+      ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators)]
+      ['slot-types :: (quote-syntax !class-type-slot-types)]
+      ['slot-defaults :: (quote-syntax !class-type-slot-defaults)]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]]
      mutators:
      [['id :: (quote-syntax !class-type-id-set!)]
       ['name :: (quote-syntax !class-type-name-set!)]
       ['super :: (quote-syntax !class-type-super-set!)]
       ['slots :: (quote-syntax !class-type-slots-set!)]
+      ['precedence-list :: (quote-syntax !class-type-precedence-list-set!)]
+      ['ordered-slots :: (quote-syntax !class-type-ordered-slots-set!)]
       ['struct? :: (quote-syntax !class-type-struct?-set!)]
       ['final? :: (quote-syntax !class-type-final?-set!)]
       ['system? :: (quote-syntax !class-type-system?-set!)]
@@ -310,12 +360,17 @@ package: gerbil/core
       ['accessors :: (quote-syntax !class-type-accessors-set!)]
       ['mutators :: (quote-syntax !class-type-mutators-set!)]
       ['unchecked-accessors :: (quote-syntax !class-type-unchecked-accessors-set!)]
-      ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators-set!)]]
+      ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators-set!)]
+      ['slot-types :: (quote-syntax !class-type-slot-types-set!)]
+      ['slot-defaults :: (quote-syntax !class-type-slot-defaults-set!)]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]]
      unchecked-accessors:
      [['id :: (quote-syntax &!class-type-id)]
       ['name :: (quote-syntax &!class-type-name)]
       ['super :: (quote-syntax &!class-type-super)]
       ['slots :: (quote-syntax &!class-type-slots)]
+      ['precedence-list :: (quote-syntax &!class-type-precedence-list)]
+      ['ordered-slots :: (quote-syntax &!class-type-ordered-slots)]
       ['struct? :: (quote-syntax &!class-type-struct?)]
       ['final? :: (quote-syntax &!class-type-final?)]
       ['system? :: (quote-syntax &!class-type-system?)]
@@ -327,12 +382,17 @@ package: gerbil/core
       ['accessors :: (quote-syntax &!class-type-accessors)]
       ['mutators :: (quote-syntax &!class-type-mutators)]
       ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors)]
-      ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators)]]
+      ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators)]
+      ['slot-types :: (quote-syntax &!class-type-slot-types)]
+      ['slot-defaults :: (quote-syntax &!class-type-slot-defaults)]
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]]
      unchecked-mutators:
      [['id :: (quote-syntax &!class-type-id-set!)]
       ['name :: (quote-syntax &!class-type-name-set!)]
       ['super :: (quote-syntax &!class-type-super-set!)]
       ['slots :: (quote-syntax &!class-type-slots-set!)]
+      ['precedence-list :: (quote-syntax &!class-type-precedence-list-set!)]
+      ['ordered-slots :: (quote-syntax &!class-type-ordered-slots-set!)]
       ['struct? :: (quote-syntax &!class-type-struct?-set!)]
       ['final? :: (quote-syntax &!class-type-final?-set!)]
       ['system? :: (quote-syntax &!class-type-system?-set!)]
@@ -344,7 +404,10 @@ package: gerbil/core
       ['accessors :: (quote-syntax &!class-type-accessors-set!)]
       ['mutators :: (quote-syntax &!class-type-mutators-set!)]
       ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors-set!)]
-      ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]])))
+      ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]
+      ['slot-types :: (quote-syntax &!class-type-slot-types-set!)]
+      ['slot-defaults :: (quote-syntax &!class-type-slot-defaults-set!)]
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]])))
 
 (module MOP-4
   (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))
@@ -362,11 +425,8 @@ package: gerbil/core
       (def (wrap e-stx)
         (stx-wrap-source e-stx (stx-source stx)))
 
-      (def make-id
-        (if (uninterned-symbol? (stx-e id))
-          (lambda _ (genident id))
-          (lambda args
-            (apply stx-identifier id args))))
+      (def (make-id . args)
+        (apply stx-identifier id args))
 
       (def (get-mixin-slots super slots)
         (def tab (make-hash-table-eq))
@@ -698,8 +758,52 @@ package: gerbil/core
                 unchecked-accessors: []
                 unchecked-mutators: [])))))))
 
+  ;; the root
   (defsystem-class-info :t t::t () true)
+
+  ;; class as a stystem class
   (defsystem-class-info :class class::t (t::t) class-type?)
+  ;; and as an instance
+  (defsyntax class
+    (make-class-type-info
+     id: 'class
+     name: 'class
+     super: []
+     slots: '(id name super flags fields
+              precedence-list slot-vector slot-table properties constructor methods)
+     struct?: #t
+     type-descriptor: (quote-syntax class::t)
+     constructor: (quote-syntax make-class-type)
+     predicate: (quote-syntax class-type?)
+     accessors:
+     [['id :: (quote-syntax class-type-id)]
+      ['name :: (quote-syntax class-type-name)]
+      ['super :: (quote-syntax class-type-super)]
+      ['flags :: (quote-syntax class-type-flags)]
+      ['fields :: (quote-syntax class-type-fields)]
+      ['precedence-list :: (quote-syntax class-type-precedence-list)]
+      ['slot-vector :: (quote-syntax class-type-slot-vector)]
+      ['slot-table :: (quote-syntax class-type-slot-table)]
+      ['properties :: (quote-syntax class-type-properties)]
+      ['constructor :: (quote-syntax class-type-constructor)]
+      ['methods :: (quote-syntax class-type-methods)]]
+     mutators: []                       ; read only
+     unchecked-accessors:
+     [['id :: (quote-syntax &class-type-id)]
+      ['name :: (quote-syntax &class-type-name)]
+      ['super :: (quote-syntax &class-type-super)]
+      ['flags :: (quote-syntax &class-type-flags)]
+      ['fields :: (quote-syntax &class-type-fields)]
+      ['precedence-list :: (quote-syntax &class-type-precedence-list)]
+      ['slot-vector :: (quote-syntax &class-type-slot-vector)]
+      ['slot-table :: (quote-syntax &class-type-slot-table)]
+      ['properties :: (quote-syntax &class-type-properties)]
+      ['constructor :: (quote-syntax &class-type-constructor)]
+      ['methods :: (quote-syntax &class-type-methods)]]
+     unchecked-mutators: []             ; read only
+     ))
+
+  ;; objects
   (defsystem-class-info :object object::t (t::t) true)
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes

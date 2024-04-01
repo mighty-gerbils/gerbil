@@ -82,9 +82,6 @@
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
 
-;; contract violations
-(deferror-class ContractViolation () contract-violation-error?)
-
 ;; utility macros
 (defsyntax (exception-context stx)
   (syntax-case stx ()

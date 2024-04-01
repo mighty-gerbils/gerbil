@@ -8,6 +8,9 @@ namespace: #f
 (import "gambit")
 (export #t)
 
+;; predefine this so that we can raise it before it is defined (bootstrap)
+(defmutable raise-contract-violation-error error)
+
 ;; syntax utilities
 (begin-syntax
   (def (procedure-formals ctx args)

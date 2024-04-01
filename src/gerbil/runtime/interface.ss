@@ -32,10 +32,6 @@ namespace: #f
 ;; interface meta descriptor
 (defstruct interface-descriptor (type methods) final: #t)
 
-(defrules immediate-instance-of? ()
-  ((_ klass obj)
-   (and (##structure? obj) (eq? (##structure-type obj) klass))))
-
 ;; prototype table
 (def (__interface-hash-key key)
   (##fxxor (__symbolic-hash (##car key)) (__symbolic-hash (##cdr key))))

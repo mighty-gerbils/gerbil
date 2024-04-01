@@ -657,6 +657,24 @@ namespace: #f
              obj
              (%#call (%#ref ##type-id) klass)))))
 
+
+(defapi (immediate-instance-of? klass obj)
+  :- boolean
+  (and (##structure? obj) (eq? klass (##structure-type obj))))
+
+(declare-inline immediate-instance-of?
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ klass (%#ref obj))
+       #'(%#if (%#call (%#ref ##structure?) (%#ref obj))
+               (%#if (%#call (%#ref eq?) klass (%#call (%#ref ##structure-type) (%#ref obj)))
+                     (%#quote #t)
+                     (%#quote #f))
+               (%#quote #f)))
+      ((%#call recur klass obj)
+       (with-syntax (($obj (make-symbol (gensym '__obj))))
+         #'(%#let-values ((($obj) obj)) (%#call recur klass (%#ref $obj))))))))
+
 (defapi (struct-instance? (klass : :class) obj)
   :- :boolean
   (##structure-instance-of? obj (##type-id klass)))

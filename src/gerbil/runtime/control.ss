@@ -34,9 +34,9 @@ namespace: #f
 (def (keyword-dispatch kwt K . all-args)
   (when kwt
     (unless (vector? kwt)
-      (error "expected vector" kwt)))
+      (error "keyword-dispatch: expected vector" kwt)))
   (unless (procedure? K)
-    (error "expected procedure" K))
+    (error "keyword-dispatch: expected procedure" K))
   (let (keys (make-symbolic-table #f 0))
     (let lp ((rest all-args) (args #f) (tail #f))
       (match rest

@@ -20,6 +20,8 @@ namespace: #f
   constructor: :init!
   transparent: #t)
 
+(defclass (ContractViolation Error) ())
+
 ;;; Runtime Errors -- wrapped gambit emitted exceptions
 (defclass (RuntimeException StackTrace Exception) (exception)
   transparent: #t)
@@ -42,6 +44,17 @@ namespace: #f
 (def (error message . irritants)
   (raise
    (Error message irritants: irritants)))
+
+
+(def (__raise-contract-violation-error message context: (ctx #f) contract: (contract-expr #f) value: (value #f))
+  (raise
+   (ContractViolation message
+                      where: ctx
+                      irritants: [contract: contract-expr value: value])))
+
+(set! raise-contract-violation-error __raise-contract-violation-error)
+
+(def contract-violation-error? ContractViolation?)
 
 (defapi (with-exception-handler (handler : :procedure) (thunk : :procedure))
   (##with-exception-handler
@@ -123,6 +136,9 @@ namespace: #f
             (call-with-output-string "" (cut display message <>))))
       (unchecked-slot-set! self 'message message)
       (apply class-instance-init! self rest))))
+
+(defmethod {:init! ContractViolation}
+  Error:::init!)
 
 (def dump-stack-trace? (make-parameter #f))
 

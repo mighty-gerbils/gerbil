@@ -4,7 +4,6 @@
 
 (import :std/error)
 (export
-  defrule
   catch
   finally
   try
@@ -45,10 +44,6 @@
 
 (import (for-syntax :std/misc/func
                     :std/stxutil))
-
-(defrules defrule ()
-  ((_ (name args ...) body ...)
-   (defrules name () ((name args ...) body ...))))
 
 (defrules catch ())
 (defrules finally ())

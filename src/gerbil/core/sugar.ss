@@ -22,6 +22,18 @@ package: gerbil/core
 
   (defalias define-rules defrules)
 
+  (defrules defrule ()
+    ((_ (name . args) body)
+     (identifier? #'name)
+     (define-syntax name
+       (syntax-rules ()
+         ((_ . args) body))))
+    ((_ (name . args) fender body)
+     (identifier? #'name)
+     (define-syntax name
+       (syntax-rules ()
+         ((_ . args) fender body)))))
+
   (defrules defsyntax% ()
     ((_ (id . args) body ...)
      (identifier? #'id)
@@ -357,7 +369,7 @@ package: gerbil/core
               body))))
 
       (define (make-dispatch main)
-        (with-syntax* ((kwvar (or key (genident 'keys)))
+        (with-syntax* ((kwvar (or key (syntax-local-introduce '@@keywords)))
                        ((get-kw ...)
                         (map (lambda% (kwarg)
                                (with-syntax ((key (car kwarg)))

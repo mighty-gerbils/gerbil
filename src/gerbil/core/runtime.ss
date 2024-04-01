@@ -1419,6 +1419,7 @@ package: gerbil/core
     max-char-code
 
     ;; :gerbil/runtime/util
+    raise-contract-violation-error
     displayln
     display*
     file-newer?
@@ -1548,6 +1549,16 @@ package: gerbil/core
     class-type-properties
     class-type-constructor
     class-type-methods
+    &class-type-id
+    &class-type-name
+    &class-type-super
+    &class-type-flags
+    &class-type-fields
+    &class-type-precedence-list
+    &class-type-slot-vector
+    &class-type-slot-table
+    &class-type-properties
+    &class-type-constructor
     class-type-slot-list
     class-type-field-count
     class-type-seal!
@@ -1559,6 +1570,7 @@ package: gerbil/core
     make-class-slot-mutator
     make-class-slot-unchecked-accessor
     make-class-slot-unchecked-mutator
+    immediate-instance-of?
     direct-instance?
     struct-instance?
     class-instance?
@@ -1708,6 +1720,7 @@ package: gerbil/core
     datum-parsing-exception-filepos
 
     ;; :gerbil/runtime/interface
+    interface-instance::t
     interface-cast-error?
     interface-descriptor?
     interface-instance?
