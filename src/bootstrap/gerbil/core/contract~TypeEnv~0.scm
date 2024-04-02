@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1712084991)
+  (define gerbil/core/contract~TypeEnv::timestamp 1712093472)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type
@@ -13,10 +13,10 @@
     (define gerbil/core/contract~TypeEnv#type-env?
       (make-class-predicate gerbil/core/contract~TypeEnv#type-env::t))
     (define gerbil/core/contract~TypeEnv#make-type-env
-      (lambda _%$args46608%_
+      (lambda _%$args46566%_
         (apply make-instance
                gerbil/core/contract~TypeEnv#type-env::t
-               _%$args46608%_)))
+               _%$args46566%_)))
     (define gerbil/core/contract~TypeEnv#type-env-var
       (make-class-slot-accessor gerbil/core/contract~TypeEnv#type-env::t 'var))
     (define gerbil/core/contract~TypeEnv#type-env-type
@@ -79,27 +79,27 @@
       (lambda ()
         (gx#syntax-local-value (gx#syntax-local-introduce '@@type) false)))
     (define gerbil/core/contract~TypeEnv#type-env-lookup
-      (lambda (_%var46598%_)
-        (let _%loop46600%_ ((_%te46602%_
+      (lambda (_%var46556%_)
+        (let _%loop46558%_ ((_%te46560%_
                              (let ()
                                (declare (not safe))
                                (gerbil/core/contract~TypeEnv#current-type-env))))
-          (if (let () (declare (not safe)) (not _%te46602%_))
+          (if (let () (declare (not safe)) (not _%te46560%_))
               (let () '#f)
               (if (gx#free-identifier=?
-                   _%var46598%_
+                   _%var46556%_
                    (##direct-structure-ref
-                    _%te46602%_
+                    _%te46560%_
                     '1
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f))
-                  (let () _%te46602%_)
+                  (let () _%te46560%_)
                   (let ()
-                    (let ((__tmp79947
+                    (let ((__tmp80023
                            (##direct-structure-ref
-                            _%te46602%_
+                            _%te46560%_
                             '4
                             gerbil/core/contract~TypeEnv#type-env::t
                             '#f)))
                       (declare (not safe))
-                      (_%loop46600%_ __tmp79947))))))))))
+                      (_%loop46558%_ __tmp80023))))))))))

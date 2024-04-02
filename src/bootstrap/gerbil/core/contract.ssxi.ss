@@ -508,7 +508,7 @@ package: gerbil/core
    (@lambda 1 #f))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|
-   (@lambda 8 #f))
+   (@lambda 6 #f))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-interface-method-contract|
    (@lambda 5 #f))
