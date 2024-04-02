@@ -255,16 +255,20 @@ namespace: #f
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
     (if metaclass
-      (make-instance metaclass
-                     ;; gambit type fields
-                     type-id type-name type-flags type-super field-info
-                     ;; gerbil class fields
-                     precedence-list slot-vector slot-table properties constructor methods)
-      (##structure class::t
-                   ;; gambit type fields
-                   type-id type-name type-flags type-super field-info
-                   ;; gerbil class fields
-                   precedence-list slot-vector slot-table properties constructor methods))))
+      ;; check this
+      (: (make-instance metaclass
+                        ;; gambit type fields
+                        type-id type-name type-flags type-super field-info
+                        ;; gerbil class fields
+                        precedence-list slot-vector slot-table properties constructor methods)
+         :class)
+      ;; this we know is a class
+      (:- (##structure class::t
+                       ;; gambit type fields
+                       type-id type-name type-flags type-super field-info
+                       ;; gerbil class fields
+                       precedence-list slot-vector slot-table properties constructor methods)
+          :class))))
 
 ;;; class type utilities
 (defsyntax (defrefset stx)

@@ -432,9 +432,9 @@ namespace: gxc
     ((form ((hd expr) ...) . body)
      (with-syntax (((expr ...) (map (cut compile-e self <>) #'(expr ...))))
        (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
-         (let (body (map (cut compile-e self <>) #'body))
+         (with-syntax ((body (map (cut compile-e self <>) #'body)))
            (xform-wrap-source
-            [#'form #'((hd expr) ...) body ...]
+            #'(form ((hd expr) ...) . body)
             stx)))))))
 
 (def (xform-letrec-values% self stx)
@@ -442,9 +442,9 @@ namespace: gxc
     ((form ((hd expr) ...) . body)
      (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
        (with-syntax (((expr ...) (map (cut compile-e self <>) #'(expr ...))))
-         (let (body (map (cut compile-e self <>) #'body))
+         (with-syntax ((body (map (cut compile-e self <>) #'body)))
            (xform-wrap-source
-            [#'form #'((hd expr) ...) body ...]
+            #'(form ((hd expr) ...) . body)
             stx)))))))
 
 (def (xform-let-locals bindings)
@@ -457,7 +457,7 @@ namespace: gxc
             (loop-bind bind-rest (cons (identifier-symbol id) locals)))
            ((? identifier? id)
             (loop rest (cons (identifier-symbol id) locals)))
-           ([] (loop rest locals)))))
+           (_ (loop rest locals)))))
       (else locals))))
 
 (def (xform-operands self stx)

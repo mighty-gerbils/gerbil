@@ -29,6 +29,11 @@ namespace: gxc
 ;;; optimizer-info: types
 (defstruct !type (id)
   equal: #t print: #t)
+
+(defstruct (!abort !type) ()
+  constructor: :init!
+  equal: #t)
+
 (defstruct (!alias !type) ())
 (defstruct (!procedure !type) (signature)
   equal: #t print: #t)
@@ -99,6 +104,10 @@ namespace: gxc
   equal: #t)
 
 ;;; methods
+(defmethod {:init! !abort}
+  (lambda (self)
+    (set! self.id 'abort)))
+
 (defmethod {:init! !class-meta}
   (lambda (self klass)
     (set! self.id 'class)
@@ -436,8 +445,6 @@ namespace: gxc
    !class))
 
 (def (optimizer-lookup-class-name klass)
-  (unless (!class? klass)
-    (raise-compile-error "not a class" 'lookup-class-name klass))
   (hash-get (optimizer-info-classes (current-compile-optimizer-info)) klass))
 
 (def (optimizer-lookup-method type-t method)

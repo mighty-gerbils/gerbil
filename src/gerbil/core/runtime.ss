@@ -1491,6 +1491,8 @@ package: gerbil/core
     string-rindex
     string-split
     string-join
+    read-u8vector
+    write-u8vector
 
     ;; :gerbil/runtime/table
     symbolic?

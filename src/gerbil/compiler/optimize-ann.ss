@@ -31,11 +31,12 @@ namespace: gxc
 (defcompile-method (apply-push-match-vars vars: vars K: K) ::push-match-vars
   (vars K)
   final:
-  (%#lambda             xform-lambda%)
-  (%#let-values    push-match-vars-let-values%)
-  (%#letrec-values push-match-vars-stop)
-  (%#if            push-match-vars-if%)
-  (%#call          push-match-vars-call%))
+  (%#lambda                xform-lambda%)
+  (%#let-values       push-match-vars-let-values%)
+  (%#letrec-values    push-match-vars-stop)
+  (%#if               push-match-vars-if%)
+  (%#call             push-match-vars-call%)
+  (%#begin-annotation push-match-vars-stop)
 
 ;; current annotation context stack
 (def current-annotation-optimizer

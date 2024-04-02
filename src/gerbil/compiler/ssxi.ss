@@ -181,7 +181,16 @@ namespace: gxc
       ((args return unchecked:)
        (make-signature #'args #'return #f (make-symbol "##" (stx-e proc))))
       ((args return unchecked: unchecked-proc)
-       (make-signature #'args #'return #f (stx-e #'unchecked-proc))))))
+       (make-signature #'args #'return #f (stx-e #'unchecked-proc)))))
+
+  (def (signature->unchecked-signature sig)
+    (syntax-case sig (quote)
+      ((_ arguments: (quote args)
+          return: (quote return)
+          effect: (quote effect)
+          unchecked: (quote unchecked))
+       (and (stx-e #'unchecked)
+            #'(unchecked (make-!signature return: 'return)))))))
 
 (defsyntax (declare-primitive-predicate stx)
   (syntax-case stx ()
@@ -196,16 +205,57 @@ namespace: gxc
   (syntax-case stx ()
     ((_ proc signature ...)
      (identifier? #'proc)
-     (with-syntax (((arity sig) (parse-signature stx #'proc #'(signature ...))))
-       #'(declare-type proc (make-!primitive-lambda 'arity #f signature: sig))))))
+     (with-syntax* (((arity sig) (parse-signature stx #'proc #'(signature ...)))
+                    (decl
+                     #'(declare-type proc
+                         (make-!primitive-lambda 'arity #f signature: sig)))
+                    ((values unchecked)
+                     (signature->unchecked-signature #'sig))
+                    (decl-unchecked
+                     (if unchecked
+                       (with-syntax (((proc sig) unchecked))
+                         #'(declare-type proc
+                             (make-!primitive-lambda 'arity #f signature: sig)))
+                       '(begin))))
+       #'(begin decl decl-unchecked)))))
 
 (defsyntax (declare-primitive-case-lambda stx)
   (syntax-case stx ()
     ((_ proc case-signature ...)
      (identifier? #'proc)
-     (with-syntax ((((arity sig) ...)
-                    (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
-       #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: sig) ...]))))))
+     (let (signatures (map (cut parse-signature stx #'proc <>) #'(case-signature ...)))
+       (with-syntax* ((((arity sig) ...) signatures)
+                      (decl
+                       #'(declare-type proc
+                           (make-!primitive-case-lambda
+                            [(make-!primitive-lambda 'arity #f signature: sig) ...])))
+                      (decl-unchecked
+                       (let ((values unchecked-proc unchecked-clauses)
+                             (let loop ((rest signatures)
+                                        (unchecked-proc #f)
+                                        (unchecked-clauses []))
+                               (match rest
+                                 ([hd . rest]
+                                  (syntax-case hd (quote)
+                                    ((arity
+                                      (_ arguments: (quote args)
+                                         return: (quote return)
+                                         effect: (quote effect)
+                                         unchecked: (quote unchecked)))
+                                     (let ((clause #'(make-!primitive-lambda 'arity #f signature: (make-!signature return: 'return)))
+                                           (unchecked (stx-e #'unchecked)))
+                                       (loop rest
+                                             (or unchecked unchecked-proc)
+                                             (cons clause unchecked-clauses))))))
+                                 (else
+                                  (values unchecked-proc (reverse! unchecked-clauses))))))
+                         (if unchecked-proc
+                           (with-syntax ((proc unchecked-proc)
+                                         ((clause ...) unchecked-clauses))
+                             #'(declare-type proc
+                                 (make-!primitive-case-lambda [clause ...])))
+                           '(begin)))))
+         #'(begin decl decl-unchecked))))))
 
 (defrules declare-builtin-class ()
   ((_ system: id super)

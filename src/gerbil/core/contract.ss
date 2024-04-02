@@ -119,7 +119,7 @@ package: gerbil/core
                  (let (val expr)
                    (if (or (not val) (predicate val))
                      val
-                     (error "bad cast" klass val))))))
+                     (contract-violation! "bad cast" expr predicate val))))))
           ((interface-info? meta)
            (with-syntax ((klass (interface-info-instance-type meta))
                          (cast-it (interface-info-instance-constructor meta)))
@@ -182,9 +182,10 @@ package: gerbil/core
                                (cut ##display-locat locat #t <>))))
                        (else
                         (expander-context-id (core-context-top))))))
-         #'(raise-contract-violation-error
-            "contract violation"
-            context: 'src-ctx contract: 'contract-expr value: value)))))
+         #'(abort!
+            (raise-contract-violation-error
+             "contract violation"
+             context: 'src-ctx contract: 'contract-expr value: value))))))
 
   (defsyntax (nil-dereference! stx)
     (syntax-case stx ()
@@ -199,9 +200,13 @@ package: gerbil/core
                                (cut ##display-locat locat #t <>))))
                        (else
                         (expander-context-id (core-context-top))))))
-         #'(raise-contract-violation-error
-            "nil (#f) derefence"
-            context: 'src-ctx contract: '(check-nil! expr) value: #f))))))
+         #'(abort!
+            (raise-contract-violation-error
+             "nil (#f) derefence"
+             context: 'src-ctx contract: '(check-nil! expr) value: #f))))))
+
+  (defrule (abort! expr)
+    (begin-annotation (@abort) expr)))
 
 (module TypeReference
   (import (phi: +1 InterfaceInfo))
@@ -857,9 +862,9 @@ package: gerbil/core
           ((id . rest)
            (identifier? #'id)
            (loop #'rest (cons #'id result)))
-          (((id _) . rest)
+          (((id default) . rest)
            (identifier? #'id)
-           (loop #'rest (cons #'id result)))
+           (loop #'rest (cons #'(id default) result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
@@ -1552,9 +1557,12 @@ package: gerbil/core
            #'(begin-annotation (@type.signature . lambda-signature)
                (using contract body ...)))))))
 
-  (defrule (with-interface-checked-method self (Interface method unchecked signature return)
-             body ...)
-    (with-interface-method self (Interface method unchecked signature return #t) body ...))
+  (defsyntax (with-interface-checked-method stx)
+    (syntax-case stx ()
+      ((_ self (Interface method unchecked signature return) body ...)
+       (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
+         #'(begin-annotation (@type return-type)
+             (with-interface-method self (Interface method unchecked signature return #t) body ...))))))
 
   (defrule (with-interface-unchecked-method self (Interface method unchecked signature return)
              body ...)
@@ -1634,18 +1642,21 @@ package: gerbil/core
                     (in (signature-arguments-in signature))
                     ((out ...) (signature-arguments-out signature))
                     (signature signature)
-                    (return return))
+                    (return return)
+                    (return-type (resolve-type->type-descriptor stx return)))
         (if (stx-list? #'signature)
           (syntax/loc stx
             (def (id . in)
               (with-procedure-signature (signature return unchecked-id)
-                (with-procedure-contract signature
-                  (unchecked-id out ...)))))
+                (begin-annotation (@type return-type)
+                  (with-procedure-contract signature
+                    (unchecked-id out ...))))))
           (syntax/loc stx
             (def (id . in)
               (with-procedure-signature (signature return unchecked-id)
-                (with-procedure-contract signature
-                  (##apply unchecked-id out ...))))))))
+                (begin-annotation (@type return-type)
+                  (with-procedure-contract signature
+                    (##apply unchecked-id out ...)))))))))
 
     (def (make-unchecked-def unchecked-id signature return body)
       (with-syntax ((unchecked-id unchecked-id)

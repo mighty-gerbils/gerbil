@@ -206,6 +206,8 @@ namespace: gxc
         ;; unspecific type, let the runtime contract check it
         #f)
 
+       ((!abort? expr-type)) ; runtime error, type is satisfied because there is no value
+
        ((!type-subtype? expr-type type)) ; happy!
 
        ;; fuzzy rules for types that might be compatible and should be checked
@@ -491,14 +493,6 @@ namespace: gxc
       (raise-compile-error "Illegal case-lambda application; arity mismatch"
                            stx (map !lambda-arity self.clauses))))))
 
-(def (!lambda-arity-match? self args)
-  (with ((!lambda _ _ arity) self)
-    (match arity
-      ((? fixnum?)
-       (fx= (length args) arity))
-      ([arity]
-       (fx>= (length args) arity)))))
-
 (defmethod {optimize-call !kw-lambda}
   (lambda (self ctx stx args)
     (with ((!kw-lambda _ _ table dispatch) self)
@@ -598,8 +592,9 @@ namespace: gxc
      (cond
       ((member return: #'(signature ...) stx-eq?)
        => (lambda (tail)
-            (check-return-type! stx #'body (cadr tail))
-            (compile-e self #'body)))
+            (let (type (optimizer-resolve-class stx (identifier-symbol (cadr tail))))
+              (check-return-type! stx #'body type)
+              (compile-e self #'body))))
       (else
        (compile-e self #'body))))
     ((_ ann body)
@@ -617,13 +612,16 @@ namespace: gxc
       (cond
        ((not expr-type)
         ;; no type information, we can't verify declaration
-        (raise-compile-error "cannot verify procedure return type" stx expr type))
+        (raise-compile-error "cannot verify procedure return type; no type information" stx type))
        ((eq? 't (!type-id expr-type))
         ;; unspecific type, we can't verity declaration
-        (raise-compile-error "cannot verify procedure return type" stx expr type))
+        (raise-compile-error "cannot verify procedure return type; unspecific type" stx type expr-type))
+
+
+       ((!abort? expr-type)) ; runtime error, type is axiomatically satisfied
 
        ((!type-subtype? expr-type type)) ; happy!
 
        (else
         ;; not happy; we can't verify type
-        (raise-compile-error "cannot verify procedure return type" stx expr type)))))))
+        (raise-compile-error "procedure return type does not match signature" stx type expr-type)))))))

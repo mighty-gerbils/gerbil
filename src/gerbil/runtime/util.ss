@@ -51,13 +51,8 @@ namespace: #f
 
 (def (displayln . args)
   => :void
-  (let lp ((rest args))
-    (match rest
-      ([hd . rest]
-       (display hd)
-       (lp rest))
-      (else
-       (newline)))))
+  (for-each display args)
+  (newline))
 
 (def (display* . args)
   => :void
@@ -296,7 +291,6 @@ namespace: #f
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
 (def (remove-nulls! l)
-  => :list
   (match l
     ([[] . r]
      (remove-nulls! r))
@@ -314,7 +308,8 @@ namespace: #f
   => :list
   (let (l2 [x])
     (if (pair? l)
-      (begin (set-cdr! (:- (##last-pair l) :pair) l2) l)
+      (using (l :- :pair)
+        (begin (set-cdr! (##last-pair l) l2) l))
       l2)))
 
 ;; Append the elements the list in the first argument to the front of the list
@@ -324,8 +319,9 @@ namespace: #f
 ;; and the tail with the reverse of the rhead up till then appended in front.
 ;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
 (def (append-reverse-until (pred  : :procedure) rhead tail)
-  => :list
+  => :values
   (let loop ((rhead rhead) (tail tail))
+    => :values
     (match rhead
       ([] (values [] tail))
       ([a :: r]
@@ -336,6 +332,7 @@ namespace: #f
 (def (andmap1 (f : :procedure) lst)
   => :boolean
   (let lp ((rest lst))
+    => :boolean
     (match rest
       ([x . rest]
        (and (f x) (lp rest)))
@@ -344,6 +341,7 @@ namespace: #f
 (def (andmap2 (f : :procedure) lst1 lst2)
   => :boolean
   (let lp ((rest1 lst1) (rest2 lst2))
+    => :boolean
     (match rest1
       ([x1 . rest1]
        (match rest2
@@ -363,6 +361,7 @@ namespace: #f
 (def (andmap* (f : :procedure) . rest)
   => :boolean
   (let recur ((rest rest))
+    => :boolean
     (if (andmap1 pair? rest)
       (and (apply f (map car rest))
            (recur (map cdr rest)))
@@ -403,6 +402,7 @@ namespace: #f
 (def (filter-map1 (f : :procedure) lst)
   => :list
   (let recur ((rest lst))
+    => :list
     (match rest
       ([x . rest]
        (cond
@@ -413,6 +413,7 @@ namespace: #f
 (def (filter-map2 (f : :procedure) lst1 lst2)
   => :list
   (let recur ((rest1 lst1) (rest2 lst2))
+    => :list
     (match rest1
       ([x1 . rest1]
        (match rest2
@@ -434,6 +435,7 @@ namespace: #f
 (def (filter-map* (f : :procedure) . rest)
   => :list
   (let recur ((rest rest))
+    => :list
     (if (andmap1 pair? rest)
       (cond
        ((apply f (map car rest))
@@ -576,7 +578,8 @@ namespace: #f
     (vector-for-each (cut display-as-string <> port) x))
    ((or (null? x) (void? x) (eof-object? x) (boolean? x))
     (void))
-   (else (error "cannot convert as string" x))))
+   (else
+    (abort! (error "cannot convert as string" x)))))
 
 (def* as-string
   ((x)
@@ -653,8 +656,8 @@ namespace: #f
   (fxzero? (string-length str)))
 
 (def (string-index (str : :string)
-                      (char : :char)
-                      (start :~ nonnegative-fixnum? :- :fixnum :=  0))
+                   (char : :char)
+                   (start :~ nonnegative-fixnum? :- :fixnum :=  0))
   (let ((len (string-length str)))
     (let lp ((k start))
       (using (k :- :fixnum)
@@ -667,7 +670,7 @@ namespace: #f
                        (char : :char)
                        (start #f))
   (let* ((len (string-length str))
-         (start (:- (if (fixnum? start) start (fx- len 1)) :fixnum)))
+         (start (if (fixnum? start) start (fx- len 1))))
     (let lp ((k start))
       (using (k :- :fixnum)
         (and (fx>= k 0)
@@ -679,14 +682,15 @@ namespace: #f
   => :list
   (let ((len (string-length str)))
     (let lp ((start 0) (r '()))
+      => :list
       (using (start :- :fixnum)
         (cond
          ((string-index str char start)
           => (lambda (end)
-               (let (end (:- end :fixnum))
+               (using (end :- :fixnum)
                  (lp (fx+ end 1) (cons (##substring str start end) r)))))
          ((fx< start len)
-          (foldl cons (list (##substring str start len)) r))
+          (:- (foldl cons (list (##substring str start len)) r) :list))
          (else
           (reverse! r)))))))
 
@@ -721,6 +725,7 @@ namespace: #f
           (olen (:- (join-length strs jlen) :fixnum))
           (ostr (make-string olen)))
     (let lp ((rest strs) (k 0))
+      => :string
       (using (k :- :fixnum)
         (match rest
           ([hd . rest]
@@ -737,23 +742,24 @@ namespace: #f
           (else "")))))) ; empty
 
 (def (read-u8vector (bytes : :u8vector)
-                    (port :~ input-port? :- :port))
+                    (port  :~ input-port? :- :port)
+                    (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
+                           := 0)
+                    (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
+                           := (u8vector-length)))
   => :fixnum
-  (##read-subu8vector bytes 0 (u8vector-length bytes) port))
+  (:- (##read-subu8vector bytes start end port)
+      :fixnum))
 
 (def (write-u8vector (bytes : :u8vector)
-                     (port  :~ output-port? :- :port))
+                     (port  :~ output-port? :- :port)
+                     (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
+                           := 0)
+                     (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
+                            := (u8vector-length)))
   => :void
-  (##write-subu8vector bytes 0 (u8vector-length bytes) port))
-
-(def (read-string (str  : :string)
-                  (port :~ input-port? :- :port))
-  => :fixnum
-  (##read-substring str 0 (string-length str) port))
-(def (write-string (str  : :string)
-                   (port :~ output-port? :- :port))
-  => :void
-  (##write-substring str 0 (string-length str) port))
+  (:- (##write-subu8vector bytes start end port)
+      :void))
 
 (defrules DBG ()
   ((_ . a) (DBG/1 1 . a)))
