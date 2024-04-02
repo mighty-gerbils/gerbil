@@ -84,7 +84,7 @@
 		 sym
 		  )))))))
   (catch (e)
-    '(:not-available t)))
+    '(:not-available t))))
 
 (def-swank (swank:autodoc lst . args)
   (try 
