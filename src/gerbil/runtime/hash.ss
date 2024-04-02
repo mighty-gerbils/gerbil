@@ -588,6 +588,9 @@ namespace: #f
 (defhash-method (hash-copy h)
   (h.copy))
 
+(defhash-method (hash-clear! h)
+  (h.clear!))
+
 (def (hash-merge (h : HashTable) . rest)
   (let (copy (h.copy))
     (apply hash-merge! copy rest)

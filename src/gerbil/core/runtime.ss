@@ -1781,6 +1781,7 @@ package: gerbil/core
     hash-copy
     hash-merge
     hash-merge!
+    hash-clear!
 
     ;; :gerbil/runtime/thread
     spawn
