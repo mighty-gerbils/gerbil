@@ -67,7 +67,24 @@
     (if exit (fnd) 
 	(call/cc (lambda (k) (set! exit k) (fnd)))))
 
-
+(def (swank:operator-arglist name module)
+  (try
+   (let* ((sym name)
+	  (sym (and (string? sym) (string->symbol sym)))
+	  (id (and sym (swank-eval-in-context `(gx#resolve-identifier ',sym)))))
+     (if (not id)
+       `(:not-available t)
+       `(,(##object->string
+	   (if (syntax-binding? id)
+	     (swank-pp-procedure sym '/syntax/)
+	     (let (val (swank-eval-in-context sym))
+	       (if (procedure? val)
+		 (try (swank-autodoc-procedure sym val)
+		      (catch (e) `(,sym . /args/)))
+		 sym
+		  )))))))
+  (catch (e)
+    '(:not-available t)))
 
 (def-swank (swank:autodoc lst . args)
   (try 
