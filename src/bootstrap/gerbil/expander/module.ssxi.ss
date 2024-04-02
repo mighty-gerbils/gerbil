@@ -17,7 +17,7 @@ package: gerbil/expander
            #f))
   (declare-type
    gx#module-import::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#module-import::t) 'class::t))
   (declare-type gx#module-import? (@predicate gx#module-import::t))
   (declare-type gx#make-module-import (@constructor gx#module-import::t))
   (declare-type
@@ -75,7 +75,7 @@ package: gerbil/expander
            #f))
   (declare-type
    gx#module-export::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#module-export::t) 'class::t))
   (declare-type gx#module-export? (@predicate gx#module-export::t))
   (declare-type gx#make-module-export (@constructor gx#module-export::t))
   (declare-type
@@ -139,7 +139,9 @@ package: gerbil/expander
            #f
            #f
            #f))
-  (declare-type gx#import-set::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gx#import-set::t
+   (optimizer-resolve-class '(typedecl gx#import-set::t) 'class::t))
   (declare-type gx#import-set? (@predicate gx#import-set::t))
   (declare-type gx#make-import-set (@constructor gx#import-set::t))
   (declare-type gx#import-set-source (@accessor gx#import-set::t source #t))
@@ -175,7 +177,9 @@ package: gerbil/expander
            #f
            #f
            #f))
-  (declare-type gx#export-set::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gx#export-set::t
+   (optimizer-resolve-class '(typedecl gx#export-set::t) 'class::t))
   (declare-type gx#export-set? (@predicate gx#export-set::t))
   (declare-type gx#make-export-set (@constructor gx#export-set::t))
   (declare-type gx#export-set-source (@accessor gx#export-set::t source #t))
@@ -214,13 +218,11 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((:init! . gx#import-expander:::init!)
-            (apply-import-expander
-             .
-             gx#import-expander::apply-import-expander))))
+           ((apply-import-expander . gx#import-expander::apply-import-expander)
+            (:init! . gx#import-expander:::init!))))
   (declare-type
    gx#import-expander::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
   (declare-type gx#import-expander? (@predicate gx#import-expander::t))
   (declare-type gx#make-import-expander (@constructor gx#import-expander::t))
   (declare-type
@@ -271,13 +273,11 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((:init! . gx#export-expander:::init!)
-            (apply-export-expander
-             .
-             gx#export-expander::apply-export-expander))))
+           ((apply-export-expander . gx#export-expander::apply-export-expander)
+            (:init! . gx#export-expander:::init!))))
   (declare-type
    gx#export-expander::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))
   (declare-type gx#export-expander? (@predicate gx#export-expander::t))
   (declare-type gx#make-export-expander (@constructor gx#export-expander::t))
   (declare-type
@@ -333,7 +333,9 @@ package: gerbil/expander
            ((:init! . gx#import-export-expander:::init!))))
   (declare-type
    gx#import-export-expander::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gx#import-export-expander::t)
+    'class::t))
   (declare-type
    gx#import-export-expander?
    (@predicate gx#import-export-expander::t))
@@ -377,8 +379,33 @@ package: gerbil/expander
    gx#&import-export-expander-e-set!
    (@mutator gx#import-export-expander::t e #f))
   (declare-type
+   gx#current-import-expander-phi
+   (optimizer-resolve-class
+    '(typedecl gx#current-import-expander-phi)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   gx#current-export-expander-phi
+   (optimizer-resolve-class
+    '(typedecl gx#current-export-expander-phi)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   gx#current-module-reader-path
+   (optimizer-resolve-class
+    '(typedecl gx#current-module-reader-path)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   gx#current-module-reader-args
+   (optimizer-resolve-class
+    '(typedecl gx#current-module-reader-args)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
    gx#source-file-settings
-   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gx#source-file-settings)
+    '#<!class #11619
+              id: pair
+              super: (list::t)
+              precedence-list: (list::t t::t)>))
   (declare-type
    gx#call-with-input-source-file
    (@lambda 2
@@ -390,41 +417,76 @@ package: gerbil/expander
    (@lambda 5
             #f
             signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gx#prelude-context:::init!__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gx#prelude-context:::init!__0
+   (@lambda 2
+            #f
+            signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#prelude-context:::init!__% (@lambda 3 #f))
-  (declare-type gx#prelude-context:::init!__0 (@lambda 2 #f))
   (declare-type
    gx#prelude-context:::init!
    (@case-lambda
-    (2 gx#prelude-context:::init!__0)
-    (3 gx#prelude-context:::init!__%)))
+    (2
+     gx#prelude-context:::init!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     gx#prelude-context:::init!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    gx#import-export-expander-init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#import-expander:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#export-expander:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#import-export-expander:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#import-expander::apply-import-expander (@lambda 2 #f))
   (declare-type gx#export-expander::apply-export-expander (@lambda 2 #f))
-  (declare-type gx#module-source-path (@lambda 1 #f))
+  (declare-type
+   gx#module-source-path
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#import-module__% (@lambda 3 #f))
   (declare-type gx#import-module__0 (@lambda 1 #f))
   (declare-type gx#import-module__1 (@lambda 2 #f))
@@ -443,7 +505,12 @@ package: gerbil/expander
    (@case-lambda
     (0 gx#core-context-prelude__0)
     (1 gx#core-context-prelude__%)))
-  (declare-type gx#core-module->prelude-context (@lambda 1 #f))
+  (declare-type
+   gx#core-module->prelude-context
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-import-module__% (@lambda 2 #f))
   (declare-type gx#core-import-module__0 (@lambda 1 #f))
   (declare-type
@@ -475,16 +542,37 @@ package: gerbil/expander
             #f
             signature:
             (return: symbol::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#core-resolve-module-path__% (@lambda 2 #f))
-  (declare-type gx#core-resolve-module-path__0 (@lambda 1 #f))
+  (declare-type
+   gx#core-resolve-module-path__%
+   (@lambda 2
+            #f
+            signature:
+            (return: string::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#core-resolve-module-path__0
+   (@lambda 1
+            #f
+            signature:
+            (return: string::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#core-resolve-module-path
    (@case-lambda
-    (1 gx#core-resolve-module-path__0)
-    (2 gx#core-resolve-module-path__%)))
+    (1
+     gx#core-resolve-module-path__0
+     signature:
+     (return: string::t effect: #f arguments: #f unchecked: #f))
+    (2
+     gx#core-resolve-module-path__%
+     signature:
+     (return: string::t effect: #f arguments: #f unchecked: #f))))
   (declare-type gx#core-resolve-library-module-path (@lambda 1 #f))
   (declare-type gx#core-resolve-library-relative-module-path (@lambda 1 #f))
-  (declare-type gx#core-library-package-path-prefix (@lambda 1 #f))
+  (declare-type
+   gx#core-library-package-path-prefix
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-library-package-plist__% (@lambda 2 #f))
   (declare-type gx#core-library-package-plist__0 (@lambda 1 #f))
   (declare-type
@@ -538,13 +626,36 @@ package: gerbil/expander
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-expand-module-body (@lambda 1 #f))
   (declare-type gx#core-expand-import/export (@lambda 5 #f))
-  (declare-type gx#core-expand-import%__% (@lambda 2 #f))
-  (declare-type gx#core-expand-import%__0 (@lambda 1 #f))
+  (declare-type
+   gx#core-expand-import%__%
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#core-expand-import%__0
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#core-expand-import%
-   (@case-lambda (1 gx#core-expand-import%__0) (2 gx#core-expand-import%__%)))
+   (@case-lambda
+    (1
+     gx#core-expand-import%__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (2
+     gx#core-expand-import%__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
   (declare-type gx#core-import-nested-module (@lambda 2 #f))
-  (declare-type gx#core-expand-import-source (@lambda 1 #f))
+  (declare-type
+   gx#core-expand-import-source
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-expand-export%__% (@lambda 2 #f))
   (declare-type gx#core-expand-export%__0 (@lambda 1 #f))
   (declare-type

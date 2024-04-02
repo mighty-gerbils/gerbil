@@ -15,14 +15,8 @@ namespace: gerbil/core/more-sugar
           (phi: 1 :gerbil/core/match)
           (phi: 2 :gerbil/core/runtime))
          (%#export #t (phi: 1 #t))
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/core/more-sugar~1")))
-                  (%#define-syntax : |gerbil/core/more-sugar[:0:]#:|))
-         (%#define-syntax :~ |gerbil/core/more-sugar[:0:]#:~|)
-         (%#define-syntax :- |gerbil/core/more-sugar[:0:]#:-|)
-         (%#define-syntax := |gerbil/core/more-sugar[:0:]#:=|)
          (%#begin-syntax
+          (%#call (%#ref load-module) (%#quote "gerbil/core/more-sugar~1"))
           (%#define-runtime
            setq-macro::t
            |gerbil/core/more-sugar[1]#setq-macro::t|)

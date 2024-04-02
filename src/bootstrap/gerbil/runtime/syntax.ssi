@@ -53,12 +53,9 @@ namespace: #f
           &SyntaxError-continuation-set!
           &SyntaxError-continuation-set!)
          (%#define-syntax SyntaxError |[:0:]#SyntaxError|)
-         (%#begin (%#define-runtime
-                   SyntaxError::display-exception
-                   SyntaxError::display-exception)
-                  (%#define-runtime
-                   SyntaxError::display-exception::specialize
-                   SyntaxError::display-exception::specialize))
+         (%#define-runtime
+          SyntaxError::display-exception
+          SyntaxError::display-exception)
          (%#define-runtime make-syntax-error make-syntax-error)
          (%#define-runtime syntax-error? syntax-error?)
          (%#define-runtime __raise-syntax-error __raise-syntax-error)

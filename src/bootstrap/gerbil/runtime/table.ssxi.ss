@@ -4,7 +4,12 @@ package: gerbil/runtime
 (begin
   (declare-type
    __table::t.id
-   (@class symbol (symbolic::t) (symbolic::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __table::t.id)
+    '#<!class #3409
+              id: symbol
+              super: (symbolic::t)
+              precedence-list: (symbolic::t t::t)>))
   (declare-type &raw-table-table (@lambda 1 #f))
   (declare-type &raw-table-count (@lambda 1 #f))
   (declare-type &raw-table-free (@lambda 1 #f))
@@ -47,7 +52,12 @@ package: gerbil/runtime
             (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __eq-hash (@lambda 1 #f))
   (declare-type eqv-hash (@lambda 1 #f))
-  (declare-type symbolic? (@lambda 1 #f))
+  (declare-type
+   symbolic?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type symbolic-hash (@lambda 1 #f))
   (declare-type string-hash (@lambda 1 ##string=?-hash))
   (declare-type immediate-hash (@lambda 1 #f))
@@ -128,20 +138,20 @@ package: gerbil/runtime
   (declare-type immediate-table-delete! (@lambda 2 #f))
   (declare-type
    __gc-table::t.id
-   (@class symbol (symbolic::t) (symbolic::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __gc-table::t.id)
+    '#<!class #3409
+              id: symbol
+              super: (symbolic::t)
+              precedence-list: (symbolic::t t::t)>))
   (declare-type
    __gc-table-loads
-   (@class f64vector
-           (hvector::t)
-           (hvector::t sequence::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl __gc-table-loads)
+    '#<!class #3410
+              id: f64vector
+              super: (hvector::t)
+              precedence-list: (hvector::t sequence::t t::t)>))
   (declare-type &gc-table-gcht (@lambda 1 #f))
   (declare-type &gc-table-immediate (@lambda 1 #f))
   (declare-type &gc-table-gcht-set! (@lambda 2 #f))

@@ -15,7 +15,9 @@ package: gerbil/runtime
            #f
            #f
            ((display-exception . SyntaxError::display-exception))))
-  (declare-type SyntaxError::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   SyntaxError::t
+   (optimizer-resolve-class '(typedecl SyntaxError::t) 'class::t))
   (declare-type SyntaxError? (@predicate SyntaxError::t))
   (declare-type make-SyntaxError (@constructor SyntaxError::t))
   (declare-type SyntaxError-message (@accessor SyntaxError::t message #t))
@@ -63,13 +65,7 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   SyntaxError::display-exception::specialize
-   (@lambda 2
-            #f
-            signature:
-            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
    make-syntax-error
    (@lambda 6
@@ -91,7 +87,7 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type AST::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type AST::t (optimizer-resolve-class '(typedecl AST::t) 'class::t))
   (declare-type AST? (@predicate AST::t))
   (declare-type make-AST (@constructor AST::t))
   (declare-type AST-e (@accessor AST::t e #t))
@@ -123,7 +119,12 @@ package: gerbil/runtime
             #f
             signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type __AST-datum? (@lambda 1 #f))
+  (declare-type
+   __AST-datum?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __AST-id?
    (@lambda 1
@@ -152,7 +153,12 @@ package: gerbil/runtime
   (declare-type read-syntax-from-file (@lambda 1 #f))
   (declare-type __wrap-syntax (@lambda 2 #f))
   (declare-type __unwrap-syntax (@lambda 2 #f))
-  (declare-type __pp-syntax (@lambda 1 #f))
+  (declare-type
+   __pp-syntax
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __make-readtable (@lambda 0 #f))
   (declare-type
    __readtable-bracket-keyword-set!

@@ -1,588 +1,607 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1711709194)
+  (define gerbil/core/mop~MOP-2::timestamp 1712084077)
   (begin
     (define gerbil/core/mop~MOP-2#class-type-info::t
-      (let ((__tmp29446 (list)))
-        (declare (not safe))
-        (__make-class-type
-         'gerbil.core#class-type-info::t
-         'class-type-info
-         __tmp29446
-         '(id name
-              super
-              slots
-              struct?
-              final?
-              system?
-              metaclass
-              constructor-method
-              type-descriptor
-              constructor
-              predicate
-              accessors
-              mutators
-              unchecked-accessors
-              unchecked-mutators)
-         '()
-         '#f)))
+      (make-class-type
+       'gerbil.core#class-type-info::t
+       'class-type-info
+       (list)
+       '(id name
+            super
+            slots
+            precedence-list
+            ordered-slots
+            struct?
+            final?
+            system?
+            metaclass
+            constructor-method
+            type-descriptor
+            constructor
+            predicate
+            accessors
+            mutators
+            unchecked-accessors
+            unchecked-mutators
+            slot-types
+            slot-defaults
+            slot-contracts)
+       '((print: name))
+       '#f))
     (define gerbil/core/mop~MOP-2#class-type-info?
-      (let ()
-        (declare (not safe))
-        (__make-class-predicate gerbil/core/mop~MOP-2#class-type-info::t)))
+      (make-class-predicate gerbil/core/mop~MOP-2#class-type-info::t))
     (define gerbil/core/mop~MOP-2#make-class-type-info
-      (lambda _$args24916_
+      (lambda _%$args22667%_
         (apply make-instance
                gerbil/core/mop~MOP-2#class-type-info::t
-               _$args24916_)))
+               _%$args22667%_)))
     (define gerbil/core/mop~MOP-2#!class-type-id
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'id)))
+      (make-class-slot-accessor gerbil/core/mop~MOP-2#class-type-info::t 'id))
     (define gerbil/core/mop~MOP-2#!class-type-name
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'name)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'name))
     (define gerbil/core/mop~MOP-2#!class-type-super
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'super)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'super))
     (define gerbil/core/mop~MOP-2#!class-type-slots
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'slots)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop~MOP-2#!class-type-precedence-list
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'precedence-list))
+    (define gerbil/core/mop~MOP-2#!class-type-ordered-slots
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'ordered-slots))
     (define gerbil/core/mop~MOP-2#!class-type-struct?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'struct?)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'struct?))
     (define gerbil/core/mop~MOP-2#!class-type-final?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'final?)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'final?))
     (define gerbil/core/mop~MOP-2#!class-type-system?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'system?)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'system?))
     (define gerbil/core/mop~MOP-2#!class-type-metaclass
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'metaclass)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'metaclass))
     (define gerbil/core/mop~MOP-2#!class-type-constructor-method
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor-method)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor-method))
     (define gerbil/core/mop~MOP-2#!class-type-descriptor
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'type-descriptor)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'type-descriptor))
     (define gerbil/core/mop~MOP-2#!class-type-constructor
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor))
     (define gerbil/core/mop~MOP-2#!class-type-predicate
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'predicate)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'predicate))
     (define gerbil/core/mop~MOP-2#!class-type-accessors
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'accessors)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'accessors))
     (define gerbil/core/mop~MOP-2#!class-type-mutators
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'mutators)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'mutators))
     (define gerbil/core/mop~MOP-2#!class-type-unchecked-accessors
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-accessors)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-accessors))
     (define gerbil/core/mop~MOP-2#!class-type-unchecked-mutators
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-mutators)))
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-types
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-types))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-defaults
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-defaults))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-contracts
+      (make-class-slot-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-contracts))
     (define gerbil/core/mop~MOP-2#!class-type-id-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'id)))
+      (make-class-slot-mutator gerbil/core/mop~MOP-2#class-type-info::t 'id))
     (define gerbil/core/mop~MOP-2#!class-type-name-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'name)))
+      (make-class-slot-mutator gerbil/core/mop~MOP-2#class-type-info::t 'name))
     (define gerbil/core/mop~MOP-2#!class-type-super-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'super)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'super))
     (define gerbil/core/mop~MOP-2#!class-type-slots-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'slots)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop~MOP-2#!class-type-precedence-list-set!
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'precedence-list))
+    (define gerbil/core/mop~MOP-2#!class-type-ordered-slots-set!
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'ordered-slots))
     (define gerbil/core/mop~MOP-2#!class-type-struct?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'struct?)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'struct?))
     (define gerbil/core/mop~MOP-2#!class-type-final?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'final?)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'final?))
     (define gerbil/core/mop~MOP-2#!class-type-system?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'system?)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'system?))
     (define gerbil/core/mop~MOP-2#!class-type-metaclass-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'metaclass)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'metaclass))
     (define gerbil/core/mop~MOP-2#!class-type-constructor-method-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor-method)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor-method))
     (define gerbil/core/mop~MOP-2#!class-type-descriptor-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'type-descriptor)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'type-descriptor))
     (define gerbil/core/mop~MOP-2#!class-type-constructor-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor))
     (define gerbil/core/mop~MOP-2#!class-type-predicate-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'predicate)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'predicate))
     (define gerbil/core/mop~MOP-2#!class-type-accessors-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'accessors)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'accessors))
     (define gerbil/core/mop~MOP-2#!class-type-mutators-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'mutators)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'mutators))
     (define gerbil/core/mop~MOP-2#!class-type-unchecked-accessors-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-accessors)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-accessors))
     (define gerbil/core/mop~MOP-2#!class-type-unchecked-mutators-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-mutators)))
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-types-set!
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-types))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-defaults-set!
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-defaults))
+    (define gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!
+      (make-class-slot-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-contracts))
     (define gerbil/core/mop~MOP-2#&!class-type-id
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'id)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'id))
     (define gerbil/core/mop~MOP-2#&!class-type-name
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'name)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'name))
     (define gerbil/core/mop~MOP-2#&!class-type-super
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'super)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'super))
     (define gerbil/core/mop~MOP-2#&!class-type-slots
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'slots)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop~MOP-2#&!class-type-precedence-list
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'precedence-list))
+    (define gerbil/core/mop~MOP-2#&!class-type-ordered-slots
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'ordered-slots))
     (define gerbil/core/mop~MOP-2#&!class-type-struct?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'struct?)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'struct?))
     (define gerbil/core/mop~MOP-2#&!class-type-final?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'final?)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'final?))
     (define gerbil/core/mop~MOP-2#&!class-type-system?
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'system?)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'system?))
     (define gerbil/core/mop~MOP-2#&!class-type-metaclass
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'metaclass)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'metaclass))
     (define gerbil/core/mop~MOP-2#&!class-type-constructor-method
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor-method)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor-method))
     (define gerbil/core/mop~MOP-2#&!class-type-descriptor
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'type-descriptor)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'type-descriptor))
     (define gerbil/core/mop~MOP-2#&!class-type-constructor
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor))
     (define gerbil/core/mop~MOP-2#&!class-type-predicate
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'predicate)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'predicate))
     (define gerbil/core/mop~MOP-2#&!class-type-accessors
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'accessors)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'accessors))
     (define gerbil/core/mop~MOP-2#&!class-type-mutators
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'mutators)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'mutators))
     (define gerbil/core/mop~MOP-2#&!class-type-unchecked-accessors
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-accessors)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-accessors))
     (define gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-mutators)))
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-types
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-types))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-defaults
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-defaults))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-contracts
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-contracts))
     (define gerbil/core/mop~MOP-2#&!class-type-id-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'id)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'id))
     (define gerbil/core/mop~MOP-2#&!class-type-name-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'name)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'name))
     (define gerbil/core/mop~MOP-2#&!class-type-super-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'super)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'super))
     (define gerbil/core/mop~MOP-2#&!class-type-slots-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'slots)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop~MOP-2#&!class-type-precedence-list-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'precedence-list))
+    (define gerbil/core/mop~MOP-2#&!class-type-ordered-slots-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'ordered-slots))
     (define gerbil/core/mop~MOP-2#&!class-type-struct?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'struct?)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'struct?))
     (define gerbil/core/mop~MOP-2#&!class-type-final?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'final?)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'final?))
     (define gerbil/core/mop~MOP-2#&!class-type-system?-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'system?)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'system?))
     (define gerbil/core/mop~MOP-2#&!class-type-metaclass-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'metaclass)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'metaclass))
     (define gerbil/core/mop~MOP-2#&!class-type-constructor-method-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor-method)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor-method))
     (define gerbil/core/mop~MOP-2#&!class-type-descriptor-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'type-descriptor)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'type-descriptor))
     (define gerbil/core/mop~MOP-2#&!class-type-constructor-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'constructor)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'constructor))
     (define gerbil/core/mop~MOP-2#&!class-type-predicate-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'predicate)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'predicate))
     (define gerbil/core/mop~MOP-2#&!class-type-accessors-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'accessors)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'accessors))
     (define gerbil/core/mop~MOP-2#&!class-type-mutators-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'mutators)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'mutators))
     (define gerbil/core/mop~MOP-2#&!class-type-unchecked-accessors-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-accessors)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-accessors))
     (define gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators-set!
-      (let ()
-        (declare (not safe))
-        (__make-class-slot-unchecked-mutator
-         gerbil/core/mop~MOP-2#class-type-info::t
-         'unchecked-mutators)))
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-types-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-types))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-defaults-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-defaults))
+    (define gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop~MOP-2#class-type-info::t
+       'slot-contracts))
     (define gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
-      (lambda (_self24828_ _stx24829_)
-        (let* ((_g2483124850_
-                (lambda (_g2483224847_)
+      (lambda (_%self22578%_ _%stx22579%_)
+        (let* ((_%g2258122600%_
+                (lambda (_%g2258222597%_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g2483224847_)))
-               (_g2483024913_
-                (lambda (_g2483224853_)
-                  (if (gx#stx-pair? _g2483224853_)
-                      (let ((_e2483624855_ (gx#syntax-e _g2483224853_)))
-                        (let ((_hd2483524858_
+                   _%g2258222597%_)))
+               (_%g2258022664%_
+                (lambda (_%g2258222603%_)
+                  (if (gx#stx-pair? _%g2258222603%_)
+                      (let ((_%e2258622605%_ (gx#syntax-e _%g2258222603%_)))
+                        (let ((_%hd2258522608%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e2483624855_)))
-                              (_tl2483424860_
+                                 (##car _%e2258622605%_)))
+                              (_%tl2258422610%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e2483624855_))))
-                          (if (gx#stx-pair/null? _tl2483424860_)
-                              (let ((_g29447_
+                                 (##cdr _%e2258622605%_))))
+                          (if (gx#stx-pair/null? _%tl2258422610%_)
+                              (let ((_g27227_
                                      (gx#syntax-split-splice
-                                      _tl2483424860_
+                                      _%tl2258422610%_
                                       '0)))
                                 (begin
-                                  (let ((_g29448_
+                                  (let ((_g27228_
                                          (let ()
                                            (declare (not safe))
-                                           (if (##values? _g29447_)
-                                               (##vector-length _g29447_)
+                                           (if (##values? _g27227_)
+                                               (##vector-length _g27227_)
                                                1))))
                                     (if (not (let ()
                                                (declare (not safe))
-                                               (##fx= _g29448_ 2)))
+                                               (##fx= _g27228_ 2)))
                                         (error "Context expects 2 values"
-                                               _g29448_)))
-                                  (let ((_target2483724863_
+                                               _g27228_)))
+                                  (let ((_%target2258722613%_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g29447_ 0)))
-                                        (_tl2483924865_
+                                           (##vector-ref _g27227_ 0)))
+                                        (_%tl2258922615%_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g29447_ 1))))
-                                    (if (gx#stx-null? _tl2483924865_)
-                                        (letrec ((_loop2484024868_
-                                                  (lambda (_hd2483824871_
-                                                           _arg2484424873_)
+                                           (##vector-ref _g27227_ 1))))
+                                    (if (gx#stx-null? _%tl2258922615%_)
+                                        (letrec ((_%loop2259022618%_
+                                                  (lambda (_%hd2258822621%_
+                                                           _%arg2259422623%_)
                                                     (if (gx#stx-pair?
-                                                         _hd2483824871_)
-                                                        (let ((_e2484124876_
+                                                         _%hd2258822621%_)
+                                                        (let ((_%e2259122626%_
                                                                (gx#syntax-e
-                                                                _hd2483824871_)))
-                                                          (let ((_lp-hd2484224879_
+                                                                _%hd2258822621%_)))
+                                                          (let ((_%lp-hd2259222629%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let () (declare (not safe)) (##car _e2484124876_)))
-                        (_lp-tl2484324881_
-                         (let () (declare (not safe)) (##cdr _e2484124876_))))
-                    (let ((__tmp29449
-                           (cons _lp-hd2484224879_ _arg2484424873_)))
+                         (let () (declare (not safe)) (##car _%e2259122626%_)))
+                        (_%lp-tl2259322631%_
+                         (let ()
+                           (declare (not safe))
+                           (##cdr _%e2259122626%_))))
+                    (let ((__tmp27229
+                           (cons _%lp-hd2259222629%_ _%arg2259422623%_)))
                       (declare (not safe))
-                      (_loop2484024868_ _lp-tl2484324881_ __tmp29449))))
-                (let ((_arg2484524884_ (reverse _arg2484424873_)))
-                  ((lambda (_L24887_)
-                     (let ((_$e24901_
-                            (let ((__obj29366 _self24828_))
+                      (_%loop2259022618%_ _%lp-tl2259322631%_ __tmp27229))))
+                (let ((_%arg2259522634%_ (reverse _%arg2259422623%_)))
+                  ((lambda (_%L22637%_)
+                     (let ((_%$e22651%_
+                            (let ((__obj27143 _%self22578%_))
                               (if (let ()
                                     (declare (not safe))
                                     (##structure-direct-instance-of?
-                                     __obj29366
+                                     __obj27143
                                      'gerbil.core#class-type-info::t))
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     __obj29366
-                                     '11
+                                     __obj27143
+                                     '13
                                      '#f
                                      '#f))
                                   (class-slot-ref
                                    gerbil/core/mop~MOP-2#class-type-info::t
-                                   __obj29366
+                                   __obj27143
                                    'constructor)))))
-                       (if _$e24901_
-                           ((lambda (_make24904_)
-                              (cons _make24904_
-                                    (let ((__tmp29450
-                                           (lambda (_g2490524908_
-                                                    _g2490624910_)
-                                             (cons _g2490524908_
-                                                   _g2490624910_))))
-                                      (declare (not safe))
-                                      (__foldr1 __tmp29450 '() _L24887_))))
-                            _$e24901_)
-                           (gx#raise-syntax-error
-                            '#f
-                            '"no constructor defined for class"
-                            _stx24829_
-                            _self24828_))))
-                   _arg2484524884_))))))
+                       (if _%$e22651%_
+                           ((lambda (_%make22654%_)
+                              (cons _%make22654%_
+                                    (foldr (lambda (_%g2265522658%_
+                                                    _%g2265622660%_)
+                                             (cons _%g2265522658%_
+                                                   _%g2265622660%_))
+                                           '()
+                                           _%L22637%_)))
+                            _%$e22651%_)
+                           (let ()
+                             (gx#raise-syntax-error
+                              '#f
+                              '"no constructor defined for class"
+                              _%stx22579%_
+                              _%self22578%_)))))
+                   _%arg2259522634%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (let ()
                                             (declare (not safe))
-                                            (_loop2484024868_
-                                             _target2483724863_
+                                            (_%loop2259022618%_
+                                             _%target2258722613%_
                                              '())))
                                         (let ()
                                           (declare (not safe))
-                                          (_g2483124850_ _g2483224853_))))))
+                                          (_%g2258122600%_
+                                           _%g2258222603%_))))))
                               (let ()
                                 (declare (not safe))
-                                (_g2483124850_ _g2483224853_)))))
+                                (_%g2258122600%_ _%g2258222603%_)))))
                       (let ()
                         (declare (not safe))
-                        (_g2483124850_ _g2483224853_))))))
+                        (_%g2258122600%_ _%g2258222603%_))))))
           (declare (not safe))
-          (_g2483024913_ _stx24829_))))
-    (let ()
-      (declare (not safe))
-      (bind-method!__0
-       gerbil/core/mop~MOP-2#class-type-info::t
-       'apply-macro-expander
-       gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander))
+          (_%g2258022664%_ _%stx22579%_))))
+    (bind-method!
+     gerbil/core/mop~MOP-2#class-type-info::t
+     'apply-macro-expander
+     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
+    (define gerbil/core/mop~MOP-2#!class-slot-type
+      (lambda (_%klass22569%_ _%slot22570%_)
+        (let ((_%$e22572%_
+               (let ((__obj27144 _%klass22569%_))
+                 (if (let ()
+                       (declare (not safe))
+                       (##structure-direct-instance-of?
+                        __obj27144
+                        'gerbil.core#class-type-info::t))
+                     (let ()
+                       (declare (not safe))
+                       (##unchecked-structure-ref __obj27144 '19 '#f '#f))
+                     (class-slot-ref
+                      gerbil/core/mop~MOP-2#class-type-info::t
+                      __obj27144
+                      'slot-types)))))
+          (if _%$e22572%_
+              ((lambda (_%slot-types22575%_)
+                 (assgetq _%slot22570%_ _%slot-types22575%_))
+               _%$e22572%_)
+              (let () '#f)))))
+    (define gerbil/core/mop~MOP-2#!class-slot-default
+      (lambda (_%klass22556%_ _%slot22557%_)
+        (let ((_%$e22559%_
+               (let ((__obj27145 _%klass22556%_))
+                 (if (let ()
+                       (declare (not safe))
+                       (##structure-direct-instance-of?
+                        __obj27145
+                        'gerbil.core#class-type-info::t))
+                     (let ()
+                       (declare (not safe))
+                       (##unchecked-structure-ref __obj27145 '20 '#f '#f))
+                     (class-slot-ref
+                      gerbil/core/mop~MOP-2#class-type-info::t
+                      __obj27145
+                      'slot-defaults)))))
+          (if _%$e22559%_
+              ((lambda (_%slot-defaults22562%_)
+                 (let ((_%$e22564%_
+                        (assgetq _%slot22557%_ _%slot-defaults22562%_)))
+                   (if _%$e22564%_
+                       (gx#syntax-local-introduce _%$e22564%_)
+                       (let () '#f))))
+               _%$e22559%_)
+              (let () '#f)))))
+    (define gerbil/core/mop~MOP-2#!class-slot-contract
+      (lambda (_%klass22543%_ _%slot22544%_)
+        (let ((_%$e22546%_
+               (let ((__obj27146 _%klass22543%_))
+                 (if (let ()
+                       (declare (not safe))
+                       (##structure-direct-instance-of?
+                        __obj27146
+                        'gerbil.core#class-type-info::t))
+                     (let ()
+                       (declare (not safe))
+                       (##unchecked-structure-ref __obj27146 '20 '#f '#f))
+                     (class-slot-ref
+                      gerbil/core/mop~MOP-2#class-type-info::t
+                      __obj27146
+                      'slot-defaults)))))
+          (if _%$e22546%_
+              ((lambda (_%slot-defaults22549%_)
+                 (let ((_%$e22551%_
+                        (assgetq _%slot22544%_ _%slot-defaults22549%_)))
+                   (if _%$e22551%_
+                       (gx#syntax-local-introduce _%$e22551%_)
+                       (let () '#f))))
+               _%$e22546%_)
+              (let () '#f)))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-      (lambda (_stx24809_ _is?24810_)
-        (if (gx#identifier? _stx24809_)
-            (let ((_e2481124813_ (gx#syntax-local-value _stx24809_ false)))
-              (if _e2481124813_
-                  (let ((_e24816_ _e2481124813_))
+      (lambda (_%stx22524%_ _%is?22525%_)
+        (if (gx#identifier? _%stx22524%_)
+            (let ((_%e2252622528%_ (gx#syntax-local-value _%stx22524%_ false)))
+              (if _%e2252622528%_
+                  (let ((_%e22531%_ _%e2252622528%_))
                     (if (let ()
                           (declare (not safe))
                           (class-instance?
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           _e24816_))
-                        (_is?24810_ _e24816_)
+                           _%e22531%_))
+                        (_%is?22525%_ _%e22531%_)
                         '#f))
                   '#f))
             '#f)))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-      (lambda (_stx24821_)
-        (let ((_is?24823_ true))
+      (lambda (_%stx22536%_)
+        (let ((_%is?22538%_ true))
           (declare (not safe))
           (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-           _stx24821_
-           _is?24823_))))
+           _%stx22536%_
+           _%is?22538%_))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-      (lambda _g29452_
-        (let ((_g29451_ (let () (declare (not safe)) (##length _g29452_))))
-          (cond ((let () (declare (not safe)) (##fx= _g29451_ 1))
-                 (apply (lambda (_stx24821_)
+      (lambda _g27231_
+        (let ((_g27230_ (let () (declare (not safe)) (##length _g27231_))))
+          (cond ((let () (declare (not safe)) (##fx= _g27230_ 1))
+                 (apply (lambda (_%stx22536%_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-                             _stx24821_)))
-                        _g29452_))
-                ((let () (declare (not safe)) (##fx= _g29451_ 2))
-                 (apply (lambda (_stx24825_ _is?24826_)
+                             _%stx22536%_)))
+                        _g27231_))
+                ((let () (declare (not safe)) (##fx= _g27230_ 2))
+                 (apply (lambda (_%stx22540%_ _%is?22541%_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-                             _stx24825_
-                             _is?24826_)))
-                        _g29452_))
+                             _%stx22540%_
+                             _%is?22541%_)))
+                        _g27231_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-                  _g29452_))))))))
+                  _g27231_))))))))

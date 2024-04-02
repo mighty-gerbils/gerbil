@@ -17,7 +17,7 @@ package: gerbil/expander
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
   (declare-type
    gx#syntax-pattern::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#syntax-pattern::t) 'class::t))
   (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))
   (declare-type gx#make-syntax-pattern (@constructor gx#syntax-pattern::t))
   (declare-type gx#syntax-pattern-id (@accessor gx#syntax-pattern::t id #t))
@@ -44,7 +44,12 @@ package: gerbil/expander
    gx#&syntax-pattern-depth-set!
    (@mutator gx#syntax-pattern::t depth #f))
   (declare-type gx#&syntax-pattern-e-set! (@mutator gx#syntax-pattern::t e #f))
-  (declare-type gx#syntax-pattern::apply-macro-expander (@lambda 2 #f))
+  (declare-type
+   gx#syntax-pattern::apply-macro-expander
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type gx#macro-expand-syntax (@lambda 1 #f))
   (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))
   (declare-type gx#macro-expand-syntax-case__0 (@lambda 1 #f))

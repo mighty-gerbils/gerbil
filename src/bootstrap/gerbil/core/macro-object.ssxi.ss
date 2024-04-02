@@ -19,7 +19,9 @@ package: gerbil/core
              gerbil/core/macro-object#macro-object::apply-macro-expander))))
   (declare-type
    gerbil/core/macro-object#macro-object::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gerbil/core/macro-object#macro-object::t)
+    'class::t))
   (declare-type
    gerbil/core/macro-object#macro-object?
    (@predicate gerbil/core/macro-object#macro-object::t))
@@ -46,4 +48,9 @@ package: gerbil/core
    (@lambda 2
             #f
             signature:
-            (return: procedure::t effect: #f arguments: #f unchecked: #f))))
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+  (declare-method
+   gerbil/core/macro-object#macro-object::t
+   apply-macro-expander
+   gerbil/core/macro-object#macro-object::apply-macro-expander
+   #f))

@@ -63,5 +63,8 @@ namespace: gxc
          (%#define-runtime !kw-lambda::typedecl gxc#!kw-lambda::typedecl)
          (%#define-runtime
           !kw-lambda-primary::typedecl
-          gxc#!kw-lambda-primary::typedecl))
+          gxc#!kw-lambda-primary::typedecl)
+         (%#define-runtime
+          !primitive-predicate::typedecl
+          gxc#!primitive-predicate::typedecl))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize~0"))

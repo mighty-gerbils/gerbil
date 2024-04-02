@@ -64,49 +64,87 @@ package: gerbil/runtime
    (@lambda 4
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return: thread::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    spawn-thread__%
    (@lambda 3
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return: thread::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    spawn-thread__0
    (@lambda 1
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return: thread::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    spawn-thread__1
    (@lambda 2
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return: thread::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    spawn-thread
    (@case-lambda
     (1
      spawn-thread__0
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))
+     (return: thread::t effect: #f arguments: #f unchecked: #f))
     (2
      spawn-thread__1
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))
+     (return: thread::t effect: #f arguments: #f unchecked: #f))
     (3
      spawn-thread__%
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type thread-local-ref__% (@lambda 2 #f))
-  (declare-type thread-local-ref__0 (@lambda 1 #f))
+     (return: thread::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   thread-local-ref__%
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   thread-local-ref__0
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    thread-local-ref
-   (@case-lambda (1 thread-local-ref__0) (2 thread-local-ref__%)))
-  (declare-type thread-local-get (@lambda 1 #f))
-  (declare-type thread-local-set! (@lambda 2 #f))
-  (declare-type thread-local-delete! (@lambda 1 #f))
+   (@case-lambda
+    (1
+     thread-local-ref__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (2
+     thread-local-ref__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   thread-local-get
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   thread-local-set!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   thread-local-delete!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type thread-local-table (@lambda 0 #f))
+  (declare-type
+   __thread-locals-mutex
+   (optimizer-resolve-class
+    '(typedecl __thread-locals-mutex)
+    '#<!class #13507 id: mutex::t super: () precedence-list: (t::t)>))
   (declare-type unhandled-actor-exception-hook-set! (@lambda 1 #f))
   (declare-type
    current-thread-group

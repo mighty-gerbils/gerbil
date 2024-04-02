@@ -2,6 +2,11 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
 (begin
+  (declare-type
+   gxc#current-compile-method
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-method)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
   (declare-type gxc#compile-e__0 (@lambda 1 #f))
   (declare-type gxc#compile-e__1 (@lambda 2 #f))
   (declare-type
@@ -19,13 +24,13 @@ package: gerbil/compiler
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return: false::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#true-method
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return: true::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#identity-method (@lambda 2 #f))
   (declare-class
    gxc#::void-expression::t
@@ -42,14 +47,16 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::void-expression::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::void-expression::t) 'class::t))
   (declare-type gxc#::void-expression? (@predicate gxc#::void-expression::t))
   (declare-type
    gxc#make-::void-expression
    (@constructor gxc#::void-expression::t))
   (declare-type
    gxc#::void-expression-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::void-expression-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::void-special-form::t
    (@class gxc#::void-special-form::t
@@ -65,7 +72,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::void-special-form::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::void-special-form::t) 'class::t))
   (declare-type
    gxc#::void-special-form?
    (@predicate gxc#::void-special-form::t))
@@ -74,7 +81,9 @@ package: gerbil/compiler
    (@constructor gxc#::void-special-form::t))
   (declare-type
    gxc#::void-special-form-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::void-special-form-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::void::t
    (@class gxc#::void::t
@@ -88,12 +97,16 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#::void::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#::void::t
+   (optimizer-resolve-class '(typedecl gxc#::void::t) 'class::t))
   (declare-type gxc#::void? (@predicate gxc#::void::t))
   (declare-type gxc#make-::void (@constructor gxc#::void::t))
   (declare-type
    gxc#::void-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::void-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::false-expression::t
    (@class gxc#::false-expression::t
@@ -109,14 +122,16 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::false-expression::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::false-expression::t) 'class::t))
   (declare-type gxc#::false-expression? (@predicate gxc#::false-expression::t))
   (declare-type
    gxc#make-::false-expression
    (@constructor gxc#::false-expression::t))
   (declare-type
    gxc#::false-expression-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::false-expression-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::false-special-form::t
    (@class gxc#::false-special-form::t
@@ -132,7 +147,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::false-special-form::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::false-special-form::t) 'class::t))
   (declare-type
    gxc#::false-special-form?
    (@predicate gxc#::false-special-form::t))
@@ -141,7 +156,9 @@ package: gerbil/compiler
    (@constructor gxc#::false-special-form::t))
   (declare-type
    gxc#::false-special-form-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::false-special-form-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::false::t
    (@class gxc#::false::t
@@ -158,12 +175,16 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#::false::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#::false::t
+   (optimizer-resolve-class '(typedecl gxc#::false::t) 'class::t))
   (declare-type gxc#::false? (@predicate gxc#::false::t))
   (declare-type gxc#make-::false (@constructor gxc#::false::t))
   (declare-type
    gxc#::false-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::false-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::identity-expression::t
    (@class gxc#::identity-expression::t
@@ -179,7 +200,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::identity-expression::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::identity-expression::t)
+    'class::t))
   (declare-type
    gxc#::identity-expression?
    (@predicate gxc#::identity-expression::t))
@@ -188,7 +211,9 @@ package: gerbil/compiler
    (@constructor gxc#::identity-expression::t))
   (declare-type
    gxc#::identity-expression-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::identity-expression-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::identity-special-form::t
    (@class gxc#::identity-special-form::t
@@ -204,7 +229,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::identity-special-form::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::identity-special-form::t)
+    'class::t))
   (declare-type
    gxc#::identity-special-form?
    (@predicate gxc#::identity-special-form::t))
@@ -213,7 +240,9 @@ package: gerbil/compiler
    (@constructor gxc#::identity-special-form::t))
   (declare-type
    gxc#::identity-special-form-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::identity-special-form-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::identity::t
    (@class gxc#::identity::t
@@ -232,12 +261,14 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::identity::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::identity::t) 'class::t))
   (declare-type gxc#::identity? (@predicate gxc#::identity::t))
   (declare-type gxc#make-::identity (@constructor gxc#::identity::t))
   (declare-type
    gxc#::identity-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::identity-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::basic-xform-expression::t
    (@class gxc#::basic-xform-expression::t
@@ -253,7 +284,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::basic-xform-expression::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::basic-xform-expression::t)
+    'class::t))
   (declare-type
    gxc#::basic-xform-expression?
    (@predicate gxc#::basic-xform-expression::t))
@@ -262,7 +295,9 @@ package: gerbil/compiler
    (@constructor gxc#::basic-xform-expression::t))
   (declare-type
    gxc#::basic-xform-expression-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::basic-xform-expression-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-class
    gxc#::basic-xform::t
    (@class gxc#::basic-xform::t
@@ -283,12 +318,14 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::basic-xform::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::basic-xform::t) 'class::t))
   (declare-type gxc#::basic-xform? (@predicate gxc#::basic-xform::t))
   (declare-type gxc#make-::basic-xform (@constructor gxc#::basic-xform::t))
   (declare-type
    gxc#::basic-xform-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::basic-xform-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
   (declare-type gxc#apply-begin% (@lambda 2 #f))
   (declare-type gxc#apply-last-begin% (@lambda 2 #f))
   (declare-type
@@ -317,6 +354,8 @@ package: gerbil/compiler
   (declare-type gxc#xform-lambda% (@lambda 2 #f))
   (declare-type gxc#xform-case-lambda% (@lambda 2 #f))
   (declare-type gxc#xform-let-values% (@lambda 2 #f))
+  (declare-type gxc#xform-letrec-values% (@lambda 2 #f))
+  (declare-type gxc#xform-let-locals (@lambda 1 #f))
   (declare-type gxc#xform-operands (@lambda 2 #f))
   (declare-type gxc#xform-call% (@lambda 2 #f))
   (declare-type gxc#xform-setq% (@lambda 2 #f)))

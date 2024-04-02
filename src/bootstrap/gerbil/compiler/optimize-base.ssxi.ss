@@ -2,6 +2,21 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
 (begin
+  (declare-type
+   gxc#current-compile-optimizer-info
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-optimizer-info)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#current-compile-mutators
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-mutators)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#current-compile-local-type
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-local-type)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
   (declare-class
    gxc#optimizer-info::t
    (@class gxc#optimizer-info::t
@@ -17,7 +32,7 @@ package: gerbil/compiler
            ((:init! . gxc#optimizer-info:::init!))))
   (declare-type
    gxc#optimizer-info::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#optimizer-info::t) 'class::t))
   (declare-type gxc#optimizer-info? (@predicate gxc#optimizer-info::t))
   (declare-type gxc#make-optimizer-info (@constructor gxc#optimizer-info::t))
   (declare-type
@@ -73,17 +88,41 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-class
    gxc#!type::t
    (@class gxc#!type::t () (object::t t::t) (id) (id) #f #t #f #f #f #f))
-  (declare-type gxc#!type::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!type::t
+   (optimizer-resolve-class '(typedecl gxc#!type::t) 'class::t))
   (declare-type gxc#!type? (@predicate gxc#!type::t))
   (declare-type gxc#make-!type (@constructor gxc#!type::t))
   (declare-type gxc#!type-id (@accessor gxc#!type::t id #t))
   (declare-type gxc#!type-id-set! (@mutator gxc#!type::t id #t))
   (declare-type gxc#&!type-id (@accessor gxc#!type::t id #f))
   (declare-type gxc#&!type-id-set! (@mutator gxc#!type::t id #f))
+  (declare-class
+   gxc#!abort::t
+   (@class gxc#!abort::t
+           (gxc#!type::t)
+           (gxc#!type::t object::t t::t)
+           ()
+           (id)
+           :init!
+           #t
+           #f
+           #f
+           #f
+           ((:init! . gxc#!abort:::init!))))
+  (declare-type
+   gxc#!abort::t
+   (optimizer-resolve-class '(typedecl gxc#!abort::t) 'class::t))
+  (declare-type gxc#!abort? (@predicate gxc#!abort::t))
+  (declare-type gxc#make-!abort (@constructor gxc#!abort::t))
+  (declare-type gxc#!abort-id (@accessor gxc#!abort::t id #t))
+  (declare-type gxc#!abort-id-set! (@mutator gxc#!abort::t id #t))
+  (declare-type gxc#&!abort-id (@accessor gxc#!abort::t id #f))
+  (declare-type gxc#&!abort-id-set! (@mutator gxc#!abort::t id #f))
   (declare-class
    gxc#!alias::t
    (@class gxc#!alias::t
@@ -97,7 +136,9 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#!alias::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!alias::t
+   (optimizer-resolve-class '(typedecl gxc#!alias::t) 'class::t))
   (declare-type gxc#!alias? (@predicate gxc#!alias::t))
   (declare-type gxc#make-!alias (@constructor gxc#!alias::t))
   (declare-type gxc#!alias-id (@accessor gxc#!alias::t id #t))
@@ -119,7 +160,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#!procedure::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!procedure::t) 'class::t))
   (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
   (declare-type gxc#make-!procedure (@constructor gxc#!procedure::t))
   (declare-type
@@ -153,7 +194,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#!signature::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!signature::t) 'class::t))
   (declare-type gxc#!signature? (@predicate gxc#!signature::t))
   (declare-type gxc#make-!signature (@constructor gxc#!signature::t))
   (declare-type gxc#!signature-return (@accessor gxc#!signature::t return #t))
@@ -211,7 +252,7 @@ package: gerbil/compiler
            ((:init! . gxc#!primitive-predicate:::init!))))
   (declare-type
    gxc#!primitive-predicate::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!primitive-predicate::t) 'class::t))
   (declare-type
    gxc#!primitive-predicate?
    (@predicate gxc#!primitive-predicate::t))
@@ -257,7 +298,7 @@ package: gerbil/compiler
            ((:init! . gxc#!class-meta:::init!))))
   (declare-type
    gxc#!class-meta::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!class-meta::t) 'class::t))
   (declare-type gxc#!class-meta? (@predicate gxc#!class-meta::t))
   (declare-type gxc#make-!class-meta (@constructor gxc#!class-meta::t))
   (declare-type gxc#!class-meta-class (@accessor gxc#!class-meta::t class #t))
@@ -302,7 +343,9 @@ package: gerbil/compiler
            #f
            #f
            ((:init! . gxc#!class:::init!))))
-  (declare-type gxc#!class::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!class::t
+   (optimizer-resolve-class '(typedecl gxc#!class::t) 'class::t))
   (declare-type gxc#!class? (@predicate gxc#!class::t))
   (declare-type gxc#make-!class (@constructor gxc#!class::t))
   (declare-type gxc#!class-super (@accessor gxc#!class::t super #t))
@@ -384,7 +427,7 @@ package: gerbil/compiler
            ((:init! . gxc#!predicate:::init!))))
   (declare-type
    gxc#!predicate::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!predicate::t) 'class::t))
   (declare-type gxc#!predicate? (@predicate gxc#!predicate::t))
   (declare-type gxc#make-!predicate (@constructor gxc#!predicate::t))
   (declare-type
@@ -418,7 +461,7 @@ package: gerbil/compiler
            ((:init! . gxc#!constructor:::init!))))
   (declare-type
    gxc#!constructor::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!constructor::t) 'class::t))
   (declare-type gxc#!constructor? (@predicate gxc#!constructor::t))
   (declare-type gxc#make-!constructor (@constructor gxc#!constructor::t))
   (declare-type
@@ -450,7 +493,9 @@ package: gerbil/compiler
            #f
            #f
            ((:init! . gxc#!accessor:::init!))))
-  (declare-type gxc#!accessor::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!accessor::t
+   (optimizer-resolve-class '(typedecl gxc#!accessor::t) 'class::t))
   (declare-type gxc#!accessor? (@predicate gxc#!accessor::t))
   (declare-type gxc#make-!accessor (@constructor gxc#!accessor::t))
   (declare-type gxc#!accessor-slot (@accessor gxc#!accessor::t slot #t))
@@ -498,7 +543,9 @@ package: gerbil/compiler
            #f
            #f
            ((:init! . gxc#!mutator:::init!))))
-  (declare-type gxc#!mutator::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!mutator::t
+   (optimizer-resolve-class '(typedecl gxc#!mutator::t) 'class::t))
   (declare-type gxc#!mutator? (@predicate gxc#!mutator::t))
   (declare-type gxc#make-!mutator (@constructor gxc#!mutator::t))
   (declare-type gxc#!mutator-slot (@accessor gxc#!mutator::t slot #t))
@@ -544,7 +591,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#!interface::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!interface::t) 'class::t))
   (declare-type gxc#!interface? (@predicate gxc#!interface::t))
   (declare-type gxc#make-!interface (@constructor gxc#!interface::t))
   (declare-type
@@ -568,7 +615,7 @@ package: gerbil/compiler
    (@class gxc#!lambda::t
            (gxc#!procedure::t)
            (gxc#!procedure::t gxc#!type::t object::t t::t)
-           (arity dispatch inline inline-typedecl signature)
+           (arity dispatch inline inline-typedecl)
            (id signature arity dispatch inline inline-typedecl)
            :init!
            #t
@@ -576,7 +623,9 @@ package: gerbil/compiler
            #f
            #f
            ((:init! . gxc#!lambda:::init!))))
-  (declare-type gxc#!lambda::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gxc#!lambda::t
+   (optimizer-resolve-class '(typedecl gxc#!lambda::t) 'class::t))
   (declare-type gxc#!lambda? (@predicate gxc#!lambda::t))
   (declare-type gxc#make-!lambda (@constructor gxc#!lambda::t))
   (declare-type gxc#!lambda-arity (@accessor gxc#!lambda::t arity #t))
@@ -634,7 +683,7 @@ package: gerbil/compiler
            ((:init! . gxc#!case-lambda:::init!))))
   (declare-type
    gxc#!case-lambda::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!case-lambda::t) 'class::t))
   (declare-type gxc#!case-lambda? (@predicate gxc#!case-lambda::t))
   (declare-type gxc#make-!case-lambda (@constructor gxc#!case-lambda::t))
   (declare-type
@@ -680,7 +729,7 @@ package: gerbil/compiler
            ((:init! . gxc#!kw-lambda:::init!))))
   (declare-type
    gxc#!kw-lambda::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!kw-lambda::t) 'class::t))
   (declare-type gxc#!kw-lambda? (@predicate gxc#!kw-lambda::t))
   (declare-type gxc#make-!kw-lambda (@constructor gxc#!kw-lambda::t))
   (declare-type gxc#!kw-lambda-table (@accessor gxc#!kw-lambda::t table #t))
@@ -734,7 +783,7 @@ package: gerbil/compiler
            ((:init! . gxc#!kw-lambda-primary:::init!))))
   (declare-type
    gxc#!kw-lambda-primary::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!kw-lambda-primary::t) 'class::t))
   (declare-type gxc#!kw-lambda-primary? (@predicate gxc#!kw-lambda-primary::t))
   (declare-type
    gxc#make-!kw-lambda-primary
@@ -792,7 +841,7 @@ package: gerbil/compiler
    (@class gxc#!primitive::t () (object::t t::t) () () #f #f #f #f #f #f))
   (declare-type
    gxc#!primitive::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!primitive::t) 'class::t))
   (declare-type gxc#!primitive? (@predicate gxc#!primitive::t))
   (declare-type gxc#make-!primitive (@constructor gxc#!primitive::t))
   (declare-class
@@ -815,7 +864,7 @@ package: gerbil/compiler
            ((:init! . gxc#!primitive-lambda:::init!))))
   (declare-type
    gxc#!primitive-lambda::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#!primitive-lambda::t) 'class::t))
   (declare-type gxc#!primitive-lambda? (@predicate gxc#!primitive-lambda::t))
   (declare-type
    gxc#make-!primitive-lambda
@@ -912,7 +961,9 @@ package: gerbil/compiler
            ((:init! . gxc#!primitive-case-lambda:::init!))))
   (declare-type
    gxc#!primitive-case-lambda::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#!primitive-case-lambda::t)
+    'class::t))
   (declare-type
    gxc#!primitive-case-lambda?
    (@predicate gxc#!primitive-case-lambda::t))
@@ -955,48 +1006,232 @@ package: gerbil/compiler
   (declare-type
    gxc#&!primitive-case-lambda-id-set!
    (@mutator gxc#!primitive-case-lambda::t id #f))
-  (declare-type gxc#!class-meta:::init! (@lambda 2 #f))
-  (declare-type gxc#!class:::init!__0 (@lambda 9 #f))
-  (declare-type gxc#!class:::init!__1 (@lambda 12 #f))
+  (declare-type
+   gxc#!abort:::init!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!class-meta:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   gxc#!class:::init!__0
+   (@lambda 9
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!class:::init!__1
+   (@lambda 12
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t)
+             unchecked:
+             #f)))
   (declare-type
    gxc#!class:::init!
-   (@case-lambda (9 gxc#!class:::init!__0) (12 gxc#!class:::init!__1)))
-  (declare-type gxc#compute-class-fields (@lambda 4 #f))
+   (@case-lambda
+    (9
+     gxc#!class:::init!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (12
+     gxc#!class:::init!__1
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   gxc#compute-class-fields
+   (@lambda 4
+            #f
+            signature:
+            (return: list::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#!class-slot->field-offset (@lambda 2 #f))
   (declare-type gxc#!class-slot-find-struct (@lambda 2 #f))
-  (declare-type gxc#!class-struct-slot? (@lambda 2 #f))
-  (declare-type gxc#!predicate:::init! (@lambda 2 #f))
-  (declare-type gxc#!constructor:::init! (@lambda 2 #f))
-  (declare-type gxc#!accessor:::init! (@lambda 4 #f))
-  (declare-type gxc#!mutator:::init! (@lambda 4 #f))
-  (declare-type gxc#!lambda:::init!__% (@lambda 5 #f))
-  (declare-type gxc#!lambda:::init!__@ (@lambda (1) #f))
+  (declare-type
+   gxc#!class-struct-slot?
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#!predicate:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   gxc#!constructor:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   gxc#!accessor:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!mutator:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!lambda:::init!__%
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!lambda:::init!__@
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#!lambda:::init!
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))
-  (declare-type gxc#!case-lambda:::init! (@lambda 2 #f))
-  (declare-type gxc#!kw-lambda:::init! (@lambda 3 #f))
-  (declare-type gxc#!kw-lambda-primary:::init! (@lambda 3 #f))
+  (declare-type
+   gxc#!case-lambda:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   gxc#!kw-lambda:::init!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!kw-lambda-primary:::init!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
   (declare-type
    gxc#!primitive-lambda:::init!
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))
-  (declare-type gxc#!primitive-case-lambda:::init! (@lambda 2 #f))
-  (declare-type gxc#!primitive-predicate:::init! (@lambda 2 #f))
+  (declare-type
+   gxc#!primitive-case-lambda:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   gxc#!primitive-predicate:::init!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type gxc#!class-method-table (@lambda 1 #f))
-  (declare-type gxc#!class-lookup-method (@lambda 2 #f))
-  (declare-type gxc#!type-subclass? (@lambda 2 #f))
+  (declare-type
+   gxc#!class-lookup-method
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#!type-subtype? (@lambda 2 #f))
   (declare-type gxc#!class-subclass? (@lambda 2 #f))
-  (declare-type gxc#!interface-instance? (@lambda 1 #f))
-  (declare-type gxc#optimizer-declare-type!__% (@lambda 3 #f))
-  (declare-type gxc#optimizer-declare-type!__0 (@lambda 2 #f))
+  (declare-type
+   gxc#!interface-instance?
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-declare-type!__%
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-declare-type!__0
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#optimizer-declare-type!
    (@case-lambda
-    (2 gxc#optimizer-declare-type!__0)
-    (3 gxc#optimizer-declare-type!__%)))
-  (declare-type gxc#optimizer-declare-class! (@lambda 2 #f))
-  (declare-type gxc#optimizer-declare-builtin-class! (@lambda 2 #f))
-  (declare-type gxc#optimizer-clear-type! (@lambda 1 #f))
+    (2
+     gxc#optimizer-declare-type!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     gxc#optimizer-declare-type!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   gxc#optimizer-declare-class!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-declare-builtin-class!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-clear-type!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#optimizer-declare-method!__% (@lambda 4 #f))
   (declare-type gxc#optimizer-declare-method!__0 (@lambda 3 #f))
   (declare-type
@@ -1004,12 +1239,46 @@ package: gerbil/compiler
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
     (4 gxc#optimizer-declare-method!__%)))
-  (declare-type gxc#optimizer-lookup-type (@lambda 1 #f))
+  (declare-type
+   gxc#optimizer-lookup-type
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#optimizer-resolve-type (@lambda 1 #f))
-  (declare-type gxc#optimizer-lookup-class (@lambda 1 #f))
-  (declare-type gxc#optimizer-resolve-class (@lambda 2 #f))
-  (declare-type gxc#optimizer-lookup-class-name (@lambda 1 #f))
-  (declare-type gxc#optimizer-lookup-method (@lambda 2 #f))
-  (declare-type gxc#optimizer-top-level-method! (@lambda 1 #f))
-  (declare-type gxc#optimizer-top-level-method? (@lambda 1 #f))
-  (declare-type gxc#identifier-symbol (@lambda 1 #f)))
+  (declare-type
+   gxc#optimizer-lookup-class
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-resolve-class
+   (@lambda 2
+            #f
+            signature:
+            (return: gxc#!class::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-lookup-class-name
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-lookup-method
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-top-level-method!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#optimizer-top-level-method?
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f))))

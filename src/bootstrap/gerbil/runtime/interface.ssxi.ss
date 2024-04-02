@@ -15,7 +15,9 @@ package: gerbil/runtime
            #f
            #f
            ((:init! . CastError:::init!))))
-  (declare-type CastError::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   CastError::t
+   (optimizer-resolve-class '(typedecl CastError::t) 'class::t))
   (declare-type CastError? (@predicate CastError::t))
   (declare-type make-CastError (@constructor CastError::t))
   (declare-type CastError-message (@accessor CastError::t message #t))
@@ -42,7 +44,19 @@ package: gerbil/runtime
   (declare-type
    &CastError-continuation-set!
    (@mutator CastError::t continuation #f))
-  (declare-type CastError:::init! (@lambda (2) #f))
+  (declare-type
+   CastError:::init!
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t . t::t)
+             unchecked:
+             #f)))
   (declare-type raise-cast-error (@lambda (2) #f))
   (declare-type interface-cast-error? (@predicate CastError::t))
   (declare-class
@@ -60,7 +74,7 @@ package: gerbil/runtime
            #f))
   (declare-type
    interface-instance::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl interface-instance::t) 'class::t))
   (declare-type interface-instance? (@predicate interface-instance::t))
   (declare-type
    interface-instance-object
@@ -89,7 +103,7 @@ package: gerbil/runtime
            #f))
   (declare-type
    interface-descriptor::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl interface-descriptor::t) 'class::t))
   (declare-type interface-descriptor? (@predicate interface-descriptor::t))
   (declare-type
    make-interface-descriptor
@@ -118,7 +132,12 @@ package: gerbil/runtime
   (declare-type
    &interface-descriptor-methods-set!
    (@mutator interface-descriptor::t methods #f))
-  (declare-type __interface-hash-key (@lambda 1 #f))
+  (declare-type
+   __interface-hash-key
+   (@lambda 1
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __interface-test-key (@lambda 2 #f))
   (declare-type make-prototype-table__% (@lambda 2 #f))
   (declare-type make-prototype-table__0 (@lambda 0 #f))
@@ -137,10 +156,20 @@ package: gerbil/runtime
   (declare-type prototype-trable-delete! (@lambda 2 #f))
   (declare-type
    __interface-prototypes-mx
-   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __interface-prototypes-mx)
+    '#<!class #11618
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type
    __interface-prototypes-key
-   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __interface-prototypes-key)
+    '#<!class #11619
+              id: pair
+              super: (list::t)
+              precedence-list: (list::t t::t)>))
   (declare-type
    interface-subclass?
    (@lambda 1

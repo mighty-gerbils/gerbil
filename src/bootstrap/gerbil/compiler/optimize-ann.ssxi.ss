@@ -23,7 +23,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::optimize-annotated::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::optimize-annotated::t) 'class::t))
   (declare-type
    gxc#::optimize-annotated?
    (@predicate gxc#::optimize-annotated::t))
@@ -32,8 +32,15 @@ package: gerbil/compiler
    (@constructor gxc#::optimize-annotated::t))
   (declare-type
    gxc#::optimize-annotated-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-optimize-annotated (@lambda 1 #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::optimize-annotated-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-optimize-annotated
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::generate-runtime-repr::t
    (@class gxc#::generate-runtime-repr::t
@@ -52,7 +59,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::generate-runtime-repr::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::generate-runtime-repr::t)
+    'class::t))
   (declare-type
    gxc#::generate-runtime-repr?
    (@predicate gxc#::generate-runtime-repr::t))
@@ -61,8 +70,15 @@ package: gerbil/compiler
    (@constructor gxc#::generate-runtime-repr::t))
   (declare-type
    gxc#::generate-runtime-repr-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-generate-runtime-repr (@lambda 1 #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::generate-runtime-repr-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-generate-runtime-repr
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::push-match-vars::t
    (@class gxc#::push-match-vars::t
@@ -78,7 +94,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::push-match-vars::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::push-match-vars::t) 'class::t))
   (declare-type gxc#::push-match-vars? (@predicate gxc#::push-match-vars::t))
   (declare-type
    gxc#make-::push-match-vars
@@ -109,12 +125,29 @@ package: gerbil/compiler
    (@mutator gxc#::push-match-vars::t K #f))
   (declare-type
    gxc#::push-match-vars-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-push-match-vars__% (@lambda 4 #f))
-  (declare-type gxc#apply-push-match-vars__@ (@lambda (1) #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::push-match-vars-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-push-match-vars__%
+   (@lambda 4
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#apply-push-match-vars__@
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-push-match-vars
    (@kw-lambda (K: vars:) gxc#apply-push-match-vars__@))
+  (declare-type
+   gxc#current-annotation-optimizer
+   (optimizer-resolve-class
+    '(typedecl gxc#current-annotation-optimizer)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
   (declare-type gxc#optimize-annotation% (@lambda 2 #f))
   (declare-type gxc#optimize-match (@lambda 1 #f))
   (declare-type

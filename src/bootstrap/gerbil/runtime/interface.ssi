@@ -77,9 +77,6 @@ namespace: #f
           &interface-descriptor-methods-set!
           &interface-descriptor-methods-set!)
          (%#define-syntax interface-descriptor |[:0:]#interface-descriptor|)
-         (%#define-syntax
-          immediate-instance-of?
-          |[:0:]#immediate-instance-of?|)
          (%#define-runtime __interface-hash-key __interface-hash-key)
          (%#define-runtime __interface-test-key __interface-test-key)
          (%#begin (%#define-runtime

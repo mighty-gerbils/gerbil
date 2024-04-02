@@ -66,6 +66,14 @@ namespace: gxc
          (%#define-runtime &!type-id gxc#&!type-id)
          (%#define-runtime &!type-id-set! gxc#&!type-id-set!)
          (%#define-syntax !type |gxc[:0:]#!type|)
+         (%#define-runtime !abort::t gxc#!abort::t)
+         (%#define-runtime !abort? gxc#!abort?)
+         (%#define-runtime make-!abort gxc#make-!abort)
+         (%#define-runtime !abort-id gxc#!abort-id)
+         (%#define-runtime !abort-id-set! gxc#!abort-id-set!)
+         (%#define-runtime &!abort-id gxc#&!abort-id)
+         (%#define-runtime &!abort-id-set! gxc#&!abort-id-set!)
+         (%#define-syntax !abort |gxc[:0:]#!abort|)
          (%#define-runtime !alias::t gxc#!alias::t)
          (%#define-runtime !alias? gxc#!alias?)
          (%#define-runtime make-!alias gxc#make-!alias)
@@ -556,6 +564,7 @@ namespace: gxc
          (%#define-syntax
           !primitive-case-lambda
           |gxc[:0:]#!primitive-case-lambda|)
+         (%#define-runtime !abort:::init! gxc#!abort:::init!)
          (%#define-runtime !class-meta:::init! gxc#!class-meta:::init!)
          (%#begin (%#define-runtime !class:::init!__0 gxc#!class:::init!__0)
                   (%#define-runtime !class:::init!__1 gxc#!class:::init!__1)
@@ -589,7 +598,7 @@ namespace: gxc
           gxc#!primitive-predicate:::init!)
          (%#define-runtime !class-method-table gxc#!class-method-table)
          (%#define-runtime !class-lookup-method gxc#!class-lookup-method)
-         (%#define-runtime !type-subclass? gxc#!type-subclass?)
+         (%#define-runtime !type-subtype? gxc#!type-subtype?)
          (%#define-runtime !class-subclass? gxc#!class-subclass?)
          (%#define-runtime !interface-instance? gxc#!interface-instance?)
          (%#begin (%#define-runtime
@@ -630,6 +639,5 @@ namespace: gxc
           gxc#optimizer-top-level-method!)
          (%#define-runtime
           optimizer-top-level-method?
-          gxc#optimizer-top-level-method?)
-         (%#define-runtime identifier-symbol gxc#identifier-symbol))
+          gxc#optimizer-top-level-method?))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base~0"))

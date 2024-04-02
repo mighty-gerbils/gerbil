@@ -1,42 +1,42 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core/more-syntax-sugar[:0:]#identifier-rules|
-    (lambda (_$stx44677_)
-      (let* ((_g4468144692_
-              (lambda (_g4468244688_)
+    (lambda (_%$stx41817%_)
+      (let* ((_%g4182141832%_
+              (lambda (_%g4182241828%_)
                 (gx#raise-syntax-error
                  '#f
                  '"Bad syntax; invalid match target"
-                 _g4468244688_)))
-             (_g4468044722_
-              (lambda (_g4468244696_)
-                (if (gx#stx-pair? _g4468244696_)
-                    (let ((_e4468644699_ (gx#syntax-e _g4468244696_)))
-                      (let ((_hd4468544703_
+                 _%g4182241828%_)))
+             (_%g4182041862%_
+              (lambda (_%g4182241836%_)
+                (if (gx#stx-pair? _%g4182241836%_)
+                    (let ((_%e4182641839%_ (gx#syntax-e _%g4182241836%_)))
+                      (let ((_%hd4182541843%_
                              (let ()
                                (declare (not safe))
-                               (##car _e4468644699_)))
-                            (_tl4468444706_
+                               (##car _%e4182641839%_)))
+                            (_%tl4182441846%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e4468644699_))))
-                        ((lambda (_L44709_)
+                               (##cdr _%e4182641839%_))))
+                        ((lambda (_%L41849%_)
                            (cons (gx#datum->syntax '#f 'make-setq-macro)
                                  (cons 'macro:
                                        (cons (cons (gx#datum->syntax
                                                     '#f
                                                     'syntax-rules)
-                                                   _L44709_)
+                                                   _%L41849%_)
                                              '()))))
-                         _tl4468444706_)))
-                    (_g4468144692_ _g4468244696_)))))
-        (_g4468044722_ _$stx44677_))))
+                         _%tl4182441846%_)))
+                    (_%g4182141832%_ _%g4182241836%_)))))
+        (_%g4182041862%_ _%$stx41817%_))))
   (define |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|
-    (lambda (_$stx44726_)
-      (let ((_g4472944736_
-             (lambda (_g4473044732_)
+    (lambda (_%$stx41866%_)
+      (let ((_%g4186941876%_
+             (lambda (_%g4187041872%_)
                (gx#raise-syntax-error
                 '#f
                 '"Bad syntax; invalid match target"
-                _g4473044732_))))
-        (_g4472944736_ _$stx44726_)))))
+                _%g4187041872%_))))
+        (_%g4186941876%_ _%$stx41866%_)))))

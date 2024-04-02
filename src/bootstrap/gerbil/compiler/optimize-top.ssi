@@ -79,6 +79,22 @@ namespace: gxc
           gxc#::collect-type-info-bind-methods!)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
          (%#define-runtime
+          ::raw-expression-type::t
+          gxc#::raw-expression-type::t)
+         (%#define-runtime ::raw-expression-type? gxc#::raw-expression-type?)
+         (%#define-runtime
+          make-::raw-expression-type
+          gxc#make-::raw-expression-type)
+         (%#define-syntax
+          ::raw-expression-type
+          |gxc[:0:]#::raw-expression-type|)
+         (%#define-runtime
+          ::raw-expression-type-bind-methods!
+          gxc#::raw-expression-type-bind-methods!)
+         (%#define-runtime
+          apply-raw-expression-type
+          gxc#apply-raw-expression-type)
+         (%#define-runtime
           ::basic-expression-type::t
           gxc#::basic-expression-type::t)
          (%#define-runtime
@@ -135,14 +151,32 @@ namespace: gxc
          (%#define-runtime
           collect-type-begin-annotation%
           gxc#collect-type-begin-annotation%)
+         (%#begin (%#define-runtime
+                   collect-type-let-values%__%
+                   gxc#collect-type-let-values%__%)
+                  (%#begin (%#define-runtime
+                            collect-type-let-values%__0
+                            gxc#collect-type-let-values%__0)
+                           (%#define-runtime
+                            collect-type-let-values%
+                            gxc#collect-type-let-values%)))
+         (%#begin (%#define-runtime
+                   collect-type-letrec-values%__%
+                   gxc#collect-type-letrec-values%__%)
+                  (%#begin (%#define-runtime
+                            collect-type-letrec-values%__0
+                            gxc#collect-type-letrec-values%__0)
+                           (%#define-runtime
+                            collect-type-letrec-values%
+                            gxc#collect-type-letrec-values%)))
          (%#define-runtime
-          collect-type-let-values%
-          gxc#collect-type-let-values%)
+          collect-top-level-type-let-values%
+          gxc#collect-top-level-type-let-values%)
+         (%#define-runtime
+          collect-top-level-type-letrec-values%
+          gxc#collect-top-level-type-letrec-values%)
          (%#define-runtime collect-type-call% gxc#collect-type-call%)
          (%#define-runtime collect-type-setq% gxc#collect-type-setq%)
-         (%#define-runtime
-          basic-expression-type-begin%
-          gxc#basic-expression-type-begin%)
          (%#define-runtime
           basic-expression-type-annotations
           gxc#basic-expression-type-annotations)
@@ -180,6 +214,12 @@ namespace: gxc
           basic-expression-type-annotation-predicate
           gxc#basic-expression-type-annotation-predicate)
          (%#define-runtime
+          basic-expression-type-annotation-abort
+          gxc#basic-expression-type-annotation-abort)
+         (%#define-runtime
+          raw-expression-type-lambda%
+          gxc#raw-expression-type-lambda%)
+         (%#define-runtime
           basic-expression-type-lambda%
           gxc#basic-expression-type-lambda%)
          (%#define-runtime
@@ -194,15 +234,37 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-call%
           gxc#basic-expression-type-call%)
+         (%#define-runtime !procedure::return-type gxc#!procedure::return-type)
+         (%#define-runtime
+          !procedure::apply-return-type
+          gxc#!procedure::apply-return-type)
+         (%#define-runtime
+          !case-lambda::return-type
+          gxc#!case-lambda::return-type)
+         (%#define-runtime
+          !case-lambda::apply-return-type
+          gxc#!case-lambda::apply-return-type)
+         (%#define-runtime !kw-lambda::return-type gxc#!kw-lambda::return-type)
+         (%#define-runtime
+          !kw-lambda::apply-return-type
+          gxc#!kw-lambda::apply-return-type)
+         (%#define-runtime !lambda-arity-match? gxc#!lambda-arity-match?)
+         (%#define-runtime
+          !lambda-arity-match-apply?
+          gxc#!lambda-arity-match-apply?)
          (%#define-runtime
           basic-expression-type-special-cast
           gxc#basic-expression-type-special-cast)
+         (%#define-runtime
+          basic-expression-type-special-apply
+          gxc#basic-expression-type-special-apply)
          (%#define-runtime
           basic-expression-type-ref%
           gxc#basic-expression-type-ref%)
          (%#define-runtime
           basic-expression-type-if%
           gxc#basic-expression-type-if%)
+         (%#define-runtime greatest-common-type gxc#greatest-common-type)
          (%#define-runtime
           basic-expression-type-quote%
           gxc#basic-expression-type-quote%)

@@ -17,7 +17,9 @@ package: gerbil/core
            #f))
   (declare-type
    |gerbil/core/match[1]#match-macro::t|
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl |gerbil/core/match[1]#match-macro::t|)
+    'class::t))
   (declare-type
    |gerbil/core/match[1]#match-macro?|
    (@predicate |gerbil/core/match[1]#match-macro::t|))

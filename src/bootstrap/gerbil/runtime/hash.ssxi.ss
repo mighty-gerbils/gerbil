@@ -17,7 +17,7 @@ package: gerbil/runtime
            ((:init! . UnboundKeyError:::init!))))
   (declare-type
    UnboundKeyError::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl UnboundKeyError::t) 'class::t))
   (declare-type UnboundKeyError? (@predicate UnboundKeyError::t))
   (declare-type make-UnboundKeyError (@constructor UnboundKeyError::t))
   (declare-type
@@ -64,130 +64,361 @@ package: gerbil/runtime
   (declare-type
    &UnboundKeyError-continuation-set!
    (@mutator UnboundKeyError::t continuation #f))
-  (declare-type UnboundKeyError:::init! (@lambda (2) #f))
+  (declare-type
+   UnboundKeyError:::init!
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t . t::t)
+             unchecked:
+             #f)))
   (declare-type raise-unbound-key-error (@lambda (2) #f))
   (declare-type unbound-key-error? (@predicate UnboundKeyError::t))
   (declare-class
    HashTable::t
-   (@class gerbil#HashTable::t
+   (@class gerbil/runtime/hash#HashTable::t
            (interface-instance::t)
            (interface-instance::t object::t t::t)
-           (ref set! update! delete! for-each length copy clear!)
-           (__object ref set! update! delete! for-each length copy clear!)
+           (clear! copy delete! for-each length ref set! update!)
+           (__object clear! copy delete! for-each length ref set! update!)
            #f
            #t
            #t
            #f
            #f
            #f))
-  (declare-type HashTable::t (optimizer-resolve-class 'typedecl 'class::t))
-  (declare-type HashTable? (@predicate HashTable::t))
-  (declare-type HashTable-ref@ (@accessor HashTable::t ref #t))
-  (declare-type HashTable-set@ (@accessor HashTable::t set! #t))
-  (declare-type HashTable-update@ (@accessor HashTable::t update! #t))
-  (declare-type HashTable-del@ (@accessor HashTable::t delete! #t))
-  (declare-type HashTable-each@ (@accessor HashTable::t for-each #t))
-  (declare-type HashTable-length@ (@accessor HashTable::t length #t))
-  (declare-type HashTable-copy@ (@accessor HashTable::t copy #t))
-  (declare-type HashTable-clear@ (@accessor HashTable::t clear! #t))
-  (declare-type HashTable-ref@-set! (@mutator HashTable::t ref #t))
-  (declare-type HashTable-set@-set! (@mutator HashTable::t set! #t))
-  (declare-type HashTable-update@-set! (@mutator HashTable::t update! #t))
-  (declare-type HashTable-del@-set! (@mutator HashTable::t delete! #t))
-  (declare-type HashTable-each@-set! (@mutator HashTable::t for-each #t))
-  (declare-type HashTable-length@-set! (@mutator HashTable::t length #t))
-  (declare-type HashTable-copy@-set! (@mutator HashTable::t copy #t))
-  (declare-type HashTable-clear@-set! (@mutator HashTable::t clear! #t))
-  (declare-type &HashTable-ref@ (@accessor HashTable::t ref #f))
-  (declare-type &HashTable-set@ (@accessor HashTable::t set! #f))
-  (declare-type &HashTable-update@ (@accessor HashTable::t update! #f))
-  (declare-type &HashTable-del@ (@accessor HashTable::t delete! #f))
-  (declare-type &HashTable-each@ (@accessor HashTable::t for-each #f))
-  (declare-type &HashTable-length@ (@accessor HashTable::t length #f))
-  (declare-type &HashTable-copy@ (@accessor HashTable::t copy #f))
-  (declare-type &HashTable-clear@ (@accessor HashTable::t clear! #f))
-  (declare-type &HashTable-ref@-set! (@mutator HashTable::t ref #f))
-  (declare-type &HashTable-set@-set! (@mutator HashTable::t set! #f))
-  (declare-type &HashTable-update@-set! (@mutator HashTable::t update! #f))
-  (declare-type &HashTable-del@-set! (@mutator HashTable::t delete! #f))
-  (declare-type &HashTable-each@-set! (@mutator HashTable::t for-each #f))
-  (declare-type &HashTable-length@-set! (@mutator HashTable::t length #f))
-  (declare-type &HashTable-copy@-set! (@mutator HashTable::t copy #f))
-  (declare-type &HashTable-clear@-set! (@mutator HashTable::t clear! #f))
+  (declare-type
+   HashTable::t
+   (optimizer-resolve-class '(typedecl HashTable::t) 'class::t))
   (declare-type
    HashTable::interface
    (@interface
     HashTable::t
-    (ref set! update! delete! for-each length copy clear!)))
+    (clear! copy delete! for-each length ref set! update!)))
+  (declare-type
+   make-HashTable
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             HashTable::t
+             effect:
+             (cast)
+             arguments:
+             (t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   try-HashTable
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: (cast) arguments: (t::t) unchecked: #f)))
+  (declare-type HashTable? (@predicate HashTable::t))
+  (declare-type
+   is-HashTable?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             (pure)
+             arguments:
+             (t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   HashTable-clear!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             &HashTable-clear!)))
+  (declare-type
+   &HashTable-clear!
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-copy
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             HashTable::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             &HashTable-copy)))
+  (declare-type
+   &HashTable-copy
+   (@lambda 1
+            #f
+            signature:
+            (return: HashTable::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t)
+             unchecked:
+             &HashTable-delete!)))
+  (declare-type
+   &HashTable-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-for-each
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t procedure::t)
+             unchecked:
+             &HashTable-for-each)))
+  (declare-type
+   &HashTable-for-each
+   (@lambda 2
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-length
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             fixnum::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             &HashTable-length)))
+  (declare-type
+   &HashTable-length
+   (@lambda 1
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-ref
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t t::t)
+             unchecked:
+             &HashTable-ref)))
+  (declare-type
+   &HashTable-ref
+   (@lambda 3
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t t::t)
+             unchecked:
+             &HashTable-set!)))
+  (declare-type
+   &HashTable-set!
+   (@lambda 3
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   HashTable-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t procedure::t t::t)
+             unchecked:
+             &HashTable-update!)))
+  (declare-type
+   &HashTable-update!
+   (@lambda 4
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
-   HashTableLock::t
-   (@class gerbil#HashTableLock::t
+   Locker::t
+   (@class gerbil/runtime/hash#Locker::t
            (interface-instance::t)
            (interface-instance::t object::t t::t)
-           (begin-read! end-read! begin-write! end-write!)
-           (__object begin-read! end-read! begin-write! end-write!)
+           (read-lock! read-unlock! write-lock! write-unlock!)
+           (__object read-lock! read-unlock! write-lock! write-unlock!)
            #f
            #t
            #t
            #f
            #f
            #f))
-  (declare-type HashTableLock::t (optimizer-resolve-class 'typedecl 'class::t))
-  (declare-type HashTableLock? (@predicate HashTableLock::t))
   (declare-type
-   HashTableLock-begin-read@
-   (@accessor HashTableLock::t begin-read! #t))
+   Locker::t
+   (optimizer-resolve-class '(typedecl Locker::t) 'class::t))
   (declare-type
-   HashTableLock-end-read@
-   (@accessor HashTableLock::t end-read! #t))
+   Locker::interface
+   (@interface Locker::t (read-lock! read-unlock! write-lock! write-unlock!)))
   (declare-type
-   HashTableLock-begin-write@
-   (@accessor HashTableLock::t begin-write! #t))
+   make-Locker
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             Locker::t
+             effect:
+             (cast)
+             arguments:
+             (t::t)
+             unchecked:
+             #f)))
   (declare-type
-   HashTableLock-end-write@
-   (@accessor HashTableLock::t end-write! #t))
+   try-Locker
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: (cast) arguments: (t::t) unchecked: #f)))
+  (declare-type Locker? (@predicate Locker::t))
   (declare-type
-   HashTableLock-begin-read@-set!
-   (@mutator HashTableLock::t begin-read! #t))
+   is-Locker?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             (pure)
+             arguments:
+             (t::t)
+             unchecked:
+             #f)))
   (declare-type
-   HashTableLock-end-read@-set!
-   (@mutator HashTableLock::t end-read! #t))
+   Locker-read-lock!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (Locker::t)
+             unchecked:
+             &Locker-read-lock!)))
   (declare-type
-   HashTableLock-begin-write@-set!
-   (@mutator HashTableLock::t begin-write! #t))
+   &Locker-read-lock!
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   HashTableLock-end-write@-set!
-   (@mutator HashTableLock::t end-write! #t))
+   Locker-read-unlock!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (Locker::t)
+             unchecked:
+             &Locker-read-unlock!)))
   (declare-type
-   &HashTableLock-begin-read@
-   (@accessor HashTableLock::t begin-read! #f))
+   &Locker-read-unlock!
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   &HashTableLock-end-read@
-   (@accessor HashTableLock::t end-read! #f))
+   Locker-write-lock!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (Locker::t)
+             unchecked:
+             &Locker-write-lock!)))
   (declare-type
-   &HashTableLock-begin-write@
-   (@accessor HashTableLock::t begin-write! #f))
+   &Locker-write-lock!
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   &HashTableLock-end-write@
-   (@accessor HashTableLock::t end-write! #f))
+   Locker-write-unlock!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (Locker::t)
+             unchecked:
+             &Locker-write-unlock!)))
   (declare-type
-   &HashTableLock-begin-read@-set!
-   (@mutator HashTableLock::t begin-read! #f))
+   &Locker-write-unlock!
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   &HashTableLock-end-read@-set!
-   (@mutator HashTableLock::t end-read! #f))
-  (declare-type
-   &HashTableLock-begin-write@-set!
-   (@mutator HashTableLock::t begin-write! #f))
-  (declare-type
-   &HashTableLock-end-write@-set!
-   (@mutator HashTableLock::t end-write! #f))
-  (declare-type
-   HashTableLock::interface
-   (@interface
-    HashTableLock::t
-    (begin-read! end-read! begin-write! end-write!)))
-  (declare-type gambit-table-update! (@lambda 4 #f))
+   gambit-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gambit-table-for-each
    (@lambda 2
@@ -208,7 +439,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type hash-table::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   hash-table::t
+   (optimizer-resolve-class '(typedecl hash-table::t) 'class::t))
   (declare-class
    gc-hash-table::t
    (@class gerbil#gc-hash-table::t
@@ -222,7 +455,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type gc-hash-table::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gc-hash-table::t
+   (optimizer-resolve-class '(typedecl gc-hash-table::t) 'class::t))
   (declare-class
    locked-hash-table::t
    (@class gerbil/runtime/hash#locked-hash-table::t
@@ -235,17 +470,17 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((set! . _locked-hash-table::set!69916_)
-            (for-each . _locked-hash-table::for-each69922_)
-            (copy . _locked-hash-table::copy69926_)
-            (clear! . _locked-hash-table::clear!69928_)
-            (ref . _locked-hash-table::ref69914_)
-            (update! . _locked-hash-table::update!69918_)
-            (delete! . _locked-hash-table::delete!69920_)
-            (length . _locked-hash-table::length69924_))))
+           ((clear! . _%locked-hash-table::clear!101554%_)
+            (for-each . _%locked-hash-table::for-each101548%_)
+            (update! . _%locked-hash-table::update!101544%_)
+            (ref . _%locked-hash-table::ref101540%_)
+            (length . _%locked-hash-table::length101550%_)
+            (delete! . _%locked-hash-table::delete!101546%_)
+            (copy . _%locked-hash-table::copy101552%_)
+            (set! . _%locked-hash-table::set!101542%_))))
   (declare-type
    locked-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
   (declare-type locked-hash-table? (@predicate locked-hash-table::t))
   (declare-type make-locked-hash-table (@constructor locked-hash-table::t))
   (declare-type
@@ -284,17 +519,17 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((set! . _checked-hash-table::set!70208_)
-            (for-each . _checked-hash-table::for-each70214_)
-            (copy . _checked-hash-table::copy70218_)
-            (clear! . _checked-hash-table::clear!70220_)
-            (ref . _checked-hash-table::ref70206_)
-            (update! . _checked-hash-table::update!70210_)
-            (delete! . _checked-hash-table::delete!70212_)
-            (length . _checked-hash-table::length70216_))))
+           ((clear! . _%checked-hash-table::clear!101846%_)
+            (for-each . _%checked-hash-table::for-each101840%_)
+            (update! . _%checked-hash-table::update!101836%_)
+            (ref . _%checked-hash-table::ref101832%_)
+            (length . _%checked-hash-table::length101842%_)
+            (delete! . _%checked-hash-table::delete!101838%_)
+            (copy . _%checked-hash-table::copy101844%_)
+            (set! . _%checked-hash-table::set!101834%_))))
   (declare-type
    checked-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
   (declare-type checked-hash-table? (@predicate checked-hash-table::t))
   (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
   (declare-type
@@ -334,7 +569,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type eq-hash-table::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   eq-hash-table::t
+   (optimizer-resolve-class '(typedecl eq-hash-table::t) 'class::t))
   (declare-type eq-hash-table? (@predicate eq-hash-table::t))
   (declare-type make-eq-hash-table (@constructor eq-hash-table::t))
   (declare-class
@@ -352,7 +589,7 @@ package: gerbil/runtime
            #f))
   (declare-type
    eqv-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl eqv-hash-table::t) 'class::t))
   (declare-type eqv-hash-table? (@predicate eqv-hash-table::t))
   (declare-type make-eqv-hash-table (@constructor eqv-hash-table::t))
   (declare-class
@@ -370,7 +607,7 @@ package: gerbil/runtime
            #f))
   (declare-type
    symbol-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl symbol-hash-table::t) 'class::t))
   (declare-type symbol-hash-table? (@predicate symbol-hash-table::t))
   (declare-type make-symbol-hash-table (@constructor symbol-hash-table::t))
   (declare-class
@@ -388,7 +625,7 @@ package: gerbil/runtime
            #f))
   (declare-type
    string-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl string-hash-table::t) 'class::t))
   (declare-type string-hash-table? (@predicate string-hash-table::t))
   (declare-type make-string-hash-table (@constructor string-hash-table::t))
   (declare-class
@@ -406,99 +643,151 @@ package: gerbil/runtime
            #f))
   (declare-type
    immediate-hash-table::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl immediate-hash-table::t) 'class::t))
   (declare-type immediate-hash-table? (@predicate immediate-hash-table::t))
   (declare-type
    make-immediate-hash-table
    (@constructor immediate-hash-table::t))
+  (declare-type hash-table? (@lambda 1 HashTable?))
+  (declare-type is-hash-table? (@lambda 1 is-HashTable?))
   (declare-type
-   hash-table?
-   (@lambda 1
-            #f
-            signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type is-hash-table? (@lambda 1 #f))
-  (declare-type HashTable-ref (@lambda 3 #f))
-  (declare-type &HashTable-ref (@lambda 3 #f))
-  (declare-type HashTable-set! (@lambda 3 #f))
-  (declare-type &HashTable-set! (@lambda 3 #f))
-  (declare-type HashTable-update! (@lambda 4 #f))
-  (declare-type &HashTable-update! (@lambda 4 #f))
-  (declare-type HashTable-delete! (@lambda 2 #f))
-  (declare-type &HashTable-delete! (@lambda 2 #f))
-  (declare-type HashTable-for-each (@lambda 2 #f))
-  (declare-type &HashTable-for-each (@lambda 2 #f))
-  (declare-type HashTable-length (@lambda 1 #f))
-  (declare-type &HashTable-length (@lambda 1 #f))
-  (declare-type HashTable-copy (@lambda 1 #f))
-  (declare-type
-   &HashTable-copy
-   (@lambda 1
-            #f
-            signature:
-            (return: HashTable::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type HashTable-clear! (@lambda 1 #f))
-  (declare-type &HashTable-clear! (@lambda 1 #f))
-  (declare-type &HashTableLock-begin-read! (@lambda 1 #f))
-  (declare-type &HashTableLock-end-read! (@lambda 1 #f))
-  (declare-type &HashTableLock-begin-write! (@lambda 1 #f))
-  (declare-type &HashTableLock-end-write! (@lambda 1 #f))
-  (declare-type
-   _locked-hash-table::ref69914_
+   _%locked-hash-table::ref101540%_
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
   (declare-type
-   _locked-hash-table::set!69916_
+   _%locked-hash-table::set!101542%_
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
   (declare-type
-   _locked-hash-table::update!69918_
+   _%locked-hash-table::update!101544%_
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
   (declare-type
-   _locked-hash-table::delete!69920_
+   _%locked-hash-table::delete!101546%_
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _locked-hash-table::for-each69922_
+   _%locked-hash-table::for-each101548%_
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _locked-hash-table::length69924_
+   _%locked-hash-table::length101550%_
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _locked-hash-table::copy69926_
+   _%locked-hash-table::copy101552%_
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _locked-hash-table::clear!69928_
+   _%locked-hash-table::clear!101554%_
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type _checked-hash-table::ref70206_ (@lambda 3 #f))
-  (declare-type _checked-hash-table::set!70208_ (@lambda 3 #f))
-  (declare-type _checked-hash-table::update!70210_ (@lambda 4 #f))
-  (declare-type _checked-hash-table::delete!70212_ (@lambda 2 #f))
-  (declare-type _checked-hash-table::for-each70214_ (@lambda 2 #f))
-  (declare-type _checked-hash-table::length70216_ (@lambda 1 #f))
-  (declare-type _checked-hash-table::copy70218_ (@lambda 1 #f))
-  (declare-type _checked-hash-table::clear!70220_ (@lambda 1 #f))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   _%checked-hash-table::ref101832%_
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   _%checked-hash-table::set!101834%_
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   _%checked-hash-table::update!101836%_
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   _%checked-hash-table::delete!101838%_
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   _%checked-hash-table::for-each101840%_
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+  (declare-type
+   _%checked-hash-table::length101842%_
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   _%checked-hash-table::copy101844%_
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   _%checked-hash-table::clear!101846%_
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type make-generic-hash-table (@lambda 6 #f))
   (declare-type make-hash-table__% (@lambda 9 #f))
   (declare-type make-hash-table__@ (@lambda (1) #f))
@@ -526,50 +815,315 @@ package: gerbil/runtime
   (declare-type plist->hash-table-string (@lambda (1) #f))
   (declare-type plist->hash-table-immediate (@lambda (1) #f))
   (declare-type plist->hash-table! (@lambda 2 #f))
-  (declare-type hash-length (@lambda 1 #f))
-  (declare-type &hash-length (@lambda 1 &HashTable-length))
-  (declare-type hash-ref__% (@lambda 3 #f))
-  (declare-type hash-ref__0 (@lambda 2 #f))
-  (declare-type hash-ref (@case-lambda (2 hash-ref__0) (3 hash-ref__%)))
-  (declare-type &hash-ref__% (@lambda 3 #f))
-  (declare-type &hash-ref__0 (@lambda 2 #f))
-  (declare-type &hash-ref (@case-lambda (2 &hash-ref__0) (3 &hash-ref__%)))
-  (declare-type hash-get (@lambda 2 #f))
-  (declare-type &hash-get (@lambda 2 #f))
-  (declare-type hash-put! (@lambda 3 #f))
-  (declare-type &hash-put! (@lambda 3 &HashTable-set!))
-  (declare-type hash-update!__% (@lambda 4 #f))
-  (declare-type hash-update!__0 (@lambda 3 #f))
   (declare-type
-   hash-update!
-   (@case-lambda (3 hash-update!__0) (4 hash-update!__%)))
-  (declare-type &hash-update!__% (@lambda 4 &HashTable-update!))
-  (declare-type &hash-update!__0 (@lambda 3 #f))
+   hash-length
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash-length)))
   (declare-type
-   &hash-update!
-   (@case-lambda (3 &hash-update!__0) (4 &hash-update!__%)))
-  (declare-type hash-remove! (@lambda 2 #f))
-  (declare-type &hash-remove! (@lambda 2 &HashTable-delete!))
-  (declare-type hash-key? (@lambda 2 #f))
+   __hash-length
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   &hash-key?
+   hash-ref__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t t::t)
+             unchecked:
+             __hash-ref)))
+  (declare-type
+   hash-ref__0
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type hash->list (@lambda 1 #f))
-  (declare-type &hash->list (@lambda 1 #f))
-  (declare-type hash->plist (@lambda 1 #f))
-  (declare-type &hash->plist (@lambda 1 #f))
-  (declare-type hash-for-each (@lambda 2 #f))
-  (declare-type hash-map (@lambda 2 #f))
-  (declare-type hash-fold (@lambda 3 #f))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-ref
+   (@case-lambda
+    (2
+     hash-ref__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     hash-ref__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   __hash-ref__%
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-ref__0
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-ref
+   (@case-lambda
+    (2
+     __hash-ref__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     __hash-ref__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   hash-get
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t)
+             unchecked:
+             __hash-get)))
+  (declare-type
+   __hash-get
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-put!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t t::t)
+             unchecked:
+             __hash-put!)))
+  (declare-type
+   __hash-put!
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-update!__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t t::t t::t)
+             unchecked:
+             __hash-update!)))
+  (declare-type
+   hash-update!__0
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-update!
+   (@case-lambda
+    (3
+     hash-update!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (4
+     hash-update!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   __hash-update!__%
+   (@lambda 4
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-update!__0
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-update!
+   (@case-lambda
+    (3
+     __hash-update!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (4
+     __hash-update!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   hash-remove!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t)
+             unchecked:
+             __hash-remove!)))
+  (declare-type
+   __hash-remove!
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-key?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t t::t)
+             unchecked:
+             __hash-key?)))
+  (declare-type
+   __hash-key?
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash->list
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash->list)))
+  (declare-type
+   __hash->list
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash->plist
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash->plist)))
+  (declare-type
+   __hash->plist
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-for-each
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t HashTable::t)
+             unchecked:
+             __hash-for-each)))
+  (declare-type
+   __hash-for-each
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-map
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t HashTable::t)
+             unchecked:
+             __hash-map)))
+  (declare-type
+   __hash-map
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-fold
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t t::t HashTable::t)
+             unchecked:
+             __hash-fold)))
+  (declare-type
+   __hash-fold
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    hash-find__%
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t HashTable::t t::t)
+             unchecked:
+             __hash-find)))
   (declare-type
    hash-find__0
    (@lambda 2
@@ -587,11 +1141,140 @@ package: gerbil/runtime
      hash-find__%
      signature:
      (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type hash-keys (@lambda 1 #f))
-  (declare-type &hash-keys (@lambda 1 #f))
-  (declare-type hash-values (@lambda 1 #f))
-  (declare-type &hash-values (@lambda 1 #f))
-  (declare-type hash-copy (@lambda 1 #f))
-  (declare-type &hash-copy (@lambda 1 &HashTable-copy))
-  (declare-type hash-merge (@lambda (1) #f))
-  (declare-type hash-merge! (@lambda (1) #f)))
+  (declare-type
+   __hash-find__%
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-find__0
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __hash-find
+   (@case-lambda
+    (2
+     __hash-find__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     __hash-find__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   hash-keys
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash-keys)))
+  (declare-type
+   __hash-keys
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-values
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash-values)))
+  (declare-type
+   __hash-values
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-copy
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash-copy)))
+  (declare-type
+   __hash-copy
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-clear!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t)
+             unchecked:
+             __hash-clear!)))
+  (declare-type
+   __hash-clear!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-merge
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t . t::t)
+             unchecked:
+             __hash-merge)))
+  (declare-type
+   __hash-merge
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   hash-merge!
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (HashTable::t . t::t)
+             unchecked:
+             __hash-merge!)))
+  (declare-type
+   __hash-merge!
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f))))

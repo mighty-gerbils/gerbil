@@ -8,7 +8,12 @@ package: gerbil/runtime
             #f
             signature:
             (return: null::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type add-load-path! (@lambda (0) #f))
+  (declare-type
+   add-load-path!
+   (@lambda (0)
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type set-load-path! (@lambda 1 #f))
   (declare-type
    load-module

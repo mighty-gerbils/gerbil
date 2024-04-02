@@ -46,6 +46,52 @@ namespace: #f
          (%#define-runtime &Error-where-set! &Error-where-set!)
          (%#define-runtime &Error-continuation-set! &Error-continuation-set!)
          (%#define-syntax Error |[:0:]#Error|)
+         (%#define-runtime ContractViolation::t ContractViolation::t)
+         (%#define-runtime ContractViolation? ContractViolation?)
+         (%#define-runtime make-ContractViolation make-ContractViolation)
+         (%#define-runtime ContractViolation-message ContractViolation-message)
+         (%#define-runtime
+          ContractViolation-irritants
+          ContractViolation-irritants)
+         (%#define-runtime ContractViolation-where ContractViolation-where)
+         (%#define-runtime
+          ContractViolation-continuation
+          ContractViolation-continuation)
+         (%#define-runtime
+          ContractViolation-message-set!
+          ContractViolation-message-set!)
+         (%#define-runtime
+          ContractViolation-irritants-set!
+          ContractViolation-irritants-set!)
+         (%#define-runtime
+          ContractViolation-where-set!
+          ContractViolation-where-set!)
+         (%#define-runtime
+          ContractViolation-continuation-set!
+          ContractViolation-continuation-set!)
+         (%#define-runtime
+          &ContractViolation-message
+          &ContractViolation-message)
+         (%#define-runtime
+          &ContractViolation-irritants
+          &ContractViolation-irritants)
+         (%#define-runtime &ContractViolation-where &ContractViolation-where)
+         (%#define-runtime
+          &ContractViolation-continuation
+          &ContractViolation-continuation)
+         (%#define-runtime
+          &ContractViolation-message-set!
+          &ContractViolation-message-set!)
+         (%#define-runtime
+          &ContractViolation-irritants-set!
+          &ContractViolation-irritants-set!)
+         (%#define-runtime
+          &ContractViolation-where-set!
+          &ContractViolation-where-set!)
+         (%#define-runtime
+          &ContractViolation-continuation-set!
+          &ContractViolation-continuation-set!)
+         (%#define-syntax ContractViolation |[:0:]#ContractViolation|)
          (%#define-runtime RuntimeException::t RuntimeException::t)
          (%#define-runtime RuntimeException? RuntimeException?)
          (%#define-runtime make-RuntimeException make-RuntimeException)
@@ -79,6 +125,16 @@ namespace: #f
           gerbil-exception-handler-hook)
          (%#define-runtime raise raise)
          (%#define-runtime error error)
+         (%#begin (%#define-runtime
+                   __raise-contract-violation-error__%
+                   __raise-contract-violation-error__%)
+                  (%#define-runtime
+                   __raise-contract-violation-error__@
+                   __raise-contract-violation-error__@)
+                  (%#define-runtime
+                   __raise-contract-violation-error
+                   __raise-contract-violation-error))
+         (%#define-runtime contract-violation-error? contract-violation-error?)
          (%#define-runtime with-exception-handler with-exception-handler)
          (%#define-runtime __with-exception-handler __with-exception-handler)
          (%#define-runtime with-catch with-catch)
@@ -98,23 +154,13 @@ namespace: #f
                            (%#define-runtime
                             display-exception
                             display-exception)))
-         (%#begin (%#define-runtime Error:::init! Error:::init!)
-                  (%#define-runtime
-                   Error:::init!::specialize
-                   Error:::init!::specialize))
+         (%#define-runtime Error:::init! Error:::init!)
+         (%#define-runtime ContractViolation:::init! ContractViolation:::init!)
          (%#define-runtime dump-stack-trace? dump-stack-trace?)
-         (%#begin (%#define-runtime
-                   Error::display-exception
-                   Error::display-exception)
-                  (%#define-runtime
-                   Error::display-exception::specialize
-                   Error::display-exception::specialize))
-         (%#begin (%#define-runtime
-                   RuntimeException::display-exception
-                   RuntimeException::display-exception)
-                  (%#define-runtime
-                   RuntimeException::display-exception::specialize
-                   RuntimeException::display-exception::specialize))
+         (%#define-runtime Error::display-exception Error::display-exception)
+         (%#define-runtime
+          RuntimeException::display-exception
+          RuntimeException::display-exception)
          (%#define-runtime fix-port-width! fix-port-width!)
          (%#define-runtime reset-port-width! reset-port-width!)
          (%#define-runtime

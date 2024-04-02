@@ -17,7 +17,9 @@ package: gerbil/core
            #f))
   (declare-type
    |gerbil/core/more-sugar[1]#setq-macro::t|
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl |gerbil/core/more-sugar[1]#setq-macro::t|)
+    'class::t))
   (declare-type
    |gerbil/core/more-sugar[1]#setq-macro?|
    (@predicate |gerbil/core/more-sugar[1]#setq-macro::t|))
@@ -51,7 +53,9 @@ package: gerbil/core
            #f))
   (declare-type
    |gerbil/core/more-sugar[1]#setf-macro::t|
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl |gerbil/core/more-sugar[1]#setf-macro::t|)
+    'class::t))
   (declare-type
    |gerbil/core/more-sugar[1]#setf-macro?|
    (@predicate |gerbil/core/more-sugar[1]#setf-macro::t|))

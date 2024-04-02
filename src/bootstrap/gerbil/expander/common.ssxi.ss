@@ -15,7 +15,9 @@ package: gerbil/expander
            #f
            #f
            #f))
-  (declare-type gx#AST::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   gx#AST::t
+   (optimizer-resolve-class '(typedecl gx#AST::t) 'class::t))
   (declare-type gx#AST? (@predicate gx#AST::t))
   (declare-type gx#make-AST (@constructor gx#AST::t))
   (declare-type gx#AST-e (@accessor gx#AST::t e #t))

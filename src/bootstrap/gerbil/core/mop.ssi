@@ -9,6 +9,7 @@ namespace: gerbil/core/mop
           (phi: 1 :gerbil/core/expander)
           (phi: 1 :gerbil/core/sugar))
          (%#export
+          #t
           (import: (in: #f MOP-1))
           (import: (in: #f MOP-4))
           (import: (in: #f MOP-5))
@@ -66,6 +67,12 @@ namespace: gerbil/core/mop
                     !class-type-slots
                     gerbil/core/mop~MOP-2#!class-type-slots)
                    (%#define-runtime
+                    !class-type-precedence-list
+                    gerbil/core/mop~MOP-2#!class-type-precedence-list)
+                   (%#define-runtime
+                    !class-type-ordered-slots
+                    gerbil/core/mop~MOP-2#!class-type-ordered-slots)
+                   (%#define-runtime
                     !class-type-struct?
                     gerbil/core/mop~MOP-2#!class-type-struct?)
                    (%#define-runtime
@@ -102,6 +109,15 @@ namespace: gerbil/core/mop
                     !class-type-unchecked-mutators
                     gerbil/core/mop~MOP-2#!class-type-unchecked-mutators)
                    (%#define-runtime
+                    !class-type-slot-types
+                    gerbil/core/mop~MOP-2#!class-type-slot-types)
+                   (%#define-runtime
+                    !class-type-slot-defaults
+                    gerbil/core/mop~MOP-2#!class-type-slot-defaults)
+                   (%#define-runtime
+                    !class-type-slot-contracts
+                    gerbil/core/mop~MOP-2#!class-type-slot-contracts)
+                   (%#define-runtime
                     !class-type-id-set!
                     gerbil/core/mop~MOP-2#!class-type-id-set!)
                    (%#define-runtime
@@ -113,6 +129,12 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     !class-type-slots-set!
                     gerbil/core/mop~MOP-2#!class-type-slots-set!)
+                   (%#define-runtime
+                    !class-type-precedence-list-set!
+                    gerbil/core/mop~MOP-2#!class-type-precedence-list-set!)
+                   (%#define-runtime
+                    !class-type-ordered-slots-set!
+                    gerbil/core/mop~MOP-2#!class-type-ordered-slots-set!)
                    (%#define-runtime
                     !class-type-struct?-set!
                     gerbil/core/mop~MOP-2#!class-type-struct?-set!)
@@ -150,6 +172,15 @@ namespace: gerbil/core/mop
                     !class-type-unchecked-mutators-set!
                     gerbil/core/mop~MOP-2#!class-type-unchecked-mutators-set!)
                    (%#define-runtime
+                    !class-type-slot-types-set!
+                    gerbil/core/mop~MOP-2#!class-type-slot-types-set!)
+                   (%#define-runtime
+                    !class-type-slot-defaults-set!
+                    gerbil/core/mop~MOP-2#!class-type-slot-defaults-set!)
+                   (%#define-runtime
+                    !class-type-slot-contracts-set!
+                    gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!)
+                   (%#define-runtime
                     &!class-type-id
                     gerbil/core/mop~MOP-2#&!class-type-id)
                    (%#define-runtime
@@ -161,6 +192,12 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     &!class-type-slots
                     gerbil/core/mop~MOP-2#&!class-type-slots)
+                   (%#define-runtime
+                    &!class-type-precedence-list
+                    gerbil/core/mop~MOP-2#&!class-type-precedence-list)
+                   (%#define-runtime
+                    &!class-type-ordered-slots
+                    gerbil/core/mop~MOP-2#&!class-type-ordered-slots)
                    (%#define-runtime
                     &!class-type-struct?
                     gerbil/core/mop~MOP-2#&!class-type-struct?)
@@ -198,6 +235,15 @@ namespace: gerbil/core/mop
                     &!class-type-unchecked-mutators
                     gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators)
                    (%#define-runtime
+                    &!class-type-slot-types
+                    gerbil/core/mop~MOP-2#&!class-type-slot-types)
+                   (%#define-runtime
+                    &!class-type-slot-defaults
+                    gerbil/core/mop~MOP-2#&!class-type-slot-defaults)
+                   (%#define-runtime
+                    &!class-type-slot-contracts
+                    gerbil/core/mop~MOP-2#&!class-type-slot-contracts)
+                   (%#define-runtime
                     &!class-type-id-set!
                     gerbil/core/mop~MOP-2#&!class-type-id-set!)
                    (%#define-runtime
@@ -209,6 +255,12 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     &!class-type-slots-set!
                     gerbil/core/mop~MOP-2#&!class-type-slots-set!)
+                   (%#define-runtime
+                    &!class-type-precedence-list-set!
+                    gerbil/core/mop~MOP-2#&!class-type-precedence-list-set!)
+                   (%#define-runtime
+                    &!class-type-ordered-slots-set!
+                    gerbil/core/mop~MOP-2#&!class-type-ordered-slots-set!)
                    (%#define-runtime
                     &!class-type-struct?-set!
                     gerbil/core/mop~MOP-2#&!class-type-struct?-set!)
@@ -246,8 +298,26 @@ namespace: gerbil/core/mop
                     &!class-type-unchecked-mutators-set!
                     gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators-set!)
                    (%#define-runtime
+                    &!class-type-slot-types-set!
+                    gerbil/core/mop~MOP-2#&!class-type-slot-types-set!)
+                   (%#define-runtime
+                    &!class-type-slot-defaults-set!
+                    gerbil/core/mop~MOP-2#&!class-type-slot-defaults-set!)
+                   (%#define-runtime
+                    &!class-type-slot-contracts-set!
+                    gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!)
+                   (%#define-runtime
                     class-type-info::apply-macro-expander
                     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
+                   (%#define-runtime
+                    !class-slot-type
+                    gerbil/core/mop~MOP-2#!class-slot-type)
+                   (%#define-runtime
+                    !class-slot-default
+                    gerbil/core/mop~MOP-2#!class-slot-default)
+                   (%#define-runtime
+                    !class-slot-contract
+                    gerbil/core/mop~MOP-2#!class-slot-contract)
                    (%#begin (%#define-runtime
                              syntax-local-class-type-info?__%
                              gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)
@@ -314,6 +384,7 @@ namespace: gerbil/core/mop
                              |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|))
                    (%#define-syntax :t |gerbil/core/mop~MOP-5[:0:]#:t|)
                    (%#define-syntax :class |gerbil/core/mop~MOP-5[:0:]#:class|)
+                   (%#define-syntax class |gerbil/core/mop~MOP-5[:0:]#class|)
                    (%#define-syntax
                     :object
                     |gerbil/core/mop~MOP-5[:0:]#:object|)

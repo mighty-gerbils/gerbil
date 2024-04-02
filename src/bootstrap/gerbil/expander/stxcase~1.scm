@@ -1,111 +1,111 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gx[1]#_g95359_|
+  (define |gx[1]#_g129150_|
     (##structure
      gx#syntax-quote::t
      'expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95361_|
+  (define |gx[1]#_g129152_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95363_|
+  (define |gx[1]#_g129154_|
     (##structure
      gx#syntax-quote::t
      'make-syntax-pattern
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95365_|
+  (define |gx[1]#_g129156_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95367_|
+  (define |gx[1]#_g129158_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95368_|
+  (define |gx[1]#_g129159_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-depth
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95369_|
+  (define |gx[1]#_g129160_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95371_|
+  (define |gx[1]#_g129162_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95372_|
+  (define |gx[1]#_g129163_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-depth-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95373_|
+  (define |gx[1]#_g129164_|
     (##structure
      gx#syntax-quote::t
      'syntax-pattern-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95375_|
+  (define |gx[1]#_g129166_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95376_|
+  (define |gx[1]#_g129167_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-depth
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95377_|
+  (define |gx[1]#_g129168_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95379_|
+  (define |gx[1]#_g129170_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95380_|
+  (define |gx[1]#_g129171_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-depth-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g95381_|
+  (define |gx[1]#_g129172_|
     (##structure
      gx#syntax-quote::t
      '&syntax-pattern-e-set!
@@ -113,7 +113,7 @@
      (gx#current-expander-context)
      '()))
   (define |gx[:0:]#syntax-pattern|
-    (let ((__obj95187
+    (let ((__obj128978
            (let ()
              (declare (not safe))
              (##structure
@@ -133,67 +133,84 @@
               '#f
               '#f
               '#f
+              '#f
+              '#f
+              '#f
+              '#f
+              '#f
               '#f))))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj95187
+         __obj128978
          'gx#syntax-pattern::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 'syntax-pattern '2 '#f '#f))
+        (##unchecked-structure-set! __obj128978 'syntax-pattern '2 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 '(id depth) '4 '#f '#f))
-      (let ((__tmp95358 (cons |gx[1]#_g95359_| '())))
-        (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95358 '3 '#f '#f))
+        (##unchecked-structure-set! __obj128978 '(id depth) '4 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 '#t '5 '#f '#f))
+        (##unchecked-structure-set! __obj128978 '(e id depth) '6 '#f '#f))
+      (let ((__tmp129149 (cons |gx[1]#_g129150_| '())))
+        (declare (not safe))
+        (##unchecked-structure-set! __obj128978 __tmp129149 '3 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 '#f '6 '#f '#f))
+        (##unchecked-structure-set! __obj128978 '#t '7 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj128978 '#f '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 '#f '9 '#f '#f))
-      (let ((__tmp95360 |gx[1]#_g95361_|))
+        (##unchecked-structure-set! __obj128978 '#f '10 '#f '#f))
+      (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95360 '10 '#f '#f))
-      (let ((__tmp95362 |gx[1]#_g95363_|))
+        (##unchecked-structure-set! __obj128978 '#f '11 '#f '#f))
+      (let ((__tmp129151 |gx[1]#_g129152_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95362 '11 '#f '#f))
-      (let ((__tmp95364 |gx[1]#_g95365_|))
+        (##unchecked-structure-set! __obj128978 __tmp129151 '12 '#f '#f))
+      (let ((__tmp129153 |gx[1]#_g129154_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95364 '12 '#f '#f))
-      (let ((__tmp95366
-             (cons (cons 'id |gx[1]#_g95367_|)
-                   (cons (cons 'depth |gx[1]#_g95368_|)
-                         (cons (cons 'e |gx[1]#_g95369_|) '())))))
+        (##unchecked-structure-set! __obj128978 __tmp129153 '13 '#f '#f))
+      (let ((__tmp129155 |gx[1]#_g129156_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95366 '13 '#f '#f))
-      (let ((__tmp95370
-             (cons (cons 'id |gx[1]#_g95371_|)
-                   (cons (cons 'depth |gx[1]#_g95372_|)
-                         (cons (cons 'e |gx[1]#_g95373_|) '())))))
+        (##unchecked-structure-set! __obj128978 __tmp129155 '14 '#f '#f))
+      (let ((__tmp129157
+             (cons (cons 'id |gx[1]#_g129158_|)
+                   (cons (cons 'depth |gx[1]#_g129159_|)
+                         (cons (cons 'e |gx[1]#_g129160_|) '())))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95370 '14 '#f '#f))
-      (let ((__tmp95374
-             (cons (cons 'id |gx[1]#_g95375_|)
-                   (cons (cons 'depth |gx[1]#_g95376_|)
-                         (cons (cons 'e |gx[1]#_g95377_|) '())))))
+        (##unchecked-structure-set! __obj128978 __tmp129157 '15 '#f '#f))
+      (let ((__tmp129161
+             (cons (cons 'id |gx[1]#_g129162_|)
+                   (cons (cons 'depth |gx[1]#_g129163_|)
+                         (cons (cons 'e |gx[1]#_g129164_|) '())))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95374 '15 '#f '#f))
-      (let ((__tmp95378
-             (cons (cons 'id |gx[1]#_g95379_|)
-                   (cons (cons 'depth |gx[1]#_g95380_|)
-                         (cons (cons 'e |gx[1]#_g95381_|) '())))))
+        (##unchecked-structure-set! __obj128978 __tmp129161 '16 '#f '#f))
+      (let ((__tmp129165
+             (cons (cons 'id |gx[1]#_g129166_|)
+                   (cons (cons 'depth |gx[1]#_g129167_|)
+                         (cons (cons 'e |gx[1]#_g129168_|) '())))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj95187 __tmp95378 '16 '#f '#f))
-      __obj95187)))
+        (##unchecked-structure-set! __obj128978 __tmp129165 '17 '#f '#f))
+      (let ((__tmp129169
+             (cons (cons 'id |gx[1]#_g129170_|)
+                   (cons (cons 'depth |gx[1]#_g129171_|)
+                         (cons (cons 'e |gx[1]#_g129172_|) '())))))
+        (declare (not safe))
+        (##unchecked-structure-set! __obj128978 __tmp129169 '18 '#f '#f))
+      (let ()
+        (declare (not safe))
+        (##unchecked-structure-set! __obj128978 '() '19 '#f '#f))
+      (let ()
+        (declare (not safe))
+        (##unchecked-structure-set! __obj128978 '() '21 '#f '#f))
+      (let ()
+        (declare (not safe))
+        (##unchecked-structure-set! __obj128978 '() '20 '#f '#f))
+      __obj128978)))

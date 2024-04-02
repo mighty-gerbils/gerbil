@@ -2,7 +2,17 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type __load-gxi (@lambda 0 #f))
+  (declare-type
+   __scheme-source
+   (optimizer-resolve-class
+    '(typedecl __scheme-source)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   __load-gxi
+   (@lambda 0
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __gxi-init-interactive!
    (@lambda 1
@@ -29,9 +39,11 @@ package: gerbil/runtime
   (declare-type __eval-module (@lambda 1 gx#core-eval-module))
   (declare-type gerbil-runtime-init! (@lambda 1 #f))
   (declare-type
-   __expander-loaded
-   (@class boolean (immediate::t) (immediate::t t::t) () () #f #f #f #f #f #f))
-  (declare-type
    __runtime-initialized
-   (@class boolean (immediate::t) (immediate::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __runtime-initialized)
+    '#<!class #13889
+              id: false
+              super: (boolean::t atom::t)
+              precedence-list: (boolean::t atom::t immediate::t t::t)>))
   (declare-type gerbil-load-expander! (@lambda 0 #f)))

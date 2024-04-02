@@ -21,7 +21,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::generate-method-specializers::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::generate-method-specializers::t)
+    'class::t))
   (declare-type
    gxc#::generate-method-specializers?
    (@predicate gxc#::generate-method-specializers::t))
@@ -30,8 +32,15 @@ package: gerbil/compiler
    (@constructor gxc#::generate-method-specializers::t))
   (declare-type
    gxc#::generate-method-specializers-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-generate-method-specializers (@lambda 1 #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::generate-method-specializers-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-generate-method-specializers
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::collect-object-refs::t
    (@class gxc#::collect-object-refs::t
@@ -51,7 +60,9 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::collect-object-refs::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-object-refs::t)
+    'class::t))
   (declare-type
    gxc#::collect-object-refs?
    (@predicate gxc#::collect-object-refs::t))
@@ -96,9 +107,21 @@ package: gerbil/compiler
    (@mutator gxc#::collect-object-refs::t slots #f))
   (declare-type
    gxc#::collect-object-refs-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-collect-object-refs__% (@lambda 5 #f))
-  (declare-type gxc#apply-collect-object-refs__@ (@lambda (1) #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-object-refs-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-collect-object-refs__%
+   (@lambda 5
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#apply-collect-object-refs__@
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-object-refs
    (@kw-lambda (receiver: slots: methods:) gxc#apply-collect-object-refs__@))
@@ -117,7 +140,7 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::subst-object-refs::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::subst-object-refs::t) 'class::t))
   (declare-type
    gxc#::subst-object-refs?
    (@predicate gxc#::subst-object-refs::t))
@@ -174,9 +197,21 @@ package: gerbil/compiler
    (@mutator gxc#::subst-object-refs::t slots #f))
   (declare-type
    gxc#::subst-object-refs-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-subst-object-refs__% (@lambda 6 #f))
-  (declare-type gxc#apply-subst-object-refs__@ (@lambda (1) #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::subst-object-refs-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-subst-object-refs__%
+   (@lambda 6
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#apply-subst-object-refs__@
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-subst-object-refs
    (@kw-lambda

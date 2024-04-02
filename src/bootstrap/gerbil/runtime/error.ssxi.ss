@@ -15,7 +15,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type Exception::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   Exception::t
+   (optimizer-resolve-class '(typedecl Exception::t) 'class::t))
   (declare-type Exception? (@predicate Exception::t))
   (declare-type make-Exception (@constructor Exception::t))
   (declare-class
@@ -31,7 +33,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type StackTrace::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   StackTrace::t
+   (optimizer-resolve-class '(typedecl StackTrace::t) 'class::t))
   (declare-type StackTrace? (@predicate StackTrace::t))
   (declare-type make-StackTrace (@constructor StackTrace::t))
   (declare-type
@@ -60,7 +64,9 @@ package: gerbil/runtime
            #f
            ((:init! . Error:::init!)
             (display-exception . Error::display-exception))))
-  (declare-type Error::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   Error::t
+   (optimizer-resolve-class '(typedecl Error::t) 'class::t))
   (declare-type Error? (@predicate Error::t))
   (declare-type make-Error (@constructor Error::t))
   (declare-type Error-message (@accessor Error::t message #t))
@@ -80,6 +86,72 @@ package: gerbil/runtime
   (declare-type &Error-where-set! (@mutator Error::t where #f))
   (declare-type &Error-continuation-set! (@mutator Error::t continuation #f))
   (declare-class
+   ContractViolation::t
+   (@class gerbil/runtime/error#ContractViolation::t
+           (Error::t)
+           (Error::t StackTrace::t Exception::t object::t t::t)
+           ()
+           (continuation message irritants where)
+           :init!
+           #f
+           #f
+           #f
+           #f
+           ((:init! . ContractViolation:::init!))))
+  (declare-type
+   ContractViolation::t
+   (optimizer-resolve-class '(typedecl ContractViolation::t) 'class::t))
+  (declare-type ContractViolation? (@predicate ContractViolation::t))
+  (declare-type make-ContractViolation (@constructor ContractViolation::t))
+  (declare-type
+   ContractViolation-message
+   (@accessor ContractViolation::t message #t))
+  (declare-type
+   ContractViolation-irritants
+   (@accessor ContractViolation::t irritants #t))
+  (declare-type
+   ContractViolation-where
+   (@accessor ContractViolation::t where #t))
+  (declare-type
+   ContractViolation-continuation
+   (@accessor ContractViolation::t continuation #t))
+  (declare-type
+   ContractViolation-message-set!
+   (@mutator ContractViolation::t message #t))
+  (declare-type
+   ContractViolation-irritants-set!
+   (@mutator ContractViolation::t irritants #t))
+  (declare-type
+   ContractViolation-where-set!
+   (@mutator ContractViolation::t where #t))
+  (declare-type
+   ContractViolation-continuation-set!
+   (@mutator ContractViolation::t continuation #t))
+  (declare-type
+   &ContractViolation-message
+   (@accessor ContractViolation::t message #f))
+  (declare-type
+   &ContractViolation-irritants
+   (@accessor ContractViolation::t irritants #f))
+  (declare-type
+   &ContractViolation-where
+   (@accessor ContractViolation::t where #f))
+  (declare-type
+   &ContractViolation-continuation
+   (@accessor ContractViolation::t continuation #f))
+  (declare-type
+   &ContractViolation-message-set!
+   (@mutator ContractViolation::t message #f))
+  (declare-type
+   &ContractViolation-irritants-set!
+   (@mutator ContractViolation::t irritants #f))
+  (declare-type
+   &ContractViolation-where-set!
+   (@mutator ContractViolation::t where #f))
+  (declare-type
+   &ContractViolation-continuation-set!
+   (@mutator ContractViolation::t continuation #f))
+  (declare-class
    RuntimeException::t
    (@class gerbil/runtime/error#RuntimeException::t
            (StackTrace::t Exception::t)
@@ -94,7 +166,7 @@ package: gerbil/runtime
            ((display-exception . RuntimeException::display-exception))))
   (declare-type
    RuntimeException::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl RuntimeException::t) 'class::t))
   (declare-type RuntimeException? (@predicate RuntimeException::t))
   (declare-type make-RuntimeException (@constructor RuntimeException::t))
   (declare-type
@@ -124,6 +196,14 @@ package: gerbil/runtime
   (declare-type gerbil-exception-handler-hook (@lambda 2 #f))
   (declare-type raise (@lambda 1 #f))
   (declare-type error (@lambda (1) #f))
+  (declare-type __raise-contract-violation-error__% (@lambda 5 #f))
+  (declare-type __raise-contract-violation-error__@ (@lambda (1) #f))
+  (declare-type
+   __raise-contract-violation-error
+   (@kw-lambda
+    (context: value: contract:)
+    __raise-contract-violation-error__@))
+  (declare-type contract-violation-error? (@predicate ContractViolation::t))
   (declare-type
    with-exception-handler
    (@lambda 2
@@ -212,27 +292,49 @@ package: gerbil/runtime
      #f
      signature:
      (return: void::t effect: (io) arguments: (t::t port::t) unchecked: #f))))
-  (declare-type Error:::init! (@lambda (2) #f))
   (declare-type
-   Error:::init!::specialize
+   Error:::init!
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t . t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   ContractViolation:::init!
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t . t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   dump-stack-trace?
+   (optimizer-resolve-class
+    '(typedecl dump-stack-trace?)
+    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+  (declare-type
+   Error::display-exception
    (@lambda 2
             #f
             signature:
-            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type Error::display-exception (@lambda 2 #f))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   Error::display-exception::specialize
+   RuntimeException::display-exception
    (@lambda 2
             #f
             signature:
-            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type RuntimeException::display-exception (@lambda 2 #f))
-  (declare-type
-   RuntimeException::display-exception::specialize
-   (@lambda 2
-            #f
-            signature:
-            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type fix-port-width! (@lambda 1 #f))
   (declare-type reset-port-width! (@lambda 2 #f))
   (declare-type datum-parsing-exception-filepos (@lambda 1 #f))

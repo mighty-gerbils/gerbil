@@ -17,7 +17,7 @@ package: gerbil/expander
            #f))
   (declare-type
    gx#identifier-wrap::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#identifier-wrap::t) 'class::t))
   (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
   (declare-type gx#make-identifier-wrap (@constructor gx#identifier-wrap::t))
   (declare-type
@@ -67,7 +67,7 @@ package: gerbil/expander
            #f))
   (declare-type
    gx#syntax-wrap::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#syntax-wrap::t) 'class::t))
   (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
   (declare-type gx#make-syntax-wrap (@constructor gx#syntax-wrap::t))
   (declare-type gx#syntax-wrap-mark (@accessor gx#syntax-wrap::t mark #t))
@@ -101,7 +101,7 @@ package: gerbil/expander
            #f))
   (declare-type
    gx#syntax-quote::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gx#syntax-quote::t) 'class::t))
   (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))
   (declare-type gx#make-syntax-quote (@constructor gx#syntax-quote::t))
   (declare-type
@@ -170,8 +170,18 @@ package: gerbil/expander
   (declare-type
    gx#stx-unwrap
    (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__%)))
-  (declare-type gx#stx-wrap (@lambda 2 #f))
-  (declare-type gx#stx-rewrap (@lambda 2 #f))
+  (declare-type
+   gx#stx-wrap
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#stx-rewrap
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#stx-apply-mark (@lambda 2 #f))
   (declare-type gx#apply-mark (@lambda 2 #f))
   (declare-type gx#stx-e (@lambda 1 #f))
@@ -183,7 +193,12 @@ package: gerbil/expander
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#stx-wrap-source (@lambda 2 #f))
   (declare-type gx#stx-datum? (@lambda 1 #f))
-  (declare-type gx#self-quoting? (@lambda 1 #f))
+  (declare-type
+   gx#self-quoting?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#stx-boolean?
    (@lambda 1
@@ -233,7 +248,12 @@ package: gerbil/expander
             signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#stx-list? (@lambda 1 #f))
-  (declare-type gx#stx-pair/null? (@lambda 1 #f))
+  (declare-type
+   gx#stx-pair/null?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#stx-vector?
    (@lambda 1

@@ -2,50 +2,14 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type |[1]#procedure-formals| (@lambda 2 #f))
-  (declare-type
-   |[1]#procedure-signature|
-   (@lambda 4
-            #f
-            signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type |[1]#procedure-typedecl| (@lambda 2 #f))
-  (declare-type |[1]#procedure-contract| (@lambda 2 #f))
-  (declare-type |[1]#procedure-invocation| (@lambda 3 #f))
   (declare-type
    displayln
-   (@lambda (0)
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             t::t
-             unchecked:
-             __displayln)))
-  (declare-type
-   __displayln
    (@lambda (0)
             #f
             signature:
             (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    display*
-   (@lambda (0)
-            #f
-            signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             t::t
-             unchecked:
-             __display*)))
-  (declare-type
-   __display*
    (@lambda (0)
             #f
             signature:
@@ -124,15 +88,14 @@ package: gerbil/runtime
      (return: void::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    absent-value
-   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl absent-value)
+    '#<!class #2475
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type
    true
-   (@lambda (0)
-            #f
-            signature:
-            (return: true::t effect: #f arguments: t::t unchecked: __true)))
-  (declare-type
-   __true
    (@lambda (0)
             #f
             signature:
@@ -148,31 +111,12 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __true?)))
-  (declare-type
-   __true?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-inline-rule!
    true?
    (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #t)))))
   (declare-type
    false
-   (@lambda (0)
-            #f
-            signature:
-            (return: false::t effect: #f arguments: t::t unchecked: __false)))
-  (declare-type
-   __false
    (@lambda (0)
             #f
             signature:
@@ -188,12 +132,6 @@ package: gerbil/runtime
    (@lambda (0)
             #f
             signature:
-            (return: void::t effect: #f arguments: t::t unchecked: __void)))
-  (declare-type
-   __void
-   (@lambda (0)
-            #f
-            signature:
             (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-inline-rule!
    void
@@ -203,19 +141,6 @@ package: gerbil/runtime
     ((%#call _ arg ...) (%#begin arg ... (%#quote #!void)))))
   (declare-type
    void?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __void?)))
-  (declare-type
-   __void?
    (@lambda 1
             #f
             signature:
@@ -230,35 +155,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __dssl-object?)))
-  (declare-type
-   __dssl-object?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    dssl-key-object?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __dssl-key-object?)))
-  (declare-type
-   __dssl-key-object?
    (@lambda 1
             #f
             signature:
@@ -268,35 +167,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __dssl-rest-object?)))
-  (declare-type
-   __dssl-rest-object?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    dssl-optional-object?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __dssl-optional-object?)))
-  (declare-type
-   __dssl-optional-object?
    (@lambda 1
             #f
             signature:
@@ -306,35 +179,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __immediate?)))
-  (declare-type
-   __immediate?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    nonnegative-fixnum?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __nonnegative-fixnum?)))
-  (declare-type
-   __nonnegative-fixnum?
    (@lambda 1
             #f
             signature:
@@ -344,35 +191,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __pair-or-null?)))
-  (declare-type
-   __pair-or-null?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    values-count
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __values-count)))
-  (declare-type
-   __values-count
    (@lambda 1
             #f
             signature:
@@ -412,19 +233,6 @@ package: gerbil/runtime
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    values->list
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             list::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __values->list)))
-  (declare-type
-   __values->list
    (@lambda 1
             #f
             signature:
@@ -569,40 +377,9 @@ package: gerbil/runtime
             #f
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   remove-nulls!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             list::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __remove-nulls!)))
-  (declare-type
-   __remove-nulls!
-   (@lambda 1
-            #f
-            signature:
-            (return: list::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type remove-nulls! (@lambda 1 #f))
   (declare-type
    append1!
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             list::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __append1!)))
-  (declare-type
-   __append1!
    (@lambda 2
             #f
             signature:
@@ -613,7 +390,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             list::t
+             values::t
              effect:
              #f
              arguments:
@@ -625,7 +402,7 @@ package: gerbil/runtime
    (@lambda 3
             #f
             signature:
-            (return: list::t effect: #f arguments: #f unchecked: #f)))
+            (return: values::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    andmap1
    (@lambda 2
@@ -827,357 +604,27 @@ package: gerbil/runtime
             #f
             signature:
             (return: list::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   agetq__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __agetq)))
-  (declare-type
-   agetq__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   agetq
-   (@case-lambda
-    (2
-     agetq__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     agetq__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __agetq__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __agetq__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __agetq
-   (@case-lambda
-    (2
-     __agetq__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __agetq__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   agetv__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __agetv)))
-  (declare-type
-   agetv__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   agetv
-   (@case-lambda
-    (2
-     agetv__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     agetv__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __agetv__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __agetv__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __agetv
-   (@case-lambda
-    (2
-     __agetv__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __agetv__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   aget__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __aget)))
-  (declare-type
-   aget__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   aget
-   (@case-lambda
-    (2
-     aget__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     aget__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __aget__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __aget__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __aget
-   (@case-lambda
-    (2
-     __aget__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __aget__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   assgetq
-   (@case-lambda
-    (2
-     agetq__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     agetq__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   assgetv
-   (@case-lambda
-    (2
-     agetv__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     agetv__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   assget
-   (@case-lambda
-    (2
-     aget__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     aget__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   pgetq__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __pgetq)))
-  (declare-type
-   pgetq__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   pgetq
-   (@case-lambda
-    (2
-     pgetq__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     pgetq__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __pgetq__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pgetq__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pgetq
-   (@case-lambda
-    (2
-     __pgetq__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __pgetq__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   pgetv__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __pgetv)))
-  (declare-type
-   pgetv__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   pgetv
-   (@case-lambda
-    (2
-     pgetv__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     pgetv__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __pgetv__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pgetv__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pgetv
-   (@case-lambda
-    (2
-     __pgetv__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __pgetv__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   pget__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t)
-             unchecked:
-             __pget)))
-  (declare-type
-   pget__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   pget
-   (@case-lambda
-    (2
-     pget__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     pget__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type
-   __pget__%
-   (@lambda 3
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pget__0
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   __pget
-   (@case-lambda
-    (2
-     __pget__0
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
-    (3
-     __pget__%
-     signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type agetq__% (@lambda 3 #f))
+  (declare-type agetq__0 (@lambda 2 #f))
+  (declare-type agetq (@case-lambda (2 agetq__0) (3 agetq__%)))
+  (declare-type agetv__% (@lambda 3 #f))
+  (declare-type agetv__0 (@lambda 2 #f))
+  (declare-type agetv (@case-lambda (2 agetv__0) (3 agetv__%)))
+  (declare-type aget__% (@lambda 3 #f))
+  (declare-type aget__0 (@lambda 2 #f))
+  (declare-type aget (@case-lambda (2 aget__0) (3 aget__%)))
+  (declare-type assgetq (@case-lambda (2 agetq__0) (3 agetq__%)))
+  (declare-type assgetv (@case-lambda (2 agetv__0) (3 agetv__%)))
+  (declare-type assget (@case-lambda (2 aget__0) (3 aget__%)))
+  (declare-type pgetq__% (@lambda 3 #f))
+  (declare-type pgetq__0 (@lambda 2 #f))
+  (declare-type pgetq (@case-lambda (2 pgetq__0) (3 pgetq__%)))
+  (declare-type pgetv__% (@lambda 3 #f))
+  (declare-type pgetv__0 (@lambda 2 #f))
+  (declare-type pgetv (@case-lambda (2 pgetv__0) (3 pgetv__%)))
+  (declare-type pget__% (@lambda 3 #f))
+  (declare-type pget__0 (@lambda 2 #f))
+  (declare-type pget (@case-lambda (2 pget__0) (3 pget__%)))
   (declare-type
    find
    (@lambda 2
@@ -1216,63 +663,9 @@ package: gerbil/runtime
             #f
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   remove1
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __remove1)))
-  (declare-type
-   __remove1
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   remv1
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __remv1)))
-  (declare-type
-   __remv1
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type
-   remq1
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __remq1)))
-  (declare-type
-   __remq1
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type remove1 (@lambda 2 #f))
+  (declare-type remv1 (@lambda 2 #f))
+  (declare-type remq1 (@lambda 2 #f))
   (declare-type
    remf
    (@lambda 2
@@ -1411,35 +804,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __fx>=0?)))
-  (declare-type
-   __fx>=0?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    fx>0?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __fx>0?)))
-  (declare-type
-   __fx>0?
    (@lambda 1
             #f
             signature:
@@ -1449,35 +816,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __fx=0?)))
-  (declare-type
-   __fx=0?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    fx<0?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __fx<0?)))
-  (declare-type
-   __fx<0?
    (@lambda 1
             #f
             signature:
@@ -1487,35 +828,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __fx<=0?)))
-  (declare-type
-   __fx<=0?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    interned-symbol?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __interned-symbol?)))
-  (declare-type
-   __interned-symbol?
    (@lambda 1
             #f
             signature:
@@ -1546,7 +861,14 @@ package: gerbil/runtime
             #f
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type as-string (@case-lambda (1 as-string__0) ((0) as-string__1)))
+  (declare-type
+   as-string
+   (@case-lambda
+    (1 as-string__0)
+    ((0)
+     as-string__1
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
   (declare-type make-symbol__0 (@lambda 1 #f))
   (declare-type
    make-symbol__1
@@ -1556,7 +878,12 @@ package: gerbil/runtime
             (return: symbol::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    make-symbol
-   (@case-lambda (1 make-symbol__0) ((0) make-symbol__1)))
+   (@case-lambda
+    (1 make-symbol__0)
+    ((0)
+     make-symbol__1
+     signature:
+     (return: symbol::t effect: #f arguments: #f unchecked: #f))))
   (declare-type make-keyword__0 (@lambda 1 #f))
   (declare-type
    make-keyword__1
@@ -1566,22 +893,14 @@ package: gerbil/runtime
             (return: keyword::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    make-keyword
-   (@case-lambda (1 make-keyword__0) ((0) make-keyword__1)))
+   (@case-lambda
+    (1 make-keyword__0)
+    ((0)
+     make-keyword__1
+     signature:
+     (return: keyword::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    interned-keyword?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __interned-keyword?)))
-  (declare-type
-   __interned-keyword?
    (@lambda 1
             #f
             signature:
@@ -1932,23 +1251,10 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return:
-             string::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __string-join)))
-  (declare-type
-   __string-join
-   (@lambda 2
-            #f
-            signature:
             (return: string::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   read-u8vector
-   (@lambda 2
+   read-u8vector__%
+   (@lambda 4
             #f
             signature:
             (return:
@@ -1956,18 +1262,72 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (u8vector::t #f)
+             (u8vector::t #f #f #f)
              unchecked:
              __read-u8vector)))
   (declare-type
-   __read-u8vector
+   read-u8vector__0
    (@lambda 2
             #f
             signature:
             (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   write-u8vector
+   read-u8vector__1
+   (@lambda 3
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   read-u8vector
+   (@case-lambda
+    (2
+     read-u8vector__0
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))
+    (3
+     read-u8vector__1
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))
+    (4
+     read-u8vector__%
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   __read-u8vector__%
+   (@lambda 4
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __read-u8vector__0
    (@lambda 2
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __read-u8vector__1
+   (@lambda 3
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __read-u8vector
+   (@case-lambda
+    (2
+     __read-u8vector__0
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))
+    (3
+     __read-u8vector__1
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))
+    (4
+     __read-u8vector__%
+     signature:
+     (return: fixnum::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   write-u8vector__%
+   (@lambda 4
             #f
             signature:
             (return:
@@ -1975,83 +1335,72 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (u8vector::t #f)
+             (u8vector::t #f #f #f)
              unchecked:
              __write-u8vector)))
   (declare-type
-   __write-u8vector
+   write-u8vector__0
    (@lambda 2
             #f
             signature:
             (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   read-string
-   (@case-lambda
-    (1
-     #f
-     signature:
-     (return: string::t effect: (io) arguments: (fixnum::t) unchecked: #f))
-    (2
-     #f
-     signature:
-     (return:
-      string::t
-      effect:
-      (io)
-      arguments:
-      (fixnum::t port::t)
-      unchecked:
-      #f))))
-  (declare-type
-   __read-string
-   (@lambda 2
+   write-u8vector__1
+   (@lambda 3
             #f
             signature:
-            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
-   write-string
+   write-u8vector
    (@case-lambda
-    (1
-     #f
-     signature:
-     (return: void::t effect: (io) arguments: (string::t) unchecked: #f))
     (2
-     #f
+     write-u8vector__0
      signature:
-     (return:
-      void::t
-      effect:
-      (io)
-      arguments:
-      (string::t port::t)
-      unchecked:
-      #f))
+     (return: void::t effect: #f arguments: #f unchecked: #f))
     (3
-     #f
+     write-u8vector__1
      signature:
-     (return:
-      void::t
-      effect:
-      (io)
-      arguments:
-      (string::t port::t fixnum::t)
-      unchecked:
-      #f))
+     (return: void::t effect: #f arguments: #f unchecked: #f))
     (4
-     #f
+     write-u8vector__%
      signature:
-     (return:
-      void::t
-      effect:
-      (io)
-      arguments:
-      (string::t port::t fixnum::t fixnum::t)
-      unchecked:
-      #f))))
+     (return: void::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
-   __write-string
+   __write-u8vector__%
+   (@lambda 4
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __write-u8vector__0
    (@lambda 2
             #f
             signature:
             (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __write-u8vector__1
+   (@lambda 3
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __write-u8vector
+   (@case-lambda
+    (2
+     __write-u8vector__0
+     signature:
+     (return: void::t effect: #f arguments: #f unchecked: #f))
+    (3
+     __write-u8vector__1
+     signature:
+     (return: void::t effect: #f arguments: #f unchecked: #f))
+    (4
+     __write-u8vector__%
+     signature:
+     (return: void::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   DBG-printer
+   (optimizer-resolve-class
+    '(typedecl DBG-printer)
+    '#<!class #2476 id: procedure super: (t::t) precedence-list: (t::t)>))
   (declare-type DBG-helper (@lambda 5 #f)))

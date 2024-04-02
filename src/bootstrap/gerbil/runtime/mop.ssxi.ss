@@ -4,123 +4,87 @@ package: gerbil/runtime
 (begin
   (declare-type
    type-flag-opaque
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl type-flag-opaque)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    type-flag-extensible
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl type-flag-extensible)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    type-flag-macros
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl type-flag-macros)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    type-flag-concrete
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl type-flag-concrete)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    type-flag-id
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl type-flag-id)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    class-type-flag-struct
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl class-type-flag-struct)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    class-type-flag-sealed
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl class-type-flag-sealed)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    class-type-flag-metaclass
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl class-type-flag-metaclass)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-type
    class-type-flag-system
-   (@class fixnum
-           (integer::t immediate::t)
-           (integer::t real::t number::t immediate::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (optimizer-resolve-class
+    '(typedecl class-type-flag-system)
+    '#<!class #6658
+              id: fixnum
+              super: (integer::t immediate::t)
+              precedence-list:
+               (integer::t real::t number::t immediate::t t::t)>))
   (declare-class t::t (@class t () () () () #f #f #f #f #f #f))
-  (declare-type t::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type t::t (optimizer-resolve-class '(typedecl t::t) 'class::t))
   (declare-class
    class::t
    (@class class
@@ -152,11 +116,15 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type class::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   class::t
+   (optimizer-resolve-class '(typedecl class::t) 'class::t))
   (declare-class
    object::t
    (@class object (t::t) (t::t) () () #f #f #f #f #f #f))
-  (declare-type object::t (optimizer-resolve-class 'typedecl 'class::t))
+  (declare-type
+   object::t
+   (optimizer-resolve-class '(typedecl object::t) 'class::t))
   (declare-type class-type? (@predicate class::t))
   (declare-type
    class-type=?
@@ -315,14 +283,7 @@ package: gerbil/runtime
    (@lambda 9
             #f
             signature:
-            (return:
-             class::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t t::t t::t t::t t::t t::t t::t t::t)
-             unchecked:
-             #f)))
+            (return: class::t effect: #f arguments: #f unchecked: #f)))
   (declare-type class-type-id (@accessor class::t id #t))
   (declare-type &class-type-id (@accessor class::t id #f))
   (declare-type class-type-id-set! (@mutator class::t id #t))
@@ -423,7 +384,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -435,7 +396,7 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    substruct?
    (@lambda 2
@@ -460,7 +421,12 @@ package: gerbil/runtime
   (declare-type base-struct/list (@lambda 1 #f))
   (declare-type base-struct (@lambda (0) #f))
   (declare-type find-super-constructor (@lambda 1 #f))
-  (declare-type compute-class-slots (@lambda 2 #f))
+  (declare-type
+   compute-class-slots
+   (@lambda 2
+            #f
+            signature:
+            (return: values::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    make-class-type
    (@lambda 6
@@ -471,7 +437,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (symbol::t symbol::t list::t list::t list::t t::t)
+             (symbol::t symbol::t list::t list::t list::t #f)
              unchecked:
              __make-class-type)))
   (declare-type
@@ -485,8 +451,26 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: (class::t) unchecked: #f)))
-  (declare-type compute-precedence-list (@lambda 1 #f))
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __class-precedence-list)))
+  (declare-type
+   __class-precedence-list
+   (@lambda 1
+            #f
+            signature:
+            (return: list::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   compute-precedence-list
+   (@lambda 1
+            #f
+            signature:
+            (return: values::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    make-class-predicate
    (@lambda 1
@@ -665,7 +649,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             fixnum::t
+             t::t
              effect:
              #f
              arguments:
@@ -677,7 +661,7 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    class-slot-ref
    (@lambda 3
@@ -851,35 +835,9 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __object?)))
-  (declare-type
-   __object?
-   (@lambda 1
-            #f
-            signature:
             (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    object-type
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             class::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __object-type)))
-  (declare-type
-   __object-type
    (@lambda 1
             #f
             signature:
@@ -911,6 +869,30 @@ package: gerbil/runtime
      (%#call (%#ref ##structure-direct-instance-of?)
              obj
              (%#call (%#ref ##type-id) klass)))))
+  (declare-type
+   immediate-instance-of?
+   (@lambda 2
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-inline-rule!
+   immediate-instance-of?
+   (lambda (ast)
+     (ast-case
+      ast
+      (%#call %#ref)
+      ((%#call _ klass (%#ref obj))
+       #'(%#if (%#call (%#ref ##structure?) (%#ref obj))
+               (%#if (%#call (%#ref eq?)
+                             klass
+                             (%#call (%#ref ##structure-type) (%#ref obj)))
+                     (%#quote #t)
+                     (%#quote #f))
+               (%#quote #f)))
+      ((%#call recur klass obj)
+       (with-syntax
+        (($obj (make-symbol (gensym '__obj))))
+        #'(%#let-values ((($obj) obj)) (%#call recur klass (%#ref $obj))))))))
   (declare-type
    struct-instance?
    (@lambda 2
@@ -991,7 +973,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             object::t
              effect:
              #f
              arguments:
@@ -1003,7 +985,7 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return: object::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    new-instance
    (@lambda 1
@@ -1061,13 +1043,19 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
              (object::t . t::t)
              unchecked:
-             #f)))
+             __struct-instance-init!)))
+  (declare-type
+   __struct-instance-init!
+   (@lambda (1)
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-inline-rule!
    struct-instance-init!
    (lambda (ast)
@@ -1102,21 +1090,27 @@ package: gerbil/runtime
         #'(%#let-values
            ((($self) self))
            (%#call recur (%#ref $self) arg ...)))))))
-  (declare-type __struct-instance-init! (@lambda 2 #f))
+  (declare-type ___struct-instance-init! (@lambda 2 #f))
   (declare-type
    class-instance-init!
    (@lambda (1)
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
              (object::t . t::t)
              unchecked:
-             #f)))
-  (declare-type __class-instance-init! (@lambda 3 #f))
+             __class-instance-init!)))
+  (declare-type
+   __class-instance-init!
+   (@lambda (1)
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type ___class-instance-init! (@lambda 3 #f))
   (declare-type __metaclass-instance-init! (@lambda 3 #f))
   (declare-type
    constructor-init!
@@ -1124,14 +1118,20 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
              (class::t symbol::t object::t . t::t)
              unchecked:
-             #f)))
-  (declare-type __constructor-init! (@lambda 4 #f))
+             __constructor-init!)))
+  (declare-type
+   __constructor-init!
+   (@lambda (3)
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type ___constructor-init! (@lambda 4 #f))
   (declare-type
    struct-copy
    (@lambda 1
@@ -1252,19 +1252,6 @@ package: gerbil/runtime
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    checked-method-ref
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             procedure::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             __checked-method-ref)))
-  (declare-type
-   __checked-method-ref
    (@lambda 2
             #f
             signature:
@@ -1453,7 +1440,12 @@ package: gerbil/runtime
   (declare-type method-specializer-table-delete! (@lambda 2 #f))
   (declare-type
    __method-specializers-mx
-   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __method-specializers-mx)
+    '#<!class #2475
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type bind-specializer! (@lambda 2 #f))
   (declare-type __lookup-method-specializer (@lambda 1 #f))
   (declare-type __class-specializer-hash-key (@lambda 1 #f))
@@ -1474,20 +1466,43 @@ package: gerbil/runtime
   (declare-type class-specializer-table-delete! (@lambda 2 #f))
   (declare-type
    __class-specializers-mx
-   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __class-specializers-mx)
+    '#<!class #2475
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type
    __class-specializers-key
-   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __class-specializers-key)
+    '#<!class #3540
+              id: pair
+              super: (list::t)
+              precedence-list: (list::t t::t)>))
   (declare-type
    specialize-class
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: (class::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __specialize-class)))
+  (declare-type
+   __specialize-class
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __lookup-class-specializer (@lambda 1 #f))
   (declare-type __bind-class-specializer! (@lambda 2 #f))
   (declare-type __specialize-method (@lambda 4 #f))
-  (declare-type __specialize-class (@lambda 1 #f))
+  (declare-type ___specialize-class (@lambda 1 #f))
   (declare-type
    seal-class!
    (@lambda 1
@@ -1549,26 +1564,26 @@ package: gerbil/runtime
   (declare-type write-object (@lambda 2 #f))
   (declare-type
    __shadow-classes-mx
-   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+   (optimizer-resolve-class
+    '(typedecl __shadow-classes-mx)
+    '#<!class #2475
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type __shadow-class (@lambda 1 #f))
   (declare-type
    class-of
    (@lambda 1
             #f
             signature:
-            (return:
-             class::t
-             effect:
-             #f
-             arguments:
-             (t::t)
-             unchecked:
-             __class-of)))
-  (declare-type
-   __class-of
-   (@lambda 1
-            #f
-            signature:
             (return: class::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __subtype-id
+   (optimizer-resolve-class
+    '(typedecl __subtype-id)
+    '#<!class #2475
+              id: vector
+              super: (sequence::t)
+              precedence-list: (sequence::t t::t)>))
   (declare-type __system-class (@lambda 1 #f))
   (declare-type __make-system-class (@lambda 2 #f)))

@@ -9,7 +9,12 @@ package: gerbil/compiler
             #f
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimizer-load-builtin-ssxi (@lambda 1 #f))
+  (declare-type
+   gxc#optimizer-load-builtin-ssxi
+   (@lambda 1
+            #f
+            signature:
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#optimizer-load-ssxi-deps (@lambda 1 #f))
   (declare-type gxc#optimizer-load-ssxi (@lambda 1 #f))
   (declare-type gxc#optimizer-import-ssxi (@lambda 1 #f))
@@ -19,7 +24,12 @@ package: gerbil/compiler
             #f
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimize-source (@lambda 1 #f))
+  (declare-type
+   gxc#optimize-source
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::generate-ssxi::t
    (@class gxc#::generate-ssxi::t
@@ -35,41 +45,94 @@ package: gerbil/compiler
            #f))
   (declare-type
    gxc#::generate-ssxi::t
-   (optimizer-resolve-class 'typedecl 'class::t))
+   (optimizer-resolve-class '(typedecl gxc#::generate-ssxi::t) 'class::t))
   (declare-type gxc#::generate-ssxi? (@predicate gxc#::generate-ssxi::t))
   (declare-type gxc#make-::generate-ssxi (@constructor gxc#::generate-ssxi::t))
   (declare-type
    gxc#::generate-ssxi-bind-methods!
-   (@class promise () (t::t) () () #f #f #f #f #f #f))
-  (declare-type gxc#apply-generate-ssxi (@lambda 1 #f))
+   (optimizer-resolve-class
+    '(typedecl gxc#::generate-ssxi-bind-methods!)
+    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+  (declare-type
+   gxc#apply-generate-ssxi
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#generate-ssxi-begin-syntax% (@lambda 2 #f))
   (declare-type gxc#generate-ssxi-module% (@lambda 2 #f))
   (declare-type gxc#generate-ssxi-define-values% (@lambda 2 #f))
   (declare-type gxc#generate-ssxi-call% (@lambda 2 #f))
   (declare-type gxc#generate-ssxi-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#!alias::typedecl (@lambda 1 #f))
-  (declare-type gxc#!class::typedecl (@lambda 1 #f))
+  (declare-type
+   gxc#!alias::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!class::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
    gxc#!predicate::typedecl
    (@lambda 1
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
    gxc#!constructor::typedecl
    (@lambda 1
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#!accessor::typedecl (@lambda 1 #f))
-  (declare-type gxc#!mutator::typedecl (@lambda 1 #f))
-  (declare-type gxc#!interface::typedecl (@lambda 1 #f))
-  (declare-type gxc#!lambda::typedecl (@lambda 1 #f))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!accessor::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!mutator::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!interface::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!lambda::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
    gxc#!case-lambda::typedecl
    (@lambda 1
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#!kw-lambda::typedecl (@lambda 1 #f))
-  (declare-type gxc#!kw-lambda-primary::typedecl (@lambda 1 #f)))
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!kw-lambda::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!kw-lambda-primary::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+  (declare-type
+   gxc#!primitive-predicate::typedecl
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: (t::t) unchecked: #f))))

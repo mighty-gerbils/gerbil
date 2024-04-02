@@ -34,6 +34,7 @@ namespace: gxc
          (%#define-syntax @constructor |gxc[:0:]#@constructor|)
          (%#define-syntax @accessor |gxc[:0:]#@accessor|)
          (%#define-syntax @mutator |gxc[:0:]#@mutator|)
+         (%#define-syntax @primitive-predicate |gxc[:0:]#@primitive-predicate|)
          (%#define-syntax @interface |gxc[:0:]#@interface|)
          (%#define-syntax @lambda |gxc[:0:]#@lambda|)
          (%#define-syntax @case-lambda |gxc[:0:]#@case-lambda|)
@@ -55,7 +56,10 @@ namespace: gxc
          (%#begin-syntax
           (%#define-runtime verify-procedure! |gxc[1]#verify-procedure!|)
           (%#define-runtime verify-class! |gxc[1]#verify-class!|)
-          (%#define-runtime parse-signature |gxc[1]#parse-signature|))
+          (%#define-runtime parse-signature |gxc[1]#parse-signature|)
+          (%#define-runtime
+           signature->unchecked-signature
+           |gxc[1]#signature->unchecked-signature|))
          (%#define-syntax
           declare-primitive-predicate
           |gxc[:0:]#declare-primitive-predicate|)

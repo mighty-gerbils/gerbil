@@ -22,6 +22,9 @@ namespace: gerbil/core/sugar
                              |gerbil/core/sugar~Sugar-1[:0:]#defrules|))
                    (%#define-alias define-rules defrules)
                    (%#define-syntax
+                    defrule
+                    |gerbil/core/sugar~Sugar-1[:0:]#defrule|)
+                   (%#define-syntax
                     defsyntax%
                     |gerbil/core/sugar~Sugar-1[:0:]#defsyntax%|)
                    (%#define-syntax
