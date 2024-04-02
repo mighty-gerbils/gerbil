@@ -70,6 +70,10 @@ namespace: gxc
   ((_ type-id slot checked?)
    (make-!mutator 'type-id 'slot checked?)))
 
+(defrules @primitive-predicate ()
+  ((_ type-id)
+   (make-!primitive-predicate 'type-id)))
+
 ;; interfaces
 (defrules @interface ()
   ((_ type-id methods)

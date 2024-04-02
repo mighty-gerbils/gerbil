@@ -256,8 +256,7 @@ namespace: gxc
 
 (defmethod {typedecl !predicate}
   (lambda (self)
-    (let (klass-id (&!predicate-id self))
-      ['@predicate klass-id])))
+    ['@predicate self.id]))
 
 (defmethod {typedecl !constructor}
   (lambda (self)
@@ -265,19 +264,16 @@ namespace: gxc
 
 (defmethod {typedecl !accessor}
   (lambda (self)
-    (with ((!accessor klass-id _ slot checked?) self)
-      ['@accessor klass-id slot checked?])))
+    ['@accessor self.id self.slot self.checked?]))
 
 (defmethod {typedecl !mutator}
   (lambda (self)
-    (with ((!mutator klass-id _ slot checked?) self)
-      ['@mutator klass-id slot checked?])))
+    ['@mutator self.id self.slot self.checked?]))
 
 ;; interfaces
 (defmethod {typedecl !interface}
   (lambda (self)
-    (with ((!interface klass-id methods) self)
-      ['@interface klass-id methods])))
+    ['@interface self.id self.methods]))
 
 ;; procedure types
 (defmethod {typedecl !lambda}
@@ -295,17 +291,17 @@ namespace: gxc
 (defmethod {typedecl !case-lambda}
   (lambda (self)
     (def (clause-e clause)
-      (cdr (!lambda::typedecl clause)))
-    (let (clauses (&!case-lambda-clauses self))
-      (let (clauses (map clause-e clauses))
-        ['@case-lambda clauses ...]))))
+      (cdr {clause.typedecl}))
+      ['@case-lambda (map clause-e self.clauses) ...]))
 
 (defmethod {typedecl !kw-lambda}
   (lambda (self)
-    (with ((!kw-lambda _ _ table dispatch) self)
-      ['@kw-lambda table dispatch])))
+    ['@kw-lambda self.table self.dispatch]))
 
 (defmethod {typedecl !kw-lambda-primary}
   (lambda (self)
-    (with ((!kw-lambda-primary _ _ keys main) self)
-      ['@kw-lambda-dispatch keys main])))
+    ['@kw-lambda-dispatch self.keys self.main]))
+
+(defmethod {typedecl !primitive-predicate}
+  (lambda (self)
+    ['@primitive-predicate self.id]))
