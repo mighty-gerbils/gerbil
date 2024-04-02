@@ -49,27 +49,34 @@ namespace: gxc
 
   (let* ((modid (expander-context-id ctx))
          (modid-str (symbol->string modid)))
-    (for-each load-it!
-              '(gerbil/builtin
-                gerbil/runtime/gambit
-                gerbil/runtime/util
-                gerbil/runtime/table
-                gerbil/runtime/control
-                gerbil/runtime/system
-                gerbil/runtime/c3
-                gerbil/runtime/mop
-                gerbil/runtime/mop-system-classes
-                gerbil/runtime/error
-                gerbil/runtime/interface
-                gerbil/runtime/hash
-                gerbil/runtime/thread
-                gerbil/runtime/syntax
-                gerbil/runtime/eval
-                gerbil/runtime/repl
-                gerbil/runtime/loader
-                gerbil/runtime/init
-                gerbil/runtime
-                gerbil/builtin-inline-rules))))
+    (if (or (string-prefix? "gerbil/runtime" modid-str)
+            (string-prefix? "gerbil/core" modid-str))
+      ;; don't laod the runtime when building core or itself, as it can
+      ;; create a vicious bootstrap cycle because of forward references
+      (for-each load-it!
+                '(gerbil/builtin
+                  gerbil/builtin-inline-rules))
+      (for-each load-it!
+                '(gerbil/builtin
+                  gerbil/builtin-inline-rules
+                  gerbil/runtime/gambit
+                  gerbil/runtime/util
+                  gerbil/runtime/table
+                  gerbil/runtime/control
+                  gerbil/runtime/system
+                  gerbil/runtime/c3
+                  gerbil/runtime/mop
+                  gerbil/runtime/mop-system-classes
+                  gerbil/runtime/error
+                  gerbil/runtime/interface
+                  gerbil/runtime/hash
+                  gerbil/runtime/thread
+                  gerbil/runtime/syntax
+                  gerbil/runtime/eval
+                  gerbil/runtime/repl
+                  gerbil/runtime/loader
+                  gerbil/runtime/init
+                  gerbil/runtime)))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
