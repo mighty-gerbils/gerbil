@@ -10,20 +10,10 @@ package: gerbil/runtime
             (return: string::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gerbil-system-manifest
-   (optimizer-resolve-class
-    '(typedecl gerbil-system-manifest)
-    '#<!class #3540
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gerbil-system-manifest) 'pair::t))
   (declare-type
    build-manifest
-   (optimizer-resolve-class
-    '(typedecl build-manifest)
-    '#<!class #3540
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl build-manifest) 'pair::t))
   (declare-type
    display-build-manifest__%
    (@lambda 2
@@ -100,9 +90,7 @@ package: gerbil/runtime
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gerbil-greeting
-   (optimizer-resolve-class
-    '(typedecl gerbil-greeting)
-    '#<!class #3541 id: t super: () precedence-list: ()>))
+   (optimizer-resolve-class '(typedecl gerbil-greeting) 't::t))
   (declare-type
    gerbil-system
    (@lambda 0

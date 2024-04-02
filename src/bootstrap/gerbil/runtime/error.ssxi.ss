@@ -320,9 +320,7 @@ package: gerbil/runtime
              #f)))
   (declare-type
    dump-stack-trace?
-   (optimizer-resolve-class
-    '(typedecl dump-stack-trace?)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl dump-stack-trace?) 'procedure::t))
   (declare-type
    Error::display-exception
    (@lambda 2

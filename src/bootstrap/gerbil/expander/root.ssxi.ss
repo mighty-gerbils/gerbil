@@ -4,20 +4,10 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#*core-syntax-expanders*
-   (optimizer-resolve-class
-    '(typedecl gx#*core-syntax-expanders*)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gx#*core-syntax-expanders*) 'pair::t))
   (declare-type
    gx#*core-macro-expanders*
-   (optimizer-resolve-class
-    '(typedecl gx#*core-macro-expanders*)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gx#*core-macro-expanders*) 'pair::t))
   (declare-type
    gx#root-context:::init!__%
    (@lambda 2

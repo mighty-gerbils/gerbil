@@ -4,12 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-type
    __table::t.id
-   (optimizer-resolve-class
-    '(typedecl __table::t.id)
-    '#<!class #3409
-              id: symbol
-              super: (symbolic::t)
-              precedence-list: (symbolic::t t::t)>))
+   (optimizer-resolve-class '(typedecl __table::t.id) 'symbol::t))
   (declare-type &raw-table-table (@lambda 1 #f))
   (declare-type &raw-table-count (@lambda 1 #f))
   (declare-type &raw-table-free (@lambda 1 #f))
@@ -138,20 +133,10 @@ package: gerbil/runtime
   (declare-type immediate-table-delete! (@lambda 2 #f))
   (declare-type
    __gc-table::t.id
-   (optimizer-resolve-class
-    '(typedecl __gc-table::t.id)
-    '#<!class #3409
-              id: symbol
-              super: (symbolic::t)
-              precedence-list: (symbolic::t t::t)>))
+   (optimizer-resolve-class '(typedecl __gc-table::t.id) 'symbol::t))
   (declare-type
    __gc-table-loads
-   (optimizer-resolve-class
-    '(typedecl __gc-table-loads)
-    '#<!class #3410
-              id: f64vector
-              super: (hvector::t)
-              precedence-list: (hvector::t sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __gc-table-loads) 'f64vector::t))
   (declare-type &gc-table-gcht (@lambda 1 #f))
   (declare-type &gc-table-immediate (@lambda 1 #f))
   (declare-type &gc-table-gcht-set! (@lambda 2 #f))

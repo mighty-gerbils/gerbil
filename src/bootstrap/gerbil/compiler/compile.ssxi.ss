@@ -4,40 +4,30 @@ package: gerbil/compiler
 (begin
   (declare-type
    gxc#gambit-annotations
-   (optimizer-resolve-class
-    '(typedecl gxc#gambit-annotations)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#gambit-annotations) 'pair::t))
   (declare-type
    gxc#checked-primitives
-   (optimizer-resolve-class
-    '(typedecl gxc#checked-primitives)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#checked-primitives) 'pair::t))
   (declare-type
    gxc#current-compile-lift
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-lift)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-marks
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-marks)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-identifiers
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-identifiers)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-boolean-context
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-boolean-context)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
   (declare-class
    gxc#::collect-bindings::t
@@ -67,7 +57,7 @@ package: gerbil/compiler
    gxc#::collect-bindings-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-bindings-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-bindings
    (@lambda 1
@@ -112,7 +102,7 @@ package: gerbil/compiler
    gxc#::lift-modules-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::lift-modules-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-lift-modules__%
    (@lambda 3
@@ -154,7 +144,7 @@ package: gerbil/compiler
    gxc#::find-runtime-code-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::find-runtime-code-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-find-runtime-code
    (@lambda 1
@@ -193,7 +183,7 @@ package: gerbil/compiler
    gxc#::find-lambda-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::find-lambda-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-find-lambda-expression
    (@lambda 1
@@ -222,7 +212,7 @@ package: gerbil/compiler
    gxc#::count-values-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::count-values-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-count-values
    (@lambda 1
@@ -257,7 +247,7 @@ package: gerbil/compiler
    gxc#::generate-runtime-empty-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-runtime-empty-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::generate-loader::t
    (@class gxc#::generate-loader::t
@@ -282,7 +272,7 @@ package: gerbil/compiler
    gxc#::generate-loader-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-loader-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-loader
    (@lambda 1
@@ -313,7 +303,7 @@ package: gerbil/compiler
    gxc#::generate-runtime-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-runtime-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-runtime
    (@lambda 1
@@ -351,7 +341,7 @@ package: gerbil/compiler
    gxc#::generate-runtime-phi-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-runtime-phi-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-runtime-phi
    (@lambda 1
@@ -398,7 +388,7 @@ package: gerbil/compiler
    gxc#::collect-expression-refs-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-expression-refs-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-expression-refs__%
    (@lambda 3
@@ -448,7 +438,7 @@ package: gerbil/compiler
    gxc#::generate-meta-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-meta-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-meta__%
    (@lambda 3
@@ -502,7 +492,7 @@ package: gerbil/compiler
    gxc#::generate-meta-phi-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-meta-phi-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-meta-phi__%
    (@lambda 3

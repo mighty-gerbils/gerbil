@@ -6,17 +6,17 @@ package: gerbil/compiler
    gxc#current-compile-optimizer-info
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-optimizer-info)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-mutators
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-mutators)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-local-type
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-local-type)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-class
    gxc#optimizer-info::t
    (@class gxc#optimizer-info::t

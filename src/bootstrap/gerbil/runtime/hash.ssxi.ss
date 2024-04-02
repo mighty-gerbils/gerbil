@@ -470,14 +470,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((clear! . _%locked-hash-table::clear!101554%_)
-            (for-each . _%locked-hash-table::for-each101548%_)
-            (update! . _%locked-hash-table::update!101544%_)
-            (ref . _%locked-hash-table::ref101540%_)
-            (length . _%locked-hash-table::length101550%_)
-            (delete! . _%locked-hash-table::delete!101546%_)
+           ((for-each . _%locked-hash-table::for-each101548%_)
+            (set! . _%locked-hash-table::set!101542%_)
             (copy . _%locked-hash-table::copy101552%_)
-            (set! . _%locked-hash-table::set!101542%_))))
+            (ref . _%locked-hash-table::ref101540%_)
+            (update! . _%locked-hash-table::update!101544%_)
+            (clear! . _%locked-hash-table::clear!101554%_)
+            (delete! . _%locked-hash-table::delete!101546%_)
+            (length . _%locked-hash-table::length101550%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -519,14 +519,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((clear! . _%checked-hash-table::clear!101846%_)
-            (for-each . _%checked-hash-table::for-each101840%_)
-            (update! . _%checked-hash-table::update!101836%_)
-            (ref . _%checked-hash-table::ref101832%_)
-            (length . _%checked-hash-table::length101842%_)
-            (delete! . _%checked-hash-table::delete!101838%_)
+           ((for-each . _%checked-hash-table::for-each101840%_)
+            (set! . _%checked-hash-table::set!101834%_)
             (copy . _%checked-hash-table::copy101844%_)
-            (set! . _%checked-hash-table::set!101834%_))))
+            (ref . _%checked-hash-table::ref101832%_)
+            (update! . _%checked-hash-table::update!101836%_)
+            (clear! . _%checked-hash-table::clear!101846%_)
+            (delete! . _%checked-hash-table::delete!101838%_)
+            (length . _%checked-hash-table::length101842%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))

@@ -4,9 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-type
    __scheme-source
-   (optimizer-resolve-class
-    '(typedecl __scheme-source)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl __scheme-source) 'procedure::t))
   (declare-type
    __load-gxi
    (@lambda 0
@@ -40,10 +38,5 @@ package: gerbil/runtime
   (declare-type gerbil-runtime-init! (@lambda 1 #f))
   (declare-type
    __runtime-initialized
-   (optimizer-resolve-class
-    '(typedecl __runtime-initialized)
-    '#<!class #13889
-              id: false
-              super: (boolean::t atom::t)
-              precedence-list: (boolean::t atom::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl __runtime-initialized) 'false::t))
   (declare-type gerbil-load-expander! (@lambda 0 #f)))

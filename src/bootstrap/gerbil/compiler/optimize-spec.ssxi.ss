@@ -34,7 +34,7 @@ package: gerbil/compiler
    gxc#::generate-method-specializers-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-method-specializers-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-method-specializers
    (@lambda 1
@@ -109,7 +109,7 @@ package: gerbil/compiler
    gxc#::collect-object-refs-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-object-refs-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-object-refs__%
    (@lambda 5
@@ -199,7 +199,7 @@ package: gerbil/compiler
    gxc#::subst-object-refs-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::subst-object-refs-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-subst-object-refs__%
    (@lambda 6

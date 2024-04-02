@@ -124,19 +124,13 @@ package: gerbil/runtime
    (@mutator __core-special-form::t id #f))
   (declare-type
    __current-expander
-   (optimizer-resolve-class
-    '(typedecl __current-expander)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl __current-expander) 'procedure::t))
   (declare-type
    __current-compiler
-   (optimizer-resolve-class
-    '(typedecl __current-compiler)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl __current-compiler) 'procedure::t))
   (declare-type
    __current-path
-   (optimizer-resolve-class
-    '(typedecl __current-path)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl __current-path) 'procedure::t))
   (declare-type
    __core-resolve
    (@lambda 1

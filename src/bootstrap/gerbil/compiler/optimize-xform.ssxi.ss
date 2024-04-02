@@ -30,7 +30,7 @@ package: gerbil/compiler
    gxc#::collect-mutators-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-mutators-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-mutators
    (@lambda 1
@@ -65,7 +65,7 @@ package: gerbil/compiler
    gxc#::collect-methods-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-methods-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-methods
    (@lambda 1
@@ -120,7 +120,7 @@ package: gerbil/compiler
    gxc#::expression-subst-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::expression-subst-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-expression-subst__%
    (@lambda 4
@@ -174,7 +174,7 @@ package: gerbil/compiler
    gxc#::expression-subst*-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::expression-subst*-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-expression-subst*__%
    (@lambda 3
@@ -214,7 +214,7 @@ package: gerbil/compiler
    gxc#::find-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::find-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::find-var-refs::t
    (@class gxc#::find-var-refs::t
@@ -249,7 +249,7 @@ package: gerbil/compiler
    gxc#::find-var-refs-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::find-var-refs-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-find-var-refs__%
    (@lambda 3
@@ -305,7 +305,7 @@ package: gerbil/compiler
    gxc#::collect-runtime-refs-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-runtime-refs-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-runtime-refs__%
    (@lambda 3

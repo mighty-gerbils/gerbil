@@ -6,82 +6,82 @@ package: gerbil/compiler
    gxc#current-compile-symbol-table
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-symbol-table)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-runtime-sections
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-runtime-sections)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-runtime-names
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-runtime-names)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-output-dir
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-output-dir)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-invoke-gsc
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-invoke-gsc)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-gsc-options
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-gsc-options)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-keep-scm
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-keep-scm)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-verbose
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-verbose)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-optimize
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-optimize)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-debug
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-debug)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-generate-ssxi
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-generate-ssxi)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-static
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-static)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-timestamp
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-timestamp)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-decls
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-decls)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-context
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-context)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gxc#current-compile-local-env
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-local-env)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-class
    gxc#symbol-table::t
    (@class gxc#symbol-table::t
@@ -139,17 +139,12 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#+verbose-mutex+
-   (optimizer-resolve-class
-    '(typedecl gxc#+verbose-mutex+)
-    '#<!class #13507 id: mutex::t super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#+verbose-mutex+) 'mutex::t))
   (declare-type
    gxc#module-path-reserved-chars
    (optimizer-resolve-class
     '(typedecl gxc#module-path-reserved-chars)
-    '#<!class #15902
-              id: string
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+    'string::t))
   (declare-type gxc#module-id->path-string (@lambda 1 #f))
   (declare-type gxc#map* (@lambda 2 #f))
   (declare-type

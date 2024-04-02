@@ -4,85 +4,31 @@ package: gerbil/runtime
 (begin
   (declare-type
    type-flag-opaque
-   (optimizer-resolve-class
-    '(typedecl type-flag-opaque)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl type-flag-opaque) 'fixnum::t))
   (declare-type
    type-flag-extensible
-   (optimizer-resolve-class
-    '(typedecl type-flag-extensible)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl type-flag-extensible) 'fixnum::t))
   (declare-type
    type-flag-macros
-   (optimizer-resolve-class
-    '(typedecl type-flag-macros)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl type-flag-macros) 'fixnum::t))
   (declare-type
    type-flag-concrete
-   (optimizer-resolve-class
-    '(typedecl type-flag-concrete)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl type-flag-concrete) 'fixnum::t))
   (declare-type
    type-flag-id
-   (optimizer-resolve-class
-    '(typedecl type-flag-id)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl type-flag-id) 'fixnum::t))
   (declare-type
    class-type-flag-struct
-   (optimizer-resolve-class
-    '(typedecl class-type-flag-struct)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl class-type-flag-struct) 'fixnum::t))
   (declare-type
    class-type-flag-sealed
-   (optimizer-resolve-class
-    '(typedecl class-type-flag-sealed)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl class-type-flag-sealed) 'fixnum::t))
   (declare-type
    class-type-flag-metaclass
-   (optimizer-resolve-class
-    '(typedecl class-type-flag-metaclass)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl class-type-flag-metaclass) 'fixnum::t))
   (declare-type
    class-type-flag-system
-   (optimizer-resolve-class
-    '(typedecl class-type-flag-system)
-    '#<!class #6658
-              id: fixnum
-              super: (integer::t immediate::t)
-              precedence-list:
-               (integer::t real::t number::t immediate::t t::t)>))
+   (optimizer-resolve-class '(typedecl class-type-flag-system) 'fixnum::t))
   (declare-class t::t (@class t () () () () #f #f #f #f #f #f))
   (declare-type t::t (optimizer-resolve-class '(typedecl t::t) 'class::t))
   (declare-class
@@ -1440,12 +1386,7 @@ package: gerbil/runtime
   (declare-type method-specializer-table-delete! (@lambda 2 #f))
   (declare-type
    __method-specializers-mx
-   (optimizer-resolve-class
-    '(typedecl __method-specializers-mx)
-    '#<!class #2475
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __method-specializers-mx) 'vector::t))
   (declare-type bind-specializer! (@lambda 2 #f))
   (declare-type __lookup-method-specializer (@lambda 1 #f))
   (declare-type __class-specializer-hash-key (@lambda 1 #f))
@@ -1466,20 +1407,10 @@ package: gerbil/runtime
   (declare-type class-specializer-table-delete! (@lambda 2 #f))
   (declare-type
    __class-specializers-mx
-   (optimizer-resolve-class
-    '(typedecl __class-specializers-mx)
-    '#<!class #2475
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __class-specializers-mx) 'vector::t))
   (declare-type
    __class-specializers-key
-   (optimizer-resolve-class
-    '(typedecl __class-specializers-key)
-    '#<!class #3540
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl __class-specializers-key) 'pair::t))
   (declare-type
    specialize-class
    (@lambda 1
@@ -1564,12 +1495,7 @@ package: gerbil/runtime
   (declare-type write-object (@lambda 2 #f))
   (declare-type
    __shadow-classes-mx
-   (optimizer-resolve-class
-    '(typedecl __shadow-classes-mx)
-    '#<!class #2475
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __shadow-classes-mx) 'vector::t))
   (declare-type __shadow-class (@lambda 1 #f))
   (declare-type
    class-of
@@ -1579,11 +1505,6 @@ package: gerbil/runtime
             (return: class::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __subtype-id
-   (optimizer-resolve-class
-    '(typedecl __subtype-id)
-    '#<!class #2475
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __subtype-id) 'vector::t))
   (declare-type __system-class (@lambda 1 #f))
   (declare-type __make-system-class (@lambda 2 #f)))

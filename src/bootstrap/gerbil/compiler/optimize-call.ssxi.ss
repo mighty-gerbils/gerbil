@@ -30,7 +30,7 @@ package: gerbil/compiler
    gxc#::optimize-call-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::optimize-call-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-optimize-call
    (@lambda 1
@@ -67,7 +67,7 @@ package: gerbil/compiler
    gxc#::check-return-type-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::check-return-type-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-check-return-type
    (@lambda 1

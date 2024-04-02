@@ -4,33 +4,16 @@ package: gerbil/compiler
 (begin
   (declare-type
    gxc#default-gerbil-gsc
-   (optimizer-resolve-class
-    '(typedecl gxc#default-gerbil-gsc)
-    '#<!class #15902
-              id: string
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#default-gerbil-gsc) 'string::t))
   (declare-type
    gxc#default-gerbil-gcc
-   (optimizer-resolve-class
-    '(typedecl gxc#default-gerbil-gcc)
-    '#<!class #15902
-              id: string
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#default-gerbil-gcc) 'string::t))
   (declare-type
    gxc#default-gerbil-ar
-   (optimizer-resolve-class
-    '(typedecl gxc#default-gerbil-ar)
-    '#<!class #15902
-              id: string
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#default-gerbil-ar) 'string::t))
   (declare-type
    gxc#+driver-mutex+
-   (optimizer-resolve-class
-    '(typedecl gxc#+driver-mutex+)
-    '#<!class #13507 id: mutex::t super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#+driver-mutex+) 'mutex::t))
   (declare-type
    gxc#compile-timestamp
    (@lambda 0
@@ -45,12 +28,7 @@ package: gerbil/compiler
             (return: flonum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#scheme-file-settings
-   (optimizer-resolve-class
-    '(typedecl gxc#scheme-file-settings)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#scheme-file-settings) 'pair::t))
   (declare-type
    gxc#with-output-to-scheme-file
    (@lambda 2
@@ -83,12 +61,7 @@ package: gerbil/compiler
             (return: string::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#gerbil-runtime-modules
-   (optimizer-resolve-class
-    '(typedecl gxc#gerbil-runtime-modules)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#gerbil-runtime-modules) 'pair::t))
   (declare-type
    gxc#delete-directory*
    (@lambda 1

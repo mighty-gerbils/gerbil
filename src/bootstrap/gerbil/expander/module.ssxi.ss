@@ -218,8 +218,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type
    gx#import-expander::t
    (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
@@ -273,8 +275,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))
@@ -382,30 +386,25 @@ package: gerbil/expander
    gx#current-import-expander-phi
    (optimizer-resolve-class
     '(typedecl gx#current-import-expander-phi)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-export-expander-phi
    (optimizer-resolve-class
     '(typedecl gx#current-export-expander-phi)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-module-reader-path
    (optimizer-resolve-class
     '(typedecl gx#current-module-reader-path)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-module-reader-args
    (optimizer-resolve-class
     '(typedecl gx#current-module-reader-args)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#source-file-settings
-   (optimizer-resolve-class
-    '(typedecl gx#source-file-settings)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl gx#source-file-settings) 'pair::t))
   (declare-type
    gx#call-with-input-source-file
    (@lambda 2

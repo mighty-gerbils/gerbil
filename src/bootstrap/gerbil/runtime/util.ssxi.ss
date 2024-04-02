@@ -88,12 +88,7 @@ package: gerbil/runtime
      (return: void::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    absent-value
-   (optimizer-resolve-class
-    '(typedecl absent-value)
-    '#<!class #2475
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl absent-value) 'vector::t))
   (declare-type
    true
    (@lambda (0)
@@ -1400,7 +1395,5 @@ package: gerbil/runtime
      (return: void::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    DBG-printer
-   (optimizer-resolve-class
-    '(typedecl DBG-printer)
-    '#<!class #2476 id: procedure super: (t::t) precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl DBG-printer) 'procedure::t))
   (declare-type DBG-helper (@lambda 5 #f)))

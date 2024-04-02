@@ -6,57 +6,55 @@ package: gerbil/expander
    gx#current-expander-context
    (optimizer-resolve-class
     '(typedecl gx#current-expander-context)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-marks
    (optimizer-resolve-class
     '(typedecl gx#current-expander-marks)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-phi
-   (optimizer-resolve-class
-    '(typedecl gx#current-expander-phi)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl gx#current-expander-phi) 'procedure::t))
   (declare-type
    gx#current-expander-path
    (optimizer-resolve-class
     '(typedecl gx#current-expander-path)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-eval
    (optimizer-resolve-class
     '(typedecl gx#current-expander-eval)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-compile
    (optimizer-resolve-class
     '(typedecl gx#current-expander-compile)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-module-eval
    (optimizer-resolve-class
     '(typedecl gx#current-expander-module-eval)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-module-import
    (optimizer-resolve-class
     '(typedecl gx#current-expander-module-import)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-module-prelude
    (optimizer-resolve-class
     '(typedecl gx#current-expander-module-prelude)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-allow-rebind?
    (optimizer-resolve-class
     '(typedecl gx#current-expander-allow-rebind?)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type
    gx#current-expander-compiling?
    (optimizer-resolve-class
     '(typedecl gx#current-expander-compiling?)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-class
    gx#expander-context::t
    (@class gx#expander-context::t

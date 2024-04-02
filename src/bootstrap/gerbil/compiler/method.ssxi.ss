@@ -6,7 +6,7 @@ package: gerbil/compiler
    gxc#current-compile-method
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-method)
-    '#<!class #11389 id: procedure super: () precedence-list: (t::t)>))
+    'procedure::t))
   (declare-type gxc#compile-e__0 (@lambda 1 #f))
   (declare-type gxc#compile-e__1 (@lambda 2 #f))
   (declare-type
@@ -56,7 +56,7 @@ package: gerbil/compiler
    gxc#::void-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::void-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::void-special-form::t
    (@class gxc#::void-special-form::t
@@ -83,7 +83,7 @@ package: gerbil/compiler
    gxc#::void-special-form-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::void-special-form-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::void::t
    (@class gxc#::void::t
@@ -104,9 +104,7 @@ package: gerbil/compiler
   (declare-type gxc#make-::void (@constructor gxc#::void::t))
   (declare-type
    gxc#::void-bind-methods!
-   (optimizer-resolve-class
-    '(typedecl gxc#::void-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#::void-bind-methods!) 'promise::t))
   (declare-class
    gxc#::false-expression::t
    (@class gxc#::false-expression::t
@@ -131,7 +129,7 @@ package: gerbil/compiler
    gxc#::false-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::false-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::false-special-form::t
    (@class gxc#::false-special-form::t
@@ -158,7 +156,7 @@ package: gerbil/compiler
    gxc#::false-special-form-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::false-special-form-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::false::t
    (@class gxc#::false::t
@@ -182,9 +180,7 @@ package: gerbil/compiler
   (declare-type gxc#make-::false (@constructor gxc#::false::t))
   (declare-type
    gxc#::false-bind-methods!
-   (optimizer-resolve-class
-    '(typedecl gxc#::false-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl gxc#::false-bind-methods!) 'promise::t))
   (declare-class
    gxc#::identity-expression::t
    (@class gxc#::identity-expression::t
@@ -213,7 +209,7 @@ package: gerbil/compiler
    gxc#::identity-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::identity-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::identity-special-form::t
    (@class gxc#::identity-special-form::t
@@ -242,7 +238,7 @@ package: gerbil/compiler
    gxc#::identity-special-form-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::identity-special-form-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::identity::t
    (@class gxc#::identity::t
@@ -268,7 +264,7 @@ package: gerbil/compiler
    gxc#::identity-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::identity-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::basic-xform-expression::t
    (@class gxc#::basic-xform-expression::t
@@ -297,7 +293,7 @@ package: gerbil/compiler
    gxc#::basic-xform-expression-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::basic-xform-expression-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-class
    gxc#::basic-xform::t
    (@class gxc#::basic-xform::t
@@ -325,7 +321,7 @@ package: gerbil/compiler
    gxc#::basic-xform-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::basic-xform-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type gxc#apply-begin% (@lambda 2 #f))
   (declare-type gxc#apply-last-begin% (@lambda 2 #f))
   (declare-type

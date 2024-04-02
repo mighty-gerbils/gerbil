@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize::timestamp 1712084091)
+  (define gerbil/compiler/optimize::timestamp 1712085002)
   (begin
     (define gxc#optimizer-info-init!
       (lambda ()
@@ -772,7 +772,12 @@
                                    (cons (cons 'typedecl
                                                (cons _%sym192182%_ '()))
                                          '()))
-                             (cons (cons 'quote (cons _%type192192%_ '()))
+                             (cons (cons 'quote
+                                         (cons (let ()
+                                                 (declare (not safe))
+                                                 (gxc#optimizer-lookup-class-name
+                                                  _%type192192%_))
+                                               '()))
                                    '())))
                  '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

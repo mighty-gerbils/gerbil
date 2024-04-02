@@ -142,9 +142,7 @@ package: gerbil/runtime
   (declare-type thread-local-table (@lambda 0 #f))
   (declare-type
    __thread-locals-mutex
-   (optimizer-resolve-class
-    '(typedecl __thread-locals-mutex)
-    '#<!class #13507 id: mutex::t super: () precedence-list: (t::t)>))
+   (optimizer-resolve-class '(typedecl __thread-locals-mutex) 'mutex::t))
   (declare-type unhandled-actor-exception-hook-set! (@lambda 1 #f))
   (declare-type
    current-thread-group

@@ -34,7 +34,7 @@ package: gerbil/compiler
    gxc#::collect-top-level-type-info-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-top-level-type-info-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-top-level-type-info
    (@lambda 1
@@ -73,7 +73,7 @@ package: gerbil/compiler
    gxc#::collect-top-level-declarations-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-top-level-declarations-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-top-level-declarations
    (@lambda 1
@@ -112,7 +112,7 @@ package: gerbil/compiler
    gxc#::basic-expression-top-level-type-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::basic-expression-top-level-type-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-basic-expression-top-level-type
    (@lambda 1
@@ -149,7 +149,7 @@ package: gerbil/compiler
    gxc#::collect-type-info-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::collect-type-info-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-collect-type-info
    (@lambda 1
@@ -188,7 +188,7 @@ package: gerbil/compiler
    gxc#::raw-expression-type-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::raw-expression-type-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-raw-expression-type
    (@lambda 1
@@ -228,7 +228,7 @@ package: gerbil/compiler
    gxc#::basic-expression-type-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::basic-expression-type-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-basic-expression-type
    (@lambda 1
@@ -265,7 +265,7 @@ package: gerbil/compiler
    gxc#::lift-top-lambdas-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::lift-top-lambdas-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-lift-top-lambdas
    (@lambda 1
@@ -304,7 +304,7 @@ package: gerbil/compiler
    gxc#::extract-lambda-signature-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::extract-lambda-signature-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-extract-lambda-signature
    (@lambda 1

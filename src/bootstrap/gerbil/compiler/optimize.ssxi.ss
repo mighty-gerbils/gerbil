@@ -52,7 +52,7 @@ package: gerbil/compiler
    gxc#::generate-ssxi-bind-methods!
    (optimizer-resolve-class
     '(typedecl gxc#::generate-ssxi-bind-methods!)
-    '#<!class #16074 id: promise super: () precedence-list: (t::t)>))
+    'promise::t))
   (declare-type
    gxc#apply-generate-ssxi
    (@lambda 1

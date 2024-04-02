@@ -156,20 +156,10 @@ package: gerbil/runtime
   (declare-type prototype-trable-delete! (@lambda 2 #f))
   (declare-type
    __interface-prototypes-mx
-   (optimizer-resolve-class
-    '(typedecl __interface-prototypes-mx)
-    '#<!class #11618
-              id: vector
-              super: (sequence::t)
-              precedence-list: (sequence::t t::t)>))
+   (optimizer-resolve-class '(typedecl __interface-prototypes-mx) 'vector::t))
   (declare-type
    __interface-prototypes-key
-   (optimizer-resolve-class
-    '(typedecl __interface-prototypes-key)
-    '#<!class #11619
-              id: pair
-              super: (list::t)
-              precedence-list: (list::t t::t)>))
+   (optimizer-resolve-class '(typedecl __interface-prototypes-key) 'pair::t))
   (declare-type
    interface-subclass?
    (@lambda 1
