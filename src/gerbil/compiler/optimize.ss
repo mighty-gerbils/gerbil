@@ -219,7 +219,7 @@ namespace: gxc
         => (lambda (type)
              (verbose "generate typedecl " sym " " type)
              (if (!class? type)
-               ['declare-type sym `(optimizer-resolve-class '(typedecl ,sym) ',type)]
+               ['declare-type sym `(optimizer-resolve-class '(typedecl ,sym) ',(optimizer-lookup-class-name type))]
                ['declare-type sym {type.typedecl}])))
        (else '(begin)))))
 
