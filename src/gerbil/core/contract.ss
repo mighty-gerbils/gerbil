@@ -131,7 +131,9 @@ package: gerbil/core
           ((class-type-info? meta)
            (with-syntax ((klass (!class-type-descriptor meta))
                          (predicate (!class-type-predicate meta)))
-             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
+             (if (memq (!class-type-id meta)
+                       ;; everything is t, void we don't need to check.
+                       '(t void))
                #'(begin-annotation (@type klass) expr)
                #'(begin-annotation (@type klass)
                  (let (val expr)
@@ -156,7 +158,9 @@ package: gerbil/core
           ((class-type-info? meta)
            (with-syntax ((klass (!class-type-descriptor meta))
                          (predicate (!class-type-predicate meta)))
-             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
+             (if (memq (!class-type-id meta)
+                       ;; everything is t, void we don't need to check.
+                       '(t void))
                #'(begin-annotation (@type klass) expr)
                #'(begin-annotation (@type klass)
                    (let (val expr)
@@ -178,18 +182,8 @@ package: gerbil/core
     (syntax-case stx ()
       ((_ expr type)
        (identifier? #'type)
-       (let (meta (resolve-type stx #'type))
-         (cond
-          ((class-type-info? meta)
-           (with-syntax ((klass (!class-type-descriptor meta)))
-             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
-               #'(begin-annotation (@type klass) expr)
-               #'(begin-annotation (@type klass) expr))))
-          ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta)))
-             #'(begin-annotation (@type klass) expr)))
-          (else
-           (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
+       (with-syntax ((klass (resolve-type->type-descriptor stx #'type)))
+         #'(begin-annotation (@type klass) expr)))))
 
   ;; predicate contract check
   (defrules :~ (:-)
@@ -925,12 +919,12 @@ package: gerbil/core
                        result)
                  result))))))
 
-    (def (make-interface-method-lambda-signature stx self Interface method unchecked-method signature return checked?)
-      (if checked?
+    (def (make-interface-method-lambda-signature stx self Interface signature return unchecked-proc)
+      (if (stx-e unchecked-proc)
         (make-procedure-lambda-signature stx
           (cons [self ': Interface] signature)
           return
-          unchecked-method)
+          unchecked-proc)
         (let (return-type (resolve-type->type-descriptor stx return))
           [return: return-type])))
 
@@ -1483,10 +1477,10 @@ package: gerbil/core
 
   ;; syntax for defining interface (extension) methods
   (defsyntax (definterface-method stx)
-    (def (make-checked-method-def Interface method-impl-name unchecked-method-impl-name signature return)
+    (def (make-checked-method-def Interface method-name raw-method-name signature return)
       (with-syntax ((Interface Interface)
-                    (method method-impl-name)
-                    (unchecked-method unchecked-method-impl-name)
+                    (method method-name)
+                    (raw-method raw-method-name)
                     (self (syntax-local-introduce 'self))
                     (in (signature-arguments-in signature))
                     ((out ...) (signature-arguments-out signature))
@@ -1495,17 +1489,35 @@ package: gerbil/core
         (if (stx-list? #'signature)
           (syntax/loc stx
             (def (method self . in)
-              (with-interface-checked-method self (Interface method unchecked-method signature return)
-                (: (unchecked-method self out ...) return))))
+              (with-interface-checked-method self (Interface signature return raw-method )
+                (:- (raw-method self out ...) return))))
           (syntax/loc stx
             (def (method self . in)
-              (with-interface-checked-method self (Interface method unchecked-method signature return)
+              (with-interface-checked-method self (Interface signature return raw-method)
+                (:- (##apply raw-method self out ...) return)))))))
+
+    (def (make-raw-method-def Interface raw-method-name unchecked-method-name signature return)
+      (with-syntax ((Interface Interface)
+                    (raw-method raw-method-name)
+                    (unchecked-method unchecked-method-name)
+                    (self (syntax-local-introduce 'self))
+                    (in (signature-arguments-in signature))
+                    ((out ...) (signature-arguments-out signature))
+                    (signature signature)
+                    (return return))
+        (if (stx-list? #'signature)
+          (syntax/loc stx
+            (def (raw-method self . in)
+              (with-interface-unchecked-method self (Interface signature return)
+                (: (unchecked-method self out ...) return))))
+          (syntax/loc stx
+            (def (raw-method self . in)
+              (with-interface-raw-method self (Interface signature return)
                 (: (##apply unchecked-method self out ...) return)))))))
 
-    (def (make-unchecked-method-def Interface method-impl-name unchecked-method-impl-name signature return body)
+    (def (make-unchecked-method-def Interface unchecked-method-name signature return body)
       (with-syntax ((Interface Interface)
-                    (method method-impl-name)
-                    (unchecked-method unchecked-method-impl-name)
+                    (unchecked-method unchecked-method-name)
                     (self (syntax-local-introduce 'self))
                     (in (signature-arguments-in signature))
                     (signature signature)
@@ -1513,7 +1525,7 @@ package: gerbil/core
                     ((body ...) body))
         (syntax/loc stx
           (def (unchecked-method self . in)
-            (with-interface-unchecked-method self (Interface method unchecked-method signature return)
+            (with-interface-unchecked-method self (Interface signature return)
               (:- (let () body ...) return))))))
 
     (syntax-case stx ()
@@ -1522,51 +1534,56 @@ package: gerbil/core
             (identifier? #'method))
        (let* ((info (syntax-local-value #'Interface))
               (interface-name (interface-info-name info))
-              (method-impl-name
+              (method-name
                (stx-identifier #'Interface interface-name "-" #'method))
-              (unchecked-method-impl-name
-               (stx-identifier #'Interface "&" method-impl-name)))
+              (raw-method-name
+               (stx-identifier #'Interface "__" method-name))
+              (unchecked-method-name
+               (stx-identifier #'Interface "&" method-name)))
          (check-signature! stx #'signature #'return)
          (with-syntax ((defchecked
                          (make-checked-method-def
                           #'Interface
-                          method-impl-name
-                          unchecked-method-impl-name
+                          method-name
+                          raw-method-name
+                          #'signature
+                          #'return))
+                       (defraw
+                         (make-raw-method-def
+                          #'Interface
+                          raw-method-name
+                          unchecked-method-name
                           #'signature
                           #'return))
                        (defunchecked
                          (make-unchecked-method-def
                           #'Interface
-                          method-impl-name
-                          unchecked-method-impl-name
+                          unchecked-method-name
                           #'signature
                           #'return
                           #'(body ...))))
-           #'(begin defchecked defunchecked))))))
+           #'(begin defchecked defraw defunchecked))))))
 
   (defsyntax (with-interface-method stx)
     (syntax-case stx ()
-      ((_ self (Interface method unchecked-method signature return checked?) body ...)
-       (let (checked? (stx-e #'checked?))
+      ((_ self (Interface signature return unchecked-proc) body ...)
+       (let (checked? (stx-e #'unchecked-proc))
          (with-syntax ((lambda-signature
                         (make-interface-method-lambda-signature stx
-                          #'self #'Interface #'method #'unchecked-method #'signature #'return checked?))
+                          #'self #'Interface #'signature #'return #'unchecked-proc))
                        (contract
                         (make-interface-method-contract stx
                           #'self #'Interface #'signature checked?)))
            #'(begin-annotation (@type.signature . lambda-signature)
                (using contract body ...)))))))
 
-  (defsyntax (with-interface-checked-method stx)
-    (syntax-case stx ()
-      ((_ self (Interface method unchecked signature return) body ...)
-       (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
-         #'(begin-annotation (@type return-type)
-             (with-interface-method self (Interface method unchecked signature return #t) body ...))))))
-
-  (defrule (with-interface-unchecked-method self (Interface method unchecked signature return)
+  (defrule (with-interface-checked-method self (Interface signature return raw-method)
              body ...)
-    (with-interface-method self (Interface method unchecked signature return #f) body ...))
+    (with-interface-method self (Interface signature return raw-method) body ...))
+
+  (defrule (with-interface-unchecked-method self (Interface signature return)
+             body ...)
+    (with-interface-method self (Interface signature return #f) body ...))
 
   (defsyntax-for-export (interface-out stx)
     (def (expand body unchecked?)
