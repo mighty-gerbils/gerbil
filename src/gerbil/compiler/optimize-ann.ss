@@ -36,7 +36,7 @@ namespace: gxc
   (%#letrec-values    push-match-vars-stop)
   (%#if               push-match-vars-if%)
   (%#call             push-match-vars-call%)
-  (%#begin-annotation push-match-vars-stop)
+  (%#begin-annotation push-match-vars-stop))
 
 ;; current annotation context stack
 (def current-annotation-optimizer

@@ -24,7 +24,7 @@ package: gerbil/core
               "runtime"
               "expander"))
 (export  #t ; export the submodules themselves
-         (import: TypeCast TypeReference Using ContractRules Interface TypedDefinitions)
+         (import: TypeReference TypeCast Using ContractRules Interface TypedDefinitions)
          (phi: +1 (import: InterfaceInfo TypeEnv ClassPrecedenceList)))
 
 (module InterfaceInfo
@@ -75,26 +75,69 @@ package: gerbil/core
            (and (interface-info? e)
                 (is? e))))))
 
-(module TypeCast
+(module TypeReference
   (import (phi: +1 InterfaceInfo))
+  (export #t (phi: +1 #t))
+
+  (begin-syntax
+    (defclass type-reference (identifier))
+
+    (def (type-identifier? id)
+      (and (identifier? id)
+           (alet (t (syntax-local-value id false))
+             (or (class-type-info? t)
+                 (interface-info? t)
+                 (type-reference? t)))))
+
+    (def (resolve-type stx id)
+      (let loop ((t (syntax-local-value id false)))
+        (cond
+         ((class-type-info? t) t)
+         ((interface-info? t) t)
+         ((type-reference? t)
+          (loop (syntax-local-value (type-reference-identifier t) false)))
+         ((not t)
+          (raise-syntax-error #f "unresolved type" stx id))
+         (else
+          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t)))))
+
+    (def (resolve-type->type-descriptor stx id)
+      (let (t (resolve-type stx id))
+        (cond
+         ((class-type-info? t)
+          (!class-type-descriptor t))
+         ((interface-info? t)
+          (interface-info-instance-type t))
+         (else
+          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
+
+  (defrules deftype ()
+    ((_ reference-id type-id)
+     (and (identifier? #'reference-id)
+          (identifier? #'type-id))
+     (defsyntax reference-id
+       (make-type-reference identifier: (quote-syntax type-id))))))
+
+(module TypeCast
+  (import TypeReference (phi: +1 InterfaceInfo))
   (export #t)
   ;; checked type cast
   (defsyntax (: stx)
     (syntax-case stx ()
       ((_ expr type)
        (identifier? #'type)
-       (let (meta (syntax-local-value #'type false))
+       (let (meta (resolve-type stx #'type))
          (cond
-          ((not meta)
-           (raise-syntax-error #f "unknown type" stx #'type))
           ((class-type-info? meta)
            (with-syntax ((klass (!class-type-descriptor meta))
                          (predicate (!class-type-predicate meta)))
-             #'(begin-annotation (@type klass)
+             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
+               #'(begin-annotation (@type klass) expr)
+               #'(begin-annotation (@type klass)
                  (let (val expr)
                    (if (predicate val)
                      val
-                     (error "bad cast" klass val))))))
+                     (error "bad cast" klass val)))))))
           ((interface-info? meta)
            (with-syntax ((klass (interface-info-instance-type meta))
                          (cast-it (interface-info-instance-constructor meta)))
@@ -108,18 +151,18 @@ package: gerbil/core
     (syntax-case stx ()
       ((_ expr type)
        (identifier? #'type)
-       (let (meta (syntax-local-value #'type false))
+       (let (meta (resolve-type stx #'type))
          (cond
-          ((not meta)
-           (raise-syntax-error #f "unknown type" stx #'type))
           ((class-type-info? meta)
            (with-syntax ((klass (!class-type-descriptor meta))
                          (predicate (!class-type-predicate meta)))
-             #'(begin-annotation (@type klass)
-                 (let (val expr)
-                   (if (or (not val) (predicate val))
-                     val
-                     (contract-violation! "bad cast" expr predicate val))))))
+             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
+               #'(begin-annotation (@type klass) expr)
+               #'(begin-annotation (@type klass)
+                   (let (val expr)
+                     (if (or (not val) (predicate val))
+                       val
+                       (contract-violation! "bad cast" expr predicate val)))))))
           ((interface-info? meta)
            (with-syntax ((klass (interface-info-instance-type meta))
                          (cast-it (interface-info-instance-constructor meta)))
@@ -135,13 +178,13 @@ package: gerbil/core
     (syntax-case stx ()
       ((_ expr type)
        (identifier? #'type)
-       (let (meta (syntax-local-value #'type false))
+       (let (meta (resolve-type stx #'type))
          (cond
-          ((not meta)
-           (raise-syntax-error #f "unknown type" stx #'type))
           ((class-type-info? meta)
            (with-syntax ((klass (!class-type-descriptor meta)))
-             #'(begin-annotation (@type klass) expr)))
+             (if (eq? (!class-type-id meta) 't) ; everything is t, erase type
+               #'(begin-annotation (@type klass) expr)
+               #'(begin-annotation (@type klass) expr))))
           ((interface-info? meta)
            (with-syntax ((klass (interface-info-instance-type meta)))
              #'(begin-annotation (@type klass) expr)))
@@ -207,49 +250,6 @@ package: gerbil/core
 
   (defrule (abort! expr)
     (begin-annotation (@abort) expr)))
-
-(module TypeReference
-  (import (phi: +1 InterfaceInfo))
-  (export #t (phi: +1 #t))
-
-  (begin-syntax
-    (defclass type-reference (identifier))
-
-    (def (type-identifier? id)
-      (and (identifier? id)
-           (alet (t (syntax-local-value id false))
-             (or (class-type-info? t)
-                 (interface-info? t)
-                 (type-reference? t)))))
-
-    (def (resolve-type stx id)
-      (let loop ((t (syntax-local-value id false)))
-        (cond
-         ((class-type-info? t) t)
-         ((interface-info? t) t)
-         ((type-reference? t)
-          (loop (syntax-local-value (type-reference-identifier t) false)))
-         ((not t)
-          (raise-syntax-error #f "unresolved type" stx id))
-         (else
-          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t)))))
-
-    (def (resolve-type->type-descriptor stx id)
-      (let (t (resolve-type stx id))
-        (cond
-         ((class-type-info? t)
-          (!class-type-descriptor t))
-         ((interface-info? t)
-          (interface-info-instance-type t))
-         (else
-          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
-
-  (defrules deftype ()
-    ((_ reference-id type-id)
-     (and (identifier? #'reference-id)
-          (identifier? #'type-id))
-     (defsyntax reference-id
-       (make-type-reference identifier: (quote-syntax type-id))))))
 
 (module TypeEnv
   (import "expander")
@@ -1463,7 +1463,7 @@ package: gerbil/core
                             (begin-annotation (@type.signature return: boolean::t
                                                                effect: (pure)
                                                                arguments: (t::t))
-                              (satisfies? descriptor obj))))
+                              (and (satisfies? descriptor obj) #t))))
                       (definfo
                         #'(defsyntax name
                             (make-interface-info
@@ -1496,11 +1496,11 @@ package: gerbil/core
           (syntax/loc stx
             (def (method self . in)
               (with-interface-checked-method self (Interface method unchecked-method signature return)
-                (unchecked-method self out ...))))
+                (: (unchecked-method self out ...) return))))
           (syntax/loc stx
             (def (method self . in)
               (with-interface-checked-method self (Interface method unchecked-method signature return)
-                (##apply unchecked-method self out ...)))))))
+                (: (##apply unchecked-method self out ...) return)))))))
 
     (def (make-unchecked-method-def Interface method-impl-name unchecked-method-impl-name signature return body)
       (with-syntax ((Interface Interface)
@@ -1514,7 +1514,7 @@ package: gerbil/core
         (syntax/loc stx
           (def (unchecked-method self . in)
             (with-interface-unchecked-method self (Interface method unchecked-method signature return)
-              body ...)))))
+              (:- (let () body ...) return))))))
 
     (syntax-case stx ()
       ((_ Interface (method signature return) body ...)
@@ -2509,5 +2509,5 @@ package: gerbil/core
   (defrule (defstruct/c hd slots . body)
     (defclass/c hd slots struct: #t . body)))
 
-(import TypeCast Using ContractRules TypeReference Interface TypedDefinitions
+(import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassPrecedenceList))

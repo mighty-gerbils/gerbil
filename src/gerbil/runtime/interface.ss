@@ -86,10 +86,11 @@ namespace: #f
    descriptor klass obj-klass
    (lambda (prototype) prototype)
    (lambda (klass obj-klass method-name)
-     (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
-                       interface: klass interface-id: (##type-id klass)
-                       class: obj-klass class-id: (##type-id obj-klass)
-                       method: method-name))))
+     (abort!
+      (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
+                        interface: klass interface-id: (##type-id klass)
+                        class: obj-klass class-id: (##type-id obj-klass)
+                        method: method-name)))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype

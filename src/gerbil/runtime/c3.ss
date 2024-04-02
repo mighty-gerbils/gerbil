@@ -54,6 +54,7 @@ namespace: #f
                    struct: struct?
                    eq: (eq eq?)
                    get-name: (get-name identity))
+  => :values
   (def pls (map get-precedence-list supers)) ;; (List (List X)) ;; precedence lists to merge
   (def sit []) ;; (List X) ;; single-inheritance tail
 

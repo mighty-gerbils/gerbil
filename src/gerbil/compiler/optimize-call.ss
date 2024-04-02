@@ -167,7 +167,7 @@ namespace: gxc
               stx))
             (else ;; generic class instance check
              (xform-wrap-source
-              ['%#call ['%#ref 'class-instance?] ['%#ref klass.id] object]
+              ['%#call ['%#ref 'class-instance?] ['%#ref self.id] object]
               stx)))))))))
 
 (def (expression-no-side-effects? stx)
@@ -506,7 +506,7 @@ namespace: gxc
                (let (xargs
                      (map (lambda (key)
                             (cond
-                             ((assgetq key kwargs) => values)
+                             ((assgetq key kwargs))
                              (else '(%#ref absent-value))))
                           keys))
                  (for-each
@@ -540,7 +540,7 @@ namespace: gxc
                       (xargs
                        (map (lambda (key)
                               (cond
-                               ((assgetq key xkwargs) => values)
+                               ((assgetq key xkwargs))
                                (else '(%#ref absent-value))))
                             keys)))
                  (compile-e

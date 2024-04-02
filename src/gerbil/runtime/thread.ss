@@ -25,6 +25,7 @@ namespace: #f
     (spawn-actor f args name tgroup)))
 
 (def (spawn-actor f args name tgroup)
+  => :thread
   (def (thread-main thunk)
     ;; install an abortive handler to force stack unwinding
     ;; this ensures that unwind-protect finalizers are invoked if

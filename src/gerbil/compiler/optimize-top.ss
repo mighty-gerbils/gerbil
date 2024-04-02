@@ -22,7 +22,15 @@ namespace: gxc
   (%#begin            apply-begin%)
   (%#begin-syntax     apply-begin-syntax%)
   (%#module           apply-module%)
-  (%#define-values    collect-top-level-type-define-values%))
+  (%#define-values    collect-top-level-type-define-values%)
+  (%#lambda                apply-body-lambda%)
+  (%#case-lambda           apply-body-case-lambda%)
+  (%#let-values       collect-top-level-type-let-values%)
+  (%#letrec-values    collect-top-level-type-letrec-values%)
+  (%#letrec*-values   collect-top-level-type-letrec-values%)
+  (%#call             collect-type-call%)
+  (%#if               apply-operands)
+  (%#set!             collect-type-setq%))
 
 ;; method to collect top level user type related declarations
 (defcompile-method (apply-collect-top-level-declarations)
@@ -41,7 +49,7 @@ namespace: gxc
   final:
   (%#begin-annotation basic-expression-type-begin-annotation%))
 
-;; method to collect the type
+;; method to collect types in the whole module
 (defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
   ()
   final:
@@ -59,13 +67,12 @@ namespace: gxc
   (%#if               apply-operands)
   (%#set!             collect-type-setq%))
 
-;; method to find the type of an expression
-(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
+;; methods to find the type of an expression
+(defcompile-method (apply-raw-expression-type) (::raw-expression-type ::false)
   ()
-  final:
   (%#begin            apply-last-begin%)
   (%#begin-annotation basic-expression-type-begin-annotation%)
-  (%#lambda                basic-expression-type-lambda%)
+  (%#lambda                raw-expression-type-lambda%)
   (%#case-lambda           basic-expression-type-case-lambda%)
   (%#let-values       apply-body-last-let-values%)
   (%#letrec-values    apply-body-last-let-values%)
@@ -74,6 +81,11 @@ namespace: gxc
   (%#ref              basic-expression-type-ref%)
   (%#if               basic-expression-type-if%)
   (%#quote            basic-expression-type-quote%))
+
+(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::raw-expression-type ::false)
+  ()
+  final:
+  (%#lambda                basic-expression-type-lambda%))
 
 ;; method to lift sub-lambdas from case/opt/kw lambda definitions
 (defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
@@ -99,6 +111,11 @@ namespace: gxc
     ((_ (id) expr)
      (identifier? #'id)
      (let (sym (identifier-symbol #'id))
+       ;; first pass of type collection, so that we can get preliminary type
+       ;; signatures for lambda
+       ;; the apply-collect-type-info pass is later applied to collect
+       ;; exact type signatures.
+       (apply-collect-top-level-type-info #'expr)
        (alet (type (apply-basic-expression-top-level-type #'expr))
          (if (!class-meta? type)
            (begin
@@ -155,13 +172,13 @@ namespace: gxc
     ((_ ann body)
      (compile-e self #'body))))
 
-(def (collect-type-let-values% self stx)
+(def (collect-type-let-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)
     (ast-case hd ()
       ((id)
        (identifier? #'id)
        (let (sym (identifier-symbol #'id))
-         (alet (type (apply-basic-expression-type expr))
+         (alet (type (expression-type expr))
            (if (!class-meta? type)
              (begin
                (optimizer-declare-class! sym (!class-meta-class type))
@@ -176,13 +193,13 @@ namespace: gxc
        (for-each (cut compile-e self <>) #'(expr ...))
        (compile-e self #'body)))))
 
-(def (collect-type-letrec-values% self stx)
+(def (collect-type-letrec-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)
     (ast-case hd ()
       ((id)
        (identifier? #'id)
        (let (sym (identifier-symbol #'id))
-         (alet (type (apply-basic-expression-type expr))
+         (alet (type (expression-type expr))
            (if (!class-meta? type)
              (begin
                (optimizer-declare-class! sym (!class-meta-class type))
@@ -202,6 +219,12 @@ namespace: gxc
        (for-each collect-e #'(hd ...) #'(expr ...))
        (for-each (cut compile-e self <>) #'(expr ...))
        (compile-e self #'body)))))
+
+(def (collect-top-level-type-let-values% self stx)
+  (collect-type-let-values% self stx apply-raw-expression-type))
+
+(def (collect-top-level-type-letrec-values% self stx)
+  (collect-type-letrec-values% self stx apply-raw-expression-type))
 
 (def (collect-type-call% self stx)
   (ast-case stx (%#ref %#quote)
@@ -325,6 +348,18 @@ namespace: gxc
   (@predicate       basic-expression-type-annotation-predicate)
   (@abort           basic-expression-type-annotation-abort))
 
+(def (raw-expression-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ . form)
+     ;; delegate dispatch
+     (dispatch-lambda-form? #'form)
+     (make-!lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+
+    ((_ . form)
+     ;; generic lambda -- track type for call arity checking and return type inference
+     (let (signature (lambda-form-infer-signature #'form))
+       (make-!lambda (lambda-form-arity #'form) #f signature: signature)))))
+
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#call %#ref %#quote)
@@ -389,7 +424,9 @@ namespace: gxc
      ((not rator-type) #f)
      ((!procedure? rator-type)
       {rator-type.return-type self stx args})
-     ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))
+     ((and (!class? rator-type)
+           (or (eq? (!type-id rator-type) 'procedure)
+               (eq? (!type-id rator-type) 't)))
       #f)
      (else
       (raise-compile-error "operator is not a procedure" stx rator rator-type))))
@@ -398,7 +435,7 @@ namespace: gxc
     ((_ (%#ref id) . args)
      (cond
       ((hash-get basic-expression-type-special (identifier-symbol #'id))
-       => (lambda (type-e) (type-e stx)))
+       => (lambda (type-e) (type-e self stx)))
       (else
        (type-e #'id (optimizer-resolve-type (identifier-symbol #'id)) #'args))))
     ((_ rator . args)
@@ -410,6 +447,9 @@ namespace: gxc
             (return (&!signature-return signature)))
       (optimizer-resolve-class stx return))))
 
+(defmethod {apply-return-type !procedure}
+  !procedure::return-type)
+
 (defmethod {return-type !case-lambda}
   (lambda (self ctx stx args)
     (cond
@@ -419,13 +459,33 @@ namespace: gxc
       (raise-compile-error "Illegal case-lambda application; arity mismatch"
                            stx (map !lambda-arity self.clauses))))))
 
+(defmethod {apply-return-type !case-lambda}
+  (lambda (self ctx stx args)
+    (let* ((candidates
+            (filter (cut !lambda-arity-match-apply? <> args)
+                    self.clauses))
+           (candidate-types
+            (map (lambda (candidate)
+                   {candidate.apply-return-type ctx stx args})
+                 candidates)))
+      (and (pair? candidate-types)
+           (foldl (lambda (candidate-type ret)
+                    (and ret candidate-type
+                         (greatest-common-type stx candidate-type ret)))
+                  (car candidate-types)
+                  (cdr candidate-types))))))
+
 (defmethod {return-type !kw-lambda}
   (lambda (self ctx stx args)
     (match (optimizer-lookup-type self.dispatch)
-      ((!kw-lambda-primary _ _ main)
-       (alet (main (optimizer-lookup-type main))
-         {main.return-type ctx stx args}))
-      (else #f))))
+      ((? !procedure? proc)
+       (!procedure::return-type proc ctx stx args)))))
+
+(defmethod {apply-return-type !kw-lambda}
+  (lambda (self ctx stx args)
+    (match (optimizer-lookup-type self.dispatch)
+      ((? !procedure? proc)
+       (!procedure::apply-return-type proc ctx stx args)))))
 
 (def (!lambda-arity-match? self args)
   (with ((!lambda _ _ arity) self)
@@ -435,7 +495,14 @@ namespace: gxc
       ([arity]
        (fx>= (length args) arity)))))
 
-(def (basic-expression-type-special-cast stx)
+(def (!lambda-arity-match-apply? self args)
+  (with ((!lambda _ _ arity) self)
+    (match arity
+      ((? fixnum?)
+       (fx= (fx1- (length args)) arity))
+      ([arity] #t))))
+
+(def (basic-expression-type-special-cast ctx stx)
   (ast-case stx (%#ref)
     ((_ _ (%#ref interface-id) expr)
      (alet (interface-type (optimizer-resolve-type (identifier-symbol #'interface-id)))
@@ -443,8 +510,31 @@ namespace: gxc
          (optimizer-resolve-class stx (!type-id interface-type))
          (raise-compile-error "cast to non interface" stx #'interface-id interface-type))))))
 
+(def (basic-expression-type-special-apply ctx stx)
+  (def (type-e rator rator-type args)
+    (cond
+     ((!procedure? rator-type)
+      {rator-type.apply-return-type ctx stx args})
+     ((and (!class? rator-type)
+           (or (eq? (!type-id rator-type) 'procedure)
+               (eq? (!type-id rator-type) 't)))
+      #f)
+     (else
+      (raise-compile-error "applied operator is not a procedure" stx #'rator rator-type))))
+  (ast-case stx (%#ref)
+    ((_ _ (%#ref -kw-dispatch) kwt rator . args)
+     (free-identifier=? #'-kw-dispatch 'keyword-dispatch)
+     (alet (rator-type (apply-basic-expression-type #'rator))
+       (type-e #'rator rator-type (cons #'kwt #'args))))
+    ((_ _ rator . args)
+     (alet (rator-type (apply-basic-expression-type #'rator))
+       (type-e #'rator rator-type #'args)))
+    (_ #f)))
+
 (defbasic-expression-type-special
-  (cast basic-expression-type-special-cast))
+  (cast basic-expression-type-special-cast)
+  (apply basic-expression-type-special-apply)
+  (##apply basic-expression-type-special-apply))
 
 (def (basic-expression-type-ref% self stx)
   (ast-case stx ()
@@ -464,6 +554,8 @@ namespace: gxc
 
 (def (greatest-common-type stx type-a type-b)
   (cond
+   ((or (not type-a) (not type-b))
+    #f)
    ((!type-subtype? type-a type-b)
     type-b)
    ((!type-subtype? type-b type-a)
@@ -485,6 +577,8 @@ namespace: gxc
               (and result (optimizer-resolve-class stx result)))))
           (else
            (and result (optimizer-resolve-class stx result)))))))
+   ((and (eq? (!type-id type-a) 'procedure) (eq? (!type-id type-b) 'procedure))
+    (optimizer-resolve-class stx 'procedure::t))
    (else #f)))
 
 (def (basic-expression-type-quote% self stx)
