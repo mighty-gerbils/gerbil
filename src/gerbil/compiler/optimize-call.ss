@@ -75,16 +75,20 @@ namespace: gxc
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
     ((_ rator rand ...)
      (let (rator-type (apply-basic-expression-type #'rator))
-       (if (and rator-type
-                (eq? (!type-id rator-type) 'procedure)
-                (not (!primitive? rator-type)))
-           ;; known to be procedure, %#call-unchecked
-           (xform-wrap-source
-            (cons* '%#call-unchecked
-                   (compile-e self #'rator)
-                   (map (cut compile-e self <>) #'(rand ...)))
-            stx)
-         (xform-call% self stx))))))
+       (cond
+        ((and rator-type
+              (eq? (!type-id rator-type) 'procedure)
+              (not (!primitive? rator-type)))
+         ;; known to be procedure, %#call-unchecked
+         (xform-wrap-source
+          (cons* '%#call-unchecked
+                 (compile-e self #'rator)
+                 (map (cut compile-e self <>) #'(rand ...)))
+          stx))
+        ((or (not rator-type) (memq (!type-id rator-type) '(t procedure)))
+         (xform-call% self stx))
+        (else
+         (raise-compile-error "illegal application; not a procedure" stx rator-type)))))))
 
 (defmethod {optimize-call !procedure}
   (lambda (self ctx stx args)
