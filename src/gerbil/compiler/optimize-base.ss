@@ -365,7 +365,7 @@ namespace: gxc
 
 (def (!interface-instance? type)
   (and (!class? type)
-       (memq 'gerbil#interface-instance::t (!class-precedence-list type))))
+       (memq 'interface-instance::t (!class-precedence-list type))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))

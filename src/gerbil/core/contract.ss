@@ -252,11 +252,16 @@ package: gerbil/core
                         (expander-context-id (core-context-top))))))
          #'(abort!
             (raise-contract-violation-error
-             "nil (#f) derefence"
-             context: 'src-ctx contract: '(check-nil! expr) value: #f))))))
+               "nil (#f) derefence"
+               context: 'src-ctx contract: '(check-nil! expr) value: #f))))))
 
   (defrule (abort! expr)
-    (begin-annotation (@abort) expr)))
+    (begin-annotation (@abort)
+      (begin
+        expr
+        ;; abort means the exception is not continuable
+        ;; create a frame for the stack trace
+        (void)))))
 
 (module TypeEnv
   (import "expander")
@@ -279,7 +284,7 @@ package: gerbil/core
   (export #t)
 
   (defsyntax (using stx)
-    (syntax-case stx (:~ :-)
+    (syntax-case stx (:~)
       ((_ (id expr ~ contract) body ...)
        (and (identifier? #'id)
             (identifier? #'~)
@@ -291,12 +296,17 @@ package: gerbil/core
        #'(let (id expr)
            (using (id ~ contract)
              body ...)))
-      ((_ (id expr :~ contract :- Type) body ...)
+      ((_ (id expr :~ contract ~ Type) body ...)
        (and (identifier? #'id)
-            (identifier? #'Type))
+            (identifier? #'Type)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':-)
+                (free-identifier=? #'~ #'::-)
+                (free-identifier=? #'~ #':?)))
        #'(let (id expr)
            (using (id :~ contract)
-             (using (id :- Type)
+             (using (id ~ Type)
                body ...))))
       ((_ (id ~ Type) body ...)
        (and (identifier? #'id)
@@ -306,30 +316,31 @@ package: gerbil/core
                 (free-identifier=? #'~ #':-)
                 (free-identifier=? #'~ #'::-)
                 (free-identifier=? #'~ #':?)))
-       (let (meta (syntax-local-value #'Type false))
+       (let (meta (resolve-type stx #'Type))
          (cond
-          ((not meta)
-           (raise-syntax-error #f "unknown type" stx  #'Type))
           ((interface-info? meta)
            #'(with-interface (id ~ Type) body ...))
           ((class-type-info? meta)
            #'(with-class (id ~ Type) body ...))
-          ((type-reference? meta)
-           (with-syntax ((Type (type-reference-identifier meta)))
-             #'(using (id ~ Type) body ...)))
           (else
-           (raise-syntax-error #f "bad type; must be an interface, struct, or class with complete type information" stx #'Type meta)))))
+           (raise-syntax-error #f "unexpected type; must be a class type or interface" stx #'Type meta)))))
       ((_ (id :~ pred) body ...)
        (identifier? #'id)
        #'(with-contract (id :~ pred) body ...))
-      ((_ (id :~ pred :- Type) body ...)
+      ((_ (id :~ pred ~ Type) body ...)
        (and (identifier? #'id)
-            (identifier? #'Type))
+            (identifier? #'Type)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':-)
+                (free-identifier=? #'~ #'::-)
+                (free-identifier=? #'~ #':?)))
        #'(using (id :~ pred)
-           (using (id :- Type)
+           (using (id ~ Type)
              body ...)))
-      ((_ (hd . rest) body ...)
-       #'(using hd (using rest body ...)))
+      ((_ ((hd . contract) . rest) body ...)
+       (identifier? #'hd)
+       #'(using (hd . contract) (using rest body ...)))
       ((_ () body ...)
        #'(let () body ...))))
 
@@ -346,7 +357,7 @@ package: gerbil/core
            (let (str (symbol->string (stx-e id)))
              (alet (index (string-index str #\.))
                (and (fx> index 0)
-                    (not (find string-empty? (string-split str #\.))))))))
+                    (not (ormap string-empty? (string-split str #\.))))))))
 
     (def (split-dotted-identifier stx id)
       (let (parts (string-split (symbol->string (stx-e id)) #\.))
@@ -360,7 +371,7 @@ package: gerbil/core
                       (resolve-type stx klass-or-id)
                       klass-or-id))
              (accessors (!class-type-unchecked-accessors klass)))
-        (cond
+       (cond
          ((assgetq slot accessors))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
@@ -439,6 +450,7 @@ package: gerbil/core
 
     (def (expand var Interface body checked? checked-methods? maybe?)
       (with-syntax ((expr-body (expand-body var Interface body (or checked? checked-methods?))))
+
         (if checked?
           (if maybe?
             (with-syntax ((var var)
@@ -497,35 +509,33 @@ package: gerbil/core
                                        rest)
                                  type object #t)))
                         ((class-type-info? type)
-                         (with-syntax ((object object)
+                         (with-syntax ((object
+                                        (if nil-check?
+                                          ['check-nil! object]
+                                          object))
                                        (accessor (get-slot-accessor stx type part)))
                            (cond
                             ((null? rest)
-                             (if nil-check?
-                               #'(%%app (accessor (check-nil! object)) rand ...)
-                               #'(%%app (accessor object) rand ...)))
+                             #'(%%app (accessor object) rand ...))
                             ((!class-slot-type type part)
                              => (lambda (type)
                                   (let (type (resolve-type stx type))
-                                    (if nil-check?
-                                      (loop rest type #'(accessor (check-nil! object)) #f)
-                                      (loop rest type #'(accessor object) #f)))))
+                                    (loop rest type #'(accessor object) #f))))
                             (else
                              (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                         ((interface-info? type)
                          (if (null? rest)
-                             (with-syntax ((object object)
-                                           (method
-                                            (syntax-local-introduce
-                                             (make-symbol
-                                              (if (type-env-checked? te) "&" "")
-                                              (interface-info-name type)
-                                              "-" part))))
-                               (if nil-check?
-                                 #'(%%app (%%ref method) (check-nil! object) rand ...)
-                                 #'(%%app (%%ref method) object rand ...)))
-
-                             (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id part)))
+                           (with-syntax ((object
+                                          (if nil-check?
+                                            ['check-nil! object]
+                                            object))
+                                         (method
+                                          (stx-identifier #'id
+                                            (if (type-env-checked? te) "" "&")
+                                            (interface-info-name type)
+                                            "-" part)))
+                             #'(method object rand ...))
+                           (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id part)))
                         (else
                          (raise-syntax-error #f "unexpected type" stx type))))
                       (else
@@ -557,7 +567,10 @@ package: gerbil/core
                                      rest)
                                type object #t)))
                       ((class-type-info? type)
-                       (with-syntax ((object object)
+                       (with-syntax ((object
+                                      (if nil-check?
+                                        ['check-nil! object]
+                                        object))
                                      (accessor (get-slot-accessor stx type part)))
                          (cond
                           ((null? rest)
@@ -565,11 +578,8 @@ package: gerbil/core
                             ((!class-slot-type type part)
                              => (lambda (slot-type)
                                   (with-syntax ((slot-type (resolve-type->type-descriptor stx type)))
-                                    (if nil-check?
-                                      #'(begin-annotation (@type slot-type)
-                                          (accessor (check-nil! object)))
-                                      #'(begin-annotation (@type slot-type)
-                                          (accessor object))))))
+                                    #'(begin-annotation (@type slot-type)
+                                        (accessor object)))))
                             (nil-check?
                              #'(accessor (check-nil! object)))
                             (else
@@ -717,7 +727,8 @@ package: gerbil/core
     (def (check-signature! stx args return
                            optionals: (optionals-allowed? #t)
                            keywords: (keywords-allowed? #t))
-      (check-valid-type! stx return)
+      (when (stx-e return)
+        (check-valid-type! stx return))
       (check-signature-spec! stx args
                              optionals: optionals-allowed?
                              keywords: keywords-allowed?))
@@ -1285,7 +1296,7 @@ package: gerbil/core
                  (cons (cons* (stx-e #'kw) #'id #'contract)
                        keywords)))
           (_ (values (reverse! positionals)
-                     (list-sort (lambda (a b) (keyword<? (car a) (car b)))
+                     (list-sort (lambda (a b) (keyword<? (stx-car a) (stx-car b)))
                                 keywords))))))
 
 
@@ -1327,9 +1338,9 @@ package: gerbil/core
           (_  (list-sort keyword<? keywords)))))
 
     (def (symbol<? x y)
-      (string<? (symbol->string x) (symbol->string y)))
+      (string<? (symbol->string (stx-e x)) (symbol->string (stx-e y))))
     (def (keyword<? x y)
-      (string<? (keyword->string x) (keyword->string y))))
+      (string<? (keyword->string (stx-e x)) (keyword->string (stx-e y)))))
 
   (defsyntax (interface stx)
     (def (fold-methods mixin specs)
@@ -1351,7 +1362,7 @@ package: gerbil/core
               (else
                (lp rest (cons method methods)))))
             (else
-             (list-sort (lambda (x y) (symbol<? (stx-e (stx-car x)) (stx-e (stx-car y))))
+             (list-sort (lambda (x y) (symbol<? (stx-car x) (stx-car y)))
                         methods))))))
 
     (def (fold-mixins mixin methods)
@@ -1380,13 +1391,13 @@ package: gerbil/core
            (identifier? #'id)
            (begin
              (check-signature! stx #'args #f)
-             (loop #'rest (cons [#'id #'args (syntax-local-introduce ':t)] methods))))
+             (loop #'rest (cons [#'id #'args (core-quote-syntax ':t)] methods))))
           (() methods)
           (bad (raise-syntax-error #f "invalid interface specification" stx #'bad)))))
 
     (def (make-method-defs Interface)
       (lambda (method offset)
-        (let (signature (cadr method))
+        (let (signature (stx-car (stx-cdr method)))
           (with-syntax ((Interface Interface)
                         (method method)
                         (method-name (stx-car method))
@@ -1418,9 +1429,9 @@ package: gerbil/core
                       ((method ...)
                        (fold-methods #'(mixin ...) #'(spec ...)))
                       ((method-name ...)
-                       (map car #'(method ...)))
+                       (map stx-car #'(method ...)))
                       ((method-signature ...)
-                       (map cdr #'(method ...)))
+                       (map stx-cdr #'(method ...)))
                       ((method-impl-name ...)
                        (map (lambda (method-name)
                               (stx-identifier #'name #'name "-" method-name))
@@ -2397,7 +2408,7 @@ package: gerbil/core
                         (with-syntax (((id: id) type-id))
                           #'(quote id)))
                        (meta-type-name
-                        (with-syntax ((type-name (cadr type-name)))
+                        (with-syntax ((type-name (stx-car (stx-cdr type-name))))
                           #'(quote type-name)))
                        (meta-type-super
                         (with-syntax (((super-id ...) super-ref))

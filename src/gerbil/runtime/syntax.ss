@@ -112,7 +112,7 @@ namespace: #f
              (newline))
            rest))
         (else (void)))
-      (when (getenv "GERBIL_EXPANDER_DEBUG" #f)
+      (when (getenv "GERBIL_DEBUG" #f)
         (alet (cont (&StackTrace-continuation self))
           (display "--- continuation backtrace:")
           (newline)

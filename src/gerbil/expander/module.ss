@@ -117,7 +117,7 @@ namespace: gx
      ((core-library-module-path? e)
       (recur (import-module (core-resolve-library-module-path e))))
      (else
-      (error "Cannot eval module" obj)))))
+      (error "cannot eval module" obj)))))
 
 (def (core-context-prelude (ctx (current-expander-context)))
   (let lp ((e ctx))
@@ -160,7 +160,7 @@ namespace: gx
                   (or (current-expander-module-prelude)
                       (make-prelude-context #f)))
                  (else
-                  (error "Cannot import module; unknown prelude" rpath pre))))
+                  (error "cannot import module; unknown prelude" rpath pre))))
                (ctx
                 (make-module-context id prelude ns path))
                (body
@@ -189,12 +189,11 @@ namespace: gx
                (if (and (syntax-binding? bind)
                         (module-context? (&syntax-binding-e bind)))
                  (lp rest (&syntax-binding-e bind))
-                 (error "Cannot import submodule; not bound as a module" rpath id bind))))
+                 (error "cannot import submodule; not bound as a module" rpath id bind))))
             (else ctx))))))
 
   (cond
-   ((and (not reload?) (hash-get __module-registry rpath))
-    => values)
+   ((and (not reload?) (hash-get __module-registry rpath)))
    ((list? rpath)
     (import-submodule rpath))
    ((core-library-module-path? rpath)
@@ -444,7 +443,7 @@ namespace: gx
                   (lp rest))))
           (else
            (resolve ssi srcs))))
-        ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
+        ([] (raise-syntax-error #f "cannot find library module" libpath))))))
 
 (def (core-resolve-library-relative-module-path modpath)
   (def (resolve path base)
@@ -462,7 +461,7 @@ namespace: gx
   (let ((spath (symbol->string (stx-e modpath)))
         (mod (core-context-top (current-expander-context) module-context?)))
     (unless mod
-      (raise-syntax-error #f "Cannot resolve relative module path; not in module context" modpath))
+      (raise-syntax-error #f "cannot resolve relative module path; not in module context" modpath))
     (let (mpath (symbol->string (expander-context-id mod)))
       (let lp ((spath spath) (mpath mpath))
         (cond
@@ -473,7 +472,7 @@ namespace: gx
                  (lp (substring spath 3 (string-length spath))
                      (substring mpath 0 idx))))
            (else
-            (raise-syntax-error #f "Cannot resolve relative module path; illegal traversal" modpath))))
+            (raise-syntax-error #f "cannot resolve relative module path; illegal traversal" modpath))))
          ((string-prefix? "./" spath)
           (lp (substring spath 2 (string-length spath)) mpath))
          (else

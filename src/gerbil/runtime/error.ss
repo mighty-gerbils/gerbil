@@ -99,8 +99,7 @@ namespace: #f
 
 (def (error-message obj)
   (cond
-   ((Error? obj)
-    (&Error-message obj))
+   ((slot-ref obj 'message false))
    ((error-exception? obj)
     (error-exception-message obj))
    (else #f)))

@@ -137,8 +137,9 @@ namespace: gxc
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
-    (display-exception exn)
-    (displayln "*** WARNING Failed to load ssxi module for " id)
+    (unless (equal? (error-message exn) "cannot find library module")
+      (display-exception exn)
+      (displayln "*** WARNING Failed to load ssxi module for " id))
     #f)
 
   (def (import-e)
