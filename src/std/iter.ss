@@ -306,7 +306,7 @@
                (cond
                 ;; speculatively inline list iteration
                 ((pair? iterable)
-                 (for-each iter-do iterable))
+                 (for-each iter-do (:- iterable :list)))
                 ((null? iterable) (void))
                 (else
                  ;; full iteration protocol

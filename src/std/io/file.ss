@@ -75,7 +75,8 @@
     (using (self :- file-io)
       (when self.closed?
         (raise-io-closed file-io "file is closed"))
-      (fdseek self.fd position from))))
+      (fdseek self.fd position from)
+      (void))))
 
 (defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))

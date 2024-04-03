@@ -113,7 +113,7 @@
                         (lp (fx+ i 4) (fx1+ j)))
                       ;; invalid character
                       (begin
-                        (string-set! str j #xfffd) ; replacement character
+                        (string-set! str j #\xfffd) ; replacement character
                         (lp (fx+ i 4) (fx1+ j)))))
                   (raise-io-error utf16-decode! "Incomplete character" W)))
               ;; invalid character

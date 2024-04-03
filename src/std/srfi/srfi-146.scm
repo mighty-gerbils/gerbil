@@ -922,6 +922,7 @@
 (define (make-mapping-comparator comparator)
   (make-comparator mapping? (mapping-equality comparator) (mapping-ordering comparator) #f))
 
-(define mapping-comparator (make-mapping-comparator (make-default-comparator)))
+(define mapping-comparator
+  (cut %make-mapping (make-default-comparator) <>))
 
 (comparator-register-default! mapping-comparator)
