@@ -9,7 +9,8 @@
         :std/sort
         :std/text/hex
         ./env)
-(export write-json-object/port write-json-object/writer write-json-object/buffer)
+(export write-json-object/port write-json-object/writer write-json-object/buffer
+        json-key-string json-sort-alist)
 (declare (not safe))
 
 (def (json-key-string key)

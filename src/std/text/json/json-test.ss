@@ -27,6 +27,16 @@
       (check (json-object->string obj) => str)
       (check (string->json-object str) => obj :: eqf))))
 
+(def (check-encode-decode/ordered obj str)
+  (parameterize ((json-sort-keys #f) (json-object-walist? #t))
+    (check (json-object->string obj) => str)
+    (check (string->json-object str) => obj)))
+
+(def (check-pretty obj str . options)
+  (let (eqf (if (hash-table? obj) equal-hash? equal?))
+    (check (apply pretty-json obj options) => str)
+    (check (string->json-object str) => obj :: eqf)))
+
 (def (check-encode-decode= obj)
   (checkf = (string->json-object (json-object->string obj)) obj))
 
@@ -57,9 +67,28 @@
         (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))
                              "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
-      (check-encode (walist '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
       (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
-      (check-exception (string->json-object "true junk") parse-error?))
+      (check-exception (string->json-object "true junk") parse-error?)
+      (def my-obj (hash (obj0 (hash)) (l3 [1 2 3]) (obj1 (hash (name "John Doe") (age 33)))))
+      #;(check-pretty my-obj
+                    "{\"l3\":\n  [1,\n   2,\n   3],\n \"obj0\": {},\n \"obj1\":\n  {\"age\": 33,\n   \"name\": \"John doe\"}}\n"
+                      sort-keys?: #t
+                      lisp-style?: #t)
+      (check-pretty my-obj
+                    "{\n  \"l3\": [\n    1,\n    2,\n    3\n  ],\n  \"obj0\": {},\n  \"obj1\": {\n    \"age\": 33,\n    \"name\": \"John Doe\"\n  }\n}\n"))
+    (test-case "encoding and decoding with walist"
+      (check-encode-decode/ordered (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
+      (check-encode (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
+      (def my-obj (walistq [['obj0 :: (walistq '())]
+                            ['l3 :: [1 2 3]]
+                            ['obj1 :: (walistq [['name . "John Doe"]
+                                                ['age . 33]])]]))
+      (parameterize ((json-sort-keys #f) (json-object-walist? #t))
+        (check-pretty my-obj
+                      "{\"obj0\": {},\n \"l3\":\n  [1,\n   2,\n   3],\n \"obj1\":\n  {\"name\": \"John Doe\",\n   \"age\": 33}}\n"
+                      lisp-style?: #t)
+        (check-pretty my-obj
+                      "{\n  \"obj0\": {},\n  \"l3\": [\n    1,\n    2,\n    3\n  ],\n  \"obj1\": {\n    \"name\": \"John Doe\",\n    \"age\": 33\n  }\n}\n")))
 
     (test-case "io zoo"
       (def obj

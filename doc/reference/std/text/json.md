@@ -121,6 +121,46 @@ If bound to `list->vector` then JSON lists will be parsed as vectors.
 #("a" 1)
 ```
 
+## json-sort-keys
+``` scheme
+json-object-keys
+```
+
+This is a parameter that can be used to control how JSON objects should be encoded.
+If true (the default), keys in JSON objects represented by hash-tables will be sorted
+before they are printed.
+
+::: tip Examples
+``` scheme
+> (parameterize ((json-object-walist? #f))
+    (hash->list (string->json-object "{\"a\",1}")))
+(("a" . 1))
+
+> (parameterize ((json-object-walist? #t))
+    (string->json-object "{\"a\",1}"))
+(("a" . 1))
+```
+
+## json-object-walist?
+``` scheme
+json-object-walist?
+```
+
+Parameter to control how JSON objects should be decoded.
+If false (the default), JSON objects will be hash-tables.
+If true, JSON objects will be walist (or walistq depending on json-symbolic-keys).
+
+::: tip Examples
+``` scheme
+> (parameterize ((json-object-walist? #f))
+    (hash->list (string->json-object "{\"a\",1}")))
+(("a" . 1))
+
+> (parameterize ((json-object-walist? #t))
+    (string->json-object "{\"a\",1}"))
+(("a" . 1))
+```
+
 ## trivial-class->json-object
 ``` scheme
 (trivial-class->json-object object) -> json | error
@@ -152,10 +192,18 @@ The default `:json` method is `trivial-class->json-object`.
 
 ## pretty-json
 ```scheme
-(pretty-json object [output])
+(pretty-json object [output]
+   [indent: 2] [sort-keys?: (json-sort-keys)] [lisp-style?: #f])
 ```
 A function that pretty-prints a JSON `object` to the specified `output`
 as per [with-output](../misc/ports.md#with-output)
 (defaults to `#f`, i.e. print to string).
+The `indent` keyword specifies how much to increase indentation at each level of nesting
+(must be a positive integer, defaults to 2).
+The `sort-keys?` keyword offers a shortcut to parameterizing `json-sort-keys`.
+The `lisp-style?` keyword if true specifies a format that follows Lisp style,
+and saves number of lines by starting objects and lists on the same line as the
+square or curly bracket, and closing it on the same line as the last entry,
+as opposed to regular style that uses newlines copiously.
 
-Internally this function uses the external program `jq -M .` to do the pretty-printing.
+(Since Gerbil v0.18.2, this function no longer invokes `jq -M .` as an external program.)
