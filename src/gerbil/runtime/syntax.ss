@@ -75,7 +75,7 @@ namespace: #f
 (defmethod {display-exception SyntaxError}
   (lambda (self port)
     (def (location)
-      (let lp ((rest (&SyntaxError-irritants self)))
+      (let lp ((rest self.irritants))
         (match rest
           ([hd . rest]
            (or (__AST-source hd)
@@ -93,10 +93,10 @@ namespace: #f
       (newline)
       (display        "--- Syntax Error")
       (cond
-       ((&SyntaxError-where self)
-        => (lambda (where) (displayln " at " where ": " (&SyntaxError-message self))))
-       (else (displayln ": " (&SyntaxError-message self))))
-      (match (&SyntaxError-irritants self)
+       (self.where
+        => (lambda (where) (displayln " at " where ": " self.message)))
+       (else (displayln ": " self.message)))
+      (match self.irritants
         ([stx . rest]
          (display     "... form:   ")
          (__pp-syntax stx)
@@ -113,7 +113,7 @@ namespace: #f
            rest))
         (else (void)))
       (when (getenv "GERBIL_DEBUG" #f)
-        (alet (cont (&StackTrace-continuation self))
+        (alet (cont self.continuation)
           (display "--- continuation backtrace:")
           (newline)
           (display-continuation-backtrace cont))))))
