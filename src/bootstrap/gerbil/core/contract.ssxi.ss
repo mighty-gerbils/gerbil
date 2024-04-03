@@ -375,6 +375,9 @@ package: gerbil/core
    |gerbil/core/contract~TypeReference[1]#resolve-type|
    (@lambda 2 #f))
   (declare-type
+   |gerbil/core/contract~TypeReference[1]#resolve-type->identifier|
+   (@lambda 2 #f))
+  (declare-type
    |gerbil/core/contract~TypeReference[1]#resolve-type->type-descriptor|
    (@lambda 2 #f))
   (declare-class

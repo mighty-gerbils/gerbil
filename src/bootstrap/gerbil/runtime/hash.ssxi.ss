@@ -145,13 +145,7 @@ package: gerbil/runtime
              arguments:
              (HashTable::t)
              unchecked:
-             __HashTable-clear!)))
-  (declare-type
-   __HashTable-clear!
-   (@lambda 1
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-clear!)))
   (declare-type
    &HashTable-clear!
    (@lambda 1
@@ -195,13 +189,7 @@ package: gerbil/runtime
              arguments:
              (HashTable::t t::t)
              unchecked:
-             __HashTable-delete!)))
-  (declare-type
-   __HashTable-delete!
-   (@lambda 2
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-delete!)))
   (declare-type
    &HashTable-delete!
    (@lambda 2
@@ -220,13 +208,7 @@ package: gerbil/runtime
              arguments:
              (HashTable::t procedure::t)
              unchecked:
-             __HashTable-for-each)))
-  (declare-type
-   __HashTable-for-each
-   (@lambda 2
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-for-each)))
   (declare-type
    &HashTable-for-each
    (@lambda 2
@@ -264,25 +246,19 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
              (HashTable::t t::t t::t)
              unchecked:
-             __HashTable-ref)))
-  (declare-type
-   __HashTable-ref
-   (@lambda 3
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-ref)))
   (declare-type
    &HashTable-ref
    (@lambda 3
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    HashTable-set!
    (@lambda 3
@@ -295,13 +271,7 @@ package: gerbil/runtime
              arguments:
              (HashTable::t t::t t::t)
              unchecked:
-             __HashTable-set!)))
-  (declare-type
-   __HashTable-set!
-   (@lambda 3
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-set!)))
   (declare-type
    &HashTable-set!
    (@lambda 3
@@ -320,13 +290,7 @@ package: gerbil/runtime
              arguments:
              (HashTable::t t::t procedure::t t::t)
              unchecked:
-             __HashTable-update!)))
-  (declare-type
-   __HashTable-update!
-   (@lambda 4
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &HashTable-update!)))
   (declare-type
    &HashTable-update!
    (@lambda 4
@@ -397,13 +361,7 @@ package: gerbil/runtime
              arguments:
              (Locker::t)
              unchecked:
-             __Locker-read-lock!)))
-  (declare-type
-   __Locker-read-lock!
-   (@lambda 1
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &Locker-read-lock!)))
   (declare-type
    &Locker-read-lock!
    (@lambda 1
@@ -422,13 +380,7 @@ package: gerbil/runtime
              arguments:
              (Locker::t)
              unchecked:
-             __Locker-read-unlock!)))
-  (declare-type
-   __Locker-read-unlock!
-   (@lambda 1
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &Locker-read-unlock!)))
   (declare-type
    &Locker-read-unlock!
    (@lambda 1
@@ -447,13 +399,7 @@ package: gerbil/runtime
              arguments:
              (Locker::t)
              unchecked:
-             __Locker-write-lock!)))
-  (declare-type
-   __Locker-write-lock!
-   (@lambda 1
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &Locker-write-lock!)))
   (declare-type
    &Locker-write-lock!
    (@lambda 1
@@ -472,13 +418,7 @@ package: gerbil/runtime
              arguments:
              (Locker::t)
              unchecked:
-             __Locker-write-unlock!)))
-  (declare-type
-   __Locker-write-unlock!
-   (@lambda 1
-            #f
-            signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+             &Locker-write-unlock!)))
   (declare-type
    &Locker-write-unlock!
    (@lambda 1
@@ -542,14 +482,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((clear! . _%locked-hash-table::clear!101634%_)
-            (update! . _%locked-hash-table::update!101624%_)
-            (length . _%locked-hash-table::length101630%_)
-            (ref . _%locked-hash-table::ref101620%_)
-            (delete! . _%locked-hash-table::delete!101626%_)
-            (set! . _%locked-hash-table::set!101622%_)
-            (for-each . _%locked-hash-table::for-each101628%_)
-            (copy . _%locked-hash-table::copy101632%_))))
+           ((for-each . _%locked-hash-table::for-each101662%_)
+            (set! . _%locked-hash-table::set!101656%_)
+            (copy . _%locked-hash-table::copy101666%_)
+            (clear! . _%locked-hash-table::clear!101668%_)
+            (ref . _%locked-hash-table::ref101654%_)
+            (update! . _%locked-hash-table::update!101658%_)
+            (delete! . _%locked-hash-table::delete!101660%_)
+            (length . _%locked-hash-table::length101664%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -591,14 +531,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((clear! . _%checked-hash-table::clear!101926%_)
-            (update! . _%checked-hash-table::update!101916%_)
-            (length . _%checked-hash-table::length101922%_)
-            (ref . _%checked-hash-table::ref101912%_)
-            (delete! . _%checked-hash-table::delete!101918%_)
-            (set! . _%checked-hash-table::set!101914%_)
-            (for-each . _%checked-hash-table::for-each101920%_)
-            (copy . _%checked-hash-table::copy101924%_))))
+           ((for-each . _%checked-hash-table::for-each101954%_)
+            (set! . _%checked-hash-table::set!101948%_)
+            (copy . _%checked-hash-table::copy101958%_)
+            (clear! . _%checked-hash-table::clear!101960%_)
+            (ref . _%checked-hash-table::ref101946%_)
+            (update! . _%checked-hash-table::update!101950%_)
+            (delete! . _%checked-hash-table::delete!101952%_)
+            (length . _%checked-hash-table::length101956%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
@@ -723,7 +663,7 @@ package: gerbil/runtime
   (declare-type hash-table? (@lambda 1 HashTable?))
   (declare-type is-hash-table? (@lambda 1 is-HashTable?))
   (declare-type
-   _%locked-hash-table::ref101620%_
+   _%locked-hash-table::ref101654%_
    (@lambda 3
             #f
             signature:
@@ -736,7 +676,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::set!101622%_
+   _%locked-hash-table::set!101656%_
    (@lambda 3
             #f
             signature:
@@ -749,7 +689,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::update!101624%_
+   _%locked-hash-table::update!101658%_
    (@lambda 4
             #f
             signature:
@@ -762,37 +702,37 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::delete!101626%_
+   _%locked-hash-table::delete!101660%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::for-each101628%_
+   _%locked-hash-table::for-each101662%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::length101630%_
+   _%locked-hash-table::length101664%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::copy101632%_
+   _%locked-hash-table::copy101666%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::clear!101634%_
+   _%locked-hash-table::clear!101668%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::ref101912%_
+   _%checked-hash-table::ref101946%_
    (@lambda 3
             #f
             signature:
@@ -805,7 +745,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::set!101914%_
+   _%checked-hash-table::set!101948%_
    (@lambda 3
             #f
             signature:
@@ -818,7 +758,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::update!101916%_
+   _%checked-hash-table::update!101950%_
    (@lambda 4
             #f
             signature:
@@ -831,31 +771,31 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::delete!101918%_
+   _%checked-hash-table::delete!101952%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::for-each101920%_
+   _%checked-hash-table::for-each101954%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::length101922%_
+   _%checked-hash-table::length101956%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::copy101924%_
+   _%checked-hash-table::copy101958%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::clear!101926%_
+   _%checked-hash-table::clear!101960%_
    (@lambda 1
             #f
             signature:

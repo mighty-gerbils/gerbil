@@ -239,6 +239,9 @@ namespace: gerbil/core/contract
                      resolve-type
                      |gerbil/core/contract~TypeReference[1]#resolve-type|)
                     (%#define-runtime
+                     resolve-type->identifier
+                     |gerbil/core/contract~TypeReference[1]#resolve-type->identifier|)
+                    (%#define-runtime
                      resolve-type->type-descriptor
                      |gerbil/core/contract~TypeReference[1]#resolve-type->type-descriptor|))
                    (%#define-syntax
