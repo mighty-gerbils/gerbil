@@ -71,7 +71,10 @@ namespace: gerbil/core/more-sugar
            |gerbil/core/more-sugar[1]#syntax-local-setf-macro?|)
           (%#define-runtime
            syntax-local-setq-macro?
-           |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|))
+           |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|)
+          (%#define-runtime
+           expand-set!
+           |gerbil/core/more-sugar[1]#expand-set!|))
          (%#define-syntax set! |gerbil/core/more-sugar[:0:]#set!|)
          (%#define-syntax
           values-set!

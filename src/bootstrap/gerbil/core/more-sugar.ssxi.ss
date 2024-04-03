@@ -4,7 +4,7 @@ package: gerbil/core
 (begin
   (declare-class
    |gerbil/core/more-sugar[1]#setq-macro::t|
-   (@class gerbil.core#setq-macro::t
+   (@class gerbil/core/more-sugar#setq-macro::t
            (gerbil/core/macro-object#macro-object::t)
            (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
@@ -40,7 +40,7 @@ package: gerbil/core
    (@mutator |gerbil/core/more-sugar[1]#setq-macro::t| macro #f))
   (declare-class
    |gerbil/core/more-sugar[1]#setf-macro::t|
-   (@class gerbil.core#setf-macro::t
+   (@class gerbil/core/more-sugar#setf-macro::t
            (gerbil/core/macro-object#macro-object::t)
            (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
@@ -85,4 +85,5 @@ package: gerbil/core
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f))))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type |gerbil/core/more-sugar[1]#expand-set!| (@lambda 1 #f)))
