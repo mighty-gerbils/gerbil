@@ -107,10 +107,10 @@
 (interface (PeekableStringReader StringReader)
   ;; reads a single char
   ;; returns the char or eof
-  (read-char) => :char
+  (read-char) => :t
   ;; peeks the next char
   ;; returns the char or eof
-  (peek-char) => :char)
+  (peek-char) => :t)
 
 (deftype @BufferedStringReader BufferedStringReader)
 
