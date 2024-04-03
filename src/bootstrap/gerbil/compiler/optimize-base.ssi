@@ -582,7 +582,15 @@ namespace: gxc
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
                   (%#define-runtime !lambda:::init!__@ gxc#!lambda:::init!__@)
                   (%#define-runtime !lambda:::init! gxc#!lambda:::init!))
-         (%#define-runtime !case-lambda:::init! gxc#!case-lambda:::init!)
+         (%#begin (%#define-runtime
+                   !case-lambda:::init!__%
+                   gxc#!case-lambda:::init!__%)
+                  (%#define-runtime
+                   !case-lambda:::init!__@
+                   gxc#!case-lambda:::init!__@)
+                  (%#define-runtime
+                   !case-lambda:::init!
+                   gxc#!case-lambda:::init!))
          (%#define-runtime !kw-lambda:::init! gxc#!kw-lambda:::init!)
          (%#define-runtime
           !kw-lambda-primary:::init!

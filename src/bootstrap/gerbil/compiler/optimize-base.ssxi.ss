@@ -1127,11 +1127,24 @@ package: gerbil/compiler
    gxc#!lambda:::init!
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))
   (declare-type
-   gxc#!case-lambda:::init!
-   (@lambda 2
+   gxc#!case-lambda:::init!__%
+   (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!case-lambda:::init!__@
+   (@kw-lambda-dispatch (signature:) gxc#!case-lambda:::init!__%))
+  (declare-type
+   gxc#!case-lambda:::init!
+   (@kw-lambda (signature:) gxc#!case-lambda:::init!__@))
   (declare-type
    gxc#!kw-lambda:::init!
    (@lambda 3
@@ -1163,10 +1176,7 @@ package: gerbil/compiler
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))
   (declare-type
    gxc#!primitive-case-lambda:::init!
-   (@lambda 2
-            #f
-            signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+   (@kw-lambda (signature:) gxc#!case-lambda:::init!__@))
   (declare-type
    gxc#!primitive-predicate:::init!
    (@lambda 2

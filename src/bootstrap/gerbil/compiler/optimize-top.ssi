@@ -252,6 +252,7 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda::apply-return-type
           gxc#!kw-lambda::apply-return-type)
+         (%#define-runtime extract-keyword-args gxc#extract-keyword-args)
          (%#define-runtime !lambda-arity-match? gxc#!lambda-arity-match?)
          (%#define-runtime
           !lambda-arity-match-apply?

@@ -466,6 +466,7 @@ package: gerbil/compiler
              (t::t t::t t::t t::t)
              unchecked:
              #f)))
+  (declare-type gxc#extract-keyword-args (@lambda 1 #f))
   (declare-type gxc#!lambda-arity-match? (@lambda 2 #f))
   (declare-type gxc#!lambda-arity-match-apply? (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-special-cast (@lambda 2 #f))

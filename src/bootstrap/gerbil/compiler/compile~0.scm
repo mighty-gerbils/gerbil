@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1712155162)
+  (define gerbil/compiler/compile::timestamp 1712161241)
   (begin
     (define gxc#gambit-annotations
       '(not gambit-scheme
