@@ -35,6 +35,7 @@ package: gerbil/runtime
   (declare-type __compile-top (@lambda 1 #f))
   (declare-type __eval-import (@lambda 1 #f))
   (declare-type __eval-module (@lambda 1 gx#core-eval-module))
+  (declare-type __interrupt-handler (@lambda 0 #f))
   (declare-type gerbil-runtime-init! (@lambda 1 #f))
   (declare-type
    __runtime-initialized

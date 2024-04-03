@@ -1,225 +1,215 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1712124234)
+  (define gerbil/runtime/loader::timestamp 1712146026)
   (begin
     (define __modules (let () (declare (not safe)) (make-hash-table)))
     (define __load-path '())
     (define load-path (lambda () __load-path))
     (define add-load-path!
-      (lambda _%paths111603%_
-        (if (let () (declare (not safe)) (__andmap1 string? _%paths111603%_))
+      (lambda _%paths111587%_
+        (if (let () (declare (not safe)) (__andmap1 string? _%paths111587%_))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad load path; expected list of paths"
-                     _%paths111603%_)))
-        (let ((__tmp111608
-               (lambda (_%p111605%_)
-                 (set! __load-path (cons _%p111605%_ __load-path))))
-              (__tmp111607 (reverse! _%paths111603%_)))
+                     _%paths111587%_)))
+        (let ((__tmp111592
+               (lambda (_%p111589%_)
+                 (set! __load-path (cons _%p111589%_ __load-path))))
+              (__tmp111591 (reverse! _%paths111587%_)))
           (declare (not safe))
-          (##for-each __tmp111608 __tmp111607))))
+          (##for-each __tmp111592 __tmp111591))))
     (define set-load-path!
-      (lambda (_%paths111601%_)
-        (if (and (let () (declare (not safe)) (list? _%paths111601%_))
+      (lambda (_%paths111585%_)
+        (if (and (let () (declare (not safe)) (list? _%paths111585%_))
                  (let ()
                    (declare (not safe))
-                   (__andmap1 string? _%paths111601%_)))
+                   (__andmap1 string? _%paths111585%_)))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad load path; expected list of paths"
-                     _%paths111601%_)))
-        (set! __load-path _%paths111601%_)))
+                     _%paths111585%_)))
+        (set! __load-path _%paths111585%_)))
     (define load-module
-      (lambda (_%modpath111587%_)
+      (lambda (_%modpath111571%_)
         (let ()
-          (if (let () (declare (not safe)) (string? _%modpath111587%_))
-              (let ()
-                (let ((_%modpath111591%_ _%modpath111587%_))
-                  (let ()
-                    (let ()
-                      (declare (not safe))
-                      (__load-module _%modpath111591%_)))))
-              (raise-contract-violation-error
-               '"contract violation"
-               'context:
-               '"\"gerbil/runtime/loader.ss\"@28.20-28.27"
-               'contract:
-               'string?
-               'value:
-               _%modpath111587%_)))))
+          (if (let () (declare (not safe)) (string? _%modpath111571%_))
+              (let ((_%modpath111575%_ _%modpath111571%_))
+                (declare (not safe))
+                (__load-module _%modpath111575%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 '"\"gerbil/runtime/loader.ss\"@28.20-28.27"
+                 'contract:
+                 'string?
+                 'value:
+                 _%modpath111571%_)
+                '#!void)))))
     (define __load-module
-      (lambda (_%modpath111564%_)
+      (lambda (_%modpath111548%_)
         (let ()
-          (let ((_%modpath111567%_ _%modpath111564%_))
-            (let ()
-              (let ((_%$e111576%_
-                     (let ()
-                       (declare (not safe))
-                       (hash-get __modules _%modpath111567%_))))
-                (if _%$e111576%_
-                    _%$e111576%_
-                    (let ((_%$e111579%_
+          (let* ((_%modpath111551%_ _%modpath111548%_)
+                 (_%$e111560%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-get __modules _%modpath111551%_))))
+            (if _%$e111560%_
+                _%$e111560%_
+                (let ((_%$e111563%_
+                       (let ()
+                         (declare (not safe))
+                         (__find-library-module _%modpath111551%_))))
+                  (if _%$e111563%_
+                      ((lambda (_%path111566%_)
+                         (let ((_%loaded-path111568%_ (load _%path111566%_)))
                            (let ()
                              (declare (not safe))
-                             (__find-library-module _%modpath111567%_))))
-                      (if _%$e111579%_
-                          ((lambda (_%path111582%_)
-                             (let ((_%loaded-path111584%_
-                                    (load _%path111582%_)))
+                             (hash-put!
+                              __modules
+                              _%modpath111551%_
+                              _%loaded-path111568%_))
+                           _%loaded-path111568%_))
+                       _%$e111563%_)
+                      (let ()
+                        (declare (not safe))
+                        (error '"module not found" _%modpath111551%_)))))))))
+    (define reload-module!
+      (lambda (_%modpath111534%_)
+        (let ()
+          (if (let () (declare (not safe)) (string? _%modpath111534%_))
+              (let ((_%modpath111538%_ _%modpath111534%_))
+                (declare (not safe))
+                (__reload-module! _%modpath111538%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 '"\"gerbil/runtime/loader.ss\"@39.23-39.30"
+                 'contract:
+                 'string?
+                 'value:
+                 _%modpath111534%_)
+                '#!void)))))
+    (define __reload-module!
+      (lambda (_%modpath111508%_)
+        (let ()
+          (let* ((_%modpath111511%_ _%modpath111508%_)
+                 (_%$e111521%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-get __modules _%modpath111511%_))))
+            (if _%$e111521%_
+                ((lambda (_%current-path111524%_)
+                   (if (eq? _%current-path111524%_ 'builtin)
+                       (let ((_%latest-path111526%_
+                              (let ()
+                                (declare (not safe))
+                                (__find-library-module _%modpath111511%_))))
+                         (if (or (equal? (path-extension
+                                          _%current-path111524%_)
+                                         '".scm")
+                                 (let ((__tmp111593
+                                        (equal? _%current-path111524%_
+                                                _%latest-path111526%_)))
+                                   (declare (not safe))
+                                   (not __tmp111593)))
+                             (let ((_%loaded-path111531%_
+                                    (load _%modpath111511%_)))
                                (let ()
                                  (declare (not safe))
                                  (hash-put!
                                   __modules
-                                  _%modpath111567%_
-                                  _%loaded-path111584%_))
-                               _%loaded-path111584%_))
-                           _%$e111579%_)
-                          (let ()
-                            (let ()
-                              (declare (not safe))
-                              (error '"module not found"
-                                     _%modpath111567%_))))))))))))
-    (define reload-module!
-      (lambda (_%modpath111550%_)
-        (let ()
-          (if (let () (declare (not safe)) (string? _%modpath111550%_))
-              (let ()
-                (let ((_%modpath111554%_ _%modpath111550%_))
-                  (let ()
-                    (let ()
-                      (declare (not safe))
-                      (__reload-module! _%modpath111554%_)))))
-              (raise-contract-violation-error
-               '"contract violation"
-               'context:
-               '"\"gerbil/runtime/loader.ss\"@39.23-39.30"
-               'contract:
-               'string?
-               'value:
-               _%modpath111550%_)))))
-    (define __reload-module!
-      (lambda (_%modpath111524%_)
-        (let ()
-          (let ((_%modpath111527%_ _%modpath111524%_))
-            (let ()
-              (let ((_%$e111537%_
-                     (let ()
-                       (declare (not safe))
-                       (hash-get __modules _%modpath111527%_))))
-                (if _%$e111537%_
-                    ((lambda (_%current-path111540%_)
-                       (if (eq? _%current-path111540%_ 'builtin)
-                           (let ((_%latest-path111542%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (__find-library-module
-                                     _%modpath111527%_))))
-                             (if (or (equal? (path-extension
-                                              _%current-path111540%_)
-                                             '".scm")
-                                     (let ((__tmp111609
-                                            (equal? _%current-path111540%_
-                                                    _%latest-path111542%_)))
-                                       (declare (not safe))
-                                       (not __tmp111609)))
-                                 (let ((_%loaded-path111547%_
-                                        (load _%modpath111527%_)))
-                                   (let ()
-                                     (declare (not safe))
-                                     (hash-put!
-                                      __modules
-                                      _%modpath111527%_
-                                      _%loaded-path111547%_))
-                                   _%loaded-path111547%_)
-                                 '#!void))
-                           (let ()
-                             (declare (not safe))
-                             (error '"cannot reload builtin module"
-                                    _%modpath111527%_))))
-                     _%$e111537%_)
-                    (let ()
-                      (let ()
-                        (declare (not safe))
-                        (__load-module _%modpath111527%_))))))))))
+                                  _%modpath111511%_
+                                  _%loaded-path111531%_))
+                               _%loaded-path111531%_)
+                             '#!void))
+                       (let ()
+                         (declare (not safe))
+                         (error '"cannot reload builtin module"
+                                _%modpath111511%_))))
+                 _%$e111521%_)
+                (let ()
+                  (declare (not safe))
+                  (__load-module _%modpath111511%_)))))))
     (define __find-library-module
-      (lambda (_%modpath111458%_)
-        (letrec ((_%find-compiled-file111460%_
-                  (lambda (_%npath111513%_)
-                    (let ((_%basepath111515%_
+      (lambda (_%modpath111442%_)
+        (letrec ((_%find-compiled-file111444%_
+                  (lambda (_%npath111497%_)
+                    (let ((_%basepath111499%_
                            (let ()
                              (declare (not safe))
-                             (##string-append _%npath111513%_ '".o"))))
-                      (let _%lp111517%_ ((_%current111519%_ '#f)
-                                         (_%n111520%_ '1))
-                        (let ((_%next111522%_
-                               (let ((__tmp111610
-                                      (number->string _%n111520%_)))
+                             (##string-append _%npath111497%_ '".o"))))
+                      (let _%lp111501%_ ((_%current111503%_ '#f)
+                                         (_%n111504%_ '1))
+                        (let ((_%next111506%_
+                               (let ((__tmp111594
+                                      (number->string _%n111504%_)))
                                  (declare (not safe))
                                  (##string-append
-                                  _%basepath111515%_
-                                  __tmp111610))))
+                                  _%basepath111499%_
+                                  __tmp111594))))
                           (if (let ()
                                 (declare (not safe))
-                                (##file-exists? _%next111522%_))
-                              (let ((__tmp111611
+                                (##file-exists? _%next111506%_))
+                              (let ((__tmp111595
                                      (let ()
                                        (declare (not safe))
-                                       (##fx+ _%n111520%_ '1))))
+                                       (##fx+ _%n111504%_ '1))))
                                 (declare (not safe))
-                                (_%lp111517%_ _%next111522%_ __tmp111611))
-                              _%current111519%_))))))
-                 (_%find-source-file111461%_
-                  (lambda (_%npath111509%_)
-                    (let ((_%spath111511%_
+                                (_%lp111501%_ _%next111506%_ __tmp111595))
+                              _%current111503%_))))))
+                 (_%find-source-file111445%_
+                  (lambda (_%npath111493%_)
+                    (let ((_%spath111495%_
                            (let ()
                              (declare (not safe))
-                             (##string-append _%npath111509%_ '".scm"))))
+                             (##string-append _%npath111493%_ '".scm"))))
                       (if (let ()
                             (declare (not safe))
-                            (##file-exists? _%spath111511%_))
-                          _%spath111511%_
+                            (##file-exists? _%spath111495%_))
+                          _%spath111495%_
                           '#f)))))
-          (let _%lp111463%_ ((_%rest111465%_
+          (let _%lp111447%_ ((_%rest111449%_
                               (let () (declare (not safe)) (load-path))))
-            (let* ((_%rest111466111474%_ _%rest111465%_)
-                   (_%else111468111482%_ (lambda () '#f))
-                   (_%K111470111497%_
-                    (lambda (_%rest111485%_ _%dir111486%_)
-                      (let* ((_%npath111488%_
+            (let* ((_%rest111450111458%_ _%rest111449%_)
+                   (_%else111452111466%_ (lambda () '#f))
+                   (_%K111454111481%_
+                    (lambda (_%rest111469%_ _%dir111470%_)
+                      (let* ((_%npath111472%_
                               (path-expand
-                               _%modpath111458%_
-                               (path-expand _%dir111486%_)))
-                             (_%$e111490%_
+                               _%modpath111442%_
+                               (path-expand _%dir111470%_)))
+                             (_%$e111474%_
                               (let ()
                                 (declare (not safe))
-                                (_%find-compiled-file111460%_
-                                 _%npath111488%_))))
-                        (if _%$e111490%_
-                            (path-normalize _%$e111490%_)
-                            (let ((_%$e111493%_
+                                (_%find-compiled-file111444%_
+                                 _%npath111472%_))))
+                        (if _%$e111474%_
+                            (path-normalize _%$e111474%_)
+                            (let ((_%$e111477%_
                                    (let ()
                                      (declare (not safe))
-                                     (_%find-source-file111461%_
-                                      _%npath111488%_))))
-                              (if _%$e111493%_
-                                  (path-normalize _%$e111493%_)
+                                     (_%find-source-file111445%_
+                                      _%npath111472%_))))
+                              (if _%$e111477%_
+                                  (path-normalize _%$e111477%_)
                                   (let ()
-                                    (let ()
-                                      (declare (not safe))
-                                      (_%lp111463%_ _%rest111485%_))))))))))
-              (if (let () (declare (not safe)) (##pair? _%rest111466111474%_))
-                  (let ((_%hd111471111500%_
+                                    (declare (not safe))
+                                    (_%lp111447%_ _%rest111469%_)))))))))
+              (if (let () (declare (not safe)) (##pair? _%rest111450111458%_))
+                  (let ((_%hd111455111484%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest111466111474%_)))
-                        (_%tl111472111502%_
+                           (##car _%rest111450111458%_)))
+                        (_%tl111456111486%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest111466111474%_))))
-                    (let* ((_%dir111505%_ _%hd111471111500%_)
-                           (_%rest111507%_ _%tl111472111502%_))
+                           (##cdr _%rest111450111458%_))))
+                    (let* ((_%dir111489%_ _%hd111455111484%_)
+                           (_%rest111491%_ _%tl111456111486%_))
                       (declare (not safe))
-                      (_%K111470111497%_ _%rest111507%_ _%dir111505%_)))
-                  (let () (declare (not safe)) (_%else111468111482%_))))))))))
+                      (_%K111454111481%_ _%rest111491%_ _%dir111489%_)))
+                  (let () (declare (not safe)) (_%else111452111466%_))))))))))

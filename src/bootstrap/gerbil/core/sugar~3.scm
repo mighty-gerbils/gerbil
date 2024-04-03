@@ -521,18 +521,14 @@
                                       (lambda (_%g1823918250%_)
                                         ((lambda (_%L18253%_)
                                            (let ()
-                                             (let ()
-                                               (gx#stx-wrap-source
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'begin)
-                                                      (cons _%L18253%_
-                                                            (cons _%L18225%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (gx#stx-source
-                                                 _%stx17939%_)))))
+                                             (gx#stx-wrap-source
+                                              (cons (gx#datum->syntax
+                                                     '#f
+                                                     'begin)
+                                                    (cons _%L18253%_
+                                                          (cons _%L18225%_
+                                                                '())))
+                                              (gx#stx-source _%stx17939%_))))
                                          _%g1823918250%_))))
                                 (_%g1823718268%_
                                  (gx#stx-wrap-source

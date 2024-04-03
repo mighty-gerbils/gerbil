@@ -83,21 +83,19 @@
                       (if (let () (declare (not safe)) (not _%super24874%_))
                           (let () '())
                           (if (gx#identifier? _%super24874%_)
-                              (let ()
-                                (let ((__tmp27369
-                                       (let ()
-                                         (declare (not safe))
-                                         (_%get-mixin-slots-r22687%_
-                                          _%super24874%_))))
-                                  (declare (not safe))
-                                  (_%dedup24880%_ __tmp27369)))
-                              (let ()
-                                (let ((__tmp27370
-                                       (concatenate
-                                        (map _%get-mixin-slots-r22687%_
-                                             _%super24874%_))))
-                                  (declare (not safe))
-                                  (_%dedup24880%_ __tmp27370))))))))
+                              (let ((__tmp27369
+                                     (let ()
+                                       (declare (not safe))
+                                       (_%get-mixin-slots-r22687%_
+                                        _%super24874%_))))
+                                (declare (not safe))
+                                (_%dedup24880%_ __tmp27369))
+                              (let ((__tmp27370
+                                     (concatenate
+                                      (map _%get-mixin-slots-r22687%_
+                                           _%super24874%_))))
+                                (declare (not safe))
+                                (_%dedup24880%_ __tmp27370)))))))
                  (_%get-mixin-slots-r22687%_
                   (lambda (_%type-id24868%_)
                     (let ((_%info24871%_
@@ -1260,14 +1258,14 @@
                                                  (_%g2425124282%_
                                                   (lambda (_%g2425324264%_)
                                                     ((lambda (_%L24267%_)
-                                                       (let ()
-                                                         (let ()
-                                                           (let ((__tmp27406
+                                                       (let ((__tmp27406
+                                                              (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons (gx#datum->syntax '#f 'begin)
-                                (cons _%L23819%_ (cons _%L24267%_ '())))))
-                     (declare (not safe))
-                     (_%wrap22683%_ __tmp27406)))))
+                             '#f
+                             'begin)
+                            (cons _%L23819%_ (cons _%L24267%_ '())))))
+                 (declare (not safe))
+                 (_%wrap22683%_ __tmp27406)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      _%g2425324264%_)))
                                                  (__tmp27407
@@ -2556,13 +2554,12 @@
                                                     (lambda (_%g2545025461%_)
                                                       ((lambda (_%L25464%_)
                                                          (let ()
-                                                           (let ()
-                                                             (_%wrap25170%_
-                                                              (cons (gx#datum->syntax
+                                                           (_%wrap25170%_
+                                                            (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'begin)
-                            (cons _%L25408%_ (cons _%L25464%_ '())))))))
+                           '#f
+                           'begin)
+                          (cons _%L25408%_ (cons _%L25464%_ '()))))))
                _%g2545025461%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (_%g2544825479%_

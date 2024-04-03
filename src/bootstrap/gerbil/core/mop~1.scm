@@ -12,15 +12,14 @@
                 _%type-t22498%_
                 '"::t"))
              _%$e22501%_)
-            (let ()
-              (let ((_%mid22510%_
-                     (gx#expander-context-id (gx#current-expander-context))))
-                (gx#stx-identifier
-                 _%type-t22498%_
-                 _%mid22510%_
-                 '"#"
-                 _%type-t22498%_
-                 '"::t")))))))
+            (let ((_%mid22510%_
+                   (gx#expander-context-id (gx#current-expander-context))))
+              (gx#stx-identifier
+               _%type-t22498%_
+               _%mid22510%_
+               '"#"
+               _%type-t22498%_
+               '"::t"))))))
   (define |gerbil/core/mop~MOP-1[1]#make-class-type-id|
     (lambda (_%type-t22495%_)
       (if (gx#module-context? (gx#current-expander-context))
@@ -657,33 +656,29 @@
                     (_%def-ugetf2190521975%_
                      (reverse _%def-ugetf2190321939%_)))
                 ((lambda (_%L21978%_ _%L21980%_)
-                   (let ()
-                     (let ()
-                       (let ((__tmp27244
-                              (cons (gx#datum->syntax '#f 'begin)
-                                    (cons _%L21716%_
-                                          (cons _%L21772%_
-                                                (cons _%L21744%_
-                                                      (foldr (lambda (_%g2199822007%_
+                   (let ((__tmp27244
+                          (cons (gx#datum->syntax '#f 'begin)
+                                (cons _%L21716%_
+                                      (cons _%L21772%_
+                                            (cons _%L21744%_
+                                                  (foldr (lambda (_%g2199822007%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _%g2199922010%_)
-                       (cons _%g2199822007%_ _%g2199922010%_))
-                     (foldr (lambda (_%g2200022013%_ _%g2200122016%_)
-                              (cons _%g2200022013%_ _%g2200122016%_))
-                            (foldr (lambda (_%g2200222019%_ _%g2200322022%_)
-                                     (cons _%g2200222019%_ _%g2200322022%_))
-                                   (foldr (lambda (_%g2200422025%_
-                                                   _%g2200522028%_)
-                                            (cons _%g2200422025%_
-                                                  _%g2200522028%_))
-                                          '()
-                                          _%L21978%_)
-                                   _%L21980%_)
-                            _%L21872%_)
-                     _%L21874%_)))))))
+                          _%g2199922010%_)
+                   (cons _%g2199822007%_ _%g2199922010%_))
+                 (foldr (lambda (_%g2200022013%_ _%g2200122016%_)
+                          (cons _%g2200022013%_ _%g2200122016%_))
+                        (foldr (lambda (_%g2200222019%_ _%g2200322022%_)
+                                 (cons _%g2200222019%_ _%g2200322022%_))
+                               (foldr (lambda (_%g2200422025%_ _%g2200522028%_)
+                                        (cons _%g2200422025%_ _%g2200522028%_))
+                                      '()
+                                      _%L21978%_)
+                               _%L21980%_)
+                        _%L21872%_)
+                 _%L21874%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                         (declare (not safe))
-                         (_%wrap21077%_ __tmp27244)))))
+                     (declare (not safe))
+                     (_%wrap21077%_ __tmp27244)))
                  _%def-usetf2190421972%_
                  _%def-ugetf2190521975%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

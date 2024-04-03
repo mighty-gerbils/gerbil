@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1712124230)
+  (define gerbil/core/contract~TypeEnv::timestamp 1712146022)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type
@@ -94,12 +94,11 @@
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f))
                   (let () _%te46615%_)
-                  (let ()
-                    (let ((__tmp80089
-                           (##direct-structure-ref
-                            _%te46615%_
-                            '4
-                            gerbil/core/contract~TypeEnv#type-env::t
-                            '#f)))
-                      (declare (not safe))
-                      (_%loop46613%_ __tmp80089))))))))))
+                  (let ((__tmp80073
+                         (##direct-structure-ref
+                          _%te46615%_
+                          '4
+                          gerbil/core/contract~TypeEnv#type-env::t
+                          '#f)))
+                    (declare (not safe))
+                    (_%loop46613%_ __tmp80073)))))))))
