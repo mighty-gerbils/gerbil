@@ -388,7 +388,7 @@
              (cons host port)))
           ((3)                                           ; DOMAINNAME
            (unless (fx> len 6)
-             (raise-io-error socks5-recv-reply "bad response length" len ('> 6)))
+             (raise-io-error socks5-recv-reply "bad response length" len '(> 6)))
            (let* ((host (subu8vector msg 4 (fx- len 3))) ; skip NUL terminator
                   (porthi (u8vector-ref msg (fx- len 2)))
                   (portlo (u8vector-ref msg (fx- len 1)))
