@@ -343,8 +343,10 @@ package: gerbil/core
   (begin-syntax
     (def (dotted-identifier? id)
       (and (identifier? id)
-           (alet (index (string-index (symbol->string (stx-e id)) #\.))
-             (> index 0))))
+           (let (str (symbol->string (stx-e id)))
+             (alet (index (string-index str #\.))
+               (and (fx> index 0)
+                    (not (find string-empty? (string-split str #\.))))))))
 
     (def (split-dotted-identifier stx id)
       (let (parts (string-split (symbol->string (stx-e id)) #\.))
@@ -641,9 +643,9 @@ package: gerbil/core
                        (raise-syntax-error #f "unexpected type" stx type))))))))
           (else
            ;; no type info for base of dots, dispatch to set!
-           #'(set! id value)))))
+           (expand-set! stx)))))
       ((_ target value)
-       #'(set! target value)))))
+       (expand-set! stx)))))
 
 (module ContractRules
   (export #t)
