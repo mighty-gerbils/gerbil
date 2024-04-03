@@ -510,7 +510,7 @@
                  (cond
                   ;; speculatively inline list iteration
                   ((pair? iterable)
-                   (map iter-do iterable))
+                   (map iter-do (:- iterable :list)))
                   ((null? iterable) [])
                   (else
                    ;; full iteration protocol
