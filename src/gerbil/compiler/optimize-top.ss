@@ -443,15 +443,22 @@ namespace: gxc
 
 (defmethod {return-type !procedure}
   (lambda (self ctx stx args)
-    (if self.dispatch
-      (let (dispatch-type (optimizer-lookup-type self.dispatch))
-        {dispatch-type.return-type ctx stx args})
-      (alet* ((signature self.signature)
-              (return (&!signature-return signature)))
-        (optimizer-resolve-class stx return)))))
+    (alet* ((signature self.signature)
+            (return (&!signature-return signature)))
+      (optimizer-resolve-class stx return))))
 
 (defmethod {apply-return-type !procedure}
   !procedure::return-type)
+
+(defmethod {return-type !lambda}
+  (lambda (self ctx stx args)
+    (if self.dispatch
+      (alet (dispatch-type (optimizer-lookup-type self.dispatch))
+        {dispatch-type.return-type ctx stx args})
+      (!procedure::return-type self ctx stx args))))
+
+(defmethod {apply-return-type !lambda}
+  !lambda::return-type)
 
 (defmethod {return-type !case-lambda}
   (lambda (self ctx stx args)
@@ -482,8 +489,8 @@ namespace: gxc
   (lambda (self ctx stx args)
     (match (optimizer-lookup-type self.dispatch)
       ((!kw-lambda-primary _ _ keys main)
-       (alet (type (optimizer-lookup-type main))
-         {type.return-type ctx stx args}))
+       (alet (main-type (optimizer-lookup-type main))
+         {main-type.return-type ctx stx args}))
       ((? !procedure? proc)
        (!procedure::return-type proc ctx stx args)))))
 
@@ -491,8 +498,8 @@ namespace: gxc
   (lambda (self ctx stx args)
     (match (optimizer-lookup-type self.dispatch)
       ((!kw-lambda-primary _ _ keys main)
-       (alet (type (optimizer-lookup-type main))
-         {type.apply-return-type ctx stx args}))
+       (alet (main-type (optimizer-lookup-type main))
+         {main-type.apply-return-type ctx stx args}))
       ((? !procedure? proc)
        (!procedure::apply-return-type proc ctx stx args)))))
 
