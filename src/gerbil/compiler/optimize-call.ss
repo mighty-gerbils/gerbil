@@ -502,7 +502,7 @@ namespace: gxc
     (with ((!kw-lambda _ _ table dispatch) self)
       (if (symbol-in-local-scope? dispatch)
         (match (optimizer-lookup-type dispatch)
-          ((!kw-lambda-primary _ keys main)
+          ((!kw-lambda-primary _ _ keys main)
            (let ((values pargs kwargs)
                  (!kw-lambda-split-args stx args))
              (verbose "dispatch kw-lambda => " main)
