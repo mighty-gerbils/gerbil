@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1712146026)
+  (define gerbil/runtime/error::timestamp 1712147676)
   (begin
     (define Exception::t
       (let ((__tmp100072 (list)))
@@ -683,10 +683,7 @@
                                   (##write-char '#\space)))
                               _%irritants99576%_)
                              (newline))))
-                     (if (and '#t
-                              (let ()
-                                (declare (not safe))
-                                (dump-stack-trace?)))
+                     (if (let () (declare (not safe)) (dump-stack-trace?))
                          (let ((_%cont9957999581%_
                                 (let ()
                                   (declare (not safe))

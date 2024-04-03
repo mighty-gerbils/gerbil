@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/syntax::timestamp 1712146026)
+  (define gerbil/runtime/syntax::timestamp 1712147677)
   (begin
     (declare (not safe))
     (define SyntaxError::t
@@ -135,7 +135,7 @@
                          '2
                          '#f
                          '#f)))))
-               (let* ((_%g108487108495%_
+               (let* ((_%self.irritants108487108495%_
                        (##unchecked-structure-ref _%self108463%_ '3 '#f '#f))
                       (_%else108489108503%_ (lambda () '#!void))
                       (_%K108491108516%_
@@ -159,16 +159,22 @@
                                   '#!void))
                             (newline))
                           _%rest108506%_))))
-                 (if (##pair? _%g108487108495%_)
-                     (let ((_%hd108492108519%_ (##car _%g108487108495%_))
-                           (_%tl108493108521%_ (##cdr _%g108487108495%_)))
+                 (if (##pair? _%self.irritants108487108495%_)
+                     (let ((_%hd108492108519%_
+                            (##car _%self.irritants108487108495%_))
+                           (_%tl108493108521%_
+                            (##cdr _%self.irritants108487108495%_)))
                        (let* ((_%stx108524%_ _%hd108492108519%_)
                               (_%rest108526%_ _%tl108493108521%_))
                          (_%K108491108516%_ _%rest108526%_ _%stx108524%_)))
                      '#!void))
                (if (##getenv '"GERBIL_DEBUG" '#f)
                    (let ((_%cont108527108529%_
-                          (unchecked-slot-ref _%self108463%_ 'continuation)))
+                          (##unchecked-structure-ref
+                           _%self108463%_
+                           '1
+                           '#f
+                           '#f)))
                      (if _%cont108527108529%_
                          (let ((_%cont108532%_ _%cont108527108529%_))
                            (display '"--- continuation backtrace:")
