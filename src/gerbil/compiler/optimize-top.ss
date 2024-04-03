@@ -407,10 +407,33 @@ namespace: gxc
              (and (dispatch-lambda-form? form)
                   (dispatch-lambda-form-delegate form))
              signature: signature)))
+
+  (def (return-type-e clauses)
+    (let loop ((rest clauses) (result #f))
+      (match rest
+        ([clause . rest]
+         (using (clause :- !lambda)
+           (let* ((return
+                   (using (signature clause.signature :- !signature)
+                     (and signature
+                          signature.return
+                          (optimizer-resolve-class stx signature.return))))
+                  (result
+                   (if (and result return)
+                     (greatest-common-type stx result return)
+                     (or result return))))
+             (loop rest result))))
+        (else result))))
+
   (ast-case stx ()
     ((_ . clauses)
-     (let (clauses (map clause-e #'clauses))
-       (make-!case-lambda clauses)))))
+     (let* ((clauses (map clause-e #'clauses))
+            (return (return-type-e clauses)))
+       (make-!case-lambda
+        clauses
+        signature: (and return
+                        (alet (return-type (optimizer-lookup-class-name return))
+                          (make-!signature return: return-type))))))))
 
 (def basic-expression-type-special (make-hash-table-eq))
 (defrules defbasic-expression-type-special ()
@@ -466,8 +489,7 @@ namespace: gxc
      ((find (cut !lambda-arity-match? <> args) self.clauses)
       => (lambda (clause) {clause.return-type ctx stx args}))
      (else
-      (raise-compile-error "Illegal case-lambda application; arity mismatch"
-                           stx (map !lambda-arity self.clauses))))))
+      (!procedure::return-type self ctx stx args)))))
 
 (defmethod {apply-return-type !case-lambda}
   (lambda (self ctx stx args)
@@ -478,30 +500,41 @@ namespace: gxc
             (map (lambda (candidate)
                    {candidate.apply-return-type ctx stx args})
                  candidates)))
-      (and (pair? candidate-types)
-           (foldl (lambda (candidate-type ret)
-                    (and ret candidate-type
-                         (greatest-common-type stx candidate-type ret)))
-                  (car candidate-types)
-                  (cdr candidate-types))))))
+      (if (pair? candidate-types)
+        (foldl (lambda (candidate-type ret)
+                 (and ret candidate-type
+                      (greatest-common-type stx candidate-type ret)))
+               (car candidate-types)
+               (cdr candidate-types))
+        (!procedure::return-type self ctx stx args)))))
 
 (defmethod {return-type !kw-lambda}
   (lambda (self ctx stx args)
     (match (optimizer-lookup-type self.dispatch)
       ((!kw-lambda-primary _ _ keys main)
        (alet (main-type (optimizer-lookup-type main))
-         {main-type.return-type ctx stx args}))
+         {main-type.return-type ctx stx (extract-keyword-args args)}))
       ((? !procedure? proc)
-       (!procedure::return-type proc ctx stx args)))))
+       {proc.return-type proc ctx stx (extract-keyword-args args)}))))
 
 (defmethod {apply-return-type !kw-lambda}
   (lambda (self ctx stx args)
     (match (optimizer-lookup-type self.dispatch)
       ((!kw-lambda-primary _ _ keys main)
        (alet (main-type (optimizer-lookup-type main))
-         {main-type.apply-return-type ctx stx args}))
+         {main-type.apply-return-type ctx stx (extract-keyword-args args)}))
       ((? !procedure? proc)
-       (!procedure::apply-return-type proc ctx stx args)))))
+       {proc.apply-return-type proc ctx stx (extract-keyword-args args)}))))
+
+(def (extract-keyword-args args)
+  (let loop ((rest args) (result []))
+    (ast-case rest (%#quote)
+      (((%#quote kw) arg . rest)
+       (stx-keyword? #'kw)
+       (loop #'rest (cons #'arg result)))
+      ((arg . rest)
+       (loop #'rest (cons #'arg result)))
+      (_ (reverse! result)))))
 
 (def (!lambda-arity-match? self args)
   (with ((!lambda _ _ arity) self)

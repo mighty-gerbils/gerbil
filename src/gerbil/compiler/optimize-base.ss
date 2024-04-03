@@ -299,8 +299,9 @@ namespace: gxc
     (set! self.signature signature)))
 
 (defmethod {:init! !case-lambda}
-  (lambda (self clauses)
+  (lambda (self clauses signature: (signature #f))
     (set! self.id 'procedure)
+    (set! self.signature signature)
     (set! self.clauses clauses)))
 
 (defmethod {:init! !kw-lambda}
@@ -438,11 +439,11 @@ namespace: gxc
     (hash-get table sym)))
 
 (def (optimizer-resolve-class where sym) => !class
-  (:-
-   (or (alet (klass (optimizer-lookup-class sym))
-        (: klass !class))
-       (raise-compile-error "unknown class" where sym))
-   !class))
+  (cond
+   ((optimizer-lookup-class sym)
+   => (cut : <> !class))
+   (else
+    (abort! (raise-compile-error "unknown class" where sym)))))
 
 (def (optimizer-lookup-class-name klass)
   (hash-get (optimizer-info-classes (current-compile-optimizer-info)) klass))

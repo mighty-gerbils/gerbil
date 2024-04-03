@@ -555,7 +555,7 @@ namespace: gxc
                                                    (xform-wrap-source
                                                     ['%#call '(%#ref make-symbolic-table)
                                                              ['%#quote (length kwargs)]
-                                                             '(%#quote 0)]
+                                                             '(%#quote (length kwvars))]
                                                     stx)]]
                                                  ['%#begin
                                                   kwset ...
