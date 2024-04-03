@@ -111,10 +111,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-lift-modules__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (modules:) gxc#apply-lift-modules__%))
   (declare-type
    gxc#apply-lift-modules
    (@kw-lambda (modules:) gxc#apply-lift-modules__@))
@@ -397,10 +394,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-expression-refs__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (table:) gxc#apply-collect-expression-refs__%))
   (declare-type
    gxc#apply-collect-expression-refs
    (@kw-lambda (table:) gxc#apply-collect-expression-refs__@))
@@ -447,10 +441,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-generate-meta__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (state:) gxc#apply-generate-meta__%))
   (declare-type
    gxc#apply-generate-meta
    (@kw-lambda (state:) gxc#apply-generate-meta__@))
@@ -501,10 +492,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-generate-meta-phi__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (state:) gxc#apply-generate-meta-phi__%))
   (declare-type
    gxc#apply-generate-meta-phi
    (@kw-lambda (state:) gxc#apply-generate-meta-phi__@))

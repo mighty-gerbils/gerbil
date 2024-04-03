@@ -62,8 +62,8 @@ package: gerbil/runtime
            #f
            #f
            #f
-           ((display-exception . Error::display-exception)
-            (:init! . Error:::init!))))
+           ((:init! . Error:::init!)
+            (display-exception . Error::display-exception))))
   (declare-type
    Error::t
    (optimizer-resolve-class '(typedecl Error::t) 'class::t))
@@ -197,7 +197,11 @@ package: gerbil/runtime
   (declare-type raise (@lambda 1 #f))
   (declare-type error (@lambda (1) #f))
   (declare-type __raise-contract-violation-error__% (@lambda 5 #f))
-  (declare-type __raise-contract-violation-error__@ (@lambda (1) #f))
+  (declare-type
+   __raise-contract-violation-error__@
+   (@kw-lambda-dispatch
+    (context: contract: value:)
+    __raise-contract-violation-error__%))
   (declare-type
    __raise-contract-violation-error
    (@kw-lambda

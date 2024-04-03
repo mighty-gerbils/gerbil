@@ -389,6 +389,32 @@ package: gerbil/compiler
              unchecked:
              #f)))
   (declare-type
+   gxc#!lambda::return-type
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
+   gxc#!lambda::apply-return-type
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f)))
+  (declare-type
    gxc#!case-lambda::return-type
    (@lambda 4
             #f

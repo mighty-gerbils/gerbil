@@ -129,10 +129,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-expression-subst__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (id: new-id:) gxc#apply-expression-subst__%))
   (declare-type
    gxc#apply-expression-subst
    (@kw-lambda (id: new-id:) gxc#apply-expression-subst__@))
@@ -183,10 +180,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-expression-subst*__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (subst:) gxc#apply-expression-subst*__%))
   (declare-type
    gxc#apply-expression-subst*
    (@kw-lambda (subst:) gxc#apply-expression-subst*__@))
@@ -258,10 +252,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-find-var-refs__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (ids:) gxc#apply-find-var-refs__%))
   (declare-type
    gxc#apply-find-var-refs
    (@kw-lambda (ids:) gxc#apply-find-var-refs__@))
@@ -314,10 +305,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-runtime-refs__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (table:) gxc#apply-collect-runtime-refs__%))
   (declare-type
    gxc#apply-collect-runtime-refs
    (@kw-lambda (table:) gxc#apply-collect-runtime-refs__@))

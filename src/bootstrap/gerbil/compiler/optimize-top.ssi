@@ -238,6 +238,10 @@ namespace: gxc
          (%#define-runtime
           !procedure::apply-return-type
           gxc#!procedure::apply-return-type)
+         (%#define-runtime !lambda::return-type gxc#!lambda::return-type)
+         (%#define-runtime
+          !lambda::apply-return-type
+          gxc#!lambda::apply-return-type)
          (%#define-runtime
           !case-lambda::return-type
           gxc#!case-lambda::return-type)

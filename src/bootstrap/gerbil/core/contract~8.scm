@@ -127,13 +127,12 @@
               '#!void)
           (let ()
             (declare (not safe))
-            (|gerbil/core/contract~Interface[1]#check-signature-spec!|
-             _%stx59417%_
-             _%args59418%_
-             'optionals:
+            (|gerbil/core/contract~Interface[1]#check-signature-spec!__%|
+             '#f
              _%optionals-allowed?59421%_
-             'keywords:
-             _%keywords-allowed?59424%_)))))
+             _%keywords-allowed?59424%_
+             _%stx59417%_
+             _%args59418%_)))))
     (define |gerbil/core/contract~Interface[1]#check-signature!__@|
       (lambda (_%@@keywords59431%_ . _%args59433%_)
         (apply |gerbil/core/contract~Interface[1]#check-signature!__%|
@@ -7123,7 +7122,10 @@
                                         _%L61121%_)
                                  (let ()
                                    (declare (not safe))
-                                   (|gerbil/core/contract~Interface[1]#check-signature!|
+                                   (|gerbil/core/contract~Interface[1]#check-signature!__%|
+                                    '#f
+                                    absent-value
+                                    absent-value
                                     _%stx59451%_
                                     _%L61120%_
                                     _%L61119%_))
@@ -7137,7 +7139,10 @@
                                (lambda (_%L61052%_ _%L61054%_ _%L61055%_)
                                  (let ()
                                    (declare (not safe))
-                                   (|gerbil/core/contract~Interface[1]#check-signature!|
+                                   (|gerbil/core/contract~Interface[1]#check-signature!__%|
+                                    '#f
+                                    absent-value
+                                    absent-value
                                     _%stx59451%_
                                     _%L61054%_
                                     '#f))
@@ -9714,7 +9719,10 @@
                                         _%method-name61434%_)))
                                  (let ()
                                    (declare (not safe))
-                                   (|gerbil/core/contract~Interface[1]#check-signature!|
+                                   (|gerbil/core/contract~Interface[1]#check-signature!__%|
+                                    '#f
+                                    absent-value
+                                    absent-value
                                     _%stx61248%_
                                     _%L61396%_
                                     _%L61395%_))

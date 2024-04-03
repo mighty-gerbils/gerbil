@@ -1,10 +1,30 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1712147678)
+  (define gerbil/expander/module::timestamp 1712155162)
   (begin
     (declare (not safe))
-    (define gx#__module-registry (make-hash-table))
-    (define gx#__module-pkg-cache (make-hash-table))
+    (define gx#__module-registry
+      (make-hash-table__%
+       '#f
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value))
+    (define gx#__module-pkg-cache
+      (make-hash-table__%
+       '#f
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value
+       absent-value))
     (define gx#module-import::t
       (make-class-type
        'gx#module-import::t
@@ -3035,7 +3055,16 @@
                                                            (_%import-spec-source122235%_
                                                             _%path122351%_))
                                                           (_%exports122356%_
-                                                           (make-hash-table))
+                                                           (make-hash-table__%
+                                                            '#f
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value
+                                                            absent-value))
                                                           (_%specs122357%_
                                                            (gx#syntax->list
                                                             _%specs122353%_)))

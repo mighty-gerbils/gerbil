@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1712147676)
+  (define gerbil/runtime/mop::timestamp 1712155160)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -1773,17 +1773,14 @@
       (lambda (_%direct-supers95058%_)
         (let ()
           (declare (not safe))
-          (c4-linearize
-           '()
-           _%direct-supers95058%_
-           'get-precedence-list:
+          (c4-linearize__%
+           '#f
            class-precedence-list
-           'struct:
            class-type-struct?
-           'eq:
            eq?
-           'get-name:
-           ##type-name))))
+           ##type-name
+           '()
+           _%direct-supers95058%_))))
     (define make-class-predicate
       (lambda (_%klass95044%_)
         (let ()

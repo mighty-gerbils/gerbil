@@ -136,10 +136,7 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-push-match-vars__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (vars: K:) gxc#apply-push-match-vars__%))
   (declare-type
    gxc#apply-push-match-vars
    (@kw-lambda (K: vars:) gxc#apply-push-match-vars__@))

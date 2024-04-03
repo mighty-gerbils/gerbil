@@ -477,7 +477,9 @@ package: gerbil/core
    (@lambda 6 #f))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__@|
-   (@lambda (1) #f))
+   (@kw-lambda-dispatch
+    (optionals: keywords:)
+    |gerbil/core/contract~Interface[1]#check-signature!__%|))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!|
    (@kw-lambda
@@ -491,7 +493,9 @@ package: gerbil/core
    (@lambda 5 #f))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature-spec!__@|
-   (@lambda (1) #f))
+   (@kw-lambda-dispatch
+    (optionals: keywords:)
+    |gerbil/core/contract~Interface[1]#check-signature-spec!__%|))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature-spec!|
    (@kw-lambda

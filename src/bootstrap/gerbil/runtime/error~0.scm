@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1712147676)
+  (define gerbil/runtime/error::timestamp 1712155160)
   (begin
     (define Exception::t
       (let ((__tmp100072 (list)))

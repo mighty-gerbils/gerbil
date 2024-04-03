@@ -1122,10 +1122,7 @@ package: gerbil/compiler
              #f)))
   (declare-type
    gxc#!lambda:::init!__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch (signature:) gxc#!lambda:::init!__%))
   (declare-type
    gxc#!lambda:::init!
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))

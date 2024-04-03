@@ -482,14 +482,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((ref . _%locked-hash-table::ref101673%_)
-            (length . _%locked-hash-table::length101683%_)
-            (update! . _%locked-hash-table::update!101677%_)
-            (delete! . _%locked-hash-table::delete!101679%_)
+           ((update! . _%locked-hash-table::update!101677%_)
+            (ref . _%locked-hash-table::ref101673%_)
+            (set! . _%locked-hash-table::set!101675%_)
             (for-each . _%locked-hash-table::for-each101681%_)
             (copy . _%locked-hash-table::copy101685%_)
             (clear! . _%locked-hash-table::clear!101687%_)
-            (set! . _%locked-hash-table::set!101675%_))))
+            (delete! . _%locked-hash-table::delete!101679%_)
+            (length . _%locked-hash-table::length101683%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -531,14 +531,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((ref . _%checked-hash-table::ref101965%_)
-            (length . _%checked-hash-table::length101975%_)
-            (update! . _%checked-hash-table::update!101969%_)
-            (delete! . _%checked-hash-table::delete!101971%_)
+           ((update! . _%checked-hash-table::update!101969%_)
+            (ref . _%checked-hash-table::ref101965%_)
+            (set! . _%checked-hash-table::set!101967%_)
             (for-each . _%checked-hash-table::for-each101973%_)
             (copy . _%checked-hash-table::copy101977%_)
             (clear! . _%checked-hash-table::clear!101979%_)
-            (set! . _%checked-hash-table::set!101967%_))))
+            (delete! . _%checked-hash-table::delete!101971%_)
+            (length . _%checked-hash-table::length101975%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
@@ -802,7 +802,11 @@ package: gerbil/runtime
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type make-generic-hash-table (@lambda 6 #f))
   (declare-type make-hash-table__% (@lambda 9 #f))
-  (declare-type make-hash-table__@ (@lambda (1) #f))
+  (declare-type
+   make-hash-table__@
+   (@kw-lambda-dispatch
+    (size: seed: test: hash: lock: check: weak-keys: weak-values:)
+    make-hash-table__%))
   (declare-type
    make-hash-table
    (@kw-lambda

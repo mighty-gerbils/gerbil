@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1712147679)
+  (define gerbil/compiler/optimize-base::timestamp 1712155163)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -1771,17 +1771,14 @@
                               '#f
                               '#f)))))
                     (declare (not safe))
-                    (c4-linearize
-                     '()
-                     _%super147547%_
-                     'get-precedence-list:
+                    (c4-linearize__%
+                     '#f
                      __tmp148280
-                     'struct:
                      __tmp148277
-                     'eq:
                      eq?
-                     'get-name:
-                     identity))))
+                     identity
+                     '()
+                     _%super147547%_))))
             (begin
               (let ((_g148276_
                      (let ()

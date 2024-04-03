@@ -1,8 +1,20 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1712147677)
+  (define gerbil/runtime/loader::timestamp 1712155161)
   (begin
-    (define __modules (let () (declare (not safe)) (make-hash-table)))
+    (define __modules
+      (let ()
+        (declare (not safe))
+        (make-hash-table__%
+         '#f
+         absent-value
+         absent-value
+         absent-value
+         absent-value
+         absent-value
+         absent-value
+         absent-value
+         absent-value)))
     (define __load-path '())
     (define load-path (lambda () __load-path))
     (define add-load-path!

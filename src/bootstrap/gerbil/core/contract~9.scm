@@ -377,7 +377,10 @@
                            _%body64706%_)
                     (let ()
                       (declare (not safe))
-                      (|gerbil/core/contract~Interface[1]#check-signature!|
+                      (|gerbil/core/contract~Interface[1]#check-signature!__%|
+                       '#f
+                       absent-value
+                       absent-value
                        _%stx63795%_
                        _%args64704%_
                        _%return64705%_))
@@ -3900,14 +3903,13 @@
                                    (begin
                                      (let ()
                                        (declare (not safe))
-                                       (|gerbil/core/contract~Interface[1]#check-signature!|
+                                       (|gerbil/core/contract~Interface[1]#check-signature!__%|
+                                        '#f
+                                        '#f
+                                        '#f
                                         _%stx66015%_
                                         _%L66481%_
-                                        _%L66480%_
-                                        'keywords:
-                                        '#f
-                                        'optionals:
-                                        '#f))
+                                        _%L66480%_))
                                      (let* ((_%g6650166509%_
                                              (lambda (_%g6650266505%_)
                                                (gx#raise-syntax-error
@@ -8462,11 +8464,12 @@
                        _%stx67929%_)
                       (let ()
                         (declare (not safe))
-                        (|gerbil/core/contract~Interface[1]#check-signature-spec!|
+                        (|gerbil/core/contract~Interface[1]#check-signature-spec!__%|
+                         '#f
+                         absent-value
+                         '#f
                          _%stx67929%_
-                         _%slots68090%_
-                         'keywords:
-                         '#f))
+                         _%slots68090%_))
                       (_%check-typedef-body!67934%_ _%body68091%_)
                       (let ((_g80444_
                              (_%get-mixin-slots67945%_ _%super-ref68089%_)))

@@ -118,10 +118,9 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-object-refs__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch
+    (receiver: methods: slots:)
+    gxc#apply-collect-object-refs__%))
   (declare-type
    gxc#apply-collect-object-refs
    (@kw-lambda (receiver: slots: methods:) gxc#apply-collect-object-refs__@))
@@ -208,10 +207,9 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-subst-object-refs__@
-   (@lambda (1)
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+   (@kw-lambda-dispatch
+    (receiver: klass: methods: slots:)
+    gxc#apply-subst-object-refs__%))
   (declare-type
    gxc#apply-subst-object-refs
    (@kw-lambda

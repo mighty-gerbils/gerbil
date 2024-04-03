@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1712147678)
+  (define gerbil/compiler/compile::timestamp 1712155162)
   (begin
     (define gxc#gambit-annotations
       '(not gambit-scheme
@@ -52,11 +52,16 @@
                      (let () (declare (not safe)) (gx#stx-e _%id143736%_))))))
           (let ()
             (declare (not safe))
-            (make-hash-table
-             'test:
+            (make-hash-table__%
+             '#f
+             absent-value
+             absent-value
              gx#bound-identifier=?
-             'hash:
-             _%hash-e143734%_)))))
+             _%hash-e143734%_
+             absent-value
+             absent-value
+             absent-value
+             absent-value)))))
     (define gxc#::collect-bindings::t
       (let ((__tmp145127 (list gxc#::void::t))
             (__tmp145126 (cons (cons 'final: '#t) '())))
@@ -14060,23 +14065,23 @@
                                      (let ((__tmp145378
                                             (lambda ()
                                               (let ((__tmp145380
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (slot-ref__0
+                                                        _%self136153%_
+                                                        'state)))
+                                                    (__tmp145379
                                                      (cons (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#datum->syntax__0
                                                               '#f
                                                               '%#begin))
-                                                           _%L136179%_))
-                                                    (__tmp145379
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (slot-ref__0
-                                                        _%self136153%_
-                                                        'state))))
+                                                           _%L136179%_)))
                                                 (declare (not safe))
-                                                (gxc#apply-generate-meta-phi
+                                                (gxc#apply-generate-meta-phi__%
+                                                 '#f
                                                  __tmp145380
-                                                 'state:
                                                  __tmp145379)))))
                                        (declare (not safe))
                                        (__call-with-parameters
@@ -16216,10 +16221,10 @@
                (let () (declare (not safe)) (make-hash-table-eq))))
           (let ()
             (declare (not safe))
-            (gxc#apply-collect-expression-refs
-             _%stx134835%_
-             'table:
-             _%ht134837%_))
+            (gxc#apply-collect-expression-refs__%
+             '#f
+             _%ht134837%_
+             _%stx134835%_))
           _%ht134837%_)))
     (define gxc#collect-refs-ref%
       (lambda (_%self134778%_ _%stx134779%_)
