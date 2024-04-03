@@ -23,7 +23,7 @@ namespace: #f
 (deftype @HashTable HashTable)
 
 (interface HashTable
-  (ref key default) => :void
+  (ref key default) => :t
   (set! key value) => :void
   (update! key (proc : :procedure) default) => :void
   (delete! key) => :void
