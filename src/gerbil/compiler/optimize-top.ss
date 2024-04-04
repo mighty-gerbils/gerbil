@@ -58,8 +58,8 @@ namespace: gxc
   (%#module           apply-module%)
   (%#define-values    collect-type-define-values%)
   (%#begin-annotation collect-type-begin-annotation%)
-  (%#lambda                apply-body-lambda%)
-  (%#case-lambda           apply-body-case-lambda%)
+  (%#lambda                collect-type-lambda%)
+  (%#case-lambda           collect-type-case-lambda%)
   (%#let-values       collect-type-let-values%)
   (%#letrec-values    collect-type-letrec-values%)
   (%#letrec*-values   collect-type-letrec-values%)
@@ -171,6 +171,31 @@ namespace: gxc
        (compile-e self #'body)))
     ((_ ann body)
      (compile-e self #'body))))
+
+(def (collect-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ args . body)
+     (begin
+       (collect-type-lambda-formals-tail stx #'args)
+       (apply-body-lambda% self stx)))))
+
+(def (collect-type-case-lambda% self stx)
+  (ast-case stx ()
+    ((_ (args . _) ...)
+     (begin
+       (for-each (cut collect-type-lambda-formals-tail stx <>) #'(args ...))
+       (apply-body-case-lambda% self stx)))))
+
+(def (collect-type-lambda-formals-tail stx formals)
+  (let loop ((rest formals))
+    (ast-case #'rest ()
+      ((_ . rest) (loop #'rest))
+      (() (void))
+      (id
+       (identifier? #'id)
+       (optimizer-declare-type! (identifier-symbol #'id)
+                                (optimizer-resolve-class stx 'list::t)
+                                #t)))))
 
 (def (collect-type-let-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)

@@ -746,7 +746,7 @@ namespace: #f
                     (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
                            := 0)
                     (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
-                           := (u8vector-length)))
+                           := (u8vector-length bytes)))
   => :fixnum
   (:- (##read-subu8vector bytes start end port)
       :fixnum))
@@ -756,7 +756,7 @@ namespace: #f
                      (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
                            := 0)
                      (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
-                            := (u8vector-length)))
+                            := (u8vector-length bytes)))
   => :void
   (:- (##write-subu8vector bytes start end port)
       :void))

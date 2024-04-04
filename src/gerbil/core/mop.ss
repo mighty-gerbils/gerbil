@@ -262,31 +262,6 @@ package: gerbil/core
   (bind-method! class-type-info::t 'apply-macro-expander
                 class-type-info::apply-macro-expander)
 
-  (def (!class-slot-type klass slot)
-    (cond
-     ((!class-type-slot-types klass)
-      => (lambda (slot-types)
-           (assgetq slot slot-types)))
-     (else #f)))
-
-  (def (!class-slot-default klass slot)
-    (cond
-     ((!class-type-slot-defaults klass)
-      => (lambda (slot-defaults)
-           (cond
-            ((assgetq slot slot-defaults) => syntax-local-introduce)
-            (else #f))))
-     (else #f)))
-
-  (def (!class-slot-contract klass slot)
-    (cond
-     ((!class-type-slot-defaults klass)
-      => (lambda (slot-defaults)
-           (cond
-            ((assgetq slot slot-defaults) => syntax-local-introduce)
-            (else #f))))
-     (else #f)))
-
   (def (syntax-local-class-type-info? stx (is? true))
     (and (identifier? stx)
          (alet (e (syntax-local-value stx false))

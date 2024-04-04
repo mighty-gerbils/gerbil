@@ -360,7 +360,7 @@ package: gerbil/core
           (cons 'begin body)))
 
       (define (make-main)
-        (with-syntax* ((kwvar (or key '_))
+        (with-syntax* ((kwvar (or key (syntax-local-introduce '@@keywords)))
                        ((kwval ...) (gentemps (map cadr kwargs)))
                        (args args)
                        (body (make-body kwargs #'(kwval ...))))
