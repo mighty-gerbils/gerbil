@@ -401,7 +401,7 @@
 
     (def (read/length length)
       (let* ((data (make-u8vector length))
-             (rd (reader.read data 0 length length)))
+             (rd (and (fx> length 0)(reader.read data 0 length length))))
         data))
 
     (def (read/end)
