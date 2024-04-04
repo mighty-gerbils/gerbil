@@ -75,6 +75,6 @@
     (raise-context-error queue-peek "cannot peek; empty queue" q))
    (else default)))
 
-(def (queue->list q)
+(def (queue->list (q : queue))
   => :list
-  (list-copy q))
+  (list-copy q.front))
