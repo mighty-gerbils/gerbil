@@ -482,14 +482,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((update! . _%locked-hash-table::update!102258%_)
-            (ref . _%locked-hash-table::ref102254%_)
-            (for-each . _%locked-hash-table::for-each102262%_)
-            (set! . _%locked-hash-table::set!102256%_)
-            (copy . _%locked-hash-table::copy102266%_)
-            (clear! . _%locked-hash-table::clear!102268%_)
-            (delete! . _%locked-hash-table::delete!102260%_)
-            (length . _%locked-hash-table::length102264%_))))
+           ((delete! . _%locked-hash-table::delete!102268%_)
+            (length . _%locked-hash-table::length102272%_)
+            (clear! . _%locked-hash-table::clear!102276%_)
+            (ref . _%locked-hash-table::ref102262%_)
+            (update! . _%locked-hash-table::update!102266%_)
+            (copy . _%locked-hash-table::copy102274%_)
+            (set! . _%locked-hash-table::set!102264%_)
+            (for-each . _%locked-hash-table::for-each102270%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -531,14 +531,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((update! . _%checked-hash-table::update!102550%_)
-            (ref . _%checked-hash-table::ref102546%_)
-            (for-each . _%checked-hash-table::for-each102554%_)
-            (set! . _%checked-hash-table::set!102548%_)
-            (copy . _%checked-hash-table::copy102558%_)
-            (clear! . _%checked-hash-table::clear!102560%_)
-            (delete! . _%checked-hash-table::delete!102552%_)
-            (length . _%checked-hash-table::length102556%_))))
+           ((delete! . _%checked-hash-table::delete!102560%_)
+            (length . _%checked-hash-table::length102564%_)
+            (clear! . _%checked-hash-table::clear!102568%_)
+            (ref . _%checked-hash-table::ref102554%_)
+            (update! . _%checked-hash-table::update!102558%_)
+            (copy . _%checked-hash-table::copy102566%_)
+            (set! . _%checked-hash-table::set!102556%_)
+            (for-each . _%checked-hash-table::for-each102562%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
@@ -663,7 +663,7 @@ package: gerbil/runtime
   (declare-type hash-table? (@lambda 1 HashTable?))
   (declare-type is-hash-table? (@lambda 1 is-HashTable?))
   (declare-type
-   _%locked-hash-table::ref102254%_
+   _%locked-hash-table::ref102262%_
    (@lambda 3
             #f
             signature:
@@ -676,7 +676,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::set!102256%_
+   _%locked-hash-table::set!102264%_
    (@lambda 3
             #f
             signature:
@@ -689,7 +689,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::update!102258%_
+   _%locked-hash-table::update!102266%_
    (@lambda 4
             #f
             signature:
@@ -702,37 +702,37 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%locked-hash-table::delete!102260%_
+   _%locked-hash-table::delete!102268%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::for-each102262%_
+   _%locked-hash-table::for-each102270%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::length102264%_
+   _%locked-hash-table::length102272%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::copy102266%_
+   _%locked-hash-table::copy102274%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%locked-hash-table::clear!102268%_
+   _%locked-hash-table::clear!102276%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::ref102546%_
+   _%checked-hash-table::ref102554%_
    (@lambda 3
             #f
             signature:
@@ -745,7 +745,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::set!102548%_
+   _%checked-hash-table::set!102556%_
    (@lambda 3
             #f
             signature:
@@ -758,7 +758,7 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::update!102550%_
+   _%checked-hash-table::update!102558%_
    (@lambda 4
             #f
             signature:
@@ -771,31 +771,31 @@ package: gerbil/runtime
              unchecked:
              #f)))
   (declare-type
-   _%checked-hash-table::delete!102552%_
+   _%checked-hash-table::delete!102560%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::for-each102554%_
+   _%checked-hash-table::for-each102562%_
    (@lambda 2
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::length102556%_
+   _%checked-hash-table::length102564%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::copy102558%_
+   _%checked-hash-table::copy102566%_
    (@lambda 1
             #f
             signature:
             (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
   (declare-type
-   _%checked-hash-table::clear!102560%_
+   _%checked-hash-table::clear!102568%_
    (@lambda 1
             #f
             signature:
