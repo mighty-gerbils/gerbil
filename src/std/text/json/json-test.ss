@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo at hackzen.org
 ;;; :std/text/json unit test
 
 (import :std/io
@@ -75,8 +75,22 @@
                     "{\"l3\":\n  [1,\n   2,\n   3],\n \"obj0\": {},\n \"obj1\":\n  {\"age\": 33,\n   \"name\": \"John doe\"}}\n"
                       sort-keys?: #t
                       lisp-style?: #t)
-      (check-pretty my-obj
-                    "{\n  \"l3\": [\n    1,\n    2,\n    3\n  ],\n  \"obj0\": {},\n  \"obj1\": {\n    \"age\": 33,\n    \"name\": \"John Doe\"\n  }\n}\n"))
+      (check-pretty my-obj #<<END
+{
+  "l3": [
+    1,
+    2,
+    3
+  ],
+  "obj0": {},
+  "obj1": {
+    "age": 33,
+    "name": "John Doe"
+  }
+}
+
+END
+       ))
     (test-case "encoding and decoding with walist"
       (check-encode-decode/ordered (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
       (check-encode (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
@@ -85,17 +99,37 @@
                             ['obj1 :: (walistq [['name . "John Doe"]
                                                 ['age . 33]])]]))
       (parameterize ((json-sort-keys #f) (json-object-walist? #t))
-        (check-pretty my-obj
-                      "{\"obj0\": {},\n \"l3\":\n  [1,\n   2,\n   3],\n \"obj1\":\n  {\"name\": \"John Doe\",\n   \"age\": 33}}\n"
-                      lisp-style?: #t)
-        (check-pretty my-obj
-                      "{\n  \"obj0\": {},\n  \"l3\": [\n    1,\n    2,\n    3\n  ],\n  \"obj1\": {\n    \"name\": \"John Doe\",\n    \"age\": 33\n  }\n}\n")))
+        (check-pretty my-obj #<<END
+{"obj0": {},
+ "l3":
+  [1,
+   2,
+   3],
+ "obj1":
+  {"name": "John Doe",
+   "age": 33}}
 
+END
+                      lisp-style?: #t)
+        (check-pretty my-obj #<<END
+{
+  "obj0": {},
+  "l3": [
+    1,
+    2,
+    3
+  ],
+  "obj1": {
+    "name": "John Doe",
+    "age": 33
+  }
+}
+
+END
+                      )))
     (test-case "io zoo"
-      (def obj
-        (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
-      (def str
-        "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
+      (def obj (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
+      (def str "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
 
       (check (call-with-output-string "" (cut write-json obj <>)) => str)
       (check (call-with-input-string str read-json) => obj :: equal-hash?)
