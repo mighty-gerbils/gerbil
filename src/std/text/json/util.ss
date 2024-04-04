@@ -4,8 +4,10 @@
 (import
   :gerbil/gambit
   :gerbil/runtime/hash
+  :std/contract
   :std/error
   :std/io
+  :std/io/strio/types
   :std/misc/ports
   :std/misc/process
   :std/iter
@@ -134,12 +136,12 @@
 (defclass JSON ())
 (defmethod {:json JSON} trivial-class->json-object)
 
-(def (pretty-json object (out #f)
+(def (pretty-json object (output (current-output-port))
                   indent: (indent 2)
                   sort-keys?: (sort-keys? (json-sort-keys))
                   lisp-style?: (lisp-style? #f))
   (check-argument-positive-integer indent)
-  (with-output (out)
+  (using (out (open-buffered-string-writer output) : BufferedStringWriter)
     (def env (make-env))
     (def (simple? obj)
       (or (number? obj) (string? obj) (symbol? obj) (keyword? obj)
@@ -149,7 +151,7 @@
     (def (write-value obj indentation)
       (cond
        ((simple? obj)
-        (write-json-object/port obj out env))
+        (write-json-object/writer obj out env))
        ((list? obj)
         (write-list obj indentation))
        ((vector? obj)
@@ -162,37 +164,39 @@
         (write-value {:json obj} indentation))))
     (def (write-many write-one open close lst indentation)
       (let (new-indentation (+ indentation indent))
-        (write-char open out)
+        (out.write-char-inline open)
         (unless lisp-style? (newline-indent new-indentation))
         (let lp ((l lst))
           (match l
             ([e . r]
              (write-one e new-indentation)
              (unless (null? r)
-               (write-char #\, out)
+               (out.write-char-inline #\,)
                (newline-indent new-indentation)
                (lp r)))))
         (unless lisp-style? (newline-indent indentation))
-        (write-char close out)))
+        (out.write-char-inline close)))
     (def (write-alist alist indentation)
       (let (alst (if (json-sort-keys) (json-sort-alist alist) alist))
         (write-many write-binding #\{ #\} alst indentation)))
     (def (write-list list indentation)
       (write-many write-value #\[ #\] list indentation))
+    (def (space!) (out.write-char-inline #\space))
+    (def (newline!) (out.write-char-inline #\newline))
     (def (newline-indent indentation)
-      (newline out)
-      (for (_ (in-range indentation))
-        (write-char #\space out)))
+      (newline!)
+      (for (_ (in-range indentation)) (space!)))
     (def (write-binding binding indentation)
       (match binding
         ([key . val]
          (let (key (json-key-string key))
-           (write-json-object/port key out env)
-           (write-char #\: out)
+           (write-json-object/writer key out env)
+           (out.write-char-inline #\:)
            (if (or (not lisp-style?) (simple? val))
-             (write-char #\space out)
+             (space!)
              (newline-indent (1+ indentation)))
            (write-value val indentation)))))
     (parameterize ((json-sort-keys sort-keys?))
       (write-value object (if lisp-style? -1 0)))
-    (newline out)))
+    (newline!)
+    (unless output (get-buffer-output-string out))))

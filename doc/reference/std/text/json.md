@@ -123,7 +123,7 @@ If bound to `list->vector` then JSON lists will be parsed as vectors.
 
 ## json-sort-keys
 ``` scheme
-json-object-keys
+json-sort-keys
 ```
 
 This is a parameter that can be used to control how JSON objects should be encoded.
@@ -132,13 +132,12 @@ before they are printed.
 
 ::: tip Examples
 ``` scheme
-> (parameterize ((json-object-walist? #f))
-    (hash->list (string->json-object "{\"a\",1}")))
-(("a" . 1))
-
-> (parameterize ((json-object-walist? #t))
-    (string->json-object "{\"a\",1}"))
-(("a" . 1))
+> (parameterize ((json-sort-keys #t))
+    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
+"{\"bar\":2,\"baz\":3,\"foo\":1}"
+> (parameterize ((json-sort-keys #f))
+    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
+"{\"baz\":3,\"bar\":2,\"foo\":1}"
 ```
 
 ## json-object-walist?
@@ -148,17 +147,23 @@ json-object-walist?
 
 Parameter to control how JSON objects should be decoded.
 If false (the default), JSON objects will be hash-tables.
-If true, JSON objects will be walist (or walistq depending on json-symbolic-keys).
+If true, JSON objects will be `walistq`
+(or `walist` if json-symbolic-keys is false).
+
+This allows you to preserve the order of keys from JSON text,
+in cases where this order matters, e.g. for the sake of
+pretty-printing JSON or reading pretty-printed JSON,
+where the order will make the data more readable to humans.
 
 ::: tip Examples
 ``` scheme
 > (parameterize ((json-object-walist? #f))
-    (hash->list (string->json-object "{\"a\",1}")))
-(("a" . 1))
+    (hash->list (string->json-object "{\"a\":1,\"b\":2}")))
+((a . 1) (b . 2))
 
 > (parameterize ((json-object-walist? #t))
-    (string->json-object "{\"a\",1}"))
-(("a" . 1))
+    (walist->alist (string->json-object "{\"a\":1,\"b\":2}")))
+((a . 1) (b . 2))
 ```
 
 ## trivial-class->json-object
@@ -190,13 +195,14 @@ JSON::t -> class-descriptor
 A class for object that can be printed as JSON.
 The default `:json` method is `trivial-class->json-object`.
 
+
 ## pretty-json
 ```scheme
 (pretty-json object [output]
    [indent: 2] [sort-keys?: (json-sort-keys)] [lisp-style?: #f])
 ```
 A function that pretty-prints a JSON `object` to the specified `output`
-as per [with-output](../misc/ports.md#with-output)
+as per [open-buffered-string-writer](../stdio.md#open-buffered-reader)
 (defaults to `#f`, i.e. print to string).
 The `indent` keyword specifies how much to increase indentation at each level of nesting
 (must be a positive integer, defaults to 2).
