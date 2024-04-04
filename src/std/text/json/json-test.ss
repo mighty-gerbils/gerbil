@@ -5,6 +5,7 @@
 (import :std/io
         :std/misc/walist
         :std/misc/hash
+        :std/misc/ports
         :std/parser/base
         :std/sugar
         :std/test
@@ -34,7 +35,7 @@
 
 (def (check-pretty obj str . options)
   (let (eqf (if (hash-table? obj) equal-hash? equal?))
-    (check (apply pretty-json obj options) => str)
+    (check (with-output (out #f) (apply pretty-json obj out options)) => str)
     (check (string->json-object str) => obj :: eqf)))
 
 (def (check-encode-decode= obj)
