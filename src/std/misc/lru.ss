@@ -3,7 +3,6 @@
 ;;; LRU cache
 
 (import :std/error
-        :std/contract
         :std/generic
         :std/iter
         :std/misc/list)

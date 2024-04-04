@@ -3,7 +3,6 @@
 ;;; Generics: macros
 
 (import :std/generic/dispatch
-        :std/interface
         (for-syntax :std/stxutil)
         (rename-in (only-in :gerbil/core defmethod) (defmethod defmethod~)))
 (export #t (phi: +1 #t))

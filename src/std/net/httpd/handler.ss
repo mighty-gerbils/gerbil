@@ -4,7 +4,6 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/io
         :std/io/dummy

@@ -2,9 +2,7 @@
 ;;; © vyzo
 ;;; buffered string reader implementation
 (import :std/error
-        :std/contract
         :std/sugar
-        (only-in :std/srfi/1 reverse!)
         ../interface
         ./types)
 (export #t)

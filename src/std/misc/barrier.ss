@@ -3,8 +3,6 @@
 ;;; thread barriers
 
 (import :std/error
-        :std/interface
-        :std/contract
         :std/sugar)
 (export make-barrier barrier? barrier
         barrier-wait!

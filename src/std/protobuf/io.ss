@@ -4,8 +4,6 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/interface
-        :std/contract
         :std/foreign
         :std/text/utf8
         :std/io

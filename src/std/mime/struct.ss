@@ -1,5 +1,5 @@
-(import  :std/interface :std/contract :std/srfi/13
-	 (for-syntax :std/misc/ports :std/srfi/13 :std/pregexp))
+(import :std/srfi/13
+	    (for-syntax :std/misc/ports :std/srfi/13 :std/pregexp))
 (export #t)
 
 ;;* Mime Types

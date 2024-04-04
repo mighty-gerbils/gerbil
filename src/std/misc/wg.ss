@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; transient parallel workgroups
 (import :std/error
-        :std/contract
         :std/iter
         ./channel)
 (export WG? make-wg wg-add! wg-wait!)

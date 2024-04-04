@@ -5,7 +5,6 @@
 
 (import :std/sugar
         :std/error
-        :std/contract
         :std/misc/shuffle)
 (export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect

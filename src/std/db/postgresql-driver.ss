@@ -4,10 +4,8 @@
 ;; https://www.postgresql.org/docs/current/protocol-message-formats.html
 
 (import :std/actor
-        :std/interface
         :std/io
         :std/io/bio/util
-        :std/contract
         :std/misc/bytes
         :std/misc/channel
         :std/misc/list

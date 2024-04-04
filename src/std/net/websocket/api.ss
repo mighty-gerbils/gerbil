@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; websocket API
 (import :std/error
-        :std/contract
         :std/text/utf8
         (only-in :std/srfi/1 reverse!)
         ./interface
@@ -46,6 +45,7 @@
                 (wsock.send (message (subu8vector data start start+frame) type #t))
                 (lp start+frame)))))))))
 
+;; TODO define this with interface method infrastructure
 (def (WebSocket-recv-all wsock max-message-size)
   (check-argument (nonnegative-fixnum? max-message-size) "nonnegative fixnum" max-message-size)
   (&WebSocket-recv-all wsock max-message-size))

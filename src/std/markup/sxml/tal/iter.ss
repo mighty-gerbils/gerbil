@@ -1,4 +1,4 @@
-(import :std/interface :std/contract :std/iter :std/generic :std/markup/sxml/tal/toplevel)
+(import :std/iter :std/generic :std/markup/sxml/tal/toplevel)
 (export #t)
 (declare (fixnum))
 
@@ -23,6 +23,7 @@
 
 (defmethod (:iter (self tal:repeat)) (make-iterator e: self next: tal:repeat-next!))
 
+;; TODO return types
 (interface Repeat
   (index) ;; repetition number, starting from zero.
   (number) ;; repetition number, starting from one.

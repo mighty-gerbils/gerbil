@@ -3,7 +3,6 @@
 ;;; SQLite dbi interface
 
 (import :std/error
-        :std/contract
         :std/sugar
         :std/db/dbi
         :std/db/_sqlite

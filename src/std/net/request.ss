@@ -20,8 +20,6 @@
 
 (import :std/build-config
         :std/error
-        :std/interface
-        :std/contract
         :std/sugar
         :std/io
         :std/net/ssl

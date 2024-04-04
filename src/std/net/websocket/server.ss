@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; websocket server interface
-(import :std/interface
-        :std/contract
-        :std/io
+(import :std/io
         :std/net/httpd
         :std/crypto/digest
         :std/text/base64

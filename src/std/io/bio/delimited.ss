@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; delimited input buffers
 (import :std/error
-        :std/contract
         ../interface
         ./types
         ./input)

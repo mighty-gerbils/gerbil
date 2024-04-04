@@ -4,7 +4,6 @@
 
 (import :std/sugar
         :std/error
-        :std/contract
         :gerbil/gambit)
 (export coroutine (rename: cort? coroutine?) continue yield
         cothread cothread? cothread-stop!)

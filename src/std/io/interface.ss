@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Standard IO interfaces
-(import :std/interface
-        :std/contract
-        :std/sugar
+(import :std/sugar
         :std/misc/timeout)
 (export #t timeout?)
 

@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; read-write locks
 (import :std/error
-        :std/sugar
-        :std/contract)
+        :std/sugar)
 (export make-rwlock
         rwlock?
         rwlock-read-lock!

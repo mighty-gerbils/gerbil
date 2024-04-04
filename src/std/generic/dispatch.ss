@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; Generic dispatch
 
-(import :std/error
-        :std/contract)
+(import :std/error)
 (export make-generic generic? generic-id generic-dispatch
         generic-bind! generic-dispatch generic-dispatch-next
         generic-dispatch1 generic-dispatch2 generic-dispatch3 generic-dispatch4

@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; delimited readers
 (import :std/error
-        :std/contract
         ./interface)
 (export (rename: open-delimited-reader delimited-reader)
         (rename: open-delimited-string-reader delimited-string-reader))

@@ -4,7 +4,6 @@
 
 (import :std/sugar
         :std/error
-        :std/contract
         :std/logger)
 (export make-conpool conpool?
         conpool-get conpool-put conpool-release conpool-close)

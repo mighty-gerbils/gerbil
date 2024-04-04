@@ -2,8 +2,6 @@
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 client functionality
 (import :std/error
-        :std/contract
-        :std/interface
         :std/io
         :std/io/socket/types
         (only-in :std/os/socket AF_INET AF_INET6)

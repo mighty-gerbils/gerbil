@@ -6,7 +6,6 @@
 ;;; implementation; delete is based on CLR...
 
 (import :std/error
-        :std/contract
         :std/generic
         :std/iter)
 (export rbtree rbtree? make-rbtree

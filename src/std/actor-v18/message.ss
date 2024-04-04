@@ -4,7 +4,6 @@
 (import :gerbil/runtime/thread
         :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/stxparam)
 (export #t)

@@ -4,7 +4,6 @@
 
 (import :std/sugar
         :std/error
-        :std/contract
         (only-in :std/logger start-logger!)
         :std/io
         :std/actor

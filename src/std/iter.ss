@@ -4,7 +4,6 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/generic
         :std/coroutine
         :std/hash-table)

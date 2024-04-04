@@ -5,7 +5,6 @@
 (import :std/misc/queue
         :std/misc/timeout
         :std/generic
-        :std/contract
         :std/iter
         :std/error)
 (export channel make-channel channel?

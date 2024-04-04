@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; imperative queues
 
-(import :std/error
-        :std/contract)
+(import :std/error)
 (export queue make-queue queue?
         queue-length
         queue-empty?

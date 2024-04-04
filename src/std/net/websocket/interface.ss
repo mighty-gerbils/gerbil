@@ -3,8 +3,6 @@
 ;;; websocket interface
 
 (import :std/error
-        :std/interface
-        :std/contract
         :std/io/interface)
 (export #t)
 

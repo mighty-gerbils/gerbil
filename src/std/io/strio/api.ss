@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; string IO api
 (import :std/error
-        :std/interface
         ../interface
         ../dummy
         ../port

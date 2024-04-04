@@ -3,8 +3,7 @@
 ;;; asynchronous completion tokens
 
 (import :std/error
-        :std/sugar
-        :std/contract)
+        :std/sugar)
 (export make-completion
         completion?
         completion

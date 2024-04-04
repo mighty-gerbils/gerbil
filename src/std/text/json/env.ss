@@ -2,7 +2,6 @@
 ;;; ̧© vyzo
 ;;; json io environment
 (import :std/error
-        :std/contract
         :std/sugar)
 (export #t)
 

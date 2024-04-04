@@ -1,4 +1,4 @@
-(import :std/interface :std/contract :std/io :std/text/utf8 :std/sugar
+(import :std/io :std/text/utf8 :std/sugar
 	:std/os/socket
 	./interface)
 (export #t)
@@ -54,7 +54,7 @@
 	      (unless full? (u8vector-shrink! buff n))
 	      (cons buff (lp full?))))))
 
-    
+
     (match buffs ([b . rest]
 		  (if (null? rest) b (u8vector-concatenate buffs))))))
 
@@ -94,5 +94,5 @@
 	(cond ((not crlf) (error "No lines in " u8v start end) )
 	      (else (cons (->s u8v start (- crlf 1))
 			   (readln (+ 1 crlf)))))))))
-    
+
 (defmethod {read-lines session} session-read-lines)

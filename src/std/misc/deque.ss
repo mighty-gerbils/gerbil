@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; double ended queues
-(import :std/error
-        :std/contract)
+(import :std/error)
 (export deque make-deque deque? deque-length
         deque-empty?
         push-front! pop-front! peek-front

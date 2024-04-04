@@ -5,7 +5,6 @@
   :gerbil/gambit
   :gerbil/runtime/hash
   :std/error
-  :std/interface
   :std/io
   :std/misc/ports
   :std/misc/process

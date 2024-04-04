@@ -1,4 +1,4 @@
-(import ./interface ./session :std/text/utf8 :std/io :std/net/ssl :std/interface :std/contract)
+(import ./interface ./session :std/text/utf8 :std/io :std/net/ssl)
 (export #t)
 
 (defstruct (client-session session) ())

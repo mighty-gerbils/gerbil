@@ -4,8 +4,6 @@
 (import :gerbil/gambit
         :std/error
         :std/sugar
-        :std/interface
-        :std/contract
         :std/srfi/1
         ../interface
         ./inline

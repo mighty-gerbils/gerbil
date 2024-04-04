@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; file IO
 (import :std/error
-        :std/contract
         :std/sugar
         :std/os/fd
         :std/os/fdio

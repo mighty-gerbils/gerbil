@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; Lazy evaluation
 
-(import :std/contract)
 (export
   (rename: delay-lazy lazy)
   (rename: delay-eager delay)

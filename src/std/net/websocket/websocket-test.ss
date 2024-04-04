@@ -1,5 +1,4 @@
 (import :std/test
-        :std/contract
         :std/net/request
         :std/net/httpd
         ./api)
