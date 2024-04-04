@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1712256093)
+  (define gerbil/compiler/driver::timestamp 1712262520)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -757,33 +757,31 @@
                                      (declare (not safe))
                                      (gxc#gerbil-gcc)))
                                   (__tmp196130
-                                   (cons '"-o"
-                                         (cons _%output-bin195873%_
-                                               (let ((__tmp196131
-                                                      (cons _%bin-o195871%_
-                                                            (cons _%output-o195879%_
+                                   (cons '"-w"
+                                         (cons '"-o"
+                                               (cons _%output-bin195873%_
+                                                     (let ((__tmp196131
+                                                            (cons _%bin-o195871%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _%output_-o195883%_
-                                (let ((__tmp196132
-                                       (cons _%rpath195905%_
-                                             (cons '"-L"
-                                                   (cons _%gerbil-libdir195827%_
-                                                         (cons '"-lgerbil"
-                                                               (cons '"-lgambit"
+                          (cons _%output-o195879%_
+                                (cons _%output_-o195883%_
+                                      (let ((__tmp196132
+                                             (cons _%rpath195905%_
+                                                   (cons '"-L"
+                                                         (cons _%gerbil-libdir195827%_
+                                                               (cons '"-lgerbil"
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _%libgerbil-ld-opts195903%_)))))))
+                             (cons '"-lgambit"
+                                   _%libgerbil-ld-opts195903%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                  (declare (not safe))
-                                  (__foldr1
-                                   cons
-                                   __tmp196132
-                                   _%output-ld-opts195891%_)))))))
+                                        (declare (not safe))
+                                        (__foldr1
+                                         cons
+                                         __tmp196132
+                                         _%output-ld-opts195891%_)))))))
+               (declare (not safe))
+               (__foldr1 cons __tmp196131 _%deps-o195861%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (declare (not safe))
-                                                 (__foldr1
-                                                  cons
-                                                  __tmp196131
-                                                  _%deps-o195861%_))))))
                               (declare (not safe))
                               (gxc#invoke__%
                                '#f
@@ -1235,22 +1233,23 @@
                                      (declare (not safe))
                                      (gxc#gerbil-gcc)))
                                   (__tmp196159
-                                   (cons '"-o"
-                                         (cons _%output-bin195646%_
-                                               (cons _%output-o195677%_
-                                                     (cons _%output-o_195681%_
-                                                           (let ((__tmp196160
+                                   (cons '"-w"
+                                         (cons '"-o"
+                                               (cons _%output-bin195646%_
+                                                     (cons _%output-o195677%_
+                                                           (cons _%output-o_195681%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _%rpath195695%_
-                                (cons '"-L"
-                                      (cons _%gerbil-libdir195650%_
-                                            (cons '"-lgambit"
-                                                  _%default-ld-options195697%_))))))
-                     (declare (not safe))
-                     (__foldr1
-                      cons
-                      __tmp196160
-                      _%output-ld-opts195689%_))))))))
+                         (let ((__tmp196160
+                                (cons _%rpath195695%_
+                                      (cons '"-L"
+                                            (cons _%gerbil-libdir195650%_
+                                                  (cons '"-lgambit"
+                                                        _%default-ld-options195697%_))))))
+                           (declare (not safe))
+                           (__foldr1
+                            cons
+                            __tmp196160
+                            _%output-ld-opts195689%_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                               (declare (not safe))
                               (gxc#invoke__%
@@ -3118,12 +3117,13 @@
               (gxc#invoke__% '#f '#t absent-value __tmp196251 __tmp196249))
             (let ((__tmp196253 (let () (declare (not safe)) (gxc#gerbil-gcc)))
                   (__tmp196252
-                   (cons '"-shared"
-                         (cons '"-o"
-                               (cons _%link-path194824%_
-                                     (cons _%path-o194822%_
-                                           (cons _%link-path-o194828%_
-                                                 _%gcc-ld-opts194834%_)))))))
+                   (cons '"-w"
+                         (cons '"-shared"
+                               (cons '"-o"
+                                     (cons _%link-path194824%_
+                                           (cons _%path-o194822%_
+                                                 (cons _%link-path-o194828%_
+                                                       _%gcc-ld-opts194834%_))))))))
               (declare (not safe))
               (gxc#invoke__%
                '#f

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~ClassMeta::timestamp 1712256083)
+  (define gerbil/core/contract~ClassMeta::timestamp 1712262509)
   (define gerbil/core/contract~ClassMeta#!class-precedence-list
     (lambda (_%klass52218%_)
       (let ((_%$e52220%_

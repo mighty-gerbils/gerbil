@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1712256087)
+  (define gerbil/expander/module::timestamp 1712262514)
   (begin
     (declare (not safe))
     (define gx#__module-registry
@@ -1473,7 +1473,7 @@
                                            (substring
                                             _%head124237%_
                                             (##fx+ _%ix124242%_ '1)
-                                            (##string-length _%head124237%_)))
+                                            (string-length _%head124237%_)))
                                           (_%args124257%_
                                            (__with-catch
                                             (lambda (_%g124247124249%_)
