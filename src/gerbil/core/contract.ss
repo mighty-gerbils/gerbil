@@ -1042,7 +1042,7 @@ package: gerbil/core
           [return: return-type])))
 
     (def (make-interface-method-contract stx self Interface signature checked?)
-      (make-procedure-contract stx (cons [self ': Interface] signature) checked?))
+      (make-procedure-contract stx (cons [self (if checked? ': '::-) Interface] signature) checked?))
 
     (def (make-procedure-lambda-signature stx signature return unchecked)
       (def (type-e contract)
@@ -1112,39 +1112,33 @@ package: gerbil/core
       (def (contract-e id contract)
         (with-syntax ((id id))
           (syntax-case contract (: :? :~ :- ::- :=)
-            ((: type . maybe-default)
-             (cond
-              (checked?
-               #'(id : type))
-              ((interface-info? (resolve-type stx #'type))
-               #'(id ::- type))
-              (else #'(id :- type))))
-            ((:? type . maybe-default)
-             (cond
-              (checked?
-               #'(id :? type))
-              ((interface-info? (resolve-type stx #'type))
-               #'(id ::- type))
-              (else
-               #'(id :- type))))
+            ((~ type . maybe-default)
+             (or (free-identifier=? #'~ #'::-)
+                 (free-identifier=? #'~ #':)
+                 (free-identifier=? #'~ #':?))
+             (if checked?
+               #'(id ~ type)
+               #'(id ::- type)))
             ((:- type . maybe-default)
              #'(id :- type))
-            ((::- type . maybe-default)
-             #'(id ::- type))
             ((:~ predicate-expr ~ type . maybe-default)
-             (or (free-identifier=? #'~ #':-)
-                 (free-identifier=? #'~ #'::-))
-             #'(id :~ predicate-expr ~ type))
-            ((:~ predicate-expr ~ type . maybe-default)
-             (or (free-identifier=? #'~ #':)
+             (or (free-identifier=? #'~ #'::-)
+                 (free-identifier=? #'~ #':)
                  (free-identifier=? #'~ #':?))
-             (cond
-              (checked?
-               #'(id :~ predicate-expr :- type))
-              ((interface-info? (resolve-type stx #'type))
-               #'(id ::- type))
-              (else
-               #'(id :- type))))
+             (if checked?
+               #'(id :~ predicate-expr ~ type)
+               #'(id ::- type)))
+            ((:~ predicate-expr ~ type . maybe-default)
+             (or (free-identifier=? #'~ #'::-)
+                 (free-identifier=? #'~ #':)
+                 (free-identifier=? #'~ #':?))
+             (if checked?
+               #'(id :~ predicate-expr ~ type)
+               #'(id ::- type)))
+            ((:~ predicate-expr :- type . maybe-default)
+             (if checked?
+               #'(id :~ predicate-expr :- type)
+               #'(id :- type)))
             ((:~ predicate-expr . maybe-default)
              (if checked?
                #'(id :~ predicate-expr)
@@ -1654,8 +1648,8 @@ package: gerbil/core
                   (: (unchecked-method self out ...) return))))
             (syntax/loc stx
               (def (raw-method self . in)
-                (with-interface-raw-method self (Interface signature return)
-                                           (: (##apply unchecked-method self out ...) return))))))
+                (with-interface-unchecked-method self (Interface signature return)
+                  (: (##apply unchecked-method self out ...) return))))))
         '(begin)))
 
     (def (make-unchecked-method-def Interface unchecked-method-name signature return body)
@@ -1711,7 +1705,7 @@ package: gerbil/core
   (defsyntax (with-interface-method stx)
     (syntax-case stx ()
       ((_ self (Interface signature return unchecked-proc) body ...)
-       (let (checked? (stx-e #'unchecked-proc))
+       (let (checked? (and (stx-e #'unchecked-proc) #t))
          (with-syntax ((lambda-signature
                         (make-interface-method-lambda-signature stx
                           #'self #'Interface #'signature #'return #'unchecked-proc))
