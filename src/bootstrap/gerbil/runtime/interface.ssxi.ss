@@ -153,7 +153,7 @@ package: gerbil/runtime
   (declare-type __prototype-table-set! (@lambda 3 #f))
   (declare-type prototype-table-update! (@lambda 4 #f))
   (declare-type __prototype-table-update! (@lambda 4 #f))
-  (declare-type prototype-trable-delete! (@lambda 2 #f))
+  (declare-type prototype-table-delete! (@lambda 2 #f))
   (declare-type
    __interface-prototypes-mx
    (optimizer-resolve-class '(typedecl __interface-prototypes-mx) 'vector::t))
