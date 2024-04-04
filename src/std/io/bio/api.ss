@@ -34,8 +34,10 @@
     (raise-bad-argument make-buffer "fixnum or u8vector" buffer-or-size))))
 
 (def (open-buffered-reader pre-reader (buffer-or-size default-buffer-size))
+  => BufferedReader
   (cond
-   ((BufferedReader? pre-reader) pre-reader)
+   ((BufferedReader? pre-reader)
+    (:- pre-reader BufferedReader))
    ((is-BufferedReader? pre-reader) (BufferedReader pre-reader))
    ((u8vector? pre-reader)
     (BufferedReader
@@ -50,8 +52,10 @@
     (raise-bad-argument open-buffered-reader "Reader instance or u8vector" pre-reader))))
 
 (def (open-buffered-writer pre-writer (buffer-or-size default-buffer-size))
+  => BufferedWriter
   (cond
-   ((BufferedWriter? pre-writer) pre-writer)
+   ((BufferedWriter? pre-writer)
+    (:- pre-writer BufferedWriter))
    ((is-BufferedWriter? pre-writer) (BufferedWriter pre-writer))
    ((not pre-writer)
     (let ((writer (open-chunk-writer))
@@ -67,6 +71,7 @@
     (raise-bad-argument open-buffered-writer "Writer instance or #f" pre-writer))))
 
 (def (open-chunk-writer)
+  => Writer
   (Writer (make-chunked-output-buffer [] #f)))
 
 (def (get-buffer-output-chunks wr)
@@ -82,9 +87,10 @@
       (raise-bad-argument get-buffer-output "instance of BufferedWriter wrapping an output buffer" wr)))))
 
 (def (get-buffer-output-u8vector wr)
+  => :u8vector
   (let (chunks (get-buffer-output-chunks wr))
     (match chunks
-      ([chunk] chunk)
+      ([chunk] (:- chunk :u8vector))
       (else (u8vector-concatenate chunks)))))
 
 (defreader-ext (read-delimited reader read-value)

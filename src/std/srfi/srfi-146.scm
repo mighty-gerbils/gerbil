@@ -309,12 +309,13 @@
 	   (lambda ()
 	 (values (mapping-delete mapping key) key value))))))
      ((let/cc K
-        (rbtree-for-each (mapping-tree mapping)
-                        (lambda (k v)
-                          (K (lambda ()
-                               (values (%make-mapping (mapping-comparator mapping)
-                                                      (rbtree-remove (mapping-tree mapping) k))
-                                       k v)))))
+        (rbtree-for-each
+         (lambda (k v)
+           (K (lambda ()
+                (values (%make-mapping (mapping-comparator mapping)
+                                       (rbtree-remove (mapping-tree mapping) k))
+                        k v))))
+         (mapping-tree mapping))
         failure))
      )))
 

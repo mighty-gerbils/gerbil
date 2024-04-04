@@ -45,32 +45,31 @@
 
 ;;; Generic Method binding
 
-(def (generic-bind! gen signature method)
-  (using (gen :- generic)
-    (unless (procedure? method)
-      (raise-bad-argument generic-bind! "procedure -- method implementation" method))
-    (let ((arity (length signature))
-          (mx gen.mx))
-      (mutex-lock! mx)
-      (let (tabs gen.tabs)
-        (if (fx< arity (vector-length tabs))
-          (cond
-           ((vector-ref tabs arity)
-            => (lambda (gtab)
-                 (generic-bind-method! gtab signature method)))
-           (else
-            (let (gtab (make-generic-table))
-              (vector-set! tabs arity gtab)
-              (generic-bind-method! gtab signature method))))
-          (let ((new-tabs (make-vector (fx+ arity 1) #f))
-                (gtab (make-generic-table)))
-            (subvector-move! tabs 0 (vector-length tabs) new-tabs 0)
-            (vector-set! new-tabs arity gtab)
-            (set! gen.tabs new-tabs)
+(def (generic-bind! (gen :- generic) signature method)
+  (unless (procedure? method)
+    (raise-bad-argument generic-bind! "procedure -- method implementation" method))
+  (let ((arity (length signature))
+        (mx gen.mx))
+    (mutex-lock! mx)
+    (let (tabs gen.tabs)
+      (if (fx< arity (vector-length tabs))
+        (cond
+         ((vector-ref tabs arity)
+          => (lambda (gtab)
+               (generic-bind-method! gtab signature method)))
+         (else
+          (let (gtab (make-generic-table))
+            (vector-set! tabs arity gtab)
             (generic-bind-method! gtab signature method))))
-      (mutex-unlock! mx))))
+        (let ((new-tabs (make-vector (fx+ arity 1) #f))
+              (gtab (make-generic-table)))
+          (subvector-move! tabs 0 (vector-length tabs) new-tabs 0)
+          (vector-set! new-tabs arity gtab)
+          (set! gen.tabs new-tabs)
+          (generic-bind-method! gtab signature method))))
+    (mutex-unlock! mx)))
 
-(def (generic-bind-method! gtab signature method)
+(def (generic-bind-method! (gtab :- generic-table) signature method)
   (def (invalidate? cache)
     (let (cache-len (vector-length cache))
       (let lp ((i 0))
@@ -80,23 +79,22 @@
           #f))))
 
   (let again ()
-    (using (gtab :- generic-table)
-      (let* ((old-methods gtab.methods)
-             (new-methods (generic-add-method old-methods signature method)))
-        (let (mx gtab.mx)
-          (mutex-lock! mx)
-          (cond
-           ((eq? old-methods gtab.methods)
-            (set! gtab.methods new-methods)
-            ;; invalidate cache if it has any entries
-            (when (invalidate? gtab.cache)
-              (set! gtab.cache
-                (make-vector (vector-length gtab.cache) #f)))
-            (mutex-unlock! mx))
-           (else
-            ;; concurrent redefinition, try again
-            (mutex-unlock! mx)
-            (again))))))))
+    (let* ((old-methods gtab.methods)
+           (new-methods (generic-add-method old-methods signature method)))
+      (let (mx gtab.mx)
+        (mutex-lock! mx)
+        (cond
+         ((eq? old-methods gtab.methods)
+          (set! gtab.methods new-methods)
+          ;; invalidate cache if it has any entries
+          (when (invalidate? gtab.cache)
+            (set! gtab.cache
+              (make-vector (vector-length gtab.cache) #f)))
+          (mutex-unlock! mx))
+         (else
+          ;; concurrent redefinition, try again
+          (mutex-unlock! mx)
+          (again)))))))
 
 (def (generic-add-method methods signature method)
   (let recur ((rest methods))
@@ -129,47 +127,44 @@
 
 ;;; Generic Method Dispatch
 
-(def (generic-dispatch gen . args)
-  (using (gen :- generic)
-    (let ((arity (length args))
-          (tabs gen.tabs))
-      (cond
-       ((and (fx< arity (vector-length tabs))
-             (vector-ref tabs arity))
-        => (lambda (gtab)
-             (cond
-              ((generic-dispatch-method gtab args gen.default)
-               => (lambda (method)
-                    (apply method args)))
-              (else
-               (raise-dispatch-error generic-dispatch (generic-id gen) args)))))
-       (gen.default
-        => (lambda (method)
-             (apply method args)))
-       (else
-        (raise-dispatch-error generic-dispatch (generic-id gen) args))))))
-
-(def (generic-dispatch-method gtab args default)
-  (using (gtab :- generic-table)
+(def (generic-dispatch (gen :- generic) . args)
+  (let ((arity (length args))
+        (tabs gen.tabs))
     (cond
-     ((generic-dispatch-cache-lookup gtab.cache args))
+     ((and (fx< arity (vector-length tabs))
+           (vector-ref tabs arity))
+      => (lambda (gtab)
+           (cond
+            ((generic-dispatch-method gtab args gen.default)
+             => (lambda (method)
+                  (apply method args)))
+            (else
+             (raise-dispatch-error generic-dispatch (generic-id gen) args)))))
+     (gen.default
+      => (lambda (method)
+           (apply method args)))
      (else
-      (generic-dispatch-method-ref gtab args default)))))
+      (raise-dispatch-error generic-dispatch (generic-id gen) args)))))
 
-(def (generic-dispatch-method-ref gtab args default)
-  (using (gtab :- generic-table)
-    (let* ((methods gtab.methods)
-           (method (or (generic-dispatch-find-method methods args) default)))
-      (when method
-        (let (mx gtab.mx)
-          (mutex-lock! mx)
-          ;; we only cache if there was no concurrent redefinition
-          (when (eq? methods gtab.methods)
-            ;; don't try to cache if a concurrent cache miss already did so
-            (unless (generic-dispatch-cache-lookup gtab.cache args)
-              (generic-dispatch-cache! gtab args method)))
-          (mutex-unlock! mx)))
-      method)))
+(def (generic-dispatch-method (gtab :- generic-table) args default)
+  (cond
+   ((generic-dispatch-cache-lookup gtab.cache args))
+   (else
+    (generic-dispatch-method-ref gtab args default))))
+
+(def (generic-dispatch-method-ref (gtab :- generic-table) args default)
+  (let* ((methods gtab.methods)
+         (method (or (generic-dispatch-find-method methods args) default)))
+    (when method
+      (let (mx gtab.mx)
+        (mutex-lock! mx)
+        ;; we only cache if there was no concurrent redefinition
+        (when (eq? methods gtab.methods)
+          ;; don't try to cache if a concurrent cache miss already did so
+          (unless (generic-dispatch-cache-lookup gtab.cache args)
+            (generic-dispatch-cache! gtab args method)))
+        (mutex-unlock! mx)))
+    method))
 
 (defrules defdispatch* ()
   ((_ dispatch-e method-e cache-lookup-e arity arg ...)
@@ -226,7 +221,7 @@
       (else #t))))
 
 ;; @next-method implementation
-(def (generic-dispatch-next gen method . args)
+(def (generic-dispatch-next (gen :- generic) method . args)
   (def (drop method methods)
     (let lp ((rest methods))
       (match rest
@@ -236,26 +231,25 @@
            (lp rest)))
         (else []))))
 
-  (using (gen :- generic)
-    (let ((arity (length args))
-          (tabs gen.tabs))
-      (cond
-       ((and (fx< arity (vector-length tabs))
-             (vector-ref tabs arity))
-        => (lambda (gtab)
-             (using (gtab :- generic-table)
-               (let (methods (drop method gtab.methods))
-                 (cond
-                  ((generic-dispatch-find-method methods args)
-                   => (lambda (method)
-                        (apply method args)))
-                  (gen.default
-                   => (lambda (method)
-                        (apply method args)))
-                  (else
-                   (raise-dispatch-error generic-dispatch-next (generic-id gen) args)))))))
-       (else
-        (raise-dispatch-error generic-dispatch-next (generic-id gen) args))))))
+  (let ((arity (length args))
+        (tabs gen.tabs))
+    (cond
+     ((and (fx< arity (vector-length tabs))
+           (vector-ref tabs arity))
+      => (lambda (gtab)
+           (using (gtab :- generic-table)
+             (let (methods (drop method gtab.methods))
+               (cond
+                ((generic-dispatch-find-method methods args)
+                 => (lambda (method)
+                      (apply method args)))
+                (gen.default
+                 => (lambda (method)
+                      (apply method args)))
+                (else
+                 (raise-dispatch-error generic-dispatch-next (generic-id gen) args)))))))
+     (else
+      (raise-dispatch-error generic-dispatch-next (generic-id gen) args)))))
 
 ;; The cache is a perfect hash table represented as a vector containing
 ;; cache entries. A cache entry is an inverted arg type id improper list
@@ -328,22 +322,21 @@
 (deflookup* generic-dispatch-cache-lookup4 cache-hash4 arg1 arg2 arg3 arg4)
 
 ;; cache the result of method dispatch
-(def (generic-dispatch-cache! gtab args method)
-  (using (gtab :- generic-table)
-    (let* ((arg-types (map class-of args))
-           (entry (foldl cons method arg-types))
-           (hash (foldl (lambda (klass shift r)
-                          (fxxor r (fxarithmetic-shift (class-hash klass) shift)))
-                        0 arg-types (iota (length args)))))
-      (let lp ((cache gtab.cache))
-        (let* ((len (vector-length cache))
-               (ix (fxmodulo hash len)))
-          (if (vector-ref cache ix)     ; conflict
-            (cond
-             ((generic-dispatch-cache-rehash cache) => lp))
-            (begin
-              (vector-set! cache ix entry)
-              (set! gtab.cache cache))))))))
+(def (generic-dispatch-cache! (gtab :- generic-table) args method)
+  (let* ((arg-types (map class-of args))
+         (entry (foldl cons method arg-types))
+         (hash (foldl (lambda (klass shift r)
+                        (fxxor r (fxarithmetic-shift (class-hash klass) shift)))
+                      0 arg-types (iota (length args)))))
+    (let lp ((cache gtab.cache))
+      (let* ((len (vector-length cache))
+             (ix (fxmodulo hash len)))
+        (if (vector-ref cache ix)       ; conflict
+          (cond
+           ((generic-dispatch-cache-rehash cache) => lp))
+          (begin
+            (vector-set! cache ix entry)
+            (set! gtab.cache cache)))))))
 
 (def (generic-dispatch-cache-rehash cache)
   (def cache-len (vector-length cache))

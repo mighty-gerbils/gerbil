@@ -14,8 +14,10 @@
         completion-error!
         with-completion-error)
 
-(defstruct completion (mx cv ready? val exn)
-  final: #t 
+(defstruct completion ((mx :- :mutex)
+                       (cv :- :condvar)
+                       ready? val exn)
+  final: #t
   constructor: :init!)
 
 (defmethod {:init! completion}
@@ -24,22 +26,21 @@
                            (make-mutex name)
                            (make-condition-variable name))))
 
-(def (completion-wait! c)
-  (using (c : completion)
-    (let lp ()
-      (mutex-lock! c.mx)
-      (if c.ready?
-        (begin
-          (mutex-unlock! c.mx)
-          (cond
-           (c.exn => raise)
-           (else c.val)))
-        (begin
-          (mutex-unlock! c.mx c.cv)
-          (lp))))))
+(def (completion-wait! (c : completion))
+  (let lp ()
+    (mutex-lock! c.mx)
+    (if c.ready?
+      (begin
+        (mutex-unlock! c.mx)
+        (cond
+         (c.exn => raise)
+         (else c.val)))
+      (begin
+        (mutex-unlock! c.mx c.cv)
+        (lp)))))
 
 (defrule (do-completion-post! compl val set-e)
-  (using (c compl : completion)
+  (using (c compl :- completion)
     (mutex-lock! c.mx)
     (if c.ready?
       (begin
@@ -52,10 +53,10 @@
         (condition-variable-broadcast! c.cv)
         (void)))))
 
-(def (completion-post! compl val)
+(def (completion-post! (compl : completion) val)
   (do-completion-post! compl val &completion-val-set!))
 
-(def (completion-error! compl exn)
+(def (completion-error! (compl : completion) exn)
   (do-completion-post! compl exn &completion-exn-set!))
 
 (defrules with-completion-error ()

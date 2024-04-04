@@ -7,11 +7,11 @@
 (defstruct mime-type (name extensions)
   transparent: #t
   constructor: :init!)
+
 (defmethod {:init! mime-type}
-  (lambda (this name . exts)
-    (using (self this :- mime-type)
-      (set! self.name name)
-      (set! self.extensions exts))))
+  (lambda (self name . exts)
+    (set! self.name name)
+    (set! self.extensions exts)))
 
 (def mime-types (make-hash-table))
 (def mime-extensions (make-hash-table))
@@ -29,12 +29,12 @@
     (def (tylin? line) (not (or (equal? "" line) (equal? (string-ref line 0) #\#))))
     (def (maker line)
       (with ([_ name extstrlst ...] (pregexp-match "([^\t]*)(.*)" line))
-      
+
 	(def exts (and (not (null? extstrlst))
 		       (string-split (string-trim (car extstrlst)) #\space)))
 	(apply make name exts)))
-      
-      
+
+
     (map maker (filter tylin? (read-file-lines path))))
 
   (syntax-case stx ()

@@ -14,18 +14,18 @@
       (set! self.next-item (iter-next! itr)))))
 
 (def (tal:repeat-next! self)
-  (if (iterator? self) (set! self (iterator-e self))) 
+  (if (iterator? self) (set! self (iterator-e self)))
   (using (self : tal:repeat)
     (def item self.next-item)
     (set! self.index (1+ self.index))
     (set! self.next-item (iter-next! self.iter))
     item))
 
-(defmethod (:iter (self tal:repeat)) (make-iterator self tal:repeat-next!))
+(defmethod (:iter (self tal:repeat)) (make-iterator e: self next: tal:repeat-next!))
 
 (interface Repeat
   (index) ;; repetition number, starting from zero.
-  (number) ;; repetition number, starting from one. 
+  (number) ;; repetition number, starting from one.
   (even? )  ;; true for even-indexed repetitions (0, 2, 4, …).
   (odd?) ;; true for odd-indexed repetitions (1, 3, 5, …).
   (start?) ;; true for the starting repetition (index 0).
@@ -48,14 +48,14 @@
 
 (defmethod {index tal:repeat} tal:repeat-index)
 (defmethod {number tal:repeat} (lambda (r) (1+ (tal:repeat-index r))))
-(defmethod {even? tal:repeat} (lambda (r) (even? (tal:repeat-index r)))) 
-(defmethod {odd? tal:repeat} (lambda (r) (odd? (tal:repeat-index r)))) 
+(defmethod {even? tal:repeat} (lambda (r) (even? (tal:repeat-index r))))
+(defmethod {odd? tal:repeat} (lambda (r) (odd? (tal:repeat-index r))))
 (defmethod {start? tal:repeat} (lambda (r) (= 0 (tal:repeat-index r))))
 (defmethod {end? tal:repeat} (lambda (r) (eq? iter-end (tal:repeat-next-item r))))
 (def (integer->letters number (base-char #\a))
   (def bn (char->integer base-char))
   (list->string
-   (reverse 
+   (reverse
     (let lp ((number number))
       (set! number (1- number))
       ;(displayln "Get Num:" number )
@@ -65,7 +65,7 @@
 
 (defmethod {letter tal:repeat}
   (lambda (r) (integer->letters (1+ (tal:repeat-index r)))))
-    
+
 (defmethod {Letter tal:repeat}
   (lambda (r) (integer->letters (1+ (tal:repeat-index r)) #\A)))
 
@@ -95,7 +95,7 @@
               ((>= v d) (cons r (loop (- v d) decode)))
               (else (loop v (cdr decode))))))))
 
-(defmethod {roman tal:repeat} 
+(defmethod {roman tal:repeat}
   (lambda (r) (string-downcase (integer->roman (1+ (tal:repeat-index r))))))
 
 (defmethod {Roman tal:repeat}

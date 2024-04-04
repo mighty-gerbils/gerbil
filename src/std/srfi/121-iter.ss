@@ -13,4 +13,4 @@
         (if (eof-object? v)
           iter-end
           v))))
-  (make-iterator g next))
+  (make-iterator e: g next: next))

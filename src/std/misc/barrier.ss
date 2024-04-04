@@ -12,51 +12,55 @@
         barrier-error!
         with-barrier-error)
 
-(defstruct barrier (mx cv count limit exn)
+(defstruct barrier ((mx    :- :mutex)
+                    (cv    :- :condvar)
+                    (count :- :fixnum)
+                    (limit :- :fixnum)
+                    exn)
   constructor: :init! final: #t )
 
 (defmethod {:init! barrier}
-  (lambda (self limit)
-    (unless (and (fixnum? limit) (##fx>= limit 0))
-      (raise-bad-argument make-barrier "positive fixnum" limit))
+  (lambda (self (limit :~ nonnegative-fixnum? :- :fixnum))
     (struct-instance-init! self
                            (make-mutex 'barrier)
                            (make-condition-variable 'barrier)
                            0 limit)))
 
-(def (barrier-wait! b)
-  (using (b : barrier)
-    (let lp ()
-      (mutex-lock! b.mx)
-      (cond
-       (b.exn
-        => (lambda (exn)
-             (mutex-unlock! b.mx)
-             (raise exn)))
-       ((##fx< b.count b.limit)
-        (mutex-unlock! b.mx b.cv)
-        (lp))
-       (else
-        (mutex-unlock! b.mx)
-        (void))))))
-
-(def (barrier-post! b)
-  (using (b : barrier)
+(def (barrier-wait! (b : barrier))
+  => :void
+  (let lp ()
+    => :void
     (mutex-lock! b.mx)
-    (let* ((count b.count)
-           (count+1 (##fx+ count 1)))
-      (set! b.count count+1)
-      (unless (##fx< count+1 b.limit)
-        (condition-variable-broadcast! b.cv))
-      (mutex-unlock! b.mx))))
+    (cond
+     (b.exn
+      (mutex-unlock! b.mx)
+      (abort! (raise b.exn)))
+     ((fx< b.count b.limit)
+      (mutex-unlock! b.mx b.cv)
+      (lp))
+     (else
+      (mutex-unlock! b.mx)
+      (void)))))
 
-(def (barrier-error! b exn)
-  (using (b : barrier)
-    (mutex-lock! b.mx)
-    (unless b.exn
-      (set! b.exn exn))
-    (condition-variable-broadcast! b.cv)
-    (mutex-unlock! b.mx)))
+(def (barrier-post! (b : barrier))
+  => :void
+  (mutex-lock! b.mx)
+  (let* ((count b.count)
+         (count+1 (fx+ count 1)))
+    (set! b.count count+1)
+    (unless (fx< count+1 b.limit)
+      (condition-variable-broadcast! b.cv))
+    (mutex-unlock! b.mx)
+    (void)))
+
+(def (barrier-error! (b : barrier) exn)
+  => :void
+  (mutex-lock! b.mx)
+  (unless b.exn
+    (set! b.exn exn))
+  (condition-variable-broadcast! b.cv)
+  (mutex-unlock! b.mx)
+  (void))
 
 (defrules with-barrier-error ()
   ((_ b expr rest ...)

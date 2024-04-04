@@ -25,58 +25,54 @@
 
 (defmethod {read input-file-io}
   (lambda (self output output-start output-end input-need)
-    (using (self :- file-io)
-      (let (fd self.fd)
-        (let lp ((output-start output-start) (input-need input-need) (result 0))
-          (when self.closed?
-            (raise-io-closed file-io-read "file is closed"))
-          (if (fx< output-start output-end)
-            (let (read (fdread fd output output-start output-end))
-              (cond
-               ((not read)
-                (&wait-io! (fd-io-in fd))
-                (lp output-start input-need result))
-               ((fx= read 0)
-                (if (fx> input-need result)
-                  (raise-premature-end-of-input file-io-read input-need)
-                  result))
-               ((fx>= read input-need)
-                (fx+ result read))
-               (else
-                (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
-            result))))))
+    (let (fd self.fd)
+      (let lp ((output-start output-start) (input-need input-need) (result 0))
+        (when self.closed?
+          (raise-io-closed file-io-read "file is closed"))
+        (if (fx< output-start output-end)
+          (let (read (fdread fd output output-start output-end))
+            (cond
+             ((not read)
+              (&wait-io! (fd-io-in fd))
+              (lp output-start input-need result))
+             ((fx= read 0)
+              (if (fx> input-need result)
+                (raise-premature-end-of-input file-io-read input-need)
+                result))
+             ((fx>= read input-need)
+              (fx+ result read))
+             (else
+              (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
+          result)))))
 
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
-    (using (self :- file-io)
-      (let (fd self.fd)
-        (let lp ((input-start input-start) (result 0))
-          (when self.closed?
-            (raise-io-closed output-file-io "file is closed"))
-          (if (fx< input-start input-end)
-            (let (wrote (fdwrite fd input input-start input-end))
-              (cond
-               ((not wrote)
-                (&wait-io! (fd-io-out fd))
-                (lp input-start result))
-               (else
-                (lp (fx+ input-start wrote) (fx+ result wrote)))))
-            result))))))
+    (let (fd self.fd)
+      (let lp ((input-start input-start) (result 0))
+        (when self.closed?
+          (raise-io-closed output-file-io "file is closed"))
+        (if (fx< input-start input-end)
+          (let (wrote (fdwrite fd input input-start input-end))
+            (cond
+             ((not wrote)
+              (&wait-io! (fd-io-out fd))
+              (lp input-start result))
+             (else
+              (lp (fx+ input-start wrote) (fx+ result wrote)))))
+          result)))))
 
 (defmethod {close file-io}
   (lambda (self)
-    (using (self :- file-io)
-      (unless self.closed?
-        (set! self.closed? #t)
-        (close-port self.fd)))))
+    (unless self.closed?
+      (set! self.closed? #t)
+      (close-port self.fd))))
 
 (defmethod {seek file-io}
   (lambda (self position from)
-    (using (self :- file-io)
-      (when self.closed?
-        (raise-io-closed file-io "file is closed"))
-      (fdseek self.fd position from)
-      (void))))
+    (when self.closed?
+      (raise-io-closed file-io "file is closed"))
+    (fdseek self.fd position from)
+    (void)))
 
 (defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))

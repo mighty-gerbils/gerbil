@@ -7,6 +7,7 @@
         :std/sugar
         :std/iter
         :std/sort
+        :std/hash-table
         :std/misc/symbol
         ./logger
         ./message
@@ -16,13 +17,13 @@
 (export #t)
 
 (interface Registry
-  (add-server id addrs roles)
-  (remove-server id)
-  (lookup-server id)
-  (lookup-servers/role role)
-  (list-servers)
-  (flush)
-  (close))
+  (add-server id addrs roles) => :void
+  (remove-server id) => :void
+  (lookup-server id) => :list
+  (lookup-servers/role role) => :list
+  (list-servers) => :list
+  (flush) => :void
+  (close) => :void)
 
 (def (default-registry-path)
   (path-expand "registry.data" (ensemble-server-path 'registry)))
@@ -99,84 +100,80 @@
          ,(@unexpected warnf))))))
 
 ;; registry implementation
-(defstruct registry (path servers roles dirty?)
-  final: #t 
+(defstruct registry ((path    :- :string)
+                     (servers :- HashTable)
+                     (roles   :- HashTable)
+                     (dirty?  :- :boolean))
+  final: #t
   constructor: :init!)
 
 (defmethod {:init! registry}
-  (lambda (self path)
-    (using (self :- registry)
-      (let (path (path-expand path))
-        (create-directory* (path-directory path))
-        (set! self.path path)
-        (set! self.servers (make-hash-table-eq))
-        (set! self.roles (make-hash-table-eq))
-        (when (file-exists? path)
-          (call-with-input-file path
-            (lambda (file)
-              (let lp ()
-                (let (next (read file))
-                  (unless (eof-object? next)
-                    (match next
-                      ([id roles . addrs]
-                       (registry::add-server self id addrs roles)
-                       (lp))))))))
-          (set! self.dirty? #f))))))
+  (lambda (self (path : :string))
+    (let (path (path-expand path))
+      (create-directory* (path-directory path))
+      (set! self.path path)
+      (set! self.servers (make-hash-table-eq))
+      (set! self.roles (make-hash-table-eq))
+      (when (file-exists? path)
+        (call-with-input-file path
+          (lambda (file)
+            (let lp ()
+              (let (next (read file))
+                (unless (eof-object? next)
+                  (match next
+                    ([id roles . addrs]
+                     (registry::add-server self id addrs roles)
+                     (lp))))))))
+        (set! self.dirty? #f)))))
 
 (defmethod {add-server registry}
   (lambda (self id addrs roles)
-    (using (self :- registry)
-      ;; is it an update? if so remove first
-      (when (hash-key? self.servers id)
-        (registry::remove-server self id))
-      ;; and now add it
-      (hash-put! self.servers id (cons roles addrs))
-      (when roles
-        (for (role roles)
-          (hash-update! self.roles role (cut cons id <>) [])))
-      (set! self.dirty? #t))))
+    ;; is it an update? if so remove first
+    (when (hash-key? self.servers id)
+      (registry::remove-server self id))
+    ;; and now add it
+    (hash-put! self.servers id (cons roles addrs))
+    (when roles
+      (for (role roles)
+        (hash-update! self.roles role (cut cons id <>) [])))
+    (set! self.dirty? #t)))
 
 (defmethod {remove-server registry}
   (lambda (self id)
-    (using (self :- registry)
-      (cond
-       ((hash-get self.servers id)
-        => (lambda (entry)
-             (for (role (car entry))
-               (hash-update! self.roles role (cut remq id <>) []))
-             (hash-remove! self.servers id)
-             (set! self.dirty? #t)))))))
+    (cond
+     ((hash-get self.servers id)
+      => (lambda (entry)
+           (for (role (car entry))
+             (hash-update! self.roles role (cut remq id <>) []))
+           (hash-remove! self.servers id)
+           (set! self.dirty? #t))))))
 
 (defmethod {lookup-server registry}
   (lambda (self id)
-    (using (self :- registry)
-      (alet (entry (hash-get self.servers id))
-        (cdr entry)))))
+    (alet (entry (hash-get self.servers id))
+      (cdr entry))))
 
 (defmethod {lookup-servers/role registry}
   (lambda (self role)
-    (using (self :- registry)
-      (let (servers (hash-ref self.roles role []))
-        (map (lambda (id) (cons id (cdr (hash-ref self.servers id []))))
-             servers)))))
+    (let (servers (hash-ref self.roles role []))
+      (map (lambda (id) (cons id (cdr (hash-ref self.servers id []))))
+           servers))))
 
 (defmethod {list-servers registry}
   (lambda (self)
-    (using (self :- registry)
-      (hash->list self.servers))))
+    (hash->list self.servers)))
 
 (defmethod {flush registry}
   (lambda (self)
-    (using (self :- registry)
-      (when self.dirty?
-        (let (tmp (string-append self.path ".tmp"))
-          (call-with-output-file tmp
-            (lambda (file)
-              (for (entry (hash->list self.servers))
-                (write entry file)
-                (newline file))))
-          (rename-file tmp self.path)
-          (set! self.dirty? #f))))))
+    (when self.dirty?
+      (let (tmp (string-append self.path ".tmp"))
+        (call-with-output-file tmp
+          (lambda (file)
+            (for (entry (hash->list self.servers))
+              (write entry file)
+              (newline file))))
+        (rename-file tmp self.path)
+        (set! self.dirty? #f)))))
 
 (defmethod {close registry}
   registry::flush)

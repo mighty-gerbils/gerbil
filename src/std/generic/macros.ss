@@ -5,7 +5,7 @@
 (import :std/generic/dispatch
         :std/interface
         (for-syntax :std/stxutil)
-        (rename-in (only-in :gerbil/core/mop defmethod) (defmethod defmethod~)))
+        (rename-in (only-in :gerbil/core defmethod) (defmethod defmethod~)))
 (export #t (phi: +1 #t))
 
 (begin-syntax
@@ -98,7 +98,7 @@
                        (map generic-type-e type-infos))
                       (impl
                        (syntax/loc stx
-                         (lambda (arg-id ...) body ...)))
+                         (lambda (arg-id ...) (using ((arg-id :- type-id) ...) body ...))))
                       (defimpl
                         (syntax/loc stx
                           (def impl-id

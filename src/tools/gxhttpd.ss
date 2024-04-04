@@ -10,6 +10,7 @@
         :std/mime/types
         :std/actor
         :std/iter
+        :std/hash-table
         :std/misc/ports
         (only-in :std/logger start-logger! deflogger current-logger-options)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
@@ -315,61 +316,67 @@
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
 
-(defstruct dynamic-mux (root handlers servlets mx cache cache-ttl cache-max-size)
+(defstruct dynamic-mux ((root :- :string)
+                        (handlers :- HashTable)
+                        (servlets :- HashTable)
+                        (mx :- :mutex)
+                        (cache :- HashTable)
+                        (cache-ttl :- :real)
+                        (cache-max-size :- :fixnum))
   constructor: :init! final: #t)
 
-(defstruct cache-entry (handler expire preserve?)
+(defstruct cache-entry ((handler :- :procedure)
+                        (expire :- :flonum)
+                        (preserve? :- :procedure))
   final: #t)
 
 (defmethod {:init! dynamic-mux}
   (lambda (self cfg)
-    (using (self :- dynamic-mux)
-      (let ((root (config-get! cfg root:))
-            (handlers (config-get cfg handlers: []))
-            (servlets? (config-get cfg enable-servlets:)))
-        (set! self.root root)
-        (set! self.cache (make-hash-table-string))
-        (set! self.cache-ttl (config-get cfg cache-ttl: 120))
-        (set! self.cache-max-size (config-get cfg cache-max-size: 16384))
-        (set! self.handlers (make-hash-table-string))
-        (when servlets?
-          (set! self.servlets (make-hash-table-string))
-          (set! self.mx (make-mutex 'mux-loader)))
-        (for ([path . handler-module] handlers)
-          (let* ((ctx (import-module handler-module #f #t))
-                 (init! (find-runtime-symbol ctx 'handler-init!))
-                 (handle-request (find-runtime-symbol ctx 'handle-request)))
-            (unless handle-request
-              (error "handler module does not export handle-request"
-                module: handler-module))
-            (when init!
-              ((eval init!) cfg))
-            (hash-put! self.handlers path (eval handle-request))))))))
+    (let ((root (: (config-get! cfg root:) :string))
+          (handlers (: (config-get cfg handlers: []) :list))
+          (servlets? (: (config-get cfg enable-servlets:) :boolean)))
+      (set! self.root root)
+      (set! self.cache (make-hash-table-string))
+      (set! self.cache-ttl (: (config-get cfg cache-ttl: 120) :real))
+      (set! self.cache-max-size (: (config-get cfg cache-max-size: 16384) :fixnum))
+      (set! self.handlers (make-hash-table-string))
+      (when servlets?
+        (set! self.servlets (make-hash-table-string))
+        (set! self.mx (make-mutex 'mux-loader)))
+      (for ([path . handler-module] handlers)
+        (let* ((ctx (import-module handler-module #f #t))
+               (init! (find-runtime-symbol ctx 'handler-init!))
+               (handle-request (find-runtime-symbol ctx 'handle-request)))
+          (unless handle-request
+            (error "handler module does not export handle-request procedure"
+              module: handler-module))
+          (when init!
+            ((: (eval init!) :procedure) cfg))
+          (hash-put! self.handlers path (: (eval handle-request) :procedure)))))))
 
 (defmethod {get-handler dynamic-mux}
-  (lambda (self host path)
-    (using (self :- dynamic-mux)
-      ;; flush the cache if it gets too big
-      (when (fx> (hash-length self.cache) self.cache-max-size)
-        (set! self.cache (make-hash-table-string)))
-      (cond
-       ((hash-get self.cache path)
-        => (lambda (cache-entry)
-             (let (now (##current-time-point))
-               (cond
-                ((fl< now (&cache-entry-expire cache-entry))
-                 (&cache-entry-handler cache-entry))
-                (((&cache-entry-preserve? cache-entry))
-                 (set! (&cache-entry-expire cache-entry)
-                   (fl+ now self.cache-ttl))
-                 (&cache-entry-handler cache-entry))
-                (else
-                 {self.__get-handler path})))))
-       (else
-        {self.__get-handler path})))))
+  (lambda (self host (path :- :string))
+    ;; flush the cache if it gets too big
+    (when (fx> (hash-length self.cache) self.cache-max-size)
+      (set! self.cache (make-hash-table-string)))
+    (cond
+     ((hash-get self.cache path)
+      => (lambda (cache-entry)
+           (let (now (##current-time-point))
+             (cond
+              ((fl< now (&cache-entry-expire cache-entry))
+               (&cache-entry-handler cache-entry))
+              (((&cache-entry-preserve? cache-entry))
+               (set! (&cache-entry-expire cache-entry)
+                 (fl+ now self.cache-ttl))
+               (&cache-entry-handler cache-entry))
+              (else
+               {self.__get-handler path})))))
+     (else
+      {self.__get-handler path}))))
 
 (defmethod {__get-handler dynamic-mux}
-  (lambda (self path)
+  (lambda (self (path :- :string))
     (defrule (not-found-cache-entry expire)
       (cache-entry not-found-handler expire (lambda () #f)))
 
@@ -383,33 +390,31 @@
                         created))))
         (cache-entry handler expire preserve?)))
 
-    (using (self :- dynamic-mux)
-      (let* ((now (##current-time-point))
-             (expire (+ now self.cache-ttl))
-             (entry
-              (let (server-path (server-request-path path))
-                (cond
-                 ((not server-path)
-                  (not-found-cache-entry expire))
-                 ((find-handler self.handlers server-path)
-                  => (lambda (handler)
-                       (cache-entry handler expire (lambda () #t))))
-                 (else
-                  (let (file-path (string-append self.root server-path))
-                    (if (file-exists? file-path)
-                      (if (and self.servlets (equal? ".ss" (path-extension file-path)))
-                        (file-cache-entry file-path expire now
-                          (find-servlet-handler self.servlets self.mx file-path))
-                        (file-cache-entry file-path expire now
-                          (file-handler file-path)))
-                      (not-found-cache-entry expire))))))))
-        (hash-put! self.cache path entry)
-        (&cache-entry-handler entry)))))
+    (let* ((now (##current-time-point))
+           (expire (+ now self.cache-ttl))
+           (entry
+            (let (server-path (server-request-path path))
+              (cond
+               ((not server-path)
+                (not-found-cache-entry expire))
+               ((find-handler self.handlers server-path)
+                => (lambda (handler)
+                     (cache-entry handler expire (lambda () #t))))
+               (else
+                (let (file-path (string-append self.root server-path))
+                  (if (file-exists? file-path)
+                    (if (and self.servlets (equal? ".ss" (path-extension file-path)))
+                      (file-cache-entry file-path expire now
+                                        (find-servlet-handler self.servlets self.mx file-path))
+                      (file-cache-entry file-path expire now
+                                        (file-handler file-path)))
+                    (not-found-cache-entry expire))))))))
+      (hash-put! self.cache path entry)
+      (&cache-entry-handler entry))))
 
 (defmethod {put-handler! dynamic-mux}
-  (lambda (self host path handler)
-    (using (self :- dynamic-mux)
-      (hash-put! self.handlers path handler))))
+  (lambda (self host (path :- :string) (handler :- :procedure))
+    (hash-put! self.handlers path handler)))
 
 (def (not-found-handler req res)
   (http-response-write-condition res Not-Found))
@@ -417,7 +422,9 @@
 (def (forbidden-handler req res)
   (http-response-write-condition res Forbidden))
 
-(defstruct servlet (handler path timestamp)
+(defstruct servlet ((handler   :- :procedure)
+                    (path      :- :string)
+                    (timestamp :- :flonum))
   final: #t)
 
 (def (find-servlet-handler servlet-tab mx file-path)
@@ -430,7 +437,7 @@
         (error "servlet does not export handle-request" file-path))
       (when init!
         ((eval init!) (current-http-server-config)))
-      (let* ((handle-request (eval handle-request))
+      (let* ((handle-request (: (eval handle-request) :procedure))
              (srv (servlet handle-request file-path load-time)))
         (hash-put! servlet-tab file-path srv)
         srv)))
@@ -444,12 +451,13 @@
                   (file-info-last-modification-time
                    (file-info file-path #t))))
              (if (> modtime srv.timestamp)
-               (&servlet-handler (load-servlet! file-path #t))
+               (servlet-handler (load-servlet! file-path #t))
                srv.handler)))))
    (else
     (servlet-handler (load-servlet! file-path #f)))))
 
 (def (file-handler path)
+  => :procedure
   (let (info (file-info path #t))
     (if (eq? (file-info-type info) 'directory)
       (let (index-html-path (path-expand "index.html" path))
@@ -461,6 +469,7 @@
 (def max-file-cache-size 32768) ; size of i/o buffer for http-response-file
 
 (def (serve-file path info)
+  => :procedure
   (let* ((content-type (path-extension->mime-type-name path))
          (headers
           [(if content-type
