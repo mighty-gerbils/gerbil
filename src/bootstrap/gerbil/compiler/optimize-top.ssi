@@ -151,6 +151,13 @@ namespace: gxc
          (%#define-runtime
           collect-type-begin-annotation%
           gxc#collect-type-begin-annotation%)
+         (%#define-runtime collect-type-lambda% gxc#collect-type-lambda%)
+         (%#define-runtime
+          collect-type-case-lambda%
+          gxc#collect-type-case-lambda%)
+         (%#define-runtime
+          collect-type-lambda-formals-tail
+          gxc#collect-type-lambda-formals-tail)
          (%#begin (%#define-runtime
                    collect-type-let-values%__%
                    gxc#collect-type-let-values%__%)

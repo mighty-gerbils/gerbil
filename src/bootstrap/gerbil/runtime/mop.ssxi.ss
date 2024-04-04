@@ -101,7 +101,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (#f)
+             (t::t)
              unchecked:
              __type-opaque?)))
   (declare-type
@@ -120,7 +120,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (#f)
+             (t::t)
              unchecked:
              __type-extensible?)))
   (declare-type
@@ -383,7 +383,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (symbol::t symbol::t list::t list::t list::t #f)
+             (symbol::t symbol::t list::t list::t list::t t::t)
              unchecked:
              __make-class-type)))
   (declare-type

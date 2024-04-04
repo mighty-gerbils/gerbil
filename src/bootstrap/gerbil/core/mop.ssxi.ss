@@ -322,9 +322,6 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
    (@lambda 2 #f))
-  (declare-type gerbil/core/mop~MOP-2#!class-slot-type (@lambda 2 #f))
-  (declare-type gerbil/core/mop~MOP-2#!class-slot-default (@lambda 2 #f))
-  (declare-type gerbil/core/mop~MOP-2#!class-slot-contract (@lambda 2 #f))
   (declare-type
    gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
    (@lambda 2 #f))

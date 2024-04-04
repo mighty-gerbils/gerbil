@@ -321,6 +321,9 @@ package: gerbil/compiler
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#collect-type-define-values% (@lambda 2 #f))
   (declare-type gxc#collect-type-begin-annotation% (@lambda 2 #f))
+  (declare-type gxc#collect-type-lambda% (@lambda 2 #f))
+  (declare-type gxc#collect-type-case-lambda% (@lambda 2 #f))
+  (declare-type gxc#collect-type-lambda-formals-tail (@lambda 2 #f))
   (declare-type gxc#collect-type-let-values%__% (@lambda 3 #f))
   (declare-type gxc#collect-type-let-values%__0 (@lambda 2 #f))
   (declare-type

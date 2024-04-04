@@ -455,6 +455,21 @@ package: gerbil/core
   (declare-type gerbil/core/contract~TypeEnv#current-type-env (@lambda 0 #f))
   (declare-type gerbil/core/contract~TypeEnv#type-env-lookup (@lambda 1 #f))
   (declare-type
+   |gerbil/core/contract~Using[1]#!class-slot-type|
+   (@lambda 2 #f))
+  (declare-type
+   |gerbil/core/contract~Using[1]#!class-slot-default|
+   (@lambda 2 #f))
+  (declare-type
+   |gerbil/core/contract~Using[1]#!class-slot-contract|
+   (@lambda 2 #f))
+  (declare-type
+   |gerbil/core/contract~Using[1]#!class-slot-checked-method-contract?|
+   (@lambda 2 #f))
+  (declare-type
+   |gerbil/core/contract~Using[1]#!class-slot-checked-mutator-contract?|
+   (@lambda 2 #f))
+  (declare-type
    |gerbil/core/contract~Using[1]#dotted-identifier?|
    (@lambda 1
             #f
@@ -470,7 +485,7 @@ package: gerbil/core
    |gerbil/core/contract~Using[1]#get-slot-mutator|
    (@lambda 4 #f))
   (declare-type
-   gerbil/core/contract~ClassPrecedenceList#!class-precedence-list
+   gerbil/core/contract~ClassMeta#!class-precedence-list
    (@lambda 1 #f))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__%|

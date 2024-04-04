@@ -309,15 +309,6 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     class-type-info::apply-macro-expander
                     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
-                   (%#define-runtime
-                    !class-slot-type
-                    gerbil/core/mop~MOP-2#!class-slot-type)
-                   (%#define-runtime
-                    !class-slot-default
-                    gerbil/core/mop~MOP-2#!class-slot-default)
-                   (%#define-runtime
-                    !class-slot-contract
-                    gerbil/core/mop~MOP-2#!class-slot-contract)
                    (%#begin (%#define-runtime
                              syntax-local-class-type-info?__%
                              gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)

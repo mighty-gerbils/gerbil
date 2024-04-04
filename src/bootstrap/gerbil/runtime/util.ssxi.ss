@@ -840,7 +840,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (t::t #f)
+             (t::t t::t)
              unchecked:
              __display-as-string)))
   (declare-type
@@ -1054,7 +1054,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t #f #f t::t)
+             (string::t t::t t::t t::t)
              unchecked:
              __substring->bytes)))
   (declare-type
@@ -1126,7 +1126,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (string::t char::t #f)
+             (string::t char::t t::t)
              unchecked:
              __string-index)))
   (declare-type
@@ -1257,7 +1257,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (u8vector::t #f #f #f)
+             (u8vector::t t::t t::t t::t)
              unchecked:
              __read-u8vector)))
   (declare-type
@@ -1330,7 +1330,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (u8vector::t #f #f #f)
+             (u8vector::t t::t t::t t::t)
              unchecked:
              __write-u8vector)))
   (declare-type
