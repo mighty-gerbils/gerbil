@@ -1501,12 +1501,19 @@ package: gerbil/core
                         (self (syntax-local-introduce 'self))
                         (offset offset)
                         ((out ...) (signature-arguments-out signature)))
-            (syntax/loc stx
-              (definterface-method Interface method
-                (declare (not safe))
-                (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
-                      (f   (##unchecked-structure-ref self offset #f 'method-name)))
-                  (f obj out ...))))))))
+            (if (stx-list? signature)
+              (syntax/loc stx
+                (definterface-method Interface method
+                  (declare (not safe))
+                  (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
+                        (f   (##unchecked-structure-ref self offset #f 'method-name)))
+                    (f obj out ...))))
+              (syntax/loc stx
+                (definterface-method Interface method
+                  (declare (not safe))
+                  (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
+                        (f   (##unchecked-structure-ref self offset #f 'method-name)))
+                    (##apply f obj out ...)))))))))
 
     (syntax-case stx ()
       ((_ hd spec ...)
