@@ -2317,7 +2317,8 @@ package: gerbil/core
                           (order-slots (!class-type-slots klass)
                                        (!class-type-super klass)))
                       (set! (!class-type-ordered-slots klass)
-                        ordered)))))
+                        ordered)
+                      ordered))))
                 []))
              (r-fields (reverse base-fields))
              (seen-slots
