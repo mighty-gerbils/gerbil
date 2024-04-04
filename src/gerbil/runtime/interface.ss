@@ -43,7 +43,7 @@ namespace: #f
   prototype-table-ref
   prototype-table-set! __prototype-table-set!
   prototype-table-update! __prototype-table-update!
-  prototype-trable-delete!
+  prototype-table-delete!
   __interface-hash-key __interface-test-key)
 
 (def __interface-prototypes-mx (__make-inline-lock))
