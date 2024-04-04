@@ -783,21 +783,23 @@ package: gerbil/core
               (cond
                ((memq (!class-type-id klass) '(t object class))
                 precedence-list)
-               ((member (quote-syntax :object) precedence-list free-identifier=?)
+               ((member ':object precedence-list free-identifier=?)
                 precedence-list)
                ((!class-type-system? klass)
-                (if (member (quote-syntax :t) precedence-list free-identifier=?)
+                (if (member ':t precedence-list free-identifier=?)
                   precedence-list
-                  (append precedence-list [(quote-syntax :t)])))
+                  (append precedence-list [(core-quote-syntax ':t)])))
                (else
                 (let loop ((tail precedence-list) (head []))
                   (match tail
                     ([hd . rest]
-                     (if (free-identifier=? hd #':t)
-                       (foldl cons (cons (quote-syntax :object) tail) head)
+                     (if (free-identifier=? hd ':t)
+                       (foldl cons (cons (core-quote-syntax ':object) tail) head)
                        (loop rest (cons hd head))))
                     (else
-                     (foldl cons [(quote-syntax :object) (quote-syntax :t)] head))))))))
+                     (foldl cons [(core-quote-syntax ':object)
+                                  (core-quote-syntax ':t)]
+                            head))))))))
         (set! (!class-type-precedence-list klass) precedence-list)
         precedence-list)))))
 
@@ -2284,29 +2286,17 @@ package: gerbil/core
 
     ;; TODO this has to become a base utility in :gerbil/runtime/c4
     (def (order-slots slots super)
-      ;; workaround for BUG in c4-linearize
-      ;; TODO remove the workaround once its fixed in c4-linearize
-      (def idtab (make-hash-table-eq))
-      (def (id-e klass-id)
-        (let* ((klass (syntax-local-value/context klass-id))
-               (id (!class-type-id klass)))
-          (hash-put! idtab id klass-id)
-          id))
-      (def (id->identifier id)
-        (hash-ref idtab id id))
-
       (let* (((values precedence-list base-struct)
               (c4-linearize [] super
                             get-precedence-list:
                             (lambda (klass-id)
-                              (cons (id-e klass-id)
-                                    (map id-e (!class-precedence-list (syntax-local-value/context klass-id)))))
+                              (cons klass-id
+                                    (!class-precedence-list (syntax-local-value/context klass-id))))
                             struct:
-                            (lambda (id)
-                              (!class-type-struct? (syntax-local-value/context (id->identifier id))))
+                            (lambda (klass-id)
+                              (!class-type-struct? (syntax-local-value/context klass-id)))
+                            eq: free-identifier=?
                             get-name: stx-e))
-             (precedence-list (map id->identifier precedence-list))
-             (base-struct (and base-struct (id->identifier base-struct)))
              (base-fields
               (if base-struct
                 (let (klass (syntax-local-value base-struct))
