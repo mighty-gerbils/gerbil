@@ -23,6 +23,7 @@
            (defreader-ext* (method . args) body ...)
            (export reader-method unchecked-method))))))
 
+;; TODO implement with interface method infrastructure
 (defsyntax (defreader-ext* stx)
   (syntax-case stx ()
     ((_ (method reader . args) body ...)
@@ -45,6 +46,7 @@
            (defwriter-ext* (method . args) body ...)
            (export writer-method unchecked-method))))))
 
+;; TODO implement with interface method infrastructure
 (defsyntax (defwriter-ext* stx)
   (syntax-case stx ()
     ((_ (method writer . args) body ...)
