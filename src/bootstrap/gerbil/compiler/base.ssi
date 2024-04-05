@@ -44,6 +44,9 @@ namespace: gxc
           gxc#current-compile-timestamp)
          (%#define-runtime current-compile-decls gxc#current-compile-decls)
          (%#define-runtime current-compile-context gxc#current-compile-context)
+         (%#define-runtime
+          current-compile-local-env
+          gxc#current-compile-local-env)
          (%#define-runtime symbol-table::t gxc#symbol-table::t)
          (%#define-runtime symbol-table? gxc#symbol-table?)
          (%#define-runtime make-symbol-table gxc#make-symbol-table)
@@ -72,5 +75,34 @@ namespace: gxc
          (%#define-runtime
           module-path-reserved-chars
           gxc#module-path-reserved-chars)
-         (%#define-runtime module-id->path-string gxc#module-id->path-string))
+         (%#define-runtime module-id->path-string gxc#module-id->path-string)
+         (%#define-runtime map* gxc#map*)
+         (%#define-runtime symbol-in-local-scope? gxc#symbol-in-local-scope?)
+         (%#define-runtime gensym-reference? gxc#gensym-reference?)
+         (%#define-runtime
+          generate-runtime-binding-id
+          gxc#generate-runtime-binding-id)
+         (%#define-runtime
+          generate-runtime-binding-id*
+          gxc#generate-runtime-binding-id*)
+         (%#begin (%#define-runtime
+                   generate-runtime-temporary__%
+                   gxc#generate-runtime-temporary__%)
+                  (%#begin (%#define-runtime
+                            generate-runtime-temporary__0
+                            gxc#generate-runtime-temporary__0)
+                           (%#define-runtime
+                            generate-runtime-temporary
+                            gxc#generate-runtime-temporary)))
+         (%#begin (%#define-runtime
+                   generate-runtime-gensym-reference__%
+                   gxc#generate-runtime-gensym-reference__%)
+                  (%#begin (%#define-runtime
+                            generate-runtime-gensym-reference__0
+                            gxc#generate-runtime-gensym-reference__0)
+                           (%#define-runtime
+                            generate-runtime-gensym-reference
+                            gxc#generate-runtime-gensym-reference)))
+         (%#define-runtime runtime-identifier=? gxc#runtime-identifier=?)
+         (%#define-runtime identifier-symbol gxc#identifier-symbol))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/base~0"))

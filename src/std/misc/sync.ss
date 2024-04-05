@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous data structures
-
-(import :std/contract)
+;;; this module is *deprecated*, gerbil hash tables now natively support locks
 (export make-sync-hash sync-hash?
         sync-hash-get sync-hash-ref sync-hash-key? sync-hash-put! sync-hash-remove!
         sync-hash-do)

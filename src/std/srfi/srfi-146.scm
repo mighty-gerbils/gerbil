@@ -309,12 +309,13 @@
 	   (lambda ()
 	 (values (mapping-delete mapping key) key value))))))
      ((let/cc K
-        (rbtree-for-each (mapping-tree mapping)
-                        (lambda (k v)
-                          (K (lambda ()
-                               (values (%make-mapping (mapping-comparator mapping)
-                                                      (rbtree-remove (mapping-tree mapping) k))
-                                       k v)))))
+        (rbtree-for-each
+         (lambda (k v)
+           (K (lambda ()
+                (values (%make-mapping (mapping-comparator mapping)
+                                       (rbtree-remove (mapping-tree mapping) k))
+                        k v))))
+         (mapping-tree mapping))
         failure))
      )))
 
@@ -922,6 +923,7 @@
 (define (make-mapping-comparator comparator)
   (make-comparator mapping? (mapping-equality comparator) (mapping-ordering comparator) #f))
 
-(define mapping-comparator (make-mapping-comparator (make-default-comparator)))
+(define mapping-comparator
+  (cut %make-mapping (make-default-comparator) <>))
 
 (comparator-register-default! mapping-comparator)

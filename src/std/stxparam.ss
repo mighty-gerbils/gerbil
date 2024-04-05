@@ -9,16 +9,18 @@
 
   (def (syntax-parameter-value id-stx)
     (let (param (syntax-local-value id-stx))
-      (unless (syntax-parameter? param)
-        (raise-syntax-error #f "Bad syntax; not defined as a syntax parameter" id-stx))
-      (let (key-stx (syntax-local-rewrap (syntax-parameter-key param)))
-        (or (syntax-local-value key-stx false)
-            (syntax-parameter-default param)))))
+      (if (syntax-parameter? param)
+        (using (param :- syntax-parameter)
+          (let (key-stx (syntax-local-rewrap param.key))
+            (or (syntax-local-value key-stx false)
+                param.default)))
+        (abort!
+         (raise-syntax-error #f "Bad syntax; not defined as a syntax parameter" id-stx)))))
 
-  (def (syntax-parameter-e param)
-    (let (key-stx (syntax-local-rewrap (syntax-parameter-key param)))
+  (def (syntax-parameter-e (param : syntax-parameter))
+    (let (key-stx (syntax-local-rewrap param.key))
       (or (syntax-local-e key-stx false)
-          (syntax-parameter-default param))))
+          param.default)))
 
   (defmethod {apply-macro-expander syntax-parameter}
     (lambda (self stx)

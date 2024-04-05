@@ -158,6 +158,19 @@ namespace: #f
 (def (__eval-module obj)
   (gx#core-eval-module obj))
 
+(def (__interrupt-handler)
+  (when (getenv "GERBIL_DEBUG" #f)
+    (newline (current-error-port))
+    (display "--- continuation backtrace:" (current-error-port))
+    (newline (current-error-port))
+    (let (stack-trace-head
+          (or (string->number (getenv "GERBIL_DEBUG_STACKTRACE" "10"))
+              10))
+      (continuation-capture
+       (lambda (cont)
+         (display-continuation-backtrace cont (current-error-port) 1 1 0 stack-trace-head)))))
+  (##default-user-interrupt-handler))
+
 (def (gerbil-runtime-init! builtin-modules)
   (unless __runtime-initialized
     ;; set this to true, we want those stack traces in our programs
@@ -188,6 +201,9 @@ namespace: #f
         (hash-put! __modules mod 'builtin)
         (hash-put! __modules (string-append mod "~0") 'builtin))
       builtin-modules)
+
+    ;; set the interrupt-handler
+    (current-user-interrupt-handler __interrupt-handler)
 
     ;; et the readtable
     (current-readtable __*readtable*)

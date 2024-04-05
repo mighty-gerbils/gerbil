@@ -77,6 +77,10 @@ namespace: #f
          (%#define-runtime file-info::t file-info::t)
          (%#define-runtime socket-info::t socket-info::t)
          (%#define-runtime address-info::t address-info::t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/mop-system-classes~1")))
+                  (%#define-syntax defpred |[:0:]#defpred|))
          (%#define-runtime atom? atom?)
          (%#define-runtime special? special?)
          (%#define-runtime sequence? sequence?)

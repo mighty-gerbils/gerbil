@@ -522,9 +522,9 @@ TODO:
 (defmethod {display-exception build-failure}
   (lambda (self port)
     (display "Build Failure at " port)
-    (display (build-failure-item self) port)
+    (display self.item port)
     (newline port)
-    (display-exception (build-failure-exception self) port)))
+    (display-exception self.exception port)))
 
 ;; file-dependencies : file -> dependencies
 (def (file-dependencies file settings)

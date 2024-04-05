@@ -8,10 +8,11 @@ namespace: #f
 (import "gambit" "util" "table")
 (export #t)
 
-(def (make-promise thunk)
-  (##make-delay-promise thunk))
+(def (make-promise (thunk : :procedure))
+  => :promise
+  (:- (##make-delay-promise thunk) :promise))
 
-(def (call-with-parameters thunk . rest)
+(def (call-with-parameters (thunk : :procedure) . rest)
   (match rest
     ([param val . rest]
      (##parameterize1 param val
@@ -19,7 +20,7 @@ namespace: #f
            (lambda () (apply call-with-parameters thunk rest)))))
     ([] (thunk))))
 
-(def (with-unwind-protect K fini)
+(def (with-unwind-protect (K : :procedure) (fini : :procedure))
   (let ((once #f))
     (dynamic-wind
         (lambda ()
@@ -33,9 +34,9 @@ namespace: #f
 (def (keyword-dispatch kwt K . all-args)
   (when kwt
     (unless (vector? kwt)
-      (error "expected vector" kwt)))
+      (error "keyword-dispatch: expected vector" kwt)))
   (unless (procedure? K)
-    (error "expected procedure" K))
+    (error "keyword-dispatch: expected procedure" K))
   (let (keys (make-symbolic-table #f 0))
     (let lp ((rest all-args) (args #f) (tail #f))
       (match rest

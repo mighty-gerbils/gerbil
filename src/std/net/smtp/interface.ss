@@ -1,4 +1,4 @@
-(import :std/interface :std/io :std/contract)
+(import :std/io)
 (export #t)
 
 (interface (SMTP Socket)

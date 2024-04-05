@@ -3,7 +3,12 @@ package: gerbil/expander
 
 (begin
   (declare-type gx#core-expand-begin% (@lambda 1 #f))
-  (declare-type gx#core-expand-begin-syntax% (@lambda 1 #f))
+  (declare-type
+   gx#core-expand-begin-syntax%
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-expand-begin-foreign% (@lambda 1 #f))
   (declare-type gx#core-expand-begin-module% (@lambda 1 #f))
   (declare-type gx#core-expand-begin-annotation% (@lambda 1 #f))
@@ -67,11 +72,30 @@ package: gerbil/expander
   (declare-type gx#macro-expand-letrec-values (@lambda 1 #f))
   (declare-type gx#macro-expand-letrec*-values (@lambda 1 #f))
   (declare-type gx#macro-expand-if (@lambda 1 #f))
-  (declare-type gx#free-identifier=? (@lambda 2 #f))
-  (declare-type gx#bound-identifier=? (@lambda 2 #f))
-  (declare-type gx#underscore? (@lambda 1 #f))
-  (declare-type gx#ellipsis? (@lambda 1 #f))
-  (declare-type gx#user-binding-identifier (@lambda 1 #f))
+  (declare-type
+   gx#free-identifier=?
+   (@lambda 2
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#bound-identifier=?
+   (@lambda 2
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#underscore?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#ellipsis?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#check-duplicate-identifiers__% (@lambda 2 #f))
   (declare-type gx#check-duplicate-identifiers__0 (@lambda 1 #f))
   (declare-type
@@ -92,7 +116,12 @@ package: gerbil/expander
     (3 gx#core-bind-values!__2)
     (4 gx#core-bind-values!__%)))
   (declare-type gx#core-quote-bind-values (@lambda 1 #f))
-  (declare-type gx#core-runtime-ref? (@lambda 1 #f))
+  (declare-type
+   gx#core-runtime-ref?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-quote-runtime-ref (@lambda 2 #f))
   (declare-type gx#core-bind-runtime!__% (@lambda 4 #f))
   (declare-type gx#core-bind-runtime!__0 (@lambda 1 #f))

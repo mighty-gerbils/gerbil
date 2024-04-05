@@ -44,6 +44,7 @@ package: gerbil/core
     current-module-reader-path
     current-module-reader-args
     local-context? top-context? module-context? prelude-context?
+    core-context-top
     expander-context-id  module-context-ns
     module-context-import module-context-export module-context-code
     make-local-context

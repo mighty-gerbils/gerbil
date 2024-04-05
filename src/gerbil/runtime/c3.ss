@@ -54,6 +54,7 @@ namespace: #f
                    struct: struct?
                    eq: (eq eq?)
                    get-name: (get-name identity))
+  => :values
   (def pls (map get-precedence-list supers)) ;; (List (List X)) ;; precedence lists to merge
   (def sit []) ;; (List X) ;; single-inheritance tail
 
@@ -75,6 +76,10 @@ namespace: #f
            precedence-lists: (map get-names pls)
            single-inheritance-tail: (get-names sit) a))
 
+  (def (same? lst1 lst2)
+    (and (fx= (length lst1) (length lst2))
+         (andmap eq lst1 lst2)))
+
   ;;; Deal with the tail of single-inheritance
   (def (merge-sit! sit2)
     (cond
@@ -82,9 +87,9 @@ namespace: #f
      ((null? sit) (set! sit sit2)) ;; yes new single inheritance tail
      (else
       (let loop ((t1 sit) (t2 sit2))
-        (cond ;; equal? should be the same as eq? due to single-inheritance
-         ((equal? t1 sit2) (void)) ;; sit is a prefix of sit2
-         ((equal? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
+        (cond
+         ((same? t1 sit2) (void)) ;; sit is a prefix of sit2
+         ((same? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
          ((or (null? t1) (null? t2))
           (err single-inheritance-incompatibility: [(get-names sit) (get-names sit2)]))
          (else (loop (cdr t1) (cdr t2))))))))

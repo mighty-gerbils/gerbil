@@ -15,16 +15,20 @@ namespace: #f
   __load-path)
 
 (def (add-load-path! . paths)
+  (unless (andmap string? paths)
+    (error "bad load path; expected list of paths" paths))
   (for-each (lambda (p) (set! __load-path (cons p __load-path)))
             (reverse! paths)))
 
 (def (set-load-path! paths)
+  (unless (and (list? paths) (andmap string? paths))
+    (error "bad load path; expected list of paths" paths))
   (set! __load-path paths))
 
-(def (load-module modpath)
+(def (load-module (modpath : :string))
   (cond
    ((hash-get __modules modpath))
-   ((find-library-module modpath)
+   ((__find-library-module modpath)
     => (lambda (path)
          (let (loaded-path (load path))
            (hash-put! __modules modpath loaded-path)
@@ -32,12 +36,12 @@ namespace: #f
    (else
     (error "module not found" modpath))))
 
-(def (reload-module! modpath)
+(def (reload-module! (modpath : :string))
   (cond
    ((hash-get __modules modpath)
     => (lambda (current-path)
          (if (eq? current-path 'builtin)
-           (let (latest-path (find-library-module modpath))
+           (let (latest-path (__find-library-module modpath))
              (when (or (equal? (path-extension current-path) ".scm")
                        (not (equal? current-path latest-path)))
                (let (loaded-path (load modpath))
@@ -47,7 +51,7 @@ namespace: #f
    (else
     (load-module modpath))))
 
-(def (find-library-module modpath)
+(def (__find-library-module modpath)
   (def (find-compiled-file npath)
     (let (basepath (##string-append npath ".o"))
       (let lp ((current #f) (n 1))

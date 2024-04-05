@@ -87,6 +87,7 @@ namespace: gerbil/core/expander
                     (top-context? gx#top-context?)
                     (module-context? gx#module-context?)
                     (prelude-context? gx#prelude-context?)
+                    (core-context-top gx#core-context-top)
                     (expander-context-id gx#expander-context-id)
                     (module-context-ns gx#module-context-ns)
                     (module-context-import gx#module-context-import)

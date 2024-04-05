@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 interface
-(import :std/interface
-        :std/contract
-        :std/io/interface)
+(import :std/io/interface)
 (export #t)
 
 ;; SOCKS client interface

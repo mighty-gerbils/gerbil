@@ -6,7 +6,6 @@
 ;;; implementation; delete is based on CLR...
 
 (import :std/error
-        :std/contract
         :std/generic
         :std/iter)
 (export rbtree rbtree? make-rbtree
@@ -32,85 +31,90 @@
         in-rbtree-values)
 
 ;; rbtree structure
-(defstruct rbtree (root cmp)
+(defstruct rbtree (root (cmp :- :procedure))
   final: #t constructor: :init!)
 
 (defmethod {:init! rbtree}
-  (lambda (self cmp (root +empty+))
+  (lambda (self (cmp : :procedure) (root +empty+))
     (struct-instance-init! self root cmp)))
 
-(def (rbtree-ref t key (default absent-obj))
-  (using (t : rbtree)
-    (let (r (tree-ref t.cmp t.root key default))
-      (if (eq? r absent-obj)
-        (raise-unbound-key rbtree-ref t key)
-        r))))
+(def (rbtree-ref (t : rbtree) key (default absent-obj))
+  (let (r (tree-ref t.cmp t.root key default))
+    (if (eq? r absent-obj)
+      (raise-unbound-key rbtree-ref t key)
+      r)))
 
-(def (rbtree-get t key)
+(def (rbtree-get (t : rbtree) key)
   (rbtree-ref t key #f))
 
-(def (rbtree-put! t key value)
-  (using (t : rbtree)
-    (set! t.root (tree-insert t.cmp t.root key value))))
+(def (rbtree-put! (t : rbtree) key value)
+  => :void
+  (set! t.root (tree-insert t.cmp t.root key value))
+  (void))
 
-(def (rbtree-put t key value)
-  (using (t : rbtree)
-    (rbtree t.cmp (tree-insert t.cmp t.root key value))))
+(def (rbtree-put (t : rbtree) key value)
+  => rbtree
+  (rbtree t.cmp (tree-insert t.cmp t.root key value)))
 
-(def (rbtree-update! t key update (default (void)))
+(def (rbtree-update! (t : rbtree) key (update : :procedure) (default (void)))
+  => :void
   (let (value (rbtree-ref t key default))
     (rbtree-put! t key (update value))))
 
-(def (rbtree-update t key update (default (void)))
+(def (rbtree-update (t : rbtree) key (update : :procedure) (default (void)))
+  => rbtree
   (let (value (rbtree-ref t key default))
     (rbtree-put t key (update value))))
 
-(def (rbtree-remove! t key)
-  (using (t : rbtree)
-    (cond
-     ((tree-delete t.cmp t.root key)
-      => (lambda (new-root)
-           (set! t.root new-root))))))
+(def (rbtree-remove! (t : rbtree) key)
+  => :void
+  (cond
+   ((tree-delete t.cmp t.root key)
+    => (lambda (new-root)
+         (set! t.root new-root))))
+  (void))
 
-(def (rbtree-remove t key)
-  (using (t : rbtree)
-    (cond
-     ((tree-delete t.cmp t.root key)
-      => (lambda (new-root)
-           (rbtree t.cmp new-root)))
-     (else t))))
+(def (rbtree-remove (t : rbtree) key)
+  => rbtree
+  (cond
+   ((tree-delete t.cmp t.root key)
+    => (lambda (new-root)
+         (rbtree t.cmp new-root)))
+   (else t)))
 
-(def (rbtree-empty? t)
-  (using (t : rbtree)
-    (Empty? t.root)))
+(def (rbtree-empty? (t : rbtree))
+  => :boolean
+  (Empty? t.root))
 
-(def (rbtree-copy t)
-  (using (t : rbtree)
-    (rbtree t.cmp t.root)))
+(def (rbtree-copy (t : rbtree))
+  => rbtree
+  (rbtree t.cmp t.root))
 
-(def (rbtree-for-each proc t)
-  (using (t : rbtree)
-    (let loop ((root t.root))
-      (match root
-        ((Tree _ left right key value)
-         (loop left)
-         (proc key value)
-         (loop right))
-        ((Empty)
-         (void))))))
+(def (rbtree-for-each (proc : :procedure) (t : rbtree))
+  => :void
+  (let loop ((root t.root))
+    => :void
+    (match root
+      ((Tree _ left right key value)
+       (loop left)
+       (proc key value)
+       (loop right))
+      ((Empty)
+       (void)))))
 
-(def (rbtree-for-eachr proc t)
-  (using (t : rbtree)
-    (let loop ((root t.root))
-      (match root
-        ((Tree _ left right key value)
-         (loop right)
-         (proc key value)
-         (loop left))
-        ((Empty)
-         (void))))))
+(def (rbtree-for-eachr (proc : :procedure) (t : rbtree))
+  => :void
+  (let loop ((root t.root))
+    => :void
+    (match root
+      ((Tree _ left right key value)
+       (loop right)
+       (proc key value)
+       (loop left))
+      ((Empty)
+       (void)))))
 
-(def (rbtree-fold proc iv t)
+(def (rbtree-fold (proc : :procedure) iv (t : rbtree))
   (let (r iv)
     (rbtree-for-each
      (lambda (k v)
@@ -118,7 +122,7 @@
      t)
     r))
 
-(def (rbtree-foldr proc iv t)
+(def (rbtree-foldr (proc : :procedure) iv (t : rbtree))
   (let (r iv)
     (rbtree-for-eachr
      (lambda (k v)
@@ -126,17 +130,22 @@
      t)
     r))
 
-(def (rbtree->list t)
-  (rbtree-foldr
-   (lambda (k v r) (cons (cons k v) r))
-   [] t))
+(def (rbtree->list (t : rbtree))
+  => :list
+  (:- (rbtree-foldr
+       (lambda (k v r) (cons (cons k v) r))
+       [] t)
+      :list))
 
-(def (rbtree->listr t)
-  (rbtree-fold
-   (lambda (k v r) (cons (cons k v) r))
-   [] t))
+(def (rbtree->listr (t : rbtree))
+  => :list
+  (:- (rbtree-fold
+       (lambda (k v r) (cons (cons k v) r))
+       [] t)
+      :list))
 
-(def (list->rbtree cmp lst)
+(def (list->rbtree (cmp : :procedure) (lst : :list))
+  => rbtree
   (let (t (rbtree cmp))
     (for-each
       (match <>
@@ -148,50 +157,54 @@
 (defmethod (:iter (rbt rbtree))
   (in-rbtree rbt))
 
-(def (in-rbtree rbt)
+(def (in-rbtree (rbt : rbtree))
   (def (iterate)
     (rbtree-for-each yield rbt))
   (in-coroutine iterate))
 
-(def (in-rbtree-keys rbt)
+(def (in-rbtree-keys (rbt : rbtree))
   (def (iterate)
     (rbtree-for-each (lambda (k v) (yield k)) rbt))
   (in-coroutine iterate))
 
-(def (in-rbtree-values rbt)
+(def (in-rbtree-values (rbt : rbtree))
   (def (iterate)
     (rbtree-for-each (lambda (k v) (yield v)) rbt))
   (in-coroutine iterate))
 
 ;;; common comparison functions
-(def (string-cmp a b)
+(def (string-cmp (a : :string) (b : :string))
+  => :fixnum
   (let* ((len-a (string-length a))
          (len-b (string-length b))
-         (len (##fxmin len-a len-b)))
+         (len (fxmin len-a len-b)))
     (let lp ((i 0))
-      (if (##fx< i len)
-        (let ((ca (##string-ref a i))
-              (cb (##string-ref b i)))
-          (if (eq? ca cb)
-            (lp (##fx+ i 1))
-            (##fx- (##char->integer ca) (##char->integer cb))))
-        (##fx- len-a len-b)))))
+      => :fixnum
+      (using (i :- :fixnum)
+        (if (fx< i len)
+          (let ((ca (:- (##string-ref a i) :char))
+                (cb (:- (##string-ref b i) :char)))
+            (if (eq? ca cb)
+              (lp (fx+ i 1))
+              (fx- (char->integer ca) (char->integer cb))))
+          (fx- len-a len-b))))))
 
-(def (symbol-cmp a b)
+(def (symbol-cmp (a : :symbol) (b : :symbol))
+  => :fixnum
   (if (eq? a b)
     0
     (string-cmp (symbol->string a) (symbol->string b))))
 
-(def (symbol-hash-cmp a b)
+(def (symbol-hash-cmp (a : :symbol) (b : :symbol))
+  => :fixnum
   (if (eq? a b)
     0
     (let* ((ha (symbol-hash a))
            (hb (symbol-hash b))
-           (ha-hb (##fx- ha hb)))
-      (if (##fxzero? ha-hb)
+           (ha-hb (fx- ha hb)))
+      (if (fx= ha-hb 0)
         (string-cmp (symbol->string a) (symbol->string b))
         ha-hb))))
-
 
 ;;; tree implementation
 
@@ -211,13 +224,12 @@
 (defstruct Right (color key value tree zipper)
   final: #t)
 
-(defrules dispatch-on-key ()
-  ((_ cmp e- e= e+)
-   (let (r cmp)
-     (cond
-      ((negative? r) e-)
-      ((zero? r) e=)
-      (else e+)))))
+(defrule (dispatch-on-key cmp e- e= e+)
+  (using (r cmp : :fixnum)
+      (cond
+       ((fx< r 0) e-)
+       ((fx= r 0) e=)
+       (else e+))))
 
 (def (tree-insert cmp root key value)
   (let ins ((root root))

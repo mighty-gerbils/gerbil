@@ -4,7 +4,6 @@
 (import :gerbil/runtime/thread
         :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/stxparam)
 (export #t)
@@ -72,10 +71,9 @@
 
 (defmethod {:init! handle}
   (lambda (self proxy ref (capabilities #f))
-    (using (self :- handle)
-      (set! self.proxy proxy)
-      (set! self.ref   ref)
-      (set! self.capabilities capabilities))))
+    (set! self.proxy proxy)
+    (set! self.ref   ref)
+    (set! self.capabilities capabilities)))
 
 ;; checks whether an actor is authorized for administrative actions.
 ;; Local (in-process) actors are always authorized.

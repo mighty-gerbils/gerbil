@@ -107,14 +107,14 @@
 ;; (assuming no weird symlinks or mounts that makes you want not to simplify foo/..)
 ;; NB: Always simplify away a trailing / except for the root directory /.
 ;; : String keep..?:Bool -> String
-(def (path-simplify path keep..?: (keep..? #f))
+(def (path-simplify path keep-dot-dot: (keep-dot-dot #f))
   (def abs? (string-prefix? "/" path))
   (def dir? (string-suffix? "/" path))
   (def l (remove (cut member <> '("" ".")) (string-split path #\/)))
   (when abs?
     (while (and (pair? l) (equal? (car l) ".."))
       (set! l (cdr l))))
-  (unless keep..?
+  (unless keep-dot-dot
     (let loop ((head (reverse l)) (tail '()))
       (cond
        ((and (pair? head) (pair? tail) (equal? (car tail) "..") (not (equal? (car head) "..")))

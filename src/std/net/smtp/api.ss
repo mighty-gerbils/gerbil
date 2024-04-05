@@ -1,4 +1,4 @@
-(import ./interface ./session ./connection ./headers ./data :std/text/utf8 :std/contract)
+(import ./interface ./session ./connection ./headers ./data :std/text/utf8)
 (export #t (import: ./interface ./session ./connection ./headers ./data))
 
 (def (send-mail smtp return-path forward-path . data)
@@ -51,7 +51,7 @@
 
     (let (res (smtp.DATA))
       (unless (positive? res #\3) (error "DATA:" res)))
-    
+
     (send-hs)
     (send-body)
 

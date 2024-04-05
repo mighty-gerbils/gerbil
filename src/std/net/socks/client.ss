@@ -2,8 +2,6 @@
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 client functionality
 (import :std/error
-        :std/contract
-        :std/interface
         :std/io
         :std/io/socket/types
         (only-in :std/os/socket AF_INET AF_INET6)
@@ -117,7 +115,7 @@
 ;;  Following the NULL byte of user id, domain name (NULL-terminated)
 ;;
 
-(defstruct socks-proxy (sock address protocol))
+(defstruct socks-proxy ((sock ::- StreamSocket) address protocol))
 (defstruct (socks4-proxy socks-proxy) () final: #t
   constructor: :init!)
 (defstruct (socks4a-proxy socks-proxy) () final: #t
@@ -125,7 +123,7 @@
 (defstruct (socks5-proxy socks-proxy) ()  final: #t
   constructor: :init!)
 
-(defstruct socks-server-socket (sock))
+(defstruct socks-server-socket ((sock ::- StreamSocket)))
 (defstruct (socks4-server-socket socks-server-socket) () final: #t)
 (defstruct (socks5-server-socket socks-server-socket) () final: #t)
 
@@ -147,18 +145,16 @@
 (defrule (defconnect-method proxy-type connect-e)
   (defmethod {connect proxy-type}
     (lambda (self address)
-      (using (self :- socks-proxy)
-        (try
-         (let (address (inet-address address))
-           (let (bind-address (connect-e self.sock address))
-             (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-               (set! bsock.laddr bind-address)
-               (set! bsock.raddr address))))
-         self.sock
-         (catch (e)
-           (using (sock self.sock :- StreamSocket)
-             (sock.close))
-           (raise e)))))))
+      (try
+       (let (address (inet-address address))
+         (let (bind-address (connect-e self.sock address))
+           (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+             (set! bsock.laddr bind-address)
+             (set! bsock.raddr address))))
+       self.sock
+       (catch (e)
+         (self.sock.close)
+         (raise e))))))
 
 (defconnect-method socks4-proxy socks4-connect)
 (defconnect-method socks4a-proxy socks4a-connect)
@@ -167,17 +163,15 @@
 (defrule (defbind-method proxy-type bind-e make-server-socket)
   (defmethod {bind proxy-type}
     (lambda (self maybe-address)
-      (using (self :- socks-server-socket)
-        (try
-         (let (address (and maybe-address (inet-address maybe-address)))
-           (let (bind-address (bind-e self.sock address))
-             (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-               (set! bsock.laddr bind-address))))
-         (ServerSocket (make-server-socket self.sock))
-         (catch (e)
-           (using (sock self.sock :- StreamSocket)
-             (sock.close))
-           (raise e)))))))
+      (try
+       (let (address (and maybe-address (inet-address maybe-address)))
+         (let (bind-address (bind-e self.sock address))
+           (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+             (set! bsock.laddr bind-address))))
+       (ServerSocket (make-server-socket self.sock))
+       (catch (e)
+         (self.sock.close)
+         (raise e))))))
 
 (defbind-method socks4-proxy socks4-bind make-socks4-server-socket)
 (defbind-method socks4a-proxy socks4-bind make-socks4-server-socket)
@@ -185,21 +179,20 @@
 
 (defmethod {close socks-server-socket}
   (lambda (self)
-    (using (self :- socks-server-socket)
-      (when self.sock
-        (using (sock self.sock :- StreamSocket)
-          (sock.close))
-        (set! self.sock #f)))))
+    (when self.sock
+      (self.sock.close)
+      (set! self.sock #f))))
 
 (defsyntax (defserver-dispatch-method stx)
   (syntax-case stx ()
     ((_ (method arg ...))
-     (with-syntax ((sock.method (make-symbol 'sock "." (stx-e #'method))))
+     (with-syntax ((self (syntax-local-introduce 'self))
+                   (self.sock.method
+                    (syntax-local-introduce
+                     (make-symbol "self.sock." (stx-e #'method)))))
        #'(defmethod {method socks-server-socket}
            (lambda (self arg ...)
-             (using ((self :- socks-server-socket)
-                     (sock self.sock :- StreamSocket))
-               (sock.method arg ...))))))))
+             (self.sock.method arg ...)))))))
 
 (defserver-dispatch-method (domain))
 (defserver-dispatch-method (address))
@@ -215,24 +208,22 @@
 (defrule (defserver-accept-method server-type receive-e)
   (defmethod {accept server-type}
     (lambda (self)
-      (using (self :- socks-server-socket)
-        (if self.sock
-          (let (peer-address (receive-e self.sock))
-            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-              (set! bsock.raddr peer-address))
-            (let (sock self.sock)
-              (set! self.sock #f)
-              sock))
-          (raise-context-error accept "proxy client has already accepted a connection"))))))
+      (if self.sock
+        (let (peer-address (receive-e self.sock))
+          (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+            (set! bsock.raddr peer-address))
+          (let (sock self.sock)
+            (set! self.sock #f)
+            sock))
+        (raise-context-error accept "proxy client has already accepted a connection")))))
 
 (defserver-accept-method socks4-server-socket socks4-recv-reply)
 (defserver-accept-method socks5-server-socket socks5-recv-reply)
 
-(def (socks-proxy-init! self sock address proto)
-  (using (self :- socks-proxy)
-    (set! self.sock sock)
-    (set! self.address address)
-    (set! self.protocol proto)))
+(def (socks-proxy-init! (self :- socks-proxy) (sock : StreamSocket) address proto)
+  (set! self.sock sock)
+  (set! self.address address)
+  (set! self.protocol proto))
 
 (def (socks-open proxy handshake)
   (let (sock (tcp-connect proxy))
@@ -388,7 +379,7 @@
              (cons host port)))
           ((3)                                           ; DOMAINNAME
            (unless (fx> len 6)
-             (raise-io-error socks5-recv-reply "bad response length" len ('> 6)))
+             (raise-io-error socks5-recv-reply "bad response length" len '(> 6)))
            (let* ((host (subu8vector msg 4 (fx- len 3))) ; skip NUL terminator
                   (porthi (u8vector-ref msg (fx- len 2)))
                   (portlo (u8vector-ref msg (fx- len 1)))

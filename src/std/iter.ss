@@ -4,12 +4,11 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/generic
         :std/coroutine
         :std/hash-table)
 (export
-  (struct-out  iterator)
+  (struct-out iterator)
   iter :iter iter-end iter-end? iter-next! iter-fini!
   for for* for/collect for/fold
   in-iota in-range in-naturals in-hash in-hash-keys in-hash-values
@@ -18,12 +17,8 @@
   yield
   )
 
-(defstruct iterator (e next fini)
-  constructor: :init! final: #t)
-
-(defmethod {:init! iterator}
-  (lambda (self e next (fini #f))
-    (struct-instance-init! self e next fini)))
+(defstruct iterator (e (next : :procedure) (fini :? :procedure := #f))
+  final: #t)
 
 (defstruct :iter-end ())
 (def iter-end
@@ -57,6 +52,7 @@
     (raise-bad-argument :iter "input-port" obj)))
 
 (def (iter-list lst)
+  => iterator
   (def (next it)
     (using (it :- iterator)
       (match it.e
@@ -64,11 +60,12 @@
          (set! it.e rest)
          hd)
         (else iter-end))))
-  (make-iterator lst next))
+  (make-iterator e: lst next: next))
 
 (defrules defiter-vector ()
-  ((_ iter-vector length-e ref-e)
-   (def (iter-vector vec)
+  ((_ iter-vector type length-e ref-e)
+   (def (iter-vector (vec : type))
+     => iterator
      (declare (not safe))
      (def (next it)
        (using (it :- iterator)
@@ -78,25 +75,28 @@
                (set! (cdr it.e) (fx1+ index))
                v)
              iter-end))))
-     (make-iterator (cons vec 0) next))))
+     (make-iterator e: (cons vec 0) next: next))))
 
-(defiter-vector iter-vector ##vector-length ##vector-ref)
-(defiter-vector iter-string ##string-length ##string-ref)
-(defiter-vector iter-u8vector ##u8vector-length ##u8vector-ref)
+(defiter-vector iter-vector :vector ##vector-length ##vector-ref)
+(defiter-vector iter-string :string ##string-length ##string-ref)
+(defiter-vector iter-u8vector :u8vector ##u8vector-length ##u8vector-ref)
 
-(def (iter-hash-table ht)
+(def (iter-hash-table (ht : HashTable))
+  => iterator
   (def (iterate)
     (hash-for-each yield ht))
   (iter-coroutine iterate))
 
-(def (iter-coroutine proc)
+(def (iter-coroutine (proc : :procedure))
+  => iterator
   (def (next it)
     (using (it :- iterator)
       (continue it.e)))
   (let (cort (coroutine (lambda () (proc) iter-end)))
-    (make-iterator cort next)))
+    (make-iterator e: cort next: next)))
 
-(def (iter-cothread proc)
+(def (iter-cothread (proc : :procedure))
+  => iterator
   (def (next it)
     (using (it :- iterator)
       (continue it.e)))
@@ -106,11 +106,13 @@
         (cothread-stop! it.e)
         (set! it.e #f))))
   (let* ((cothr (cothread (lambda () (proc) iter-end)))
-         (it (make-iterator cothr next fini)))
+         (it (make-iterator e: cothr next: next fini: fini)))
     (make-will it fini)
     it))
 
-(def (iter-input-port port (read-e read))
+(def (iter-input-port (port :- :port)
+                      (read-e :- :procedure := read))
+  => iterator
   (declare (not safe))
   (def (next it)
     (using (it :- iterator)
@@ -118,23 +120,22 @@
         (if (eof-object? val)
           iter-end
           val))))
-  (make-iterator port next))
+  (make-iterator e: port next: next))
 
-(def (iter-in-iota start count step)
+(def (iter-in-iota (start : :number) (count : :fixnum) (step : :number))
+  => iterator
   (declare (not safe))
   (def (next it)
     (using (it :- iterator)
       (with ([value . limit] it.e)
-        (if (fx> limit 0)
-          (begin
-            (set! (car it.e) (+ value step))
-            (set! (cdr it.e) (fx1- limit))
-            value)
-          iter-end))))
-  (unless (and (number? start) (fixnum? count) (number? step))
-    (raise-bad-argument in-iota "iota parameters: (count:fixnum start:number step:number)"
-      count start step))
-  (make-iterator (cons start count) next))
+        (using (limit :- :fixnum)
+          (if (fx> limit 0)
+            (begin
+              (set! (car it.e) (+ value step))
+              (set! (cdr it.e) (fx1- limit))
+              value)
+            iter-end)))))
+  (make-iterator e: (cons start count) next: next))
 
 (def* in-iota
   ((count) (iter-in-iota 0 count 1))
@@ -143,7 +144,8 @@
 
 (defrules defiter-in-range ()
   ((_ iter-in-range cmp)
-   (def (iter-in-range start end step)
+   (def (iter-in-range (start : :real) (end : :real) (step : :real))
+     => iterator
      (declare (not safe))
      (def (next it)
        (using (it :- iterator)
@@ -152,9 +154,7 @@
              (set! it.e (+ e step))
              e)
            iter-end)))
-     (unless (and (real? start) (real? end) (real? step))
-       (raise-bad-argument in-range "range parameters: real numbers" start end step))
-     (make-iterator start next))))
+     (make-iterator e: start next: next))))
 
 (defiter-in-range iter-in-range< <)
 (defiter-in-range iter-in-range> >)
@@ -170,7 +170,8 @@
      (iter-in-range> start end step)
      (iter-in-range< start end step))))
 
-(def (in-naturals (start 0) (step 1))
+(def (in-naturals (start : :integer := 0) (step : :integer := 1))
+  => iterator
   (declare (not safe))
   (def (next it)
     (using (it :- iterator)
@@ -178,46 +179,53 @@
         (let (value+step (+ value step))
           (set! it.e value+step)
           value))))
-  (make-iterator start next))
+  (make-iterator e: start next: next))
 
-(def (in-hash ht)
+(def (in-hash (ht : HashTable))
+  => iterator
   (iter-hash-table ht))
 
-(def (in-hash-keys ht)
+(def (in-hash-keys (ht : HashTable))
+  => iterator
   (def (iterate)
     (hash-for-each (lambda (k v) (yield k)) ht))
   (iter-coroutine iterate))
 
-(def (in-hash-values ht)
+(def (in-hash-values (ht : HashTable))
+  => iterator
   (def (iterate)
     (hash-for-each (lambda (k v) (yield v)) ht))
   (iter-coroutine iterate))
 
-(def (in-input-port obj (read-e read))
+(def (in-input-port (obj    :~ input-port? :- :port)
+                    (read-e : :procedure := read))
+  => iterator
   (iter-input-port obj read-e))
 
-(def (in-input-lines obj)
+(def (in-input-lines (obj :~ input-port? :- :port))
+  => iterator
   (iter-input-port obj read-line))
 
-(def (in-input-chars obj)
+(def (in-input-chars (obj :~ input-port? :- :port))
+  => iterator
   (iter-input-port obj read-char))
 
-(def (in-input-bytes obj)
+(def (in-input-bytes (obj :~ input-port? :- :port))
+  => iterator
   (iter-input-port obj read-u8))
 
-(def (in-coroutine proc . args)
+(def (in-coroutine (proc : :procedure) . args)
+  => iterator
   (iter-coroutine (if (null? args) proc (cut apply proc args))))
 
-(def (in-cothread proc . args)
+(def (in-cothread (proc : :procedure) . args)
+  => iterator
   (iter-cothread (if (null? args) proc (cut apply proc args))))
 
-(def (iter-next! it)
-  (using (it :- iterator)
-    (declare (not safe))
-    (it.next it)))
+(def (iter-next! (it : iterator))
+  (it.next it))
 
-(def (iter-fini! it)
-  (declare (not safe))
+(def (iter-fini! (it : iterator))
   (@iter-fini! it))
 
 (defrules @iter-fini! ()
@@ -225,7 +233,8 @@
    (cond
     ((&iterator-fini it) => (cut <> it)))))
 
-(def (iter-filter pred it)
+(def (iter-filter (pred : :procedure) (it : iterator))
+  => iterator
   (def (iterate)
     (for (val it)
       (when (pred val)
@@ -306,7 +315,7 @@
                (cond
                 ;; speculatively inline list iteration
                 ((pair? iterable)
-                 (for-each iter-do iterable))
+                 (for-each iter-do (:- iterable :list)))
                 ((null? iterable) (void))
                 (else
                  ;; full iteration protocol
@@ -510,7 +519,7 @@
                  (cond
                   ;; speculatively inline list iteration
                   ((pair? iterable)
-                   (map iter-do iterable))
+                   (map iter-do (:- iterable :list)))
                   ((null? iterable) [])
                   (else
                    ;; full iteration protocol

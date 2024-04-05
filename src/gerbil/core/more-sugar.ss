@@ -10,26 +10,9 @@ package: gerbil/core
         (phi: +2 "runtime"))
 (export #t (phi: +1 #t))
 
-;; checked type contract
-(defrules : ())
-
-;; checked predicate contract
-(defrules :~ ())
-
-;; type assertion
-(defrules :- ())
-
-;; type contract assertion
-(defrules :~- ())
-
-;; default value
-(defrules := ())
-
 (begin-syntax
-  (defclass (setq-macro macro-object) ()
-    id: gerbil.core#setq-macro::t)
-  (defclass (setf-macro macro-object) ()
-    id: gerbil.core#setf-macro::t)
+  (defclass (setq-macro macro-object) ())
+  (defclass (setf-macro macro-object) ())
 
   (def (syntax-local-setf-macro? stx)
     (and (identifier? stx)
@@ -37,23 +20,26 @@ package: gerbil/core
 
   (def (syntax-local-setq-macro? stx)
     (and (identifier? stx)
-         (setq-macro? (syntax-local-value stx false)))))
+         (setq-macro? (syntax-local-value stx false))))
+
+  (def (expand-set! stx)
+    (syntax-case stx ()
+      ((_ (setf-id . _) expr)
+       (syntax-local-setf-macro? #'setfid)
+       (core-apply-expander (syntax-local-e #'setf-id) stx))
+      ((_ (getf arg ...) expr)
+       (identifier? #'getf)
+       (with-syntax ((setf (stx-identifier #'getf #'getf "-set!")))
+         #'(setf arg ... expr)))
+      ((_ setq-id . _)
+       (syntax-local-setq-macro? #'setq-id)
+       (core-apply-expander (syntax-local-e #'setq-id) stx))
+      ((_ id expr)
+       (identifier? #'id)
+       #'(%#set! id expr)))))
 
 (defsyntax (set! stx)
-  (syntax-case stx ()
-    ((_ (setf-id . _) . _)
-     (syntax-local-setf-macro? #'setfid)
-     (core-apply-expander (syntax-local-e #'setf-id) stx))
-    ((_ (getf arg ...) expr)
-     (identifier? #'getf)
-     (with-syntax ((setf (stx-identifier #'getf #'getf "-set!")))
-       #'(setf arg ... expr)))
-    ((_ setq-id . _)
-     (syntax-local-setq-macro? #'setq-id)
-     (core-apply-expander (syntax-local-e #'setq-id) stx))
-    ((_ id expr)
-     (identifier? #'id)
-     #'(%#set! id expr))))
+  (expand-set! stx))
 
 (defsyntax (values-set! stx)
   (syntax-case stx ()

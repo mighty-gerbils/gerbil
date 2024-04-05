@@ -2,11 +2,11 @@
 ;;; © vyzo
 ;;; delimited string input buffers
 (import :std/error
-        :std/contract
         ../interface
         ./types
         ./input)
 (export #t)
+(declare (not safe))
 
 (def (strbuf-delimited-read-string delim output output-start output-end input-need)
   (using (delim :- delimited-string-input-buffer)

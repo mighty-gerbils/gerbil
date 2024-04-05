@@ -529,11 +529,16 @@ package: gerbil/core
       (with-syntax* (($E (genident 'E))
                      ((target ...)
                       tgt-lst)
+                     ((fail-diagnostic ...)
+                      (stx-map stx-car clauses))
                      (fail
                       (syntax/loc stx
-                        (lambda () (error "No clause matching" target ...))))
+                        (lambda ()
+                          (error "No clause matching" target ... 'fail-diagnostic ...)
+                          ;; make a frame for the stack trace
+                          (void))))
                      (body
-                      (generate-clauses body #'($E)))
+                      (generate-clauses body #'(begin-annotation (@abort) ($E))))
                      (match-expr
                       (syntax/loc stx
                         (let (($E fail))

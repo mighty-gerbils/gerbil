@@ -9,22 +9,23 @@ namespace: #f
 (export #t)
 
 ;; spawn an actor thread apply f to args
-(def (spawn f . args)
-  (check-procedure f spawn)
+(def (spawn (f : :procedure) . args)
+  => :thread
   (spawn-actor f args '#!void #f))
 
 ;; spawn a named actor thread
-(def (spawn/name name f . args)
-  (check-procedure f spawn/name)
+(def (spawn/name name (f : :procedure) . args)
+  => :thread
   (spawn-actor f args name #f))
 
 ;; spawn a named actor thread with a new thread group
-(def (spawn/group name f . args)
-  (check-procedure f spawn/group)
+(def (spawn/group name (f : :procedure) . args)
+  => :thread
   (let (tgroup (make-thread-group name))
     (spawn-actor f args name tgroup)))
 
 (def (spawn-actor f args name tgroup)
+  => :thread
   (def (thread-main thunk)
     ;; install an abortive handler to force stack unwinding
     ;; this ensures that unwind-protect finalizers are invoked if
@@ -122,7 +123,7 @@ namespace: #f
 (def (current-thread-group)
   (thread-thread-group (current-thread)))
 
-(def (with-lock mx proc)
+(def (with-lock (mx : :mutex) (proc : :procedure))
   (let (handler (current-exception-handler))
     (with-exception-handler
      (lambda (e)
@@ -138,14 +139,15 @@ namespace: #f
          (mutex-unlock! mx)
          result)))))
 
-(def (with-dynamic-lock mx proc)
+(def (with-dynamic-lock (mx : :mutex) (proc : :procedure))
   (dynamic-wind
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
 
 ;; utilities for exception printing
-(def (with-exception-stack-trace thunk (error-port (current-error-port)))
+(def (with-exception-stack-trace (thunk : :procedure)
+                                 (error-port : :port := (current-error-port)))
   (with-exception-handler
    (let (E (current-exception-handler))
      (lambda (exn)

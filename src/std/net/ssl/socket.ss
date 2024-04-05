@@ -4,7 +4,6 @@
 (export #t)
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/iter
         :std/io
@@ -15,7 +14,7 @@
         ./error)
 
 (defstruct (ssl-socket basic-socket) (ssl peer-cert)
-  final: #t 
+  final: #t
   constructor: :init!)
 
 (defstruct ssl-socket-reader (sock)

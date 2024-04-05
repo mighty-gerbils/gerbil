@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; httpd api
-(import :std/interface
-        ./base
+(import ./base
         ./control
         ./mux
         ./handler

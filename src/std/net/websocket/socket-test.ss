@@ -2,7 +2,6 @@
         :std/error
         :std/io
         :std/os/temporaries
-        :std/contract
         :std/crypto
         ./socket
         ./api)

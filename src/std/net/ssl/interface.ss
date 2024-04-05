@@ -2,9 +2,7 @@
 ;;; © vyzo
 ;;; SSL socket interface
 (export #t)
-(import :std/interface
-        :std/contract
-        :std/io)
+(import :std/io)
 
 (interface TLS
   (peer-certificate))

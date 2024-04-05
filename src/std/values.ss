@@ -18,7 +18,7 @@
   ((_ . _) (syntax-error "Bad syntax; first-value expects single argument"))
   (_ first-value))
 
-(def (second-value _ x . _) x)
+(def (second-value _1 x . _) x)
 (defrules second-value% ()
   ((_ form) (with ((values _ x . _) form) x))
   ((_ . _) (syntax-error "Bad syntax; second-value expects single argument"))

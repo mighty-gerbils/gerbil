@@ -3,7 +3,6 @@
 ;;; string reader implementation
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         ../interface
         ../bio/types

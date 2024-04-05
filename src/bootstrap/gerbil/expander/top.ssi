@@ -132,7 +132,6 @@ namespace: gx
          (%#define-runtime bound-identifier=? gx#bound-identifier=?)
          (%#define-runtime underscore? gx#underscore?)
          (%#define-runtime ellipsis? gx#ellipsis?)
-         (%#define-runtime user-binding-identifier gx#user-binding-identifier)
          (%#begin (%#define-runtime
                    check-duplicate-identifiers__%
                    gx#check-duplicate-identifiers__%)

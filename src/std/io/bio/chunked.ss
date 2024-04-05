@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; chunked buffers
 (import :std/error
-        :std/contract
         :std/srfi/1
         ../interface
         ./types)

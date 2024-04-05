@@ -77,9 +77,6 @@ namespace: #f
           &interface-descriptor-methods-set!
           &interface-descriptor-methods-set!)
          (%#define-syntax interface-descriptor |[:0:]#interface-descriptor|)
-         (%#define-syntax
-          immediate-instance-of?
-          |[:0:]#immediate-instance-of?|)
          (%#define-runtime __interface-hash-key __interface-hash-key)
          (%#define-runtime __interface-test-key __interface-test-key)
          (%#begin (%#define-runtime
@@ -99,7 +96,7 @@ namespace: #f
          (%#define-runtime __prototype-table-set! __prototype-table-set!)
          (%#define-runtime prototype-table-update! prototype-table-update!)
          (%#define-runtime __prototype-table-update! __prototype-table-update!)
-         (%#define-runtime prototype-trable-delete! prototype-trable-delete!)
+         (%#define-runtime prototype-table-delete! prototype-table-delete!)
          (%#define-runtime __interface-prototypes-mx __interface-prototypes-mx)
          (%#define-runtime __interface-prototypes __interface-prototypes)
          (%#define-runtime

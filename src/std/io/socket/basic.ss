@@ -3,7 +3,6 @@
 ;;; basic socket functionality
 (import :std/sugar
         :std/error
-        :std/contract
         :std/os/socket
         :std/misc/rwlock
         :std/event

@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; Buffered IO inline operations
 (import :std/sugar
-        :std/interface
         ../interface
         ./types
         ./input
