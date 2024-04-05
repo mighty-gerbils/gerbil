@@ -160,7 +160,11 @@ namespace: #f
           (unless (null? irritants)
             (display "--- irritants: ")
             (for-each
-              (lambda (obj) (write obj) (write-char #\space))
+              (lambda (obj)
+                (if (u8vector? obj)
+                  (write ['<u8vector> (u8vector-length obj)])
+                  (write obj))
+                (write-char #\space))
               irritants)
             (newline)))
         (when (dump-stack-trace?)
