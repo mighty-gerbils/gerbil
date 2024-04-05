@@ -7,7 +7,6 @@
         :std/crypto/hmac
         :std/text/hex
         :std/net/uri
-        :std/contract
         :std/sort)
 (export aws4-canonical-request aws4-sign aws4-auth)
 

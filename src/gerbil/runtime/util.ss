@@ -8,6 +8,13 @@ namespace: #f
 (import "gambit")
 (export #t)
 
+;; predefine this so that we can raise it before it is defined (bootstrap)
+(defmutable raise-contract-violation-error error)
+
+(defrules declare-inline ()
+  ((_ proc inline-rules)
+   (begin-annotation (@inline proc) 'inline-rules)))
+
 ;;; low level locks
 (cond-expand
   (gerbil-smp
@@ -43,34 +50,35 @@ namespace: #f
 ;;;
 
 (def (displayln . args)
-  (let lp ((rest args))
-    (match rest
-      ([hd . rest]
-       (display hd)
-       (lp rest))
-      (else
-       (newline)))))
+  => :void
+  (for-each display args)
+  (newline))
 
 (def (display* . args)
+  => :void
   (for-each display args))
 
-(def (file-newer? file1 file2)
-  (def (modification-time file)
-    (##time->seconds
+(def (file-newer? (file1 : :string)
+                     (file2 : :string))
+  => :boolean
+  (def (modification-time (file :- :string)) => :flonum
+    (time->seconds
      (file-info-last-modification-time
       (file-info file #t))))
 
-  (##fl> (modification-time file1)
-         (modification-time file2)))
+  (fl> (modification-time file1)
+       (modification-time file2)))
 
-(def (create-directory* dir (perms #o755))
-  (def (create1 path)
+(def (create-directory* (dir   : :string)
+                        (perms : :fixnum := #o755 ))
+  => :void
+  (def (create1 (path :- :string))
     (cond
      ((file-exists? path)
       (unless (eq? (file-type path) 'directory)
         (error "Path component is not a directory" path)))
      (perms
-      (create-directory (list path: path permissions: perms)))
+      (create-directory [path: path permissions: perms]))
      (else
       (create-directory path))))
 
@@ -79,11 +87,12 @@ namespace: #f
       (cond
        ((string-index dir #\/ start)
         => (lambda (x)
-             (when (##fx> x 0)
+             (when (fx> x 0)
                (create1 (substring dir 0 x)))
-             (lp (##fx+ x 1))))
+             (lp (fx+ x 1))))
        (else
-        (create1 dir))))))
+        (create1 dir)))))
+  (void))
 
 (def absent-obj
   (##absent-object))
@@ -91,70 +100,132 @@ namespace: #f
 (def absent-value
   '#(#!void))
 
-(def (true . _)
+(def (true . ignore)
+  => :true
   #t)
+
+(declare-inline true
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #t))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #t)))))
+
 (def (true? obj)
+  => :boolean
   (eq? obj #t))
 
-(def (false . _)
+(declare-inline true?
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref eq?) arg (%#quote #t)))))
+
+(def (false . ignore)
+  => :false
   #f)
 
-(def (void . _)
+(declare-inline false
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #f))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #f)))))
+
+(def (void . ignore)
+  => :void
   #!void)
+
+(declare-inline void
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #!void))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #!void)))))
+
 (def (void? obj)
+  => :boolean
   (eq? obj #!void))
 
+(declare-inline void?
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref eq?) arg (%#quote #!void)))))
+
 (def (dssl-object? obj)
+  => :boolean
   (and (memq obj '(#!key #!rest #!optional)) #t))
 (def (dssl-key-object? obj)
+  => :boolean
   (eq? obj #!key))
 (def (dssl-rest-object? obj)
+  => :boolean
   (eq? obj #!rest))
 (def (dssl-optional-object? obj)
+  => :boolean
   (eq? obj #!optional))
 
 (def (immediate? obj)
-  (let ((t (##type obj)))
-    (##fxzero? (##fxand t #b1))))
+  => :boolean
+  (let (t (:- (##type obj) :fixnum))
+    (fxzero? (fxand t #b1))))
 
 (def (nonnegative-fixnum? obj)
-  (and (fixnum? obj)
-       (not (fxnegative? obj))))
+  => :boolean
+  (and (fixnum? obj) (##fx>= obj 0)))
+
+(def (pair-or-null? obj)
+  => :boolean
+  (or (pair? obj) (null? obj)))
 
 (def (values-count obj)
+  => :fixnum
   (if (##values? obj)
     (##vector-length obj)
     1))
 
-(def (values-ref obj k)
+(declare-inline values-count
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref var))
+       #'(%#if (%#call (%#ref ##values?) (%#ref var))
+               (%#call (%#ref ##vector-length) (%#ref var))
+               (%#quote 1)))
+      ((%#call recur expr)
+       (with-syntax (($values (make-symbol (gensym '__values))))
+         #'(%#let-values ((($values) expr))
+                         (%#call recur (%#ref $values))))))))
+
+(def (values-ref obj (k : :fixnum))
   (if (##values? obj)
     (##vector-ref obj k)
     obj))
 
 (def (values->list obj)
+  => :list
   (if (##values? obj)
     (##vector->list obj)
     (list obj)))
 
-(def (subvector->list obj (start 0))
-  (let ((lst (##vector->list obj)))
-    (list-tail lst start)))
+(declare-inline values->list
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref var))
+       #'(%#if (%#call (%#ref ##values?) (%#ref var))
+               (%#call (%#ref ##vector->list) (%#ref var))
+               (%#call (%#ref list) (%#ref var))))
+      ((%#call recur expr)
+       (with-syntax (($values (make-symbol (gensym '__values))))
+         #'(%#let-values ((($values) expr))
+                         (%#call recur (%#ref $values))))))))
 
-(def (cons* x y . rest)
-  (def (recur x rest)
-    (if (pair? rest)
-      (cons x (recur (##car rest) (##cdr rest)))
-      x))
-  (cons x (recur y rest)))
-
-(def (foldl1 f iv lst)
+(def (foldl1 (f : :procedure) iv lst)
   (let lp ((rest lst) (r iv))
     (match rest
       ([x . rest]
        (lp rest (f x r)))
       (else r))))
 
-(def (foldl2 f iv lst1 lst2)
+(def (foldl2 (f : :procedure) iv lst1 lst2)
   (let lp ((rest1 lst1) (rest2 lst2) (r iv))
     (match rest1
       ([x1 . rest1]
@@ -172,22 +243,24 @@ namespace: #f
   ((f iv lst1 lst2 . rest)
    (apply foldl* f iv lst1 lst2 rest)))
 
-(def (foldl* f iv . rest)
+(def (foldl* (f : :procedure) iv . rest)
   (let recur ((iv iv) (rest rest))
     (if (andmap1 pair? rest)
-      (recur (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
-                              (list iv) rest))
+      (recur (apply f
+               (:- (foldr1 (lambda (xs r) (cons (car xs) r))
+                           (list iv) rest)
+                   :list))
              (map cdr rest))
       iv)))
 
-(def (foldr1 f iv lst)
+(def (foldr1 (f : :procedure) iv lst)
   (let recur ((rest lst))
     (match rest
       ([x . rest]
        (f x (recur rest)))
       (else iv))))
 
-(def (foldr2 f iv lst1 lst2)
+(def (foldr2 (f : :procedure) iv lst1 lst2)
   (let recur ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -205,13 +278,14 @@ namespace: #f
   ((f iv lst1 lst2 . rest)
    (apply foldr* f iv lst1 lst2 rest)))
 
-(def (foldr* f iv . rest)
+(def (foldr* (f : :procedure) iv . rest)
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (apply f
-        (foldr1 (lambda (xs r) (cons (car xs) r))
-                (list (recur (map cdr rest)))
-                rest))
+        (:- (foldr1 (lambda (xs r) (cons (car xs) r))
+                    (list (recur (map cdr rest)))
+                    rest)
+            :list))
       iv)))
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
@@ -223,7 +297,7 @@ namespace: #f
     ([_ . r]
      (let loop ((l l) (r r))
        (match r
-         ([[] . rr] (set-cdr! l (remove-nulls! rr)))
+         ([[] . rr] (set-cdr! (:- l :pair) (remove-nulls! rr)))
          ([_ . rr] (loop r rr))
          (_ (void))))
      l)
@@ -231,9 +305,11 @@ namespace: #f
 
 ;; : (List X) X -> (NonEmptyList X)
 (def (append1! l x)
+  => :list
   (let (l2 [x])
     (if (pair? l)
-      (set-cdr! (##last-pair l) l2)
+      (using (l :- :pair)
+        (begin (set-cdr! (##last-pair l) l2) l))
       l2)))
 
 ;; Append the elements the list in the first argument to the front of the list
@@ -242,8 +318,10 @@ namespace: #f
 ;; satisfying the predicate if any (or the empty list if none exists),
 ;; and the tail with the reverse of the rhead up till then appended in front.
 ;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
-(def (append-reverse-until pred rhead tail)
+(def (append-reverse-until (pred  : :procedure) rhead tail)
+  => :values
   (let loop ((rhead rhead) (tail tail))
+    => :values
     (match rhead
       ([] (values [] tail))
       ([a :: r]
@@ -251,15 +329,19 @@ namespace: #f
          (values rhead tail)
          (loop r (cons a tail)))))))
 
-(def (andmap1 f lst)
+(def (andmap1 (f : :procedure) lst)
+  => :boolean
   (let lp ((rest lst))
+    => :boolean
     (match rest
       ([x . rest]
        (and (f x) (lp rest)))
       (else #t))))
 
-(def (andmap2 f lst1 lst2)
+(def (andmap2 (f : :procedure) lst1 lst2)
+  => :boolean
   (let lp ((rest1 lst1) (rest2 lst2))
+    => :boolean
     (match rest1
       ([x1 . rest1]
        (match rest2
@@ -276,21 +358,23 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply andmap* f lst1 lst2 rest)))
 
-(def (andmap* f . rest)
+(def (andmap* (f : :procedure) . rest)
+  => :boolean
   (let recur ((rest rest))
+    => :boolean
     (if (andmap1 pair? rest)
       (and (apply f (map car rest))
            (recur (map cdr rest)))
       #t)))
 
-(def (ormap1 f lst)
+(def (ormap1 (f : :procedure) lst)
   (let lp ((rest lst))
     (match rest
       ([x . rest]
        (or (f x) (lp rest)))
       (else #f))))
 
-(def (ormap2 f lst1 lst2)
+(def (ormap2 (f : :procedure) lst1 lst2)
   (let lp ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -308,15 +392,17 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply ormap* f lst1 lst2 rest)))
 
-(def (ormap* f . rest)
+(def (ormap* (f : :procedure) . rest)
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (or (apply f (map car rest))
           (recur (map cdr rest)))
       #f)))
 
-(def (filter-map1 f lst)
+(def (filter-map1 (f : :procedure) lst)
+  => :list
   (let recur ((rest lst))
+    => :list
     (match rest
       ([x . rest]
        (cond
@@ -324,8 +410,10 @@ namespace: #f
         (else (recur rest))))
       (else []))))
 
-(def (filter-map2 f lst1 lst2)
+(def (filter-map2 (f : :procedure) lst1 lst2)
+  => :list
   (let recur ((rest1 lst1) (rest2 lst2))
+    => :list
     (match rest1
       ([x1 . rest1]
        (match rest2
@@ -344,8 +432,10 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply filter-map* f lst1 lst2 rest)))
 
-(def (filter-map* f . rest)
+(def (filter-map* (f : :procedure) . rest)
+  => :list
   (let recur ((rest rest))
+    => :list
     (if (andmap1 pair? rest)
       (cond
        ((apply f (map car rest))
@@ -354,18 +444,23 @@ namespace: #f
         (recur (map cdr rest))))
       [])))
 
-(defrules defassget ()
-  ((_ assget assf)
-   (def (assget key lst (default #f))
+(defrules defaget ()
+  ((_ aget assf)
+   (def (aget key lst (default #f))
      (cond
       ((and (pair? lst) (assf key lst)) => cdr)
       ((procedure? default)
-       (default key))
+       ((:- default :procedure) key))
       (else default)))))
 
-(defassget assgetq assq)
-(defassget assgetv assv)
-(defassget assget assoc)
+(defaget agetq assq)
+(defaget agetv assv)
+(defaget aget assoc)
+
+;; backwards compatibility aliases until we switch to the new name
+(def assgetq agetq)
+(def assgetv agetv)
+(def assget  aget)
 
 (defrules defpget ()
   ((_ pget cmp)
@@ -376,19 +471,19 @@ namespace: #f
           (if (cmp k key) v (lp rest)))
          (else
           (if (procedure? default)
-            (default key)
+            ((:- default :procedure) key)
             default)))))))
 
 (defpget pgetq eq?)
 (defpget pgetv eqv?)
 (defpget pget equal?)
 
-(def (find pred lst)
+(def (find (pred : :procedure) lst)
   (cond
-   ((memf pred lst) => car)
+   ((memf pred lst) => ##car)
    (else #f)))
 
-(def (memf proc lst)
+(def (memf (proc : :procedure) lst)
   (let lp ((rest lst))
     (match rest
       ([hd . tl]
@@ -407,10 +502,10 @@ namespace: #f
          (else lst))))))
 
 (defremove1 remove1 equal?)
-(defremove1 remv eqv?)
-(defremove1 remq eq?)
+(defremove1 remv1 eqv?)
+(defremove1 remq1 eq?)
 
-(def (remf proc lst)
+(def (remf (proc : :procedure) lst)
   (let lp ((rest lst) (r []))
     (match rest
       ([hd . rest]
@@ -419,35 +514,60 @@ namespace: #f
          (lp rest (cons hd r))))
       (else lst))))
 
-(def (1+ x)
+(def (1+ (x : :number)) => :number
   (+ x 1))
-(def (1- x)
+
+(declare-inline 1+
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref +) arg (%#quote 1)))))
+
+(def (1- (x : :number)) => :number
   (- x 1))
-(def (fx1+ x)
+
+(declare-inline 1-
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref -) arg (%#quote 1)))))
+
+(def (fx1+ (x : :fixnum)) => :fixnum
   (fx+ x 1))
-(def (fx1- x)
+
+(declare-inline fx1+
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref fx+) arg (%#quote 1)))))
+
+(def (fx1- (x : :fixnum)) => :fixnum
   (fx- x 1))
+
+(declare-inline fx1-
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref fx-) arg (%#quote 1)))))
+
 (def fxshift
   fxarithmetic-shift)
 (def fx/
   fxquotient)
-(def (fx>=0? x)
+(def (fx>=0? x) => :boolean
   (and (fixnum? x) (##fx>= x 0)))
-(def (fx>0? x)
+(def (fx>0? x) => :boolean
   (and (fixnum? x) (##fx> x 0)))
-(def (fx=0? x)
-  (eq? x 0))
-(def (fx<0? x)
+(def (fx=0? x) => :boolean
+  (##fx= x 0))
+(def (fx<0? x) => :boolean
   (and (fixnum? x) (##fx< x 0)))
-(def (fx<=0? x)
+(def (fx<=0? x) => :boolean
   (and (fixnum? x) (##fx<= x 0)))
 
-
 (def (interned-symbol? x)
+  => :boolean
   (and (symbol? x)
        (not (uninterned-symbol? x))))
 
-(def (display-as-string x port)
+(def (display-as-string x (port :~ output-port? :- :port))
+  => :void
   (cond
    ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x))
     (display x port))
@@ -458,7 +578,8 @@ namespace: #f
     (vector-for-each (cut display-as-string <> port) x))
    ((or (null? x) (void? x) (eof-object? x) (boolean? x))
     (void))
-   (else (error "cannot convert as string" x))))
+   (else
+    (abort! (error "cannot convert as string" x)))))
 
 (def* as-string
   ((x)
@@ -484,22 +605,25 @@ namespace: #f
   (args (string->keyword (apply as-string args))))
 
 (def (interned-keyword? x)
+  => :boolean
   (and (keyword? x)
        (not (uninterned-keyword? x))))
 
-(def (symbol->keyword sym)
-  ((if (uninterned-symbol? sym)
-     string->uninterned-keyword
-     string->keyword)
-   (symbol->string sym)))
+(def (symbol->keyword (sym : :symbol))
+  => :keyword
+  (if (uninterned-symbol? sym)
+    (string->uninterned-keyword (symbol->string sym))
+    (string->keyword (symbol->string sym))))
 
-(def (keyword->symbol kw)
-  ((if (uninterned-keyword? kw)
-     string->uninterned-symbol
-     string->symbol)
-   (keyword->string kw)))
+(def (keyword->symbol (sym : :keyword))
+  => :symbol
+  (if (uninterned-keyword? sym)
+    (string->uninterned-symbol (keyword->string sym))
+    (string->symbol (keyword->string sym))))
 
-(def (bytes->string bstr (enc 'UTF-8))
+(def (bytes->string (bstr : :u8vector)
+                       (enc  : :symbol := 'UTF-8))
+  => :string
   (if (eq? enc 'UTF-8)
     (utf8->string bstr)
     (let* ((in (open-input-u8vector `(char-encoding: ,enc init: ,bstr)))
@@ -509,108 +633,133 @@ namespace: #f
       (string-shrink! out n)
       out)))
 
-(def (string->bytes str (enc 'UTF-8))
+(def (string->bytes (str : :string)
+                       (enc : :symbol := 'UTF-8))
+  => :u8vector
   (if (eq? enc 'UTF-8)
     (string->utf8 str)
     (substring->bytes str 0 (string-length str) enc)))
 
-(def (substring->bytes str start end (enc 'UTF-8))
+(def (substring->bytes (str : :string)
+                       (start :~ nonnegative-fixnum? :- :fixnum)
+                       (end :~ nonnegative-fixnum? :- :fixnum)
+                       (enc 'UTF-8))
+  => :u8vector
   (if (eq? enc 'UTF-8)
     (string->utf8 str start end)
     (let ((out (open-output-u8vector `(char-encoding: ,enc))))
       (write-substring str start end out)
       (get-output-u8vector out))))
 
-(def (string-empty? str)
-  (##fxzero? (string-length str)))
+(def (string-empty? (str : :string))
+  => :boolean
+  (fxzero? (string-length str)))
 
-(def (string-prefix? prefix str)
-  (let ((str-len (string-length str))
-        (prefix-len (string-length prefix)))
-    (and (##fx<= prefix-len str-len)
-         (let lp ((i 0))
-           (if (##fx< i prefix-len)
-             (and (eq? (##string-ref str i) (##string-ref prefix i))
-                  (lp (##fx+ i 1)))
-             #t)))))
-
-(def (string-index str char (start 0))
+(def (string-index (str : :string)
+                   (char : :char)
+                   (start :~ nonnegative-fixnum? :- :fixnum :=  0))
   (let ((len (string-length str)))
     (let lp ((k start))
-      (and (##fx< k len)
-           (if (eq? char (##string-ref str k)) k
-               (lp (##fx+ k 1)))))))
+      (using (k :- :fixnum)
+        (and (fx< k len)
+             (if (eq? char (##string-ref str k))
+               k
+               (lp (fx+ k 1))))))))
 
-(def (string-rindex str char (start #f))
+(def (string-rindex (str : :string)
+                       (char : :char)
+                       (start #f))
   (let* ((len (string-length str))
-         (start (or start (##fx- len 1))))
+         (start (if (fixnum? start) start (fx- len 1))))
     (let lp ((k start))
-      (and (##fx>= k 0)
-           (if (eq? char (##string-ref str k)) k
-               (lp (##fx- k 1)))))))
+      (using (k :- :fixnum)
+        (and (fx>= k 0)
+             (if (eq? char (##string-ref str k))
+               k
+               (lp (fx- k 1))))))))
 
-(def (string-split str char)
+(def (string-split (str : :string) (char : :char))
+  => :list
   (let ((len (string-length str)))
     (let lp ((start 0) (r '()))
-      (cond
-       ((string-index str char start)
-        => (lambda (end)
-             (lp (##fx+ end 1) (cons (##substring str start end) r))))
-       ((##fx< start len)
-        (foldl cons (list (##substring str start len)) r))
-       (else
-        (reverse r))))))
+      => :list
+      (using (start :- :fixnum)
+        (cond
+         ((string-index str char start)
+          => (lambda (end)
+               (using (end :- :fixnum)
+                 (lp (fx+ end 1) (cons (##substring str start end) r)))))
+         ((fx< start len)
+          (:- (foldl cons (list (##substring str start len)) r) :list))
+         (else
+          (reverse! r)))))))
 
 (def (string-join strs join)
-  ;; TODO conditionally disable contract checks
+  => :string
   (def (join-length strs jlen)
     (let lp ((rest strs) (len 0))
-      (match rest
-        ([hd . rest]
-         (if (string? hd)
-           (if (pair? rest)
-             (lp rest
-                 (##fx+ (##string-length hd)
-                        jlen len))
-             (##fx+ (##string-length hd)
-                    len))
-           (error "expected string" hd)))
-        (else 0))))                     ; empty
+      (using (len :- :fixnum)
+        (match rest
+          ([hd . rest]
+           (if (string? hd)
+             (using (hd :- :string)
+               (if (pair? rest)
+                 (lp rest
+                     (fx+ (string-length hd)
+                          jlen len))
+                 (fx+ (string-length hd)
+                      len)))
+             (error "expected string" hd)))
+          (else 0)))))
 
   (let* ((join
-          (cond
-           ((char? join)
-            (string join))
-           ((string? join)
-            join)
-           (else
-            (error "expected string or char" join))))
-         (jlen (##string-length join))
-         (olen (join-length strs jlen))
-         (ostr (make-string olen)))
+          (:- (cond
+               ((char? join)
+                (string join))
+               ((string? join)
+                join)
+               (else
+                (error "expected string or char" join)))
+              :string))
+          (jlen (string-length join))
+          (olen (:- (join-length strs jlen) :fixnum))
+          (ostr (make-string olen)))
     (let lp ((rest strs) (k 0))
-      (match rest
-        ([hd . rest]
-         (let ((hdlen (##string-length hd)))
-           (if (pair? rest)
-             (begin
-               (##substring-move! hd 0 hdlen ostr k)
-               (##substring-move! join 0 jlen ostr (##fx+ k hdlen))
-               (lp rest (##fx+ k hdlen jlen)))
-             (begin
-               (##substring-move! hd 0 hdlen ostr k)
-               ostr))))
-        (else "")))))                   ; empty
+      => :string
+      (using (k :- :fixnum)
+        (match rest
+          ([hd . rest]
+           (using (hd :- :string)
+             (let ((hdlen (string-length hd)))
+               (if (pair? rest)
+                 (begin
+                   (##substring-move! hd 0 hdlen ostr k)
+                   (##substring-move! join 0 jlen ostr (##fx+ k hdlen))
+                   (lp rest (fx+ k hdlen jlen)))
+                 (begin
+                   (##substring-move! hd 0 hdlen ostr k)
+                   ostr)))))
+          (else "")))))) ; empty
 
-(def (read-u8vector bytes port)
-  (read-subu8vector bytes 0 (u8vector-length bytes) port))
-(def (write-u8vector bytes port)
-  (write-subu8vector bytes 0 (u8vector-length bytes) port))
+(def (read-u8vector (bytes : :u8vector)
+                    (port  :~ input-port? :- :port)
+                    (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
+                           := 0)
+                    (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
+                           := (u8vector-length bytes)))
+  => :fixnum
+  (:- (##read-subu8vector bytes start end port)
+      :fixnum))
 
-(def (read-string str port)
-  (read-substring str 0 (string-length str) port))
-(def (write-string str port)
-  (write-substring str 0 (string-length str) port))
+(def (write-u8vector (bytes : :u8vector)
+                     (port  :~ output-port? :- :port)
+                     (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
+                           := 0)
+                     (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
+                            := (u8vector-length bytes)))
+  => :void
+  (:- (##write-subu8vector bytes start end port)
+      :void))
 
 (defrules DBG ()
   ((_ . a) (DBG/1 1 . a)))

@@ -3,7 +3,6 @@
 ;;; actor server connections
 (import :std/error
         :std/sugar
-        :std/contract
         :std/sort
         :std/io
         :std/net/ssl

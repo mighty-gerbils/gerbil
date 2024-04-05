@@ -5,4 +5,5 @@
   (load-module "gerbil/core/mop")
   (load-module "gerbil/core/match")
   (load-module "gerbil/core/more-sugar")
-  (load-module "gerbil/core/module-sugar"))
+  (load-module "gerbil/core/module-sugar")
+  (load-module "gerbil/core/contract"))

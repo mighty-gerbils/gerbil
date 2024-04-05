@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; stream sockets
 (import :std/error
-        :std/contract
         :std/os/socket
         :std/os/fd
         ../interface

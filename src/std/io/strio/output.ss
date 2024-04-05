@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; buffered string writer implementation
 (import :std/error
-        :std/contract
         :std/sugar
         ../interface
         ./types)

@@ -4,15 +4,20 @@ namespace: #f
 
 (%#begin (%#import :gerbil/runtime/gambit)
          (%#export #t)
+         (%#define-runtime
+          raise-contract-violation-error
+          raise-contract-violation-error)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/util~1")))
-                  (%#define-syntax __lock-inline! |[:0:]#__lock-inline!|))
+                  (%#define-syntax declare-inline |[:0:]#declare-inline|))
+         (%#define-syntax __lock-inline! |[:0:]#__lock-inline!|)
          (%#define-syntax __unlock-inline! |[:0:]#__unlock-inline!|)
          (%#define-syntax __make-inline-lock |[:0:]#__make-inline-lock|)
          (%#define-runtime displayln displayln)
          (%#define-runtime display* display*)
          (%#define-runtime file-newer? file-newer?)
+         (%#define-runtime __file-newer? __file-newer?)
          (%#begin (%#define-runtime create-directory*__% create-directory*__%)
                   (%#begin (%#define-runtime
                             create-directory*__0
@@ -20,6 +25,15 @@ namespace: #f
                            (%#define-runtime
                             create-directory*
                             create-directory*)))
+         (%#begin (%#define-runtime
+                   __create-directory*__%
+                   __create-directory*__%)
+                  (%#begin (%#define-runtime
+                            __create-directory*__0
+                            __create-directory*__0)
+                           (%#define-runtime
+                            __create-directory*
+                            __create-directory*)))
          (%#define-runtime absent-obj absent-obj)
          (%#define-runtime absent-value absent-value)
          (%#define-runtime true true)
@@ -33,48 +47,63 @@ namespace: #f
          (%#define-runtime dssl-optional-object? dssl-optional-object?)
          (%#define-runtime immediate? immediate?)
          (%#define-runtime nonnegative-fixnum? nonnegative-fixnum?)
+         (%#define-runtime pair-or-null? pair-or-null?)
          (%#define-runtime values-count values-count)
          (%#define-runtime values-ref values-ref)
+         (%#define-runtime __values-ref __values-ref)
          (%#define-runtime values->list values->list)
-         (%#begin (%#define-runtime subvector->list__% subvector->list__%)
-                  (%#begin (%#define-runtime
-                            subvector->list__0
-                            subvector->list__0)
-                           (%#define-runtime subvector->list subvector->list)))
-         (%#define-runtime cons* cons*)
          (%#define-runtime foldl1 foldl1)
+         (%#define-runtime __foldl1 __foldl1)
          (%#define-runtime foldl2 foldl2)
+         (%#define-runtime __foldl2 __foldl2)
          (%#define-runtime foldl foldl)
          (%#define-runtime foldl* foldl*)
+         (%#define-runtime __foldl* __foldl*)
          (%#define-runtime foldr1 foldr1)
+         (%#define-runtime __foldr1 __foldr1)
          (%#define-runtime foldr2 foldr2)
+         (%#define-runtime __foldr2 __foldr2)
          (%#define-runtime foldr foldr)
          (%#define-runtime foldr* foldr*)
+         (%#define-runtime __foldr* __foldr*)
          (%#define-runtime remove-nulls! remove-nulls!)
          (%#define-runtime append1! append1!)
          (%#define-runtime append-reverse-until append-reverse-until)
+         (%#define-runtime __append-reverse-until __append-reverse-until)
          (%#define-runtime andmap1 andmap1)
+         (%#define-runtime __andmap1 __andmap1)
          (%#define-runtime andmap2 andmap2)
+         (%#define-runtime __andmap2 __andmap2)
          (%#define-runtime andmap andmap)
          (%#define-runtime andmap* andmap*)
+         (%#define-runtime __andmap* __andmap*)
          (%#define-runtime ormap1 ormap1)
+         (%#define-runtime __ormap1 __ormap1)
          (%#define-runtime ormap2 ormap2)
+         (%#define-runtime __ormap2 __ormap2)
          (%#define-runtime ormap ormap)
          (%#define-runtime ormap* ormap*)
+         (%#define-runtime __ormap* __ormap*)
          (%#define-runtime filter-map1 filter-map1)
+         (%#define-runtime __filter-map1 __filter-map1)
          (%#define-runtime filter-map2 filter-map2)
+         (%#define-runtime __filter-map2 __filter-map2)
          (%#define-runtime filter-map filter-map)
          (%#define-runtime filter-map* filter-map*)
-         (%#define-syntax defassget |[:0:]#defassget|)
-         (%#begin (%#define-runtime assgetq__% assgetq__%)
-                  (%#begin (%#define-runtime assgetq__0 assgetq__0)
-                           (%#define-runtime assgetq assgetq)))
-         (%#begin (%#define-runtime assgetv__% assgetv__%)
-                  (%#begin (%#define-runtime assgetv__0 assgetv__0)
-                           (%#define-runtime assgetv assgetv)))
-         (%#begin (%#define-runtime assget__% assget__%)
-                  (%#begin (%#define-runtime assget__0 assget__0)
-                           (%#define-runtime assget assget)))
+         (%#define-runtime __filter-map* __filter-map*)
+         (%#define-syntax defaget |[:0:]#defaget|)
+         (%#begin (%#define-runtime agetq__% agetq__%)
+                  (%#begin (%#define-runtime agetq__0 agetq__0)
+                           (%#define-runtime agetq agetq)))
+         (%#begin (%#define-runtime agetv__% agetv__%)
+                  (%#begin (%#define-runtime agetv__0 agetv__0)
+                           (%#define-runtime agetv agetv)))
+         (%#begin (%#define-runtime aget__% aget__%)
+                  (%#begin (%#define-runtime aget__0 aget__0)
+                           (%#define-runtime aget aget)))
+         (%#define-runtime assgetq assgetq)
+         (%#define-runtime assgetv assgetv)
+         (%#define-runtime assget assget)
          (%#define-syntax defpget |[:0:]#defpget|)
          (%#begin (%#define-runtime pgetq__% pgetq__%)
                   (%#begin (%#define-runtime pgetq__0 pgetq__0)
@@ -86,16 +115,23 @@ namespace: #f
                   (%#begin (%#define-runtime pget__0 pget__0)
                            (%#define-runtime pget pget)))
          (%#define-runtime find find)
+         (%#define-runtime __find __find)
          (%#define-runtime memf memf)
+         (%#define-runtime __memf __memf)
          (%#define-syntax defremove1 |[:0:]#defremove1|)
          (%#define-runtime remove1 remove1)
-         (%#define-runtime remv remv)
-         (%#define-runtime remq remq)
+         (%#define-runtime remv1 remv1)
+         (%#define-runtime remq1 remq1)
          (%#define-runtime remf remf)
+         (%#define-runtime __remf __remf)
          (%#define-runtime 1+ 1+)
+         (%#define-runtime __1+ __1+)
          (%#define-runtime 1- 1-)
+         (%#define-runtime __1- __1-)
          (%#define-runtime fx1+ fx1+)
+         (%#define-runtime __fx1+ __fx1+)
          (%#define-runtime fx1- fx1-)
+         (%#define-runtime __fx1- __fx1-)
          (%#define-runtime fxshift fxshift)
          (%#define-runtime fx/ fx/)
          (%#define-runtime fx>=0? fx>=0?)
@@ -105,6 +141,7 @@ namespace: #f
          (%#define-runtime fx<=0? fx<=0?)
          (%#define-runtime interned-symbol? interned-symbol?)
          (%#define-runtime display-as-string display-as-string)
+         (%#define-runtime __display-as-string __display-as-string)
          (%#begin (%#define-runtime as-string__0 as-string__0)
                   (%#define-runtime as-string__1 as-string__1)
                   (%#define-runtime as-string as-string))
@@ -116,13 +153,25 @@ namespace: #f
                   (%#define-runtime make-keyword make-keyword))
          (%#define-runtime interned-keyword? interned-keyword?)
          (%#define-runtime symbol->keyword symbol->keyword)
+         (%#define-runtime __symbol->keyword __symbol->keyword)
          (%#define-runtime keyword->symbol keyword->symbol)
+         (%#define-runtime __keyword->symbol __keyword->symbol)
          (%#begin (%#define-runtime bytes->string__% bytes->string__%)
                   (%#begin (%#define-runtime bytes->string__0 bytes->string__0)
                            (%#define-runtime bytes->string bytes->string)))
+         (%#begin (%#define-runtime __bytes->string__% __bytes->string__%)
+                  (%#begin (%#define-runtime
+                            __bytes->string__0
+                            __bytes->string__0)
+                           (%#define-runtime __bytes->string __bytes->string)))
          (%#begin (%#define-runtime string->bytes__% string->bytes__%)
                   (%#begin (%#define-runtime string->bytes__0 string->bytes__0)
                            (%#define-runtime string->bytes string->bytes)))
+         (%#begin (%#define-runtime __string->bytes__% __string->bytes__%)
+                  (%#begin (%#define-runtime
+                            __string->bytes__0
+                            __string->bytes__0)
+                           (%#define-runtime __string->bytes __string->bytes)))
          (%#begin (%#define-runtime substring->bytes__% substring->bytes__%)
                   (%#begin (%#define-runtime
                             substring->bytes__0
@@ -130,20 +179,66 @@ namespace: #f
                            (%#define-runtime
                             substring->bytes
                             substring->bytes)))
+         (%#begin (%#define-runtime
+                   __substring->bytes__%
+                   __substring->bytes__%)
+                  (%#begin (%#define-runtime
+                            __substring->bytes__0
+                            __substring->bytes__0)
+                           (%#define-runtime
+                            __substring->bytes
+                            __substring->bytes)))
          (%#define-runtime string-empty? string-empty?)
-         (%#define-runtime string-prefix? string-prefix?)
+         (%#define-runtime __string-empty? __string-empty?)
          (%#begin (%#define-runtime string-index__% string-index__%)
                   (%#begin (%#define-runtime string-index__0 string-index__0)
                            (%#define-runtime string-index string-index)))
+         (%#begin (%#define-runtime __string-index__% __string-index__%)
+                  (%#begin (%#define-runtime
+                            __string-index__0
+                            __string-index__0)
+                           (%#define-runtime __string-index __string-index)))
          (%#begin (%#define-runtime string-rindex__% string-rindex__%)
                   (%#begin (%#define-runtime string-rindex__0 string-rindex__0)
                            (%#define-runtime string-rindex string-rindex)))
+         (%#begin (%#define-runtime __string-rindex__% __string-rindex__%)
+                  (%#begin (%#define-runtime
+                            __string-rindex__0
+                            __string-rindex__0)
+                           (%#define-runtime __string-rindex __string-rindex)))
          (%#define-runtime string-split string-split)
+         (%#define-runtime __string-split __string-split)
          (%#define-runtime string-join string-join)
-         (%#define-runtime read-u8vector read-u8vector)
-         (%#define-runtime write-u8vector write-u8vector)
-         (%#define-runtime read-string read-string)
-         (%#define-runtime write-string write-string)
+         (%#begin (%#define-runtime read-u8vector__% read-u8vector__%)
+                  (%#begin (%#define-runtime read-u8vector__0 read-u8vector__0)
+                           (%#define-runtime read-u8vector__1 read-u8vector__1)
+                           (%#define-runtime read-u8vector read-u8vector)))
+         (%#begin (%#define-runtime __read-u8vector__% __read-u8vector__%)
+                  (%#begin (%#define-runtime
+                            __read-u8vector__0
+                            __read-u8vector__0)
+                           (%#define-runtime
+                            __read-u8vector__1
+                            __read-u8vector__1)
+                           (%#define-runtime __read-u8vector __read-u8vector)))
+         (%#begin (%#define-runtime write-u8vector__% write-u8vector__%)
+                  (%#begin (%#define-runtime
+                            write-u8vector__0
+                            write-u8vector__0)
+                           (%#define-runtime
+                            write-u8vector__1
+                            write-u8vector__1)
+                           (%#define-runtime write-u8vector write-u8vector)))
+         (%#begin (%#define-runtime __write-u8vector__% __write-u8vector__%)
+                  (%#begin (%#define-runtime
+                            __write-u8vector__0
+                            __write-u8vector__0)
+                           (%#define-runtime
+                            __write-u8vector__1
+                            __write-u8vector__1)
+                           (%#define-runtime
+                            __write-u8vector
+                            __write-u8vector)))
          (%#define-syntax DBG |[:0:]#DBG|)
          (%#define-syntax DBG/1 |[:0:]#DBG/1|)
          (%#define-runtime DBG-printer DBG-printer)

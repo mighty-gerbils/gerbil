@@ -31,11 +31,12 @@ namespace: gxc
 (defcompile-method (apply-push-match-vars vars: vars K: K) ::push-match-vars
   (vars K)
   final:
-  (%#lambda             xform-lambda%)
-  (%#let-values    push-match-vars-let-values%)
-  (%#letrec-values push-match-vars-stop)
-  (%#if            push-match-vars-if%)
-  (%#call          push-match-vars-call%))
+  (%#lambda                xform-lambda%)
+  (%#let-values       push-match-vars-let-values%)
+  (%#letrec-values    push-match-vars-stop)
+  (%#if               push-match-vars-if%)
+  (%#call             push-match-vars-call%)
+  (%#begin-annotation push-match-vars-stop))
 
 ;; current annotation context stack
 (def current-annotation-optimizer
@@ -58,10 +59,6 @@ namespace: gxc
             (optimize-syntax-case #'expr))
            (else
             (compile-e #'expr))))))
-    ((_ (ann param ...) expr) ; extended annotation -- stripped for now
-     (and (identifier? #'ann)
-          (not (memq (stx-e #'ann) gambit-annotations)))
-     (compile-e #'expr))
      (_ (xform-begin-annotation% self stx))))
 
 ;;; optimize-match
@@ -298,7 +295,7 @@ namespace: gxc
         (else
          (match (optimizer-resolve-type sym)
            ((!predicate t)
-            (optimizer-resolve-type t))
+            (optimizer-resolve-class `(predicate-type ,id) t))
            (else #f))))))
 
   (def (fold-assert-type expr val env)
@@ -582,15 +579,13 @@ namespace: gxc
                 ;; if it's an assertion for a subtype of ours
                 (and (!class? t)
                      (!class? xt)
-                     (memq t (map (cut optimizer-resolve-class xt <>)
-                                  (!class-precedence-list xt)))))
+                     (!class-subclass? t xt)))
                (else
                 ;; it's a negative type assertion; we cannot satisfy it
                 ;; if it's an assertion for a supertype of ours
                 (if (and (!class? t)
                          (!class? xt)
-                         (memq xt (map (cut optimizer-resolve-class t <>)
-                                       (!class-precedence-list t))))
+                         (!class-subclass? t xt))
                     #f
                     (lp rest))))
               (lp rest)))
@@ -918,7 +913,7 @@ namespace: gxc
        (let* ((body (apply-expression-subst #'body id: #'obj new-id: target))
               (body (if negation (closure-e body) body)))
          ;; we need to redeclare the type of the lambda, as it has lost the argument
-         (optimizer-declare-type! (identifier-symbol id) (make-!lambda 'lambda 0 #f) #t)
+         (optimizer-declare-type! (identifier-symbol id) (make-!lambda 0 #f) #t)
          (cons id ['%#lambda [] body]))))))
 
 ;;; apply-push-match-vars

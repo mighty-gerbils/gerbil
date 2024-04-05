@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; datagram sockets
 (import :std/error
-        :std/contract
         :std/os/socket
         :std/os/fd
         :std/net/address

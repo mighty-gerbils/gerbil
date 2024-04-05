@@ -53,7 +53,7 @@
   (defmethod {name klass}
     (lambda (self . args)
       (let ((port (&raw-port-port self))
-            (buffer (&cooked-port-buffer self)))
+            (buffer (&cooked-port-buffer (:- self cooked-port))))
         body ...))))
 
 (defrule (defsimple-port-method klass (name self . args) body ...)

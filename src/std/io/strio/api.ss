@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; string IO api
 (import :std/error
-        :std/interface
         ../interface
         ../dummy
         ../port
@@ -75,8 +74,10 @@
 
 (def (open-string-reader pre-reader (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
+  => StringReader
   (cond
-   ((StringReader? pre-reader) pre-reader)
+   ((StringReader? pre-reader)
+    (:- pre-reader StringReader))
    ((is-StringReader? pre-reader) (StringReader pre-reader))
    ((is-BufferedReader? pre-reader)
     (let (obj (interface-instance-object pre-reader))
@@ -104,8 +105,10 @@
 
 (def (open-string-writer pre-writer (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
+  => StringWriter
   (cond
-   ((StringWriter? pre-writer) pre-writer)
+   ((StringWriter? pre-writer)
+    (:- pre-writer StringWriter))
    ((is-StringWriter? pre-writer) (StringWriter pre-writer))
    ((is-BufferedWriter? pre-writer)
     (let (obj (interface-instance-object pre-writer))
@@ -133,13 +136,15 @@
 
 (def (open-buffered-string-reader pre-reader (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
+  => BufferedStringReader
   (cond
    ((string? pre-reader)
     (BufferedStringReader
      (make-string-input-buffer dummy-string-reader
                                pre-reader 0 (string-length pre-reader)
                                #f)))
-   ((BufferedStringReader? pre-reader) pre-reader)
+   ((BufferedStringReader? pre-reader)
+    (:- pre-reader BufferedStringReader))
    ((is-BufferedStringReader? pre-reader) (BufferedStringReader pre-reader))
    ((is-StringReader? pre-reader)
     (BufferedStringReader
@@ -159,13 +164,15 @@
 
 (def (open-buffered-string-writer pre-writer (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
+  => BufferedStringWriter
   (cond
    ((not pre-writer)
     (BufferedStringWriter
      (make-string-output-buffer (open-chunk-writer)
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
-   ((BufferedStringWriter? pre-writer) pre-writer)
+   ((BufferedStringWriter? pre-writer)
+    (:- pre-writer BufferedStringWriter))
    ((is-BufferedStringWriter? pre-writer) (BufferedStringWriter pre-writer))
    ((is-StringWriter? pre-writer)
     (BufferedStringWriter
@@ -184,13 +191,16 @@
     (raise-bad-argument open-buffered-string-writer "#f or implementation of StringWriter or writer" pre-writer))))
 
 (def (open-chunk-writer)
+  => StringWriter
   (StringWriter (make-chunked-string-output-buffer [] #f)))
 
 (def (get-buffer-output-string wr)
+  => :string
   (let (chunks (get-buffer-output-string-chunks wr))
     (match chunks
-      ([chunk] chunk)
-      (else (string-concatenate chunks)))))
+      ([chunk] (:- chunk :string))
+      (else
+       (string-concatenate chunks)))))
 
 (def (get-buffer-output-string-chunks wr)
   (let (strio (interface-instance-object wr))

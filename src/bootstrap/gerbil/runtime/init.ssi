@@ -29,6 +29,7 @@ namespace: #f
          (%#define-runtime __compile-top __compile-top)
          (%#define-runtime __eval-import __eval-import)
          (%#define-runtime __eval-module __eval-module)
+         (%#define-runtime __interrupt-handler __interrupt-handler)
          (%#define-runtime gerbil-runtime-init! gerbil-runtime-init!)
          (%#define-runtime __expander-loaded __expander-loaded)
          (%#define-runtime __runtime-initialized __runtime-initialized)

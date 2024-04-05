@@ -9,8 +9,11 @@ namespace: #f
           :gerbil/runtime/hash)
          (%#export #t)
          (%#define-runtime spawn spawn)
+         (%#define-runtime __spawn __spawn)
          (%#define-runtime spawn/name spawn/name)
+         (%#define-runtime __spawn/name __spawn/name)
          (%#define-runtime spawn/group spawn/group)
+         (%#define-runtime __spawn/group __spawn/group)
          (%#define-runtime spawn-actor spawn-actor)
          (%#begin (%#define-runtime spawn-thread__% spawn-thread__%)
                   (%#begin (%#define-runtime spawn-thread__0 spawn-thread__0)
@@ -40,7 +43,9 @@ namespace: #f
           unhandled-actor-exception-hook-set!)
          (%#define-runtime current-thread-group current-thread-group)
          (%#define-runtime with-lock with-lock)
+         (%#define-runtime __with-lock __with-lock)
          (%#define-runtime with-dynamic-lock with-dynamic-lock)
+         (%#define-runtime __with-dynamic-lock __with-dynamic-lock)
          (%#begin (%#define-runtime
                    with-exception-stack-trace__%
                    with-exception-stack-trace__%)
@@ -50,6 +55,15 @@ namespace: #f
                            (%#define-runtime
                             with-exception-stack-trace
                             with-exception-stack-trace)))
+         (%#begin (%#define-runtime
+                   __with-exception-stack-trace__%
+                   __with-exception-stack-trace__%)
+                  (%#begin (%#define-runtime
+                            __with-exception-stack-trace__0
+                            __with-exception-stack-trace__0)
+                           (%#define-runtime
+                            __with-exception-stack-trace
+                            __with-exception-stack-trace)))
          (%#begin (%#define-runtime dump-stack-trace!__% dump-stack-trace!__%)
                   (%#begin (%#define-runtime
                             dump-stack-trace!__0

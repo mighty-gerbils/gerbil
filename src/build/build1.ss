@@ -50,7 +50,7 @@
     "gerbil/compiler/ssxi.ss"
     "gerbil/compiler.ss"))
 
-(def gerbil-prelude-core
+(def gerbil-modules-core
   '("gerbil/core/runtime.ss"
     "gerbil/core/expander.ss"
     "gerbil/core/sugar.ss"
@@ -60,6 +60,7 @@
     "gerbil/core/more-sugar.ss"
     "gerbil/core/more-syntax-sugar.ss"
     "gerbil/core/module-sugar.ss"
+    "gerbil/core/contract.ss"
     "gerbil/core.ss"))
 
 (def gerbil-prelude-gambit
@@ -84,15 +85,17 @@
 
 (displayln "building gerbil in " gerbil-libdir)
 ;; initialize optimizer and preload builtin.ssxi so that we have visibility
-(gxc#optimizer-info-init!)
-(gx#import-module "gerbil/builtin.ssxi.ss" #t)
+(unless (getenv "GERBIL_BUILD_NOOPT" #f)
+  (gxc#optimizer-info-init!)
+  (gx#import-module "gerbil/builtin.ssxi.ss" #t)
+  (gx#import-module "gerbil/builtin-inline-rules.ssxi.ss" #t))
+;; compile core prelude
+(compile-group gerbil-modules-core)
 ;; compile runtime
 (compile-group gerbil-modules-runtime)
-;; compile expander first so that prelude macros have expander visibility
+;; compile expander
 (compile-group gerbil-modules-expander)
-;; compile core prelude
-(compile-group gerbil-prelude-core)
-;; compile gambit prelude
-(compile-group gerbil-prelude-gambit)
 ;; compile compiler
 (compile-group gerbil-modules-compiler)
+;; compile gambit prelude (TODO: obsolete, it is just an empty shim now)
+(compile-group gerbil-prelude-gambit)

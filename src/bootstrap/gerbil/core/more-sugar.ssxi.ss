@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/core
 
 (begin
-  (declare-type
+  (declare-class
    |gerbil/core/more-sugar[1]#setq-macro::t|
-   (@class gerbil.core#setq-macro::t
-           (gerbil/core/macro-object#macro-object::t object::t)
+   (@class gerbil/core/more-sugar#setq-macro::t
+           (gerbil/core/macro-object#macro-object::t)
            (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
            (macro)
@@ -15,6 +15,11 @@ package: gerbil/core
            #f
            #f
            #f))
+  (declare-type
+   |gerbil/core/more-sugar[1]#setq-macro::t|
+   (optimizer-resolve-class
+    '(typedecl |gerbil/core/more-sugar[1]#setq-macro::t|)
+    'class::t))
   (declare-type
    |gerbil/core/more-sugar[1]#setq-macro?|
    (@predicate |gerbil/core/more-sugar[1]#setq-macro::t|))
@@ -33,10 +38,10 @@ package: gerbil/core
   (declare-type
    |gerbil/core/more-sugar[1]#&setq-macro-macro-set!|
    (@mutator |gerbil/core/more-sugar[1]#setq-macro::t| macro #f))
-  (declare-type
+  (declare-class
    |gerbil/core/more-sugar[1]#setf-macro::t|
-   (@class gerbil.core#setf-macro::t
-           (gerbil/core/macro-object#macro-object::t object::t)
+   (@class gerbil/core/more-sugar#setf-macro::t
+           (gerbil/core/macro-object#macro-object::t)
            (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
            (macro)
@@ -46,6 +51,11 @@ package: gerbil/core
            #f
            #f
            #f))
+  (declare-type
+   |gerbil/core/more-sugar[1]#setf-macro::t|
+   (optimizer-resolve-class
+    '(typedecl |gerbil/core/more-sugar[1]#setf-macro::t|)
+    'class::t))
   (declare-type
    |gerbil/core/more-sugar[1]#setf-macro?|
    (@predicate |gerbil/core/more-sugar[1]#setf-macro::t|))
@@ -66,7 +76,14 @@ package: gerbil/core
    (@mutator |gerbil/core/more-sugar[1]#setf-macro::t| macro #f))
   (declare-type
    |gerbil/core/more-sugar[1]#syntax-local-setf-macro?|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|
-   (@lambda 1 #f)))
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type |gerbil/core/more-sugar[1]#expand-set!| (@lambda 1 #f)))

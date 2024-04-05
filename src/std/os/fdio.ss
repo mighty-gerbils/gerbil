@@ -49,7 +49,6 @@
       (check-os-error (_fsync fd)
         (fdsync raw)))))
 
-; TODO: this should probably use the port position functions instead of C FFI
 (def (fdseek raw position from)
   (let ((fd (if (fd? raw) (fd-e raw) raw))
         (whence (case from

@@ -1,11 +1,11 @@
-(import :std/io/bio/types :std/io :std/contract :std/interface
+(import :std/io/bio/types :std/io
 	./interface ./session)
 (export #t)
 
 (def CR (##char->integer #\return))
 (def LF (##char->integer #\linefeed))
 (def FULLSTOP (##char->integer #\.))
-	
+
 
 (def (end-data writer)
   (using ((wr writer :- BufferedWriter)
@@ -44,15 +44,15 @@
        (else
 	(write-flush start (1- end))
 	(write-buff (1- end) end))))
-	  
-      
+
+
     (def (next n) (and (not (= end (1+ n))) (ref (1+ n))))
     (def (prev n (idx (- n 1)))
       (if (< idx 0)
 	(let ((pidx (+ ob.whi idx)))
 	  (if (< pidx 0) #f (u8vector-ref ob.buf pidx)))
 	(ref idx)))
-		
+
     (let lp ((start start) (n start))
       (def code (if (= n end) #f (ref n)))
      ;; (displayln "n: " n " prev " (prev n))
@@ -63,8 +63,8 @@
 		     (not (= code LF)))
 		 (let (p (prev n)) (and p (= p CR))))
 	  (wr.write-u8 LF))
-     ;    
-    (cond 
+     ;
+    (cond
      ((not code)
      ;; We are at the end. We want to keep a char in tne buffer and
       ;; flush the rest.
@@ -95,8 +95,8 @@
 	 ((not nxt) ;(write-flush start n)
 	  ;; add it to the buffer
 	  (wr.write-u8 CR)))))
-     
-     ; Bare LF 
+
+     ; Bare LF
      ((= code LF)
       (let (prv (prev n))
 	(cond ((and prv (= prv CR))
@@ -122,13 +122,13 @@
      ;;    checks the first character of the line.  If it is a period,
      ;;    one additional period is inserted at the beginning of the
      ;;    line.
-     
+
      ;;    o When a line of mail text is received by the SMTP server,
      ;;    it checks the line.  If the line is composed of a single
      ;;    period, it is treated as the end of mail indicator.  If the
      ;;    first character is a period and there are other characters
      ;;    on the line, the first character is deleted.
-     
+
      ((= code FULLSTOP)
       (let (prv (prev n))
 	(cond

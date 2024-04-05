@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type
+  (declare-class
    __syntax::t
    (@class gerbil/runtime/eval#__syntax::t
-           (object::t)
+           ()
            (object::t t::t)
            (e id)
            (e id)
@@ -15,6 +15,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __syntax::t
+   (optimizer-resolve-class '(typedecl __syntax::t) 'class::t))
   (declare-type __syntax? (@predicate __syntax::t))
   (declare-type make-__syntax (@constructor __syntax::t))
   (declare-type __syntax-e (@accessor __syntax::t e #t))
@@ -25,10 +28,10 @@ package: gerbil/runtime
   (declare-type &__syntax-id (@accessor __syntax::t id #f))
   (declare-type &__syntax-e-set! (@mutator __syntax::t e #f))
   (declare-type &__syntax-id-set! (@mutator __syntax::t id #f))
-  (declare-type
+  (declare-class
    __core-form::t
    (@class gerbil/runtime/eval#__core-form::t
-           (__syntax::t object::t)
+           (__syntax::t)
            (__syntax::t object::t t::t)
            ()
            (e id)
@@ -38,6 +41,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __core-form::t
+   (optimizer-resolve-class '(typedecl __core-form::t) 'class::t))
   (declare-type __core-form? (@predicate __core-form::t))
   (declare-type make-__core-form (@constructor __core-form::t))
   (declare-type __core-form-e (@accessor __core-form::t e #t))
@@ -48,10 +54,10 @@ package: gerbil/runtime
   (declare-type &__core-form-id (@accessor __core-form::t id #f))
   (declare-type &__core-form-e-set! (@mutator __core-form::t e #f))
   (declare-type &__core-form-id-set! (@mutator __core-form::t id #f))
-  (declare-type
+  (declare-class
    __core-expression::t
    (@class gerbil/runtime/eval#__core-expression::t
-           (__core-form::t object::t)
+           (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
@@ -61,6 +67,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __core-expression::t
+   (optimizer-resolve-class '(typedecl __core-expression::t) 'class::t))
   (declare-type __core-expression? (@predicate __core-expression::t))
   (declare-type make-__core-expression (@constructor __core-expression::t))
   (declare-type __core-expression-e (@accessor __core-expression::t e #t))
@@ -75,10 +84,10 @@ package: gerbil/runtime
   (declare-type
    &__core-expression-id-set!
    (@mutator __core-expression::t id #f))
-  (declare-type
+  (declare-class
    __core-special-form::t
    (@class gerbil/runtime/eval#__core-special-form::t
-           (__core-form::t object::t)
+           (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
@@ -88,6 +97,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __core-special-form::t
+   (optimizer-resolve-class '(typedecl __core-special-form::t) 'class::t))
   (declare-type __core-special-form? (@predicate __core-special-form::t))
   (declare-type make-__core-special-form (@constructor __core-special-form::t))
   (declare-type __core-special-form-e (@accessor __core-special-form::t e #t))
@@ -110,17 +122,49 @@ package: gerbil/runtime
   (declare-type
    &__core-special-form-id-set!
    (@mutator __core-special-form::t id #f))
-  (declare-type __core-resolve (@lambda 1 #f))
+  (declare-type
+   __current-expander
+   (optimizer-resolve-class '(typedecl __current-expander) 'procedure::t))
+  (declare-type
+   __current-compiler
+   (optimizer-resolve-class '(typedecl __current-compiler) 'procedure::t))
+  (declare-type
+   __current-path
+   (optimizer-resolve-class '(typedecl __current-path) 'procedure::t))
+  (declare-type
+   __core-resolve
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __core-bound-id?__% (@lambda 2 #f))
   (declare-type __core-bound-id?__0 (@lambda 1 #f))
   (declare-type
    __core-bound-id?
    (@case-lambda (1 __core-bound-id?__0) (2 __core-bound-id?__%)))
-  (declare-type __core-bind-syntax!__% (@lambda 3 #f))
-  (declare-type __core-bind-syntax!__0 (@lambda 2 #f))
+  (declare-type
+   __core-bind-syntax!__%
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   __core-bind-syntax!__0
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __core-bind-syntax!
-   (@case-lambda (2 __core-bind-syntax!__0) (3 __core-bind-syntax!__%)))
+   (@case-lambda
+    (2
+     __core-bind-syntax!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     __core-bind-syntax!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
   (declare-type __SRC__% (@lambda 2 #f))
   (declare-type __SRC__0 (@lambda 1 #f))
   (declare-type __SRC (@case-lambda (1 __SRC__0) (2 __SRC__%)))

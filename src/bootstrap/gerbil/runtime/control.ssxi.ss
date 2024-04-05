@@ -2,8 +2,62 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type make-promise (@lambda 1 #f))
-  (declare-type call-with-parameters (@lambda (1) #f))
-  (declare-type with-unwind-protect (@lambda 2 #f))
+  (declare-type
+   make-promise
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             promise::t
+             effect:
+             #f
+             arguments:
+             (procedure::t)
+             unchecked:
+             __make-promise)))
+  (declare-type
+   __make-promise
+   (@lambda 1
+            #f
+            signature:
+            (return: promise::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   call-with-parameters
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t . t::t)
+             unchecked:
+             __call-with-parameters)))
+  (declare-type
+   __call-with-parameters
+   (@lambda (1)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   with-unwind-protect
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t procedure::t)
+             unchecked:
+             __with-unwind-protect)))
+  (declare-type
+   __with-unwind-protect
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type keyword-dispatch (@lambda (2) #f))
   (declare-type keyword-rest (@lambda (1) #f)))

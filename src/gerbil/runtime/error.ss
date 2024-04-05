@@ -20,6 +20,8 @@ namespace: #f
   constructor: :init!
   transparent: #t)
 
+(defclass (ContractViolation Error) ())
+
 ;;; Runtime Errors -- wrapped gambit emitted exceptions
 (defclass (RuntimeException StackTrace Exception) (exception)
   transparent: #t)
@@ -43,23 +45,25 @@ namespace: #f
   (raise
    (Error message irritants: irritants)))
 
-(defrules check-procedure ()
-  ((_ arg where)
-   (unless (procedure? arg)
-     (raise (Error "expected procedure" where: 'where irritants: [arg])))))
 
-(def (with-exception-handler handler thunk)
-  (check-procedure handler with-exception-handler)
-  (check-procedure thunk with-exception-hander)
+(def (__raise-contract-violation-error message context: (ctx #f) contract: (contract-expr #f) value: (value #f))
+  (raise
+   (ContractViolation message
+                      where: ctx
+                      irritants: [contract: contract-expr value: value])))
+
+(set! raise-contract-violation-error __raise-contract-violation-error)
+
+(def contract-violation-error? ContractViolation?)
+
+(def (with-exception-handler (handler : :procedure) (thunk : :procedure))
   (##with-exception-handler
    (lambda (exn)
      (let (exn (wrap-runtime-exception exn))
        (handler exn)))
    thunk))
 
-(def (with-catch handler thunk)
-  (check-procedure handler with-exception-handler)
-  (check-procedure thunk with-exception-hander)
+(def (with-catch (handler : :procedure) (thunk : :procedure))
   (##continuation-capture
    (lambda (cont)
      (with-exception-handler
@@ -95,8 +99,7 @@ namespace: #f
 
 (def (error-message obj)
   (cond
-   ((Error? obj)
-    (&Error-message obj))
+   ((slot-ref obj 'message false))
    ((error-exception? obj)
     (error-exception-message obj))
    (else #f)))
@@ -130,8 +133,11 @@ namespace: #f
           (if (string? message)
             message
             (call-with-output-string "" (cut display message <>))))
-      (unchecked-slot-set! self 'message message)
+      (set! self.message message)
       (apply class-instance-init! self rest))))
+
+(defmethod {:init! ContractViolation}
+  Error:::init!)
 
 (def dump-stack-trace? (make-parameter #f))
 
@@ -146,19 +152,23 @@ namespace: #f
           (newline))
         (display "*** ERROR IN ")
         (cond
-         ((&Error-where self) => display)
+         (self.where => display)
          (else (display "?")))
         (display* " [" (##type-name (object-type self)) "]: ")
-        (displayln (&Error-message self))
-        (let (irritants (&Error-irritants self))
+        (displayln self.message)
+        (let (irritants self.irritants)
           (unless (null? irritants)
             (display "--- irritants: ")
             (for-each
-              (lambda (obj) (write obj) (write-char #\space))
+              (lambda (obj)
+                (if (u8vector? obj)
+                  (write ['<u8vector> (u8vector-length obj)])
+                  (write obj))
+                (write-char #\space))
               irritants)
             (newline)))
-        (when (and (StackTrace? self) (dump-stack-trace?))
-          (alet (cont (&StackTrace-continuation self))
+        (when (dump-stack-trace?)
+          (alet (cont self.continuation)
             (displayln "--- continuation backtrace:")
             (display-continuation-backtrace cont))))
       (##write-string (get-output-string tmp-port) port)))
@@ -168,9 +178,9 @@ namespace: #f
   (lambda (self port)
     (let (tmp-port (open-output-string))
       (fix-port-width! tmp-port)
-      (##default-display-exception (&RuntimeException-exception self) tmp-port)
+      (##default-display-exception self.exception tmp-port)
       (when (dump-stack-trace?)
-        (alet (cont (&StackTrace-continuation self))
+        (alet (cont self.continuation)
           (display "--- continuation backtrace:" tmp-port)
           (newline tmp-port)
           (display-continuation-backtrace cont tmp-port)))

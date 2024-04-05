@@ -5,7 +5,6 @@
         "interface"
         :std/net/request
         :std/misc/func
-        :std/contract
         :std/net/uri
         :std/crypto/digest
         :std/text/hex
@@ -94,7 +93,7 @@
         ; we explicitly handle 404 so we get proper predicate
         ; semantics and don't raise on what would otherwise be
         ; #f condition.
-        (if (memq code [200 404]) 
+        (if (memq code [200 404])
           (begin
             (request-close req)
             (= code 200))

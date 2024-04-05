@@ -82,9 +82,6 @@
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
 
-;; contract violations
-(deferror-class ContractViolation () contract-violation-error?)
-
 ;; utility macros
 (defsyntax (exception-context stx)
   (syntax-case stx ()
@@ -105,25 +102,28 @@
   ((_ expr expectation argument)
    (begin-annotation @contract
      (unless expr
-       (raise-contract-violation argument expr (string-append "bad argument; expected " expectation) argument)))))
+       (abort!
+        (raise-contract-violation argument expr (string-append "bad argument; expected " expectation) argument))))))
 
 ;; check to the raiser!
 (defrules raise/context ()
   ((macro exn)
    (raise/context exn where: macro))
   ((_ exn where: ctx)
-   (let (e exn)
-     (set! (@ e where) (exception-context ctx))
-     (raise e))))
+   (abort!
+    (let (e exn)
+      (set! (@ e where) (exception-context ctx))
+      (raise e)))))
 
 (defrules defraise/context ()
   ((_ (rule where args ...) (Klass message irritants: irritants))
    (defrules rule ()
      ((_ where args ...)
-      (raise
-       (Klass message
-              where: (exception-context where)
-              irritants: (cons 'where irritants)))))))
+      (abort!
+       (raise
+        (Klass message
+               where: (exception-context where)
+               irritants: (cons 'where irritants))))))))
 
 (defraise/context (raise-io-error where message irritants ...)
   (IOError message irritants: [irritants ...]))

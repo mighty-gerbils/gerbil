@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; server sockets
 (import :std/error
-        :std/contract
         :std/os/socket
         :std/os/fd
         :std/misc/rwlock

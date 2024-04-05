@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; embedded HTTP/1.1 server; (rotating) request logger
 (import :std/sugar
-        :std/contract
         :std/io
         (only-in :std/os/fcntl O_CREAT O_APPEND)
         :std/net/address

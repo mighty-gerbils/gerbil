@@ -48,16 +48,23 @@ namespace: gxc
           generate-ssxi-define-values%
           gxc#generate-ssxi-define-values%)
          (%#define-runtime generate-ssxi-call% gxc#generate-ssxi-call%)
+         (%#define-runtime
+          generate-ssxi-begin-annotation%
+          gxc#generate-ssxi-begin-annotation%)
          (%#define-runtime !alias::typedecl gxc#!alias::typedecl)
          (%#define-runtime !class::typedecl gxc#!class::typedecl)
          (%#define-runtime !predicate::typedecl gxc#!predicate::typedecl)
          (%#define-runtime !constructor::typedecl gxc#!constructor::typedecl)
          (%#define-runtime !accessor::typedecl gxc#!accessor::typedecl)
          (%#define-runtime !mutator::typedecl gxc#!mutator::typedecl)
+         (%#define-runtime !interface::typedecl gxc#!interface::typedecl)
          (%#define-runtime !lambda::typedecl gxc#!lambda::typedecl)
          (%#define-runtime !case-lambda::typedecl gxc#!case-lambda::typedecl)
          (%#define-runtime !kw-lambda::typedecl gxc#!kw-lambda::typedecl)
          (%#define-runtime
           !kw-lambda-primary::typedecl
-          gxc#!kw-lambda-primary::typedecl))
+          gxc#!kw-lambda-primary::typedecl)
+         (%#define-runtime
+          !primitive-predicate::typedecl
+          gxc#!primitive-predicate::typedecl))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize~0"))

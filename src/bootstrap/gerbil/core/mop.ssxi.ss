@@ -5,14 +5,16 @@ package: gerbil/core
   (declare-type |gerbil/core/mop~MOP-1[1]#module-type-id| (@lambda 1 #f))
   (declare-type |gerbil/core/mop~MOP-1[1]#make-class-type-id| (@lambda 1 #f))
   (declare-type |gerbil/core/mop~MOP-1[1]#generate-typedef| (@lambda 2 #f))
-  (declare-type
+  (declare-class
    gerbil/core/mop~MOP-2#class-type-info::t
    (@class gerbil.core#class-type-info::t
-           (object::t)
+           ()
            (object::t t::t)
            (id name
                super
                slots
+               precedence-list
+               ordered-slots
                struct?
                final?
                system?
@@ -24,10 +26,15 @@ package: gerbil/core
                accessors
                mutators
                unchecked-accessors
-               unchecked-mutators)
+               unchecked-mutators
+               slot-types
+               slot-defaults
+               slot-contracts)
            (id name
                super
                slots
+               precedence-list
+               ordered-slots
                struct?
                final?
                system?
@@ -39,13 +46,21 @@ package: gerbil/core
                accessors
                mutators
                unchecked-accessors
-               unchecked-mutators)
+               unchecked-mutators
+               slot-types
+               slot-defaults
+               slot-contracts)
            #f
            #f
            #f
            #f
            #f
            #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#class-type-info::t
+   (optimizer-resolve-class
+    '(typedecl gerbil/core/mop~MOP-2#class-type-info::t)
+    'class::t))
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info?
    (@predicate gerbil/core/mop~MOP-2#class-type-info::t))
@@ -64,6 +79,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-slots
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t slots #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-precedence-list
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t precedence-list #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-ordered-slots
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t ordered-slots #t))
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-struct?
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t struct? #t))
@@ -101,6 +122,15 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#!class-type-unchecked-mutators
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t unchecked-mutators #t))
   (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-types
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-types #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-defaults
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-defaults #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-contracts
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #t))
+  (declare-type
    gerbil/core/mop~MOP-2#!class-type-id-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t id #t))
   (declare-type
@@ -112,6 +142,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-slots-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t slots #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-precedence-list-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t precedence-list #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-ordered-slots-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t ordered-slots #t))
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-struct?-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t struct? #t))
@@ -149,6 +185,15 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#!class-type-unchecked-mutators-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t unchecked-mutators #t))
   (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-types-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-types #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-defaults-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-defaults #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #t))
+  (declare-type
    gerbil/core/mop~MOP-2#&!class-type-id
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t id #f))
   (declare-type
@@ -160,6 +205,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-slots
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t slots #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-precedence-list
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t precedence-list #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-ordered-slots
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t ordered-slots #f))
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-struct?
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t struct? #f))
@@ -197,6 +248,15 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t unchecked-mutators #f))
   (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-types
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-types #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-defaults
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-defaults #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-contracts
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #f))
+  (declare-type
    gerbil/core/mop~MOP-2#&!class-type-id-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t id #f))
   (declare-type
@@ -208,6 +268,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-slots-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t slots #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-precedence-list-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t precedence-list #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-ordered-slots-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t ordered-slots #f))
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-struct?-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t struct? #f))
@@ -244,6 +310,15 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-unchecked-mutators-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t unchecked-mutators #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-types-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-types #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-defaults-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-defaults #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #f))
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
    (@lambda 2 #f))

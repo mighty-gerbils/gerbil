@@ -2,8 +2,6 @@
 ;;; © vyzo
 ;;; websocket client interface
 (import :std/error
-        :std/interface
-        :std/contract
         :std/io
         :std/net/ssl
         :std/net/request

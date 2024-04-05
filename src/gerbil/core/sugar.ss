@@ -22,6 +22,18 @@ package: gerbil/core
 
   (defalias define-rules defrules)
 
+  (defrules defrule ()
+    ((_ (name . args) body)
+     (identifier? #'name)
+     (define-syntax name
+       (syntax-rules ()
+         ((_ . args) body))))
+    ((_ (name . args) fender body)
+     (identifier? #'name)
+     (define-syntax name
+       (syntax-rules ()
+         ((_ . args) fender body)))))
+
   (defrules defsyntax% ()
     ((_ (id . args) body ...)
      (identifier? #'id)
@@ -109,7 +121,7 @@ package: gerbil/core
   (defrules cond (else =>)
     ((_) #!void)
     ((_ (else body ...))
-     (%#expression (begin body ...)))
+     (let () body ...))
     ((_ (else . _) . _)
      (syntax-error "bad syntax; misplaced else"))
     ((recur (test) . rest)
@@ -119,7 +131,7 @@ package: gerbil/core
      (let ($e test)
        (if $e (K $e) (recur . rest))))
     ((recur (test body ...) . rest)
-     (if test (begin body ...) (recur . rest))))
+     (if test (let () body ...) (recur . rest))))
 
   (defrules when ()
     ((_ test expr ...)
@@ -172,17 +184,12 @@ package: gerbil/core
            (syntax-case #'hd ()
              ((id e)
               (lp #'hd-rest pre
-                  (cons (cons (generate-bind #'id) #'e)
-                        opt)))
-             (_ (lp #'hd-rest
-                    (cons (generate-bind #'hd)
-                          pre)
+                  (cons (cons #'id #'e) opt)))
+             (_ (lp #'hd-rest (cons #'hd pre)
                     opt))))
           (_ (values (reverse pre)
                      (reverse opt)
-                     (if (identifier? rest)
-                       (generate-bind rest)
-                       rest))))))
+                     rest)))))
 
     (define (kw-lambda? hd)
       (let lp ((rest hd) (opt? #f) (key? #f))
@@ -220,12 +227,12 @@ package: gerbil/core
                (syntax-case #'bind ()
                  ((id default)
                   (lp #'hd-rest kwvar
-                      (cons (list key (generate-bind #'id) #'default)
+                      (cons (list key #'id #'default)
                             kwargs)
                       args))
                  (_
                   (lp #'hd-rest kwvar
-                      (cons (list key (generate-bind #'bind)
+                      (cons (list key #'bind
                                   #'(error "Missing required keyword argument"
                                       kw))
                             kwargs)
@@ -234,48 +241,38 @@ package: gerbil/core
            (if kwvar
              (raise-syntax-error #f "bad syntax; duplicate #!key argument"
                                  stx hd #'id)
-             (lp #'hd-rest
-                 (generate-bind #'id)
-                 kwargs args)))
+             (lp #'hd-rest #'id kwargs args)))
           ((hd . hd-rest)
            (lp #'hd-rest kwvar kwargs (cons #'hd args)))
           (_ (values kwvar (reverse kwargs) (foldl cons rest args))))))
 
-    (define (generate-bind e)
-      (if (underscore? e)
-        (genident e)
-        e))
-
     (define (check-duplicate-bindings hd)
-      (define (cons-id id ids)
-        (if (underscore? id) ids (cons id ids)))
-
       (let lp ((rest hd) (ids '()))
         (syntax-case rest ()
           ((hd . hd-rest)
            (cond
             ((identifier? #'hd)
-             (lp #'hd-rest (cons-id #'hd ids)))
+             (lp #'hd-rest (cons #'hd ids)))
             ((stx-pair? #'hd)
              (syntax-case #'hd ()
                ((id _)
-                (lp #'hd-rest (cons-id #'id ids)))))
+                (lp #'hd-rest (cons #'id ids)))))
             ((stx-keyword? #'hd)
              (syntax-case #'hd-rest ()
                ((hd . hd-rest)
                 (syntax-case #'hd ()
                   ((id _)
-                   (lp #'hd-rest (cons-id #'id ids)))
-                  (_ (lp #'hd-rest (cons-id #'hd ids)))))))
+                   (lp #'hd-rest (cons #'id ids)))
+                  (_ (lp #'hd-rest (cons #'hd ids)))))))
             ((eq? (stx-e #'hd) #!key)
              (syntax-case #'hd-rest ()
                ((id . hd-rest)
-                (lp #'hd-rest (cons-id #'id ids)))))
+                (lp #'hd-rest (cons #'id ids)))))
             (else
              (error "BUG: check-duplicate-bindings" stx rest))))
           (_
            (check-duplicate-identifiers
-            (if (stx-null? rest) ids (cons-id rest ids))
+            (if (stx-null? rest) ids (cons rest ids))
             stx)))))
 
     (define (generate-opt-primary pre opt tail body)
@@ -363,7 +360,7 @@ package: gerbil/core
           (cons 'begin body)))
 
       (define (make-main)
-        (with-syntax* ((kwvar (or key '_))
+        (with-syntax* ((kwvar (or key (syntax-local-introduce '@@keywords)))
                        ((kwval ...) (gentemps (map cadr kwargs)))
                        (args args)
                        (body (make-body kwargs #'(kwval ...))))
@@ -372,7 +369,7 @@ package: gerbil/core
               body))))
 
       (define (make-dispatch main)
-        (with-syntax* ((kwvar (or key (genident 'keys)))
+        (with-syntax* ((kwvar (or key (syntax-local-introduce '@@keywords)))
                        ((get-kw ...)
                         (map (lambda% (kwarg)
                                (with-syntax ((key (car kwarg)))

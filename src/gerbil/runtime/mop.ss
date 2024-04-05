@@ -54,15 +54,14 @@ namespace: #f
 (def class-type-flag-system 8192) ;; it is a system class, non instantiable
 
 ;; the root class
-(def t::t.id 'gerbil#t::t)
 (def t::t
-  (begin-annotation (@mop.system gerbil#t::t ())
+  (begin-annotation (@mop.system t ())
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        #f                               ; type: class::t, set below
-       t::t.id                          ; type-id
+       't                               ; type-id
        't                               ; type-name
        flags                            ; type-flags
        #f                               ; type-super
@@ -75,10 +74,9 @@ namespace: #f
        #f))))
 
 ;; the class metaclass
-(def class::t.id 'gerbil#class::t)
 (def class::t
     (begin-annotation
-        (@mop.class gerbil#class::t     ; type-id
+        (@mop.class class               ; type-id
                     (t::t)              ; super
                     (id name super flags fields
                         precedence-list slot-vector slot-table
@@ -113,7 +111,7 @@ namespace: #f
                 (struct: . #t)))
              (t (##structure
                  #f                  ; type: self reference, set below
-                 class::t.id         ; type-id
+                 'class              ; type-id
                  'class              ; type-name
                  flags               ; type-flags
                  ##type-type         ; type-super
@@ -132,15 +130,14 @@ namespace: #f
 (##structure-type-set! t::t class::t)
 
 ;; standard objects
-(def object::t.id 'gerbil#object::t)
 (def object::t
-  (begin-annotation (@mop.system gerbil#object::t (t::t))
+  (begin-annotation (@mop.system object (t::t))
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        class::t                         ; type
-       t::t.id                          ; type-id
+       'object                          ; type-id
        'object                          ; type-name
        flags                            ; type-flags
        #f                               ; type-super
@@ -155,9 +152,9 @@ namespace: #f
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
     (lambda (obj)
-      (##structure-instance-of? obj class::t.id))))
+      (##structure-instance-of? obj 'class))))
 
-(def (class-type=? x y)
+(def (class-type=? (x : :class) (y : :class)) => :boolean
   (eq? (class-type-id x) (class-type-id y)))
 
 (defrules fxflag-set? ()
@@ -171,34 +168,26 @@ namespace: #f
    (##fx= (##fxand value flag) 0))
   ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) 0))))
 
-(def (type-opaque? type)
+(def (type-opaque? (type :~ ##type? :- :t)) => :boolean
   (fxflag-set? (##type-flags type) type-flag-opaque))
-(def (type-extensible? type)
+(def (type-extensible? (type :~ ##type? :- :t)) => :boolean
   (fxflag-set? (##type-flags type) type-flag-extensible))
-(def (class-type-final? type)
+(def (class-type-final? (type : :class)) => :boolean
   (fxflag-unset? (##type-flags type) type-flag-extensible))
-(def (class-type-struct? klass)
+(def (class-type-struct? (klass : :class)) => :boolean
   (fxflag-set? (##type-flags klass) class-type-flag-struct))
-(def (class-type-sealed? klass)
+(def (class-type-sealed? (klass : :class)) => :boolean
   (fxflag-set? (##type-flags klass) class-type-flag-sealed))
-(def (class-type-metaclass? klass)
+(def (class-type-metaclass? (klass : :class)) => :boolean
   (fxflag-set? (##type-flags klass) class-type-flag-metaclass))
-(def (class-type-system? klass)
+(def (class-type-system? (klass : :class)) => :boolean
   (fxflag-set? (##type-flags klass) class-type-flag-system))
-
-;; TODO for debugging only
-(def (properties-form properties)
-  (map (match <>
-         ([key . val]
-          (if (eq? key 'direct-supers:)
-            [key :: (map class-type-id val)]
-            [key :: val])))
-       properties))
 
 ;; Compute the flags and field-info and create a class type
 (def (make-class-type-descriptor type-id type-name type-super
                                  precedence-list slot-vector properties
                                  constructor slot-table methods)
+  => :class
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
@@ -207,20 +196,20 @@ namespace: #f
     (def (put-slots! ht slots)
       (for-each (cut symbolic-table-set! ht <> #t) slots))
     (def (put-alist! ht key alist)
-      (cond ((assgetq key alist) => (cut put-slots! ht <>))))
+      (cond ((agetq key alist) => (cut put-slots! ht <>))))
     (put-alist! ht key properties)
     (for-each (lambda (mixin)
                 (let (alist (class-type-properties mixin))
-                  (if (or (assgetq transparent: alist) (eq? #t (assgetq key alist)))
+                  (if (or (agetq transparent: alist) (eq? #t (agetq key alist)))
                     (put-slots! ht (class-type-slot-list mixin))
                     (put-alist! ht key alist))))
               precedence-list)
     ht)
 
-  (let* ((transparent? (assgetq transparent: properties))
-         (all-slots-printable? (or transparent? (eq? #t (assgetq print: properties))))
+  (let* ((transparent? (agetq transparent: properties))
+         (all-slots-printable? (or transparent? (eq? #t (agetq print: properties))))
          (printable (and (not all-slots-printable?) (make-props! print:)))
-         (all-slots-equalable? (or transparent? (eq? #t (assgetq equal: properties))))
+         (all-slots-equalable? (or transparent? (eq? #t (agetq equal: properties))))
          (equalable (and (not all-slots-equalable?) (make-props! equal:)))
          (first-new-field
           (if (class-type? type-super)
@@ -228,14 +217,14 @@ namespace: #f
             1))
          (field-info-length (##fx* 3 (##fx- (##vector-length slot-vector) first-new-field)))
          (field-info (make-vector field-info-length #f))
-         (struct? (assgetq struct: properties))
-         (final? (assgetq final: properties))
+         (struct? (agetq struct: properties))
+         (final? (agetq final: properties))
          (metaclass
-          (alet (metaclass (assgetq metaclass: properties))
+          (alet (metaclass (agetq metaclass: properties))
             (unless (class-type? metaclass)
               (error "metaclass is not a class type" class: type-id metaclass: metaclass))
             metaclass))
-         (system? (assgetq system: properties))
+         (system? (agetq system: properties))
          (opaque?
           (or (not all-slots-equalable?)
               (and type-super (type-opaque? type-super))))
@@ -266,16 +255,20 @@ namespace: #f
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
     (if metaclass
-      (make-instance metaclass
-                     ;; gambit type fields
-                     type-id type-name type-flags type-super field-info
-                     ;; gerbil class fields
-                     precedence-list slot-vector slot-table properties constructor methods)
-      (##structure class::t
-                   ;; gambit type fields
-                   type-id type-name type-flags type-super field-info
-                   ;; gerbil class fields
-                   precedence-list slot-vector slot-table properties constructor methods))))
+      ;; check this
+      (: (make-instance metaclass
+                        ;; gambit type fields
+                        type-id type-name type-flags type-super field-info
+                        ;; gerbil class fields
+                        precedence-list slot-vector slot-table properties constructor methods)
+         :class)
+      ;; this we know is a class
+      (:- (##structure class::t
+                       ;; gambit type fields
+                       type-id type-name type-flags type-super field-info
+                       ;; gerbil class fields
+                       precedence-list slot-vector slot-table properties constructor methods)
+          :class))))
 
 ;;; class type utilities
 (defsyntax (defrefset stx)
@@ -321,22 +314,23 @@ namespace: #f
   (constructor 10)
   (methods 11))
 
-(def (class-type-slot-list klass)
-  (cdr (vector->list (class-type-slot-vector klass))))
-(def (class-type-field-count klass)
-  (##fx- (##vector-length (class-type-slot-vector klass)) 1))
-(def (class-type-seal! klass)
-  (##structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
-                    3 class::t class-type-seal!))
-(def (&class-type-seal! klass)
+(def (class-type-slot-list (klass : :class)) => :list
+  (:- (cdr (vector->list (class-type-slot-vector klass)))
+      :list ))
+(def (class-type-field-count (klass : :class)) => :fixnum
+  (:- (##fx- (##vector-length (class-type-slot-vector klass)) 1)
+      :fixnum))
+(def (class-type-seal! (klass : :class)) => :void
   (##unchecked-structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
-                              3 class::t class-type-seal!))
+                              3 class::t class-type-seal!)
+  (void))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
-(def (substruct? maybe-sub-struct maybe-super-struct)
+(def (substruct? (maybe-sub-struct : :class) (maybe-super-struct : :class))
+  => :boolean
   (let (maybe-super-struct-id (##type-id maybe-super-struct))
-    (let lp ((super-struct maybe-sub-struct))
+    (let lp ((super-struct maybe-sub-struct)) => :boolean
       (cond
        ((not super-struct)
         #f)
@@ -417,7 +411,7 @@ namespace: #f
          (process-slots (cut for-each process-slot <>)))
     (for-each (lambda (mixin)
                 (process-slots
-                 (assgetq direct-slots: (&class-type-properties mixin) [])))
+                 (agetq direct-slots: (&class-type-properties mixin) [])))
               (reverse class-precedence-list))
     (process-slots direct-slots)
     (let (slot-vector (list->vector (reverse r-slots)))
@@ -425,11 +419,17 @@ namespace: #f
 
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
-(def (make-class-type id name direct-supers direct-slots properties constructor)
+(def (make-class-type (id            : :symbol)
+                      (name          : :symbol)
+                      (direct-supers : :list)
+                      (direct-slots  : :list)
+                      (properties    : :list)
+                      (constructor   :~ (? (or not symbol?)) :- :symbol))
+  => :class
   (cond
    ((find (? (not class-type?)) direct-supers)
     => (cut error "Illegal super class; not a class descriptor" <>))
-   ((find class-type-final? direct-supers)
+   ((find __class-type-final? direct-supers)
     => (cut error "Cannot extend final class" <>)))
 
   (let* (((values precedence-list struct-super)
@@ -442,7 +442,7 @@ namespace: #f
            properties ...])
          (constructor* (or constructor (find-super-constructor direct-supers)))
          (precedence-list
-          (if (or (assgetq system: properties)
+          (if (or (agetq system: properties)
                   (memq object::t precedence-list))
             precedence-list
             (let loop ((tail precedence-list) (head []))
@@ -457,19 +457,19 @@ namespace: #f
                                 precedence-list slot-vector properties
                                 constructor* slot-table #f)))
 
-(def (class-precedence-list klass)
+(def (class-precedence-list (klass : :class)) => :list
   (cons klass (&class-type-precedence-list klass)))
 
 ;; class precedence list, excluding current class; super struct if any
 ;; (List TypeDescriptor) -> (List TypeDescriptor) (OrFalse TypeDescriptor)
-(def (compute-precedence-list direct-supers)
+(def (compute-precedence-list direct-supers) => :values
   (c4-linearize [] direct-supers
                 get-precedence-list: class-precedence-list
                 struct: class-type-struct?
                 eq: eq?
                 get-name: ##type-name))
 
-(def (make-class-predicate klass)
+(def (make-class-predicate (klass : :class)) => :procedure
   (let (tid (##type-id klass))
     (cond
      ((class-type-final? klass) (cut ##structure-direct-instance-of? <> tid))
@@ -483,44 +483,49 @@ namespace: #f
 ;; (same as above but you have a more expensive argument class check to be safe)
 ;; or (c) the slot being a regular class slot (the more expensive code path),
 ;; return an accessor for this klass and slot.
-(def (if-class-slot-field klass slot if-final if-struct if-struct-field if-class-slot)
-  (let (field (symbolic-table-ref (&class-type-slot-table klass) slot #f))
-    (cond
-     ((not field)
-      (error "unknown slot" class: klass slot: slot))
-     ((class-type-final? klass)
-      (if-final klass slot field))
-     ((class-type-struct? klass)
-      (if-struct klass slot field))
-     ((let (strukt (base-struct/1 klass))
-        (and (class-type? strukt)
-             (##fx< field (##vector-length (&class-type-slot-vector strukt)))))
-      (if-struct-field klass slot field))
-     (else
-      (if-class-slot klass slot field)))))
+(defrules if-class-slot-field ()
+  ((_ klass slot if-final if-struct if-struct-field if-class-slot)
+   (let (field (symbolic-table-ref (&class-type-slot-table klass) slot #f))
+     (cond
+      ((not field)
+       (abort! (error "unknown slot" class: klass slot: slot)))
+      ((class-type-final? klass)
+       (if-final klass slot field))
+      ((class-type-struct? klass)
+       (if-struct klass slot field))
+      ((let (strukt (base-struct/1 klass))
+         (and (class-type? strukt)
+              (##fx< field (##vector-length (&class-type-slot-vector strukt)))))
+       (if-struct-field klass slot field))
+      (else
+       (if-class-slot klass slot field))))))
 
-(def (make-class-slot-accessor klass slot)
+(def (make-class-slot-accessor (klass : :class) (slot : :symbol))
+  => :procedure
   (if-class-slot-field klass slot
      make-final-slot-accessor
      make-struct-slot-accessor
      make-struct-subclass-slot-accessor
      make-class-cached-slot-accessor))
 
-(def (make-class-slot-mutator klass slot)
+(def (make-class-slot-mutator (klass : :class) (slot : :symbol))
+  => :procedure
   (if-class-slot-field klass slot
      make-final-slot-mutator
      make-struct-slot-mutator
      make-struct-subclass-slot-mutator
      make-class-cached-slot-mutator))
 
-(def (make-class-slot-unchecked-accessor klass slot)
+(def (make-class-slot-unchecked-accessor (klass : :class) (slot : :symbol))
+  => :procedure
   (if-class-slot-field klass slot
      make-struct-slot-unchecked-accessor
      make-struct-slot-unchecked-accessor
      make-struct-slot-unchecked-accessor
      make-class-cached-slot-unchecked-accessor))
 
-(def (make-class-slot-unchecked-mutator klass slot)
+(def (make-class-slot-unchecked-mutator (klass : :class) (slot : :symbol))
+  => :procedure
   (if-class-slot-field klass slot
      make-struct-slot-unchecked-mutator
      make-struct-slot-unchecked-mutator
@@ -581,17 +586,16 @@ namespace: #f
     (unchecked-field-set! obj field val)
     (unchecked-slot-set! obj slot val)))
 
-(def (class-slot-offset klass slot)
-  (if (symbolic? slot)
-    (symbolic-table-ref (&class-type-slot-table klass) slot #f)
-    (error "slot must be a symbol or keyword" slot)))
+(def (class-slot-offset (klass : :class) (slot : :symbolic))
+  (symbolic-table-ref (&class-type-slot-table klass) slot #f))
 
-(def (class-slot-ref klass obj slot)
+(def (class-slot-ref (klass : :class) obj (slot : :symbolic))
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-ref obj off klass slot))
     (not-an-instance obj klass)))
-(def (class-slot-set! klass obj slot val)
+
+(def (class-slot-set! (klass : :class) obj (slot : :symbolic) val)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-set! obj val off klass slot))
@@ -603,9 +607,9 @@ namespace: #f
   (##unchecked-structure-set! obj val off (##structure-type obj) #f))
 
 (def (unchecked-slot-ref obj slot)
-  (unchecked-field-ref obj (class-slot-offset (##structure-type obj) slot)))
+  (unchecked-field-ref obj (__class-slot-offset (##structure-type obj) slot)))
 (def (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset (##structure-type obj) slot) val))
+  (unchecked-field-set! obj (__class-slot-offset (##structure-type obj) slot) val))
 
 (defrules __slot-e ()
   ((_ obj slot K E)
@@ -614,9 +618,9 @@ namespace: #f
       ((class-slot-offset klass slot) => K)
       (else (E obj slot))))))
 
-(def (slot-ref obj slot (E __slot-error))
+(def (slot-ref obj (slot : :symbol) (E : :procedure := __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-ref obj off)) E))
-(def (slot-set! obj slot val (E __slot-error))
+(def (slot-set! obj (slot : :symbol) val (E : :procedure := __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-set! obj off val)) E))
 
 (def (__slot-error obj slot)
@@ -624,79 +628,161 @@ namespace: #f
 
 ;; Is maybe-sub-class a subclass of maybe-super-class?
 ; : TypeDescriptor TypeDescriptor -> Bool
-(def (subclass? maybe-sub-class maybe-super-class)
+(def (subclass? (maybe-sub-class : :class) (maybe-super-class : :class))
+  => :boolean
   (let (maybe-super-class-id (##type-id maybe-super-class))
     (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
-        (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
-               (&class-type-precedence-list maybe-sub-class)))))
+        (:- (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
+                   (&class-type-precedence-list maybe-sub-class))
+            :boolean))))
 
 ;;; generic object utilities
 (def (object? o)
+  => :boolean
   (and (##structure? o)
        (class-type? (##structure-type o))))
 
 (def (object-type o)
+  => :class
   (if (##structure? o)
     (let (klass (##structure-type o))
       (if (class-type? klass)
-        klass
-        (error "not an object" o klass)))
-    (error "not an object" o)))
+        (:- klass :class)
+        (abort! (error "not an object" o klass))))
+    (abort! (error "not an object" o))))
 
-(def (direct-instance? klass obj)
-  (##structure-direct-instance-of? obj (##type-id klass)))
+(def (direct-instance? (klass : :class) obj)
+  => :boolean
+  (:- (##structure-direct-instance-of? obj (##type-id klass))
+      :boolean))
 
-(def (struct-instance? klass obj)
-  (##structure-instance-of? obj (##type-id klass)))
+(declare-inline direct-instance?
+  (ast-rules (%#call)
+    ((%#call _ klass obj)
+     (%#call (%#ref ##structure-direct-instance-of?)
+             obj
+             (%#call (%#ref ##type-id) klass)))))
 
-(def (class-instance? klass obj)
+
+(def (immediate-instance-of? klass obj)
+  => :boolean
+  (and (##structure? obj) (eq? klass (##structure-type obj))))
+
+(declare-inline immediate-instance-of?
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ klass (%#ref obj))
+       #'(%#if (%#call (%#ref ##structure?) (%#ref obj))
+               (%#if (%#call (%#ref eq?) klass (%#call (%#ref ##structure-type) (%#ref obj)))
+                     (%#quote #t)
+                     (%#quote #f))
+               (%#quote #f)))
+      ((%#call recur klass obj)
+       (with-syntax (($obj (make-symbol (gensym '__obj))))
+         #'(%#let-values ((($obj) obj)) (%#call recur klass (%#ref $obj))))))))
+
+(def (struct-instance? (klass : :class) obj)
+  => :boolean
+  (:- (##structure-instance-of? obj (##type-id klass))
+      :boolean))
+
+(def (class-instance? (klass : :class) obj)
+  => :boolean
   (let (type (class-of obj))
     (subclass? type klass)))
 
-(def (make-object klass k)
+(def (make-object (klass : :class) (k : :fixnum))
+  => :object
   (if (class-type-system? klass)
-    (error "cannot instantiate system class" class: klass)
+    (abort! (error "cannot instantiate system class" class: klass))
     (let (obj (##make-structure klass k))
-      (object-fill! obj #f)
-      obj)))
+      (object-fill! obj #f))))
 
-(def (object-fill! obj fill)
+(declare-inline make-object
+  (lambda (ast)
+    (ast-case ast (%#call %#quote)
+      ((%#call make-object klass (%#quote len))
+       (with-syntax (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
+         #'(%#call (%#ref ##structure) klass init ...)))
+      ((%#call make-object klass len)
+       (with-syntax (($obj (make-symbol (gensym '__obj))))
+         #'(%#let-values ((($obj) (%#call (%#ref ##make-structure) klass len)))
+                         (%#begin
+                          (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
+                          (%#ref $obj))))))))
+
+(def (object-fill! (obj : :object) fill)
+  => :object
   ;; courtesy of marc feeley
   (let loop ((i (##fx- (##structure-length obj) 1)))
+    => :object
     (if (##fx> i 0)
       (begin
         (##unchecked-structure-set! obj fill i #f #f)
         (loop (##fx- i 1)))
       obj)))
 
-(def (new-instance klass)
+(def (new-instance (klass : :class)) => :object
   (make-object klass (##vector-length (&class-type-slot-vector klass))))
 
-(def (make-instance klass . args)
-  (let (obj (new-instance klass))
-    (cond
-     ((&class-type-constructor klass)
-      => (lambda (kons-id)
-           (__constructor-init! klass kons-id obj args)))
-     ((class-type-metaclass? klass)
-      (__metaclass-instance-init! klass obj args))
-     ((not (class-type-struct? klass))
-      (__class-instance-init! klass obj args))
-     ((##fx= (##fx- (##structure-length obj) 1) (length args))
-      (apply ##structure klass args))
-     (else
-      (error "arguments don't match object size"
-        class: klass slots: (class-type-slot-list klass)
-        args: args)))))
+(def (make-instance (klass : :class) . args) => :object
+  (cond
+   ((&class-type-constructor klass)
+    => (lambda (kons-id)
+         (let (obj (new-instance klass))
+           (___constructor-init! klass kons-id obj args)
+           obj)))
+   ((class-type-metaclass? klass)
+    (let (obj (new-instance klass))
+      (__metaclass-instance-init! klass obj args)
+      obj))
+   ((not (class-type-struct? klass))
+    (let (obj (new-instance klass))
+      (___class-instance-init! klass obj args)
+      obj))
+   ((##fx= (class-type-field-count klass) (length args))
+    (:- (apply ##structure klass args) :object))
+   (else
+    (abort!
+     (error "arguments don't match object size"
+       class: klass slots: (class-type-slot-list klass)
+       args: args)))))
 
 (def make-class-instance make-instance)
 
-(def (struct-instance-init! obj . args)
+(def (struct-instance-init! (obj : :object) . args) => :void
   (if (##fx< (length args) (##structure-length obj))
-    (__struct-instance-init! obj args)
-    (error "too many arguments for struct" object: obj args: args)))
+    (___struct-instance-init! obj args)
+    (error "too many arguments for struct" object: obj args: args))
+  (void))
 
-(def (__struct-instance-init! obj args)
+(declare-inline struct-instance-init!
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ self)
+       #'(%#quote #!void))
+      ((%#call _ (%#ref self) arg ...)
+       (with-syntax* (((values arg-count) (length #'(arg ...)))
+                      ((off ...) (iota arg-count 1))
+                      (count arg-count))
+         #'(%#if (%#call (%#ref ##fx<)
+                         (%#quote count)
+                         (%#call (%#ref ##structure-length) (%#ref self)))
+                 (%#begin
+                  (%#call (%#ref ##unchecked-structure-set!) (%#ref self) arg (%#quote off) (%#quote #f) (%#quote #f))
+                  ...
+                  (%#quote #!void))
+                 (%#call (%#ref error)
+                         (%#quote "struct-instance-init!: too many arguments for struct")
+                         (%#ref self)
+                         (%#quote count)
+                         (%#call (%#ref ##vector-length) (%#ref self))))))
+      ((%#call recur self arg ...)
+       (with-syntax (($self (make-symbol (gensym '__self))))
+         #'(%#let-values ((($self) self))
+                         (%#call recur (%#ref $self) arg ...)))))))
+
+(def (___struct-instance-init! obj args)
   (let lp ((k 1) (rest args))
     (match rest
       ([hd . rest]
@@ -704,15 +790,18 @@ namespace: #f
        (lp (##fx+ k 1) rest))
       (else obj))))
 
-(def (class-instance-init! obj . args)
-  (__class-instance-init! (##structure-type obj) obj args))
+(def (class-instance-init! (obj : :object) . args) => :void
+  (___class-instance-init! (##structure-type obj) obj args)
+  (void))
 
-(def (__class-instance-init! klass obj args)
+(def (___class-instance-init! klass obj args)
   (let lp ((rest args))
     (match rest
       ([key val . rest]
        (cond
-        ((class-slot-offset klass key)
+        ((not (keyword? key))
+         (error "non keyword slot initializer" slot: key))
+        ((__class-slot-offset klass key)
          => (lambda (off)
               (unchecked-field-set! obj off val)
               (lp rest)))
@@ -725,10 +814,12 @@ namespace: #f
 (def (__metaclass-instance-init! klass obj args)
   (apply call-method klass 'instance-init! obj args))
 
-(def (constructor-init! klass kons-id obj . args)
-  (__constructor-init! klass kons-id obj args))
+(def (constructor-init! (klass : :class) (kons-id : :symbol) (obj : :object) . args)
+  => :void
+  (___constructor-init! klass kons-id obj args)
+  (void))
 
-(def (__constructor-init! klass kons-id obj args)
+(def (___constructor-init! klass kons-id obj args)
   (cond
    ((__find-method klass obj kons-id)
     => (lambda (kons)
@@ -737,74 +828,74 @@ namespace: #f
    (else
     (error "missing constructor" class: klass method: kons-id))))
 
-(def (struct-copy struct)
-  (unless (##structure? struct)
-    (error "not a structure" struct))
-  (##structure-copy struct))
+(def (struct-copy (struct : :object)) => :object
+  (:- (##structure-copy struct) :object))
 
-(def (struct->list obj)
-  (if (##structure? obj)
-    (##vector->list obj)
-    (error "not a structure" obj)))
+(def (struct->list (obj : :object)) => :list
+  (##vector->list obj))
 
-(def (class->list obj)
-  (if (object? obj)
-    (let (klass (##structure-type obj))
-      (if (class-type? klass)
-        (let (slot-vector (&class-type-slot-vector klass))
-          (let loop ((index (##fx- (##vector-length slot-vector) 1))
-                     (plist []))
-            (if (##fx< index 1)
-              (cons klass plist)
-              (let ((slot (##vector-ref slot-vector index)))
-                (loop (##fx- index 1)
-                      (cons* (symbol->keyword slot)
-                             (unchecked-field-ref obj index)
-                             plist))))))
-        (error "not a class type" object: obj class: klass)))
-    (error "not an object" obj)))
+(def (class->list (obj : :object)) => :list
+  (let (klass (##structure-type obj))
+    (let (slot-vector (&class-type-slot-vector klass))
+      (let loop ((index (##fx- (##vector-length slot-vector) 1))
+                 (plist []))
+        => :list
+        (if (##fx< index 1)
+          (cons klass plist)
+          (let ((slot (##vector-ref slot-vector index)))
+            (loop (##fx- index 1)
+                  (cons* (symbol->keyword slot)
+                         (unchecked-field-ref obj index)
+                         plist))))))))
 
 ;;; Methods
-(def (call-method obj id . args)
-  (cond
-   ((method-ref obj id)
-    => (lambda (method) (apply method obj args)))
-   (else
-    (error "cannot find method" object: obj method: id))))
-
-(def (method-ref obj id)
-  (find-method (class-of obj) obj id))
-
-(def (checked-method-ref obj id)
-  (or (method-ref obj id)
-      (error "missing method" object: obj method: id)))
-
-(def (bound-method-ref obj id)
+(def (call-method obj (id : :symbol) . args)
   (cond
    ((method-ref obj id)
     => (lambda (method)
-         (lambda args
+         (using (method :- :procedure)
            (apply method obj args))))
+   (else
+    (error "cannot find method" object: obj method: id))))
+
+(declare-inline call-method
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref self) method arg ...)
+       (with-syntax (($method (make-symbol (gensym '__method))))
+         #'(%#let-values ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
+                         (%#if (%#ref $method)
+                               (%#call (%#ref $method) (%#ref self) arg ...)
+                               (%#call (%#ref error) (%#quote "Missing method")
+                                       (%#ref self) method)))))
+      ((%#call recur self method arg ...)
+       (with-syntax (($self (make-symbol (gensym '__self))))
+         #'(%#let-values ((($self) self))
+                         (%#call recur (%#ref $self) method arg ...)))))))
+
+(def (method-ref obj (id : :symbol))
+  (find-method (class-of obj) obj id))
+
+(def (checked-method-ref obj id) => :procedure
+  (:- (or (method-ref obj id)
+          (abort! (error "missing method" object: obj method: id)))
+      :procedure))
+
+(def (bound-method-ref obj (id : :symbol))
+  (cond
+   ((method-ref obj id)
+    => (lambda (method)
+         (using (method :- :procedure)
+           (lambda args
+             (apply method obj args)))))
    (else #f)))
 
-(def (checked-bound-method-ref obj id)
+(def (checked-bound-method-ref obj (id : :symbol)) => :procedure
   (let (method (checked-method-ref obj id))
     (lambda args
       (apply method obj args))))
 
-(def (find-method klass obj id)
-  (cond
-   ((not (symbol? id))
-    (error "method id must be a symbol" method: id))
-   ((class-type? klass)
-    (__find-method klass obj id))
-   ((##type? klass)
-    (__find-method (__shadow-class klass) obj id))
-   (else
-    (error "bad class; must be a class-type or builtin type"
-      class: klass method: id))))
-
-(def (__find-method klass obj id)
+(def (find-method (klass : :class) obj (id : :symbol))
   (cond
    ((direct-method-ref klass obj id))
    ((class-type-sealed? klass)
@@ -812,10 +903,10 @@ namespace: #f
    (else
     (mixin-method-ref klass obj id))))
 
-(def (mixin-find-method mixins obj id)
+(def (mixin-find-method mixins obj (id : :symbol))
   (ormap (cut direct-method-ref <> obj id) mixins))
 
-(def (direct-method-ref klass obj id)
+(def (direct-method-ref (klass : :class) obj (id : :symbol))
   (def (metaclass-resolve-method)
     (call-method klass 'direct-method-ref obj id))
 
@@ -845,21 +936,16 @@ namespace: #f
       (metaclass-resolve-method!)))
    (else #f)))
 
-(def (mixin-method-ref klass obj id)
+(def (mixin-method-ref (klass : :class) obj (id : :symbol))
   (mixin-find-method (class-type-precedence-list klass) obj id))
 
-(def (bind-method! klass id proc (rebind? #f))
+(def (bind-method! klass (id : :symbol) (proc : :procedure) (rebind? #f))
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
       (begin
         (symbolic-table-set! ht id proc)
         (void))))
-
-  (unless (procedure? proc)
-    (error "bad method; expected procedure" proc))
-  (unless (symbol? id)
-    (error "bad method id; expected symbol" id))
 
   (cond
    ((class-type? klass)
@@ -928,11 +1014,11 @@ namespace: #f
 ;; Specializes all current class methods in the hierarchy
 ;; returns symbolic table mapping method => specialized procedure
 ;; the result is cached in the __class-specializers table
-(def (specialize-class klass)
+(def (specialize-class (klass : :class))
   (cond
    ((__lookup-class-specializer klass))
    (else
-    (let (method-table (__specialize-class klass))
+    (let (method-table (___specialize-class klass))
       (__bind-class-specializer! klass method-table)
       method-table))))
 
@@ -962,7 +1048,7 @@ namespace: #f
     (symbolic-table-set! method-table method proc))))
 
 ;;; class => symbolic-table method => proccedure for all object methods
-(def (__specialize-class klass)
+(def (___specialize-class klass)
   (cond
    ((not (class-type? klass))
     (if (##type? klass)
@@ -985,20 +1071,19 @@ namespace: #f
           (else method-table)))))))
 
 ;;; class sealing
-(def (seal-class! klass)
-  (when (class-type? klass)
-    (unless (class-type-sealed? klass)
-      (unless (class-type-final? klass)
-        (error "cannot seal non-final class" klass))
-      (cond
-       ((class-type-metaclass? klass)
-        (call-method klass 'seal-class!))
-       ((find class-type-metaclass? (&class-type-precedence-list klass))
-        (error "cannot seal class that extends metaclass without a metaclass" klass))
-       (else
-        (let (method-table (specialize-class klass))
-          (&class-type-methods-set! klass method-table))))
-      (&class-type-seal! klass))))
+(def (seal-class! (klass : :class))
+  (unless (class-type-sealed? klass)
+    (unless (class-type-final? klass)
+      (error "cannot seal non-final class" klass))
+    (cond
+     ((class-type-metaclass? klass)
+      (call-method klass 'seal-class!))
+     ((find class-type-metaclass? (&class-type-precedence-list klass))
+      (error "cannot seal class that extends metaclass without a metaclass" klass))
+     (else
+      (let (method-table (specialize-class klass))
+        (&class-type-methods-set! klass method-table))))
+    (class-type-seal! klass)))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but
 ;; 2. is somewhat simpler and slightly faster in the common case that has no
@@ -1010,7 +1095,7 @@ namespace: #f
 ;; (in the number of classes, or even just in the number of applicable method,
 ;; if resolved only once), but would be notably more complex and somewhat
 ;; incompatible (or involve some cleverness for backward compatibility).
-(def (next-method subklass obj id)
+(def (next-method (subklass : :class) obj (id : :symbol))
   (def (find-next-method klass)
     (let lp ((rest (class-precedence-list klass)))
         (match rest
@@ -1021,12 +1106,8 @@ namespace: #f
           (else #f))))
   (find-next-method (class-of obj)))
 
-(def (call-next-method subklass obj id . args)
+(def (call-next-method (subklass : :class) obj (id : :symbol) . args)
   (cond
-   ((not (class-type? subklass))
-    (error "bad class; expected class type" subklass))
-   ((not (symbol? id))
-    (error "bad method id; expected symbol" id))
    ((next-method subklass obj id)
     => (lambda (methodf) (apply methodf obj args)))
    (else
@@ -1043,7 +1124,8 @@ namespace: #f
    (else
     (##default-wr we obj))))
 
-(##wr-set! write-object)
+;; TODO uncomment
+;; (##wr-set! write-object)
 
 ;; shadow classes: these are system class automagically created for builtin types
 ;; to track their methods
@@ -1106,38 +1188,39 @@ namespace: #f
         (loop (##type-super super) (cons super hierarchy))))))))
 
 ;; the class-of operator
-(def (class-of obj)
+(def (class-of obj) => :class
   (declare (not interrupts-enabled))
-  (let (t (##type obj))
-    (cond
-     ((fx= t (macro-type-subtyped))       ; subtyped
-      (let (st (##subtype obj))
+  (:- (let (t (##type obj))
         (cond
-         ((fx= st (macro-subtype-structure)) ; object
-          (let (klass (##structure-type obj))
-            (if (class-type? klass) klass (__shadow-class klass))))
-         ((fx= st (macro-subtype-boxvalues)) ; box or values?
-          (if (fx= (##vector-length obj) 1)
-            (__system-class 'box)
-            (__system-class 'values)))
-         ((##vector-ref __subtype-id st)
-          => __system-class)
-         (else
-          (error "unknown class" subtype: st object: obj)))))
-     ((fx= t (macro-type-mem2))       ; pair
-      (__system-class 'pair))
-     ((fx= t (macro-type-fixnum))     ; fixnum
-      (__system-class 'fixnum))
-     (else                              ; special (immediate)
-      (cond
-       ((char? obj)      (__system-class 'char))
-       ((eq? obj '())    (__system-class 'null))
-       ((eq? obj #f)     (__system-class 'boolean))
-       ((eq? obj #t)     (__system-class 'boolean))
-       ((eq? obj #!void) (__system-class 'void))
-       ((eq? obj #!eof)  (__system-class 'eof))
-       (else
-        (__system-class 'special)))))))
+         ((fx= t (macro-type-subtyped)) ; subtyped
+          (let (st (##subtype obj))
+            (cond
+             ((fx= st (macro-subtype-structure)) ; object
+              (let (klass (##structure-type obj))
+                (if (class-type? klass) klass (__shadow-class klass))))
+             ((fx= st (macro-subtype-boxvalues)) ; box or values?
+              (if (fx= (##vector-length obj) 1)
+                (__system-class 'box)
+                (__system-class 'values)))
+             ((##vector-ref __subtype-id st)
+              => __system-class)
+             (else
+              (error "unknown class" subtype: st object: obj)))))
+         ((fx= t (macro-type-mem2))     ; pair
+          (__system-class 'pair))
+         ((fx= t (macro-type-fixnum))   ; fixnum
+          (__system-class 'fixnum))
+         (else                          ; special (immediate)
+          (cond
+           ((char? obj)      (__system-class 'char))
+           ((eq? obj '())    (__system-class 'null))
+           ((eq? obj #f)     (__system-class 'boolean))
+           ((eq? obj #t)     (__system-class 'boolean))
+           ((eq? obj #!void) (__system-class 'void))
+           ((eq? obj #!eof)  (__system-class 'eof))
+           (else
+            (__system-class 'special))))))
+      :class))
 
 (def __subtype-id (make-vector 32 #f))
 

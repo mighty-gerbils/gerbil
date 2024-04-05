@@ -4,7 +4,6 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/io
         :std/io/dummy
@@ -135,10 +134,6 @@
     (try
      (loop)
      (catch (os-error? e)
-       ;; replace all #u8() with <u8vector>
-       (slot-set! e 'irritants
-                  (map (lambda (x) (if (u8vector? x) '<u8vector> x))
-                       (error-irritants e)))
        (errorf "unhandled exception: ~a" e)
        (raise e))
      (catch (e)
@@ -147,8 +142,7 @@
          (raise e))
        e)
      (finally
-      (with-catch void
-                  (cut &StreamSocket-shutdown sock 'out))
+      (with-catch void (cut &StreamSocket-shutdown sock 'out))
       (sock.close)
       (put-input-buffer! ibuf)
       (put-output-buffer! obuf)))))

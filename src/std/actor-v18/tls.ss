@@ -297,7 +297,7 @@
     ;; server.cert
     (when (file-exists? server.crt)
       (rename-file server.crt
-                   (string-append server.crt ".bak." (number->string (number->string (current-time-seconds))))))
+                   (string-append server.crt ".bak." (number->string (current-time-seconds)))))
     (displayln "... generate " server.crt)
     (invoke "openssl"
             ["ca" "-batch" "-notext"

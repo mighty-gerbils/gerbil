@@ -2,11 +2,11 @@
 ;;; © vyzo
 ;;; delimited input buffers
 (import :std/error
-        :std/contract
         ../interface
         ./types
         ./input)
 (export #t)
+(declare (not safe))
 
 (def (bio-delimited-read-bytes delim output output-start output-end input-need)
   (using (delim :- delimited-input-buffer)

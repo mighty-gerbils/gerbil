@@ -27,9 +27,10 @@ namespace: gxc
 (def (optimize! ctx)
   (parameterize ((current-compile-mutators (make-hash-table-eq))
                  (current-compile-local-type (make-hash-table-eq)))
-    (optimizer-load-ssxi-deps ctx)
     ;; load builtins
     (optimizer-load-builtin-ssxi ctx)
+    ;; load deps
+    (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -48,26 +49,34 @@ namespace: gxc
 
   (let* ((modid (expander-context-id ctx))
          (modid-str (symbol->string modid)))
-    (for-each load-it!
-              '(gerbil/runtime/gambit
-                gerbil/runtime/util
-                gerbil/runtime/table
-                gerbil/runtime/control
-                gerbil/runtime/system
-                gerbil/runtime/c3
-                gerbil/runtime/mop
-                gerbil/runtime/mop-system-classes
-                gerbil/runtime/error
-                gerbil/runtime/interface
-                gerbil/runtime/hash
-                gerbil/runtime/thread
-                gerbil/runtime/syntax
-                gerbil/runtime/eval
-                gerbil/runtime/repl
-                gerbil/runtime/loader
-                gerbil/runtime/init
-                gerbil/runtime
-                gerbil/builtin))))
+    (if (or (string-prefix? "gerbil/runtime" modid-str)
+            (string-prefix? "gerbil/core" modid-str))
+      ;; don't laod the runtime when building core or itself, as it can
+      ;; create a vicious bootstrap cycle because of forward references
+      (for-each load-it!
+                '(gerbil/builtin
+                  gerbil/builtin-inline-rules))
+      (for-each load-it!
+                '(gerbil/builtin
+                  gerbil/builtin-inline-rules
+                  gerbil/runtime/gambit
+                  gerbil/runtime/util
+                  gerbil/runtime/table
+                  gerbil/runtime/control
+                  gerbil/runtime/system
+                  gerbil/runtime/c3
+                  gerbil/runtime/mop
+                  gerbil/runtime/mop-system-classes
+                  gerbil/runtime/error
+                  gerbil/runtime/interface
+                  gerbil/runtime/hash
+                  gerbil/runtime/thread
+                  gerbil/runtime/syntax
+                  gerbil/runtime/eval
+                  gerbil/runtime/repl
+                  gerbil/runtime/loader
+                  gerbil/runtime/init
+                  gerbil/runtime)))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
@@ -128,9 +137,9 @@ namespace: gxc
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
-    (when (current-compile-verbose)
-      (displayln "Failed to load ssxi module for " id)
-      (display-exception exn))
+    (unless (equal? (error-message exn) "cannot find library module")
+      (display-exception exn)
+      (displayln "*** WARNING Failed to load ssxi module for " id))
     #f)
 
   (def (import-e)
@@ -153,25 +162,34 @@ namespace: gxc
 ;;; source transforms
 (def (optimize-source stx)
   (apply-collect-mutators stx)
+  ;; collect all methods for specializer generation
   (apply-collect-methods stx)
-  ;; collect top-level types to aid specializer generation
+  ;; collect top-level types to get class definitions
   (apply-collect-top-level-type-info stx)
+  ;; generate specializers and lift lambdas for things like case/opt/kw lambdas
   (let* ((stx (apply-generate-method-specializers stx))
          (stx (apply-lift-top-lambdas stx)))
-    ;; full type collection to aid further optimizations
+    ;; full type collection for type directed optimizations
     (apply-collect-type-info stx)
+    ;; check declared procedure return types
+    (apply-check-return-type stx)
+    ;; process user declarations
+    (apply-collect-top-level-declarations stx)
+    ;; optimize special constructs (match, syntax-case)
     (let (stx (apply-optimize-annotated stx))
+      ;; type-check and optimize procedure applications
       (apply-optimize-call stx))))
 
 ;; method to generate the ssxi optimizer meta module
 (defcompile-method (apply-generate-ssxi) (::generate-ssxi ::generate-runtime-empty)
   ()
   final:
-  (%#begin         generate-runtime-begin%)
-  (%#begin-syntax  generate-ssxi-begin-syntax%)
-  (%#module        generate-ssxi-module%)
-  (%#define-values generate-ssxi-define-values%)
-  (%#call          generate-ssxi-call%))
+  (%#begin            generate-runtime-begin%)
+  (%#begin-syntax     generate-ssxi-begin-syntax%)
+  (%#begin-annotation generate-ssxi-begin-annotation%)
+  (%#module           generate-ssxi-module%)
+  (%#define-values    generate-ssxi-define-values%)
+  (%#call             generate-ssxi-call%))
 
 ;;; apply-generate-ssxi
 (def (generate-ssxi-begin-syntax% self stx)
@@ -192,11 +210,18 @@ namespace: gxc
   (def (generate-e id)
     (let (sym (and (identifier? #'id) (identifier-symbol id)))
       (cond
-       ((and sym (optimizer-lookup-type sym))
+       ((optimizer-lookup-class sym)
+        => (lambda (klass)
+             (verbose "generate class decl" sym)
+             ['begin
+               ['declare-class sym {klass.typedecl}]
+               ['declare-type sym `(optimizer-resolve-class '(typedecl ,sym) 'class::t)]]))
+       ((optimizer-lookup-type sym)
         => (lambda (type)
-             (verbose "generate typedecl " sym)
-             (let (typedecl {typedecl type})
-               ['declare-type sym typedecl])))
+             (verbose "generate typedecl " sym " " type)
+             (if (!class? type)
+               ['declare-type sym `(optimizer-resolve-class '(typedecl ,sym) ',(optimizer-lookup-class-name type))]
+               ['declare-type sym {type.typedecl}])))
        (else '(begin)))))
 
   (ast-case stx ()
@@ -220,10 +245,16 @@ namespace: gxc
                       #f])
     (_ '(begin))))
 
+(def (generate-ssxi-begin-annotation% self stx)
+  (ast-case stx (@inline %#quote)
+    ((_ (@inline proc) (%#quote rules))
+     ['declare-inline-rule! (identifier-symbol #'proc) #'rules])
+    ((_ ann body) '(begin))))
+
+;; typedecls
 (defmethod {typedecl !alias}
   (lambda (self)
-    (with ((!alias alias-id) self)
-      ['@alias alias-id])))
+    ['@alias self.id]))
 
 ;; MOP
 (defmethod {typedecl !class}
@@ -233,48 +264,52 @@ namespace: gxc
 
 (defmethod {typedecl !predicate}
   (lambda (self)
-    (with ((!predicate klass-id) self)
-      ['@predicate klass-id])))
+    ['@predicate self.id]))
 
 (defmethod {typedecl !constructor}
   (lambda (self)
-    (with ((!constructor klass-id) self)
-      ['@constructor klass-id])))
+    ['@constructor self.id]))
 
 (defmethod {typedecl !accessor}
   (lambda (self)
-    (with ((!accessor klass-id slot checked?) self)
-      ['@accessor klass-id slot checked?])))
+    ['@accessor self.id self.slot self.checked?]))
 
 (defmethod {typedecl !mutator}
   (lambda (self)
-    (with ((!mutator klass-id slot checked?) self)
-      ['@mutator klass-id slot checked?])))
+    ['@mutator self.id self.slot self.checked?]))
+
+;; interfaces
+(defmethod {typedecl !interface}
+  (lambda (self)
+    ['@interface self.id self.methods]))
 
 ;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (with ((!lambda _ arity dispatch inline typedecl) self)
-      (if inline
-        (or typedecl
-            (error "Cannot generate typedecl for inline rules"))
+    (with ((!lambda _ signature arity dispatch) self)
+      (if signature
+        (using (signature :- !signature)
+          ['@lambda arity dispatch
+               signature: [return: signature.return
+                           effect: signature.effect
+                           arguments: signature.arguments
+                           unchecked: signature.unchecked]])
         ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
     (def (clause-e clause)
-      (with ((!lambda _ arity dispatch) clause)
-        [arity dispatch]))
-    (with ((!case-lambda _ clauses) self)
-      (let (clauses (map clause-e clauses))
-        ['@case-lambda clauses ...]))))
+      (cdr {clause.typedecl}))
+      ['@case-lambda (map clause-e self.clauses) ...]))
 
 (defmethod {typedecl !kw-lambda}
   (lambda (self)
-    (with ((!kw-lambda _ table dispatch) self)
-      ['@kw-lambda table dispatch])))
+    ['@kw-lambda self.table self.dispatch]))
 
 (defmethod {typedecl !kw-lambda-primary}
   (lambda (self)
-    (with ((!kw-lambda-primary _ keys main) self)
-      ['@kw-lambda-dispatch keys main])))
+    ['@kw-lambda-dispatch self.keys self.main]))
+
+(defmethod {typedecl !primitive-predicate}
+  (lambda (self)
+    ['@primitive-predicate self.id]))

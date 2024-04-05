@@ -1,0 +1,609 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/contract
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          :gerbil/core/sugar
+          :gerbil/core/mop
+          :gerbil/core/match
+          :gerbil/core/more-sugar
+          :gerbil/core/module-sugar
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/sugar)
+          (phi: 1 :gerbil/core/mop)
+          (phi: 1 :gerbil/core/match)
+          (phi: 1 :gerbil/core/more-sugar)
+          (phi: 1 :gerbil/core/expander)
+          (phi: 1 :gerbil/core/macro-object)
+          (phi: 1 :gerbil/core/more-syntax-sugar)
+          (phi: 2 :gerbil/core/runtime)
+          (phi: 2 :gerbil/core/expander))
+         (%#export
+          #t
+          (import: (in: #f TypeReference))
+          (import: (in: #f TypeCast))
+          (import: (in: #f Using))
+          (import: (in: #f ContractRules))
+          (import: (in: #f Interface))
+          (import: (in: #f TypedDefinitions))
+          (phi: 1 (import: (in: #f InterfaceInfo)))
+          (phi: 1 (import: (in: #f TypeEnv)))
+          (phi: 1 (import: (in: #f ClassMeta))))
+         (%#module
+          InterfaceInfo
+          (%#begin (%#import :gerbil/core/expander)
+                   (%#export #t)
+                   (%#define-runtime
+                    interface-info::t
+                    gerbil/core/contract~InterfaceInfo#interface-info::t)
+                   (%#define-runtime
+                    interface-info?
+                    gerbil/core/contract~InterfaceInfo#interface-info?)
+                   (%#define-runtime
+                    make-interface-info
+                    gerbil/core/contract~InterfaceInfo#make-interface-info)
+                   (%#define-runtime
+                    interface-info-name
+                    gerbil/core/contract~InterfaceInfo#interface-info-name)
+                   (%#define-runtime
+                    interface-info-interface-mixin
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin)
+                   (%#define-runtime
+                    interface-info-interface-methods
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-methods)
+                   (%#define-runtime
+                    interface-info-instance-type
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type)
+                   (%#define-runtime
+                    interface-info-interface-descriptor
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor)
+                   (%#define-runtime
+                    interface-info-instance-constructor
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor)
+                   (%#define-runtime
+                    interface-info-instance-try-constructor
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-try-constructor)
+                   (%#define-runtime
+                    interface-info-instance-predicate
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-predicate)
+                   (%#define-runtime
+                    interface-info-instance-satisfies-predicate
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-satisfies-predicate)
+                   (%#define-runtime
+                    interface-info-implementation-methods
+                    gerbil/core/contract~InterfaceInfo#interface-info-implementation-methods)
+                   (%#define-runtime
+                    interface-info-unchecked-implementation-methods
+                    gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-methods)
+                   (%#define-runtime
+                    interface-info-name-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-name-set!)
+                   (%#define-runtime
+                    interface-info-interface-mixin-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin-set!)
+                   (%#define-runtime
+                    interface-info-interface-methods-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-methods-set!)
+                   (%#define-runtime
+                    interface-info-instance-type-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!)
+                   (%#define-runtime
+                    interface-info-interface-descriptor-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor-set!)
+                   (%#define-runtime
+                    interface-info-instance-constructor-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor-set!)
+                   (%#define-runtime
+                    interface-info-instance-try-constructor-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-try-constructor-set!)
+                   (%#define-runtime
+                    interface-info-instance-predicate-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-predicate-set!)
+                   (%#define-runtime
+                    interface-info-instance-satisfies-predicate-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-satisfies-predicate-set!)
+                   (%#define-runtime
+                    interface-info-implementation-methods-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-implementation-methods-set!)
+                   (%#define-runtime
+                    interface-info-unchecked-implementation-methods-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-methods-set!)
+                   (%#define-runtime
+                    &interface-info-name
+                    gerbil/core/contract~InterfaceInfo#&interface-info-name)
+                   (%#define-runtime
+                    &interface-info-interface-mixin
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin)
+                   (%#define-runtime
+                    &interface-info-interface-methods
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-methods)
+                   (%#define-runtime
+                    &interface-info-instance-type
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type)
+                   (%#define-runtime
+                    &interface-info-interface-descriptor
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor)
+                   (%#define-runtime
+                    &interface-info-instance-constructor
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor)
+                   (%#define-runtime
+                    &interface-info-instance-try-constructor
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-try-constructor)
+                   (%#define-runtime
+                    &interface-info-instance-predicate
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-predicate)
+                   (%#define-runtime
+                    &interface-info-instance-satisfies-predicate
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-satisfies-predicate)
+                   (%#define-runtime
+                    &interface-info-implementation-methods
+                    gerbil/core/contract~InterfaceInfo#&interface-info-implementation-methods)
+                   (%#define-runtime
+                    &interface-info-unchecked-implementation-methods
+                    gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-methods)
+                   (%#define-runtime
+                    &interface-info-name-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-name-set!)
+                   (%#define-runtime
+                    &interface-info-interface-mixin-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin-set!)
+                   (%#define-runtime
+                    &interface-info-interface-methods-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-methods-set!)
+                   (%#define-runtime
+                    &interface-info-instance-type-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!)
+                   (%#define-runtime
+                    &interface-info-interface-descriptor-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor-set!)
+                   (%#define-runtime
+                    &interface-info-instance-constructor-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor-set!)
+                   (%#define-runtime
+                    &interface-info-instance-try-constructor-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-try-constructor-set!)
+                   (%#define-runtime
+                    &interface-info-instance-predicate-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-predicate-set!)
+                   (%#define-runtime
+                    &interface-info-instance-satisfies-predicate-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-satisfies-predicate-set!)
+                   (%#define-runtime
+                    &interface-info-implementation-methods-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-implementation-methods-set!)
+                   (%#define-runtime
+                    &interface-info-unchecked-implementation-methods-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-methods-set!)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/contract~1")))
+                            (%#define-syntax
+                             interface-info
+                             |gerbil/core/contract~InterfaceInfo[:0:]#interface-info|))
+                   (%#define-runtime
+                    interface-info::apply-macro-expander
+                    gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander)
+                   (%#define-runtime
+                    interface-info-flatten-mixin
+                    gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin)
+                   (%#begin (%#define-runtime
+                             syntax-local-interface-info?__%
+                             gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)
+                            (%#begin (%#define-runtime
+                                      syntax-local-interface-info?__0
+                                      gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0)
+                                     (%#define-runtime
+                                      syntax-local-interface-info?
+                                      gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?))))
+          (%#call (%#ref load-module)
+                  (%#quote "gerbil/core/contract~InterfaceInfo~0")))
+         (%#module
+          TypeReference
+          (%#begin (%#import (phi: 1 (in: #f InterfaceInfo)))
+                   (%#export #t (phi: 1 #t))
+                   (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/contract~2"))
+                    (%#define-runtime
+                     type-reference::t
+                     |gerbil/core/contract~TypeReference[1]#type-reference::t|)
+                    (%#define-runtime
+                     type-reference?
+                     |gerbil/core/contract~TypeReference[1]#type-reference?|)
+                    (%#define-runtime
+                     make-type-reference
+                     |gerbil/core/contract~TypeReference[1]#make-type-reference|)
+                    (%#define-runtime
+                     type-reference-identifier
+                     |gerbil/core/contract~TypeReference[1]#type-reference-identifier|)
+                    (%#define-runtime
+                     type-reference-identifier-set!
+                     |gerbil/core/contract~TypeReference[1]#type-reference-identifier-set!|)
+                    (%#define-runtime
+                     &type-reference-identifier
+                     |gerbil/core/contract~TypeReference[1]#&type-reference-identifier|)
+                    (%#define-runtime
+                     &type-reference-identifier-set!
+                     |gerbil/core/contract~TypeReference[1]#&type-reference-identifier-set!|)
+                    (%#begin (%#begin-syntax
+                              (%#call (%#ref load-module)
+                                      (%#quote "gerbil/core/contract~3")))
+                             (%#define-syntax
+                              type-reference
+                              |gerbil/core/contract~TypeReference[:1:]#type-reference|))
+                    (%#define-runtime
+                     type-identifier?
+                     |gerbil/core/contract~TypeReference[1]#type-identifier?|)
+                    (%#define-runtime
+                     resolve-type
+                     |gerbil/core/contract~TypeReference[1]#resolve-type|)
+                    (%#define-runtime
+                     resolve-type->identifier
+                     |gerbil/core/contract~TypeReference[1]#resolve-type->identifier|)
+                    (%#define-runtime
+                     resolve-type->type-descriptor
+                     |gerbil/core/contract~TypeReference[1]#resolve-type->type-descriptor|))
+                   (%#define-syntax
+                    deftype
+                    |gerbil/core/contract~TypeReference[:0:]#deftype|)))
+         (%#module
+          TypeCast
+          (%#begin (%#import
+                    (in: #f TypeReference)
+                    (phi: 1 (in: #f InterfaceInfo)))
+                   (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/contract~4")))
+                            (%#define-syntax
+                             :
+                             |gerbil/core/contract~TypeCast[:0:]#:|))
+                   (%#define-syntax :? |gerbil/core/contract~TypeCast[:0:]#:?|)
+                   (%#define-syntax :- |gerbil/core/contract~TypeCast[:0:]#:-|)
+                   (%#define-syntax :~ |gerbil/core/contract~TypeCast[:0:]#:~|)
+                   (%#define-syntax
+                    ::-
+                    |gerbil/core/contract~TypeCast[:0:]#::-|)
+                   (%#define-syntax := |gerbil/core/contract~TypeCast[:0:]#:=|)
+                   (%#define-syntax
+                    check-nil!
+                    |gerbil/core/contract~TypeCast[:0:]#check-nil!|)
+                   (%#define-syntax
+                    contract-violation!
+                    |gerbil/core/contract~TypeCast[:0:]#contract-violation!|)
+                   (%#define-syntax
+                    nil-dereference!
+                    |gerbil/core/contract~TypeCast[:0:]#nil-dereference!|)
+                   (%#define-syntax
+                    abort!
+                    |gerbil/core/contract~TypeCast[:0:]#abort!|)))
+         (%#module
+          TypeEnv
+          (%#begin (%#import :gerbil/core/expander)
+                   (%#export #t)
+                   (%#define-runtime
+                    type-env::t
+                    gerbil/core/contract~TypeEnv#type-env::t)
+                   (%#define-runtime
+                    type-env?
+                    gerbil/core/contract~TypeEnv#type-env?)
+                   (%#define-runtime
+                    make-type-env
+                    gerbil/core/contract~TypeEnv#make-type-env)
+                   (%#define-runtime
+                    type-env-var
+                    gerbil/core/contract~TypeEnv#type-env-var)
+                   (%#define-runtime
+                    type-env-type
+                    gerbil/core/contract~TypeEnv#type-env-type)
+                   (%#define-runtime
+                    type-env-checked?
+                    gerbil/core/contract~TypeEnv#type-env-checked?)
+                   (%#define-runtime
+                    type-env-super
+                    gerbil/core/contract~TypeEnv#type-env-super)
+                   (%#define-runtime
+                    type-env-var-set!
+                    gerbil/core/contract~TypeEnv#type-env-var-set!)
+                   (%#define-runtime
+                    type-env-type-set!
+                    gerbil/core/contract~TypeEnv#type-env-type-set!)
+                   (%#define-runtime
+                    type-env-checked?-set!
+                    gerbil/core/contract~TypeEnv#type-env-checked?-set!)
+                   (%#define-runtime
+                    type-env-super-set!
+                    gerbil/core/contract~TypeEnv#type-env-super-set!)
+                   (%#define-runtime
+                    &type-env-var
+                    gerbil/core/contract~TypeEnv#&type-env-var)
+                   (%#define-runtime
+                    &type-env-type
+                    gerbil/core/contract~TypeEnv#&type-env-type)
+                   (%#define-runtime
+                    &type-env-checked?
+                    gerbil/core/contract~TypeEnv#&type-env-checked?)
+                   (%#define-runtime
+                    &type-env-super
+                    gerbil/core/contract~TypeEnv#&type-env-super)
+                   (%#define-runtime
+                    &type-env-var-set!
+                    gerbil/core/contract~TypeEnv#&type-env-var-set!)
+                   (%#define-runtime
+                    &type-env-type-set!
+                    gerbil/core/contract~TypeEnv#&type-env-type-set!)
+                   (%#define-runtime
+                    &type-env-checked?-set!
+                    gerbil/core/contract~TypeEnv#&type-env-checked?-set!)
+                   (%#define-runtime
+                    &type-env-super-set!
+                    gerbil/core/contract~TypeEnv#&type-env-super-set!)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/contract~5")))
+                            (%#define-syntax
+                             type-env
+                             |gerbil/core/contract~TypeEnv[:0:]#type-env|))
+                   (%#define-runtime
+                    current-type-env
+                    gerbil/core/contract~TypeEnv#current-type-env)
+                   (%#define-runtime
+                    type-env-lookup
+                    gerbil/core/contract~TypeEnv#type-env-lookup))
+          (%#call (%#ref load-module)
+                  (%#quote "gerbil/core/contract~TypeEnv~0")))
+         (%#module
+          Using
+          (%#begin (%#import
+                    (in: #f TypeCast)
+                    (in: #f TypeReference)
+                    (phi: 1 (in: #f InterfaceInfo))
+                    (phi: 1 (in: #f TypeEnv)))
+                   (%#export #t (phi: 1 #t))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/contract~6")))
+                            (%#define-syntax
+                             using
+                             |gerbil/core/contract~Using[:0:]#using|))
+                   (%#define-syntax
+                    with-contract
+                    |gerbil/core/contract~Using[:0:]#with-contract|)
+                   (%#begin-syntax
+                    (%#define-runtime
+                     !class-slot-type
+                     |gerbil/core/contract~Using[1]#!class-slot-type|)
+                    (%#define-runtime
+                     !class-slot-default
+                     |gerbil/core/contract~Using[1]#!class-slot-default|)
+                    (%#define-runtime
+                     !class-slot-contract
+                     |gerbil/core/contract~Using[1]#!class-slot-contract|)
+                    (%#define-runtime
+                     !class-slot-checked-method-contract?
+                     |gerbil/core/contract~Using[1]#!class-slot-checked-method-contract?|)
+                    (%#define-runtime
+                     !class-slot-checked-mutator-contract?
+                     |gerbil/core/contract~Using[1]#!class-slot-checked-mutator-contract?|)
+                    (%#define-runtime
+                     dotted-identifier?
+                     |gerbil/core/contract~Using[1]#dotted-identifier?|)
+                    (%#define-runtime
+                     split-dotted-identifier
+                     |gerbil/core/contract~Using[1]#split-dotted-identifier|)
+                    (%#define-runtime
+                     get-slot-accessor
+                     |gerbil/core/contract~Using[1]#get-slot-accessor|)
+                    (%#define-runtime
+                     get-slot-mutator
+                     |gerbil/core/contract~Using[1]#get-slot-mutator|))
+                   (%#define-syntax
+                    with-class
+                    |gerbil/core/contract~Using[:0:]#with-class|)
+                   (%#define-syntax
+                    with-interface
+                    |gerbil/core/contract~Using[:0:]#with-interface|)
+                   (%#define-syntax
+                    %%app-dotted
+                    |gerbil/core/contract~Using[:0:]#%%app-dotted|)
+                   (%#define-syntax
+                    %%ref-dotted
+                    |gerbil/core/contract~Using[:0:]#%%ref-dotted|)
+                   (%#define-syntax
+                    %%set-dotted!
+                    |gerbil/core/contract~Using[:0:]#%%set-dotted!|)))
+         (%#module
+          ContractRules
+          (%#begin (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/contract~7")))
+                            (%#define-syntax
+                             maybe
+                             |gerbil/core/contract~ContractRules[:0:]#maybe|))
+                   (%#define-syntax
+                    in-range?
+                    |gerbil/core/contract~ContractRules[:0:]#in-range?|)
+                   (%#define-syntax
+                    in-range-inclusive?
+                    |gerbil/core/contract~ContractRules[:0:]#in-range-inclusive?|)
+                   (%#define-syntax
+                    list-of?
+                    |gerbil/core/contract~ContractRules[:0:]#list-of?|)))
+         (%#module
+          ClassMeta
+          (%#begin (%#export #t)
+                   (%#import
+                    :gerbil/core/expander
+                    (in: :gerbil/core/mop MOP-2)
+                    (phi: -1 (in: #f TypeCast)))
+                   (%#define-runtime
+                    !class-precedence-list
+                    gerbil/core/contract~ClassMeta#!class-precedence-list))
+          (%#call (%#ref load-module)
+                  (%#quote "gerbil/core/contract~ClassMeta~0")))
+         (%#module
+          Interface
+          (%#begin (%#import
+                    (in: #f TypeCast)
+                    (in: #f TypeReference)
+                    (in: #f Using)
+                    (phi: 1 (in: #f InterfaceInfo))
+                    (phi: 1 (in: #f TypeEnv))
+                    (phi: 1 (in: #f ClassMeta)))
+                   (%#export #t (phi: 1 #t))
+                   (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/contract~8"))
+                    (%#begin (%#define-runtime
+                              check-signature!__%
+                              |gerbil/core/contract~Interface[1]#check-signature!__%|)
+                             (%#define-runtime
+                              check-signature!__@
+                              |gerbil/core/contract~Interface[1]#check-signature!__@|)
+                             (%#define-runtime
+                              check-signature!
+                              |gerbil/core/contract~Interface[1]#check-signature!|))
+                    (%#define-runtime
+                     check-valid-type!
+                     |gerbil/core/contract~Interface[1]#check-valid-type!|)
+                    (%#begin (%#define-runtime
+                              check-signature-spec!__%
+                              |gerbil/core/contract~Interface[1]#check-signature-spec!__%|)
+                             (%#define-runtime
+                              check-signature-spec!__@
+                              |gerbil/core/contract~Interface[1]#check-signature-spec!__@|)
+                             (%#define-runtime
+                              check-signature-spec!
+                              |gerbil/core/contract~Interface[1]#check-signature-spec!|))
+                    (%#define-runtime
+                     signature-contract?
+                     |gerbil/core/contract~Interface[1]#signature-contract?|)
+                    (%#define-runtime
+                     check-signature-contract-types!
+                     |gerbil/core/contract~Interface[1]#check-signature-contract-types!|)
+                    (%#define-runtime
+                     signature-arguments-in
+                     |gerbil/core/contract~Interface[1]#signature-arguments-in|)
+                    (%#define-runtime
+                     signature-arguments-out
+                     |gerbil/core/contract~Interface[1]#signature-arguments-out|)
+                    (%#define-runtime
+                     make-interface-method-lambda-signature
+                     |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|)
+                    (%#define-runtime
+                     make-interface-method-contract
+                     |gerbil/core/contract~Interface[1]#make-interface-method-contract|)
+                    (%#define-runtime
+                     make-procedure-lambda-signature
+                     |gerbil/core/contract~Interface[1]#make-procedure-lambda-signature|)
+                    (%#define-runtime
+                     make-procedure-contract
+                     |gerbil/core/contract~Interface[1]#make-procedure-contract|)
+                    (%#define-runtime
+                     compatible-signatures?
+                     |gerbil/core/contract~Interface[1]#compatible-signatures?|)
+                    (%#define-runtime
+                     compatible-signature-type-contract?
+                     |gerbil/core/contract~Interface[1]#compatible-signature-type-contract?|)
+                    (%#define-runtime
+                     compatible-type-contract?
+                     |gerbil/core/contract~Interface[1]#compatible-type-contract?|)
+                    (%#define-runtime
+                     contract-type-subtype?
+                     |gerbil/core/contract~Interface[1]#contract-type-subtype?|)
+                    (%#define-runtime
+                     signature-type-contract
+                     |gerbil/core/contract~Interface[1]#signature-type-contract|)
+                    (%#define-runtime
+                     signature-arity
+                     |gerbil/core/contract~Interface[1]#signature-arity|)
+                    (%#define-runtime
+                     signature-keywords
+                     |gerbil/core/contract~Interface[1]#signature-keywords|)
+                    (%#define-runtime
+                     symbol<?
+                     |gerbil/core/contract~Interface[1]#symbol<?|)
+                    (%#define-runtime
+                     keyword<?
+                     |gerbil/core/contract~Interface[1]#keyword<?|))
+                   (%#define-syntax
+                    interface
+                    |gerbil/core/contract~Interface[:0:]#interface|)
+                   (%#define-syntax
+                    definterface-method
+                    |gerbil/core/contract~Interface[:0:]#definterface-method|)
+                   (%#define-syntax
+                    with-interface-method
+                    |gerbil/core/contract~Interface[:0:]#with-interface-method|)
+                   (%#define-syntax
+                    with-interface-checked-method
+                    |gerbil/core/contract~Interface[:0:]#with-interface-checked-method|)
+                   (%#define-syntax
+                    with-interface-unchecked-method
+                    |gerbil/core/contract~Interface[:0:]#with-interface-unchecked-method|)
+                   (%#define-syntax
+                    interface-out
+                    |gerbil/core/contract~Interface[:0:]#interface-out|)))
+         (%#module
+          TypedDefinitions
+          (%#begin (%#import
+                    (in: #f TypeCast)
+                    (in: #f Using)
+                    (in: #f ContractRules)
+                    (in: #f TypeReference)
+                    (in: #f Interface)
+                    (phi: 1 (in: #f InterfaceInfo))
+                    (phi: 1 (in: #f TypeEnv))
+                    (phi: 1 (in: #f ClassMeta)))
+                   (%#export #t (phi: 1 #t))
+                   (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/contract~9"))
+                    (%#define-runtime
+                     is-signature?
+                     |gerbil/core/contract~TypedDefinitions[1]#is-signature?|))
+                   (%#define-syntax
+                    def/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#def/c|)
+                   (%#define-syntax
+                    with-procedure-signature
+                    |gerbil/core/contract~TypedDefinitions[:0:]#with-procedure-signature|)
+                   (%#define-syntax
+                    with-procedure-contract
+                    |gerbil/core/contract~TypedDefinitions[:0:]#with-procedure-contract|)
+                   (%#define-syntax
+                    with-procedure-unchecked-contract
+                    |gerbil/core/contract~TypedDefinitions[:0:]#with-procedure-unchecked-contract|)
+                   (%#define-syntax
+                    lambda/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#lambda/c|)
+                   (%#define-syntax
+                    def*/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#def*/c|)
+                   (%#define-syntax
+                    case-lambda/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#case-lambda/c|)
+                   (%#define-syntax
+                    defmethod/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defmethod/c|)
+                   (%#define-syntax
+                    let/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#let/c|)
+                   (%#define-syntax
+                    defclass/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defclass/c|)
+                   (%#define-syntax
+                    defstruct/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defstruct/c|)))
+         (%#import
+          (in: #f TypeReference)
+          (in: #f TypeCast)
+          (in: #f Using)
+          (in: #f ContractRules)
+          (in: #f Interface)
+          (in: #f TypedDefinitions)
+          (phi: 1 (in: #f InterfaceInfo))
+          (phi: 1 (in: #f TypeEnv))
+          (phi: 1 (in: #f ClassMeta))))

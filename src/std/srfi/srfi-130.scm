@@ -191,7 +191,7 @@
   (let ((n (string-length s)))
     (cond ((> n (+ limit 1))
            (append (string-split-into-characters (substring s 0 limit) limit)
-                   (substring s limit n)))
+                   [(substring s limit n)]))
           (else
            (map string (string->list s))))))
 

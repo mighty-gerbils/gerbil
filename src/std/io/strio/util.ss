@@ -3,8 +3,6 @@
 ;;; string buffered io extension methods
 (import :std/sugar
         :std/error
-        :std/interface
-        :std/contract
         (only-in :std/srfi/1 reverse!)
         ../interface
         ./inline)
@@ -21,6 +19,7 @@
            (defstring-reader-ext* (method . args) body ...)
            (export reader-method unchecked-method))))))
 
+;; TODO implement with interface method infrastructure
 (defsyntax (defstring-reader-ext* stx)
   (syntax-case stx ()
     ((_ (method reader . args) body ...)
@@ -43,6 +42,7 @@
            (defstring-writer-ext* (method . args) body ...)
            (export writer-method unchecked-method))))))
 
+;; TODO implement with interface method infrastructure
 (defsyntax (defstring-writer-ext* stx)
   (syntax-case stx ()
     ((_ (method writer . args) body ...)

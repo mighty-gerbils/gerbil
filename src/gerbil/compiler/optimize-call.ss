@@ -9,8 +9,10 @@ namespace: gxc
         "../expander"
         "base"
         "method"
+        "compile"
         "optimize-base"
-        "optimize-xform")
+        "optimize-xform"
+        "optimize-top")
 (export #t)
 
 ;; method to optimize direct procedure calls
@@ -18,269 +20,453 @@ namespace: gxc
   final:
   (%#call optimize-call%))
 
+;; method to verify the procedure declared return type
+(defcompile-method (apply-check-return-type) (::check-return-type ::void) ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#begin-annotation apply-check-return-type-begin-annotation%)
+  (%#module           apply-module%)
+  (%#define-values    apply-define-values%)
+  (%#define-syntax    apply-define-syntax%)
+  (%#lambda                apply-body-lambda%)
+  (%#case-lambda           apply-body-case-lambda%)
+  (%#let-values       apply-body-let-values%)
+  (%#letrec-values    apply-body-let-values%)
+  (%#letrec*-values   apply-body-let-values%)
+  (%#call             apply-operands)
+  (%#if               apply-operands)
+  (%#set!             apply-body-setq%))
+
 ;;; apply-optimize-call
 (def (optimize-call% self stx)
   (ast-case stx (%#ref)
-    ((_ (%#ref rator) . rands)
+    ((_ (%#ref rator) rand ...)
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-resolve-type rator-id)))
        (cond
+        ((or (not rator-type)
+             (eq? (!type-id rator-type) 't))
+         (xform-call% self stx))
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-         (let (optimized {optimize-call rator-type self stx #'rands})
-           (if (!primitive? rator-type)
-             optimized        ; %#call-unchecked unsafe for primitives
-             (ast-case optimized (%#call)
-               ((%#call . body)
-                (xform-wrap-source
-                 (cons '%#call-unchecked #'body)
-                 stx))
-               (_ optimized)))))
-        ((not rator-type)
-         (xform-call% self stx))
+         (let (optimized {rator-type.optimize-call self stx #'(rand ...)})
+           (ast-case optimized (%#call %#ref)
+             ((%#call (%#ref optimized-rator) arg ...)
+              (let (optimized-rator-id (identifier-symbol #'optimized-rator))
+                (if (or (and (!primitive? rator-type)
+                             (eq? optimized-rator-id rator-id))
+                        (memq optimized-rator-id checked-primitives))
+                  ;; %#call-unchecked unsafe in this case
+                  optimized
+                  ;; %#call-unchecked to known procedure
+                  (xform-wrap-source
+                   (cons* '%#call-unchecked #'(%#ref optimized-rator) #'(arg ...))
+                   stx))))
+             (_ optimized))))
+        ((and (!class? rator-type) (eq? (&!type-id rator-type) 'procedure))
+         ;; known to be procedure, %#call-unchecked
+         (xform-wrap-source
+          (cons* '%#call-unchecked
+                 #'(%#ref rator)
+                 (map (cut compile-e self <>) #'(rand ...)))
+          stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
-    (_ (xform-call% self stx))))
+    ((_ rator rand ...)
+     (let (rator-type (apply-basic-expression-type #'rator))
+       (cond
+        ((and rator-type
+              (eq? (!type-id rator-type) 'procedure)
+              (not (!primitive? rator-type)))
+         ;; known to be procedure, %#call-unchecked
+         (xform-wrap-source
+          (cons* '%#call-unchecked
+                 (compile-e self #'rator)
+                 (map (cut compile-e self <>) #'(rand ...)))
+          stx))
+        ((or (not rator-type) (memq (!type-id rator-type) '(t procedure)))
+         (xform-call% self stx))
+        (else
+         (raise-compile-error "illegal application; not a procedure" stx rator-type)))))))
+
+(defmethod {optimize-call !procedure}
+  (lambda (self ctx stx args)
+    (if {self.check-arguments ctx stx args}
+      (using (signature self.signature :- !signature)
+        (cond
+         ((and signature signature.unchecked)
+          => (lambda (unchecked)
+               (if (symbol-in-local-scope? unchecked)
+                 (xform-wrap-source
+                  (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
+                  stx)
+                 (xform-call% ctx stx))))
+         (else
+          (xform-call% ctx stx))))
+      (xform-call% ctx stx))))
+
+(defmethod {check-arguments !procedure}
+  (lambda (self ctx stx args)
+    (alet* ((signature self.signature)
+            (argument-types (!signature-arguments signature)))
+      (let (argument-types
+            (map* (lambda (t) (and t (optimizer-resolve-class stx t)))
+                  argument-types))
+        (let loop ((rest-args args) (rest-types argument-types) (result #t))
+          (match rest-args
+            ([arg . rest-args]
+             (match rest-types
+               ([type . rest-types]
+                (loop rest-args rest-types
+                      (and (check-expression-type! stx arg type)
+                           result)))
+               ([] (raise-compile-error "signature arity mismatch" stx argument-types))
+               (tail-type
+                (and (andmap (cut check-expression-type! stx <> tail-type) rest-args)
+                     result))))
+            (else result)))))))
+
+(defmethod {optimize-call !primitive-predicate}
+  (lambda (self ctx stx args)
+    (ast-case args ()
+      ((expr)
+       (let* ((klass (optimizer-resolve-class stx self.id))
+              (object (compile-e ctx #'expr))
+              (instance? (or (expression-type? object klass)
+                             (expression-type? #'expr klass))))
+         (if instance?
+           (xform-wrap-source
+            (if (or (expression-no-side-effects? object)
+                    (expression-no-side-effects? #'expr))
+              ['%#quote #t]
+              ['%#begin object #t])
+            stx)
+           (xform-call% ctx stx)))))))
 
 (defmethod {optimize-call !predicate}
   (lambda (self ctx stx args)
     (ast-case args ()
       ((expr)
-       (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (object (compile-e ctx #'expr)))
-         (cond
-          ((!class-final? klass)
-           (xform-wrap-source
-            ['%#struct-direct-instance? ['%#quote (!type-id klass)] object]
-            stx))
-          ((!class-struct? klass)
-           (xform-wrap-source
-            ['%#struct-instance? ['%#quote (!type-id klass)] object]
-            stx))
-          (else ;; generic class instance check
-           (xform-wrap-source
-            ['%#call ['%#ref 'class-instance?] ['%#ref (!type-id self)] object]
-            stx))))))))
+       (let* ((klass (optimizer-resolve-class stx self.id))
+              (object (compile-e ctx #'expr))
+              (instance? (or (expression-type? object klass)
+                             (expression-type? #'expr klass))))
+         (using (klass :- !class)
+           (cond
+            (instance?
+             (xform-wrap-source
+              (if (or (expression-no-side-effects? object)
+                      (expression-no-side-effects? #'expr))
+                ['%#quote #t]
+                ['%#begin object #t])
+              stx))
+            (klass.final?
+             (xform-wrap-source
+              ['%#struct-direct-instance? ['%#quote klass.id] object]
+              stx))
+            (klass.struct?
+             (xform-wrap-source
+              ['%#struct-instance? ['%#quote klass.id] object]
+              stx))
+            (else ;; generic class instance check
+             (xform-wrap-source
+              ['%#call ['%#ref 'class-instance?] ['%#ref self.id] object]
+              stx)))))))))
+
+(def (expression-no-side-effects? stx)
+  ;; TODO this should be a compile method for more accuracy
+  (ast-case stx (%#quote %#ref %#call %#set!)
+    ((%#quote _) #t)
+    ((%#ref _) #t)
+    ((%#call (%#ref rator) rand ...)
+     (alet* ((rator-type (optimizer-resolve-type (identifier-symbol #'rator)))
+             (rator-signature (and (!procedure? rator-type) (&!procedure-signature rator-type)))
+             (rator-effect (and rator-signature (!signature-effect rator-signature))))
+       (and (or (equal? '(pure) rator-effect)
+                (equal? '(alloc) rator-effect))
+            (andmap expression-no-side-effects? #'(rand ...)))))
+    (_ #f)))
+
+(def (expression-type? stx klass)
+  (let (expr-type (apply-basic-expression-type stx))
+    (and expr-type (!type-subtype? expr-type klass))))
+
+(def (check-expression-type! stx expr type)
+  (cond
+   ((not type)
+    ;; forced contract check
+    #f)
+
+   ((eq? (!type-id type) 't))           ; happy!
+
+   (else
+    (let (expr-type (apply-basic-expression-type expr))
+      (cond
+       ((not expr-type)
+        ;; no type information, let the runtime contract check it
+        #f)
+       ((eq? 't (!type-id expr-type))
+        ;; unspecific type, let the runtime contract check it
+        #f)
+
+       ((!abort? expr-type)) ; runtime error, type is satisfied because there is no value
+
+       ((!type-subtype? expr-type type)) ; happy!
+
+       ;; fuzzy rules for types that might be compatible and should be checked
+       ;; at runtime -- we have incomplete type info in general, and runtime
+       ;; contract checks, so we should not fail to compile when the type
+       ;; is not definitely wrong.
+       ((!interface-instance? type)
+        ;; let the runtime contract cast it
+        #f)
+
+       ((!type-subtype? type expr-type)
+        ;; wider type than what we have; let the runtime contract check it
+        ;; most notable this catches unspecific object instances, which are
+        ;; abundant.
+        #f)
+
+       (else
+        ;; not happy; type is incompatible
+        (raise-compile-error "signature type mismatch" stx expr expr-type type)))))))
 
 (defmethod {optimize-call !constructor}
   (lambda (self ctx stx args)
-    (let* ((klass (optimizer-resolve-class stx (!type-id self)))
+    (let* ((klass (optimizer-resolve-class stx self.id))
            (fields (length (!class-fields klass)))
            (args (map (cut compile-e ctx <>) args))
            (inline-make-object
-            ['%#call ['%#ref '##structure]
-                     ['%#ref (!type-id self)]
-                     (make-list fields '(%#quote #f))
-                     ...]))
-      (cond
-       ((!class-constructor klass)
-        => (lambda (ctor)
-             (let (($obj (make-symbol (gensym '__obj)))
-                   (ctor-impl (!class-lookup-method klass ctor)))
-               (xform-wrap-source
-                ['%#let-values [[[$obj] inline-make-object]]
-                               ['%#begin
-                                (if ctor-impl
-                                  ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
-                                  (let ($ctor (make-symbol (gensym '__constructor)))
-                                    ['%#let-values [[[$ctor]
-                                                     ['%#call ['%#ref 'direct-method-ref] ['%#ref (!type-id self)] ['%#ref $obj] ['%#quote ctor]]]]
-                                                   ['%#if ['%#ref $ctor]
-                                                          ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
-                                                          ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))
-                                ['%#ref $obj]]]
-                stx))))
-       ((!class-metaclass klass)
-        => (lambda (metaclass)
-             (let* (($obj (make-symbol (gensym '__obj)))
-                    (metakons
-                     (!class-lookup-method (optimizer-resolve-class stx metaclass)
-                                           'instance-init!)))
-               (xform-wrap-source
-                ['%#let-values [[[$obj] inline-make-object]]
-                               ['%#begin
-                                (if metakons
-                                  ['%#call ['%#ref metakons] ['%#ref (!type-id self)] ['%#ref $obj] args ...]
-                                  ['%#call ['%#ref 'call-method] ['%#ref (!type-id self)] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
-                                ['%#ref $obj]]]
-                stx))))
-       ((!class-struct? klass)
-        (if (fx= (length args) fields)
-          (xform-wrap-source
-           ['%#call ['%#ref '##structure]
-                    ['%#ref (!type-id self)]
-                    args ...]
-           stx)
-          (raise-compile-error "illegal struct constructor application; arity mismatch"
-                               stx (!type-id self) (length (!class-fields klass)))))
-       (else
-        (let ($obj (make-symbol (gensym '__obj)))
-          (let lp ((rest args) (initializers []))
-            (ast-case rest (%#quote)
-              (((%#quote kw) expr . rest)
-               (stx-keyword? #'kw)
-               (let* ((slot (keyword->symbol (stx-e #'kw)))
-                      (off  (!class-slot->field-offset klass slot)))
-                 (if off
-                   (lp #'rest (cons (cons off #'expr) initializers))
-                   (raise-compile-error "unknown slot" stx (!type-id self) slot))))
-              (()
-               (xform-wrap-source
-                ['%#let-values [[[$obj] inline-make-object]]
-                               ['%#begin
-                                (foldl (lambda (i r)
-                                         (cons ['%#struct-unchecked-set!
-                                                ['%#ref (!type-id self)]
-                                                ['%#quote (car i)]
-                                                ['%#ref $obj]
-                                                (cdr i)]
-                                               r))
-                                       [] initializers)
-                                ...
-                               ['%#ref $obj]]]
-                stx))
-              (_
-               ;; not canonical static keyword -> value initialization list
-               ;; redirect to class-instance-init!
-               (xform-wrap-source
-                ['%#let-values [[[$obj] inline-make-object]]
-                               ['%#begin
-                                ['%#call ['%#ref 'class-instance-init!]
-                                         ['%#ref $obj]
-                                         args ...]
-                                ['%#ref $obj]]]
-                stx))))))))))
+            ['%#begin-annotation ['@type self.id]
+                                 ['%#call ['%#ref '##structure]
+                                          ['%#ref self.id]
+                                          (make-list fields '(%#quote #f))
+                                          ...]]))
+      (using (klass :- !class)
+        (cond
+         (klass.constructor
+          => (lambda (ctor)
+               (let (($obj (make-symbol (gensym '__obj)))
+                     (ctor-impl (!class-lookup-method klass ctor)))
+                 (xform-wrap-source
+                  ['%#let-values [[[$obj] inline-make-object]]
+                                 ['%#begin
+                                  (if ctor-impl
+                                    ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                    (let ($ctor (make-symbol (gensym '__constructor)))
+                                      ['%#let-values [[[$ctor]
+                                                       ['%#call ['%#ref 'direct-method-ref] ['%#ref self.id] ['%#ref $obj] ['%#quote ctor]]]]
+                                                     ['%#if ['%#ref $ctor]
+                                                            ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
+                                                            ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref self.id] ['%#quote 'method:] ['%#quote ctor]]]]))
+                                  ['%#ref $obj]]]
+                  stx))))
+         (klass.metaclass
+          => (lambda (metaclass)
+               (let* (($obj (make-symbol (gensym '__obj)))
+                      (metakons
+                       (!class-lookup-method (optimizer-resolve-class stx metaclass)
+                                             'instance-init!)))
+                 (xform-wrap-source
+                  ['%#let-values [[[$obj] inline-make-object]]
+                                 ['%#begin
+                                  (if metakons
+                                    ['%#call ['%#ref metakons] ['%#ref self.id] ['%#ref $obj] args ...]
+                                    ['%#call ['%#ref 'call-method] ['%#ref self.id] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
+                                  ['%#ref $obj]]]
+                  stx))))
+         (klass.struct?
+          (if (fx= (length args) fields)
+            (xform-wrap-source
+             ['%#begin-annotation ['@type self.id]
+                                  ['%#call ['%#ref '##structure]
+                                           ['%#ref self.id]
+                                           args ...]]
+             stx)
+            (raise-compile-error "illegal struct constructor application; arity mismatch"
+                                 stx self.id klass.fields)))
+         (else
+          (let ($obj (make-symbol (gensym '__obj)))
+            (let lp ((rest args) (initializers []))
+              (ast-case rest (%#quote)
+                (((%#quote kw) expr . rest)
+                 (stx-keyword? #'kw)
+                 (let* ((slot (keyword->symbol (stx-e #'kw)))
+                        (off  (!class-slot->field-offset klass slot)))
+                   (if off
+                     (lp #'rest (cons (cons off #'expr) initializers))
+                     (raise-compile-error "unknown slot" stx self.id slot))))
+                (()
+                 (xform-wrap-source
+                  ['%#let-values [[[$obj] inline-make-object]]
+                                 ['%#begin
+                                  (foldl (lambda (i r)
+                                           (cons ['%#struct-unchecked-set!
+                                                  ['%#ref self.id]
+                                                  ['%#quote (car i)]
+                                                  ['%#ref $obj]
+                                                  (cdr i)]
+                                                 r))
+                                         [] initializers)
+                                  ...
+                                  ['%#ref $obj]]]
+                  stx))
+                (_
+                 ;; not canonical static keyword -> value initialization list
+                 ;; redirect to class-instance-init!
+                 (xform-wrap-source
+                  ['%#let-values [[[$obj] inline-make-object]]
+                                 ['%#begin
+                                  ['%#call ['%#ref 'class-instance-init!]
+                                           ['%#ref $obj]
+                                           args ...]
+                                  ['%#ref $obj]]]
+                  stx)))))))))))
 
 (defmethod {optimize-call !accessor}
   (lambda (self ctx stx args)
-    (ast-case args ()
-      ((object)
-       (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (field (!class-slot->field-offset klass (!accessor-slot self)))
-              (object (compile-e ctx #'object)))
-         (cond
-          ((!class-final? klass)
-           (xform-wrap-source
-            [(if (!accessor-checked? self)
-               '%#struct-direct-ref
-               '%#struct-unchecked-ref)
-             ['%#ref (!type-id self)]
-             ['%#quote field]
-             object]
-            stx))
-          ((!class-struct? klass)
-           (xform-wrap-source
-            [(if (!accessor-checked? self)
-               '%#struct-ref
-               '%#struct-unchecked-ref)
-             ['%#ref (!type-id self)]
-             ['%#quote field]
-             object]
-            stx))
-          ((!class-slot-find-struct klass (!accessor-slot self))
-           => (lambda (klass)
-                (xform-wrap-source
-                 [(if (!accessor-checked? self)
-                    '%#struct-ref
-                    '%#struct-unchecked-ref)
-                  ['%#ref (!type-id self)]
-                  ['%#quote field]
-                  object]
-                 stx)))
-          ((!accessor-checked? self)
-           (xform-wrap-source
-            (let ($obj (make-symbol (gensym '__obj)))
-              ['%#let-values [[[$obj] object]]
-                             ['%#if ['%#struct-direct-instance?
-                                     ['%#quote (!type-id klass)]
-                                     ['%#ref $obj]]
-                                    ['%#struct-unchecked-ref
-                                     ['%#ref (!type-id self)]
-                                     ['%#quote field]
-                                     ['%#ref $obj]]
-                                    ['%#call
-                                     ['%#ref 'class-slot-ref]
-                                     ['%#ref (!type-id self)]
-                                     ['%#ref $obj]
-                                     ['%#quote (!accessor-slot self)]]]])
-            stx))
-          (else
-           (xform-wrap-source
-            ['%#call ['%#ref 'unchecked-slot-ref]
-                     object
-                     ['%#quote (!accessor-slot self)]]
-            stx))))))))
+    (let (arguments-ok? {self.check-arguments ctx stx args})
+      (ast-case args ()
+        ((object)
+         (let* ((klass (optimizer-resolve-class stx self.id))
+                (field (!class-slot->field-offset klass self.slot))
+                (object (compile-e ctx #'object)))
+           (using (klass :- !class)
+             (cond
+              (klass.final?
+               (xform-wrap-source
+                [(if (or arguments-ok? (not self.checked?))
+                   '%#struct-unchecked-ref
+                   '%#struct-direct-ref)
+                 ['%#ref self.id]
+                 ['%#quote field]
+                 object]
+                stx))
+              (klass.struct?
+               (xform-wrap-source
+                [(if (or arguments-ok? (not self.checked?))
+                   '%#struct-unchecked-ref
+                   '%#struct-ref)
+                 ['%#ref self.id]
+                 ['%#quote field]
+                 object]
+                stx))
+              ((!class-slot-find-struct klass self.slot)
+               => (lambda (klass)
+                    (xform-wrap-source
+                     [(if (or arguments-ok? (not self.checked?))
+                        '%#struct-unchecked-ref
+                        '%#struct-ref)
+                      ['%#ref self.id]
+                      ['%#quote field]
+                      object]
+                     stx)))
+              (self.checked?
+               (xform-wrap-source
+                (let ($obj (make-symbol (gensym '__obj)))
+                  ['%#let-values [[[$obj] object]]
+                                 ['%#if ['%#struct-direct-instance?
+                                         ['%#quote klass.id]
+                                         ['%#ref $obj]]
+                                        ['%#struct-unchecked-ref
+                                         ['%#ref self.id]
+                                         ['%#quote field]
+                                         ['%#ref $obj]]
+                                        (if arguments-ok?
+                                          ['%#call ['%#ref 'unchecked-slot-ref]
+                                                   ['%#ref $obj]
+                                                   ['%#quote (!accessor-slot self)]]
+                                          ['%#call
+                                           ['%#ref 'class-slot-ref]
+                                           ['%#ref self.id]
+                                           ['%#ref $obj]
+                                           ['%#quote self.slot]])]])
+                stx))
+              (else
+               (xform-wrap-source
+                ['%#call ['%#ref 'unchecked-slot-ref]
+                         object
+                         ['%#quote self.slot]]
+                stx))))))))))
 
 (defmethod {optimize-call !mutator}
   (lambda (self ctx stx args)
-    (ast-case args ()
-      ((object value)
-       (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (field (!class-slot->field-offset klass (!mutator-slot self)))
-              (object (compile-e ctx #'object))
-              (value (compile-e ctx #'value)))
-         (cond
-          ((!class-final? klass)
-           (xform-wrap-source
-            [(if (!mutator-checked? self)
-               '%#struct-direct-set!
-               '%#struct-unchecked-set!)
-             ['%#ref (!type-id self)]
-             ['%#quote field]
-             object
-             value]
-            stx))
-          ((!class-struct? klass)
-           (xform-wrap-source
-            [(if (!mutator-checked? self)
-               '%#struct-set!
-               '%#struct-unchecked-set!)
-             ['%#ref (!type-id self)]
-             ['%#quote field]
-             object
-             value]
-            stx))
-          ((!class-slot-find-struct klass (!mutator-slot self))
-           => (lambda (klass)
-                (xform-wrap-source
-                 [(if (!mutator-checked? self)
-                    '%#struct-set!
-                    '%#struct-unchecked-set!)
-                  ['%#ref (!type-id self)]
-                  ['%#quote field]
-                  object
-                  value]
-                 stx)))
-          ((!mutator-checked? self)
-           (xform-wrap-source
-            (let ($obj (make-symbol (gensym '__obj)))
-              ['%#let-values [[[$obj] object]]
-                             ['%#if ['%#struct-direct-instance?
-                                     ['%#quote (!type-id klass)]
-                                     ['%#ref $obj]]
-                                    ['%#struct-unchecked-set!
-                                     ['%#ref (!type-id self)]
-                                     ['%#quote field]
-                                     ['%#ref $obj]
-                                     value]
-                                    ['%#call
-                                     ['%#ref 'class-slot-set!]
-                                     ['%#ref (!type-id self)]
-                                     ['%#ref $obj]
-                                     ['%#quote (!mutator-slot self)]
-                                     value]]])
-            stx))
-          (else
-           (xform-wrap-source
-            ['%#call ['%#ref 'unchecked-slot-set!]
-                     object
-                     ['%#quote (!mutator-slot self)]
-                     value]
-            stx))))))))
+    (let (arguments-ok? {self.check-arguments ctx stx args})
+      (ast-case args ()
+        ((object value)
+         (let* ((klass (optimizer-resolve-class stx self.id))
+                (field (!class-slot->field-offset klass self.slot))
+                (object (compile-e ctx #'object))
+                (value (compile-e ctx #'value)))
+           (using (klass :- !class)
+             (cond
+              (klass.final?
+               (xform-wrap-source
+                [(if (or arguments-ok? (not self.checked?))
+                   '%#struct-unchecked-set!
+                   '%#struct-direct-set!)
+                 ['%#ref self.id]
+                 ['%#quote field]
+                 object
+                 value]
+                stx))
+              (klass.struct?
+               (xform-wrap-source
+                [(if (or arguments-ok? (not self.checked?))
+                   '%#struct-unchecked-set!
+                   '%#struct-set!)
+                 ['%#ref self.id]
+                 ['%#quote field]
+                 object
+                 value]
+                stx))
+              ((!class-slot-find-struct klass self.slot)
+               => (lambda (klass)
+                    (xform-wrap-source
+                     [(if (or arguments-ok? (not self.slot))
+                        '%#struct-unchecked-set!
+                        '%#struct-set!)
+                      ['%#ref self.id]
+                      ['%#quote field]
+                      object
+                      value]
+                     stx)))
+              (self.checked?
+               (xform-wrap-source
+                (let ($obj (make-symbol (gensym '__obj)))
+                  ['%#let-values [[[$obj] object]]
+                                 ['%#if ['%#struct-direct-instance?
+                                         ['%#quote klass.id]
+                                         ['%#ref $obj]]
+                                        ['%#struct-unchecked-set!
+                                         ['%#ref self.id]
+                                         ['%#quote field]
+                                         ['%#ref $obj]
+                                         value]
+                                        (if arguments-ok?
+                                          ['%#call ['%#ref 'unchecked-slot-set!]
+                                                   ['%#ref $obj]
+                                                   ['%#quote self.slot]
+                                                   value]
+                                          ['%#call
+                                           ['%#ref 'class-slot-set!]
+                                           ['%#ref self.id]
+                                           ['%#ref $obj]
+                                           ['%#quote self.slot]
+                                           value])]])
+                stx))
+              (else
+               (xform-wrap-source
+                ['%#call ['%#ref 'unchecked-slot-set!]
+                         object
+                         ['%#quote self.slot]
+                         value]
+                stx))))))))))
 
 (defmethod {optimize-call !lambda}
   (lambda (self ctx stx args)
-    (with ((!lambda _ arity dispatch inline) self)
+    (with ((!lambda _ _ arity dispatch inline) self)
       (unless (!lambda-arity-match? self args)
         (raise-compile-error "Illegal lambda application; arity mismatch"
                              stx arity))
@@ -292,7 +478,7 @@ namespace: gxc
          (xform-wrap-source
           (inline stx)
           stx)))
-       (dispatch
+       ((and dispatch (symbol-in-local-scope? dispatch))
         (verbose "dispatch lambda => " dispatch)
         (compile-e
          ctx
@@ -300,94 +486,87 @@ namespace: gxc
           ['%#call ['%#ref dispatch] args ...]
           stx)))
        (else
-        (xform-call% ctx stx))))))
+        (!procedure::optimize-call self ctx stx args))))))
 
 (defmethod {optimize-call !case-lambda}
   (lambda (self ctx stx args)
-    (with ((!case-lambda _ clauses) self)
-      (cond
-       ((find (cut !lambda-arity-match? <> args) clauses)
-        => (lambda (clause) {optimize-call clause ctx stx args}))
-       (else
-        (raise-compile-error "Illegal case-lambda application; arity mismatch"
-                             stx (map !lambda-arity clauses)))))))
-
-(def (!lambda-arity-match? self args)
-  (with ((!lambda _ arity) self)
-    (match arity
-      ((? fixnum?)
-       (fx= (length args) arity))
-      ([arity]
-       (fx>= (length args) arity)))))
+    (cond
+     ((find (cut !lambda-arity-match? <> args) self.clauses)
+      => (lambda (clause) {clause.optimize-call ctx stx args}))
+     (else
+      (raise-compile-error "Illegal case-lambda application; arity mismatch"
+                           stx (map !lambda-arity self.clauses))))))
 
 (defmethod {optimize-call !kw-lambda}
   (lambda (self ctx stx args)
-    (with ((!kw-lambda _ table dispatch) self)
-      (match (optimizer-lookup-type dispatch)
-        ((!kw-lambda-primary _ keys main)
-         (let ((values pargs kwargs)
-               (!kw-lambda-split-args stx args))
-           (verbose "dispatch kw-lambda => " main)
-           (if table
-             (let (xargs
-                   (map (lambda (key)
-                          (cond
-                           ((assgetq key kwargs) => values)
-                           (else '(%#ref absent-value))))
-                        keys))
-               (for-each
-                 (lambda (kw)
-                   (unless (memq (car kw) keys)
-                     (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
-                                          stx keys kw)))
-                 kwargs)
-               (compile-e
-                ctx
-                (xform-wrap-source
-                 ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
-                 stx)))
-             (let* ((kwt (make-symbol (gensym '__kwt)))
-                    (kwvars
-                     (map (lambda (_) (make-symbol (gensym '__kw)))
-                          kwargs))
-                    (kwbind
-                     (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
-                          kwargs kwvars))
-                    (kwset
-                     (map (lambda (kw kwvar)
-                            ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
-                                     ['%#quote (car kw)]
-                                     ['%#ref kwvar]])
-                          kwargs kwvars))
-                    (xkwargs
-                     (map (lambda (kw kwvar)
-                            (cons (car kw) ['%#ref kwvar]))
-                          kwargs kwvars))
-                    (xargs
+    (with ((!kw-lambda _ _ table dispatch) self)
+      (if (symbol-in-local-scope? dispatch)
+        (match (optimizer-lookup-type dispatch)
+          ((!kw-lambda-primary _ _ keys main)
+           (let ((values pargs kwargs)
+                 (!kw-lambda-split-args stx args))
+             (verbose "dispatch kw-lambda => " main)
+             (if table
+               (let (xargs
                      (map (lambda (key)
                             (cond
-                             ((assgetq key xkwargs) => values)
+                             ((assgetq key kwargs))
                              (else '(%#ref absent-value))))
-                          keys)))
-               (compile-e
-                ctx
-                (xform-wrap-source
-                 ['%#let-values kwbind
-                   ['%#let-values [[[kwt]
-                                    (xform-wrap-source
-                                     ['%#call '(%#ref make-symbolic-table)
-                                              ['%#quote (length kwargs)]
-                                              '(%#quote 0)]
-                                     stx)]]
-                     ['%#begin
-                      kwset ...
-                      (xform-wrap-source
-                       ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
-                       stx)]]]
-                 stx))))))
+                          keys))
+                 (for-each
+                   (lambda (kw)
+                     (unless (memq (car kw) keys)
+                       (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
+                                            stx keys kw)))
+                   kwargs)
+                 (compile-e
+                  ctx
+                  (xform-wrap-source
+                   ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                   stx)))
+               (let* ((kwt (make-symbol (gensym '__kwt)))
+                      (kwvars
+                       (map (lambda (_) (make-symbol (gensym '__kw)))
+                            kwargs))
+                      (kwbind
+                       (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
+                            kwargs kwvars))
+                      (kwset
+                       (map (lambda (kw kwvar)
+                              ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
+                                       ['%#quote (car kw)]
+                                       ['%#ref kwvar]])
+                            kwargs kwvars))
+                      (xkwargs
+                       (map (lambda (kw kwvar)
+                              (cons (car kw) ['%#ref kwvar]))
+                            kwargs kwvars))
+                      (xargs
+                       (map (lambda (key)
+                              (cond
+                               ((assgetq key xkwargs))
+                               (else '(%#ref absent-value))))
+                            keys)))
+                 (compile-e
+                  ctx
+                  (xform-wrap-source
+                   ['%#let-values kwbind
+                                  ['%#let-values [[[kwt]
+                                                   (xform-wrap-source
+                                                    ['%#call '(%#ref make-symbolic-table)
+                                                             ['%#quote (length kwargs)]
+                                                             '(%#quote (length kwvars))]
+                                                    stx)]]
+                                                 ['%#begin
+                                                  kwset ...
+                                                  (xform-wrap-source
+                                                   ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                                                   stx)]]]
+                   stx))))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
-           (xform-call% ctx stx))))))
+           (xform-call% ctx stx)))
+        (xform-call% ctx stx)))))
 
 (def (!kw-lambda-split-args stx args)
   (let lp ((rest args) (pargs []) (kwargs []))
@@ -404,9 +583,49 @@ namespace: gxc
            (lp #'rest pargs (cons (cons kw #'val) kwargs)))))
       ((val . rest)
        (lp #'rest (cons #'val pargs) kwargs))
-      (()
+      (_
        (values (reverse pargs) (reverse kwargs))))))
 
 (defmethod {optimize-call !kw-lambda-primary}
   (lambda (self ctx stx args)
     (xform-call% ctx stx)))
+
+(def (apply-check-return-type-begin-annotation% self stx)
+  (ast-case stx (@type.signature)
+    ((_ (@type.signature signature ...) body)
+     (cond
+      ((member return: #'(signature ...) stx-eq?)
+       => (lambda (tail)
+            (let (type (optimizer-resolve-class stx (identifier-symbol (cadr tail))))
+              (check-return-type! stx #'body type)
+              (compile-e self #'body))))
+      (else
+       (compile-e self #'body))))
+    ((_ ann body)
+     (compile-e self #'body))))
+
+(def (check-return-type! stx expr type)
+  (cond
+   ;; nothing declared as return type
+   ((not type))
+
+   ((eq? (!type-id type) 't))           ; happy!
+
+   (else
+    (let (expr-type (apply-basic-expression-type expr))
+      (cond
+       ((not expr-type)
+        ;; no type information, we can't verify declaration
+        (raise-compile-error "cannot verify procedure return type; no type information" stx type))
+       ((eq? 't (!type-id expr-type))
+        ;; unspecific type, we can't verity declaration
+        (raise-compile-error "cannot verify procedure return type; unspecific type" stx type expr-type))
+
+
+       ((!abort? expr-type)) ; runtime error, type is axiomatically satisfied
+
+       ((!type-subtype? expr-type type)) ; happy!
+
+       (else
+        ;; not happy; we can't verify type
+        (raise-compile-error "procedure return type does not match signature" stx type expr-type)))))))

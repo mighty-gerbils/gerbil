@@ -13,27 +13,20 @@ namespace: gx
 (def __module-pkg-cache (make-hash-table))
 
 (defstruct module-import (source name phi weak?)
-  id: gx#module-import::t
-  final: #t)
+  final: #t print: #t)
 (defstruct module-export (context key phi name weak?)
-  id: gx#module-export::t
-  final: #t)
+  final: #t transparent: #t)
 
 (defstruct import-set (source phi imports)
-  id: gx#import-set::t
-  final: #t)
+  final: #t print: (source phi))
 (defstruct export-set (source phi exports)
-  id: gx#export-set::t
-  final: #t)
+  final: #t print: (source phi))
 
 (defclass (import-expander user-expander) ()
-  id: gx#import-expander::t
   constructor: :init!)
 (defclass (export-expander user-expander) ()
-  id: gx#export-expander::t
   constructor: :init!)
 (defclass (import-export-expander import-expander export-expander) ()
-  id: gx#import-export-expander::t
   constructor: :init!)
 
 (def current-import-expander-phi
@@ -124,7 +117,7 @@ namespace: gx
      ((core-library-module-path? e)
       (recur (import-module (core-resolve-library-module-path e))))
      (else
-      (error "Cannot eval module" obj)))))
+      (error "cannot eval module" obj)))))
 
 (def (core-context-prelude (ctx (current-expander-context)))
   (let lp ((e ctx))
@@ -167,7 +160,7 @@ namespace: gx
                   (or (current-expander-module-prelude)
                       (make-prelude-context #f)))
                  (else
-                  (error "Cannot import module; unknown prelude" rpath pre))))
+                  (error "cannot import module; unknown prelude" rpath pre))))
                (ctx
                 (make-module-context id prelude ns path))
                (body
@@ -196,12 +189,11 @@ namespace: gx
                (if (and (syntax-binding? bind)
                         (module-context? (&syntax-binding-e bind)))
                  (lp rest (&syntax-binding-e bind))
-                 (error "Cannot import submodule; not bound as a module" rpath id bind))))
+                 (error "cannot import submodule; not bound as a module" rpath id bind))))
             (else ctx))))))
 
   (cond
-   ((and (not reload?) (hash-get __module-registry rpath))
-    => values)
+   ((and (not reload?) (hash-get __module-registry rpath)))
    ((list? rpath)
     (import-submodule rpath))
    ((core-library-module-path? rpath)
@@ -451,7 +443,7 @@ namespace: gx
                   (lp rest))))
           (else
            (resolve ssi srcs))))
-        ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
+        ([] (raise-syntax-error #f "cannot find library module" libpath))))))
 
 (def (core-resolve-library-relative-module-path modpath)
   (def (resolve path base)
@@ -469,7 +461,7 @@ namespace: gx
   (let ((spath (symbol->string (stx-e modpath)))
         (mod (core-context-top (current-expander-context) module-context?)))
     (unless mod
-      (raise-syntax-error #f "Cannot resolve relative module path; not in module context" modpath))
+      (raise-syntax-error #f "cannot resolve relative module path; not in module context" modpath))
     (let (mpath (symbol->string (expander-context-id mod)))
       (let lp ((spath spath) (mpath mpath))
         (cond
@@ -480,7 +472,7 @@ namespace: gx
                  (lp (substring spath 3 (string-length spath))
                      (substring mpath 0 idx))))
            (else
-            (raise-syntax-error #f "Cannot resolve relative module path; illegal traversal" modpath))))
+            (raise-syntax-error #f "cannot resolve relative module path; illegal traversal" modpath))))
          ((string-prefix? "./" spath)
           (lp (substring spath 2 (string-length spath)) mpath))
          (else
@@ -1003,7 +995,7 @@ namespace: gx
            (foldl (lambda (in r) (cons (import->export in) r))
                   r imports)
            r))
-        (else r)))
+      (else r)))
 
     (cons (make-export-set src current-phi
             (foldl fold-e [] (&module-context-import current-ctx)))

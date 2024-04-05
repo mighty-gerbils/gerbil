@@ -41,7 +41,7 @@
                             #'((val) (quote key))))
                         keys vals)))
       #'(defreader-ext* (bio-read buf)
-          (let (val (buf.read-varint*))
+          (let (val (%%app-dotted buf.read-varint*))
             (case val
               cases ...
               (else val))))))
@@ -311,12 +311,12 @@
           (defreader-ext* (bio-read! buf obj)
             read-init ...
             (let lp ()
-              (unless (eof-object? (buf.peek-u8))
-                (let ((values key tag) (buf.read-field))
+              (unless (eof-object? (%%app-dotted buf.peek-u8))
+                (let ((values key tag) (%%app-dotted buf.read-field))
                   (case key
                     cases ...
                     (else
-                     (buf.skip-unknown tag)))
+                     (%%app-dotted buf.skip-unknown tag)))
                   (lp))))
             read-fini ...))))
 
@@ -363,7 +363,7 @@
         (if (or (scalar-type? type)
                 (enum-type? type))
           #'(bio-read-e buf)
-          #'(buf.read-delimited bio-read-e))))
+          #'(%%app-dotted buf.read-delimited bio-read-e))))
 
     (with ([specifier field-id . rest] field)
       (with-syntax ((getf (format-id id "&~a-~a" id field-id))
@@ -393,7 +393,7 @@
                   (with-syntax ((do-read (make-read-e type #'bio-read-e)))
                     (cons #'((key)
                              (if (eq? tag 'VARLEN)
-                               (setf obj (foldl cons (getf obj) (buf.read-packed bio-read-e)))
+                               (setf obj (foldl cons (getf obj) (%%app-dotted buf.read-packed bio-read-e)))
                                (setf obj (cons do-read (getf obj)))))
                           r)))))))
           ((map:)
@@ -406,7 +406,7 @@
                                #'(cut &BufferedReader-read-delimited <> bio-read-value-e)
                                #'bio-read-value-e)))
                (cons #'((key)
-                        (let (kv (buf.read-key-value-pair bio-read-key-e read-value-e))
+                        (let (kv (%%app-dotted buf.read-key-value-pair bio-read-key-e read-value-e))
                           (setf obj (cons kv (or (getf obj) [])))))
                      r))))
           ((oneof:)
@@ -443,7 +443,7 @@
         (if (or (scalar-type? type)
                 (enum-type? type))
           #'(bio-write-e buf val)
-          #'(buf.write-delimited* val bio-write-e))))
+          #'(%%app-dotted buf.write-delimited* val bio-write-e))))
 
     (with ([specifier field-id . rest] field)
       (with-syntax ((getf (format-id id "&~a-~a" id field-id)))
@@ -455,7 +455,7 @@
                             ((_ bio-write-e) (type-unchecked-io-methods type))
                             (do-write (make-write-e type #'bio-write-e)))
                #'(let (val (getf obj))
-                   (buf.write-field key (quote tag))
+                   (%%app-dotted buf.write-field key (quote tag))
                    do-write))))
           ((optional:)
            (with ([key type] rest)
@@ -466,7 +466,7 @@
                #'(cond
                   ((getf obj)
                    => (lambda (val)
-                        (buf.write-field key (quote tag))
+                        (%%app-dotted buf.write-field key (quote tag))
                         do-write))))))
           ((repeated:)
            (with ([key type] rest)
@@ -477,7 +477,7 @@
                #'(let (vals (getf obj))
                    (for-each
                      (lambda (val)
-                       (buf.write-field key (quote tag))
+                       (%%app-dotted buf.write-field key (quote tag))
                        do-write)
                      vals)))))
           ((packed:)
@@ -485,8 +485,8 @@
              (with-syntax ((key key)
                            ((_ bio-write-e) (type-unchecked-io-methods type)))
                #'(let (vals (getf obj))
-                   (buf.write-field key (quote VARLEN))
-                   (buf.write-packed vals bio-write-e)))))
+                   (%%app-dotted buf.write-field key (quote VARLEN))
+                   (%%app-dotted buf.write-packed vals bio-write-e)))))
           ((map:)
            (with ([key key-type value-type] rest)
              (with-syntax* ((key key)
@@ -504,8 +504,8 @@
                         (for-each
                           (lambda (kv)
                             (with ([k . v] kv)
-                              (buf.write-field key (quote VARLEN))
-                              (buf.write-key-value-pair k v
+                              (%%app-dotted buf.write-field key (quote VARLEN))
+                              (%%app-dotted buf.write-key-value-pair k v
                                                         (quote key-tag)
                                                         bio-write-key-e
                                                         (quote value-tag)
@@ -522,7 +522,7 @@
                                                  (do-write
                                                   (make-write-e type #'bio-write-e)))
                                     #'((kw)
-                                       (buf.write-field key (quote tag))
+                                       (%%app-dotted buf.write-field key (quote tag))
                                        do-write))))
                                rest)))
              #'(cond
