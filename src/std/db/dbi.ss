@@ -200,7 +200,7 @@
             (i it.e :- Statement))
       (when i
         (i.query-fini)
-        (set! (iterator-e it) #f))))
+        (set! it.e #f))))
 
   (if stmt.e
     (let (it (make-iterator e: stmt.i next: next fini: fini))
