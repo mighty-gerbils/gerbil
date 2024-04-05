@@ -954,7 +954,7 @@ package: gerbil
  (input-port-characters-buffered (port::t) integer::t effect: (io))
  (input-port-column (port::t) integer::t effect: (io))
  (input-port-line (port::t) integer::t effect: (io))
- (input-port-readtable (port::t) integer::t effect: (io))
+ (input-port-readtable (port::t) readtable::t effect: (io))
  (input-port-readtable-set! (port::t readtable::t) void::t effect: (mut io))
  (input-port-timeout-set! (port::t t::t) void::t effect: (mut io))
  (integer-length (integer::t) fixnum::t effect: (pure))
