@@ -339,10 +339,10 @@
              (cond-expand (darwin "libgerbil.dylib")
                           (else "libgerbil.so")))
             (library-file-path "libgerbil.a"))))
-    ;; compile each .scm to .c separately as we need them to link
+    ;; compile each .scm to .c separately as we need them to link in the compiler
     ;; this also allows us to parallelize the build.
     (let (wg (make-wg/build-cores))
-      (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
+      (for (scm-path static-module-scm-paths)
         (wg-add! wg
           (lambda ()
             (displayln "... compile " scm-path)
@@ -355,8 +355,7 @@
 
     ;; build them
     (let (wg (make-wg/build-cores))
-      (for (c-path [static-module-c-paths ...
-                    builtin-modules-c-path link-c-path])
+      (for (c-path static-module-c-paths)
         (wg-add! wg
           (lambda ()
             (displayln "... compile " c-path)
