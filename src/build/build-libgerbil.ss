@@ -323,11 +323,6 @@
          (static-module-scm-paths (map static-file-path static-module-scm-files))
          (static-module-c-paths   (map module-c-file static-module-scm-paths))
          (static-module-o-paths   (map module-o-file static-module-c-paths))
-         (builtin-modules-scm-path (static-file-path "libgerbil-builtin-modules.scm"))
-         (builtin-modules-c-path (module-c-file builtin-modules-scm-path))
-         (builtin-modules-o-path (module-o-file builtin-modules-c-path))
-         (link-c-path (library-file-path "libgerbil-link.c"))
-         (link-o-path (module-o-file link-c-path))
          (gambit-sharp (library-file-path "_gambit#.scm"))
          (include-gambit-sharp
           (string-append "(include \"" gambit-sharp "\")"))
@@ -344,14 +339,8 @@
              (cond-expand (darwin "libgerbil.dylib")
                           (else "libgerbil.so")))
             (library-file-path "libgerbil.a"))))
-    ;; generate the builtin modules stub
-    (call-with-output-file builtin-modules-scm-path
-      (lambda (p)
-        (write `(define ligerbil-builtin-modules
-                  (quote ,ordered-modules))
-               p)
-        (newline p)))
-    ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
+    ;; compile each .scm to .c separately as we need them to link
+    ;; this also allows us to parallelize the build.
     (let (wg (make-wg/build-cores))
       (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
         (wg-add! wg
@@ -363,12 +352,6 @@
                          gsc-gx-features ...
                          scm-path]))))
       (wg-wait! wg))
-
-    ;; link them
-    (displayln "... link " link-c-path)
-    (invoke-gsc ["-link" "-o" link-c-path
-                 static-module-c-paths ...
-                 builtin-modules-c-path])
 
     ;; build them
     (let (wg (make-wg/build-cores))
@@ -392,18 +375,11 @@
           (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
                                (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
                                libgerbil-ldd ...
-                               static-module-o-paths ...
-                               builtin-modules-o-path
-                               link-o-path]))
+                               static-module-o-paths ...]))
           (else (invoke-gcc ["-shared" "-o" libgerbil
                              libgerbil-ldd ...
-                             static-module-o-paths ...
-                             builtin-modules-o-path
-                             link-o-path])))
-        (invoke-ar ["cq" libgerbil
-                    static-module-o-paths ...
-                    builtin-modules-o-path
-                    link-o-path]))
+                             static-module-o-paths ...])))
+        (invoke-ar ["cq" libgerbil static-module-o-paths ...]))
       (call-with-output-file (string-append libgerbil ".ldd")
         (cut write
              (filter
@@ -412,13 +388,7 @@
                  (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
                 (else true))
               libgerbil-ldd)
-             <>)))
-    ;; cleanup
-    (for (f [static-module-c-paths ...
-             builtin-modules-c-path
-             static-module-o-paths ...
-             builtin-modules-o-path])
-      (delete-file f))))
+             <>)))))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))

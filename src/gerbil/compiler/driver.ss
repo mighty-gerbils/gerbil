@@ -143,8 +143,7 @@ namespace: gxc
 (def (compile-executable-module/separate ctx opts)
   (def (generate-stub builtin-modules)
     (let (mod-main (find-runtime-symbol ctx 'main))
-      (write `(define builtin-modules
-                (append (quote ,builtin-modules) libgerbil-builtin-modules)))
+      (write `(define builtin-modules (quote ,builtin-modules)))
       (write `(define (gerbil-main)
                 (with-unwind-protect
                  (lambda ()
@@ -162,26 +161,51 @@ namespace: gxc
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
 
-  (def (not-exclude-module? ctx)
+  (def (not-libgerbil-module? ctx)
+    (not (libgerbil-module? ctx)))
+
+  (def (libgerbil-module? ctx)
     (let (id-str (symbol->string (expander-context-id ctx)))
-      (and (not (string-prefix? "gerbil/" id-str))
-           (not (string-prefix? "std/" id-str)))))
+      (or (string-prefix? "gerbil/" id-str)
+          (string-prefix? "std/" id-str))))
 
   (def (not-file-empty? path)
     (not (file-empty? path)))
+
+  (def (fold-libgerbil-runtime-scm gerbil-staticdir libgerbil-scm)
+    (let (gerbil-runtime-scm
+          (map (lambda (rtm)
+                 (path-expand
+                  (string-append
+                   (string-join (string-split rtm #\/) "__")
+                   ".scm")
+                  gerbil-staticdir))
+               gerbil-runtime-modules))
+      (remove-duplicates (append gerbil-runtime-scm libgerbil-scm))))
+
+  (def (remove-duplicates strlst)
+    (let loop ((rest strlst) (result []))
+      (match rest
+        ([path . rest]
+         (if (member path result)
+           (loop rest result)
+           (loop rest (cons path result))))
+        (else (reverse! result)))))
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home      (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
-           (gxlink           (path-expand "libgerbil-link" gerbil-libdir))
            (tmp              (path-expand
                               (string-append "gxc." (number->string (compile-timestamp-nanos)))
                               "/tmp"))
            (tmp-path         (lambda (f) (path-expand (path-strip-directory f) tmp)))
            (deps             (find-runtime-module-deps ctx))
-           (deps             (filter not-exclude-module? deps))
-           (src-deps-scm     (map find-static-module-file deps))
+           (libgerbil-deps   (filter libgerbil-module? deps))
+           (libgerbil-scm    (map find-static-module-file libgerbil-deps))
+           (libgerbil-scm    (fold-libgerbil-runtime-scm gerbil-staticdir libgerbil-scm))
+           (src-deps         (filter not-libgerbil-module? deps))
+           (src-deps-scm     (map find-static-module-file src-deps))
            (src-deps-scm     (filter not-file-empty? src-deps-scm))
            (src-deps-scm     (map path-expand src-deps-scm))
            (deps-scm         (map tmp-path src-deps-scm))
@@ -217,8 +241,10 @@ namespace: gxc
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so libgerbil.dylib))))
            (rpath (gerbil-rpath gerbil-libdir))
            (builtin-modules
-            (map (lambda (mod) (symbol->string (expander-context-id mod)))
-                 (cons ctx deps))))
+            (remove-duplicates
+             (append gerbil-runtime-modules
+                     (map (lambda (mod) (symbol->string (expander-context-id mod)))
+                          (cons ctx deps))))))
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
         (cut generate-stub builtin-modules))
@@ -227,11 +253,13 @@ namespace: gxc
         (for-each copy-file src-deps-scm deps-scm)
         (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
-                ["-link" "-l" gxlink
+                ["-link"
                  gsc-link-opts ...
+                 libgerbil-scm ...
                  deps-scm ...
                  bin-scm
                  output-scm])
+        ;; TODO parallelize this
         (invoke (gerbil-gsc)
                 ["-obj"
                  gsc-cc-opts ...
