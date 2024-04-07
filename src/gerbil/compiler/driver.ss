@@ -414,7 +414,7 @@ namespace: gxc
         (invoke (gerbil-gcc)
                 ["-w" "-o" output-bin
                  output-o output-o_ output-ld-opts ...
-                 rpath
+                 (if (gerbil-enable-shared?) [rpath] []) ...
                  "-L" gerbil-libdir "-lgambit"
                  default-ld-options ...]))))
 
