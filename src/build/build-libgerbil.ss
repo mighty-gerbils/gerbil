@@ -364,30 +364,32 @@
                          c-path]))))
       (wg-wait! wg))
 
-    ;; and collect them
-    (when (file-exists? libgerbil)
-      (delete-file libgerbil))
-    (displayln "... build " libgerbil)
-    (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
-      (if (eq? mode 'shared)
-        (cond-expand
-          (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
-                               (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
-                               libgerbil-ldd ...
-                               static-module-o-paths ...]))
-          (else (invoke-gcc ["-shared" "-o" libgerbil
-                             libgerbil-ldd ...
-                             static-module-o-paths ...])))
-        (invoke-ar ["cq" libgerbil static-module-o-paths ...]))
-      (call-with-output-file (string-append libgerbil ".ldd")
-        (cut write
-             (filter
-              (cond-expand
-                (darwin
-                 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
-                (else true))
-              libgerbil-ldd)
-             <>)))))
+    ;; Note we don't currently link to libgerbil but rather the individual object files
+    ;; because ... reasons; so don't build it at all.
+    ;; (when (file-exists? libgerbil)
+    ;;   (delete-file libgerbil))
+    ;; (displayln "... build " libgerbil)
+    ;; (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
+    ;;   (if (eq? mode 'shared)
+    ;;     (cond-expand
+    ;;       (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
+    ;;                            (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
+    ;;                            libgerbil-ldd ...
+    ;;                            static-module-o-paths ...]))
+    ;;       (else (invoke-gcc ["-shared" "-o" libgerbil
+    ;;                          libgerbil-ldd ...
+    ;;                          static-module-o-paths ...])))
+    ;;     (invoke-ar ["cq" libgerbil static-module-o-paths ...]))
+    ;;   (call-with-output-file (string-append libgerbil ".ldd")
+    ;;     (cut write
+    ;;          (filter
+    ;;           (cond-expand
+    ;;             (darwin
+    ;;              (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+    ;;             (else true))
+    ;;           libgerbil-ldd)
+    ;;          <>)))
+    ))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))
