@@ -129,7 +129,7 @@ while [ $# -gt 0 ]; do
 
         --disable-shared|--enable-shared=no)
             gerbil_shared=f
-            unset gambit_shared
+            gambit_shared="--disable-shared"
             shift
             ;;
 
