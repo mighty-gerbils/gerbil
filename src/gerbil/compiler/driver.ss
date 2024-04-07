@@ -155,8 +155,8 @@ namespace: gxc
       (write '(gerbil-main))
       (newline)))
 
-  (def (get-libgerbil-ld-opts libgerbil)
-    (call-with-input-file (string-append libgerbil ".ldd") read))
+  (def (get-libgerbil-ld-opts gerbil-libdir)
+    (call-with-input-file (path-expand "libgerbil.ldd" gerbil-libdir) read))
 
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
@@ -234,19 +234,7 @@ namespace: gxc
            (gsc-cc-opts      (gsc-cc-options))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
-           ;; (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
-           ;; (libgerbil.so     (path-expand "libgerbil.so" gerbil-libdir))
-           ;; (libgerbil.dylib  (path-expand "libgerbil.dylib" gerbil-libdir))
-           ;; (libgerbil-ld-opts
-           ;;  (cond
-           ;;   ((file-exists? libgerbil.so)
-           ;;    (get-libgerbil-ld-opts libgerbil.so))
-           ;;   ((file-exists? libgerbil.dylib)
-           ;;    (get-libgerbil-ld-opts libgerbil.dylib))
-           ;;   ((file-exists? libgerbil.a)
-           ;;    (get-libgerbil-ld-opts libgerbil.a))
-           ;;   (else
-           ;;    (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so libgerbil.dylib))))
+           (libgerbil-ld-opts (get-libgerbil-ld-opts gerbil-libdir))
            (rpath (gerbil-rpath gerbil-libdir))
            (builtin-modules
             (remove-duplicates

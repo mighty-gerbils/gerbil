@@ -333,12 +333,14 @@
             ["-e" include-gambit-sharp]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
-         (libgerbil
-          (if (eq? mode 'shared)
-            (library-file-path
-             (cond-expand (darwin "libgerbil.dylib")
-                          (else "libgerbil.so")))
-            (library-file-path "libgerbil.a"))))
+         ;; see note below
+         ;; (libgerbil
+         ;;  (if (eq? mode 'shared)
+         ;;    (library-file-path
+         ;;     (cond-expand (darwin "libgerbil.dylib")
+         ;;                  (else "libgerbil.so")))
+         ;;    (library-file-path "libgerbil.a")))
+         (libgerbil.ldd (library-file-path "libgerbil.ldd")))
     ;; compile each .scm to .c separately as we need them to link in the compiler
     ;; this also allows us to parallelize the build.
     (let (wg (make-wg/build-cores))
@@ -380,15 +382,16 @@
     ;;                          libgerbil-ldd ...
     ;;                          static-module-o-paths ...])))
     ;;     (invoke-ar ["cq" libgerbil static-module-o-paths ...]))
-    ;;   (call-with-output-file (string-append libgerbil ".ldd")
-    ;;     (cut write
-    ;;          (filter
-    ;;           (cond-expand
-    ;;             (darwin
-    ;;              (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
-    ;;             (else true))
-    ;;           libgerbil-ldd)
-    ;;          <>)))
+
+    (call-with-output-file (string-append libgerbil.ldd)
+      (cut write
+           (filter
+            (cond-expand
+              (darwin
+               (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+              (else true))
+            libgerbil-ldd)
+           <>)))
     ))
 
 (def (remove-duplicates lst)
