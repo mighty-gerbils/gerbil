@@ -261,6 +261,12 @@ package: gerbil/compiler
             signature:
             (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#static-module-name (@lambda 1 #f))
+  (declare-type
+   gxc#gerbil-enable-shared?
+   (@lambda 0
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#invoke__% (@lambda 5 #f))
   (declare-type
    gxc#invoke__@
