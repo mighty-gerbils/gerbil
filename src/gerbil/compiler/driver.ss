@@ -287,7 +287,7 @@ namespace: gxc
                  output-o output_-o
                  libgerbil-o ...
                  output-ld-opts ...
-                 rpath
+                 (if (gerbil-enable-shared?) [rpath] []) ...
                  "-L" gerbil-libdir "-lgambit"
                  libgerbil-ld-opts ...])
         ;; clean up
@@ -919,6 +919,9 @@ namespace: gxc
     (static-module-name (symbol->string idstr)))
    (else
     (error "Bad module id" idstr))))
+
+(def (gerbil-enable-shared?)
+  (member "--enable-shared" (string-split (configure-command-string) #\')))
 
 (def (invoke program args
              stdout-redirection: (stdout-redirection #f)

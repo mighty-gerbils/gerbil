@@ -101,12 +101,11 @@
     ([static-include: modf]
      #f)))
 
-(def (fold-cc-options stdlib-spec mode)
-  (let* ((base "-D___LIBRARY")
-         (base (string-append base " -I " (gerbil-static-dir))))
+(def (fold-cc-options stdlib-spec)
+  (let (base (string-append "-I " (gerbil-static-dir)))
     (fold-options "-cc-options" stdlib-spec base)))
 
-(def (fold-ld-options stdlib-spec mode)
+(def (fold-ld-options stdlib-spec)
   (let (base default-ld-options)
     (fold-options "-ld-options" stdlib-spec base)))
 
@@ -304,11 +303,11 @@
       (make-wg cores)
       #f)))
 
-(def (build-libgerbil mode)
+(def (build-libgerbil)
   (let* ((build-spec (build-spec))
          (stdlib-spec (filter-map filter-build-spec build-spec))
-         (cc-options (fold-cc-options stdlib-spec mode))
-         (ld-options (fold-ld-options stdlib-spec mode))
+         (cc-options (fold-cc-options stdlib-spec))
+         (ld-options (fold-ld-options stdlib-spec))
          (stdlib-modules (map car stdlib-spec))
          (ordered-modules (order-modules stdlib-modules))
          (ordered-modules (remove-duplicates
@@ -377,16 +376,5 @@
          (lp rest (cons hd result))))
       (else (reverse result)))))
 
-(def (auto-build-mode)
-  (if (member "--enable-shared" (string-split (configure-command-string) #\'))
-    'shared
-    'library))
-
-(def (main . args)
-  (match args
-    ([] (build-libgerbil (auto-build-mode)))
-    (["shared"] (build-libgerbil 'shared))
-    (["library"] (build-libgerbil 'library))
-    (else
-     (displayln "Usage: build-libgerbil [shared|library]")
-     (exit 1))))
+(def (main)
+  (build-libgerbil))
