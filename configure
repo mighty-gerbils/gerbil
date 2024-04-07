@@ -97,7 +97,7 @@ esac
 gerbil_shared=f
 gambit_tag="${default_gambit_tag}"
 gambit_config="${default_gambit_config}"
-gambit_shared="--enable-shared"
+gambit_shared="--disable-shared"
 
 while [ $# -gt 0 ]; do
     case "$1" in
