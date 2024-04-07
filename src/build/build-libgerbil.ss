@@ -102,9 +102,10 @@
      #f)))
 
 (def (fold-cc-options stdlib-spec mode)
-  (let* ((base (if (eq? mode 'shared)
-                 "-D___SHARED"
-                 "-D___LIBRARY"))
+  (let* (;; (base (if (eq? mode 'shared)
+         ;;         "-D___SHARED"
+         ;;         "-D___LIBRARY"))
+         (base "-D___LIBRARY")
          (base (string-append base " -I " (gerbil-static-dir))))
     (fold-options "-cc-options" stdlib-spec base)))
 
