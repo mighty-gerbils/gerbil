@@ -331,6 +331,7 @@
             ["-e" include-gambit-sharp]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
+         (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
          (libgerbil.ldd (library-file-path "libgerbil.ldd")))
     ;; compile each .scm to .c separately as we need them to link in the compiler
     ;; this also allows us to parallelize the build.
@@ -365,8 +366,7 @@
                (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
               (else true))
             libgerbil-ldd)
-           <>)))
-    ))
+           <>))))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))
