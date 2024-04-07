@@ -102,10 +102,7 @@
      #f)))
 
 (def (fold-cc-options stdlib-spec mode)
-  (let* (;; (base (if (eq? mode 'shared)
-         ;;         "-D___SHARED"
-         ;;         "-D___LIBRARY"))
-         (base "-D___LIBRARY")
+  (let* ((base "-D___LIBRARY")
          (base (string-append base " -I " (gerbil-static-dir))))
     (fold-options "-cc-options" stdlib-spec base)))
 
@@ -334,13 +331,6 @@
             ["-e" include-gambit-sharp]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
-         ;; see note below
-         ;; (libgerbil
-         ;;  (if (eq? mode 'shared)
-         ;;    (library-file-path
-         ;;     (cond-expand (darwin "libgerbil.dylib")
-         ;;                  (else "libgerbil.so")))
-         ;;    (library-file-path "libgerbil.a")))
          (libgerbil.ldd (library-file-path "libgerbil.ldd")))
     ;; compile each .scm to .c separately as we need them to link in the compiler
     ;; this also allows us to parallelize the build.
@@ -367,24 +357,7 @@
                          c-path]))))
       (wg-wait! wg))
 
-    ;; Note we don't currently link to libgerbil but rather the individual object files
-    ;; because ... reasons; so don't build it at all.
-    ;; (when (file-exists? libgerbil)
-    ;;   (delete-file libgerbil))
-    ;; (displayln "... build " libgerbil)
-    ;; (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
-    ;;   (if (eq? mode 'shared)
-    ;;     (cond-expand
-    ;;       (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
-    ;;                            (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
-    ;;                            libgerbil-ldd ...
-    ;;                            static-module-o-paths ...]))
-    ;;       (else (invoke-gcc ["-shared" "-o" libgerbil
-    ;;                          libgerbil-ldd ...
-    ;;                          static-module-o-paths ...])))
-    ;;     (invoke-ar ["cq" libgerbil static-module-o-paths ...]))
-
-    (call-with-output-file (string-append libgerbil.ldd)
+    (call-with-output-file libgerbil.ldd
       (cut write
            (filter
             (cond-expand
