@@ -94,7 +94,7 @@ case $(uname) in
         ;;
 esac
 
-gerbil_shared=t
+gerbil_shared=f
 gambit_tag="${default_gambit_tag}"
 gambit_config="${default_gambit_config}"
 gambit_shared="--enable-shared"
