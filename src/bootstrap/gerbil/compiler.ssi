@@ -2,5 +2,10 @@ prelude: :gerbil/core
 package: gerbil
 namespace: gxc
 
-(%#begin (%#import :gerbil/compiler/driver)
-         (%#export (import: :gerbil/compiler/driver)))
+(%#begin (%#import :gerbil/compiler/driver :gerbil/compiler/base)
+         (%#export
+          (import: :gerbil/compiler/driver)
+          (spec:
+           0
+           execute-pending-compile-jobs!
+           execute-pending-compile-jobs!)))

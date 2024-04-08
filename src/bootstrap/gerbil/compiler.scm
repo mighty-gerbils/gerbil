@@ -1,2 +1,4 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(load-module "gerbil/compiler/driver")
+(begin
+  (load-module "gerbil/compiler/driver")
+  (load-module "gerbil/compiler/base"))

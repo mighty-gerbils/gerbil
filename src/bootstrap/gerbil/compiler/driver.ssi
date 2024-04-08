@@ -96,6 +96,13 @@ namespace: gxc
                            (%#define-runtime
                             gsc-cc-options
                             gxc#gsc-cc-options)))
+         (%#begin (%#define-runtime gsc-ld-options__% gxc#gsc-ld-options__%)
+                  (%#begin (%#define-runtime
+                            gsc-ld-options__0
+                            gxc#gsc-ld-options__0)
+                           (%#define-runtime
+                            gsc-ld-options
+                            gxc#gsc-ld-options)))
          (%#define-runtime
           gsc-static-include-options
           gxc#gsc-static-include-options)
@@ -111,7 +118,5 @@ namespace: gxc
          (%#define-runtime gerbil-enable-shared? gxc#gerbil-enable-shared?)
          (%#begin (%#define-runtime invoke__% gxc#invoke__%)
                   (%#define-runtime invoke__@ gxc#invoke__@)
-                  (%#define-runtime invoke gxc#invoke))
-         (%#define-syntax go! |gxc[:0:]#go!|)
-         (%#define-runtime join! gxc#join!))
+                  (%#define-runtime invoke gxc#invoke)))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/driver~0"))
