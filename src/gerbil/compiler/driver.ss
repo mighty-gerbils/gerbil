@@ -627,24 +627,25 @@ namespace: gxc
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "~0")))))
+                      (string-append idstr "~0"))))
+           (generate-loader
+            (lambda () (generate-loader-code ctx code rt))))
       (cond
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
-        (generate-runtime-code ctx code))
+        (generate-runtime-code ctx code generate-loader))
        (else
         ;; just touch empty runtime code file in static
         (let (path (compile-static-output-file ctx))
-          (with-output-to-scheme-file path void))))
-
-      (generate-loader-code ctx code rt)))
+          (with-output-to-scheme-file path void))
+        (generate-loader)))))
 
   (def (context-timestamp ctx)
     (string->symbol
      (string-append (symbol->string (expander-context-id ctx))
                     "::timestamp")))
 
-  (def (generate-runtime-code ctx code)
+  (def (generate-runtime-code ctx code continue)
     (let* ((lifts (box []))
            (runtime-code
             (parameterize ((current-expander-context ctx)
@@ -664,7 +665,7 @@ namespace: gxc
       (let (scms (compile-static-output-file ctx))
         ;; copy compiled scm0 to static and delete when not keep-scm
         (parameterize ((current-compile-keep-scm #t))
-          (compile-scm-file scm0 runtime-code))
+          (compile-scm-file scm0 runtime-code continue))
         (when (file-exists? scms)
           (delete-file scms))
         (verbose "copy static module " scm0 " => " scms)
@@ -772,7 +773,7 @@ namespace: gxc
     (reverse (unbox modules))))
 
 ;;; utilities
-(def (compile-scm-file path code (phi? #f))
+(def (compile-scm-file path code (phi? #f) (continue void))
   (verbose "compile " path)
   (with-output-to-scheme-file path
     (lambda ()
@@ -787,7 +788,8 @@ namespace: gxc
         (lambda ()
           (gsc-compile-file path phi?)
           (unless (current-compile-keep-scm)
-            (delete-file path))))
+            (delete-file path))
+          (continue)))
     (if (current-compile-parallel)
       (add-compile-job! compile-it `(compile-file ,path))
       (compile-it))))

@@ -280,7 +280,7 @@ TODO:
   (parameterize ((current-directory (settings-srcdir settings))
                  (current-expander-compiling? #t))
     (with-fresh-cache (%make buildspec settings)))
-  (when (settings-parallelize settings)
+  (when (> (settings-parallelize settings) 1)
     (execute-pending-compile-jobs!)))
 
 (def (%make buildspec settings)
@@ -671,7 +671,7 @@ TODO:
          debug: (settings-debug settings)
          generate-ssxi: #t
          verbose: (settings-verbose>=? settings 9)
-         parallel: (settings-parallelize settings)
+         parallel: (> (settings-parallelize settings) 1)
          (when/list gsc-opts [gsc-options: gsc-opts]) ...])
       (compile-module srcpath gxc-opts)))
 
