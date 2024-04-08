@@ -248,8 +248,8 @@ namespace: gxc
                  (locked #f)
                  (unlock
                   (lambda ()
-                   (close-port locked)
-                   (delete-file lock))))
+                    (close-port locked)
+                    (delete-file lock))))
             (let retry ()
               (if (file-exists? lock)
                 (begin
@@ -261,20 +261,16 @@ namespace: gxc
                   (unless locked
                     (retry)))))
 
-            (if (and (file-exists? o-path)
-                     (or (not scm-path)
-                         (file-newer? scm-path o-path)))
-              (go!
-               (unwind-protect
-                 (invoke (gerbil-gsc)
-                         ["-obj"
-                          gsc-cc-opts ...
-                          gsc-static-opts ...
-                          c-path])
-                 (unlock)))
-              (begin
-                (unlock)
-                #f)))))
+            (unwind-protect
+              (when (and (file-exists? o-path)
+                         (or (not scm-path)
+                             (file-newer? scm-path o-path)))
+                (invoke (gerbil-gsc)
+                        ["-obj"
+                         gsc-cc-opts ...
+                         gsc-static-opts ...
+                         c-path]))
+              (unlock)))))
 
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
@@ -290,11 +286,9 @@ namespace: gxc
                          src-bin-scm
                          output-scm])
                 ;; do this in parallel, caching compiled objects
-                (for-each
-                  (lambda (maybe-thread) (and maybe-thread (join! maybe-thread)))
-                  (map compile-obj
-                       [src-deps-scm ... src-bin-scm output-scm #f]
-                       [src-deps-c ...   src-bin-c   output-c   output_-c]))
+                (for-each compile-obj
+                          [src-deps-scm ... src-bin-scm output-scm #f]
+                          [src-deps-c ...   src-bin-c   output-c   output_-c])
                 (invoke (gerbil-gsc)
                         ["-obj"
                          gsc-cc-opts ...
