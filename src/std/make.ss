@@ -103,7 +103,7 @@ TODO:
     (def prefix (or prefix_ (read-package-prefix srcdir)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
-    (def parallelize (gerbil-build-cores parallelize))
+    (def parallelize (gerbil-build-cores parallelize_))
     (def verbose
       (cond
        (verbose_)
