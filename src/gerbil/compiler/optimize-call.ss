@@ -57,7 +57,7 @@ namespace: gxc
                 (if (or (and (!primitive? rator-type)
                              (eq? optimized-rator-id rator-id))
                         (memq optimized-rator-id checked-primitives))
-                  ;; %#call-unchecked unsafe in this case
+                  ;; %#call-unchecked may be unsafe (or is unnecessary) in this case
                   optimized
                   ;; %#call-unchecked to known procedure
                   (xform-wrap-source

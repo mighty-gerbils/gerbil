@@ -41,10 +41,6 @@ namespace: gxc
 (defclass !signature (return effect arguments unchecked)
   final: #t equal: #t print: #t)
 
-(defstruct (!primitive-predicate !procedure) ()
-  constructor: :init!
-  equal: #t)
-
 ;;; MOP
 (defstruct (!class-meta !type) (class)
   constructor: :init!)
@@ -96,10 +92,15 @@ namespace: gxc
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
 (defclass !primitive ())
-(defclass (!primitive-lambda !primitive !lambda) ()
+
+(defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
   equal: #t)
-(defclass (!primitive-case-lambda !primitive !case-lambda) ()
+
+(defstruct (!primitive-lambda !primitive !lambda) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!primitive-case-lambda !primitive !case-lambda) ()
   constructor: :init!
   equal: #t)
 
