@@ -240,8 +240,6 @@
     "net/smtp/headers"
     "net/smtp/api"
     "net/smtp"
-    "net/websocket/server"
-    "net/websocket/api"
     "net/websocket/interface"
     "net/websocket/socket"
     "net/websocket/client"
