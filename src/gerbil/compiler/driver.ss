@@ -667,7 +667,6 @@ namespace: gxc
         (compile-scm-file scmrt loader-code))
       (when (file-exists? scms)
         (delete-file scms))
-      (verbose "copy static module " scm0 " => " scms)
       (if runtime-code?
         (copy-file scm0 scms)
         (call-with-output-file scms void))))
