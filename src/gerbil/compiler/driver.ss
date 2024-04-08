@@ -622,9 +622,11 @@ namespace: gxc
   (def (compile1 ctx)
     (let* ((code (module-context-code ctx))
            (rtm  (let (idstr (module-id->path-string (expander-context-id ctx)))
-                   (string-append idstr "~0"))))
-      (hash-put! (current-compile-runtime-sections) ctx rtm)
-      (generate-runtime-code ctx code rtm)))
+                   (string-append idstr "~0")))
+           (rtc? (apply-find-runtime-code code)))
+      (when rtc?
+        (hash-put! (current-compile-runtime-sections) ctx rtm))
+      (generate-runtime-code ctx code (and rtc? rtm))))
 
   (def (context-timestamp ctx)
     (string->symbol
@@ -632,36 +634,43 @@ namespace: gxc
                     "::timestamp")))
 
   (def (generate-runtime-code ctx code rtm)
-    (let* ((lifts (box []))
+    (let* ((runtime-code? (and rtm #t))
+           (lifts (box []))
            (runtime-code
-            (parameterize ((current-expander-context ctx)
-                           (current-expander-phi 0)
-                           (current-compile-lift lifts)
-                           (current-compile-marks (make-hash-table-eq))
-                           (current-compile-identifiers (make-bound-identifier-table)))
-              (apply-generate-runtime code)))
+            (and runtime-code?
+                 (parameterize ((current-expander-context ctx)
+                                (current-expander-phi 0)
+                                (current-compile-lift lifts)
+                                (current-compile-marks (make-hash-table-eq))
+                                (current-compile-identifiers (make-bound-identifier-table)))
+                   (apply-generate-runtime code))))
            (runtime-code
-            (if (null? (unbox lifts))
-              runtime-code
-              ['begin (reverse (unbox lifts)) ... runtime-code]))
+            (and runtime-code?
+                 (if (null? (unbox lifts))
+                   runtime-code
+                   ['begin (reverse (unbox lifts)) ... runtime-code])))
            (runtime-code
-            ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
-                    runtime-code])
+            (and runtime-code?
+                 ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
+                         runtime-code]))
            (loader-code
             (parameterize ((current-expander-context ctx))
               (apply-generate-loader code)))
            (loader-code
-            ['begin loader-code ['load-module rtm]])
+            ['begin loader-code (if runtime-code? ['load-module rtm] '(begin))])
            (scm0 (compile-output-file ctx 0 ".scm"))
            (scmrt (compile-output-file ctx #f ".scm"))
            (scms (compile-static-output-file ctx)))
-      (compile-scm-file scm0 runtime-code)
+      (when runtime-code?
+        (compile-scm-file scm0 runtime-code))
       (parameterize ((current-compile-gsc-options #f))
         (compile-scm-file scmrt loader-code))
       (when (file-exists? scms)
         (delete-file scms))
       (verbose "copy static module " scm0 " => " scms)
-      (copy-file scm0 scms)))
+      (if runtime-code?
+        (copy-file scm0 scms)
+        (call-with-output-file scms void))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
