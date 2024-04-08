@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1712299482)
+  (define gerbil/runtime/util::timestamp 1712533288)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)
@@ -22,7 +22,7 @@
                       (raise-contract-violation-error
                        '"contract violation"
                        'context:
-                       '"\"gerbil/runtime/util.ss\"@62.23-62.28"
+                       '"\"gerbil/runtime/util.ss\"@62.20-62.25"
                        'contract:
                        'string?
                        'value:
