@@ -307,9 +307,7 @@ namespace: gxc
                          "-L" gerbil-libdir "-lgambit"
                          libgerbil-ld-opts ...])
                 ;; clean up
-                (for-each delete-file [output-c output_-c output-o output_-o])
-                (unless (current-compile-keep-scm)
-                  (delete-file output-scm))))
+                (for-each delete-file [output-c output_-c output-o output_-o])))
           (if (current-compile-parallel)
             (add-compile-job! compile-it)
             (compile-it))))))
@@ -437,9 +435,7 @@ namespace: gxc
                          output-o output-o_ output-ld-opts ...
                          (if (gerbil-enable-shared?) [rpath] []) ...
                          "-L" gerbil-libdir "-lgambit"
-                         default-ld-options ...])
-                (unless (current-compile-keep-scm)
-                  (delete-file output-scm))))
+                         default-ld-options ...])))
           (if (current-compile-parallel)
             (add-compile-job! compile-it)
             (compile-it))))))
@@ -669,9 +665,7 @@ namespace: gxc
         (when (file-exists? scms)
           (delete-file scms))
         (verbose "copy static module " scm0 " => " scms)
-        (copy-file scm0 scms)
-        (unless (or (current-compile-keep-scm) (current-compile-parallel))
-          (delete-file scm0)))))
+        (copy-file scm0 scms))))
 
   (def (generate-loader-code ctx code rt)
     (let* ((loader-code
@@ -787,8 +781,6 @@ namespace: gxc
   (let (compile-it
         (lambda ()
           (gsc-compile-file path phi?)
-          (unless (current-compile-keep-scm)
-            (delete-file path))
           (continue)))
     (if (current-compile-parallel)
       (add-compile-job! compile-it `(compile-file ,path))
@@ -862,7 +854,7 @@ namespace: gxc
         (gsc-cc-opts (gsc-cc-options phi?))
         (gsc-ld-opts (gsc-ld-options phi?)))
     (invoke (gerbil-gsc)
-            [gsc-link-opts ... gsc-cc-opts ... gsc-ld-opts ... path])))
+            [gsc-cc-opts ... gsc-ld-opts ... gsc-link-opts ... path])))
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
