@@ -804,7 +804,7 @@ namespace: gxc
       ([opt . rest]
        (lp rest (cons opt opts)))
       (else
-       (if (and (not phi?) (current-compile-debug))
+       (if (current-compile-debug)
          ["-debug-source" "-track-scheme" (reverse opts) ...]
          (reverse opts))))))
 
@@ -812,15 +812,29 @@ namespace: gxc
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
         (["-cc-options" opt . rest]
-         (lp rest (cons* opt "-cc-options" opts)))
+         (lp rest (if phi? opts (cons* opt "-cc-options" opts))))
         (["-ld-options" _ . rest]
          (lp rest opts))
         ([_ . rest]
          (lp rest opts))
         (else
-         (if (and (not phi?) (current-compile-debug))
-           ["-cc-options" "-g" (reverse opts) ...]
-           (reverse opts))))))
+         (if (current-compile-debug)
+           ["-cc-options" "-g" (reverse! opts) ...]
+           (reverse! opts))))))
+
+(def (gsc-ld-options (phi? #f))
+  (if phi?
+    []
+    (let lp ((rest (current-compile-gsc-options)) (opts []))
+      (match rest
+        (["-ld-options" opt . rest]
+         (lp rest (cons* opt "-ld-options" opts)))
+        (["-cc-options" _ . rest]
+         (lp rest opts))
+        ([_ . rest]
+         (lp rest opts))
+        (else
+         (reverse! opts))))))
 
 (def (gsc-static-include-options staticdir)
   (let (user-staticdir
@@ -844,31 +858,11 @@ namespace: gxc
   (not (string-empty? str)))
 
 (def (gsc-compile-file path phi?)
-  (def (gsc-link-path base-path)
-    (let lp ((n 1))
-      (let (path (string-append base-path ".o" (number->string n)))
-        (if (file-exists? path)
-          (lp (1+ n))
-          path))))
-
-  (let* ((base-path (path-strip-extension path))
-         (path-c (string-append base-path ".c"))
-         (path-o (string-append base-path ".o"))
-         (link-path (gsc-link-path base-path))
-         (link-path-c (string-append link-path ".c"))
-         (link-path-o (string-append link-path ".o"))
-         (gsc-link-opts (gsc-link-options phi?))
-         (gsc-cc-opts (gsc-cc-options phi?))
-         (gcc-ld-opts (gcc-ld-options)))
+  (let ((gsc-link-opts (gsc-link-options phi?))
+        (gsc-cc-opts (gsc-cc-options phi?))
+        (gsc-ld-opts (gsc-ld-options phi?)))
     (invoke (gerbil-gsc)
-            ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
-            stdout-redirection: #t)
-    (invoke (gerbil-gsc)
-            ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
-            stdout-redirection: #t)
-    (invoke (gerbil-gcc)
-            ["-w" "-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
-    (for-each delete-file [path-c path-o link-path-c link-path-o])))
+            [gsc-link-opts ... gsc-cc-opts ... gsc-ld-opts ... path])))
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
