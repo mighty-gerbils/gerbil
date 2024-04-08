@@ -621,19 +621,17 @@ namespace: gxc
 (def (compile-runtime-code ctx)
   (def (compile1 ctx)
     (let* ((code (module-context-code ctx))
-           (rt   (let (idstr (module-id->path-string (expander-context-id ctx)))
-                   (string-append idstr "~0")))
-           (generate-loader
-            (lambda () (generate-loader-code ctx code rt))))
-      (hash-put! (current-compile-runtime-sections) ctx rt)
-      (generate-runtime-code ctx code generate-loader)))
+           (rtm  (let (idstr (module-id->path-string (expander-context-id ctx)))
+                   (string-append idstr "~0"))))
+      (hash-put! (current-compile-runtime-sections) ctx rtm)
+      (generate-runtime-code ctx code rtm)))
 
   (def (context-timestamp ctx)
     (string->symbol
      (string-append (symbol->string (expander-context-id ctx))
                     "::timestamp")))
 
-  (def (generate-runtime-code ctx code continue)
+  (def (generate-runtime-code ctx code rtm)
     (let* ((lifts (box []))
            (runtime-code
             (parameterize ((current-expander-context ctx)
@@ -649,26 +647,21 @@ namespace: gxc
            (runtime-code
             ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
                     runtime-code])
-           (scm0 (compile-output-file ctx 0 ".scm")))
-      (let (scms (compile-static-output-file ctx))
-        ;; copy compiled scm0 to static and delete when not keep-scm
-        (parameterize ((current-compile-keep-scm #t))
-          (compile-scm-file scm0 runtime-code continue))
-        (when (file-exists? scms)
-          (delete-file scms))
-        (verbose "copy static module " scm0 " => " scms)
-        (copy-file scm0 scms))))
-
-  (def (generate-loader-code ctx code rt)
-    (let* ((loader-code
+           (loader-code
             (parameterize ((current-expander-context ctx))
               (apply-generate-loader code)))
            (loader-code
-            (if rt
-              ['begin loader-code ['load-module rt]]
-              loader-code)))
+            ['begin loader-code ['load-module rtm]])
+           (scm0 (compile-output-file ctx 0 ".scm"))
+           (scmrt (compile-output-file ctx #f ".scm"))
+           (scms (compile-static-output-file ctx)))
+      (compile-scm-file scm0 runtime-code)
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
+        (compile-scm-file scmrt loader-code))
+      (when (file-exists? scms)
+        (delete-file scms))
+      (verbose "copy static module " scm0 " => " scms)
+      (copy-file scm0 scms)))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -759,7 +752,7 @@ namespace: gxc
     (reverse (unbox modules))))
 
 ;;; utilities
-(def (compile-scm-file path code (phi? #f) (continue void))
+(def (compile-scm-file path code (phi? #f))
   (verbose "compile " path)
   (with-output-to-scheme-file path
     (lambda ()
@@ -772,8 +765,7 @@ namespace: gxc
       (pretty-print code)))
   (let (compile-it
         (lambda ()
-          (gsc-compile-file path phi?)
-          (continue)))
+          (gsc-compile-file path phi?)))
     (if (current-compile-parallel)
       (add-compile-job! compile-it `(compile-file ,path))
       (compile-it))))
