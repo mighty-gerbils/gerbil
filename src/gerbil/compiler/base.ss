@@ -60,6 +60,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-context
   (make-parameter #f))
+(def current-compile-parallel
+  (make-parameter #f))
 
 ;; locally scoped identifiers
 (def current-compile-local-env
@@ -81,10 +83,10 @@ namespace: gxc
   (when (current-compile-verbose)
     (with-verbose-mutex (apply displayln args))))
 
-(def +verbose-mutex+ (make-mutex 'compiler/driver))
+(def __verbose-mutex (make-mutex 'compiler/driver))
 (defrules with-verbose-mutex ()
   ((_ expr)
-   (with-lock +verbose-mutex+ (lambda () expr))))
+   (with-lock __verbose-mutex (lambda () expr))))
 
 
 ;; these characters are restricted to avoid confusing shells and other tools
@@ -196,3 +198,66 @@ namespace: gxc
   (if (syntax-quote? stx)
     (generate-runtime-binding-id stx)
     (stx-e stx)))
+
+;; parallel build support
+(def __compile-jobs [])
+(def __available-cores
+  (string->number
+   (getenv "GERBIL_BUILD_CORES" "1")))
+(def __jobs-mx (make-mutex))
+(def __jobs-cv (make-condition-variable))
+
+(def (add-compile-job! thunk)
+  (mutex-lock! __jobs-mx)
+  (let (job (make-compile-job thunk (current-expander-context)))
+    (set! __compile-jobs (cons job __compile-jobs)))
+  (mutex-unlock! __jobs-mx))
+
+(def (pending-compile-jobs)
+  (mutex-lock! __jobs-mx)
+  (let (result (reverse! __compile-jobs))
+    (set! __compile-jobs [])
+    (mutex-unlock! __jobs-mx)
+    result))
+
+(def (execute-pending-compile-jobs!)
+  (let loop ()
+    (let (pending (pending-compile-jobs))
+      (unless (null? pending)
+        (for-each thread-start! pending)
+        (for-each join! pending)))))
+
+(def (make-compile-job thunk name)
+  (make-thread
+   (lambda ()
+     (let loop ()
+       (mutex-lock! __jobs-mx)
+       (if (> __available-cores 0)
+         (begin
+           (set! __available-cores (1- __available-cores))
+           (mutex-unlock! __jobs-mx)
+           (with-verbose-mutex
+            (displayln "... execute compile job " name))
+           (with-catch
+            (lambda (e) (with-verbose-mutex (display-exception e)))
+            thunk)
+           (mutex-lock! __jobs-mx)
+           (set! __available-cores (fx1+ __available-cores))
+           (condition-variable-signal! __jobs-cv)
+           (mutex-unlock! __jobs-mx))
+         (begin
+           (mutex-unlock! __jobs-mx __jobs-cv)
+           (loop)))))
+   name))
+
+(defrules go! ()
+  ((_ expr)
+   (spawn (lambda () expr))))
+
+(def (join! thread)
+  (with-catch
+   (lambda (exn)
+     (if (uncaught-exception? exn)
+       (raise (uncaught-exception-reason exn))
+       (raise exn)))
+   (cut thread-join! thread)))
