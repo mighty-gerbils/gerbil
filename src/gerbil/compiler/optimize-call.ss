@@ -53,11 +53,19 @@ namespace: gxc
          (let (optimized {rator-type.optimize-call self stx #'(rand ...)})
            (ast-case optimized (%#call %#ref)
              ((%#call (%#ref optimized-rator) arg ...)
-              (let (optimized-rator-id (identifier-symbol #'optimized-rator))
-                (if (or (and (!primitive? rator-type)
-                             (eq? optimized-rator-id rator-id))
-                        (memq optimized-rator-id checked-primitives))
-                  ;; %#call-unchecked may be unsafe (or is unnecessary) in this case
+              (let* ((optimized-rator-id (identifier-symbol #'optimized-rator))
+                     (rator-type (or (optimizer-lookup-type optimized-rator-id)
+                                     rator-type)))
+                (if (or
+                      ;; may be unsafe or unecessary to %#call-unchecked
+                      (!primitive? rator-type)
+                      ;; definitely unsafe, can't #%call-unchecked
+                      (memq optimized-rator-id checked-primitives)
+                      ;; in the current module, no need for %#call-unchecked
+                      ;; because of module block semantics
+                      (and (!procedure? rator-type)
+                           (eq? (!procedure-origin rator-type)
+                                (expander-context-id (current-expander-context)))))
                   optimized
                   ;; %#call-unchecked to known procedure
                   (xform-wrap-source
@@ -78,7 +86,10 @@ namespace: gxc
        (cond
         ((and rator-type
               (eq? (!type-id rator-type) 'procedure)
-              (not (!primitive? rator-type)))
+              (not (!primitive? rator-type))
+              (not (and (!procedure? rator-type)
+                        (eq? (!procedure-origin rator-type)
+                             (expander-context-id (current-expander-context))))))
          ;; known to be procedure, %#call-unchecked
          (xform-wrap-source
           (cons* '%#call-unchecked

@@ -491,9 +491,8 @@ namespace: gxc
 
 (defmethod {return-type !procedure}
   (lambda (self ctx stx args)
-    (alet* ((signature self.signature)
-            (return (&!signature-return signature)))
-      (optimizer-resolve-class stx return))))
+    (and self.signature
+         (optimizer-resolve-class stx self.signature.return))))
 
 (defmethod {apply-return-type !procedure}
   !procedure::return-type)
@@ -744,6 +743,10 @@ namespace: gxc
        (rest [0])))))
 
 (def (lambda-form-infer-signature form)
+  (def (default-signature)
+    (make-!signature return: 't::t
+                     origin: (expander-context-id (current-expander-context))))
+
   (ast-case form ()
     ((hd body)
      (cond
@@ -752,12 +755,14 @@ namespace: gxc
        => (lambda (return-type)
             (cond
              ((!procedure? return-type)
-              (make-!signature return: 'procedure::t))
+              (make-!signature return: 'procedure::t
+                               origin: (expander-context-id (current-expander-context))))
              ((optimizer-lookup-class-name return-type)
               => (lambda (return-type-name)
-                   (make-!signature return: return-type-name)))
-             (else #f))))
-      (else #f)))))
+                   (make-!signature return: return-type-name
+                                    origin: (expander-context-id (current-expander-context)))))
+             (else (default-signature)))))
+      (else (default-signature))))))
 
 (def (extract-lambda-signature-begin-annotation% self stx)
   (ast-case stx (@type.signature)
@@ -780,7 +785,9 @@ namespace: gxc
                    (cons* unchecked: (identifier-symbol arg) result)))
             (else
              (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
-         ([] (apply make-!signature result))
+         ([] (apply make-!signature
+               origin: (expander-context-id (current-expander-context))
+               result))
          (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
     ((_ ann body)
      (compile-e self #'body))))
