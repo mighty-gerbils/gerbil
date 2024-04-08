@@ -128,10 +128,9 @@ TODO:
   ;; Except we need to compute (available-memory) and calibrate (memory-per-compilation-cpu)...
   ;; Until then, we disable the parallel build as it confuses a lot of beginners.
   (cond
-   ((real? cpu-count-spec) cpu-count-spec)
+   ((integer? cpu-count-spec) cpu-count-spec)
    ((eq? cpu-count-spec #t)
-    (with-catch (lambda (_) 0) ;; if not defined and an integer, default to 0
-                (lambda () (string->number (getenv "GERBIL_BUILD_CORES")))))
+    (: (string->number (getenv "GERBIL_BUILD_CORES" "0")) :integer))
    (else 0)))
 
 (def (settings-verbose>=? settings level)
@@ -662,7 +661,6 @@ TODO:
 ;; TODO: split that (and more?) into many action. See :gerbil/compiler/driver
 (def (gxc-compile mod opts settings (invoke-gsc? #t))
   (message "... compile " mod)
-  (def foreground? (and (pair? opts) (pair? (car opts)) (pgetq foreground: (car opts))))
   (def gsc-opts (gsc-compile-opts opts))
   (def srcpath (source-path mod ".ss" settings))
   (let (gxc-opts

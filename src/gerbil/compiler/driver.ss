@@ -253,7 +253,7 @@ namespace: gxc
             (let retry ()
               (if (file-exists? lock)
                 (begin
-                  (thread-sleep! .1)
+                  (thread-sleep! .01)
                   (retry))
                 (begin
                   (set! locked
