@@ -45,12 +45,6 @@ TODO:
   * Allow for extra-dependency: to a list of other targets (as identified by spec-file ?)
     in the plist of gxc:, etc.
 
-  * Divide the building of a spec into multiple actions, some foreground
-    (using Gerbil's non-thread-safe compiler), some background (spawning gsc),
-    each having inputs and outputs, backgroundability, and a perform method.
-    The inputs can have changed from the cache if the dependencies were out of date.
-    The outputs can change compare to the cache if the action was out of date.
-
   * Provide a DSL to extend the spec language, each rule being defining one
     or multiple actions, each with inputs and outputs, its backgroundability,
     is perform method.
@@ -87,8 +81,7 @@ TODO:
    libdir-prefix parallelize
    full-program-optimization
    build-release
-   build-optimized
-   parallel)
+   build-optimized)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
@@ -98,11 +91,10 @@ TODO:
       optimize: (optimize #t) debug: (debug_ #f)
       static: (_ignore-static #t)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
-      parallelize: (parallelize_ #f)
+      parallelize: (parallelize_ #t)
       full-program-optimization: (full-program-optimization #f)
       build-release: (build-release #f)
-      build-optimized: (build-optimized #f)
-      parallel: (parallel #f))
+      build-optimized: (build-optimized #f))
 
     (def gerbil-path_ (delay (gerbil-path)))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
@@ -128,8 +120,7 @@ TODO:
       libdir-prefix parallelize
       full-program-optimization
       build-release
-      build-optimized
-      parallel)))
+      build-optimized)))
 
 (def (gerbil-build-cores (cpu-count-spec #t))
   ;; TODO: for the default (catch) case, use something like
@@ -290,7 +281,7 @@ TODO:
   (parameterize ((current-directory (settings-srcdir settings))
                  (current-expander-compiling? #t))
     (with-fresh-cache (%make buildspec settings)))
-  (when (settings-parallel settings)
+  (when (settings-parallelize settings)
     (execute-pending-compile-jobs!)))
 
 (def (%make buildspec settings)
@@ -674,33 +665,17 @@ TODO:
   (def foreground? (and (pair? opts) (pair? (car opts)) (pgetq foreground: (car opts))))
   (def gsc-opts (gsc-compile-opts opts))
   (def srcpath (source-path mod ".ss" settings))
-  (if (or foreground? (> 1 (settings-parallelize settings)))
-    (let ((gxc-opts
-           [invoke-gsc: invoke-gsc?
-            keep-scm: (not invoke-gsc?)
-            output-dir: (settings-libdir settings)
-            optimize: (settings-optimize settings)
-            debug: (settings-debug settings)
-            generate-ssxi: #t
-            verbose: (settings-verbose>=? settings 9)
-            (when/list gsc-opts [gsc-options: gsc-opts]) ...]))
-      (compile-module srcpath gxc-opts))
-    (let* ((arguments
-            ["-d" (settings-libdir settings)
-             (when/list (not invoke-gsc?) ["-s" "-S"]) ...
-             (when/list (settings-optimize settings) ["-O"]) ...
-             (when/list (settings-debug settings) ["-g"]) ...
-             (when/list (settings-verbose>=? settings 9) ["-v"]) ...
-             (when/list gsc-opts (append-map (lambda (x) ["-gsc-flag" x]) gsc-opts)) ...
-             srcpath])
-           (_ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
-           (proc (open-process [path: (gerbil-gxc)
-                                arguments: arguments
-                                stdout-redirection: #f]))
-           (status (process-status proc)))
-      (close-port proc)
-      (unless (zero? status)
-        (error "Compilation error; gxc exited with nonzero status" status)))))
+  (let (gxc-opts
+        [invoke-gsc: invoke-gsc?
+         keep-scm: (not invoke-gsc?)
+         output-dir: (settings-libdir settings)
+         optimize: (settings-optimize settings)
+         debug: (settings-debug settings)
+         generate-ssxi: #t
+         verbose: (settings-verbose>=? settings 9)
+         parallel: (settings-parallelize settings)
+         (when/list gsc-opts [gsc-options: gsc-opts]) ...])
+      (compile-module srcpath gxc-opts)))
 
 (def (gsc-libpath mod settings)
   (def libdir-prefix (settings-libdir-prefix settings))
