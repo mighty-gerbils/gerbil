@@ -242,7 +242,6 @@
     "net/smtp"
     "net/websocket/server"
     "net/websocket/api"
-    "net/websocket"
     "net/websocket/interface"
     "net/websocket/socket"
     "net/websocket/client"
