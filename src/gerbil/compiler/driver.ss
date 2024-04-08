@@ -621,20 +621,12 @@ namespace: gxc
 (def (compile-runtime-code ctx)
   (def (compile1 ctx)
     (let* ((code (module-context-code ctx))
-           (rt (and (apply-find-runtime-code code)
-                    (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "~0"))))
+           (rt   (let (idstr (module-id->path-string (expander-context-id ctx)))
+                   (string-append idstr "~0")))
            (generate-loader
             (lambda () (generate-loader-code ctx code rt))))
-      (cond
-       (rt
-        (hash-put! (current-compile-runtime-sections) ctx rt)
-        (generate-runtime-code ctx code generate-loader))
-       (else
-        ;; just touch empty runtime code file in static
-        (let (path (compile-static-output-file ctx))
-          (with-output-to-scheme-file path void))
-        (generate-loader)))))
+      (hash-put! (current-compile-runtime-sections) ctx rt)
+      (generate-runtime-code ctx code generate-loader)))
 
   (def (context-timestamp ctx)
     (string->symbol
