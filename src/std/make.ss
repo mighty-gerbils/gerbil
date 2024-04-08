@@ -87,7 +87,8 @@ TODO:
    libdir-prefix parallelize
    full-program-optimization
    build-release
-   build-optimized)
+   build-optimized
+   parallel)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
@@ -100,7 +101,8 @@ TODO:
       parallelize: (parallelize_ #f)
       full-program-optimization: (full-program-optimization #f)
       build-release: (build-release #f)
-      build-optimized: (build-optimized #f))
+      build-optimized: (build-optimized #f)
+      parallel: (parallel #f))
 
     (def gerbil-path_ (delay (gerbil-path)))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
@@ -126,7 +128,8 @@ TODO:
       libdir-prefix parallelize
       full-program-optimization
       build-release
-      build-optimized)))
+      build-optimized
+      parallel)))
 
 (def (gerbil-build-cores (cpu-count-spec #t))
   ;; TODO: for the default (catch) case, use something like
@@ -286,7 +289,9 @@ TODO:
   (def settings (apply make-settings keywords))
   (parameterize ((current-directory (settings-srcdir settings))
                  (current-expander-compiling? #t))
-    (with-fresh-cache (%make buildspec settings))))
+    (with-fresh-cache (%make buildspec settings)))
+  (when (settings-parallel settings)
+    (execute-pending-compile-jobs!)))
 
 (def (%make buildspec settings)
 

@@ -207,9 +207,9 @@ namespace: gxc
 (def __jobs-mx (make-mutex))
 (def __jobs-cv (make-condition-variable))
 
-(def (add-compile-job! thunk)
+(def (add-compile-job! thunk (name (current-compile-context)))
   (mutex-lock! __jobs-mx)
-  (let (job (make-compile-job thunk (current-expander-context)))
+  (let (job (make-compile-job thunk name))
     (set! __compile-jobs (cons job __compile-jobs)))
   (mutex-unlock! __jobs-mx))
 

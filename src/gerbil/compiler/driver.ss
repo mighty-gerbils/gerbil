@@ -208,10 +208,6 @@ namespace: gxc
     (let* ((gerbil-home      (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
-           (tmp              (path-expand
-                              (string-append "gxc." (number->string (compile-timestamp-nanos)))
-                              "/tmp"))
-           (tmp-path         (lambda (f) (path-expand (path-strip-directory f) tmp)))
            (deps             (find-runtime-module-deps ctx))
            (libgerbil-deps   (filter libgerbil-module? deps))
            (libgerbil-scm    (map find-static-module-file libgerbil-deps))
@@ -248,15 +244,37 @@ namespace: gxc
 
       (def (compile-obj scm-path c-path)
         (let (o-path (replace-extension c-path ".o"))
-          (if (and (file-exists? o-path)
-                   (or (not scm-path)
-                       (file-newer? scm-path o-path)))
-            (go! (invoke (gerbil-gsc)
+          (let* ((lock (string-append o-path ".lock"))
+                 (locked #f)
+                 (unlock
+                  (lambda ()
+                   (close-port locked)
+                   (delete-file lock))))
+            (let retry ()
+              (if (file-exists? lock)
+                (begin
+                  (thread-sleep! .1)
+                  (retry))
+                (begin
+                  (set! locked
+                    (with-catch false (cut open-file [path: lock create: #t])))
+                  (unless locked
+                    (retry)))))
+
+            (if (and (file-exists? o-path)
+                     (or (not scm-path)
+                         (file-newer? scm-path o-path)))
+              (go!
+               (unwind-protect
+                 (invoke (gerbil-gsc)
                          ["-obj"
                           gsc-cc-opts ...
                           gsc-static-opts ...
-                          c-path]))
-            #f)))
+                          c-path])
+                 (unlock)))
+              (begin
+                (unlock)
+                #f)))))
 
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
@@ -264,7 +282,6 @@ namespace: gxc
       (when (current-compile-invoke-gsc)
         (let (compile-it
               (lambda ()
-                (with-driver-mutex (create-directory tmp))
                 (invoke (gerbil-gsc)
                         ["-link"
                          gsc-link-opts ...
@@ -600,14 +617,8 @@ namespace: gxc
       (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
 
-    (if (null? (lift-nested-modules ctx))
-      (let* ((thr1 (go! (compile-runtime-code ctx)))
-             (thr2 (go! (compile-meta-code ctx))))
-        (join! thr1)
-        (join! thr2))
-      (begin
-        (compile-runtime-code ctx)
-        (compile-meta-code ctx)))
+    (compile-runtime-code ctx)
+    (compile-meta-code ctx)
 
     (when (and (current-compile-optimize)
                (current-compile-generate-ssxi))
@@ -726,8 +737,7 @@ namespace: gxc
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
-    (let (threads (map (lambda (code) (go! (compile-phi code))) phi-code))
-      (for-each join! threads))))
+    (for-each compile-phi phi-code)))
 
 (def (compile-ssxi-code ctx)
   (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
@@ -785,7 +795,7 @@ namespace: gxc
           (unless (current-compile-keep-scm)
             (delete-file path))))
     (if (current-compile-parallel)
-      (add-compile-job! compile-it)
+      (add-compile-job! compile-it `(compile-file ,path))
       (compile-it))))
 
 (def (gsc-link-options (phi? #f))
