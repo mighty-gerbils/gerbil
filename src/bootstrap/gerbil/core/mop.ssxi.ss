@@ -2,9 +2,51 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/core
 
 (begin
-  (declare-type |gerbil/core/mop~MOP-1[1]#module-type-id| (@lambda 1 #f))
-  (declare-type |gerbil/core/mop~MOP-1[1]#make-class-type-id| (@lambda 1 #f))
-  (declare-type |gerbil/core/mop~MOP-1[1]#generate-typedef| (@lambda 2 #f))
+  (declare-type
+   |gerbil/core/mop~MOP-1[1]#module-type-id|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-1)))
+  (declare-type
+   |gerbil/core/mop~MOP-1[1]#make-class-type-id|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-1)))
+  (declare-type
+   |gerbil/core/mop~MOP-1[1]#generate-typedef|
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-1)))
   (declare-class
    gerbil/core/mop~MOP-2#class-type-info::t
    (@class gerbil.core#class-type-info::t
@@ -321,17 +363,105 @@ package: gerbil/core
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #f))
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-2)))
   (declare-type
    gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-2)))
   (declare-type
    gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-2)))
   (declare-type
    gerbil/core/mop~MOP-2#syntax-local-class-type-info?
    (@case-lambda
-    (1 gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0)
-    (2 gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)))
-  (declare-type |gerbil/core/mop~MOP-4[1]#typedef-body?| (@lambda 1 #f))
-  (declare-type |gerbil/core/mop~MOP-4[1]#generate-defclass| (@lambda 5 #f)))
+    (1
+     gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/core/mop~MOP-2))
+    (2
+     gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/core/mop~MOP-2))))
+  (declare-type
+   |gerbil/core/mop~MOP-4[1]#typedef-body?|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-4)))
+  (declare-type
+   |gerbil/core/mop~MOP-4[1]#generate-defclass|
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-4))))

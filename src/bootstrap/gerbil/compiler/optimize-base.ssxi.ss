@@ -88,7 +88,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-class
    gxc#!type::t
    (@class gxc#!type::t () (object::t t::t) (id) (id) #f #t #f #f #f #f))
@@ -146,46 +155,12 @@ package: gerbil/compiler
   (declare-type gxc#&!alias-id (@accessor gxc#!alias::t id #f))
   (declare-type gxc#&!alias-id-set! (@mutator gxc#!alias::t id #f))
   (declare-class
-   gxc#!procedure::t
-   (@class gxc#!procedure::t
-           (gxc#!type::t)
-           (gxc#!type::t object::t t::t)
-           (signature)
-           (id signature)
-           #f
-           #t
-           #f
-           #f
-           #f
-           #f))
-  (declare-type
-   gxc#!procedure::t
-   (optimizer-resolve-class '(typedecl gxc#!procedure::t) 'class::t))
-  (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
-  (declare-type gxc#make-!procedure (@constructor gxc#!procedure::t))
-  (declare-type
-   gxc#!procedure-signature
-   (@accessor gxc#!procedure::t signature #t))
-  (declare-type gxc#!procedure-id (@accessor gxc#!procedure::t id #t))
-  (declare-type
-   gxc#!procedure-signature-set!
-   (@mutator gxc#!procedure::t signature #t))
-  (declare-type gxc#!procedure-id-set! (@mutator gxc#!procedure::t id #t))
-  (declare-type
-   gxc#&!procedure-signature
-   (@accessor gxc#!procedure::t signature #f))
-  (declare-type gxc#&!procedure-id (@accessor gxc#!procedure::t id #f))
-  (declare-type
-   gxc#&!procedure-signature-set!
-   (@mutator gxc#!procedure::t signature #f))
-  (declare-type gxc#&!procedure-id-set! (@mutator gxc#!procedure::t id #f))
-  (declare-class
    gxc#!signature::t
    (@class gxc#!signature::t
            ()
            (object::t t::t)
-           (return effect arguments unchecked)
-           (return effect arguments unchecked)
+           (return effect arguments unchecked origin)
+           (return effect arguments unchecked origin)
            #f
            #f
            #t
@@ -205,6 +180,7 @@ package: gerbil/compiler
   (declare-type
    gxc#!signature-unchecked
    (@accessor gxc#!signature::t unchecked #t))
+  (declare-type gxc#!signature-origin (@accessor gxc#!signature::t origin #t))
   (declare-type
    gxc#!signature-return-set!
    (@mutator gxc#!signature::t return #t))
@@ -217,6 +193,9 @@ package: gerbil/compiler
   (declare-type
    gxc#!signature-unchecked-set!
    (@mutator gxc#!signature::t unchecked #t))
+  (declare-type
+   gxc#!signature-origin-set!
+   (@mutator gxc#!signature::t origin #t))
   (declare-type gxc#&!signature-return (@accessor gxc#!signature::t return #f))
   (declare-type gxc#&!signature-effect (@accessor gxc#!signature::t effect #f))
   (declare-type
@@ -225,6 +204,7 @@ package: gerbil/compiler
   (declare-type
    gxc#&!signature-unchecked
    (@accessor gxc#!signature::t unchecked #f))
+  (declare-type gxc#&!signature-origin (@accessor gxc#!signature::t origin #f))
   (declare-type
    gxc#&!signature-return-set!
    (@mutator gxc#!signature::t return #f))
@@ -237,52 +217,102 @@ package: gerbil/compiler
   (declare-type
    gxc#&!signature-unchecked-set!
    (@mutator gxc#!signature::t unchecked #f))
+  (declare-type
+   gxc#&!signature-origin-set!
+   (@mutator gxc#!signature::t origin #f))
   (declare-class
-   gxc#!primitive-predicate::t
-   (@class gxc#!primitive-predicate::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t object::t t::t)
-           ()
+   gxc#!procedure::t
+   (@class gxc#!procedure::t
+           (gxc#!type::t)
+           (gxc#!type::t object::t t::t)
+           (signature)
            (id signature)
-           :init!
+           #f
            #t
            #f
            #f
            #f
-           ((:init! . gxc#!primitive-predicate:::init!))))
+           #f))
   (declare-type
-   gxc#!primitive-predicate::t
-   (optimizer-resolve-class '(typedecl gxc#!primitive-predicate::t) 'class::t))
+   gxc#!procedure::t
+   (optimizer-resolve-class '(typedecl gxc#!procedure::t) 'class::t))
+  (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
   (declare-type
-   gxc#!primitive-predicate?
-   (@predicate gxc#!primitive-predicate::t))
+   gxc#!procedure-signature
+   (@accessor gxc#!procedure::t signature #t))
+  (declare-type gxc#!procedure-id (@accessor gxc#!procedure::t id #t))
   (declare-type
-   gxc#make-!primitive-predicate
-   (@constructor gxc#!primitive-predicate::t))
+   gxc#!procedure-unchecked-signature-set!
+   (@mutator gxc#!procedure::t signature #t))
+  (declare-type gxc#!procedure-id-set! (@mutator gxc#!procedure::t id #t))
   (declare-type
-   gxc#!primitive-predicate-signature
-   (@accessor gxc#!primitive-predicate::t signature #t))
+   gxc#&!procedure-signature
+   (@accessor gxc#!procedure::t signature #f))
+  (declare-type gxc#&!procedure-id (@accessor gxc#!procedure::t id #f))
   (declare-type
-   gxc#!primitive-predicate-id
-   (@accessor gxc#!primitive-predicate::t id #t))
+   gxc#&!procedure-unchecked-signature-set!
+   (@mutator gxc#!procedure::t signature #f))
+  (declare-type gxc#&!procedure-id-set! (@mutator gxc#!procedure::t id #f))
   (declare-type
-   gxc#!primitive-predicate-signature-set!
-   (@mutator gxc#!primitive-predicate::t signature #t))
+   gxc#make-!procedure
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             gxc#!procedure::t
+             effect:
+             #f
+             arguments:
+             (t::t #f)
+             unchecked:
+             gxc#__make-!procedure
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
-   gxc#!primitive-predicate-id-set!
-   (@mutator gxc#!primitive-predicate::t id #t))
+   gxc#__make-!procedure
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             gxc#!procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
-   gxc#&!primitive-predicate-signature
-   (@accessor gxc#!primitive-predicate::t signature #f))
+   gxc#!procedure-signature-set!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (gxc#!procedure::t #f)
+             unchecked:
+             gxc#__!procedure-signature-set!
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
-   gxc#&!primitive-predicate-id
-   (@accessor gxc#!primitive-predicate::t id #f))
-  (declare-type
-   gxc#&!primitive-predicate-signature-set!
-   (@mutator gxc#!primitive-predicate::t signature #f))
-  (declare-type
-   gxc#&!primitive-predicate-id-set!
-   (@mutator gxc#!primitive-predicate::t id #f))
+   gxc#__!procedure-signature-set!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-class
    gxc#!class-meta::t
    (@class gxc#!class-meta::t
@@ -845,6 +875,52 @@ package: gerbil/compiler
   (declare-type gxc#!primitive? (@predicate gxc#!primitive::t))
   (declare-type gxc#make-!primitive (@constructor gxc#!primitive::t))
   (declare-class
+   gxc#!primitive-predicate::t
+   (@class gxc#!primitive-predicate::t
+           (gxc#!primitive::t gxc#!procedure::t)
+           (gxc#!primitive::t gxc#!procedure::t gxc#!type::t object::t t::t)
+           ()
+           (id signature)
+           :init!
+           #t
+           #f
+           #f
+           #f
+           ((:init! . gxc#!primitive-predicate:::init!))))
+  (declare-type
+   gxc#!primitive-predicate::t
+   (optimizer-resolve-class '(typedecl gxc#!primitive-predicate::t) 'class::t))
+  (declare-type
+   gxc#!primitive-predicate?
+   (@predicate gxc#!primitive-predicate::t))
+  (declare-type
+   gxc#make-!primitive-predicate
+   (@constructor gxc#!primitive-predicate::t))
+  (declare-type
+   gxc#!primitive-predicate-signature
+   (@accessor gxc#!primitive-predicate::t signature #t))
+  (declare-type
+   gxc#!primitive-predicate-id
+   (@accessor gxc#!primitive-predicate::t id #t))
+  (declare-type
+   gxc#!primitive-predicate-signature-set!
+   (@mutator gxc#!primitive-predicate::t signature #t))
+  (declare-type
+   gxc#!primitive-predicate-id-set!
+   (@mutator gxc#!primitive-predicate::t id #t))
+  (declare-type
+   gxc#&!primitive-predicate-signature
+   (@accessor gxc#!primitive-predicate::t signature #f))
+  (declare-type
+   gxc#&!primitive-predicate-id
+   (@accessor gxc#!primitive-predicate::t id #f))
+  (declare-type
+   gxc#&!primitive-predicate-signature-set!
+   (@mutator gxc#!primitive-predicate::t signature #f))
+  (declare-type
+   gxc#&!primitive-predicate-id-set!
+   (@mutator gxc#!primitive-predicate::t id #f))
+  (declare-class
    gxc#!primitive-lambda::t
    (@class gxc#!primitive-lambda::t
            (gxc#!primitive::t gxc#!lambda::t)
@@ -857,7 +933,7 @@ package: gerbil/compiler
            ()
            (id signature arity dispatch inline inline-typedecl)
            :init!
-           #f
+           #t
            #f
            #f
            #f
@@ -954,7 +1030,7 @@ package: gerbil/compiler
            ()
            (id signature clauses)
            :init!
-           #f
+           #t
            #f
            #f
            #f
@@ -1011,13 +1087,31 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class-meta:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class:::init!__0
    (@lambda 9
@@ -1030,7 +1124,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t t::t t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class:::init!__1
    (@lambda 12
@@ -1043,44 +1139,128 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class:::init!
    (@case-lambda
     (9
      gxc#!class:::init!__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))
     (12
      gxc#!class:::init!__1
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))))
   (declare-type
    gxc#compute-class-fields
    (@lambda 4
             #f
             signature:
-            (return: list::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#!class-slot->field-offset (@lambda 2 #f))
-  (declare-type gxc#!class-slot-find-struct (@lambda 2 #f))
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!class-slot->field-offset
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!class-slot-find-struct
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class-struct-slot?
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!predicate:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!constructor:::init!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!accessor:::init!
    (@lambda 4
@@ -1093,7 +1273,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!mutator:::init!
    (@lambda 4
@@ -1106,7 +1288,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!lambda:::init!__%
    (@lambda 5
@@ -1119,7 +1303,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!lambda:::init!__@
    (@kw-lambda-dispatch (signature:) gxc#!lambda:::init!__%))
@@ -1138,7 +1324,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!case-lambda:::init!__@
    (@kw-lambda-dispatch (signature:) gxc#!case-lambda:::init!__%))
@@ -1157,7 +1345,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!kw-lambda-primary:::init!
    (@lambda 3
@@ -1170,7 +1360,9 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t)
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!primitive-lambda:::init!
    (@kw-lambda (signature:) gxc#!lambda:::init!__@))
@@ -1182,110 +1374,386 @@ package: gerbil/compiler
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
-  (declare-type gxc#!class-method-table (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!class-method-table
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!class-lookup-method
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#!type-subtype? (@lambda 2 #f))
-  (declare-type gxc#!class-subclass? (@lambda 2 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!type-subtype?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!class-subclass?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#!interface-instance?
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#!procedure-origin
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-declare-type!__%
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-declare-type!__0
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-declare-type!
    (@case-lambda
     (2
      gxc#optimizer-declare-type!__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))
     (3
      gxc#optimizer-declare-type!__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))))
   (declare-type
    gxc#optimizer-declare-class!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-declare-builtin-class!
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-clear-type!
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimizer-declare-method!__% (@lambda 4 #f))
-  (declare-type gxc#optimizer-declare-method!__0 (@lambda 3 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#optimizer-declare-method!__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#optimizer-declare-method!__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
-    (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__%)))
+    (3
+     gxc#optimizer-declare-method!__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))
+    (4
+     gxc#optimizer-declare-method!__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-base))))
   (declare-type
    gxc#optimizer-lookup-type
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimizer-resolve-type (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#optimizer-resolve-type
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-lookup-class
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-resolve-class
    (@lambda 2
             #f
             signature:
-            (return: gxc#!class::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             gxc#!class::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-lookup-class-name
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-lookup-method
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-top-level-method!
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base)))
   (declare-type
    gxc#optimizer-top-level-method?
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f))))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-base))))
