@@ -231,7 +231,7 @@ namespace: gxc
            (output_-c        (replace-extension output-scm "_.c"))
            (output_-o        (replace-extension output-scm "_.o"))
            (gsc-link-opts    (gsc-link-options))
-           (gsc-cc-opts      (gsc-cc-options))
+           (gsc-cc-opts      (gsc-cc-options static: #t))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil-ld-opts (get-libgerbil-ld-opts gerbil-libdir))
@@ -262,14 +262,15 @@ namespace: gxc
                     (retry)))))
 
             (unwind-protect
-              (when (and (file-exists? o-path)
-                         (or (not scm-path)
-                             (file-newer? scm-path o-path)))
-                (invoke (gerbil-gsc)
-                        ["-obj"
-                         gsc-cc-opts ...
-                         gsc-static-opts ...
-                         c-path]))
+              (when (or (not (file-exists? o-path))
+                        (not scm-path)
+                        (file-newer? scm-path o-path))
+                (let (gsc-cc-opts (gsc-cc-options static: #f))
+                  (invoke (gerbil-gsc)
+                          ["-obj"
+                           gsc-cc-opts ...
+                           gsc-static-opts ...
+                           c-path])))
               (unlock)))))
 
       (with-driver-mutex (create-directory* (path-directory output-bin)))
@@ -285,17 +286,9 @@ namespace: gxc
                          src-deps-scm ...
                          src-bin-scm
                          output-scm])
-                ;; do this in parallel, caching compiled objects
                 (for-each compile-obj
                           [src-deps-scm ... src-bin-scm output-scm #f]
                           [src-deps-c ...   src-bin-c   output-c   output_-c])
-                (invoke (gerbil-gsc)
-                        ["-obj"
-                         gsc-cc-opts ...
-                         gsc-static-opts ...
-                         src-deps-c ...
-                         src-bin-c
-                         output-c output_-c])
                 (invoke (gerbil-gcc)
                         ["-w" "-o" output-bin
                          src-deps-o ...
@@ -403,7 +396,7 @@ namespace: gxc
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
            (gsc-link-opts (gsc-link-options))
-           (gsc-cc-opts (gsc-cc-options))
+           (gsc-cc-opts (gsc-cc-options static: #t))
            (gsc-static-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
@@ -792,11 +785,19 @@ namespace: gxc
          ["-debug-source" "-track-scheme" (reverse opts) ...]
          (reverse opts))))))
 
-(def (gsc-cc-options (phi? #f))
+(def (gsc-cc-options (phi? #f) static: (static? #f))
+  (if phi?
+    (if (current-compile-debug)
+      ["-cc-options" "-g"]
+      [])
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
+        (["-cc-options" (and opt "-Bstatic") . rest]
+         (if static?
+           (lp rest (cons* opt "-cc-options" opts))
+           (lp rest opts)))
         (["-cc-options" opt . rest]
-         (lp rest (if phi? opts (cons* opt "-cc-options" opts))))
+         (lp rest (cons* opt "-cc-options" opts)))
         (["-ld-options" _ . rest]
          (lp rest opts))
         ([_ . rest]
@@ -804,13 +805,17 @@ namespace: gxc
         (else
          (if (current-compile-debug)
            ["-cc-options" "-g" (reverse! opts) ...]
-           (reverse! opts))))))
+           (reverse! opts)))))))
 
-(def (gsc-ld-options (phi? #f))
+(def (gsc-ld-options (phi? #f) static: (static? #f))
   (if phi?
     []
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
+        (["-ld-options" (and opt "-static") . rest]
+         (if static?
+           (lp rest (cons* opt "-ld-options" opts))
+           (lp rest opts)))
         (["-ld-options" opt . rest]
          (lp rest (cons* opt "-ld-options" opts)))
         (["-cc-options" _ . rest]

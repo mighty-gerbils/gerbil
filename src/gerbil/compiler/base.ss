@@ -238,13 +238,12 @@ namespace: gxc
            (mutex-unlock! __jobs-mx)
            (with-verbose-mutex
             (displayln "... execute compile job " name))
-           (with-catch
-            (lambda (e) (with-verbose-mutex (display-exception e)))
-            thunk)
-           (mutex-lock! __jobs-mx)
-           (set! __available-cores (fx1+ __available-cores))
-           (condition-variable-signal! __jobs-cv)
-           (mutex-unlock! __jobs-mx))
+           (unwind-protect
+             (thunk)
+             (mutex-lock! __jobs-mx)
+             (set! __available-cores (fx1+ __available-cores))
+             (condition-variable-signal! __jobs-cv)
+             (mutex-unlock! __jobs-mx)))
          (begin
            (mutex-unlock! __jobs-mx __jobs-cv)
            (loop)))))
