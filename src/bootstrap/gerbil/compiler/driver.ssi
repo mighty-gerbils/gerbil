@@ -108,6 +108,7 @@ namespace: gxc
           gxc#compile-static-output-file)
          (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
          (%#define-runtime static-module-name gxc#static-module-name)
+         (%#define-runtime gerbil-enable-shared? gxc#gerbil-enable-shared?)
          (%#begin (%#define-runtime invoke__% gxc#invoke__%)
                   (%#define-runtime invoke__@ gxc#invoke__@)
                   (%#define-runtime invoke gxc#invoke))

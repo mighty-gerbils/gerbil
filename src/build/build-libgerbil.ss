@@ -101,14 +101,11 @@
     ([static-include: modf]
      #f)))
 
-(def (fold-cc-options stdlib-spec mode)
-  (let* ((base (if (eq? mode 'shared)
-                 "-D___SHARED"
-                 "-D___LIBRARY"))
-         (base (string-append base " -I " (gerbil-static-dir))))
+(def (fold-cc-options stdlib-spec)
+  (let (base (string-append "-I " (gerbil-static-dir)))
     (fold-options "-cc-options" stdlib-spec base)))
 
-(def (fold-ld-options stdlib-spec mode)
+(def (fold-ld-options stdlib-spec)
   (let (base default-ld-options)
     (fold-options "-ld-options" stdlib-spec base)))
 
@@ -306,11 +303,11 @@
       (make-wg cores)
       #f)))
 
-(def (build-libgerbil mode)
+(def (build-libgerbil)
   (let* ((build-spec (build-spec))
          (stdlib-spec (filter-map filter-build-spec build-spec))
-         (cc-options (fold-cc-options stdlib-spec mode))
-         (ld-options (fold-ld-options stdlib-spec mode))
+         (cc-options (fold-cc-options stdlib-spec))
+         (ld-options (fold-ld-options stdlib-spec))
          (stdlib-modules (map car stdlib-spec))
          (ordered-modules (order-modules stdlib-modules))
          (ordered-modules (remove-duplicates
@@ -323,11 +320,6 @@
          (static-module-scm-paths (map static-file-path static-module-scm-files))
          (static-module-c-paths   (map module-c-file static-module-scm-paths))
          (static-module-o-paths   (map module-o-file static-module-c-paths))
-         (builtin-modules-scm-path (static-file-path "libgerbil-builtin-modules.scm"))
-         (builtin-modules-c-path (module-c-file builtin-modules-scm-path))
-         (builtin-modules-o-path (module-o-file builtin-modules-c-path))
-         (link-c-path (library-file-path "libgerbil-link.c"))
-         (link-o-path (module-o-file link-c-path))
          (gambit-sharp (library-file-path "_gambit#.scm"))
          (include-gambit-sharp
           (string-append "(include \"" gambit-sharp "\")"))
@@ -338,22 +330,12 @@
             ["-e" include-gambit-sharp]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
-         (libgerbil
-          (if (eq? mode 'shared)
-            (library-file-path
-             (cond-expand (darwin "libgerbil.dylib")
-                          (else "libgerbil.so")))
-            (library-file-path "libgerbil.a"))))
-    ;; generate the builtin modules stub
-    (call-with-output-file builtin-modules-scm-path
-      (lambda (p)
-        (write `(define ligerbil-builtin-modules
-                  (quote ,ordered-modules))
-               p)
-        (newline p)))
-    ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
+         (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
+         (libgerbil.ldd (library-file-path "libgerbil.ldd")))
+    ;; compile each .scm to .c separately as we need them to link in the compiler
+    ;; this also allows us to parallelize the build.
     (let (wg (make-wg/build-cores))
-      (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
+      (for (scm-path static-module-scm-paths)
         (wg-add! wg
           (lambda ()
             (displayln "... compile " scm-path)
@@ -364,16 +346,9 @@
                          scm-path]))))
       (wg-wait! wg))
 
-    ;; link them
-    (displayln "... link " link-c-path)
-    (invoke-gsc ["-link" "-o" link-c-path
-                 static-module-c-paths ...
-                 builtin-modules-c-path])
-
     ;; build them
     (let (wg (make-wg/build-cores))
-      (for (c-path [static-module-c-paths ...
-                    builtin-modules-c-path link-c-path])
+      (for (c-path static-module-c-paths)
         (wg-add! wg
           (lambda ()
             (displayln "... compile " c-path)
@@ -382,43 +357,15 @@
                          c-path]))))
       (wg-wait! wg))
 
-    ;; and collect them
-    (when (file-exists? libgerbil)
-      (delete-file libgerbil))
-    (displayln "... build " libgerbil)
-    (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
-      (if (eq? mode 'shared)
-        (cond-expand
-          (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
-                               (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
-                               libgerbil-ldd ...
-                               static-module-o-paths ...
-                               builtin-modules-o-path
-                               link-o-path]))
-          (else (invoke-gcc ["-shared" "-o" libgerbil
-                             libgerbil-ldd ...
-                             static-module-o-paths ...
-                             builtin-modules-o-path
-                             link-o-path])))
-        (invoke-ar ["cq" libgerbil
-                    static-module-o-paths ...
-                    builtin-modules-o-path
-                    link-o-path]))
-      (call-with-output-file (string-append libgerbil ".ldd")
-        (cut write
-             (filter
-              (cond-expand
-                (darwin
-                 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
-                (else true))
-              libgerbil-ldd)
-             <>)))
-    ;; cleanup
-    (for (f [static-module-c-paths ...
-             builtin-modules-c-path
-             static-module-o-paths ...
-             builtin-modules-o-path])
-      (delete-file f))))
+    (call-with-output-file libgerbil.ldd
+      (cut write
+           (filter
+            (cond-expand
+              (darwin
+               (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+              (else true))
+            libgerbil-ldd)
+           <>))))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))
@@ -429,16 +376,5 @@
          (lp rest (cons hd result))))
       (else (reverse result)))))
 
-(def (auto-build-mode)
-  (if (member "--enable-shared" (string-split (configure-command-string) #\'))
-    'shared
-    'library))
-
-(def (main . args)
-  (match args
-    ([] (build-libgerbil (auto-build-mode)))
-    (["shared"] (build-libgerbil 'shared))
-    (["library"] (build-libgerbil 'library))
-    (else
-     (displayln "Usage: build-libgerbil [shared|library]")
-     (exit 1))))
+(def (main)
+  (build-libgerbil))

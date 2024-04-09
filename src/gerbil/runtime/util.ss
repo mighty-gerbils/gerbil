@@ -59,7 +59,7 @@ namespace: #f
   (for-each display args))
 
 (def (file-newer? (file1 : :string)
-                     (file2 : :string))
+                  (file2 : :string))
   => :boolean
   (def (modification-time (file :- :string)) => :flonum
     (time->seconds
