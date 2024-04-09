@@ -339,21 +339,24 @@ TODO:
     (for-each thread-join! workers)))
 
 (def __timestamps (make-hash-table))
+(def __timestamps-mx (make-mutex))
 
 (def (file-timestamp file)
-  (cond
-   ((hash-get __timestamps file))
-   (else
-    (let (ts (time->seconds (file-info-last-modification-time (file-info file))))
-      (hash-put! __timestamps file ts)
-      ts))))
+  (with-lock __timestamps-mx
+    (lambda ()
+      (cond
+       ((hash-get __timestamps file))
+       (else
+        (let (ts (time->seconds (file-info-last-modification-time (file-info file))))
+          (hash-put! __timestamps file ts)
+          ts))))))
 
 (def (library-timestamp id)
   (cond
-   ((hash-get __timestamps id))
+   ((with-lock __timestamps-mx (cut hash-get __timestamps id)))
    (else
     (let (ts (file-timestamp (core-resolve-library-module-path (library-symbol id))))
-      (hash-put! __timestamps id ts)
+      (with-lock __timestamps-mx (cut hash-put! __timestamps id ts))
       ts))))
 
 (def (module-strip-nesting id)
