@@ -209,8 +209,6 @@ TODO:
   (def import-mx (make-mutex 'import))
   ;; table of module id -> completion, indicating completion of a build
   (def completions (make-hash-table-eq))
-  ;; timestamps of in-tree modules
-  (def timestamps (make-hash-table-eq))
   ;; the build coordinator barrier
   (def build-barrier
     (make-barrier (length buildspec)))
@@ -292,8 +290,11 @@ TODO:
         (consider in))
       (if (or (build? spec)
               (build-dependent? spec mod))
+        ;; it needs to be built, put it to the work channel
         (channel-put workch spec)
+        ;; no need to build, unblock dependents
         (completion-post! (hash-ref completions (module-id spec)) 'done))
+      ;; clear the barrrier
       (barrier-post! build-barrier)))
 
   (def (consider in)
@@ -308,7 +309,7 @@ TODO:
 
   (def (wait-for ctx)
     (alet* ((id (expander-context-id ctx)) ; :<root> prelude has no id
-            (completion (hash-get completions id)))
+            (completion (hash-get completions id))) ; outside deps not in the table
       (completion-wait! completion)))
 
   ;; prepare the build
@@ -320,20 +321,21 @@ TODO:
   (for (spec buildspec)
     (let ((file (spec-file spec settings))
           (id (module-id spec)))
-      (hash-put! completions id (make-completion `(build ,id)))
-      (hash-put! timestamps id (file-timestamp file))))
+      (hash-put! completions id (make-completion `(build ,id)))))
 
   ;; spawn a thread for each spec that waits for the dependency completions
-  ;; and pushes to the work channel
+  ;; and pushes to the work channel if necessary.
   (for (spec buildspec)
     (spawn/name `(build ,(spec-file spec settings)) build-coordinator spec))
 
   ;; spawn the workers and wait
   (let (workers (map (lambda (i) (spawn/name `(worker ,i) build-worker))
                      (iota build-worker-count)))
-    ;; wait for work to complete
+    ;; wait for the coordinators to complete
     (barrier-wait! build-barrier)
+    ;; close the channel (no more work)
     (channel-close workch)
+    ;; and wait for the workers to complete
     (for-each thread-join! workers)))
 
 (def __timestamps (make-hash-table))
