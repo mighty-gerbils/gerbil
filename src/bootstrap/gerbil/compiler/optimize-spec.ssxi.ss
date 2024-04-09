@@ -40,16 +40,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::collect-object-refs::t
    (@class gxc#::collect-object-refs::t
@@ -124,16 +115,7 @@ package: gerbil/compiler
    (@lambda 5
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-object-refs__@
    (@kw-lambda-dispatch
@@ -222,16 +204,7 @@ package: gerbil/compiler
    (@lambda 6
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-subst-object-refs__@
    (@kw-lambda-dispatch
@@ -242,48 +215,6 @@ package: gerbil/compiler
    (@kw-lambda
     (receiver: methods: slots: klass:)
     gxc#apply-subst-object-refs__@))
-  (declare-type
-   gxc#generate-method-specializers-define-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec)))
-  (declare-type
-   gxc#collect-object-refs-call%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec)))
-  (declare-type
-   gxc#subst-object-refs-call%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-spec))))
+  (declare-type gxc#generate-method-specializers-define-values% (@lambda 2 #f))
+  (declare-type gxc#collect-object-refs-call% (@lambda 2 #f))
+  (declare-type gxc#subst-object-refs-call% (@lambda 2 #f)))

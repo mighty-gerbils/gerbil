@@ -36,16 +36,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::check-return-type::t
    (@class gxc#::check-return-type::t
@@ -82,31 +73,8 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#optimize-call%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#optimize-call% (@lambda 2 #f))
   (declare-type
    gxc#!procedure::optimize-call
    (@lambda 4
@@ -119,9 +87,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!procedure::check-arguments
    (@lambda 4
@@ -134,9 +100,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!primitive-predicate::optimize-call
    (@lambda 4
@@ -149,9 +113,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!predicate::optimize-call
    (@lambda 4
@@ -164,54 +126,10 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#expression-no-side-effects?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#expression-type?
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#check-expression-type!
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
+  (declare-type gxc#expression-no-side-effects? (@lambda 1 #f))
+  (declare-type gxc#expression-type? (@lambda 2 #f))
+  (declare-type gxc#check-expression-type! (@lambda 3 #f))
   (declare-type
    gxc#!constructor::optimize-call
    (@lambda 4
@@ -224,9 +142,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!accessor::optimize-call
    (@lambda 4
@@ -239,9 +155,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!mutator::optimize-call
    (@lambda 4
@@ -254,9 +168,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!lambda::optimize-call
    (@lambda 4
@@ -269,9 +181,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!case-lambda::optimize-call
    (@lambda 4
@@ -284,9 +194,7 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
   (declare-type
    gxc#!kw-lambda::optimize-call
    (@lambda 4
@@ -299,24 +207,8 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#!kw-lambda-split-args
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
+             #f)))
+  (declare-type gxc#!kw-lambda-split-args (@lambda 2 #f))
   (declare-type
    gxc#!kw-lambda-primary::optimize-call
    (@lambda 4
@@ -329,36 +221,6 @@ package: gerbil/compiler
              arguments:
              (t::t t::t t::t t::t)
              unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#apply-check-return-type-begin-annotation%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call)))
-  (declare-type
-   gxc#check-return-type!
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-call))))
+             #f)))
+  (declare-type gxc#apply-check-return-type-begin-annotation% (@lambda 2 #f))
+  (declare-type gxc#check-return-type! (@lambda 3 #f)))

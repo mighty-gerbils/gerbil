@@ -6,13 +6,4 @@ package: gerbil/runtime
  (@lambda 0
           #f
           signature:
-          (return:
-           t::t
-           effect:
-           #f
-           arguments:
-           #f
-           unchecked:
-           #f
-           origin:
-           gerbil/runtime/repl)))
+          (return: t::t effect: #f arguments: #f unchecked: #f)))

@@ -65,47 +65,15 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-type
    make-syntax-error
    (@lambda 6
             #f
             signature:
-            (return:
-             SyntaxError::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: SyntaxError::t effect: #f arguments: #f unchecked: #f)))
   (declare-type syntax-error? (@predicate SyntaxError::t))
-  (declare-type
-   __raise-syntax-error
-   (@lambda (3)
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+  (declare-type __raise-syntax-error (@lambda (3) #f))
   (declare-class
    AST::t
    (@class gerbil#AST::t
@@ -130,489 +98,79 @@ package: gerbil/runtime
   (declare-type &AST-source (@accessor AST::t source #f))
   (declare-type &AST-e-set! (@mutator AST::t e #f))
   (declare-type &AST-source-set! (@mutator AST::t source #f))
-  (declare-type
-   __AST-e
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST-source
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+  (declare-type __AST-e (@lambda 1 #f))
+  (declare-type __AST-source (@lambda 1 #f))
+  (declare-type __AST (@lambda 2 #f))
   (declare-type
    __AST-eq?
    (@lambda 2
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __AST-pair?
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __AST-null?
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __AST-datum?
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    __AST-id?
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST-id-list?__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST-id-list?__0
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type __AST-id-list?__% (@lambda 2 #f))
+  (declare-type __AST-id-list?__0 (@lambda 1 #f))
   (declare-type
    __AST-id-list?
-   (@case-lambda
-    (1
-     __AST-id-list?__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))
-    (2
-     __AST-id-list?__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))))
-  (declare-type
-   __AST-bind-list?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST-list?__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST-list?__0
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+   (@case-lambda (1 __AST-id-list?__0) (2 __AST-id-list?__%)))
+  (declare-type __AST-bind-list? (@lambda 1 #f))
+  (declare-type __AST-list?__% (@lambda 2 #f))
+  (declare-type __AST-list?__0 (@lambda 1 #f))
   (declare-type
    __AST-list?
-   (@case-lambda
-    (1
-     __AST-list?__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))
-    (2
-     __AST-list?__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))))
-  (declare-type
-   __AST->list
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __AST->datum
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   get-readenv
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   read-syntax__%
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   read-syntax__0
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+   (@case-lambda (1 __AST-list?__0) (2 __AST-list?__%)))
+  (declare-type __AST->list (@lambda 1 #f))
+  (declare-type __AST->datum (@lambda 1 #f))
+  (declare-type get-readenv (@lambda 1 #f))
+  (declare-type read-syntax__% (@lambda 1 #f))
+  (declare-type read-syntax__0 (@lambda 0 #f))
   (declare-type
    read-syntax
-   (@case-lambda
-    (0
-     read-syntax__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))
-    (1
-     read-syntax__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/syntax))))
-  (declare-type
-   read-syntax-from-file
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __wrap-syntax
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __unwrap-syntax
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+   (@case-lambda (0 read-syntax__0) (1 read-syntax__%)))
+  (declare-type read-syntax-from-file (@lambda 1 #f))
+  (declare-type __wrap-syntax (@lambda 2 #f))
+  (declare-type __unwrap-syntax (@lambda 2 #f))
   (declare-type
    __pp-syntax
    (@lambda 1
             #f
             signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __make-readtable
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type __make-readtable (@lambda 0 #f))
   (declare-type
    __readtable-bracket-keyword-set!
    (@lambda 2 macro-readtable-bracket-handler-set!))
   (declare-type
    __readtable-brace-keyword-set!
    (@lambda 2 macro-readtable-brace-handler-set!))
-  (declare-type
-   __read-sharp-bang
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   __*readtable*
-   (optimizer-resolve-class '(typedecl __*readtable*) 't::t))
+  (declare-type __read-sharp-bang (@lambda 3 #f))
   (declare-type
    source-location-path?
    (@lambda 1
             #f
             signature:
-            (return:
-             boolean::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax)))
-  (declare-type
-   source-location-path
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/syntax))))
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type source-location-path (@lambda 1 #f)))

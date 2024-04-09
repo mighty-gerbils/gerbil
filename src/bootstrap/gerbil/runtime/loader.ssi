@@ -12,6 +12,7 @@ namespace: #f
          (%#define-runtime load-path load-path)
          (%#define-runtime add-load-path! add-load-path!)
          (%#define-runtime set-load-path! set-load-path!)
+         (%#define-runtime __set-load-path! __set-load-path!)
          (%#define-runtime load-module load-module)
          (%#define-runtime __load-module __load-module)
          (%#define-runtime reload-module! reload-module!)

@@ -1,16 +1,16 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/init::timestamp 1712643208)
+  (define gerbil/expander/init::timestamp 1712696214)
   (begin
-    (let ((__tmp129011
-           (let ((__obj129009
+    (let ((__tmp129849
+           (let ((__obj129847
                   (let ()
                     (declare (not safe))
                     (##structure gx#top-context::t '#f '#f '#f '#f '#f))))
-             (gx#top-context:::init! __obj129009)
-             __obj129009)))
+             (gx#top-context:::init! __obj129847)
+             __obj129847)))
       (declare (not safe))
-      (gx#current-expander-context __tmp129011))
+      (gx#current-expander-context __tmp129849))
     (let ()
       (declare (not safe))
       (gx#current-expander-module-import gx#core-import-module))
@@ -19,8 +19,8 @@
       (gx#current-expander-module-eval gx#core-eval-module))
     (let () (declare (not safe)) (gx#current-expander-compile __compile-top))
     (let () (declare (not safe)) (gx#current-expander-eval ##eval))
-    (let ((__tmp129012
-           (let ((__obj129010
+    (let ((__tmp129850
+           (let ((__obj129848
                   (let ()
                     (declare (not safe))
                     (##structure
@@ -33,7 +33,7 @@
                      '#f
                      '#f
                      '#f))))
-             (gx#prelude-context:::init! __obj129010 '#f)
-             __obj129010)))
+             (gx#prelude-context:::init! __obj129848 '#f)
+             __obj129848)))
       (declare (not safe))
-      (gx#core-bind-root-syntax!__% ':<root> __tmp129012 '#t))))
+      (gx#core-bind-root-syntax!__% ':<root> __tmp129850 '#t))))

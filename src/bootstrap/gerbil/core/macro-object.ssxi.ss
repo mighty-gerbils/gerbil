@@ -42,34 +42,13 @@ package: gerbil/core
    (@mutator gerbil/core/macro-object#macro-object::t macro #f))
   (declare-type
    gerbil/core/macro-object#macro-object::apply-macro-expander
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/core/macro-object)))
+   (@lambda 2 #f))
   (declare-type
    gerbil/core/macro-object#macro-object::apply-macro-expander::specialize
    (@lambda 2
             #f
             signature:
-            (return:
-             procedure::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/core/macro-object)))
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
   (declare-method
    gerbil/core/macro-object#macro-object::t
    apply-macro-expander

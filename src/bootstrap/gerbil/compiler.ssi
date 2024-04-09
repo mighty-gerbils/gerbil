@@ -5,6 +5,7 @@ namespace: gxc
 (%#begin (%#import :gerbil/compiler/driver :gerbil/compiler/base)
          (%#export
           (import: :gerbil/compiler/driver)
+          (spec: 0 add-compile-job! add-compile-job!)
           (spec:
            0
            execute-pending-compile-jobs!

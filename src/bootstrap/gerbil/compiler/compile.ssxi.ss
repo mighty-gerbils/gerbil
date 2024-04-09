@@ -28,21 +28,7 @@ package: gerbil/compiler
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-boolean-context)
     'procedure::t))
-  (declare-type
-   gxc#make-bound-identifier-table
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+  (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
   (declare-class
    gxc#::collect-bindings::t
    (@class gxc#::collect-bindings::t
@@ -77,16 +63,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::lift-modules::t
    (@class gxc#::lift-modules::t
@@ -131,16 +108,7 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-lift-modules__@
    (@kw-lambda-dispatch (modules:) gxc#apply-lift-modules__%))
@@ -179,16 +147,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::find-lambda-expression::t
    (@class gxc#::find-lambda-expression::t
@@ -227,16 +186,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::count-values::t
    (@class gxc#::count-values::t
@@ -265,16 +215,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::generate-runtime-empty::t
    (@class gxc#::generate-runtime-empty::t
@@ -334,16 +275,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::generate-runtime::t
    (@class gxc#::generate-runtime::t
@@ -374,16 +306,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::generate-runtime-phi::t
    (@class gxc#::generate-runtime-phi::t
@@ -421,16 +344,7 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#::collect-expression-refs::t
    (@class gxc#::collect-expression-refs::t
@@ -477,16 +391,7 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-collect-expression-refs__@
    (@kw-lambda-dispatch (table:) gxc#apply-collect-expression-refs__%))
@@ -533,16 +438,7 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-generate-meta__@
    (@kw-lambda-dispatch (state:) gxc#apply-generate-meta__%))
@@ -593,980 +489,123 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#apply-generate-meta-phi__@
    (@kw-lambda-dispatch (state:) gxc#apply-generate-meta-phi__%))
   (declare-type
    gxc#apply-generate-meta-phi
    (@kw-lambda (state:) gxc#apply-generate-meta-phi__@))
-  (declare-type
-   gxc#collect-bindings-define-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#collect-bindings-define-syntax%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#lift-modules-module%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#current-compile-decls-unsafe?
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+  (declare-type gxc#collect-bindings-define-values% (@lambda 2 #f))
+  (declare-type gxc#collect-bindings-define-syntax% (@lambda 2 #f))
+  (declare-type gxc#lift-modules-module% (@lambda 2 #f))
+  (declare-type gxc#current-compile-decls-unsafe? (@lambda 0 #f))
   (declare-type
    gxc#add-module-binding!
    (@lambda 2
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-identifier
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-identifier-key
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#generate-runtime-identifier (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-identifier-key (@lambda 1 #f))
   (declare-type
    gxc#generate-runtime-empty
    (@lambda 2
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-begin%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-begin-foreign%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-begin-annotation%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-declare%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-define-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-check-values
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#generate-runtime-begin% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-begin-foreign% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-begin-annotation% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-declare% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-define-values% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-check-values (@lambda 3 #f))
   (declare-type
    gxc#generate-runtime-values-count
    (@lambda 1
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#generate-runtime-values-ref
    (@lambda 3
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#generate-runtime-values->list
    (@lambda 2
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-lambda%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#generate-runtime-lambda% (@lambda 2 #f))
   (declare-type
    gxc#generate-runtime-lambda-form
    (@lambda 3
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-lambda-head
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-case-lambda%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-let-values%__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-let-values%__0
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#generate-runtime-lambda-head (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-case-lambda% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-let-values%__% (@lambda 3 #f))
+  (declare-type gxc#generate-runtime-let-values%__0 (@lambda 2 #f))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda
-    (2
-     gxc#generate-runtime-let-values%__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/compiler/compile))
-    (3
-     gxc#generate-runtime-let-values%__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/compiler/compile))))
-  (declare-type
-   gxc#generate-runtime-let-values-bind
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-letrec-values%__%
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-letrec-values%__0
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+    (2 gxc#generate-runtime-let-values%__0)
+    (3 gxc#generate-runtime-let-values%__%)))
+  (declare-type gxc#generate-runtime-let-values-bind (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-letrec-values%__% (@lambda 3 #f))
+  (declare-type gxc#generate-runtime-letrec-values%__0 (@lambda 2 #f))
   (declare-type
    gxc#generate-runtime-letrec-values%
    (@case-lambda
-    (2
-     gxc#generate-runtime-letrec-values%__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/compiler/compile))
-    (3
-     gxc#generate-runtime-letrec-values%__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/compiler/compile))))
-  (declare-type
-   gxc#generate-runtime-letrec*-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-simple-let?
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+    (2 gxc#generate-runtime-letrec-values%__0)
+    (3 gxc#generate-runtime-letrec-values%__%)))
+  (declare-type gxc#generate-runtime-letrec*-values% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-simple-let? (@lambda 1 #f))
   (declare-type
    gxc#generate-runtime-simple-let
    (@lambda 5
             #f
             signature:
-            (return:
-             pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-quote%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-call%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-call-unchecked%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-if%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-ref%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-setq%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-instancep%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-direct-instancep%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-ref%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-setq%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-direct-ref%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-direct-setq%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-unchecked-ref%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-struct-unchecked-setq%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-loader-import%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-quote-syntax%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-runtime-phi-define-runtime%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-begin%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-begin-syntax%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-module%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-import-path
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#current-context-chain
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-import%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-export%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-provide%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-extern%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-define-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-define-syntax%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-define-alias%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#generate-meta-phi-define-values%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#generate-runtime-quote% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-call% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-call-unchecked% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-if% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-instancep% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-instancep% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-unchecked-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-unchecked-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-loader-import% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-quote-syntax% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-phi-define-runtime% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-begin% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-begin-syntax% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-module% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-import-path (@lambda 2 #f))
+  (declare-type gxc#current-context-chain (@lambda 0 #f))
+  (declare-type gxc#generate-meta-import% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-export% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-provide% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-extern% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-define-values% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-define-syntax% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-define-alias% (@lambda 2 #f))
+  (declare-type gxc#generate-meta-phi-define-values% (@lambda 2 #f))
   (declare-type
    gxc#generate-meta-phi-expr
    (@lambda 2
             #f
             signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-class
    gxc#meta-state::t
    (@class gxc#meta-state::t
@@ -1610,16 +649,7 @@ package: gerbil/compiler
    (@lambda 2
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (t::t t::t)
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
   (declare-class
    gxc#meta-state-block::t
    (@class gxc#meta-state-block::t
@@ -1688,168 +718,34 @@ package: gerbil/compiler
   (declare-type
    gxc#&meta-state-block-code-set!
    (@mutator gxc#meta-state-block::t code #f))
-  (declare-type
-   gxc#meta-state-begin-phi!
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+  (declare-type gxc#meta-state-begin-phi! (@lambda 2 #f))
   (declare-type
    gxc#meta-state-add-phi!
    (@lambda 3
             #f
             signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#meta-state-end-phi!
    (@lambda 1
             #f
             signature:
-            (return:
-             void::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: void::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gxc#meta-state-end!
    (@lambda 1
             #f
             signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#collect-expression-refs
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#collect-refs-ref%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#collect-refs-setq%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#find-runtime-begin%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#collect-expression-refs (@lambda 1 #f))
+  (declare-type gxc#collect-refs-ref% (@lambda 2 #f))
+  (declare-type gxc#collect-refs-setq% (@lambda 2 #f))
+  (declare-type gxc#find-runtime-begin% (@lambda 2 #f))
   (declare-type
    gxc#count-values-single%
    (@lambda 2
             #f
             signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#count-values-call%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile)))
-  (declare-type
-   gxc#count-values-if%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/compile))))
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#count-values-call% (@lambda 2 #f))
+  (declare-type gxc#count-values-if% (@lambda 2 #f)))
