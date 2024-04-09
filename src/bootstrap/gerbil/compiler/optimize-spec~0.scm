@@ -1,29 +1,29 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-spec::timestamp 1712696216)
+  (define gerbil/compiler/optimize-spec::timestamp 1712697259)
   (begin
     (define gxc#::generate-method-specializers::t
-      (let ((__tmp172794 (list gxc#::identity::t))
-            (__tmp172793 (cons (cons 'final: '#t) '())))
+      (let ((__tmp171721 (list gxc#::identity::t))
+            (__tmp171720 (cons (cons 'final: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#::generate-method-specializers::t
          '::generate-method-specializers
-         __tmp172794
+         __tmp171721
          '()
-         __tmp172793
+         __tmp171720
          '#f)))
     (define gxc#::generate-method-specializers?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#::generate-method-specializers::t)))
     (define gxc#make-::generate-method-specializers
-      (lambda _%$args171659%_
+      (lambda _%$args170586%_
         (apply make-instance
                gxc#::generate-method-specializers::t
-               _%$args171659%_)))
+               _%$args170586%_)))
     (define gxc#::generate-method-specializers-bind-methods!
-      (let ((__tmp172795
+      (let ((__tmp171722
              (lambda ()
                (force gxc#::identity-bind-methods!)
                (let ()
@@ -54,44 +54,44 @@
                  (declare (not safe))
                  (__seal-class! gxc#::generate-method-specializers::t)))))
         (declare (not safe))
-        (__make-promise __tmp172795)))
+        (__make-promise __tmp171722)))
     (define gxc#apply-generate-method-specializers
-      (lambda (_%stx171651%_)
+      (lambda (_%stx170578%_)
         (force gxc#::generate-method-specializers-bind-methods!)
-        (let* ((_%self171654%_
-                (let ((__obj172788
+        (let* ((_%self170581%_
+                (let ((__obj171715
                        (let ()
                          (declare (not safe))
                          (##structure gxc#::generate-method-specializers::t))))
-                  __obj172788))
-               (__tmp172796
+                  __obj171715))
+               (__tmp171723
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (gxc#compile-e__1 _%self171654%_ _%stx171651%_)))))
+                    (gxc#compile-e__1 _%self170581%_ _%stx170578%_)))))
           (declare (not safe))
           (__call-with-parameters
-           __tmp172796
+           __tmp171723
            gxc#current-compile-method
-           _%self171654%_))))
+           _%self170581%_))))
     (define gxc#::collect-object-refs::t
-      (let ((__tmp172798 (list gxc#::void::t))
-            (__tmp172797 (cons (cons 'final: '#t) '())))
+      (let ((__tmp171725 (list gxc#::void::t))
+            (__tmp171724 (cons (cons 'final: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#::collect-object-refs::t
          '::collect-object-refs
-         __tmp172798
+         __tmp171725
          '(receiver methods slots)
-         __tmp172797
+         __tmp171724
          '#f)))
     (define gxc#::collect-object-refs?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#::collect-object-refs::t)))
     (define gxc#make-::collect-object-refs
-      (lambda _%$args171648%_
-        (apply make-instance gxc#::collect-object-refs::t _%$args171648%_)))
+      (lambda _%$args170575%_
+        (apply make-instance gxc#::collect-object-refs::t _%$args170575%_)))
     (define gxc#::collect-object-refs-receiver
       (let ()
         (declare (not safe))
@@ -153,7 +153,7 @@
          gxc#::collect-object-refs::t
          'slots)))
     (define gxc#::collect-object-refs-bind-methods!
-      (let ((__tmp172799
+      (let ((__tmp171726
              (lambda ()
                (force gxc#::void-bind-methods!)
                (let ()
@@ -256,34 +256,34 @@
                  (declare (not safe))
                  (__seal-class! gxc#::collect-object-refs::t)))))
         (declare (not safe))
-        (__make-promise __tmp172799)))
+        (__make-promise __tmp171726)))
     (define gxc#apply-collect-object-refs__%
-      (lambda (_%@@keywords171614%_
-               _%receiver171609171615%_
-               _%methods171610171617%_
-               _%slots171611171619%_
-               _%stx171621%_)
-        (let* ((_%receiver171624%_
-                (if (eq? _%receiver171609171615%_ absent-value)
+      (lambda (_%@@keywords170541%_
+               _%receiver170536170542%_
+               _%methods170537170544%_
+               _%slots170538170546%_
+               _%stx170548%_)
+        (let* ((_%receiver170551%_
+                (if (eq? _%receiver170536170542%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'receiver:))
-                    _%receiver171609171615%_))
-               (_%methods171626%_
-                (if (eq? _%methods171610171617%_ absent-value)
+                    _%receiver170536170542%_))
+               (_%methods170553%_
+                (if (eq? _%methods170537170544%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'methods:))
-                    _%methods171610171617%_))
-               (_%slots171628%_
-                (if (eq? _%slots171611171619%_ absent-value)
+                    _%methods170537170544%_))
+               (_%slots170555%_
+                (if (eq? _%slots170538170546%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'slots:))
-                    _%slots171611171619%_)))
+                    _%slots170538170546%_)))
           (force gxc#::collect-object-refs-bind-methods!)
-          (let* ((_%self171630%_
-                  (let ((__obj172790
+          (let* ((_%self170557%_
+                  (let ((__obj171717
                          (let ()
                            (declare (not safe))
                            (##structure
@@ -294,85 +294,85 @@
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172790
-                       _%receiver171624%_
+                       __obj171717
+                       _%receiver170551%_
                        '1
                        '#f
                        '#f))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172790
-                       _%methods171626%_
+                       __obj171717
+                       _%methods170553%_
                        '2
                        '#f
                        '#f))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172790
-                       _%slots171628%_
+                       __obj171717
+                       _%slots170555%_
                        '3
                        '#f
                        '#f))
-                    __obj172790))
-                 (__tmp172800
+                    __obj171717))
+                 (__tmp171727
                   (lambda ()
                     (let ()
                       (declare (not safe))
-                      (gxc#compile-e__1 _%self171630%_ _%stx171621%_)))))
+                      (gxc#compile-e__1 _%self170557%_ _%stx170548%_)))))
             (declare (not safe))
             (__call-with-parameters
-             __tmp172800
+             __tmp171727
              gxc#current-compile-method
-             _%self171630%_)))))
+             _%self170557%_)))))
     (define gxc#apply-collect-object-refs__@
-      (lambda (_%@@keywords171637%_ . _%args171638%_)
+      (lambda (_%@@keywords170564%_ . _%args170565%_)
         (apply gxc#apply-collect-object-refs__%
-               _%@@keywords171637%_
+               _%@@keywords170564%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171637%_
+                  _%@@keywords170564%_
                   'receiver:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171637%_
+                  _%@@keywords170564%_
                   'methods:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171637%_
+                  _%@@keywords170564%_
                   'slots:
                   absent-value))
-               _%args171638%_)))
+               _%args170565%_)))
     (define gxc#apply-collect-object-refs
-      (lambda _%args171612171644%_
+      (lambda _%args170539170571%_
         (apply keyword-dispatch
                '#(receiver: slots: methods:)
                gxc#apply-collect-object-refs__@
-               _%args171612171644%_)))
+               _%args170539170571%_)))
     (define gxc#::subst-object-refs::t
-      (let ((__tmp172802 (list gxc#::basic-xform-expression::t))
-            (__tmp172801 (cons (cons 'final: '#t) '())))
+      (let ((__tmp171729 (list gxc#::basic-xform-expression::t))
+            (__tmp171728 (cons (cons 'final: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#::subst-object-refs::t
          '::subst-object-refs
-         __tmp172802
+         __tmp171729
          '(receiver klass methods slots)
-         __tmp172801
+         __tmp171728
          '#f)))
     (define gxc#::subst-object-refs?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#::subst-object-refs::t)))
     (define gxc#make-::subst-object-refs
-      (lambda _%$args171605%_
-        (apply make-instance gxc#::subst-object-refs::t _%$args171605%_)))
+      (lambda _%$args170532%_
+        (apply make-instance gxc#::subst-object-refs::t _%$args170532%_)))
     (define gxc#::subst-object-refs-receiver
       (let ()
         (declare (not safe))
@@ -454,7 +454,7 @@
          gxc#::subst-object-refs::t
          'slots)))
     (define gxc#::subst-object-refs-bind-methods!
-      (let ((__tmp172803
+      (let ((__tmp171730
              (lambda ()
                (force gxc#::basic-xform-expression-bind-methods!)
                (let ()
@@ -473,41 +473,41 @@
                  (declare (not safe))
                  (__seal-class! gxc#::subst-object-refs::t)))))
         (declare (not safe))
-        (__make-promise __tmp172803)))
+        (__make-promise __tmp171730)))
     (define gxc#apply-subst-object-refs__%
-      (lambda (_%@@keywords171567%_
-               _%receiver171561171568%_
-               _%klass171562171570%_
-               _%methods171563171572%_
-               _%slots171564171574%_
-               _%stx171576%_)
-        (let* ((_%receiver171579%_
-                (if (eq? _%receiver171561171568%_ absent-value)
+      (lambda (_%@@keywords170494%_
+               _%receiver170488170495%_
+               _%klass170489170497%_
+               _%methods170490170499%_
+               _%slots170491170501%_
+               _%stx170503%_)
+        (let* ((_%receiver170506%_
+                (if (eq? _%receiver170488170495%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'receiver:))
-                    _%receiver171561171568%_))
-               (_%klass171581%_
-                (if (eq? _%klass171562171570%_ absent-value)
+                    _%receiver170488170495%_))
+               (_%klass170508%_
+                (if (eq? _%klass170489170497%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'klass:))
-                    _%klass171562171570%_))
-               (_%methods171583%_
-                (if (eq? _%methods171563171572%_ absent-value)
+                    _%klass170489170497%_))
+               (_%methods170510%_
+                (if (eq? _%methods170490170499%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'methods:))
-                    _%methods171563171572%_))
-               (_%slots171585%_
-                (if (eq? _%slots171564171574%_ absent-value)
+                    _%methods170490170499%_))
+               (_%slots170512%_
+                (if (eq? _%slots170491170501%_ absent-value)
                     (let ()
                       (declare (not safe))
                       (error '"Missing required keyword argument" 'slots:))
-                    _%slots171564171574%_)))
+                    _%slots170491170501%_)))
           (force gxc#::subst-object-refs-bind-methods!)
-          (let* ((_%self171587%_
-                  (let ((__obj172792
+          (let* ((_%self170514%_
+                  (let ((__obj171719
                          (let ()
                            (declare (not safe))
                            (##structure
@@ -519,96 +519,96 @@
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172792
-                       _%receiver171579%_
+                       __obj171719
+                       _%receiver170506%_
                        '1
                        '#f
                        '#f))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172792
-                       _%klass171581%_
+                       __obj171719
+                       _%klass170508%_
                        '2
                        '#f
                        '#f))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172792
-                       _%methods171583%_
+                       __obj171719
+                       _%methods170510%_
                        '3
                        '#f
                        '#f))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj172792
-                       _%slots171585%_
+                       __obj171719
+                       _%slots170512%_
                        '4
                        '#f
                        '#f))
-                    __obj172792))
-                 (__tmp172804
+                    __obj171719))
+                 (__tmp171731
                   (lambda ()
                     (let ()
                       (declare (not safe))
-                      (gxc#compile-e__1 _%self171587%_ _%stx171576%_)))))
+                      (gxc#compile-e__1 _%self170514%_ _%stx170503%_)))))
             (declare (not safe))
             (__call-with-parameters
-             __tmp172804
+             __tmp171731
              gxc#current-compile-method
-             _%self171587%_)))))
+             _%self170514%_)))))
     (define gxc#apply-subst-object-refs__@
-      (lambda (_%@@keywords171594%_ . _%args171595%_)
+      (lambda (_%@@keywords170521%_ . _%args170522%_)
         (apply gxc#apply-subst-object-refs__%
-               _%@@keywords171594%_
+               _%@@keywords170521%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171594%_
+                  _%@@keywords170521%_
                   'receiver:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171594%_
+                  _%@@keywords170521%_
                   'klass:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171594%_
+                  _%@@keywords170521%_
                   'methods:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords171594%_
+                  _%@@keywords170521%_
                   'slots:
                   absent-value))
-               _%args171595%_)))
+               _%args170522%_)))
     (define gxc#apply-subst-object-refs
-      (lambda _%args171565171601%_
+      (lambda _%args170492170528%_
         (apply keyword-dispatch
                '#(receiver: methods: slots: klass:)
                gxc#apply-subst-object-refs__@
-               _%args171565171601%_)))
+               _%args170492170528%_)))
     (define gxc#generate-method-specializers-define-values%
-      (lambda (_%self168742%_ _%stx168743%_)
-        (letrec ((_%generate-method-bind168745%_
-                  (lambda (_%$klass171553%_
-                           _%$method-table171554%_
-                           _%id171555%_
-                           _%$id171556%_)
-                    (let ((_%$tmp171558%_
-                           (let ((__tmp172805
+      (lambda (_%self167669%_ _%stx167670%_)
+        (letrec ((_%generate-method-bind167672%_
+                  (lambda (_%$klass170480%_
+                           _%$method-table170481%_
+                           _%id170482%_
+                           _%$id170483%_)
+                    (let ((_%$tmp170485%_
+                           (let ((__tmp171732
                                   (let ()
                                     (declare (not safe))
                                     (##gensym '__method))))
                              (declare (not safe))
-                             (make-symbol__0 __tmp172805))))
-                      (cons (cons _%$id171556%_ '())
+                             (make-symbol__0 __tmp171732))))
+                      (cons (cons _%$id170483%_ '())
                             (cons (cons '%#call
                                         (cons (cons '%#ref
                                                     (cons 'make-promise '()))
@@ -616,14 +616,14 @@
                                                           (cons '()
                                                                 (cons (cons '%#let-values
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                    (cons (cons (cons (cons _%$tmp171558%_ '())
+                                    (cons (cons (cons (cons _%$tmp170485%_ '())
                                                       (cons (cons '%#call
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (cons (cons '%#ref (cons 'symbolic-table-ref '()))
                                 (cons (cons '%#ref
-                                            (cons _%$method-table171554%_ '()))
+                                            (cons _%$method-table170481%_ '()))
                                       (cons (cons '%#quote
-                                                  (cons _%id171555%_ '()))
+                                                  (cons _%id170482%_ '()))
                                             (cons (cons '%#quote
                                                         (cons '#f '()))
                                                   '())))))
@@ -633,15 +633,15 @@
                                           (cons (cons '%#if
                                                       (cons (cons '%#ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _%$tmp171558%_ '()))
-                    (cons (cons '%#ref (cons _%$tmp171558%_ '()))
+                          (cons _%$tmp170485%_ '()))
+                    (cons (cons '%#ref (cons _%$tmp170485%_ '()))
                           (cons (cons '%#call
                                       (cons (cons '%#ref (cons 'error '()))
                                             (cons (cons '%#quote
                                                         (cons '"Missing method"
                                                               '()))
                                                   (cons (cons '%#quote
-                                                              (cons _%id171555%_
+                                                              (cons _%id170482%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))
                 '()))))
@@ -653,26 +653,26 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     '())))
                                   '())))))
-                 (_%generate-slot-bind168746%_
-                  (lambda (_%$klass171547%_ _%id171548%_ _%$id171549%_)
-                    (let ((_%$tmp171551%_
-                           (let ((__tmp172806
+                 (_%generate-slot-bind167673%_
+                  (lambda (_%$klass170474%_ _%id170475%_ _%$id170476%_)
+                    (let ((_%$tmp170478%_
+                           (let ((__tmp171733
                                   (let ()
                                     (declare (not safe))
                                     (##gensym '__slot))))
                              (declare (not safe))
-                             (make-symbol__0 __tmp172806))))
-                      (cons (cons _%$id171549%_ '())
+                             (make-symbol__0 __tmp171733))))
+                      (cons (cons _%$id170476%_ '())
                             (cons (cons '%#let-values
-                                        (cons (cons (cons (cons _%$tmp171551%_
+                                        (cons (cons (cons (cons _%$tmp170478%_
                                                                 '())
                                                           (cons (cons '%#call
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (cons (cons '%#ref (cons 'class-slot-offset '()))
                                     (cons (cons '%#ref
-                                                (cons _%$klass171547%_ '()))
+                                                (cons _%$klass170474%_ '()))
                                           (cons (cons '%#quote
-                                                      (cons _%id171548%_ '()))
+                                                      (cons _%id170475%_ '()))
                                                 '()))))
                         '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -680,6107 +680,5744 @@
                                               (cons (cons '%#if
                                                           (cons (cons '%#ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (cons _%$tmp171551%_ '()))
-                        (cons (cons '%#ref (cons _%$tmp171551%_ '()))
+                              (cons _%$tmp170478%_ '()))
+                        (cons (cons '%#ref (cons _%$tmp170478%_ '()))
                               (cons (cons '%#call
                                           (cons (cons '%#ref (cons 'error '()))
                                                 (cons (cons '%#quote
                                                             (cons '"Unknown slot"
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))
-              (cons (cons '%#quote (cons _%id171548%_ '())) '()))))
+              (cons (cons '%#quote (cons _%id170475%_ '())) '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                     '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     '())))
                                   '())))))
-                 (_%generate-specializer-impl168747%_
-                  (lambda (_%$klass171541%_
-                           _%$method-table171542%_
-                           _%methods-bind171543%_
-                           _%slots-bind171544%_
-                           _%specializer-impl171545%_)
-                    (let ((__tmp172807
+                 (_%generate-specializer-impl167674%_
+                  (lambda (_%$klass170468%_
+                           _%$method-table170469%_
+                           _%methods-bind170470%_
+                           _%slots-bind170471%_
+                           _%specializer-impl170472%_)
+                    (let ((__tmp171734
                            (cons '%#lambda
-                                 (cons (cons _%$klass171541%_
-                                             (cons _%$method-table171542%_
+                                 (cons (cons _%$klass170468%_
+                                             (cons _%$method-table170469%_
                                                    '()))
                                        (cons (cons '%#let-values
                                                    (cons (let ()
                                                            (declare (not safe))
                                                            (__foldr1
                                                             cons
-                                                            _%slots-bind171544%_
-                                                            _%methods-bind171543%_))
-                                                         (cons _%specializer-impl171545%_
+                                                            _%slots-bind170471%_
+                                                            _%methods-bind170470%_))
+                                                         (cons _%specializer-impl170472%_
                                                                '())))
                                              '())))))
                       (declare (not safe))
-                      (gxc#xform-wrap-source __tmp172807 _%stx168743%_))))
-                 (_%generate-specializer-def168748%_
-                  (lambda (_%id171537%_
-                           _%specializer-id171538%_
-                           _%specializer-impl171539%_)
-                    (let ((__tmp172808
+                      (gxc#xform-wrap-source __tmp171734 _%stx167670%_))))
+                 (_%generate-specializer-def167675%_
+                  (lambda (_%id170464%_
+                           _%specializer-id170465%_
+                           _%specializer-impl170466%_)
+                    (let ((__tmp171735
                            (cons '%#begin
-                                 (cons _%stx168743%_
-                                       (cons (let ((__tmp172809
+                                 (cons _%stx167670%_
+                                       (cons (let ((__tmp171736
                                                     (cons '%#define-values
-                                                          (cons (cons _%specializer-id171538%_
+                                                          (cons (cons _%specializer-id170465%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               '())
-                        (cons _%specializer-impl171539%_ '())))))
+                        (cons _%specializer-impl170466%_ '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
                                                (gxc#xform-wrap-source
-                                                __tmp172809
-                                                _%stx168743%_))
-                                             (cons (let ((__tmp172810
+                                                __tmp171736
+                                                _%stx167670%_))
+                                             (cons (let ((__tmp171737
                                                           (cons '%#call
                                                                 (cons (cons '%#ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                     (cons 'bind-specializer! '()))
-                              (cons (cons '%#ref (cons _%id171537%_ '()))
+                              (cons (cons '%#ref (cons _%id170464%_ '()))
                                     (cons (cons '%#ref
-                                                (cons _%specializer-id171538%_
+                                                (cons _%specializer-id170465%_
                                                       '()))
                                           '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (gxc#xform-wrap-source
-                                                      __tmp172810
-                                                      _%stx168743%_))
+                                                      __tmp171737
+                                                      _%stx167670%_))
                                                    '()))))))
                       (declare (not safe))
-                      (gxc#xform-wrap-source __tmp172808 _%stx168743%_)))))
-          (let* ((_%__stx171748171749%_ _%stx168743%_)
-                 (_%g168751168771%_
+                      (gxc#xform-wrap-source __tmp171735 _%stx167670%_)))))
+          (let* ((_%__stx170675170676%_ _%stx167670%_)
+                 (_%g167678167698%_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
                        '"Bad syntax; invalid match target"
-                       _%__stx171748171749%_)))))
-            (let ((_%__kont171750171751%_
-                   (lambda (_%L168815%_ _%L168816%_)
-                     (let ((_%method-calls168835%_
+                       _%__stx170675170676%_)))))
+            (let ((_%__kont170677170678%_
+                   (lambda (_%L167742%_ _%L167743%_)
+                     (let ((_%method-calls167762%_
                             (let () (declare (not safe)) (make-hash-table-eq)))
-                           (_%slot-refs168836%_
+                           (_%slot-refs167763%_
                             (let () (declare (not safe)) (make-hash-table-eq)))
-                           (_%empty168837%_
+                           (_%empty167764%_
                             (let ()
                               (declare (not safe))
                               (make-hash-table-eq))))
-                       (letrec ((_%no-specializer?168839%_
+                       (letrec ((_%no-specializer?167766%_
                                  (lambda ()
                                    (if (fxzero? (let ()
                                                   (declare (not safe))
                                                   (hash-length
-                                                   _%method-calls168835%_)))
+                                                   _%method-calls167762%_)))
                                        (fxzero? (let ()
                                                   (declare (not safe))
                                                   (hash-length
-                                                   _%slot-refs168836%_)))
+                                                   _%slot-refs167763%_)))
                                        '#f))))
                          (if (let ()
                                (declare (not safe))
-                               (gxc#lambda-expr? _%L168815%_))
-                             (let ()
-                               (let* ((_%__stx171662171663%_ _%L168815%_)
-                                      (_%g169227169245%_
-                                       (lambda ()
+                               (gxc#lambda-expr? _%L167742%_))
+                             (let* ((_%__stx170589170590%_ _%L167742%_)
+                                    (_%g168154168172%_
+                                     (lambda ()
+                                       (let ()
+                                         (declare (not safe))
+                                         (gx#raise-syntax-error
+                                          '#f
+                                          '"Bad syntax; invalid match target"
+                                          _%__stx170589170590%_)))))
+                               (let ((_%__kont170591170592%_
+                                      (lambda (_%L168208%_
+                                               _%L168209%_
+                                               _%L168210%_)
+                                        (for-each
+                                         (lambda (_%g168226168228%_)
+                                           (gxc#apply-collect-object-refs__%
+                                            '#f
+                                            _%L168210%_
+                                            _%method-calls167762%_
+                                            _%slot-refs167763%_
+                                            _%g168226168228%_))
+                                         _%L168208%_)
+                                        (if (_%no-specializer?167766%_)
+                                            _%stx167670%_
+                                            (let* ((_%specializer-id168237%_
+                                                    (let* ((_%id168231%_
+                                                            (let ((__tmp171738
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-e _%L167743%_))))
+                      (declare (not safe))
+                      (make-symbol__1 __tmp171738 '"::specialize")))
+                   (_%specializer-id168234%_
+                    (let ((__tmp171739
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-source _%stx167670%_))))
+                      (declare (not safe))
+                      (gx#core-quote-syntax__1 _%id168231%_ __tmp171739))))
+              (let ()
+                (declare (not safe))
+                (gx#core-bind-runtime!__0 _%specializer-id168234%_))
+              _%specializer-id168234%_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%$klass168239%_
+                                                    (let ((__tmp171740
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##gensym
+                                                              '__klass))))
+                                                      (declare (not safe))
+                                                      (make-symbol__0
+                                                       __tmp171740)))
+                                                   (_%$method-table168241%_
+                                                    (let ((__tmp171741
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##gensym
+                                                              '__method-table))))
+                                                      (declare (not safe))
+                                                      (make-symbol__0
+                                                       __tmp171741)))
+                                                   (_%methods168243%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (hash-keys
+                                                       _%method-calls167762%_)))
+                                                   (_%$methods168247%_
+                                                    (map (lambda (_%id168245%_)
+                                                           (let ((__tmp171742
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (gensym _%id168245%_)))
+                     (declare (not safe))
+                     (make-symbol__1 '"__" __tmp171742)))
+                 _%methods168243%_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%_168256%_
+                                                    (for-each
+                                                     (lambda (_%g168248168251%_
+                                                              _%g168249168253%_)
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (hash-put!
+                                                          _%method-calls167762%_
+                                                          _%g168248168251%_
+                                                          _%g168249168253%_)))
+                                                     _%methods168243%_
+                                                     _%$methods168247%_))
+                                                   (_%methods-bind168266%_
+                                                    (map (lambda (_%g168258168261%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          _%g168259168263%_)
+                   (_%generate-method-bind167672%_
+                    _%$klass168239%_
+                    _%$method-table168241%_
+                    _%g168258168261%_
+                    _%g168259168263%_))
+                 _%methods168243%_
+                 _%$methods168247%_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%slots168268%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (hash-keys
+                                                       _%slot-refs167763%_)))
+                                                   (_%$slots168272%_
+                                                    (map (lambda (_%id168270%_)
+                                                           (let ((__tmp171743
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (gensym _%id168270%_)))
+                     (declare (not safe))
+                     (make-symbol__1 '"__" __tmp171743)))
+                 _%slots168268%_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%_168281%_
+                                                    (for-each
+                                                     (lambda (_%g168273168276%_
+                                                              _%g168274168278%_)
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (hash-put!
+                                                          _%slot-refs167763%_
+                                                          _%g168273168276%_
+                                                          _%g168274168278%_)))
+                                                     _%slots168268%_
+                                                     _%$slots168272%_))
+                                                   (_%slots-bind168290%_
+                                                    (map (lambda (_%g168282168285%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          _%g168283168287%_)
+                   (_%generate-slot-bind167673%_
+                    _%$klass168239%_
+                    _%g168282168285%_
+                    _%g168283168287%_))
+                 _%slots168268%_
+                 _%$slots168272%_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%specializer-body168296%_
+                                                    (map (lambda (_%g168291168293%_)
+                                                           (gxc#apply-subst-object-refs__%
+                                                            '#f
+                                                            _%L168210%_
+                                                            _%$klass168239%_
+                                                            _%method-calls167762%_
+                                                            _%slot-refs167763%_
+                                                            _%g168291168293%_))
+                                                         _%L168208%_))
+                                                   (_%specializer-impl168298%_
+                                                    (let ((__tmp171744
+                                                           (cons '%#lambda
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (cons (cons _%L168210%_ _%L168209%_)
+                               _%specializer-body168296%_))))
+              (declare (not safe))
+              (gxc#xform-wrap-source __tmp171744 _%stx167670%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%specializer-impl168300%_
+                                                    (_%generate-specializer-impl167674%_
+                                                     _%$klass168239%_
+                                                     _%$method-table168241%_
+                                                     _%methods-bind168266%_
+                                                     _%slots-bind168290%_
+                                                     _%specializer-impl168298%_)))
+                                              (let ((__tmp171746
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (gx#stx-e _%L167743%_)))
+                                                    (__tmp171745
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (gx#stx-e
+                                                        _%specializer-id168237%_))))
+                                                (declare (not safe))
+                                                (gxc#verbose
+                                                 '"generate method specializer "
+                                                 __tmp171746
+                                                 '" => "
+                                                 __tmp171745))
+                                              (_%generate-specializer-def167675%_
+                                               _%L167743%_
+                                               _%specializer-id168237%_
+                                               _%specializer-impl168300%_)))))
+                                     (_%__kont170593170594%_
+                                      (lambda () _%stx167670%_)))
+                                 (if (let ()
+                                       (declare (not safe))
+                                       (gx#stx-pair? _%__stx170589170590%_))
+                                     (let ((_%e168159168184%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (gx#stx-e
+                                               _%__stx170589170590%_))))
+                                       (let ((_%tl168161168189%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##cdr _%e168159168184%_)))
+                                             (_%hd168160168187%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##car _%e168159168184%_))))
+                                         (if (let ()
+                                               (declare (not safe))
+                                               (gx#stx-pair?
+                                                _%tl168161168189%_))
+                                             (let ((_%e168162168192%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (gx#stx-e
+                                                       _%tl168161168189%_))))
+                                               (let ((_%tl168164168197%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##cdr _%e168162168192%_)))
+                                                     (_%hd168163168195%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##car _%e168162168192%_))))
+                                                 (if (let ()
+                                                       (declare (not safe))
+                                                       (gx#stx-pair?
+                                                        _%hd168163168195%_))
+                                                     (let ((_%e168165168200%_
+                                                            (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (gx#stx-e
+                                                               _%hd168163168195%_))))
+                                                       (let ((_%tl168167168205%_
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (##cdr _%e168165168200%_)))
+                     (_%hd168166168203%_
+                      (let () (declare (not safe)) (##car _%e168165168200%_))))
+                 (_%__kont170591170592%_
+                  _%tl168164168197%_
+                  _%tl168167168205%_
+                  _%hd168166168203%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%__kont170593170594%_))))
+                                             (_%__kont170593170594%_))))
+                                     (_%__kont170593170594%_))))
+                             (if (let ()
+                                   (declare (not safe))
+                                   (gxc#case-lambda-expr? _%L167742%_))
+                                 (let* ((_%g168307168326%_
+                                         (lambda (_%g168308168323%_)
+                                           (let ()
+                                             (declare (not safe))
+                                             (gx#raise-syntax-error
+                                              '#f
+                                              '"Bad syntax; invalid match target"
+                                              _%g168308168323%_))))
+                                        (_%g168306168613%_
+                                         (lambda (_%g168308168329%_)
+                                           (if (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-pair?
+                                                  _%g168308168329%_))
+                                               (let ((_%e168310168331%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (gx#stx-e
+                                                         _%g168308168329%_))))
+                                                 (let ((_%hd168311168334%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##car _%e168310168331%_)))
+                                                       (_%tl168312168336%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##cdr _%e168310168331%_))))
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-pair/null?
+                                                          _%tl168312168336%_))
+                                                       (let ((_g171747_
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (gx#syntax-split-splice _%tl168312168336%_ '0))))
+                 (begin
+                   (let ((_g171748_
+                          (let ()
+                            (declare (not safe))
+                            (if (##values? _g171747_)
+                                (##vector-length _g171747_)
+                                1))))
+                     (if (not (let ()
+                                (declare (not safe))
+                                (##fx= _g171748_ 2)))
+                         (error "Context expects 2 values" _g171748_)))
+                   (let ((_%target168313168339%_
+                          (let ()
+                            (declare (not safe))
+                            (##vector-ref _g171747_ 0)))
+                         (_%tl168315168341%_
+                          (let ()
+                            (declare (not safe))
+                            (##vector-ref _g171747_ 1))))
+                     (if (let ()
+                           (declare (not safe))
+                           (gx#stx-null? _%tl168315168341%_))
+                         (letrec ((_%loop168316168344%_
+                                   (lambda (_%hd168314168347%_
+                                            _%clause168320168349%_)
+                                     (if (let ()
+                                           (declare (not safe))
+                                           (gx#stx-pair? _%hd168314168347%_))
+                                         (let ((_%e168317168352%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (gx#stx-e
+                                                   _%hd168314168347%_))))
+                                           (let ((_%lp-hd168318168355%_
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (##car _%e168317168352%_)))
+                                                 (_%lp-tl168319168357%_
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (##cdr _%e168317168352%_))))
+                                             (_%loop168316168344%_
+                                              _%lp-tl168319168357%_
+                                              (cons _%lp-hd168318168355%_
+                                                    _%clause168320168349%_))))
+                                         (let ((_%clause168321168360%_
+                                                (reverse _%clause168320168349%_)))
+                                           ((lambda (_%L168363%_)
+                                              (for-each
+                                               (lambda (_%clause168377%_)
+                                                 (let* ((_%__stx170615170616%_
+                                                         _%clause168377%_)
+                                                        (_%g168380168395%_
+                                                         (lambda ()
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#raise-syntax-error
+                                                              '#f
+                                                              '"Bad syntax; invalid match target"
+                                                              _%__stx170615170616%_)))))
+                                                   (let ((_%__kont170617170618%_
+                                                          (lambda (_%L168423%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _%L168424%_
+                           _%L168425%_)
+                    (for-each
+                     (lambda (_%g168440168442%_)
+                       (gxc#apply-collect-object-refs__%
+                        '#f
+                        _%L168425%_
+                        _%method-calls167762%_
+                        _%slot-refs167763%_
+                        _%g168440168442%_))
+                     _%L168423%_)))
+                 (_%__kont170619170620%_ (lambda () '#!void)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (if (let ()
+                                                           (declare (not safe))
+                                                           (gx#stx-pair?
+                                                            _%__stx170615170616%_))
+                                                         (let ((_%e168385168407%_
+                                                                (let ()
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (declare (not safe))
+                          (gx#stx-e _%__stx170615170616%_))))
+                   (let ((_%tl168387168412%_
+                          (let ()
+                            (declare (not safe))
+                            (##cdr _%e168385168407%_)))
+                         (_%hd168386168410%_
+                          (let ()
+                            (declare (not safe))
+                            (##car _%e168385168407%_))))
+                     (if (let ()
+                           (declare (not safe))
+                           (gx#stx-pair? _%hd168386168410%_))
+                         (let ((_%e168388168415%_
+                                (let ()
+                                  (declare (not safe))
+                                  (gx#stx-e _%hd168386168410%_))))
+                           (let ((_%tl168390168420%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##cdr _%e168388168415%_)))
+                                 (_%hd168389168418%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##car _%e168388168415%_))))
+                             (_%__kont170617170618%_
+                              _%tl168387168412%_
+                              _%tl168390168420%_
+                              _%hd168389168418%_)))
+                         (_%__kont170619170620%_))))
+                 (_%__kont170619170620%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (let ((__tmp171749
+                                                      (lambda (_%g168447168450%_
+                                                               _%g168448168452%_)
+                                                        (cons _%g168447168450%_
+                                                              _%g168448168452%_))))
+                                                 (declare (not safe))
+                                                 (__foldr1
+                                                  __tmp171749
+                                                  '()
+                                                  _%L168363%_)))
+                                              (if (_%no-specializer?167766%_)
+                                                  _%stx167670%_
+                                                  (let* ((_%specializer-id168461%_
+                                                          (let* ((_%id168455%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (let ((__tmp171750
+                                 (let ()
+                                   (declare (not safe))
+                                   (gx#stx-e _%L167743%_))))
+                            (declare (not safe))
+                            (make-symbol__1 __tmp171750 '"::specialize")))
+                         (_%specializer-id168458%_
+                          (let ((__tmp171751
+                                 (let ()
+                                   (declare (not safe))
+                                   (gx#stx-source _%stx167670%_))))
+                            (declare (not safe))
+                            (gx#core-quote-syntax__1
+                             _%id168455%_
+                             __tmp171751))))
+                    (let ()
+                      (declare (not safe))
+                      (gx#core-bind-runtime!__0 _%specializer-id168458%_))
+                    _%specializer-id168458%_))
+                 (_%$klass168463%_
+                  (let ((__tmp171752
+                         (let () (declare (not safe)) (##gensym '__klass))))
+                    (declare (not safe))
+                    (make-symbol__0 __tmp171752)))
+                 (_%$method-table168465%_
+                  (let ((__tmp171753
+                         (let ()
+                           (declare (not safe))
+                           (##gensym '__method-table))))
+                    (declare (not safe))
+                    (make-symbol__0 __tmp171753)))
+                 (_%methods168467%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-keys _%method-calls167762%_)))
+                 (_%$methods168471%_
+                  (map (lambda (_%id168469%_)
+                         (let ((__tmp171754 (gensym _%id168469%_)))
+                           (declare (not safe))
+                           (make-symbol__1 '"__" __tmp171754)))
+                       _%methods168467%_))
+                 (_%_168480%_
+                  (for-each
+                   (lambda (_%g168472168475%_ _%g168473168477%_)
+                     (let ()
+                       (declare (not safe))
+                       (hash-put!
+                        _%method-calls167762%_
+                        _%g168472168475%_
+                        _%g168473168477%_)))
+                   _%methods168467%_
+                   _%$methods168471%_))
+                 (_%methods-bind168490%_
+                  (map (lambda (_%g168482168485%_ _%g168483168487%_)
+                         (_%generate-method-bind167672%_
+                          _%$klass168463%_
+                          _%$method-table168465%_
+                          _%g168482168485%_
+                          _%g168483168487%_))
+                       _%methods168467%_
+                       _%$methods168471%_))
+                 (_%slots168492%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-keys _%slot-refs167763%_)))
+                 (_%$slots168496%_
+                  (map (lambda (_%id168494%_)
+                         (let ((__tmp171755 (gensym _%id168494%_)))
+                           (declare (not safe))
+                           (make-symbol__1 '"__" __tmp171755)))
+                       _%slots168492%_))
+                 (_%_168505%_
+                  (for-each
+                   (lambda (_%g168497168500%_ _%g168498168502%_)
+                     (let ()
+                       (declare (not safe))
+                       (hash-put!
+                        _%slot-refs167763%_
+                        _%g168497168500%_
+                        _%g168498168502%_)))
+                   _%slots168492%_
+                   _%$slots168496%_))
+                 (_%slots-bind168514%_
+                  (map (lambda (_%g168506168509%_ _%g168507168511%_)
+                         (_%generate-slot-bind167673%_
+                          _%$klass168463%_
+                          _%g168506168509%_
+                          _%g168507168511%_))
+                       _%slots168492%_
+                       _%$slots168496%_))
+                 (_%specializer-clauses168606%_
+                  (map (lambda (_%clause168516%_)
+                         (let* ((_%__stx170635170636%_ _%clause168516%_)
+                                (_%g168519168534%_
+                                 (lambda ()
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#raise-syntax-error
+                                      '#f
+                                      '"Bad syntax; invalid match target"
+                                      _%__stx170635170636%_)))))
+                           (let ((_%__kont170637170638%_
+                                  (lambda (_%L168562%_ _%L168563%_ _%L168564%_)
+                                    (let ((_%body168594%_
+                                           (map (lambda (_%g168589168591%_)
+                                                  (gxc#apply-subst-object-refs__%
+                                                   '#f
+                                                   _%L168564%_
+                                                   _%$klass168463%_
+                                                   _%method-calls167762%_
+                                                   _%slot-refs167763%_
+                                                   _%g168589168591%_))
+                                                _%L168562%_)))
+                                      (cons (cons _%L168564%_ _%L168563%_)
+                                            _%body168594%_))))
+                                 (_%__kont170639170640%_
+                                  (lambda () _%clause168516%_)))
+                             (if (let ()
+                                   (declare (not safe))
+                                   (gx#stx-pair? _%__stx170635170636%_))
+                                 (let ((_%e168524168546%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (gx#stx-e _%__stx170635170636%_))))
+                                   (let ((_%tl168526168551%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (##cdr _%e168524168546%_)))
+                                         (_%hd168525168549%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (##car _%e168524168546%_))))
+                                     (if (let ()
+                                           (declare (not safe))
+                                           (gx#stx-pair? _%hd168525168549%_))
+                                         (let ((_%e168527168554%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (gx#stx-e
+                                                   _%hd168525168549%_))))
+                                           (let ((_%tl168529168559%_
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (##cdr _%e168527168554%_)))
+                                                 (_%hd168528168557%_
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (##car _%e168527168554%_))))
+                                             (_%__kont170637170638%_
+                                              _%tl168526168551%_
+                                              _%tl168529168559%_
+                                              _%hd168528168557%_)))
+                                         (_%__kont170639170640%_))))
+                                 (_%__kont170639170640%_)))))
+                       (let ((__tmp171756
+                              (lambda (_%g168598168601%_ _%g168599168603%_)
+                                (cons _%g168598168601%_ _%g168599168603%_))))
+                         (declare (not safe))
+                         (__foldr1 __tmp171756 '() _%L168363%_))))
+                 (_%specializer-impl168608%_
+                  (let ((__tmp171757
+                         (cons '%#case-lambda _%specializer-clauses168606%_)))
+                    (declare (not safe))
+                    (gxc#xform-wrap-source __tmp171757 _%stx167670%_)))
+                 (_%specializer-impl168610%_
+                  (_%generate-specializer-impl167674%_
+                   _%$klass168463%_
+                   _%$method-table168465%_
+                   _%methods-bind168490%_
+                   _%slots-bind168514%_
+                   _%specializer-impl168608%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (let ((__tmp171759
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%L167743%_)))
+                                                          (__tmp171758
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%specializer-id168461%_))))
+                                                      (declare (not safe))
+                                                      (gxc#verbose
+                                                       '"generate method specializer "
+                                                       __tmp171759
+                                                       '" => "
+                                                       __tmp171758))
+                                                    (_%generate-specializer-def167675%_
+                                                     _%L167743%_
+                                                     _%specializer-id168461%_
+                                                     _%specializer-impl168610%_))))
+                                            _%clause168321168360%_))))))
+                           (_%loop168316168344%_ _%target168313168339%_ '()))
+                         (_%g168307168326%_ _%g168308168329%_)))))
+               (_%g168307168326%_ _%g168308168329%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (_%g168307168326%_
+                                                _%g168308168329%_)))))
+                                   (_%g168306168613%_ _%L167742%_))
+                                 (if (let ()
+                                       (declare (not safe))
+                                       (gxc#opt-lambda-expr? _%L167742%_))
+                                     (let* ((_%g168617168647%_
+                                             (lambda (_%g168618168644%_)
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (gx#raise-syntax-error
+                                                  '#f
+                                                  '"Bad syntax; invalid match target"
+                                                  _%g168618168644%_))))
+                                            (_%g168616169256%_
+                                             (lambda (_%g168618168650%_)
+                                               (if (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-pair?
+                                                      _%g168618168650%_))
+                                                   (let ((_%e168622168652%_
+                                                          (let ()
+                                                            (declare
+                                                              (not safe))
+                                                            (gx#stx-e
+                                                             _%g168618168650%_))))
+                                                     (let ((_%hd168623168655%_
+                                                            (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (##car _%e168622168652%_)))
+                                                           (_%tl168624168657%_
+                                                            (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (##cdr _%e168622168652%_))))
+                                                       (if (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-pair?
+                                                              _%tl168624168657%_))
+                                                           (let ((_%e168625168660%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (let ()
+                            (declare (not safe))
+                            (gx#stx-e _%tl168624168657%_))))
+                     (let ((_%hd168626168663%_
+                            (let ()
+                              (declare (not safe))
+                              (##car _%e168625168660%_)))
+                           (_%tl168627168665%_
+                            (let ()
+                              (declare (not safe))
+                              (##cdr _%e168625168660%_))))
+                       (if (let ()
+                             (declare (not safe))
+                             (gx#stx-pair? _%hd168626168663%_))
+                           (let ((_%e168628168668%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (gx#stx-e _%hd168626168663%_))))
+                             (let ((_%hd168629168671%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%e168628168668%_)))
+                                   (_%tl168630168673%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##cdr _%e168628168668%_))))
+                               (if (let ()
+                                     (declare (not safe))
+                                     (gx#stx-pair? _%hd168629168671%_))
+                                   (let ((_%e168631168676%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (gx#stx-e _%hd168629168671%_))))
+                                     (let ((_%hd168632168679%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##car _%e168631168676%_)))
+                                           (_%tl168633168681%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##cdr _%e168631168676%_))))
+                                       (if (let ()
+                                             (declare (not safe))
+                                             (gx#stx-pair? _%hd168632168679%_))
+                                           (let ((_%e168634168684%_
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (gx#stx-e
+                                                     _%hd168632168679%_))))
+                                             (let ((_%hd168635168687%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (##car _%e168634168684%_)))
+                                                   (_%tl168636168689%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (##cdr _%e168634168684%_))))
+                                               (if (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-null?
+                                                      _%tl168636168689%_))
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-pair?
+                                                          _%tl168633168681%_))
+                                                       (let ((_%e168637168692%_
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (gx#stx-e _%tl168633168681%_))))
+                 (let ((_%hd168638168695%_
+                        (let ()
+                          (declare (not safe))
+                          (##car _%e168637168692%_)))
+                       (_%tl168639168697%_
+                        (let ()
+                          (declare (not safe))
+                          (##cdr _%e168637168692%_))))
+                   (if (let ()
+                         (declare (not safe))
+                         (gx#stx-null? _%tl168639168697%_))
+                       (if (let ()
+                             (declare (not safe))
+                             (gx#stx-null? _%tl168630168673%_))
+                           (if (let ()
+                                 (declare (not safe))
+                                 (gx#stx-pair? _%tl168627168665%_))
+                               (let ((_%e168640168700%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (gx#stx-e _%tl168627168665%_))))
+                                 (let ((_%hd168641168703%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##car _%e168640168700%_)))
+                                       (_%tl168642168705%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##cdr _%e168640168700%_))))
+                                   (if (let ()
+                                         (declare (not safe))
+                                         (gx#stx-null? _%tl168642168705%_))
+                                       ((lambda (_%L168708%_
+                                                 _%L168709%_
+                                                 _%L168710%_)
+                                          (let* ((_%g168734168752%_
+                                                  (lambda (_%g168735168749%_)
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (gx#raise-syntax-error
+                                                       '#f
+                                                       '"Bad syntax; invalid match target"
+                                                       _%g168735168749%_))))
+                                                 (_%g168733168803%_
+                                                  (lambda (_%g168735168755%_)
+                                                    (if (let ()
+                                                          (declare (not safe))
+                                                          (gx#stx-pair?
+                                                           _%g168735168755%_))
+                                                        (let ((_%e168739168757%_
+                                                               (let ()
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (declare (not safe))
+                         (gx#stx-e _%g168735168755%_))))
+                  (let ((_%hd168740168760%_
+                         (let ()
+                           (declare (not safe))
+                           (##car _%e168739168757%_)))
+                        (_%tl168741168762%_
+                         (let ()
+                           (declare (not safe))
+                           (##cdr _%e168739168757%_))))
+                    (if (let ()
+                          (declare (not safe))
+                          (gx#stx-pair? _%tl168741168762%_))
+                        (let ((_%e168742168765%_
+                               (let ()
+                                 (declare (not safe))
+                                 (gx#stx-e _%tl168741168762%_))))
+                          (let ((_%hd168743168768%_
+                                 (let ()
+                                   (declare (not safe))
+                                   (##car _%e168742168765%_)))
+                                (_%tl168744168770%_
+                                 (let ()
+                                   (declare (not safe))
+                                   (##cdr _%e168742168765%_))))
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-pair? _%hd168743168768%_))
+                                (let ((_%e168745168773%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (gx#stx-e _%hd168743168768%_))))
+                                  (let ((_%hd168746168776%_
                                          (let ()
                                            (declare (not safe))
-                                           (gx#raise-syntax-error
-                                            '#f
-                                            '"Bad syntax; invalid match target"
-                                            _%__stx171662171663%_)))))
-                                 (let ((_%__kont171664171665%_
-                                        (lambda (_%L169281%_
-                                                 _%L169282%_
-                                                 _%L169283%_)
-                                          (for-each
-                                           (lambda (_%g169299169301%_)
-                                             (let ()
-                                               (declare (not safe))
-                                               (gxc#apply-collect-object-refs__%
-                                                '#f
-                                                _%L169283%_
-                                                _%method-calls168835%_
-                                                _%slot-refs168836%_
-                                                _%g169299169301%_)))
-                                           _%L169281%_)
-                                          (if (let ()
-                                                (declare (not safe))
-                                                (_%no-specializer?168839%_))
-                                              _%stx168743%_
-                                              (let* ((_%specializer-id169310%_
-                                                      (let* ((_%id169304%_
-                                                              (let ((__tmp172811
+                                           (##car _%e168745168773%_)))
+                                        (_%tl168747168778%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##cdr _%e168745168773%_))))
+                                    ((lambda (_%L168781%_
+                                              _%L168782%_
+                                              _%L168783%_)
+                                       (for-each
+                                        (lambda (_%g168798168800%_)
+                                          (gxc#apply-collect-object-refs__%
+                                           '#f
+                                           _%L168783%_
+                                           _%method-calls167762%_
+                                           _%slot-refs167763%_
+                                           _%g168798168800%_))
+                                        _%L168781%_))
+                                     _%tl168744168770%_
+                                     _%tl168747168778%_
+                                     _%hd168746168776%_)))
+                                (_%g168734168752%_ _%g168735168755%_))))
+                        (_%g168734168752%_ _%g168735168755%_))))
+                (_%g168734168752%_ _%g168735168755%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                            (_%g168733168803%_ _%L168709%_))
+                                          (let* ((_%g168806168825%_
+                                                  (lambda (_%g168807168822%_)
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (gx#raise-syntax-error
+                                                       '#f
+                                                       '"Bad syntax; invalid match target"
+                                                       _%g168807168822%_))))
+                                                 (_%g168805168944%_
+                                                  (lambda (_%g168807168828%_)
+                                                    (if (let ()
+                                                          (declare (not safe))
+                                                          (gx#stx-pair?
+                                                           _%g168807168828%_))
+                                                        (let ((_%e168809168830%_
+                                                               (let ()
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (declare (not safe))
+                         (gx#stx-e _%g168807168828%_))))
+                  (let ((_%hd168810168833%_
+                         (let ()
+                           (declare (not safe))
+                           (##car _%e168809168830%_)))
+                        (_%tl168811168835%_
+                         (let ()
+                           (declare (not safe))
+                           (##cdr _%e168809168830%_))))
+                    (if (let ()
+                          (declare (not safe))
+                          (gx#stx-pair/null? _%tl168811168835%_))
+                        (let ((_g171760_
+                               (let ()
+                                 (declare (not safe))
+                                 (gx#syntax-split-splice
+                                  _%tl168811168835%_
+                                  '0))))
+                          (begin
+                            (let ((_g171761_
+                                   (let ()
+                                     (declare (not safe))
+                                     (if (##values? _g171760_)
+                                         (##vector-length _g171760_)
+                                         1))))
+                              (if (not (let ()
+                                         (declare (not safe))
+                                         (##fx= _g171761_ 2)))
+                                  (error "Context expects 2 values"
+                                         _g171761_)))
+                            (let ((_%target168812168838%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (##vector-ref _g171760_ 0)))
+                                  (_%tl168814168840%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (##vector-ref _g171760_ 1))))
+                              (if (let ()
+                                    (declare (not safe))
+                                    (gx#stx-null? _%tl168814168840%_))
+                                  (letrec ((_%loop168815168843%_
+                                            (lambda (_%hd168813168846%_
+                                                     _%clause168819168848%_)
+                                              (if (let ()
+                                                    (declare (not safe))
+                                                    (gx#stx-pair?
+                                                     _%hd168813168846%_))
+                                                  (let ((_%e168816168851%_
+                                                         (let ()
+                                                           (declare (not safe))
+                                                           (gx#stx-e
+                                                            _%hd168813168846%_))))
+                                                    (let ((_%lp-hd168817168854%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##car _%e168816168851%_)))
+                                                          (_%lp-tl168818168856%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##cdr _%e168816168851%_))))
+                                                      (_%loop168815168843%_
+                                                       _%lp-tl168818168856%_
+                                                       (cons _%lp-hd168817168854%_
+                                                             _%clause168819168848%_))))
+                                                  (let ((_%clause168820168859%_
+                                                         (reverse _%clause168819168848%_)))
+                                                    ((lambda (_%L168862%_)
+                                                       (for-each
+                                                        (lambda (_%clause168875%_)
+                                                          (let* ((_%g168877168892%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (lambda (_%g168878168889%_)
+                            (let ()
+                              (declare (not safe))
+                              (gx#raise-syntax-error
+                               '#f
+                               '"Bad syntax; invalid match target"
+                               _%g168878168889%_))))
+                         (_%g168876168934%_
+                          (lambda (_%g168878168895%_)
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-pair? _%g168878168895%_))
+                                (let ((_%e168882168897%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (gx#stx-e _%g168878168895%_))))
+                                  (let ((_%hd168883168900%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##car _%e168882168897%_)))
+                                        (_%tl168884168902%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##cdr _%e168882168897%_))))
+                                    (if (let ()
+                                          (declare (not safe))
+                                          (gx#stx-pair? _%hd168883168900%_))
+                                        (let ((_%e168885168905%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-e
+                                                  _%hd168883168900%_))))
+                                          (let ((_%hd168886168908%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##car _%e168885168905%_)))
+                                                (_%tl168887168910%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##cdr _%e168885168905%_))))
+                                            ((lambda (_%L168913%_
+                                                      _%L168914%_
+                                                      _%L168915%_)
+                                               (for-each
+                                                (lambda (_%g168929168931%_)
+                                                  (gxc#apply-collect-object-refs__%
+                                                   '#f
+                                                   _%L168915%_
+                                                   _%method-calls167762%_
+                                                   _%slot-refs167763%_
+                                                   _%g168929168931%_))
+                                                _%L168913%_))
+                                             _%tl168884168902%_
+                                             _%tl168887168910%_
+                                             _%hd168886168908%_)))
+                                        (_%g168877168892%_
+                                         _%g168878168895%_))))
+                                (_%g168877168892%_ _%g168878168895%_)))))
+                    (_%g168876168934%_ _%clause168875%_)))
+                (let ((__tmp171762
+                       (lambda (_%g168936168939%_ _%g168937168941%_)
+                         (cons _%g168936168939%_ _%g168937168941%_))))
+                  (declare (not safe))
+                  (__foldr1 __tmp171762 '() _%L168862%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     _%clause168820168859%_))))))
+                                    (_%loop168815168843%_
+                                     _%target168812168838%_
+                                     '()))
+                                  (_%g168806168825%_ _%g168807168828%_)))))
+                        (_%g168806168825%_ _%g168807168828%_))))
+                (_%g168806168825%_ _%g168807168828%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                            (_%g168805168944%_ _%L168708%_))
+                                          (if (_%no-specializer?167766%_)
+                                              _%stx167670%_
+                                              (let* ((_%specializer-id168953%_
+                                                      (let* ((_%id168947%_
+                                                              (let ((__tmp171763
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (let ()
                                (declare (not safe))
-                               (gx#stx-e _%L168816%_))))
+                               (gx#stx-e _%L167743%_))))
                         (declare (not safe))
-                        (make-symbol__1 __tmp172811 '"::specialize")))
-                     (_%specializer-id169307%_
-                      (let ((__tmp172812
+                        (make-symbol__1 __tmp171763 '"::specialize")))
+                     (_%specializer-id168950%_
+                      (let ((__tmp171764
                              (let ()
                                (declare (not safe))
-                               (gx#stx-source _%stx168743%_))))
+                               (gx#stx-source _%stx167670%_))))
                         (declare (not safe))
-                        (gx#core-quote-syntax__1 _%id169304%_ __tmp172812))))
+                        (gx#core-quote-syntax__1 _%id168947%_ __tmp171764))))
                 (let ()
                   (declare (not safe))
-                  (gx#core-bind-runtime!__0 _%specializer-id169307%_))
-                _%specializer-id169307%_))
+                  (gx#core-bind-runtime!__0 _%specializer-id168950%_))
+                _%specializer-id168950%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%$klass169312%_
-                                                      (let ((__tmp172813
+                                                     (_%$klass168955%_
+                                                      (let ((__tmp171765
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
                        (##gensym '__klass))))
                 (declare (not safe))
-                (make-symbol__0 __tmp172813)))
+                (make-symbol__0 __tmp171765)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%$method-table169314%_
-                                                      (let ((__tmp172814
+                                                     (_%$method-table168957%_
+                                                      (let ((__tmp171766
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
                        (##gensym '__method-table))))
                 (declare (not safe))
-                (make-symbol__0 __tmp172814)))
+                (make-symbol__0 __tmp171766)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%methods169316%_
+                                                     (_%methods168959%_
                                                       (let ()
                                                         (declare (not safe))
                                                         (hash-keys
-                                                         _%method-calls168835%_)))
-                                                     (_%$methods169320%_
-                                                      (map (lambda (_%id169318%_)
-                                                             (let ((__tmp172815
+                                                         _%method-calls167762%_)))
+                                                     (_%$methods168963%_
+                                                      (map (lambda (_%id168961%_)
+                                                             (let ((__tmp171767
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (gensym _%id169318%_)))
+                            (gensym _%id168961%_)))
                        (declare (not safe))
-                       (make-symbol__1 '"__" __tmp172815)))
-                   _%methods169316%_))
+                       (make-symbol__1 '"__" __tmp171767)))
+                   _%methods168959%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%_169329%_
+                                                     (_%_168972%_
                                                       (for-each
-                                                       (lambda (_%g169321169324%_
-                                                                _%g169322169326%_)
+                                                       (lambda (_%g168964168967%_
+                                                                _%g168965168969%_)
                                                          (let ()
                                                            (declare (not safe))
                                                            (hash-put!
-                                                            _%method-calls168835%_
-                                                            _%g169321169324%_
-                                                            _%g169322169326%_)))
-                                                       _%methods169316%_
-                                                       _%$methods169320%_))
-                                                     (_%methods-bind169339%_
-                                                      (map (lambda (_%g169331169334%_
+                                                            _%method-calls167762%_
+                                                            _%g168964168967%_
+                                                            _%g168965168969%_)))
+                                                       _%methods168959%_
+                                                       _%$methods168963%_))
+                                                     (_%methods-bind168982%_
+                                                      (map (lambda (_%g168974168977%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _%g169332169336%_)
-                     (let ()
-                       (declare (not safe))
-                       (_%generate-method-bind168745%_
-                        _%$klass169312%_
-                        _%$method-table169314%_
-                        _%g169331169334%_
-                        _%g169332169336%_)))
-                   _%methods169316%_
-                   _%$methods169320%_))
+                            _%g168975168979%_)
+                     (_%generate-method-bind167672%_
+                      _%$klass168955%_
+                      _%$method-table168957%_
+                      _%g168974168977%_
+                      _%g168975168979%_))
+                   _%methods168959%_
+                   _%$methods168963%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%slots169341%_
+                                                     (_%slots168984%_
                                                       (let ()
                                                         (declare (not safe))
                                                         (hash-keys
-                                                         _%slot-refs168836%_)))
-                                                     (_%$slots169345%_
-                                                      (map (lambda (_%id169343%_)
-                                                             (let ((__tmp172816
+                                                         _%slot-refs167763%_)))
+                                                     (_%$slots168988%_
+                                                      (map (lambda (_%id168986%_)
+                                                             (let ((__tmp171768
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (gensym _%id169343%_)))
+                            (gensym _%id168986%_)))
                        (declare (not safe))
-                       (make-symbol__1 '"__" __tmp172816)))
-                   _%slots169341%_))
+                       (make-symbol__1 '"__" __tmp171768)))
+                   _%slots168984%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%_169354%_
+                                                     (_%_168997%_
                                                       (for-each
-                                                       (lambda (_%g169346169349%_
-                                                                _%g169347169351%_)
+                                                       (lambda (_%g168989168992%_
+                                                                _%g168990168994%_)
                                                          (let ()
                                                            (declare (not safe))
                                                            (hash-put!
-                                                            _%slot-refs168836%_
-                                                            _%g169346169349%_
-                                                            _%g169347169351%_)))
-                                                       _%slots169341%_
-                                                       _%$slots169345%_))
-                                                     (_%slots-bind169363%_
-                                                      (map (lambda (_%g169355169358%_
+                                                            _%slot-refs167763%_
+                                                            _%g168989168992%_
+                                                            _%g168990168994%_)))
+                                                       _%slots168984%_
+                                                       _%$slots168988%_))
+                                                     (_%slots-bind169006%_
+                                                      (map (lambda (_%g168998169001%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _%g169356169360%_)
-                     (let ()
-                       (declare (not safe))
-                       (_%generate-slot-bind168746%_
-                        _%$klass169312%_
-                        _%g169355169358%_
-                        _%g169356169360%_)))
-                   _%slots169341%_
-                   _%$slots169345%_))
+                            _%g168999169003%_)
+                     (_%generate-slot-bind167673%_
+                      _%$klass168955%_
+                      _%g168998169001%_
+                      _%g168999169003%_))
+                   _%slots168984%_
+                   _%$slots168988%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%specializer-body169369%_
-                                                      (map (lambda (_%g169364169366%_)
-                                                             (let ()
-                                                               (declare
+                                                     (_%specializer-lambda-expr169092%_
+                                                      (let* ((_%g169008169026%_
+                                                              (lambda (_%g169009169023%_)
+                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (gxc#apply-subst-object-refs__%
-                        '#f
-                        _%L169283%_
-                        _%$klass169312%_
-                        _%method-calls168835%_
-                        _%slot-refs168836%_
-                        _%g169364169366%_)))
-                   _%L169281%_))
+                          (declare (not safe))
+                          (gx#raise-syntax-error
+                           '#f
+                           '"Bad syntax; invalid match target"
+                           _%g169009169023%_))))
+                     (_%g169007169089%_
+                      (lambda (_%g169009169029%_)
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair? _%g169009169029%_))
+                            (let ((_%e169013169031%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-e _%g169009169029%_))))
+                              (let ((_%hd169014169034%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%e169013169031%_)))
+                                    (_%tl169015169036%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%e169013169031%_))))
+                                (if (let ()
+                                      (declare (not safe))
+                                      (gx#stx-pair? _%tl169015169036%_))
+                                    (let ((_%e169016169039%_
+                                           (let ()
+                                             (declare (not safe))
+                                             (gx#stx-e _%tl169015169036%_))))
+                                      (let ((_%hd169017169042%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%e169016169039%_)))
+                                            (_%tl169018169044%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%e169016169039%_))))
+                                        (if (let ()
+                                              (declare (not safe))
+                                              (gx#stx-pair?
+                                               _%hd169017169042%_))
+                                            (let ((_%e169019169047%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-e
+                                                      _%hd169017169042%_))))
+                                              (let ((_%hd169020169050%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%e169019169047%_)))
+                                                    (_%tl169021169052%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%e169019169047%_))))
+                                                ((lambda (_%L169055%_
+                                                          _%L169056%_
+                                                          _%L169057%_)
+                                                   (let* ((_%body169087%_
+                                                           (map (lambda (_%g169082169084%_)
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (gxc#apply-subst-object-refs__%
+                           '#f
+                           _%L169057%_
+                           _%$klass168955%_
+                           _%method-calls167762%_
+                           _%slot-refs167763%_
+                           _%g169082169084%_))
+                        _%L169055%_))
+                  (__tmp171769
+                   (cons '%#lambda
+                         (cons (cons _%L169057%_ _%L169056%_)
+                               _%body169087%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%specializer-impl169371%_
-                                                      (let ((__tmp172817
-                                                             (cons '%#lambda
+                                                     (declare (not safe))
+                                                     (gxc#xform-wrap-source
+                                                      __tmp171769
+                                                      _%L168709%_)))
+                                                 _%tl169018169044%_
+                                                 _%tl169021169052%_
+                                                 _%hd169020169050%_)))
+                                            (_%g169008169026%_
+                                             _%g169009169029%_))))
+                                    (_%g169008169026%_ _%g169009169029%_))))
+                            (_%g169008169026%_ _%g169009169029%_)))))
+                (_%g169007169089%_ _%L168709%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%specializer-case-lambda-expr169249%_
+                                                      (let* ((_%g169094169113%_
+                                                              (lambda (_%g169095169110%_)
+                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons (cons _%L169283%_ _%L169282%_)
-                                 _%specializer-body169369%_))))
+                          (declare (not safe))
+                          (gx#raise-syntax-error
+                           '#f
+                           '"Bad syntax; invalid match target"
+                           _%g169095169110%_))))
+                     (_%g169093169246%_
+                      (lambda (_%g169095169116%_)
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair? _%g169095169116%_))
+                            (let ((_%e169097169118%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-e _%g169095169116%_))))
+                              (let ((_%hd169098169121%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%e169097169118%_)))
+                                    (_%tl169099169123%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%e169097169118%_))))
+                                (if (let ()
+                                      (declare (not safe))
+                                      (gx#stx-pair/null? _%tl169099169123%_))
+                                    (let ((_g171770_
+                                           (let ()
+                                             (declare (not safe))
+                                             (gx#syntax-split-splice
+                                              _%tl169099169123%_
+                                              '0))))
+                                      (begin
+                                        (let ((_g171771_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (if (##values? _g171770_)
+                                                     (##vector-length
+                                                      _g171770_)
+                                                     1))))
+                                          (if (not (let ()
+                                                     (declare (not safe))
+                                                     (##fx= _g171771_ 2)))
+                                              (error "Context expects 2 values"
+                                                     _g171771_)))
+                                        (let ((_%target169100169126%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##vector-ref _g171770_ 0)))
+                                              (_%tl169102169128%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##vector-ref _g171770_ 1))))
+                                          (if (let ()
+                                                (declare (not safe))
+                                                (gx#stx-null?
+                                                 _%tl169102169128%_))
+                                              (letrec ((_%loop169103169131%_
+                                                        (lambda (_%hd169101169134%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _%clause169107169136%_)
+                  (if (let ()
+                        (declare (not safe))
+                        (gx#stx-pair? _%hd169101169134%_))
+                      (let ((_%e169104169139%_
+                             (let ()
+                               (declare (not safe))
+                               (gx#stx-e _%hd169101169134%_))))
+                        (let ((_%lp-hd169105169142%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##car _%e169104169139%_)))
+                              (_%lp-tl169106169144%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##cdr _%e169104169139%_))))
+                          (_%loop169103169131%_
+                           _%lp-tl169106169144%_
+                           (cons _%lp-hd169105169142%_
+                                 _%clause169107169136%_))))
+                      (let ((_%clause169108169147%_
+                             (reverse _%clause169107169136%_)))
+                        ((lambda (_%L169150%_)
+                           (let* ((_%clauses169244%_
+                                   (map (lambda (_%clause169164%_)
+                                          (let* ((_%__stx170655170656%_
+                                                  _%clause169164%_)
+                                                 (_%g169167169182%_
+                                                  (lambda ()
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (gx#raise-syntax-error
+                                                       '#f
+                                                       '"Bad syntax; invalid match target"
+                                                       _%__stx170655170656%_)))))
+                                            (let ((_%__kont170657170658%_
+                                                   (lambda (_%L169210%_
+                                                            _%L169211%_
+                                                            _%L169212%_)
+                                                     (let ((_%body169232%_
+                                                            (map (lambda (_%g169227169229%_)
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (gxc#apply-subst-object-refs__%
+                            '#f
+                            _%L169212%_
+                            _%$klass168955%_
+                            _%method-calls167762%_
+                            _%slot-refs167763%_
+                            _%g169227169229%_))
+                         _%L169210%_)))
+               (cons (cons _%L169212%_ _%L169211%_) _%body169232%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (_%__kont170659170660%_
+                                                   (lambda ()
+                                                     _%clause169164%_)))
+                                              (if (let ()
+                                                    (declare (not safe))
+                                                    (gx#stx-pair?
+                                                     _%__stx170655170656%_))
+                                                  (let ((_%e169172169194%_
+                                                         (let ()
+                                                           (declare (not safe))
+                                                           (gx#stx-e
+                                                            _%__stx170655170656%_))))
+                                                    (let ((_%tl169174169199%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##cdr _%e169172169194%_)))
+                                                          (_%hd169173169197%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##car _%e169172169194%_))))
+                                                      (if (let ()
+                                                            (declare
+                                                              (not safe))
+                                                            (gx#stx-pair?
+                                                             _%hd169173169197%_))
+                                                          (let ((_%e169175169202%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (let ()
+                           (declare (not safe))
+                           (gx#stx-e _%hd169173169197%_))))
+                    (let ((_%tl169177169207%_
+                           (let ()
+                             (declare (not safe))
+                             (##cdr _%e169175169202%_)))
+                          (_%hd169176169205%_
+                           (let ()
+                             (declare (not safe))
+                             (##car _%e169175169202%_))))
+                      (_%__kont170657170658%_
+                       _%tl169174169199%_
+                       _%tl169177169207%_
+                       _%hd169176169205%_)))
+                  (_%__kont170659170660%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (_%__kont170659170660%_)))))
+                                        (let ((__tmp171772
+                                               (lambda (_%g169236169239%_
+                                                        _%g169237169241%_)
+                                                 (cons _%g169236169239%_
+                                                       _%g169237169241%_))))
+                                          (declare (not safe))
+                                          (__foldr1
+                                           __tmp171772
+                                           '()
+                                           _%L169150%_))))
+                                  (__tmp171773
+                                   (cons '%#case-lambda _%clauses169244%_)))
+                             (declare (not safe))
+                             (gxc#xform-wrap-source __tmp171773 _%L168708%_)))
+                         _%clause169108169147%_))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (_%loop169103169131%_
+                                                 _%target169100169126%_
+                                                 '()))
+                                              (_%g169094169113%_
+                                               _%g169095169116%_)))))
+                                    (_%g169094169113%_ _%g169095169116%_))))
+                            (_%g169094169113%_ _%g169095169116%_)))))
+                (_%g169093169246%_ _%L168708%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%specializer-impl169251%_
+                                                      (let ((__tmp171774
+                                                             (cons '%#let-values
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (cons (cons (cons _%L168710%_ '())
+                                             (cons _%specializer-lambda-expr169092%_
+                                                   '()))
+                                       '())
+                                 (cons _%specializer-case-lambda-expr169249%_
+                                       '())))))
                 (declare (not safe))
-                (gxc#xform-wrap-source __tmp172817 _%stx168743%_)))
+                (gxc#xform-wrap-source __tmp171774 _%stx167670%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_%specializer-impl169373%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (_%generate-specializer-impl168747%_
-                                                         _%$klass169312%_
-                                                         _%$method-table169314%_
-                                                         _%methods-bind169339%_
-                                                         _%slots-bind169363%_
-                                                         _%specializer-impl169371%_))))
-                                                (let ((__tmp172819
+                                                     (_%specializer-impl169253%_
+                                                      (_%generate-specializer-impl167674%_
+                                                       _%$klass168955%_
+                                                       _%$method-table168957%_
+                                                       _%methods-bind168982%_
+                                                       _%slots-bind169006%_
+                                                       _%specializer-impl169251%_)))
+                                                (let ((__tmp171776
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _%L168816%_)))
-                                                      (__tmp172818
+                                                          _%L167743%_)))
+                                                      (__tmp171775
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _%specializer-id169310%_))))
+                                                          _%specializer-id168953%_))))
                                                   (declare (not safe))
                                                   (gxc#verbose
                                                    '"generate method specializer "
-                                                   __tmp172819
+                                                   __tmp171776
                                                    '" => "
-                                                   __tmp172818))
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (_%generate-specializer-def168748%_
-                                                   _%L168816%_
-                                                   _%specializer-id169310%_
-                                                   _%specializer-impl169373%_))))))
-                                       (_%__kont171666171667%_
-                                        (lambda () _%stx168743%_)))
-                                   (if (let ()
-                                         (declare (not safe))
-                                         (gx#stx-pair? _%__stx171662171663%_))
-                                       (let ((_%e169234169257%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (gx#stx-e
-                                                 _%__stx171662171663%_))))
-                                         (let ((_%tl169232169262%_
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##cdr _%e169234169257%_)))
-                                               (_%hd169233169260%_
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##car _%e169234169257%_))))
-                                           (if (let ()
-                                                 (declare (not safe))
-                                                 (gx#stx-pair?
-                                                  _%tl169232169262%_))
-                                               (let ((_%e169237169265%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (gx#stx-e
-                                                         _%tl169232169262%_))))
-                                                 (let ((_%tl169235169270%_
-                                                        (let ()
-                                                          (declare (not safe))
-                                                          (##cdr _%e169237169265%_)))
-                                                       (_%hd169236169268%_
-                                                        (let ()
-                                                          (declare (not safe))
-                                                          (##car _%e169237169265%_))))
-                                                   (if (let ()
-                                                         (declare (not safe))
-                                                         (gx#stx-pair?
-                                                          _%hd169236169268%_))
-                                                       (let ((_%e169240169273%_
-                                                              (let ()
-                                                                (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (not safe))
-                        (gx#stx-e _%hd169236169268%_))))
-                 (let ((_%tl169238169278%_
-                        (let ()
-                          (declare (not safe))
-                          (##cdr _%e169240169273%_)))
-                       (_%hd169239169276%_
-                        (let ()
-                          (declare (not safe))
-                          (##car _%e169240169273%_))))
-                   (_%__kont171664171665%_
-                    _%tl169235169270%_
-                    _%tl169238169278%_
-                    _%hd169239169276%_)))
-               (_%__kont171666171667%_))))
+                                                   __tmp171775))
+                                                (_%generate-specializer-def167675%_
+                                                 _%L167743%_
+                                                 _%specializer-id168953%_
+                                                 _%specializer-impl169253%_))))
+                                        _%hd168641168703%_
+                                        _%hd168638168695%_
+                                        _%hd168635168687%_)
+                                       (_%g168617168647%_ _%g168618168650%_))))
+                               (_%g168617168647%_ _%g168618168650%_))
+                           (_%g168617168647%_ _%g168618168650%_))
+                       (_%g168617168647%_ _%g168618168650%_))))
+               (_%g168617168647%_ _%g168618168650%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_%__kont171666171667%_))))
-                                       (_%__kont171666171667%_)))))
-                             (if (let ()
-                                   (declare (not safe))
-                                   (gxc#case-lambda-expr? _%L168815%_))
-                                 (let ()
-                                   (let* ((_%g169380169399%_
-                                           (lambda (_%g169381169396%_)
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#raise-syntax-error
-                                                '#f
-                                                '"Bad syntax; invalid match target"
-                                                _%g169381169396%_))))
-                                          (_%g169379169686%_
-                                           (lambda (_%g169381169402%_)
-                                             (if (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-pair?
-                                                    _%g169381169402%_))
-                                                 (let ((_%e169385169404%_
-                                                        (let ()
-                                                          (declare (not safe))
-                                                          (gx#stx-e
-                                                           _%g169381169402%_))))
-                                                   (let ((_%hd169384169407%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##car _%e169385169404%_)))
-                                                         (_%tl169383169409%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##cdr _%e169385169404%_))))
-                                                     (if (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-pair/null?
-                                                            _%tl169383169409%_))
-                                                         (let ((_g172820_
-                                                                (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#syntax-split-splice _%tl169383169409%_ '0))))
-                   (begin
-                     (let ((_g172821_
-                            (let ()
-                              (declare (not safe))
-                              (if (##values? _g172820_)
-                                  (##vector-length _g172820_)
-                                  1))))
-                       (if (not (let ()
-                                  (declare (not safe))
-                                  (##fx= _g172821_ 2)))
-                           (error "Context expects 2 values" _g172821_)))
-                     (let ((_%target169386169412%_
-                            (let ()
-                              (declare (not safe))
-                              (##vector-ref _g172820_ 0)))
-                           (_%tl169388169414%_
-                            (let ()
-                              (declare (not safe))
-                              (##vector-ref _g172820_ 1))))
-                       (if (let ()
-                             (declare (not safe))
-                             (gx#stx-null? _%tl169388169414%_))
-                           (letrec ((_%loop169389169417%_
-                                     (lambda (_%hd169387169420%_
-                                              _%clause169393169422%_)
-                                       (if (let ()
-                                             (declare (not safe))
-                                             (gx#stx-pair? _%hd169387169420%_))
-                                           (let ((_%e169390169425%_
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (gx#stx-e
-                                                     _%hd169387169420%_))))
-                                             (let ((_%lp-hd169391169428%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##car _%e169390169425%_)))
-                                                   (_%lp-tl169392169430%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##cdr _%e169390169425%_))))
-                                               (let ((__tmp172822
-                                                      (cons _%lp-hd169391169428%_
-                                                            _%clause169393169422%_)))
-                                                 (declare (not safe))
-                                                 (_%loop169389169417%_
-                                                  _%lp-tl169392169430%_
-                                                  __tmp172822))))
-                                           (let ((_%clause169394169433%_
-                                                  (reverse _%clause169393169422%_)))
-                                             ((lambda (_%L169436%_)
-                                                (for-each
-                                                 (lambda (_%clause169450%_)
-                                                   (let* ((_%__stx171688171689%_
-                                                           _%clause169450%_)
-                                                          (_%g169453169468%_
-                                                           (lambda ()
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (gx#raise-syntax-error
-                        '#f
-                        '"Bad syntax; invalid match target"
-                        _%__stx171688171689%_)))))
+                                                   (_%g168617168647%_
+                                                    _%g168618168650%_))))
+                                           (_%g168617168647%_
+                                            _%g168618168650%_))))
+                                   (_%g168617168647%_ _%g168618168650%_))))
+                           (_%g168617168647%_ _%g168618168650%_))))
+                   (_%g168617168647%_ _%g168618168650%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ((_%__kont171690171691%_
-                                                            (lambda (_%L169496%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _%L169497%_
-                             _%L169498%_)
-                      (for-each
-                       (lambda (_%g169513169515%_)
-                         (let ()
-                           (declare (not safe))
-                           (gxc#apply-collect-object-refs__%
-                            '#f
-                            _%L169498%_
-                            _%method-calls168835%_
-                            _%slot-refs168836%_
-                            _%g169513169515%_)))
-                       _%L169496%_)))
-                   (_%__kont171692171693%_ (lambda () '#!void)))
-               (if (let ()
-                     (declare (not safe))
-                     (gx#stx-pair? _%__stx171688171689%_))
-                   (let ((_%e169460169480%_
-                          (let ()
-                            (declare (not safe))
-                            (gx#stx-e _%__stx171688171689%_))))
-                     (let ((_%tl169458169485%_
-                            (let ()
-                              (declare (not safe))
-                              (##cdr _%e169460169480%_)))
-                           (_%hd169459169483%_
-                            (let ()
-                              (declare (not safe))
-                              (##car _%e169460169480%_))))
-                       (if (let ()
-                             (declare (not safe))
-                             (gx#stx-pair? _%hd169459169483%_))
-                           (let ((_%e169463169488%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (gx#stx-e _%hd169459169483%_))))
-                             (let ((_%tl169461169493%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (##cdr _%e169463169488%_)))
-                                   (_%hd169462169491%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (##car _%e169463169488%_))))
-                               (_%__kont171690171691%_
-                                _%tl169458169485%_
-                                _%tl169461169493%_
-                                _%hd169462169491%_)))
-                           (_%__kont171692171693%_))))
-                   (_%__kont171692171693%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (let ((__tmp172823
-                                                        (lambda (_%g169520169523%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%g169521169525%_)
-                  (cons _%g169520169523%_ _%g169521169525%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (declare (not safe))
-                                                   (__foldr1
-                                                    __tmp172823
-                                                    '()
-                                                    _%L169436%_)))
-                                                (if (let ()
-                                                      (declare (not safe))
-                                                      (_%no-specializer?168839%_))
-                                                    _%stx168743%_
-                                                    (let* ((_%specializer-id169534%_
-                                                            (let* ((_%id169528%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp172824
-                                   (let ()
-                                     (declare (not safe))
-                                     (gx#stx-e _%L168816%_))))
-                              (declare (not safe))
-                              (make-symbol__1 __tmp172824 '"::specialize")))
-                           (_%specializer-id169531%_
-                            (let ((__tmp172825
-                                   (let ()
-                                     (declare (not safe))
-                                     (gx#stx-source _%stx168743%_))))
-                              (declare (not safe))
-                              (gx#core-quote-syntax__1
-                               _%id169528%_
-                               __tmp172825))))
-                      (let ()
-                        (declare (not safe))
-                        (gx#core-bind-runtime!__0 _%specializer-id169531%_))
-                      _%specializer-id169531%_))
-                   (_%$klass169536%_
-                    (let ((__tmp172826
-                           (let () (declare (not safe)) (##gensym '__klass))))
-                      (declare (not safe))
-                      (make-symbol__0 __tmp172826)))
-                   (_%$method-table169538%_
-                    (let ((__tmp172827
-                           (let ()
-                             (declare (not safe))
-                             (##gensym '__method-table))))
-                      (declare (not safe))
-                      (make-symbol__0 __tmp172827)))
-                   (_%methods169540%_
-                    (let ()
-                      (declare (not safe))
-                      (hash-keys _%method-calls168835%_)))
-                   (_%$methods169544%_
-                    (map (lambda (_%id169542%_)
-                           (let ((__tmp172828 (gensym _%id169542%_)))
-                             (declare (not safe))
-                             (make-symbol__1 '"__" __tmp172828)))
-                         _%methods169540%_))
-                   (_%_169553%_
-                    (for-each
-                     (lambda (_%g169545169548%_ _%g169546169550%_)
-                       (let ()
-                         (declare (not safe))
-                         (hash-put!
-                          _%method-calls168835%_
-                          _%g169545169548%_
-                          _%g169546169550%_)))
-                     _%methods169540%_
-                     _%$methods169544%_))
-                   (_%methods-bind169563%_
-                    (map (lambda (_%g169555169558%_ _%g169556169560%_)
-                           (let ()
-                             (declare (not safe))
-                             (_%generate-method-bind168745%_
-                              _%$klass169536%_
-                              _%$method-table169538%_
-                              _%g169555169558%_
-                              _%g169556169560%_)))
-                         _%methods169540%_
-                         _%$methods169544%_))
-                   (_%slots169565%_
-                    (let ()
-                      (declare (not safe))
-                      (hash-keys _%slot-refs168836%_)))
-                   (_%$slots169569%_
-                    (map (lambda (_%id169567%_)
-                           (let ((__tmp172829 (gensym _%id169567%_)))
-                             (declare (not safe))
-                             (make-symbol__1 '"__" __tmp172829)))
-                         _%slots169565%_))
-                   (_%_169578%_
-                    (for-each
-                     (lambda (_%g169570169573%_ _%g169571169575%_)
-                       (let ()
-                         (declare (not safe))
-                         (hash-put!
-                          _%slot-refs168836%_
-                          _%g169570169573%_
-                          _%g169571169575%_)))
-                     _%slots169565%_
-                     _%$slots169569%_))
-                   (_%slots-bind169587%_
-                    (map (lambda (_%g169579169582%_ _%g169580169584%_)
-                           (let ()
-                             (declare (not safe))
-                             (_%generate-slot-bind168746%_
-                              _%$klass169536%_
-                              _%g169579169582%_
-                              _%g169580169584%_)))
-                         _%slots169565%_
-                         _%$slots169569%_))
-                   (_%specializer-clauses169679%_
-                    (map (lambda (_%clause169589%_)
-                           (let* ((_%__stx171708171709%_ _%clause169589%_)
-                                  (_%g169592169607%_
-                                   (lambda ()
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#raise-syntax-error
-                                        '#f
-                                        '"Bad syntax; invalid match target"
-                                        _%__stx171708171709%_)))))
-                             (let ((_%__kont171710171711%_
-                                    (lambda (_%L169635%_
-                                             _%L169636%_
-                                             _%L169637%_)
-                                      (let ((_%body169667%_
-                                             (map (lambda (_%g169662169664%_)
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (gxc#apply-subst-object-refs__%
-                                                       '#f
-                                                       _%L169637%_
-                                                       _%$klass169536%_
-                                                       _%method-calls168835%_
-                                                       _%slot-refs168836%_
-                                                       _%g169662169664%_)))
-                                                  _%L169635%_)))
-                                        (cons (cons _%L169637%_ _%L169636%_)
-                                              _%body169667%_))))
-                                   (_%__kont171712171713%_
-                                    (lambda () _%clause169589%_)))
-                               (if (let ()
-                                     (declare (not safe))
-                                     (gx#stx-pair? _%__stx171708171709%_))
-                                   (let ((_%e169599169619%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (gx#stx-e _%__stx171708171709%_))))
-                                     (let ((_%tl169597169624%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (##cdr _%e169599169619%_)))
-                                           (_%hd169598169622%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (##car _%e169599169619%_))))
-                                       (if (let ()
-                                             (declare (not safe))
-                                             (gx#stx-pair? _%hd169598169622%_))
-                                           (let ((_%e169602169627%_
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (gx#stx-e
-                                                     _%hd169598169622%_))))
-                                             (let ((_%tl169600169632%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##cdr _%e169602169627%_)))
-                                                   (_%hd169601169630%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##car _%e169602169627%_))))
-                                               (_%__kont171710171711%_
-                                                _%tl169597169624%_
-                                                _%tl169600169632%_
-                                                _%hd169601169630%_)))
-                                           (_%__kont171712171713%_))))
-                                   (_%__kont171712171713%_)))))
-                         (let ((__tmp172830
-                                (lambda (_%g169671169674%_ _%g169672169676%_)
-                                  (cons _%g169671169674%_ _%g169672169676%_))))
-                           (declare (not safe))
-                           (__foldr1 __tmp172830 '() _%L169436%_))))
-                   (_%specializer-impl169681%_
-                    (let ((__tmp172831
-                           (cons '%#case-lambda
-                                 _%specializer-clauses169679%_)))
-                      (declare (not safe))
-                      (gxc#xform-wrap-source __tmp172831 _%stx168743%_)))
-                   (_%specializer-impl169683%_
-                    (let ()
-                      (declare (not safe))
-                      (_%generate-specializer-impl168747%_
-                       _%$klass169536%_
-                       _%$method-table169538%_
-                       _%methods-bind169563%_
-                       _%slots-bind169587%_
-                       _%specializer-impl169681%_))))
-              (let ((__tmp172833
-                     (let () (declare (not safe)) (gx#stx-e _%L168816%_)))
-                    (__tmp172832
-                     (let ()
-                       (declare (not safe))
-                       (gx#stx-e _%specializer-id169534%_))))
-                (declare (not safe))
-                (gxc#verbose
-                 '"generate method specializer "
-                 __tmp172833
-                 '" => "
-                 __tmp172832))
-              (let ()
-                (declare (not safe))
-                (_%generate-specializer-def168748%_
-                 _%L168816%_
-                 _%specializer-id169534%_
-                 _%specializer-impl169683%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              _%clause169394169433%_))))))
-                             (let ()
-                               (declare (not safe))
-                               (_%loop169389169417%_
-                                _%target169386169412%_
-                                '())))
-                           (let ()
-                             (declare (not safe))
-                             (_%g169380169399%_ _%g169381169402%_))))))
-                 (let ()
-                   (declare (not safe))
-                   (_%g169380169399%_ _%g169381169402%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (_%g169380169399%_
-                                                    _%g169381169402%_))))))
-                                     (declare (not safe))
-                                     (_%g169379169686%_ _%L168815%_)))
-                                 (if (let ()
-                                       (declare (not safe))
-                                       (gxc#opt-lambda-expr? _%L168815%_))
-                                     (let ()
-                                       (let* ((_%g169690169720%_
-                                               (lambda (_%g169691169717%_)
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (gx#raise-syntax-error
-                                                    '#f
-                                                    '"Bad syntax; invalid match target"
-                                                    _%g169691169717%_))))
-                                              (_%g169689170329%_
-                                               (lambda (_%g169691169723%_)
-                                                 (if (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-pair?
-                                                        _%g169691169723%_))
-                                                     (let ((_%e169697169725%_
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#stx-e
-                                                               _%g169691169723%_))))
-                                                       (let ((_%hd169696169728%_
-                                                              (let ()
-                                                                (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (not safe))
-                        (##car _%e169697169725%_)))
-                     (_%tl169695169730%_
-                      (let () (declare (not safe)) (##cdr _%e169697169725%_))))
-                 (if (let ()
-                       (declare (not safe))
-                       (gx#stx-pair? _%tl169695169730%_))
-                     (let ((_%e169700169733%_
-                            (let ()
-                              (declare (not safe))
-                              (gx#stx-e _%tl169695169730%_))))
-                       (let ((_%hd169699169736%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%e169700169733%_)))
-                             (_%tl169698169738%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%e169700169733%_))))
-                         (if (let ()
-                               (declare (not safe))
-                               (gx#stx-pair? _%hd169699169736%_))
-                             (let ((_%e169703169741%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (gx#stx-e _%hd169699169736%_))))
-                               (let ((_%hd169702169744%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%e169703169741%_)))
-                                     (_%tl169701169746%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%e169703169741%_))))
-                                 (if (let ()
-                                       (declare (not safe))
-                                       (gx#stx-pair? _%hd169702169744%_))
-                                     (let ((_%e169706169749%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (gx#stx-e _%hd169702169744%_))))
-                                       (let ((_%hd169705169752%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##car _%e169706169749%_)))
-                                             (_%tl169704169754%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##cdr _%e169706169749%_))))
-                                         (if (let ()
-                                               (declare (not safe))
-                                               (gx#stx-pair?
-                                                _%hd169705169752%_))
-                                             (let ((_%e169709169757%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (gx#stx-e
-                                                       _%hd169705169752%_))))
-                                               (let ((_%hd169708169760%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (##car _%e169709169757%_)))
-                                                     (_%tl169707169762%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (##cdr _%e169709169757%_))))
-                                                 (if (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-null?
-                                                        _%tl169707169762%_))
-                                                     (if (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-pair?
-                                                            _%tl169704169754%_))
-                                                         (let ((_%e169712169765%_
-                                                                (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-e _%tl169704169754%_))))
-                   (let ((_%hd169711169768%_
-                          (let ()
-                            (declare (not safe))
-                            (##car _%e169712169765%_)))
-                         (_%tl169710169770%_
-                          (let ()
-                            (declare (not safe))
-                            (##cdr _%e169712169765%_))))
-                     (if (let ()
-                           (declare (not safe))
-                           (gx#stx-null? _%tl169710169770%_))
-                         (if (let ()
-                               (declare (not safe))
-                               (gx#stx-null? _%tl169701169746%_))
-                             (if (let ()
-                                   (declare (not safe))
-                                   (gx#stx-pair? _%tl169698169738%_))
-                                 (let ((_%e169715169773%_
-                                        (let ()
-                                          (declare (not safe))
-                                          (gx#stx-e _%tl169698169738%_))))
-                                   (let ((_%hd169714169776%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##car _%e169715169773%_)))
-                                         (_%tl169713169778%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##cdr _%e169715169773%_))))
+                                                   (_%g168617168647%_
+                                                    _%g168618168650%_)))))
+                                       (_%g168616169256%_ _%L167742%_))
                                      (if (let ()
                                            (declare (not safe))
-                                           (gx#stx-null? _%tl169713169778%_))
-                                         ((lambda (_%L169781%_
-                                                   _%L169782%_
-                                                   _%L169783%_)
-                                            (let* ((_%g169807169825%_
-                                                    (lambda (_%g169808169822%_)
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (gx#raise-syntax-error
-                                                         '#f
-                                                         '"Bad syntax; invalid match target"
-                                                         _%g169808169822%_))))
-                                                   (_%g169806169876%_
-                                                    (lambda (_%g169808169828%_)
-                                                      (if (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#stx-pair?
-                                                             _%g169808169828%_))
-                                                          (let ((_%e169814169830%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ()
-                           (declare (not safe))
-                           (gx#stx-e _%g169808169828%_))))
-                    (let ((_%hd169813169833%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e169814169830%_)))
-                          (_%tl169812169835%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e169814169830%_))))
-                      (if (let ()
-                            (declare (not safe))
-                            (gx#stx-pair? _%tl169812169835%_))
-                          (let ((_%e169817169838%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (gx#stx-e _%tl169812169835%_))))
-                            (let ((_%hd169816169841%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##car _%e169817169838%_)))
-                                  (_%tl169815169843%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##cdr _%e169817169838%_))))
-                              (if (let ()
-                                    (declare (not safe))
-                                    (gx#stx-pair? _%hd169816169841%_))
-                                  (let ((_%e169820169846%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (gx#stx-e _%hd169816169841%_))))
-                                    (let ((_%hd169819169849%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e169820169846%_)))
-                                          (_%tl169818169851%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e169820169846%_))))
-                                      ((lambda (_%L169854%_
-                                                _%L169855%_
-                                                _%L169856%_)
-                                         (for-each
-                                          (lambda (_%g169871169873%_)
-                                            (let ()
-                                              (declare (not safe))
-                                              (gxc#apply-collect-object-refs__%
-                                               '#f
-                                               _%L169856%_
-                                               _%method-calls168835%_
-                                               _%slot-refs168836%_
-                                               _%g169871169873%_)))
-                                          _%L169854%_))
-                                       _%tl169815169843%_
-                                       _%tl169818169851%_
-                                       _%hd169819169849%_)))
-                                  (let ()
-                                    (declare (not safe))
-                                    (_%g169807169825%_ _%g169808169828%_)))))
-                          (let ()
-                            (declare (not safe))
-                            (_%g169807169825%_ _%g169808169828%_)))))
-                  (let ()
-                    (declare (not safe))
-                    (_%g169807169825%_ _%g169808169828%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (declare (not safe))
-                                              (_%g169806169876%_ _%L169782%_))
-                                            (let* ((_%g169879169898%_
-                                                    (lambda (_%g169880169895%_)
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (gx#raise-syntax-error
-                                                         '#f
-                                                         '"Bad syntax; invalid match target"
-                                                         _%g169880169895%_))))
-                                                   (_%g169878170017%_
-                                                    (lambda (_%g169880169901%_)
-                                                      (if (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#stx-pair?
-                                                             _%g169880169901%_))
-                                                          (let ((_%e169884169903%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ()
-                           (declare (not safe))
-                           (gx#stx-e _%g169880169901%_))))
-                    (let ((_%hd169883169906%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e169884169903%_)))
-                          (_%tl169882169908%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e169884169903%_))))
-                      (if (let ()
-                            (declare (not safe))
-                            (gx#stx-pair/null? _%tl169882169908%_))
-                          (let ((_g172834_
-                                 (let ()
-                                   (declare (not safe))
-                                   (gx#syntax-split-splice
-                                    _%tl169882169908%_
-                                    '0))))
-                            (begin
-                              (let ((_g172835_
-                                     (let ()
-                                       (declare (not safe))
-                                       (if (##values? _g172834_)
-                                           (##vector-length _g172834_)
-                                           1))))
-                                (if (not (let ()
-                                           (declare (not safe))
-                                           (##fx= _g172835_ 2)))
-                                    (error "Context expects 2 values"
-                                           _g172835_)))
-                              (let ((_%target169885169911%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##vector-ref _g172834_ 0)))
-                                    (_%tl169887169913%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##vector-ref _g172834_ 1))))
-                                (if (let ()
-                                      (declare (not safe))
-                                      (gx#stx-null? _%tl169887169913%_))
-                                    (letrec ((_%loop169888169916%_
-                                              (lambda (_%hd169886169919%_
-                                                       _%clause169892169921%_)
-                                                (if (let ()
-                                                      (declare (not safe))
-                                                      (gx#stx-pair?
-                                                       _%hd169886169919%_))
-                                                    (let ((_%e169889169924%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gx#stx-e
-                                                              _%hd169886169919%_))))
-                                                      (let ((_%lp-hd169890169927%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e169889169924%_)))
-                    (_%lp-tl169891169929%_
-                     (let () (declare (not safe)) (##cdr _%e169889169924%_))))
-                (let ((__tmp172836
-                       (cons _%lp-hd169890169927%_ _%clause169892169921%_)))
-                  (declare (not safe))
-                  (_%loop169888169916%_ _%lp-tl169891169929%_ __tmp172836))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (let ((_%clause169893169932%_
-                                                           (reverse _%clause169892169921%_)))
-                                                      ((lambda (_%L169935%_)
-                                                         (for-each
-                                                          (lambda (_%clause169948%_)
-                                                            (let* ((_%g169950169965%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (lambda (_%g169951169962%_)
-                              (let ()
-                                (declare (not safe))
-                                (gx#raise-syntax-error
-                                 '#f
-                                 '"Bad syntax; invalid match target"
-                                 _%g169951169962%_))))
-                           (_%g169949170007%_
-                            (lambda (_%g169951169968%_)
-                              (if (let ()
-                                    (declare (not safe))
-                                    (gx#stx-pair? _%g169951169968%_))
-                                  (let ((_%e169957169970%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (gx#stx-e _%g169951169968%_))))
-                                    (let ((_%hd169956169973%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e169957169970%_)))
-                                          (_%tl169955169975%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e169957169970%_))))
-                                      (if (let ()
-                                            (declare (not safe))
-                                            (gx#stx-pair? _%hd169956169973%_))
-                                          (let ((_%e169960169978%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-e
-                                                    _%hd169956169973%_))))
-                                            (let ((_%hd169959169981%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##car _%e169960169978%_)))
-                                                  (_%tl169958169983%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##cdr _%e169960169978%_))))
-                                              ((lambda (_%L169986%_
-                                                        _%L169987%_
-                                                        _%L169988%_)
-                                                 (for-each
-                                                  (lambda (_%g170002170004%_)
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (gxc#apply-collect-object-refs__%
-                                                       '#f
-                                                       _%L169988%_
-                                                       _%method-calls168835%_
-                                                       _%slot-refs168836%_
-                                                       _%g170002170004%_)))
-                                                  _%L169986%_))
-                                               _%tl169955169975%_
-                                               _%tl169958169983%_
-                                               _%hd169959169981%_)))
-                                          (let ()
-                                            (declare (not safe))
-                                            (_%g169950169965%_
-                                             _%g169951169968%_)))))
-                                  (let ()
-                                    (declare (not safe))
-                                    (_%g169950169965%_ _%g169951169968%_))))))
-                      (declare (not safe))
-                      (_%g169949170007%_ _%clause169948%_)))
-                  (let ((__tmp172837
-                         (lambda (_%g170009170012%_ _%g170010170014%_)
-                           (cons _%g170009170012%_ _%g170010170014%_))))
-                    (declare (not safe))
-                    (__foldr1 __tmp172837 '() _%L169935%_))))
-               _%clause169893169932%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%loop169888169916%_
-                                         _%target169885169911%_
-                                         '())))
-                                    (let ()
-                                      (declare (not safe))
-                                      (_%g169879169898%_
-                                       _%g169880169901%_))))))
-                          (let ()
-                            (declare (not safe))
-                            (_%g169879169898%_ _%g169880169901%_)))))
-                  (let ()
-                    (declare (not safe))
-                    (_%g169879169898%_ _%g169880169901%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (declare (not safe))
-                                              (_%g169878170017%_ _%L169781%_))
-                                            (if (let ()
-                                                  (declare (not safe))
-                                                  (_%no-specializer?168839%_))
-                                                _%stx168743%_
-                                                (let* ((_%specializer-id170026%_
-                                                        (let* ((_%id170020%_
-                                                                (let ((__tmp172838
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%L168816%_))))
-                          (declare (not safe))
-                          (make-symbol__1 __tmp172838 '"::specialize")))
-                       (_%specializer-id170023%_
-                        (let ((__tmp172839
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-source _%stx168743%_))))
-                          (declare (not safe))
-                          (gx#core-quote-syntax__1 _%id170020%_ __tmp172839))))
-                  (let ()
-                    (declare (not safe))
-                    (gx#core-bind-runtime!__0 _%specializer-id170023%_))
-                  _%specializer-id170023%_))
-               (_%$klass170028%_
-                (let ((__tmp172840
-                       (let () (declare (not safe)) (##gensym '__klass))))
-                  (declare (not safe))
-                  (make-symbol__0 __tmp172840)))
-               (_%$method-table170030%_
-                (let ((__tmp172841
-                       (let ()
-                         (declare (not safe))
-                         (##gensym '__method-table))))
-                  (declare (not safe))
-                  (make-symbol__0 __tmp172841)))
-               (_%methods170032%_
-                (let ()
-                  (declare (not safe))
-                  (hash-keys _%method-calls168835%_)))
-               (_%$methods170036%_
-                (map (lambda (_%id170034%_)
-                       (let ((__tmp172842 (gensym _%id170034%_)))
-                         (declare (not safe))
-                         (make-symbol__1 '"__" __tmp172842)))
-                     _%methods170032%_))
-               (_%_170045%_
-                (for-each
-                 (lambda (_%g170037170040%_ _%g170038170042%_)
-                   (let ()
-                     (declare (not safe))
-                     (hash-put!
-                      _%method-calls168835%_
-                      _%g170037170040%_
-                      _%g170038170042%_)))
-                 _%methods170032%_
-                 _%$methods170036%_))
-               (_%methods-bind170055%_
-                (map (lambda (_%g170047170050%_ _%g170048170052%_)
-                       (let ()
-                         (declare (not safe))
-                         (_%generate-method-bind168745%_
-                          _%$klass170028%_
-                          _%$method-table170030%_
-                          _%g170047170050%_
-                          _%g170048170052%_)))
-                     _%methods170032%_
-                     _%$methods170036%_))
-               (_%slots170057%_
-                (let () (declare (not safe)) (hash-keys _%slot-refs168836%_)))
-               (_%$slots170061%_
-                (map (lambda (_%id170059%_)
-                       (let ((__tmp172843 (gensym _%id170059%_)))
-                         (declare (not safe))
-                         (make-symbol__1 '"__" __tmp172843)))
-                     _%slots170057%_))
-               (_%_170070%_
-                (for-each
-                 (lambda (_%g170062170065%_ _%g170063170067%_)
-                   (let ()
-                     (declare (not safe))
-                     (hash-put!
-                      _%slot-refs168836%_
-                      _%g170062170065%_
-                      _%g170063170067%_)))
-                 _%slots170057%_
-                 _%$slots170061%_))
-               (_%slots-bind170079%_
-                (map (lambda (_%g170071170074%_ _%g170072170076%_)
-                       (let ()
-                         (declare (not safe))
-                         (_%generate-slot-bind168746%_
-                          _%$klass170028%_
-                          _%g170071170074%_
-                          _%g170072170076%_)))
-                     _%slots170057%_
-                     _%$slots170061%_))
-               (_%specializer-lambda-expr170165%_
-                (let* ((_%g170081170099%_
-                        (lambda (_%g170082170096%_)
-                          (let ()
-                            (declare (not safe))
-                            (gx#raise-syntax-error
-                             '#f
-                             '"Bad syntax; invalid match target"
-                             _%g170082170096%_))))
-                       (_%g170080170162%_
-                        (lambda (_%g170082170102%_)
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-pair? _%g170082170102%_))
-                              (let ((_%e170088170104%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%g170082170102%_))))
-                                (let ((_%hd170087170107%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##car _%e170088170104%_)))
-                                      (_%tl170086170109%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##cdr _%e170088170104%_))))
-                                  (if (let ()
-                                        (declare (not safe))
-                                        (gx#stx-pair? _%tl170086170109%_))
-                                      (let ((_%e170091170112%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#stx-e _%tl170086170109%_))))
-                                        (let ((_%hd170090170115%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##car _%e170091170112%_)))
-                                              (_%tl170089170117%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##cdr _%e170091170112%_))))
-                                          (if (let ()
-                                                (declare (not safe))
-                                                (gx#stx-pair?
-                                                 _%hd170090170115%_))
-                                              (let ((_%e170094170120%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-e
-                                                        _%hd170090170115%_))))
-                                                (let ((_%hd170093170123%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##car _%e170094170120%_)))
-                                                      (_%tl170092170125%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##cdr _%e170094170120%_))))
-                                                  ((lambda (_%L170128%_
-                                                            _%L170129%_
-                                                            _%L170130%_)
-                                                     (let* ((_%body170160%_
-                                                             (map (lambda (_%g170155170157%_)
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ()
-                              (declare (not safe))
-                              (gxc#apply-subst-object-refs__%
-                               '#f
-                               _%L170130%_
-                               _%$klass170028%_
-                               _%method-calls168835%_
-                               _%slot-refs168836%_
-                               _%g170155170157%_)))
-                          _%L170128%_))
-                    (__tmp172844
-                     (cons '%#lambda
-                           (cons (cons _%L170130%_ _%L170129%_)
-                                 _%body170160%_))))
-               (declare (not safe))
-               (gxc#xform-wrap-source __tmp172844 _%L169782%_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _%tl170089170117%_
-                                                   _%tl170092170125%_
-                                                   _%hd170093170123%_)))
-                                              (let ()
-                                                (declare (not safe))
-                                                (_%g170081170099%_
-                                                 _%g170082170102%_)))))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%g170081170099%_
-                                         _%g170082170102%_)))))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170081170099%_ _%g170082170102%_))))))
-                  (declare (not safe))
-                  (_%g170080170162%_ _%L169782%_)))
-               (_%specializer-case-lambda-expr170322%_
-                (let* ((_%g170167170186%_
-                        (lambda (_%g170168170183%_)
-                          (let ()
-                            (declare (not safe))
-                            (gx#raise-syntax-error
-                             '#f
-                             '"Bad syntax; invalid match target"
-                             _%g170168170183%_))))
-                       (_%g170166170319%_
-                        (lambda (_%g170168170189%_)
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-pair? _%g170168170189%_))
-                              (let ((_%e170172170191%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%g170168170189%_))))
-                                (let ((_%hd170171170194%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##car _%e170172170191%_)))
-                                      (_%tl170170170196%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##cdr _%e170172170191%_))))
-                                  (if (let ()
-                                        (declare (not safe))
-                                        (gx#stx-pair/null? _%tl170170170196%_))
-                                      (let ((_g172845_
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#syntax-split-splice
-                                                _%tl170170170196%_
-                                                '0))))
-                                        (begin
-                                          (let ((_g172846_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (if (##values? _g172845_)
-                                                       (##vector-length
-                                                        _g172845_)
-                                                       1))))
-                                            (if (not (let ()
-                                                       (declare (not safe))
-                                                       (##fx= _g172846_ 2)))
-                                                (error "Context expects 2 values"
-                                                       _g172846_)))
-                                          (let ((_%target170173170199%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##vector-ref _g172845_ 0)))
-                                                (_%tl170175170201%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##vector-ref
-                                                    _g172845_
-                                                    1))))
-                                            (if (let ()
-                                                  (declare (not safe))
-                                                  (gx#stx-null?
-                                                   _%tl170175170201%_))
-                                                (letrec ((_%loop170176170204%_
-                                                          (lambda (_%hd170174170207%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _%clause170180170209%_)
-                    (if (let ()
-                          (declare (not safe))
-                          (gx#stx-pair? _%hd170174170207%_))
-                        (let ((_%e170177170212%_
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%hd170174170207%_))))
-                          (let ((_%lp-hd170178170215%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##car _%e170177170212%_)))
-                                (_%lp-tl170179170217%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##cdr _%e170177170212%_))))
-                            (let ((__tmp172847
-                                   (cons _%lp-hd170178170215%_
-                                         _%clause170180170209%_)))
-                              (declare (not safe))
-                              (_%loop170176170204%_
-                               _%lp-tl170179170217%_
-                               __tmp172847))))
-                        (let ((_%clause170181170220%_
-                               (reverse _%clause170180170209%_)))
-                          ((lambda (_%L170223%_)
-                             (let* ((_%clauses170317%_
-                                     (map (lambda (_%clause170237%_)
-                                            (let* ((_%__stx171728171729%_
-                                                    _%clause170237%_)
-                                                   (_%g170240170255%_
-                                                    (lambda ()
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (gx#raise-syntax-error
-                                                         '#f
-                                                         '"Bad syntax; invalid match target"
-                                                         _%__stx171728171729%_)))))
-                                              (let ((_%__kont171730171731%_
-                                                     (lambda (_%L170283%_
-                                                              _%L170284%_
-                                                              _%L170285%_)
-                                                       (let ((_%body170305%_
-                                                              (map (lambda (_%g170300170302%_)
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ()
-                               (declare (not safe))
-                               (gxc#apply-subst-object-refs__%
-                                '#f
-                                _%L170285%_
-                                _%$klass170028%_
-                                _%method-calls168835%_
-                                _%slot-refs168836%_
-                                _%g170300170302%_)))
-                           _%L170283%_)))
-                 (cons (cons _%L170285%_ _%L170284%_) _%body170305%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%__kont171732171733%_
-                                                     (lambda ()
-                                                       _%clause170237%_)))
-                                                (if (let ()
-                                                      (declare (not safe))
-                                                      (gx#stx-pair?
-                                                       _%__stx171728171729%_))
-                                                    (let ((_%e170247170267%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gx#stx-e
-                                                              _%__stx171728171729%_))))
-                                                      (let ((_%tl170245170272%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##cdr _%e170247170267%_)))
-                    (_%hd170246170270%_
-                     (let () (declare (not safe)) (##car _%e170247170267%_))))
-                (if (let ()
-                      (declare (not safe))
-                      (gx#stx-pair? _%hd170246170270%_))
-                    (let ((_%e170250170275%_
-                           (let ()
-                             (declare (not safe))
-                             (gx#stx-e _%hd170246170270%_))))
-                      (let ((_%tl170248170280%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e170250170275%_)))
-                            (_%hd170249170278%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e170250170275%_))))
-                        (_%__kont171730171731%_
-                         _%tl170245170272%_
-                         _%tl170248170280%_
-                         _%hd170249170278%_)))
-                    (_%__kont171732171733%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%__kont171732171733%_)))))
-                                          (let ((__tmp172848
-                                                 (lambda (_%g170309170312%_
-                                                          _%g170310170314%_)
-                                                   (cons _%g170309170312%_
-                                                         _%g170310170314%_))))
-                                            (declare (not safe))
-                                            (__foldr1
-                                             __tmp172848
-                                             '()
-                                             _%L170223%_))))
-                                    (__tmp172849
-                                     (cons '%#case-lambda _%clauses170317%_)))
-                               (declare (not safe))
-                               (gxc#xform-wrap-source
-                                __tmp172849
-                                _%L169781%_)))
-                           _%clause170181170220%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (_%loop170176170204%_
-                                                     _%target170173170199%_
-                                                     '())))
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (_%g170167170186%_
-                                                   _%g170168170189%_))))))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%g170167170186%_
-                                         _%g170168170189%_)))))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170167170186%_ _%g170168170189%_))))))
-                  (declare (not safe))
-                  (_%g170166170319%_ _%L169781%_)))
-               (_%specializer-impl170324%_
-                (let ((__tmp172850
-                       (cons '%#let-values
-                             (cons (cons (cons (cons _%L169783%_ '())
-                                               (cons _%specializer-lambda-expr170165%_
-                                                     '()))
-                                         '())
-                                   (cons _%specializer-case-lambda-expr170322%_
-                                         '())))))
-                  (declare (not safe))
-                  (gxc#xform-wrap-source __tmp172850 _%stx168743%_)))
-               (_%specializer-impl170326%_
-                (let ()
-                  (declare (not safe))
-                  (_%generate-specializer-impl168747%_
-                   _%$klass170028%_
-                   _%$method-table170030%_
-                   _%methods-bind170055%_
-                   _%slots-bind170079%_
-                   _%specializer-impl170324%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ((__tmp172852
-                                                         (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-e
-                                                            _%L168816%_)))
-                                                        (__tmp172851
-                                                         (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-e
-                                                            _%specializer-id170026%_))))
-                                                    (declare (not safe))
-                                                    (gxc#verbose
-                                                     '"generate method specializer "
-                                                     __tmp172852
-                                                     '" => "
-                                                     __tmp172851))
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (_%generate-specializer-def168748%_
-                                                     _%L168816%_
-                                                     _%specializer-id170026%_
-                                                     _%specializer-impl170326%_)))))
-                                          _%hd169714169776%_
-                                          _%hd169711169768%_
-                                          _%hd169708169760%_)
-                                         (let ()
-                                           (declare (not safe))
-                                           (_%g169690169720%_
-                                            _%g169691169723%_)))))
-                                 (let ()
-                                   (declare (not safe))
-                                   (_%g169690169720%_ _%g169691169723%_)))
-                             (let ()
-                               (declare (not safe))
-                               (_%g169690169720%_ _%g169691169723%_)))
-                         (let ()
-                           (declare (not safe))
-                           (_%g169690169720%_ _%g169691169723%_)))))
-                 (let ()
-                   (declare (not safe))
-                   (_%g169690169720%_ _%g169691169723%_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (_%g169690169720%_
-                                                        _%g169691169723%_)))))
-                                             (let ()
-                                               (declare (not safe))
-                                               (_%g169690169720%_
-                                                _%g169691169723%_)))))
-                                     (let ()
-                                       (declare (not safe))
-                                       (_%g169690169720%_
-                                        _%g169691169723%_)))))
-                             (let ()
-                               (declare (not safe))
-                               (_%g169690169720%_ _%g169691169723%_)))))
-                     (let ()
-                       (declare (not safe))
-                       (_%g169690169720%_ _%g169691169723%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (_%g169690169720%_
-                                                        _%g169691169723%_))))))
-                                         (declare (not safe))
-                                         (_%g169689170329%_ _%L168815%_)))
-                                     (if (let ()
-                                           (declare (not safe))
-                                           (gxc#kw-lambda-expr? _%L168815%_))
-                                         (let ()
-                                           (let* ((_%g170333170386%_
-                                                   (lambda (_%g170334170383%_)
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (gx#raise-syntax-error
-                                                        '#f
-                                                        '"Bad syntax; invalid match target"
-                                                        _%g170334170383%_))))
-                                                  (_%g170332171529%_
-                                                   (lambda (_%g170334170389%_)
-                                                     (if (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-pair?
-                                                            _%g170334170389%_))
-                                                         (let ((_%e170342170391%_
-                                                                (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-e _%g170334170389%_))))
-                   (let ((_%hd170341170394%_
-                          (let ()
-                            (declare (not safe))
-                            (##car _%e170342170391%_)))
-                         (_%tl170340170396%_
-                          (let ()
-                            (declare (not safe))
-                            (##cdr _%e170342170391%_))))
-                     (if (let ()
-                           (declare (not safe))
-                           (gx#identifier? _%hd170341170394%_))
-                         (if (let ()
-                               (declare (not safe))
-                               (gx#stx-eq? '%#let-values _%hd170341170394%_))
-                             (if (let ()
-                                   (declare (not safe))
-                                   (gx#stx-pair? _%tl170340170396%_))
-                                 (let ((_%e170345170399%_
-                                        (let ()
-                                          (declare (not safe))
-                                          (gx#stx-e _%tl170340170396%_))))
-                                   (let ((_%hd170344170402%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##car _%e170345170399%_)))
-                                         (_%tl170343170404%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##cdr _%e170345170399%_))))
-                                     (if (let ()
-                                           (declare (not safe))
-                                           (gx#stx-pair? _%hd170344170402%_))
-                                         (let ((_%e170348170407%_
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (gx#stx-e
-                                                   _%hd170344170402%_))))
-                                           (let ((_%hd170347170410%_
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (##car _%e170348170407%_)))
-                                                 (_%tl170346170412%_
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (##cdr _%e170348170407%_))))
-                                             (if (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-pair?
-                                                    _%hd170347170410%_))
-                                                 (let ((_%e170351170415%_
-                                                        (let ()
-                                                          (declare (not safe))
-                                                          (gx#stx-e
-                                                           _%hd170347170410%_))))
-                                                   (let ((_%hd170350170418%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##car _%e170351170415%_)))
-                                                         (_%tl170349170420%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##cdr _%e170351170415%_))))
-                                                     (if (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-pair?
-                                                            _%hd170350170418%_))
-                                                         (let ((_%e170354170423%_
-                                                                (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-e _%hd170350170418%_))))
-                   (let ((_%hd170353170426%_
-                          (let ()
-                            (declare (not safe))
-                            (##car _%e170354170423%_)))
-                         (_%tl170352170428%_
-                          (let ()
-                            (declare (not safe))
-                            (##cdr _%e170354170423%_))))
-                     (if (let ()
-                           (declare (not safe))
-                           (gx#stx-null? _%tl170352170428%_))
-                         (if (let ()
-                               (declare (not safe))
-                               (gx#stx-pair? _%tl170349170420%_))
-                             (let ((_%e170357170431%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (gx#stx-e _%tl170349170420%_))))
-                               (let ((_%hd170356170434%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%e170357170431%_)))
-                                     (_%tl170355170436%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%e170357170431%_))))
-                                 (if (let ()
-                                       (declare (not safe))
-                                       (gx#stx-pair? _%hd170356170434%_))
-                                     (let ((_%e170360170439%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (gx#stx-e _%hd170356170434%_))))
-                                       (let ((_%hd170359170442%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##car _%e170360170439%_)))
-                                             (_%tl170358170444%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##cdr _%e170360170439%_))))
-                                         (if (let ()
-                                               (declare (not safe))
-                                               (gx#identifier?
-                                                _%hd170359170442%_))
-                                             (if (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-eq?
-                                                    '%#let-values
-                                                    _%hd170359170442%_))
-                                                 (if (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-pair?
-                                                        _%tl170358170444%_))
-                                                     (let ((_%e170363170447%_
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#stx-e
-                                                               _%tl170358170444%_))))
-                                                       (let ((_%hd170362170450%_
-                                                              (let ()
-                                                                (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (not safe))
-                        (##car _%e170363170447%_)))
-                     (_%tl170361170452%_
-                      (let () (declare (not safe)) (##cdr _%e170363170447%_))))
-                 (if (let ()
-                       (declare (not safe))
-                       (gx#stx-pair? _%hd170362170450%_))
-                     (let ((_%e170366170455%_
-                            (let ()
-                              (declare (not safe))
-                              (gx#stx-e _%hd170362170450%_))))
-                       (let ((_%hd170365170458%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%e170366170455%_)))
-                             (_%tl170364170460%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%e170366170455%_))))
-                         (if (let ()
-                               (declare (not safe))
-                               (gx#stx-pair? _%hd170365170458%_))
-                             (let ((_%e170369170463%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (gx#stx-e _%hd170365170458%_))))
-                               (let ((_%hd170368170466%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%e170369170463%_)))
-                                     (_%tl170367170468%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%e170369170463%_))))
-                                 (if (let ()
-                                       (declare (not safe))
-                                       (gx#stx-pair? _%hd170368170466%_))
-                                     (let ((_%e170372170471%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (gx#stx-e _%hd170368170466%_))))
-                                       (let ((_%hd170371170474%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##car _%e170372170471%_)))
-                                             (_%tl170370170476%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (##cdr _%e170372170471%_))))
-                                         (if (let ()
-                                               (declare (not safe))
-                                               (gx#stx-null?
-                                                _%tl170370170476%_))
-                                             (if (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-pair?
-                                                    _%tl170367170468%_))
-                                                 (let ((_%e170375170479%_
-                                                        (let ()
-                                                          (declare (not safe))
-                                                          (gx#stx-e
-                                                           _%tl170367170468%_))))
-                                                   (let ((_%hd170374170482%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##car _%e170375170479%_)))
-                                                         (_%tl170373170484%_
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##cdr _%e170375170479%_))))
-                                                     (if (let ()
-                                                           (declare (not safe))
-                                                           (gx#stx-null?
-                                                            _%tl170373170484%_))
-                                                         (if (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (gx#stx-null? _%tl170364170460%_))
-                     (if (let ()
-                           (declare (not safe))
-                           (gx#stx-pair? _%tl170361170452%_))
-                         (let ((_%e170378170487%_
-                                (let ()
-                                  (declare (not safe))
-                                  (gx#stx-e _%tl170361170452%_))))
-                           (let ((_%hd170377170490%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (##car _%e170378170487%_)))
-                                 (_%tl170376170492%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (##cdr _%e170378170487%_))))
-                             (if (let ()
-                                   (declare (not safe))
-                                   (gx#stx-null? _%tl170376170492%_))
-                                 (if (let ()
-                                       (declare (not safe))
-                                       (gx#stx-null? _%tl170355170436%_))
-                                     (if (let ()
-                                           (declare (not safe))
-                                           (gx#stx-null? _%tl170346170412%_))
-                                         (if (let ()
-                                               (declare (not safe))
-                                               (gx#stx-pair?
-                                                _%tl170343170404%_))
-                                             (let ((_%e170381170495%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (gx#stx-e
-                                                       _%tl170343170404%_))))
-                                               (let ((_%hd170380170498%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (##car _%e170381170495%_)))
-                                                     (_%tl170379170500%_
-                                                      (let ()
-                                                        (declare (not safe))
-                                                        (##cdr _%e170381170495%_))))
-                                                 (if (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-null?
-                                                        _%tl170379170500%_))
-                                                     ((lambda (_%L170503%_
-                                                               _%L170504%_
-                                                               _%L170505%_
-                                                               _%L170506%_
-                                                               _%L170507%_)
-                                                        (let* ((_%g170547170609%_
-                                                                (lambda (_%g170548170606%_)
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ()
-                            (declare (not safe))
-                            (gx#raise-syntax-error
-                             '#f
-                             '"Bad syntax; invalid match target"
-                             _%g170548170606%_))))
-                       (_%g170546171526%_
-                        (lambda (_%g170548170612%_)
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-pair? _%g170548170612%_))
-                              (let ((_%e170556170614%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%g170548170612%_))))
-                                (let ((_%hd170555170617%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##car _%e170556170614%_)))
-                                      (_%tl170554170619%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##cdr _%e170556170614%_))))
-                                  (if (let ()
-                                        (declare (not safe))
-                                        (gx#identifier? _%hd170555170617%_))
-                                      (if (let ()
-                                            (declare (not safe))
-                                            (gx#stx-eq?
-                                             '%#lambda
-                                             _%hd170555170617%_))
-                                          (if (let ()
-                                                (declare (not safe))
-                                                (gx#stx-pair?
-                                                 _%tl170554170619%_))
-                                              (let ((_%e170559170622%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-e
-                                                        _%tl170554170619%_))))
-                                                (let ((_%hd170558170625%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##car _%e170559170622%_)))
-                                                      (_%tl170557170627%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##cdr _%e170559170622%_))))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (gx#stx-pair?
-                                                         _%tl170557170627%_))
-                                                      (let ((_%e170562170630%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (gx#stx-e _%tl170557170627%_))))
-                (let ((_%hd170561170633%_
-                       (let () (declare (not safe)) (##car _%e170562170630%_)))
-                      (_%tl170560170635%_
-                       (let ()
-                         (declare (not safe))
-                         (##cdr _%e170562170630%_))))
-                  (if (let ()
-                        (declare (not safe))
-                        (gx#stx-pair? _%hd170561170633%_))
-                      (let ((_%e170565170638%_
-                             (let ()
-                               (declare (not safe))
-                               (gx#stx-e _%hd170561170633%_))))
-                        (let ((_%hd170564170641%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##car _%e170565170638%_)))
-                              (_%tl170563170643%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##cdr _%e170565170638%_))))
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#identifier? _%hd170564170641%_))
-                              (if (let ()
-                                    (declare (not safe))
-                                    (gx#stx-eq? '%#call _%hd170564170641%_))
-                                  (if (let ()
-                                        (declare (not safe))
-                                        (gx#stx-pair? _%tl170563170643%_))
-                                      (let ((_%e170568170646%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#stx-e _%tl170563170643%_))))
-                                        (let ((_%hd170567170649%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##car _%e170568170646%_)))
-                                              (_%tl170566170651%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##cdr _%e170568170646%_))))
-                                          (if (let ()
-                                                (declare (not safe))
-                                                (gx#stx-pair?
-                                                 _%hd170567170649%_))
-                                              (let ((_%e170571170654%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (gx#stx-e
-                                                        _%hd170567170649%_))))
-                                                (let ((_%hd170570170657%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##car _%e170571170654%_)))
-                                                      (_%tl170569170659%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##cdr _%e170571170654%_))))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (gx#identifier?
-                                                         _%hd170570170657%_))
-                                                      (if (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#stx-eq?
-                                                             '%#ref
-                                                             _%hd170570170657%_))
-                                                          (if (let ()
-                                                                (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (not safe))
-                        (gx#stx-pair? _%tl170569170659%_))
-                      (let ((_%e170574170662%_
-                             (let ()
-                               (declare (not safe))
-                               (gx#stx-e _%tl170569170659%_))))
-                        (let ((_%hd170573170665%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##car _%e170574170662%_)))
-                              (_%tl170572170667%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##cdr _%e170574170662%_))))
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-null? _%tl170572170667%_))
-                              (if (let ()
-                                    (declare (not safe))
-                                    (gx#stx-pair? _%tl170566170651%_))
-                                  (let ((_%e170577170670%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (gx#stx-e _%tl170566170651%_))))
-                                    (let ((_%hd170576170673%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e170577170670%_)))
-                                          (_%tl170575170675%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e170577170670%_))))
-                                      (if (let ()
-                                            (declare (not safe))
-                                            (gx#stx-pair? _%hd170576170673%_))
-                                          (let ((_%e170580170678%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (gx#stx-e
-                                                    _%hd170576170673%_))))
-                                            (let ((_%hd170579170681%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##car _%e170580170678%_)))
-                                                  (_%tl170578170683%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##cdr _%e170580170678%_))))
-                                              (if (let ()
-                                                    (declare (not safe))
-                                                    (gx#identifier?
-                                                     _%hd170579170681%_))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (gx#stx-eq?
-                                                         '%#ref
-                                                         _%hd170579170681%_))
-                                                      (if (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#stx-pair?
-                                                             _%tl170578170683%_))
-                                                          (let ((_%e170583170686%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ()
-                           (declare (not safe))
-                           (gx#stx-e _%tl170578170683%_))))
-                    (let ((_%hd170582170689%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e170583170686%_)))
-                          (_%tl170581170691%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e170583170686%_))))
-                      (if (let ()
-                            (declare (not safe))
-                            (gx#stx-null? _%tl170581170691%_))
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-pair? _%tl170575170675%_))
-                              (let ((_%e170586170694%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%tl170575170675%_))))
-                                (let ((_%hd170585170697%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##car _%e170586170694%_)))
-                                      (_%tl170584170699%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##cdr _%e170586170694%_))))
-                                  (if (let ()
-                                        (declare (not safe))
-                                        (gx#stx-pair? _%hd170585170697%_))
-                                      (let ((_%e170589170702%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#stx-e _%hd170585170697%_))))
-                                        (let ((_%hd170588170705%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##car _%e170589170702%_)))
-                                              (_%tl170587170707%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (##cdr _%e170589170702%_))))
-                                          (if (let ()
-                                                (declare (not safe))
-                                                (gx#identifier?
-                                                 _%hd170588170705%_))
-                                              (if (let ()
-                                                    (declare (not safe))
-                                                    (gx#stx-eq?
-                                                     '%#ref
-                                                     _%hd170588170705%_))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (gx#stx-pair?
-                                                         _%tl170587170707%_))
-                                                      (let ((_%e170592170710%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (gx#stx-e _%tl170587170707%_))))
-                (let ((_%hd170591170713%_
-                       (let () (declare (not safe)) (##car _%e170592170710%_)))
-                      (_%tl170590170715%_
-                       (let ()
-                         (declare (not safe))
-                         (##cdr _%e170592170710%_))))
-                  (if (let ()
-                        (declare (not safe))
-                        (gx#stx-null? _%tl170590170715%_))
-                      (if (let ()
-                            (declare (not safe))
-                            (gx#stx-pair/null? _%tl170584170699%_))
-                          (if (let ((__tmp172853
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-length _%tl170584170699%_))))
-                                (declare (not safe))
-                                (##fx>= __tmp172853 '1))
-                              (let ((_g172854_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#syntax-split-splice
-                                        _%tl170584170699%_
-                                        '1))))
-                                (begin
-                                  (let ((_g172855_
-                                         (let ()
-                                           (declare (not safe))
-                                           (if (##values? _g172854_)
-                                               (##vector-length _g172854_)
-                                               1))))
-                                    (if (not (let ()
-                                               (declare (not safe))
-                                               (##fx= _g172855_ 2)))
-                                        (error "Context expects 2 values"
-                                               _g172855_)))
-                                  (let ((_%target170593170718%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (##vector-ref _g172854_ 0)))
-                                        (_%tl170595170720%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (##vector-ref _g172854_ 1))))
-                                    (if (let ()
-                                          (declare (not safe))
-                                          (gx#stx-pair? _%tl170595170720%_))
-                                        (let ((_%e170604170723%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (gx#stx-e
-                                                  _%tl170595170720%_))))
-                                          (let ((_%hd170603170726%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##car _%e170604170723%_)))
-                                                (_%tl170602170728%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##cdr _%e170604170723%_))))
-                                            (if (let ()
-                                                  (declare (not safe))
-                                                  (gx#stx-null?
-                                                   _%tl170602170728%_))
-                                                (letrec ((_%loop170596170731%_
-                                                          (lambda (_%hd170594170734%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _%kw-ref170600170736%_)
-                    (if (let ()
-                          (declare (not safe))
-                          (gx#stx-pair? _%hd170594170734%_))
-                        (let ((_%e170597170739%_
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%hd170594170734%_))))
-                          (let ((_%lp-hd170598170742%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##car _%e170597170739%_)))
-                                (_%lp-tl170599170744%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##cdr _%e170597170739%_))))
-                            (let ((__tmp172856
-                                   (cons _%lp-hd170598170742%_
-                                         _%kw-ref170600170736%_)))
-                              (declare (not safe))
-                              (_%loop170596170731%_
-                               _%lp-tl170599170744%_
-                               __tmp172856))))
-                        (let ((_%kw-ref170601170747%_
-                               (reverse _%kw-ref170600170736%_)))
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-null? _%tl170560170635%_))
-                              ((lambda (_%L170750%_
-                                        _%L170751%_
-                                        _%L170752%_
-                                        _%L170753%_
-                                        _%L170754%_)
-                                 (let* ((_%kw-count170805%_
-                                         (length (let ((__tmp172857
-                                                        (lambda (_%g170797170800%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%g170798170802%_)
-                  (cons _%g170797170800%_ _%g170798170802%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (declare (not safe))
-                                                   (__foldr1
-                                                    __tmp172857
-                                                    '()
-                                                    _%L170751%_))))
-                                        (_%self-index170807%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (##fx+ _%kw-count170805%_ '1))))
-                                   (if (let ()
-                                         (declare (not safe))
-                                         (gxc#lambda-expr? _%L170505%_))
-                                       (let ()
-                                         (let* ((_%g170811170825%_
-                                                 (lambda (_%g170812170822%_)
+                                           (gxc#kw-lambda-expr? _%L167742%_))
+                                         (let* ((_%g169260169313%_
+                                                 (lambda (_%g169261169310%_)
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#raise-syntax-error
                                                       '#f
                                                       '"Bad syntax; invalid match target"
-                                                      _%g170812170822%_))))
-                                                (_%g170810170942%_
-                                                 (lambda (_%g170812170828%_)
+                                                      _%g169261169310%_))))
+                                                (_%g169259170456%_
+                                                 (lambda (_%g169261169316%_)
                                                    (if (let ()
                                                          (declare (not safe))
                                                          (gx#stx-pair?
-                                                          _%g170812170828%_))
-                                                       (let ((_%e170817170830%_
+                                                          _%g169261169316%_))
+                                                       (let ((_%e169267169318%_
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (gx#stx-e _%g170812170828%_))))
-                 (let ((_%hd170816170833%_
+                        (gx#stx-e _%g169261169316%_))))
+                 (let ((_%hd169268169321%_
                         (let ()
                           (declare (not safe))
-                          (##car _%e170817170830%_)))
-                       (_%tl170815170835%_
+                          (##car _%e169267169318%_)))
+                       (_%tl169269169323%_
                         (let ()
                           (declare (not safe))
-                          (##cdr _%e170817170830%_))))
+                          (##cdr _%e169267169318%_))))
                    (if (let ()
                          (declare (not safe))
-                         (gx#stx-pair? _%tl170815170835%_))
-                       (let ((_%e170820170838%_
-                              (let ()
-                                (declare (not safe))
-                                (gx#stx-e _%tl170815170835%_))))
-                         (let ((_%hd170819170841%_
-                                (let ()
-                                  (declare (not safe))
-                                  (##car _%e170820170838%_)))
-                               (_%tl170818170843%_
-                                (let ()
-                                  (declare (not safe))
-                                  (##cdr _%e170820170838%_))))
-                           ((lambda (_%L170846%_ _%L170847%_)
-                              (let ((_%self170864%_
-                                     (list-ref
-                                      _%L170847%_
-                                      _%self-index170807%_)))
-                                (for-each
-                                 (lambda (_%g170865170867%_)
-                                   (let ()
-                                     (declare (not safe))
-                                     (gxc#apply-collect-object-refs__%
-                                      '#f
-                                      _%self170864%_
-                                      _%method-calls168835%_
-                                      _%slot-refs168836%_
-                                      _%g170865170867%_)))
-                                 _%L170846%_)
-                                (if (let ()
-                                      (declare (not safe))
-                                      (_%no-specializer?168839%_))
-                                    _%stx168743%_
-                                    (let* ((_%specializer-id170876%_
-                                            (let* ((_%id170870%_
-                                                    (let ((__tmp172858
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gx#stx-e
-                                                              _%L168816%_))))
-                                                      (declare (not safe))
-                                                      (make-symbol__1
-                                                       __tmp172858
-                                                       '"::specialize")))
-                                                   (_%specializer-id170873%_
-                                                    (let ((__tmp172859
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gx#stx-source
-                                                              _%stx168743%_))))
-                                                      (declare (not safe))
-                                                      (gx#core-quote-syntax__1
-                                                       _%id170870%_
-                                                       __tmp172859))))
-                                              (let ()
-                                                (declare (not safe))
-                                                (gx#core-bind-runtime!__0
-                                                 _%specializer-id170873%_))
-                                              _%specializer-id170873%_))
-                                           (_%$klass170878%_
-                                            (let ((__tmp172860
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##gensym '__klass))))
-                                              (declare (not safe))
-                                              (make-symbol__0 __tmp172860)))
-                                           (_%$method-table170880%_
-                                            (let ((__tmp172861
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##gensym
-                                                      '__method-table))))
-                                              (declare (not safe))
-                                              (make-symbol__0 __tmp172861)))
-                                           (_%methods170882%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (hash-keys
-                                               _%method-calls168835%_)))
-                                           (_%$methods170886%_
-                                            (map (lambda (_%id170884%_)
-                                                   (let ((__tmp172862
-                                                          (gensym _%id170884%_)))
-                                                     (declare (not safe))
-                                                     (make-symbol__1
-                                                      '"__"
-                                                      __tmp172862)))
-                                                 _%methods170882%_))
-                                           (_%_170895%_
-                                            (for-each
-                                             (lambda (_%g170887170890%_
-                                                      _%g170888170892%_)
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (hash-put!
-                                                  _%method-calls168835%_
-                                                  _%g170887170890%_
-                                                  _%g170888170892%_)))
-                                             _%methods170882%_
-                                             _%$methods170886%_))
-                                           (_%methods-bind170905%_
-                                            (map (lambda (_%g170897170900%_
-                                                          _%g170898170902%_)
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (_%generate-method-bind168745%_
-                                                      _%$klass170878%_
-                                                      _%$method-table170880%_
-                                                      _%g170897170900%_
-                                                      _%g170898170902%_)))
-                                                 _%methods170882%_
-                                                 _%$methods170886%_))
-                                           (_%slots170907%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (hash-keys _%slot-refs168836%_)))
-                                           (_%$slots170911%_
-                                            (map (lambda (_%id170909%_)
-                                                   (let ((__tmp172863
-                                                          (gensym _%id170909%_)))
-                                                     (declare (not safe))
-                                                     (make-symbol__1
-                                                      '"__"
-                                                      __tmp172863)))
-                                                 _%slots170907%_))
-                                           (_%_170920%_
-                                            (for-each
-                                             (lambda (_%g170912170915%_
-                                                      _%g170913170917%_)
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (hash-put!
-                                                  _%slot-refs168836%_
-                                                  _%g170912170915%_
-                                                  _%g170913170917%_)))
-                                             _%slots170907%_
-                                             _%$slots170911%_))
-                                           (_%slots-bind170929%_
-                                            (map (lambda (_%g170921170924%_
-                                                          _%g170922170926%_)
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (_%generate-slot-bind168746%_
-                                                      _%$klass170878%_
-                                                      _%g170921170924%_
-                                                      _%g170922170926%_)))
-                                                 _%slots170907%_
-                                                 _%$slots170911%_))
-                                           (_%specializer-impl170937%_
-                                            (let* ((_%specializer-body170935%_
-                                                    (map (lambda (_%g170930170932%_)
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gxc#apply-subst-object-refs__%
-                                                              '#f
-                                                              _%self170864%_
-                                                              _%$klass170878%_
-                                                              _%method-calls168835%_
-                                                              _%slot-refs168836%_
-                                                              _%g170930170932%_)))
-                                                         _%L170846%_))
-                                                   (__tmp172864
-                                                    (cons '%#let-values
-                                                          (cons (cons (cons (cons _%L170507%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                          '())
-                                    (cons (cons '%#let-values
-                                                (cons (cons (cons (cons _%L170506%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                '())
-                          (cons (let ((__tmp172865
-                                       (cons '%#lambda
-                                             (cons _%L170847%_
-                                                   _%specializer-body170935%_))))
-                                  (declare (not safe))
-                                  (gxc#xform-wrap-source
-                                   __tmp172865
-                                   _%L170505%_))
-                                '()))
-                    '())
-              (cons _%L170504%_ '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          '()))
-                              '())
-                        (cons _%L170503%_ '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (declare (not safe))
-                                              (gxc#xform-wrap-source
-                                               __tmp172864
-                                               _%stx168743%_)))
-                                           (_%specializer-impl170939%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (_%generate-specializer-impl168747%_
-                                               _%$klass170878%_
-                                               _%$method-table170880%_
-                                               _%methods-bind170905%_
-                                               _%slots-bind170929%_
-                                               _%specializer-impl170937%_))))
-                                      (let ((__tmp172867
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#stx-e _%L168816%_)))
-                                            (__tmp172866
-                                             (let ()
-                                               (declare (not safe))
-                                               (gx#stx-e
-                                                _%specializer-id170876%_))))
-                                        (declare (not safe))
-                                        (gxc#verbose
-                                         '"generate method specializer "
-                                         __tmp172867
-                                         '" => "
-                                         __tmp172866))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%generate-specializer-def168748%_
-                                         _%L168816%_
-                                         _%specializer-id170876%_
-                                         _%specializer-impl170939%_))))))
-                            _%tl170818170843%_
-                            _%hd170819170841%_)))
-                       (let ()
-                         (declare (not safe))
-                         (_%g170811170825%_ _%g170812170828%_)))))
-               (let ()
-                 (declare (not safe))
-                 (_%g170811170825%_ _%g170812170828%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           (declare (not safe))
-                                           (_%g170810170942%_ _%L170505%_)))
-                                       (if (let ()
-                                             (declare (not safe))
-                                             (gxc#opt-lambda-expr?
-                                              _%L170505%_))
-                                           (let ()
-                                             (let* ((_%g170946170976%_
-                                                     (lambda (_%g170947170973%_)
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (gx#raise-syntax-error
-                                                          '#f
-                                                          '"Bad syntax; invalid match target"
-                                                          _%g170947170973%_))))
-                                                    (_%g170945171522%_
-                                                     (lambda (_%g170947170979%_)
-                                                       (if (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (gx#stx-pair?
-                                                              _%g170947170979%_))
-                                                           (let ((_%e170953170981%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ()
-                            (declare (not safe))
-                            (gx#stx-e _%g170947170979%_))))
-                     (let ((_%hd170952170984%_
-                            (let ()
-                              (declare (not safe))
-                              (##car _%e170953170981%_)))
-                           (_%tl170951170986%_
-                            (let ()
-                              (declare (not safe))
-                              (##cdr _%e170953170981%_))))
+                         (gx#identifier? _%hd169268169321%_))
                        (if (let ()
                              (declare (not safe))
-                             (gx#stx-pair? _%tl170951170986%_))
-                           (let ((_%e170956170989%_
+                             (gx#stx-eq? '%#let-values _%hd169268169321%_))
+                           (if (let ()
+                                 (declare (not safe))
+                                 (gx#stx-pair? _%tl169269169323%_))
+                               (let ((_%e169270169326%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (gx#stx-e _%tl169269169323%_))))
+                                 (let ((_%hd169271169329%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##car _%e169270169326%_)))
+                                       (_%tl169272169331%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##cdr _%e169270169326%_))))
+                                   (if (let ()
+                                         (declare (not safe))
+                                         (gx#stx-pair? _%hd169271169329%_))
+                                       (let ((_%e169273169334%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (gx#stx-e
+                                                 _%hd169271169329%_))))
+                                         (let ((_%hd169274169337%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##car _%e169273169334%_)))
+                                               (_%tl169275169339%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##cdr _%e169273169334%_))))
+                                           (if (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-pair?
+                                                  _%hd169274169337%_))
+                                               (let ((_%e169276169342%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (gx#stx-e
+                                                         _%hd169274169337%_))))
+                                                 (let ((_%hd169277169345%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##car _%e169276169342%_)))
+                                                       (_%tl169278169347%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##cdr _%e169276169342%_))))
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-pair?
+                                                          _%hd169277169345%_))
+                                                       (let ((_%e169279169350%_
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (gx#stx-e _%hd169277169345%_))))
+                 (let ((_%hd169280169353%_
+                        (let ()
+                          (declare (not safe))
+                          (##car _%e169279169350%_)))
+                       (_%tl169281169355%_
+                        (let ()
+                          (declare (not safe))
+                          (##cdr _%e169279169350%_))))
+                   (if (let ()
+                         (declare (not safe))
+                         (gx#stx-null? _%tl169281169355%_))
+                       (if (let ()
+                             (declare (not safe))
+                             (gx#stx-pair? _%tl169278169347%_))
+                           (let ((_%e169282169358%_
                                   (let ()
                                     (declare (not safe))
-                                    (gx#stx-e _%tl170951170986%_))))
-                             (let ((_%hd170955170992%_
+                                    (gx#stx-e _%tl169278169347%_))))
+                             (let ((_%hd169283169361%_
                                     (let ()
                                       (declare (not safe))
-                                      (##car _%e170956170989%_)))
-                                   (_%tl170954170994%_
+                                      (##car _%e169282169358%_)))
+                                   (_%tl169284169363%_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _%e170956170989%_))))
+                                      (##cdr _%e169282169358%_))))
                                (if (let ()
                                      (declare (not safe))
-                                     (gx#stx-pair? _%hd170955170992%_))
-                                   (let ((_%e170959170997%_
+                                     (gx#stx-pair? _%hd169283169361%_))
+                                   (let ((_%e169285169366%_
                                           (let ()
                                             (declare (not safe))
-                                            (gx#stx-e _%hd170955170992%_))))
-                                     (let ((_%hd170958171000%_
+                                            (gx#stx-e _%hd169283169361%_))))
+                                     (let ((_%hd169286169369%_
                                             (let ()
                                               (declare (not safe))
-                                              (##car _%e170959170997%_)))
-                                           (_%tl170957171002%_
+                                              (##car _%e169285169366%_)))
+                                           (_%tl169287169371%_
                                             (let ()
                                               (declare (not safe))
-                                              (##cdr _%e170959170997%_))))
+                                              (##cdr _%e169285169366%_))))
                                        (if (let ()
                                              (declare (not safe))
-                                             (gx#stx-pair? _%hd170958171000%_))
-                                           (let ((_%e170962171005%_
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (gx#stx-e
-                                                     _%hd170958171000%_))))
-                                             (let ((_%hd170961171008%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##car _%e170962171005%_)))
-                                                   (_%tl170960171010%_
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (##cdr _%e170962171005%_))))
+                                             (gx#identifier?
+                                              _%hd169286169369%_))
+                                           (if (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-eq?
+                                                  '%#let-values
+                                                  _%hd169286169369%_))
                                                (if (let ()
                                                      (declare (not safe))
                                                      (gx#stx-pair?
-                                                      _%hd170961171008%_))
-                                                   (let ((_%e170965171013%_
+                                                      _%tl169287169371%_))
+                                                   (let ((_%e169288169374%_
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (gx#stx-e
-                                                             _%hd170961171008%_))))
-                                                     (let ((_%hd170964171016%_
+                                                             _%tl169287169371%_))))
+                                                     (let ((_%hd169289169377%_
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (##car _%e170965171013%_)))
-                                                           (_%tl170963171018%_
+                                                              (##car _%e169288169374%_)))
+                                                           (_%tl169290169379%_
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (##cdr _%e170965171013%_))))
+                                                              (##cdr _%e169288169374%_))))
+                                                       (if (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-pair?
+                                                              _%hd169289169377%_))
+                                                           (let ((_%e169291169382%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (let ()
+                            (declare (not safe))
+                            (gx#stx-e _%hd169289169377%_))))
+                     (let ((_%hd169292169385%_
+                            (let ()
+                              (declare (not safe))
+                              (##car _%e169291169382%_)))
+                           (_%tl169293169387%_
+                            (let ()
+                              (declare (not safe))
+                              (##cdr _%e169291169382%_))))
+                       (if (let ()
+                             (declare (not safe))
+                             (gx#stx-pair? _%hd169292169385%_))
+                           (let ((_%e169294169390%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (gx#stx-e _%hd169292169385%_))))
+                             (let ((_%hd169295169393%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%e169294169390%_)))
+                                   (_%tl169296169395%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##cdr _%e169294169390%_))))
+                               (if (let ()
+                                     (declare (not safe))
+                                     (gx#stx-pair? _%hd169295169393%_))
+                                   (let ((_%e169297169398%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (gx#stx-e _%hd169295169393%_))))
+                                     (let ((_%hd169298169401%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##car _%e169297169398%_)))
+                                           (_%tl169299169403%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##cdr _%e169297169398%_))))
+                                       (if (let ()
+                                             (declare (not safe))
+                                             (gx#stx-null? _%tl169299169403%_))
+                                           (if (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-pair?
+                                                  _%tl169296169395%_))
+                                               (let ((_%e169300169406%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (gx#stx-e
+                                                         _%tl169296169395%_))))
+                                                 (let ((_%hd169301169409%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##car _%e169300169406%_)))
+                                                       (_%tl169302169411%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##cdr _%e169300169406%_))))
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-null?
+                                                          _%tl169302169411%_))
                                                        (if (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#stx-null?
-                                                              _%tl170963171018%_))
+                                                              _%tl169293169387%_))
                                                            (if (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (gx#stx-pair? _%tl170960171010%_))
-                       (let ((_%e170968171021%_
+                         (gx#stx-pair? _%tl169290169379%_))
+                       (let ((_%e169303169414%_
                               (let ()
                                 (declare (not safe))
-                                (gx#stx-e _%tl170960171010%_))))
-                         (let ((_%hd170967171024%_
+                                (gx#stx-e _%tl169290169379%_))))
+                         (let ((_%hd169304169417%_
                                 (let ()
                                   (declare (not safe))
-                                  (##car _%e170968171021%_)))
-                               (_%tl170966171026%_
+                                  (##car _%e169303169414%_)))
+                               (_%tl169305169419%_
                                 (let ()
                                   (declare (not safe))
-                                  (##cdr _%e170968171021%_))))
+                                  (##cdr _%e169303169414%_))))
                            (if (let ()
                                  (declare (not safe))
-                                 (gx#stx-null? _%tl170966171026%_))
+                                 (gx#stx-null? _%tl169305169419%_))
                                (if (let ()
                                      (declare (not safe))
-                                     (gx#stx-null? _%tl170957171002%_))
+                                     (gx#stx-null? _%tl169284169363%_))
                                    (if (let ()
                                          (declare (not safe))
-                                         (gx#stx-pair? _%tl170954170994%_))
-                                       (let ((_%e170971171029%_
-                                              (let ()
-                                                (declare (not safe))
-                                                (gx#stx-e
-                                                 _%tl170954170994%_))))
-                                         (let ((_%hd170970171032%_
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##car _%e170971171029%_)))
-                                               (_%tl170969171034%_
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##cdr _%e170971171029%_))))
-                                           (if (let ()
-                                                 (declare (not safe))
-                                                 (gx#stx-null?
-                                                  _%tl170969171034%_))
-                                               ((lambda (_%L171037%_
-                                                         _%L171038%_
-                                                         _%L171039%_)
-                                                  (let* ((_%g171063171077%_
-                                                          (lambda (_%g171064171074%_)
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#raise-syntax-error
-                                                               '#f
-                                                               '"Bad syntax; invalid match target"
-                                                               _%g171064171074%_))))
-                                                         (_%g171062171118%_
-                                                          (lambda (_%g171064171080%_)
-                                                            (if (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-pair? _%g171064171080%_))
-                        (let ((_%e171069171082%_
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%g171064171080%_))))
-                          (let ((_%hd171068171085%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##car _%e171069171082%_)))
-                                (_%tl171067171087%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##cdr _%e171069171082%_))))
-                            (if (let ()
-                                  (declare (not safe))
-                                  (gx#stx-pair? _%tl171067171087%_))
-                                (let ((_%e171072171090%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (gx#stx-e _%tl171067171087%_))))
-                                  (let ((_%hd171071171093%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (##car _%e171072171090%_)))
-                                        (_%tl171070171095%_
-                                         (let ()
-                                           (declare (not safe))
-                                           (##cdr _%e171072171090%_))))
-                                    ((lambda (_%L171098%_ _%L171099%_)
-                                       (let ((_%self171112%_
-                                              (list-ref
-                                               _%L171099%_
-                                               _%self-index170807%_)))
-                                         (for-each
-                                          (lambda (_%g171113171115%_)
-                                            (let ()
-                                              (declare (not safe))
-                                              (gxc#apply-collect-object-refs__%
-                                               '#f
-                                               _%self171112%_
-                                               _%method-calls168835%_
-                                               _%slot-refs168836%_
-                                               _%g171113171115%_)))
-                                          _%L171098%_)))
-                                     _%tl171070171095%_
-                                     _%hd171071171093%_)))
-                                (let ()
-                                  (declare (not safe))
-                                  (_%g171063171077%_ _%g171064171080%_)))))
-                        (let ()
-                          (declare (not safe))
-                          (_%g171063171077%_ _%g171064171080%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         (gx#stx-null? _%tl169275169339%_))
+                                       (if (let ()
+                                             (declare (not safe))
+                                             (gx#stx-pair? _%tl169272169331%_))
+                                           (let ((_%e169306169422%_
+                                                  (let ()
                                                     (declare (not safe))
-                                                    (_%g171062171118%_
-                                                     _%L171038%_))
-                                                  (let* ((_%g171121171140%_
-                                                          (lambda (_%g171122171137%_)
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#raise-syntax-error
-                                                               '#f
-                                                               '"Bad syntax; invalid match target"
-                                                               _%g171122171137%_))))
-                                                         (_%g171120171245%_
-                                                          (lambda (_%g171122171143%_)
-                                                            (if (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-pair? _%g171122171143%_))
-                        (let ((_%e171126171145%_
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%g171122171143%_))))
-                          (let ((_%hd171125171148%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##car _%e171126171145%_)))
-                                (_%tl171124171150%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##cdr _%e171126171145%_))))
-                            (if (let ()
-                                  (declare (not safe))
-                                  (gx#stx-pair/null? _%tl171124171150%_))
-                                (let ((_g172868_
-                                       (let ()
-                                         (declare (not safe))
-                                         (gx#syntax-split-splice
-                                          _%tl171124171150%_
-                                          '0))))
-                                  (begin
-                                    (let ((_g172869_
-                                           (let ()
-                                             (declare (not safe))
-                                             (if (##values? _g172868_)
-                                                 (##vector-length _g172868_)
-                                                 1))))
-                                      (if (not (let ()
-                                                 (declare (not safe))
-                                                 (##fx= _g172869_ 2)))
-                                          (error "Context expects 2 values"
-                                                 _g172869_)))
-                                    (let ((_%target171127171153%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##vector-ref _g172868_ 0)))
-                                          (_%tl171129171155%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##vector-ref _g172868_ 1))))
-                                      (if (let ()
-                                            (declare (not safe))
-                                            (gx#stx-null? _%tl171129171155%_))
-                                          (letrec ((_%loop171130171158%_
-                                                    (lambda (_%hd171128171161%_
-                                                             _%clause171134171163%_)
-                                                      (if (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#stx-pair?
-                                                             _%hd171128171161%_))
-                                                          (let ((_%e171131171166%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ()
-                           (declare (not safe))
-                           (gx#stx-e _%hd171128171161%_))))
-                    (let ((_%lp-hd171132171169%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e171131171166%_)))
-                          (_%lp-tl171133171171%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e171131171166%_))))
-                      (let ((__tmp172870
-                             (cons _%lp-hd171132171169%_
-                                   _%clause171134171163%_)))
-                        (declare (not safe))
-                        (_%loop171130171158%_
-                         _%lp-tl171133171171%_
-                         __tmp172870))))
-                  (let ((_%clause171135171174%_
-                         (reverse _%clause171134171163%_)))
-                    ((lambda (_%L171177%_)
-                       (for-each
-                        (lambda (_%clause171190%_)
-                          (let* ((_%g171192171203%_
-                                  (lambda (_%g171193171200%_)
-                                    (let ()
-                                      (declare (not safe))
-                                      (gx#raise-syntax-error
-                                       '#f
-                                       '"Bad syntax; invalid match target"
-                                       _%g171193171200%_))))
-                                 (_%g171191171235%_
-                                  (lambda (_%g171193171206%_)
-                                    (if (let ()
-                                          (declare (not safe))
-                                          (gx#stx-pair? _%g171193171206%_))
-                                        (let ((_%e171198171208%_
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (gx#stx-e
-                                                  _%g171193171206%_))))
-                                          (let ((_%hd171197171211%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##car _%e171198171208%_)))
-                                                (_%tl171196171213%_
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##cdr _%e171198171208%_))))
-                                            ((lambda (_%L171216%_ _%L171217%_)
-                                               (let ((_%self171229%_
-                                                      (list-ref
-                                                       _%L171217%_
-                                                       _%self-index170807%_)))
-                                                 (for-each
-                                                  (lambda (_%g171230171232%_)
+                                                    (gx#stx-e
+                                                     _%tl169272169331%_))))
+                                             (let ((_%hd169307169425%_
                                                     (let ()
                                                       (declare (not safe))
-                                                      (gxc#apply-collect-object-refs__%
-                                                       '#f
-                                                       _%self171229%_
-                                                       _%method-calls168835%_
-                                                       _%slot-refs168836%_
-                                                       _%g171230171232%_)))
-                                                  _%L171216%_)))
-                                             _%tl171196171213%_
-                                             _%hd171197171211%_)))
-                                        (let ()
-                                          (declare (not safe))
-                                          (_%g171192171203%_
-                                           _%g171193171206%_))))))
-                            (declare (not safe))
-                            (_%g171191171235%_ _%clause171190%_)))
-                        (let ((__tmp172871
-                               (lambda (_%g171237171240%_ _%g171238171242%_)
-                                 (cons _%g171237171240%_ _%g171238171242%_))))
-                          (declare (not safe))
-                          (__foldr1 __tmp172871 '() _%L171177%_))))
-                     _%clause171135171174%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (let ()
-                                              (declare (not safe))
-                                              (_%loop171130171158%_
-                                               _%target171127171153%_
-                                               '())))
-                                          (let ()
-                                            (declare (not safe))
-                                            (_%g171121171140%_
-                                             _%g171122171143%_))))))
-                                (let ()
-                                  (declare (not safe))
-                                  (_%g171121171140%_ _%g171122171143%_)))))
-                        (let ()
-                          (declare (not safe))
-                          (_%g171121171140%_ _%g171122171143%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (declare (not safe))
-                                                    (_%g171120171245%_
-                                                     _%L171037%_))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (_%no-specializer?168839%_))
-                                                      _%stx168743%_
-                                                      (let* ((_%specializer-id171254%_
-                                                              (let* ((_%id171248%_
+                                                      (##car _%e169306169422%_)))
+                                                   (_%tl169308169427%_
+                                                    (let ()
+                                                      (declare (not safe))
+                                                      (##cdr _%e169306169422%_))))
+                                               (if (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-null?
+                                                      _%tl169308169427%_))
+                                                   ((lambda (_%L169430%_
+                                                             _%L169431%_
+                                                             _%L169432%_
+                                                             _%L169433%_
+                                                             _%L169434%_)
+                                                      (let* ((_%g169474169536%_
+                                                              (lambda (_%g169475169533%_)
+                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp172872
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%L168816%_))))
-                                (declare (not safe))
-                                (make-symbol__1 __tmp172872 '"::specialize")))
-                             (_%specializer-id171251%_
-                              (let ((__tmp172873
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-source _%stx168743%_))))
-                                (declare (not safe))
-                                (gx#core-quote-syntax__1
-                                 _%id171248%_
-                                 __tmp172873))))
-                        (let ()
                           (declare (not safe))
-                          (gx#core-bind-runtime!__0 _%specializer-id171251%_))
-                        _%specializer-id171251%_))
-                     (_%$klass171256%_
-                      (let ((__tmp172874
-                             (let ()
-                               (declare (not safe))
-                               (##gensym '__klass))))
-                        (declare (not safe))
-                        (make-symbol__0 __tmp172874)))
-                     (_%$method-table171258%_
-                      (let ((__tmp172875
-                             (let ()
-                               (declare (not safe))
-                               (##gensym '__method-table))))
-                        (declare (not safe))
-                        (make-symbol__0 __tmp172875)))
-                     (_%methods171260%_
-                      (let ()
-                        (declare (not safe))
-                        (hash-keys _%method-calls168835%_)))
-                     (_%$methods171264%_
-                      (map (lambda (_%id171262%_)
-                             (let ((__tmp172876 (gensym _%id171262%_)))
-                               (declare (not safe))
-                               (make-symbol__1 '"__" __tmp172876)))
-                           _%methods171260%_))
-                     (_%_171273%_
-                      (for-each
-                       (lambda (_%g171265171268%_ _%g171266171270%_)
-                         (let ()
-                           (declare (not safe))
-                           (hash-put!
-                            _%method-calls168835%_
-                            _%g171265171268%_
-                            _%g171266171270%_)))
-                       _%methods171260%_
-                       _%$methods171264%_))
-                     (_%methods-bind171283%_
-                      (map (lambda (_%g171275171278%_ _%g171276171280%_)
-                             (let ()
-                               (declare (not safe))
-                               (_%generate-method-bind168745%_
-                                _%$klass171256%_
-                                _%$method-table171258%_
-                                _%g171275171278%_
-                                _%g171276171280%_)))
-                           _%methods171260%_
-                           _%$methods171264%_))
-                     (_%slots171285%_
-                      (let ()
-                        (declare (not safe))
-                        (hash-keys _%slot-refs168836%_)))
-                     (_%$slots171289%_
-                      (map (lambda (_%id171287%_)
-                             (let ((__tmp172877 (gensym _%id171287%_)))
-                               (declare (not safe))
-                               (make-symbol__1 '"__" __tmp172877)))
-                           _%slots171285%_))
-                     (_%_171298%_
-                      (for-each
-                       (lambda (_%g171290171293%_ _%g171291171295%_)
-                         (let ()
-                           (declare (not safe))
-                           (hash-put!
-                            _%slot-refs168836%_
-                            _%g171290171293%_
-                            _%g171291171295%_)))
-                       _%slots171285%_
-                       _%$slots171289%_))
-                     (_%slots-bind171307%_
-                      (map (lambda (_%g171299171302%_ _%g171300171304%_)
-                             (let ()
-                               (declare (not safe))
-                               (_%generate-slot-bind168746%_
-                                _%$klass171256%_
-                                _%g171299171302%_
-                                _%g171300171304%_)))
-                           _%slots171285%_
-                           _%$slots171289%_))
-                     (_%specializer-lambda-expr171380%_
-                      (let* ((_%g171309171323%_
-                              (lambda (_%g171310171320%_)
-                                (let ()
-                                  (declare (not safe))
-                                  (gx#raise-syntax-error
-                                   '#f
-                                   '"Bad syntax; invalid match target"
-                                   _%g171310171320%_))))
-                             (_%g171308171377%_
-                              (lambda (_%g171310171326%_)
+                          (gx#raise-syntax-error
+                           '#f
+                           '"Bad syntax; invalid match target"
+                           _%g169475169533%_))))
+                     (_%g169473170453%_
+                      (lambda (_%g169475169539%_)
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair? _%g169475169539%_))
+                            (let ((_%e169481169541%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-e _%g169475169539%_))))
+                              (let ((_%hd169482169544%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%e169481169541%_)))
+                                    (_%tl169483169546%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%e169481169541%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-pair? _%g171310171326%_))
-                                    (let ((_%e171315171328%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (gx#stx-e _%g171310171326%_))))
-                                      (let ((_%hd171314171331%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e171315171328%_)))
-                                            (_%tl171313171333%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e171315171328%_))))
+                                      (gx#identifier? _%hd169482169544%_))
+                                    (if (let ()
+                                          (declare (not safe))
+                                          (gx#stx-eq?
+                                           '%#lambda
+                                           _%hd169482169544%_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-pair?
-                                               _%tl171313171333%_))
-                                            (let ((_%e171318171336%_
+                                               _%tl169483169546%_))
+                                            (let ((_%e169484169549%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#stx-e
-                                                      _%tl171313171333%_))))
-                                              (let ((_%hd171317171339%_
+                                                      _%tl169483169546%_))))
+                                              (let ((_%hd169485169552%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _%e171318171336%_)))
-                                                    (_%tl171316171341%_
+                                                       (##car _%e169484169549%_)))
+                                                    (_%tl169486169554%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _%e171318171336%_))))
-                                                ((lambda (_%L171344%_
-                                                          _%L171345%_)
-                                                   (let* ((_%self171368%_
-                                                           (list-ref
-                                                            _%L171345%_
-                                                            _%self-index170807%_))
-                                                          (_%body171374%_
-                                                           (map (lambda (_%g171369171371%_)
+                                                       (##cdr _%e169484169549%_))))
+                                                (if (let ()
+                                                      (declare (not safe))
+                                                      (gx#stx-pair?
+                                                       _%tl169486169554%_))
+                                                    (let ((_%e169487169557%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%tl169486169554%_))))
+                                                      (let ((_%hd169488169560%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%e169487169557%_)))
+                    (_%tl169489169562%_
+                     (let () (declare (not safe)) (##cdr _%e169487169557%_))))
+                (if (let ()
+                      (declare (not safe))
+                      (gx#stx-pair? _%hd169488169560%_))
+                    (let ((_%e169490169565%_
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-e _%hd169488169560%_))))
+                      (let ((_%hd169491169568%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%e169490169565%_)))
+                            (_%tl169492169570%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%e169490169565%_))))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#identifier? _%hd169491169568%_))
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-eq? '%#call _%hd169491169568%_))
+                                (if (let ()
+                                      (declare (not safe))
+                                      (gx#stx-pair? _%tl169492169570%_))
+                                    (let ((_%e169493169573%_
+                                           (let ()
+                                             (declare (not safe))
+                                             (gx#stx-e _%tl169492169570%_))))
+                                      (let ((_%hd169494169576%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%e169493169573%_)))
+                                            (_%tl169495169578%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%e169493169573%_))))
+                                        (if (let ()
+                                              (declare (not safe))
+                                              (gx#stx-pair?
+                                               _%hd169494169576%_))
+                                            (let ((_%e169496169581%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-e
+                                                      _%hd169494169576%_))))
+                                              (let ((_%hd169497169584%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%e169496169581%_)))
+                                                    (_%tl169498169586%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%e169496169581%_))))
+                                                (if (let ()
+                                                      (declare (not safe))
+                                                      (gx#identifier?
+                                                       _%hd169497169584%_))
+                                                    (if (let ()
+                                                          (declare (not safe))
+                                                          (gx#stx-eq?
+                                                           '%#ref
+                                                           _%hd169497169584%_))
+                                                        (if (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (gx#stx-pair?
+                                                               _%tl169498169586%_))
+                                                            (let ((_%e169499169589%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-e _%tl169498169586%_))))
+                      (let ((_%hd169500169592%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%e169499169589%_)))
+                            (_%tl169501169594%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%e169499169589%_))))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-null? _%tl169501169594%_))
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-pair? _%tl169495169578%_))
+                                (let ((_%e169502169597%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (gx#stx-e _%tl169495169578%_))))
+                                  (let ((_%hd169503169600%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##car _%e169502169597%_)))
+                                        (_%tl169504169602%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##cdr _%e169502169597%_))))
+                                    (if (let ()
+                                          (declare (not safe))
+                                          (gx#stx-pair? _%hd169503169600%_))
+                                        (let ((_%e169505169605%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-e
+                                                  _%hd169503169600%_))))
+                                          (let ((_%hd169506169608%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##car _%e169505169605%_)))
+                                                (_%tl169507169610%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##cdr _%e169505169605%_))))
+                                            (if (let ()
+                                                  (declare (not safe))
+                                                  (gx#identifier?
+                                                   _%hd169506169608%_))
+                                                (if (let ()
+                                                      (declare (not safe))
+                                                      (gx#stx-eq?
+                                                       '%#ref
+                                                       _%hd169506169608%_))
+                                                    (if (let ()
+                                                          (declare (not safe))
+                                                          (gx#stx-pair?
+                                                           _%tl169507169610%_))
+                                                        (let ((_%e169508169613%_
+                                                               (let ()
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (declare (not safe))
+                         (gx#stx-e _%tl169507169610%_))))
+                  (let ((_%hd169509169616%_
+                         (let ()
+                           (declare (not safe))
+                           (##car _%e169508169613%_)))
+                        (_%tl169510169618%_
+                         (let ()
+                           (declare (not safe))
+                           (##cdr _%e169508169613%_))))
+                    (if (let ()
+                          (declare (not safe))
+                          (gx#stx-null? _%tl169510169618%_))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair? _%tl169504169602%_))
+                            (let ((_%e169511169621%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-e _%tl169504169602%_))))
+                              (let ((_%hd169512169624%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%e169511169621%_)))
+                                    (_%tl169513169626%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%e169511169621%_))))
+                                (if (let ()
+                                      (declare (not safe))
+                                      (gx#stx-pair? _%hd169512169624%_))
+                                    (let ((_%e169514169629%_
+                                           (let ()
+                                             (declare (not safe))
+                                             (gx#stx-e _%hd169512169624%_))))
+                                      (let ((_%hd169515169632%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%e169514169629%_)))
+                                            (_%tl169516169634%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%e169514169629%_))))
+                                        (if (let ()
+                                              (declare (not safe))
+                                              (gx#identifier?
+                                               _%hd169515169632%_))
+                                            (if (let ()
+                                                  (declare (not safe))
+                                                  (gx#stx-eq?
+                                                   '%#ref
+                                                   _%hd169515169632%_))
+                                                (if (let ()
+                                                      (declare (not safe))
+                                                      (gx#stx-pair?
+                                                       _%tl169516169634%_))
+                                                    (let ((_%e169517169637%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%tl169516169634%_))))
+                                                      (let ((_%hd169518169640%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%e169517169637%_)))
+                    (_%tl169519169642%_
+                     (let () (declare (not safe)) (##cdr _%e169517169637%_))))
+                (if (let ()
+                      (declare (not safe))
+                      (gx#stx-null? _%tl169519169642%_))
+                    (if (let ()
+                          (declare (not safe))
+                          (gx#stx-pair/null? _%tl169513169626%_))
+                        (if (let ((__tmp171777
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-length _%tl169513169626%_))))
+                              (declare (not safe))
+                              (##fx>= __tmp171777 '1))
+                            (let ((_g171778_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#syntax-split-splice
+                                      _%tl169513169626%_
+                                      '1))))
+                              (begin
+                                (let ((_g171779_
+                                       (let ()
+                                         (declare (not safe))
+                                         (if (##values? _g171778_)
+                                             (##vector-length _g171778_)
+                                             1))))
+                                  (if (not (let ()
+                                             (declare (not safe))
+                                             (##fx= _g171779_ 2)))
+                                      (error "Context expects 2 values"
+                                             _g171779_)))
+                                (let ((_%target169520169645%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (##vector-ref _g171778_ 0)))
+                                      (_%tl169522169647%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (##vector-ref _g171778_ 1))))
+                                  (if (let ()
+                                        (declare (not safe))
+                                        (gx#stx-pair? _%tl169522169647%_))
+                                      (let ((_%e169529169650%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (gx#stx-e _%tl169522169647%_))))
+                                        (let ((_%hd169530169653%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##car _%e169529169650%_)))
+                                              (_%tl169531169655%_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##cdr _%e169529169650%_))))
+                                          (if (let ()
+                                                (declare (not safe))
+                                                (gx#stx-null?
+                                                 _%tl169531169655%_))
+                                              (letrec ((_%loop169523169658%_
+                                                        (lambda (_%hd169521169661%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _%kw-ref169527169663%_)
+                  (if (let ()
+                        (declare (not safe))
+                        (gx#stx-pair? _%hd169521169661%_))
+                      (let ((_%e169524169666%_
+                             (let ()
+                               (declare (not safe))
+                               (gx#stx-e _%hd169521169661%_))))
+                        (let ((_%lp-hd169525169669%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##car _%e169524169666%_)))
+                              (_%lp-tl169526169671%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##cdr _%e169524169666%_))))
+                          (_%loop169523169658%_
+                           _%lp-tl169526169671%_
+                           (cons _%lp-hd169525169669%_
+                                 _%kw-ref169527169663%_))))
+                      (let ((_%kw-ref169528169674%_
+                             (reverse _%kw-ref169527169663%_)))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-null? _%tl169489169562%_))
+                            ((lambda (_%L169677%_
+                                      _%L169678%_
+                                      _%L169679%_
+                                      _%L169680%_
+                                      _%L169681%_)
+                               (let* ((_%kw-count169732%_
+                                       (length (let ((__tmp171780
+                                                      (lambda (_%g169724169727%_
+                                                               _%g169725169729%_)
+                                                        (cons _%g169724169727%_
+                                                              _%g169725169729%_))))
+                                                 (declare (not safe))
+                                                 (__foldr1
+                                                  __tmp171780
+                                                  '()
+                                                  _%L169678%_))))
+                                      (_%self-index169734%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (##fx+ _%kw-count169732%_ '1))))
+                                 (if (let ()
+                                       (declare (not safe))
+                                       (gxc#lambda-expr? _%L169432%_))
+                                     (let* ((_%g169738169752%_
+                                             (lambda (_%g169739169749%_)
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (gx#raise-syntax-error
+                                                  '#f
+                                                  '"Bad syntax; invalid match target"
+                                                  _%g169739169749%_))))
+                                            (_%g169737169869%_
+                                             (lambda (_%g169739169755%_)
+                                               (if (let ()
+                                                     (declare (not safe))
+                                                     (gx#stx-pair?
+                                                      _%g169739169755%_))
+                                                   (let ((_%e169742169757%_
+                                                          (let ()
+                                                            (declare
+                                                              (not safe))
+                                                            (gx#stx-e
+                                                             _%g169739169755%_))))
+                                                     (let ((_%hd169743169760%_
+                                                            (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (##car _%e169742169757%_)))
+                                                           (_%tl169744169762%_
+                                                            (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (##cdr _%e169742169757%_))))
+                                                       (if (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-pair?
+                                                              _%tl169744169762%_))
+                                                           (let ((_%e169745169765%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
-                            (gxc#apply-subst-object-refs__%
-                             '#f
-                             _%self171368%_
-                             _%$klass171256%_
-                             _%method-calls168835%_
-                             _%slot-refs168836%_
-                             _%g171369171371%_)))
-                        _%L171344%_))
-                  (__tmp172878
-                   (cons '%#lambda (cons _%L171345%_ _%body171374%_))))
+                            (gx#stx-e _%tl169744169762%_))))
+                     (let ((_%hd169746169768%_
+                            (let ()
+                              (declare (not safe))
+                              (##car _%e169745169765%_)))
+                           (_%tl169747169770%_
+                            (let ()
+                              (declare (not safe))
+                              (##cdr _%e169745169765%_))))
+                       ((lambda (_%L169773%_ _%L169774%_)
+                          (let ((_%self169791%_
+                                 (list-ref _%L169774%_ _%self-index169734%_)))
+                            (for-each
+                             (lambda (_%g169792169794%_)
+                               (gxc#apply-collect-object-refs__%
+                                '#f
+                                _%self169791%_
+                                _%method-calls167762%_
+                                _%slot-refs167763%_
+                                _%g169792169794%_))
+                             _%L169773%_)
+                            (if (_%no-specializer?167766%_)
+                                _%stx167670%_
+                                (let* ((_%specializer-id169803%_
+                                        (let* ((_%id169797%_
+                                                (let ((__tmp171781
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-e
+                                                          _%L167743%_))))
+                                                  (declare (not safe))
+                                                  (make-symbol__1
+                                                   __tmp171781
+                                                   '"::specialize")))
+                                               (_%specializer-id169800%_
+                                                (let ((__tmp171782
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-source
+                                                          _%stx167670%_))))
+                                                  (declare (not safe))
+                                                  (gx#core-quote-syntax__1
+                                                   _%id169797%_
+                                                   __tmp171782))))
+                                          (let ()
+                                            (declare (not safe))
+                                            (gx#core-bind-runtime!__0
+                                             _%specializer-id169800%_))
+                                          _%specializer-id169800%_))
+                                       (_%$klass169805%_
+                                        (let ((__tmp171783
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##gensym '__klass))))
+                                          (declare (not safe))
+                                          (make-symbol__0 __tmp171783)))
+                                       (_%$method-table169807%_
+                                        (let ((__tmp171784
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (##gensym '__method-table))))
+                                          (declare (not safe))
+                                          (make-symbol__0 __tmp171784)))
+                                       (_%methods169809%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (hash-keys _%method-calls167762%_)))
+                                       (_%$methods169813%_
+                                        (map (lambda (_%id169811%_)
+                                               (let ((__tmp171785
+                                                      (gensym _%id169811%_)))
+                                                 (declare (not safe))
+                                                 (make-symbol__1
+                                                  '"__"
+                                                  __tmp171785)))
+                                             _%methods169809%_))
+                                       (_%_169822%_
+                                        (for-each
+                                         (lambda (_%g169814169817%_
+                                                  _%g169815169819%_)
+                                           (let ()
+                                             (declare (not safe))
+                                             (hash-put!
+                                              _%method-calls167762%_
+                                              _%g169814169817%_
+                                              _%g169815169819%_)))
+                                         _%methods169809%_
+                                         _%$methods169813%_))
+                                       (_%methods-bind169832%_
+                                        (map (lambda (_%g169824169827%_
+                                                      _%g169825169829%_)
+                                               (_%generate-method-bind167672%_
+                                                _%$klass169805%_
+                                                _%$method-table169807%_
+                                                _%g169824169827%_
+                                                _%g169825169829%_))
+                                             _%methods169809%_
+                                             _%$methods169813%_))
+                                       (_%slots169834%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (hash-keys _%slot-refs167763%_)))
+                                       (_%$slots169838%_
+                                        (map (lambda (_%id169836%_)
+                                               (let ((__tmp171786
+                                                      (gensym _%id169836%_)))
+                                                 (declare (not safe))
+                                                 (make-symbol__1
+                                                  '"__"
+                                                  __tmp171786)))
+                                             _%slots169834%_))
+                                       (_%_169847%_
+                                        (for-each
+                                         (lambda (_%g169839169842%_
+                                                  _%g169840169844%_)
+                                           (let ()
+                                             (declare (not safe))
+                                             (hash-put!
+                                              _%slot-refs167763%_
+                                              _%g169839169842%_
+                                              _%g169840169844%_)))
+                                         _%slots169834%_
+                                         _%$slots169838%_))
+                                       (_%slots-bind169856%_
+                                        (map (lambda (_%g169848169851%_
+                                                      _%g169849169853%_)
+                                               (_%generate-slot-bind167673%_
+                                                _%$klass169805%_
+                                                _%g169848169851%_
+                                                _%g169849169853%_))
+                                             _%slots169834%_
+                                             _%$slots169838%_))
+                                       (_%specializer-impl169864%_
+                                        (let* ((_%specializer-body169862%_
+                                                (map (lambda (_%g169857169859%_)
+                                                       (gxc#apply-subst-object-refs__%
+                                                        '#f
+                                                        _%self169791%_
+                                                        _%$klass169805%_
+                                                        _%method-calls167762%_
+                                                        _%slot-refs167763%_
+                                                        _%g169857169859%_))
+                                                     _%L169773%_))
+                                               (__tmp171787
+                                                (cons '%#let-values
+                                                      (cons (cons (cons (cons _%L169434%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                      '())
+                                (cons (cons '%#let-values
+                                            (cons (cons (cons (cons _%L169433%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '())
+                      (cons (let ((__tmp171788
+                                   (cons '%#lambda
+                                         (cons _%L169774%_
+                                               _%specializer-body169862%_))))
+                              (declare (not safe))
+                              (gxc#xform-wrap-source __tmp171788 _%L169432%_))
+                            '()))
+                '())
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (cons _%L169431%_ '())))
+                                      '()))
+                          '())
+                    (cons _%L169430%_ '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                          (declare (not safe))
+                                          (gxc#xform-wrap-source
+                                           __tmp171787
+                                           _%stx167670%_)))
+                                       (_%specializer-impl169866%_
+                                        (_%generate-specializer-impl167674%_
+                                         _%$klass169805%_
+                                         _%$method-table169807%_
+                                         _%methods-bind169832%_
+                                         _%slots-bind169856%_
+                                         _%specializer-impl169864%_)))
+                                  (let ((__tmp171790
+                                         (let ()
+                                           (declare (not safe))
+                                           (gx#stx-e _%L167743%_)))
+                                        (__tmp171789
+                                         (let ()
+                                           (declare (not safe))
+                                           (gx#stx-e
+                                            _%specializer-id169803%_))))
+                                    (declare (not safe))
+                                    (gxc#verbose
+                                     '"generate method specializer "
+                                     __tmp171790
+                                     '" => "
+                                     __tmp171789))
+                                  (_%generate-specializer-def167675%_
+                                   _%L167743%_
+                                   _%specializer-id169803%_
+                                   _%specializer-impl169866%_)))))
+                        _%tl169747169770%_
+                        _%hd169746169768%_)))
+                   (_%g169738169752%_ _%g169739169755%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%g169738169752%_
+                                                    _%g169739169755%_)))))
+                                       (_%g169737169869%_ _%L169432%_))
+                                     (if (let ()
+                                           (declare (not safe))
+                                           (gxc#opt-lambda-expr? _%L169432%_))
+                                         (let* ((_%g169873169903%_
+                                                 (lambda (_%g169874169900%_)
+                                                   (let ()
                                                      (declare (not safe))
-                                                     (gxc#xform-wrap-source
-                                                      __tmp172878
-                                                      _%L171038%_)))
-                                                 _%tl171316171341%_
-                                                 _%hd171317171339%_)))
+                                                     (gx#raise-syntax-error
+                                                      '#f
+                                                      '"Bad syntax; invalid match target"
+                                                      _%g169874169900%_))))
+                                                (_%g169872170449%_
+                                                 (lambda (_%g169874169906%_)
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-pair?
+                                                          _%g169874169906%_))
+                                                       (let ((_%e169878169908%_
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (gx#stx-e _%g169874169906%_))))
+                 (let ((_%hd169879169911%_
+                        (let ()
+                          (declare (not safe))
+                          (##car _%e169878169908%_)))
+                       (_%tl169880169913%_
+                        (let ()
+                          (declare (not safe))
+                          (##cdr _%e169878169908%_))))
+                   (if (let ()
+                         (declare (not safe))
+                         (gx#stx-pair? _%tl169880169913%_))
+                       (let ((_%e169881169916%_
+                              (let ()
+                                (declare (not safe))
+                                (gx#stx-e _%tl169880169913%_))))
+                         (let ((_%hd169882169919%_
+                                (let ()
+                                  (declare (not safe))
+                                  (##car _%e169881169916%_)))
+                               (_%tl169883169921%_
+                                (let ()
+                                  (declare (not safe))
+                                  (##cdr _%e169881169916%_))))
+                           (if (let ()
+                                 (declare (not safe))
+                                 (gx#stx-pair? _%hd169882169919%_))
+                               (let ((_%e169884169924%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (gx#stx-e _%hd169882169919%_))))
+                                 (let ((_%hd169885169927%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##car _%e169884169924%_)))
+                                       (_%tl169886169929%_
+                                        (let ()
+                                          (declare (not safe))
+                                          (##cdr _%e169884169924%_))))
+                                   (if (let ()
+                                         (declare (not safe))
+                                         (gx#stx-pair? _%hd169885169927%_))
+                                       (let ((_%e169887169932%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (gx#stx-e
+                                                 _%hd169885169927%_))))
+                                         (let ((_%hd169888169935%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##car _%e169887169932%_)))
+                                               (_%tl169889169937%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##cdr _%e169887169932%_))))
+                                           (if (let ()
+                                                 (declare (not safe))
+                                                 (gx#stx-pair?
+                                                  _%hd169888169935%_))
+                                               (let ((_%e169890169940%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (gx#stx-e
+                                                         _%hd169888169935%_))))
+                                                 (let ((_%hd169891169943%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##car _%e169890169940%_)))
+                                                       (_%tl169892169945%_
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (##cdr _%e169890169940%_))))
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gx#stx-null?
+                                                          _%tl169892169945%_))
+                                                       (if (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-pair?
+                                                              _%tl169889169937%_))
+                                                           (let ((_%e169893169948%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (let ()
+                            (declare (not safe))
+                            (gx#stx-e _%tl169889169937%_))))
+                     (let ((_%hd169894169951%_
+                            (let ()
+                              (declare (not safe))
+                              (##car _%e169893169948%_)))
+                           (_%tl169895169953%_
+                            (let ()
+                              (declare (not safe))
+                              (##cdr _%e169893169948%_))))
+                       (if (let ()
+                             (declare (not safe))
+                             (gx#stx-null? _%tl169895169953%_))
+                           (if (let ()
+                                 (declare (not safe))
+                                 (gx#stx-null? _%tl169886169929%_))
+                               (if (let ()
+                                     (declare (not safe))
+                                     (gx#stx-pair? _%tl169883169921%_))
+                                   (let ((_%e169896169956%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (gx#stx-e _%tl169883169921%_))))
+                                     (let ((_%hd169897169959%_
                                             (let ()
                                               (declare (not safe))
-                                              (_%g171309171323%_
-                                               _%g171310171326%_)))))
-                                    (let ()
-                                      (declare (not safe))
-                                      (_%g171309171323%_
-                                       _%g171310171326%_))))))
-                        (declare (not safe))
-                        (_%g171308171377%_ _%L171038%_)))
-                     (_%specializer-case-lambda-expr171515%_
-                      (let* ((_%g171382171401%_
-                              (lambda (_%g171383171398%_)
+                                              (##car _%e169896169956%_)))
+                                           (_%tl169898169961%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##cdr _%e169896169956%_))))
+                                       (if (let ()
+                                             (declare (not safe))
+                                             (gx#stx-null? _%tl169898169961%_))
+                                           ((lambda (_%L169964%_
+                                                     _%L169965%_
+                                                     _%L169966%_)
+                                              (let* ((_%g169990170004%_
+                                                      (lambda (_%g169991170001%_)
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (gx#raise-syntax-error
+                                                           '#f
+                                                           '"Bad syntax; invalid match target"
+                                                           _%g169991170001%_))))
+                                                     (_%g169989170045%_
+                                                      (lambda (_%g169991170007%_)
+                                                        (if (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (gx#stx-pair?
+                                                               _%g169991170007%_))
+                                                            (let ((_%e169994170009%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-e _%g169991170007%_))))
+                      (let ((_%hd169995170012%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%e169994170009%_)))
+                            (_%tl169996170014%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%e169994170009%_))))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair? _%tl169996170014%_))
+                            (let ((_%e169997170017%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#stx-e _%tl169996170014%_))))
+                              (let ((_%hd169998170020%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%e169997170017%_)))
+                                    (_%tl169999170022%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%e169997170017%_))))
+                                ((lambda (_%L170025%_ _%L170026%_)
+                                   (let ((_%self170039%_
+                                          (list-ref
+                                           _%L170026%_
+                                           _%self-index169734%_)))
+                                     (for-each
+                                      (lambda (_%g170040170042%_)
+                                        (gxc#apply-collect-object-refs__%
+                                         '#f
+                                         _%self170039%_
+                                         _%method-calls167762%_
+                                         _%slot-refs167763%_
+                                         _%g170040170042%_))
+                                      _%L170025%_)))
+                                 _%tl169999170022%_
+                                 _%hd169998170020%_)))
+                            (_%g169990170004%_ _%g169991170007%_))))
+                    (_%g169990170004%_ _%g169991170007%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (_%g169989170045%_
+                                                 _%L169965%_))
+                                              (let* ((_%g170048170067%_
+                                                      (lambda (_%g170049170064%_)
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (gx#raise-syntax-error
+                                                           '#f
+                                                           '"Bad syntax; invalid match target"
+                                                           _%g170049170064%_))))
+                                                     (_%g170047170172%_
+                                                      (lambda (_%g170049170070%_)
+                                                        (if (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (gx#stx-pair?
+                                                               _%g170049170070%_))
+                                                            (let ((_%e170051170072%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (let ()
+                             (declare (not safe))
+                             (gx#stx-e _%g170049170070%_))))
+                      (let ((_%hd170052170075%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%e170051170072%_)))
+                            (_%tl170053170077%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%e170051170072%_))))
+                        (if (let ()
+                              (declare (not safe))
+                              (gx#stx-pair/null? _%tl170053170077%_))
+                            (let ((_g171791_
+                                   (let ()
+                                     (declare (not safe))
+                                     (gx#syntax-split-splice
+                                      _%tl170053170077%_
+                                      '0))))
+                              (begin
+                                (let ((_g171792_
+                                       (let ()
+                                         (declare (not safe))
+                                         (if (##values? _g171791_)
+                                             (##vector-length _g171791_)
+                                             1))))
+                                  (if (not (let ()
+                                             (declare (not safe))
+                                             (##fx= _g171792_ 2)))
+                                      (error "Context expects 2 values"
+                                             _g171792_)))
+                                (let ((_%target170054170080%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (##vector-ref _g171791_ 0)))
+                                      (_%tl170056170082%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (##vector-ref _g171791_ 1))))
+                                  (if (let ()
+                                        (declare (not safe))
+                                        (gx#stx-null? _%tl170056170082%_))
+                                      (letrec ((_%loop170057170085%_
+                                                (lambda (_%hd170055170088%_
+                                                         _%clause170061170090%_)
+                                                  (if (let ()
+                                                        (declare (not safe))
+                                                        (gx#stx-pair?
+                                                         _%hd170055170088%_))
+                                                      (let ((_%e170058170093%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (gx#stx-e _%hd170055170088%_))))
+                (let ((_%lp-hd170059170096%_
+                       (let () (declare (not safe)) (##car _%e170058170093%_)))
+                      (_%lp-tl170060170098%_
+                       (let ()
+                         (declare (not safe))
+                         (##cdr _%e170058170093%_))))
+                  (_%loop170057170085%_
+                   _%lp-tl170060170098%_
+                   (cons _%lp-hd170059170096%_ _%clause170061170090%_))))
+              (let ((_%clause170062170101%_ (reverse _%clause170061170090%_)))
+                ((lambda (_%L170104%_)
+                   (for-each
+                    (lambda (_%clause170117%_)
+                      (let* ((_%g170119170130%_
+                              (lambda (_%g170120170127%_)
                                 (let ()
                                   (declare (not safe))
                                   (gx#raise-syntax-error
                                    '#f
                                    '"Bad syntax; invalid match target"
-                                   _%g171383171398%_))))
-                             (_%g171381171512%_
-                              (lambda (_%g171383171404%_)
+                                   _%g170120170127%_))))
+                             (_%g170118170162%_
+                              (lambda (_%g170120170133%_)
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-pair? _%g171383171404%_))
-                                    (let ((_%e171387171406%_
+                                      (gx#stx-pair? _%g170120170133%_))
+                                    (let ((_%e170123170135%_
                                            (let ()
                                              (declare (not safe))
-                                             (gx#stx-e _%g171383171404%_))))
-                                      (let ((_%hd171386171409%_
+                                             (gx#stx-e _%g170120170133%_))))
+                                      (let ((_%hd170124170138%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e171387171406%_)))
-                                            (_%tl171385171411%_
+                                               (##car _%e170123170135%_)))
+                                            (_%tl170125170140%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e171387171406%_))))
-                                        (if (let ()
-                                              (declare (not safe))
-                                              (gx#stx-pair/null?
-                                               _%tl171385171411%_))
-                                            (let ((_g172879_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (gx#syntax-split-splice
-                                                      _%tl171385171411%_
-                                                      '0))))
-                                              (begin
-                                                (let ((_g172880_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (if (##values?
-                                                              _g172879_)
-                                                             (##vector-length
-                                                              _g172879_)
-                                                             1))))
-                                                  (if (not (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (##fx= _g172880_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            2)))
-              (error "Context expects 2 values" _g172880_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (let ((_%target171388171414%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##vector-ref
-                                                          _g172879_
-                                                          0)))
-                                                      (_%tl171390171416%_
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##vector-ref
-                                                          _g172879_
-                                                          1))))
-                                                  (if (let ()
-                                                        (declare (not safe))
-                                                        (gx#stx-null?
-                                                         _%tl171390171416%_))
-                                                      (letrec ((_%loop171391171419%_
-                                                                (lambda (_%hd171389171422%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 _%clause171395171424%_)
-                          (if (let ()
-                                (declare (not safe))
-                                (gx#stx-pair? _%hd171389171422%_))
-                              (let ((_%e171392171427%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (gx#stx-e _%hd171389171422%_))))
-                                (let ((_%lp-hd171393171430%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##car _%e171392171427%_)))
-                                      (_%lp-tl171394171432%_
-                                       (let ()
-                                         (declare (not safe))
-                                         (##cdr _%e171392171427%_))))
-                                  (let ((__tmp172881
-                                         (cons _%lp-hd171393171430%_
-                                               _%clause171395171424%_)))
-                                    (declare (not safe))
-                                    (_%loop171391171419%_
-                                     _%lp-tl171394171432%_
-                                     __tmp172881))))
-                              (let ((_%clause171396171435%_
-                                     (reverse _%clause171395171424%_)))
-                                ((lambda (_%L171438%_)
-                                   (let* ((_%clauses171510%_
-                                           (map (lambda (_%clause171452%_)
-                                                  (let* ((_%g171454171465%_
-                                                          (lambda (_%g171455171462%_)
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#raise-syntax-error
-                                                               '#f
-                                                               '"Bad syntax; invalid match target"
-                                                               _%g171455171462%_))))
-                                                         (_%g171453171500%_
-                                                          (lambda (_%g171455171468%_)
-                                                            (if (let ()
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gx#stx-pair? _%g171455171468%_))
-                        (let ((_%e171460171470%_
-                               (let ()
-                                 (declare (not safe))
-                                 (gx#stx-e _%g171455171468%_))))
-                          (let ((_%hd171459171473%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##car _%e171460171470%_)))
-                                (_%tl171458171475%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##cdr _%e171460171470%_))))
-                            ((lambda (_%L171478%_ _%L171479%_)
-                               (let* ((_%self171491%_
-                                       (list-ref
-                                        _%L171479%_
-                                        _%self-index170807%_))
-                                      (_%body171497%_
-                                       (map (lambda (_%g171492171494%_)
-                                              (let ()
-                                                (declare (not safe))
-                                                (gxc#apply-subst-object-refs__%
+                                               (##cdr _%e170123170135%_))))
+                                        ((lambda (_%L170143%_ _%L170144%_)
+                                           (let ((_%self170156%_
+                                                  (list-ref
+                                                   _%L170144%_
+                                                   _%self-index169734%_)))
+                                             (for-each
+                                              (lambda (_%g170157170159%_)
+                                                (gxc#apply-collect-object-refs__%
                                                  '#f
-                                                 _%self171491%_
-                                                 _%$klass171256%_
-                                                 _%method-calls168835%_
-                                                 _%slot-refs168836%_
-                                                 _%g171492171494%_)))
-                                            _%L171478%_)))
-                                 (cons _%L171479%_ _%body171497%_)))
-                             _%tl171458171475%_
-                             _%hd171459171473%_)))
-                        (let ()
-                          (declare (not safe))
-                          (_%g171454171465%_ _%g171455171468%_))))))
+                                                 _%self170156%_
+                                                 _%method-calls167762%_
+                                                 _%slot-refs167763%_
+                                                 _%g170157170159%_))
+                                              _%L170143%_)))
+                                         _%tl170125170140%_
+                                         _%hd170124170138%_)))
+                                    (_%g170119170130%_ _%g170120170133%_)))))
+                        (_%g170118170162%_ _%clause170117%_)))
+                    (let ((__tmp171793
+                           (lambda (_%g170164170167%_ _%g170165170169%_)
+                             (cons _%g170164170167%_ _%g170165170169%_))))
+                      (declare (not safe))
+                      (__foldr1 __tmp171793 '() _%L170104%_))))
+                 _%clause170062170101%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (declare (not safe))
-                                                    (_%g171453171500%_
-                                                     _%clause171452%_)))
-                                                (let ((__tmp172882
-                                                       (lambda (_%g171502171505%_
-                                                                _%g171503171507%_)
-                                                         (cons _%g171502171505%_
-                                                               _%g171503171507%_))))
-                                                  (declare (not safe))
-                                                  (__foldr1
-                                                   __tmp172882
-                                                   '()
-                                                   _%L171438%_))))
-                                          (__tmp172883
-                                           (cons '%#case-lambda
-                                                 _%clauses171510%_)))
-                                     (declare (not safe))
-                                     (gxc#xform-wrap-source
-                                      __tmp172883
-                                      _%L171037%_)))
-                                 _%clause171396171435%_))))))
-                (let ()
-                  (declare (not safe))
-                  (_%loop171391171419%_ _%target171388171414%_ '())))
-              (let ()
-                (declare (not safe))
-                (_%g171382171401%_ _%g171383171404%_))))))
+                                        (_%loop170057170085%_
+                                         _%target170054170080%_
+                                         '()))
+                                      (_%g170048170067%_ _%g170049170070%_)))))
+                            (_%g170048170067%_ _%g170049170070%_))))
+                    (_%g170048170067%_ _%g170049170070%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (let ()
-                                              (declare (not safe))
-                                              (_%g171382171401%_
-                                               _%g171383171404%_)))))
-                                    (let ()
-                                      (declare (not safe))
-                                      (_%g171382171401%_
-                                       _%g171383171404%_))))))
-                        (declare (not safe))
-                        (_%g171381171512%_ _%L171037%_)))
-                     (_%specializer-impl171517%_
-                      (let ((__tmp172884
-                             (cons '%#let-values
-                                   (cons (cons (cons (cons _%L170507%_ '())
-                                                     (cons (cons '%#let-values
+                                                (_%g170047170172%_
+                                                 _%L169964%_))
+                                              (if (_%no-specializer?167766%_)
+                                                  _%stx167670%_
+                                                  (let* ((_%specializer-id170181%_
+                                                          (let* ((_%id170175%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons (cons (cons (cons _%L170506%_ '())
-                                           (cons (let ((__tmp172885
-                                                        (cons '%#let-values
-                                                              (cons (cons (cons (cons _%L171039%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                              '())
-                                        (cons _%specializer-lambda-expr171380%_
-                                              '()))
-                                  '())
-                            (cons _%specializer-case-lambda-expr171515%_
-                                  '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (declare (not safe))
-                                                   (gxc#xform-wrap-source
-                                                    __tmp172885
-                                                    _%stx168743%_))
-                                                 '()))
-                                     '())
-                               (cons _%L170504%_ '())))
-                   '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               '())
-                                         (cons _%L170503%_ '())))))
-                        (declare (not safe))
-                        (gxc#xform-wrap-source __tmp172884 _%stx168743%_)))
-                     (_%specializer-impl171519%_
-                      (let ()
-                        (declare (not safe))
-                        (_%generate-specializer-impl168747%_
-                         _%$klass171256%_
-                         _%$method-table171258%_
-                         _%methods-bind171283%_
-                         _%slots-bind171307%_
-                         _%specializer-impl171517%_))))
-                (let ((__tmp172887
-                       (let () (declare (not safe)) (gx#stx-e _%L168816%_)))
-                      (__tmp172886
-                       (let ()
-                         (declare (not safe))
-                         (gx#stx-e _%specializer-id171254%_))))
-                  (declare (not safe))
-                  (gxc#verbose
-                   '"generate method specializer "
-                   __tmp172887
-                   '" => "
-                   __tmp172886))
-                (let ()
-                  (declare (not safe))
-                  (_%generate-specializer-def168748%_
-                   _%L168816%_
-                   _%specializer-id171254%_
-                   _%specializer-impl171519%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                _%hd170970171032%_
-                                                _%hd170967171024%_
-                                                _%hd170964171016%_)
+                          (let ((__tmp171794
+                                 (let ()
+                                   (declare (not safe))
+                                   (gx#stx-e _%L167743%_))))
+                            (declare (not safe))
+                            (make-symbol__1 __tmp171794 '"::specialize")))
+                         (_%specializer-id170178%_
+                          (let ((__tmp171795
+                                 (let ()
+                                   (declare (not safe))
+                                   (gx#stx-source _%stx167670%_))))
+                            (declare (not safe))
+                            (gx#core-quote-syntax__1
+                             _%id170175%_
+                             __tmp171795))))
+                    (let ()
+                      (declare (not safe))
+                      (gx#core-bind-runtime!__0 _%specializer-id170178%_))
+                    _%specializer-id170178%_))
+                 (_%$klass170183%_
+                  (let ((__tmp171796
+                         (let () (declare (not safe)) (##gensym '__klass))))
+                    (declare (not safe))
+                    (make-symbol__0 __tmp171796)))
+                 (_%$method-table170185%_
+                  (let ((__tmp171797
+                         (let ()
+                           (declare (not safe))
+                           (##gensym '__method-table))))
+                    (declare (not safe))
+                    (make-symbol__0 __tmp171797)))
+                 (_%methods170187%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-keys _%method-calls167762%_)))
+                 (_%$methods170191%_
+                  (map (lambda (_%id170189%_)
+                         (let ((__tmp171798 (gensym _%id170189%_)))
+                           (declare (not safe))
+                           (make-symbol__1 '"__" __tmp171798)))
+                       _%methods170187%_))
+                 (_%_170200%_
+                  (for-each
+                   (lambda (_%g170192170195%_ _%g170193170197%_)
+                     (let ()
+                       (declare (not safe))
+                       (hash-put!
+                        _%method-calls167762%_
+                        _%g170192170195%_
+                        _%g170193170197%_)))
+                   _%methods170187%_
+                   _%$methods170191%_))
+                 (_%methods-bind170210%_
+                  (map (lambda (_%g170202170205%_ _%g170203170207%_)
+                         (_%generate-method-bind167672%_
+                          _%$klass170183%_
+                          _%$method-table170185%_
+                          _%g170202170205%_
+                          _%g170203170207%_))
+                       _%methods170187%_
+                       _%$methods170191%_))
+                 (_%slots170212%_
+                  (let ()
+                    (declare (not safe))
+                    (hash-keys _%slot-refs167763%_)))
+                 (_%$slots170216%_
+                  (map (lambda (_%id170214%_)
+                         (let ((__tmp171799 (gensym _%id170214%_)))
+                           (declare (not safe))
+                           (make-symbol__1 '"__" __tmp171799)))
+                       _%slots170212%_))
+                 (_%_170225%_
+                  (for-each
+                   (lambda (_%g170217170220%_ _%g170218170222%_)
+                     (let ()
+                       (declare (not safe))
+                       (hash-put!
+                        _%slot-refs167763%_
+                        _%g170217170220%_
+                        _%g170218170222%_)))
+                   _%slots170212%_
+                   _%$slots170216%_))
+                 (_%slots-bind170234%_
+                  (map (lambda (_%g170226170229%_ _%g170227170231%_)
+                         (_%generate-slot-bind167673%_
+                          _%$klass170183%_
+                          _%g170226170229%_
+                          _%g170227170231%_))
+                       _%slots170212%_
+                       _%$slots170216%_))
+                 (_%specializer-lambda-expr170307%_
+                  (let* ((_%g170236170250%_
+                          (lambda (_%g170237170247%_)
+                            (let ()
+                              (declare (not safe))
+                              (gx#raise-syntax-error
+                               '#f
+                               '"Bad syntax; invalid match target"
+                               _%g170237170247%_))))
+                         (_%g170235170304%_
+                          (lambda (_%g170237170253%_)
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-pair? _%g170237170253%_))
+                                (let ((_%e170240170255%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (gx#stx-e _%g170237170253%_))))
+                                  (let ((_%hd170241170258%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##car _%e170240170255%_)))
+                                        (_%tl170242170260%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##cdr _%e170240170255%_))))
+                                    (if (let ()
+                                          (declare (not safe))
+                                          (gx#stx-pair? _%tl170242170260%_))
+                                        (let ((_%e170243170263%_
                                                (let ()
                                                  (declare (not safe))
-                                                 (_%g170946170976%_
-                                                  _%g170947170979%_)))))
+                                                 (gx#stx-e
+                                                  _%tl170242170260%_))))
+                                          (let ((_%hd170244170266%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##car _%e170243170263%_)))
+                                                (_%tl170245170268%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##cdr _%e170243170263%_))))
+                                            ((lambda (_%L170271%_ _%L170272%_)
+                                               (let* ((_%self170295%_
+                                                       (list-ref
+                                                        _%L170272%_
+                                                        _%self-index169734%_))
+                                                      (_%body170301%_
+                                                       (map (lambda (_%g170296170298%_)
+                                                              (gxc#apply-subst-object-refs__%
+                                                               '#f
+                                                               _%self170295%_
+                                                               _%$klass170183%_
+                                                               _%method-calls167762%_
+                                                               _%slot-refs167763%_
+                                                               _%g170296170298%_))
+                                                            _%L170271%_))
+                                                      (__tmp171800
+                                                       (cons '%#lambda
+                                                             (cons _%L170272%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _%body170301%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (declare (not safe))
+                                                 (gxc#xform-wrap-source
+                                                  __tmp171800
+                                                  _%L169965%_)))
+                                             _%tl170245170268%_
+                                             _%hd170244170266%_)))
+                                        (_%g170236170250%_
+                                         _%g170237170253%_))))
+                                (_%g170236170250%_ _%g170237170253%_)))))
+                    (_%g170235170304%_ _%L169965%_)))
+                 (_%specializer-case-lambda-expr170442%_
+                  (let* ((_%g170309170328%_
+                          (lambda (_%g170310170325%_)
+                            (let ()
+                              (declare (not safe))
+                              (gx#raise-syntax-error
+                               '#f
+                               '"Bad syntax; invalid match target"
+                               _%g170310170325%_))))
+                         (_%g170308170439%_
+                          (lambda (_%g170310170331%_)
+                            (if (let ()
+                                  (declare (not safe))
+                                  (gx#stx-pair? _%g170310170331%_))
+                                (let ((_%e170312170333%_
                                        (let ()
                                          (declare (not safe))
-                                         (_%g170946170976%_
-                                          _%g170947170979%_)))
-                                   (let ()
-                                     (declare (not safe))
-                                     (_%g170946170976%_ _%g170947170979%_)))
-                               (let ()
-                                 (declare (not safe))
-                                 (_%g170946170976%_ _%g170947170979%_)))))
-                       (let ()
-                         (declare (not safe))
-                         (_%g170946170976%_ _%g170947170979%_)))
-                   (let ()
-                     (declare (not safe))
-                     (_%g170946170976%_ _%g170947170979%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         (gx#stx-e _%g170310170331%_))))
+                                  (let ((_%hd170313170336%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##car _%e170312170333%_)))
+                                        (_%tl170314170338%_
+                                         (let ()
+                                           (declare (not safe))
+                                           (##cdr _%e170312170333%_))))
+                                    (if (let ()
+                                          (declare (not safe))
+                                          (gx#stx-pair/null?
+                                           _%tl170314170338%_))
+                                        (let ((_g171801_
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (gx#syntax-split-splice
+                                                  _%tl170314170338%_
+                                                  '0))))
+                                          (begin
+                                            (let ((_g171802_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (_%g170946170976%_
-                                                      _%g170947170979%_)))))
-                                           (let ()
-                                             (declare (not safe))
-                                             (_%g170946170976%_
-                                              _%g170947170979%_)))))
+                                                     (if (##values? _g171801_)
+                                                         (##vector-length
+                                                          _g171801_)
+                                                         1))))
+                                              (if (not (let ()
+                                                         (declare (not safe))
+                                                         (##fx= _g171802_ 2)))
+                                                  (error "Context expects 2 values"
+                                                         _g171802_)))
+                                            (let ((_%target170315170341%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##vector-ref
+                                                      _g171801_
+                                                      0)))
+                                                  (_%tl170317170343%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##vector-ref
+                                                      _g171801_
+                                                      1))))
+                                              (if (let ()
+                                                    (declare (not safe))
+                                                    (gx#stx-null?
+                                                     _%tl170317170343%_))
+                                                  (letrec ((_%loop170318170346%_
+                                                            (lambda (_%hd170316170349%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             _%clause170322170351%_)
+                      (if (let ()
+                            (declare (not safe))
+                            (gx#stx-pair? _%hd170316170349%_))
+                          (let ((_%e170319170354%_
+                                 (let ()
+                                   (declare (not safe))
+                                   (gx#stx-e _%hd170316170349%_))))
+                            (let ((_%lp-hd170320170357%_
                                    (let ()
                                      (declare (not safe))
-                                     (_%g170946170976%_ _%g170947170979%_)))))
+                                     (##car _%e170319170354%_)))
+                                  (_%lp-tl170321170359%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (##cdr _%e170319170354%_))))
+                              (_%loop170318170346%_
+                               _%lp-tl170321170359%_
+                               (cons _%lp-hd170320170357%_
+                                     _%clause170322170351%_))))
+                          (let ((_%clause170323170362%_
+                                 (reverse _%clause170322170351%_)))
+                            ((lambda (_%L170365%_)
+                               (let* ((_%clauses170437%_
+                                       (map (lambda (_%clause170379%_)
+                                              (let* ((_%g170381170392%_
+                                                      (lambda (_%g170382170389%_)
+                                                        (let ()
+                                                          (declare (not safe))
+                                                          (gx#raise-syntax-error
+                                                           '#f
+                                                           '"Bad syntax; invalid match target"
+                                                           _%g170382170389%_))))
+                                                     (_%g170380170427%_
+                                                      (lambda (_%g170382170395%_)
+                                                        (if (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (gx#stx-pair?
+                                                               _%g170382170395%_))
+                                                            (let ((_%e170385170397%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (let ()
                              (declare (not safe))
-                             (_%g170946170976%_ _%g170947170979%_)))))
-                   (let ()
-                     (declare (not safe))
-                     (_%g170946170976%_ _%g170947170979%_))))))
+                             (gx#stx-e _%g170382170395%_))))
+                      (let ((_%hd170386170400%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%e170385170397%_)))
+                            (_%tl170387170402%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%e170385170397%_))))
+                        ((lambda (_%L170405%_ _%L170406%_)
+                           (let* ((_%self170418%_
+                                   (list-ref _%L170406%_ _%self-index169734%_))
+                                  (_%body170424%_
+                                   (map (lambda (_%g170419170421%_)
+                                          (gxc#apply-subst-object-refs__%
+                                           '#f
+                                           _%self170418%_
+                                           _%$klass170183%_
+                                           _%method-calls167762%_
+                                           _%slot-refs167763%_
+                                           _%g170419170421%_))
+                                        _%L170405%_)))
+                             (cons _%L170406%_ _%body170424%_)))
+                         _%tl170387170402%_
+                         _%hd170386170400%_)))
+                    (_%g170381170392%_ _%g170382170395%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (_%g170380170427%_
+                                                 _%clause170379%_)))
+                                            (let ((__tmp171803
+                                                   (lambda (_%g170429170432%_
+                                                            _%g170430170434%_)
+                                                     (cons _%g170429170432%_
+                                                           _%g170430170434%_))))
+                                              (declare (not safe))
+                                              (__foldr1
+                                               __tmp171803
+                                               '()
+                                               _%L170365%_))))
+                                      (__tmp171804
+                                       (cons '%#case-lambda
+                                             _%clauses170437%_)))
+                                 (declare (not safe))
+                                 (gxc#xform-wrap-source
+                                  __tmp171804
+                                  _%L169964%_)))
+                             _%clause170323170362%_))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%loop170318170346%_
+                                                     _%target170315170341%_
+                                                     '()))
+                                                  (_%g170309170328%_
+                                                   _%g170310170331%_)))))
+                                        (_%g170309170328%_
+                                         _%g170310170331%_))))
+                                (_%g170309170328%_ _%g170310170331%_)))))
+                    (_%g170308170439%_ _%L169964%_)))
+                 (_%specializer-impl170444%_
+                  (let ((__tmp171805
+                         (cons '%#let-values
+                               (cons (cons (cons (cons _%L169434%_ '())
+                                                 (cons (cons '%#let-values
+                                                             (cons (cons (cons (cons _%L169433%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                             '())
+                                       (cons (let ((__tmp171806
+                                                    (cons '%#let-values
+                                                          (cons (cons (cons (cons _%L169966%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                          '())
+                                    (cons _%specializer-lambda-expr170307%_
+                                          '()))
+                              '())
+                        (cons _%specializer-case-lambda-expr170442%_ '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (_%g170945171522%_
-                                                _%L170505%_)))
-                                           (let () _%stx168743%_)))))
-                               _%hd170603170726%_
-                               _%kw-ref170601170747%_
-                               _%hd170591170713%_
-                               _%hd170582170689%_
-                               _%hd170573170665%_)
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_))))))))
+                                               (gxc#xform-wrap-source
+                                                __tmp171806
+                                                _%stx167670%_))
+                                             '()))
+                                 '())
+                           (cons _%L169431%_ '())))
+               '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (_%loop170596170731%_
-                                                     _%target170593170718%_
-                                                     '())))
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (_%g170547170609%_
-                                                   _%g170548170612%_)))))
-                                        (let ()
-                                          (declare (not safe))
-                                          (_%g170547170609%_
-                                           _%g170548170612%_))))))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_)))
-                          (let ()
-                            (declare (not safe))
-                            (_%g170547170609%_ _%g170548170612%_)))
-                      (let ()
-                        (declare (not safe))
-                        (_%g170547170609%_ _%g170548170612%_)))))
-              (let ()
-                (declare (not safe))
-                (_%g170547170609%_ _%g170548170612%_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (_%g170547170609%_
-                                                     _%g170548170612%_)))
-                                              (let ()
-                                                (declare (not safe))
-                                                (_%g170547170609%_
-                                                 _%g170548170612%_)))))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%g170547170609%_
-                                         _%g170548170612%_)))))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_)))
-                          (let ()
-                            (declare (not safe))
-                            (_%g170547170609%_ _%g170548170612%_)))))
-                  (let ()
+                                           '())
+                                     (cons _%L169430%_ '())))))
                     (declare (not safe))
-                    (_%g170547170609%_ _%g170548170612%_)))
-              (let ()
-                (declare (not safe))
-                (_%g170547170609%_ _%g170548170612%_)))
+                    (gxc#xform-wrap-source __tmp171805 _%stx167670%_)))
+                 (_%specializer-impl170446%_
+                  (_%generate-specializer-impl167674%_
+                   _%$klass170183%_
+                   _%$method-table170185%_
+                   _%methods-bind170210%_
+                   _%slots-bind170234%_
+                   _%specializer-impl170444%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ()
-                                                    (declare (not safe))
-                                                    (_%g170547170609%_
-                                                     _%g170548170612%_)))))
-                                          (let ()
-                                            (declare (not safe))
-                                            (_%g170547170609%_
-                                             _%g170548170612%_)))))
-                                  (let ()
-                                    (declare (not safe))
-                                    (_%g170547170609%_ _%g170548170612%_)))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_)))))
-                      (let ()
-                        (declare (not safe))
-                        (_%g170547170609%_ _%g170548170612%_)))
-                  (let ()
-                    (declare (not safe))
-                    (_%g170547170609%_ _%g170548170612%_)))
-              (let ()
-                (declare (not safe))
-                (_%g170547170609%_ _%g170548170612%_)))))
+                                                    (let ((__tmp171808
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%L167743%_)))
+                                                          (__tmp171807
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (gx#stx-e
+                                                              _%specializer-id170181%_))))
+                                                      (declare (not safe))
+                                                      (gxc#verbose
+                                                       '"generate method specializer "
+                                                       __tmp171808
+                                                       '" => "
+                                                       __tmp171807))
+                                                    (_%generate-specializer-def167675%_
+                                                     _%L167743%_
+                                                     _%specializer-id170181%_
+                                                     _%specializer-impl170446%_))))
+                                            _%hd169897169959%_
+                                            _%hd169894169951%_
+                                            _%hd169891169943%_)
+                                           (_%g169873169903%_
+                                            _%g169874169906%_))))
+                                   (_%g169873169903%_ _%g169874169906%_))
+                               (_%g169873169903%_ _%g169874169906%_))
+                           (_%g169873169903%_ _%g169874169906%_))))
+                   (_%g169873169903%_ _%g169874169906%_))
+               (_%g169873169903%_ _%g169874169906%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (let ()
-                                                (declare (not safe))
-                                                (_%g170547170609%_
-                                                 _%g170548170612%_)))))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%g170547170609%_ _%g170548170612%_)))
-                                  (let ()
-                                    (declare (not safe))
-                                    (_%g170547170609%_ _%g170548170612%_)))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_)))))
-                      (let ()
-                        (declare (not safe))
-                        (_%g170547170609%_ _%g170548170612%_)))))
-              (let ()
-                (declare (not safe))
-                (_%g170547170609%_ _%g170548170612%_)))))
+                                               (_%g169873169903%_
+                                                _%g169874169906%_))))
+                                       (_%g169873169903%_ _%g169874169906%_))))
+                               (_%g169873169903%_ _%g169874169906%_))))
+                       (_%g169873169903%_ _%g169874169906%_))))
+               (_%g169873169903%_ _%g169874169906%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (let ()
-                                                (declare (not safe))
-                                                (_%g170547170609%_
-                                                 _%g170548170612%_)))
-                                          (let ()
-                                            (declare (not safe))
-                                            (_%g170547170609%_
-                                             _%g170548170612%_)))
-                                      (let ()
-                                        (declare (not safe))
-                                        (_%g170547170609%_
-                                         _%g170548170612%_)))))
-                              (let ()
-                                (declare (not safe))
-                                (_%g170547170609%_ _%g170548170612%_))))))
-                  (declare (not safe))
-                  (_%g170546171526%_ _%L170504%_)))
-              _%hd170380170498%_
-              _%hd170377170490%_
-              _%hd170374170482%_
-              _%hd170371170474%_
-              _%hd170353170426%_)
+                                           (_%g169872170449%_ _%L169432%_))
+                                         _%stx167670%_))))
+                             _%hd169530169653%_
+                             _%kw-ref169528169674%_
+                             _%hd169518169640%_
+                             _%hd169509169616%_
+                             _%hd169500169592%_)
+                            (_%g169474169536%_ _%g169475169539%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (_%g170333170386%_
-                                                        _%g170334170389%_)))))
-                                             (let ()
-                                               (declare (not safe))
-                                               (_%g170333170386%_
-                                                _%g170334170389%_)))
-                                         (let ()
-                                           (declare (not safe))
-                                           (_%g170333170386%_
-                                            _%g170334170389%_)))
-                                     (let ()
-                                       (declare (not safe))
-                                       (_%g170333170386%_ _%g170334170389%_)))
-                                 (let ()
-                                   (declare (not safe))
-                                   (_%g170333170386%_ _%g170334170389%_)))))
-                         (let ()
-                           (declare (not safe))
-                           (_%g170333170386%_ _%g170334170389%_)))
-                     (let ()
-                       (declare (not safe))
-                       (_%g170333170386%_ _%g170334170389%_)))
-                 (let ()
-                   (declare (not safe))
-                   (_%g170333170386%_ _%g170334170389%_)))))
+                                                (_%loop169523169658%_
+                                                 _%target169520169645%_
+                                                 '()))
+                                              (_%g169474169536%_
+                                               _%g169475169539%_))))
+                                      (_%g169474169536%_ _%g169475169539%_)))))
+                            (_%g169474169536%_ _%g169475169539%_))
+                        (_%g169474169536%_ _%g169475169539%_))
+                    (_%g169474169536%_ _%g169475169539%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (_%g170333170386%_
-                                                    _%g170334170389%_)))
-                                             (let ()
-                                               (declare (not safe))
-                                               (_%g170333170386%_
-                                                _%g170334170389%_)))))
-                                     (let ()
-                                       (declare (not safe))
-                                       (_%g170333170386%_
-                                        _%g170334170389%_)))))
-                             (let ()
-                               (declare (not safe))
-                               (_%g170333170386%_ _%g170334170389%_)))))
-                     (let ()
-                       (declare (not safe))
-                       (_%g170333170386%_ _%g170334170389%_)))))
+                                                    (_%g169474169536%_
+                                                     _%g169475169539%_))
+                                                (_%g169474169536%_
+                                                 _%g169475169539%_))
+                                            (_%g169474169536%_
+                                             _%g169475169539%_))))
+                                    (_%g169474169536%_ _%g169475169539%_))))
+                            (_%g169474169536%_ _%g169475169539%_))
+                        (_%g169474169536%_ _%g169475169539%_))))
+                (_%g169474169536%_ _%g169475169539%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (_%g170333170386%_
-                                                        _%g170334170389%_)))
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (_%g170333170386%_
-                                                    _%g170334170389%_)))
-                                             (let ()
-                                               (declare (not safe))
-                                               (_%g170333170386%_
-                                                _%g170334170389%_)))))
-                                     (let ()
-                                       (declare (not safe))
-                                       (_%g170333170386%_
-                                        _%g170334170389%_)))))
-                             (let ()
-                               (declare (not safe))
-                               (_%g170333170386%_ _%g170334170389%_)))
-                         (let ()
-                           (declare (not safe))
-                           (_%g170333170386%_ _%g170334170389%_)))))
-                 (let ()
-                   (declare (not safe))
-                   (_%g170333170386%_ _%g170334170389%_)))))
+                                                    (_%g169474169536%_
+                                                     _%g169475169539%_))
+                                                (_%g169474169536%_
+                                                 _%g169475169539%_))))
+                                        (_%g169474169536%_
+                                         _%g169475169539%_))))
+                                (_%g169474169536%_ _%g169475169539%_))
+                            (_%g169474169536%_ _%g169475169539%_))))
+                    (_%g169474169536%_ _%g169475169539%_))
+                (_%g169474169536%_ _%g169475169539%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (_%g170333170386%_
-                                                    _%g170334170389%_)))))
-                                         (let ()
-                                           (declare (not safe))
-                                           (_%g170333170386%_
-                                            _%g170334170389%_)))))
-                                 (let ()
-                                   (declare (not safe))
-                                   (_%g170333170386%_ _%g170334170389%_)))
-                             (let ()
-                               (declare (not safe))
-                               (_%g170333170386%_ _%g170334170389%_)))
-                         (let ()
-                           (declare (not safe))
-                           (_%g170333170386%_ _%g170334170389%_)))))
-                 (let ()
-                   (declare (not safe))
-                   (_%g170333170386%_ _%g170334170389%_))))))
+                                                    (_%g169474169536%_
+                                                     _%g169475169539%_))))
+                                            (_%g169474169536%_
+                                             _%g169475169539%_))))
+                                    (_%g169474169536%_ _%g169475169539%_))
+                                (_%g169474169536%_ _%g169475169539%_))
+                            (_%g169474169536%_ _%g169475169539%_))))
+                    (_%g169474169536%_ _%g169475169539%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             (declare (not safe))
-                                             (_%g170332171529%_ _%L168815%_)))
-                                         (let () _%stx168743%_)))))))))
-                  (_%__kont171752171753%_ (lambda () _%stx168743%_)))
-              (let ((_%__match171781171782%_
-                     (lambda (_%e168757168783%_
-                              _%hd168756168786%_
-                              _%tl168755168788%_
-                              _%e168760168791%_
-                              _%hd168759168794%_
-                              _%tl168758168796%_
-                              _%e168763168799%_
-                              _%hd168762168802%_
-                              _%tl168761168804%_
-                              _%e168766168807%_
-                              _%hd168765168810%_
-                              _%tl168764168812%_)
-                       (let ((_%L168815%_ _%hd168765168810%_)
-                             (_%L168816%_ _%hd168762168802%_))
-                         (if (let ((__tmp172888
+                                                    (_%g169474169536%_
+                                                     _%g169475169539%_))))
+                                            (_%g169474169536%_
+                                             _%g169475169539%_))
+                                        (_%g169474169536%_ _%g169475169539%_))
+                                    (_%g169474169536%_ _%g169475169539%_))))
+                            (_%g169474169536%_ _%g169475169539%_)))))
+                (_%g169473170453%_ _%L169431%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    _%hd169307169425%_
+                                                    _%hd169304169417%_
+                                                    _%hd169301169409%_
+                                                    _%hd169298169401%_
+                                                    _%hd169280169353%_)
+                                                   (_%g169260169313%_
+                                                    _%g169261169316%_))))
+                                           (_%g169260169313%_
+                                            _%g169261169316%_))
+                                       (_%g169260169313%_ _%g169261169316%_))
+                                   (_%g169260169313%_ _%g169261169316%_))
+                               (_%g169260169313%_ _%g169261169316%_))))
+                       (_%g169260169313%_ _%g169261169316%_))
+                   (_%g169260169313%_ _%g169261169316%_))
+               (_%g169260169313%_ _%g169261169316%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (_%g169260169313%_
+                                                _%g169261169316%_))
+                                           (_%g169260169313%_
+                                            _%g169261169316%_))))
+                                   (_%g169260169313%_ _%g169261169316%_))))
+                           (_%g169260169313%_ _%g169261169316%_))))
+                   (_%g169260169313%_ _%g169261169316%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (_%g169260169313%_
+                                                    _%g169261169316%_))
+                                               (_%g169260169313%_
+                                                _%g169261169316%_))
+                                           (_%g169260169313%_
+                                            _%g169261169316%_))))
+                                   (_%g169260169313%_ _%g169261169316%_))))
+                           (_%g169260169313%_ _%g169261169316%_))
+                       (_%g169260169313%_ _%g169261169316%_))))
+               (_%g169260169313%_ _%g169261169316%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (_%g169260169313%_
+                                                _%g169261169316%_))))
+                                       (_%g169260169313%_ _%g169261169316%_))))
+                               (_%g169260169313%_ _%g169261169316%_))
+                           (_%g169260169313%_ _%g169261169316%_))
+                       (_%g169260169313%_ _%g169261169316%_))))
+               (_%g169260169313%_ _%g169261169316%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (_%g169259170456%_ _%L167742%_))
+                                         _%stx167670%_))))))))
+                  (_%__kont170679170680%_ (lambda () _%stx167670%_)))
+              (let ((_%__match170708170709%_
+                     (lambda (_%e167682167710%_
+                              _%hd167683167713%_
+                              _%tl167684167715%_
+                              _%e167685167718%_
+                              _%hd167686167721%_
+                              _%tl167687167723%_
+                              _%e167688167726%_
+                              _%hd167689167729%_
+                              _%tl167690167731%_
+                              _%e167691167734%_
+                              _%hd167692167737%_
+                              _%tl167693167739%_)
+                       (let ((_%L167742%_ _%hd167692167737%_)
+                             (_%L167743%_ _%hd167689167729%_))
+                         (if (let ((__tmp171809
                                     (let ()
                                       (declare (not safe))
-                                      (gxc#identifier-symbol _%L168816%_))))
+                                      (gxc#identifier-symbol _%L167743%_))))
                                (declare (not safe))
-                               (gxc#optimizer-top-level-method? __tmp172888))
-                             (_%__kont171750171751%_ _%L168815%_ _%L168816%_)
-                             (_%__kont171752171753%_))))))
+                               (gxc#optimizer-top-level-method? __tmp171809))
+                             (_%__kont170677170678%_ _%L167742%_ _%L167743%_)
+                             (_%__kont170679170680%_))))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-pair? _%__stx171748171749%_))
-                    (let ((_%e168757168783%_
+                      (gx#stx-pair? _%__stx170675170676%_))
+                    (let ((_%e167682167710%_
                            (let ()
                              (declare (not safe))
-                             (gx#stx-e _%__stx171748171749%_))))
-                      (let ((_%tl168755168788%_
+                             (gx#stx-e _%__stx170675170676%_))))
+                      (let ((_%tl167684167715%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e168757168783%_)))
-                            (_%hd168756168786%_
+                               (##cdr _%e167682167710%_)))
+                            (_%hd167683167713%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e168757168783%_))))
+                               (##car _%e167682167710%_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%tl168755168788%_))
-                            (let ((_%e168760168791%_
+                              (gx#stx-pair? _%tl167684167715%_))
+                            (let ((_%e167685167718%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%tl168755168788%_))))
-                              (let ((_%tl168758168796%_
+                                     (gx#stx-e _%tl167684167715%_))))
+                              (let ((_%tl167687167723%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e168760168791%_)))
-                                    (_%hd168759168794%_
+                                       (##cdr _%e167685167718%_)))
+                                    (_%hd167686167721%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e168760168791%_))))
+                                       (##car _%e167685167718%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-pair? _%hd168759168794%_))
-                                    (let ((_%e168763168799%_
+                                      (gx#stx-pair? _%hd167686167721%_))
+                                    (let ((_%e167688167726%_
                                            (let ()
                                              (declare (not safe))
-                                             (gx#stx-e _%hd168759168794%_))))
-                                      (let ((_%tl168761168804%_
+                                             (gx#stx-e _%hd167686167721%_))))
+                                      (let ((_%tl167690167731%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e168763168799%_)))
-                                            (_%hd168762168802%_
+                                               (##cdr _%e167688167726%_)))
+                                            (_%hd167689167729%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e168763168799%_))))
+                                               (##car _%e167688167726%_))))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-null?
-                                               _%tl168761168804%_))
+                                               _%tl167690167731%_))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-pair?
-                                                   _%tl168758168796%_))
-                                                (let ((_%e168766168807%_
+                                                   _%tl167687167723%_))
+                                                (let ((_%e167691167734%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _%tl168758168796%_))))
-                                                  (let ((_%tl168764168812%_
+                                                          _%tl167687167723%_))))
+                                                  (let ((_%tl167693167739%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _%e168766168807%_)))
-                                                        (_%hd168765168810%_
+                                                           (##cdr _%e167691167734%_)))
+                                                        (_%hd167692167737%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _%e168766168807%_))))
+                                                           (##car _%e167691167734%_))))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#stx-null?
-                                                           _%tl168764168812%_))
-                                                        (_%__match171781171782%_
-                                                         _%e168757168783%_
-                                                         _%hd168756168786%_
-                                                         _%tl168755168788%_
-                                                         _%e168760168791%_
-                                                         _%hd168759168794%_
-                                                         _%tl168758168796%_
-                                                         _%e168763168799%_
-                                                         _%hd168762168802%_
-                                                         _%tl168761168804%_
-                                                         _%e168766168807%_
-                                                         _%hd168765168810%_
-                                                         _%tl168764168812%_)
-                                                        (_%__kont171752171753%_))))
-                                                (_%__kont171752171753%_))
-                                            (_%__kont171752171753%_))))
-                                    (_%__kont171752171753%_))))
-                            (_%__kont171752171753%_))))
-                    (_%__kont171752171753%_))))))))
+                                                           _%tl167693167739%_))
+                                                        (_%__match170708170709%_
+                                                         _%e167682167710%_
+                                                         _%hd167683167713%_
+                                                         _%tl167684167715%_
+                                                         _%e167685167718%_
+                                                         _%hd167686167721%_
+                                                         _%tl167687167723%_
+                                                         _%e167688167726%_
+                                                         _%hd167689167729%_
+                                                         _%tl167690167731%_
+                                                         _%e167691167734%_
+                                                         _%hd167692167737%_
+                                                         _%tl167693167739%_)
+                                                        (_%__kont170679170680%_))))
+                                                (_%__kont170679170680%_))
+                                            (_%__kont170679170680%_))))
+                                    (_%__kont170679170680%_))))
+                            (_%__kont170679170680%_))))
+                    (_%__kont170679170680%_))))))))
     (define gxc#collect-object-refs-call%
-      (lambda (_%self167703%_ _%stx167704%_)
-        (let* ((_%__stx171784171785%_ _%stx167704%_)
-               (_%g167712167934%_
+      (lambda (_%self166630%_ _%stx166631%_)
+        (let* ((_%__stx170711170712%_ _%stx166631%_)
+               (_%g166639166861%_
                 (lambda ()
                   (let ()
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _%__stx171784171785%_)))))
-          (let ((_%__kont171786171787%_
-                 (lambda (_%L168691%_ _%L168692%_ _%L168693%_ _%L168694%_)
-                   (let ((__tmp172890
+                     _%__stx170711170712%_)))))
+          (let ((_%__kont170713170714%_
+                 (lambda (_%L167618%_ _%L167619%_ _%L167620%_ _%L167621%_)
+                   (let ((__tmp171811
                           (let ()
                             (declare (not safe))
-                            (slot-ref__0 _%self167703%_ 'methods)))
-                         (__tmp172889
+                            (slot-ref__0 _%self166630%_ 'methods)))
+                         (__tmp171810
                           (let ()
                             (declare (not safe))
-                            (gx#stx-e _%L168692%_))))
+                            (gx#stx-e _%L167619%_))))
                      (declare (not safe))
-                     (hash-put! __tmp172890 __tmp172889 '#t))
+                     (hash-put! __tmp171811 __tmp171810 '#t))
                    (for-each
-                    (lambda (_%g168727168729%_)
+                    (lambda (_%g167654167656%_)
                       (let ()
                         (declare (not safe))
-                        (gxc#compile-e__1 _%self167703%_ _%g168727168729%_)))
-                    (let ((__tmp172891
-                           (lambda (_%g168731168734%_ _%g168732168736%_)
-                             (cons _%g168731168734%_ _%g168732168736%_))))
+                        (gxc#compile-e__1 _%self166630%_ _%g167654167656%_)))
+                    (let ((__tmp171812
+                           (lambda (_%g167658167661%_ _%g167659167663%_)
+                             (cons _%g167658167661%_ _%g167659167663%_))))
                       (declare (not safe))
-                      (__foldr1 __tmp172891 '() _%L168691%_)))))
-                (_%__kont171790171791%_
-                 (lambda (_%L168526%_
-                          _%L168527%_
-                          _%L168528%_
-                          _%L168529%_
-                          _%L168530%_)
-                   (let ((__tmp172893
+                      (__foldr1 __tmp171812 '() _%L167618%_)))))
+                (_%__kont170717170718%_
+                 (lambda (_%L167453%_
+                          _%L167454%_
+                          _%L167455%_
+                          _%L167456%_
+                          _%L167457%_)
+                   (let ((__tmp171814
                           (let ()
                             (declare (not safe))
-                            (slot-ref__0 _%self167703%_ 'methods)))
-                         (__tmp172892
+                            (slot-ref__0 _%self166630%_ 'methods)))
+                         (__tmp171813
                           (let ()
                             (declare (not safe))
-                            (gx#stx-e _%L168527%_))))
+                            (gx#stx-e _%L167454%_))))
                      (declare (not safe))
-                     (hash-put! __tmp172893 __tmp172892 '#t))
+                     (hash-put! __tmp171814 __tmp171813 '#t))
                    (for-each
-                    (lambda (_%g168570168572%_)
+                    (lambda (_%g167497167499%_)
                       (let ()
                         (declare (not safe))
-                        (gxc#compile-e__1 _%self167703%_ _%g168570168572%_)))
-                    (let ((__tmp172894
-                           (lambda (_%g168574168577%_ _%g168575168579%_)
-                             (cons _%g168574168577%_ _%g168575168579%_))))
+                        (gxc#compile-e__1 _%self166630%_ _%g167497167499%_)))
+                    (let ((__tmp171815
+                           (lambda (_%g167501167504%_ _%g167502167506%_)
+                             (cons _%g167501167504%_ _%g167502167506%_))))
                       (declare (not safe))
-                      (__foldr1 __tmp172894 '() _%L168526%_)))))
-                (_%__kont171794171795%_
-                 (lambda (_%L168359%_ _%L168360%_ _%L168361%_)
-                   (let ((__tmp172896
+                      (__foldr1 __tmp171815 '() _%L167453%_)))))
+                (_%__kont170721170722%_
+                 (lambda (_%L167286%_ _%L167287%_ _%L167288%_)
+                   (let ((__tmp171817
                           (let ()
                             (declare (not safe))
-                            (slot-ref__0 _%self167703%_ 'slots)))
-                         (__tmp172895
+                            (slot-ref__0 _%self166630%_ 'slots)))
+                         (__tmp171816
                           (let ()
                             (declare (not safe))
-                            (gx#stx-e _%L168359%_))))
+                            (gx#stx-e _%L167286%_))))
                      (declare (not safe))
-                     (hash-put! __tmp172896 __tmp172895 '#t))))
-                (_%__kont171796171797%_
-                 (lambda (_%L168236%_ _%L168237%_ _%L168238%_ _%L168239%_)
-                   (let ((__tmp172898
+                     (hash-put! __tmp171817 __tmp171816 '#t))))
+                (_%__kont170723170724%_
+                 (lambda (_%L167163%_ _%L167164%_ _%L167165%_ _%L167166%_)
+                   (let ((__tmp171819
                           (let ()
                             (declare (not safe))
-                            (slot-ref__0 _%self167703%_ 'slots)))
-                         (__tmp172897
+                            (slot-ref__0 _%self166630%_ 'slots)))
+                         (__tmp171818
                           (let ()
                             (declare (not safe))
-                            (gx#stx-e _%L168237%_))))
+                            (gx#stx-e _%L167164%_))))
                      (declare (not safe))
-                     (hash-put! __tmp172898 __tmp172897 '#t))
+                     (hash-put! __tmp171819 __tmp171818 '#t))
                    (let ()
                      (declare (not safe))
-                     (gxc#compile-e__1 _%self167703%_ _%L168236%_))))
-                (_%__kont171798171799%_
-                 (lambda (_%L168110%_ _%L168111%_)
-                   (let* ((_%accessor168133%_
-                           (let ((__tmp172899
+                     (gxc#compile-e__1 _%self166630%_ _%L167163%_))))
+                (_%__kont170725170726%_
+                 (lambda (_%L167037%_ _%L167038%_)
+                   (let* ((_%accessor167060%_
+                           (let ((__tmp171820
                                   (let ()
                                     (declare (not safe))
-                                    (gxc#identifier-symbol _%L168111%_))))
+                                    (gxc#identifier-symbol _%L167038%_))))
                              (declare (not safe))
-                             (gxc#optimizer-resolve-type __tmp172899)))
-                          (_%klass168135%_
-                           (let ((__tmp172900
+                             (gxc#optimizer-resolve-type __tmp171820)))
+                          (_%klass167062%_
+                           (let ((__tmp171821
                                   (##structure-ref
-                                   _%accessor168133%_
+                                   _%accessor167060%_
                                    '1
                                    gxc#!type::t
                                    '#f)))
                              (declare (not safe))
                              (gxc#optimizer-resolve-class
-                              _%stx167704%_
-                              __tmp172900)))
-                          (_%slot168137%_
+                              _%stx166631%_
+                              __tmp171821)))
+                          (_%slot167064%_
                            (##structure-ref
-                            _%accessor168133%_
+                            _%accessor167060%_
                             '3
                             gxc#!accessor::t
                             '#f)))
-                     (if (and (let ((__tmp172901
-                                     (##structure-ref
-                                      _%accessor168133%_
-                                      '4
-                                      gxc#!accessor::t
-                                      '#f)))
-                                (declare (not safe))
-                                (not __tmp172901))
+                     (if (and (not (##structure-ref
+                                    _%accessor167060%_
+                                    '4
+                                    gxc#!accessor::t
+                                    '#f))
                               (or (let ()
                                     (declare (not safe))
                                     (gxc#!class-struct-slot?
-                                     _%klass168135%_
-                                     _%slot168137%_))
+                                     _%klass167062%_
+                                     _%slot167064%_))
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     _%klass168135%_
+                                     _%klass167062%_
                                      '8
                                      '#f
                                      '#f))))
                          '#!void
-                         (let ((__tmp172903
+                         (let ((__tmp171823
                                 (let ()
                                   (declare (not safe))
-                                  (slot-ref__0 _%self167703%_ 'slots)))
-                               (__tmp172902
+                                  (slot-ref__0 _%self166630%_ 'slots)))
+                               (__tmp171822
                                 (##structure-ref
-                                 _%accessor168133%_
+                                 _%accessor167060%_
                                  '3
                                  gxc#!accessor::t
                                  '#f)))
                            (declare (not safe))
-                           (hash-put! __tmp172903 __tmp172902 '#t))))))
-                (_%__kont171800171801%_
-                 (lambda (_%L168010%_ _%L168011%_ _%L168012%_)
-                   (let* ((_%mutator168039%_
-                           (let ((__tmp172904
+                           (hash-put! __tmp171823 __tmp171822 '#t))))))
+                (_%__kont170727170728%_
+                 (lambda (_%L166937%_ _%L166938%_ _%L166939%_)
+                   (let* ((_%mutator166966%_
+                           (let ((__tmp171824
                                   (let ()
                                     (declare (not safe))
-                                    (gxc#identifier-symbol _%L168012%_))))
+                                    (gxc#identifier-symbol _%L166939%_))))
                              (declare (not safe))
-                             (gxc#optimizer-resolve-type __tmp172904)))
-                          (_%klass168041%_
-                           (let ((__tmp172905
+                             (gxc#optimizer-resolve-type __tmp171824)))
+                          (_%klass166968%_
+                           (let ((__tmp171825
                                   (##structure-ref
-                                   _%mutator168039%_
+                                   _%mutator166966%_
                                    '1
                                    gxc#!type::t
                                    '#f)))
                              (declare (not safe))
                              (gxc#optimizer-resolve-class
-                              _%stx167704%_
-                              __tmp172905)))
-                          (_%slot168043%_
+                              _%stx166631%_
+                              __tmp171825)))
+                          (_%slot166970%_
                            (##structure-ref
-                            _%mutator168039%_
+                            _%mutator166966%_
                             '3
                             gxc#!mutator::t
                             '#f)))
-                     (if (and (let ((__tmp172906
-                                     (##structure-ref
-                                      _%mutator168039%_
-                                      '4
-                                      gxc#!mutator::t
-                                      '#f)))
-                                (declare (not safe))
-                                (not __tmp172906))
+                     (if (and (not (##structure-ref
+                                    _%mutator166966%_
+                                    '4
+                                    gxc#!mutator::t
+                                    '#f))
                               (or (let ()
                                     (declare (not safe))
                                     (gxc#!class-struct-slot?
-                                     _%klass168041%_
-                                     _%slot168043%_))
+                                     _%klass166968%_
+                                     _%slot166970%_))
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     _%klass168041%_
+                                     _%klass166968%_
                                      '8
                                      '#f
                                      '#f))))
                          '#!void
-                         (let ((__tmp172907
+                         (let ((__tmp171826
                                 (let ()
                                   (declare (not safe))
-                                  (slot-ref__0 _%self167703%_ 'slots))))
+                                  (slot-ref__0 _%self166630%_ 'slots))))
                            (declare (not safe))
-                           (hash-put! __tmp172907 _%slot168043%_ '#t)))
+                           (hash-put! __tmp171826 _%slot166970%_ '#t)))
                      (let ()
                        (declare (not safe))
-                       (gxc#compile-e__1 _%self167703%_ _%L168010%_)))))
-                (_%__kont171802171803%_
+                       (gxc#compile-e__1 _%self166630%_ _%L166937%_)))))
+                (_%__kont170729170730%_
                  (lambda ()
                    (let ()
                      (declare (not safe))
-                     (gxc#apply-operands _%self167703%_ _%stx167704%_)))))
-            (let* ((_%__match172283172284%_
-                    (lambda (_%e167908167946%_
-                             _%hd167907167949%_
-                             _%tl167906167951%_
-                             _%e167911167954%_
-                             _%hd167910167957%_
-                             _%tl167909167959%_
-                             _%e167914167962%_
-                             _%hd167913167965%_
-                             _%tl167912167967%_
-                             _%e167917167970%_
-                             _%hd167916167973%_
-                             _%tl167915167975%_
-                             _%e167920167978%_
-                             _%hd167919167981%_
-                             _%tl167918167983%_
-                             _%e167923167986%_
-                             _%hd167922167989%_
-                             _%tl167921167991%_
-                             _%e167926167994%_
-                             _%hd167925167997%_
-                             _%tl167924167999%_
-                             _%e167929168002%_
-                             _%hd167928168005%_
-                             _%tl167927168007%_)
-                      (let ((_%L168010%_ _%hd167928168005%_)
-                            (_%L168011%_ _%hd167925167997%_)
-                            (_%L168012%_ _%hd167916167973%_))
-                        (if (and (let ((__tmp172908
-                                        (let ((__tmp172909
+                     (gxc#apply-operands _%self166630%_ _%stx166631%_)))))
+            (let* ((_%__match171210171211%_
+                    (lambda (_%e166833166873%_
+                             _%hd166834166876%_
+                             _%tl166835166878%_
+                             _%e166836166881%_
+                             _%hd166837166884%_
+                             _%tl166838166886%_
+                             _%e166839166889%_
+                             _%hd166840166892%_
+                             _%tl166841166894%_
+                             _%e166842166897%_
+                             _%hd166843166900%_
+                             _%tl166844166902%_
+                             _%e166845166905%_
+                             _%hd166846166908%_
+                             _%tl166847166910%_
+                             _%e166848166913%_
+                             _%hd166849166916%_
+                             _%tl166850166918%_
+                             _%e166851166921%_
+                             _%hd166852166924%_
+                             _%tl166853166926%_
+                             _%e166854166929%_
+                             _%hd166855166932%_
+                             _%tl166856166934%_)
+                      (let ((_%L166937%_ _%hd166855166932%_)
+                            (_%L166938%_ _%hd166852166924%_)
+                            (_%L166939%_ _%hd166843166900%_))
+                        (if (and (let ((__tmp171827
+                                        (let ((__tmp171828
                                                (let ()
                                                  (declare (not safe))
                                                  (gxc#identifier-symbol
-                                                  _%L168012%_))))
+                                                  _%L166939%_))))
                                           (declare (not safe))
                                           (gxc#optimizer-resolve-type
-                                           __tmp172909))))
+                                           __tmp171828))))
                                    (declare (not safe))
                                    (##structure-instance-of?
-                                    __tmp172908
+                                    __tmp171827
                                     'gxc#!mutator::t))
-                                 (let ((__tmp172910
+                                 (let ((__tmp171829
                                         (let ()
                                           (declare (not safe))
                                           (slot-ref__0
-                                           _%self167703%_
+                                           _%self166630%_
                                            'receiver))))
                                    (declare (not safe))
                                    (gx#free-identifier=?
-                                    _%L168011%_
-                                    __tmp172910)))
-                            (_%__kont171800171801%_
-                             _%L168010%_
-                             _%L168011%_
-                             _%L168012%_)
-                            (_%__kont171802171803%_)))))
-                   (_%__match172281172282%_
-                    (lambda (_%e167908167946%_
-                             _%hd167907167949%_
-                             _%tl167906167951%_
-                             _%e167911167954%_
-                             _%hd167910167957%_
-                             _%tl167909167959%_
-                             _%e167914167962%_
-                             _%hd167913167965%_
-                             _%tl167912167967%_
-                             _%e167917167970%_
-                             _%hd167916167973%_
-                             _%tl167915167975%_
-                             _%e167920167978%_
-                             _%hd167919167981%_
-                             _%tl167918167983%_
-                             _%e167923167986%_
-                             _%hd167922167989%_
-                             _%tl167921167991%_
-                             _%e167926167994%_
-                             _%hd167925167997%_
-                             _%tl167924167999%_
-                             _%e167929168002%_
-                             _%hd167928168005%_
-                             _%tl167927168007%_)
+                                    _%L166938%_
+                                    __tmp171829)))
+                            (_%__kont170727170728%_
+                             _%L166937%_
+                             _%L166938%_
+                             _%L166939%_)
+                            (_%__kont170729170730%_)))))
+                   (_%__match171208171209%_
+                    (lambda (_%e166833166873%_
+                             _%hd166834166876%_
+                             _%tl166835166878%_
+                             _%e166836166881%_
+                             _%hd166837166884%_
+                             _%tl166838166886%_
+                             _%e166839166889%_
+                             _%hd166840166892%_
+                             _%tl166841166894%_
+                             _%e166842166897%_
+                             _%hd166843166900%_
+                             _%tl166844166902%_
+                             _%e166845166905%_
+                             _%hd166846166908%_
+                             _%tl166847166910%_
+                             _%e166848166913%_
+                             _%hd166849166916%_
+                             _%tl166850166918%_
+                             _%e166851166921%_
+                             _%hd166852166924%_
+                             _%tl166853166926%_
+                             _%e166854166929%_
+                             _%hd166855166932%_
+                             _%tl166856166934%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-null? _%tl167927168007%_))
-                          (_%__match172283172284%_
-                           _%e167908167946%_
-                           _%hd167907167949%_
-                           _%tl167906167951%_
-                           _%e167911167954%_
-                           _%hd167910167957%_
-                           _%tl167909167959%_
-                           _%e167914167962%_
-                           _%hd167913167965%_
-                           _%tl167912167967%_
-                           _%e167917167970%_
-                           _%hd167916167973%_
-                           _%tl167915167975%_
-                           _%e167920167978%_
-                           _%hd167919167981%_
-                           _%tl167918167983%_
-                           _%e167923167986%_
-                           _%hd167922167989%_
-                           _%tl167921167991%_
-                           _%e167926167994%_
-                           _%hd167925167997%_
-                           _%tl167924167999%_
-                           _%e167929168002%_
-                           _%hd167928168005%_
-                           _%tl167927168007%_)
-                          (_%__kont171802171803%_))))
-                   (_%__match172275172276%_
-                    (lambda (_%e167908167946%_
-                             _%hd167907167949%_
-                             _%tl167906167951%_
-                             _%e167911167954%_
-                             _%hd167910167957%_
-                             _%tl167909167959%_
-                             _%e167914167962%_
-                             _%hd167913167965%_
-                             _%tl167912167967%_
-                             _%e167917167970%_
-                             _%hd167916167973%_
-                             _%tl167915167975%_
-                             _%e167920167978%_
-                             _%hd167919167981%_
-                             _%tl167918167983%_
-                             _%e167923167986%_
-                             _%hd167922167989%_
-                             _%tl167921167991%_
-                             _%e167926167994%_
-                             _%hd167925167997%_
-                             _%tl167924167999%_)
+                            (gx#stx-null? _%tl166856166934%_))
+                          (_%__match171210171211%_
+                           _%e166833166873%_
+                           _%hd166834166876%_
+                           _%tl166835166878%_
+                           _%e166836166881%_
+                           _%hd166837166884%_
+                           _%tl166838166886%_
+                           _%e166839166889%_
+                           _%hd166840166892%_
+                           _%tl166841166894%_
+                           _%e166842166897%_
+                           _%hd166843166900%_
+                           _%tl166844166902%_
+                           _%e166845166905%_
+                           _%hd166846166908%_
+                           _%tl166847166910%_
+                           _%e166848166913%_
+                           _%hd166849166916%_
+                           _%tl166850166918%_
+                           _%e166851166921%_
+                           _%hd166852166924%_
+                           _%tl166853166926%_
+                           _%e166854166929%_
+                           _%hd166855166932%_
+                           _%tl166856166934%_)
+                          (_%__kont170729170730%_))))
+                   (_%__match171202171203%_
+                    (lambda (_%e166833166873%_
+                             _%hd166834166876%_
+                             _%tl166835166878%_
+                             _%e166836166881%_
+                             _%hd166837166884%_
+                             _%tl166838166886%_
+                             _%e166839166889%_
+                             _%hd166840166892%_
+                             _%tl166841166894%_
+                             _%e166842166897%_
+                             _%hd166843166900%_
+                             _%tl166844166902%_
+                             _%e166845166905%_
+                             _%hd166846166908%_
+                             _%tl166847166910%_
+                             _%e166848166913%_
+                             _%hd166849166916%_
+                             _%tl166850166918%_
+                             _%e166851166921%_
+                             _%hd166852166924%_
+                             _%tl166853166926%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _%tl167918167983%_))
-                          (let ((_%e167929168002%_
+                            (gx#stx-pair? _%tl166847166910%_))
+                          (let ((_%e166854166929%_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _%tl167918167983%_))))
-                            (let ((_%tl167927168007%_
+                                   (gx#stx-e _%tl166847166910%_))))
+                            (let ((_%tl166856166934%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e167929168002%_)))
-                                  (_%hd167928168005%_
+                                     (##cdr _%e166854166929%_)))
+                                  (_%hd166855166932%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e167929168002%_))))
+                                     (##car _%e166854166929%_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-null? _%tl167927168007%_))
-                                  (_%__match172283172284%_
-                                   _%e167908167946%_
-                                   _%hd167907167949%_
-                                   _%tl167906167951%_
-                                   _%e167911167954%_
-                                   _%hd167910167957%_
-                                   _%tl167909167959%_
-                                   _%e167914167962%_
-                                   _%hd167913167965%_
-                                   _%tl167912167967%_
-                                   _%e167917167970%_
-                                   _%hd167916167973%_
-                                   _%tl167915167975%_
-                                   _%e167920167978%_
-                                   _%hd167919167981%_
-                                   _%tl167918167983%_
-                                   _%e167923167986%_
-                                   _%hd167922167989%_
-                                   _%tl167921167991%_
-                                   _%e167926167994%_
-                                   _%hd167925167997%_
-                                   _%tl167924167999%_
-                                   _%e167929168002%_
-                                   _%hd167928168005%_
-                                   _%tl167927168007%_)
-                                  (_%__kont171802171803%_))))
-                          (_%__kont171802171803%_))))
-                   (_%__match172221172222%_
-                    (lambda (_%e167884168054%_
-                             _%hd167883168057%_
-                             _%tl167882168059%_
-                             _%e167887168062%_
-                             _%hd167886168065%_
-                             _%tl167885168067%_
-                             _%e167890168070%_
-                             _%hd167889168073%_
-                             _%tl167888168075%_
-                             _%e167893168078%_
-                             _%hd167892168081%_
-                             _%tl167891168083%_
-                             _%e167896168086%_
-                             _%hd167895168089%_
-                             _%tl167894168091%_
-                             _%e167899168094%_
-                             _%hd167898168097%_
-                             _%tl167897168099%_
-                             _%e167902168102%_
-                             _%hd167901168105%_
-                             _%tl167900168107%_)
-                      (let ((_%L168110%_ _%hd167901168105%_)
-                            (_%L168111%_ _%hd167892168081%_))
-                        (if (and (let ((__tmp172911
-                                        (let ((__tmp172912
+                                    (gx#stx-null? _%tl166856166934%_))
+                                  (_%__match171210171211%_
+                                   _%e166833166873%_
+                                   _%hd166834166876%_
+                                   _%tl166835166878%_
+                                   _%e166836166881%_
+                                   _%hd166837166884%_
+                                   _%tl166838166886%_
+                                   _%e166839166889%_
+                                   _%hd166840166892%_
+                                   _%tl166841166894%_
+                                   _%e166842166897%_
+                                   _%hd166843166900%_
+                                   _%tl166844166902%_
+                                   _%e166845166905%_
+                                   _%hd166846166908%_
+                                   _%tl166847166910%_
+                                   _%e166848166913%_
+                                   _%hd166849166916%_
+                                   _%tl166850166918%_
+                                   _%e166851166921%_
+                                   _%hd166852166924%_
+                                   _%tl166853166926%_
+                                   _%e166854166929%_
+                                   _%hd166855166932%_
+                                   _%tl166856166934%_)
+                                  (_%__kont170729170730%_))))
+                          (_%__kont170729170730%_))))
+                   (_%__match171148171149%_
+                    (lambda (_%e166809166981%_
+                             _%hd166810166984%_
+                             _%tl166811166986%_
+                             _%e166812166989%_
+                             _%hd166813166992%_
+                             _%tl166814166994%_
+                             _%e166815166997%_
+                             _%hd166816167000%_
+                             _%tl166817167002%_
+                             _%e166818167005%_
+                             _%hd166819167008%_
+                             _%tl166820167010%_
+                             _%e166821167013%_
+                             _%hd166822167016%_
+                             _%tl166823167018%_
+                             _%e166824167021%_
+                             _%hd166825167024%_
+                             _%tl166826167026%_
+                             _%e166827167029%_
+                             _%hd166828167032%_
+                             _%tl166829167034%_)
+                      (let ((_%L167037%_ _%hd166828167032%_)
+                            (_%L167038%_ _%hd166819167008%_))
+                        (if (and (let ((__tmp171830
+                                        (let ((__tmp171831
                                                (let ()
                                                  (declare (not safe))
                                                  (gxc#identifier-symbol
-                                                  _%L168111%_))))
+                                                  _%L167038%_))))
                                           (declare (not safe))
                                           (gxc#optimizer-resolve-type
-                                           __tmp172912))))
+                                           __tmp171831))))
                                    (declare (not safe))
                                    (##structure-instance-of?
-                                    __tmp172911
+                                    __tmp171830
                                     'gxc#!accessor::t))
-                                 (let ((__tmp172913
+                                 (let ((__tmp171832
                                         (let ()
                                           (declare (not safe))
                                           (slot-ref__0
-                                           _%self167703%_
+                                           _%self166630%_
                                            'receiver))))
                                    (declare (not safe))
                                    (gx#free-identifier=?
-                                    _%L168110%_
-                                    __tmp172913)))
-                            (_%__kont171798171799%_ _%L168110%_ _%L168111%_)
-                            (_%__kont171802171803%_)))))
-                   (_%__match172219172220%_
-                    (lambda (_%e167884168054%_
-                             _%hd167883168057%_
-                             _%tl167882168059%_
-                             _%e167887168062%_
-                             _%hd167886168065%_
-                             _%tl167885168067%_
-                             _%e167890168070%_
-                             _%hd167889168073%_
-                             _%tl167888168075%_
-                             _%e167893168078%_
-                             _%hd167892168081%_
-                             _%tl167891168083%_
-                             _%e167896168086%_
-                             _%hd167895168089%_
-                             _%tl167894168091%_
-                             _%e167899168094%_
-                             _%hd167898168097%_
-                             _%tl167897168099%_
-                             _%e167902168102%_
-                             _%hd167901168105%_
-                             _%tl167900168107%_)
+                                    _%L167037%_
+                                    __tmp171832)))
+                            (_%__kont170725170726%_ _%L167037%_ _%L167038%_)
+                            (_%__kont170729170730%_)))))
+                   (_%__match171146171147%_
+                    (lambda (_%e166809166981%_
+                             _%hd166810166984%_
+                             _%tl166811166986%_
+                             _%e166812166989%_
+                             _%hd166813166992%_
+                             _%tl166814166994%_
+                             _%e166815166997%_
+                             _%hd166816167000%_
+                             _%tl166817167002%_
+                             _%e166818167005%_
+                             _%hd166819167008%_
+                             _%tl166820167010%_
+                             _%e166821167013%_
+                             _%hd166822167016%_
+                             _%tl166823167018%_
+                             _%e166824167021%_
+                             _%hd166825167024%_
+                             _%tl166826167026%_
+                             _%e166827167029%_
+                             _%hd166828167032%_
+                             _%tl166829167034%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-null? _%tl167894168091%_))
-                          (_%__match172221172222%_
-                           _%e167884168054%_
-                           _%hd167883168057%_
-                           _%tl167882168059%_
-                           _%e167887168062%_
-                           _%hd167886168065%_
-                           _%tl167885168067%_
-                           _%e167890168070%_
-                           _%hd167889168073%_
-                           _%tl167888168075%_
-                           _%e167893168078%_
-                           _%hd167892168081%_
-                           _%tl167891168083%_
-                           _%e167896168086%_
-                           _%hd167895168089%_
-                           _%tl167894168091%_
-                           _%e167899168094%_
-                           _%hd167898168097%_
-                           _%tl167897168099%_
-                           _%e167902168102%_
-                           _%hd167901168105%_
-                           _%tl167900168107%_)
-                          (_%__match172275172276%_
-                           _%e167884168054%_
-                           _%hd167883168057%_
-                           _%tl167882168059%_
-                           _%e167887168062%_
-                           _%hd167886168065%_
-                           _%tl167885168067%_
-                           _%e167890168070%_
-                           _%hd167889168073%_
-                           _%tl167888168075%_
-                           _%e167893168078%_
-                           _%hd167892168081%_
-                           _%tl167891168083%_
-                           _%e167896168086%_
-                           _%hd167895168089%_
-                           _%tl167894168091%_
-                           _%e167899168094%_
-                           _%hd167898168097%_
-                           _%tl167897168099%_
-                           _%e167902168102%_
-                           _%hd167901168105%_
-                           _%tl167900168107%_))))
-                   (_%__match172165172166%_
-                    (lambda (_%e167849168148%_
-                             _%hd167848168151%_
-                             _%tl167847168153%_
-                             _%e167852168156%_
-                             _%hd167851168159%_
-                             _%tl167850168161%_
-                             _%e167855168164%_
-                             _%hd167854168167%_
-                             _%tl167853168169%_
-                             _%e167858168172%_
-                             _%hd167857168175%_
-                             _%tl167856168177%_
-                             _%e167861168180%_
-                             _%hd167860168183%_
-                             _%tl167859168185%_
-                             _%e167864168188%_
-                             _%hd167863168191%_
-                             _%tl167862168193%_
-                             _%e167867168196%_
-                             _%hd167866168199%_
-                             _%tl167865168201%_
-                             _%e167870168204%_
-                             _%hd167869168207%_
-                             _%tl167868168209%_
-                             _%e167873168212%_
-                             _%hd167872168215%_
-                             _%tl167871168217%_
-                             _%e167876168220%_
-                             _%hd167875168223%_
-                             _%tl167874168225%_
-                             _%e167879168228%_
-                             _%hd167878168231%_
-                             _%tl167877168233%_)
-                      (let ((_%L168236%_ _%hd167878168231%_)
-                            (_%L168237%_ _%hd167875168223%_)
-                            (_%L168238%_ _%hd167866168199%_)
-                            (_%L168239%_ _%hd167857168175%_))
+                            (gx#stx-null? _%tl166823167018%_))
+                          (_%__match171148171149%_
+                           _%e166809166981%_
+                           _%hd166810166984%_
+                           _%tl166811166986%_
+                           _%e166812166989%_
+                           _%hd166813166992%_
+                           _%tl166814166994%_
+                           _%e166815166997%_
+                           _%hd166816167000%_
+                           _%tl166817167002%_
+                           _%e166818167005%_
+                           _%hd166819167008%_
+                           _%tl166820167010%_
+                           _%e166821167013%_
+                           _%hd166822167016%_
+                           _%tl166823167018%_
+                           _%e166824167021%_
+                           _%hd166825167024%_
+                           _%tl166826167026%_
+                           _%e166827167029%_
+                           _%hd166828167032%_
+                           _%tl166829167034%_)
+                          (_%__match171202171203%_
+                           _%e166809166981%_
+                           _%hd166810166984%_
+                           _%tl166811166986%_
+                           _%e166812166989%_
+                           _%hd166813166992%_
+                           _%tl166814166994%_
+                           _%e166815166997%_
+                           _%hd166816167000%_
+                           _%tl166817167002%_
+                           _%e166818167005%_
+                           _%hd166819167008%_
+                           _%tl166820167010%_
+                           _%e166821167013%_
+                           _%hd166822167016%_
+                           _%tl166823167018%_
+                           _%e166824167021%_
+                           _%hd166825167024%_
+                           _%tl166826167026%_
+                           _%e166827167029%_
+                           _%hd166828167032%_
+                           _%tl166829167034%_))))
+                   (_%__match171092171093%_
+                    (lambda (_%e166774167075%_
+                             _%hd166775167078%_
+                             _%tl166776167080%_
+                             _%e166777167083%_
+                             _%hd166778167086%_
+                             _%tl166779167088%_
+                             _%e166780167091%_
+                             _%hd166781167094%_
+                             _%tl166782167096%_
+                             _%e166783167099%_
+                             _%hd166784167102%_
+                             _%tl166785167104%_
+                             _%e166786167107%_
+                             _%hd166787167110%_
+                             _%tl166788167112%_
+                             _%e166789167115%_
+                             _%hd166790167118%_
+                             _%tl166791167120%_
+                             _%e166792167123%_
+                             _%hd166793167126%_
+                             _%tl166794167128%_
+                             _%e166795167131%_
+                             _%hd166796167134%_
+                             _%tl166797167136%_
+                             _%e166798167139%_
+                             _%hd166799167142%_
+                             _%tl166800167144%_
+                             _%e166801167147%_
+                             _%hd166802167150%_
+                             _%tl166803167152%_
+                             _%e166804167155%_
+                             _%hd166805167158%_
+                             _%tl166806167160%_)
+                      (let ((_%L167163%_ _%hd166805167158%_)
+                            (_%L167164%_ _%hd166802167150%_)
+                            (_%L167165%_ _%hd166793167126%_)
+                            (_%L167166%_ _%hd166784167102%_))
                         (if (and (or (let ()
                                        (declare (not safe))
                                        (gxc#runtime-identifier=?
-                                        _%L168239%_
+                                        _%L167166%_
                                         'slot-set!))
                                      (let ()
                                        (declare (not safe))
                                        (gxc#runtime-identifier=?
-                                        _%L168239%_
+                                        _%L167166%_
                                         'unchecked-slot-set!)))
-                                 (let ((__tmp172914
+                                 (let ((__tmp171833
                                         (let ()
                                           (declare (not safe))
                                           (slot-ref__0
-                                           _%self167703%_
+                                           _%self166630%_
                                            'receiver))))
                                    (declare (not safe))
                                    (gx#free-identifier=?
-                                    _%L168238%_
-                                    __tmp172914)))
-                            (_%__kont171796171797%_
-                             _%L168236%_
-                             _%L168237%_
-                             _%L168238%_
-                             _%L168239%_)
-                            (_%__kont171802171803%_)))))
-                   (_%__match172157172158%_
-                    (lambda (_%e167849168148%_
-                             _%hd167848168151%_
-                             _%tl167847168153%_
-                             _%e167852168156%_
-                             _%hd167851168159%_
-                             _%tl167850168161%_
-                             _%e167855168164%_
-                             _%hd167854168167%_
-                             _%tl167853168169%_
-                             _%e167858168172%_
-                             _%hd167857168175%_
-                             _%tl167856168177%_
-                             _%e167861168180%_
-                             _%hd167860168183%_
-                             _%tl167859168185%_
-                             _%e167864168188%_
-                             _%hd167863168191%_
-                             _%tl167862168193%_
-                             _%e167867168196%_
-                             _%hd167866168199%_
-                             _%tl167865168201%_
-                             _%e167870168204%_
-                             _%hd167869168207%_
-                             _%tl167868168209%_
-                             _%e167873168212%_
-                             _%hd167872168215%_
-                             _%tl167871168217%_
-                             _%e167876168220%_
-                             _%hd167875168223%_
-                             _%tl167874168225%_)
+                                    _%L167165%_
+                                    __tmp171833)))
+                            (_%__kont170723170724%_
+                             _%L167163%_
+                             _%L167164%_
+                             _%L167165%_
+                             _%L167166%_)
+                            (_%__kont170729170730%_)))))
+                   (_%__match171084171085%_
+                    (lambda (_%e166774167075%_
+                             _%hd166775167078%_
+                             _%tl166776167080%_
+                             _%e166777167083%_
+                             _%hd166778167086%_
+                             _%tl166779167088%_
+                             _%e166780167091%_
+                             _%hd166781167094%_
+                             _%tl166782167096%_
+                             _%e166783167099%_
+                             _%hd166784167102%_
+                             _%tl166785167104%_
+                             _%e166786167107%_
+                             _%hd166787167110%_
+                             _%tl166788167112%_
+                             _%e166789167115%_
+                             _%hd166790167118%_
+                             _%tl166791167120%_
+                             _%e166792167123%_
+                             _%hd166793167126%_
+                             _%tl166794167128%_
+                             _%e166795167131%_
+                             _%hd166796167134%_
+                             _%tl166797167136%_
+                             _%e166798167139%_
+                             _%hd166799167142%_
+                             _%tl166800167144%_
+                             _%e166801167147%_
+                             _%hd166802167150%_
+                             _%tl166803167152%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _%tl167868168209%_))
-                          (let ((_%e167879168228%_
+                            (gx#stx-pair? _%tl166797167136%_))
+                          (let ((_%e166804167155%_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _%tl167868168209%_))))
-                            (let ((_%tl167877168233%_
+                                   (gx#stx-e _%tl166797167136%_))))
+                            (let ((_%tl166806167160%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e167879168228%_)))
-                                  (_%hd167878168231%_
+                                     (##cdr _%e166804167155%_)))
+                                  (_%hd166805167158%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e167879168228%_))))
+                                     (##car _%e166804167155%_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-null? _%tl167877168233%_))
-                                  (_%__match172165172166%_
-                                   _%e167849168148%_
-                                   _%hd167848168151%_
-                                   _%tl167847168153%_
-                                   _%e167852168156%_
-                                   _%hd167851168159%_
-                                   _%tl167850168161%_
-                                   _%e167855168164%_
-                                   _%hd167854168167%_
-                                   _%tl167853168169%_
-                                   _%e167858168172%_
-                                   _%hd167857168175%_
-                                   _%tl167856168177%_
-                                   _%e167861168180%_
-                                   _%hd167860168183%_
-                                   _%tl167859168185%_
-                                   _%e167864168188%_
-                                   _%hd167863168191%_
-                                   _%tl167862168193%_
-                                   _%e167867168196%_
-                                   _%hd167866168199%_
-                                   _%tl167865168201%_
-                                   _%e167870168204%_
-                                   _%hd167869168207%_
-                                   _%tl167868168209%_
-                                   _%e167873168212%_
-                                   _%hd167872168215%_
-                                   _%tl167871168217%_
-                                   _%e167876168220%_
-                                   _%hd167875168223%_
-                                   _%tl167874168225%_
-                                   _%e167879168228%_
-                                   _%hd167878168231%_
-                                   _%tl167877168233%_)
-                                  (_%__kont171802171803%_))))
-                          (_%__match172281172282%_
-                           _%e167849168148%_
-                           _%hd167848168151%_
-                           _%tl167847168153%_
-                           _%e167852168156%_
-                           _%hd167851168159%_
-                           _%tl167850168161%_
-                           _%e167855168164%_
-                           _%hd167854168167%_
-                           _%tl167853168169%_
-                           _%e167858168172%_
-                           _%hd167857168175%_
-                           _%tl167856168177%_
-                           _%e167861168180%_
-                           _%hd167860168183%_
-                           _%tl167859168185%_
-                           _%e167864168188%_
-                           _%hd167863168191%_
-                           _%tl167862168193%_
-                           _%e167867168196%_
-                           _%hd167866168199%_
-                           _%tl167865168201%_
-                           _%e167870168204%_
-                           _%hd167869168207%_
-                           _%tl167868168209%_))))
-                   (_%__match172079172080%_
-                    (lambda (_%e167815168279%_
-                             _%hd167814168282%_
-                             _%tl167813168284%_
-                             _%e167818168287%_
-                             _%hd167817168290%_
-                             _%tl167816168292%_
-                             _%e167821168295%_
-                             _%hd167820168298%_
-                             _%tl167819168300%_
-                             _%e167824168303%_
-                             _%hd167823168306%_
-                             _%tl167822168308%_
-                             _%e167827168311%_
-                             _%hd167826168314%_
-                             _%tl167825168316%_
-                             _%e167830168319%_
-                             _%hd167829168322%_
-                             _%tl167828168324%_
-                             _%e167833168327%_
-                             _%hd167832168330%_
-                             _%tl167831168332%_
-                             _%e167836168335%_
-                             _%hd167835168338%_
-                             _%tl167834168340%_
-                             _%e167839168343%_
-                             _%hd167838168346%_
-                             _%tl167837168348%_
-                             _%e167842168351%_
-                             _%hd167841168354%_
-                             _%tl167840168356%_)
-                      (let ((_%L168359%_ _%hd167841168354%_)
-                            (_%L168360%_ _%hd167832168330%_)
-                            (_%L168361%_ _%hd167823168306%_))
+                                    (gx#stx-null? _%tl166806167160%_))
+                                  (_%__match171092171093%_
+                                   _%e166774167075%_
+                                   _%hd166775167078%_
+                                   _%tl166776167080%_
+                                   _%e166777167083%_
+                                   _%hd166778167086%_
+                                   _%tl166779167088%_
+                                   _%e166780167091%_
+                                   _%hd166781167094%_
+                                   _%tl166782167096%_
+                                   _%e166783167099%_
+                                   _%hd166784167102%_
+                                   _%tl166785167104%_
+                                   _%e166786167107%_
+                                   _%hd166787167110%_
+                                   _%tl166788167112%_
+                                   _%e166789167115%_
+                                   _%hd166790167118%_
+                                   _%tl166791167120%_
+                                   _%e166792167123%_
+                                   _%hd166793167126%_
+                                   _%tl166794167128%_
+                                   _%e166795167131%_
+                                   _%hd166796167134%_
+                                   _%tl166797167136%_
+                                   _%e166798167139%_
+                                   _%hd166799167142%_
+                                   _%tl166800167144%_
+                                   _%e166801167147%_
+                                   _%hd166802167150%_
+                                   _%tl166803167152%_
+                                   _%e166804167155%_
+                                   _%hd166805167158%_
+                                   _%tl166806167160%_)
+                                  (_%__kont170729170730%_))))
+                          (_%__match171208171209%_
+                           _%e166774167075%_
+                           _%hd166775167078%_
+                           _%tl166776167080%_
+                           _%e166777167083%_
+                           _%hd166778167086%_
+                           _%tl166779167088%_
+                           _%e166780167091%_
+                           _%hd166781167094%_
+                           _%tl166782167096%_
+                           _%e166783167099%_
+                           _%hd166784167102%_
+                           _%tl166785167104%_
+                           _%e166786167107%_
+                           _%hd166787167110%_
+                           _%tl166788167112%_
+                           _%e166789167115%_
+                           _%hd166790167118%_
+                           _%tl166791167120%_
+                           _%e166792167123%_
+                           _%hd166793167126%_
+                           _%tl166794167128%_
+                           _%e166795167131%_
+                           _%hd166796167134%_
+                           _%tl166797167136%_))))
+                   (_%__match171006171007%_
+                    (lambda (_%e166740167206%_
+                             _%hd166741167209%_
+                             _%tl166742167211%_
+                             _%e166743167214%_
+                             _%hd166744167217%_
+                             _%tl166745167219%_
+                             _%e166746167222%_
+                             _%hd166747167225%_
+                             _%tl166748167227%_
+                             _%e166749167230%_
+                             _%hd166750167233%_
+                             _%tl166751167235%_
+                             _%e166752167238%_
+                             _%hd166753167241%_
+                             _%tl166754167243%_
+                             _%e166755167246%_
+                             _%hd166756167249%_
+                             _%tl166757167251%_
+                             _%e166758167254%_
+                             _%hd166759167257%_
+                             _%tl166760167259%_
+                             _%e166761167262%_
+                             _%hd166762167265%_
+                             _%tl166763167267%_
+                             _%e166764167270%_
+                             _%hd166765167273%_
+                             _%tl166766167275%_
+                             _%e166767167278%_
+                             _%hd166768167281%_
+                             _%tl166769167283%_)
+                      (let ((_%L167286%_ _%hd166768167281%_)
+                            (_%L167287%_ _%hd166759167257%_)
+                            (_%L167288%_ _%hd166750167233%_))
                         (if (and (or (let ()
                                        (declare (not safe))
                                        (gxc#runtime-identifier=?
-                                        _%L168361%_
+                                        _%L167288%_
                                         'slot-ref))
                                      (let ()
                                        (declare (not safe))
                                        (gxc#runtime-identifier=?
-                                        _%L168361%_
+                                        _%L167288%_
                                         'unchecked-slot-ref)))
-                                 (let ((__tmp172915
+                                 (let ((__tmp171834
                                         (let ()
                                           (declare (not safe))
                                           (slot-ref__0
-                                           _%self167703%_
+                                           _%self166630%_
                                            'receiver))))
                                    (declare (not safe))
                                    (gx#free-identifier=?
-                                    _%L168360%_
-                                    __tmp172915)))
-                            (_%__kont171794171795%_
-                             _%L168359%_
-                             _%L168360%_
-                             _%L168361%_)
-                            (_%__match172283172284%_
-                             _%e167815168279%_
-                             _%hd167814168282%_
-                             _%tl167813168284%_
-                             _%e167818168287%_
-                             _%hd167817168290%_
-                             _%tl167816168292%_
-                             _%e167821168295%_
-                             _%hd167820168298%_
-                             _%tl167819168300%_
-                             _%e167824168303%_
-                             _%hd167823168306%_
-                             _%tl167822168308%_
-                             _%e167827168311%_
-                             _%hd167826168314%_
-                             _%tl167825168316%_
-                             _%e167830168319%_
-                             _%hd167829168322%_
-                             _%tl167828168324%_
-                             _%e167833168327%_
-                             _%hd167832168330%_
-                             _%tl167831168332%_
-                             _%e167836168335%_
-                             _%hd167835168338%_
-                             _%tl167834168340%_)))))
-                   (_%__match172077172078%_
-                    (lambda (_%e167815168279%_
-                             _%hd167814168282%_
-                             _%tl167813168284%_
-                             _%e167818168287%_
-                             _%hd167817168290%_
-                             _%tl167816168292%_
-                             _%e167821168295%_
-                             _%hd167820168298%_
-                             _%tl167819168300%_
-                             _%e167824168303%_
-                             _%hd167823168306%_
-                             _%tl167822168308%_
-                             _%e167827168311%_
-                             _%hd167826168314%_
-                             _%tl167825168316%_
-                             _%e167830168319%_
-                             _%hd167829168322%_
-                             _%tl167828168324%_
-                             _%e167833168327%_
-                             _%hd167832168330%_
-                             _%tl167831168332%_
-                             _%e167836168335%_
-                             _%hd167835168338%_
-                             _%tl167834168340%_
-                             _%e167839168343%_
-                             _%hd167838168346%_
-                             _%tl167837168348%_
-                             _%e167842168351%_
-                             _%hd167841168354%_
-                             _%tl167840168356%_)
+                                    _%L167287%_
+                                    __tmp171834)))
+                            (_%__kont170721170722%_
+                             _%L167286%_
+                             _%L167287%_
+                             _%L167288%_)
+                            (_%__match171210171211%_
+                             _%e166740167206%_
+                             _%hd166741167209%_
+                             _%tl166742167211%_
+                             _%e166743167214%_
+                             _%hd166744167217%_
+                             _%tl166745167219%_
+                             _%e166746167222%_
+                             _%hd166747167225%_
+                             _%tl166748167227%_
+                             _%e166749167230%_
+                             _%hd166750167233%_
+                             _%tl166751167235%_
+                             _%e166752167238%_
+                             _%hd166753167241%_
+                             _%tl166754167243%_
+                             _%e166755167246%_
+                             _%hd166756167249%_
+                             _%tl166757167251%_
+                             _%e166758167254%_
+                             _%hd166759167257%_
+                             _%tl166760167259%_
+                             _%e166761167262%_
+                             _%hd166762167265%_
+                             _%tl166763167267%_)))))
+                   (_%__match171004171005%_
+                    (lambda (_%e166740167206%_
+                             _%hd166741167209%_
+                             _%tl166742167211%_
+                             _%e166743167214%_
+                             _%hd166744167217%_
+                             _%tl166745167219%_
+                             _%e166746167222%_
+                             _%hd166747167225%_
+                             _%tl166748167227%_
+                             _%e166749167230%_
+                             _%hd166750167233%_
+                             _%tl166751167235%_
+                             _%e166752167238%_
+                             _%hd166753167241%_
+                             _%tl166754167243%_
+                             _%e166755167246%_
+                             _%hd166756167249%_
+                             _%tl166757167251%_
+                             _%e166758167254%_
+                             _%hd166759167257%_
+                             _%tl166760167259%_
+                             _%e166761167262%_
+                             _%hd166762167265%_
+                             _%tl166763167267%_
+                             _%e166764167270%_
+                             _%hd166765167273%_
+                             _%tl166766167275%_
+                             _%e166767167278%_
+                             _%hd166768167281%_
+                             _%tl166769167283%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-null? _%tl167834168340%_))
-                          (_%__match172079172080%_
-                           _%e167815168279%_
-                           _%hd167814168282%_
-                           _%tl167813168284%_
-                           _%e167818168287%_
-                           _%hd167817168290%_
-                           _%tl167816168292%_
-                           _%e167821168295%_
-                           _%hd167820168298%_
-                           _%tl167819168300%_
-                           _%e167824168303%_
-                           _%hd167823168306%_
-                           _%tl167822168308%_
-                           _%e167827168311%_
-                           _%hd167826168314%_
-                           _%tl167825168316%_
-                           _%e167830168319%_
-                           _%hd167829168322%_
-                           _%tl167828168324%_
-                           _%e167833168327%_
-                           _%hd167832168330%_
-                           _%tl167831168332%_
-                           _%e167836168335%_
-                           _%hd167835168338%_
-                           _%tl167834168340%_
-                           _%e167839168343%_
-                           _%hd167838168346%_
-                           _%tl167837168348%_
-                           _%e167842168351%_
-                           _%hd167841168354%_
-                           _%tl167840168356%_)
-                          (_%__match172157172158%_
-                           _%e167815168279%_
-                           _%hd167814168282%_
-                           _%tl167813168284%_
-                           _%e167818168287%_
-                           _%hd167817168290%_
-                           _%tl167816168292%_
-                           _%e167821168295%_
-                           _%hd167820168298%_
-                           _%tl167819168300%_
-                           _%e167824168303%_
-                           _%hd167823168306%_
-                           _%tl167822168308%_
-                           _%e167827168311%_
-                           _%hd167826168314%_
-                           _%tl167825168316%_
-                           _%e167830168319%_
-                           _%hd167829168322%_
-                           _%tl167828168324%_
-                           _%e167833168327%_
-                           _%hd167832168330%_
-                           _%tl167831168332%_
-                           _%e167836168335%_
-                           _%hd167835168338%_
-                           _%tl167834168340%_
-                           _%e167839168343%_
-                           _%hd167838168346%_
-                           _%tl167837168348%_
-                           _%e167842168351%_
-                           _%hd167841168354%_
-                           _%tl167840168356%_))))
-                   (_%__match172067172068%_
-                    (lambda (_%e167815168279%_
-                             _%hd167814168282%_
-                             _%tl167813168284%_
-                             _%e167818168287%_
-                             _%hd167817168290%_
-                             _%tl167816168292%_
-                             _%e167821168295%_
-                             _%hd167820168298%_
-                             _%tl167819168300%_
-                             _%e167824168303%_
-                             _%hd167823168306%_
-                             _%tl167822168308%_
-                             _%e167827168311%_
-                             _%hd167826168314%_
-                             _%tl167825168316%_
-                             _%e167830168319%_
-                             _%hd167829168322%_
-                             _%tl167828168324%_
-                             _%e167833168327%_
-                             _%hd167832168330%_
-                             _%tl167831168332%_
-                             _%e167836168335%_
-                             _%hd167835168338%_
-                             _%tl167834168340%_
-                             _%e167839168343%_
-                             _%hd167838168346%_
-                             _%tl167837168348%_)
+                            (gx#stx-null? _%tl166763167267%_))
+                          (_%__match171006171007%_
+                           _%e166740167206%_
+                           _%hd166741167209%_
+                           _%tl166742167211%_
+                           _%e166743167214%_
+                           _%hd166744167217%_
+                           _%tl166745167219%_
+                           _%e166746167222%_
+                           _%hd166747167225%_
+                           _%tl166748167227%_
+                           _%e166749167230%_
+                           _%hd166750167233%_
+                           _%tl166751167235%_
+                           _%e166752167238%_
+                           _%hd166753167241%_
+                           _%tl166754167243%_
+                           _%e166755167246%_
+                           _%hd166756167249%_
+                           _%tl166757167251%_
+                           _%e166758167254%_
+                           _%hd166759167257%_
+                           _%tl166760167259%_
+                           _%e166761167262%_
+                           _%hd166762167265%_
+                           _%tl166763167267%_
+                           _%e166764167270%_
+                           _%hd166765167273%_
+                           _%tl166766167275%_
+                           _%e166767167278%_
+                           _%hd166768167281%_
+                           _%tl166769167283%_)
+                          (_%__match171084171085%_
+                           _%e166740167206%_
+                           _%hd166741167209%_
+                           _%tl166742167211%_
+                           _%e166743167214%_
+                           _%hd166744167217%_
+                           _%tl166745167219%_
+                           _%e166746167222%_
+                           _%hd166747167225%_
+                           _%tl166748167227%_
+                           _%e166749167230%_
+                           _%hd166750167233%_
+                           _%tl166751167235%_
+                           _%e166752167238%_
+                           _%hd166753167241%_
+                           _%tl166754167243%_
+                           _%e166755167246%_
+                           _%hd166756167249%_
+                           _%tl166757167251%_
+                           _%e166758167254%_
+                           _%hd166759167257%_
+                           _%tl166760167259%_
+                           _%e166761167262%_
+                           _%hd166762167265%_
+                           _%tl166763167267%_
+                           _%e166764167270%_
+                           _%hd166765167273%_
+                           _%tl166766167275%_
+                           _%e166767167278%_
+                           _%hd166768167281%_
+                           _%tl166769167283%_))))
+                   (_%__match170994170995%_
+                    (lambda (_%e166740167206%_
+                             _%hd166741167209%_
+                             _%tl166742167211%_
+                             _%e166743167214%_
+                             _%hd166744167217%_
+                             _%tl166745167219%_
+                             _%e166746167222%_
+                             _%hd166747167225%_
+                             _%tl166748167227%_
+                             _%e166749167230%_
+                             _%hd166750167233%_
+                             _%tl166751167235%_
+                             _%e166752167238%_
+                             _%hd166753167241%_
+                             _%tl166754167243%_
+                             _%e166755167246%_
+                             _%hd166756167249%_
+                             _%tl166757167251%_
+                             _%e166758167254%_
+                             _%hd166759167257%_
+                             _%tl166760167259%_
+                             _%e166761167262%_
+                             _%hd166762167265%_
+                             _%tl166763167267%_
+                             _%e166764167270%_
+                             _%hd166765167273%_
+                             _%tl166766167275%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-eq? '%#quote _%hd167838168346%_))
+                            (gx#stx-eq? '%#quote _%hd166765167273%_))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-pair? _%tl167837168348%_))
-                              (let ((_%e167842168351%_
+                                (gx#stx-pair? _%tl166766167275%_))
+                              (let ((_%e166767167278%_
                                      (let ()
                                        (declare (not safe))
-                                       (gx#stx-e _%tl167837168348%_))))
-                                (let ((_%tl167840168356%_
+                                       (gx#stx-e _%tl166766167275%_))))
+                                (let ((_%tl166769167283%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%e167842168351%_)))
-                                      (_%hd167841168354%_
+                                         (##cdr _%e166767167278%_)))
+                                      (_%hd166768167281%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%e167842168351%_))))
+                                         (##car _%e166767167278%_))))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-null? _%tl167840168356%_))
+                                        (gx#stx-null? _%tl166769167283%_))
                                       (if (let ()
                                             (declare (not safe))
-                                            (gx#stx-null? _%tl167834168340%_))
-                                          (_%__match172079172080%_
-                                           _%e167815168279%_
-                                           _%hd167814168282%_
-                                           _%tl167813168284%_
-                                           _%e167818168287%_
-                                           _%hd167817168290%_
-                                           _%tl167816168292%_
-                                           _%e167821168295%_
-                                           _%hd167820168298%_
-                                           _%tl167819168300%_
-                                           _%e167824168303%_
-                                           _%hd167823168306%_
-                                           _%tl167822168308%_
-                                           _%e167827168311%_
-                                           _%hd167826168314%_
-                                           _%tl167825168316%_
-                                           _%e167830168319%_
-                                           _%hd167829168322%_
-                                           _%tl167828168324%_
-                                           _%e167833168327%_
-                                           _%hd167832168330%_
-                                           _%tl167831168332%_
-                                           _%e167836168335%_
-                                           _%hd167835168338%_
-                                           _%tl167834168340%_
-                                           _%e167839168343%_
-                                           _%hd167838168346%_
-                                           _%tl167837168348%_
-                                           _%e167842168351%_
-                                           _%hd167841168354%_
-                                           _%tl167840168356%_)
-                                          (_%__match172157172158%_
-                                           _%e167815168279%_
-                                           _%hd167814168282%_
-                                           _%tl167813168284%_
-                                           _%e167818168287%_
-                                           _%hd167817168290%_
-                                           _%tl167816168292%_
-                                           _%e167821168295%_
-                                           _%hd167820168298%_
-                                           _%tl167819168300%_
-                                           _%e167824168303%_
-                                           _%hd167823168306%_
-                                           _%tl167822168308%_
-                                           _%e167827168311%_
-                                           _%hd167826168314%_
-                                           _%tl167825168316%_
-                                           _%e167830168319%_
-                                           _%hd167829168322%_
-                                           _%tl167828168324%_
-                                           _%e167833168327%_
-                                           _%hd167832168330%_
-                                           _%tl167831168332%_
-                                           _%e167836168335%_
-                                           _%hd167835168338%_
-                                           _%tl167834168340%_
-                                           _%e167839168343%_
-                                           _%hd167838168346%_
-                                           _%tl167837168348%_
-                                           _%e167842168351%_
-                                           _%hd167841168354%_
-                                           _%tl167840168356%_))
-                                      (_%__match172281172282%_
-                                       _%e167815168279%_
-                                       _%hd167814168282%_
-                                       _%tl167813168284%_
-                                       _%e167818168287%_
-                                       _%hd167817168290%_
-                                       _%tl167816168292%_
-                                       _%e167821168295%_
-                                       _%hd167820168298%_
-                                       _%tl167819168300%_
-                                       _%e167824168303%_
-                                       _%hd167823168306%_
-                                       _%tl167822168308%_
-                                       _%e167827168311%_
-                                       _%hd167826168314%_
-                                       _%tl167825168316%_
-                                       _%e167830168319%_
-                                       _%hd167829168322%_
-                                       _%tl167828168324%_
-                                       _%e167833168327%_
-                                       _%hd167832168330%_
-                                       _%tl167831168332%_
-                                       _%e167836168335%_
-                                       _%hd167835168338%_
-                                       _%tl167834168340%_))))
-                              (_%__match172281172282%_
-                               _%e167815168279%_
-                               _%hd167814168282%_
-                               _%tl167813168284%_
-                               _%e167818168287%_
-                               _%hd167817168290%_
-                               _%tl167816168292%_
-                               _%e167821168295%_
-                               _%hd167820168298%_
-                               _%tl167819168300%_
-                               _%e167824168303%_
-                               _%hd167823168306%_
-                               _%tl167822168308%_
-                               _%e167827168311%_
-                               _%hd167826168314%_
-                               _%tl167825168316%_
-                               _%e167830168319%_
-                               _%hd167829168322%_
-                               _%tl167828168324%_
-                               _%e167833168327%_
-                               _%hd167832168330%_
-                               _%tl167831168332%_
-                               _%e167836168335%_
-                               _%hd167835168338%_
-                               _%tl167834168340%_))
-                          (_%__match172281172282%_
-                           _%e167815168279%_
-                           _%hd167814168282%_
-                           _%tl167813168284%_
-                           _%e167818168287%_
-                           _%hd167817168290%_
-                           _%tl167816168292%_
-                           _%e167821168295%_
-                           _%hd167820168298%_
-                           _%tl167819168300%_
-                           _%e167824168303%_
-                           _%hd167823168306%_
-                           _%tl167822168308%_
-                           _%e167827168311%_
-                           _%hd167826168314%_
-                           _%tl167825168316%_
-                           _%e167830168319%_
-                           _%hd167829168322%_
-                           _%tl167828168324%_
-                           _%e167833168327%_
-                           _%hd167832168330%_
-                           _%tl167831168332%_
-                           _%e167836168335%_
-                           _%hd167835168338%_
-                           _%tl167834168340%_))))
-                   (_%__match171999172000%_
-                    (lambda (_%e167764168398%_
-                             _%hd167763168401%_
-                             _%tl167762168403%_
-                             _%e167767168406%_
-                             _%hd167766168409%_
-                             _%tl167765168411%_
-                             _%e167770168414%_
-                             _%hd167769168417%_
-                             _%tl167768168419%_
-                             _%e167773168422%_
-                             _%hd167772168425%_
-                             _%tl167771168427%_
-                             _%e167776168430%_
-                             _%hd167775168433%_
-                             _%tl167774168435%_
-                             _%e167779168438%_
-                             _%hd167778168441%_
-                             _%tl167777168443%_
-                             _%e167782168446%_
-                             _%hd167781168449%_
-                             _%tl167780168451%_
-                             _%e167785168454%_
-                             _%hd167784168457%_
-                             _%tl167783168459%_
-                             _%e167788168462%_
-                             _%hd167787168465%_
-                             _%tl167786168467%_
-                             _%e167791168470%_
-                             _%hd167790168473%_
-                             _%tl167789168475%_
-                             _%e167794168478%_
-                             _%hd167793168481%_
-                             _%tl167792168483%_
-                             _%e167797168486%_
-                             _%hd167796168489%_
-                             _%tl167795168491%_
-                             _%e167800168494%_
-                             _%hd167799168497%_
-                             _%tl167798168499%_
-                             _%__splice171792171793%_
-                             _%target167801168502%_
-                             _%tl167803168504%_)
-                      (letrec ((_%loop167804168507%_
-                                (lambda (_%hd167802168510%_
-                                         _%args167808168512%_)
+                                            (gx#stx-null? _%tl166763167267%_))
+                                          (_%__match171006171007%_
+                                           _%e166740167206%_
+                                           _%hd166741167209%_
+                                           _%tl166742167211%_
+                                           _%e166743167214%_
+                                           _%hd166744167217%_
+                                           _%tl166745167219%_
+                                           _%e166746167222%_
+                                           _%hd166747167225%_
+                                           _%tl166748167227%_
+                                           _%e166749167230%_
+                                           _%hd166750167233%_
+                                           _%tl166751167235%_
+                                           _%e166752167238%_
+                                           _%hd166753167241%_
+                                           _%tl166754167243%_
+                                           _%e166755167246%_
+                                           _%hd166756167249%_
+                                           _%tl166757167251%_
+                                           _%e166758167254%_
+                                           _%hd166759167257%_
+                                           _%tl166760167259%_
+                                           _%e166761167262%_
+                                           _%hd166762167265%_
+                                           _%tl166763167267%_
+                                           _%e166764167270%_
+                                           _%hd166765167273%_
+                                           _%tl166766167275%_
+                                           _%e166767167278%_
+                                           _%hd166768167281%_
+                                           _%tl166769167283%_)
+                                          (_%__match171084171085%_
+                                           _%e166740167206%_
+                                           _%hd166741167209%_
+                                           _%tl166742167211%_
+                                           _%e166743167214%_
+                                           _%hd166744167217%_
+                                           _%tl166745167219%_
+                                           _%e166746167222%_
+                                           _%hd166747167225%_
+                                           _%tl166748167227%_
+                                           _%e166749167230%_
+                                           _%hd166750167233%_
+                                           _%tl166751167235%_
+                                           _%e166752167238%_
+                                           _%hd166753167241%_
+                                           _%tl166754167243%_
+                                           _%e166755167246%_
+                                           _%hd166756167249%_
+                                           _%tl166757167251%_
+                                           _%e166758167254%_
+                                           _%hd166759167257%_
+                                           _%tl166760167259%_
+                                           _%e166761167262%_
+                                           _%hd166762167265%_
+                                           _%tl166763167267%_
+                                           _%e166764167270%_
+                                           _%hd166765167273%_
+                                           _%tl166766167275%_
+                                           _%e166767167278%_
+                                           _%hd166768167281%_
+                                           _%tl166769167283%_))
+                                      (_%__match171208171209%_
+                                       _%e166740167206%_
+                                       _%hd166741167209%_
+                                       _%tl166742167211%_
+                                       _%e166743167214%_
+                                       _%hd166744167217%_
+                                       _%tl166745167219%_
+                                       _%e166746167222%_
+                                       _%hd166747167225%_
+                                       _%tl166748167227%_
+                                       _%e166749167230%_
+                                       _%hd166750167233%_
+                                       _%tl166751167235%_
+                                       _%e166752167238%_
+                                       _%hd166753167241%_
+                                       _%tl166754167243%_
+                                       _%e166755167246%_
+                                       _%hd166756167249%_
+                                       _%tl166757167251%_
+                                       _%e166758167254%_
+                                       _%hd166759167257%_
+                                       _%tl166760167259%_
+                                       _%e166761167262%_
+                                       _%hd166762167265%_
+                                       _%tl166763167267%_))))
+                              (_%__match171208171209%_
+                               _%e166740167206%_
+                               _%hd166741167209%_
+                               _%tl166742167211%_
+                               _%e166743167214%_
+                               _%hd166744167217%_
+                               _%tl166745167219%_
+                               _%e166746167222%_
+                               _%hd166747167225%_
+                               _%tl166748167227%_
+                               _%e166749167230%_
+                               _%hd166750167233%_
+                               _%tl166751167235%_
+                               _%e166752167238%_
+                               _%hd166753167241%_
+                               _%tl166754167243%_
+                               _%e166755167246%_
+                               _%hd166756167249%_
+                               _%tl166757167251%_
+                               _%e166758167254%_
+                               _%hd166759167257%_
+                               _%tl166760167259%_
+                               _%e166761167262%_
+                               _%hd166762167265%_
+                               _%tl166763167267%_))
+                          (_%__match171208171209%_
+                           _%e166740167206%_
+                           _%hd166741167209%_
+                           _%tl166742167211%_
+                           _%e166743167214%_
+                           _%hd166744167217%_
+                           _%tl166745167219%_
+                           _%e166746167222%_
+                           _%hd166747167225%_
+                           _%tl166748167227%_
+                           _%e166749167230%_
+                           _%hd166750167233%_
+                           _%tl166751167235%_
+                           _%e166752167238%_
+                           _%hd166753167241%_
+                           _%tl166754167243%_
+                           _%e166755167246%_
+                           _%hd166756167249%_
+                           _%tl166757167251%_
+                           _%e166758167254%_
+                           _%hd166759167257%_
+                           _%tl166760167259%_
+                           _%e166761167262%_
+                           _%hd166762167265%_
+                           _%tl166763167267%_))))
+                   (_%__match170926170927%_
+                    (lambda (_%e166689167325%_
+                             _%hd166690167328%_
+                             _%tl166691167330%_
+                             _%e166692167333%_
+                             _%hd166693167336%_
+                             _%tl166694167338%_
+                             _%e166695167341%_
+                             _%hd166696167344%_
+                             _%tl166697167346%_
+                             _%e166698167349%_
+                             _%hd166699167352%_
+                             _%tl166700167354%_
+                             _%e166701167357%_
+                             _%hd166702167360%_
+                             _%tl166703167362%_
+                             _%e166704167365%_
+                             _%hd166705167368%_
+                             _%tl166706167370%_
+                             _%e166707167373%_
+                             _%hd166708167376%_
+                             _%tl166709167378%_
+                             _%e166710167381%_
+                             _%hd166711167384%_
+                             _%tl166712167386%_
+                             _%e166713167389%_
+                             _%hd166714167392%_
+                             _%tl166715167394%_
+                             _%e166716167397%_
+                             _%hd166717167400%_
+                             _%tl166718167402%_
+                             _%e166719167405%_
+                             _%hd166720167408%_
+                             _%tl166721167410%_
+                             _%e166722167413%_
+                             _%hd166723167416%_
+                             _%tl166724167418%_
+                             _%e166725167421%_
+                             _%hd166726167424%_
+                             _%tl166727167426%_
+                             _%__splice170719170720%_
+                             _%target166728167429%_
+                             _%tl166730167431%_)
+                      (letrec ((_%loop166731167434%_
+                                (lambda (_%hd166729167437%_
+                                         _%args166735167439%_)
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-pair? _%hd167802168510%_))
-                                      (let ((_%e167805168515%_
+                                        (gx#stx-pair? _%hd166729167437%_))
+                                      (let ((_%e166732167442%_
                                              (let ()
                                                (declare (not safe))
-                                               (gx#stx-e _%hd167802168510%_))))
-                                        (let ((_%lp-tl167807168520%_
+                                               (gx#stx-e _%hd166729167437%_))))
+                                        (let ((_%lp-tl166734167447%_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _%e167805168515%_)))
-                                              (_%lp-hd167806168518%_
+                                                 (##cdr _%e166732167442%_)))
+                                              (_%lp-hd166733167445%_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _%e167805168515%_))))
-                                          (let ((__tmp172916
-                                                 (cons _%lp-hd167806168518%_
-                                                       _%args167808168512%_)))
-                                            (declare (not safe))
-                                            (_%loop167804168507%_
-                                             _%lp-tl167807168520%_
-                                             __tmp172916))))
-                                      (let ((_%args167809168523%_
-                                             (reverse _%args167808168512%_)))
-                                        (let ((_%L168526%_
-                                               _%args167809168523%_)
-                                              (_%L168527%_ _%hd167799168497%_)
-                                              (_%L168528%_ _%hd167790168473%_)
-                                              (_%L168529%_ _%hd167781168449%_)
-                                              (_%L168530%_ _%hd167772168425%_))
+                                                 (##car _%e166732167442%_))))
+                                          (_%loop166731167434%_
+                                           _%lp-tl166734167447%_
+                                           (cons _%lp-hd166733167445%_
+                                                 _%args166735167439%_))))
+                                      (let ((_%args166736167450%_
+                                             (reverse _%args166735167439%_)))
+                                        (let ((_%L167453%_
+                                               _%args166736167450%_)
+                                              (_%L167454%_ _%hd166726167424%_)
+                                              (_%L167455%_ _%hd166717167400%_)
+                                              (_%L167456%_ _%hd166708167376%_)
+                                              (_%L167457%_ _%hd166699167352%_))
                                           (if (and (let ()
                                                      (declare (not safe))
                                                      (gxc#runtime-identifier=?
-                                                      _%L168530%_
+                                                      _%L167457%_
                                                       'apply))
                                                    (let ()
                                                      (declare (not safe))
                                                      (gxc#runtime-identifier=?
-                                                      _%L168529%_
+                                                      _%L167456%_
                                                       'call-method))
-                                                   (let ((__tmp172917
+                                                   (let ((__tmp171835
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (slot-ref__0
-                                                             _%self167703%_
+                                                             _%self166630%_
                                                              'receiver))))
                                                      (declare (not safe))
                                                      (gx#free-identifier=?
-                                                      _%L168528%_
-                                                      __tmp172917)))
-                                              (_%__kont171790171791%_
-                                               _%L168526%_
-                                               _%L168527%_
-                                               _%L168528%_
-                                               _%L168529%_
-                                               _%L168530%_)
-                                              (_%__kont171802171803%_))))))))
-                        (let ()
-                          (declare (not safe))
-                          (_%loop167804168507%_ _%target167801168502%_ '())))))
-                   (_%__match171957171958%_
-                    (lambda (_%e167764168398%_
-                             _%hd167763168401%_
-                             _%tl167762168403%_
-                             _%e167767168406%_
-                             _%hd167766168409%_
-                             _%tl167765168411%_
-                             _%e167770168414%_
-                             _%hd167769168417%_
-                             _%tl167768168419%_
-                             _%e167773168422%_
-                             _%hd167772168425%_
-                             _%tl167771168427%_
-                             _%e167776168430%_
-                             _%hd167775168433%_
-                             _%tl167774168435%_
-                             _%e167779168438%_
-                             _%hd167778168441%_
-                             _%tl167777168443%_
-                             _%e167782168446%_
-                             _%hd167781168449%_
-                             _%tl167780168451%_
-                             _%e167785168454%_
-                             _%hd167784168457%_
-                             _%tl167783168459%_
-                             _%e167788168462%_
-                             _%hd167787168465%_
-                             _%tl167786168467%_)
+                                                      _%L167455%_
+                                                      __tmp171835)))
+                                              (_%__kont170717170718%_
+                                               _%L167453%_
+                                               _%L167454%_
+                                               _%L167455%_
+                                               _%L167456%_
+                                               _%L167457%_)
+                                              (_%__kont170729170730%_))))))))
+                        (_%loop166731167434%_ _%target166728167429%_ '()))))
+                   (_%__match170884170885%_
+                    (lambda (_%e166689167325%_
+                             _%hd166690167328%_
+                             _%tl166691167330%_
+                             _%e166692167333%_
+                             _%hd166693167336%_
+                             _%tl166694167338%_
+                             _%e166695167341%_
+                             _%hd166696167344%_
+                             _%tl166697167346%_
+                             _%e166698167349%_
+                             _%hd166699167352%_
+                             _%tl166700167354%_
+                             _%e166701167357%_
+                             _%hd166702167360%_
+                             _%tl166703167362%_
+                             _%e166704167365%_
+                             _%hd166705167368%_
+                             _%tl166706167370%_
+                             _%e166707167373%_
+                             _%hd166708167376%_
+                             _%tl166709167378%_
+                             _%e166710167381%_
+                             _%hd166711167384%_
+                             _%tl166712167386%_
+                             _%e166713167389%_
+                             _%hd166714167392%_
+                             _%tl166715167394%_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-eq? '%#ref _%hd167787168465%_))
+                            (gx#stx-eq? '%#ref _%hd166714167392%_))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-pair? _%tl167786168467%_))
-                              (let ((_%e167791168470%_
+                                (gx#stx-pair? _%tl166715167394%_))
+                              (let ((_%e166716167397%_
                                      (let ()
                                        (declare (not safe))
-                                       (gx#stx-e _%tl167786168467%_))))
-                                (let ((_%tl167789168475%_
+                                       (gx#stx-e _%tl166715167394%_))))
+                                (let ((_%tl166718167402%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%e167791168470%_)))
-                                      (_%hd167790168473%_
+                                         (##cdr _%e166716167397%_)))
+                                      (_%hd166717167400%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%e167791168470%_))))
+                                         (##car _%e166716167397%_))))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-null? _%tl167789168475%_))
+                                        (gx#stx-null? _%tl166718167402%_))
                                       (if (let ()
                                             (declare (not safe))
-                                            (gx#stx-pair? _%tl167783168459%_))
-                                          (let ((_%e167794168478%_
+                                            (gx#stx-pair? _%tl166712167386%_))
+                                          (let ((_%e166719167405%_
                                                  (let ()
                                                    (declare (not safe))
                                                    (gx#stx-e
-                                                    _%tl167783168459%_))))
-                                            (let ((_%tl167792168483%_
+                                                    _%tl166712167386%_))))
+                                            (let ((_%tl166721167410%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##cdr _%e167794168478%_)))
-                                                  (_%hd167793168481%_
+                                                     (##cdr _%e166719167405%_)))
+                                                  (_%hd166720167408%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##car _%e167794168478%_))))
+                                                     (##car _%e166719167405%_))))
                                               (if (let ()
                                                     (declare (not safe))
                                                     (gx#stx-pair?
-                                                     _%hd167793168481%_))
-                                                  (let ((_%e167797168486%_
+                                                     _%hd166720167408%_))
+                                                  (let ((_%e166722167413%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (gx#stx-e
-                                                            _%hd167793168481%_))))
-                                                    (let ((_%tl167795168491%_
+                                                            _%hd166720167408%_))))
+                                                    (let ((_%tl166724167418%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (##cdr _%e167797168486%_)))
-                                                          (_%hd167796168489%_
+                                                             (##cdr _%e166722167413%_)))
+                                                          (_%hd166723167416%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (##car _%e167797168486%_))))
+                                                             (##car _%e166722167413%_))))
                                                       (if (let ()
                                                             (declare
                                                               (not safe))
                                                             (gx#identifier?
-                                                             _%hd167796168489%_))
+                                                             _%hd166723167416%_))
                                                           (if (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (gx#stx-eq? '%#quote _%hd167796168489%_))
+                        (gx#stx-eq? '%#quote _%hd166723167416%_))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _%tl167795168491%_))
-                          (let ((_%e167800168494%_
+                            (gx#stx-pair? _%tl166724167418%_))
+                          (let ((_%e166725167421%_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _%tl167795168491%_))))
-                            (let ((_%tl167798168499%_
+                                   (gx#stx-e _%tl166724167418%_))))
+                            (let ((_%tl166727167426%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e167800168494%_)))
-                                  (_%hd167799168497%_
+                                     (##cdr _%e166725167421%_)))
+                                  (_%hd166726167424%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e167800168494%_))))
+                                     (##car _%e166725167421%_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-null? _%tl167798168499%_))
+                                    (gx#stx-null? _%tl166727167426%_))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-pair/null? _%tl167792168483%_))
-                                      (let ((_%__splice171792171793%_
+                                        (gx#stx-pair/null? _%tl166721167410%_))
+                                      (let ((_%__splice170719170720%_
                                              (let ()
                                                (declare (not safe))
                                                (gx#syntax-split-splice
-                                                _%tl167792168483%_
+                                                _%tl166721167410%_
                                                 '0))))
-                                        (let ((_%tl167803168504%_
+                                        (let ((_%tl166730167431%_
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice171792171793%_
+                                                  _%__splice170719170720%_
                                                   '1)))
-                                              (_%target167801168502%_
+                                              (_%target166728167429%_
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice171792171793%_
+                                                  _%__splice170719170720%_
                                                   '0))))
                                           (if (let ()
                                                 (declare (not safe))
                                                 (gx#stx-null?
-                                                 _%tl167803168504%_))
-                                              (_%__match171999172000%_
-                                               _%e167764168398%_
-                                               _%hd167763168401%_
-                                               _%tl167762168403%_
-                                               _%e167767168406%_
-                                               _%hd167766168409%_
-                                               _%tl167765168411%_
-                                               _%e167770168414%_
-                                               _%hd167769168417%_
-                                               _%tl167768168419%_
-                                               _%e167773168422%_
-                                               _%hd167772168425%_
-                                               _%tl167771168427%_
-                                               _%e167776168430%_
-                                               _%hd167775168433%_
-                                               _%tl167774168435%_
-                                               _%e167779168438%_
-                                               _%hd167778168441%_
-                                               _%tl167777168443%_
-                                               _%e167782168446%_
-                                               _%hd167781168449%_
-                                               _%tl167780168451%_
-                                               _%e167785168454%_
-                                               _%hd167784168457%_
-                                               _%tl167783168459%_
-                                               _%e167788168462%_
-                                               _%hd167787168465%_
-                                               _%tl167786168467%_
-                                               _%e167791168470%_
-                                               _%hd167790168473%_
-                                               _%tl167789168475%_
-                                               _%e167794168478%_
-                                               _%hd167793168481%_
-                                               _%tl167792168483%_
-                                               _%e167797168486%_
-                                               _%hd167796168489%_
-                                               _%tl167795168491%_
-                                               _%e167800168494%_
-                                               _%hd167799168497%_
-                                               _%tl167798168499%_
-                                               _%__splice171792171793%_
-                                               _%target167801168502%_
-                                               _%tl167803168504%_)
-                                              (_%__kont171802171803%_))))
-                                      (_%__kont171802171803%_))
-                                  (_%__kont171802171803%_))))
-                          (_%__kont171802171803%_))
-                      (_%__kont171802171803%_))
-                  (_%__kont171802171803%_))))
+                                                 _%tl166730167431%_))
+                                              (_%__match170926170927%_
+                                               _%e166689167325%_
+                                               _%hd166690167328%_
+                                               _%tl166691167330%_
+                                               _%e166692167333%_
+                                               _%hd166693167336%_
+                                               _%tl166694167338%_
+                                               _%e166695167341%_
+                                               _%hd166696167344%_
+                                               _%tl166697167346%_
+                                               _%e166698167349%_
+                                               _%hd166699167352%_
+                                               _%tl166700167354%_
+                                               _%e166701167357%_
+                                               _%hd166702167360%_
+                                               _%tl166703167362%_
+                                               _%e166704167365%_
+                                               _%hd166705167368%_
+                                               _%tl166706167370%_
+                                               _%e166707167373%_
+                                               _%hd166708167376%_
+                                               _%tl166709167378%_
+                                               _%e166710167381%_
+                                               _%hd166711167384%_
+                                               _%tl166712167386%_
+                                               _%e166713167389%_
+                                               _%hd166714167392%_
+                                               _%tl166715167394%_
+                                               _%e166716167397%_
+                                               _%hd166717167400%_
+                                               _%tl166718167402%_
+                                               _%e166719167405%_
+                                               _%hd166720167408%_
+                                               _%tl166721167410%_
+                                               _%e166722167413%_
+                                               _%hd166723167416%_
+                                               _%tl166724167418%_
+                                               _%e166725167421%_
+                                               _%hd166726167424%_
+                                               _%tl166727167426%_
+                                               _%__splice170719170720%_
+                                               _%target166728167429%_
+                                               _%tl166730167431%_)
+                                              (_%__kont170729170730%_))))
+                                      (_%__kont170729170730%_))
+                                  (_%__kont170729170730%_))))
+                          (_%__kont170729170730%_))
+                      (_%__kont170729170730%_))
+                  (_%__kont170729170730%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%__kont171802171803%_))))
-                                          (_%__match172281172282%_
-                                           _%e167764168398%_
-                                           _%hd167763168401%_
-                                           _%tl167762168403%_
-                                           _%e167767168406%_
-                                           _%hd167766168409%_
-                                           _%tl167765168411%_
-                                           _%e167770168414%_
-                                           _%hd167769168417%_
-                                           _%tl167768168419%_
-                                           _%e167773168422%_
-                                           _%hd167772168425%_
-                                           _%tl167771168427%_
-                                           _%e167776168430%_
-                                           _%hd167775168433%_
-                                           _%tl167774168435%_
-                                           _%e167779168438%_
-                                           _%hd167778168441%_
-                                           _%tl167777168443%_
-                                           _%e167782168446%_
-                                           _%hd167781168449%_
-                                           _%tl167780168451%_
-                                           _%e167785168454%_
-                                           _%hd167784168457%_
-                                           _%tl167783168459%_))
-                                      (_%__match172281172282%_
-                                       _%e167764168398%_
-                                       _%hd167763168401%_
-                                       _%tl167762168403%_
-                                       _%e167767168406%_
-                                       _%hd167766168409%_
-                                       _%tl167765168411%_
-                                       _%e167770168414%_
-                                       _%hd167769168417%_
-                                       _%tl167768168419%_
-                                       _%e167773168422%_
-                                       _%hd167772168425%_
-                                       _%tl167771168427%_
-                                       _%e167776168430%_
-                                       _%hd167775168433%_
-                                       _%tl167774168435%_
-                                       _%e167779168438%_
-                                       _%hd167778168441%_
-                                       _%tl167777168443%_
-                                       _%e167782168446%_
-                                       _%hd167781168449%_
-                                       _%tl167780168451%_
-                                       _%e167785168454%_
-                                       _%hd167784168457%_
-                                       _%tl167783168459%_))))
-                              (_%__match172281172282%_
-                               _%e167764168398%_
-                               _%hd167763168401%_
-                               _%tl167762168403%_
-                               _%e167767168406%_
-                               _%hd167766168409%_
-                               _%tl167765168411%_
-                               _%e167770168414%_
-                               _%hd167769168417%_
-                               _%tl167768168419%_
-                               _%e167773168422%_
-                               _%hd167772168425%_
-                               _%tl167771168427%_
-                               _%e167776168430%_
-                               _%hd167775168433%_
-                               _%tl167774168435%_
-                               _%e167779168438%_
-                               _%hd167778168441%_
-                               _%tl167777168443%_
-                               _%e167782168446%_
-                               _%hd167781168449%_
-                               _%tl167780168451%_
-                               _%e167785168454%_
-                               _%hd167784168457%_
-                               _%tl167783168459%_))
-                          (_%__match172067172068%_
-                           _%e167764168398%_
-                           _%hd167763168401%_
-                           _%tl167762168403%_
-                           _%e167767168406%_
-                           _%hd167766168409%_
-                           _%tl167765168411%_
-                           _%e167770168414%_
-                           _%hd167769168417%_
-                           _%tl167768168419%_
-                           _%e167773168422%_
-                           _%hd167772168425%_
-                           _%tl167771168427%_
-                           _%e167776168430%_
-                           _%hd167775168433%_
-                           _%tl167774168435%_
-                           _%e167779168438%_
-                           _%hd167778168441%_
-                           _%tl167777168443%_
-                           _%e167782168446%_
-                           _%hd167781168449%_
-                           _%tl167780168451%_
-                           _%e167785168454%_
-                           _%hd167784168457%_
-                           _%tl167783168459%_
-                           _%e167788168462%_
-                           _%hd167787168465%_
-                           _%tl167786168467%_))))
-                   (_%__match171889171890%_
-                    (lambda (_%e167720168587%_
-                             _%hd167719168590%_
-                             _%tl167718168592%_
-                             _%e167723168595%_
-                             _%hd167722168598%_
-                             _%tl167721168600%_
-                             _%e167726168603%_
-                             _%hd167725168606%_
-                             _%tl167724168608%_
-                             _%e167729168611%_
-                             _%hd167728168614%_
-                             _%tl167727168616%_
-                             _%e167732168619%_
-                             _%hd167731168622%_
-                             _%tl167730168624%_
-                             _%e167735168627%_
-                             _%hd167734168630%_
-                             _%tl167733168632%_
-                             _%e167738168635%_
-                             _%hd167737168638%_
-                             _%tl167736168640%_
-                             _%e167741168643%_
-                             _%hd167740168646%_
-                             _%tl167739168648%_
-                             _%e167744168651%_
-                             _%hd167743168654%_
-                             _%tl167742168656%_
-                             _%e167747168659%_
-                             _%hd167746168662%_
-                             _%tl167745168664%_
-                             _%__splice171788171789%_
-                             _%target167748168667%_
-                             _%tl167750168669%_)
-                      (letrec ((_%loop167751168672%_
-                                (lambda (_%hd167749168675%_
-                                         _%args167755168677%_)
+                                                  (_%__kont170729170730%_))))
+                                          (_%__match171208171209%_
+                                           _%e166689167325%_
+                                           _%hd166690167328%_
+                                           _%tl166691167330%_
+                                           _%e166692167333%_
+                                           _%hd166693167336%_
+                                           _%tl166694167338%_
+                                           _%e166695167341%_
+                                           _%hd166696167344%_
+                                           _%tl166697167346%_
+                                           _%e166698167349%_
+                                           _%hd166699167352%_
+                                           _%tl166700167354%_
+                                           _%e166701167357%_
+                                           _%hd166702167360%_
+                                           _%tl166703167362%_
+                                           _%e166704167365%_
+                                           _%hd166705167368%_
+                                           _%tl166706167370%_
+                                           _%e166707167373%_
+                                           _%hd166708167376%_
+                                           _%tl166709167378%_
+                                           _%e166710167381%_
+                                           _%hd166711167384%_
+                                           _%tl166712167386%_))
+                                      (_%__match171208171209%_
+                                       _%e166689167325%_
+                                       _%hd166690167328%_
+                                       _%tl166691167330%_
+                                       _%e166692167333%_
+                                       _%hd166693167336%_
+                                       _%tl166694167338%_
+                                       _%e166695167341%_
+                                       _%hd166696167344%_
+                                       _%tl166697167346%_
+                                       _%e166698167349%_
+                                       _%hd166699167352%_
+                                       _%tl166700167354%_
+                                       _%e166701167357%_
+                                       _%hd166702167360%_
+                                       _%tl166703167362%_
+                                       _%e166704167365%_
+                                       _%hd166705167368%_
+                                       _%tl166706167370%_
+                                       _%e166707167373%_
+                                       _%hd166708167376%_
+                                       _%tl166709167378%_
+                                       _%e166710167381%_
+                                       _%hd166711167384%_
+                                       _%tl166712167386%_))))
+                              (_%__match171208171209%_
+                               _%e166689167325%_
+                               _%hd166690167328%_
+                               _%tl166691167330%_
+                               _%e166692167333%_
+                               _%hd166693167336%_
+                               _%tl166694167338%_
+                               _%e166695167341%_
+                               _%hd166696167344%_
+                               _%tl166697167346%_
+                               _%e166698167349%_
+                               _%hd166699167352%_
+                               _%tl166700167354%_
+                               _%e166701167357%_
+                               _%hd166702167360%_
+                               _%tl166703167362%_
+                               _%e166704167365%_
+                               _%hd166705167368%_
+                               _%tl166706167370%_
+                               _%e166707167373%_
+                               _%hd166708167376%_
+                               _%tl166709167378%_
+                               _%e166710167381%_
+                               _%hd166711167384%_
+                               _%tl166712167386%_))
+                          (_%__match170994170995%_
+                           _%e166689167325%_
+                           _%hd166690167328%_
+                           _%tl166691167330%_
+                           _%e166692167333%_
+                           _%hd166693167336%_
+                           _%tl166694167338%_
+                           _%e166695167341%_
+                           _%hd166696167344%_
+                           _%tl166697167346%_
+                           _%e166698167349%_
+                           _%hd166699167352%_
+                           _%tl166700167354%_
+                           _%e166701167357%_
+                           _%hd166702167360%_
+                           _%tl166703167362%_
+                           _%e166704167365%_
+                           _%hd166705167368%_
+                           _%tl166706167370%_
+                           _%e166707167373%_
+                           _%hd166708167376%_
+                           _%tl166709167378%_
+                           _%e166710167381%_
+                           _%hd166711167384%_
+                           _%tl166712167386%_
+                           _%e166713167389%_
+                           _%hd166714167392%_
+                           _%tl166715167394%_))))
+                   (_%__match170816170817%_
+                    (lambda (_%e166645167514%_
+                             _%hd166646167517%_
+                             _%tl166647167519%_
+                             _%e166648167522%_
+                             _%hd166649167525%_
+                             _%tl166650167527%_
+                             _%e166651167530%_
+                             _%hd166652167533%_
+                             _%tl166653167535%_
+                             _%e166654167538%_
+                             _%hd166655167541%_
+                             _%tl166656167543%_
+                             _%e166657167546%_
+                             _%hd166658167549%_
+                             _%tl166659167551%_
+                             _%e166660167554%_
+                             _%hd166661167557%_
+                             _%tl166662167559%_
+                             _%e166663167562%_
+                             _%hd166664167565%_
+                             _%tl166665167567%_
+                             _%e166666167570%_
+                             _%hd166667167573%_
+                             _%tl166668167575%_
+                             _%e166669167578%_
+                             _%hd166670167581%_
+                             _%tl166671167583%_
+                             _%e166672167586%_
+                             _%hd166673167589%_
+                             _%tl166674167591%_
+                             _%__splice170715170716%_
+                             _%target166675167594%_
+                             _%tl166677167596%_)
+                      (letrec ((_%loop166678167599%_
+                                (lambda (_%hd166676167602%_
+                                         _%args166682167604%_)
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-pair? _%hd167749168675%_))
-                                      (let ((_%e167752168680%_
+                                        (gx#stx-pair? _%hd166676167602%_))
+                                      (let ((_%e166679167607%_
                                              (let ()
                                                (declare (not safe))
-                                               (gx#stx-e _%hd167749168675%_))))
-                                        (let ((_%lp-tl167754168685%_
+                                               (gx#stx-e _%hd166676167602%_))))
+                                        (let ((_%lp-tl166681167612%_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _%e167752168680%_)))
-                                              (_%lp-hd167753168683%_
+                                                 (##cdr _%e166679167607%_)))
+                                              (_%lp-hd166680167610%_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _%e167752168680%_))))
-                                          (let ((__tmp172918
-                                                 (cons _%lp-hd167753168683%_
-                                                       _%args167755168677%_)))
-                                            (declare (not safe))
-                                            (_%loop167751168672%_
-                                             _%lp-tl167754168685%_
-                                             __tmp172918))))
-                                      (let ((_%args167756168688%_
-                                             (reverse _%args167755168677%_)))
-                                        (let ((_%L168691%_
-                                               _%args167756168688%_)
-                                              (_%L168692%_ _%hd167746168662%_)
-                                              (_%L168693%_ _%hd167737168638%_)
-                                              (_%L168694%_ _%hd167728168614%_))
+                                                 (##car _%e166679167607%_))))
+                                          (_%loop166678167599%_
+                                           _%lp-tl166681167612%_
+                                           (cons _%lp-hd166680167610%_
+                                                 _%args166682167604%_))))
+                                      (let ((_%args166683167615%_
+                                             (reverse _%args166682167604%_)))
+                                        (let ((_%L167618%_
+                                               _%args166683167615%_)
+                                              (_%L167619%_ _%hd166673167589%_)
+                                              (_%L167620%_ _%hd166664167565%_)
+                                              (_%L167621%_ _%hd166655167541%_))
                                           (if (and (let ()
                                                      (declare (not safe))
                                                      (gxc#runtime-identifier=?
-                                                      _%L168694%_
+                                                      _%L167621%_
                                                       'call-method))
-                                                   (let ((__tmp172919
+                                                   (let ((__tmp171836
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (slot-ref__0
-                                                             _%self167703%_
+                                                             _%self166630%_
                                                              'receiver))))
                                                      (declare (not safe))
                                                      (gx#free-identifier=?
-                                                      _%L168693%_
-                                                      __tmp172919)))
-                                              (_%__kont171786171787%_
-                                               _%L168691%_
-                                               _%L168692%_
-                                               _%L168693%_
-                                               _%L168694%_)
-                                              (_%__match172077172078%_
-                                               _%e167720168587%_
-                                               _%hd167719168590%_
-                                               _%tl167718168592%_
-                                               _%e167723168595%_
-                                               _%hd167722168598%_
-                                               _%tl167721168600%_
-                                               _%e167726168603%_
-                                               _%hd167725168606%_
-                                               _%tl167724168608%_
-                                               _%e167729168611%_
-                                               _%hd167728168614%_
-                                               _%tl167727168616%_
-                                               _%e167732168619%_
-                                               _%hd167731168622%_
-                                               _%tl167730168624%_
-                                               _%e167735168627%_
-                                               _%hd167734168630%_
-                                               _%tl167733168632%_
-                                               _%e167738168635%_
-                                               _%hd167737168638%_
-                                               _%tl167736168640%_
-                                               _%e167741168643%_
-                                               _%hd167740168646%_
-                                               _%tl167739168648%_
-                                               _%e167744168651%_
-                                               _%hd167743168654%_
-                                               _%tl167742168656%_
-                                               _%e167747168659%_
-                                               _%hd167746168662%_
-                                               _%tl167745168664%_))))))))
-                        (let ()
-                          (declare (not safe))
-                          (_%loop167751168672%_
-                           _%target167748168667%_
-                           '()))))))
+                                                      _%L167620%_
+                                                      __tmp171836)))
+                                              (_%__kont170713170714%_
+                                               _%L167618%_
+                                               _%L167619%_
+                                               _%L167620%_
+                                               _%L167621%_)
+                                              (_%__match171004171005%_
+                                               _%e166645167514%_
+                                               _%hd166646167517%_
+                                               _%tl166647167519%_
+                                               _%e166648167522%_
+                                               _%hd166649167525%_
+                                               _%tl166650167527%_
+                                               _%e166651167530%_
+                                               _%hd166652167533%_
+                                               _%tl166653167535%_
+                                               _%e166654167538%_
+                                               _%hd166655167541%_
+                                               _%tl166656167543%_
+                                               _%e166657167546%_
+                                               _%hd166658167549%_
+                                               _%tl166659167551%_
+                                               _%e166660167554%_
+                                               _%hd166661167557%_
+                                               _%tl166662167559%_
+                                               _%e166663167562%_
+                                               _%hd166664167565%_
+                                               _%tl166665167567%_
+                                               _%e166666167570%_
+                                               _%hd166667167573%_
+                                               _%tl166668167575%_
+                                               _%e166669167578%_
+                                               _%hd166670167581%_
+                                               _%tl166671167583%_
+                                               _%e166672167586%_
+                                               _%hd166673167589%_
+                                               _%tl166674167591%_))))))))
+                        (_%loop166678167599%_ _%target166675167594%_ '())))))
               (if (let ()
                     (declare (not safe))
-                    (gx#stx-pair? _%__stx171784171785%_))
-                  (let ((_%e167720168587%_
+                    (gx#stx-pair? _%__stx170711170712%_))
+                  (let ((_%e166645167514%_
                          (let ()
                            (declare (not safe))
-                           (gx#stx-e _%__stx171784171785%_))))
-                    (let ((_%tl167718168592%_
+                           (gx#stx-e _%__stx170711170712%_))))
+                    (let ((_%tl166647167519%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%e167720168587%_)))
-                          (_%hd167719168590%_
+                             (##cdr _%e166645167514%_)))
+                          (_%hd166646167517%_
                            (let ()
                              (declare (not safe))
-                             (##car _%e167720168587%_))))
+                             (##car _%e166645167514%_))))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _%tl167718168592%_))
-                          (let ((_%e167723168595%_
+                            (gx#stx-pair? _%tl166647167519%_))
+                          (let ((_%e166648167522%_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _%tl167718168592%_))))
-                            (let ((_%tl167721168600%_
+                                   (gx#stx-e _%tl166647167519%_))))
+                            (let ((_%tl166650167527%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e167723168595%_)))
-                                  (_%hd167722168598%_
+                                     (##cdr _%e166648167522%_)))
+                                  (_%hd166649167525%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e167723168595%_))))
+                                     (##car _%e166648167522%_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-pair? _%hd167722168598%_))
-                                  (let ((_%e167726168603%_
+                                    (gx#stx-pair? _%hd166649167525%_))
+                                  (let ((_%e166651167530%_
                                          (let ()
                                            (declare (not safe))
-                                           (gx#stx-e _%hd167722168598%_))))
-                                    (let ((_%tl167724168608%_
+                                           (gx#stx-e _%hd166649167525%_))))
+                                    (let ((_%tl166653167535%_
                                            (let ()
                                              (declare (not safe))
-                                             (##cdr _%e167726168603%_)))
-                                          (_%hd167725168606%_
+                                             (##cdr _%e166651167530%_)))
+                                          (_%hd166652167533%_
                                            (let ()
                                              (declare (not safe))
-                                             (##car _%e167726168603%_))))
+                                             (##car _%e166651167530%_))))
                                       (if (let ()
                                             (declare (not safe))
                                             (gx#identifier?
-                                             _%hd167725168606%_))
+                                             _%hd166652167533%_))
                                           (if (let ()
                                                 (declare (not safe))
                                                 (gx#stx-eq?
                                                  '%#ref
-                                                 _%hd167725168606%_))
+                                                 _%hd166652167533%_))
                                               (if (let ()
                                                     (declare (not safe))
                                                     (gx#stx-pair?
-                                                     _%tl167724168608%_))
-                                                  (let ((_%e167729168611%_
+                                                     _%tl166653167535%_))
+                                                  (let ((_%e166654167538%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (gx#stx-e
-                                                            _%tl167724168608%_))))
-                                                    (let ((_%tl167727168616%_
+                                                            _%tl166653167535%_))))
+                                                    (let ((_%tl166656167543%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (##cdr _%e167729168611%_)))
-                                                          (_%hd167728168614%_
+                                                             (##cdr _%e166654167538%_)))
+                                                          (_%hd166655167541%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (##car _%e167729168611%_))))
+                                                             (##car _%e166654167538%_))))
                                                       (if (let ()
                                                             (declare
                                                               (not safe))
                                                             (gx#stx-null?
-                                                             _%tl167727168616%_))
+                                                             _%tl166656167543%_))
                                                           (if (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (gx#stx-pair? _%tl167721168600%_))
-                      (let ((_%e167732168619%_
+                        (gx#stx-pair? _%tl166650167527%_))
+                      (let ((_%e166657167546%_
                              (let ()
                                (declare (not safe))
-                               (gx#stx-e _%tl167721168600%_))))
-                        (let ((_%tl167730168624%_
+                               (gx#stx-e _%tl166650167527%_))))
+                        (let ((_%tl166659167551%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%e167732168619%_)))
-                              (_%hd167731168622%_
+                                 (##cdr _%e166657167546%_)))
+                              (_%hd166658167549%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%e167732168619%_))))
+                                 (##car _%e166657167546%_))))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-pair? _%hd167731168622%_))
-                              (let ((_%e167735168627%_
+                                (gx#stx-pair? _%hd166658167549%_))
+                              (let ((_%e166660167554%_
                                      (let ()
                                        (declare (not safe))
-                                       (gx#stx-e _%hd167731168622%_))))
-                                (let ((_%tl167733168632%_
+                                       (gx#stx-e _%hd166658167549%_))))
+                                (let ((_%tl166662167559%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%e167735168627%_)))
-                                      (_%hd167734168630%_
+                                         (##cdr _%e166660167554%_)))
+                                      (_%hd166661167557%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%e167735168627%_))))
+                                         (##car _%e166660167554%_))))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#identifier? _%hd167734168630%_))
+                                        (gx#identifier? _%hd166661167557%_))
                                       (if (let ()
                                             (declare (not safe))
                                             (gx#stx-eq?
                                              '%#ref
-                                             _%hd167734168630%_))
+                                             _%hd166661167557%_))
                                           (if (let ()
                                                 (declare (not safe))
                                                 (gx#stx-pair?
-                                                 _%tl167733168632%_))
-                                              (let ((_%e167738168635%_
+                                                 _%tl166662167559%_))
+                                              (let ((_%e166663167562%_
                                                      (let ()
                                                        (declare (not safe))
                                                        (gx#stx-e
-                                                        _%tl167733168632%_))))
-                                                (let ((_%tl167736168640%_
+                                                        _%tl166662167559%_))))
+                                                (let ((_%tl166665167567%_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _%e167738168635%_)))
-                                                      (_%hd167737168638%_
+                                                         (##cdr _%e166663167562%_)))
+                                                      (_%hd166664167565%_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _%e167738168635%_))))
+                                                         (##car _%e166663167562%_))))
                                                   (if (let ()
                                                         (declare (not safe))
                                                         (gx#stx-null?
-                                                         _%tl167736168640%_))
+                                                         _%tl166665167567%_))
                                                       (if (let ()
                                                             (declare
                                                               (not safe))
                                                             (gx#stx-pair?
-                                                             _%tl167730168624%_))
-                                                          (let ((_%e167741168643%_
+                                                             _%tl166659167551%_))
+                                                          (let ((_%e166666167570%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (gx#stx-e _%tl167730168624%_))))
-                    (let ((_%tl167739168648%_
+                           (gx#stx-e _%tl166659167551%_))))
+                    (let ((_%tl166668167575%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%e167741168643%_)))
-                          (_%hd167740168646%_
+                             (##cdr _%e166666167570%_)))
+                          (_%hd166667167573%_
                            (let ()
                              (declare (not safe))
-                             (##car _%e167741168643%_))))
+                             (##car _%e166666167570%_))))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _%hd167740168646%_))
-                          (let ((_%e167744168651%_
+                            (gx#stx-pair? _%hd166667167573%_))
+                          (let ((_%e166669167578%_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _%hd167740168646%_))))
-                            (let ((_%tl167742168656%_
+                                   (gx#stx-e _%hd166667167573%_))))
+                            (let ((_%tl166671167583%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e167744168651%_)))
-                                  (_%hd167743168654%_
+                                     (##cdr _%e166669167578%_)))
+                                  (_%hd166670167581%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e167744168651%_))))
+                                     (##car _%e166669167578%_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#identifier? _%hd167743168654%_))
+                                    (gx#identifier? _%hd166670167581%_))
                                   (if (let ()
                                         (declare (not safe))
                                         (gx#stx-eq?
                                          '%#quote
-                                         _%hd167743168654%_))
+                                         _%hd166670167581%_))
                                       (if (let ()
                                             (declare (not safe))
-                                            (gx#stx-pair? _%tl167742168656%_))
-                                          (let ((_%e167747168659%_
+                                            (gx#stx-pair? _%tl166671167583%_))
+                                          (let ((_%e166672167586%_
                                                  (let ()
                                                    (declare (not safe))
                                                    (gx#stx-e
-                                                    _%tl167742168656%_))))
-                                            (let ((_%tl167745168664%_
+                                                    _%tl166671167583%_))))
+                                            (let ((_%tl166674167591%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##cdr _%e167747168659%_)))
-                                                  (_%hd167746168662%_
+                                                     (##cdr _%e166672167586%_)))
+                                                  (_%hd166673167589%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##car _%e167747168659%_))))
+                                                     (##car _%e166672167586%_))))
                                               (if (let ()
                                                     (declare (not safe))
                                                     (gx#stx-null?
-                                                     _%tl167745168664%_))
+                                                     _%tl166674167591%_))
                                                   (if (let ()
                                                         (declare (not safe))
                                                         (gx#stx-pair/null?
-                                                         _%tl167739168648%_))
-                                                      (let ((_%__splice171788171789%_
+                                                         _%tl166668167575%_))
+                                                      (let ((_%__splice170715170716%_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (gx#syntax-split-splice _%tl167739168648%_ '0))))
-                (let ((_%tl167750168669%_
+                       (gx#syntax-split-splice _%tl166668167575%_ '0))))
+                (let ((_%tl166677167596%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice171788171789%_ '1)))
-                      (_%target167748168667%_
+                         (##vector-ref _%__splice170715170716%_ '1)))
+                      (_%target166675167594%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice171788171789%_ '0))))
+                         (##vector-ref _%__splice170715170716%_ '0))))
                   (if (let ()
                         (declare (not safe))
-                        (gx#stx-null? _%tl167750168669%_))
-                      (_%__match171889171890%_
-                       _%e167720168587%_
-                       _%hd167719168590%_
-                       _%tl167718168592%_
-                       _%e167723168595%_
-                       _%hd167722168598%_
-                       _%tl167721168600%_
-                       _%e167726168603%_
-                       _%hd167725168606%_
-                       _%tl167724168608%_
-                       _%e167729168611%_
-                       _%hd167728168614%_
-                       _%tl167727168616%_
-                       _%e167732168619%_
-                       _%hd167731168622%_
-                       _%tl167730168624%_
-                       _%e167735168627%_
-                       _%hd167734168630%_
-                       _%tl167733168632%_
-                       _%e167738168635%_
-                       _%hd167737168638%_
-                       _%tl167736168640%_
-                       _%e167741168643%_
-                       _%hd167740168646%_
-                       _%tl167739168648%_
-                       _%e167744168651%_
-                       _%hd167743168654%_
-                       _%tl167742168656%_
-                       _%e167747168659%_
-                       _%hd167746168662%_
-                       _%tl167745168664%_
-                       _%__splice171788171789%_
-                       _%target167748168667%_
-                       _%tl167750168669%_)
-                      (_%__match172077172078%_
-                       _%e167720168587%_
-                       _%hd167719168590%_
-                       _%tl167718168592%_
-                       _%e167723168595%_
-                       _%hd167722168598%_
-                       _%tl167721168600%_
-                       _%e167726168603%_
-                       _%hd167725168606%_
-                       _%tl167724168608%_
-                       _%e167729168611%_
-                       _%hd167728168614%_
-                       _%tl167727168616%_
-                       _%e167732168619%_
-                       _%hd167731168622%_
-                       _%tl167730168624%_
-                       _%e167735168627%_
-                       _%hd167734168630%_
-                       _%tl167733168632%_
-                       _%e167738168635%_
-                       _%hd167737168638%_
-                       _%tl167736168640%_
-                       _%e167741168643%_
-                       _%hd167740168646%_
-                       _%tl167739168648%_
-                       _%e167744168651%_
-                       _%hd167743168654%_
-                       _%tl167742168656%_
-                       _%e167747168659%_
-                       _%hd167746168662%_
-                       _%tl167745168664%_))))
-              (_%__match172077172078%_
-               _%e167720168587%_
-               _%hd167719168590%_
-               _%tl167718168592%_
-               _%e167723168595%_
-               _%hd167722168598%_
-               _%tl167721168600%_
-               _%e167726168603%_
-               _%hd167725168606%_
-               _%tl167724168608%_
-               _%e167729168611%_
-               _%hd167728168614%_
-               _%tl167727168616%_
-               _%e167732168619%_
-               _%hd167731168622%_
-               _%tl167730168624%_
-               _%e167735168627%_
-               _%hd167734168630%_
-               _%tl167733168632%_
-               _%e167738168635%_
-               _%hd167737168638%_
-               _%tl167736168640%_
-               _%e167741168643%_
-               _%hd167740168646%_
-               _%tl167739168648%_
-               _%e167744168651%_
-               _%hd167743168654%_
-               _%tl167742168656%_
-               _%e167747168659%_
-               _%hd167746168662%_
-               _%tl167745168664%_))
+                        (gx#stx-null? _%tl166677167596%_))
+                      (_%__match170816170817%_
+                       _%e166645167514%_
+                       _%hd166646167517%_
+                       _%tl166647167519%_
+                       _%e166648167522%_
+                       _%hd166649167525%_
+                       _%tl166650167527%_
+                       _%e166651167530%_
+                       _%hd166652167533%_
+                       _%tl166653167535%_
+                       _%e166654167538%_
+                       _%hd166655167541%_
+                       _%tl166656167543%_
+                       _%e166657167546%_
+                       _%hd166658167549%_
+                       _%tl166659167551%_
+                       _%e166660167554%_
+                       _%hd166661167557%_
+                       _%tl166662167559%_
+                       _%e166663167562%_
+                       _%hd166664167565%_
+                       _%tl166665167567%_
+                       _%e166666167570%_
+                       _%hd166667167573%_
+                       _%tl166668167575%_
+                       _%e166669167578%_
+                       _%hd166670167581%_
+                       _%tl166671167583%_
+                       _%e166672167586%_
+                       _%hd166673167589%_
+                       _%tl166674167591%_
+                       _%__splice170715170716%_
+                       _%target166675167594%_
+                       _%tl166677167596%_)
+                      (_%__match171004171005%_
+                       _%e166645167514%_
+                       _%hd166646167517%_
+                       _%tl166647167519%_
+                       _%e166648167522%_
+                       _%hd166649167525%_
+                       _%tl166650167527%_
+                       _%e166651167530%_
+                       _%hd166652167533%_
+                       _%tl166653167535%_
+                       _%e166654167538%_
+                       _%hd166655167541%_
+                       _%tl166656167543%_
+                       _%e166657167546%_
+                       _%hd166658167549%_
+                       _%tl166659167551%_
+                       _%e166660167554%_
+                       _%hd166661167557%_
+                       _%tl166662167559%_
+                       _%e166663167562%_
+                       _%hd166664167565%_
+                       _%tl166665167567%_
+                       _%e166666167570%_
+                       _%hd166667167573%_
+                       _%tl166668167575%_
+                       _%e166669167578%_
+                       _%hd166670167581%_
+                       _%tl166671167583%_
+                       _%e166672167586%_
+                       _%hd166673167589%_
+                       _%tl166674167591%_))))
+              (_%__match171004171005%_
+               _%e166645167514%_
+               _%hd166646167517%_
+               _%tl166647167519%_
+               _%e166648167522%_
+               _%hd166649167525%_
+               _%tl166650167527%_
+               _%e166651167530%_
+               _%hd166652167533%_
+               _%tl166653167535%_
+               _%e166654167538%_
+               _%hd166655167541%_
+               _%tl166656167543%_
+               _%e166657167546%_
+               _%hd166658167549%_
+               _%tl166659167551%_
+               _%e166660167554%_
+               _%hd166661167557%_
+               _%tl166662167559%_
+               _%e166663167562%_
+               _%hd166664167565%_
+               _%tl166665167567%_
+               _%e166666167570%_
+               _%hd166667167573%_
+               _%tl166668167575%_
+               _%e166669167578%_
+               _%hd166670167581%_
+               _%tl166671167583%_
+               _%e166672167586%_
+               _%hd166673167589%_
+               _%tl166674167591%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%__match172281172282%_
-                                                   _%e167720168587%_
-                                                   _%hd167719168590%_
-                                                   _%tl167718168592%_
-                                                   _%e167723168595%_
-                                                   _%hd167722168598%_
-                                                   _%tl167721168600%_
-                                                   _%e167726168603%_
-                                                   _%hd167725168606%_
-                                                   _%tl167724168608%_
-                                                   _%e167729168611%_
-                                                   _%hd167728168614%_
-                                                   _%tl167727168616%_
-                                                   _%e167732168619%_
-                                                   _%hd167731168622%_
-                                                   _%tl167730168624%_
-                                                   _%e167735168627%_
-                                                   _%hd167734168630%_
-                                                   _%tl167733168632%_
-                                                   _%e167738168635%_
-                                                   _%hd167737168638%_
-                                                   _%tl167736168640%_
-                                                   _%e167741168643%_
-                                                   _%hd167740168646%_
-                                                   _%tl167739168648%_))))
-                                          (_%__match172281172282%_
-                                           _%e167720168587%_
-                                           _%hd167719168590%_
-                                           _%tl167718168592%_
-                                           _%e167723168595%_
-                                           _%hd167722168598%_
-                                           _%tl167721168600%_
-                                           _%e167726168603%_
-                                           _%hd167725168606%_
-                                           _%tl167724168608%_
-                                           _%e167729168611%_
-                                           _%hd167728168614%_
-                                           _%tl167727168616%_
-                                           _%e167732168619%_
-                                           _%hd167731168622%_
-                                           _%tl167730168624%_
-                                           _%e167735168627%_
-                                           _%hd167734168630%_
-                                           _%tl167733168632%_
-                                           _%e167738168635%_
-                                           _%hd167737168638%_
-                                           _%tl167736168640%_
-                                           _%e167741168643%_
-                                           _%hd167740168646%_
-                                           _%tl167739168648%_))
-                                      (_%__match171957171958%_
-                                       _%e167720168587%_
-                                       _%hd167719168590%_
-                                       _%tl167718168592%_
-                                       _%e167723168595%_
-                                       _%hd167722168598%_
-                                       _%tl167721168600%_
-                                       _%e167726168603%_
-                                       _%hd167725168606%_
-                                       _%tl167724168608%_
-                                       _%e167729168611%_
-                                       _%hd167728168614%_
-                                       _%tl167727168616%_
-                                       _%e167732168619%_
-                                       _%hd167731168622%_
-                                       _%tl167730168624%_
-                                       _%e167735168627%_
-                                       _%hd167734168630%_
-                                       _%tl167733168632%_
-                                       _%e167738168635%_
-                                       _%hd167737168638%_
-                                       _%tl167736168640%_
-                                       _%e167741168643%_
-                                       _%hd167740168646%_
-                                       _%tl167739168648%_
-                                       _%e167744168651%_
-                                       _%hd167743168654%_
-                                       _%tl167742168656%_))
-                                  (_%__match172281172282%_
-                                   _%e167720168587%_
-                                   _%hd167719168590%_
-                                   _%tl167718168592%_
-                                   _%e167723168595%_
-                                   _%hd167722168598%_
-                                   _%tl167721168600%_
-                                   _%e167726168603%_
-                                   _%hd167725168606%_
-                                   _%tl167724168608%_
-                                   _%e167729168611%_
-                                   _%hd167728168614%_
-                                   _%tl167727168616%_
-                                   _%e167732168619%_
-                                   _%hd167731168622%_
-                                   _%tl167730168624%_
-                                   _%e167735168627%_
-                                   _%hd167734168630%_
-                                   _%tl167733168632%_
-                                   _%e167738168635%_
-                                   _%hd167737168638%_
-                                   _%tl167736168640%_
-                                   _%e167741168643%_
-                                   _%hd167740168646%_
-                                   _%tl167739168648%_))))
-                          (_%__match172281172282%_
-                           _%e167720168587%_
-                           _%hd167719168590%_
-                           _%tl167718168592%_
-                           _%e167723168595%_
-                           _%hd167722168598%_
-                           _%tl167721168600%_
-                           _%e167726168603%_
-                           _%hd167725168606%_
-                           _%tl167724168608%_
-                           _%e167729168611%_
-                           _%hd167728168614%_
-                           _%tl167727168616%_
-                           _%e167732168619%_
-                           _%hd167731168622%_
-                           _%tl167730168624%_
-                           _%e167735168627%_
-                           _%hd167734168630%_
-                           _%tl167733168632%_
-                           _%e167738168635%_
-                           _%hd167737168638%_
-                           _%tl167736168640%_
-                           _%e167741168643%_
-                           _%hd167740168646%_
-                           _%tl167739168648%_))))
-                  (_%__match172219172220%_
-                   _%e167720168587%_
-                   _%hd167719168590%_
-                   _%tl167718168592%_
-                   _%e167723168595%_
-                   _%hd167722168598%_
-                   _%tl167721168600%_
-                   _%e167726168603%_
-                   _%hd167725168606%_
-                   _%tl167724168608%_
-                   _%e167729168611%_
-                   _%hd167728168614%_
-                   _%tl167727168616%_
-                   _%e167732168619%_
-                   _%hd167731168622%_
-                   _%tl167730168624%_
-                   _%e167735168627%_
-                   _%hd167734168630%_
-                   _%tl167733168632%_
-                   _%e167738168635%_
-                   _%hd167737168638%_
-                   _%tl167736168640%_))
-              (_%__kont171802171803%_))))
+                                                  (_%__match171208171209%_
+                                                   _%e166645167514%_
+                                                   _%hd166646167517%_
+                                                   _%tl166647167519%_
+                                                   _%e166648167522%_
+                                                   _%hd166649167525%_
+                                                   _%tl166650167527%_
+                                                   _%e166651167530%_
+                                                   _%hd166652167533%_
+                                                   _%tl166653167535%_
+                                                   _%e166654167538%_
+                                                   _%hd166655167541%_
+                                                   _%tl166656167543%_
+                                                   _%e166657167546%_
+                                                   _%hd166658167549%_
+                                                   _%tl166659167551%_
+                                                   _%e166660167554%_
+                                                   _%hd166661167557%_
+                                                   _%tl166662167559%_
+                                                   _%e166663167562%_
+                                                   _%hd166664167565%_
+                                                   _%tl166665167567%_
+                                                   _%e166666167570%_
+                                                   _%hd166667167573%_
+                                                   _%tl166668167575%_))))
+                                          (_%__match171208171209%_
+                                           _%e166645167514%_
+                                           _%hd166646167517%_
+                                           _%tl166647167519%_
+                                           _%e166648167522%_
+                                           _%hd166649167525%_
+                                           _%tl166650167527%_
+                                           _%e166651167530%_
+                                           _%hd166652167533%_
+                                           _%tl166653167535%_
+                                           _%e166654167538%_
+                                           _%hd166655167541%_
+                                           _%tl166656167543%_
+                                           _%e166657167546%_
+                                           _%hd166658167549%_
+                                           _%tl166659167551%_
+                                           _%e166660167554%_
+                                           _%hd166661167557%_
+                                           _%tl166662167559%_
+                                           _%e166663167562%_
+                                           _%hd166664167565%_
+                                           _%tl166665167567%_
+                                           _%e166666167570%_
+                                           _%hd166667167573%_
+                                           _%tl166668167575%_))
+                                      (_%__match170884170885%_
+                                       _%e166645167514%_
+                                       _%hd166646167517%_
+                                       _%tl166647167519%_
+                                       _%e166648167522%_
+                                       _%hd166649167525%_
+                                       _%tl166650167527%_
+                                       _%e166651167530%_
+                                       _%hd166652167533%_
+                                       _%tl166653167535%_
+                                       _%e166654167538%_
+                                       _%hd166655167541%_
+                                       _%tl166656167543%_
+                                       _%e166657167546%_
+                                       _%hd166658167549%_
+                                       _%tl166659167551%_
+                                       _%e166660167554%_
+                                       _%hd166661167557%_
+                                       _%tl166662167559%_
+                                       _%e166663167562%_
+                                       _%hd166664167565%_
+                                       _%tl166665167567%_
+                                       _%e166666167570%_
+                                       _%hd166667167573%_
+                                       _%tl166668167575%_
+                                       _%e166669167578%_
+                                       _%hd166670167581%_
+                                       _%tl166671167583%_))
+                                  (_%__match171208171209%_
+                                   _%e166645167514%_
+                                   _%hd166646167517%_
+                                   _%tl166647167519%_
+                                   _%e166648167522%_
+                                   _%hd166649167525%_
+                                   _%tl166650167527%_
+                                   _%e166651167530%_
+                                   _%hd166652167533%_
+                                   _%tl166653167535%_
+                                   _%e166654167538%_
+                                   _%hd166655167541%_
+                                   _%tl166656167543%_
+                                   _%e166657167546%_
+                                   _%hd166658167549%_
+                                   _%tl166659167551%_
+                                   _%e166660167554%_
+                                   _%hd166661167557%_
+                                   _%tl166662167559%_
+                                   _%e166663167562%_
+                                   _%hd166664167565%_
+                                   _%tl166665167567%_
+                                   _%e166666167570%_
+                                   _%hd166667167573%_
+                                   _%tl166668167575%_))))
+                          (_%__match171208171209%_
+                           _%e166645167514%_
+                           _%hd166646167517%_
+                           _%tl166647167519%_
+                           _%e166648167522%_
+                           _%hd166649167525%_
+                           _%tl166650167527%_
+                           _%e166651167530%_
+                           _%hd166652167533%_
+                           _%tl166653167535%_
+                           _%e166654167538%_
+                           _%hd166655167541%_
+                           _%tl166656167543%_
+                           _%e166657167546%_
+                           _%hd166658167549%_
+                           _%tl166659167551%_
+                           _%e166660167554%_
+                           _%hd166661167557%_
+                           _%tl166662167559%_
+                           _%e166663167562%_
+                           _%hd166664167565%_
+                           _%tl166665167567%_
+                           _%e166666167570%_
+                           _%hd166667167573%_
+                           _%tl166668167575%_))))
+                  (_%__match171146171147%_
+                   _%e166645167514%_
+                   _%hd166646167517%_
+                   _%tl166647167519%_
+                   _%e166648167522%_
+                   _%hd166649167525%_
+                   _%tl166650167527%_
+                   _%e166651167530%_
+                   _%hd166652167533%_
+                   _%tl166653167535%_
+                   _%e166654167538%_
+                   _%hd166655167541%_
+                   _%tl166656167543%_
+                   _%e166657167546%_
+                   _%hd166658167549%_
+                   _%tl166659167551%_
+                   _%e166660167554%_
+                   _%hd166661167557%_
+                   _%tl166662167559%_
+                   _%e166663167562%_
+                   _%hd166664167565%_
+                   _%tl166665167567%_))
+              (_%__kont170729170730%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_%__kont171802171803%_))
-                                          (_%__kont171802171803%_))
-                                      (_%__kont171802171803%_))))
-                              (_%__kont171802171803%_))))
-                      (_%__kont171802171803%_))
-                  (_%__kont171802171803%_))))
+                                              (_%__kont170729170730%_))
+                                          (_%__kont170729170730%_))
+                                      (_%__kont170729170730%_))))
+                              (_%__kont170729170730%_))))
+                      (_%__kont170729170730%_))
+                  (_%__kont170729170730%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%__kont171802171803%_))
-                                              (_%__kont171802171803%_))
-                                          (_%__kont171802171803%_))))
-                                  (_%__kont171802171803%_))))
-                          (_%__kont171802171803%_))))
-                  (_%__kont171802171803%_)))))))
+                                                  (_%__kont170729170730%_))
+                                              (_%__kont170729170730%_))
+                                          (_%__kont170729170730%_))))
+                                  (_%__kont170729170730%_))))
+                          (_%__kont170729170730%_))))
+                  (_%__kont170729170730%_)))))))
     (define gxc#subst-object-refs-call%
-      (lambda (_%self166642%_ _%stx166643%_)
-        (letrec ((_%force-e166645%_
-                  (lambda (_%target167701%_)
+      (lambda (_%self165569%_ _%stx165570%_)
+        (letrec ((_%force-e165572%_
+                  (lambda (_%target166628%_)
                     (cons '%#call
                           (cons (cons '%#ref (cons 'force '()))
-                                (cons (cons '%#ref (cons _%target167701%_ '()))
+                                (cons (cons '%#ref (cons _%target166628%_ '()))
                                       '()))))))
-          (let* ((_%__stx172286172287%_ _%stx166643%_)
-                 (_%g166653166875%_
+          (let* ((_%__stx171213171214%_ _%stx165570%_)
+                 (_%g165580165802%_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
                        '"Bad syntax; invalid match target"
-                       _%__stx172286172287%_)))))
-            (let ((_%__kont172288172289%_
-                   (lambda (_%L167647%_ _%L167648%_ _%L167649%_ _%L167650%_)
-                     (let ((_%$method167695%_
-                            (let ((__tmp172921
+                       _%__stx171213171214%_)))))
+            (let ((_%__kont171215171216%_
+                   (lambda (_%L166574%_ _%L166575%_ _%L166576%_ _%L166577%_)
+                     (let ((_%$method166622%_
+                            (let ((__tmp171838
                                    (let ()
                                      (declare (not safe))
-                                     (slot-ref__0 _%self166642%_ 'methods)))
-                                  (__tmp172920
+                                     (slot-ref__0 _%self165569%_ 'methods)))
+                                  (__tmp171837
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%L167648%_))))
+                                     (gx#stx-e _%L166575%_))))
                               (declare (not safe))
-                              (hash-ref__0 __tmp172921 __tmp172920)))
-                           (_%args167696%_
-                            (map (lambda (_%g167683167685%_)
+                              (hash-ref__0 __tmp171838 __tmp171837)))
+                           (_%args166623%_
+                            (map (lambda (_%g166610166612%_)
                                    (let ()
                                      (declare (not safe))
                                      (gxc#compile-e__1
-                                      _%self166642%_
-                                      _%g167683167685%_)))
-                                 (let ((__tmp172922
-                                        (lambda (_%g167687167690%_
-                                                 _%g167688167692%_)
-                                          (cons _%g167687167690%_
-                                                _%g167688167692%_))))
+                                      _%self165569%_
+                                      _%g166610166612%_)))
+                                 (let ((__tmp171839
+                                        (lambda (_%g166614166617%_
+                                                 _%g166615166619%_)
+                                          (cons _%g166614166617%_
+                                                _%g166615166619%_))))
                                    (declare (not safe))
-                                   (__foldr1 __tmp172922 '() _%L167647%_)))))
-                       (let ((__tmp172923
+                                   (__foldr1 __tmp171839 '() _%L166574%_)))))
+                       (let ((__tmp171840
                               (cons '%#call
-                                    (cons (let ()
-                                            (declare (not safe))
-                                            (_%force-e166645%_
-                                             _%$method167695%_))
+                                    (cons (_%force-e165572%_ _%$method166622%_)
                                           (cons (cons '%#ref
                                                       (cons (let ()
                                                               (declare
                                                                 (not safe))
                                                               (slot-ref__0
-                                                               _%self166642%_
+                                                               _%self165569%_
                                                                'receiver))
                                                             '()))
-                                                _%args167696%_)))))
+                                                _%args166623%_)))))
                          (declare (not safe))
-                         (gxc#xform-wrap-source __tmp172923 _%stx166643%_)))))
-                  (_%__kont172292172293%_
-                   (lambda (_%L167479%_
-                            _%L167480%_
-                            _%L167481%_
-                            _%L167482%_
-                            _%L167483%_)
-                     (let ((_%$method167535%_
-                            (let ((__tmp172925
+                         (gxc#xform-wrap-source __tmp171840 _%stx165570%_)))))
+                  (_%__kont171219171220%_
+                   (lambda (_%L166406%_
+                            _%L166407%_
+                            _%L166408%_
+                            _%L166409%_
+                            _%L166410%_)
+                     (let ((_%$method166462%_
+                            (let ((__tmp171842
                                    (let ()
                                      (declare (not safe))
-                                     (slot-ref__0 _%self166642%_ 'methods)))
-                                  (__tmp172924
+                                     (slot-ref__0 _%self165569%_ 'methods)))
+                                  (__tmp171841
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%L167480%_))))
+                                     (gx#stx-e _%L166407%_))))
                               (declare (not safe))
-                              (hash-ref__0 __tmp172925 __tmp172924)))
-                           (_%args167536%_
-                            (map (lambda (_%g167523167525%_)
+                              (hash-ref__0 __tmp171842 __tmp171841)))
+                           (_%args166463%_
+                            (map (lambda (_%g166450166452%_)
                                    (let ()
                                      (declare (not safe))
                                      (gxc#compile-e__1
-                                      _%self166642%_
-                                      _%g167523167525%_)))
-                                 (let ((__tmp172926
-                                        (lambda (_%g167527167530%_
-                                                 _%g167528167532%_)
-                                          (cons _%g167527167530%_
-                                                _%g167528167532%_))))
+                                      _%self165569%_
+                                      _%g166450166452%_)))
+                                 (let ((__tmp171843
+                                        (lambda (_%g166454166457%_
+                                                 _%g166455166459%_)
+                                          (cons _%g166454166457%_
+                                                _%g166455166459%_))))
                                    (declare (not safe))
-                                   (__foldr1 __tmp172926 '() _%L167479%_)))))
-                       (let ((__tmp172927
+                                   (__foldr1 __tmp171843 '() _%L166406%_)))))
+                       (let ((__tmp171844
                               (cons '%#call
                                     (cons (cons '%#ref (cons 'apply '()))
-                                          (cons (let ()
-                                                  (declare (not safe))
-                                                  (_%force-e166645%_
-                                                   _%$method167535%_))
+                                          (cons (_%force-e165572%_
+                                                 _%$method166462%_)
                                                 (cons (cons '%#ref
                                                             (cons (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (declare (not safe))
-                            (slot-ref__0 _%self166642%_ 'receiver))
+                            (slot-ref__0 _%self165569%_ 'receiver))
                           '()))
-              _%args167536%_))))))
+              _%args166463%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                          (declare (not safe))
-                         (gxc#xform-wrap-source __tmp172927 _%stx166643%_)))))
-                  (_%__kont172296172297%_
-                   (lambda (_%L167310%_ _%L167311%_ _%L167312%_)
-                     (let* ((_%$field167344%_
-                             (let ((__tmp172929
+                         (gxc#xform-wrap-source __tmp171844 _%stx165570%_)))))
+                  (_%__kont171223171224%_
+                   (lambda (_%L166237%_ _%L166238%_ _%L166239%_)
+                     (let* ((_%$field166271%_
+                             (let ((__tmp171846
                                     (let ()
                                       (declare (not safe))
-                                      (slot-ref__0 _%self166642%_ 'slots)))
-                                   (__tmp172928
+                                      (slot-ref__0 _%self165569%_ 'slots)))
+                                   (__tmp171845
                                     (let ()
                                       (declare (not safe))
-                                      (gx#stx-e _%L167310%_))))
+                                      (gx#stx-e _%L166237%_))))
                                (declare (not safe))
-                               (hash-ref__0 __tmp172929 __tmp172928)))
-                            (__tmp172930
+                               (hash-ref__0 __tmp171846 __tmp171845)))
+                            (__tmp171847
                              (cons '%#struct-unchecked-ref
                                    (cons (cons '%#ref
                                                (cons (let ()
                                                        (declare (not safe))
                                                        (slot-ref__0
-                                                        _%self166642%_
+                                                        _%self165569%_
                                                         'klass))
                                                      '()))
                                          (cons (cons '%#ref
-                                                     (cons _%$field167344%_
+                                                     (cons _%$field166271%_
                                                            '()))
                                                (cons (cons '%#ref
                                                            (cons (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (declare (not safe))
-                           (slot-ref__0 _%self166642%_ 'receiver))
+                           (slot-ref__0 _%self165569%_ 'receiver))
                          '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      '()))))))
                        (declare (not safe))
-                       (gxc#xform-wrap-source __tmp172930 _%stx166643%_))))
-                  (_%__kont172298172299%_
-                   (lambda (_%L167184%_ _%L167185%_ _%L167186%_ _%L167187%_)
-                     (let ((_%$field167222%_
-                            (let ((__tmp172932
+                       (gxc#xform-wrap-source __tmp171847 _%stx165570%_))))
+                  (_%__kont171225171226%_
+                   (lambda (_%L166111%_ _%L166112%_ _%L166113%_ _%L166114%_)
+                     (let ((_%$field166149%_
+                            (let ((__tmp171849
                                    (let ()
                                      (declare (not safe))
-                                     (slot-ref__0 _%self166642%_ 'slots)))
-                                  (__tmp172931
+                                     (slot-ref__0 _%self165569%_ 'slots)))
+                                  (__tmp171848
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%L167185%_))))
+                                     (gx#stx-e _%L166112%_))))
                               (declare (not safe))
-                              (hash-ref__0 __tmp172932 __tmp172931)))
-                           (_%expr167223%_
+                              (hash-ref__0 __tmp171849 __tmp171848)))
+                           (_%expr166150%_
                             (let ()
                               (declare (not safe))
-                              (gxc#compile-e__1 _%self166642%_ _%L167184%_))))
-                       (let ((__tmp172933
+                              (gxc#compile-e__1 _%self165569%_ _%L166111%_))))
+                       (let ((__tmp171850
                               (cons '%#struct-unchecked-set!
                                     (cons (cons '%#ref
                                                 (cons (let ()
                                                         (declare (not safe))
                                                         (slot-ref__0
-                                                         _%self166642%_
+                                                         _%self165569%_
                                                          'klass))
                                                       '()))
                                           (cons (cons '%#ref
-                                                      (cons _%$field167222%_
+                                                      (cons _%$field166149%_
                                                             '()))
                                                 (cons (cons '%#ref
                                                             (cons (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (declare (not safe))
-                            (slot-ref__0 _%self166642%_ 'receiver))
+                            (slot-ref__0 _%self165569%_ 'receiver))
                           '()))
-              (cons _%expr167223%_ '())))))))
+              (cons _%expr166150%_ '())))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                          (declare (not safe))
-                         (gxc#xform-wrap-source __tmp172933 _%stx166643%_)))))
-                  (_%__kont172300172301%_
-                   (lambda (_%L167056%_ _%L167057%_)
-                     (let* ((_%accessor167079%_
-                             (let ((__tmp172934
+                         (gxc#xform-wrap-source __tmp171850 _%stx165570%_)))))
+                  (_%__kont171227171228%_
+                   (lambda (_%L165983%_ _%L165984%_)
+                     (let* ((_%accessor166006%_
+                             (let ((__tmp171851
                                     (let ()
                                       (declare (not safe))
-                                      (gxc#identifier-symbol _%L167057%_))))
+                                      (gxc#identifier-symbol _%L165984%_))))
                                (declare (not safe))
-                               (gxc#optimizer-resolve-type __tmp172934)))
-                            (_%klass167081%_
-                             (let ((__tmp172935
+                               (gxc#optimizer-resolve-type __tmp171851)))
+                            (_%klass166008%_
+                             (let ((__tmp171852
                                     (##structure-ref
-                                     _%accessor167079%_
+                                     _%accessor166006%_
                                      '1
                                      gxc#!type::t
                                      '#f)))
                                (declare (not safe))
                                (gxc#optimizer-resolve-class
-                                _%stx166643%_
-                                __tmp172935)))
-                            (_%slot167083%_
+                                _%stx165570%_
+                                __tmp171852)))
+                            (_%slot166010%_
                              (##structure-ref
-                              _%accessor167079%_
+                              _%accessor166006%_
                               '3
                               gxc#!accessor::t
                               '#f)))
-                       (if (and (let ((__tmp172936
-                                       (##structure-ref
-                                        _%accessor167079%_
-                                        '4
-                                        gxc#!accessor::t
-                                        '#f)))
-                                  (declare (not safe))
-                                  (not __tmp172936))
+                       (if (and (not (##structure-ref
+                                      _%accessor166006%_
+                                      '4
+                                      gxc#!accessor::t
+                                      '#f))
                                 (or (let ()
                                       (declare (not safe))
                                       (gxc#!class-struct-slot?
-                                       _%klass167081%_
-                                       _%slot167083%_))
+                                       _%klass166008%_
+                                       _%slot166010%_))
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-ref
-                                       _%klass167081%_
+                                       _%klass166008%_
                                        '8
                                        '#f
                                        '#f))))
-                           _%stx166643%_
-                           (let* ((_%$field167089%_
-                                   (let ((__tmp172937
+                           _%stx165570%_
+                           (let* ((_%$field166016%_
+                                   (let ((__tmp171853
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'slots))))
                                      (declare (not safe))
-                                     (hash-ref__0 __tmp172937 _%slot167083%_)))
-                                  (__tmp172938
+                                     (hash-ref__0 __tmp171853 _%slot166010%_)))
+                                  (__tmp171854
                                    (cons '%#struct-unchecked-ref
                                          (cons (cons '%#ref
                                                      (cons (let ()
                                                              (declare
                                                                (not safe))
                                                              (slot-ref__0
-                                                              _%self166642%_
+                                                              _%self165569%_
                                                               'klass))
                                                            '()))
                                                (cons (cons '%#ref
-                                                           (cons _%$field167089%_
+                                                           (cons _%$field166016%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6788,105 +6425,102 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (cons (let ()
                                  (declare (not safe))
-                                 (slot-ref__0 _%self166642%_ 'receiver))
+                                 (slot-ref__0 _%self165569%_ 'receiver))
                                '()))
                    '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                              (declare (not safe))
                              (gxc#xform-wrap-source
-                              __tmp172938
-                              _%stx166643%_))))))
-                  (_%__kont172302172303%_
-                   (lambda (_%L166951%_ _%L166952%_ _%L166953%_)
-                     (let* ((_%mutator166981%_
-                             (let ((__tmp172939
+                              __tmp171854
+                              _%stx165570%_))))))
+                  (_%__kont171229171230%_
+                   (lambda (_%L165878%_ _%L165879%_ _%L165880%_)
+                     (let* ((_%mutator165908%_
+                             (let ((__tmp171855
                                     (let ()
                                       (declare (not safe))
-                                      (gxc#identifier-symbol _%L166953%_))))
+                                      (gxc#identifier-symbol _%L165880%_))))
                                (declare (not safe))
-                               (gxc#optimizer-resolve-type __tmp172939)))
-                            (_%klass166983%_
-                             (let ((__tmp172940
+                               (gxc#optimizer-resolve-type __tmp171855)))
+                            (_%klass165910%_
+                             (let ((__tmp171856
                                     (##structure-ref
-                                     _%mutator166981%_
+                                     _%mutator165908%_
                                      '1
                                      gxc#!type::t
                                      '#f)))
                                (declare (not safe))
                                (gxc#optimizer-resolve-class
-                                _%stx166643%_
-                                __tmp172940)))
-                            (_%slot166985%_
+                                _%stx165570%_
+                                __tmp171856)))
+                            (_%slot165912%_
                              (##structure-ref
-                              _%mutator166981%_
+                              _%mutator165908%_
                               '3
                               gxc#!mutator::t
                               '#f))
-                            (_%expr166987%_
+                            (_%expr165914%_
                              (let ()
                                (declare (not safe))
-                               (gxc#compile-e__1 _%self166642%_ _%L166951%_))))
-                       (if (and (let ((__tmp172941
-                                       (##structure-ref
-                                        _%mutator166981%_
-                                        '4
-                                        gxc#!mutator::t
-                                        '#f)))
-                                  (declare (not safe))
-                                  (not __tmp172941))
+                               (gxc#compile-e__1 _%self165569%_ _%L165878%_))))
+                       (if (and (not (##structure-ref
+                                      _%mutator165908%_
+                                      '4
+                                      gxc#!mutator::t
+                                      '#f))
                                 (or (let ()
                                       (declare (not safe))
                                       (gxc#!class-struct-slot?
-                                       _%klass166983%_
-                                       _%slot166985%_))
+                                       _%klass165910%_
+                                       _%slot165912%_))
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-ref
-                                       _%klass166983%_
+                                       _%klass165910%_
                                        '8
                                        '#f
                                        '#f))))
-                           (let ((__tmp172942
+                           (let ((__tmp171857
                                   (cons '%#call
                                         (cons (cons (let ()
                                                       (declare (not safe))
                                                       (gx#datum->syntax__0
                                                        '#f
                                                        '%#ref))
-                                                    (cons _%L166953%_ '()))
+                                                    (cons _%L165880%_ '()))
                                               (cons (cons (let ()
                                                             (declare
                                                               (not safe))
                                                             (gx#datum->syntax__0
                                                              '#f
                                                              '%#ref))
-                                                          (cons _%L166952%_
+                                                          (cons _%L165879%_
                                                                 '()))
-                                                    (cons _%expr166987%_
+                                                    (cons _%expr165914%_
                                                           '()))))))
                              (declare (not safe))
-                             (gxc#xform-wrap-source __tmp172942 _%stx166643%_))
-                           (let* ((_%$field166993%_
-                                   (let ((__tmp172943
+                             (gxc#xform-wrap-source __tmp171857 _%stx165570%_))
+                           (let* ((_%$field165920%_
+                                   (let ((__tmp171858
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'slots))))
                                      (declare (not safe))
-                                     (hash-ref__0 __tmp172943 _%slot166985%_)))
-                                  (__tmp172944
+                                     (hash-ref__0 __tmp171858 _%slot165912%_)))
+                                  (__tmp171859
                                    (cons '%#struct-unchecked-set!
                                          (cons (cons '%#ref
                                                      (cons (let ()
                                                              (declare
                                                                (not safe))
                                                              (slot-ref__0
-                                                              _%self166642%_
+                                                              _%self165569%_
                                                               'klass))
                                                            '()))
                                                (cons (cons '%#ref
-                                                           (cons _%$field166993%_
+                                                           (cons _%$field165920%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6894,1860 +6528,1846 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (cons (let ()
                                  (declare (not safe))
-                                 (slot-ref__0 _%self166642%_ 'receiver))
+                                 (slot-ref__0 _%self165569%_ 'receiver))
                                '()))
-                   (cons _%expr166987%_ '())))))))
+                   (cons _%expr165914%_ '())))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                              (declare (not safe))
                              (gxc#xform-wrap-source
-                              __tmp172944
-                              _%stx166643%_))))))
-                  (_%__kont172304172305%_
+                              __tmp171859
+                              _%stx165570%_))))))
+                  (_%__kont171231171232%_
                    (lambda ()
                      (let ()
                        (declare (not safe))
-                       (gxc#xform-operands _%self166642%_ _%stx166643%_)))))
-              (let* ((_%__match172785172786%_
-                      (lambda (_%e166849166887%_
-                               _%hd166848166890%_
-                               _%tl166847166892%_
-                               _%e166852166895%_
-                               _%hd166851166898%_
-                               _%tl166850166900%_
-                               _%e166855166903%_
-                               _%hd166854166906%_
-                               _%tl166853166908%_
-                               _%e166858166911%_
-                               _%hd166857166914%_
-                               _%tl166856166916%_
-                               _%e166861166919%_
-                               _%hd166860166922%_
-                               _%tl166859166924%_
-                               _%e166864166927%_
-                               _%hd166863166930%_
-                               _%tl166862166932%_
-                               _%e166867166935%_
-                               _%hd166866166938%_
-                               _%tl166865166940%_
-                               _%e166870166943%_
-                               _%hd166869166946%_
-                               _%tl166868166948%_)
-                        (let ((_%L166951%_ _%hd166869166946%_)
-                              (_%L166952%_ _%hd166866166938%_)
-                              (_%L166953%_ _%hd166857166914%_))
-                          (if (and (let ((__tmp172945
+                       (gxc#xform-operands _%self165569%_ _%stx165570%_)))))
+              (let* ((_%__match171712171713%_
+                      (lambda (_%e165774165814%_
+                               _%hd165775165817%_
+                               _%tl165776165819%_
+                               _%e165777165822%_
+                               _%hd165778165825%_
+                               _%tl165779165827%_
+                               _%e165780165830%_
+                               _%hd165781165833%_
+                               _%tl165782165835%_
+                               _%e165783165838%_
+                               _%hd165784165841%_
+                               _%tl165785165843%_
+                               _%e165786165846%_
+                               _%hd165787165849%_
+                               _%tl165788165851%_
+                               _%e165789165854%_
+                               _%hd165790165857%_
+                               _%tl165791165859%_
+                               _%e165792165862%_
+                               _%hd165793165865%_
+                               _%tl165794165867%_
+                               _%e165795165870%_
+                               _%hd165796165873%_
+                               _%tl165797165875%_)
+                        (let ((_%L165878%_ _%hd165796165873%_)
+                              (_%L165879%_ _%hd165793165865%_)
+                              (_%L165880%_ _%hd165784165841%_))
+                          (if (and (let ((__tmp171860
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'receiver))))
                                      (declare (not safe))
                                      (gx#free-identifier=?
-                                      _%L166952%_
-                                      __tmp172945))
-                                   (let ((__tmp172946
-                                          (let ((__tmp172947
+                                      _%L165879%_
+                                      __tmp171860))
+                                   (let ((__tmp171861
+                                          (let ((__tmp171862
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#identifier-symbol
-                                                    _%L166953%_))))
+                                                    _%L165880%_))))
                                             (declare (not safe))
                                             (gxc#optimizer-resolve-type
-                                             __tmp172947))))
+                                             __tmp171862))))
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      __tmp172946
+                                      __tmp171861
                                       'gxc#!mutator::t)))
-                              (_%__kont172302172303%_
-                               _%L166951%_
-                               _%L166952%_
-                               _%L166953%_)
-                              (_%__kont172304172305%_)))))
-                     (_%__match172783172784%_
-                      (lambda (_%e166849166887%_
-                               _%hd166848166890%_
-                               _%tl166847166892%_
-                               _%e166852166895%_
-                               _%hd166851166898%_
-                               _%tl166850166900%_
-                               _%e166855166903%_
-                               _%hd166854166906%_
-                               _%tl166853166908%_
-                               _%e166858166911%_
-                               _%hd166857166914%_
-                               _%tl166856166916%_
-                               _%e166861166919%_
-                               _%hd166860166922%_
-                               _%tl166859166924%_
-                               _%e166864166927%_
-                               _%hd166863166930%_
-                               _%tl166862166932%_
-                               _%e166867166935%_
-                               _%hd166866166938%_
-                               _%tl166865166940%_
-                               _%e166870166943%_
-                               _%hd166869166946%_
-                               _%tl166868166948%_)
+                              (_%__kont171229171230%_
+                               _%L165878%_
+                               _%L165879%_
+                               _%L165880%_)
+                              (_%__kont171231171232%_)))))
+                     (_%__match171710171711%_
+                      (lambda (_%e165774165814%_
+                               _%hd165775165817%_
+                               _%tl165776165819%_
+                               _%e165777165822%_
+                               _%hd165778165825%_
+                               _%tl165779165827%_
+                               _%e165780165830%_
+                               _%hd165781165833%_
+                               _%tl165782165835%_
+                               _%e165783165838%_
+                               _%hd165784165841%_
+                               _%tl165785165843%_
+                               _%e165786165846%_
+                               _%hd165787165849%_
+                               _%tl165788165851%_
+                               _%e165789165854%_
+                               _%hd165790165857%_
+                               _%tl165791165859%_
+                               _%e165792165862%_
+                               _%hd165793165865%_
+                               _%tl165794165867%_
+                               _%e165795165870%_
+                               _%hd165796165873%_
+                               _%tl165797165875%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-null? _%tl166868166948%_))
-                            (_%__match172785172786%_
-                             _%e166849166887%_
-                             _%hd166848166890%_
-                             _%tl166847166892%_
-                             _%e166852166895%_
-                             _%hd166851166898%_
-                             _%tl166850166900%_
-                             _%e166855166903%_
-                             _%hd166854166906%_
-                             _%tl166853166908%_
-                             _%e166858166911%_
-                             _%hd166857166914%_
-                             _%tl166856166916%_
-                             _%e166861166919%_
-                             _%hd166860166922%_
-                             _%tl166859166924%_
-                             _%e166864166927%_
-                             _%hd166863166930%_
-                             _%tl166862166932%_
-                             _%e166867166935%_
-                             _%hd166866166938%_
-                             _%tl166865166940%_
-                             _%e166870166943%_
-                             _%hd166869166946%_
-                             _%tl166868166948%_)
-                            (_%__kont172304172305%_))))
-                     (_%__match172777172778%_
-                      (lambda (_%e166849166887%_
-                               _%hd166848166890%_
-                               _%tl166847166892%_
-                               _%e166852166895%_
-                               _%hd166851166898%_
-                               _%tl166850166900%_
-                               _%e166855166903%_
-                               _%hd166854166906%_
-                               _%tl166853166908%_
-                               _%e166858166911%_
-                               _%hd166857166914%_
-                               _%tl166856166916%_
-                               _%e166861166919%_
-                               _%hd166860166922%_
-                               _%tl166859166924%_
-                               _%e166864166927%_
-                               _%hd166863166930%_
-                               _%tl166862166932%_
-                               _%e166867166935%_
-                               _%hd166866166938%_
-                               _%tl166865166940%_)
+                              (gx#stx-null? _%tl165797165875%_))
+                            (_%__match171712171713%_
+                             _%e165774165814%_
+                             _%hd165775165817%_
+                             _%tl165776165819%_
+                             _%e165777165822%_
+                             _%hd165778165825%_
+                             _%tl165779165827%_
+                             _%e165780165830%_
+                             _%hd165781165833%_
+                             _%tl165782165835%_
+                             _%e165783165838%_
+                             _%hd165784165841%_
+                             _%tl165785165843%_
+                             _%e165786165846%_
+                             _%hd165787165849%_
+                             _%tl165788165851%_
+                             _%e165789165854%_
+                             _%hd165790165857%_
+                             _%tl165791165859%_
+                             _%e165792165862%_
+                             _%hd165793165865%_
+                             _%tl165794165867%_
+                             _%e165795165870%_
+                             _%hd165796165873%_
+                             _%tl165797165875%_)
+                            (_%__kont171231171232%_))))
+                     (_%__match171704171705%_
+                      (lambda (_%e165774165814%_
+                               _%hd165775165817%_
+                               _%tl165776165819%_
+                               _%e165777165822%_
+                               _%hd165778165825%_
+                               _%tl165779165827%_
+                               _%e165780165830%_
+                               _%hd165781165833%_
+                               _%tl165782165835%_
+                               _%e165783165838%_
+                               _%hd165784165841%_
+                               _%tl165785165843%_
+                               _%e165786165846%_
+                               _%hd165787165849%_
+                               _%tl165788165851%_
+                               _%e165789165854%_
+                               _%hd165790165857%_
+                               _%tl165791165859%_
+                               _%e165792165862%_
+                               _%hd165793165865%_
+                               _%tl165794165867%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%tl166859166924%_))
-                            (let ((_%e166870166943%_
+                              (gx#stx-pair? _%tl165788165851%_))
+                            (let ((_%e165795165870%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%tl166859166924%_))))
-                              (let ((_%tl166868166948%_
+                                     (gx#stx-e _%tl165788165851%_))))
+                              (let ((_%tl165797165875%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e166870166943%_)))
-                                    (_%hd166869166946%_
+                                       (##cdr _%e165795165870%_)))
+                                    (_%hd165796165873%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e166870166943%_))))
+                                       (##car _%e165795165870%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _%tl166868166948%_))
-                                    (_%__match172785172786%_
-                                     _%e166849166887%_
-                                     _%hd166848166890%_
-                                     _%tl166847166892%_
-                                     _%e166852166895%_
-                                     _%hd166851166898%_
-                                     _%tl166850166900%_
-                                     _%e166855166903%_
-                                     _%hd166854166906%_
-                                     _%tl166853166908%_
-                                     _%e166858166911%_
-                                     _%hd166857166914%_
-                                     _%tl166856166916%_
-                                     _%e166861166919%_
-                                     _%hd166860166922%_
-                                     _%tl166859166924%_
-                                     _%e166864166927%_
-                                     _%hd166863166930%_
-                                     _%tl166862166932%_
-                                     _%e166867166935%_
-                                     _%hd166866166938%_
-                                     _%tl166865166940%_
-                                     _%e166870166943%_
-                                     _%hd166869166946%_
-                                     _%tl166868166948%_)
-                                    (_%__kont172304172305%_))))
-                            (_%__kont172304172305%_))))
-                     (_%__match172723172724%_
-                      (lambda (_%e166825167000%_
-                               _%hd166824167003%_
-                               _%tl166823167005%_
-                               _%e166828167008%_
-                               _%hd166827167011%_
-                               _%tl166826167013%_
-                               _%e166831167016%_
-                               _%hd166830167019%_
-                               _%tl166829167021%_
-                               _%e166834167024%_
-                               _%hd166833167027%_
-                               _%tl166832167029%_
-                               _%e166837167032%_
-                               _%hd166836167035%_
-                               _%tl166835167037%_
-                               _%e166840167040%_
-                               _%hd166839167043%_
-                               _%tl166838167045%_
-                               _%e166843167048%_
-                               _%hd166842167051%_
-                               _%tl166841167053%_)
-                        (let ((_%L167056%_ _%hd166842167051%_)
-                              (_%L167057%_ _%hd166833167027%_))
-                          (if (and (let ((__tmp172948
+                                      (gx#stx-null? _%tl165797165875%_))
+                                    (_%__match171712171713%_
+                                     _%e165774165814%_
+                                     _%hd165775165817%_
+                                     _%tl165776165819%_
+                                     _%e165777165822%_
+                                     _%hd165778165825%_
+                                     _%tl165779165827%_
+                                     _%e165780165830%_
+                                     _%hd165781165833%_
+                                     _%tl165782165835%_
+                                     _%e165783165838%_
+                                     _%hd165784165841%_
+                                     _%tl165785165843%_
+                                     _%e165786165846%_
+                                     _%hd165787165849%_
+                                     _%tl165788165851%_
+                                     _%e165789165854%_
+                                     _%hd165790165857%_
+                                     _%tl165791165859%_
+                                     _%e165792165862%_
+                                     _%hd165793165865%_
+                                     _%tl165794165867%_
+                                     _%e165795165870%_
+                                     _%hd165796165873%_
+                                     _%tl165797165875%_)
+                                    (_%__kont171231171232%_))))
+                            (_%__kont171231171232%_))))
+                     (_%__match171650171651%_
+                      (lambda (_%e165750165927%_
+                               _%hd165751165930%_
+                               _%tl165752165932%_
+                               _%e165753165935%_
+                               _%hd165754165938%_
+                               _%tl165755165940%_
+                               _%e165756165943%_
+                               _%hd165757165946%_
+                               _%tl165758165948%_
+                               _%e165759165951%_
+                               _%hd165760165954%_
+                               _%tl165761165956%_
+                               _%e165762165959%_
+                               _%hd165763165962%_
+                               _%tl165764165964%_
+                               _%e165765165967%_
+                               _%hd165766165970%_
+                               _%tl165767165972%_
+                               _%e165768165975%_
+                               _%hd165769165978%_
+                               _%tl165770165980%_)
+                        (let ((_%L165983%_ _%hd165769165978%_)
+                              (_%L165984%_ _%hd165760165954%_))
+                          (if (and (let ((__tmp171863
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'receiver))))
                                      (declare (not safe))
                                      (gx#free-identifier=?
-                                      _%L167056%_
-                                      __tmp172948))
-                                   (let ((__tmp172949
-                                          (let ((__tmp172950
+                                      _%L165983%_
+                                      __tmp171863))
+                                   (let ((__tmp171864
+                                          (let ((__tmp171865
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#identifier-symbol
-                                                    _%L167057%_))))
+                                                    _%L165984%_))))
                                             (declare (not safe))
                                             (gxc#optimizer-resolve-type
-                                             __tmp172950))))
+                                             __tmp171865))))
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      __tmp172949
+                                      __tmp171864
                                       'gxc#!accessor::t)))
-                              (_%__kont172300172301%_ _%L167056%_ _%L167057%_)
-                              (_%__kont172304172305%_)))))
-                     (_%__match172721172722%_
-                      (lambda (_%e166825167000%_
-                               _%hd166824167003%_
-                               _%tl166823167005%_
-                               _%e166828167008%_
-                               _%hd166827167011%_
-                               _%tl166826167013%_
-                               _%e166831167016%_
-                               _%hd166830167019%_
-                               _%tl166829167021%_
-                               _%e166834167024%_
-                               _%hd166833167027%_
-                               _%tl166832167029%_
-                               _%e166837167032%_
-                               _%hd166836167035%_
-                               _%tl166835167037%_
-                               _%e166840167040%_
-                               _%hd166839167043%_
-                               _%tl166838167045%_
-                               _%e166843167048%_
-                               _%hd166842167051%_
-                               _%tl166841167053%_)
+                              (_%__kont171227171228%_ _%L165983%_ _%L165984%_)
+                              (_%__kont171231171232%_)))))
+                     (_%__match171648171649%_
+                      (lambda (_%e165750165927%_
+                               _%hd165751165930%_
+                               _%tl165752165932%_
+                               _%e165753165935%_
+                               _%hd165754165938%_
+                               _%tl165755165940%_
+                               _%e165756165943%_
+                               _%hd165757165946%_
+                               _%tl165758165948%_
+                               _%e165759165951%_
+                               _%hd165760165954%_
+                               _%tl165761165956%_
+                               _%e165762165959%_
+                               _%hd165763165962%_
+                               _%tl165764165964%_
+                               _%e165765165967%_
+                               _%hd165766165970%_
+                               _%tl165767165972%_
+                               _%e165768165975%_
+                               _%hd165769165978%_
+                               _%tl165770165980%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-null? _%tl166835167037%_))
-                            (_%__match172723172724%_
-                             _%e166825167000%_
-                             _%hd166824167003%_
-                             _%tl166823167005%_
-                             _%e166828167008%_
-                             _%hd166827167011%_
-                             _%tl166826167013%_
-                             _%e166831167016%_
-                             _%hd166830167019%_
-                             _%tl166829167021%_
-                             _%e166834167024%_
-                             _%hd166833167027%_
-                             _%tl166832167029%_
-                             _%e166837167032%_
-                             _%hd166836167035%_
-                             _%tl166835167037%_
-                             _%e166840167040%_
-                             _%hd166839167043%_
-                             _%tl166838167045%_
-                             _%e166843167048%_
-                             _%hd166842167051%_
-                             _%tl166841167053%_)
-                            (_%__match172777172778%_
-                             _%e166825167000%_
-                             _%hd166824167003%_
-                             _%tl166823167005%_
-                             _%e166828167008%_
-                             _%hd166827167011%_
-                             _%tl166826167013%_
-                             _%e166831167016%_
-                             _%hd166830167019%_
-                             _%tl166829167021%_
-                             _%e166834167024%_
-                             _%hd166833167027%_
-                             _%tl166832167029%_
-                             _%e166837167032%_
-                             _%hd166836167035%_
-                             _%tl166835167037%_
-                             _%e166840167040%_
-                             _%hd166839167043%_
-                             _%tl166838167045%_
-                             _%e166843167048%_
-                             _%hd166842167051%_
-                             _%tl166841167053%_))))
-                     (_%__match172667172668%_
-                      (lambda (_%e166790167096%_
-                               _%hd166789167099%_
-                               _%tl166788167101%_
-                               _%e166793167104%_
-                               _%hd166792167107%_
-                               _%tl166791167109%_
-                               _%e166796167112%_
-                               _%hd166795167115%_
-                               _%tl166794167117%_
-                               _%e166799167120%_
-                               _%hd166798167123%_
-                               _%tl166797167125%_
-                               _%e166802167128%_
-                               _%hd166801167131%_
-                               _%tl166800167133%_
-                               _%e166805167136%_
-                               _%hd166804167139%_
-                               _%tl166803167141%_
-                               _%e166808167144%_
-                               _%hd166807167147%_
-                               _%tl166806167149%_
-                               _%e166811167152%_
-                               _%hd166810167155%_
-                               _%tl166809167157%_
-                               _%e166814167160%_
-                               _%hd166813167163%_
-                               _%tl166812167165%_
-                               _%e166817167168%_
-                               _%hd166816167171%_
-                               _%tl166815167173%_
-                               _%e166820167176%_
-                               _%hd166819167179%_
-                               _%tl166818167181%_)
-                        (let ((_%L167184%_ _%hd166819167179%_)
-                              (_%L167185%_ _%hd166816167171%_)
-                              (_%L167186%_ _%hd166807167147%_)
-                              (_%L167187%_ _%hd166798167123%_))
+                              (gx#stx-null? _%tl165764165964%_))
+                            (_%__match171650171651%_
+                             _%e165750165927%_
+                             _%hd165751165930%_
+                             _%tl165752165932%_
+                             _%e165753165935%_
+                             _%hd165754165938%_
+                             _%tl165755165940%_
+                             _%e165756165943%_
+                             _%hd165757165946%_
+                             _%tl165758165948%_
+                             _%e165759165951%_
+                             _%hd165760165954%_
+                             _%tl165761165956%_
+                             _%e165762165959%_
+                             _%hd165763165962%_
+                             _%tl165764165964%_
+                             _%e165765165967%_
+                             _%hd165766165970%_
+                             _%tl165767165972%_
+                             _%e165768165975%_
+                             _%hd165769165978%_
+                             _%tl165770165980%_)
+                            (_%__match171704171705%_
+                             _%e165750165927%_
+                             _%hd165751165930%_
+                             _%tl165752165932%_
+                             _%e165753165935%_
+                             _%hd165754165938%_
+                             _%tl165755165940%_
+                             _%e165756165943%_
+                             _%hd165757165946%_
+                             _%tl165758165948%_
+                             _%e165759165951%_
+                             _%hd165760165954%_
+                             _%tl165761165956%_
+                             _%e165762165959%_
+                             _%hd165763165962%_
+                             _%tl165764165964%_
+                             _%e165765165967%_
+                             _%hd165766165970%_
+                             _%tl165767165972%_
+                             _%e165768165975%_
+                             _%hd165769165978%_
+                             _%tl165770165980%_))))
+                     (_%__match171594171595%_
+                      (lambda (_%e165715166023%_
+                               _%hd165716166026%_
+                               _%tl165717166028%_
+                               _%e165718166031%_
+                               _%hd165719166034%_
+                               _%tl165720166036%_
+                               _%e165721166039%_
+                               _%hd165722166042%_
+                               _%tl165723166044%_
+                               _%e165724166047%_
+                               _%hd165725166050%_
+                               _%tl165726166052%_
+                               _%e165727166055%_
+                               _%hd165728166058%_
+                               _%tl165729166060%_
+                               _%e165730166063%_
+                               _%hd165731166066%_
+                               _%tl165732166068%_
+                               _%e165733166071%_
+                               _%hd165734166074%_
+                               _%tl165735166076%_
+                               _%e165736166079%_
+                               _%hd165737166082%_
+                               _%tl165738166084%_
+                               _%e165739166087%_
+                               _%hd165740166090%_
+                               _%tl165741166092%_
+                               _%e165742166095%_
+                               _%hd165743166098%_
+                               _%tl165744166100%_
+                               _%e165745166103%_
+                               _%hd165746166106%_
+                               _%tl165747166108%_)
+                        (let ((_%L166111%_ _%hd165746166106%_)
+                              (_%L166112%_ _%hd165743166098%_)
+                              (_%L166113%_ _%hd165734166074%_)
+                              (_%L166114%_ _%hd165725166050%_))
                           (if (and (or (let ()
                                          (declare (not safe))
                                          (gxc#runtime-identifier=?
-                                          _%L167187%_
+                                          _%L166114%_
                                           'slot-set!))
                                        (let ()
                                          (declare (not safe))
                                          (gxc#runtime-identifier=?
-                                          _%L167187%_
+                                          _%L166114%_
                                           'unchecked-slot-set!)))
-                                   (let ((__tmp172951
+                                   (let ((__tmp171866
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'receiver))))
                                      (declare (not safe))
                                      (gx#free-identifier=?
-                                      _%L167186%_
-                                      __tmp172951)))
-                              (_%__kont172298172299%_
-                               _%L167184%_
-                               _%L167185%_
-                               _%L167186%_
-                               _%L167187%_)
-                              (_%__kont172304172305%_)))))
-                     (_%__match172659172660%_
-                      (lambda (_%e166790167096%_
-                               _%hd166789167099%_
-                               _%tl166788167101%_
-                               _%e166793167104%_
-                               _%hd166792167107%_
-                               _%tl166791167109%_
-                               _%e166796167112%_
-                               _%hd166795167115%_
-                               _%tl166794167117%_
-                               _%e166799167120%_
-                               _%hd166798167123%_
-                               _%tl166797167125%_
-                               _%e166802167128%_
-                               _%hd166801167131%_
-                               _%tl166800167133%_
-                               _%e166805167136%_
-                               _%hd166804167139%_
-                               _%tl166803167141%_
-                               _%e166808167144%_
-                               _%hd166807167147%_
-                               _%tl166806167149%_
-                               _%e166811167152%_
-                               _%hd166810167155%_
-                               _%tl166809167157%_
-                               _%e166814167160%_
-                               _%hd166813167163%_
-                               _%tl166812167165%_
-                               _%e166817167168%_
-                               _%hd166816167171%_
-                               _%tl166815167173%_)
+                                      _%L166113%_
+                                      __tmp171866)))
+                              (_%__kont171225171226%_
+                               _%L166111%_
+                               _%L166112%_
+                               _%L166113%_
+                               _%L166114%_)
+                              (_%__kont171231171232%_)))))
+                     (_%__match171586171587%_
+                      (lambda (_%e165715166023%_
+                               _%hd165716166026%_
+                               _%tl165717166028%_
+                               _%e165718166031%_
+                               _%hd165719166034%_
+                               _%tl165720166036%_
+                               _%e165721166039%_
+                               _%hd165722166042%_
+                               _%tl165723166044%_
+                               _%e165724166047%_
+                               _%hd165725166050%_
+                               _%tl165726166052%_
+                               _%e165727166055%_
+                               _%hd165728166058%_
+                               _%tl165729166060%_
+                               _%e165730166063%_
+                               _%hd165731166066%_
+                               _%tl165732166068%_
+                               _%e165733166071%_
+                               _%hd165734166074%_
+                               _%tl165735166076%_
+                               _%e165736166079%_
+                               _%hd165737166082%_
+                               _%tl165738166084%_
+                               _%e165739166087%_
+                               _%hd165740166090%_
+                               _%tl165741166092%_
+                               _%e165742166095%_
+                               _%hd165743166098%_
+                               _%tl165744166100%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%tl166809167157%_))
-                            (let ((_%e166820167176%_
+                              (gx#stx-pair? _%tl165738166084%_))
+                            (let ((_%e165745166103%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%tl166809167157%_))))
-                              (let ((_%tl166818167181%_
+                                     (gx#stx-e _%tl165738166084%_))))
+                              (let ((_%tl165747166108%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e166820167176%_)))
-                                    (_%hd166819167179%_
+                                       (##cdr _%e165745166103%_)))
+                                    (_%hd165746166106%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e166820167176%_))))
+                                       (##car _%e165745166103%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _%tl166818167181%_))
-                                    (_%__match172667172668%_
-                                     _%e166790167096%_
-                                     _%hd166789167099%_
-                                     _%tl166788167101%_
-                                     _%e166793167104%_
-                                     _%hd166792167107%_
-                                     _%tl166791167109%_
-                                     _%e166796167112%_
-                                     _%hd166795167115%_
-                                     _%tl166794167117%_
-                                     _%e166799167120%_
-                                     _%hd166798167123%_
-                                     _%tl166797167125%_
-                                     _%e166802167128%_
-                                     _%hd166801167131%_
-                                     _%tl166800167133%_
-                                     _%e166805167136%_
-                                     _%hd166804167139%_
-                                     _%tl166803167141%_
-                                     _%e166808167144%_
-                                     _%hd166807167147%_
-                                     _%tl166806167149%_
-                                     _%e166811167152%_
-                                     _%hd166810167155%_
-                                     _%tl166809167157%_
-                                     _%e166814167160%_
-                                     _%hd166813167163%_
-                                     _%tl166812167165%_
-                                     _%e166817167168%_
-                                     _%hd166816167171%_
-                                     _%tl166815167173%_
-                                     _%e166820167176%_
-                                     _%hd166819167179%_
-                                     _%tl166818167181%_)
-                                    (_%__kont172304172305%_))))
-                            (_%__match172783172784%_
-                             _%e166790167096%_
-                             _%hd166789167099%_
-                             _%tl166788167101%_
-                             _%e166793167104%_
-                             _%hd166792167107%_
-                             _%tl166791167109%_
-                             _%e166796167112%_
-                             _%hd166795167115%_
-                             _%tl166794167117%_
-                             _%e166799167120%_
-                             _%hd166798167123%_
-                             _%tl166797167125%_
-                             _%e166802167128%_
-                             _%hd166801167131%_
-                             _%tl166800167133%_
-                             _%e166805167136%_
-                             _%hd166804167139%_
-                             _%tl166803167141%_
-                             _%e166808167144%_
-                             _%hd166807167147%_
-                             _%tl166806167149%_
-                             _%e166811167152%_
-                             _%hd166810167155%_
-                             _%tl166809167157%_))))
-                     (_%__match172581172582%_
-                      (lambda (_%e166756167230%_
-                               _%hd166755167233%_
-                               _%tl166754167235%_
-                               _%e166759167238%_
-                               _%hd166758167241%_
-                               _%tl166757167243%_
-                               _%e166762167246%_
-                               _%hd166761167249%_
-                               _%tl166760167251%_
-                               _%e166765167254%_
-                               _%hd166764167257%_
-                               _%tl166763167259%_
-                               _%e166768167262%_
-                               _%hd166767167265%_
-                               _%tl166766167267%_
-                               _%e166771167270%_
-                               _%hd166770167273%_
-                               _%tl166769167275%_
-                               _%e166774167278%_
-                               _%hd166773167281%_
-                               _%tl166772167283%_
-                               _%e166777167286%_
-                               _%hd166776167289%_
-                               _%tl166775167291%_
-                               _%e166780167294%_
-                               _%hd166779167297%_
-                               _%tl166778167299%_
-                               _%e166783167302%_
-                               _%hd166782167305%_
-                               _%tl166781167307%_)
-                        (let ((_%L167310%_ _%hd166782167305%_)
-                              (_%L167311%_ _%hd166773167281%_)
-                              (_%L167312%_ _%hd166764167257%_))
+                                      (gx#stx-null? _%tl165747166108%_))
+                                    (_%__match171594171595%_
+                                     _%e165715166023%_
+                                     _%hd165716166026%_
+                                     _%tl165717166028%_
+                                     _%e165718166031%_
+                                     _%hd165719166034%_
+                                     _%tl165720166036%_
+                                     _%e165721166039%_
+                                     _%hd165722166042%_
+                                     _%tl165723166044%_
+                                     _%e165724166047%_
+                                     _%hd165725166050%_
+                                     _%tl165726166052%_
+                                     _%e165727166055%_
+                                     _%hd165728166058%_
+                                     _%tl165729166060%_
+                                     _%e165730166063%_
+                                     _%hd165731166066%_
+                                     _%tl165732166068%_
+                                     _%e165733166071%_
+                                     _%hd165734166074%_
+                                     _%tl165735166076%_
+                                     _%e165736166079%_
+                                     _%hd165737166082%_
+                                     _%tl165738166084%_
+                                     _%e165739166087%_
+                                     _%hd165740166090%_
+                                     _%tl165741166092%_
+                                     _%e165742166095%_
+                                     _%hd165743166098%_
+                                     _%tl165744166100%_
+                                     _%e165745166103%_
+                                     _%hd165746166106%_
+                                     _%tl165747166108%_)
+                                    (_%__kont171231171232%_))))
+                            (_%__match171710171711%_
+                             _%e165715166023%_
+                             _%hd165716166026%_
+                             _%tl165717166028%_
+                             _%e165718166031%_
+                             _%hd165719166034%_
+                             _%tl165720166036%_
+                             _%e165721166039%_
+                             _%hd165722166042%_
+                             _%tl165723166044%_
+                             _%e165724166047%_
+                             _%hd165725166050%_
+                             _%tl165726166052%_
+                             _%e165727166055%_
+                             _%hd165728166058%_
+                             _%tl165729166060%_
+                             _%e165730166063%_
+                             _%hd165731166066%_
+                             _%tl165732166068%_
+                             _%e165733166071%_
+                             _%hd165734166074%_
+                             _%tl165735166076%_
+                             _%e165736166079%_
+                             _%hd165737166082%_
+                             _%tl165738166084%_))))
+                     (_%__match171508171509%_
+                      (lambda (_%e165681166157%_
+                               _%hd165682166160%_
+                               _%tl165683166162%_
+                               _%e165684166165%_
+                               _%hd165685166168%_
+                               _%tl165686166170%_
+                               _%e165687166173%_
+                               _%hd165688166176%_
+                               _%tl165689166178%_
+                               _%e165690166181%_
+                               _%hd165691166184%_
+                               _%tl165692166186%_
+                               _%e165693166189%_
+                               _%hd165694166192%_
+                               _%tl165695166194%_
+                               _%e165696166197%_
+                               _%hd165697166200%_
+                               _%tl165698166202%_
+                               _%e165699166205%_
+                               _%hd165700166208%_
+                               _%tl165701166210%_
+                               _%e165702166213%_
+                               _%hd165703166216%_
+                               _%tl165704166218%_
+                               _%e165705166221%_
+                               _%hd165706166224%_
+                               _%tl165707166226%_
+                               _%e165708166229%_
+                               _%hd165709166232%_
+                               _%tl165710166234%_)
+                        (let ((_%L166237%_ _%hd165709166232%_)
+                              (_%L166238%_ _%hd165700166208%_)
+                              (_%L166239%_ _%hd165691166184%_))
                           (if (and (or (let ()
                                          (declare (not safe))
                                          (gxc#runtime-identifier=?
-                                          _%L167312%_
+                                          _%L166239%_
                                           'slot-ref))
                                        (let ()
                                          (declare (not safe))
                                          (gxc#runtime-identifier=?
-                                          _%L167312%_
+                                          _%L166239%_
                                           'unchecked-slot-ref)))
-                                   (let ((__tmp172952
+                                   (let ((__tmp171867
                                           (let ()
                                             (declare (not safe))
                                             (slot-ref__0
-                                             _%self166642%_
+                                             _%self165569%_
                                              'receiver))))
                                      (declare (not safe))
                                      (gx#free-identifier=?
-                                      _%L167311%_
-                                      __tmp172952)))
-                              (_%__kont172296172297%_
-                               _%L167310%_
-                               _%L167311%_
-                               _%L167312%_)
-                              (_%__match172785172786%_
-                               _%e166756167230%_
-                               _%hd166755167233%_
-                               _%tl166754167235%_
-                               _%e166759167238%_
-                               _%hd166758167241%_
-                               _%tl166757167243%_
-                               _%e166762167246%_
-                               _%hd166761167249%_
-                               _%tl166760167251%_
-                               _%e166765167254%_
-                               _%hd166764167257%_
-                               _%tl166763167259%_
-                               _%e166768167262%_
-                               _%hd166767167265%_
-                               _%tl166766167267%_
-                               _%e166771167270%_
-                               _%hd166770167273%_
-                               _%tl166769167275%_
-                               _%e166774167278%_
-                               _%hd166773167281%_
-                               _%tl166772167283%_
-                               _%e166777167286%_
-                               _%hd166776167289%_
-                               _%tl166775167291%_)))))
-                     (_%__match172579172580%_
-                      (lambda (_%e166756167230%_
-                               _%hd166755167233%_
-                               _%tl166754167235%_
-                               _%e166759167238%_
-                               _%hd166758167241%_
-                               _%tl166757167243%_
-                               _%e166762167246%_
-                               _%hd166761167249%_
-                               _%tl166760167251%_
-                               _%e166765167254%_
-                               _%hd166764167257%_
-                               _%tl166763167259%_
-                               _%e166768167262%_
-                               _%hd166767167265%_
-                               _%tl166766167267%_
-                               _%e166771167270%_
-                               _%hd166770167273%_
-                               _%tl166769167275%_
-                               _%e166774167278%_
-                               _%hd166773167281%_
-                               _%tl166772167283%_
-                               _%e166777167286%_
-                               _%hd166776167289%_
-                               _%tl166775167291%_
-                               _%e166780167294%_
-                               _%hd166779167297%_
-                               _%tl166778167299%_
-                               _%e166783167302%_
-                               _%hd166782167305%_
-                               _%tl166781167307%_)
+                                      _%L166238%_
+                                      __tmp171867)))
+                              (_%__kont171223171224%_
+                               _%L166237%_
+                               _%L166238%_
+                               _%L166239%_)
+                              (_%__match171712171713%_
+                               _%e165681166157%_
+                               _%hd165682166160%_
+                               _%tl165683166162%_
+                               _%e165684166165%_
+                               _%hd165685166168%_
+                               _%tl165686166170%_
+                               _%e165687166173%_
+                               _%hd165688166176%_
+                               _%tl165689166178%_
+                               _%e165690166181%_
+                               _%hd165691166184%_
+                               _%tl165692166186%_
+                               _%e165693166189%_
+                               _%hd165694166192%_
+                               _%tl165695166194%_
+                               _%e165696166197%_
+                               _%hd165697166200%_
+                               _%tl165698166202%_
+                               _%e165699166205%_
+                               _%hd165700166208%_
+                               _%tl165701166210%_
+                               _%e165702166213%_
+                               _%hd165703166216%_
+                               _%tl165704166218%_)))))
+                     (_%__match171506171507%_
+                      (lambda (_%e165681166157%_
+                               _%hd165682166160%_
+                               _%tl165683166162%_
+                               _%e165684166165%_
+                               _%hd165685166168%_
+                               _%tl165686166170%_
+                               _%e165687166173%_
+                               _%hd165688166176%_
+                               _%tl165689166178%_
+                               _%e165690166181%_
+                               _%hd165691166184%_
+                               _%tl165692166186%_
+                               _%e165693166189%_
+                               _%hd165694166192%_
+                               _%tl165695166194%_
+                               _%e165696166197%_
+                               _%hd165697166200%_
+                               _%tl165698166202%_
+                               _%e165699166205%_
+                               _%hd165700166208%_
+                               _%tl165701166210%_
+                               _%e165702166213%_
+                               _%hd165703166216%_
+                               _%tl165704166218%_
+                               _%e165705166221%_
+                               _%hd165706166224%_
+                               _%tl165707166226%_
+                               _%e165708166229%_
+                               _%hd165709166232%_
+                               _%tl165710166234%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-null? _%tl166775167291%_))
-                            (_%__match172581172582%_
-                             _%e166756167230%_
-                             _%hd166755167233%_
-                             _%tl166754167235%_
-                             _%e166759167238%_
-                             _%hd166758167241%_
-                             _%tl166757167243%_
-                             _%e166762167246%_
-                             _%hd166761167249%_
-                             _%tl166760167251%_
-                             _%e166765167254%_
-                             _%hd166764167257%_
-                             _%tl166763167259%_
-                             _%e166768167262%_
-                             _%hd166767167265%_
-                             _%tl166766167267%_
-                             _%e166771167270%_
-                             _%hd166770167273%_
-                             _%tl166769167275%_
-                             _%e166774167278%_
-                             _%hd166773167281%_
-                             _%tl166772167283%_
-                             _%e166777167286%_
-                             _%hd166776167289%_
-                             _%tl166775167291%_
-                             _%e166780167294%_
-                             _%hd166779167297%_
-                             _%tl166778167299%_
-                             _%e166783167302%_
-                             _%hd166782167305%_
-                             _%tl166781167307%_)
-                            (_%__match172659172660%_
-                             _%e166756167230%_
-                             _%hd166755167233%_
-                             _%tl166754167235%_
-                             _%e166759167238%_
-                             _%hd166758167241%_
-                             _%tl166757167243%_
-                             _%e166762167246%_
-                             _%hd166761167249%_
-                             _%tl166760167251%_
-                             _%e166765167254%_
-                             _%hd166764167257%_
-                             _%tl166763167259%_
-                             _%e166768167262%_
-                             _%hd166767167265%_
-                             _%tl166766167267%_
-                             _%e166771167270%_
-                             _%hd166770167273%_
-                             _%tl166769167275%_
-                             _%e166774167278%_
-                             _%hd166773167281%_
-                             _%tl166772167283%_
-                             _%e166777167286%_
-                             _%hd166776167289%_
-                             _%tl166775167291%_
-                             _%e166780167294%_
-                             _%hd166779167297%_
-                             _%tl166778167299%_
-                             _%e166783167302%_
-                             _%hd166782167305%_
-                             _%tl166781167307%_))))
-                     (_%__match172569172570%_
-                      (lambda (_%e166756167230%_
-                               _%hd166755167233%_
-                               _%tl166754167235%_
-                               _%e166759167238%_
-                               _%hd166758167241%_
-                               _%tl166757167243%_
-                               _%e166762167246%_
-                               _%hd166761167249%_
-                               _%tl166760167251%_
-                               _%e166765167254%_
-                               _%hd166764167257%_
-                               _%tl166763167259%_
-                               _%e166768167262%_
-                               _%hd166767167265%_
-                               _%tl166766167267%_
-                               _%e166771167270%_
-                               _%hd166770167273%_
-                               _%tl166769167275%_
-                               _%e166774167278%_
-                               _%hd166773167281%_
-                               _%tl166772167283%_
-                               _%e166777167286%_
-                               _%hd166776167289%_
-                               _%tl166775167291%_
-                               _%e166780167294%_
-                               _%hd166779167297%_
-                               _%tl166778167299%_)
+                              (gx#stx-null? _%tl165704166218%_))
+                            (_%__match171508171509%_
+                             _%e165681166157%_
+                             _%hd165682166160%_
+                             _%tl165683166162%_
+                             _%e165684166165%_
+                             _%hd165685166168%_
+                             _%tl165686166170%_
+                             _%e165687166173%_
+                             _%hd165688166176%_
+                             _%tl165689166178%_
+                             _%e165690166181%_
+                             _%hd165691166184%_
+                             _%tl165692166186%_
+                             _%e165693166189%_
+                             _%hd165694166192%_
+                             _%tl165695166194%_
+                             _%e165696166197%_
+                             _%hd165697166200%_
+                             _%tl165698166202%_
+                             _%e165699166205%_
+                             _%hd165700166208%_
+                             _%tl165701166210%_
+                             _%e165702166213%_
+                             _%hd165703166216%_
+                             _%tl165704166218%_
+                             _%e165705166221%_
+                             _%hd165706166224%_
+                             _%tl165707166226%_
+                             _%e165708166229%_
+                             _%hd165709166232%_
+                             _%tl165710166234%_)
+                            (_%__match171586171587%_
+                             _%e165681166157%_
+                             _%hd165682166160%_
+                             _%tl165683166162%_
+                             _%e165684166165%_
+                             _%hd165685166168%_
+                             _%tl165686166170%_
+                             _%e165687166173%_
+                             _%hd165688166176%_
+                             _%tl165689166178%_
+                             _%e165690166181%_
+                             _%hd165691166184%_
+                             _%tl165692166186%_
+                             _%e165693166189%_
+                             _%hd165694166192%_
+                             _%tl165695166194%_
+                             _%e165696166197%_
+                             _%hd165697166200%_
+                             _%tl165698166202%_
+                             _%e165699166205%_
+                             _%hd165700166208%_
+                             _%tl165701166210%_
+                             _%e165702166213%_
+                             _%hd165703166216%_
+                             _%tl165704166218%_
+                             _%e165705166221%_
+                             _%hd165706166224%_
+                             _%tl165707166226%_
+                             _%e165708166229%_
+                             _%hd165709166232%_
+                             _%tl165710166234%_))))
+                     (_%__match171496171497%_
+                      (lambda (_%e165681166157%_
+                               _%hd165682166160%_
+                               _%tl165683166162%_
+                               _%e165684166165%_
+                               _%hd165685166168%_
+                               _%tl165686166170%_
+                               _%e165687166173%_
+                               _%hd165688166176%_
+                               _%tl165689166178%_
+                               _%e165690166181%_
+                               _%hd165691166184%_
+                               _%tl165692166186%_
+                               _%e165693166189%_
+                               _%hd165694166192%_
+                               _%tl165695166194%_
+                               _%e165696166197%_
+                               _%hd165697166200%_
+                               _%tl165698166202%_
+                               _%e165699166205%_
+                               _%hd165700166208%_
+                               _%tl165701166210%_
+                               _%e165702166213%_
+                               _%hd165703166216%_
+                               _%tl165704166218%_
+                               _%e165705166221%_
+                               _%hd165706166224%_
+                               _%tl165707166226%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-eq? '%#quote _%hd166779167297%_))
+                              (gx#stx-eq? '%#quote _%hd165706166224%_))
                             (if (let ()
                                   (declare (not safe))
-                                  (gx#stx-pair? _%tl166778167299%_))
-                                (let ((_%e166783167302%_
+                                  (gx#stx-pair? _%tl165707166226%_))
+                                (let ((_%e165708166229%_
                                        (let ()
                                          (declare (not safe))
-                                         (gx#stx-e _%tl166778167299%_))))
-                                  (let ((_%tl166781167307%_
+                                         (gx#stx-e _%tl165707166226%_))))
+                                  (let ((_%tl165710166234%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%e166783167302%_)))
-                                        (_%hd166782167305%_
+                                           (##cdr _%e165708166229%_)))
+                                        (_%hd165709166232%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%e166783167302%_))))
+                                           (##car _%e165708166229%_))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-null? _%tl166781167307%_))
+                                          (gx#stx-null? _%tl165710166234%_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-null?
-                                               _%tl166775167291%_))
-                                            (_%__match172581172582%_
-                                             _%e166756167230%_
-                                             _%hd166755167233%_
-                                             _%tl166754167235%_
-                                             _%e166759167238%_
-                                             _%hd166758167241%_
-                                             _%tl166757167243%_
-                                             _%e166762167246%_
-                                             _%hd166761167249%_
-                                             _%tl166760167251%_
-                                             _%e166765167254%_
-                                             _%hd166764167257%_
-                                             _%tl166763167259%_
-                                             _%e166768167262%_
-                                             _%hd166767167265%_
-                                             _%tl166766167267%_
-                                             _%e166771167270%_
-                                             _%hd166770167273%_
-                                             _%tl166769167275%_
-                                             _%e166774167278%_
-                                             _%hd166773167281%_
-                                             _%tl166772167283%_
-                                             _%e166777167286%_
-                                             _%hd166776167289%_
-                                             _%tl166775167291%_
-                                             _%e166780167294%_
-                                             _%hd166779167297%_
-                                             _%tl166778167299%_
-                                             _%e166783167302%_
-                                             _%hd166782167305%_
-                                             _%tl166781167307%_)
-                                            (_%__match172659172660%_
-                                             _%e166756167230%_
-                                             _%hd166755167233%_
-                                             _%tl166754167235%_
-                                             _%e166759167238%_
-                                             _%hd166758167241%_
-                                             _%tl166757167243%_
-                                             _%e166762167246%_
-                                             _%hd166761167249%_
-                                             _%tl166760167251%_
-                                             _%e166765167254%_
-                                             _%hd166764167257%_
-                                             _%tl166763167259%_
-                                             _%e166768167262%_
-                                             _%hd166767167265%_
-                                             _%tl166766167267%_
-                                             _%e166771167270%_
-                                             _%hd166770167273%_
-                                             _%tl166769167275%_
-                                             _%e166774167278%_
-                                             _%hd166773167281%_
-                                             _%tl166772167283%_
-                                             _%e166777167286%_
-                                             _%hd166776167289%_
-                                             _%tl166775167291%_
-                                             _%e166780167294%_
-                                             _%hd166779167297%_
-                                             _%tl166778167299%_
-                                             _%e166783167302%_
-                                             _%hd166782167305%_
-                                             _%tl166781167307%_))
-                                        (_%__match172783172784%_
-                                         _%e166756167230%_
-                                         _%hd166755167233%_
-                                         _%tl166754167235%_
-                                         _%e166759167238%_
-                                         _%hd166758167241%_
-                                         _%tl166757167243%_
-                                         _%e166762167246%_
-                                         _%hd166761167249%_
-                                         _%tl166760167251%_
-                                         _%e166765167254%_
-                                         _%hd166764167257%_
-                                         _%tl166763167259%_
-                                         _%e166768167262%_
-                                         _%hd166767167265%_
-                                         _%tl166766167267%_
-                                         _%e166771167270%_
-                                         _%hd166770167273%_
-                                         _%tl166769167275%_
-                                         _%e166774167278%_
-                                         _%hd166773167281%_
-                                         _%tl166772167283%_
-                                         _%e166777167286%_
-                                         _%hd166776167289%_
-                                         _%tl166775167291%_))))
-                                (_%__match172783172784%_
-                                 _%e166756167230%_
-                                 _%hd166755167233%_
-                                 _%tl166754167235%_
-                                 _%e166759167238%_
-                                 _%hd166758167241%_
-                                 _%tl166757167243%_
-                                 _%e166762167246%_
-                                 _%hd166761167249%_
-                                 _%tl166760167251%_
-                                 _%e166765167254%_
-                                 _%hd166764167257%_
-                                 _%tl166763167259%_
-                                 _%e166768167262%_
-                                 _%hd166767167265%_
-                                 _%tl166766167267%_
-                                 _%e166771167270%_
-                                 _%hd166770167273%_
-                                 _%tl166769167275%_
-                                 _%e166774167278%_
-                                 _%hd166773167281%_
-                                 _%tl166772167283%_
-                                 _%e166777167286%_
-                                 _%hd166776167289%_
-                                 _%tl166775167291%_))
-                            (_%__match172783172784%_
-                             _%e166756167230%_
-                             _%hd166755167233%_
-                             _%tl166754167235%_
-                             _%e166759167238%_
-                             _%hd166758167241%_
-                             _%tl166757167243%_
-                             _%e166762167246%_
-                             _%hd166761167249%_
-                             _%tl166760167251%_
-                             _%e166765167254%_
-                             _%hd166764167257%_
-                             _%tl166763167259%_
-                             _%e166768167262%_
-                             _%hd166767167265%_
-                             _%tl166766167267%_
-                             _%e166771167270%_
-                             _%hd166770167273%_
-                             _%tl166769167275%_
-                             _%e166774167278%_
-                             _%hd166773167281%_
-                             _%tl166772167283%_
-                             _%e166777167286%_
-                             _%hd166776167289%_
-                             _%tl166775167291%_))))
-                     (_%__match172501172502%_
-                      (lambda (_%e166705167351%_
-                               _%hd166704167354%_
-                               _%tl166703167356%_
-                               _%e166708167359%_
-                               _%hd166707167362%_
-                               _%tl166706167364%_
-                               _%e166711167367%_
-                               _%hd166710167370%_
-                               _%tl166709167372%_
-                               _%e166714167375%_
-                               _%hd166713167378%_
-                               _%tl166712167380%_
-                               _%e166717167383%_
-                               _%hd166716167386%_
-                               _%tl166715167388%_
-                               _%e166720167391%_
-                               _%hd166719167394%_
-                               _%tl166718167396%_
-                               _%e166723167399%_
-                               _%hd166722167402%_
-                               _%tl166721167404%_
-                               _%e166726167407%_
-                               _%hd166725167410%_
-                               _%tl166724167412%_
-                               _%e166729167415%_
-                               _%hd166728167418%_
-                               _%tl166727167420%_
-                               _%e166732167423%_
-                               _%hd166731167426%_
-                               _%tl166730167428%_
-                               _%e166735167431%_
-                               _%hd166734167434%_
-                               _%tl166733167436%_
-                               _%e166738167439%_
-                               _%hd166737167442%_
-                               _%tl166736167444%_
-                               _%e166741167447%_
-                               _%hd166740167450%_
-                               _%tl166739167452%_
-                               _%__splice172294172295%_
-                               _%target166742167455%_
-                               _%tl166744167457%_)
-                        (letrec ((_%loop166745167460%_
-                                  (lambda (_%hd166743167463%_
-                                           _%args166749167465%_)
+                                               _%tl165704166218%_))
+                                            (_%__match171508171509%_
+                                             _%e165681166157%_
+                                             _%hd165682166160%_
+                                             _%tl165683166162%_
+                                             _%e165684166165%_
+                                             _%hd165685166168%_
+                                             _%tl165686166170%_
+                                             _%e165687166173%_
+                                             _%hd165688166176%_
+                                             _%tl165689166178%_
+                                             _%e165690166181%_
+                                             _%hd165691166184%_
+                                             _%tl165692166186%_
+                                             _%e165693166189%_
+                                             _%hd165694166192%_
+                                             _%tl165695166194%_
+                                             _%e165696166197%_
+                                             _%hd165697166200%_
+                                             _%tl165698166202%_
+                                             _%e165699166205%_
+                                             _%hd165700166208%_
+                                             _%tl165701166210%_
+                                             _%e165702166213%_
+                                             _%hd165703166216%_
+                                             _%tl165704166218%_
+                                             _%e165705166221%_
+                                             _%hd165706166224%_
+                                             _%tl165707166226%_
+                                             _%e165708166229%_
+                                             _%hd165709166232%_
+                                             _%tl165710166234%_)
+                                            (_%__match171586171587%_
+                                             _%e165681166157%_
+                                             _%hd165682166160%_
+                                             _%tl165683166162%_
+                                             _%e165684166165%_
+                                             _%hd165685166168%_
+                                             _%tl165686166170%_
+                                             _%e165687166173%_
+                                             _%hd165688166176%_
+                                             _%tl165689166178%_
+                                             _%e165690166181%_
+                                             _%hd165691166184%_
+                                             _%tl165692166186%_
+                                             _%e165693166189%_
+                                             _%hd165694166192%_
+                                             _%tl165695166194%_
+                                             _%e165696166197%_
+                                             _%hd165697166200%_
+                                             _%tl165698166202%_
+                                             _%e165699166205%_
+                                             _%hd165700166208%_
+                                             _%tl165701166210%_
+                                             _%e165702166213%_
+                                             _%hd165703166216%_
+                                             _%tl165704166218%_
+                                             _%e165705166221%_
+                                             _%hd165706166224%_
+                                             _%tl165707166226%_
+                                             _%e165708166229%_
+                                             _%hd165709166232%_
+                                             _%tl165710166234%_))
+                                        (_%__match171710171711%_
+                                         _%e165681166157%_
+                                         _%hd165682166160%_
+                                         _%tl165683166162%_
+                                         _%e165684166165%_
+                                         _%hd165685166168%_
+                                         _%tl165686166170%_
+                                         _%e165687166173%_
+                                         _%hd165688166176%_
+                                         _%tl165689166178%_
+                                         _%e165690166181%_
+                                         _%hd165691166184%_
+                                         _%tl165692166186%_
+                                         _%e165693166189%_
+                                         _%hd165694166192%_
+                                         _%tl165695166194%_
+                                         _%e165696166197%_
+                                         _%hd165697166200%_
+                                         _%tl165698166202%_
+                                         _%e165699166205%_
+                                         _%hd165700166208%_
+                                         _%tl165701166210%_
+                                         _%e165702166213%_
+                                         _%hd165703166216%_
+                                         _%tl165704166218%_))))
+                                (_%__match171710171711%_
+                                 _%e165681166157%_
+                                 _%hd165682166160%_
+                                 _%tl165683166162%_
+                                 _%e165684166165%_
+                                 _%hd165685166168%_
+                                 _%tl165686166170%_
+                                 _%e165687166173%_
+                                 _%hd165688166176%_
+                                 _%tl165689166178%_
+                                 _%e165690166181%_
+                                 _%hd165691166184%_
+                                 _%tl165692166186%_
+                                 _%e165693166189%_
+                                 _%hd165694166192%_
+                                 _%tl165695166194%_
+                                 _%e165696166197%_
+                                 _%hd165697166200%_
+                                 _%tl165698166202%_
+                                 _%e165699166205%_
+                                 _%hd165700166208%_
+                                 _%tl165701166210%_
+                                 _%e165702166213%_
+                                 _%hd165703166216%_
+                                 _%tl165704166218%_))
+                            (_%__match171710171711%_
+                             _%e165681166157%_
+                             _%hd165682166160%_
+                             _%tl165683166162%_
+                             _%e165684166165%_
+                             _%hd165685166168%_
+                             _%tl165686166170%_
+                             _%e165687166173%_
+                             _%hd165688166176%_
+                             _%tl165689166178%_
+                             _%e165690166181%_
+                             _%hd165691166184%_
+                             _%tl165692166186%_
+                             _%e165693166189%_
+                             _%hd165694166192%_
+                             _%tl165695166194%_
+                             _%e165696166197%_
+                             _%hd165697166200%_
+                             _%tl165698166202%_
+                             _%e165699166205%_
+                             _%hd165700166208%_
+                             _%tl165701166210%_
+                             _%e165702166213%_
+                             _%hd165703166216%_
+                             _%tl165704166218%_))))
+                     (_%__match171428171429%_
+                      (lambda (_%e165630166278%_
+                               _%hd165631166281%_
+                               _%tl165632166283%_
+                               _%e165633166286%_
+                               _%hd165634166289%_
+                               _%tl165635166291%_
+                               _%e165636166294%_
+                               _%hd165637166297%_
+                               _%tl165638166299%_
+                               _%e165639166302%_
+                               _%hd165640166305%_
+                               _%tl165641166307%_
+                               _%e165642166310%_
+                               _%hd165643166313%_
+                               _%tl165644166315%_
+                               _%e165645166318%_
+                               _%hd165646166321%_
+                               _%tl165647166323%_
+                               _%e165648166326%_
+                               _%hd165649166329%_
+                               _%tl165650166331%_
+                               _%e165651166334%_
+                               _%hd165652166337%_
+                               _%tl165653166339%_
+                               _%e165654166342%_
+                               _%hd165655166345%_
+                               _%tl165656166347%_
+                               _%e165657166350%_
+                               _%hd165658166353%_
+                               _%tl165659166355%_
+                               _%e165660166358%_
+                               _%hd165661166361%_
+                               _%tl165662166363%_
+                               _%e165663166366%_
+                               _%hd165664166369%_
+                               _%tl165665166371%_
+                               _%e165666166374%_
+                               _%hd165667166377%_
+                               _%tl165668166379%_
+                               _%__splice171221171222%_
+                               _%target165669166382%_
+                               _%tl165671166384%_)
+                        (letrec ((_%loop165672166387%_
+                                  (lambda (_%hd165670166390%_
+                                           _%args165676166392%_)
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-pair? _%hd166743167463%_))
-                                        (let ((_%e166746167468%_
+                                          (gx#stx-pair? _%hd165670166390%_))
+                                        (let ((_%e165673166395%_
                                                (let ()
                                                  (declare (not safe))
                                                  (gx#stx-e
-                                                  _%hd166743167463%_))))
-                                          (let ((_%lp-tl166748167473%_
+                                                  _%hd165670166390%_))))
+                                          (let ((_%lp-tl165675166400%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _%e166746167468%_)))
-                                                (_%lp-hd166747167471%_
+                                                   (##cdr _%e165673166395%_)))
+                                                (_%lp-hd165674166398%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _%e166746167468%_))))
-                                            (let ((__tmp172953
-                                                   (cons _%lp-hd166747167471%_
-                                                         _%args166749167465%_)))
-                                              (declare (not safe))
-                                              (_%loop166745167460%_
-                                               _%lp-tl166748167473%_
-                                               __tmp172953))))
-                                        (let ((_%args166750167476%_
-                                               (reverse _%args166749167465%_)))
-                                          (let ((_%L167479%_
-                                                 _%args166750167476%_)
-                                                (_%L167480%_
-                                                 _%hd166740167450%_)
-                                                (_%L167481%_
-                                                 _%hd166731167426%_)
-                                                (_%L167482%_
-                                                 _%hd166722167402%_)
-                                                (_%L167483%_
-                                                 _%hd166713167378%_))
+                                                   (##car _%e165673166395%_))))
+                                            (_%loop165672166387%_
+                                             _%lp-tl165675166400%_
+                                             (cons _%lp-hd165674166398%_
+                                                   _%args165676166392%_))))
+                                        (let ((_%args165677166403%_
+                                               (reverse _%args165676166392%_)))
+                                          (let ((_%L166406%_
+                                                 _%args165677166403%_)
+                                                (_%L166407%_
+                                                 _%hd165667166377%_)
+                                                (_%L166408%_
+                                                 _%hd165658166353%_)
+                                                (_%L166409%_
+                                                 _%hd165649166329%_)
+                                                (_%L166410%_
+                                                 _%hd165640166305%_))
                                             (if (and (let ()
                                                        (declare (not safe))
                                                        (gxc#runtime-identifier=?
-                                                        _%L167483%_
+                                                        _%L166410%_
                                                         'apply))
                                                      (let ()
                                                        (declare (not safe))
                                                        (gxc#runtime-identifier=?
-                                                        _%L167482%_
+                                                        _%L166409%_
                                                         'call-method))
-                                                     (let ((__tmp172954
+                                                     (let ((__tmp171868
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (slot-ref__0
-                                                               _%self166642%_
+                                                               _%self165569%_
                                                                'receiver))))
                                                        (declare (not safe))
                                                        (gx#free-identifier=?
-                                                        _%L167481%_
-                                                        __tmp172954)))
-                                                (_%__kont172292172293%_
-                                                 _%L167479%_
-                                                 _%L167480%_
-                                                 _%L167481%_
-                                                 _%L167482%_
-                                                 _%L167483%_)
-                                                (_%__kont172304172305%_))))))))
-                          (let ()
-                            (declare (not safe))
-                            (_%loop166745167460%_
-                             _%target166742167455%_
-                             '())))))
-                     (_%__match172459172460%_
-                      (lambda (_%e166705167351%_
-                               _%hd166704167354%_
-                               _%tl166703167356%_
-                               _%e166708167359%_
-                               _%hd166707167362%_
-                               _%tl166706167364%_
-                               _%e166711167367%_
-                               _%hd166710167370%_
-                               _%tl166709167372%_
-                               _%e166714167375%_
-                               _%hd166713167378%_
-                               _%tl166712167380%_
-                               _%e166717167383%_
-                               _%hd166716167386%_
-                               _%tl166715167388%_
-                               _%e166720167391%_
-                               _%hd166719167394%_
-                               _%tl166718167396%_
-                               _%e166723167399%_
-                               _%hd166722167402%_
-                               _%tl166721167404%_
-                               _%e166726167407%_
-                               _%hd166725167410%_
-                               _%tl166724167412%_
-                               _%e166729167415%_
-                               _%hd166728167418%_
-                               _%tl166727167420%_)
+                                                        _%L166408%_
+                                                        __tmp171868)))
+                                                (_%__kont171219171220%_
+                                                 _%L166406%_
+                                                 _%L166407%_
+                                                 _%L166408%_
+                                                 _%L166409%_
+                                                 _%L166410%_)
+                                                (_%__kont171231171232%_))))))))
+                          (_%loop165672166387%_ _%target165669166382%_ '()))))
+                     (_%__match171386171387%_
+                      (lambda (_%e165630166278%_
+                               _%hd165631166281%_
+                               _%tl165632166283%_
+                               _%e165633166286%_
+                               _%hd165634166289%_
+                               _%tl165635166291%_
+                               _%e165636166294%_
+                               _%hd165637166297%_
+                               _%tl165638166299%_
+                               _%e165639166302%_
+                               _%hd165640166305%_
+                               _%tl165641166307%_
+                               _%e165642166310%_
+                               _%hd165643166313%_
+                               _%tl165644166315%_
+                               _%e165645166318%_
+                               _%hd165646166321%_
+                               _%tl165647166323%_
+                               _%e165648166326%_
+                               _%hd165649166329%_
+                               _%tl165650166331%_
+                               _%e165651166334%_
+                               _%hd165652166337%_
+                               _%tl165653166339%_
+                               _%e165654166342%_
+                               _%hd165655166345%_
+                               _%tl165656166347%_)
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-eq? '%#ref _%hd166728167418%_))
+                              (gx#stx-eq? '%#ref _%hd165655166345%_))
                             (if (let ()
                                   (declare (not safe))
-                                  (gx#stx-pair? _%tl166727167420%_))
-                                (let ((_%e166732167423%_
+                                  (gx#stx-pair? _%tl165656166347%_))
+                                (let ((_%e165657166350%_
                                        (let ()
                                          (declare (not safe))
-                                         (gx#stx-e _%tl166727167420%_))))
-                                  (let ((_%tl166730167428%_
+                                         (gx#stx-e _%tl165656166347%_))))
+                                  (let ((_%tl165659166355%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%e166732167423%_)))
-                                        (_%hd166731167426%_
+                                           (##cdr _%e165657166350%_)))
+                                        (_%hd165658166353%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%e166732167423%_))))
+                                           (##car _%e165657166350%_))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-null? _%tl166730167428%_))
+                                          (gx#stx-null? _%tl165659166355%_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-pair?
-                                               _%tl166724167412%_))
-                                            (let ((_%e166735167431%_
+                                               _%tl165653166339%_))
+                                            (let ((_%e165660166358%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#stx-e
-                                                      _%tl166724167412%_))))
-                                              (let ((_%tl166733167436%_
+                                                      _%tl165653166339%_))))
+                                              (let ((_%tl165662166363%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _%e166735167431%_)))
-                                                    (_%hd166734167434%_
+                                                       (##cdr _%e165660166358%_)))
+                                                    (_%hd165661166361%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _%e166735167431%_))))
+                                                       (##car _%e165660166358%_))))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-pair?
-                                                       _%hd166734167434%_))
-                                                    (let ((_%e166738167439%_
+                                                       _%hd165661166361%_))
+                                                    (let ((_%e165663166366%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#stx-e
-                                                              _%hd166734167434%_))))
-                                                      (let ((_%tl166736167444%_
+                                                              _%hd165661166361%_))))
+                                                      (let ((_%tl165665166371%_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##cdr _%e166738167439%_)))
-                    (_%hd166737167442%_
-                     (let () (declare (not safe)) (##car _%e166738167439%_))))
+                       (##cdr _%e165663166366%_)))
+                    (_%hd165664166369%_
+                     (let () (declare (not safe)) (##car _%e165663166366%_))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#identifier? _%hd166737167442%_))
+                      (gx#identifier? _%hd165664166369%_))
                     (if (let ()
                           (declare (not safe))
-                          (gx#stx-eq? '%#quote _%hd166737167442%_))
+                          (gx#stx-eq? '%#quote _%hd165664166369%_))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%tl166736167444%_))
-                            (let ((_%e166741167447%_
+                              (gx#stx-pair? _%tl165665166371%_))
+                            (let ((_%e165666166374%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%tl166736167444%_))))
-                              (let ((_%tl166739167452%_
+                                     (gx#stx-e _%tl165665166371%_))))
+                              (let ((_%tl165668166379%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e166741167447%_)))
-                                    (_%hd166740167450%_
+                                       (##cdr _%e165666166374%_)))
+                                    (_%hd165667166377%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e166741167447%_))))
+                                       (##car _%e165666166374%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _%tl166739167452%_))
+                                      (gx#stx-null? _%tl165668166379%_))
                                     (if (let ()
                                           (declare (not safe))
                                           (gx#stx-pair/null?
-                                           _%tl166733167436%_))
-                                        (let ((_%__splice172294172295%_
+                                           _%tl165662166363%_))
+                                        (let ((_%__splice171221171222%_
                                                (let ()
                                                  (declare (not safe))
                                                  (gx#syntax-split-splice
-                                                  _%tl166733167436%_
+                                                  _%tl165662166363%_
                                                   '0))))
-                                          (let ((_%tl166744167457%_
+                                          (let ((_%tl165671166384%_
                                                  (let ()
                                                    (declare (not safe))
                                                    (##vector-ref
-                                                    _%__splice172294172295%_
+                                                    _%__splice171221171222%_
                                                     '1)))
-                                                (_%target166742167455%_
+                                                (_%target165669166382%_
                                                  (let ()
                                                    (declare (not safe))
                                                    (##vector-ref
-                                                    _%__splice172294172295%_
+                                                    _%__splice171221171222%_
                                                     '0))))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-null?
-                                                   _%tl166744167457%_))
-                                                (_%__match172501172502%_
-                                                 _%e166705167351%_
-                                                 _%hd166704167354%_
-                                                 _%tl166703167356%_
-                                                 _%e166708167359%_
-                                                 _%hd166707167362%_
-                                                 _%tl166706167364%_
-                                                 _%e166711167367%_
-                                                 _%hd166710167370%_
-                                                 _%tl166709167372%_
-                                                 _%e166714167375%_
-                                                 _%hd166713167378%_
-                                                 _%tl166712167380%_
-                                                 _%e166717167383%_
-                                                 _%hd166716167386%_
-                                                 _%tl166715167388%_
-                                                 _%e166720167391%_
-                                                 _%hd166719167394%_
-                                                 _%tl166718167396%_
-                                                 _%e166723167399%_
-                                                 _%hd166722167402%_
-                                                 _%tl166721167404%_
-                                                 _%e166726167407%_
-                                                 _%hd166725167410%_
-                                                 _%tl166724167412%_
-                                                 _%e166729167415%_
-                                                 _%hd166728167418%_
-                                                 _%tl166727167420%_
-                                                 _%e166732167423%_
-                                                 _%hd166731167426%_
-                                                 _%tl166730167428%_
-                                                 _%e166735167431%_
-                                                 _%hd166734167434%_
-                                                 _%tl166733167436%_
-                                                 _%e166738167439%_
-                                                 _%hd166737167442%_
-                                                 _%tl166736167444%_
-                                                 _%e166741167447%_
-                                                 _%hd166740167450%_
-                                                 _%tl166739167452%_
-                                                 _%__splice172294172295%_
-                                                 _%target166742167455%_
-                                                 _%tl166744167457%_)
-                                                (_%__kont172304172305%_))))
-                                        (_%__kont172304172305%_))
-                                    (_%__kont172304172305%_))))
-                            (_%__kont172304172305%_))
-                        (_%__kont172304172305%_))
-                    (_%__kont172304172305%_))))
+                                                   _%tl165671166384%_))
+                                                (_%__match171428171429%_
+                                                 _%e165630166278%_
+                                                 _%hd165631166281%_
+                                                 _%tl165632166283%_
+                                                 _%e165633166286%_
+                                                 _%hd165634166289%_
+                                                 _%tl165635166291%_
+                                                 _%e165636166294%_
+                                                 _%hd165637166297%_
+                                                 _%tl165638166299%_
+                                                 _%e165639166302%_
+                                                 _%hd165640166305%_
+                                                 _%tl165641166307%_
+                                                 _%e165642166310%_
+                                                 _%hd165643166313%_
+                                                 _%tl165644166315%_
+                                                 _%e165645166318%_
+                                                 _%hd165646166321%_
+                                                 _%tl165647166323%_
+                                                 _%e165648166326%_
+                                                 _%hd165649166329%_
+                                                 _%tl165650166331%_
+                                                 _%e165651166334%_
+                                                 _%hd165652166337%_
+                                                 _%tl165653166339%_
+                                                 _%e165654166342%_
+                                                 _%hd165655166345%_
+                                                 _%tl165656166347%_
+                                                 _%e165657166350%_
+                                                 _%hd165658166353%_
+                                                 _%tl165659166355%_
+                                                 _%e165660166358%_
+                                                 _%hd165661166361%_
+                                                 _%tl165662166363%_
+                                                 _%e165663166366%_
+                                                 _%hd165664166369%_
+                                                 _%tl165665166371%_
+                                                 _%e165666166374%_
+                                                 _%hd165667166377%_
+                                                 _%tl165668166379%_
+                                                 _%__splice171221171222%_
+                                                 _%target165669166382%_
+                                                 _%tl165671166384%_)
+                                                (_%__kont171231171232%_))))
+                                        (_%__kont171231171232%_))
+                                    (_%__kont171231171232%_))))
+                            (_%__kont171231171232%_))
+                        (_%__kont171231171232%_))
+                    (_%__kont171231171232%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%__kont172304172305%_))))
-                                            (_%__match172783172784%_
-                                             _%e166705167351%_
-                                             _%hd166704167354%_
-                                             _%tl166703167356%_
-                                             _%e166708167359%_
-                                             _%hd166707167362%_
-                                             _%tl166706167364%_
-                                             _%e166711167367%_
-                                             _%hd166710167370%_
-                                             _%tl166709167372%_
-                                             _%e166714167375%_
-                                             _%hd166713167378%_
-                                             _%tl166712167380%_
-                                             _%e166717167383%_
-                                             _%hd166716167386%_
-                                             _%tl166715167388%_
-                                             _%e166720167391%_
-                                             _%hd166719167394%_
-                                             _%tl166718167396%_
-                                             _%e166723167399%_
-                                             _%hd166722167402%_
-                                             _%tl166721167404%_
-                                             _%e166726167407%_
-                                             _%hd166725167410%_
-                                             _%tl166724167412%_))
-                                        (_%__match172783172784%_
-                                         _%e166705167351%_
-                                         _%hd166704167354%_
-                                         _%tl166703167356%_
-                                         _%e166708167359%_
-                                         _%hd166707167362%_
-                                         _%tl166706167364%_
-                                         _%e166711167367%_
-                                         _%hd166710167370%_
-                                         _%tl166709167372%_
-                                         _%e166714167375%_
-                                         _%hd166713167378%_
-                                         _%tl166712167380%_
-                                         _%e166717167383%_
-                                         _%hd166716167386%_
-                                         _%tl166715167388%_
-                                         _%e166720167391%_
-                                         _%hd166719167394%_
-                                         _%tl166718167396%_
-                                         _%e166723167399%_
-                                         _%hd166722167402%_
-                                         _%tl166721167404%_
-                                         _%e166726167407%_
-                                         _%hd166725167410%_
-                                         _%tl166724167412%_))))
-                                (_%__match172783172784%_
-                                 _%e166705167351%_
-                                 _%hd166704167354%_
-                                 _%tl166703167356%_
-                                 _%e166708167359%_
-                                 _%hd166707167362%_
-                                 _%tl166706167364%_
-                                 _%e166711167367%_
-                                 _%hd166710167370%_
-                                 _%tl166709167372%_
-                                 _%e166714167375%_
-                                 _%hd166713167378%_
-                                 _%tl166712167380%_
-                                 _%e166717167383%_
-                                 _%hd166716167386%_
-                                 _%tl166715167388%_
-                                 _%e166720167391%_
-                                 _%hd166719167394%_
-                                 _%tl166718167396%_
-                                 _%e166723167399%_
-                                 _%hd166722167402%_
-                                 _%tl166721167404%_
-                                 _%e166726167407%_
-                                 _%hd166725167410%_
-                                 _%tl166724167412%_))
-                            (_%__match172569172570%_
-                             _%e166705167351%_
-                             _%hd166704167354%_
-                             _%tl166703167356%_
-                             _%e166708167359%_
-                             _%hd166707167362%_
-                             _%tl166706167364%_
-                             _%e166711167367%_
-                             _%hd166710167370%_
-                             _%tl166709167372%_
-                             _%e166714167375%_
-                             _%hd166713167378%_
-                             _%tl166712167380%_
-                             _%e166717167383%_
-                             _%hd166716167386%_
-                             _%tl166715167388%_
-                             _%e166720167391%_
-                             _%hd166719167394%_
-                             _%tl166718167396%_
-                             _%e166723167399%_
-                             _%hd166722167402%_
-                             _%tl166721167404%_
-                             _%e166726167407%_
-                             _%hd166725167410%_
-                             _%tl166724167412%_
-                             _%e166729167415%_
-                             _%hd166728167418%_
-                             _%tl166727167420%_))))
-                     (_%__match172391172392%_
-                      (lambda (_%e166661167543%_
-                               _%hd166660167546%_
-                               _%tl166659167548%_
-                               _%e166664167551%_
-                               _%hd166663167554%_
-                               _%tl166662167556%_
-                               _%e166667167559%_
-                               _%hd166666167562%_
-                               _%tl166665167564%_
-                               _%e166670167567%_
-                               _%hd166669167570%_
-                               _%tl166668167572%_
-                               _%e166673167575%_
-                               _%hd166672167578%_
-                               _%tl166671167580%_
-                               _%e166676167583%_
-                               _%hd166675167586%_
-                               _%tl166674167588%_
-                               _%e166679167591%_
-                               _%hd166678167594%_
-                               _%tl166677167596%_
-                               _%e166682167599%_
-                               _%hd166681167602%_
-                               _%tl166680167604%_
-                               _%e166685167607%_
-                               _%hd166684167610%_
-                               _%tl166683167612%_
-                               _%e166688167615%_
-                               _%hd166687167618%_
-                               _%tl166686167620%_
-                               _%__splice172290172291%_
-                               _%target166689167623%_
-                               _%tl166691167625%_)
-                        (letrec ((_%loop166692167628%_
-                                  (lambda (_%hd166690167631%_
-                                           _%args166696167633%_)
+                                                    (_%__kont171231171232%_))))
+                                            (_%__match171710171711%_
+                                             _%e165630166278%_
+                                             _%hd165631166281%_
+                                             _%tl165632166283%_
+                                             _%e165633166286%_
+                                             _%hd165634166289%_
+                                             _%tl165635166291%_
+                                             _%e165636166294%_
+                                             _%hd165637166297%_
+                                             _%tl165638166299%_
+                                             _%e165639166302%_
+                                             _%hd165640166305%_
+                                             _%tl165641166307%_
+                                             _%e165642166310%_
+                                             _%hd165643166313%_
+                                             _%tl165644166315%_
+                                             _%e165645166318%_
+                                             _%hd165646166321%_
+                                             _%tl165647166323%_
+                                             _%e165648166326%_
+                                             _%hd165649166329%_
+                                             _%tl165650166331%_
+                                             _%e165651166334%_
+                                             _%hd165652166337%_
+                                             _%tl165653166339%_))
+                                        (_%__match171710171711%_
+                                         _%e165630166278%_
+                                         _%hd165631166281%_
+                                         _%tl165632166283%_
+                                         _%e165633166286%_
+                                         _%hd165634166289%_
+                                         _%tl165635166291%_
+                                         _%e165636166294%_
+                                         _%hd165637166297%_
+                                         _%tl165638166299%_
+                                         _%e165639166302%_
+                                         _%hd165640166305%_
+                                         _%tl165641166307%_
+                                         _%e165642166310%_
+                                         _%hd165643166313%_
+                                         _%tl165644166315%_
+                                         _%e165645166318%_
+                                         _%hd165646166321%_
+                                         _%tl165647166323%_
+                                         _%e165648166326%_
+                                         _%hd165649166329%_
+                                         _%tl165650166331%_
+                                         _%e165651166334%_
+                                         _%hd165652166337%_
+                                         _%tl165653166339%_))))
+                                (_%__match171710171711%_
+                                 _%e165630166278%_
+                                 _%hd165631166281%_
+                                 _%tl165632166283%_
+                                 _%e165633166286%_
+                                 _%hd165634166289%_
+                                 _%tl165635166291%_
+                                 _%e165636166294%_
+                                 _%hd165637166297%_
+                                 _%tl165638166299%_
+                                 _%e165639166302%_
+                                 _%hd165640166305%_
+                                 _%tl165641166307%_
+                                 _%e165642166310%_
+                                 _%hd165643166313%_
+                                 _%tl165644166315%_
+                                 _%e165645166318%_
+                                 _%hd165646166321%_
+                                 _%tl165647166323%_
+                                 _%e165648166326%_
+                                 _%hd165649166329%_
+                                 _%tl165650166331%_
+                                 _%e165651166334%_
+                                 _%hd165652166337%_
+                                 _%tl165653166339%_))
+                            (_%__match171496171497%_
+                             _%e165630166278%_
+                             _%hd165631166281%_
+                             _%tl165632166283%_
+                             _%e165633166286%_
+                             _%hd165634166289%_
+                             _%tl165635166291%_
+                             _%e165636166294%_
+                             _%hd165637166297%_
+                             _%tl165638166299%_
+                             _%e165639166302%_
+                             _%hd165640166305%_
+                             _%tl165641166307%_
+                             _%e165642166310%_
+                             _%hd165643166313%_
+                             _%tl165644166315%_
+                             _%e165645166318%_
+                             _%hd165646166321%_
+                             _%tl165647166323%_
+                             _%e165648166326%_
+                             _%hd165649166329%_
+                             _%tl165650166331%_
+                             _%e165651166334%_
+                             _%hd165652166337%_
+                             _%tl165653166339%_
+                             _%e165654166342%_
+                             _%hd165655166345%_
+                             _%tl165656166347%_))))
+                     (_%__match171318171319%_
+                      (lambda (_%e165586166470%_
+                               _%hd165587166473%_
+                               _%tl165588166475%_
+                               _%e165589166478%_
+                               _%hd165590166481%_
+                               _%tl165591166483%_
+                               _%e165592166486%_
+                               _%hd165593166489%_
+                               _%tl165594166491%_
+                               _%e165595166494%_
+                               _%hd165596166497%_
+                               _%tl165597166499%_
+                               _%e165598166502%_
+                               _%hd165599166505%_
+                               _%tl165600166507%_
+                               _%e165601166510%_
+                               _%hd165602166513%_
+                               _%tl165603166515%_
+                               _%e165604166518%_
+                               _%hd165605166521%_
+                               _%tl165606166523%_
+                               _%e165607166526%_
+                               _%hd165608166529%_
+                               _%tl165609166531%_
+                               _%e165610166534%_
+                               _%hd165611166537%_
+                               _%tl165612166539%_
+                               _%e165613166542%_
+                               _%hd165614166545%_
+                               _%tl165615166547%_
+                               _%__splice171217171218%_
+                               _%target165616166550%_
+                               _%tl165618166552%_)
+                        (letrec ((_%loop165619166555%_
+                                  (lambda (_%hd165617166558%_
+                                           _%args165623166560%_)
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-pair? _%hd166690167631%_))
-                                        (let ((_%e166693167636%_
+                                          (gx#stx-pair? _%hd165617166558%_))
+                                        (let ((_%e165620166563%_
                                                (let ()
                                                  (declare (not safe))
                                                  (gx#stx-e
-                                                  _%hd166690167631%_))))
-                                          (let ((_%lp-tl166695167641%_
+                                                  _%hd165617166558%_))))
+                                          (let ((_%lp-tl165622166568%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _%e166693167636%_)))
-                                                (_%lp-hd166694167639%_
+                                                   (##cdr _%e165620166563%_)))
+                                                (_%lp-hd165621166566%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _%e166693167636%_))))
-                                            (let ((__tmp172955
-                                                   (cons _%lp-hd166694167639%_
-                                                         _%args166696167633%_)))
-                                              (declare (not safe))
-                                              (_%loop166692167628%_
-                                               _%lp-tl166695167641%_
-                                               __tmp172955))))
-                                        (let ((_%args166697167644%_
-                                               (reverse _%args166696167633%_)))
-                                          (let ((_%L167647%_
-                                                 _%args166697167644%_)
-                                                (_%L167648%_
-                                                 _%hd166687167618%_)
-                                                (_%L167649%_
-                                                 _%hd166678167594%_)
-                                                (_%L167650%_
-                                                 _%hd166669167570%_))
+                                                   (##car _%e165620166563%_))))
+                                            (_%loop165619166555%_
+                                             _%lp-tl165622166568%_
+                                             (cons _%lp-hd165621166566%_
+                                                   _%args165623166560%_))))
+                                        (let ((_%args165624166571%_
+                                               (reverse _%args165623166560%_)))
+                                          (let ((_%L166574%_
+                                                 _%args165624166571%_)
+                                                (_%L166575%_
+                                                 _%hd165614166545%_)
+                                                (_%L166576%_
+                                                 _%hd165605166521%_)
+                                                (_%L166577%_
+                                                 _%hd165596166497%_))
                                             (if (and (let ()
                                                        (declare (not safe))
                                                        (gxc#runtime-identifier=?
-                                                        _%L167650%_
+                                                        _%L166577%_
                                                         'call-method))
-                                                     (let ((__tmp172956
+                                                     (let ((__tmp171869
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (slot-ref__0
-                                                               _%self166642%_
+                                                               _%self165569%_
                                                                'receiver))))
                                                        (declare (not safe))
                                                        (gx#free-identifier=?
-                                                        _%L167649%_
-                                                        __tmp172956)))
-                                                (_%__kont172288172289%_
-                                                 _%L167647%_
-                                                 _%L167648%_
-                                                 _%L167649%_
-                                                 _%L167650%_)
-                                                (_%__match172579172580%_
-                                                 _%e166661167543%_
-                                                 _%hd166660167546%_
-                                                 _%tl166659167548%_
-                                                 _%e166664167551%_
-                                                 _%hd166663167554%_
-                                                 _%tl166662167556%_
-                                                 _%e166667167559%_
-                                                 _%hd166666167562%_
-                                                 _%tl166665167564%_
-                                                 _%e166670167567%_
-                                                 _%hd166669167570%_
-                                                 _%tl166668167572%_
-                                                 _%e166673167575%_
-                                                 _%hd166672167578%_
-                                                 _%tl166671167580%_
-                                                 _%e166676167583%_
-                                                 _%hd166675167586%_
-                                                 _%tl166674167588%_
-                                                 _%e166679167591%_
-                                                 _%hd166678167594%_
-                                                 _%tl166677167596%_
-                                                 _%e166682167599%_
-                                                 _%hd166681167602%_
-                                                 _%tl166680167604%_
-                                                 _%e166685167607%_
-                                                 _%hd166684167610%_
-                                                 _%tl166683167612%_
-                                                 _%e166688167615%_
-                                                 _%hd166687167618%_
-                                                 _%tl166686167620%_))))))))
-                          (let ()
-                            (declare (not safe))
-                            (_%loop166692167628%_
-                             _%target166689167623%_
-                             '()))))))
+                                                        _%L166576%_
+                                                        __tmp171869)))
+                                                (_%__kont171215171216%_
+                                                 _%L166574%_
+                                                 _%L166575%_
+                                                 _%L166576%_
+                                                 _%L166577%_)
+                                                (_%__match171506171507%_
+                                                 _%e165586166470%_
+                                                 _%hd165587166473%_
+                                                 _%tl165588166475%_
+                                                 _%e165589166478%_
+                                                 _%hd165590166481%_
+                                                 _%tl165591166483%_
+                                                 _%e165592166486%_
+                                                 _%hd165593166489%_
+                                                 _%tl165594166491%_
+                                                 _%e165595166494%_
+                                                 _%hd165596166497%_
+                                                 _%tl165597166499%_
+                                                 _%e165598166502%_
+                                                 _%hd165599166505%_
+                                                 _%tl165600166507%_
+                                                 _%e165601166510%_
+                                                 _%hd165602166513%_
+                                                 _%tl165603166515%_
+                                                 _%e165604166518%_
+                                                 _%hd165605166521%_
+                                                 _%tl165606166523%_
+                                                 _%e165607166526%_
+                                                 _%hd165608166529%_
+                                                 _%tl165609166531%_
+                                                 _%e165610166534%_
+                                                 _%hd165611166537%_
+                                                 _%tl165612166539%_
+                                                 _%e165613166542%_
+                                                 _%hd165614166545%_
+                                                 _%tl165615166547%_))))))))
+                          (_%loop165619166555%_ _%target165616166550%_ '())))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-pair? _%__stx172286172287%_))
-                    (let ((_%e166661167543%_
+                      (gx#stx-pair? _%__stx171213171214%_))
+                    (let ((_%e165586166470%_
                            (let ()
                              (declare (not safe))
-                             (gx#stx-e _%__stx172286172287%_))))
-                      (let ((_%tl166659167548%_
+                             (gx#stx-e _%__stx171213171214%_))))
+                      (let ((_%tl165588166475%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e166661167543%_)))
-                            (_%hd166660167546%_
+                               (##cdr _%e165586166470%_)))
+                            (_%hd165587166473%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e166661167543%_))))
+                               (##car _%e165586166470%_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%tl166659167548%_))
-                            (let ((_%e166664167551%_
+                              (gx#stx-pair? _%tl165588166475%_))
+                            (let ((_%e165589166478%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%tl166659167548%_))))
-                              (let ((_%tl166662167556%_
+                                     (gx#stx-e _%tl165588166475%_))))
+                              (let ((_%tl165591166483%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e166664167551%_)))
-                                    (_%hd166663167554%_
+                                       (##cdr _%e165589166478%_)))
+                                    (_%hd165590166481%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e166664167551%_))))
+                                       (##car _%e165589166478%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-pair? _%hd166663167554%_))
-                                    (let ((_%e166667167559%_
+                                      (gx#stx-pair? _%hd165590166481%_))
+                                    (let ((_%e165592166486%_
                                            (let ()
                                              (declare (not safe))
-                                             (gx#stx-e _%hd166663167554%_))))
-                                      (let ((_%tl166665167564%_
+                                             (gx#stx-e _%hd165590166481%_))))
+                                      (let ((_%tl165594166491%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e166667167559%_)))
-                                            (_%hd166666167562%_
+                                               (##cdr _%e165592166486%_)))
+                                            (_%hd165593166489%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e166667167559%_))))
+                                               (##car _%e165592166486%_))))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#identifier?
-                                               _%hd166666167562%_))
+                                               _%hd165593166489%_))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-eq?
                                                    '%#ref
-                                                   _%hd166666167562%_))
+                                                   _%hd165593166489%_))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-pair?
-                                                       _%tl166665167564%_))
-                                                    (let ((_%e166670167567%_
+                                                       _%tl165594166491%_))
+                                                    (let ((_%e165595166494%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#stx-e
-                                                              _%tl166665167564%_))))
-                                                      (let ((_%tl166668167572%_
+                                                              _%tl165594166491%_))))
+                                                      (let ((_%tl165597166499%_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##cdr _%e166670167567%_)))
-                    (_%hd166669167570%_
-                     (let () (declare (not safe)) (##car _%e166670167567%_))))
+                       (##cdr _%e165595166494%_)))
+                    (_%hd165596166497%_
+                     (let () (declare (not safe)) (##car _%e165595166494%_))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-null? _%tl166668167572%_))
+                      (gx#stx-null? _%tl165597166499%_))
                     (if (let ()
                           (declare (not safe))
-                          (gx#stx-pair? _%tl166662167556%_))
-                        (let ((_%e166673167575%_
+                          (gx#stx-pair? _%tl165591166483%_))
+                        (let ((_%e165598166502%_
                                (let ()
                                  (declare (not safe))
-                                 (gx#stx-e _%tl166662167556%_))))
-                          (let ((_%tl166671167580%_
+                                 (gx#stx-e _%tl165591166483%_))))
+                          (let ((_%tl165600166507%_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _%e166673167575%_)))
-                                (_%hd166672167578%_
+                                   (##cdr _%e165598166502%_)))
+                                (_%hd165599166505%_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _%e166673167575%_))))
+                                   (##car _%e165598166502%_))))
                             (if (let ()
                                   (declare (not safe))
-                                  (gx#stx-pair? _%hd166672167578%_))
-                                (let ((_%e166676167583%_
+                                  (gx#stx-pair? _%hd165599166505%_))
+                                (let ((_%e165601166510%_
                                        (let ()
                                          (declare (not safe))
-                                         (gx#stx-e _%hd166672167578%_))))
-                                  (let ((_%tl166674167588%_
+                                         (gx#stx-e _%hd165599166505%_))))
+                                  (let ((_%tl165603166515%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%e166676167583%_)))
-                                        (_%hd166675167586%_
+                                           (##cdr _%e165601166510%_)))
+                                        (_%hd165602166513%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%e166676167583%_))))
+                                           (##car _%e165601166510%_))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#identifier? _%hd166675167586%_))
+                                          (gx#identifier? _%hd165602166513%_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-eq?
                                                '%#ref
-                                               _%hd166675167586%_))
+                                               _%hd165602166513%_))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-pair?
-                                                   _%tl166674167588%_))
-                                                (let ((_%e166679167591%_
+                                                   _%tl165603166515%_))
+                                                (let ((_%e165604166518%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _%tl166674167588%_))))
-                                                  (let ((_%tl166677167596%_
+                                                          _%tl165603166515%_))))
+                                                  (let ((_%tl165606166523%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _%e166679167591%_)))
-                                                        (_%hd166678167594%_
+                                                           (##cdr _%e165604166518%_)))
+                                                        (_%hd165605166521%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _%e166679167591%_))))
+                                                           (##car _%e165604166518%_))))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#stx-null?
-                                                           _%tl166677167596%_))
+                                                           _%tl165606166523%_))
                                                         (if (let ()
                                                               (declare
                                                                 (not safe))
                                                               (gx#stx-pair?
-                                                               _%tl166671167580%_))
-                                                            (let ((_%e166682167599%_
+                                                               _%tl165600166507%_))
+                                                            (let ((_%e165607166526%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (let ()
                              (declare (not safe))
-                             (gx#stx-e _%tl166671167580%_))))
-                      (let ((_%tl166680167604%_
+                             (gx#stx-e _%tl165600166507%_))))
+                      (let ((_%tl165609166531%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e166682167599%_)))
-                            (_%hd166681167602%_
+                               (##cdr _%e165607166526%_)))
+                            (_%hd165608166529%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e166682167599%_))))
+                               (##car _%e165607166526%_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _%hd166681167602%_))
-                            (let ((_%e166685167607%_
+                              (gx#stx-pair? _%hd165608166529%_))
+                            (let ((_%e165610166534%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _%hd166681167602%_))))
-                              (let ((_%tl166683167612%_
+                                     (gx#stx-e _%hd165608166529%_))))
+                              (let ((_%tl165612166539%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e166685167607%_)))
-                                    (_%hd166684167610%_
+                                       (##cdr _%e165610166534%_)))
+                                    (_%hd165611166537%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e166685167607%_))))
+                                       (##car _%e165610166534%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#identifier? _%hd166684167610%_))
+                                      (gx#identifier? _%hd165611166537%_))
                                     (if (let ()
                                           (declare (not safe))
                                           (gx#stx-eq?
                                            '%#quote
-                                           _%hd166684167610%_))
+                                           _%hd165611166537%_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-pair?
-                                               _%tl166683167612%_))
-                                            (let ((_%e166688167615%_
+                                               _%tl165612166539%_))
+                                            (let ((_%e165613166542%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#stx-e
-                                                      _%tl166683167612%_))))
-                                              (let ((_%tl166686167620%_
+                                                      _%tl165612166539%_))))
+                                              (let ((_%tl165615166547%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _%e166688167615%_)))
-                                                    (_%hd166687167618%_
+                                                       (##cdr _%e165613166542%_)))
+                                                    (_%hd165614166545%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _%e166688167615%_))))
+                                                       (##car _%e165613166542%_))))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-null?
-                                                       _%tl166686167620%_))
+                                                       _%tl165615166547%_))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#stx-pair/null?
-                                                           _%tl166680167604%_))
-                                                        (let ((_%__splice172290172291%_
+                                                           _%tl165609166531%_))
+                                                        (let ((_%__splice171217171218%_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (gx#syntax-split-splice _%tl166680167604%_ '0))))
-                  (let ((_%tl166691167625%_
+                         (gx#syntax-split-splice _%tl165609166531%_ '0))))
+                  (let ((_%tl165618166552%_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice172290172291%_ '1)))
-                        (_%target166689167623%_
+                           (##vector-ref _%__splice171217171218%_ '1)))
+                        (_%target165616166550%_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice172290172291%_ '0))))
+                           (##vector-ref _%__splice171217171218%_ '0))))
                     (if (let ()
                           (declare (not safe))
-                          (gx#stx-null? _%tl166691167625%_))
-                        (_%__match172391172392%_
-                         _%e166661167543%_
-                         _%hd166660167546%_
-                         _%tl166659167548%_
-                         _%e166664167551%_
-                         _%hd166663167554%_
-                         _%tl166662167556%_
-                         _%e166667167559%_
-                         _%hd166666167562%_
-                         _%tl166665167564%_
-                         _%e166670167567%_
-                         _%hd166669167570%_
-                         _%tl166668167572%_
-                         _%e166673167575%_
-                         _%hd166672167578%_
-                         _%tl166671167580%_
-                         _%e166676167583%_
-                         _%hd166675167586%_
-                         _%tl166674167588%_
-                         _%e166679167591%_
-                         _%hd166678167594%_
-                         _%tl166677167596%_
-                         _%e166682167599%_
-                         _%hd166681167602%_
-                         _%tl166680167604%_
-                         _%e166685167607%_
-                         _%hd166684167610%_
-                         _%tl166683167612%_
-                         _%e166688167615%_
-                         _%hd166687167618%_
-                         _%tl166686167620%_
-                         _%__splice172290172291%_
-                         _%target166689167623%_
-                         _%tl166691167625%_)
-                        (_%__match172579172580%_
-                         _%e166661167543%_
-                         _%hd166660167546%_
-                         _%tl166659167548%_
-                         _%e166664167551%_
-                         _%hd166663167554%_
-                         _%tl166662167556%_
-                         _%e166667167559%_
-                         _%hd166666167562%_
-                         _%tl166665167564%_
-                         _%e166670167567%_
-                         _%hd166669167570%_
-                         _%tl166668167572%_
-                         _%e166673167575%_
-                         _%hd166672167578%_
-                         _%tl166671167580%_
-                         _%e166676167583%_
-                         _%hd166675167586%_
-                         _%tl166674167588%_
-                         _%e166679167591%_
-                         _%hd166678167594%_
-                         _%tl166677167596%_
-                         _%e166682167599%_
-                         _%hd166681167602%_
-                         _%tl166680167604%_
-                         _%e166685167607%_
-                         _%hd166684167610%_
-                         _%tl166683167612%_
-                         _%e166688167615%_
-                         _%hd166687167618%_
-                         _%tl166686167620%_))))
-                (_%__match172579172580%_
-                 _%e166661167543%_
-                 _%hd166660167546%_
-                 _%tl166659167548%_
-                 _%e166664167551%_
-                 _%hd166663167554%_
-                 _%tl166662167556%_
-                 _%e166667167559%_
-                 _%hd166666167562%_
-                 _%tl166665167564%_
-                 _%e166670167567%_
-                 _%hd166669167570%_
-                 _%tl166668167572%_
-                 _%e166673167575%_
-                 _%hd166672167578%_
-                 _%tl166671167580%_
-                 _%e166676167583%_
-                 _%hd166675167586%_
-                 _%tl166674167588%_
-                 _%e166679167591%_
-                 _%hd166678167594%_
-                 _%tl166677167596%_
-                 _%e166682167599%_
-                 _%hd166681167602%_
-                 _%tl166680167604%_
-                 _%e166685167607%_
-                 _%hd166684167610%_
-                 _%tl166683167612%_
-                 _%e166688167615%_
-                 _%hd166687167618%_
-                 _%tl166686167620%_))
+                          (gx#stx-null? _%tl165618166552%_))
+                        (_%__match171318171319%_
+                         _%e165586166470%_
+                         _%hd165587166473%_
+                         _%tl165588166475%_
+                         _%e165589166478%_
+                         _%hd165590166481%_
+                         _%tl165591166483%_
+                         _%e165592166486%_
+                         _%hd165593166489%_
+                         _%tl165594166491%_
+                         _%e165595166494%_
+                         _%hd165596166497%_
+                         _%tl165597166499%_
+                         _%e165598166502%_
+                         _%hd165599166505%_
+                         _%tl165600166507%_
+                         _%e165601166510%_
+                         _%hd165602166513%_
+                         _%tl165603166515%_
+                         _%e165604166518%_
+                         _%hd165605166521%_
+                         _%tl165606166523%_
+                         _%e165607166526%_
+                         _%hd165608166529%_
+                         _%tl165609166531%_
+                         _%e165610166534%_
+                         _%hd165611166537%_
+                         _%tl165612166539%_
+                         _%e165613166542%_
+                         _%hd165614166545%_
+                         _%tl165615166547%_
+                         _%__splice171217171218%_
+                         _%target165616166550%_
+                         _%tl165618166552%_)
+                        (_%__match171506171507%_
+                         _%e165586166470%_
+                         _%hd165587166473%_
+                         _%tl165588166475%_
+                         _%e165589166478%_
+                         _%hd165590166481%_
+                         _%tl165591166483%_
+                         _%e165592166486%_
+                         _%hd165593166489%_
+                         _%tl165594166491%_
+                         _%e165595166494%_
+                         _%hd165596166497%_
+                         _%tl165597166499%_
+                         _%e165598166502%_
+                         _%hd165599166505%_
+                         _%tl165600166507%_
+                         _%e165601166510%_
+                         _%hd165602166513%_
+                         _%tl165603166515%_
+                         _%e165604166518%_
+                         _%hd165605166521%_
+                         _%tl165606166523%_
+                         _%e165607166526%_
+                         _%hd165608166529%_
+                         _%tl165609166531%_
+                         _%e165610166534%_
+                         _%hd165611166537%_
+                         _%tl165612166539%_
+                         _%e165613166542%_
+                         _%hd165614166545%_
+                         _%tl165615166547%_))))
+                (_%__match171506171507%_
+                 _%e165586166470%_
+                 _%hd165587166473%_
+                 _%tl165588166475%_
+                 _%e165589166478%_
+                 _%hd165590166481%_
+                 _%tl165591166483%_
+                 _%e165592166486%_
+                 _%hd165593166489%_
+                 _%tl165594166491%_
+                 _%e165595166494%_
+                 _%hd165596166497%_
+                 _%tl165597166499%_
+                 _%e165598166502%_
+                 _%hd165599166505%_
+                 _%tl165600166507%_
+                 _%e165601166510%_
+                 _%hd165602166513%_
+                 _%tl165603166515%_
+                 _%e165604166518%_
+                 _%hd165605166521%_
+                 _%tl165606166523%_
+                 _%e165607166526%_
+                 _%hd165608166529%_
+                 _%tl165609166531%_
+                 _%e165610166534%_
+                 _%hd165611166537%_
+                 _%tl165612166539%_
+                 _%e165613166542%_
+                 _%hd165614166545%_
+                 _%tl165615166547%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%__match172783172784%_
-                                                     _%e166661167543%_
-                                                     _%hd166660167546%_
-                                                     _%tl166659167548%_
-                                                     _%e166664167551%_
-                                                     _%hd166663167554%_
-                                                     _%tl166662167556%_
-                                                     _%e166667167559%_
-                                                     _%hd166666167562%_
-                                                     _%tl166665167564%_
-                                                     _%e166670167567%_
-                                                     _%hd166669167570%_
-                                                     _%tl166668167572%_
-                                                     _%e166673167575%_
-                                                     _%hd166672167578%_
-                                                     _%tl166671167580%_
-                                                     _%e166676167583%_
-                                                     _%hd166675167586%_
-                                                     _%tl166674167588%_
-                                                     _%e166679167591%_
-                                                     _%hd166678167594%_
-                                                     _%tl166677167596%_
-                                                     _%e166682167599%_
-                                                     _%hd166681167602%_
-                                                     _%tl166680167604%_))))
-                                            (_%__match172783172784%_
-                                             _%e166661167543%_
-                                             _%hd166660167546%_
-                                             _%tl166659167548%_
-                                             _%e166664167551%_
-                                             _%hd166663167554%_
-                                             _%tl166662167556%_
-                                             _%e166667167559%_
-                                             _%hd166666167562%_
-                                             _%tl166665167564%_
-                                             _%e166670167567%_
-                                             _%hd166669167570%_
-                                             _%tl166668167572%_
-                                             _%e166673167575%_
-                                             _%hd166672167578%_
-                                             _%tl166671167580%_
-                                             _%e166676167583%_
-                                             _%hd166675167586%_
-                                             _%tl166674167588%_
-                                             _%e166679167591%_
-                                             _%hd166678167594%_
-                                             _%tl166677167596%_
-                                             _%e166682167599%_
-                                             _%hd166681167602%_
-                                             _%tl166680167604%_))
-                                        (_%__match172459172460%_
-                                         _%e166661167543%_
-                                         _%hd166660167546%_
-                                         _%tl166659167548%_
-                                         _%e166664167551%_
-                                         _%hd166663167554%_
-                                         _%tl166662167556%_
-                                         _%e166667167559%_
-                                         _%hd166666167562%_
-                                         _%tl166665167564%_
-                                         _%e166670167567%_
-                                         _%hd166669167570%_
-                                         _%tl166668167572%_
-                                         _%e166673167575%_
-                                         _%hd166672167578%_
-                                         _%tl166671167580%_
-                                         _%e166676167583%_
-                                         _%hd166675167586%_
-                                         _%tl166674167588%_
-                                         _%e166679167591%_
-                                         _%hd166678167594%_
-                                         _%tl166677167596%_
-                                         _%e166682167599%_
-                                         _%hd166681167602%_
-                                         _%tl166680167604%_
-                                         _%e166685167607%_
-                                         _%hd166684167610%_
-                                         _%tl166683167612%_))
-                                    (_%__match172783172784%_
-                                     _%e166661167543%_
-                                     _%hd166660167546%_
-                                     _%tl166659167548%_
-                                     _%e166664167551%_
-                                     _%hd166663167554%_
-                                     _%tl166662167556%_
-                                     _%e166667167559%_
-                                     _%hd166666167562%_
-                                     _%tl166665167564%_
-                                     _%e166670167567%_
-                                     _%hd166669167570%_
-                                     _%tl166668167572%_
-                                     _%e166673167575%_
-                                     _%hd166672167578%_
-                                     _%tl166671167580%_
-                                     _%e166676167583%_
-                                     _%hd166675167586%_
-                                     _%tl166674167588%_
-                                     _%e166679167591%_
-                                     _%hd166678167594%_
-                                     _%tl166677167596%_
-                                     _%e166682167599%_
-                                     _%hd166681167602%_
-                                     _%tl166680167604%_))))
-                            (_%__match172783172784%_
-                             _%e166661167543%_
-                             _%hd166660167546%_
-                             _%tl166659167548%_
-                             _%e166664167551%_
-                             _%hd166663167554%_
-                             _%tl166662167556%_
-                             _%e166667167559%_
-                             _%hd166666167562%_
-                             _%tl166665167564%_
-                             _%e166670167567%_
-                             _%hd166669167570%_
-                             _%tl166668167572%_
-                             _%e166673167575%_
-                             _%hd166672167578%_
-                             _%tl166671167580%_
-                             _%e166676167583%_
-                             _%hd166675167586%_
-                             _%tl166674167588%_
-                             _%e166679167591%_
-                             _%hd166678167594%_
-                             _%tl166677167596%_
-                             _%e166682167599%_
-                             _%hd166681167602%_
-                             _%tl166680167604%_))))
-                    (_%__match172721172722%_
-                     _%e166661167543%_
-                     _%hd166660167546%_
-                     _%tl166659167548%_
-                     _%e166664167551%_
-                     _%hd166663167554%_
-                     _%tl166662167556%_
-                     _%e166667167559%_
-                     _%hd166666167562%_
-                     _%tl166665167564%_
-                     _%e166670167567%_
-                     _%hd166669167570%_
-                     _%tl166668167572%_
-                     _%e166673167575%_
-                     _%hd166672167578%_
-                     _%tl166671167580%_
-                     _%e166676167583%_
-                     _%hd166675167586%_
-                     _%tl166674167588%_
-                     _%e166679167591%_
-                     _%hd166678167594%_
-                     _%tl166677167596%_))
-                (_%__kont172304172305%_))))
+                                                    (_%__match171710171711%_
+                                                     _%e165586166470%_
+                                                     _%hd165587166473%_
+                                                     _%tl165588166475%_
+                                                     _%e165589166478%_
+                                                     _%hd165590166481%_
+                                                     _%tl165591166483%_
+                                                     _%e165592166486%_
+                                                     _%hd165593166489%_
+                                                     _%tl165594166491%_
+                                                     _%e165595166494%_
+                                                     _%hd165596166497%_
+                                                     _%tl165597166499%_
+                                                     _%e165598166502%_
+                                                     _%hd165599166505%_
+                                                     _%tl165600166507%_
+                                                     _%e165601166510%_
+                                                     _%hd165602166513%_
+                                                     _%tl165603166515%_
+                                                     _%e165604166518%_
+                                                     _%hd165605166521%_
+                                                     _%tl165606166523%_
+                                                     _%e165607166526%_
+                                                     _%hd165608166529%_
+                                                     _%tl165609166531%_))))
+                                            (_%__match171710171711%_
+                                             _%e165586166470%_
+                                             _%hd165587166473%_
+                                             _%tl165588166475%_
+                                             _%e165589166478%_
+                                             _%hd165590166481%_
+                                             _%tl165591166483%_
+                                             _%e165592166486%_
+                                             _%hd165593166489%_
+                                             _%tl165594166491%_
+                                             _%e165595166494%_
+                                             _%hd165596166497%_
+                                             _%tl165597166499%_
+                                             _%e165598166502%_
+                                             _%hd165599166505%_
+                                             _%tl165600166507%_
+                                             _%e165601166510%_
+                                             _%hd165602166513%_
+                                             _%tl165603166515%_
+                                             _%e165604166518%_
+                                             _%hd165605166521%_
+                                             _%tl165606166523%_
+                                             _%e165607166526%_
+                                             _%hd165608166529%_
+                                             _%tl165609166531%_))
+                                        (_%__match171386171387%_
+                                         _%e165586166470%_
+                                         _%hd165587166473%_
+                                         _%tl165588166475%_
+                                         _%e165589166478%_
+                                         _%hd165590166481%_
+                                         _%tl165591166483%_
+                                         _%e165592166486%_
+                                         _%hd165593166489%_
+                                         _%tl165594166491%_
+                                         _%e165595166494%_
+                                         _%hd165596166497%_
+                                         _%tl165597166499%_
+                                         _%e165598166502%_
+                                         _%hd165599166505%_
+                                         _%tl165600166507%_
+                                         _%e165601166510%_
+                                         _%hd165602166513%_
+                                         _%tl165603166515%_
+                                         _%e165604166518%_
+                                         _%hd165605166521%_
+                                         _%tl165606166523%_
+                                         _%e165607166526%_
+                                         _%hd165608166529%_
+                                         _%tl165609166531%_
+                                         _%e165610166534%_
+                                         _%hd165611166537%_
+                                         _%tl165612166539%_))
+                                    (_%__match171710171711%_
+                                     _%e165586166470%_
+                                     _%hd165587166473%_
+                                     _%tl165588166475%_
+                                     _%e165589166478%_
+                                     _%hd165590166481%_
+                                     _%tl165591166483%_
+                                     _%e165592166486%_
+                                     _%hd165593166489%_
+                                     _%tl165594166491%_
+                                     _%e165595166494%_
+                                     _%hd165596166497%_
+                                     _%tl165597166499%_
+                                     _%e165598166502%_
+                                     _%hd165599166505%_
+                                     _%tl165600166507%_
+                                     _%e165601166510%_
+                                     _%hd165602166513%_
+                                     _%tl165603166515%_
+                                     _%e165604166518%_
+                                     _%hd165605166521%_
+                                     _%tl165606166523%_
+                                     _%e165607166526%_
+                                     _%hd165608166529%_
+                                     _%tl165609166531%_))))
+                            (_%__match171710171711%_
+                             _%e165586166470%_
+                             _%hd165587166473%_
+                             _%tl165588166475%_
+                             _%e165589166478%_
+                             _%hd165590166481%_
+                             _%tl165591166483%_
+                             _%e165592166486%_
+                             _%hd165593166489%_
+                             _%tl165594166491%_
+                             _%e165595166494%_
+                             _%hd165596166497%_
+                             _%tl165597166499%_
+                             _%e165598166502%_
+                             _%hd165599166505%_
+                             _%tl165600166507%_
+                             _%e165601166510%_
+                             _%hd165602166513%_
+                             _%tl165603166515%_
+                             _%e165604166518%_
+                             _%hd165605166521%_
+                             _%tl165606166523%_
+                             _%e165607166526%_
+                             _%hd165608166529%_
+                             _%tl165609166531%_))))
+                    (_%__match171648171649%_
+                     _%e165586166470%_
+                     _%hd165587166473%_
+                     _%tl165588166475%_
+                     _%e165589166478%_
+                     _%hd165590166481%_
+                     _%tl165591166483%_
+                     _%e165592166486%_
+                     _%hd165593166489%_
+                     _%tl165594166491%_
+                     _%e165595166494%_
+                     _%hd165596166497%_
+                     _%tl165597166499%_
+                     _%e165598166502%_
+                     _%hd165599166505%_
+                     _%tl165600166507%_
+                     _%e165601166510%_
+                     _%hd165602166513%_
+                     _%tl165603166515%_
+                     _%e165604166518%_
+                     _%hd165605166521%_
+                     _%tl165606166523%_))
+                (_%__kont171231171232%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (_%__kont172304172305%_))
-                                            (_%__kont172304172305%_))
-                                        (_%__kont172304172305%_))))
-                                (_%__kont172304172305%_))))
-                        (_%__kont172304172305%_))
-                    (_%__kont172304172305%_))))
+                                                (_%__kont171231171232%_))
+                                            (_%__kont171231171232%_))
+                                        (_%__kont171231171232%_))))
+                                (_%__kont171231171232%_))))
+                        (_%__kont171231171232%_))
+                    (_%__kont171231171232%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%__kont172304172305%_))
-                                                (_%__kont172304172305%_))
-                                            (_%__kont172304172305%_))))
-                                    (_%__kont172304172305%_))))
-                            (_%__kont172304172305%_))))
-                    (_%__kont172304172305%_))))))))))
+                                                    (_%__kont171231171232%_))
+                                                (_%__kont171231171232%_))
+                                            (_%__kont171231171232%_))))
+                                    (_%__kont171231171232%_))))
+                            (_%__kont171231171232%_))))
+                    (_%__kont171231171232%_))))))))))

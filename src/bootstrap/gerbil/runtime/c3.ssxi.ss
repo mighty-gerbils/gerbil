@@ -7,7 +7,16 @@ package: gerbil/runtime
    (@lambda 7
             #f
             signature:
-            (return: values::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             values::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/c3)))
   (declare-type
    c4-linearize__@
    (@kw-lambda-dispatch
