@@ -6,6 +6,12 @@ package: gerbil/runtime
    __modules
    (optimizer-resolve-class '(typedecl __modules) 't::t))
   (declare-type
+   __load-mx
+   (optimizer-resolve-class '(typedecl __load-mx) 'mutex::t))
+  (declare-type
+   __load-cv
+   (optimizer-resolve-class '(typedecl __load-cv) 'condvar::t))
+  (declare-type
    __load-path
    (optimizer-resolve-class '(typedecl __load-path) 'list::t))
   (declare-type
