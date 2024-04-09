@@ -207,6 +207,8 @@ TODO:
   (def buildspec (normalize-buildspec buildspec-in))
   ;; mutex for imports
   (def import-mx (make-mutex 'import))
+  ;; mute for dependency timestamps (mauling of load-path)
+  (def dependency-mx (make-mutex 'dependency))
   ;; table of module id -> completion, indicating completion of a build
   (def completions (make-hash-table-eq))
   ;; table of in tree module timestamps
@@ -274,16 +276,18 @@ TODO:
     (ormap newer? (module-context-import mod)))
 
   (def (dependency-timestamp id)
-    ;; drop the srcdir from the load path and then get the library timestamp
-    (let (current-load-path (load-path))
-      (dynamic-wind
-          (lambda ()
-            (set-load-path!
-             (cons (settings-libdir settings)
-                   (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
-                           current-load-path))))
-          (lambda () (library-timestamp id))
-          (lambda () (set-load-path! current-load-path)))))
+    (with-lock dependency-mx
+      (lambda ()
+        ;; drop the srcdir from the load path and then get the library timestamp
+        (let (current-load-path (load-path))
+          (dynamic-wind
+              (lambda ()
+                (set-load-path!
+                 (cons (settings-libdir settings)
+                       (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
+                               current-load-path))))
+              (lambda () (library-timestamp id))
+              (lambda () (set-load-path! current-load-path)))))))
 
   ;; the build worker itself
   (def (build-worker)
