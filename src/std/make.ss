@@ -209,6 +209,8 @@ TODO:
   (def import-mx (make-mutex 'import))
   ;; table of module id -> completion, indicating completion of a build
   (def completions (make-hash-table-eq))
+  ;; table of in tree module timestamps
+  (def timestamps (make-hash-table-eq))
   ;; the build coordinator barrier
   (def build-barrier
     (make-barrier (length buildspec)))
@@ -250,7 +252,17 @@ TODO:
         (let* ((id (expander-context-id in))
                (ts
                 (and id
-                     (with-catch false (lambda () (dependency-timestamp id))))))
+                     ;; we need to examine both the libdir timestamp and the in
+                     ;; tree timestamp, so that if an in-tree dependency is newer
+                     ;; and has not been rebuilt yet, we trigger a rebuild
+                     (let ((ts-a (with-catch false (lambda () (dependency-timestamp id))))
+                           (ts-b (hash-get timestamps id)))
+                       (cond
+                        ((and ts-a ts-b)
+                         (max ts-a ts-b))
+                        ((not ts-a) ts-b)
+                        ((not ts-b) ts-a)
+                        (else #f))))))
           (and id
                (if ts
                  (ormap (lambda (output) (> ts (file-timestamp output))) outputs)
@@ -322,7 +334,8 @@ TODO:
   (for (spec buildspec)
     (let ((file (spec-file spec settings))
           (id (module-id spec)))
-      (hash-put! completions id (make-completion `(build ,id)))))
+      (hash-put! completions id (make-completion `(build ,id)))
+      (hash-put! timestamps id (file-timestamp file))))
 
   ;; spawn a thread for each spec that waits for the dependency completions
   ;; and pushes to the work channel if necessary.
