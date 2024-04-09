@@ -3,7 +3,6 @@
 ;;; actor server
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/iter
         :std/io
@@ -32,8 +31,7 @@
 ;; - server is the actor-server identifier: a symbol identifying the server in your
 ;;   ensemble
 ;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
-(defmessage reference (server id)
-  )
+(defmessage reference (server id))
 
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))

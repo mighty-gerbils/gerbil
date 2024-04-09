@@ -4,10 +4,8 @@
 (export #t)
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/iter
-        :std/interface
         :std/io
         :std/io/socket/types
         :std/io/socket/server
@@ -30,7 +28,7 @@
     (ServerSocket sslsock)))
 
 (defstruct (ssl-server-socket basic-server-socket) (ctx)
-  final: #t 
+  final: #t
   constructor: :init!)
 
 (defmethod {:init! ssl-server-socket}

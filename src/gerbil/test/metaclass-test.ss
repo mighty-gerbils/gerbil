@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;;; Testing metaclass support
 (import :std/test
-        :std/metaclass
         :gerbil/runtime/mop)
 (export metaclass-test)
 

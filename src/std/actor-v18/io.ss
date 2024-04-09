@@ -3,10 +3,8 @@
 ;;; actor message serialization
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
         :std/foreign
-        :std/interface
         :std/io
         (only-in :std/io/bio/api defreader-ext defreader-ext* defwriter-ext defwriter-ext*)
         ./message)

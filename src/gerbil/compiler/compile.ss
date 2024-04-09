@@ -46,6 +46,13 @@ namespace: gxc
     debug-source
     debug-environments))
 
+;; primitives that must remain checked, as they change to unchecked when (not safe)
+(def checked-primitives
+  '(##direct-structure-ref
+    ##direct-structure-set!
+    ##structure-ref
+    ##structure-set!))
+
 ;; quote-syntax lifts
 (def current-compile-lift
   (make-parameter #f))
@@ -368,61 +375,6 @@ namespace: gxc
                  (make-binding-id (generate-runtime-gensym-reference eid)
                                   syntax?)))))
 
-(def (runtime-identifier=? id1 id2)
-  (def (symbol-e id)
-    (if (symbol? id) id
-        (generate-runtime-binding-id id)))
-  (eq? (symbol-e id1) (symbol-e id2)))
-
-(def (generate-runtime-binding-id id)
-  (cond
-   ((and (syntax-quote? id) (resolve-identifier id))
-    => (lambda (bind)
-         (let ((eid (binding-id bind))
-               (ht (symbol-table-bindings (current-compile-symbol-table))))
-           (cond
-            ((interned-symbol? eid) eid)
-            ((hash-get ht eid) => values)
-            ((local-binding? bind)
-             (let (gid (generate-runtime-gensym-reference eid))
-               (hash-put! ht eid gid)
-               gid))
-            ((module-binding? bind)
-             (let (gid
-                   (cond
-                    ((module-context-ns (module-binding-context bind))
-                     => (lambda (ns) (make-symbol ns "#" eid)))
-                    (else (generate-runtime-gensym-reference eid))))
-               (hash-put! ht eid gid)
-               gid))
-            (else
-             ;; module bindings have been mapped in collect-bindings.
-             (raise-compile-error "Cannot compile reference to uninterned binding"
-                                  id eid bind))))))
-   ((interned-symbol? (stx-e id))
-    ;; implicit extern or optimizer introduced symbol
-    (stx-e id))
-   (else
-    ;; gensymed reference, where did you get this one?
-    (raise-compile-error "Cannot compile reference to uninterned identifier"
-                         id))))
-
-(def (generate-runtime-binding-id* id)
-  (if (identifier? id)
-    (generate-runtime-binding-id id)
-    (generate-runtime-temporary)))
-
-(def (generate-runtime-gensym-reference sym (quote? #f))
-  (let (ht (symbol-table-gensyms (current-compile-symbol-table)))
-    (cond
-     ((hash-get ht sym) => values)
-     (else
-      (let (g (if quote?
-                (make-symbol "__" sym "__" (current-compile-timestamp))
-                (make-symbol "_" sym "_")))
-        (hash-put! ht sym g)
-        g)))))
-
 (def (generate-runtime-identifier id)
   (generate-runtime-identifier-key (core-identifier-key id)))
 
@@ -446,19 +398,6 @@ namespace: gxc
                 (generate-runtime-identifier-key eid)))))
         (else
          (generate-runtime-identifier-key eid))))))))
-
-(def (generate-runtime-temporary (top #f))
-  (if top
-    (let ((ns (module-context-ns (core-context-top (current-expander-context))))
-          (phi (current-expander-phi)))
-      (if ns
-        (if (fxpositive? phi)
-          (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
-          (make-symbol ns "#_" (gensym) "_"))
-        (if (fxpositive? phi)
-          (make-symbol "[" (number->string phi) "]#_" (gensym) "_")
-          (make-symbol "_" (gensym) "_"))))
-    (make-symbol "_" (gensym) "_")))
 
 (def (generate-runtime-empty self stx)
   '(begin))
@@ -506,8 +445,11 @@ namespace: gxc
     ((_ (ann param ...) expr)
      (and (identifier? #'ann) ; extended optimizer annotation?
           (not (memq (stx-e #'ann) gambit-annotations)))
-     ;; TODO process appropriate annotations
-     (compile-e self #'expr))
+     (if (memq (stx-e #'ann) '(@inline))
+       ;; optimizer declaration, skip
+       '(begin)
+       ;; other annotations
+       (compile-e self #'expr)))
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
        (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
@@ -728,7 +670,7 @@ namespace: gxc
 (def (generate-runtime-let-values% self stx (compiled-body? #f))
   (def (generate-simple hd body)
     (coalesce-boolean
-     (coalesce-let*
+     (coalesce-let
       (generate-runtime-simple-let self 'let hd body compiled-body?))))
 
   (def (coalesce-boolean code)
@@ -743,8 +685,10 @@ namespace: gxc
         (else code))
       code))
 
-  (def (coalesce-let* code)
+  (def (coalesce-let code)
     (match code
+      (['let [] ['let . body]]
+       ['let . body])
       (['let [[id expr]] ['let [] . body]]
        ['let [[id expr]] . body])
       (['let [[id1 expr1]] ['let [[id2 expr2]] . body]]
@@ -838,7 +782,7 @@ namespace: gxc
         (_ (let* ((body (if compiled-body? body (compile-e self body)))
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
-             ['letrec (reverse bind) body])))))
+              ['letrec (reverse bind) body])))))
 
   (def (generate-values-check check body)
     ['begin (reverse check) ... body])
@@ -967,31 +911,33 @@ namespace: gxc
                   (body #'(body ...))
                   (init (map list args rands)))
              ['let id init body ...])
-           (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+           (raise-compile-error "Illegal loop application; arity mismatch"
+                                stx #'(arg ...) rands)))
         (_ (cons rator rands)))))
 
   (ast-case stx ()
-    ((_ rator . rands)
+    ((_ rator rand ...)
      ;; see gambit#422
-     (with-inline-unsafe-primitives (compile-call #'rator #'rands)
+     (with-inline-unsafe-primitives (compile-call #'rator #'(rand ...))
        (ast-case #'rator (%#ref)
          ((%#ref _)
           (let (f (compile-e self #'rator))
-            (if (string-prefix? "##" (symbol->string f))
-              (with-primitive-bind+args (bind args (reverse #'rands))
+            (if (and (string-prefix? "##" (symbol->string f))
+                     (not (memq f checked-primitives)))
+              (with-primitive-bind+args (bind args (reverse #'(rand ...)))
                 ['let [bind ...]
                   '(declare (not safe))
                   (cons f args)])
-              (compile-call #'rator #'rands))))
-         (_ (compile-call #'rator #'rands)))))))
+              (compile-call #'rator #'(rand ...)))))
+         (_ (compile-call #'rator #'(rand ...))))))))
 
 (def (generate-runtime-call-unchecked% self stx)
   (ast-case stx (%#ref)
-    ((_ (%#ref rator) . rands)
+    ((_ (%#ref rator) rand ...)
      (if (current-compile-decls-unsafe?)
        (generate-runtime-call% self stx)
        (let (f (compile-e self #'(%#ref rator)))
-         (with-primitive-bind+args (bind args (reverse #'rands))
+         (with-primitive-bind+args (bind args (reverse #'(rand ...)))
            ['let [bind ...]
              '(declare (not safe))
              (cons f args)]))))
@@ -1147,13 +1093,13 @@ namespace: gxc
      (with-inline-unsafe-primitives
          ['##unchecked-structure-ref (compile-e self #'obj)
                                      (compile-e self #'off)
-                                     (compile-e self #'type)
+                                     '(quote #f)
                                      '(quote #f)]
-       (with-primitive-bind+args (bind args [#'type #'off #'obj])
+       (with-primitive-bind+args (bind args [ #'off #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##unchecked-structure-ref obj off type where)
-           ['##unchecked-structure-ref args ... '(quote #f)]])))))
+           ['##unchecked-structure-ref args ... '(quote #f) '(quote #f)]])))))
 
 (def (generate-runtime-struct-unchecked-setq% self stx)
   (ast-case stx ()
@@ -1163,13 +1109,13 @@ namespace: gxc
          ['##unchecked-structure-set! (compile-e self #'obj)
                                       (compile-e self #'val)
                                       (compile-e self #'off)
-                                      (compile-e self #'type)
+                                      '(quote #f)
                                       '(quote #f)]
-       (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
+       (with-primitive-bind+args (bind args [#'off #'val #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##unchecked-structure-set! obj val off type where)
-           ['##unchecked-structure-set! args ... '(quote #f)]])))))
+           ['##unchecked-structure-set! args ... '(quote #f) '(quote #f)]])))))
 
 ;;; loader
 (def (generate-runtime-loader-import% self stx)
@@ -1551,8 +1497,7 @@ namespace: gxc
          (id
           (identifier? #'id)
           (generate* (foldl cons [(generate1 #'id)] r)))
-         (_
-          (generate* (reverse r))))))))
+         (_ (generate* (reverse r))))))))
 
 (def (generate-meta-define-syntax% self stx)
   (ast-case stx ()

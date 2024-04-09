@@ -3,7 +3,6 @@
 ;;; buffered output
 (import :std/error
         :std/sugar
-        :std/contract
         ../interface
         ./types)
 (export #t)

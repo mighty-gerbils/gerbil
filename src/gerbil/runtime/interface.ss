@@ -32,10 +32,6 @@ namespace: #f
 ;; interface meta descriptor
 (defstruct interface-descriptor (type methods) final: #t)
 
-(defrules immediate-instance-of? ()
-  ((_ klass obj)
-   (and (##structure? obj) (eq? (##structure-type obj) klass))))
-
 ;; prototype table
 (def (__interface-hash-key key)
   (##fxxor (__symbolic-hash (##car key)) (__symbolic-hash (##cdr key))))
@@ -47,7 +43,7 @@ namespace: #f
   prototype-table-ref
   prototype-table-set! __prototype-table-set!
   prototype-table-update! __prototype-table-update!
-  prototype-trable-delete!
+  prototype-table-delete!
   __interface-hash-key __interface-test-key)
 
 (def __interface-prototypes-mx (__make-inline-lock))
@@ -90,10 +86,11 @@ namespace: #f
    descriptor klass obj-klass
    (lambda (prototype) prototype)
    (lambda (klass obj-klass method-name)
-     (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
-                       interface: klass interface-id: (##type-id klass)
-                       class: obj-klass class-id: (##type-id obj-klass)
-                       method: method-name))))
+     (abort!
+      (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
+                        interface: klass interface-id: (##type-id klass)
+                        class: obj-klass class-id: (##type-id obj-klass)
+                        method: method-name)))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype

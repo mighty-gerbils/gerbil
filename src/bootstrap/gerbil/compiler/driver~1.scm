@@ -1,169 +1,137 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gxc[:0:]#with-driver-mutex|
-    (lambda (_$stx158845_)
-      (let* ((_g158849158863_
-              (lambda (_g158850158859_)
+    (lambda (_%$stx194498%_)
+      (let* ((_%g194502194516%_
+              (lambda (_%g194503194512%_)
                 (let ()
                   (declare (not safe))
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g158850158859_))))
-             (_g158848158905_
-              (lambda (_g158850158867_)
+                   _%g194503194512%_))))
+             (_%g194501194558%_
+              (lambda (_%g194503194520%_)
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-pair? _g158850158867_))
-                    (let ((_e158854158870_
+                      (gx#stx-pair? _%g194503194520%_))
+                    (let ((_%e194507194523%_
                            (let ()
                              (declare (not safe))
-                             (gx#syntax-e _g158850158867_))))
-                      (let ((_hd158853158874_
+                             (gx#syntax-e _%g194503194520%_))))
+                      (let ((_%hd194506194527%_
                              (let ()
                                (declare (not safe))
-                               (##car _e158854158870_)))
-                            (_tl158852158877_
+                               (##car _%e194507194523%_)))
+                            (_%tl194505194530%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e158854158870_))))
+                               (##cdr _%e194507194523%_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _tl158852158877_))
-                            (let ((_e158857158880_
+                              (gx#stx-pair? _%tl194505194530%_))
+                            (let ((_%e194510194533%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#syntax-e _tl158852158877_))))
-                              (let ((_hd158856158884_
+                                     (gx#syntax-e _%tl194505194530%_))))
+                              (let ((_%hd194509194537%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _e158857158880_)))
-                                    (_tl158855158887_
+                                       (##car _%e194510194533%_)))
+                                    (_%tl194508194540%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _e158857158880_))))
+                                       (##cdr _%e194510194533%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _tl158855158887_))
-                                    ((lambda (_L158890_)
-                                       (let ((__tmp160644
-                                              (let ()
-                                                (declare (not safe))
-                                                (gx#datum->syntax__0
-                                                 '#f
-                                                 'with-lock)))
-                                             (__tmp160637
-                                              (let ((__tmp160643
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (gx#datum->syntax__0
-                                                        '#f
-                                                        '+driver-mutex+)))
-                                                    (__tmp160638
-                                                     (let ((__tmp160639
-                                                            (let ((__tmp160642
+                                      (gx#stx-null? _%tl194508194540%_))
+                                    ((lambda (_%L194543%_)
+                                       (cons (let ()
+                                               (declare (not safe))
+                                               (gx#datum->syntax__0
+                                                '#f
+                                                'with-lock))
+                                             (cons (let ()
+                                                     (declare (not safe))
+                                                     (gx#datum->syntax__0
+                                                      '#f
+                                                      '+driver-mutex+))
+                                                   (cons (cons (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ()
-                             (declare (not safe))
-                             (gx#datum->syntax__0 '#f 'lambda)))
-                          (__tmp160640
-                           (let ((__tmp160641
-                                  (let ()
-                                    (declare (not safe))
-                                    (cons _L158890_ '()))))
-                             (declare (not safe))
-                             (cons '() __tmp160641))))
-                      (declare (not safe))
-                      (cons __tmp160642 __tmp160640))))
-               (declare (not safe))
-               (cons __tmp160639 '()))))
+                         (declare (not safe))
+                         (gx#datum->syntax__0 '#f 'lambda))
+                       (cons '() (cons _%L194543%_ '())))
+                 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (declare (not safe))
-                                                (cons __tmp160643
-                                                      __tmp160638))))
-                                         (declare (not safe))
-                                         (cons __tmp160644 __tmp160637)))
-                                     _hd158856158884_)
-                                    (_g158849158863_ _g158850158867_))))
-                            (_g158849158863_ _g158850158867_))))
-                    (_g158849158863_ _g158850158867_)))))
-        (_g158848158905_ _$stx158845_))))
+                                     _%hd194509194537%_)
+                                    (_%g194502194516%_ _%g194503194520%_))))
+                            (_%g194502194516%_ _%g194503194520%_))))
+                    (_%g194502194516%_ _%g194503194520%_)))))
+        (_%g194501194558%_ _%$stx194498%_))))
   (define |gxc[:0:]#go!|
-    (lambda (_$stx158909_)
-      (let* ((_g158913158927_
-              (lambda (_g158914158923_)
+    (lambda (_%$stx194562%_)
+      (let* ((_%g194566194580%_
+              (lambda (_%g194567194576%_)
                 (let ()
                   (declare (not safe))
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g158914158923_))))
-             (_g158912158968_
-              (lambda (_g158914158931_)
+                   _%g194567194576%_))))
+             (_%g194565194621%_
+              (lambda (_%g194567194584%_)
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-pair? _g158914158931_))
-                    (let ((_e158918158934_
+                      (gx#stx-pair? _%g194567194584%_))
+                    (let ((_%e194571194587%_
                            (let ()
                              (declare (not safe))
-                             (gx#syntax-e _g158914158931_))))
-                      (let ((_hd158917158938_
+                             (gx#syntax-e _%g194567194584%_))))
+                      (let ((_%hd194570194591%_
                              (let ()
                                (declare (not safe))
-                               (##car _e158918158934_)))
-                            (_tl158916158941_
+                               (##car _%e194571194587%_)))
+                            (_%tl194569194594%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e158918158934_))))
+                               (##cdr _%e194571194587%_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _tl158916158941_))
-                            (let ((_e158921158944_
+                              (gx#stx-pair? _%tl194569194594%_))
+                            (let ((_%e194574194597%_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#syntax-e _tl158916158941_))))
-                              (let ((_hd158920158948_
+                                     (gx#syntax-e _%tl194569194594%_))))
+                              (let ((_%hd194573194601%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _e158921158944_)))
-                                    (_tl158919158951_
+                                       (##car _%e194574194597%_)))
+                                    (_%tl194572194604%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _e158921158944_))))
+                                       (##cdr _%e194574194597%_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _tl158919158951_))
-                                    ((lambda (_L158954_)
-                                       (let ((__tmp160650
-                                              (let ()
-                                                (declare (not safe))
-                                                (gx#datum->syntax__0
-                                                 '#f
-                                                 'spawn)))
-                                             (__tmp160645
-                                              (let ((__tmp160646
-                                                     (let ((__tmp160649
-                                                            (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gx#datum->syntax__0
-                                                               '#f
-                                                               'lambda)))
-                                                           (__tmp160647
-                                                            (let ((__tmp160648
+                                      (gx#stx-null? _%tl194572194604%_))
+                                    ((lambda (_%L194607%_)
+                                       (cons (let ()
+                                               (declare (not safe))
+                                               (gx#datum->syntax__0
+                                                '#f
+                                                'spawn))
+                                             (cons (cons (let ()
+                                                           (declare (not safe))
+                                                           (gx#datum->syntax__0
+                                                            '#f
+                                                            'lambda))
+                                                         (cons '()
+                                                               (cons _%L194607%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let () (declare (not safe)) (cons _L158954_ '()))))
-                      (declare (not safe))
-                      (cons '() __tmp160648))))
-               (declare (not safe))
-               (cons __tmp160649 __tmp160647))))
+                             '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (declare (not safe))
-                                                (cons __tmp160646 '()))))
-                                         (declare (not safe))
-                                         (cons __tmp160650 __tmp160645)))
-                                     _hd158920158948_)
-                                    (_g158913158927_ _g158914158931_))))
-                            (_g158913158927_ _g158914158931_))))
-                    (_g158913158927_ _g158914158931_)))))
-        (_g158912158968_ _$stx158909_)))))
+                                                   '())))
+                                     _%hd194573194601%_)
+                                    (_%g194566194580%_ _%g194567194584%_))))
+                            (_%g194566194580%_ _%g194567194584%_))))
+                    (_%g194566194580%_ _%g194567194584%_)))))
+        (_%g194565194621%_ _%$stx194562%_)))))

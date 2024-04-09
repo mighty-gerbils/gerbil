@@ -22,17 +22,34 @@ namespace: gxc
   (%#begin            apply-begin%)
   (%#begin-syntax     apply-begin-syntax%)
   (%#module           apply-module%)
-  (%#define-values    collect-top-level-type-define-values%))
+  (%#define-values    collect-top-level-type-define-values%)
+  (%#lambda                apply-body-lambda%)
+  (%#case-lambda           apply-body-case-lambda%)
+  (%#let-values       collect-top-level-type-let-values%)
+  (%#letrec-values    collect-top-level-type-letrec-values%)
+  (%#letrec*-values   collect-top-level-type-letrec-values%)
+  (%#call             collect-type-call%)
+  (%#if               apply-operands)
+  (%#set!             collect-type-setq%))
+
+;; method to collect top level user type related declarations
+(defcompile-method (apply-collect-top-level-declarations)
+  (::collect-top-level-declarations ::void)
+  ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
+  (%#begin-annotation collect-top-level-decl-begin-annotation%))
 
 ;; method to extract the type of an expression
 (defcompile-method (apply-basic-expression-top-level-type)
   (::basic-expression-top-level-type ::false)
   ()
   final:
-  (%#begin-annotation basic-expression-type-begin-annotation%)
-  (%#call             basic-expression-type-call%))
+  (%#begin-annotation basic-expression-type-begin-annotation%))
 
-;; method to collect the type
+;; method to collect types in the whole module
 (defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
   ()
   final:
@@ -40,29 +57,35 @@ namespace: gxc
   (%#begin-syntax     apply-begin-syntax%)
   (%#module           apply-module%)
   (%#define-values    collect-type-define-values%)
-  (%#begin-annotation apply-begin-annotation%)
-  (%#lambda                apply-body-lambda%)
-  (%#case-lambda           apply-body-case-lambda%)
+  (%#begin-annotation collect-type-begin-annotation%)
+  (%#lambda                collect-type-lambda%)
+  (%#case-lambda           collect-type-case-lambda%)
   (%#let-values       collect-type-let-values%)
-  (%#letrec-values    collect-type-let-values%)
-  (%#letrec*-values   collect-type-let-values%)
+  (%#letrec-values    collect-type-letrec-values%)
+  (%#letrec*-values   collect-type-letrec-values%)
   (%#call             collect-type-call%)
   (%#if               apply-operands)
-  (%#set!             apply-body-setq%))
+  (%#set!             collect-type-setq%))
 
-;; method to find the type of an expression
-(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
+;; methods to find the type of an expression
+(defcompile-method (apply-raw-expression-type) (::raw-expression-type ::false)
+  ()
+  (%#begin            apply-last-begin%)
+  (%#begin-annotation basic-expression-type-begin-annotation%)
+  (%#lambda                raw-expression-type-lambda%)
+  (%#case-lambda           basic-expression-type-case-lambda%)
+  (%#let-values       apply-body-last-let-values%)
+  (%#letrec-values    apply-body-last-let-values%)
+  (%#letrec*-values   apply-body-last-let-values%)
+  (%#call             basic-expression-type-call%)
+  (%#ref              basic-expression-type-ref%)
+  (%#if               basic-expression-type-if%)
+  (%#quote            basic-expression-type-quote%))
+
+(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::raw-expression-type ::false)
   ()
   final:
-  (%#begin            basic-expression-type-begin%)
-  (%#begin-annotation basic-expression-type-begin-annotation%)
-  (%#lambda                basic-expression-type-lambda%)
-  (%#case-lambda           basic-expression-type-case-lambda%)
-  (%#let-values       basic-expression-type-let-values%)
-  (%#letrec-values    basic-expression-type-let-values%)
-  (%#letrec*-values   basic-expression-type-let-values%)
-  (%#call             basic-expression-type-call%)
-  (%#ref              basic-expression-type-ref%))
+  (%#lambda                basic-expression-type-lambda%))
 
 ;; method to lift sub-lambdas from case/opt/kw lambda definitions
 (defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
@@ -73,45 +96,118 @@ namespace: gxc
   (%#letrec-values  lift-top-lambda-letrec-values%)
   (%#letrec*-values lift-top-lambda-letrec-values%))
 
+;; method to extract the lambda signature from a typed gerbil annotation
+(defcompile-method (apply-extract-lambda-signature) (::extract-lambda-signature ::false) ()
+  final:
+  (%#begin            apply-last-begin%)
+  (%#begin-annotation extract-lambda-signature-begin-annotation%)
+  (%#let-values       apply-body-last-let-values%)
+  (%#letrec-values    apply-body-last-let-values%)
+  (%#letrec*-values   apply-body-last-let-values%))
+
 ;;; apply-collect-top-level-type-infp
 (def (collect-top-level-type-define-values% self stx)
   (ast-case stx ()
     ((_ (id) expr)
      (identifier? #'id)
      (let (sym (identifier-symbol #'id))
-       (if (hash-get (current-compile-mutators) sym)
-           (verbose "skipping type inference for mutable binding " sym)
-           (alet (type (apply-basic-expression-top-level-type #'expr))
-             (optimizer-declare-type! sym type)))))
+       ;; first pass of type collection, so that we can get preliminary type
+       ;; signatures for lambda
+       ;; the apply-collect-type-info pass is later applied to collect
+       ;; exact type signatures.
+       (apply-collect-top-level-type-info #'expr)
+       (alet (type (apply-basic-expression-top-level-type #'expr))
+         (if (!class-meta? type)
+           (begin
+             (optimizer-declare-class! sym (!class-meta-class type))
+             (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
+           (optimizer-declare-type! sym type)))))
     (_ (void))))
+
+;;; apply-collect-top-level-declarations
+(def (collect-top-level-decl-begin-annotation% self stx)
+  (ast-case stx (@inline %#quote)
+    ((_ (@inline proc) (%#quote rules))
+     (let (type (optimizer-lookup-type (identifier-symbol #'proc)))
+       (if (!lambda? type)
+         (set! (!lambda-inline type)
+           (eval-in-ssxi-context #'rules))
+         (raise-compile-error "inline rule for non lambda procedure" stx #'proc))))
+    ((_ ann body) (void))))
+
+(def (eval-in-ssxi-context expr)
+  (parameterize ((current-expander-context (make-top-context)))
+    (eval '(import :gerbil/compiler/ssxi))
+    (eval-syntax expr)))
 
 ;;; apply-collect-type-info
 (def (collect-type-define-values% self stx)
   (ast-case stx ()
-    ((_ (id) expr)
-     (identifier? #'id)
-     (let (sym (identifier-symbol #'id))
-       (cond
-        ((hash-get (current-compile-mutators) sym)
-         (verbose "skipping type inference for mutable binding " sym))
-        ((optimizer-lookup-type sym) ; already have a type from top level type collection
-         (verbose "skipping type inference for already declared type " sym))
-        (else
-         (alet (type (apply-basic-expression-type #'expr))
-           (optimizer-declare-type! sym type))))
-       (compile-e self #'expr)))
-    ((_ hd expr)
+    ((_ (hd) expr)
+     (identifier? #'hd)
+     (let (sym (identifier-symbol #'hd))
+       (if (optimizer-lookup-type sym) ; already has a type from top
+         (compile-e self #'expr)
+         (let (type (apply-basic-expression-type #'expr))
+           (when type (optimizer-declare-type! sym type))
+           (compile-e self #'expr)))))
+    ((_ _ expr)
      (compile-e self #'expr))))
 
-(def (collect-type-let-values% self stx)
+(def (collect-type-begin-annotation% self stx)
+  (ast-case stx (@type.assert)
+    ((_ (@type.assert assertion ...) body)
+     (begin
+       (for-each
+         (lambda (assertion)
+           (ast-case assertion ()
+             ((id type)
+              (and (identifier? #'id) (identifier? #'type))
+              (optimizer-declare-type! (identifier-symbol #'id)
+                                       (optimizer-resolve-class stx (identifier-symbol #'type))
+                                       #t))
+             (_ (raise-compile-error "malformed type assertion" stx assertion))))
+         #'(assertion ...))
+       (compile-e self #'body)))
+    ((_ ann body)
+     (compile-e self #'body))))
+
+(def (collect-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ args . body)
+     (begin
+       (collect-type-lambda-formals-tail stx #'args)
+       (apply-body-lambda% self stx)))))
+
+(def (collect-type-case-lambda% self stx)
+  (ast-case stx ()
+    ((_ (args . _) ...)
+     (begin
+       (for-each (cut collect-type-lambda-formals-tail stx <>) #'(args ...))
+       (apply-body-case-lambda% self stx)))))
+
+(def (collect-type-lambda-formals-tail stx formals)
+  (let loop ((rest formals))
+    (ast-case #'rest ()
+      ((_ . rest) (loop #'rest))
+      (() (void))
+      (id
+       (identifier? #'id)
+       (optimizer-declare-type! (identifier-symbol #'id)
+                                (optimizer-resolve-class stx 'list::t)
+                                #t)))))
+
+(def (collect-type-let-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)
     (ast-case hd ()
       ((id)
        (identifier? #'id)
        (let (sym (identifier-symbol #'id))
-         (if (hash-get (current-compile-mutators) sym)
-           (verbose "skipping type declaration for mutable binding " sym)
-           (alet (type (apply-basic-expression-type expr))
+         (alet (type (expression-type expr))
+           (if (!class-meta? type)
+             (begin
+               (optimizer-declare-class! sym (!class-meta-class type))
+               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
              (optimizer-declare-type! sym type #t)))))
       (_ (void))))
 
@@ -121,6 +217,39 @@ namespace: gxc
        (for-each collect-e #'(hd ...) #'(expr ...))
        (for-each (cut compile-e self <>) #'(expr ...))
        (compile-e self #'body)))))
+
+(def (collect-type-letrec-values% self stx (expression-type apply-basic-expression-type))
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (identifier? #'id)
+       (let (sym (identifier-symbol #'id))
+         (alet (type (expression-type expr))
+           (if (!class-meta? type)
+             (begin
+               (optimizer-declare-class! sym (!class-meta-class type))
+               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
+             (optimizer-declare-type! sym type #t)))))
+      (_ (void))))
+
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (begin
+       ;; do the bindings twice
+       ;; 1. to get the return types from recursive proc declarations
+       ;; 2. to apply the inference in the bindings and body,
+       ;;    given the recursive return types
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (compile-e self #'body)))))
+
+(def (collect-top-level-type-let-values% self stx)
+  (collect-type-let-values% self stx apply-raw-expression-type))
+
+(def (collect-top-level-type-letrec-values% self stx)
+  (collect-type-letrec-values% self stx apply-raw-expression-type))
 
 (def (collect-type-call% self stx)
   (ast-case stx (%#ref %#quote)
@@ -138,17 +267,16 @@ namespace: gxc
     ((_ expr ...)
      (for-each (cut compile-e self <>) #'(expr ...)))))
 
+(def (collect-type-setq% self stx)
+  (ast-case stx ()
+    ((_ id expr)
+     (let ((bind-type (optimizer-resolve-type (identifier-symbol #'id)))
+           (expr-type (apply-basic-expression-type #'expr)))
+       (unless (!type-subtype? expr-type bind-type)
+         ;; mutation with incompatible class types destroys type information
+         (optimizer-clear-type! (identifier-symbol #'id)))))))
 
 ;;; apply-basic-expression-type
-(def current-compile-type-closure
-  (make-parameter #f))
-
-(def (basic-expression-type-begin% self stx)
-  (ast-case stx ()
-    ((_ expr)
-     (compile-e self #'expr))
-    (_ #f)))
-
 (def basic-expression-type-annotations (make-hash-table-eq))
 (defrules defbasic-expression-type-annotations ()
   ((_ (id type-e) ...)
@@ -168,6 +296,11 @@ namespace: gxc
           (compile-e self #'expr))))
        (_ (compile-e self #'expr))))))
 
+(def (basic-expression-type-annotation-typedecl stx ann)
+  (ast-case ann ()
+    ((_ type-id)
+     (optimizer-resolve-class stx (identifier-symbol #'type-id)))))
+
 (def (basic-expression-type-annotation-mop.class stx ann)
   (ast-case ann ()
     ((_ type-id super slots ctor-method struct? final? metaclass)
@@ -178,14 +311,16 @@ namespace: gxc
            (struct? (stx-e #'struct?))
            (final? (stx-e #'final?))
            (metaclass (and (stx-e #'metaclass) (identifier-symbol #'metaclass))))
-       (make-!class type-id super slots ctor-method struct? final? #f metaclass)))))
+       (make-!class-meta
+        (make-!class type-id super slots ctor-method struct? final? #f metaclass))))))
 
 (def (basic-expression-type-annotation-mop.system stx ann)
   (ast-case ann ()
     ((_ type-id super)
      (let ((type-id (stx-e #'type-id))
            (super (stx-map identifier-symbol #'super)))
-       (make-!class type-id super [] #f #f #f #t #f)))))
+       (make-!class-meta
+        (make-!class type-id super [] #f #f #f #t #f))))))
 
 (def (basic-expression-type-annotation-mop.constructor stx ann)
   (ast-case ann ()
@@ -211,22 +346,48 @@ namespace: gxc
                     (stx-e #'slot)
                     (stx-e #'checked?)))))
 
+(def (basic-expression-type-annotation-interface stx ann)
+  (ast-case ann ()
+    ((_ type-t methods)
+     (make-!interface (identifier-symbol #'type-t)
+                      (stx-map stx-e #'methods)))))
+
+(def (basic-expression-type-annotation-predicate stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!primitive-predicate (identifier-symbol #'type-t)))))
+
+(def (basic-expression-type-annotation-abort stx ann)
+  (ast-case ann ()
+    ((_) (make-!abort))))
+
 (defbasic-expression-type-annotations
   (@mop.class       basic-expression-type-annotation-mop.class)
   (@mop.constructor basic-expression-type-annotation-mop.constructor)
   (@mop.predicate   basic-expression-type-annotation-mop.predicate)
   (@mop.accessor    basic-expression-type-annotation-mop.accessor)
   (@mop.mutator     basic-expression-type-annotation-mop.mutator)
-  (@mop.system      basic-expression-type-annotation-mop.system))
+  (@mop.system      basic-expression-type-annotation-mop.system)
+  (@interface       basic-expression-type-annotation-interface)
+  (@type            basic-expression-type-annotation-typedecl)
+  (@predicate       basic-expression-type-annotation-predicate)
+  (@abort           basic-expression-type-annotation-abort))
+
+(def (raw-expression-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ . form)
+     ;; delegate dispatch
+     (dispatch-lambda-form? #'form)
+     (make-!lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+
+    ((_ . form)
+     ;; generic lambda -- track type for call arity checking and return type inference
+     (let (signature (lambda-form-infer-signature #'form))
+       (make-!lambda (lambda-form-arity #'form) #f signature: signature)))))
 
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#call %#ref %#quote)
-      ((_ . form)
-       (current-compile-type-closure)
-       ;; don't capture local dispatch references, just enough to arity check
-       (make-!lambda 'lambda (lambda-form-arity #'form) #f))
-
       ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
                        (%#ref dispatch) (%#ref -args)))
        ;; kw-lambda
@@ -235,8 +396,8 @@ namespace: gxc
             (runtime-identifier=? #'-keyword-dispatch 'keyword-dispatch)
             (free-identifier=? #'args #'-args))
        (let* ((tab (stx-e #'kwt))
-              (keys (and tab (filter values (vector->list tab)))))
-         (make-!kw-lambda 'kw-lambda keys (identifier-symbol #'dispatch))))
+              (keys (and tab (filter identity (vector->list tab)))))
+         (make-!kw-lambda keys (identifier-symbol #'dispatch))))
 
       ((_ (kwvar . args)
           (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
@@ -249,57 +410,293 @@ namespace: gxc
             (runtime-identifier=? #'-apply 'apply)
             (free-identifier=? #'kwvar #'-kwvar)
             (andmap stx-keyword? #'(key ...))
-            (andmap (cut runtime-identifier=? <> 'hash-ref) #'(-hash-ref ...))
+            (andmap (cut runtime-identifier=? <> 'symbolic-table-ref) #'(-hash-ref ...))
             (andmap (cut runtime-identifier=? <> 'absent-value) #'(-absent-value ...))
             (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
-       (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
+       (make-!kw-lambda-primary (map stx-e #'(key ...)) (identifier-symbol #'main)))
 
       ((_ . form)
        ;; delegate dispatch
        (dispatch-lambda-form? #'form)
-       (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+       (make-!lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
 
       ((_ . form)
-       ;; generic lambda -- track type for call arity checking
-       (make-!lambda 'lambda (lambda-form-arity #'form) #f)))))
+       ;; generic lambda -- track type for call arity checking and return type inference
+       (let (signature (lambda-form-infer-signature #'form))
+         (make-!lambda (lambda-form-arity #'form) #f signature: signature))))))
 
 (def (basic-expression-type-case-lambda% self stx)
   (def (clause-e form)
-    (make-!lambda 'case-lambda-clause (lambda-form-arity form)
-             (and (not (current-compile-type-closure)) ; don't capture local dispatch
-                  (dispatch-lambda-form? form)
-                  (dispatch-lambda-form-delegate form))))
+    (let (signature (lambda-form-infer-signature form))
+      (make-!lambda (lambda-form-arity form)
+             (and (dispatch-lambda-form? form)
+                  (dispatch-lambda-form-delegate form))
+             signature: signature)))
+
+  (def (return-type-e clauses)
+    (let loop ((rest clauses) (result #f))
+      (match rest
+        ([clause . rest]
+         (using (clause :- !lambda)
+           (let* ((return
+                   (using (signature clause.signature :- !signature)
+                     (and signature
+                          signature.return
+                          (optimizer-resolve-class stx signature.return))))
+                  (result
+                   (if (and result return)
+                     (greatest-common-type stx result return)
+                     (or result return))))
+             (loop rest result))))
+        (else result))))
+
   (ast-case stx ()
     ((_ . clauses)
-     (let (clauses (map clause-e #'clauses))
-       (make-!case-lambda 'case-lambda clauses)))))
+     (let* ((clauses (map clause-e #'clauses))
+            (return (return-type-e clauses)))
+       (make-!case-lambda
+        clauses
+        signature: (and return
+                        (alet (return-type (optimizer-lookup-class-name return))
+                          (make-!signature return: return-type))))))))
 
-(def (basic-expression-type-let-values% self stx)
-  (ast-case stx ()
-    ((_ bind body)
-     (parameterize ((current-compile-type-closure #t))
-       (compile-e self #'body)))))
-
-(def basic-expression-type-builtin (make-hash-table-eq))
-(defrules defbasic-expression-type-builtin ()
+(def basic-expression-type-special (make-hash-table-eq))
+(defrules defbasic-expression-type-special ()
   ((_ (id type-e) ...)
    (begin
-     (hash-put! basic-expression-type-builtin 'id type-e) ...)))
-
+     (hash-put! basic-expression-type-special 'id type-e) ...)))
 
 (def (basic-expression-type-call% self stx)
+  (def (type-e rator rator-type args)
+    (cond
+     ((not rator-type) #f)
+     ((!procedure? rator-type)
+      {rator-type.return-type self stx args})
+     ((and (!class? rator-type)
+           (or (eq? (!type-id rator-type) 'procedure)
+               (eq? (!type-id rator-type) 't)))
+      #f)
+     (else
+      (raise-compile-error "operator is not a procedure" stx rator rator-type))))
+
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
-     (alet (type-e (hash-get basic-expression-type-builtin (identifier-symbol #'id)))
-       (type-e stx #'args)))
+     (cond
+      ((hash-get basic-expression-type-special (identifier-symbol #'id))
+       => (lambda (type-e) (type-e self stx)))
+      (else
+       (type-e #'id (optimizer-resolve-type (identifier-symbol #'id)) #'args))))
+    ((_ rator . args)
+     (type-e #'rator (apply-basic-expression-type #'rator) #'args))))
+
+(defmethod {return-type !procedure}
+  (lambda (self ctx stx args)
+    (alet* ((signature self.signature)
+            (return (&!signature-return signature)))
+      (optimizer-resolve-class stx return))))
+
+(defmethod {apply-return-type !procedure}
+  !procedure::return-type)
+
+(defmethod {return-type !lambda}
+  (lambda (self ctx stx args)
+    (if self.dispatch
+      (alet (dispatch-type (optimizer-lookup-type self.dispatch))
+        {dispatch-type.return-type ctx stx args})
+      (!procedure::return-type self ctx stx args))))
+
+(defmethod {apply-return-type !lambda}
+  !lambda::return-type)
+
+(defmethod {return-type !case-lambda}
+  (lambda (self ctx stx args)
+    (cond
+     ((find (cut !lambda-arity-match? <> args) self.clauses)
+      => (lambda (clause) {clause.return-type ctx stx args}))
+     (else
+      (!procedure::return-type self ctx stx args)))))
+
+(defmethod {apply-return-type !case-lambda}
+  (lambda (self ctx stx args)
+    (let* ((candidates
+            (filter (cut !lambda-arity-match-apply? <> args)
+                    self.clauses))
+           (candidate-types
+            (map (lambda (candidate)
+                   {candidate.apply-return-type ctx stx args})
+                 candidates)))
+      (if (pair? candidate-types)
+        (foldl (lambda (candidate-type ret)
+                 (and ret candidate-type
+                      (greatest-common-type stx candidate-type ret)))
+               (car candidate-types)
+               (cdr candidate-types))
+        (!procedure::return-type self ctx stx args)))))
+
+(defmethod {return-type !kw-lambda}
+  (lambda (self ctx stx args)
+    (match (optimizer-lookup-type self.dispatch)
+      ((!kw-lambda-primary _ _ keys main)
+       (alet (main-type (optimizer-lookup-type main))
+         {main-type.return-type ctx stx (extract-keyword-args args)}))
+      ((? !procedure? proc)
+       {proc.return-type proc ctx stx (extract-keyword-args args)}))))
+
+(defmethod {apply-return-type !kw-lambda}
+  (lambda (self ctx stx args)
+    (match (optimizer-lookup-type self.dispatch)
+      ((!kw-lambda-primary _ _ keys main)
+       (alet (main-type (optimizer-lookup-type main))
+         {main-type.apply-return-type ctx stx (extract-keyword-args args)}))
+      ((? !procedure? proc)
+       {proc.apply-return-type proc ctx stx (extract-keyword-args args)}))))
+
+(def (extract-keyword-args args)
+  (let loop ((rest args) (result []))
+    (ast-case rest (%#quote)
+      (((%#quote kw) arg . rest)
+       (stx-keyword? #'kw)
+       (loop #'rest (cons #'arg result)))
+      ((arg . rest)
+       (loop #'rest (cons #'arg result)))
+      (_ (reverse! result)))))
+
+(def (!lambda-arity-match? self args)
+  (with ((!lambda _ _ arity) self)
+    (match arity
+      ((? fixnum?)
+       (fx= (length args) arity))
+      ([arity]
+       (fx>= (length args) arity)))))
+
+(def (!lambda-arity-match-apply? self args)
+  (with ((!lambda _ _ arity) self)
+    (match arity
+      ((? fixnum?)
+       (fx>= arity (length args)))
+      ([arity] #t))))
+
+(def (basic-expression-type-special-cast ctx stx)
+  (ast-case stx (%#ref)
+    ((_ _ (%#ref interface-id) expr)
+     (alet (interface-type (optimizer-resolve-type (identifier-symbol #'interface-id)))
+       (if (!interface? interface-type)
+         (optimizer-resolve-class stx (!type-id interface-type))
+         (raise-compile-error "cast to non interface" stx #'interface-id interface-type))))))
+
+(def (basic-expression-type-special-apply ctx stx)
+  (def (type-e rator rator-type args)
+    (cond
+     ((!procedure? rator-type)
+      {rator-type.apply-return-type ctx stx args})
+     ((and (!class? rator-type)
+           (or (eq? (!type-id rator-type) 'procedure)
+               (eq? (!type-id rator-type) 't)))
+      #f)
+     (else
+      (raise-compile-error "applied operator is not a procedure" stx #'rator rator-type))))
+  (ast-case stx (%#ref)
+    ((_ _ (%#ref -kw-dispatch) kwt rator . args)
+     (free-identifier=? #'-kw-dispatch 'keyword-dispatch)
+     (alet (rator-type (apply-basic-expression-type #'rator))
+       (type-e #'rator rator-type (cons #'kwt #'args))))
+    ((_ _ rator . args)
+     (alet (rator-type (apply-basic-expression-type #'rator))
+       (type-e #'rator rator-type #'args)))
     (_ #f)))
 
-(defbasic-expression-type-builtin)
+(defbasic-expression-type-special
+  (cast basic-expression-type-special-cast)
+  (apply basic-expression-type-special-apply)
+  (##apply basic-expression-type-special-apply))
 
 (def (basic-expression-type-ref% self stx)
   (ast-case stx ()
     ((_ id)
-     (optimizer-lookup-type (identifier-symbol #'id)))))
+     (optimizer-resolve-type (identifier-symbol #'id)))))
+
+(def (basic-expression-type-if% self stx)
+  (ast-case stx ()
+    ((_ test K E)
+     (let ((type-K (apply-basic-expression-type #'K))
+           (type-E (apply-basic-expression-type #'E)))
+       (cond
+        ((!abort? type-E) type-K)
+        ((!abort? type-K) type-E)
+        (else
+         (greatest-common-type stx type-K type-E)))))))
+
+(def (greatest-common-type stx type-a type-b)
+  (cond
+   ((or (not type-a) (not type-b))
+    #f)
+   ((!type-subtype? type-a type-b)
+    type-b)
+   ((!type-subtype? type-b type-a)
+    type-a)
+   ((and (!class? type-a) (!class? type-b))
+    (let* ((rev-precedence-list-a (reverse (!class-precedence-list type-a)))
+           (rev-precedence-list-b (reverse (!class-precedence-list type-b))))
+      (let loop ((rest-a rev-precedence-list-a)
+                 (rest-b rev-precedence-list-b)
+                 (result #f))
+        (match rest-a
+          ([super-a . rest-a]
+           (match rest-b
+             ([super-b . rest-b]
+              (if (eq? super-a super-b)
+                (loop rest-a rest-b super-a)
+                (and result (optimizer-resolve-class stx result))))
+             (else
+              (and result (optimizer-resolve-class stx result)))))
+          (else
+           (and result (optimizer-resolve-class stx result)))))))
+   ((and (eq? (!type-id type-a) 'procedure) (eq? (!type-id type-b) 'procedure))
+    (optimizer-resolve-class stx 'procedure::t))
+   (else #f)))
+
+(def (basic-expression-type-quote% self stx)
+  (ast-case stx ()
+    ((_ value)
+     (let (obj (stx-e #'value))
+       (cond
+        ((immediate? obj)
+         (cond
+          ((char? obj)       (optimizer-resolve-class stx 'char::t))
+          ((true? obj)       (optimizer-resolve-class stx 'true::t))
+          ((not obj)         (optimizer-resolve-class stx 'false::t))
+          ((void? obj)       (optimizer-resolve-class stx 'void::t))
+          ((eof-object? obj) (optimizer-resolve-class stx 'eof::t))
+          ((fixnum? obj)     (optimizer-resolve-class stx 'fixnum::t))
+          ((null? obj)       (optimizer-resolve-class stx 'null::t))
+          (else              (optimizer-resolve-class stx 'special::t))))
+        ((number? obj)
+         (cond
+          ((flonum? obj)   (optimizer-resolve-class stx 'flonum::t))
+          ((##bignum? obj) (optimizer-resolve-class stx 'bignum::t))
+          ((##ratnum? obj) (optimizer-resolve-class stx 'ratnum::t))
+          ((##cpxnum? obj) (optimizer-resolve-class stx 'cpxnum::t))
+          (else #f)))
+        ((symbol? obj)  (optimizer-resolve-class stx 'symbol::t))
+        ((keyword? obj) (optimizer-resolve-class stx 'keyword::t))
+        ((pair? obj)    (optimizer-resolve-class stx 'pair::t))
+        ((sequence? obj)
+         (cond
+          ((vector? obj)    (optimizer-resolve-class stx 'vector::t))
+          ((string? obj)    (optimizer-resolve-class stx 'string::t))
+          ((u8vector? obj)  (optimizer-resolve-class stx 'u8vector::t))
+          ((s8vector? obj)  (optimizer-resolve-class stx 's8vector::t))
+          ((u16vector? obj) (optimizer-resolve-class stx 'u16vector::t))
+          ((s16vector? obj) (optimizer-resolve-class stx 's16vector::t))
+          ((u32vector? obj) (optimizer-resolve-class stx 'u32vector::t))
+          ((s32vector? obj) (optimizer-resolve-class stx 's32vector::t))
+          ((u64vector? obj) (optimizer-resolve-class stx 'u64vector::t))
+          ((s64vector? obj) (optimizer-resolve-class stx 's64vector::t))
+          ((f32vector? obj) (optimizer-resolve-class stx 'f32vector::t))
+          ((f64vector? obj) (optimizer-resolve-class stx 'f64vector::t))
+          (else #f)))
+        ((box? obj) (optimizer-resolve-class stx 'box::t))
+        (else #f))))))
 
 ;;; apply-lift-top-lambdas
 (def (dispatch-lambda-form? form)
@@ -345,6 +742,48 @@ namespace: gxc
        ((arg ... . rest)
         [(length #'(arg ...))])
        (rest [0])))))
+
+(def (lambda-form-infer-signature form)
+  (ast-case form ()
+    ((hd body)
+     (cond
+      ((apply-extract-lambda-signature #'body))
+      ((apply-basic-expression-type #'body)
+       => (lambda (return-type)
+            (cond
+             ((!procedure? return-type)
+              (make-!signature return: 'procedure::t))
+             ((optimizer-lookup-class-name return-type)
+              => (lambda (return-type-name)
+                   (make-!signature return: return-type-name)))
+             (else #f))))
+      (else #f)))))
+
+(def (extract-lambda-signature-begin-annotation% self stx)
+  (ast-case stx (@type.signature)
+    ((_ (@type.signature signature ...) body)
+     (let loop ((rest #'(signature ...)) (result []))
+       (match rest
+         ([(? stx-keyword? key) arg . rest]
+          (case (stx-e key)
+            ((return:)
+             (loop rest
+                   (cons* return: (identifier-symbol arg) result)))
+            ((effect:)
+             (loop rest
+                   (cons* effect: (and arg (map stx-e arg)) result)))
+            ((arguments:)
+             (loop rest
+                   (cons* arguments: (map* identifier-symbol arg) result)))
+            ((unchecked:)
+             (loop rest
+                   (cons* unchecked: (identifier-symbol arg) result)))
+            (else
+             (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
+         ([] (apply make-!signature result))
+         (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
+    ((_ ann body)
+     (compile-e self #'body))))
 
 (def (lambda-expr? expr)
   (ast-case expr (%#lambda)

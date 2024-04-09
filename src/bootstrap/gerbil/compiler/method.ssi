@@ -146,6 +146,8 @@ namespace: gxc
          (%#define-runtime xform-lambda% gxc#xform-lambda%)
          (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
          (%#define-runtime xform-let-values% gxc#xform-let-values%)
+         (%#define-runtime xform-letrec-values% gxc#xform-letrec-values%)
+         (%#define-runtime xform-let-locals gxc#xform-let-locals)
          (%#define-runtime xform-operands gxc#xform-operands)
          (%#define-runtime xform-call% gxc#xform-call%)
          (%#define-runtime xform-setq% gxc#xform-setq%))

@@ -8,7 +8,7 @@
 (export #t)
 
 (def (string-copy! s i x)
-  (substring-move! s i x 0 (string-length x)))
+  (substring-move! x 0 (string-length x) s i))
 
 (define (div-and-mod x y)
   (cond ((and (exact-integer? x) (exact-integer? y))

@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SSL API
-(import :std/interface
-        ./interface
+(import ./interface
         ./libssl
         ./socket
         ./client

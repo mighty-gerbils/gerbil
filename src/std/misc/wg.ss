@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; transient parallel workgroups
 (import :std/error
-        :std/contract
         :std/iter
         ./channel)
 (export WG? make-wg wg-add! wg-wait!)
@@ -17,14 +16,13 @@
     (set! (&WG-workers wg) threads)
     wg))
 
-(def (worker wg)
-  (using (wg :- WG)
-    (let (ch wg.workch)
-      (let loop ()
-        (let (next (channel-get ch))
-          (unless (eof-object? next)
-            (next)
-            (loop)))))))
+(def (worker (wg :- WG))
+  (let (ch wg.workch)
+    (let loop ()
+      (let (next (channel-get ch))
+        (unless (eof-object? next)
+          (next)
+          (loop))))))
 
 (def (wg-add! wg thunk)
   (if (WG? wg)

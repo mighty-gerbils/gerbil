@@ -4,9 +4,7 @@
 (export #t)
 (import :gerbil/gambit
         :std/error
-        :std/contract
         :std/sugar
-        :std/interface
         :std/io
         :std/io/socket/types
         :std/io/socket/basic

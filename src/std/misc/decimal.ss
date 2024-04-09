@@ -17,7 +17,6 @@
   (only-in :std/srfi/141 round/ truncate/ floor/)
   (only-in :std/error check-argument raise-bad-argument
            deferror-class raise/context exception-context)
-  (only-in :std/contract using)
   (only-in :std/io PeekableStringReader open-buffered-string-reader
            PeekableStringReader-read-char PeekableStringReader-peek-char)
   (only-in :std/misc/number decrement! check-argument-uint integer-part

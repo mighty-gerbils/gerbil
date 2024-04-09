@@ -3,7 +3,6 @@
 ;;; PostgreSQL dbi interface
 
 (import :std/error
-        :std/contract
         :std/db/dbi
         :std/db/postgresql-driver
         :std/iter

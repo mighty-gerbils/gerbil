@@ -16,7 +16,6 @@
 (import
   (for-syntax :std/misc/number)
   :std/error
-  :std/contract
   :std/io
   (only-in :std/parser/base parse-error? raise-parse-error)
   :std/iter

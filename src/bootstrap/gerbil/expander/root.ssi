@@ -11,18 +11,15 @@ namespace: gx
           :gerbil/expander/compile)
          (%#define-runtime *core-syntax-expanders* gx#*core-syntax-expanders*)
          (%#define-runtime *core-macro-expanders* gx#*core-macro-expanders*)
-         (%#begin (%#begin (%#define-runtime
-                            root-context:::init!__%
-                            gx#root-context:::init!__%)
-                           (%#begin (%#define-runtime
-                                     root-context:::init!__0
-                                     gx#root-context:::init!__0)
-                                    (%#define-runtime
-                                     root-context:::init!
-                                     gx#root-context:::init!)))
-                  (%#define-runtime
-                   root-context:::init!::specialize
-                   gx#root-context:::init!::specialize))
+         (%#begin (%#define-runtime
+                   root-context:::init!__%
+                   gx#root-context:::init!__%)
+                  (%#begin (%#define-runtime
+                            root-context:::init!__0
+                            gx#root-context:::init!__0)
+                           (%#define-runtime
+                            root-context:::init!
+                            gx#root-context:::init!)))
          (%#begin (%#define-runtime
                    top-context:::init!__%
                    gx#top-context:::init!__%)

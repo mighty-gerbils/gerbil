@@ -22,11 +22,15 @@ namespace: gxc
          (%#define-runtime optimizer-info? gxc#optimizer-info?)
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
          (%#define-runtime optimizer-info-type gxc#optimizer-info-type)
+         (%#define-runtime optimizer-info-classes gxc#optimizer-info-classes)
          (%#define-runtime optimizer-info-ssxi gxc#optimizer-info-ssxi)
          (%#define-runtime optimizer-info-methods gxc#optimizer-info-methods)
          (%#define-runtime
           optimizer-info-type-set!
           gxc#optimizer-info-type-set!)
+         (%#define-runtime
+          optimizer-info-classes-set!
+          gxc#optimizer-info-classes-set!)
          (%#define-runtime
           optimizer-info-ssxi-set!
           gxc#optimizer-info-ssxi-set!)
@@ -34,11 +38,15 @@ namespace: gxc
           optimizer-info-methods-set!
           gxc#optimizer-info-methods-set!)
          (%#define-runtime &optimizer-info-type gxc#&optimizer-info-type)
+         (%#define-runtime &optimizer-info-classes gxc#&optimizer-info-classes)
          (%#define-runtime &optimizer-info-ssxi gxc#&optimizer-info-ssxi)
          (%#define-runtime &optimizer-info-methods gxc#&optimizer-info-methods)
          (%#define-runtime
           &optimizer-info-type-set!
           gxc#&optimizer-info-type-set!)
+         (%#define-runtime
+          &optimizer-info-classes-set!
+          gxc#&optimizer-info-classes-set!)
          (%#define-runtime
           &optimizer-info-ssxi-set!
           gxc#&optimizer-info-ssxi-set!)
@@ -58,6 +66,14 @@ namespace: gxc
          (%#define-runtime &!type-id gxc#&!type-id)
          (%#define-runtime &!type-id-set! gxc#&!type-id-set!)
          (%#define-syntax !type |gxc[:0:]#!type|)
+         (%#define-runtime !abort::t gxc#!abort::t)
+         (%#define-runtime !abort? gxc#!abort?)
+         (%#define-runtime make-!abort gxc#make-!abort)
+         (%#define-runtime !abort-id gxc#!abort-id)
+         (%#define-runtime !abort-id-set! gxc#!abort-id-set!)
+         (%#define-runtime &!abort-id gxc#&!abort-id)
+         (%#define-runtime &!abort-id-set! gxc#&!abort-id-set!)
+         (%#define-syntax !abort |gxc[:0:]#!abort|)
          (%#define-runtime !alias::t gxc#!alias::t)
          (%#define-runtime !alias? gxc#!alias?)
          (%#define-runtime make-!alias gxc#make-!alias)
@@ -69,11 +85,87 @@ namespace: gxc
          (%#define-runtime !procedure::t gxc#!procedure::t)
          (%#define-runtime !procedure? gxc#!procedure?)
          (%#define-runtime make-!procedure gxc#make-!procedure)
+         (%#define-runtime !procedure-signature gxc#!procedure-signature)
          (%#define-runtime !procedure-id gxc#!procedure-id)
+         (%#define-runtime
+          !procedure-signature-set!
+          gxc#!procedure-signature-set!)
          (%#define-runtime !procedure-id-set! gxc#!procedure-id-set!)
+         (%#define-runtime &!procedure-signature gxc#&!procedure-signature)
          (%#define-runtime &!procedure-id gxc#&!procedure-id)
+         (%#define-runtime
+          &!procedure-signature-set!
+          gxc#&!procedure-signature-set!)
          (%#define-runtime &!procedure-id-set! gxc#&!procedure-id-set!)
          (%#define-syntax !procedure |gxc[:0:]#!procedure|)
+         (%#define-runtime !signature::t gxc#!signature::t)
+         (%#define-runtime !signature? gxc#!signature?)
+         (%#define-runtime make-!signature gxc#make-!signature)
+         (%#define-runtime !signature-return gxc#!signature-return)
+         (%#define-runtime !signature-effect gxc#!signature-effect)
+         (%#define-runtime !signature-arguments gxc#!signature-arguments)
+         (%#define-runtime !signature-unchecked gxc#!signature-unchecked)
+         (%#define-runtime !signature-return-set! gxc#!signature-return-set!)
+         (%#define-runtime !signature-effect-set! gxc#!signature-effect-set!)
+         (%#define-runtime
+          !signature-arguments-set!
+          gxc#!signature-arguments-set!)
+         (%#define-runtime
+          !signature-unchecked-set!
+          gxc#!signature-unchecked-set!)
+         (%#define-runtime &!signature-return gxc#&!signature-return)
+         (%#define-runtime &!signature-effect gxc#&!signature-effect)
+         (%#define-runtime &!signature-arguments gxc#&!signature-arguments)
+         (%#define-runtime &!signature-unchecked gxc#&!signature-unchecked)
+         (%#define-runtime &!signature-return-set! gxc#&!signature-return-set!)
+         (%#define-runtime &!signature-effect-set! gxc#&!signature-effect-set!)
+         (%#define-runtime
+          &!signature-arguments-set!
+          gxc#&!signature-arguments-set!)
+         (%#define-runtime
+          &!signature-unchecked-set!
+          gxc#&!signature-unchecked-set!)
+         (%#define-syntax !signature |gxc[:0:]#!signature|)
+         (%#define-runtime !primitive-predicate::t gxc#!primitive-predicate::t)
+         (%#define-runtime !primitive-predicate? gxc#!primitive-predicate?)
+         (%#define-runtime
+          make-!primitive-predicate
+          gxc#make-!primitive-predicate)
+         (%#define-runtime
+          !primitive-predicate-signature
+          gxc#!primitive-predicate-signature)
+         (%#define-runtime !primitive-predicate-id gxc#!primitive-predicate-id)
+         (%#define-runtime
+          !primitive-predicate-signature-set!
+          gxc#!primitive-predicate-signature-set!)
+         (%#define-runtime
+          !primitive-predicate-id-set!
+          gxc#!primitive-predicate-id-set!)
+         (%#define-runtime
+          &!primitive-predicate-signature
+          gxc#&!primitive-predicate-signature)
+         (%#define-runtime
+          &!primitive-predicate-id
+          gxc#&!primitive-predicate-id)
+         (%#define-runtime
+          &!primitive-predicate-signature-set!
+          gxc#&!primitive-predicate-signature-set!)
+         (%#define-runtime
+          &!primitive-predicate-id-set!
+          gxc#&!primitive-predicate-id-set!)
+         (%#define-syntax !primitive-predicate |gxc[:0:]#!primitive-predicate|)
+         (%#define-runtime !class-meta::t gxc#!class-meta::t)
+         (%#define-runtime !class-meta? gxc#!class-meta?)
+         (%#define-runtime make-!class-meta gxc#make-!class-meta)
+         (%#define-runtime !class-meta-class gxc#!class-meta-class)
+         (%#define-runtime !class-meta-id gxc#!class-meta-id)
+         (%#define-runtime !class-meta-class-set! gxc#!class-meta-class-set!)
+         (%#define-runtime !class-meta-id-set! gxc#!class-meta-id-set!)
+         (%#define-runtime &!class-meta-class gxc#&!class-meta-class)
+         (%#define-runtime &!class-meta-id gxc#&!class-meta-id)
+         (%#define-runtime &!class-meta-class-set! gxc#&!class-meta-class-set!)
+         (%#define-runtime &!class-meta-id-set! gxc#&!class-meta-id-set!)
+         (%#define-syntax !class-meta |gxc[:0:]#!class-meta|)
          (%#define-runtime !class::t gxc#!class::t)
          (%#define-runtime !class? gxc#!class?)
          (%#define-runtime make-!class gxc#make-!class)
@@ -131,17 +223,33 @@ namespace: gxc
          (%#define-runtime !predicate::t gxc#!predicate::t)
          (%#define-runtime !predicate? gxc#!predicate?)
          (%#define-runtime make-!predicate gxc#make-!predicate)
+         (%#define-runtime !predicate-signature gxc#!predicate-signature)
          (%#define-runtime !predicate-id gxc#!predicate-id)
+         (%#define-runtime
+          !predicate-signature-set!
+          gxc#!predicate-signature-set!)
          (%#define-runtime !predicate-id-set! gxc#!predicate-id-set!)
+         (%#define-runtime &!predicate-signature gxc#&!predicate-signature)
          (%#define-runtime &!predicate-id gxc#&!predicate-id)
+         (%#define-runtime
+          &!predicate-signature-set!
+          gxc#&!predicate-signature-set!)
          (%#define-runtime &!predicate-id-set! gxc#&!predicate-id-set!)
          (%#define-syntax !predicate |gxc[:0:]#!predicate|)
          (%#define-runtime !constructor::t gxc#!constructor::t)
          (%#define-runtime !constructor? gxc#!constructor?)
          (%#define-runtime make-!constructor gxc#make-!constructor)
+         (%#define-runtime !constructor-signature gxc#!constructor-signature)
          (%#define-runtime !constructor-id gxc#!constructor-id)
+         (%#define-runtime
+          !constructor-signature-set!
+          gxc#!constructor-signature-set!)
          (%#define-runtime !constructor-id-set! gxc#!constructor-id-set!)
+         (%#define-runtime &!constructor-signature gxc#&!constructor-signature)
          (%#define-runtime &!constructor-id gxc#&!constructor-id)
+         (%#define-runtime
+          &!constructor-signature-set!
+          gxc#&!constructor-signature-set!)
          (%#define-runtime &!constructor-id-set! gxc#&!constructor-id-set!)
          (%#define-syntax !constructor |gxc[:0:]#!constructor|)
          (%#define-runtime !accessor::t gxc#!accessor::t)
@@ -149,17 +257,25 @@ namespace: gxc
          (%#define-runtime make-!accessor gxc#make-!accessor)
          (%#define-runtime !accessor-slot gxc#!accessor-slot)
          (%#define-runtime !accessor-checked? gxc#!accessor-checked?)
+         (%#define-runtime !accessor-signature gxc#!accessor-signature)
          (%#define-runtime !accessor-id gxc#!accessor-id)
          (%#define-runtime !accessor-slot-set! gxc#!accessor-slot-set!)
          (%#define-runtime !accessor-checked?-set! gxc#!accessor-checked?-set!)
+         (%#define-runtime
+          !accessor-signature-set!
+          gxc#!accessor-signature-set!)
          (%#define-runtime !accessor-id-set! gxc#!accessor-id-set!)
          (%#define-runtime &!accessor-slot gxc#&!accessor-slot)
          (%#define-runtime &!accessor-checked? gxc#&!accessor-checked?)
+         (%#define-runtime &!accessor-signature gxc#&!accessor-signature)
          (%#define-runtime &!accessor-id gxc#&!accessor-id)
          (%#define-runtime &!accessor-slot-set! gxc#&!accessor-slot-set!)
          (%#define-runtime
           &!accessor-checked?-set!
           gxc#&!accessor-checked?-set!)
+         (%#define-runtime
+          &!accessor-signature-set!
+          gxc#&!accessor-signature-set!)
          (%#define-runtime &!accessor-id-set! gxc#&!accessor-id-set!)
          (%#define-syntax !accessor |gxc[:0:]#!accessor|)
          (%#define-runtime !mutator::t gxc#!mutator::t)
@@ -167,17 +283,37 @@ namespace: gxc
          (%#define-runtime make-!mutator gxc#make-!mutator)
          (%#define-runtime !mutator-slot gxc#!mutator-slot)
          (%#define-runtime !mutator-checked? gxc#!mutator-checked?)
+         (%#define-runtime !mutator-signature gxc#!mutator-signature)
          (%#define-runtime !mutator-id gxc#!mutator-id)
          (%#define-runtime !mutator-slot-set! gxc#!mutator-slot-set!)
          (%#define-runtime !mutator-checked?-set! gxc#!mutator-checked?-set!)
+         (%#define-runtime !mutator-signature-set! gxc#!mutator-signature-set!)
          (%#define-runtime !mutator-id-set! gxc#!mutator-id-set!)
          (%#define-runtime &!mutator-slot gxc#&!mutator-slot)
          (%#define-runtime &!mutator-checked? gxc#&!mutator-checked?)
+         (%#define-runtime &!mutator-signature gxc#&!mutator-signature)
          (%#define-runtime &!mutator-id gxc#&!mutator-id)
          (%#define-runtime &!mutator-slot-set! gxc#&!mutator-slot-set!)
          (%#define-runtime &!mutator-checked?-set! gxc#&!mutator-checked?-set!)
+         (%#define-runtime
+          &!mutator-signature-set!
+          gxc#&!mutator-signature-set!)
          (%#define-runtime &!mutator-id-set! gxc#&!mutator-id-set!)
          (%#define-syntax !mutator |gxc[:0:]#!mutator|)
+         (%#define-runtime !interface::t gxc#!interface::t)
+         (%#define-runtime !interface? gxc#!interface?)
+         (%#define-runtime make-!interface gxc#make-!interface)
+         (%#define-runtime !interface-methods gxc#!interface-methods)
+         (%#define-runtime !interface-id gxc#!interface-id)
+         (%#define-runtime !interface-methods-set! gxc#!interface-methods-set!)
+         (%#define-runtime !interface-id-set! gxc#!interface-id-set!)
+         (%#define-runtime &!interface-methods gxc#&!interface-methods)
+         (%#define-runtime &!interface-id gxc#&!interface-id)
+         (%#define-runtime
+          &!interface-methods-set!
+          gxc#&!interface-methods-set!)
+         (%#define-runtime &!interface-id-set! gxc#&!interface-id-set!)
+         (%#define-syntax !interface |gxc[:0:]#!interface|)
          (%#define-runtime !lambda::t gxc#!lambda::t)
          (%#define-runtime !lambda? gxc#!lambda?)
          (%#define-runtime make-!lambda gxc#make-!lambda)
@@ -185,6 +321,7 @@ namespace: gxc
          (%#define-runtime !lambda-dispatch gxc#!lambda-dispatch)
          (%#define-runtime !lambda-inline gxc#!lambda-inline)
          (%#define-runtime !lambda-inline-typedecl gxc#!lambda-inline-typedecl)
+         (%#define-runtime !lambda-signature gxc#!lambda-signature)
          (%#define-runtime !lambda-id gxc#!lambda-id)
          (%#define-runtime !lambda-arity-set! gxc#!lambda-arity-set!)
          (%#define-runtime !lambda-dispatch-set! gxc#!lambda-dispatch-set!)
@@ -192,6 +329,7 @@ namespace: gxc
          (%#define-runtime
           !lambda-inline-typedecl-set!
           gxc#!lambda-inline-typedecl-set!)
+         (%#define-runtime !lambda-signature-set! gxc#!lambda-signature-set!)
          (%#define-runtime !lambda-id-set! gxc#!lambda-id-set!)
          (%#define-runtime &!lambda-arity gxc#&!lambda-arity)
          (%#define-runtime &!lambda-dispatch gxc#&!lambda-dispatch)
@@ -199,6 +337,7 @@ namespace: gxc
          (%#define-runtime
           &!lambda-inline-typedecl
           gxc#&!lambda-inline-typedecl)
+         (%#define-runtime &!lambda-signature gxc#&!lambda-signature)
          (%#define-runtime &!lambda-id gxc#&!lambda-id)
          (%#define-runtime &!lambda-arity-set! gxc#&!lambda-arity-set!)
          (%#define-runtime &!lambda-dispatch-set! gxc#&!lambda-dispatch-set!)
@@ -206,22 +345,31 @@ namespace: gxc
          (%#define-runtime
           &!lambda-inline-typedecl-set!
           gxc#&!lambda-inline-typedecl-set!)
+         (%#define-runtime &!lambda-signature-set! gxc#&!lambda-signature-set!)
          (%#define-runtime &!lambda-id-set! gxc#&!lambda-id-set!)
          (%#define-syntax !lambda |gxc[:0:]#!lambda|)
          (%#define-runtime !case-lambda::t gxc#!case-lambda::t)
          (%#define-runtime !case-lambda? gxc#!case-lambda?)
          (%#define-runtime make-!case-lambda gxc#make-!case-lambda)
          (%#define-runtime !case-lambda-clauses gxc#!case-lambda-clauses)
+         (%#define-runtime !case-lambda-signature gxc#!case-lambda-signature)
          (%#define-runtime !case-lambda-id gxc#!case-lambda-id)
          (%#define-runtime
           !case-lambda-clauses-set!
           gxc#!case-lambda-clauses-set!)
+         (%#define-runtime
+          !case-lambda-signature-set!
+          gxc#!case-lambda-signature-set!)
          (%#define-runtime !case-lambda-id-set! gxc#!case-lambda-id-set!)
          (%#define-runtime &!case-lambda-clauses gxc#&!case-lambda-clauses)
+         (%#define-runtime &!case-lambda-signature gxc#&!case-lambda-signature)
          (%#define-runtime &!case-lambda-id gxc#&!case-lambda-id)
          (%#define-runtime
           &!case-lambda-clauses-set!
           gxc#&!case-lambda-clauses-set!)
+         (%#define-runtime
+          &!case-lambda-signature-set!
+          gxc#&!case-lambda-signature-set!)
          (%#define-runtime &!case-lambda-id-set! gxc#&!case-lambda-id-set!)
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !kw-lambda::t gxc#!kw-lambda::t)
@@ -229,19 +377,27 @@ namespace: gxc
          (%#define-runtime make-!kw-lambda gxc#make-!kw-lambda)
          (%#define-runtime !kw-lambda-table gxc#!kw-lambda-table)
          (%#define-runtime !kw-lambda-dispatch gxc#!kw-lambda-dispatch)
+         (%#define-runtime !kw-lambda-signature gxc#!kw-lambda-signature)
          (%#define-runtime !kw-lambda-id gxc#!kw-lambda-id)
          (%#define-runtime !kw-lambda-table-set! gxc#!kw-lambda-table-set!)
          (%#define-runtime
           !kw-lambda-dispatch-set!
           gxc#!kw-lambda-dispatch-set!)
+         (%#define-runtime
+          !kw-lambda-signature-set!
+          gxc#!kw-lambda-signature-set!)
          (%#define-runtime !kw-lambda-id-set! gxc#!kw-lambda-id-set!)
          (%#define-runtime &!kw-lambda-table gxc#&!kw-lambda-table)
          (%#define-runtime &!kw-lambda-dispatch gxc#&!kw-lambda-dispatch)
+         (%#define-runtime &!kw-lambda-signature gxc#&!kw-lambda-signature)
          (%#define-runtime &!kw-lambda-id gxc#&!kw-lambda-id)
          (%#define-runtime &!kw-lambda-table-set! gxc#&!kw-lambda-table-set!)
          (%#define-runtime
           &!kw-lambda-dispatch-set!
           gxc#&!kw-lambda-dispatch-set!)
+         (%#define-runtime
+          &!kw-lambda-signature-set!
+          gxc#&!kw-lambda-signature-set!)
          (%#define-runtime &!kw-lambda-id-set! gxc#&!kw-lambda-id-set!)
          (%#define-syntax !kw-lambda |gxc[:0:]#!kw-lambda|)
          (%#define-runtime !kw-lambda-primary::t gxc#!kw-lambda-primary::t)
@@ -249,6 +405,9 @@ namespace: gxc
          (%#define-runtime make-!kw-lambda-primary gxc#make-!kw-lambda-primary)
          (%#define-runtime !kw-lambda-primary-keys gxc#!kw-lambda-primary-keys)
          (%#define-runtime !kw-lambda-primary-main gxc#!kw-lambda-primary-main)
+         (%#define-runtime
+          !kw-lambda-primary-signature
+          gxc#!kw-lambda-primary-signature)
          (%#define-runtime !kw-lambda-primary-id gxc#!kw-lambda-primary-id)
          (%#define-runtime
           !kw-lambda-primary-keys-set!
@@ -256,6 +415,9 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary-main-set!
           gxc#!kw-lambda-primary-main-set!)
+         (%#define-runtime
+          !kw-lambda-primary-signature-set!
+          gxc#!kw-lambda-primary-signature-set!)
          (%#define-runtime
           !kw-lambda-primary-id-set!
           gxc#!kw-lambda-primary-id-set!)
@@ -265,6 +427,9 @@ namespace: gxc
          (%#define-runtime
           &!kw-lambda-primary-main
           gxc#&!kw-lambda-primary-main)
+         (%#define-runtime
+          &!kw-lambda-primary-signature
+          gxc#&!kw-lambda-primary-signature)
          (%#define-runtime &!kw-lambda-primary-id gxc#&!kw-lambda-primary-id)
          (%#define-runtime
           &!kw-lambda-primary-keys-set!
@@ -272,6 +437,9 @@ namespace: gxc
          (%#define-runtime
           &!kw-lambda-primary-main-set!
           gxc#&!kw-lambda-primary-main-set!)
+         (%#define-runtime
+          &!kw-lambda-primary-signature-set!
+          gxc#&!kw-lambda-primary-signature-set!)
          (%#define-runtime
           &!kw-lambda-primary-id-set!
           gxc#&!kw-lambda-primary-id-set!)
@@ -293,6 +461,9 @@ namespace: gxc
          (%#define-runtime
           !primitive-lambda-inline-typedecl
           gxc#!primitive-lambda-inline-typedecl)
+         (%#define-runtime
+          !primitive-lambda-signature
+          gxc#!primitive-lambda-signature)
          (%#define-runtime !primitive-lambda-id gxc#!primitive-lambda-id)
          (%#define-runtime
           !primitive-lambda-arity-set!
@@ -306,6 +477,9 @@ namespace: gxc
          (%#define-runtime
           !primitive-lambda-inline-typedecl-set!
           gxc#!primitive-lambda-inline-typedecl-set!)
+         (%#define-runtime
+          !primitive-lambda-signature-set!
+          gxc#!primitive-lambda-signature-set!)
          (%#define-runtime
           !primitive-lambda-id-set!
           gxc#!primitive-lambda-id-set!)
@@ -321,6 +495,9 @@ namespace: gxc
          (%#define-runtime
           &!primitive-lambda-inline-typedecl
           gxc#&!primitive-lambda-inline-typedecl)
+         (%#define-runtime
+          &!primitive-lambda-signature
+          gxc#&!primitive-lambda-signature)
          (%#define-runtime &!primitive-lambda-id gxc#&!primitive-lambda-id)
          (%#define-runtime
           &!primitive-lambda-arity-set!
@@ -334,6 +511,9 @@ namespace: gxc
          (%#define-runtime
           &!primitive-lambda-inline-typedecl-set!
           gxc#&!primitive-lambda-inline-typedecl-set!)
+         (%#define-runtime
+          &!primitive-lambda-signature-set!
+          gxc#&!primitive-lambda-signature-set!)
          (%#define-runtime
           &!primitive-lambda-id-set!
           gxc#&!primitive-lambda-id-set!)
@@ -349,11 +529,17 @@ namespace: gxc
           !primitive-case-lambda-clauses
           gxc#!primitive-case-lambda-clauses)
          (%#define-runtime
+          !primitive-case-lambda-signature
+          gxc#!primitive-case-lambda-signature)
+         (%#define-runtime
           !primitive-case-lambda-id
           gxc#!primitive-case-lambda-id)
          (%#define-runtime
           !primitive-case-lambda-clauses-set!
           gxc#!primitive-case-lambda-clauses-set!)
+         (%#define-runtime
+          !primitive-case-lambda-signature-set!
+          gxc#!primitive-case-lambda-signature-set!)
          (%#define-runtime
           !primitive-case-lambda-id-set!
           gxc#!primitive-case-lambda-id-set!)
@@ -361,73 +547,68 @@ namespace: gxc
           &!primitive-case-lambda-clauses
           gxc#&!primitive-case-lambda-clauses)
          (%#define-runtime
+          &!primitive-case-lambda-signature
+          gxc#&!primitive-case-lambda-signature)
+         (%#define-runtime
           &!primitive-case-lambda-id
           gxc#&!primitive-case-lambda-id)
          (%#define-runtime
           &!primitive-case-lambda-clauses-set!
           gxc#&!primitive-case-lambda-clauses-set!)
          (%#define-runtime
+          &!primitive-case-lambda-signature-set!
+          gxc#&!primitive-case-lambda-signature-set!)
+         (%#define-runtime
           &!primitive-case-lambda-id-set!
           gxc#&!primitive-case-lambda-id-set!)
          (%#define-syntax
           !primitive-case-lambda
           |gxc[:0:]#!primitive-case-lambda|)
-         (%#begin (%#begin (%#define-runtime
-                            !class:::init!__0
-                            gxc#!class:::init!__0)
-                           (%#define-runtime
-                            !class:::init!__1
-                            gxc#!class:::init!__1)
-                           (%#define-runtime
-                            !class:::init!
-                            gxc#!class:::init!))
-                  (%#define-runtime
-                   !class:::init!::specialize
-                   gxc#!class:::init!::specialize))
+         (%#define-runtime !abort:::init! gxc#!abort:::init!)
+         (%#define-runtime !class-meta:::init! gxc#!class-meta:::init!)
+         (%#begin (%#define-runtime !class:::init!__0 gxc#!class:::init!__0)
+                  (%#define-runtime !class:::init!__1 gxc#!class:::init!__1)
+                  (%#define-runtime !class:::init! gxc#!class:::init!))
          (%#define-runtime compute-class-fields gxc#compute-class-fields)
          (%#define-runtime
           !class-slot->field-offset
           gxc#!class-slot->field-offset)
          (%#define-runtime !class-slot-find-struct gxc#!class-slot-find-struct)
          (%#define-runtime !class-struct-slot? gxc#!class-struct-slot?)
-         (%#begin (%#define-runtime !predicate:::init! gxc#!predicate:::init!)
-                  (%#define-runtime
-                   !predicate:::init!::specialize
-                   gxc#!predicate:::init!::specialize))
-         (%#begin (%#define-runtime
-                   !constructor:::init!
-                   gxc#!constructor:::init!)
-                  (%#define-runtime
-                   !constructor:::init!::specialize
-                   gxc#!constructor:::init!::specialize))
-         (%#begin (%#define-runtime !accessor:::init! gxc#!accessor:::init!)
-                  (%#define-runtime
-                   !accessor:::init!::specialize
-                   gxc#!accessor:::init!::specialize))
-         (%#begin (%#define-runtime !mutator:::init! gxc#!mutator:::init!)
-                  (%#define-runtime
-                   !mutator:::init!::specialize
-                   gxc#!mutator:::init!::specialize))
+         (%#define-runtime !predicate:::init! gxc#!predicate:::init!)
+         (%#define-runtime !constructor:::init! gxc#!constructor:::init!)
+         (%#define-runtime !accessor:::init! gxc#!accessor:::init!)
+         (%#define-runtime !mutator:::init! gxc#!mutator:::init!)
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
-                  (%#begin (%#define-runtime
-                            !lambda:::init!__0
-                            gxc#!lambda:::init!__0)
-                           (%#define-runtime
-                            !lambda:::init!__1
-                            gxc#!lambda:::init!__1)
-                           (%#define-runtime
-                            !lambda:::init!
-                            gxc#!lambda:::init!)))
+                  (%#define-runtime !lambda:::init!__@ gxc#!lambda:::init!__@)
+                  (%#define-runtime !lambda:::init! gxc#!lambda:::init!))
+         (%#begin (%#define-runtime
+                   !case-lambda:::init!__%
+                   gxc#!case-lambda:::init!__%)
+                  (%#define-runtime
+                   !case-lambda:::init!__@
+                   gxc#!case-lambda:::init!__@)
+                  (%#define-runtime
+                   !case-lambda:::init!
+                   gxc#!case-lambda:::init!))
+         (%#define-runtime !kw-lambda:::init! gxc#!kw-lambda:::init!)
+         (%#define-runtime
+          !kw-lambda-primary:::init!
+          gxc#!kw-lambda-primary:::init!)
          (%#define-runtime
           !primitive-lambda:::init!
           gxc#!primitive-lambda:::init!)
          (%#define-runtime
           !primitive-case-lambda:::init!
           gxc#!primitive-case-lambda:::init!)
-         (%#define-runtime !type-vtab gxc#!type-vtab)
+         (%#define-runtime
+          !primitive-predicate:::init!
+          gxc#!primitive-predicate:::init!)
          (%#define-runtime !class-method-table gxc#!class-method-table)
          (%#define-runtime !class-lookup-method gxc#!class-lookup-method)
-         (%#define-runtime !type-lookup-method gxc#!type-lookup-method)
+         (%#define-runtime !type-subtype? gxc#!type-subtype?)
+         (%#define-runtime !class-subclass? gxc#!class-subclass?)
+         (%#define-runtime !interface-instance? gxc#!interface-instance?)
          (%#begin (%#define-runtime
                    optimizer-declare-type!__%
                    gxc#optimizer-declare-type!__%)
@@ -437,15 +618,13 @@ namespace: gxc
                            (%#define-runtime
                             optimizer-declare-type!
                             gxc#optimizer-declare-type!)))
-         (%#begin (%#define-runtime
-                   optimizer-clear-type!__%
-                   gxc#optimizer-clear-type!__%)
-                  (%#begin (%#define-runtime
-                            optimizer-clear-type!__0
-                            gxc#optimizer-clear-type!__0)
-                           (%#define-runtime
-                            optimizer-clear-type!
-                            gxc#optimizer-clear-type!)))
+         (%#define-runtime
+          optimizer-declare-class!
+          gxc#optimizer-declare-class!)
+         (%#define-runtime
+          optimizer-declare-builtin-class!
+          gxc#optimizer-declare-builtin-class!)
+         (%#define-runtime optimizer-clear-type! gxc#optimizer-clear-type!)
          (%#begin (%#define-runtime
                    optimizer-declare-method!__%
                    gxc#optimizer-declare-method!__%)
@@ -457,13 +636,16 @@ namespace: gxc
                             gxc#optimizer-declare-method!)))
          (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
          (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
+         (%#define-runtime optimizer-lookup-class gxc#optimizer-lookup-class)
          (%#define-runtime optimizer-resolve-class gxc#optimizer-resolve-class)
+         (%#define-runtime
+          optimizer-lookup-class-name
+          gxc#optimizer-lookup-class-name)
          (%#define-runtime optimizer-lookup-method gxc#optimizer-lookup-method)
          (%#define-runtime
           optimizer-top-level-method!
           gxc#optimizer-top-level-method!)
          (%#define-runtime
           optimizer-top-level-method?
-          gxc#optimizer-top-level-method?)
-         (%#define-runtime identifier-symbol gxc#identifier-symbol))
+          gxc#optimizer-top-level-method?))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base~0"))

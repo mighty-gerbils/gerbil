@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 server
 (import :std/error
-        :std/contract
         :std/os/error
         :std/io
         :std/actor

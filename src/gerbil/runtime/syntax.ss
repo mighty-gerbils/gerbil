@@ -68,16 +68,14 @@ namespace: #f
 
 ;; we really don't want stack traces in syntax error, they are worse than useless.
 ;; so SyntaxError extends just Exception
-(defclass (SyntaxError Exception) (message irritants where
-                                   context
-                                   phi
-                                   marks)
+(defclass (SyntaxError Exception StackTrace)
+  (message irritants where context phi marks)
   final: #t)
 
 (defmethod {display-exception SyntaxError}
   (lambda (self port)
     (def (location)
-      (let lp ((rest (&SyntaxError-irritants self)))
+      (let lp ((rest self.irritants))
         (match rest
           ([hd . rest]
            (or (__AST-source hd)
@@ -90,15 +88,15 @@ namespace: #f
       (cond
        ((location)
         => (lambda (where)
-             (##display-locat where #t (current-output-port))))
+             (##display-locat where #t port)))
        (else (display "?")))
       (newline)
       (display        "--- Syntax Error")
       (cond
-       ((&SyntaxError-where self)
-        => (lambda (where) (displayln " at " where ": " (&SyntaxError-message self))))
-       (else (displayln ": " (&SyntaxError-message self))))
-      (match (&SyntaxError-irritants self)
+       (self.where
+        => (lambda (where) (displayln " at " where ": " self.message)))
+       (else (displayln ": " self.message)))
+      (match self.irritants
         ([stx . rest]
          (display     "... form:   ")
          (__pp-syntax stx)
@@ -110,10 +108,15 @@ namespace: #f
               ((__AST-source detail)
                => (lambda (loc)
                     (display " at ")
-                    (##display-locat loc #t (current-output-port)))))
+                    (##display-locat loc #t port))))
              (newline))
            rest))
-        (else (void))))))
+        (else (void)))
+      (when (getenv "GERBIL_DEBUG" #f)
+        (alet (cont self.continuation)
+          (display "--- continuation backtrace:")
+          (newline)
+          (display-continuation-backtrace cont))))))
 
 (seal-class! SyntaxError::t)
 

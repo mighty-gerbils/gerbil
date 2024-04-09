@@ -26,7 +26,7 @@
   (subvector v start end))
 
 (def (r7rs-vector-copy! v start v2 (start2 0) (end2 (vector-length v2)))
-  (subvector-move! v start v2 start2 end2))
+  (subvector-move! v2 start2 end2 v start))
 
 (def (r7rs-vector-fill! v val start end)
   (let (len (vector-length v))

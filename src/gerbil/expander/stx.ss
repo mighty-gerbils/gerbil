@@ -12,15 +12,12 @@ namespace: gx
 
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
-  id:    gx#identifier-wrap::t
   name:  syntax
   final: #t)
 (defstruct (syntax-wrap AST) (mark)
-  id:    gx#syntax-wrap::t
   name:  syntax
   final: #t)
 (defstruct (syntax-quote AST) (context marks)
-  id:    gx#syntax-quote::t
   name:  syntax
   final: #t)
 

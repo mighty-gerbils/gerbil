@@ -2,8 +2,6 @@
 ;;; © vyzo
 ;;; websocket socket implementation
 (import :std/error
-        :std/interface
-        :std/contract
         :std/io
         :std/crypto
         :std/sugar

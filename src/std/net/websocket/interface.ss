@@ -3,8 +3,6 @@
 ;;; websocket interface
 
 (import :std/error
-        :std/interface
-        :std/contract
         :std/io/interface)
 (export #t)
 
@@ -17,28 +15,26 @@
 
 (defmethod {:init! message}
   (lambda (self data type (partial? #f))
-    (using (self :- message)
-      (set! self.data data)
-      (set! self.type type)
-      (set! self.partial? partial?))))
+    (set! self.data data)
+    (set! self.type type)
+    (set! self.partial? partial?)))
 
 (interface (WebSocket Socket)
   ;; send a message
   ;; raises io-closed-error? if the websocket has been closed
-  (send (msg :~ valid-message?))
+  (send (msg :~ valid-message?)) => :void
 
   ;; receive a message
   ;; raises io-closed-error? if the websocket has been closed
-  (recv) ; -> message
+  (recv) => message
 
   ;; returns the websocket protocol or #f if none was specified
-  (protocol)
+  (protocol) => :t
 
   ;; returns the maximum frame size in bytes
-  (max-frame-size))
+  (max-frame-size) => :fixnum)
 
-(def (valid-message? msg)
-  (using (msg : message)
-    (if (memq msg.type '(text close))
-      (check-argument (string? msg.data) "string" msg.data)
-      (check-argument (u8vector? msg.data) "u8vector" msg.data))))
+(def (valid-message? (msg : message))
+  (if (memq msg.type '(text close))
+    (string? msg.data)
+    (u8vector? msg.data)))

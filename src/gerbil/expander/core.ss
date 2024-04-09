@@ -39,21 +39,15 @@ namespace: gx
 
 ;; expander context
 (defstruct expander-context (id table)
-  id: gx#expander-context::t
-  constructor: :init!)
+  constructor: :init!
+  print: (id))
 
-(defstruct (root-context expander-context) ()
-  id: gx#root-context::t)
-(defstruct (phi-context  expander-context) (super up down)
-  id: gx#context-phi::t)
-(defstruct (top-context phi-context) ()
-  id: gx#top-context::t)
-(defstruct (module-context top-context) (ns path import export e code)
-  id: gx#module-context::t)
-(defstruct (prelude-context top-context) (path import e)
-  id: gx#prelude-context::t)
-(defstruct (local-context phi-context) ()
-  id: gx#local-context::t)
+(defstruct (root-context expander-context) ())
+(defstruct (phi-context  expander-context) (super up down))
+(defstruct (top-context phi-context) ())
+(defstruct (module-context top-context) (ns path import export e code))
+(defstruct (prelude-context top-context) (path import e))
+(defstruct (local-context phi-context) ())
 
 (defmethod {:init! phi-context}
   (lambda (self id (super (current-expander-context)))
@@ -65,77 +59,54 @@ namespace: gx
 
 ;; bindings
 (defstruct binding (id key phi)
-  id: gx#binding::t
   transparent: #t)
 
 ;; runtime bindings
 (defstruct (runtime-binding binding) ()
-  id: gx#runtime-binding::t
   transparent: #t)
 (defstruct (local-binding runtime-binding) ()
-  id: gx#local-binding::t
   transparent: #t)
 (defstruct (top-binding runtime-binding) ()
-  id: gx#top-binding::t
   transparent: #t)
 (defstruct (module-binding top-binding) (context)
-  id: gx#module-binding::t
   transparent: #t)
 (defstruct (extern-binding top-binding) ()
-  id: gx#extern-binding::t
   transparent: #t)
 
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
-  id: gx#syntax-binding::t
   final: #t transparent: #t)
 (defstruct (import-binding binding) (e context weak?)
-  id: gx#import-binding::t
   final: #t transparent: #t)
 (defstruct (alias-binding binding) (e)
-  id: gx#alias-binding::t
   final: #t transparent: #t)
 
 ;; expanders [syntax-binding-e]
-(defstruct expander (e)
-  id: gx#expander::t)
+(defstruct expander (e))
 
 ;; core syntax
-(defstruct (core-expander expander) (id compile-top)
-  id: gx#core-expander::t)
+(defstruct (core-expander expander) (id compile-top))
 ;; expressions
-(defstruct (expression-form core-expander) ()
-  id: gx#expression-form::t)
+(defstruct (expression-form core-expander) ())
 ;; special forms
-(defstruct (special-form core-expander) ()
-  id: gx#special-form::t)
-(defstruct (definition-form special-form) ()
-  id: gx#definition-form::t)
-(defstruct (top-special-form special-form) ()
-  id: gx#top-special-form::t)
-(defstruct (module-special-form top-special-form) ()
-  id: gx#module-special-form::t)
+(defstruct (special-form core-expander) ())
+(defstruct (definition-form special-form) ())
+(defstruct (top-special-form special-form) ())
+(defstruct (module-special-form top-special-form) ())
 
 ;; cond-expand features
-(defstruct (feature-expander expander) ()
-  id: gx#feature-expander::t)
-(defstruct (private-feature-expander feature-expander) ()
-  id: gx#private-feature-expander::t)
+(defstruct (feature-expander expander) ())
+(defstruct (private-feature-expander feature-expander) ())
 ;; sugar-reserved
-(defstruct (reserved-expander expander) ()
-  id: gx#reserved-expander::t)
+(defstruct (reserved-expander expander) ())
 
 ;; raw macros
-(defstruct (macro-expander expander) ()
-  id: gx#core-macro::t)
-(defstruct (rename-macro-expander macro-expander) ()
-  id: gx#rename-macro-expander::t)
+(defstruct (macro-expander expander) ())
+(defstruct (rename-macro-expander macro-expander) ())
 
 ;; user macros  -- [phi displaced] mark algebra
-(defstruct (user-expander macro-expander) (context phi)
-  id: gx#macro-expander::t)
-(defstruct expander-mark (subst context phi trace)
-  id: gx#expander-mark::t)
+(defstruct (user-expander macro-expander) (context phi))
+(defstruct expander-mark (subst context phi trace))
 
 ;; syntax errors
 (extern namespace: #f make-syntax-error)
@@ -661,6 +632,7 @@ namespace: gx
 (def (core-context-get ctx key)
   (hash-get (&expander-context-table ctx) key))
 (def (core-context-put! ctx key val)
+  ;;(displayln `(core-context-put! ,(expander-context-id ctx) ,key ,val))
   (hash-put! (&expander-context-table ctx) key val))
 
 (def (core-context-resolve ctx key)
@@ -692,7 +664,7 @@ namespace: gx
       (lp (&phi-context-super ctx))
       ctx)))
 
-(def (core-context-rebind? (ctx (current-expander-context)) . _)
+(def (core-context-rebind? (ctx (current-expander-context)) . ignore)
   (or (current-expander-allow-rebind?)
       (and (top-context? ctx)
            (not (module-context? ctx))

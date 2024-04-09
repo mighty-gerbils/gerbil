@@ -246,8 +246,8 @@ namespace: gxc
   (%#lambda                       xform-lambda%)
   (%#case-lambda                  xform-case-lambda%)
   (%#let-values              xform-let-values%)
-  (%#letrec-values           xform-let-values%)
-  (%#letrec*-values          xform-let-values%)
+  (%#letrec-values           xform-letrec-values%)
+  (%#letrec*-values          xform-letrec-values%)
   (%#quote                   identity-method)
   (%#quote-syntax            identity-method)
   (%#call                    xform-operands)
@@ -406,17 +406,19 @@ namespace: gxc
 (def (xform-lambda% self stx)
   (ast-case stx ()
     ((_ hd . body)
-     (let (body (map (cut compile-e self <>) #'body))
-       (xform-wrap-source
-        ['%#lambda #'hd body ...]
-        stx)))))
+     (parameterize ((current-compile-local-env (xform-let-locals [#'hd])))
+       (let (body (map (cut compile-e self <>) #'body))
+         (xform-wrap-source
+          ['%#lambda #'hd body ...]
+          stx))))))
 
 (def (xform-case-lambda% self stx)
   (def (clause-e clause)
     (ast-case clause ()
       ((hd . body)
-       (let (body (map (cut compile-e self <>) #'body))
-         [#'hd body ...]))))
+       (parameterize ((current-compile-local-env (xform-let-locals [#'hd])))
+         (let (body (map (cut compile-e self <>) #'body))
+           [#'hd body ...])))))
 
   (ast-case stx ()
     ((_ . clauses)
@@ -429,10 +431,34 @@ namespace: gxc
   (ast-case stx ()
     ((form ((hd expr) ...) . body)
      (with-syntax (((expr ...) (map (cut compile-e self <>) #'(expr ...))))
-       (let (body (map (cut compile-e self <>) #'body))
-         (xform-wrap-source
-          [#'form #'((hd expr) ...) body ...]
-          stx))))))
+       (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+         (with-syntax ((body (map (cut compile-e self <>) #'body)))
+           (xform-wrap-source
+            #'(form ((hd expr) ...) . body)
+            stx)))))))
+
+(def (xform-letrec-values% self stx)
+  (ast-case stx ()
+    ((form ((hd expr) ...) . body)
+     (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+       (with-syntax (((expr ...) (map (cut compile-e self <>) #'(expr ...))))
+         (with-syntax ((body (map (cut compile-e self <>) #'body)))
+           (xform-wrap-source
+            #'(form ((hd expr) ...) . body)
+            stx)))))))
+
+(def (xform-let-locals bindings)
+  (let loop ((rest bindings) (locals (current-compile-local-env)))
+    (match rest
+      ([bind . rest]
+       (let loop-bind ((bind bind) (locals locals))
+         (match bind
+           ([id . bind-rest]
+            (loop-bind bind-rest (cons (identifier-symbol id) locals)))
+           ((? identifier? id)
+            (loop rest (cons (identifier-symbol id) locals)))
+           (_ (loop rest locals)))))
+      (else locals))))
 
 (def (xform-operands self stx)
   (ast-case stx ()

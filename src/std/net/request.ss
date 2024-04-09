@@ -20,8 +20,6 @@
 
 (import :std/build-config
         :std/error
-        :std/interface
-        :std/contract
         :std/sugar
         :std/io
         :std/net/ssl
@@ -155,6 +153,9 @@
                            auth:         (auth #f)
                            ssl-context:  (ssl-context (default-client-ssl-context))
                            timeout:      (timeo #f))
+
+
+           => request
            (let (deadline (make-timeout timeo #f))
              body ...))))
     ((_ http-method => method)
@@ -174,6 +175,7 @@
                            auth:         (auth #f)
                            ssl-context:  (ssl-context (default-client-ssl-context))
                            timeout:      (timeo #f))
+           => request
            (http-any 'method url
                      redirect:     redirect
                      headers:     headers
@@ -221,6 +223,7 @@
                    redirect
                    ssl-context
                    deadline)
+  => request
   ;; extra headers:
   ;;  Host: url host
   ;;  Content-Length: binary body length if body is string/bytes
@@ -289,20 +292,22 @@
                (memv req.status '(301 302 303 307))
                (memq method '(GET HEAD))
                (assoc "Location" req.headers))
-          => (match <>
+          => (lambda (header)
+               => request
+               (match header
                ([_ . new-url]
                 (if (member new-url history)
-                  (error "URL redirection loop" url)
+                  (abort! (error "URL redirection loop" url))
                   (begin
-                    (&request-close req)
+                    (request-close req)
                     (http-request method new-url
                                   user-headers
                                   body
                                   (cons url history)
                                   #t
                                   ssl-context
-                                  deadline))))))
-         (else req))))))
+                                  deadline)))))))
+         (else (:- req request)))))))
 
 (def (http-request-write req target headers body)
   (using ((req :- request)
@@ -396,7 +401,7 @@
 
     (def (read/length length)
       (let* ((data (make-u8vector length))
-             (rd (reader.read data 0 length length)))
+             (rd (and (fx> length 0)(reader.read data 0 length length))))
         data))
 
     (def (read/end)
@@ -447,93 +452,82 @@
               (set! (cdr tl) tl*)
               (lp tl*)))))))))
 
-(def (request-close req)
-  (using (req : request)
-    (&request-close req)))
-
-(def (&request-close req)
-  (using (req :- request)
-    (alet (sock req.sock)
-      (with-catch void (cut Socket-close sock))
-      (set! req.sock #f)
-      (set! req.reader #f)
-      (set! req.writer #f))))
+(def (request-close (req : request))
+  => :void
+  (alet (sock req.sock)
+    (with-catch void (cut Socket-close sock))
+    (set! req.sock #f)
+    (set! req.reader #f)
+    (set! req.writer #f))
+  (void))
 
 (defmethod {destroy request}
   request-close)
 
-(def (request-content req)
-  (using (req : request)
-    (&request-content req)))
+(def (request-content (req : request))
+  (cond
+   (req.body)
+   ((eq? req.method 'HEAD) #f)
+   (req.sock
+    => (lambda (sock)
+         (let (headers (request-headers req))
+           (try
+            (let* ((body (http-request-read-body req headers))
+                   (body
+                    (cond-expand
+                      (config-have-zlib
+                       (cond
+                        ((assoc "Content-Encoding" headers)
+                         => (lambda (enc)
+                              (case (cdr enc)
+                                (("gzip" "deflate")
+                                 (uncompress body))
+                                (("identity")
+                                 body)
+                                (else
+                                 (error "Unsupported content encoding" enc)))))
+                        (else body)))
+                      (else body))))
+              (set! req.body body)
+              body)
+            (finally
+             (request-close req))))))
+   (else #f)))
 
-(def (&request-content req)
-  (using (req :- request)
-    (cond
-     (req.body)
-     ((eq? req.method 'HEAD) #f)
-     (req.sock
-      => (lambda (sock)
-           (let (headers (request-headers req))
-             (try
-              (let* ((body (http-request-read-body req headers))
-                     (body
-                      (cond-expand
-                        (config-have-zlib
-                         (cond
-                          ((assoc "Content-Encoding" headers)
-                           => (lambda (enc)
-                                (case (cdr enc)
-                                  (("gzip" "deflate")
-                                   (uncompress body))
-                                  (("identity")
-                                   body)
-                                  (else
-                                   (error "Unsupported content encoding" enc)))))
-                          (else body)))
-                        (else body))))
-                (set! req.body body)
-                body)
-              (finally
-               (request-close req))))))
-     (else #f))))
+(def (request-text (req : request))
+  (def (get-text enc)
+    (if (eq? enc 'UTF-8)
+      (utf8->string (request-content req))
+      (bytes->string (request-content req) enc)))
+  (cond
+   ((request-encoding req) => get-text)
+   (else
+    (get-text 'UTF-8))))
 
-(def (request-text req)
-  (using (req : request)
-    (def (get-text enc)
-      (if (eq? enc 'UTF-8)
-        (utf8->string (&request-content req))
-        (bytes->string (&request-content req) enc)))
-    (cond
-     ((request-encoding req) => get-text)
-     (else
-      (get-text 'UTF-8)))))
-
-(def (request-json req)
+(def (request-json (req : request))
   (string->json-object (request-text req)))
 
-(def (request-cookies req)
-  (using (req : request)
-    (with-list-builder (push!)
-      (let lp ((rest req.headers))
-        (match rest
-          ([hd . rest]
-           (match hd
-             (["Set-Cookie" . cookie]
-              (push! cookie)
-              (lp rest))
-             (else
-              (lp rest))))
-          (else (void)))))))
+(def (request-cookies (req : request))
+  (with-list-builder (push!)
+    (let lp ((rest req.headers))
+      (match rest
+        ([hd . rest]
+         (match hd
+           (["Set-Cookie" . cookie]
+            (push! cookie)
+            (lp rest))
+           (else
+            (lp rest))))
+        (else (void))))))
 
-(def (request-response-bytes req)
-  (using (req : request)
-    (try
-     (if (eq? req.status 200)
-       (&request-content req)
-       (error "HTTP request failed"
-         req.status req.status-text (ignore-errors (request-text req))))
-     (finally
-      (&request-close req)))))
+(def (request-response-bytes (req : request))
+  (try
+   (if (eq? req.status 200)
+     (request-content req)
+     (error "HTTP request failed"
+       req.status req.status-text (ignore-errors (request-text req))))
+   (finally
+    (request-close req))))
 
 (def (http-get-content url)
   (and url (request-response-bytes (http-get url))))

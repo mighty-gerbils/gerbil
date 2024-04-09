@@ -4,8 +4,6 @@
 
 (import :gerbil/gambit
         :std/error
-        :std/interface
-        :std/contract
         :std/foreign
         :std/text/utf8
         :std/io
@@ -86,10 +84,11 @@
 (defreader-ext (read-packed buf read-e)
   (let* ((len (buf.read-varuint))
          (buf (buf.delimit len)))
-    (let lp ((r []))
-      (if (eof-object? (buf.peek-u8))
-        (reverse r)
-        (lp (cons (read-e buf) r))))))
+    (using (buf :- BufferedReader)
+      (let lp ((r []))
+        (if (eof-object? (buf.peek-u8))
+          (reverse r)
+          (lp (cons (read-e buf) r)))))))
 
 (defwriter-ext (write-packed buf xs write-e)
   (let (tmpbuf (open-buffered-writer #f))
@@ -107,18 +106,19 @@
 (defreader-ext (read-key-value-pair buf read-key-e read-value-e)
   (let* ((len (buf.read-varuint))
          (buf (buf.delimit len)))
-    (let lp ((key #f) (value #f))
-      (if (eof-object? (buf.peek-u8))
-        (cons key value)
-        (let ((values field tag) (buf.read-field))
-          (case field
-            ((1)
-             (lp (read-key-e buf) value))
-            ((2)
-             (lp key (read-value-e buf)))
-            (else
-             (buf.skip-unknown tag)
-             (lp key value))))))))
+    (using (buf :- BufferedReader)
+      (let lp ((key #f) (value #f))
+        (if (eof-object? (buf.peek-u8))
+          (cons key value)
+          (let ((values field tag) (buf.read-field))
+            (case field
+              ((1)
+               (lp (read-key-e buf) value))
+              ((2)
+               (lp key (read-value-e buf)))
+              (else
+               (buf.skip-unknown tag)
+               (lp key value)))))))))
 
 (defwriter-ext (write-key-value-pair buf k v ktag write-key-e vtag write-value-e)
   (let* ((tmpbuf (open-buffered-writer #f))

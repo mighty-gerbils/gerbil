@@ -20,41 +20,23 @@ namespace: #f
 
 (def unbound-key-error? UnboundKeyError?)
 
-(defstruct-type HashTable::t (interface-instance::t)
-  #f HashTable?
-  id: gerbil#HashTable::t
-  name: HashTable
-  final: #t
-  slots:
-  ((ref      HashTable-ref@ HashTable-ref@-set!)
-   (set!     HashTable-set@ HashTable-set@-set!)
-   (update!  HashTable-update@ HashTable-update@-set!)
-   (delete!  HashTable-del@ HashTable-del@-set!)
-   (for-each HashTable-each@ HashTable-each@-set!)
-   (length   HashTable-length@ HashTable-length@-set!)
-   (copy     HashTable-copy@ HashTable-copy@-set!)
-   (clear!   HashTable-clear@ HashTable-clear@-set!)))
+(deftype @HashTable HashTable)
 
-(def HashTable::interface
-  (interface-descriptor
-   HashTable::t
-   '(ref set! update! delete! for-each length copy clear!)))
+(interface HashTable
+  (ref key default) => :t
+  (set! key value) => :void
+  (update! key (proc : :procedure) default) => :void
+  (delete! key) => :void
+  (for-each (proc : :procedure)) => :void
+  (copy) => @HashTable
+  (clear!) => :void
+  (length) => :fixnum)
 
-(defstruct-type HashTableLock::t (interface-instance::t)
-  #f HashTableLock?
-  id: gerbil#HashTableLock::t
-  name: HashTableLock
-  final: #t
-  slots:
-  ((begin-read!  HashTableLock-begin-read@ HashTableLock-begin-read@-set!)
-   (end-read!    HashTableLock-end-read@ HashTableLock-end-read@-set!)
-   (begin-write! HashTableLock-begin-write@ HashTableLock-begin-write@-set!)
-   (end-write!   HashTableLock-end-write@ HashTableLock-end-write@-set!)))
-
-(def HashTableLock::interface
-  (interface-descriptor
-   HashTableLock::t
-   '(begin-read! end-read! begin-write! end-write!)))
+(interface Locker
+  (read-lock!) => :void
+  (read-unlock!) => :void
+  (write-lock!) => :void
+  (write-unlock!) => :void)
 
 ;; raw/builtin table methods
 (bind-method! __table::t 'ref raw-table-ref)
@@ -255,85 +237,10 @@ namespace: #f
 
 ;; HashTable interface methods
 (def (hash-table? obj)
-  (immediate-instance-of? HashTable::t obj))
+  (HashTable? obj))
 
 (def (is-hash-table? obj)
-  (or (immediate-instance-of? HashTable::t obj)
-      (satisfies? HashTable::interface obj)))
-
-(defsyntax (defhash-method stx)
-  (syntax-case stx ()
-    ((_ (hash-method h arg ...) body ...)
-     (with-syntax ((&hash-method (stx-identifier #'hash-method "&" #'hash-method))
-                   ((arg-val ...)
-                    (stx-map (lambda (arg)
-                               (if (identifier? arg)
-                                 arg
-                                 (stx-car arg)))
-                             #'(arg ...))))
-       #'(begin
-           (def (hash-method h arg ...)
-             (let (h (if (immediate-instance-of? HashTable::t h)
-                       h (cast HashTable::interface h)))
-               (&hash-method h arg-val ...)))
-           (def (&hash-method h arg ...)
-             body ...))))))
-
-;; the basic interface methods
-(defhash-method (HashTable-ref h key default)
-  (declare (not safe))
-  ((&HashTable-ref@ h) (&interface-instance-object h) key default))
-
-(defhash-method (HashTable-set! h key value)
-  (declare (not safe))
-  ((&HashTable-set@ h) (&interface-instance-object h) key value)
-  (void))
-
-(defhash-method (HashTable-update! h key update default)
-  (declare (not safe))
-  ((&HashTable-update@ h) (&interface-instance-object h) key update default)
-  (void))
-
-(defhash-method (HashTable-delete! h key)
-  (declare (not safe))
-  ((&HashTable-del@ h) (&interface-instance-object h) key)
-  (void))
-
-(defhash-method (HashTable-for-each h proc)
-  (declare (not safe))
-  ((&HashTable-each@ h) (&interface-instance-object h) proc)
-  (void))
-
-(defhash-method (HashTable-length h)
-  (declare (not safe))
-  ((&HashTable-length@ h) (&interface-instance-object h)))
-
-(defhash-method (HashTable-copy h)
-  (declare (not safe))
-  (cast HashTable::interface
-        ((&HashTable-copy@ h) (&interface-instance-object h))))
-
-(defhash-method (HashTable-clear! h)
-  (declare (not safe))
-  ((&HashTable-clear@ h) (&interface-instance-object h))
-  (void))
-
-;; hash table locker methods
-(def (&HashTableLock-begin-read! hl)
-  (declare (not safe))
-  ((&HashTableLock-begin-read@ hl) (&interface-instance-object hl)))
-
-(def (&HashTableLock-end-read! hl)
-  (declare (not safe))
-  ((&HashTableLock-end-read@ hl) (&interface-instance-object hl)))
-
-(def (&HashTableLock-begin-write! hl)
-  (declare (not safe))
-  ((&HashTableLock-begin-write@ hl) (&interface-instance-object hl)))
-
-(def (&HashTableLock-end-write! hl)
-  (declare (not safe))
-  ((&HashTableLock-end-write@ hl) (&interface-instance-object hl)))
+  (is-HashTable? obj))
 
 ;; locked hash table methods
 (defrules deflocked-hash-method ()
@@ -348,51 +255,51 @@ namespace: #f
              (cut end-lock l)))))))
 
 (deflocked-hash-method (ref key default)
-  &HashTableLock-begin-read!
+  &Locker-read-lock!
   &HashTable-ref
-  &HashTableLock-end-read!)
+  &Locker-read-unlock!)
 
 (deflocked-hash-method (set! key value)
-  &HashTableLock-begin-write!
+  &Locker-write-lock!
   &HashTable-set!
-  &HashTableLock-end-write!)
+  &Locker-write-unlock!)
 
 (deflocked-hash-method (update! key update default)
-  &HashTableLock-begin-write!
+  &Locker-write-lock!
   &HashTable-update!
-  &HashTableLock-end-write!)
+  &Locker-write-unlock!)
 
 (deflocked-hash-method (delete! key)
-  &HashTableLock-begin-write!
+  &Locker-write-lock!
   &HashTable-delete!
-  &HashTableLock-end-write!)
+  &Locker-write-unlock!)
 
 (deflocked-hash-method (for-each proc)
-  &HashTableLock-begin-read!
+  &Locker-read-lock!
   &HashTable-for-each
-  &HashTableLock-end-read!)
+  &Locker-read-unlock!)
 
 (deflocked-hash-method (length)
-  &HashTableLock-begin-read!
+  &Locker-read-lock!
   &HashTable-length
-  &HashTableLock-end-read!)
+  &Locker-read-unlock!)
 
 (deflocked-hash-method (copy)
-  &HashTableLock-begin-read!
+  &Locker-read-lock!
   &HashTable-copy
-  &HashTableLock-end-read!)
+  &Locker-read-unlock!)
 
 (deflocked-hash-method (clear!)
-  &HashTableLock-begin-write!
+  &Locker-write-lock!
   &HashTable-clear!
-  &HashTableLock-end-write!)
+  &Locker-write-unlock!)
 
 ;; checked hash table methods
 ;; make mutexes implement the hash table lock interface
-(bind-method! (macro-type-mutex) 'begin-read! mutex-lock!)
-(bind-method! (macro-type-mutex) 'end-read! mutex-unlock!)
-(bind-method! (macro-type-mutex) 'begin-write! mutex-lock!)
-(bind-method! (macro-type-mutex) 'end-write! mutex-unlock!)
+(bind-method! (macro-type-mutex) 'read-lock! mutex-lock!)
+(bind-method! (macro-type-mutex) 'read-unlock! mutex-unlock!)
+(bind-method! (macro-type-mutex) 'write-lock! mutex-lock!)
+(bind-method! (macro-type-mutex) 'write-unlock! mutex-unlock!)
 
 (defrules defchecked-hash-method ()
   ((_ (method self arg ...) check hash-method)
@@ -462,29 +369,29 @@ namespace: #f
 
   (def (wrap-lock ht)
     (if lock
-      (cast HashTable::interface
-            (make-locked-hash-table ht (cast HashTableLock::interface lock)))
+      (HashTable
+       (make-locked-hash-table ht (Locker lock)))
       ht))
 
   (def (wrap-checked ht implicit)
     (if check
-      (cast HashTable::interface
-            (make-checked-hash-table ht (if (procedure? check) check implicit)))
+      (HashTable
+       (make-checked-hash-table ht (if (procedure? check) check implicit)))
       ht))
 
   (def (make kons key? hash test)
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
-           (ht (cast HashTable::interface
-                     (kons table 0 (fxquotient size 2) hash test (table-seed)))))
+           (ht (HashTable
+                (kons table 0 (fxquotient size 2) hash test (table-seed)))))
       (wrap-checked
        (wrap-lock ht)
        key?)))
 
   (def (make-gc-hash-table)
     (let (ht
-          (cast HashTable::interface
-                (make-gc-table size-hint gc-hash-table::t)))
+          (HashTable
+           (make-gc-table size-hint gc-hash-table::t)))
       (wrap-checked
        (wrap-lock ht)
        true)))
@@ -501,13 +408,13 @@ namespace: #f
                   (else
                    equal?-hash)))
            (ht
-            (cast HashTable::interface
-                  (make-table
-                   size: size
-                   test: test
-                   hash: hash
-                   weak-keys: weak-keys
-                   weak-values: weak-values))))
+            (HashTable
+             (make-table
+              size: size
+              test: test
+              hash: hash
+              weak-keys: weak-keys
+              weak-values: weak-values))))
       (wrap-checked
        (wrap-lock ht)
        true)))
@@ -613,82 +520,88 @@ namespace: #f
        (error "bad property list -- uneven list" lst)))))
 
 ;; common hash table api
+(defrule (defhash-method (proc h . rest) body ...)
+  (def (proc (h : HashTable) . rest) body ...))
+
 (defhash-method (hash-length h)
-  (&HashTable-length h))
+  (h.length))
 
 (defhash-method (hash-ref h key (default (macro-absent-obj)))
-  (let (result (&HashTable-ref h key default))
+  (let (result (h.ref key default))
     (if (eq? result (macro-absent-obj))
       (raise-unbound-key-error 'hash-ref "unknown hash key" hash: h key: key)
       result)))
 
 (defhash-method (hash-get h key)
-  (&HashTable-ref h key #f))
+  (h.ref key #f))
 
 (defhash-method (hash-put! h key value)
-  (&HashTable-set! h key value))
+  (h.set! key value))
 
 (defhash-method (hash-update! h key update (default #!void))
-  (&HashTable-update! h key update default))
+  (h.update! key update default))
 
 (defhash-method (hash-remove! h key)
-  (&HashTable-delete! h key))
+  (h.delete! key))
 
 (defhash-method (hash-key? h k)
-  (not (eq? (&HashTable-ref h k absent-value) absent-value)))
+  (not (eq? (h.ref k absent-value) absent-value)))
 
 (defhash-method (hash->list h)
   (let (lst [])
-    (&HashTable-for-each h (lambda (k v) (set! lst (cons (cons k v) lst))))
+    (h.for-each (lambda (k v) (set! lst (cons (cons k v) lst))))
     lst))
 
 (defhash-method (hash->plist h)
   (let (lst [])
-    (&HashTable-for-each h (lambda (k v) (set! lst (cons* k v lst))))
+    (h.for-each (lambda (k v) (set! lst (cons* k v lst))))
     lst))
 
-(def (hash-for-each proc h)
-  (HashTable-for-each h proc))
+(def (hash-for-each (proc : :procedure) (h : HashTable))
+  (h.for-each proc))
 
-(def (hash-map proc h)
+(def (hash-map (proc : :procedure) (h : HashTable))
   (let (result [])
-    (HashTable-for-each h (lambda (k v) (set! result (cons (proc k v) result))))
+    (h.for-each (lambda (k v) (set! result (cons (proc k v) result))))
     result))
 
-(def (hash-fold proc iv h)
+(def (hash-fold (proc : :procedure) iv (h : HashTable))
   (let (result iv)
-    (HashTable-for-each h (lambda (k v) (set! result (proc k v result))))
+    (h.for-each (lambda (k v) (set! result (proc k v result))))
     result))
 
-(def (hash-find proc h (default-value #f))
+(def (hash-find (proc : :procedure) (h : HashTable) (default-value #f))
   (let/cc return
-    (HashTable-for-each h (lambda (k v) (cond ((proc k v) => return))))
+    (h.for-each (lambda (k v) (cond ((proc k v) => return))))
     default-value))
 
 (defhash-method (hash-keys h)
   (let (result [])
-    (&HashTable-for-each h (lambda (k v) (set! result (cons k result))))
+    (h.for-each (lambda (k v) (set! result (cons k result))))
     result))
 
 (defhash-method (hash-values h)
   (let (result [])
-    (&HashTable-for-each h (lambda (k v) (set! result (cons v result))))
+    (h.for-each (lambda (k v) (set! result (cons v result))))
     result))
 
 (defhash-method (hash-copy h)
-  (&HashTable-copy h))
+  (h.copy))
 
-(def (hash-merge h . rest)
-  (let (copy (hash-copy h))
+(defhash-method (hash-clear! h)
+  (h.clear!))
+
+(def (hash-merge (h : HashTable) . rest)
+  (let (copy (h.copy))
     (apply hash-merge! copy rest)
     copy))
 
-(def (hash-merge! h . rest)
-  (let (h (cast HashTable::interface h))
-    (for-each (lambda (hr) (hash-for-each
-                       (lambda (k v)
-                         (unless (&hash-key? h k)
-                           (&HashTable-set! h k v)))
-                       hr))
-              rest)
-    h))
+(def (hash-merge! (h : HashTable) . rest)
+  (for-each
+    (lambda ((hr : HashTable))
+      (hr.for-each
+       (lambda (k v)
+         (unless (hash-key? h k)
+           (h.set! k v)))))
+    rest)
+  h)

@@ -180,7 +180,7 @@
              (parameterize ((current-readtable
                              (readtable-case-conversion?-set
                               (current-readtable)
-                              't)))
+                              #t)))
                (read-syntax-from-file rpath))))
        (syntax-local-introduce
         (stx-wrap-source

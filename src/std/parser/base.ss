@@ -31,9 +31,9 @@
 
 (defmethod {display-exception ParseError}
   (lambda (self port)
-    (let ((msg (Error-message self))
-          (where (Error-where self))
-          (irritants (Error-irritants self)))
+    (let ((msg self.message)
+          (where self.where)
+          (irritants self.irritants))
       (match irritants
         ([(token t e loc) . rest]
          (parameterize ((current-output-port port))

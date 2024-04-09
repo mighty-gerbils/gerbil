@@ -169,4 +169,4 @@ namespace: #f
   macro-mutex-unlock!
   macro-current-thread)
 
-(void) ;; so that the __0 file exists
+(##void) ;; so that the __0 file exists
