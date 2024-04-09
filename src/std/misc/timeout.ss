@@ -6,9 +6,9 @@
         :std/sugar)
 (export #t)
 
-(def (make-timeout t (none absent-obj))
+(def (make-timeout t (none absent-value))
   (cond
-   ((not t) none)
+   ((not t) (if (eq? none absent-value) absent-obj none))
    ((time? t) t)
    ((real? t)
     (seconds->time (+ (##current-time-point) t)))

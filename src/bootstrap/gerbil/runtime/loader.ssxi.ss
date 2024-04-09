@@ -6,12 +6,21 @@ package: gerbil/runtime
    __modules
    (optimizer-resolve-class '(typedecl __modules) 't::t))
   (declare-type
+   __load-mx
+   (optimizer-resolve-class '(typedecl __load-mx) 'mutex::t))
+  (declare-type
+   __load-cv
+   (optimizer-resolve-class '(typedecl __load-cv) 'condvar::t))
+  (declare-type
+   __load-path
+   (optimizer-resolve-class '(typedecl __load-path) 'list::t))
+  (declare-type
    load-path
    (@lambda 0
             #f
             signature:
             (return:
-             null::t
+             list::t
              effect:
              #f
              arguments:
@@ -37,6 +46,21 @@ package: gerbil/runtime
              gerbil/runtime/loader)))
   (declare-type
    set-load-path!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t)
+             unchecked:
+             __set-load-path!
+             origin:
+             gerbil/runtime/loader)))
+  (declare-type
+   __set-load-path!
    (@lambda 1
             #f
             signature:

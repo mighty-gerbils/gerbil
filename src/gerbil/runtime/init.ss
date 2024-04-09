@@ -8,7 +8,6 @@ namespace: #f
 (export #t)
 (import "gambit" "system" "util" "loader" "control" "mop" "mop-system-classes" "error" "interface" "hash" "thread" "syntax" "eval"  "repl")
 
-
 (def __scheme-source
   (make-parameter #f))
 
@@ -121,9 +120,11 @@ namespace: #f
 (def (__compile-top stx)
   (__compile (gx#core-compile-top-syntax stx)))
 
-(def (__eval-import in)
-  (def mods (make-hash-table-eq))
+(def __modstate (make-hash-table-eq))
+(def __modstate-mx (make-mutex 'import))
+(def __modstate-cv (make-condition-variable 'import))
 
+(def (__eval-import in)
   (def (import1 in phi)
     (cond
      ((gx#module-import? in)
@@ -147,9 +148,40 @@ namespace: #f
       (error "Unexpected import" in))))
 
   (def (eval1 ctx)
-    (unless (hash-get mods ctx)
-      (hash-put! mods ctx #t)
-      (__eval-module ctx)))
+    (mutex-lock! __modstate-mx)
+    (cond
+     ((hash-get __modstate ctx)
+      => (lambda (state)
+           (case (car state)
+             ((forcing)
+              (mutex-unlock! __modstate-mx __modstate-cv)
+              (eval1 ctx))
+             ((ready)
+              (mutex-unlock! __modstate-mx)
+              (cadr state))
+             ((error)
+              (mutex-unlock! __modstate-mx)
+              (raise (cadr state)))
+             (else
+              (mutex-unlock! __modstate-mx)
+              (error "internal error; unexpected module state" state)))))
+     (else
+      (hash-put! __modstate ctx '(forcing))
+      (mutex-unlock! __modstate-mx)
+      (with-catch
+          (lambda (exn)
+            (mutex-lock! __modstate-mx)
+            (hash-put! __modstate ctx `(error ,exn))
+            (condition-variable-broadcast! __modstate-cv)
+            (mutex-unlock! __modstate-mx)
+            (raise exn))
+        (lambda ()
+          (let (result (__eval-module ctx))
+            (mutex-lock! __modstate-mx)
+            (hash-put! __modstate ctx `(ready, result))
+            (condition-variable-broadcast! __modstate-cv)
+            (mutex-unlock! __modstate-mx)
+            result))))))
 
   (if (pair? in)
     (for-each (lambda (in) (import1 in 0)) in)

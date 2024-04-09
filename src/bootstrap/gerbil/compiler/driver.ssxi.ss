@@ -294,7 +294,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -504,7 +504,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -519,7 +519,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -535,7 +535,7 @@ package: gerbil/compiler
      gxc#compile-scm-file__0
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:
@@ -548,7 +548,7 @@ package: gerbil/compiler
      gxc#compile-scm-file__%
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:
@@ -617,40 +617,40 @@ package: gerbil/compiler
       origin:
       gerbil/compiler/driver))))
   (declare-type
+   gxc#gsc-cc-options__%__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/driver)))
+  (declare-type
+   gxc#gsc-cc-options__%__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/driver)))
+  (declare-type
    gxc#gsc-cc-options__%
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/driver)))
-  (declare-type
-   gxc#gsc-cc-options__0
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/driver)))
-  (declare-type
-   gxc#gsc-cc-options
    (@case-lambda
-    (0
-     gxc#gsc-cc-options__0
+    (2
+     gxc#gsc-cc-options__%__0
      signature:
      (return:
       t::t
@@ -662,8 +662,8 @@ package: gerbil/compiler
       #f
       origin:
       gerbil/compiler/driver))
-    (1
-     gxc#gsc-cc-options__%
+    (3
+     gxc#gsc-cc-options__%__%
      signature:
      (return:
       t::t
@@ -675,6 +675,77 @@ package: gerbil/compiler
       #f
       origin:
       gerbil/compiler/driver))))
+  (declare-type
+   gxc#gsc-cc-options__@
+   (@kw-lambda-dispatch (static:) gxc#gsc-cc-options__%))
+  (declare-type
+   gxc#gsc-cc-options
+   (@kw-lambda (static:) gxc#gsc-cc-options__@))
+  (declare-type
+   gxc#gsc-ld-options__%__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/driver)))
+  (declare-type
+   gxc#gsc-ld-options__%__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/driver)))
+  (declare-type
+   gxc#gsc-ld-options__%
+   (@case-lambda
+    (2
+     gxc#gsc-ld-options__%__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/driver))
+    (3
+     gxc#gsc-ld-options__%__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/driver))))
+  (declare-type
+   gxc#gsc-ld-options__@
+   (@kw-lambda-dispatch (static:) gxc#gsc-ld-options__%))
+  (declare-type
+   gxc#gsc-ld-options
+   (@kw-lambda (static:) gxc#gsc-ld-options__@))
   (declare-type
    gxc#gsc-static-include-options
    (@lambda 1
@@ -726,7 +797,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -832,19 +903,4 @@ package: gerbil/compiler
     gxc#invoke__%))
   (declare-type
    gxc#invoke
-   (@kw-lambda (stderr-redirection: stdout-redirection:) gxc#invoke__@))
-  (declare-type
-   gxc#join!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/driver))))
+   (@kw-lambda (stderr-redirection: stdout-redirection:) gxc#invoke__@)))

@@ -5,5 +5,8 @@ prelude: "core"
 package: gerbil
 namespace: gxc
 
-(import :gerbil/compiler/driver)
-(export (import: :gerbil/compiler/driver))
+(import "compiler/driver"
+        "compiler/base")
+(export (import: "compiler/driver")
+        add-compile-job!
+        execute-pending-compile-jobs!)

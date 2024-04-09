@@ -126,6 +126,15 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/init)))
   (declare-type
+   __modstate
+   (optimizer-resolve-class '(typedecl __modstate) 't::t))
+  (declare-type
+   __modstate-mx
+   (optimizer-resolve-class '(typedecl __modstate-mx) 'mutex::t))
+  (declare-type
+   __modstate-cv
+   (optimizer-resolve-class '(typedecl __modstate-cv) 'condvar::t))
+  (declare-type
    __eval-import
    (@lambda 1
             #f
