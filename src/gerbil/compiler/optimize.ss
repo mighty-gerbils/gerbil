@@ -293,7 +293,8 @@ namespace: gxc
                signature: [return: signature.return
                            effect: signature.effect
                            arguments: signature.arguments
-                           unchecked: signature.unchecked]])
+                           unchecked: signature.unchecked
+                           origin: signature.origin]])
         ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}

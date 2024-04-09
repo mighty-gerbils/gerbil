@@ -35,15 +35,12 @@ namespace: gxc
   equal: #t)
 
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) (signature)
-  equal: #t print: #t)
 
-(defclass !signature (return effect arguments unchecked)
+(defclass !signature (return effect arguments unchecked origin)
   final: #t equal: #t print: #t)
 
-(defstruct (!primitive-predicate !procedure) ()
-  constructor: :init!
-  equal: #t)
+(defstruct (!procedure !type) ((signature :? !signature))
+  equal: #t print: #t)
 
 ;;; MOP
 (defstruct (!class-meta !type) (class)
@@ -96,10 +93,15 @@ namespace: gxc
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
 (defclass !primitive ())
-(defclass (!primitive-lambda !primitive !lambda) ()
+
+(defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
   equal: #t)
-(defclass (!primitive-case-lambda !primitive !case-lambda) ()
+
+(defstruct (!primitive-lambda !primitive !lambda) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!primitive-case-lambda !primitive !case-lambda) ()
   constructor: :init!
   equal: #t)
 
@@ -367,6 +369,11 @@ namespace: gxc
 (def (!interface-instance? type)
   (and (!class? type)
        (memq 'interface-instance::t (!class-precedence-list type))))
+
+(def (!procedure-origin proc)
+  (using (proc : !procedure)
+    (and proc.signature
+         proc.signature.origin)))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))

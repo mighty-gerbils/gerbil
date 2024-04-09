@@ -49,24 +49,188 @@ package: gerbil/expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
-  (declare-type gx#macro-expand-syntax (@lambda 1 #f))
-  (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))
-  (declare-type gx#macro-expand-syntax-case__0 (@lambda 1 #f))
-  (declare-type gx#macro-expand-syntax-case__1 (@lambda 2 #f))
-  (declare-type gx#macro-expand-syntax-case__2 (@lambda 3 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#macro-expand-syntax
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#macro-expand-syntax-case__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#macro-expand-syntax-case__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#macro-expand-syntax-case__1
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#macro-expand-syntax-case__2
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
   (declare-type
    gx#macro-expand-syntax-case
    (@case-lambda
-    (1 gx#macro-expand-syntax-case__0)
-    (2 gx#macro-expand-syntax-case__1)
-    (3 gx#macro-expand-syntax-case__2)
-    (4 gx#macro-expand-syntax-case__%)))
+    (1
+     gx#macro-expand-syntax-case__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/stxcase))
+    (2
+     gx#macro-expand-syntax-case__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/stxcase))
+    (3
+     gx#macro-expand-syntax-case__2
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/stxcase))
+    (4
+     gx#macro-expand-syntax-case__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/stxcase))))
   (declare-type
    gx#syntax-local-pattern?
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#syntax-check-splice-targets (@lambda (1) #f))
-  (declare-type gx#syntax-split-splice (@lambda 2 #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#syntax-check-splice-targets
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#syntax-split-splice
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/stxcase))))

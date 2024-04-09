@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/sugar~Sugar-3[1]#_g21050_|
+  (define |gerbil/core/sugar~Sugar-3[1]#_g21069_|
     (##structure
      gx#syntax-quote::t
      'quote
@@ -325,37 +325,37 @@
                                                  (##cdr _%e1795818009%_))))
                                           (if (gx#stx-pair/null?
                                                _%tl1795618016%_)
-                                              (let ((_g21044_
+                                              (let ((_g21063_
                                                      (gx#syntax-split-splice
                                                       _%tl1795618016%_
                                                       '0)))
                                                 (begin
-                                                  (let ((_g21045_
+                                                  (let ((_g21064_
                                                          (let ()
                                                            (declare (not safe))
                                                            (if (##values?
-                                                                _g21044_)
+                                                                _g21063_)
                                                                (##vector-length
-                                                                _g21044_)
+                                                                _g21063_)
                                                                1))))
                                                     (if (not (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##fx= _g21045_ 2)))
-                (error "Context expects 2 values" _g21045_)))
+                       (##fx= _g21064_ 2)))
+                (error "Context expects 2 values" _g21064_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (let ((_%target1795918019%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g21044_
+                                                            _g21063_
                                                             0)))
                                                         (_%tl1796118022%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g21044_
+                                                            _g21063_
                                                             1))))
                                                     (if (gx#stx-null?
                                                          _%tl1796118022%_)
@@ -380,31 +380,31 @@
                                 (let ((_%arg1796718045%_
                                        (reverse _%arg1796618032%_)))
                                   (if (gx#stx-pair/null? _%tl1795318006%_)
-                                      (let ((_g21046_
+                                      (let ((_g21065_
                                              (gx#syntax-split-splice
                                               _%tl1795318006%_
                                               '0)))
                                         (begin
-                                          (let ((_g21047_
+                                          (let ((_g21066_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (if (##values? _g21046_)
+                                                   (if (##values? _g21065_)
                                                        (##vector-length
-                                                        _g21046_)
+                                                        _g21065_)
                                                        1))))
                                             (if (not (let ()
                                                        (declare (not safe))
-                                                       (##fx= _g21047_ 2)))
+                                                       (##fx= _g21066_ 2)))
                                                 (error "Context expects 2 values"
-                                                       _g21047_)))
+                                                       _g21066_)))
                                           (let ((_%target1796818049%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##vector-ref _g21046_ 0)))
+                                                   (##vector-ref _g21065_ 0)))
                                                 (_%tl1797018052%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##vector-ref _g21046_ 1))))
+                                                   (##vector-ref _g21065_ 1))))
                                             (if (gx#stx-null? _%tl1797018052%_)
                                                 (letrec ((_%loop1797118055%_
                                                           (lambda (_%hd1796918059%_
@@ -443,179 +443,168 @@
                                         (_%g1811418339%_
                                          (lambda (_%g1811618127%_)
                                            ((lambda (_%L18130%_)
-                                              (let ()
-                                                (let* ((_%g1814218159%_
-                                                        (lambda (_%g1814318155%_)
-                                                          (gx#raise-syntax-error
-                                                           '#f
-                                                           '"Bad syntax; invalid match target"
-                                                           _%g1814318155%_)))
-                                                       (_%g1814118327%_
-                                                        (lambda (_%g1814318163%_)
-                                                          (if (gx#stx-pair/null?
-                                                               _%g1814318163%_)
-                                                              (let ((_g21048_
+                                              (let* ((_%g1814218159%_
+                                                      (lambda (_%g1814318155%_)
+                                                        (gx#raise-syntax-error
+                                                         '#f
+                                                         '"Bad syntax; invalid match target"
+                                                         _%g1814318155%_)))
+                                                     (_%g1814118327%_
+                                                      (lambda (_%g1814318163%_)
+                                                        (if (gx#stx-pair/null?
+                                                             _%g1814318163%_)
+                                                            (let ((_g21067_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (gx#syntax-split-splice _%g1814318163%_ '0)))
-                        (begin
-                          (let ((_g21049_
-                                 (let ()
-                                   (declare (not safe))
-                                   (if (##values? _g21048_)
-                                       (##vector-length _g21048_)
-                                       1))))
-                            (if (not (let ()
-                                       (declare (not safe))
-                                       (##fx= _g21049_ 2)))
-                                (error "Context expects 2 values" _g21049_)))
-                          (let ((_%target1814518166%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##vector-ref _g21048_ 0)))
-                                (_%tl1814718169%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##vector-ref _g21048_ 1))))
-                            (if (gx#stx-null? _%tl1814718169%_)
-                                (letrec ((_%loop1814818172%_
-                                          (lambda (_%hd1814618176%_
-                                                   _%xarg1815218179%_)
-                                            (if (gx#stx-pair? _%hd1814618176%_)
-                                                (let ((_%e1814918182%_
-                                                       (gx#syntax-e
-                                                        _%hd1814618176%_)))
-                                                  (let ((_%lp-hd1815018186%_
-                                                         (let ()
-                                                           (declare (not safe))
-                                                           (##car _%e1814918182%_)))
-                                                        (_%lp-tl1815118189%_
-                                                         (let ()
-                                                           (declare (not safe))
-                                                           (##cdr _%e1814918182%_))))
-                                                    (_%loop1814818172%_
-                                                     _%lp-tl1815118189%_
-                                                     (cons _%lp-hd1815018186%_
-                                                           _%xarg1815218179%_))))
-                                                (let ((_%xarg1815318192%_
-                                                       (reverse _%xarg1815218179%_)))
-                                                  ((lambda (_%L18196%_)
-                                                     (let ()
-                                                       (let* ((_%g1821318221%_
-                                                               (lambda (_%g1821418217%_)
+                           (gx#syntax-split-splice _%g1814318163%_ '0)))
+                      (begin
+                        (let ((_g21068_
+                               (let ()
+                                 (declare (not safe))
+                                 (if (##values? _g21067_)
+                                     (##vector-length _g21067_)
+                                     1))))
+                          (if (not (let ()
+                                     (declare (not safe))
+                                     (##fx= _g21068_ 2)))
+                              (error "Context expects 2 values" _g21068_)))
+                        (let ((_%target1814518166%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##vector-ref _g21067_ 0)))
+                              (_%tl1814718169%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##vector-ref _g21067_ 1))))
+                          (if (gx#stx-null? _%tl1814718169%_)
+                              (letrec ((_%loop1814818172%_
+                                        (lambda (_%hd1814618176%_
+                                                 _%xarg1815218179%_)
+                                          (if (gx#stx-pair? _%hd1814618176%_)
+                                              (let ((_%e1814918182%_
+                                                     (gx#syntax-e
+                                                      _%hd1814618176%_)))
+                                                (let ((_%lp-hd1815018186%_
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (##car _%e1814918182%_)))
+                                                      (_%lp-tl1815118189%_
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (##cdr _%e1814918182%_))))
+                                                  (_%loop1814818172%_
+                                                   _%lp-tl1815118189%_
+                                                   (cons _%lp-hd1815018186%_
+                                                         _%xarg1815218179%_))))
+                                              (let ((_%xarg1815318192%_
+                                                     (reverse _%xarg1815218179%_)))
+                                                ((lambda (_%L18196%_)
+                                                   (let* ((_%g1821318221%_
+                                                           (lambda (_%g1821418217%_)
+                                                             (gx#raise-syntax-error
+                                                              '#f
+                                                              '"Bad syntax; invalid match target"
+                                                              _%g1821418217%_)))
+                                                          (_%g1821218291%_
+                                                           (lambda (_%g1821418225%_)
+                                                             ((lambda (_%L18228%_)
+                                                                (let* ((_%g1824118249%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#raise-syntax-error
-                          '#f
-                          '"Bad syntax; invalid match target"
-                          _%g1821418217%_)))
-                      (_%g1821218291%_
-                       (lambda (_%g1821418225%_)
-                         ((lambda (_%L18228%_)
-                            (let ()
-                              (let* ((_%g1824118249%_
-                                      (lambda (_%g1824218245%_)
-                                        (gx#raise-syntax-error
-                                         '#f
-                                         '"Bad syntax; invalid match target"
-                                         _%g1824218245%_)))
-                                     (_%g1824018271%_
-                                      (lambda (_%g1824218253%_)
-                                        ((lambda (_%L18256%_)
-                                           (let ()
-                                             (gx#stx-wrap-source
-                                              (cons (gx#datum->syntax
-                                                     '#f
-                                                     'begin)
-                                                    (cons _%L18256%_
-                                                          (cons _%L18228%_
-                                                                '())))
-                                              (gx#stx-source _%stx17942%_))))
-                                         _%g1824218253%_))))
-                                (_%g1824018271%_
-                                 (gx#stx-wrap-source
-                                  (cons (gx#datum->syntax '#f 'def)
-                                        (cons (cons _%L18130%_
-                                                    (foldr (lambda (_%g1827618279%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _%g1827718282%_)
-                     (cons _%g1827618279%_ _%g1827718282%_))
-                   '()
-                   _%L18081%_))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (foldr (lambda (_%g1827418285%_
-                                                              _%g1827518288%_)
-                                                       (cons _%g1827418285%_
-                                                             _%g1827518288%_))
+                                (lambda (_%g1824218245%_)
+                                  (gx#raise-syntax-error
+                                   '#f
+                                   '"Bad syntax; invalid match target"
+                                   _%g1824218245%_)))
+                               (_%g1824018271%_
+                                (lambda (_%g1824218253%_)
+                                  ((lambda (_%L18256%_)
+                                     (gx#stx-wrap-source
+                                      (cons (gx#datum->syntax '#f 'begin)
+                                            (cons _%L18256%_
+                                                  (cons _%L18228%_ '())))
+                                      (gx#stx-source _%stx17942%_)))
+                                   _%g1824218253%_))))
+                          (_%g1824018271%_
+                           (gx#stx-wrap-source
+                            (cons (gx#datum->syntax '#f 'def)
+                                  (cons (cons _%L18130%_
+                                              (foldr (lambda (_%g1827618279%_
+                                                              _%g1827718282%_)
+                                                       (cons _%g1827618279%_
+                                                             _%g1827718282%_))
                                                      '()
-                                                     _%L18079%_)))
-                                  (gx#stx-source _%stx17942%_))))))
-                          _%g1821418225%_))))
-                 (_%g1821218291%_
-                  (gx#stx-wrap-source
-                   (cons (gx#datum->syntax '#f 'defrules)
-                         (cons _%L18082%_
-                               (cons '()
-                                     (cons (cons (cons (gx#datum->syntax
-                                                        '#f
-                                                        '_)
-                                                       (foldr (lambda (_%g1830018303%_
+                                                     _%L18081%_))
+                                        (foldr (lambda (_%g1827418285%_
+                                                        _%g1827518288%_)
+                                                 (cons _%g1827418285%_
+                                                       _%g1827518288%_))
+                                               '()
+                                               _%L18079%_)))
+                            (gx#stx-source _%stx17942%_)))))
+                      _%g1821418225%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%g1821218291%_
+                                                      (gx#stx-wrap-source
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'defrules)
+                                                             (cons _%L18082%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _%g1830118306%_)
-                        (cons _%g1830018303%_ _%g1830118306%_))
-                      '()
-                      _%L18196%_))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (cons (cons (cons (gx#datum->syntax
+                           (cons '()
+                                 (cons (cons (cons (gx#datum->syntax '#f '_)
+                                                   (foldr (lambda (_%g1830018303%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '#f
-                            'lambda)
-                           (cons (foldr (lambda (_%g1829818309%_
-                                                 _%g1829918312%_)
-                                          (cons _%g1829818309%_
-                                                _%g1829918312%_))
-                                        '()
-                                        _%L18081%_)
-                                 (foldr (lambda (_%g1829618315%_
-                                                 _%g1829718318%_)
-                                          (cons _%g1829618315%_
-                                                _%g1829718318%_))
-                                        '()
-                                        _%L18079%_)))
-                     (foldr (lambda (_%g1829418321%_ _%g1829518324%_)
-                              (cons _%g1829418321%_ _%g1829518324%_))
-                            '()
-                            _%L18196%_))
-               '()))
+                           _%g1830118306%_)
+                    (cons _%g1830018303%_ _%g1830118306%_))
+                  '()
+                  _%L18196%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           (cons (cons (gx#datum->syntax
-                                                        '#f
-                                                        'ref)
-                                                       (cons (cons (gx#datum->syntax
+                                             (cons (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'lambda)
+                                                               (cons (foldr (lambda (_%g1829818309%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '#f
-                            'identifier?)
-                           (cons (cons (gx#datum->syntax '#f 'syntax)
-                                       (cons (gx#datum->syntax '#f 'ref) '()))
-                                 '()))
-                     (cons _%L18130%_ '())))
+                                             _%g1829918312%_)
+                                      (cons _%g1829818309%_ _%g1829918312%_))
+                                    '()
+                                    _%L18081%_)
+                             (foldr (lambda (_%g1829618315%_ _%g1829718318%_)
+                                      (cons _%g1829618315%_ _%g1829718318%_))
+                                    '()
+                                    _%L18079%_)))
+                 (foldr (lambda (_%g1829418321%_ _%g1829518324%_)
+                          (cons _%g1829418321%_ _%g1829518324%_))
+                        '()
+                        _%L18196%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 '())))))
-                   (gx#stx-source _%stx17942%_))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _%xarg1815318192%_))))))
-                                  (_%loop1814818172%_
-                                   _%target1814518166%_
-                                   '()))
-                                (_%g1814218159%_ _%g1814318163%_)))))
-                      (_%g1814218159%_ _%g1814318163%_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%g1814118327%_
-                                                   (gx#gentemps
-                                                    (foldr (lambda (_%g1833018333%_
+                                                   '()))
+                                       (cons (cons (gx#datum->syntax '#f 'ref)
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'identifier?)
+                                                               (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _%g1833118336%_)
-                     (cons _%g1833018333%_ _%g1833118336%_))
-                   '()
-                   _%L18081%_))))))
+                                    '#f
+                                    'syntax)
+                                   (cons (gx#datum->syntax '#f 'ref) '()))
+                             '()))
+                 (cons _%L18130%_ '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             '())))))
+               (gx#stx-source _%stx17942%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 _%xarg1815318192%_))))))
+                                (_%loop1814818172%_ _%target1814518166%_ '()))
+                              (_%g1814218159%_ _%g1814318163%_)))))
+                    (_%g1814218159%_ _%g1814318163%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (_%g1814118327%_
+                                                 (gx#gentemps
+                                                  (foldr (lambda (_%g1833018333%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          _%g1833118336%_)
+                   (cons _%g1833018333%_ _%g1833118336%_))
+                 '()
+                 _%L18081%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             _%g1811618127%_))))
                                    (_%g1811418339%_
@@ -775,7 +764,7 @@
                                               (if (gx#identifier?
                                                    _%hd1836918489%_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core/sugar~Sugar-3[1]#_g21050_|
+                                                       |gerbil/core/sugar~Sugar-3[1]#_g21069_|
                                                        _%hd1836918489%_)
                                                       (if (gx#stx-pair?
                                                            _%tl1836818492%_)
