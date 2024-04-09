@@ -89,20 +89,28 @@ namespace: gxc
                            (%#define-runtime
                             gsc-link-options
                             gxc#gsc-link-options)))
-         (%#begin (%#define-runtime gsc-cc-options__% gxc#gsc-cc-options__%)
-                  (%#begin (%#define-runtime
-                            gsc-cc-options__0
-                            gxc#gsc-cc-options__0)
-                           (%#define-runtime
-                            gsc-cc-options
-                            gxc#gsc-cc-options)))
-         (%#begin (%#define-runtime gsc-ld-options__% gxc#gsc-ld-options__%)
-                  (%#begin (%#define-runtime
-                            gsc-ld-options__0
-                            gxc#gsc-ld-options__0)
-                           (%#define-runtime
-                            gsc-ld-options
-                            gxc#gsc-ld-options)))
+         (%#begin (%#begin (%#define-runtime
+                            gsc-cc-options__%__%
+                            gxc#gsc-cc-options__%__%)
+                           (%#begin (%#define-runtime
+                                     gsc-cc-options__%__0
+                                     gxc#gsc-cc-options__%__0)
+                                    (%#define-runtime
+                                     gsc-cc-options__%
+                                     gxc#gsc-cc-options__%)))
+                  (%#define-runtime gsc-cc-options__@ gxc#gsc-cc-options__@)
+                  (%#define-runtime gsc-cc-options gxc#gsc-cc-options))
+         (%#begin (%#begin (%#define-runtime
+                            gsc-ld-options__%__%
+                            gxc#gsc-ld-options__%__%)
+                           (%#begin (%#define-runtime
+                                     gsc-ld-options__%__0
+                                     gxc#gsc-ld-options__%__0)
+                                    (%#define-runtime
+                                     gsc-ld-options__%
+                                     gxc#gsc-ld-options__%)))
+                  (%#define-runtime gsc-ld-options__@ gxc#gsc-ld-options__@)
+                  (%#define-runtime gsc-ld-options gxc#gsc-ld-options))
          (%#define-runtime
           gsc-static-include-options
           gxc#gsc-static-include-options)

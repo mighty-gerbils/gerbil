@@ -93,11 +93,11 @@
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/match[1]#_g39982_|
+  (define |gerbil/core/match[1]#_g39966_|
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core/match[1]#_g39983_|
+  (define |gerbil/core/match[1]#_g39967_|
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core/match[1]#_g39984_|
+  (define |gerbil/core/match[1]#_g39968_|
     (##structure gx#syntax-quote::t 'and #f (gx#current-expander-context) '()))
   (define |gerbil/core/match[1]#_g39985_|
     (##structure gx#syntax-quote::t 'or #f (gx#current-expander-context) '()))
@@ -6694,7 +6694,7 @@
                              _%tl3667036925%_)
                       (if (gx#identifier? _%hd3666936922%_)
                           (if (gx#free-identifier=?
-                               |gerbil/core/match[1]#_g39982_|
+                               |gerbil/core/match[1]#_g39966_|
                                _%hd3666936922%_)
                               (if (gx#stx-pair? _%tl3667036925%_)
                                   (let ((_%e3667136928%_
@@ -6754,7 +6754,7 @@
                      (let () (declare (not safe)) (##car _%e3670736769%_))))
                 (if (gx#identifier? _%hd3670836773%_)
                     (if (gx#free-identifier=?
-                         |gerbil/core/match[1]#_g39983_|
+                         |gerbil/core/match[1]#_g39967_|
                          _%hd3670836773%_)
                         (if (gx#stx-pair? _%tl3670936776%_)
                             (let ((_%e3671036779%_
@@ -6816,7 +6816,7 @@
                                          (##car _%e3666836918%_))))
                                   (if (gx#identifier? _%hd3666936922%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/match[1]#_g39982_|
+                                           |gerbil/core/match[1]#_g39966_|
                                            _%hd3666936922%_)
                                           (if (gx#stx-pair? _%tl3667036925%_)
                                               (let ((_%e3667136928%_
@@ -6879,7 +6879,7 @@
                                    (##car _%e3670736769%_))))
                             (if (gx#identifier? _%hd3670836773%_)
                                 (if (gx#free-identifier=?
-                                     |gerbil/core/match[1]#_g39983_|
+                                     |gerbil/core/match[1]#_g39967_|
                                      _%hd3670836773%_)
                                     (if (gx#stx-pair? _%tl3670936776%_)
                                         (let ((_%e3671036779%_
@@ -7094,7 +7094,7 @@
                                              (##car _%e3658337272%_))))
                                       (if (gx#identifier? _%hd3658437276%_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/match[1]#_g39984_|
+                                               |gerbil/core/match[1]#_g39968_|
                                                _%hd3658437276%_)
                                               (if (gx#stx-pair/null?
                                                    _%tl3658537279%_)
@@ -7150,7 +7150,7 @@
                                _%hd3658137266%_)
                               (if (gx#identifier? _%hd3664937032%_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core/match[1]#_g39982_|
+                                       |gerbil/core/match[1]#_g39966_|
                                        _%hd3664937032%_)
                                       (if (gx#stx-pair? _%tl3665037035%_)
                                           (let ((_%e3667136928%_
@@ -7216,7 +7216,7 @@
                                (##car _%e3670736769%_))))
                         (if (gx#identifier? _%hd3670836773%_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core/match[1]#_g39983_|
+                                 |gerbil/core/match[1]#_g39967_|
                                  _%hd3670836773%_)
                                 (if (gx#stx-pair? _%tl3670936776%_)
                                     (let ((_%e3671036779%_
@@ -7278,7 +7278,7 @@
                       (_%__kont3960439605%_ _%hd3664937032%_ _%hd3658137266%_)
                       (if (gx#identifier? _%hd3664937032%_)
                           (if (gx#free-identifier=?
-                               |gerbil/core/match[1]#_g39982_|
+                               |gerbil/core/match[1]#_g39966_|
                                _%hd3664937032%_)
                               (if (gx#stx-pair? _%tl3665037035%_)
                                   (let ((_%e3667136928%_
@@ -7338,7 +7338,7 @@
                      (let () (declare (not safe)) (##car _%e3670736769%_))))
                 (if (gx#identifier? _%hd3670836773%_)
                     (if (gx#free-identifier=?
-                         |gerbil/core/match[1]#_g39983_|
+                         |gerbil/core/match[1]#_g39967_|
                          _%hd3670836773%_)
                         (if (gx#stx-pair? _%tl3670936776%_)
                             (let ((_%e3671036779%_
@@ -7429,7 +7429,7 @@
                                    _%hd3658137266%_)
                                   (if (gx#identifier? _%hd3664937032%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/match[1]#_g39982_|
+                                           |gerbil/core/match[1]#_g39966_|
                                            _%hd3664937032%_)
                                           (if (gx#stx-pair? _%tl3665037035%_)
                                               (let ((_%e3667136928%_
@@ -7492,7 +7492,7 @@
                                    (##car _%e3670736769%_))))
                             (if (gx#identifier? _%hd3670836773%_)
                                 (if (gx#free-identifier=?
-                                     |gerbil/core/match[1]#_g39983_|
+                                     |gerbil/core/match[1]#_g39967_|
                                      _%hd3670836773%_)
                                     (if (gx#stx-pair? _%tl3670936776%_)
                                         (let ((_%e3671036779%_
@@ -7557,7 +7557,7 @@
                            _%hd3658137266%_)
                           (if (gx#identifier? _%hd3664937032%_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core/match[1]#_g39982_|
+                                   |gerbil/core/match[1]#_g39966_|
                                    _%hd3664937032%_)
                                   (if (gx#stx-pair? _%tl3665037035%_)
                                       (let ((_%e3667136928%_
@@ -7620,7 +7620,7 @@
                            (##car _%e3670736769%_))))
                     (if (gx#identifier? _%hd3670836773%_)
                         (if (gx#free-identifier=?
-                             |gerbil/core/match[1]#_g39983_|
+                             |gerbil/core/match[1]#_g39967_|
                              _%hd3670836773%_)
                             (if (gx#stx-pair? _%tl3670936776%_)
                                 (let ((_%e3671036779%_
@@ -7697,7 +7697,7 @@
                                        _%hd3657837256%_)
                                       (if (gx#identifier? _%hd3663837106%_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/match[1]#_g39982_|
+                                               |gerbil/core/match[1]#_g39966_|
                                                _%hd3663837106%_)
                                               (if (gx#stx-pair?
                                                    _%tl3663937109%_)
@@ -7766,7 +7766,7 @@
                                        (##car _%e3670736769%_))))
                                 (if (gx#identifier? _%hd3670836773%_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/match[1]#_g39983_|
+                                         |gerbil/core/match[1]#_g39967_|
                                          _%hd3670836773%_)
                                         (if (gx#stx-pair? _%tl3670936776%_)
                                             (let ((_%e3671036779%_
@@ -7832,7 +7832,7 @@
                                        _%hd3658137266%_)
                                       (if (gx#identifier? _%hd3664937032%_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/match[1]#_g39982_|
+                                               |gerbil/core/match[1]#_g39966_|
                                                _%hd3664937032%_)
                                               (if (gx#stx-pair?
                                                    _%tl3665037035%_)
@@ -7901,7 +7901,7 @@
                                        (##car _%e3670736769%_))))
                                 (if (gx#identifier? _%hd3670836773%_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/match[1]#_g39983_|
+                                         |gerbil/core/match[1]#_g39967_|
                                          _%hd3670836773%_)
                                         (if (gx#stx-pair? _%tl3670936776%_)
                                             (let ((_%e3671036779%_
@@ -7966,7 +7966,7 @@
                                _%hd3658137266%_)
                               (if (gx#identifier? _%hd3664937032%_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core/match[1]#_g39982_|
+                                       |gerbil/core/match[1]#_g39966_|
                                        _%hd3664937032%_)
                                       (if (gx#stx-pair? _%tl3665037035%_)
                                           (let ((_%e3667136928%_
@@ -8032,7 +8032,7 @@
                                (##car _%e3670736769%_))))
                         (if (gx#identifier? _%hd3670836773%_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core/match[1]#_g39983_|
+                                 |gerbil/core/match[1]#_g39967_|
                                  _%hd3670836773%_)
                                 (if (gx#stx-pair? _%tl3670936776%_)
                                     (let ((_%e3671036779%_
@@ -8093,7 +8093,7 @@
                            _%hd3658137266%_)
                           (if (gx#identifier? _%hd3664937032%_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core/match[1]#_g39982_|
+                                   |gerbil/core/match[1]#_g39966_|
                                    _%hd3664937032%_)
                                   (if (gx#stx-pair? _%tl3665037035%_)
                                       (let ((_%e3667136928%_
@@ -8156,7 +8156,7 @@
                            (##car _%e3670736769%_))))
                     (if (gx#identifier? _%hd3670836773%_)
                         (if (gx#free-identifier=?
-                             |gerbil/core/match[1]#_g39983_|
+                             |gerbil/core/match[1]#_g39967_|
                              _%hd3670836773%_)
                             (if (gx#stx-pair? _%tl3670936776%_)
                                 (let ((_%e3671036779%_
@@ -8218,7 +8218,7 @@
                                                       (if (gx#identifier?
                                                            _%hd3664937032%_)
                                                           (if (gx#free-identifier=?
-                                                               |gerbil/core/match[1]#_g39982_|
+                                                               |gerbil/core/match[1]#_g39966_|
                                                                _%hd3664937032%_)
                                                               (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -8277,7 +8277,7 @@
                                                 (if (gx#identifier?
                                                      _%hd3670836773%_)
                                                     (if (gx#free-identifier=?
-                                                         |gerbil/core/match[1]#_g39983_|
+                                                         |gerbil/core/match[1]#_g39967_|
                                                          _%hd3670836773%_)
                                                         (if (gx#stx-pair?
                                                              _%tl3670936776%_)
@@ -8340,7 +8340,7 @@
                                               (if (gx#identifier?
                                                    _%hd3664937032%_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core/match[1]#_g39982_|
+                                                       |gerbil/core/match[1]#_g39966_|
                                                        _%hd3664937032%_)
                                                       (if (gx#stx-pair?
                                                            _%tl3665037035%_)
@@ -8400,7 +8400,7 @@
                                                (##car _%e3670736769%_))))
                                         (if (gx#identifier? _%hd3670836773%_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core/match[1]#_g39983_|
+                                                 |gerbil/core/match[1]#_g39967_|
                                                  _%hd3670836773%_)
                                                 (if (gx#stx-pair?
                                                      _%tl3670936776%_)
