@@ -764,12 +764,13 @@ namespace: gxc
           (extended-bindings)
           ,@(if phi? '((inlining-limit 200)) '())))
       (pretty-print code)))
-  (let (compile-it
-        (lambda ()
-          (gsc-compile-file path phi?)))
-    (if (current-compile-parallel)
-      (add-compile-job! compile-it `(compile-file ,path))
-      (compile-it))))
+  (when (current-compile-invoke-gsc)
+    (let (compile-it
+          (lambda ()
+            (gsc-compile-file path phi?)))
+      (if (current-compile-parallel)
+        (add-compile-job! compile-it `(compile-file ,path))
+        (compile-it)))))
 
 (def (gsc-link-options (phi? #f))
   (let lp ((rest (current-compile-gsc-options)) (opts []))
