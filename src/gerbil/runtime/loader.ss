@@ -9,9 +9,9 @@ namespace: #f
 (import "gambit" "util" "hash")
 
 (def __modules (make-hash-table))
-(def __load-path [])
+(def __load-path (:- [] :list))
 
-(def (load-path)
+(def (load-path) => :list
   __load-path)
 
 (def (add-load-path! . paths)
@@ -20,7 +20,7 @@ namespace: #f
   (for-each (lambda (p) (set! __load-path (cons p __load-path)))
             (reverse! paths)))
 
-(def (set-load-path! paths)
+(def (set-load-path! (paths : :list))
   (unless (and (list? paths) (andmap string? paths))
     (error "bad load path; expected list of paths" paths))
   (set! __load-path paths))

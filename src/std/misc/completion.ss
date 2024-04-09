@@ -17,7 +17,8 @@
                        (cv :- :condvar)
                        ready? val exn)
   final: #t
-  constructor: :init!)
+  constructor: :init!
+  print: (ready?))
 
 (defmethod {:init! completion}
   (lambda (self (name 'completion)) ;; name is for debugging
