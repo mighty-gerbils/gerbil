@@ -31,7 +31,8 @@
         pkg-config-cflags
         ldflags
         cppflags
-        append-options)
+        append-options
+        enable-shared?)
 
 (def default-gambit-gsc (path-expand "~~bin/gsc"))
 (def default-gerbil-gxc (path-expand "~~bin/gxc"))
@@ -896,3 +897,6 @@ TODO:
         (cut add-load-path! path)
         thunk
         (cut set-load-path! current-load-path))))
+
+(def (enable-shared?)
+  (member "--enable-shared" (string-split (configure-command-string) #\')))
