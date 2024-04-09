@@ -280,7 +280,8 @@ TODO:
        (build spec settings)
        (completion-post! (hash-ref completions (module-id spec)) 'done))
      (catch (e)
-       (barrier-error! build-barrier e))))
+       (barrier-error! build-barrier e)
+       (raise e))))
 
   ;; the build coordinator
   (def (build-coordinator spec)
