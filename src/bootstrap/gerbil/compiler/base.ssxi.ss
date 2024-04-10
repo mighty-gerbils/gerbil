@@ -421,6 +421,9 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/base)))
   (declare-type
+   gxc#__compile-jobs
+   (optimizer-resolve-class '(typedecl gxc#__compile-jobs) 'list::t))
+  (declare-type
    gxc#__available-cores
    (optimizer-resolve-class '(typedecl gxc#__available-cores) 'number::t))
   (declare-type

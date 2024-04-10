@@ -323,7 +323,27 @@ package: gerbil/runtime
    __thread-locals-mutex
    (optimizer-resolve-class '(typedecl __thread-locals-mutex) 'mutex::t))
   (declare-type
+   __unhandled-actor-exception-hook
+   (optimizer-resolve-class
+    '(typedecl __unhandled-actor-exception-hook)
+    't::t))
+  (declare-type
    unhandled-actor-exception-hook-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t)
+             unchecked:
+             __unhandled-actor-exception-hook-set!
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __unhandled-actor-exception-hook-set!
    (@lambda 1
             #f
             signature:

@@ -116,7 +116,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             list::t
              effect:
              #f
              arguments:
@@ -262,6 +262,9 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/system)))
+  (declare-type
+   __smp?
+   (optimizer-resolve-class '(typedecl __smp?) 'immediate::t))
   (declare-type
    gerbil-runtime-smp?
    (@lambda 0

@@ -1728,21 +1728,6 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-base)))
   (declare-type
-   gxc#optimizer-top-level-method!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-base)))
-  (declare-type
    gxc#optimizer-top-level-method?
    (@lambda 1
             #f

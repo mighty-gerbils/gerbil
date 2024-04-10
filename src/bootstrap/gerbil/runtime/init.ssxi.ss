@@ -149,7 +149,9 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/init)))
-  (declare-type __eval-module (@lambda 1 gx#core-eval-module))
+  (declare-type
+   __eval-module
+   (optimizer-resolve-class '(typedecl __eval-module) 't::t))
   (declare-type
    __interrupt-handler
    (@lambda 0
@@ -181,8 +183,11 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/init)))
   (declare-type
+   __expander-loaded
+   (optimizer-resolve-class '(typedecl __expander-loaded) 'boolean::t))
+  (declare-type
    __runtime-initialized
-   (optimizer-resolve-class '(typedecl __runtime-initialized) 'false::t))
+   (optimizer-resolve-class '(typedecl __runtime-initialized) 'boolean::t))
   (declare-type
    gerbil-load-expander!
    (@lambda 0

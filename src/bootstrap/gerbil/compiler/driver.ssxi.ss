@@ -63,6 +63,9 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/driver)))
   (declare-type
+   gxc#+gerbil-gsc+
+   (optimizer-resolve-class '(typedecl gxc#+gerbil-gsc+) 't::t))
+  (declare-type
    gxc#gerbil-gsc
    (@lambda 0
             #f
@@ -78,6 +81,9 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/driver)))
   (declare-type
+   gxc#+gerbil-gcc+
+   (optimizer-resolve-class '(typedecl gxc#+gerbil-gcc+) 't::t))
+  (declare-type
    gxc#gerbil-gcc
    (@lambda 0
             #f
@@ -92,6 +98,9 @@ package: gerbil/compiler
              #f
              origin:
              gerbil/compiler/driver)))
+  (declare-type
+   gxc#+gerbil-ar+
+   (optimizer-resolve-class '(typedecl gxc#+gerbil-ar+) 't::t))
   (declare-type
    gxc#gerbil-ar
    (@lambda 0

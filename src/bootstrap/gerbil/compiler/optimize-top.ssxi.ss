@@ -193,6 +193,54 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-top)))
   (declare-class
+   gxc#::collect-mutable-type-info::t
+   (@class gxc#::collect-mutable-type-info::t
+           (gxc#::void::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::collect-mutable-type-info::t
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-mutable-type-info::t)
+    'class::t))
+  (declare-type
+   gxc#::collect-mutable-type-info?
+   (@predicate gxc#::collect-mutable-type-info::t))
+  (declare-type
+   gxc#make-::collect-mutable-type-info
+   (@constructor gxc#::collect-mutable-type-info::t))
+  (declare-type
+   gxc#::collect-mutable-type-info-bind-methods!
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-mutable-type-info-bind-methods!)
+    'promise::t))
+  (declare-type
+   gxc#apply-collect-mutable-type-info
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-class
    gxc#::raw-expression-type::t
    (@class gxc#::raw-expression-type::t
            (gxc#::false::t)
@@ -652,7 +700,7 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-top)))
   (declare-type
-   gxc#collect-type-call%
+   gxc#collect-top-level-type-call%
    (@lambda 2
             #f
             signature:
