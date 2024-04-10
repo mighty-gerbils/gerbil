@@ -403,7 +403,7 @@ package: gerbil
  (features () list::t)
  (file-error? (t::t) boolean::t effect: (pure))
  (file-exists? [((string::t) boolean::t effect: (io) unchecked:)
-                ((string::t boolean::t) boolean::t effect: (io) unchecked:)
+                ((string::t boolean::t) boolean::t effect: (io) unchecked:)])
  (finite? (number::t) boolean::t effect: (pure))
  (floor-quotient (number::t number::t) number::t effect: (pure))
  (floor-remainder (number::t number::t) number::t effect: (pure))
