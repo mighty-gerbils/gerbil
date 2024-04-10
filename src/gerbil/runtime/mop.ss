@@ -865,7 +865,7 @@ namespace: #f
        (with-syntax (($method (make-symbol (gensym '__method))))
          #'(%#let-values ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
                          (%#if (%#ref $method)
-                               (%#call (%#ref $method) (%#ref self) arg ...)
+                               (%#call-unchecked (%#ref $method) (%#ref self) arg ...)
                                (%#begin
                                 (%#call (%#ref error) (%#quote "Missing method")
                                         (%#ref self) method)

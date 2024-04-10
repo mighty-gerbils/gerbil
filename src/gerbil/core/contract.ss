@@ -479,7 +479,8 @@ package: gerbil/core
                            (if maybe?
                              `(? (or not ,instance?))
                              instance?)))
-                        (var var) (expr-body expr-body))
+                        (var var)
+                        (expr-body expr-body))
             #'(with-contract (var :~ predicate)
                 expr-body))
           expr-body)))
@@ -1942,14 +1943,35 @@ package: gerbil/core
     (syntax-case stx (@method lambda/c case-lambda/c)
       ((_ {method Type} (lambda/c (self . args) body ...) . rest)
        (identifier? #'self)
-       (with-syntax ((proc (syntax/loc stx (lambda/c ((self ::- Type) . args) body ...))))
+       (with-syntax* ((receiver (genident #'self))
+                      (proc
+                       (syntax/loc stx
+                         (lambda/c (receiver . args)
+                              (using (self receiver ::- Type)
+                                (with-receiver self
+                                  (let () body ...)))))))
          #'(defmethod {method Type} proc . rest)))
       ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
        (identifier-list? #'(self ...))
-       (with-syntax ((proc (syntax/loc stx (case-lambda/c (((self ::- Type) . args) body ...) ...))))
+       (with-syntax* (((receiver ...)
+                       (map genident #'(self ...)))
+                      (proc
+                       (syntax/loc stx
+                         (case-lambda/c
+                          ((receiver . args)
+                           (using (self receiver ::- Type)
+                             (with-receiver self
+                               (let () body ...))))
+                          ...))))
          #'(defmethod {method Type} proc . rest)))
       ((_ . body)
        #'(defmethod . body))))
+
+  (defsyntax (with-receiver stx)
+    (syntax-case stx ()
+      ((_ receiver expr)
+       (with-syntax ((receiver (core-quote-syntax #'receiver)))
+         #'(begin-annotation (@receiver receiver) expr)))))
 
   (defsyntax (let/c stx)
     (syntax-case stx (=>)
