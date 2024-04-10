@@ -490,6 +490,9 @@ namespace: gerbil/core/contract
                      signature-arguments-out
                      |gerbil/core/contract~Interface[1]#signature-arguments-out|)
                     (%#define-runtime
+                     signature-has-keywords?
+                     |gerbil/core/contract~Interface[1]#signature-has-keywords?|)
+                    (%#define-runtime
                      make-interface-method-lambda-signature
                      |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|)
                     (%#define-runtime

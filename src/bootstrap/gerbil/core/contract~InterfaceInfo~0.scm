@@ -1,15 +1,15 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~InterfaceInfo::timestamp 1712784661)
+  (define gerbil/core/contract~InterfaceInfo::timestamp 1712786274)
   (begin
-    (define gerbil/core/contract~InterfaceInfo#_g81570_
+    (define gerbil/core/contract~InterfaceInfo#_g82286_
       (##structure
        gx#syntax-quote::t
        'cast
        #f
        (gx#current-expander-context)
        '()))
-    (define gerbil/core/contract~InterfaceInfo#_g81571_
+    (define gerbil/core/contract~InterfaceInfo#_g82287_
       (##structure
        gx#syntax-quote::t
        'immediate-instance-of?
@@ -251,15 +251,15 @@
                                   (if (gx#stx-null? _%tl4486844891%_)
                                       ((lambda (_%L44894%_ _%L44895%_)
                                          (lambda (_%self44909%_ _%stx44910%_)
-                                           (let* ((_%__stx7636376364%_
+                                           (let* ((_%__stx7696576966%_
                                                    _%stx44910%_)
                                                   (_%g4491344926%_
                                                    (lambda ()
                                                      (gx#raise-syntax-error
                                                       '#f
                                                       '"Bad syntax; invalid match target"
-                                                      _%__stx7636376364%_))))
-                                             (let ((_%__kont7636576366%_
+                                                      _%__stx7696576966%_))))
+                                             (let ((_%__kont7696776968%_
                                                     (lambda (_%L44984%_)
                                                       (let* ((_%g4499545013%_
                                                               (lambda (_%g4499645010%_)
@@ -351,59 +351,59 @@
                                     (_%g4499545013%_ _%g4499645016%_))))
                             (_%g4499545013%_ _%g4499645016%_)))))
                 (_%g4499445061%_
-                 (list (let ((__obj81495 _%self44909%_))
+                 (list (let ((__obj82211 _%self44909%_))
                          (if (let ()
                                (declare (not safe))
                                (##structure-direct-instance-of?
-                                __obj81495
+                                __obj82211
                                 'gerbil/core/contract~InterfaceInfo#interface-info::t))
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                __obj81495
+                                __obj82211
                                 '4
                                 '#f
                                 '#f))
                              (class-slot-ref
                               gerbil/core/contract~InterfaceInfo#interface-info::t
-                              __obj81495
+                              __obj82211
                               'instance-type)))
-                       (let ((__obj81496 _%self44909%_))
+                       (let ((__obj82212 _%self44909%_))
                          (if (let ()
                                (declare (not safe))
                                (##structure-direct-instance-of?
-                                __obj81496
+                                __obj82212
                                 'gerbil/core/contract~InterfaceInfo#interface-info::t))
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                __obj81496
+                                __obj82212
                                 '5
                                 '#f
                                 '#f))
                              (class-slot-ref
                               gerbil/core/contract~InterfaceInfo#interface-info::t
-                              __obj81496
+                              __obj82212
                               'interface-descriptor)))
-                       (let ((__obj81497 _%self44909%_))
+                       (let ((__obj82213 _%self44909%_))
                          (if (let ()
                                (declare (not safe))
                                (##structure-direct-instance-of?
-                                __obj81497
+                                __obj82213
                                 'gerbil/core/contract~InterfaceInfo#interface-info::t))
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                __obj81497
+                                __obj82213
                                 '4
                                 '#f
                                 '#f))
                              (class-slot-ref
                               gerbil/core/contract~InterfaceInfo#interface-info::t
-                              __obj81497
+                              __obj82213
                               'instance-type))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (_%__kont7636776368%_
+                                                   (_%__kont7696976970%_
                                                     (lambda ()
                                                       (let* ((_%g4493344940%_
                                                               (lambda (_%g4493444937%_)
@@ -416,34 +416,34 @@
                       (lambda (_%g4493444943%_)
                         ((lambda (_%L44945%_) _%L44945%_) _%g4493444943%_))))
                 (_%g4493244960%_
-                 (let ((__obj81498 _%self44909%_))
+                 (let ((__obj82214 _%self44909%_))
                    (if (let ()
                          (declare (not safe))
                          (##structure-direct-instance-of?
-                          __obj81498
+                          __obj82214
                           'gerbil/core/contract~InterfaceInfo#interface-info::t))
                        (let ()
                          (declare (not safe))
-                         (##unchecked-structure-ref __obj81498 '5 '#f '#f))
+                         (##unchecked-structure-ref __obj82214 '5 '#f '#f))
                        (class-slot-ref
                         gerbil/core/contract~InterfaceInfo#interface-info::t
-                        __obj81498
+                        __obj82214
                         'interface-descriptor))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (let ((_%g4491244963%_
                                                       (lambda ()
                                                         (if (gx#identifier?
                                                              _%stx44910%_)
-                                                            (_%__kont7636776368%_)
+                                                            (_%__kont7696976970%_)
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (_%g4491344926%_))))))
                                                  (if (gx#stx-pair?
-                                                      _%__stx7636376364%_)
+                                                      _%__stx7696576966%_)
                                                      (let ((_%e4491644968%_
                                                             (gx#syntax-e
-                                                             _%__stx7636376364%_)))
+                                                             _%__stx7696576966%_)))
                                                        (let ((_%tl4491844973%_
                                                               (let ()
                                                                 (declare
@@ -463,7 +463,7 @@
                                 (declare (not safe))
                                 (##car _%e4491944976%_))))
                          (if (gx#stx-null? _%tl4492144981%_)
-                             (_%__kont7636576366%_ _%hd4492044979%_)
+                             (_%__kont7696776968%_ _%hd4492044979%_)
                              (let () (declare (not safe)) (_%g4491244963%_)))))
                      (let () (declare (not safe)) (_%g4491244963%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -476,8 +476,8 @@
                               (_%g4485944873%_ _%g4486044876%_))))
                       (_%g4485944873%_ _%g4486044876%_)))))
           (_%g4485845067%_
-           (list gerbil/core/contract~InterfaceInfo#_g81570_
-                 gerbil/core/contract~InterfaceInfo#_g81571_))))
+           (list gerbil/core/contract~InterfaceInfo#_g82286_
+                 gerbil/core/contract~InterfaceInfo#_g82287_))))
       (bind-method!
        gerbil/core/contract~InterfaceInfo#interface-info::t
        'apply-macro-expander
@@ -486,22 +486,22 @@
       (define gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
         (lambda (_%info44692%_)
           (let _%loop44694%_ ((_%rest44696%_
-                               (let ((__obj81500 _%info44692%_))
+                               (let ((__obj82216 _%info44692%_))
                                  (if (let ()
                                        (declare (not safe))
                                        (##structure-direct-instance-of?
-                                        __obj81500
+                                        __obj82216
                                         'gerbil/core/contract~InterfaceInfo#interface-info::t))
                                      (let ()
                                        (declare (not safe))
                                        (##unchecked-structure-ref
-                                        __obj81500
+                                        __obj82216
                                         '2
                                         '#f
                                         '#f))
                                      (class-slot-ref
                                       gerbil/core/contract~InterfaceInfo#interface-info::t
-                                      __obj81500
+                                      __obj82216
                                       'interface-mixin))))
                               (_%result44697%_ '()))
             (let* ((_%rest4469844706%_ _%rest44696%_)
@@ -509,23 +509,23 @@
                    (_%K4470244724%_
                     (lambda (_%rest44717%_ _%id44718%_)
                       (let* ((_%mixin44720%_
-                              (let ((__obj81499
+                              (let ((__obj82215
                                      (gx#syntax-local-value _%id44718%_)))
                                 (if (let ()
                                       (declare (not safe))
                                       (##structure-direct-instance-of?
-                                       __obj81499
+                                       __obj82215
                                        'gerbil/core/contract~InterfaceInfo#interface-info::t))
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-ref
-                                       __obj81499
+                                       __obj82215
                                        '2
                                        '#f
                                        '#f))
                                     (class-slot-ref
                                      gerbil/core/contract~InterfaceInfo#interface-info::t
-                                     __obj81499
+                                     __obj82215
                                      'interface-mixin))))
                              (_%result44722%_
                               (if (member _%id44718%_
@@ -572,15 +572,15 @@
              _%stx44685%_
              _%is?44687%_))))
       (define gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?
-        (lambda _g81573_
-          (let ((_g81572_ (let () (declare (not safe)) (##length _g81573_))))
-            (cond ((let () (declare (not safe)) (##fx= _g81572_ 1))
+        (lambda _g82289_
+          (let ((_g82288_ (let () (declare (not safe)) (##length _g82289_))))
+            (cond ((let () (declare (not safe)) (##fx= _g82288_ 1))
                    (apply gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
-                          _g81573_))
-                  ((let () (declare (not safe)) (##fx= _g81572_ 2))
+                          _g82289_))
+                  ((let () (declare (not safe)) (##fx= _g82288_ 2))
                    (apply gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
-                          _g81573_))
+                          _g82289_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?
-                    _g81573_)))))))))
+                    _g82289_)))))))))

@@ -1,39 +1,39 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~ClassMeta::timestamp 1712784661)
+  (define gerbil/core/contract~ClassMeta::timestamp 1712786274)
   (define gerbil/core/contract~ClassMeta#!class-precedence-list
     (lambda (_%klass52408%_)
       (let ((_%$e52410%_
-             (let ((__obj81527 _%klass52408%_))
+             (let ((__obj82243 _%klass52408%_))
                (if (let ()
                      (declare (not safe))
                      (##structure-direct-instance-of?
-                      __obj81527
+                      __obj82243
                       'gerbil.core#class-type-info::t))
                    (let ()
                      (declare (not safe))
-                     (##unchecked-structure-ref __obj81527 '5 '#f '#f))
+                     (##unchecked-structure-ref __obj82243 '5 '#f '#f))
                    (class-slot-ref
                     gerbil/core/mop~MOP-2#class-type-info::t
-                    __obj81527
+                    __obj82243
                     'precedence-list)))))
         (if _%$e52410%_
             _%$e52410%_
-            (let ((_g81574_
+            (let ((_g82290_
                    (c4-linearize
                     '()
-                    (let ((__obj81528 _%klass52408%_))
+                    (let ((__obj82244 _%klass52408%_))
                       (if (let ()
                             (declare (not safe))
                             (##structure-direct-instance-of?
-                             __obj81528
+                             __obj82244
                              'gerbil.core#class-type-info::t))
                           (let ()
                             (declare (not safe))
-                            (##unchecked-structure-ref __obj81528 '3 '#f '#f))
+                            (##unchecked-structure-ref __obj82244 '3 '#f '#f))
                           (class-slot-ref
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           __obj81528
+                           __obj82244
                            'super)))
                     'get-precedence-list:
                     (lambda (_%klass-id52414%_)
@@ -42,98 +42,98 @@
                              (gx#syntax-local-value _%klass-id52414%_))))
                     'struct:
                     (lambda (_%klass-id52416%_)
-                      (let ((__obj81529
+                      (let ((__obj82245
                              (gx#syntax-local-value _%klass-id52416%_)))
                         (if (let ()
                               (declare (not safe))
                               (##structure-direct-instance-of?
-                               __obj81529
+                               __obj82245
                                'gerbil.core#class-type-info::t))
                             (let ()
                               (declare (not safe))
                               (##unchecked-structure-ref
-                               __obj81529
+                               __obj82245
                                '7
                                '#f
                                '#f))
                             (class-slot-ref
                              gerbil/core/mop~MOP-2#class-type-info::t
-                             __obj81529
+                             __obj82245
                              'struct?))))
                     'eq:
                     gx#free-identifier=?
                     'get-name:
                     gx#stx-e)))
               (begin
-                (let ((_g81575_
+                (let ((_g82291_
                        (let ()
                          (declare (not safe))
-                         (if (##values? _g81574_)
-                             (##vector-length _g81574_)
+                         (if (##values? _g82290_)
+                             (##vector-length _g82290_)
                              1))))
-                  (if (not (let () (declare (not safe)) (##fx= _g81575_ 2)))
-                      (error "Context expects 2 values" _g81575_)))
+                  (if (not (let () (declare (not safe)) (##fx= _g82291_ 2)))
+                      (error "Context expects 2 values" _g82291_)))
                 (let ((_%precedence-list52418%_
-                       (let () (declare (not safe)) (##vector-ref _g81574_ 0)))
+                       (let () (declare (not safe)) (##vector-ref _g82290_ 0)))
                       (_%base-struct52419%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _g81574_ 1))))
+                         (##vector-ref _g82290_ 1))))
                   (let ((_%precedence-list52463%_
-                         (if (let ((__tmp81576
-                                    (let ((__obj81530 _%klass52408%_))
+                         (if (let ((__tmp82292
+                                    (let ((__obj82246 _%klass52408%_))
                                       (if (let ()
                                             (declare (not safe))
                                             (##structure-direct-instance-of?
-                                             __obj81530
+                                             __obj82246
                                              'gerbil.core#class-type-info::t))
                                           (let ()
                                             (declare (not safe))
                                             (##unchecked-structure-ref
-                                             __obj81530
+                                             __obj82246
                                              '1
                                              '#f
                                              '#f))
                                           (class-slot-ref
                                            gerbil/core/mop~MOP-2#class-type-info::t
-                                           __obj81530
+                                           __obj82246
                                            'id)))))
                                (declare (not safe))
-                               (##memq __tmp81576 '(t object class)))
+                               (##memq __tmp82292 '(t object class)))
                              _%precedence-list52418%_
                              (if (member ':object
                                          _%precedence-list52418%_
                                          gx#free-identifier=?)
                                  _%precedence-list52418%_
-                                 (if (let ((__obj81531 _%klass52408%_))
+                                 (if (let ((__obj82247 _%klass52408%_))
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
-                                              __obj81531
+                                              __obj82247
                                               'gerbil.core#class-type-info::t))
                                            (let ()
                                              (declare (not safe))
                                              (##unchecked-structure-ref
-                                              __obj81531
+                                              __obj82247
                                               '9
                                               '#f
                                               '#f))
                                            (class-slot-ref
                                             gerbil/core/mop~MOP-2#class-type-info::t
-                                            __obj81531
+                                            __obj82247
                                             'system?)))
                                      (if (member ':t
                                                  _%precedence-list52418%_
                                                  gx#free-identifier=?)
                                          _%precedence-list52418%_
-                                         (let ((__tmp81577
+                                         (let ((__tmp82293
                                                 (cons (gx#core-quote-syntax
                                                        ':t)
                                                       '())))
                                            (declare (not safe))
                                            (##append
                                             _%precedence-list52418%_
-                                            __tmp81577)))
+                                            __tmp82293)))
                                      (let _%loop52425%_ ((_%tail52427%_
                                                           _%precedence-list52418%_)
                                                          (_%head52428%_ '()))
@@ -186,23 +186,23 @@
                                                   _%rest52461%_
                                                   _%hd52459%_)))
                                              (_%else5243152445%_)))))))))
-                    (let ((__obj81532 _%klass52408%_))
+                    (let ((__obj82248 _%klass52408%_))
                       (if (let ()
                             (declare (not safe))
                             (##structure-direct-instance-of?
-                             __obj81532
+                             __obj82248
                              'gerbil.core#class-type-info::t))
                           (let ()
                             (declare (not safe))
                             (##unchecked-structure-set!
-                             __obj81532
+                             __obj82248
                              _%precedence-list52463%_
                              '5
                              '#f
                              '#f))
                           (class-slot-set!
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           __obj81532
+                           __obj82248
                            'precedence-list
                            _%precedence-list52463%_)))
                     _%precedence-list52463%_)))))))))
