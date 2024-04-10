@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1712573423)
+  (define gerbil/core/mop~MOP-2::timestamp 1712702623)
   (begin
     (define gerbil/core/mop~MOP-2#class-type-info::t
       (make-class-type
@@ -377,19 +377,19 @@
                (_%g2254522629%_
                 (lambda (_%g2254722568%_)
                   (if (gx#stx-pair? _%g2254722568%_)
-                      (let ((_%e2255122570%_ (gx#syntax-e _%g2254722568%_)))
+                      (let ((_%e2254922570%_ (gx#syntax-e _%g2254722568%_)))
                         (let ((_%hd2255022573%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%e2255122570%_)))
-                              (_%tl2254922575%_
+                                 (##car _%e2254922570%_)))
+                              (_%tl2255122575%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%e2255122570%_))))
-                          (if (gx#stx-pair/null? _%tl2254922575%_)
+                                 (##cdr _%e2254922570%_))))
+                          (if (gx#stx-pair/null? _%tl2255122575%_)
                               (let ((_g27189_
                                      (gx#syntax-split-splice
-                                      _%tl2254922575%_
+                                      _%tl2255122575%_
                                       '0)))
                                 (begin
                                   (let ((_g27190_

@@ -78,6 +78,11 @@ package: gerbil/compiler
     '(typedecl gxc#current-compile-context)
     'procedure::t))
   (declare-type
+   gxc#current-compile-parallel
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-parallel)
+    'procedure::t))
+  (declare-type
    gxc#current-compile-local-env
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-local-env)
@@ -170,8 +175,8 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/base)))
   (declare-type
-   gxc#+verbose-mutex+
-   (optimizer-resolve-class '(typedecl gxc#+verbose-mutex+) 'mutex::t))
+   gxc#__verbose-mutex
+   (optimizer-resolve-class '(typedecl gxc#__verbose-mutex) 'mutex::t))
   (declare-type
    gxc#module-path-reserved-chars
    (optimizer-resolve-class
@@ -402,6 +407,134 @@ package: gerbil/compiler
              gerbil/compiler/base)))
   (declare-type
    gxc#identifier-symbol
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#__available-cores
+   (optimizer-resolve-class '(typedecl gxc#__available-cores) 'number::t))
+  (declare-type
+   gxc#__jobs-mx
+   (optimizer-resolve-class '(typedecl gxc#__jobs-mx) 'mutex::t))
+  (declare-type
+   gxc#__jobs-cv
+   (optimizer-resolve-class '(typedecl gxc#__jobs-cv) 'condvar::t))
+  (declare-type
+   gxc#add-compile-job!__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#add-compile-job!__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#add-compile-job!
+   (@case-lambda
+    (1
+     gxc#add-compile-job!__0
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/base))
+    (2
+     gxc#add-compile-job!__%
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/base))))
+  (declare-type
+   gxc#pending-compile-jobs
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#execute-pending-compile-jobs!
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#make-compile-job
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#join!
    (@lambda 1
             #f
             signature:

@@ -807,7 +807,7 @@ package: gerbil
 
  (fl* flonum::t flonum::t effect: (pure) unchecked:)
  (fl+ flonum::t flonum::t effect: (pure) unchecked:)
- (fl+* flonum::t flonum::t effect: (pure) unchecked:)
+ (fl* flonum::t flonum::t effect: (pure) unchecked:)
  (fl- flonum::t flonum::t effect: (pure) unchecked:)
  (fl/ flonum::t flonum::t effect: (pure) unchecked:)
  (fl< flonum::t boolean::t effect: (pure) unchecked:)
