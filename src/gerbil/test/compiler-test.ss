@@ -9,7 +9,8 @@
         :gerbil/runtime/syntax
         :gerbil/runtime/init)
 (export compiler-specializer-test
-        compiler-safety-test)
+        compiler-safety-test
+        compiler-typed-test)
 
 (def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -63,3 +64,8 @@
       (must-not-compile "compiler-test-support/non-procedure-4.ss"))
     (test-case "bad return type"
       (must-not-compile "compiler-test-support/bad-return-type.ss"))))
+
+(def compiler-typed-test
+  (test-suite "compiler type inference tests"
+    (test-case "top level classes after use in procedure"
+      (must-compile-and-execute "compiler-test-support/class-after-use.ss"))))

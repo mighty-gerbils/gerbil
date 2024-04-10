@@ -485,6 +485,10 @@ package: gerbil/core
           expr-body)))
 
     (syntax-case stx (: :? :- ::-)
+      ((_ (var ~ @Type) body ...)
+       (type-reference? (syntax-local-value #'@Type false))
+       (with-syntax ((Type (type-reference-identifier (syntax-local-value #'@Type))))
+         #'(with-class (var ~ Type) body ...)))
       ((_ (var : Type) body ...)
        (syntax-local-class-type-info? #'Type)
        (expand #'var #'Type #'(body ...) #t #t #f))
@@ -538,6 +542,10 @@ package: gerbil/core
             #'expr-body))))
 
     (syntax-case stx (: :? :- ::-)
+      ((_ (var ~ @Type) body ...)
+       (type-reference? (syntax-local-value #'@Type false))
+       (with-syntax ((Type (type-reference-identifier (syntax-local-value #'@Type))))
+         #'(with-interface (var ~ Type) body ...)))
       ((_ (var : Interface) body ...)
        (and (identifier? #'var)
             (syntax-local-interface-info? #'Interface))
