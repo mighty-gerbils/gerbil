@@ -113,7 +113,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             null::t
              effect:
              #f
              arguments:

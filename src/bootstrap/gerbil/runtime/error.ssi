@@ -154,13 +154,24 @@ namespace: #f
                            (%#define-runtime
                             display-exception
                             display-exception)))
-         (%#define-runtime Error:::init! Error:::init!)
+         (%#begin (%#define-runtime Error:::init! Error:::init!)
+                  (%#define-runtime
+                   Error:::init!::specialize
+                   Error:::init!::specialize))
          (%#define-runtime ContractViolation:::init! ContractViolation:::init!)
          (%#define-runtime dump-stack-trace? dump-stack-trace?)
-         (%#define-runtime Error::display-exception Error::display-exception)
-         (%#define-runtime
-          RuntimeException::display-exception
-          RuntimeException::display-exception)
+         (%#begin (%#define-runtime
+                   Error::display-exception
+                   Error::display-exception)
+                  (%#define-runtime
+                   Error::display-exception::specialize
+                   Error::display-exception::specialize))
+         (%#begin (%#define-runtime
+                   RuntimeException::display-exception
+                   RuntimeException::display-exception)
+                  (%#define-runtime
+                   RuntimeException::display-exception::specialize
+                   RuntimeException::display-exception::specialize))
          (%#define-runtime fix-port-width! fix-port-width!)
          (%#define-runtime reset-port-width! reset-port-width!)
          (%#define-runtime

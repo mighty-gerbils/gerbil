@@ -89,11 +89,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1088,11 +1088,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1103,11 +1103,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1118,11 +1118,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t t::t t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1133,11 +1133,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1149,7 +1149,7 @@ package: gerbil/compiler
      gxc#!class:::init!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -1162,7 +1162,7 @@ package: gerbil/compiler
      gxc#!class:::init!__1
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -1237,11 +1237,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1252,11 +1252,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1267,11 +1267,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1282,11 +1282,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1297,11 +1297,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1318,11 +1318,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1339,11 +1339,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1354,11 +1354,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1375,11 +1375,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -1715,21 +1715,6 @@ package: gerbil/compiler
   (declare-type
    gxc#optimizer-lookup-method
    (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/compiler/optimize-base)))
-  (declare-type
-   gxc#optimizer-top-level-method!
-   (@lambda 1
             #f
             signature:
             (return:

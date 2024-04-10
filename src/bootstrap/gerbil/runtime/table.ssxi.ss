@@ -1734,6 +1734,9 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   __object-eq-hash-next
+   (optimizer-resolve-class '(typedecl __object-eq-hash-next) 't::t))
+  (declare-type
    __object-eq-hash
    (optimizer-resolve-class '(typedecl __object-eq-hash) 't::t))
   (declare-type

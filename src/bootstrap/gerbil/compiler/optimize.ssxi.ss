@@ -241,11 +241,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -260,7 +260,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -271,11 +271,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -286,11 +286,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -301,11 +301,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -316,11 +316,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -331,11 +331,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -350,7 +350,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -361,11 +361,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -376,11 +376,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -391,11 +391,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -406,11 +406,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:

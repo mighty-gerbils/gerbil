@@ -117,7 +117,22 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#!procedure::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:
@@ -132,7 +147,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -147,7 +162,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -162,7 +177,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -222,7 +237,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -237,7 +252,22 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#!accessor::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:
@@ -252,7 +282,22 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#!mutator::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:
@@ -267,7 +312,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -282,7 +327,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -297,7 +342,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -327,7 +372,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:

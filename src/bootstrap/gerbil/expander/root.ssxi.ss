@@ -18,7 +18,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -68,16 +68,31 @@ package: gerbil/expander
       origin:
       gerbil/expander/root))))
   (declare-type
+   gx#root-context:::init!::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/root)))
+  (declare-type
    gx#top-context:::init!__%
    (@lambda 2
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -88,7 +103,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -104,7 +119,7 @@ package: gerbil/expander
      gx#top-context:::init!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -117,7 +132,7 @@ package: gerbil/expander
      gx#top-context:::init!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -132,11 +147,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -147,7 +162,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -163,7 +178,7 @@ package: gerbil/expander
      gx#expander-context::bind-core-syntax-expanders!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -176,7 +191,7 @@ package: gerbil/expander
      gx#expander-context::bind-core-syntax-expanders!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -191,11 +206,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -206,7 +221,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -222,7 +237,7 @@ package: gerbil/expander
      gx#expander-context::bind-core-macro-expanders!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -235,7 +250,7 @@ package: gerbil/expander
      gx#expander-context::bind-core-macro-expanders!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -254,7 +269,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:

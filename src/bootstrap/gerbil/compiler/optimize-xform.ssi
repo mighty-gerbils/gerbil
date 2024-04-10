@@ -23,14 +23,6 @@ namespace: gxc
           ::collect-mutators-bind-methods!
           gxc#::collect-mutators-bind-methods!)
          (%#define-runtime apply-collect-mutators gxc#apply-collect-mutators)
-         (%#define-runtime ::collect-methods::t gxc#::collect-methods::t)
-         (%#define-runtime ::collect-methods? gxc#::collect-methods?)
-         (%#define-runtime make-::collect-methods gxc#make-::collect-methods)
-         (%#define-syntax ::collect-methods |gxc[:0:]#::collect-methods|)
-         (%#define-runtime
-          ::collect-methods-bind-methods!
-          gxc#::collect-methods-bind-methods!)
-         (%#define-runtime apply-collect-methods gxc#apply-collect-methods)
          (%#define-runtime ::expression-subst::t gxc#::expression-subst::t)
          (%#define-runtime ::expression-subst? gxc#::expression-subst?)
          (%#define-runtime make-::expression-subst gxc#make-::expression-subst)
@@ -163,7 +155,6 @@ namespace: gxc
                    apply-collect-runtime-refs
                    gxc#apply-collect-runtime-refs))
          (%#define-runtime collect-mutators-setq% gxc#collect-mutators-setq%)
-         (%#define-runtime collect-methods-call% gxc#collect-methods-call%)
          (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
          (%#define-runtime expression-subst*-ref% gxc#expression-subst*-ref%)
          (%#define-runtime expression-subst-setq% gxc#expression-subst-setq%)

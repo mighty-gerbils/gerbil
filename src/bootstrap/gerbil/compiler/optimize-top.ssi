@@ -79,6 +79,24 @@ namespace: gxc
           gxc#::collect-type-info-bind-methods!)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
          (%#define-runtime
+          ::collect-mutable-type-info::t
+          gxc#::collect-mutable-type-info::t)
+         (%#define-runtime
+          ::collect-mutable-type-info?
+          gxc#::collect-mutable-type-info?)
+         (%#define-runtime
+          make-::collect-mutable-type-info
+          gxc#make-::collect-mutable-type-info)
+         (%#define-syntax
+          ::collect-mutable-type-info
+          |gxc[:0:]#::collect-mutable-type-info|)
+         (%#define-runtime
+          ::collect-mutable-type-info-bind-methods!
+          gxc#::collect-mutable-type-info-bind-methods!)
+         (%#define-runtime
+          apply-collect-mutable-type-info
+          gxc#apply-collect-mutable-type-info)
+         (%#define-runtime
           ::raw-expression-type::t
           gxc#::raw-expression-type::t)
          (%#define-runtime ::raw-expression-type? gxc#::raw-expression-type?)
@@ -182,7 +200,9 @@ namespace: gxc
          (%#define-runtime
           collect-top-level-type-letrec-values%
           gxc#collect-top-level-type-letrec-values%)
-         (%#define-runtime collect-type-call% gxc#collect-type-call%)
+         (%#define-runtime
+          collect-top-level-type-call%
+          gxc#collect-top-level-type-call%)
          (%#define-runtime collect-type-setq% gxc#collect-type-setq%)
          (%#define-runtime
           basic-expression-type-annotations

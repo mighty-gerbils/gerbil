@@ -3,6 +3,9 @@ package: gerbil/runtime
 
 (begin
   (declare-type
+   raise-contract-violation-error
+   (optimizer-resolve-class '(typedecl raise-contract-violation-error) 't::t))
+  (declare-type
    displayln
    (@lambda (0)
             #f

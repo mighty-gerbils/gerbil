@@ -481,11 +481,26 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t . t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   Error:::init!::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:
@@ -496,11 +511,11 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t . t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -518,7 +533,22 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   Error::display-exception::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:
@@ -533,7 +563,22 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   RuntimeException::display-exception::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
              unchecked:
              #f
              origin:

@@ -655,9 +655,6 @@ namespace: gxc
           gxc#optimizer-lookup-class-name)
          (%#define-runtime optimizer-lookup-method gxc#optimizer-lookup-method)
          (%#define-runtime
-          optimizer-top-level-method!
-          gxc#optimizer-top-level-method!)
-         (%#define-runtime
           optimizer-top-level-method?
           gxc#optimizer-top-level-method?))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base~0"))

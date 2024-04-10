@@ -54,7 +54,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:

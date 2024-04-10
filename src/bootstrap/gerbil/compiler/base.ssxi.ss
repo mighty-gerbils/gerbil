@@ -135,11 +135,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -420,6 +420,9 @@ package: gerbil/compiler
              #f
              origin:
              gerbil/compiler/base)))
+  (declare-type
+   gxc#__compile-jobs
+   (optimizer-resolve-class '(typedecl gxc#__compile-jobs) 'list::t))
   (declare-type
    gxc#__available-cores
    (optimizer-resolve-class '(typedecl gxc#__available-cores) 'number::t))
