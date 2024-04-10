@@ -556,7 +556,11 @@ namespace: gerbil/core/contract
                     (in: #f Interface)
                     (phi: 1 (in: #f InterfaceInfo))
                     (phi: 1 (in: #f TypeEnv))
-                    (phi: 1 (in: #f ClassMeta)))
+                    (phi: 1 (in: #f ClassMeta))
+                    (spec:
+                     (:gerbil/core/mop)
+                     (1 @method~ 1 @method)
+                     (0 @method~ 0 @method)))
                    (%#export #t (phi: 1 #t))
                    (%#begin-syntax
                     (%#call (%#ref load-module)
@@ -585,6 +589,9 @@ namespace: gerbil/core/contract
                    (%#define-syntax
                     case-lambda/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#case-lambda/c|)
+                   (%#define-syntax
+                    @method
+                    |gerbil/core/contract~TypedDefinitions[:0:]#@method|)
                    (%#define-syntax
                     defmethod/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#defmethod/c|)

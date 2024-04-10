@@ -1,27 +1,27 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1712773527)
+  (define gerbil/compiler/optimize-base::timestamp 1712784667)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
     (define gxc#current-compile-local-type (make-parameter '#f))
     (define gxc#optimizer-info::t
-      (let ((__tmp149012 (list)) (__tmp149011 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp149449 (list)) (__tmp149448 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#optimizer-info::t
          'optimizer-info
-         __tmp149012
+         __tmp149449
          '(type classes ssxi methods)
-         __tmp149011
+         __tmp149448
          ':init!)))
     (define gxc#optimizer-info?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#optimizer-info::t)))
     (define gxc#make-optimizer-info
-      (lambda _%$args148983%_
-        (apply make-instance gxc#optimizer-info::t _%$args148983%_)))
+      (lambda _%$args149420%_
+        (apply make-instance gxc#optimizer-info::t _%$args149420%_)))
     (define gxc#optimizer-info-type
       (let ()
         (declare (not safe))
@@ -87,62 +87,62 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#optimizer-info::t 'methods)))
     (define gxc#optimizer-info:::init!
-      (lambda (_%self146246148968%_)
-        (let* ((_%self148971%_ _%self146246148968%_)
-               (_%self148973%_ _%self148971%_))
-          (if (let ((__tmp149013
+      (lambda (_%self146683149405%_)
+        (let* ((_%self149408%_ _%self146683149405%_)
+               (_%self149410%_ _%self149408%_))
+          (if (let ((__tmp149450
                      (let ()
                        (declare (not safe))
-                       (##structure-length _%self148973%_))))
+                       (##structure-length _%self149410%_))))
                 (declare (not safe))
-                (##fx< '4 __tmp149013))
+                (##fx< '4 __tmp149450))
               (begin
-                (let ((__tmp149014
+                (let ((__tmp149451
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self148973%_
-                   __tmp149014
+                   _%self149410%_
+                   __tmp149451
                    '1
                    '#f
                    '#f))
-                (let ((__tmp149015
+                (let ((__tmp149452
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self148973%_
-                   __tmp149015
+                   _%self149410%_
+                   __tmp149452
                    '2
                    '#f
                    '#f))
-                (let ((__tmp149016
+                (let ((__tmp149453
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self148973%_
-                   __tmp149016
+                   _%self149410%_
+                   __tmp149453
                    '3
                    '#f
                    '#f))
-                (let ((__tmp149017
+                (let ((__tmp149454
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self148973%_
-                   __tmp149017
+                   _%self149410%_
+                   __tmp149454
                    '4
                    '#f
                    '#f))
                 '#!void)
-              (let ((__tmp149018
+              (let ((__tmp149455
                      (let ()
                        (declare (not safe))
-                       (##vector-length _%self148973%_))))
+                       (##vector-length _%self149410%_))))
                 (declare (not safe))
                 (error '"struct-instance-init!: too many arguments for struct"
-                       _%self148973%_
+                       _%self149410%_
                        '4
-                       __tmp149018))))))
+                       __tmp149455))))))
     (let ()
       (declare (not safe))
       (__bind-method!
@@ -151,22 +151,22 @@
        gxc#optimizer-info:::init!
        '#f))
     (define gxc#!type::t
-      (let ((__tmp149020 (list))
-            (__tmp149019
+      (let ((__tmp149457 (list))
+            (__tmp149456
              (cons (cons 'struct: '#t) '((equal: id) (print: id)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!type::t
          '!type
-         __tmp149020
+         __tmp149457
          '(id)
-         __tmp149019
+         __tmp149456
          '#f)))
     (define gxc#!type?
       (let () (declare (not safe)) (__make-class-predicate gxc#!type::t)))
     (define gxc#make-!type
-      (lambda _%$args148843%_
-        (apply make-instance gxc#!type::t _%$args148843%_)))
+      (lambda _%$args149280%_
+        (apply make-instance gxc#!type::t _%$args149280%_)))
     (define gxc#!type-id
       (let ()
         (declare (not safe))
@@ -184,21 +184,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!type::t 'id)))
     (define gxc#!abort::t
-      (let ((__tmp149022 (list gxc#!type::t))
-            (__tmp149021 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149459 (list gxc#!type::t))
+            (__tmp149458 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!abort::t
          '!abort
-         __tmp149022
+         __tmp149459
          '()
-         __tmp149021
+         __tmp149458
          ':init!)))
     (define gxc#!abort?
       (let () (declare (not safe)) (__make-class-predicate gxc#!abort::t)))
     (define gxc#make-!abort
-      (lambda _%$args148840%_
-        (apply make-instance gxc#!abort::t _%$args148840%_)))
+      (lambda _%$args149277%_
+        (apply make-instance gxc#!abort::t _%$args149277%_)))
     (define gxc#!abort-id
       (let ()
         (declare (not safe))
@@ -216,21 +216,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!abort::t 'id)))
     (define gxc#!alias::t
-      (let ((__tmp149024 (list gxc#!type::t))
-            (__tmp149023 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp149461 (list gxc#!type::t))
+            (__tmp149460 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#!alias::t
          '!alias
-         __tmp149024
+         __tmp149461
          '()
-         __tmp149023
+         __tmp149460
          '#f)))
     (define gxc#!alias?
       (let () (declare (not safe)) (__make-class-predicate gxc#!alias::t)))
     (define gxc#make-!alias
-      (lambda _%$args148837%_
-        (apply make-instance gxc#!alias::t _%$args148837%_)))
+      (lambda _%$args149274%_
+        (apply make-instance gxc#!alias::t _%$args149274%_)))
     (define gxc#!alias-id
       (let ()
         (declare (not safe))
@@ -248,8 +248,8 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!alias::t 'id)))
     (define gxc#!signature::t
-      (let ((__tmp149026 (list))
-            (__tmp149025
+      (let ((__tmp149463 (list))
+            (__tmp149462
              (cons (cons 'final: '#t)
                    '((equal: return effect arguments unchecked origin)
                      (print: return effect arguments unchecked origin)))))
@@ -257,15 +257,15 @@
         (__make-class-type
          'gxc#!signature::t
          '!signature
-         __tmp149026
+         __tmp149463
          '(return effect arguments unchecked origin)
-         __tmp149025
+         __tmp149462
          '#f)))
     (define gxc#!signature?
       (let () (declare (not safe)) (__make-class-predicate gxc#!signature::t)))
     (define gxc#make-!signature
-      (lambda _%$args148834%_
-        (apply make-instance gxc#!signature::t _%$args148834%_)))
+      (lambda _%$args149271%_
+        (apply make-instance gxc#!signature::t _%$args149271%_)))
     (define gxc#!signature-return
       (let ()
         (declare (not safe))
@@ -347,17 +347,17 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!signature::t 'origin)))
     (define gxc#!procedure::t
-      (let ((__tmp149028 (list gxc#!type::t))
-            (__tmp149027
+      (let ((__tmp149465 (list gxc#!type::t))
+            (__tmp149464
              (cons (cons 'struct: '#t)
                    '((equal: signature) (print: signature)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!procedure::t
          '!procedure
-         __tmp149028
+         __tmp149465
          '(signature)
-         __tmp149027
+         __tmp149464
          '#f)))
     (define gxc#!procedure?
       (let () (declare (not safe)) (__make-class-predicate gxc#!procedure::t)))
@@ -394,17 +394,17 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!procedure::t 'id)))
     (define gxc#make-!procedure
-      (lambda (_%id148813%_ _%signature148814%_)
-        (if ((lambda (_%$obj148817%_)
-               (or (not _%$obj148817%_)
+      (lambda (_%id149250%_ _%signature149251%_)
+        (if ((lambda (_%$obj149254%_)
+               (or (not _%$obj149254%_)
                    (let ()
                      (declare (not safe))
                      (##structure-direct-instance-of?
-                      _%$obj148817%_
+                      _%$obj149254%_
                       'gxc#!signature::t))))
-             _%signature148814%_)
-            (let ((_%signature148824%_ _%signature148814%_))
-              (gxc#__make-!procedure _%id148813%_ _%signature148824%_))
+             _%signature149251%_)
+            (let ((_%signature149261%_ _%signature149251%_))
+              (gxc#__make-!procedure _%id149250%_ _%signature149261%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -413,31 +413,31 @@
                'contract:
                '(? (or not !signature?))
                'value:
-               _%signature148814%_)
+               _%signature149251%_)
               '#!void))))
     (define gxc#__make-!procedure
-      (lambda (_%id148799%_ _%signature148801%_)
-        (let ((_%signature148804%_ _%signature148801%_))
+      (lambda (_%id149236%_ _%signature149238%_)
+        (let ((_%signature149241%_ _%signature149238%_))
           (declare (not safe))
-          (##structure gxc#!procedure::t _%id148799%_ _%signature148804%_))))
+          (##structure gxc#!procedure::t _%id149236%_ _%signature149241%_))))
     (define gxc#!procedure-signature-set!
-      (lambda (_%$obj148768%_ _%signature148769%_)
+      (lambda (_%$obj149205%_ _%signature149206%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%$obj148768%_ 'gxc#!procedure::t))
-            (let ((_%$obj148773%_ _%$obj148768%_))
-              (if ((lambda (_%$obj148782%_)
-                     (or (not _%$obj148782%_)
+              (##structure-instance-of? _%$obj149205%_ 'gxc#!procedure::t))
+            (let ((_%$obj149210%_ _%$obj149205%_))
+              (if ((lambda (_%$obj149219%_)
+                     (or (not _%$obj149219%_)
                          (let ()
                            (declare (not safe))
                            (##structure-direct-instance-of?
-                            _%$obj148782%_
+                            _%$obj149219%_
                             'gxc#!signature::t))))
-                   _%signature148769%_)
-                  (let ((_%signature148789%_ _%signature148769%_))
+                   _%signature149206%_)
+                  (let ((_%signature149226%_ _%signature149206%_))
                     (gxc#__!procedure-signature-set!
-                     _%$obj148773%_
-                     _%signature148789%_))
+                     _%$obj149210%_
+                     _%signature149226%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -446,7 +446,7 @@
                      'contract:
                      '(? (or not !signature?))
                      'value:
-                     _%signature148769%_)
+                     _%signature149206%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -456,37 +456,37 @@
                'contract:
                '!procedure?
                'value:
-               _%$obj148768%_)
+               _%$obj149205%_)
               '#!void))))
     (define gxc#__!procedure-signature-set!
-      (lambda (_%$obj148745%_ _%signature148747%_)
-        (let* ((_%$obj148751%_ _%$obj148745%_)
-               (_%signature148759%_ _%signature148747%_))
+      (lambda (_%$obj149182%_ _%signature149184%_)
+        (let* ((_%$obj149188%_ _%$obj149182%_)
+               (_%signature149196%_ _%signature149184%_))
           (declare (not safe))
           (##unchecked-structure-set!
-           _%$obj148751%_
-           _%signature148759%_
+           _%$obj149188%_
+           _%signature149196%_
            '2
            '#f
            '#f))))
     (define gxc#!class-meta::t
-      (let ((__tmp149030 (list gxc#!type::t))
-            (__tmp149029 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp149467 (list gxc#!type::t))
+            (__tmp149466 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#!class-meta::t
          '!class-meta
-         __tmp149030
+         __tmp149467
          '(class)
-         __tmp149029
+         __tmp149466
          ':init!)))
     (define gxc#!class-meta?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!class-meta::t)))
     (define gxc#make-!class-meta
-      (lambda _%$args148742%_
-        (apply make-instance gxc#!class-meta::t _%$args148742%_)))
+      (lambda _%$args149179%_
+        (apply make-instance gxc#!class-meta::t _%$args149179%_)))
     (define gxc#!class-meta-class
       (let ()
         (declare (not safe))
@@ -520,8 +520,8 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!class-meta::t 'id)))
     (define gxc#!class::t
-      (let ((__tmp149032 (list gxc#!type::t))
-            (__tmp149031
+      (let ((__tmp149469 (list gxc#!type::t))
+            (__tmp149468
              (cons (cons 'struct: '#t)
                    '((equal:
                       super
@@ -539,7 +539,7 @@
         (__make-class-type
          'gxc#!class::t
          '!class
-         __tmp149032
+         __tmp149469
          '(super precedence-list
                  slots
                  fields
@@ -549,13 +549,13 @@
                  system?
                  metaclass
                  methods)
-         __tmp149031
+         __tmp149468
          ':init!)))
     (define gxc#!class?
       (let () (declare (not safe)) (__make-class-predicate gxc#!class::t)))
     (define gxc#make-!class
-      (lambda _%$args148739%_
-        (apply make-instance gxc#!class::t _%$args148739%_)))
+      (lambda _%$args149176%_
+        (apply make-instance gxc#!class::t _%$args149176%_)))
     (define gxc#!class-super
       (let ()
         (declare (not safe))
@@ -733,21 +733,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!class::t 'id)))
     (define gxc#!predicate::t
-      (let ((__tmp149034 (list gxc#!procedure::t))
-            (__tmp149033 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149471 (list gxc#!procedure::t))
+            (__tmp149470 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!predicate::t
          '!predicate
-         __tmp149034
+         __tmp149471
          '()
-         __tmp149033
+         __tmp149470
          ':init!)))
     (define gxc#!predicate?
       (let () (declare (not safe)) (__make-class-predicate gxc#!predicate::t)))
     (define gxc#make-!predicate
-      (lambda _%$args148736%_
-        (apply make-instance gxc#!predicate::t _%$args148736%_)))
+      (lambda _%$args149173%_
+        (apply make-instance gxc#!predicate::t _%$args149173%_)))
     (define gxc#!predicate-signature
       (let ()
         (declare (not safe))
@@ -781,23 +781,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!predicate::t 'id)))
     (define gxc#!constructor::t
-      (let ((__tmp149036 (list gxc#!procedure::t))
-            (__tmp149035 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149473 (list gxc#!procedure::t))
+            (__tmp149472 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!constructor::t
          '!constructor
-         __tmp149036
+         __tmp149473
          '()
-         __tmp149035
+         __tmp149472
          ':init!)))
     (define gxc#!constructor?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!constructor::t)))
     (define gxc#make-!constructor
-      (lambda _%$args148733%_
-        (apply make-instance gxc#!constructor::t _%$args148733%_)))
+      (lambda _%$args149170%_
+        (apply make-instance gxc#!constructor::t _%$args149170%_)))
     (define gxc#!constructor-signature
       (let ()
         (declare (not safe))
@@ -831,21 +831,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!constructor::t 'id)))
     (define gxc#!accessor::t
-      (let ((__tmp149038 (list gxc#!procedure::t))
-            (__tmp149037 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
+      (let ((__tmp149475 (list gxc#!procedure::t))
+            (__tmp149474 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!accessor::t
          '!accessor
-         __tmp149038
+         __tmp149475
          '(slot checked?)
-         __tmp149037
+         __tmp149474
          ':init!)))
     (define gxc#!accessor?
       (let () (declare (not safe)) (__make-class-predicate gxc#!accessor::t)))
     (define gxc#make-!accessor
-      (lambda _%$args148730%_
-        (apply make-instance gxc#!accessor::t _%$args148730%_)))
+      (lambda _%$args149167%_
+        (apply make-instance gxc#!accessor::t _%$args149167%_)))
     (define gxc#!accessor-slot
       (let ()
         (declare (not safe))
@@ -911,21 +911,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!accessor::t 'id)))
     (define gxc#!mutator::t
-      (let ((__tmp149040 (list gxc#!procedure::t))
-            (__tmp149039 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
+      (let ((__tmp149477 (list gxc#!procedure::t))
+            (__tmp149476 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!mutator::t
          '!mutator
-         __tmp149040
+         __tmp149477
          '(slot checked?)
-         __tmp149039
+         __tmp149476
          ':init!)))
     (define gxc#!mutator?
       (let () (declare (not safe)) (__make-class-predicate gxc#!mutator::t)))
     (define gxc#make-!mutator
-      (lambda _%$args148727%_
-        (apply make-instance gxc#!mutator::t _%$args148727%_)))
+      (lambda _%$args149164%_
+        (apply make-instance gxc#!mutator::t _%$args149164%_)))
     (define gxc#!mutator-slot
       (let ()
         (declare (not safe))
@@ -991,21 +991,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!mutator::t 'id)))
     (define gxc#!interface::t
-      (let ((__tmp149042 (list gxc#!type::t))
-            (__tmp149041 (cons (cons 'struct: '#t) '((equal: methods)))))
+      (let ((__tmp149479 (list gxc#!type::t))
+            (__tmp149478 (cons (cons 'struct: '#t) '((equal: methods)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!interface::t
          '!interface
-         __tmp149042
+         __tmp149479
          '(methods)
-         __tmp149041
+         __tmp149478
          '#f)))
     (define gxc#!interface?
       (let () (declare (not safe)) (__make-class-predicate gxc#!interface::t)))
     (define gxc#make-!interface
-      (lambda _%$args148724%_
-        (apply make-instance gxc#!interface::t _%$args148724%_)))
+      (lambda _%$args149161%_
+        (apply make-instance gxc#!interface::t _%$args149161%_)))
     (define gxc#!interface-methods
       (let ()
         (declare (not safe))
@@ -1039,23 +1039,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!interface::t 'id)))
     (define gxc#!lambda::t
-      (let ((__tmp149044 (list gxc#!procedure::t))
-            (__tmp149043
+      (let ((__tmp149481 (list gxc#!procedure::t))
+            (__tmp149480
              (cons (cons 'struct: '#t)
                    '((equal: arity dispatch inline inline-typedecl)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!lambda::t
          '!lambda
-         __tmp149044
+         __tmp149481
          '(arity dispatch inline inline-typedecl)
-         __tmp149043
+         __tmp149480
          ':init!)))
     (define gxc#!lambda?
       (let () (declare (not safe)) (__make-class-predicate gxc#!lambda::t)))
     (define gxc#make-!lambda
-      (lambda _%$args148721%_
-        (apply make-instance gxc#!lambda::t _%$args148721%_)))
+      (lambda _%$args149158%_
+        (apply make-instance gxc#!lambda::t _%$args149158%_)))
     (define gxc#!lambda-arity
       (let ()
         (declare (not safe))
@@ -1155,23 +1155,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!lambda::t 'id)))
     (define gxc#!case-lambda::t
-      (let ((__tmp149046 (list gxc#!procedure::t))
-            (__tmp149045 (cons (cons 'struct: '#t) '((equal: clauses)))))
+      (let ((__tmp149483 (list gxc#!procedure::t))
+            (__tmp149482 (cons (cons 'struct: '#t) '((equal: clauses)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!case-lambda::t
          '!case-lambda
-         __tmp149046
+         __tmp149483
          '(clauses)
-         __tmp149045
+         __tmp149482
          ':init!)))
     (define gxc#!case-lambda?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!case-lambda::t)))
     (define gxc#make-!case-lambda
-      (lambda _%$args148718%_
-        (apply make-instance gxc#!case-lambda::t _%$args148718%_)))
+      (lambda _%$args149155%_
+        (apply make-instance gxc#!case-lambda::t _%$args149155%_)))
     (define gxc#!case-lambda-clauses
       (let ()
         (declare (not safe))
@@ -1221,21 +1221,21 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!case-lambda::t 'id)))
     (define gxc#!kw-lambda::t
-      (let ((__tmp149048 (list gxc#!procedure::t))
-            (__tmp149047 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp149485 (list gxc#!procedure::t))
+            (__tmp149484 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#!kw-lambda::t
          '!kw-lambda
-         __tmp149048
+         __tmp149485
          '(table dispatch)
-         __tmp149047
+         __tmp149484
          ':init!)))
     (define gxc#!kw-lambda?
       (let () (declare (not safe)) (__make-class-predicate gxc#!kw-lambda::t)))
     (define gxc#make-!kw-lambda
-      (lambda _%$args148715%_
-        (apply make-instance gxc#!kw-lambda::t _%$args148715%_)))
+      (lambda _%$args149152%_
+        (apply make-instance gxc#!kw-lambda::t _%$args149152%_)))
     (define gxc#!kw-lambda-table
       (let ()
         (declare (not safe))
@@ -1301,23 +1301,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!kw-lambda::t 'id)))
     (define gxc#!kw-lambda-primary::t
-      (let ((__tmp149050 (list gxc#!procedure::t))
-            (__tmp149049 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp149487 (list gxc#!procedure::t))
+            (__tmp149486 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#!kw-lambda-primary::t
          '!kw-lambda-primary
-         __tmp149050
+         __tmp149487
          '(keys main)
-         __tmp149049
+         __tmp149486
          ':init!)))
     (define gxc#!kw-lambda-primary?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!kw-lambda-primary::t)))
     (define gxc#make-!kw-lambda-primary
-      (lambda _%$args148712%_
-        (apply make-instance gxc#!kw-lambda-primary::t _%$args148712%_)))
+      (lambda _%$args149149%_
+        (apply make-instance gxc#!kw-lambda-primary::t _%$args149149%_)))
     (define gxc#!kw-lambda-primary-keys
       (let ()
         (declare (not safe))
@@ -1391,38 +1391,38 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!kw-lambda-primary::t 'id)))
     (define gxc#!primitive::t
-      (let ((__tmp149051 (list)))
+      (let ((__tmp149488 (list)))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive::t
          '!primitive
-         __tmp149051
+         __tmp149488
          '()
          '()
          '#f)))
     (define gxc#!primitive?
       (let () (declare (not safe)) (__make-class-predicate gxc#!primitive::t)))
     (define gxc#make-!primitive
-      (lambda _%$args148709%_
-        (apply make-instance gxc#!primitive::t _%$args148709%_)))
+      (lambda _%$args149146%_
+        (apply make-instance gxc#!primitive::t _%$args149146%_)))
     (define gxc#!primitive-predicate::t
-      (let ((__tmp149053 (list gxc#!primitive::t gxc#!procedure::t))
-            (__tmp149052 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149490 (list gxc#!primitive::t gxc#!procedure::t))
+            (__tmp149489 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-predicate::t
          '!primitive-predicate
-         __tmp149053
+         __tmp149490
          '()
-         __tmp149052
+         __tmp149489
          ':init!)))
     (define gxc#!primitive-predicate?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!primitive-predicate::t)))
     (define gxc#make-!primitive-predicate
-      (lambda _%$args148706%_
-        (apply make-instance gxc#!primitive-predicate::t _%$args148706%_)))
+      (lambda _%$args149143%_
+        (apply make-instance gxc#!primitive-predicate::t _%$args149143%_)))
     (define gxc#!primitive-predicate-signature
       (let ()
         (declare (not safe))
@@ -1462,23 +1462,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!primitive-predicate::t 'id)))
     (define gxc#!primitive-lambda::t
-      (let ((__tmp149055 (list gxc#!primitive::t gxc#!lambda::t))
-            (__tmp149054 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149492 (list gxc#!primitive::t gxc#!lambda::t))
+            (__tmp149491 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-lambda::t
          '!primitive-lambda
-         __tmp149055
+         __tmp149492
          '()
-         __tmp149054
+         __tmp149491
          ':init!)))
     (define gxc#!primitive-lambda?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!primitive-lambda::t)))
     (define gxc#make-!primitive-lambda
-      (lambda _%$args148703%_
-        (apply make-instance gxc#!primitive-lambda::t _%$args148703%_)))
+      (lambda _%$args149140%_
+        (apply make-instance gxc#!primitive-lambda::t _%$args149140%_)))
     (define gxc#!primitive-lambda-arity
       (let ()
         (declare (not safe))
@@ -1596,23 +1596,23 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!primitive-lambda::t 'id)))
     (define gxc#!primitive-case-lambda::t
-      (let ((__tmp149057 (list gxc#!primitive::t gxc#!case-lambda::t))
-            (__tmp149056 (cons (cons 'struct: '#t) '((equal:)))))
+      (let ((__tmp149494 (list gxc#!primitive::t gxc#!case-lambda::t))
+            (__tmp149493 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-case-lambda::t
          '!primitive-case-lambda
-         __tmp149057
+         __tmp149494
          '()
-         __tmp149056
+         __tmp149493
          ':init!)))
     (define gxc#!primitive-case-lambda?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#!primitive-case-lambda::t)))
     (define gxc#make-!primitive-case-lambda
-      (lambda _%$args148700%_
-        (apply make-instance gxc#!primitive-case-lambda::t _%$args148700%_)))
+      (lambda _%$args149137%_
+        (apply make-instance gxc#!primitive-case-lambda::t _%$args149137%_)))
     (define gxc#!primitive-case-lambda-clauses
       (let ()
         (declare (not safe))
@@ -1674,26 +1674,26 @@
          gxc#!primitive-case-lambda::t
          'id)))
     (define gxc#!abort:::init!
-      (lambda (_%self146247148685%_)
-        (let* ((_%self148688%_ _%self146247148685%_)
-               (_%self148690%_ _%self148688%_))
+      (lambda (_%self146684149122%_)
+        (let* ((_%self149125%_ _%self146684149122%_)
+               (_%self149127%_ _%self149125%_))
           (declare (not safe))
-          (##unchecked-structure-set! _%self148690%_ 'abort '1 '#f '#f))))
+          (##unchecked-structure-set! _%self149127%_ 'abort '1 '#f '#f))))
     (let ()
       (declare (not safe))
       (__bind-method! gxc#!abort::t ':init! gxc#!abort:::init! '#f))
     (define gxc#!class-meta:::init!
-      (lambda (_%self146248148547%_ _%klass148549%_)
-        (let* ((_%self148551%_ _%self146248148547%_)
-               (_%self148553%_ _%self148551%_))
+      (lambda (_%self146685148984%_ _%klass148986%_)
+        (let* ((_%self148988%_ _%self146685148984%_)
+               (_%self148990%_ _%self148988%_))
           (let ()
             (declare (not safe))
-            (##unchecked-structure-set! _%self148553%_ 'class '1 '#f '#f))
+            (##unchecked-structure-set! _%self148990%_ 'class '1 '#f '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148553%_
-             _%klass148549%_
+             _%self148990%_
+             _%klass148986%_
              '2
              '#f
              '#f)))))
@@ -1701,595 +1701,595 @@
       (declare (not safe))
       (__bind-method! gxc#!class-meta::t ':init! gxc#!class-meta:::init! '#f))
     (define gxc#!class:::init!__0
-      (lambda (_%self146249148235%_
-               _%id148237%_
-               _%super148238%_
-               _%slots148239%_
-               _%ctor-method148240%_
-               _%struct?148241%_
-               _%final?148242%_
-               _%system?148243%_
-               _%metaclass148244%_)
-        (let* ((_%self148246%_ _%self146249148235%_)
-               (_%self148248%_ _%self148246%_))
-          (let _%lp148258%_ ((_%rest148260%_ _%super148238%_))
-            (let* ((_%rest148261148269%_ _%rest148260%_)
-                   (_%else148263148277%_ (lambda () '#!void))
-                   (_%K148265148283%_
-                    (lambda (_%rest148280%_ _%super-id148281%_)
-                      (if (let ((__tmp149058
+      (lambda (_%self146686148672%_
+               _%id148674%_
+               _%super148675%_
+               _%slots148676%_
+               _%ctor-method148677%_
+               _%struct?148678%_
+               _%final?148679%_
+               _%system?148680%_
+               _%metaclass148681%_)
+        (let* ((_%self148683%_ _%self146686148672%_)
+               (_%self148685%_ _%self148683%_))
+          (let _%lp148695%_ ((_%rest148697%_ _%super148675%_))
+            (let* ((_%rest148698148706%_ _%rest148697%_)
+                   (_%else148700148714%_ (lambda () '#!void))
+                   (_%K148702148720%_
+                    (lambda (_%rest148717%_ _%super-id148718%_)
+                      (if (let ((__tmp149495
                                  (gxc#optimizer-resolve-class
-                                  (cons '!class (cons _%id148237%_ '()))
-                                  _%super-id148281%_)))
+                                  (cons '!class (cons _%id148674%_ '()))
+                                  _%super-id148718%_)))
                             (declare (not safe))
-                            (##unchecked-structure-ref __tmp149058 '8 '#f '#f))
-                          (let ((__tmp149059
-                                 (cons '!class (cons _%id148237%_ '()))))
+                            (##unchecked-structure-ref __tmp149495 '8 '#f '#f))
+                          (let ((__tmp149496
+                                 (cons '!class (cons _%id148674%_ '()))))
                             (declare (not safe))
                             (gxc#raise-compile-error
                              '"cannot extend final class"
-                             __tmp149059
-                             _%super-id148281%_))
+                             __tmp149496
+                             _%super-id148718%_))
                           '#!void)
-                      (_%lp148258%_ _%rest148280%_))))
-              (if (let () (declare (not safe)) (##pair? _%rest148261148269%_))
-                  (let ((_%hd148266148286%_
+                      (_%lp148695%_ _%rest148717%_))))
+              (if (let () (declare (not safe)) (##pair? _%rest148698148706%_))
+                  (let ((_%hd148703148723%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest148261148269%_)))
-                        (_%tl148267148288%_
+                           (##car _%rest148698148706%_)))
+                        (_%tl148704148725%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest148261148269%_))))
-                    (let* ((_%super-id148291%_ _%hd148266148286%_)
-                           (_%rest148293%_ _%tl148267148288%_))
-                      (_%K148265148283%_ _%rest148293%_ _%super-id148291%_)))
+                           (##cdr _%rest148698148706%_))))
+                    (let* ((_%super-id148728%_ _%hd148703148723%_)
+                           (_%rest148730%_ _%tl148704148725%_))
+                      (_%K148702148720%_ _%rest148730%_ _%super-id148728%_)))
                   '#!void)))
-          (let* ((_%ctor-method148344%_
-                  (let ((_%$e148295%_ _%ctor-method148240%_))
-                    (if _%$e148295%_
-                        _%$e148295%_
-                        (let _%lp148298%_ ((_%rest148300%_ _%super148238%_)
-                                           (_%method148301%_ '#f))
-                          (let* ((_%rest148302148310%_ _%rest148300%_)
-                                 (_%else148304148318%_
-                                  (lambda () _%method148301%_))
-                                 (_%K148306148332%_
-                                  (lambda (_%rest148321%_ _%super-id148322%_)
-                                    (let* ((_%klass148324%_
+          (let* ((_%ctor-method148781%_
+                  (let ((_%$e148732%_ _%ctor-method148677%_))
+                    (if _%$e148732%_
+                        _%$e148732%_
+                        (let _%lp148735%_ ((_%rest148737%_ _%super148675%_)
+                                           (_%method148738%_ '#f))
+                          (let* ((_%rest148739148747%_ _%rest148737%_)
+                                 (_%else148741148755%_
+                                  (lambda () _%method148738%_))
+                                 (_%K148743148769%_
+                                  (lambda (_%rest148758%_ _%super-id148759%_)
+                                    (let* ((_%klass148761%_
                                             (gxc#optimizer-resolve-class
                                              (cons '!class
-                                                   (cons _%id148237%_ '()))
-                                             _%super-id148322%_))
-                                           (_%$e148326%_
+                                                   (cons _%id148674%_ '()))
+                                             _%super-id148759%_))
+                                           (_%$e148763%_
                                             (let ()
                                               (declare (not safe))
                                               (##unchecked-structure-ref
-                                               _%klass148324%_
+                                               _%klass148761%_
                                                '6
                                                '#f
                                                '#f))))
-                                      (if _%$e148326%_
-                                          ((lambda (_%ctor-method148329%_)
-                                             (if _%method148301%_
-                                                 (if (eq? _%ctor-method148329%_
-                                                          _%method148301%_)
-                                                     (_%lp148298%_
-                                                      _%rest148321%_
-                                                      _%ctor-method148329%_)
-                                                     (let ((__tmp149060
+                                      (if _%$e148763%_
+                                          ((lambda (_%ctor-method148766%_)
+                                             (if _%method148738%_
+                                                 (if (eq? _%ctor-method148766%_
+                                                          _%method148738%_)
+                                                     (_%lp148735%_
+                                                      _%rest148758%_
+                                                      _%ctor-method148766%_)
+                                                     (let ((__tmp149497
                                                             (cons '!class
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _%id148237%_ '()))))
+                          (cons _%id148674%_ '()))))
                (declare (not safe))
                (gxc#raise-compile-error
                 '"conflicting implicit constructor methods"
-                __tmp149060
-                _%method148301%_
-                _%ctor-method148329%_)))
+                __tmp149497
+                _%method148738%_
+                _%ctor-method148766%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (_%lp148298%_
-                                                  _%rest148321%_
-                                                  _%ctor-method148329%_)))
-                                           _%$e148326%_)
-                                          (_%lp148298%_
-                                           _%rest148321%_
-                                           _%method148301%_))))))
+                                                 (_%lp148735%_
+                                                  _%rest148758%_
+                                                  _%ctor-method148766%_)))
+                                           _%$e148763%_)
+                                          (_%lp148735%_
+                                           _%rest148758%_
+                                           _%method148738%_))))))
                             (if (let ()
                                   (declare (not safe))
-                                  (##pair? _%rest148302148310%_))
-                                (let ((_%hd148307148335%_
+                                  (##pair? _%rest148739148747%_))
+                                (let ((_%hd148744148772%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%rest148302148310%_)))
-                                      (_%tl148308148337%_
+                                         (##car _%rest148739148747%_)))
+                                      (_%tl148745148774%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%rest148302148310%_))))
-                                  (let* ((_%super-id148340%_
-                                          _%hd148307148335%_)
-                                         (_%rest148342%_ _%tl148308148337%_))
-                                    (_%K148306148332%_
-                                     _%rest148342%_
-                                     _%super-id148340%_)))
-                                (_%else148304148318%_)))))))
-                 (_g149061_
-                  (let ((__tmp149065
-                         (lambda (_%klass-id148346%_)
-                           (cons _%klass-id148346%_
-                                 (let ((__tmp149066
+                                         (##cdr _%rest148739148747%_))))
+                                  (let* ((_%super-id148777%_
+                                          _%hd148744148772%_)
+                                         (_%rest148779%_ _%tl148745148774%_))
+                                    (_%K148743148769%_
+                                     _%rest148779%_
+                                     _%super-id148777%_)))
+                                (_%else148741148755%_)))))))
+                 (_g149498_
+                  (let ((__tmp149502
+                         (lambda (_%klass-id148783%_)
+                           (cons _%klass-id148783%_
+                                 (let ((__tmp149503
                                         (gxc#optimizer-resolve-class
-                                         (cons '!class (cons _%id148237%_ '()))
-                                         _%klass-id148346%_)))
+                                         (cons '!class (cons _%id148674%_ '()))
+                                         _%klass-id148783%_)))
                                    (declare (not safe))
                                    (##unchecked-structure-ref
-                                    __tmp149066
+                                    __tmp149503
                                     '3
                                     '#f
                                     '#f)))))
-                        (__tmp149063
-                         (lambda (_%klass-id148348%_)
-                           (let ((__tmp149064
+                        (__tmp149500
+                         (lambda (_%klass-id148785%_)
+                           (let ((__tmp149501
                                   (gxc#optimizer-resolve-class
-                                   (cons '!class (cons _%id148237%_ '()))
-                                   _%klass-id148348%_)))
+                                   (cons '!class (cons _%id148674%_ '()))
+                                   _%klass-id148785%_)))
                              (declare (not safe))
                              (##unchecked-structure-ref
-                              __tmp149064
+                              __tmp149501
                               '7
                               '#f
                               '#f)))))
                     (declare (not safe))
                     (c4-linearize__%
                      '#f
-                     __tmp149065
-                     __tmp149063
+                     __tmp149502
+                     __tmp149500
                      eq?
                      identity
                      '()
-                     _%super148238%_))))
+                     _%super148675%_))))
             (begin
-              (let ((_g149062_
+              (let ((_g149499_
                      (let ()
                        (declare (not safe))
-                       (if (##values? _g149061_)
-                           (##vector-length _g149061_)
+                       (if (##values? _g149498_)
+                           (##vector-length _g149498_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g149062_ 2)))
-                    (error "Context expects 2 values" _g149062_)))
-              (let ((_%precedence-list148350%_
-                     (let () (declare (not safe)) (##vector-ref _g149061_ 0)))
-                    (_%base-struct148351%_
-                     (let () (declare (not safe)) (##vector-ref _g149061_ 1))))
-                (let* ((_%precedence-list148395%_
+                (if (not (let () (declare (not safe)) (##fx= _g149499_ 2)))
+                    (error "Context expects 2 values" _g149499_)))
+              (let ((_%precedence-list148787%_
+                     (let () (declare (not safe)) (##vector-ref _g149498_ 0)))
+                    (_%base-struct148788%_
+                     (let () (declare (not safe)) (##vector-ref _g149498_ 1))))
+                (let* ((_%precedence-list148832%_
                         (if (let ()
                               (declare (not safe))
-                              (##memq _%id148237%_ '(t object class)))
-                            _%precedence-list148350%_
-                            (if (memq 'object::t _%precedence-list148350%_)
-                                _%precedence-list148350%_
-                                (if _%system?148243%_
-                                    (if (memq 't::t _%precedence-list148350%_)
-                                        _%precedence-list148350%_
+                              (##memq _%id148674%_ '(t object class)))
+                            _%precedence-list148787%_
+                            (if (memq 'object::t _%precedence-list148787%_)
+                                _%precedence-list148787%_
+                                (if _%system?148680%_
+                                    (if (memq 't::t _%precedence-list148787%_)
+                                        _%precedence-list148787%_
                                         (let ()
                                           (declare (not safe))
                                           (##append
-                                           _%precedence-list148350%_
+                                           _%precedence-list148787%_
                                            '(t::t))))
-                                    (let _%loop148357%_ ((_%tail148359%_
-                                                          _%precedence-list148350%_)
-                                                         (_%head148360%_ '()))
-                                      (let* ((_%tail148361148369%_
-                                              _%tail148359%_)
-                                             (_%else148363148377%_
+                                    (let _%loop148794%_ ((_%tail148796%_
+                                                          _%precedence-list148787%_)
+                                                         (_%head148797%_ '()))
+                                      (let* ((_%tail148798148806%_
+                                              _%tail148796%_)
+                                             (_%else148800148814%_
                                               (lambda ()
                                                 (let ()
                                                   (declare (not safe))
                                                   (__foldl1
                                                    cons
                                                    '(object::t t::t)
-                                                   _%head148360%_))))
-                                             (_%K148365148383%_
-                                              (lambda (_%rest148380%_
-                                                       _%hd148381%_)
-                                                (if (eq? _%hd148381%_ 't::t)
-                                                    (let ((__tmp149067
+                                                   _%head148797%_))))
+                                             (_%K148802148820%_
+                                              (lambda (_%rest148817%_
+                                                       _%hd148818%_)
+                                                (if (eq? _%hd148818%_ 't::t)
+                                                    (let ((__tmp149504
                                                            (cons 'object::t
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%tail148359%_)))
+                         _%tail148796%_)))
               (declare (not safe))
-              (__foldl1 cons __tmp149067 _%head148360%_))
+              (__foldl1 cons __tmp149504 _%head148797%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%loop148357%_
-                                                     _%rest148380%_
-                                                     (cons _%hd148381%_
-                                                           _%head148360%_))))))
+                                                    (_%loop148794%_
+                                                     _%rest148817%_
+                                                     (cons _%hd148818%_
+                                                           _%head148797%_))))))
                                         (if (let ()
                                               (declare (not safe))
-                                              (##pair? _%tail148361148369%_))
-                                            (let ((_%hd148366148386%_
+                                              (##pair? _%tail148798148806%_))
+                                            (let ((_%hd148803148823%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##car _%tail148361148369%_)))
-                                                  (_%tl148367148388%_
+                                                     (##car _%tail148798148806%_)))
+                                                  (_%tl148804148825%_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (##cdr _%tail148361148369%_))))
-                                              (let* ((_%hd148391%_
-                                                      _%hd148366148386%_)
-                                                     (_%rest148393%_
-                                                      _%tl148367148388%_))
-                                                (_%K148365148383%_
-                                                 _%rest148393%_
-                                                 _%hd148391%_)))
-                                            (_%else148363148377%_))))))))
-                       (_%fields148397%_
+                                                     (##cdr _%tail148798148806%_))))
+                                              (let* ((_%hd148828%_
+                                                      _%hd148803148823%_)
+                                                     (_%rest148830%_
+                                                      _%tl148804148825%_))
+                                                (_%K148802148820%_
+                                                 _%rest148830%_
+                                                 _%hd148828%_)))
+                                            (_%else148800148814%_))))))))
+                       (_%fields148834%_
                         (gxc#compute-class-fields
-                         (cons '!class (cons _%id148237%_ '()))
-                         _%base-struct148351%_
-                         _%precedence-list148395%_
-                         _%slots148239%_)))
+                         (cons '!class (cons _%id148674%_ '()))
+                         _%base-struct148788%_
+                         _%precedence-list148832%_
+                         _%slots148676%_)))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%id148237%_
+                     _%self148685%_
+                     _%id148674%_
                      '1
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%super148238%_
+                     _%self148685%_
+                     _%super148675%_
                      '2
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%precedence-list148395%_
+                     _%self148685%_
+                     _%precedence-list148832%_
                      '3
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%slots148239%_
+                     _%self148685%_
+                     _%slots148676%_
                      '4
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%fields148397%_
+                     _%self148685%_
+                     _%fields148834%_
                      '5
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%ctor-method148344%_
+                     _%self148685%_
+                     _%ctor-method148781%_
                      '6
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%struct?148241%_
+                     _%self148685%_
+                     _%struct?148678%_
                      '7
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%final?148242%_
+                     _%self148685%_
+                     _%final?148679%_
                      '8
                      '#f
                      '#f))
                   (let ()
                     (declare (not safe))
                     (##unchecked-structure-set!
-                     _%self148248%_
-                     _%metaclass148244%_
+                     _%self148685%_
+                     _%metaclass148681%_
                      '10
                      '#f
                      '#f)))))))))
     (define gxc#!class:::init!__1
-      (lambda (_%self146250148400%_
-               _%id148402%_
-               _%super148403%_
-               _%precedence-list148404%_
-               _%slots148405%_
-               _%fields148406%_
-               _%constructor148407%_
-               _%struct?148408%_
-               _%final?148409%_
-               _%system?148410%_
-               _%metaclass148411%_
-               _%methods148412%_)
-        (let* ((_%self148414%_ _%self146250148400%_)
-               (_%self148416%_ _%self148414%_))
+      (lambda (_%self146687148837%_
+               _%id148839%_
+               _%super148840%_
+               _%precedence-list148841%_
+               _%slots148842%_
+               _%fields148843%_
+               _%constructor148844%_
+               _%struct?148845%_
+               _%final?148846%_
+               _%system?148847%_
+               _%metaclass148848%_
+               _%methods148849%_)
+        (let* ((_%self148851%_ _%self146687148837%_)
+               (_%self148853%_ _%self148851%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%id148402%_
+             _%self148853%_
+             _%id148839%_
              '1
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%super148403%_
+             _%self148853%_
+             _%super148840%_
              '2
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%precedence-list148404%_
+             _%self148853%_
+             _%precedence-list148841%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%slots148405%_
+             _%self148853%_
+             _%slots148842%_
              '4
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%fields148406%_
+             _%self148853%_
+             _%fields148843%_
              '5
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%constructor148407%_
+             _%self148853%_
+             _%constructor148844%_
              '6
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%struct?148408%_
+             _%self148853%_
+             _%struct?148845%_
              '7
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%final?148409%_
+             _%self148853%_
+             _%final?148846%_
              '8
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self148416%_
-             _%metaclass148411%_
+             _%self148853%_
+             _%metaclass148848%_
              '10
              '#f
              '#f))
-          (if _%methods148412%_
-              (let ((__tmp149068
+          (if _%methods148849%_
+              (let ((__tmp149505
                      (let ()
                        (declare (not safe))
-                       (list->hash-table-eq _%methods148412%_))))
+                       (list->hash-table-eq _%methods148849%_))))
                 (declare (not safe))
                 (##unchecked-structure-set!
-                 _%self148416%_
-                 __tmp149068
+                 _%self148853%_
+                 __tmp149505
                  '11
                  '#f
                  '#f))
               '#!void))))
     (define gxc#!class:::init!
-      (lambda _g149070_
-        (let ((_g149069_ (let () (declare (not safe)) (##length _g149070_))))
-          (cond ((let () (declare (not safe)) (##fx= _g149069_ 9))
-                 (apply gxc#!class:::init!__0 _g149070_))
-                ((let () (declare (not safe)) (##fx= _g149069_ 12))
-                 (apply gxc#!class:::init!__1 _g149070_))
+      (lambda _g149507_
+        (let ((_g149506_ (let () (declare (not safe)) (##length _g149507_))))
+          (cond ((let () (declare (not safe)) (##fx= _g149506_ 9))
+                 (apply gxc#!class:::init!__0 _g149507_))
+                ((let () (declare (not safe)) (##fx= _g149506_ 12))
+                 (apply gxc#!class:::init!__1 _g149507_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#!class:::init!
-                  _g149070_))))))
+                  _g149507_))))))
     (let ()
       (declare (not safe))
       (__bind-method! gxc#!class::t ':init! gxc#!class:::init! '#f))
     (define gxc#compute-class-fields
-      (lambda (_%where148087%_
-               _%base-struct148088%_
-               _%precedence-list148089%_
-               _%direct-slots148090%_)
-        (let* ((_%base-fields148092%_
-                (if _%base-struct148088%_
-                    (let ((__tmp149071
+      (lambda (_%where148524%_
+               _%base-struct148525%_
+               _%precedence-list148526%_
+               _%direct-slots148527%_)
+        (let* ((_%base-fields148529%_
+                (if _%base-struct148525%_
+                    (let ((__tmp149508
                            (gxc#optimizer-resolve-class
-                            _%where148087%_
-                            _%base-struct148088%_)))
+                            _%where148524%_
+                            _%base-struct148525%_)))
                       (declare (not safe))
-                      (##unchecked-structure-ref __tmp149071 '5 '#f '#f))
+                      (##unchecked-structure-ref __tmp149508 '5 '#f '#f))
                     '()))
-               (_%r-fields148094%_ (reverse _%base-fields148092%_))
-               (_%seen-slots148102%_
-                (let ((_%tab148096%_
+               (_%r-fields148531%_ (reverse _%base-fields148529%_))
+               (_%seen-slots148539%_
+                (let ((_%tab148533%_
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (for-each
-                   (lambda (_%g148097148099%_)
+                   (lambda (_%g148534148536%_)
                      (let ()
                        (declare (not safe))
-                       (hash-put! _%tab148096%_ _%g148097148099%_ '#t)))
-                   _%base-fields148092%_)
-                  _%tab148096%_))
-               (_%process-slot148106%_
-                (lambda (_%slot148104%_)
+                       (hash-put! _%tab148533%_ _%g148534148536%_ '#t)))
+                   _%base-fields148529%_)
+                  _%tab148533%_))
+               (_%process-slot148543%_
+                (lambda (_%slot148541%_)
                   (if (let ()
                         (declare (not safe))
-                        (hash-get _%seen-slots148102%_ _%slot148104%_))
+                        (hash-get _%seen-slots148539%_ _%slot148541%_))
                       '#!void
                       (begin
                         (let ()
                           (declare (not safe))
-                          (hash-put! _%seen-slots148102%_ _%slot148104%_ '#t))
-                        (set! _%r-fields148094%_
-                              (cons _%slot148104%_ _%r-fields148094%_)))))))
+                          (hash-put! _%seen-slots148539%_ _%slot148541%_ '#t))
+                        (set! _%r-fields148531%_
+                              (cons _%slot148541%_ _%r-fields148531%_)))))))
           (for-each
-           (lambda (_%mixin148109%_)
-             (let ((_%klass148111%_
+           (lambda (_%mixin148546%_)
+             (let ((_%klass148548%_
                     (gxc#optimizer-resolve-class
-                     _%where148087%_
-                     _%mixin148109%_)))
+                     _%where148524%_
+                     _%mixin148546%_)))
                (if (let ()
                      (declare (not safe))
-                     (##unchecked-structure-ref _%klass148111%_ '7 '#f '#f))
+                     (##unchecked-structure-ref _%klass148548%_ '7 '#f '#f))
                    '#!void
                    (for-each
-                    _%process-slot148106%_
+                    _%process-slot148543%_
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-ref
-                       _%klass148111%_
+                       _%klass148548%_
                        '5
                        '#f
                        '#f))))))
-           _%precedence-list148089%_)
-          (for-each _%process-slot148106%_ _%direct-slots148090%_)
-          (let () (declare (not safe)) (##reverse _%r-fields148094%_)))))
+           _%precedence-list148526%_)
+          (for-each _%process-slot148543%_ _%direct-slots148527%_)
+          (let () (declare (not safe)) (##reverse _%r-fields148531%_)))))
     (define gxc#!class-slot->field-offset
-      (lambda (_%klass148046%_ _%slot148047%_)
-        (let _%lp148049%_ ((_%rest148051%_
+      (lambda (_%klass148483%_ _%slot148484%_)
+        (let _%lp148486%_ ((_%rest148488%_
                             (##structure-ref
-                             _%klass148046%_
+                             _%klass148483%_
                              '5
                              gxc#!class::t
                              '#f))
-                           (_%offset148052%_ '1))
-          (let* ((_%rest148053148061%_ _%rest148051%_)
-                 (_%else148055148069%_
+                           (_%offset148489%_ '1))
+          (let* ((_%rest148490148498%_ _%rest148488%_)
+                 (_%else148492148506%_
                   (lambda ()
-                    (let ((__tmp149073
+                    (let ((__tmp149510
                            (##structure-ref
-                            _%klass148046%_
+                            _%klass148483%_
                             '1
                             gxc#!type::t
                             '#f))
-                          (__tmp149072
+                          (__tmp149509
                            (##structure-ref
-                            _%klass148046%_
+                            _%klass148483%_
                             '5
                             gxc#!class::t
                             '#f)))
                       (declare (not safe))
                       (gxc#raise-compile-error
                        '"unknown class slot"
-                       __tmp149073
-                       __tmp149072
-                       _%slot148047%_))))
-                 (_%K148057148075%_
-                  (lambda (_%rest148072%_ _%s148073%_)
-                    (if (eq? _%s148073%_ _%slot148047%_)
-                        _%offset148052%_
-                        (_%lp148049%_
-                         _%rest148072%_
+                       __tmp149510
+                       __tmp149509
+                       _%slot148484%_))))
+                 (_%K148494148512%_
+                  (lambda (_%rest148509%_ _%s148510%_)
+                    (if (eq? _%s148510%_ _%slot148484%_)
+                        _%offset148489%_
+                        (_%lp148486%_
+                         _%rest148509%_
                          (let ()
                            (declare (not safe))
-                           (##fx+ _%offset148052%_ '1)))))))
-            (if (let () (declare (not safe)) (##pair? _%rest148053148061%_))
-                (let ((_%hd148058148078%_
+                           (##fx+ _%offset148489%_ '1)))))))
+            (if (let () (declare (not safe)) (##pair? _%rest148490148498%_))
+                (let ((_%hd148495148515%_
                        (let ()
                          (declare (not safe))
-                         (##car _%rest148053148061%_)))
-                      (_%tl148059148080%_
+                         (##car _%rest148490148498%_)))
+                      (_%tl148496148517%_
                        (let ()
                          (declare (not safe))
-                         (##cdr _%rest148053148061%_))))
-                  (let* ((_%s148083%_ _%hd148058148078%_)
-                         (_%rest148085%_ _%tl148059148080%_))
-                    (_%K148057148075%_ _%rest148085%_ _%s148083%_)))
-                (_%else148055148069%_))))))
+                         (##cdr _%rest148490148498%_))))
+                  (let* ((_%s148520%_ _%hd148495148515%_)
+                         (_%rest148522%_ _%tl148496148517%_))
+                    (_%K148494148512%_ _%rest148522%_ _%s148520%_)))
+                (_%else148492148506%_))))))
     (define gxc#!class-slot-find-struct
-      (lambda (_%klass148004%_ _%slot148005%_)
-        (if (gxc#!class-struct-slot? _%klass148004%_ _%slot148005%_)
-            _%klass148004%_
-            (let _%lp148007%_ ((_%rest148009%_
+      (lambda (_%klass148441%_ _%slot148442%_)
+        (if (gxc#!class-struct-slot? _%klass148441%_ _%slot148442%_)
+            _%klass148441%_
+            (let _%lp148444%_ ((_%rest148446%_
                                 (##structure-ref
-                                 _%klass148004%_
+                                 _%klass148441%_
                                  '3
                                  gxc#!class::t
                                  '#f)))
-              (let* ((_%rest148010148018%_ _%rest148009%_)
-                     (_%else148012148026%_ (lambda () '#f))
-                     (_%K148014148034%_
-                      (lambda (_%rest148029%_ _%super148030%_)
-                        (let ((_%super-class148032%_
+              (let* ((_%rest148447148455%_ _%rest148446%_)
+                     (_%else148449148463%_ (lambda () '#f))
+                     (_%K148451148471%_
+                      (lambda (_%rest148466%_ _%super148467%_)
+                        (let ((_%super-class148469%_
                                (gxc#optimizer-resolve-class
                                 (cons '!class-slot-find-struct
                                       (cons (##structure-ref
-                                             _%klass148004%_
+                                             _%klass148441%_
                                              '1
                                              gxc#!type::t
                                              '#f)
-                                            (cons _%slot148005%_ '())))
-                                _%super148030%_)))
+                                            (cons _%slot148442%_ '())))
+                                _%super148467%_)))
                           (if (gxc#!class-struct-slot?
-                               _%super-class148032%_
-                               _%slot148005%_)
-                              _%super-class148032%_
-                              (_%lp148007%_ _%rest148029%_))))))
+                               _%super-class148469%_
+                               _%slot148442%_)
+                              _%super-class148469%_
+                              (_%lp148444%_ _%rest148466%_))))))
                 (if (let ()
                       (declare (not safe))
-                      (##pair? _%rest148010148018%_))
-                    (let ((_%hd148015148037%_
+                      (##pair? _%rest148447148455%_))
+                    (let ((_%hd148452148474%_
                            (let ()
                              (declare (not safe))
-                             (##car _%rest148010148018%_)))
-                          (_%tl148016148039%_
+                             (##car _%rest148447148455%_)))
+                          (_%tl148453148476%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%rest148010148018%_))))
-                      (let* ((_%super148042%_ _%hd148015148037%_)
-                             (_%rest148044%_ _%tl148016148039%_))
-                        (_%K148014148034%_ _%rest148044%_ _%super148042%_)))
-                    (_%else148012148026%_)))))))
+                             (##cdr _%rest148447148455%_))))
+                      (let* ((_%super148479%_ _%hd148452148474%_)
+                             (_%rest148481%_ _%tl148453148476%_))
+                        (_%K148451148471%_ _%rest148481%_ _%super148479%_)))
+                    (_%else148449148463%_)))))))
     (define gxc#!class-struct-slot?
-      (lambda (_%klass148001%_ _%slot148002%_)
-        (if (##structure-ref _%klass148001%_ '7 gxc#!class::t '#f)
-            (memq _%slot148002%_
-                  (##structure-ref _%klass148001%_ '5 gxc#!class::t '#f))
+      (lambda (_%klass148438%_ _%slot148439%_)
+        (if (##structure-ref _%klass148438%_ '7 gxc#!class::t '#f)
+            (memq _%slot148439%_
+                  (##structure-ref _%klass148438%_ '5 gxc#!class::t '#f))
             '#f)))
     (define gxc#!predicate:::init!
-      (lambda (_%self146251147985%_ _%id147987%_)
-        (let* ((_%self147989%_ _%self146251147985%_)
-               (_%self147991%_ _%self147989%_))
+      (lambda (_%self146688148422%_ _%id148424%_)
+        (let* ((_%self148426%_ _%self146688148422%_)
+               (_%self148428%_ _%self148426%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147991%_
-             _%id147987%_
+             _%self148428%_
+             _%id148424%_
              '1
              '#f
              '#f))
-          (let ((__tmp149074
-                 (let ((__obj149006
+          (let ((__tmp149511
+                 (let ((__obj149443
                         (let ()
                           (declare (not safe))
                           (##structure
@@ -2302,7 +2302,7 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149006
+                      __obj149443
                       'boolean::t
                       '1
                       '#f
@@ -2310,7 +2310,7 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149006
+                      __obj149443
                       '(pure predicate)
                       '2
                       '#f
@@ -2318,16 +2318,16 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149006
+                      __obj149443
                       '(t::t)
                       '3
                       '#f
                       '#f))
-                   __obj149006)))
+                   __obj149443)))
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147991%_
-             __tmp149074
+             _%self148428%_
+             __tmp149511
              '2
              '#f
              '#f)))))
@@ -2335,19 +2335,19 @@
       (declare (not safe))
       (__bind-method! gxc#!predicate::t ':init! gxc#!predicate:::init! '#f))
     (define gxc#!constructor:::init!
-      (lambda (_%self146252147847%_ _%id147849%_)
-        (let* ((_%self147851%_ _%self146252147847%_)
-               (_%self147853%_ _%self147851%_))
+      (lambda (_%self146689148284%_ _%id148286%_)
+        (let* ((_%self148288%_ _%self146689148284%_)
+               (_%self148290%_ _%self148288%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147853%_
-             _%id147849%_
+             _%self148290%_
+             _%id148286%_
              '1
              '#f
              '#f))
-          (let ((__tmp149075
-                 (let ((__obj149007
+          (let ((__tmp149512
+                 (let ((__obj149444
                         (let ()
                           (declare (not safe))
                           (##structure
@@ -2360,24 +2360,24 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149007
-                      _%id147849%_
+                      __obj149444
+                      _%id148286%_
                       '1
                       '#f
                       '#f))
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149007
+                      __obj149444
                       '(alloc)
                       '2
                       '#f
                       '#f))
-                   __obj149007)))
+                   __obj149444)))
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147853%_
-             __tmp149075
+             _%self148290%_
+             __tmp149512
              '2
              '#f
              '#f)))))
@@ -2389,38 +2389,38 @@
        gxc#!constructor:::init!
        '#f))
     (define gxc#!accessor:::init!
-      (lambda (_%self146253147707%_
-               _%id147709%_
-               _%slot147710%_
-               _%checked?147711%_)
-        (let* ((_%self147713%_ _%self146253147707%_)
-               (_%self147715%_ _%self147713%_))
+      (lambda (_%self146690148144%_
+               _%id148146%_
+               _%slot148147%_
+               _%checked?148148%_)
+        (let* ((_%self148150%_ _%self146690148144%_)
+               (_%self148152%_ _%self148150%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147715%_
-             _%id147709%_
+             _%self148152%_
+             _%id148146%_
              '1
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147715%_
-             _%slot147710%_
+             _%self148152%_
+             _%slot148147%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147715%_
-             _%checked?147711%_
+             _%self148152%_
+             _%checked?148148%_
              '4
              '#f
              '#f))
-          (let ((__tmp149076
-                 (let ((__obj149008
+          (let ((__tmp149513
+                 (let ((__obj149445
                         (let ()
                           (declare (not safe))
                           (##structure
@@ -2432,28 +2432,28 @@
                            '#f))))
                    (let ()
                      (declare (not safe))
-                     (##unchecked-structure-set! __obj149008 't::t '1 '#f '#f))
+                     (##unchecked-structure-set! __obj149445 't::t '1 '#f '#f))
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149008
+                      __obj149445
                       '(pure)
                       '2
                       '#f
                       '#f))
-                   (let ((__tmp149077 (cons _%id147709%_ '())))
+                   (let ((__tmp149514 (cons _%id148146%_ '())))
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149008
-                      __tmp149077
+                      __obj149445
+                      __tmp149514
                       '3
                       '#f
                       '#f))
-                   __obj149008)))
+                   __obj149445)))
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147715%_
-             __tmp149076
+             _%self148152%_
+             __tmp149513
              '2
              '#f
              '#f)))))
@@ -2461,38 +2461,38 @@
       (declare (not safe))
       (__bind-method! gxc#!accessor::t ':init! gxc#!accessor:::init! '#f))
     (define gxc#!mutator:::init!
-      (lambda (_%self146254147567%_
-               _%id147569%_
-               _%slot147570%_
-               _%checked?147571%_)
-        (let* ((_%self147573%_ _%self146254147567%_)
-               (_%self147575%_ _%self147573%_))
+      (lambda (_%self146691148004%_
+               _%id148006%_
+               _%slot148007%_
+               _%checked?148008%_)
+        (let* ((_%self148010%_ _%self146691148004%_)
+               (_%self148012%_ _%self148010%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147575%_
-             _%id147569%_
+             _%self148012%_
+             _%id148006%_
              '1
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147575%_
-             _%slot147570%_
+             _%self148012%_
+             _%slot148007%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147575%_
-             _%checked?147571%_
+             _%self148012%_
+             _%checked?148008%_
              '4
              '#f
              '#f))
-          (let ((__tmp149078
-                 (let ((__obj149009
+          (let ((__tmp149515
+                 (let ((__obj149446
                         (let ()
                           (declare (not safe))
                           (##structure
@@ -2505,7 +2505,7 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149009
+                      __obj149446
                       'void::t
                       '1
                       '#f
@@ -2513,24 +2513,24 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149009
+                      __obj149446
                       '(mut)
                       '2
                       '#f
                       '#f))
-                   (let ((__tmp149079 (cons _%id147569%_ (cons 't::t '()))))
+                   (let ((__tmp149516 (cons _%id148006%_ (cons 't::t '()))))
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149009
-                      __tmp149079
+                      __obj149446
+                      __tmp149516
                       '3
                       '#f
                       '#f))
-                   __obj149009)))
+                   __obj149446)))
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147575%_
-             __tmp149078
+             _%self148012%_
+             __tmp149515
              '2
              '#f
              '#f)))))
@@ -2538,111 +2538,111 @@
       (declare (not safe))
       (__bind-method! gxc#!mutator::t ':init! gxc#!mutator:::init! '#f))
     (define gxc#!lambda:::init!__%
-      (lambda (_%@@keywords147409%_
-               _%signature147406147410%_
-               _%self146255147412%_
-               _%arity147414%_
-               _%dispatch147415%_)
-        (let* ((_%signature147417%_
-                (if (eq? _%signature147406147410%_ absent-value)
+      (lambda (_%@@keywords147846%_
+               _%signature147843147847%_
+               _%self146692147849%_
+               _%arity147851%_
+               _%dispatch147852%_)
+        (let* ((_%signature147854%_
+                (if (eq? _%signature147843147847%_ absent-value)
                     '#f
-                    _%signature147406147410%_))
-               (_%self147419%_ _%self146255147412%_)
-               (_%self147421%_ _%self147419%_))
+                    _%signature147843147847%_))
+               (_%self147856%_ _%self146692147849%_)
+               (_%self147858%_ _%self147856%_))
           (let ()
             (declare (not safe))
-            (##unchecked-structure-set! _%self147421%_ 'procedure '1 '#f '#f))
+            (##unchecked-structure-set! _%self147858%_ 'procedure '1 '#f '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147421%_
-             _%arity147414%_
+             _%self147858%_
+             _%arity147851%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147421%_
-             _%dispatch147415%_
+             _%self147858%_
+             _%dispatch147852%_
              '4
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147421%_
-             _%signature147417%_
+             _%self147858%_
+             _%signature147854%_
              '2
              '#f
              '#f)))))
     (define gxc#!lambda:::init!__@
-      (lambda (_%@@keywords147435%_ . _%args147436%_)
+      (lambda (_%@@keywords147872%_ . _%args147873%_)
         (apply gxc#!lambda:::init!__%
-               _%@@keywords147435%_
+               _%@@keywords147872%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords147435%_
+                  _%@@keywords147872%_
                   'signature:
                   absent-value))
-               _%args147436%_)))
+               _%args147873%_)))
     (define gxc#!lambda:::init!
-      (lambda _%args147407147442%_
+      (lambda _%args147844147879%_
         (apply keyword-dispatch
                '#(signature:)
                gxc#!lambda:::init!__@
-               _%args147407147442%_)))
+               _%args147844147879%_)))
     (let ()
       (declare (not safe))
       (__bind-method! gxc#!lambda::t ':init! gxc#!lambda:::init! '#f))
     (define gxc#!case-lambda:::init!__%
-      (lambda (_%@@keywords147248%_
-               _%signature147245147249%_
-               _%self146256147251%_
-               _%clauses147253%_)
-        (let* ((_%signature147255%_
-                (if (eq? _%signature147245147249%_ absent-value)
+      (lambda (_%@@keywords147685%_
+               _%signature147682147686%_
+               _%self146693147688%_
+               _%clauses147690%_)
+        (let* ((_%signature147692%_
+                (if (eq? _%signature147682147686%_ absent-value)
                     '#f
-                    _%signature147245147249%_))
-               (_%self147257%_ _%self146256147251%_)
-               (_%self147259%_ _%self147257%_))
+                    _%signature147682147686%_))
+               (_%self147694%_ _%self146693147688%_)
+               (_%self147696%_ _%self147694%_))
           (let ()
             (declare (not safe))
-            (##unchecked-structure-set! _%self147259%_ 'procedure '1 '#f '#f))
+            (##unchecked-structure-set! _%self147696%_ 'procedure '1 '#f '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147259%_
-             _%signature147255%_
+             _%self147696%_
+             _%signature147692%_
              '2
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147259%_
-             _%clauses147253%_
+             _%self147696%_
+             _%clauses147690%_
              '3
              '#f
              '#f)))))
     (define gxc#!case-lambda:::init!__@
-      (lambda (_%@@keywords147273%_ . _%args147274%_)
+      (lambda (_%@@keywords147710%_ . _%args147711%_)
         (apply gxc#!case-lambda:::init!__%
-               _%@@keywords147273%_
+               _%@@keywords147710%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords147273%_
+                  _%@@keywords147710%_
                   'signature:
                   absent-value))
-               _%args147274%_)))
+               _%args147711%_)))
     (define gxc#!case-lambda:::init!
-      (lambda _%args147246147280%_
+      (lambda _%args147683147717%_
         (apply keyword-dispatch
                '#(signature:)
                gxc#!case-lambda:::init!__@
-               _%args147246147280%_)))
+               _%args147683147717%_)))
     (let ()
       (declare (not safe))
       (__bind-method!
@@ -2651,25 +2651,25 @@
        gxc#!case-lambda:::init!
        '#f))
     (define gxc#!kw-lambda:::init!
-      (lambda (_%self146257147105%_ _%tab147107%_ _%dispatch147108%_)
-        (let* ((_%self147110%_ _%self146257147105%_)
-               (_%self147112%_ _%self147110%_))
+      (lambda (_%self146694147542%_ _%tab147544%_ _%dispatch147545%_)
+        (let* ((_%self147547%_ _%self146694147542%_)
+               (_%self147549%_ _%self147547%_))
           (let ()
             (declare (not safe))
-            (##unchecked-structure-set! _%self147112%_ 'procedure '1 '#f '#f))
+            (##unchecked-structure-set! _%self147549%_ 'procedure '1 '#f '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147112%_
-             _%tab147107%_
+             _%self147549%_
+             _%tab147544%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self147112%_
-             _%dispatch147108%_
+             _%self147549%_
+             _%dispatch147545%_
              '4
              '#f
              '#f)))))
@@ -2677,25 +2677,25 @@
       (declare (not safe))
       (__bind-method! gxc#!kw-lambda::t ':init! gxc#!kw-lambda:::init! '#f))
     (define gxc#!kw-lambda-primary:::init!
-      (lambda (_%self146258146966%_ _%keys146968%_ _%main146969%_)
-        (let* ((_%self146971%_ _%self146258146966%_)
-               (_%self146973%_ _%self146971%_))
+      (lambda (_%self146695147403%_ _%keys147405%_ _%main147406%_)
+        (let* ((_%self147408%_ _%self146695147403%_)
+               (_%self147410%_ _%self147408%_))
           (let ()
             (declare (not safe))
-            (##unchecked-structure-set! _%self146973%_ 'procedure '1 '#f '#f))
+            (##unchecked-structure-set! _%self147410%_ 'procedure '1 '#f '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self146973%_
-             _%keys146968%_
+             _%self147410%_
+             _%keys147405%_
              '3
              '#f
              '#f))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self146973%_
-             _%main146969%_
+             _%self147410%_
+             _%main147406%_
              '4
              '#f
              '#f)))))
@@ -2723,19 +2723,19 @@
        gxc#!primitive-case-lambda:::init!
        '#f))
     (define gxc#!primitive-predicate:::init!
-      (lambda (_%self146259146584%_ _%id146586%_)
-        (let* ((_%self146588%_ _%self146259146584%_)
-               (_%self146590%_ _%self146588%_))
+      (lambda (_%self146696147021%_ _%id147023%_)
+        (let* ((_%self147025%_ _%self146696147021%_)
+               (_%self147027%_ _%self147025%_))
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self146590%_
-             _%id146586%_
+             _%self147027%_
+             _%id147023%_
              '1
              '#f
              '#f))
-          (let ((__tmp149080
-                 (let ((__obj149010
+          (let ((__tmp149517
+                 (let ((__obj149447
                         (let ()
                           (declare (not safe))
                           (##structure
@@ -2748,7 +2748,7 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149010
+                      __obj149447
                       'boolean::t
                       '1
                       '#f
@@ -2756,7 +2756,7 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149010
+                      __obj149447
                       '(pure)
                       '2
                       '#f
@@ -2764,16 +2764,16 @@
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-set!
-                      __obj149010
+                      __obj149447
                       '(t::t)
                       '3
                       '#f
                       '#f))
-                   __obj149010)))
+                   __obj149447)))
             (declare (not safe))
             (##unchecked-structure-set!
-             _%self146590%_
-             __tmp149080
+             _%self147027%_
+             __tmp149517
              '2
              '#f
              '#f)))))
@@ -2785,158 +2785,158 @@
        gxc#!primitive-predicate:::init!
        '#f))
     (define gxc#!class-method-table
-      (lambda (_%klass146453%_)
-        (let ((_%$e146455%_
-               (##structure-ref _%klass146453%_ '11 gxc#!class::t '#f)))
-          (if _%$e146455%_
-              _%$e146455%_
-              (let ((_%tab146459%_
+      (lambda (_%klass146890%_)
+        (let ((_%$e146892%_
+               (##structure-ref _%klass146890%_ '11 gxc#!class::t '#f)))
+          (if _%$e146892%_
+              _%$e146892%_
+              (let ((_%tab146896%_
                      (let () (declare (not safe)) (make-hash-table-eq))))
                 (##structure-set!
-                 _%klass146453%_
-                 _%tab146459%_
+                 _%klass146890%_
+                 _%tab146896%_
                  '11
                  gxc#!class::t
                  '#f)
-                _%tab146459%_)))))
+                _%tab146896%_)))))
     (define gxc#!class-lookup-method
-      (lambda (_%klass146444%_ _%method146445%_)
-        (let ((_%tab146446146448%_
-               (##structure-ref _%klass146444%_ '11 gxc#!class::t '#f)))
-          (if _%tab146446146448%_
-              (let ((_%tab146451%_ _%tab146446146448%_))
+      (lambda (_%klass146881%_ _%method146882%_)
+        (let ((_%tab146883146885%_
+               (##structure-ref _%klass146881%_ '11 gxc#!class::t '#f)))
+          (if _%tab146883146885%_
+              (let ((_%tab146888%_ _%tab146883146885%_))
                 (declare (not safe))
-                (hash-get _%tab146451%_ _%method146445%_))
+                (hash-get _%tab146888%_ _%method146882%_))
               '#f))))
     (define gxc#!type-subtype?
-      (lambda (_%type-a146432%_ _%type-b146433%_)
-        (if _%type-a146432%_
-            (if _%type-b146433%_
-                (let ((_%$e146435%_ (eq? _%type-a146432%_ _%type-b146433%_)))
-                  (if _%$e146435%_
-                      _%$e146435%_
-                      (let ((_%$e146438%_
+      (lambda (_%type-a146869%_ _%type-b146870%_)
+        (if _%type-a146869%_
+            (if _%type-b146870%_
+                (let ((_%$e146872%_ (eq? _%type-a146869%_ _%type-b146870%_)))
+                  (if _%$e146872%_
+                      _%$e146872%_
+                      (let ((_%$e146875%_
                              (eq? (##structure-ref
-                                   _%type-b146433%_
+                                   _%type-b146870%_
                                    '1
                                    gxc#!type::t
                                    '#f)
                                   't)))
-                        (if _%$e146438%_
-                            _%$e146438%_
-                            (let ((_%$e146441%_
+                        (if _%$e146875%_
+                            _%$e146875%_
+                            (let ((_%$e146878%_
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
-                                          _%type-a146432%_
+                                          _%type-a146869%_
                                           'gxc#!procedure::t))
                                        (eq? (##structure-ref
-                                             _%type-b146433%_
+                                             _%type-b146870%_
                                              '1
                                              gxc#!type::t
                                              '#f)
                                             'procedure)
                                        '#f)))
-                              (if _%$e146441%_
-                                  _%$e146441%_
+                              (if _%$e146878%_
+                                  _%$e146878%_
                                   (if (let ()
                                         (declare (not safe))
                                         (##structure-instance-of?
-                                         _%type-a146432%_
+                                         _%type-a146869%_
                                          'gxc#!class::t))
                                       (if (let ()
                                             (declare (not safe))
                                             (##structure-instance-of?
-                                             _%type-b146433%_
+                                             _%type-b146870%_
                                              'gxc#!class::t))
                                           (gxc#!class-subclass?
-                                           _%type-a146432%_
-                                           _%type-b146433%_)
+                                           _%type-a146869%_
+                                           _%type-b146870%_)
                                           '#f)
                                       '#f)))))))
                 '#f)
             '#f)))
     (define gxc#!class-subclass?
-      (lambda (_%klass-a146383%_ _%klass-b146384%_)
-        (let ((_%$e146386%_
-               (eq? (##structure-ref _%klass-a146383%_ '1 gxc#!type::t '#f)
-                    (##structure-ref _%klass-b146384%_ '1 gxc#!type::t '#f))))
-          (if _%$e146386%_
-              _%$e146386%_
-              (let ((_%klass-id-b146389%_
-                     (##structure-ref _%klass-b146384%_ '1 gxc#!type::t '#f))
-                    (_%precedence-list146390%_
-                     (##structure-ref _%klass-a146383%_ '3 gxc#!class::t '#f)))
-                (let _%loop146392%_ ((_%rest146394%_
-                                      _%precedence-list146390%_))
-                  (let* ((_%rest146395146403%_ _%rest146394%_)
-                         (_%else146397146411%_ (lambda () '#f))
-                         (_%K146399146420%_
-                          (lambda (_%rest146414%_ _%klass-name146415%_)
-                            (let ((_%$e146417%_
-                                   (eq? (let ((__tmp149081
+      (lambda (_%klass-a146820%_ _%klass-b146821%_)
+        (let ((_%$e146823%_
+               (eq? (##structure-ref _%klass-a146820%_ '1 gxc#!type::t '#f)
+                    (##structure-ref _%klass-b146821%_ '1 gxc#!type::t '#f))))
+          (if _%$e146823%_
+              _%$e146823%_
+              (let ((_%klass-id-b146826%_
+                     (##structure-ref _%klass-b146821%_ '1 gxc#!type::t '#f))
+                    (_%precedence-list146827%_
+                     (##structure-ref _%klass-a146820%_ '3 gxc#!class::t '#f)))
+                (let _%loop146829%_ ((_%rest146831%_
+                                      _%precedence-list146827%_))
+                  (let* ((_%rest146832146840%_ _%rest146831%_)
+                         (_%else146834146848%_ (lambda () '#f))
+                         (_%K146836146857%_
+                          (lambda (_%rest146851%_ _%klass-name146852%_)
+                            (let ((_%$e146854%_
+                                   (eq? (let ((__tmp149518
                                                (gxc#optimizer-resolve-class
                                                 (cons 'subclass?
-                                                      (cons _%klass-a146383%_
-                                                            (cons _%klass-b146384%_
+                                                      (cons _%klass-a146820%_
+                                                            (cons _%klass-b146821%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                _%klass-name146415%_)))
+                                                _%klass-name146852%_)))
                                           (declare (not safe))
                                           (##unchecked-structure-ref
-                                           __tmp149081
+                                           __tmp149518
                                            '1
                                            '#f
                                            '#f))
-                                        _%klass-id-b146389%_)))
-                              (if _%$e146417%_
-                                  _%$e146417%_
-                                  (_%loop146392%_ _%rest146414%_))))))
+                                        _%klass-id-b146826%_)))
+                              (if _%$e146854%_
+                                  _%$e146854%_
+                                  (_%loop146829%_ _%rest146851%_))))))
                     (if (let ()
                           (declare (not safe))
-                          (##pair? _%rest146395146403%_))
-                        (let ((_%hd146400146423%_
+                          (##pair? _%rest146832146840%_))
+                        (let ((_%hd146837146860%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%rest146395146403%_)))
-                              (_%tl146401146425%_
+                                 (##car _%rest146832146840%_)))
+                              (_%tl146838146862%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%rest146395146403%_))))
-                          (let* ((_%klass-name146428%_ _%hd146400146423%_)
-                                 (_%rest146430%_ _%tl146401146425%_))
-                            (_%K146399146420%_
-                             _%rest146430%_
-                             _%klass-name146428%_)))
-                        (_%else146397146411%_)))))))))
+                                 (##cdr _%rest146832146840%_))))
+                          (let* ((_%klass-name146865%_ _%hd146837146860%_)
+                                 (_%rest146867%_ _%tl146838146862%_))
+                            (_%K146836146857%_
+                             _%rest146867%_
+                             _%klass-name146865%_)))
+                        (_%else146834146848%_)))))))))
     (define gxc#!interface-instance?
-      (lambda (_%type146381%_)
+      (lambda (_%type146818%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%type146381%_ 'gxc#!class::t))
+              (##structure-instance-of? _%type146818%_ 'gxc#!class::t))
             (memq 'interface-instance::t
-                  (##structure-ref _%type146381%_ '3 gxc#!class::t '#f))
+                  (##structure-ref _%type146818%_ '3 gxc#!class::t '#f))
             '#f)))
     (define gxc#!procedure-origin
-      (lambda (_%proc146370%_)
+      (lambda (_%proc146807%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%proc146370%_ 'gxc#!procedure::t))
-            (let ((_%proc146373%_ _%proc146370%_))
+              (##structure-instance-of? _%proc146807%_ 'gxc#!procedure::t))
+            (let ((_%proc146810%_ _%proc146807%_))
               (if (let ()
                     (declare (not safe))
-                    (##unchecked-structure-ref _%proc146373%_ '2 '#f '#f))
-                  (let ((__tmp149082
+                    (##unchecked-structure-ref _%proc146810%_ '2 '#f '#f))
+                  (let ((__tmp149519
                          (let ()
                            (declare (not safe))
                            (##unchecked-structure-ref
-                            _%proc146373%_
+                            _%proc146810%_
                             '2
                             '#f
                             '#f))))
                     (declare (not safe))
-                    (##unchecked-structure-ref __tmp149082 '5 '#f '#f))
+                    (##unchecked-structure-ref __tmp149519 '5 '#f '#f))
                   '#f))
             (begin
               (raise-contract-violation-error
@@ -2946,25 +2946,25 @@
                'contract:
                '!procedure?
                'value:
-               _%proc146370%_)
+               _%proc146807%_)
               '#!void))))
     (define gxc#optimizer-declare-type!__%
-      (lambda (_%sym146352%_ _%type146353%_ _%local?146354%_)
+      (lambda (_%sym146789%_ _%type146790%_ _%local?146791%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%type146353%_ 'gxc#!type::t))
+              (##structure-instance-of? _%type146790%_ 'gxc#!type::t))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad declaration: expected !type"
-                     _%sym146352%_
-                     _%type146353%_)))
-        (let ((__tmp149083
-               (let () (declare (not safe)) (struct->list _%type146353%_))))
+                     _%sym146789%_
+                     _%type146790%_)))
+        (let ((__tmp149520
+               (let () (declare (not safe)) (struct->list _%type146790%_))))
           (declare (not safe))
-          (gxc#verbose '"declare-type " _%sym146352%_ '" " __tmp149083))
-        (let ((_%table146356%_
-               (if _%local?146354%_
+          (gxc#verbose '"declare-type " _%sym146789%_ '" " __tmp149520))
+        (let ((_%table146793%_
+               (if _%local?146791%_
                    (let ()
                      (declare (not safe))
                      (gxc#current-compile-local-type))
@@ -2976,37 +2976,37 @@
                     gxc#optimizer-info::t
                     '#f))))
           (declare (not safe))
-          (hash-put! _%table146356%_ _%sym146352%_ _%type146353%_))))
+          (hash-put! _%table146793%_ _%sym146789%_ _%type146790%_))))
     (define gxc#optimizer-declare-type!__0
-      (lambda (_%sym146361%_ _%type146362%_)
-        (let ((_%local?146364%_ '#f))
+      (lambda (_%sym146798%_ _%type146799%_)
+        (let ((_%local?146801%_ '#f))
           (gxc#optimizer-declare-type!__%
-           _%sym146361%_
-           _%type146362%_
-           _%local?146364%_))))
+           _%sym146798%_
+           _%type146799%_
+           _%local?146801%_))))
     (define gxc#optimizer-declare-type!
-      (lambda _g149085_
-        (let ((_g149084_ (let () (declare (not safe)) (##length _g149085_))))
-          (cond ((let () (declare (not safe)) (##fx= _g149084_ 2))
-                 (apply gxc#optimizer-declare-type!__0 _g149085_))
-                ((let () (declare (not safe)) (##fx= _g149084_ 3))
-                 (apply gxc#optimizer-declare-type!__% _g149085_))
+      (lambda _g149522_
+        (let ((_g149521_ (let () (declare (not safe)) (##length _g149522_))))
+          (cond ((let () (declare (not safe)) (##fx= _g149521_ 2))
+                 (apply gxc#optimizer-declare-type!__0 _g149522_))
+                ((let () (declare (not safe)) (##fx= _g149521_ 3))
+                 (apply gxc#optimizer-declare-type!__% _g149522_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-type!
-                  _g149085_))))))
+                  _g149522_))))))
     (define gxc#optimizer-declare-class!
-      (lambda (_%sym146346%_ _%type146347%_)
+      (lambda (_%sym146783%_ _%type146784%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%type146347%_ 'gxc#!class::t))
+              (##structure-instance-of? _%type146784%_ 'gxc#!class::t))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad declaration: expected !class"
-                     _%sym146346%_
-                     _%type146347%_)))
-        (let ((_%table146349%_
+                     _%sym146783%_
+                     _%type146784%_)))
+        (let ((_%table146786%_
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3014,28 +3014,28 @@
                 '2
                 gxc#optimizer-info::t
                 '#f)))
-          (let ((__tmp149086
-                 (let () (declare (not safe)) (struct->list _%type146347%_))))
+          (let ((__tmp149523
+                 (let () (declare (not safe)) (struct->list _%type146784%_))))
             (declare (not safe))
-            (gxc#verbose '"declare-class " _%sym146346%_ '" " __tmp149086))
+            (gxc#verbose '"declare-class " _%sym146783%_ '" " __tmp149523))
           (let ()
             (declare (not safe))
-            (hash-put! _%table146349%_ _%sym146346%_ _%type146347%_))
+            (hash-put! _%table146786%_ _%sym146783%_ _%type146784%_))
           (let ()
             (declare (not safe))
-            (hash-put! _%table146349%_ _%type146347%_ _%sym146346%_)))))
+            (hash-put! _%table146786%_ _%type146784%_ _%sym146783%_)))))
     (define gxc#optimizer-declare-builtin-class!
-      (lambda (_%sym146341%_ _%type146342%_)
+      (lambda (_%sym146778%_ _%type146779%_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _%type146342%_ 'gxc#!class::t))
+              (##structure-instance-of? _%type146779%_ 'gxc#!class::t))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad declaration: expected !class"
-                     _%sym146341%_
-                     _%type146342%_)))
-        (let ((_%table146344%_
+                     _%sym146778%_
+                     _%type146779%_)))
+        (let ((_%table146781%_
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3045,38 +3045,38 @@
                 '#f)))
           (if (let ()
                 (declare (not safe))
-                (hash-get _%table146344%_ _%sym146341%_))
+                (hash-get _%table146781%_ _%sym146778%_))
               '#!void
               (begin
-                (let ((__tmp149087
+                (let ((__tmp149524
                        (let ()
                          (declare (not safe))
-                         (struct->list _%type146342%_))))
+                         (struct->list _%type146779%_))))
                   (declare (not safe))
                   (gxc#verbose
                    '"declare-builtin-class "
-                   _%sym146341%_
+                   _%sym146778%_
                    '" "
-                   __tmp149087))
+                   __tmp149524))
                 (let ()
                   (declare (not safe))
-                  (hash-put! _%table146344%_ _%sym146341%_ _%type146342%_))
+                  (hash-put! _%table146781%_ _%sym146778%_ _%type146779%_))
                 (let ()
                   (declare (not safe))
                   (hash-put!
-                   _%table146344%_
-                   _%type146342%_
-                   _%sym146341%_)))))))
+                   _%table146781%_
+                   _%type146779%_
+                   _%sym146778%_)))))))
     (define gxc#optimizer-clear-type!
-      (lambda (_%sym146339%_)
+      (lambda (_%sym146776%_)
         (let ()
           (declare (not safe))
-          (gxc#verbose '"clear-type " _%sym146339%_))
-        (let ((__tmp149088
+          (gxc#verbose '"clear-type " _%sym146776%_))
+        (let ((__tmp149525
                (let () (declare (not safe)) (gxc#current-compile-local-type))))
           (declare (not safe))
-          (hash-remove! __tmp149088 _%sym146339%_))
-        (let ((__tmp149089
+          (hash-remove! __tmp149525 _%sym146776%_))
+        (let ((__tmp149526
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3085,13 +3085,13 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-remove! __tmp149089 _%sym146339%_))))
+          (hash-remove! __tmp149526 _%sym146776%_))))
     (define gxc#optimizer-declare-method!__%
-      (lambda (_%type-t146307%_
-               _%method146308%_
-               _%sym146309%_
-               _%rebind?146310%_)
-        (let ((__tmp149090
+      (lambda (_%type-t146744%_
+               _%method146745%_
+               _%sym146746%_
+               _%rebind?146747%_)
+        (let ((__tmp149527
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3100,100 +3100,100 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-put! __tmp149090 _%sym146309%_ '#t))
-        (let ((_%klass146312%_ (gxc#optimizer-lookup-class _%type-t146307%_)))
-          (if _%klass146312%_
-              (let* ((_%vtab146314%_ (gxc#!class-method-table _%klass146312%_))
-                     (_%$e146316%_
+          (hash-put! __tmp149527 _%sym146746%_ '#t))
+        (let ((_%klass146749%_ (gxc#optimizer-lookup-class _%type-t146744%_)))
+          (if _%klass146749%_
+              (let* ((_%vtab146751%_ (gxc#!class-method-table _%klass146749%_))
+                     (_%$e146753%_
                       (let ()
                         (declare (not safe))
-                        (hash-get _%vtab146314%_ _%method146308%_))))
-                (if _%$e146316%_
-                    ((lambda (_%existing146319%_)
-                       (if _%rebind?146310%_
+                        (hash-get _%vtab146751%_ _%method146745%_))))
+                (if _%$e146753%_
+                    ((lambda (_%existing146756%_)
+                       (if _%rebind?146747%_
                            (let ()
                              (let ()
                                (declare (not safe))
                                (gxc#verbose
                                 '"declare-method: rebind existing method"
-                                _%type-t146307%_
+                                _%type-t146744%_
                                 '" "
-                                _%method146308%_))
+                                _%method146745%_))
                              (let ()
                                (declare (not safe))
                                (hash-put!
-                                _%vtab146314%_
-                                _%method146308%_
-                                _%sym146309%_)))
-                           (if (eq? _%existing146319%_ _%sym146309%_)
+                                _%vtab146751%_
+                                _%method146745%_
+                                _%sym146746%_)))
+                           (if (eq? _%existing146756%_ _%sym146746%_)
                                '#!void
-                               (let ((__tmp149091
+                               (let ((__tmp149528
                                       (cons 'bind-method!
-                                            (cons _%type-t146307%_
-                                                  (cons _%method146308%_
-                                                        (cons _%sym146309%_
+                                            (cons _%type-t146744%_
+                                                  (cons _%method146745%_
+                                                        (cons _%sym146746%_
                                                               '()))))))
                                  (declare (not safe))
                                  (gxc#raise-compile-error
                                   '"declare-method: duplicate method declaration"
-                                  __tmp149091
-                                  _%method146308%_)))))
-                     _%$e146316%_)
+                                  __tmp149528
+                                  _%method146745%_)))))
+                     _%$e146753%_)
                     (let ()
                       (let ()
                         (declare (not safe))
                         (gxc#verbose
                          '"declare-method "
-                         _%type-t146307%_
+                         _%type-t146744%_
                          '" "
-                         _%method146308%_
+                         _%method146745%_
                          '" => "
-                         _%sym146309%_))
+                         _%sym146746%_))
                       (let ()
                         (declare (not safe))
                         (hash-put!
-                         _%vtab146314%_
-                         _%method146308%_
-                         _%sym146309%_)))))
+                         _%vtab146751%_
+                         _%method146745%_
+                         _%sym146746%_)))))
               (let ()
                 (declare (not safe))
                 (gxc#verbose
                  '"declare-method: unknown class"
-                 _%type-t146307%_))))))
+                 _%type-t146744%_))))))
     (define gxc#optimizer-declare-method!__0
-      (lambda (_%type-t146328%_ _%method146329%_ _%sym146330%_)
-        (let ((_%rebind?146332%_ '#f))
+      (lambda (_%type-t146765%_ _%method146766%_ _%sym146767%_)
+        (let ((_%rebind?146769%_ '#f))
           (gxc#optimizer-declare-method!__%
-           _%type-t146328%_
-           _%method146329%_
-           _%sym146330%_
-           _%rebind?146332%_))))
+           _%type-t146765%_
+           _%method146766%_
+           _%sym146767%_
+           _%rebind?146769%_))))
     (define gxc#optimizer-declare-method!
-      (lambda _g149093_
-        (let ((_g149092_ (let () (declare (not safe)) (##length _g149093_))))
-          (cond ((let () (declare (not safe)) (##fx= _g149092_ 3))
-                 (apply gxc#optimizer-declare-method!__0 _g149093_))
-                ((let () (declare (not safe)) (##fx= _g149092_ 4))
-                 (apply gxc#optimizer-declare-method!__% _g149093_))
+      (lambda _g149530_
+        (let ((_g149529_ (let () (declare (not safe)) (##length _g149530_))))
+          (cond ((let () (declare (not safe)) (##fx= _g149529_ 3))
+                 (apply gxc#optimizer-declare-method!__0 _g149530_))
+                ((let () (declare (not safe)) (##fx= _g149529_ 4))
+                 (apply gxc#optimizer-declare-method!__% _g149530_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-method!
-                  _g149093_))))))
+                  _g149530_))))))
     (define gxc#optimizer-lookup-type
-      (lambda (_%sym146295%_)
-        (let ((_%$e146303%_
-               (let ((_%ht146296146298%_
+      (lambda (_%sym146732%_)
+        (let ((_%$e146740%_
+               (let ((_%ht146733146735%_
                       (let ()
                         (declare (not safe))
                         (gxc#current-compile-local-type))))
-                 (if _%ht146296146298%_
-                     (let ((_%ht146301%_ _%ht146296146298%_))
+                 (if _%ht146733146735%_
+                     (let ((_%ht146738%_ _%ht146733146735%_))
                        (declare (not safe))
-                       (hash-get _%ht146301%_ _%sym146295%_))
+                       (hash-get _%ht146738%_ _%sym146732%_))
                      '#f))))
-          (if _%$e146303%_
-              _%$e146303%_
-              (let ((__tmp149094
+          (if _%$e146740%_
+              _%$e146740%_
+              (let ((__tmp149531
                      (##structure-ref
                       (let ()
                         (declare (not safe))
@@ -3202,22 +3202,22 @@
                       gxc#optimizer-info::t
                       '#f)))
                 (declare (not safe))
-                (hash-get __tmp149094 _%sym146295%_))))))
+                (hash-get __tmp149531 _%sym146732%_))))))
     (define gxc#optimizer-resolve-type
-      (lambda (_%sym146287%_)
-        (let ((_%type146288146290%_ (gxc#optimizer-lookup-type _%sym146287%_)))
-          (if _%type146288146290%_
-              (let ((_%type146293%_ _%type146288146290%_))
+      (lambda (_%sym146724%_)
+        (let ((_%type146725146727%_ (gxc#optimizer-lookup-type _%sym146724%_)))
+          (if _%type146725146727%_
+              (let ((_%type146730%_ _%type146725146727%_))
                 (if (let ()
                       (declare (not safe))
-                      (##structure-instance-of? _%type146293%_ 'gxc#!alias::t))
+                      (##structure-instance-of? _%type146730%_ 'gxc#!alias::t))
                     (gxc#optimizer-resolve-type
-                     (##structure-ref _%type146293%_ '1 gxc#!type::t '#f))
-                    _%type146293%_))
+                     (##structure-ref _%type146730%_ '1 gxc#!type::t '#f))
+                    _%type146730%_))
               '#f))))
     (define gxc#optimizer-lookup-class
-      (lambda (_%sym146283%_)
-        (let ((_%table146285%_
+      (lambda (_%sym146720%_)
+        (let ((_%table146722%_
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3226,34 +3226,34 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-get _%table146285%_ _%sym146283%_))))
+          (hash-get _%table146722%_ _%sym146720%_))))
     (define gxc#optimizer-resolve-class
-      (lambda (_%where146268%_ _%sym146269%_)
-        (let ((_%$e146272%_ (gxc#optimizer-lookup-class _%sym146269%_)))
-          (if _%$e146272%_
-              ((lambda (_%g146274146276%_)
-                 (let ((_%val146279%_ _%g146274146276%_))
+      (lambda (_%where146705%_ _%sym146706%_)
+        (let ((_%$e146709%_ (gxc#optimizer-lookup-class _%sym146706%_)))
+          (if _%$e146709%_
+              ((lambda (_%g146711146713%_)
+                 (let ((_%val146716%_ _%g146711146713%_))
                    (if (let ()
                          (declare (not safe))
                          (##structure-instance-of?
-                          _%val146279%_
+                          _%val146716%_
                           'gxc#!class::t))
-                       _%val146279%_
+                       _%val146716%_
                        (let ()
                          (declare (not safe))
-                         (error '"bad cast" gxc#!class::t _%val146279%_)))))
-               _%$e146272%_)
+                         (error '"bad cast" gxc#!class::t _%val146716%_)))))
+               _%$e146709%_)
               (let ()
                 (let ()
                   (declare (not safe))
                   (gxc#raise-compile-error
                    '"unknown class"
-                   _%where146268%_
-                   _%sym146269%_))
+                   _%where146705%_
+                   _%sym146706%_))
                 '#!void)))))
     (define gxc#optimizer-lookup-class-name
-      (lambda (_%klass146266%_)
-        (let ((__tmp149095
+      (lambda (_%klass146703%_)
+        (let ((__tmp149532
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3262,15 +3262,15 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-get __tmp149095 _%klass146266%_))))
+          (hash-get __tmp149532 _%klass146703%_))))
     (define gxc#optimizer-lookup-method
-      (lambda (_%type-t146263%_ _%method146264%_)
+      (lambda (_%type-t146700%_ _%method146701%_)
         (gxc#!class-lookup-method
-         (gxc#optimizer-resolve-class 'lookup-method _%type-t146263%_)
-         _%method146264%_)))
+         (gxc#optimizer-resolve-class 'lookup-method _%type-t146700%_)
+         _%method146701%_)))
     (define gxc#optimizer-top-level-method?
-      (lambda (_%sym146261%_)
-        (let ((__tmp149096
+      (lambda (_%sym146698%_)
+        (let ((__tmp149533
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3279,4 +3279,4 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-get __tmp149096 _%sym146261%_))))))
+          (hash-get __tmp149533 _%sym146698%_))))))
