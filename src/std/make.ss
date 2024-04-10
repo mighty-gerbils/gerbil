@@ -252,19 +252,7 @@ TODO:
       (cond
        ((or (module-context? in) (prelude-context? in))
         (let* ((id (expander-context-id in))
-               (ts
-                (and id
-                     ;; we need to examine both the libdir timestamp and the in
-                     ;; tree timestamp, so that if an in-tree dependency is newer
-                     ;; and has not been rebuilt yet, we trigger a rebuild
-                     (let ((ts-a (with-catch false (lambda () (dependency-timestamp id))))
-                           (ts-b (hash-get timestamps id)))
-                       (cond
-                        ((and ts-a ts-b)
-                         (max ts-a ts-b))
-                        ((not ts-a) ts-b)
-                        ((not ts-b) ts-a)
-                        (else #f))))))
+               (ts (and id (with-catch false (lambda () (dependency-timestamp id))))))
           (and id
                (if ts
                  (ormap (lambda (output) (> ts (file-timestamp output))) outputs)
