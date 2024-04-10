@@ -163,7 +163,7 @@ namespace: gxc
 (def (optimize-source stx)
   ;; collect mutators for anything that needs it
   (apply-collect-mutators stx)
-  ;; collect top-level types to get class definitions
+  ;; collect top-level types and methods
   (apply-collect-top-level-type-info stx)
   ;; generate specializers and lift lambdas for things like case/opt/kw lambdas
   (let* ((stx (apply-generate-method-specializers stx))
