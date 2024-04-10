@@ -28,7 +28,7 @@ namespace: gxc
   (%#let-values       collect-top-level-type-let-values%)
   (%#letrec-values    collect-top-level-type-letrec-values%)
   (%#letrec*-values   collect-top-level-type-letrec-values%)
-  (%#call             collect-top-level-type-call%)
+  (%#call             collect-type-call%)
   (%#if               apply-operands)
   (%#set!             apply-body-setq%))
 
@@ -63,7 +63,7 @@ namespace: gxc
   (%#let-values       collect-type-let-values%)
   (%#letrec-values    collect-type-letrec-values%)
   (%#letrec*-values   collect-type-letrec-values%)
-  (%#call             apply-operands)
+  (%#call             collect-type-call%)
   (%#if               apply-operands)
   (%#set!             apply-body-setq%))
 
@@ -132,7 +132,7 @@ namespace: gxc
        ;; signatures for lambda
        ;; the apply-collect-type-info pass is later applied to collect
        ;; exact type signatures.
-       (apply-collect-top-level-type-info #'expr)
+       (compile-e self #'expr)
        (alet (type (apply-basic-expression-top-level-type #'expr))
          (if (!class-meta? type)
            (begin
@@ -276,7 +276,7 @@ namespace: gxc
 (def (collect-top-level-type-letrec-values% self stx)
   (collect-type-letrec-values% self stx apply-raw-expression-type))
 
-(def (collect-top-level-type-call% self stx)
+(def (collect-type-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)

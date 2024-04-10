@@ -408,6 +408,7 @@ namespace: gxc
   (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
+  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t)
   (let (klass (optimizer-lookup-class type-t))
     (if klass
       (let (vtab (!class-method-table klass))
@@ -457,10 +458,6 @@ namespace: gxc
 
 (def (optimizer-lookup-method type-t method)
   (!class-lookup-method (optimizer-resolve-class 'lookup-method type-t) method))
-
-(def (optimizer-top-level-method! sym)
-  (verbose "top-level method: " sym)
-  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t))
 
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
