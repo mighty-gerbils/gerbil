@@ -207,6 +207,8 @@ TODO:
   (def buildspec (normalize-buildspec buildspec-in))
   ;; mutex for imports
   (def import-mx (make-mutex 'import))
+  ;; mute for dependency timestamps (mauling of load-path)
+  (def dependency-mx (make-mutex 'dependency))
   ;; table of module id -> completion, indicating completion of a build
   (def completions (make-hash-table-eq))
   ;; table of in tree module timestamps
@@ -250,19 +252,7 @@ TODO:
       (cond
        ((or (module-context? in) (prelude-context? in))
         (let* ((id (expander-context-id in))
-               (ts
-                (and id
-                     ;; we need to examine both the libdir timestamp and the in
-                     ;; tree timestamp, so that if an in-tree dependency is newer
-                     ;; and has not been rebuilt yet, we trigger a rebuild
-                     (let ((ts-a (with-catch false (lambda () (dependency-timestamp id))))
-                           (ts-b (hash-get timestamps id)))
-                       (cond
-                        ((and ts-a ts-b)
-                         (max ts-a ts-b))
-                        ((not ts-a) ts-b)
-                        ((not ts-b) ts-a)
-                        (else #f))))))
+               (ts (and id (with-catch false (lambda () (dependency-timestamp id))))))
           (and id
                (if ts
                  (ormap (lambda (output) (> ts (file-timestamp output))) outputs)
@@ -274,16 +264,18 @@ TODO:
     (ormap newer? (module-context-import mod)))
 
   (def (dependency-timestamp id)
-    ;; drop the srcdir from the load path and then get the library timestamp
-    (let (current-load-path (load-path))
-      (dynamic-wind
-          (lambda ()
-            (set-load-path!
-             (cons (settings-libdir settings)
-                   (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
-                           current-load-path))))
-          (lambda () (library-timestamp id))
-          (lambda () (set-load-path! current-load-path)))))
+    (with-lock dependency-mx
+      (lambda ()
+        ;; drop the srcdir from the load path and then get the library timestamp
+        (let (current-load-path (load-path))
+          (dynamic-wind
+              (lambda ()
+                (set-load-path!
+                 (cons (settings-libdir settings)
+                       (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
+                               current-load-path))))
+              (lambda () (library-timestamp id))
+              (lambda () (set-load-path! current-load-path)))))))
 
   ;; the build worker itself
   (def (build-worker)
