@@ -406,7 +406,7 @@ namespace: gxc
 (def (xform-lambda% self stx)
   (ast-case stx ()
     ((_ hd . body)
-     (parameterize ((current-compile-local-env (xform-let-locals [#'hd])))
+     (parameterize ((current-compile-local-env (xform-let-locals #'hd)))
        (let (body (map (cut compile-e self <>) #'body))
          (xform-wrap-source
           ['%#lambda #'hd body ...]
@@ -416,7 +416,7 @@ namespace: gxc
   (def (clause-e clause)
     (ast-case clause ()
       ((hd . body)
-       (parameterize ((current-compile-local-env (xform-let-locals [#'hd])))
+       (parameterize ((current-compile-local-env (xform-let-locals #'hd)))
          (let (body (map (cut compile-e self <>) #'body))
            [#'hd body ...])))))
 
@@ -448,17 +448,25 @@ namespace: gxc
             stx)))))))
 
 (def (xform-let-locals bindings)
-  (let loop ((rest bindings) (locals (current-compile-local-env)))
+  (def (flatten maybe-lst)
+    (if (identifier? maybe-lst)
+      [maybe-lst]
+      (let loop ((rest maybe-lst) (result []))
+        (ast-case rest ()
+          ((hd . rest)
+           (loop #'rest (foldl cons result (flatten #'hd))))
+          (id
+           (identifier? #'id)
+           (cons #'id result))
+          (_ result)))))
+
+  (let loop ((rest (flatten bindings)) (locals (current-compile-local-env)))
     (match rest
-      ([bind . rest]
-       (let loop-bind ((bind bind) (locals locals))
-         (match bind
-           ([id . bind-rest]
-            (loop-bind bind-rest (cons (identifier-symbol id) locals)))
-           ((? identifier? id)
-            (loop rest (cons (identifier-symbol id) locals)))
-           (_ (loop rest locals)))))
-      (else locals))))
+      ([(? identifier? id) . rest]
+       (loop rest (cons (identifier-symbol id) locals)))
+      ((? identifier? id)
+       (cons (identifier-symbol id) locals))
+      (_ locals))))
 
 (def (xform-operands self stx)
   (ast-case stx ()

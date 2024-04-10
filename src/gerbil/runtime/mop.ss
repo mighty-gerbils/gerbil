@@ -866,8 +866,11 @@ namespace: #f
          #'(%#let-values ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
                          (%#if (%#ref $method)
                                (%#call (%#ref $method) (%#ref self) arg ...)
-                               (%#call (%#ref error) (%#quote "Missing method")
-                                       (%#ref self) method)))))
+                               (%#begin
+                                (%#call (%#ref error) (%#quote "Missing method")
+                                        (%#ref self) method)
+                                ;; frame for the stack trace
+                                (%#quote #!void))))))
       ((%#call recur self method arg ...)
        (with-syntax (($self (make-symbol (gensym '__self))))
          #'(%#let-values ((($self) self))

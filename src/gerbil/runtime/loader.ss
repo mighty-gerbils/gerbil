@@ -11,7 +11,7 @@ namespace: #f
 (def __modules (make-hash-table))
 (def __load-mx (make-mutex 'loader))
 (def __load-cv (make-condition-variable 'loader))
-(def __load-path (:- [] :list))
+(def __load-path [])
 
 (def (load-path) => :list
   __load-path)
@@ -23,7 +23,7 @@ namespace: #f
             (reverse! paths)))
 
 (def (set-load-path! (paths : :list))
-  (unless (and (list? paths) (andmap string? paths))
+  (unless (andmap string? paths)
     (error "bad load path; expected list of paths" paths))
   (set! __load-path paths))
 

@@ -112,11 +112,7 @@ namespace: #f
 
 ;;; actor debug hooks
 (def __unhandled-actor-exception-hook #f)
-(def (unhandled-actor-exception-hook-set! proc)
-  (unless (procedure? proc)
-    (raise (Error "Bad argument; expected procedure or #f"
-                  where: 'unhandler-actor-exception-hook-set!
-                  irritants: [proc])))
+(def (unhandled-actor-exception-hook-set! (proc : :procedure))
   (set! __unhandled-actor-exception-hook proc))
 
 ;;; utitilities

@@ -161,9 +161,8 @@ namespace: gxc
 
 ;;; source transforms
 (def (optimize-source stx)
+  ;; collect mutators for anything that needs it
   (apply-collect-mutators stx)
-  ;; collect all methods for specializer generation
-  (apply-collect-methods stx)
   ;; collect top-level types to get class definitions
   (apply-collect-top-level-type-info stx)
   ;; generate specializers and lift lambdas for things like case/opt/kw lambdas
@@ -171,6 +170,7 @@ namespace: gxc
          (stx (apply-lift-top-lambdas stx)))
     ;; full type collection for type directed optimizations
     (apply-collect-type-info stx)
+    (apply-collect-mutable-type-info stx)
     ;; check declared procedure return types
     (apply-check-return-type stx)
     ;; process user declarations
