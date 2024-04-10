@@ -606,6 +606,7 @@ TODO:
      verbose: (settings-verbose>=? settings 9)
      debug: (settings-debug settings)
      full-program-optimization: (settings-full-program-optimization settings)
+     parallel: (> (settings-parallelize settings) 1)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
   (gxc-compile mod gsc-opts settings #f)
   (message "... compile exe " mod " -> " binpath)
