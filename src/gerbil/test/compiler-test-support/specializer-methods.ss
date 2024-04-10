@@ -1,5 +1,6 @@
 (import :std/interface
-        :std/test)
+        :std/test
+        :gerbil/runtime/mop)
 (defclass Foo (a b c))
 (defclass (Bar Foo) (d last))
 
@@ -15,6 +16,11 @@
 
 (interface Baz
   (method-a))
+
+(check (__lookup-method-specializer Foo::method-a)
+       ? procedure?)
+(check (__lookup-method-specializer Bar::method-b)
+       ? procedure?)
 
 (let (obj (Bar a: 1 b: 2 c: 3 d: 4))
   (check (Baz-method-a (Baz obj))
