@@ -1763,7 +1763,8 @@ package: gerbil/core
 
 (module TypedDefinitions
   (import TypeCast Using ContractRules TypeReference Interface
-          (phi: +1 InterfaceInfo TypeEnv ClassMeta))
+          (phi: +1 InterfaceInfo TypeEnv ClassMeta)
+          (rename-in (only-in "mop" @method) (@method @method~)))
   (export #t (phi: +1 #t))
 
   (begin-syntax
@@ -1939,10 +1940,24 @@ package: gerbil/core
       ((_ clause ...)
        #'(case-lambda clause ...))))
 
+  (defsyntax (@method stx)
+    (syntax-case stx ()
+      ((_ id arg ...)
+       (dotted-identifier? #'id)
+       (let* ((str (symbol->string (stx-e #'id)))
+              (ix  (string-rindex str #\.)))
+         (with-syntax ((receiver (stx-identifier #'id (substring str 0 ix)))
+                       (method   (string->symbol
+                                  (substring str (fx1+ ix) (string-length str)))))
+           #'(call-method (%%ref-dotted receiver) 'method arg ...))))
+      ((_ method receiver arg ...)
+       #'(call-method receiver 'method arg ...))))
+
   (defsyntax (defmethod/c stx)
-    (syntax-case stx (@method lambda/c case-lambda/c)
+    (syntax-case stx (lambda/c case-lambda/c @method-dotted)
       ((_ {method Type} (lambda/c (self . args) body ...) . rest)
-       (identifier? #'self)
+       (and (identifier? #'self)
+            (identifier? #'method))
        (with-syntax* ((receiver (genident #'self))
                       (proc
                        (syntax/loc stx
@@ -1950,9 +1965,10 @@ package: gerbil/core
                               (using (self receiver ::- Type)
                                 (with-receiver self
                                   (let () body ...)))))))
-         #'(defmethod {method Type} proc . rest)))
+         #'(defmethod (@method~ method Type) proc . rest)))
       ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
-       (identifier-list? #'(self ...))
+       (and (identifier-list? #'(self ...))
+            (identifier? #'method))
        (with-syntax* (((receiver ...)
                        (map genident #'(self ...)))
                       (proc
@@ -1963,9 +1979,9 @@ package: gerbil/core
                              (with-receiver self
                                (let () body ...))))
                           ...))))
-         #'(defmethod {method Type} proc . rest)))
-      ((_ . body)
-       #'(defmethod . body))))
+         #'(defmethod (@method~ method Type) proc . rest)))
+      ((_ {method Type} . body)
+       #'(defmethod (@method~ method Type) . body))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
