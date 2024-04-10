@@ -523,11 +523,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -538,7 +538,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -554,7 +554,7 @@ package: gerbil/expander
      gx#phi-context:::init!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -567,7 +567,7 @@ package: gerbil/expander
      gx#phi-context:::init!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -582,11 +582,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -597,7 +597,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -613,7 +613,7 @@ package: gerbil/expander
      gx#local-context:::init!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -626,7 +626,7 @@ package: gerbil/expander
      gx#local-context:::init!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -2141,7 +2141,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -2156,7 +2156,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -2171,7 +2171,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -2186,7 +2186,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -2245,7 +2245,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -2260,7 +2260,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:

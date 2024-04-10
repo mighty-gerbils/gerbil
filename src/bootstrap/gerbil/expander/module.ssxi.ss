@@ -224,8 +224,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type
    gx#import-expander::t
    (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
@@ -428,11 +430,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -443,11 +445,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
              #f
              origin:
@@ -458,7 +460,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
@@ -474,7 +476,7 @@ package: gerbil/expander
      gx#prelude-context:::init!__0
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:
@@ -487,7 +489,7 @@ package: gerbil/expander
      gx#prelude-context:::init!__%
      signature:
      (return:
-      t::t
+      void::t
       effect:
       #f
       arguments:

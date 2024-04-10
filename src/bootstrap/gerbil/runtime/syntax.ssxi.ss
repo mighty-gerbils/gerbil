@@ -70,7 +70,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (t::t t::t)
+             #f
              unchecked:
              #f
              origin:

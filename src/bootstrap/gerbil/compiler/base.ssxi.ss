@@ -135,11 +135,11 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:

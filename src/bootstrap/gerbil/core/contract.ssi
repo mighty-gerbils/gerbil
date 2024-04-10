@@ -589,6 +589,9 @@ namespace: gerbil/core/contract
                     defmethod/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#defmethod/c|)
                    (%#define-syntax
+                    with-receiver
+                    |gerbil/core/contract~TypedDefinitions[:0:]#with-receiver|)
+                   (%#define-syntax
                     let/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#let/c|)
                    (%#define-syntax
