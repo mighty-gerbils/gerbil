@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1712786277)
+  (define gerbil/runtime/util::timestamp 1712823024)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)
@@ -134,9 +134,7 @@
                 '#!void
                 (let _%lp87573%_ ((_%start87575%_ '0))
                   (let ((_%$e87577%_
-                         (let ()
-                           (declare (not safe))
-                           (__string-index _%dir87553%_ '#\/ _%start87575%_))))
+                         (__string-index__% _%dir87553%_ '#\/ _%start87575%_)))
                     (if _%$e87577%_
                         ((lambda (_%x87580%_)
                            (if (let ()
@@ -1982,31 +1980,26 @@
         (let* ((_%str85169%_ _%str85165%_) (_%enc85177%_ _%enc85166%_))
           (if (eq? _%enc85177%_ 'UTF-8)
               (let () (declare (not safe)) (##string->utf8 _%str85169%_))
-              (let ((__tmp89527
-                     (let ()
-                       (declare (not safe))
-                       (##string-length _%str85169%_))))
-                (declare (not safe))
-                (__substring->bytes
-                 _%str85169%_
-                 '0
-                 __tmp89527
-                 _%enc85177%_))))))
+              (__substring->bytes__%
+               _%str85169%_
+               '0
+               (let () (declare (not safe)) (##string-length _%str85169%_))
+               _%enc85177%_)))))
     (define __string->bytes__0
       (lambda (_%str85189%_)
         (let ((_%enc85191%_ 'UTF-8))
           (__string->bytes__% _%str85189%_ _%enc85191%_))))
     (define __string->bytes
-      (lambda _g89529_
-        (let ((_g89528_ (let () (declare (not safe)) (##length _g89529_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89528_ 1))
-                 (apply __string->bytes__0 _g89529_))
-                ((let () (declare (not safe)) (##fx= _g89528_ 2))
-                 (apply __string->bytes__% _g89529_))
+      (lambda _g89528_
+        (let ((_g89527_ (let () (declare (not safe)) (##length _g89528_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89527_ 1))
+                 (apply __string->bytes__0 _g89528_))
+                ((let () (declare (not safe)) (##fx= _g89527_ 2))
+                 (apply __string->bytes__% _g89528_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __string->bytes
-                  _g89529_))))))
+                  _g89528_))))))
     (define substring->bytes__%
       (lambda (_%str85113%_ _%start85114%_ _%end85115%_ _%enc85116%_)
         (if (string? _%str85113%_)
@@ -2059,16 +2052,16 @@
            _%end85155%_
            _%enc85157%_))))
     (define substring->bytes
-      (lambda _g89531_
-        (let ((_g89530_ (let () (declare (not safe)) (##length _g89531_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89530_ 3))
-                 (apply substring->bytes__0 _g89531_))
-                ((let () (declare (not safe)) (##fx= _g89530_ 4))
-                 (apply substring->bytes__% _g89531_))
+      (lambda _g89530_
+        (let ((_g89529_ (let () (declare (not safe)) (##length _g89530_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89529_ 3))
+                 (apply substring->bytes__0 _g89530_))
+                ((let () (declare (not safe)) (##fx= _g89529_ 4))
+                 (apply substring->bytes__% _g89530_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   substring->bytes
-                  _g89531_))))))
+                  _g89530_))))))
     (define __substring->bytes__%
       (lambda (_%str85065%_ _%start85066%_ _%end85067%_ _%enc85068%_)
         (let* ((_%str85071%_ _%str85065%_)
@@ -2094,16 +2087,16 @@
            _%end85103%_
            _%enc85105%_))))
     (define __substring->bytes
-      (lambda _g89533_
-        (let ((_g89532_ (let () (declare (not safe)) (##length _g89533_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89532_ 3))
-                 (apply __substring->bytes__0 _g89533_))
-                ((let () (declare (not safe)) (##fx= _g89532_ 4))
-                 (apply __substring->bytes__% _g89533_))
+      (lambda _g89532_
+        (let ((_g89531_ (let () (declare (not safe)) (##length _g89532_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89531_ 3))
+                 (apply __substring->bytes__0 _g89532_))
+                ((let () (declare (not safe)) (##fx= _g89531_ 4))
+                 (apply __substring->bytes__% _g89532_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __substring->bytes
-                  _g89533_))))))
+                  _g89532_))))))
     (define string-empty?
       (lambda (_%str85050%_)
         (if (string? _%str85050%_)
@@ -2121,10 +2114,10 @@
     (define __string-empty?
       (lambda (_%str85038%_)
         (let* ((_%str85041%_ _%str85038%_)
-               (__tmp89534
+               (__tmp89533
                 (let () (declare (not safe)) (##string-length _%str85041%_))))
           (declare (not safe))
-          (##fxzero? __tmp89534))))
+          (##fxzero? __tmp89533))))
     (define string-index__%
       (lambda (_%str84990%_ _%char84991%_ _%start84992%_)
         (if (string? _%str84990%_)
@@ -2172,16 +2165,16 @@
         (let ((_%start85032%_ '0))
           (string-index__% _%str85029%_ _%char85030%_ _%start85032%_))))
     (define string-index
-      (lambda _g89536_
-        (let ((_g89535_ (let () (declare (not safe)) (##length _g89536_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89535_ 2))
-                 (apply string-index__0 _g89536_))
-                ((let () (declare (not safe)) (##fx= _g89535_ 3))
-                 (apply string-index__% _g89536_))
+      (lambda _g89535_
+        (let ((_g89534_ (let () (declare (not safe)) (##length _g89535_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89534_ 2))
+                 (apply string-index__0 _g89535_))
+                ((let () (declare (not safe)) (##fx= _g89534_ 3))
+                 (apply string-index__% _g89535_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   string-index
-                  _g89536_))))))
+                  _g89535_))))))
     (define __string-index__%
       (lambda (_%str84929%_ _%char84930%_ _%start84931%_)
         (let* ((_%str84934%_ _%str84929%_)
@@ -2205,16 +2198,16 @@
         (let ((_%start84983%_ '0))
           (__string-index__% _%str84980%_ _%char84981%_ _%start84983%_))))
     (define __string-index
-      (lambda _g89538_
-        (let ((_g89537_ (let () (declare (not safe)) (##length _g89538_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89537_ 2))
-                 (apply __string-index__0 _g89538_))
-                ((let () (declare (not safe)) (##fx= _g89537_ 3))
-                 (apply __string-index__% _g89538_))
+      (lambda _g89537_
+        (let ((_g89536_ (let () (declare (not safe)) (##length _g89537_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89536_ 2))
+                 (apply __string-index__0 _g89537_))
+                ((let () (declare (not safe)) (##fx= _g89536_ 3))
+                 (apply __string-index__% _g89537_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __string-index
-                  _g89538_))))))
+                  _g89537_))))))
     (define string-rindex__%
       (lambda (_%str84890%_ _%char84891%_ _%start84892%_)
         (if (string? _%str84890%_)
@@ -2250,16 +2243,16 @@
         (let ((_%start84922%_ '#f))
           (string-rindex__% _%str84919%_ _%char84920%_ _%start84922%_))))
     (define string-rindex
-      (lambda _g89540_
-        (let ((_g89539_ (let () (declare (not safe)) (##length _g89540_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89539_ 2))
-                 (apply string-rindex__0 _g89540_))
-                ((let () (declare (not safe)) (##fx= _g89539_ 3))
-                 (apply string-rindex__% _g89540_))
+      (lambda _g89539_
+        (let ((_g89538_ (let () (declare (not safe)) (##length _g89539_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89538_ 2))
+                 (apply string-rindex__0 _g89539_))
+                ((let () (declare (not safe)) (##fx= _g89538_ 3))
+                 (apply string-rindex__% _g89539_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   string-rindex
-                  _g89540_))))))
+                  _g89539_))))))
     (define __string-rindex__%
       (lambda (_%str84832%_ _%char84833%_ _%start84834%_)
         (let* ((_%str84837%_ _%str84832%_)
@@ -2286,16 +2279,16 @@
         (let ((_%start84883%_ '#f))
           (__string-rindex__% _%str84880%_ _%char84881%_ _%start84883%_))))
     (define __string-rindex
-      (lambda _g89542_
-        (let ((_g89541_ (let () (declare (not safe)) (##length _g89542_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89541_ 2))
-                 (apply __string-rindex__0 _g89542_))
-                ((let () (declare (not safe)) (##fx= _g89541_ 3))
-                 (apply __string-rindex__% _g89542_))
+      (lambda _g89541_
+        (let ((_g89540_ (let () (declare (not safe)) (##length _g89541_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89540_ 2))
+                 (apply __string-rindex__0 _g89541_))
+                ((let () (declare (not safe)) (##fx= _g89540_ 3))
+                 (apply __string-rindex__% _g89541_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __string-rindex
-                  _g89542_))))))
+                  _g89541_))))))
     (define string-split
       (lambda (_%str84806%_ _%char84807%_)
         (if (string? _%str84806%_)
@@ -2332,12 +2325,10 @@
           (let _%lp84770%_ ((_%start84772%_ '0) (_%r84773%_ '()))
             (let* ((_%start84776%_ _%start84772%_)
                    (_%$e84789%_
-                    (let ()
-                      (declare (not safe))
-                      (__string-index
-                       _%str84751%_
-                       _%char84759%_
-                       _%start84776%_))))
+                    (__string-index__%
+                     _%str84751%_
+                     _%char84759%_
+                     _%start84776%_)))
               (if _%$e84789%_
                   ((lambda (_%end84792%_)
                      (let ((_%end84794%_ _%end84792%_))
@@ -2386,13 +2377,13 @@
                                                    _%hd84723%_))
                                                 _%jlen84686%_
                                                 _%len84693%_))
-                                          (let ((__tmp89543
+                                          (let ((__tmp89542
                                                  (let ()
                                                    (declare (not safe))
                                                    (##string-length
                                                     _%hd84723%_))))
                                             (declare (not safe))
-                                            (##fx+ __tmp89543 _%len84693%_))))
+                                            (##fx+ __tmp89542 _%len84693%_))))
                                     (error '"expected string" _%hd84721%_)))))
                         (if (let ()
                               (declare (not safe))
@@ -2444,7 +2435,7 @@
                                    _%hdlen84671%_
                                    _%ostr84612%_
                                    _%k84621%_))
-                                (let ((__tmp89544
+                                (let ((__tmp89543
                                        (let ()
                                          (declare (not safe))
                                          (##fx+ _%k84621%_ _%hdlen84671%_))))
@@ -2454,7 +2445,7 @@
                                    '0
                                    _%jlen84608%_
                                    _%ostr84612%_
-                                   __tmp89544))
+                                   __tmp89543))
                                 (_%lp84615%_
                                  _%rest84656%_
                                  (let ()
@@ -2496,12 +2487,12 @@
                                 (let ()
                                   (declare (not safe))
                                   (##fx>= _%o84549%_ '0))
-                                (let ((__tmp89545
+                                (let ((__tmp89544
                                        (let ()
                                          (declare (not safe))
                                          (##u8vector-length _%bytes84530%_))))
                                   (declare (not safe))
-                                  (##fx< _%o84549%_ __tmp89545))))
+                                  (##fx< _%o84549%_ __tmp89544))))
                          _%start84525%_)
                         (let ((_%start84553%_ _%start84525%_))
                           (if ((lambda (_%o84562%_)
@@ -2579,18 +2570,18 @@
            _%start84588%_
            _%end84590%_))))
     (define read-u8vector
-      (lambda _g89547_
-        (let ((_g89546_ (let () (declare (not safe)) (##length _g89547_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89546_ 2))
-                 (apply read-u8vector__0 _g89547_))
-                ((let () (declare (not safe)) (##fx= _g89546_ 3))
-                 (apply read-u8vector__1 _g89547_))
-                ((let () (declare (not safe)) (##fx= _g89546_ 4))
-                 (apply read-u8vector__% _g89547_))
+      (lambda _g89546_
+        (let ((_g89545_ (let () (declare (not safe)) (##length _g89546_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89545_ 2))
+                 (apply read-u8vector__0 _g89546_))
+                ((let () (declare (not safe)) (##fx= _g89545_ 3))
+                 (apply read-u8vector__1 _g89546_))
+                ((let () (declare (not safe)) (##fx= _g89545_ 4))
+                 (apply read-u8vector__% _g89546_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   read-u8vector
-                  _g89547_))))))
+                  _g89546_))))))
     (define __read-u8vector__%
       (lambda (_%bytes84462%_ _%port84463%_ _%start84464%_ _%end84465%_)
         (let* ((_%bytes84468%_ _%bytes84462%_)
@@ -2621,18 +2612,18 @@
            _%start84513%_
            _%end84515%_))))
     (define __read-u8vector
-      (lambda _g89549_
-        (let ((_g89548_ (let () (declare (not safe)) (##length _g89549_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89548_ 2))
-                 (apply __read-u8vector__0 _g89549_))
-                ((let () (declare (not safe)) (##fx= _g89548_ 3))
-                 (apply __read-u8vector__1 _g89549_))
-                ((let () (declare (not safe)) (##fx= _g89548_ 4))
-                 (apply __read-u8vector__% _g89549_))
+      (lambda _g89548_
+        (let ((_g89547_ (let () (declare (not safe)) (##length _g89548_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89547_ 2))
+                 (apply __read-u8vector__0 _g89548_))
+                ((let () (declare (not safe)) (##fx= _g89547_ 3))
+                 (apply __read-u8vector__1 _g89548_))
+                ((let () (declare (not safe)) (##fx= _g89547_ 4))
+                 (apply __read-u8vector__% _g89548_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __read-u8vector
-                  _g89549_))))))
+                  _g89548_))))))
     (define write-u8vector__%
       (lambda (_%bytes84387%_ _%port84388%_ _%start84389%_ _%end84390%_)
         (if (u8vector? _%bytes84387%_)
@@ -2644,12 +2635,12 @@
                                 (let ()
                                   (declare (not safe))
                                   (##fx>= _%o84413%_ '0))
-                                (let ((__tmp89550
+                                (let ((__tmp89549
                                        (let ()
                                          (declare (not safe))
                                          (##u8vector-length _%bytes84394%_))))
                                   (declare (not safe))
-                                  (##fx< _%o84413%_ __tmp89550))))
+                                  (##fx< _%o84413%_ __tmp89549))))
                          _%start84389%_)
                         (let ((_%start84417%_ _%start84389%_))
                           (if ((lambda (_%o84426%_)
@@ -2727,18 +2718,18 @@
            _%start84452%_
            _%end84454%_))))
     (define write-u8vector
-      (lambda _g89552_
-        (let ((_g89551_ (let () (declare (not safe)) (##length _g89552_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89551_ 2))
-                 (apply write-u8vector__0 _g89552_))
-                ((let () (declare (not safe)) (##fx= _g89551_ 3))
-                 (apply write-u8vector__1 _g89552_))
-                ((let () (declare (not safe)) (##fx= _g89551_ 4))
-                 (apply write-u8vector__% _g89552_))
+      (lambda _g89551_
+        (let ((_g89550_ (let () (declare (not safe)) (##length _g89551_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89550_ 2))
+                 (apply write-u8vector__0 _g89551_))
+                ((let () (declare (not safe)) (##fx= _g89550_ 3))
+                 (apply write-u8vector__1 _g89551_))
+                ((let () (declare (not safe)) (##fx= _g89550_ 4))
+                 (apply write-u8vector__% _g89551_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   write-u8vector
-                  _g89552_))))))
+                  _g89551_))))))
     (define __write-u8vector__%
       (lambda (_%bytes84326%_ _%port84327%_ _%start84328%_ _%end84329%_)
         (let* ((_%bytes84332%_ _%bytes84326%_)
@@ -2769,18 +2760,18 @@
            _%start84377%_
            _%end84379%_))))
     (define __write-u8vector
-      (lambda _g89554_
-        (let ((_g89553_ (let () (declare (not safe)) (##length _g89554_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89553_ 2))
-                 (apply __write-u8vector__0 _g89554_))
-                ((let () (declare (not safe)) (##fx= _g89553_ 3))
-                 (apply __write-u8vector__1 _g89554_))
-                ((let () (declare (not safe)) (##fx= _g89553_ 4))
-                 (apply __write-u8vector__% _g89554_))
+      (lambda _g89553_
+        (let ((_g89552_ (let () (declare (not safe)) (##length _g89553_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89552_ 2))
+                 (apply __write-u8vector__0 _g89553_))
+                ((let () (declare (not safe)) (##fx= _g89552_ 3))
+                 (apply __write-u8vector__1 _g89553_))
+                ((let () (declare (not safe)) (##fx= _g89552_ 4))
+                 (apply __write-u8vector__% _g89553_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __write-u8vector
-                  _g89554_))))))
+                  _g89553_))))))
     (define DBG-printer (make-parameter write))
     (define DBG-helper
       (lambda (_%tag84294%_

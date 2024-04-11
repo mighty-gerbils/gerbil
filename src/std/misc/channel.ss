@@ -134,4 +134,4 @@
           (if (eof-object? val)
             iter-end
             val)))))
-  (make-iterator e: ch next: next))
+  (make-iterator ch next))

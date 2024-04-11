@@ -21,7 +21,7 @@
     (set! self.next-item (iter-next! self.iter))
     item))
 
-(defmethod (:iter (self tal:repeat)) (make-iterator e: self next: tal:repeat-next!))
+(defmethod (:iter (self tal:repeat)) (make-iterator self tal:repeat-next!))
 
 ;; TODO return types
 (interface Repeat
