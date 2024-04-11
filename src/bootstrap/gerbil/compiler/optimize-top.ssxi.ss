@@ -730,6 +730,21 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-top)))
   (declare-type
+   gxc#apply-path-type-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
    gxc#basic-expression-type-annotations
    (optimizer-resolve-class
     '(typedecl gxc#basic-expression-type-annotations)

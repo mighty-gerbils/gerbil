@@ -62,8 +62,8 @@ package: gerbil/runtime
            #f
            #f
            #f
-           ((:init! . Error:::init!)
-            (display-exception . Error::display-exception))))
+           ((display-exception . Error::display-exception)
+            (:init! . Error:::init!))))
   (declare-type
    Error::t
    (optimizer-resolve-class '(typedecl Error::t) 'class::t))

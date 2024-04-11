@@ -184,10 +184,7 @@
                             _%stx59399%_
                             _%signature59400%_
                             _%L60113%_)
-                           (if (not (null? _%kws59415%_))
-                               (gx#raise-syntax-error
-                                '#f
-                                '"invalid signature; positional arguments must precede keyword arguments")
+                           (if (null? _%kws59415%_)
                                (if (find (lambda (_%g6012760129%_)
                                            (gx#bound-identifier=?
                                             _%g6012760129%_
@@ -203,7 +200,10 @@
                                     _%L60111%_
                                     _%have-optional?59413%_
                                     (cons _%L60113%_ _%ids59414%_)
-                                    _%kws59415%_))))))
+                                    _%kws59415%_))
+                               (gx#raise-syntax-error
+                                '#f
+                                '"invalid signature; positional arguments must precede keyword arguments")))))
                     (_%__kont7828278283%_
                      (lambda (_%L60064%_ _%L60066%_)
                        (if (not _%optionals-allowed?59402%_)
@@ -212,10 +212,7 @@
                             '"invalid signature; optionals not allowed"
                             _%stx59399%_
                             _%signature59400%_)
-                           (if (not (null? _%kws59415%_))
-                               (gx#raise-syntax-error
-                                '#f
-                                '"invalid signature; positional arguments must precede keyword arguments")
+                           (if (null? _%kws59415%_)
                                (if (find (lambda (_%g6008460086%_)
                                            (gx#bound-identifier=?
                                             _%g6008460086%_
@@ -231,7 +228,10 @@
                                     _%L60064%_
                                     '#t
                                     (cons _%L60066%_ _%ids59414%_)
-                                    _%kws59415%_))))))
+                                    _%kws59415%_))
+                               (gx#raise-syntax-error
+                                '#f
+                                '"invalid signature; positional arguments must precede keyword arguments")))))
                     (_%__kont7828478285%_
                      (lambda (_%L59776%_ _%L59778%_ _%L59779%_)
                        (if (not _%optionals-allowed?59402%_)
@@ -353,10 +353,7 @@
                                                  (_%__kont7820878209%_))))
                                          (_%__kont7820878209%_))
                                      (_%__kont7820878209%_)))))
-                           (if (not (null? _%kws59415%_))
-                               (gx#raise-syntax-error
-                                '#f
-                                '"invalid signature; positional arguments must precede keyword arguments")
+                           (if (null? _%kws59415%_)
                                (if _%have-optional?59413%_
                                    (let* ((_%__stx7823978240%_ _%L59778%_)
                                           (_%g5991059931%_
@@ -504,7 +501,10 @@
                                           _%L59776%_
                                           _%have-optional?59413%_
                                           (cons _%L59779%_ _%ids59414%_)
-                                          _%kws59415%_))))))))
+                                          _%kws59415%_))))
+                               (gx#raise-syntax-error
+                                '#f
+                                '"invalid signature; positional arguments must precede keyword arguments")))))
                     (_%__kont7828678287%_
                      (lambda (_%L59719%_ _%L59721%_ _%L59722%_)
                        (if (not _%keywords-allowed?59405%_)
@@ -5536,39 +5536,37 @@
                                     (class-instance?
                                      gerbil/core/mop~MOP-2#class-type-info::t
                                      _%klass-b53428%_))
-                                  (if (eq? (let ((__obj82249 _%klass-a53426%_))
+                                  (if (eq? (let ((__obj82258 _%klass-a53426%_))
                                              (if (let ()
                                                    (declare (not safe))
                                                    (##structure-direct-instance-of?
-                                                    __obj82249
+                                                    __obj82258
                                                     'gerbil.core#class-type-info::t))
                                                  (let ()
                                                    (declare (not safe))
                                                    (##unchecked-structure-ref
-                                                    __obj82249
+                                                    __obj82258
                                                     '1
                                                     '#f
                                                     '#f))
-                                                 (class-slot-ref
-                                                  gerbil/core/mop~MOP-2#class-type-info::t
-                                                  __obj82249
+                                                 (unchecked-slot-ref
+                                                  __obj82258
                                                   'id)))
-                                           (let ((__obj82250 _%klass-b53428%_))
+                                           (let ((__obj82259 _%klass-b53428%_))
                                              (if (let ()
                                                    (declare (not safe))
                                                    (##structure-direct-instance-of?
-                                                    __obj82250
+                                                    __obj82259
                                                     'gerbil.core#class-type-info::t))
                                                  (let ()
                                                    (declare (not safe))
                                                    (##unchecked-structure-ref
-                                                    __obj82250
+                                                    __obj82259
                                                     '1
                                                     '#f
                                                     '#f))
-                                                 (class-slot-ref
-                                                  gerbil/core/mop~MOP-2#class-type-info::t
-                                                  __obj82250
+                                                 (unchecked-slot-ref
+                                                  __obj82259
                                                   'id))))
                                       '#t
                                       (if (member _%type-b53413%_
@@ -5586,23 +5584,22 @@
                                          _%klass-b53428%_))
                                       (let ((_%$e53444%_
                                              (gx#syntax-local-value
-                                              (let ((__obj82251
+                                              (let ((__obj82256
                                                      _%klass-b53428%_))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (##structure-direct-instance-of?
-                                                       __obj82251
+                                                       __obj82256
                                                        'gerbil/core/contract~TypeReference#type-reference::t))
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       __obj82251
+                                                       __obj82256
                                                        '1
                                                        '#f
                                                        '#f))
-                                                    (class-slot-ref
-                                                     |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                     __obj82251
+                                                    (unchecked-slot-ref
+                                                     __obj82256
                                                      'identifier)))
                                               false)))
                                         (if _%$e53444%_
@@ -5613,23 +5610,22 @@
                                              _%$e53444%_)
                                             (if (gx#free-identifier=?
                                                  _%type-a53411%_
-                                                 (let ((__obj82252
+                                                 (let ((__obj82257
                                                         _%klass-b53428%_))
                                                    (if (let ()
                                                          (declare (not safe))
                                                          (##structure-direct-instance-of?
-                                                          __obj82252
+                                                          __obj82257
                                                           'gerbil/core/contract~TypeReference#type-reference::t))
                                                        (let ()
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
-                                                          __obj82252
+                                                          __obj82257
                                                           '1
                                                           '#f
                                                           '#f))
-                                                       (class-slot-ref
-                                                        |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                        __obj82252
+                                                       (unchecked-slot-ref
+                                                        __obj82257
                                                         'identifier))))
                                                 '#t
                                                 '#f)))
@@ -5658,23 +5654,22 @@
                                              _%klass-b53428%_))
                                           (let ((_%$e53467%_
                                                  (gx#syntax-local-value
-                                                  (let ((__obj82253
+                                                  (let ((__obj82254
                                                          _%klass-b53428%_))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (##structure-direct-instance-of?
-                                                           __obj82253
+                                                           __obj82254
                                                            'gerbil/core/contract~TypeReference#type-reference::t))
                                                         (let ()
                                                           (declare (not safe))
                                                           (##unchecked-structure-ref
-                                                           __obj82253
+                                                           __obj82254
                                                            '1
                                                            '#f
                                                            '#f))
-                                                        (class-slot-ref
-                                                         |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                         __obj82253
+                                                        (unchecked-slot-ref
+                                                         __obj82254
                                                          'identifier)))
                                                   false)))
                                             (if _%$e53467%_
@@ -5685,25 +5680,24 @@
                                                  _%$e53467%_)
                                                 (if (gx#free-identifier=?
                                                      _%type-a53411%_
-                                                     (let ((__obj82254
+                                                     (let ((__obj82255
                                                             _%klass-b53428%_))
                                                        (if (let ()
                                                              (declare
                                                                (not safe))
                                                              (##structure-direct-instance-of?
-                                                              __obj82254
+                                                              __obj82255
                                                               'gerbil/core/contract~TypeReference#type-reference::t))
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##unchecked-structure-ref
-                                                              __obj82254
+                                                              __obj82255
                                                               '1
                                                               '#f
                                                               '#f))
-                                                           (class-slot-ref
-                                                            |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                            __obj82254
+                                                           (unchecked-slot-ref
+                                                            __obj82255
                                                             'identifier))))
                                                     '#t
                                                     '#f)))
@@ -5715,23 +5709,22 @@
                                          _%klass-a53426%_))
                                       (let ((_%$e53482%_
                                              (gx#syntax-local-value
-                                              (let ((__obj82255
+                                              (let ((__obj82249
                                                      _%klass-a53426%_))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (##structure-direct-instance-of?
-                                                       __obj82255
+                                                       __obj82249
                                                        'gerbil/core/contract~TypeReference#type-reference::t))
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       __obj82255
+                                                       __obj82249
                                                        '1
                                                        '#f
                                                        '#f))
-                                                    (class-slot-ref
-                                                     |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                     __obj82255
+                                                    (unchecked-slot-ref
+                                                     __obj82249
                                                      'identifier)))
                                               false)))
                                         (if _%$e53482%_
@@ -5747,22 +5740,19 @@
                                                    _%klass-b53428%_))
                                                 (let ((_%$e53491%_
                                                        (gx#syntax-local-value
-                                                        (let ((__obj82256
+                                                        (let ((__obj82251
                                                                _%klass-b53428%_))
                                                           (if (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
                         (##structure-direct-instance-of?
-                         __obj82256
+                         __obj82251
                          'gerbil/core/contract~TypeReference#type-reference::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj82256 '1 '#f '#f))
-                      (class-slot-ref
-                       |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                       __obj82256
-                       'identifier)))
+                        (##unchecked-structure-ref __obj82251 '1 '#f '#f))
+                      (unchecked-slot-ref __obj82251 'identifier)))
                 false)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if _%$e53491%_
@@ -5772,58 +5762,51 @@
                                                           _%klass-b53495%_))
                                                        _%$e53491%_)
                                                       (if (gx#free-identifier=?
-                                                           (let ((__obj82257
+                                                           (let ((__obj82252
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           _%klass-a53426%_))
                      (if (let ()
                            (declare (not safe))
                            (##structure-direct-instance-of?
-                            __obj82257
+                            __obj82252
                             'gerbil/core/contract~TypeReference#type-reference::t))
                          (let ()
                            (declare (not safe))
-                           (##unchecked-structure-ref __obj82257 '1 '#f '#f))
-                         (class-slot-ref
-                          |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                          __obj82257
-                          'identifier)))
-                   (let ((__obj82258 _%klass-b53428%_))
+                           (##unchecked-structure-ref __obj82252 '1 '#f '#f))
+                         (unchecked-slot-ref __obj82252 'identifier)))
+                   (let ((__obj82253 _%klass-b53428%_))
                      (if (let ()
                            (declare (not safe))
                            (##structure-direct-instance-of?
-                            __obj82258
+                            __obj82253
                             'gerbil/core/contract~TypeReference#type-reference::t))
                          (let ()
                            (declare (not safe))
-                           (##unchecked-structure-ref __obj82258 '1 '#f '#f))
-                         (class-slot-ref
-                          |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                          __obj82258
-                          'identifier))))
+                           (##unchecked-structure-ref __obj82253 '1 '#f '#f))
+                         (unchecked-slot-ref __obj82253 'identifier))))
                   '#t
                   '#f)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (if (gx#free-identifier=?
                                                      _%type-b53413%_
-                                                     (let ((__obj82259
+                                                     (let ((__obj82250
                                                             _%klass-a53426%_))
                                                        (if (let ()
                                                              (declare
                                                                (not safe))
                                                              (##structure-direct-instance-of?
-                                                              __obj82259
+                                                              __obj82250
                                                               'gerbil/core/contract~TypeReference#type-reference::t))
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##unchecked-structure-ref
-                                                              __obj82259
+                                                              __obj82250
                                                               '1
                                                               '#f
                                                               '#f))
-                                                           (class-slot-ref
-                                                            |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                            __obj82259
+                                                           (unchecked-slot-ref
+                                                            __obj82250
                                                             'identifier))))
                                                     '#t
                                                     '#f))))
@@ -7122,8 +7105,7 @@
                                                                '3
                                                                '#f
                                                                '#f))
-                                                            (class-slot-ref
-                                                             gerbil/core/contract~InterfaceInfo#interface-info::t
+                                                            (unchecked-slot-ref
                                                              __obj82260
                                                              'interface-methods)))))
                                           (gx#raise-syntax-error
@@ -8852,8 +8834,7 @@
                                                '1
                                                '#f
                                                '#f))
-                                            (class-slot-ref
-                                             gerbil/core/mop~MOP-2#class-type-info::t
+                                            (unchecked-slot-ref
                                              __obj82261
                                              'id)))))
                                  (declare (not safe))

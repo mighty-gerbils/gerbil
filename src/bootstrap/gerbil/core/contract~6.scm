@@ -7420,8 +7420,7 @@
                                                  '1
                                                  '#f
                                                  '#f))
-                                              (class-slot-ref
-                                               gerbil/core/contract~InterfaceInfo#interface-info::t
+                                              (unchecked-slot-ref
                                                __obj82242
                                                'name)))
                                         '"-"

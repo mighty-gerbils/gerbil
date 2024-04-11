@@ -49,12 +49,16 @@
                                                    (_%r24859%_ '()))
                                    (if (pair? _%rest24857%_)
                                        (let ((_%slot24861%_
-                                              (car _%rest24857%_)))
+                                              (let ()
+                                                (declare (not safe))
+                                                (##car _%rest24857%_))))
                                          (if (hash-get
                                               _%tab24838%_
                                               _%slot24861%_)
                                              (_%lp24854%_
-                                              (cdr _%rest24857%_)
+                                              (let ()
+                                                (declare (not safe))
+                                                (##cdr _%rest24857%_))
                                               _%r24859%_)
                                              (begin
                                                (hash-put!
@@ -62,7 +66,9 @@
                                                 _%slot24861%_
                                                 '#t)
                                                (_%lp24854%_
-                                                (cdr _%rest24857%_)
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##cdr _%rest24857%_))
                                                 (cons _%slot24861%_
                                                       _%r24859%_)))))
                                        (reverse _%r24859%_))))))
@@ -2345,27 +2351,25 @@
                                                          gerbil/core/mop~MOP-2#class-type-info::t
                                                          __obj27107
                                                          'type-descriptor)))))
-                                               (if (not (gx#identifier?
-                                                         _%L25234%_))
-                                                   (gx#raise-syntax-error
-                                                    '#f
-                                                    '"bad syntax; expected method identifier"
-                                                    _%stx25127%_
-                                                    _%L25234%_)
-                                                   (if (not (let ()
-                                                              (declare
-                                                                (not safe))
-                                                              (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-                                                               _%L25233%_)))
+                                               (if (gx#identifier? _%L25234%_)
+                                                   (if (let ()
+                                                         (declare (not safe))
+                                                         (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
+                                                          _%L25233%_))
+                                                       (gx#raise-syntax-error
+                                                        '#f
+                                                        '"bad syntax; illegal method options"
+                                                        _%stx25127%_)
                                                        (gx#raise-syntax-error
                                                         '#f
                                                         '"bad syntax; expected type identifier"
                                                         _%stx25127%_
-                                                        _%L25233%_)
-                                                       (gx#raise-syntax-error
-                                                        '#f
-                                                        '"bad syntax; illegal method options"
-                                                        _%stx25127%_)))))
+                                                        _%L25233%_))
+                                                   (gx#raise-syntax-error
+                                                    '#f
+                                                    '"bad syntax; expected method identifier"
+                                                    _%stx25127%_
+                                                    _%L25234%_))))
                                          _%tl2515725227%_
                                          _%hd2515625224%_
                                          _%hd2515325214%_

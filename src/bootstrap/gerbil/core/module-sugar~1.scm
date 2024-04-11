@@ -2421,8 +2421,7 @@
                                               '12
                                               '#f
                                               '#f))
-                                           (class-slot-ref
-                                            gerbil/core/mop~MOP-2#class-type-info::t
+                                           (unchecked-slot-ref
                                             __obj44644
                                             'type-descriptor)))
                                      (foldr cons
@@ -2440,8 +2439,7 @@
                                                            '14
                                                            '#f
                                                            '#f))
-                                                        (class-slot-ref
-                                                         gerbil/core/mop~MOP-2#class-type-info::t
+                                                        (unchecked-slot-ref
                                                          __obj44645
                                                          'predicate)))
                                                   (foldr cons
@@ -2463,8 +2461,7 @@
                                                  '18
                                                  '#f
                                                  '#f))
-                                              (class-slot-ref
-                                               gerbil/core/mop~MOP-2#class-type-info::t
+                                              (unchecked-slot-ref
                                                __obj44646
                                                'unchecked-mutators))))
                                    (map cdr
@@ -2481,8 +2478,7 @@
                                                  '17
                                                  '#f
                                                  '#f))
-                                              (class-slot-ref
-                                               gerbil/core/mop~MOP-2#class-type-info::t
+                                              (unchecked-slot-ref
                                                __obj44647
                                                'unchecked-accessors)))))
                             '())
@@ -2500,8 +2496,7 @@
                                       '16
                                       '#f
                                       '#f))
-                                   (class-slot-ref
-                                    gerbil/core/mop~MOP-2#class-type-info::t
+                                   (unchecked-slot-ref
                                     __obj44648
                                     'mutators)))))
                  (map cdr
@@ -2518,10 +2513,7 @@
                                '15
                                '#f
                                '#f))
-                            (class-slot-ref
-                             gerbil/core/mop~MOP-2#class-type-info::t
-                             __obj44649
-                             'accessors))))))
+                            (unchecked-slot-ref __obj44649 'accessors))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (let ((_%ctor44350%_
                                                    (let ((__obj44650
@@ -2538,8 +2530,7 @@
                                                             '13
                                                             '#f
                                                             '#f))
-                                                         (class-slot-ref
-                                                          gerbil/core/mop~MOP-2#class-type-info::t
+                                                         (unchecked-slot-ref
                                                           __obj44650
                                                           'constructor)))))
                                               (if _%ctor44350%_

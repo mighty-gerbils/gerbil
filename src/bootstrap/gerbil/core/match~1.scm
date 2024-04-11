@@ -1032,21 +1032,20 @@
                              (lambda ()
                                (if (gx#stx-null? _%body33701%_)
                                    (cons 'null: '())
-                                   (if (not (gx#stx-pair? _%body33701%_))
-                                       (_%parse133519%_ _%body33701%_)
-                                       (_%parse-error33526%_
-                                        _%body33701%_))))))
+                                   (if (gx#stx-pair? _%body33701%_)
+                                       (_%parse-error33526%_ _%body33701%_)
+                                       (_%parse133519%_ _%body33701%_))))))
                         (let* ((_%__match3808538086%_
                                 (lambda (_%e3372833760%_
                                          _%hd3372933764%_
                                          _%tl3373033767%_)
                                   (let ((_%L33770%_ _%tl3373033767%_)
                                         (_%L33772%_ _%hd3372933764%_))
-                                    (if (not (gx#ellipsis? _%L33772%_))
+                                    (if (gx#ellipsis? _%L33772%_)
+                                        (_%__kont3804538046%_)
                                         (_%__kont3804338044%_
                                          _%L33770%_
-                                         _%L33772%_)
-                                        (_%__kont3804538046%_)))))
+                                         _%L33772%_)))))
                                (_%__match3807938080%_
                                 (lambda (_%e3372033792%_
                                          _%hd3372133796%_
@@ -1175,9 +1174,9 @@
                                _%__stx3808838089%_))))
                       (let ((_%__kont3809138092%_
                              (lambda (_%L33679%_ _%L33681%_)
-                               (if (not (gx#ellipsis? _%L33681%_))
-                                   (_%simple-vector?33523%_ _%L33679%_)
-                                   '#f)))
+                               (if (gx#ellipsis? _%L33681%_)
+                                   '#f
+                                   (_%simple-vector?33523%_ _%L33679%_))))
                             (_%__kont3809338094%_
                              (lambda () (gx#stx-null? _%body33635%_))))
                         (if (gx#stx-pair? _%__stx3808838089%_)

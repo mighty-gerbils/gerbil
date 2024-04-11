@@ -18,6 +18,9 @@ namespace: gxc
          (%#define-runtime
           current-compile-local-type
           gxc#current-compile-local-type)
+         (%#define-runtime
+          current-compile-path-type
+          gxc#current-compile-path-type)
          (%#define-runtime optimizer-info::t gxc#optimizer-info::t)
          (%#define-runtime optimizer-info? gxc#optimizer-info?)
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
