@@ -83,5 +83,6 @@ namespace: gxc
          (%#define-runtime
           apply-check-return-type-begin-annotation%
           gxc#apply-check-return-type-begin-annotation%)
-         (%#define-runtime check-return-type! gxc#check-return-type!))
+         (%#define-runtime check-return-type! gxc#check-return-type!)
+         (%#define-runtime optimize-if% gxc#optimize-if%))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-call~0"))

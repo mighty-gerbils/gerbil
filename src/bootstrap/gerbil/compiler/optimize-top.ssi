@@ -204,6 +204,7 @@ namespace: gxc
           collect-top-level-type-call%
           gxc#collect-top-level-type-call%)
          (%#define-runtime collect-type-setq% gxc#collect-type-setq%)
+         (%#define-runtime apply-path-type-if% gxc#apply-path-type-if%)
          (%#define-runtime
           basic-expression-type-annotations
           gxc#basic-expression-type-annotations)

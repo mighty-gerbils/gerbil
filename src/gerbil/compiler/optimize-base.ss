@@ -18,6 +18,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-local-type
   (make-parameter #f))
+(def current-compile-path-type
+  (make-parameter []))
 
 (defstruct optimizer-info (type classes ssxi methods)
   constructor: :init!)
@@ -431,7 +433,8 @@ namespace: gxc
       (verbose "declare-method: unknown class"  type-t))))
 
 (def (optimizer-lookup-type sym)
-  (or (alet (ht (current-compile-local-type))
+  (or (agetq sym (current-compile-path-type))
+      (alet (ht (current-compile-local-type))
         (hash-get ht sym))
       (hash-get (optimizer-info-type (current-compile-optimizer-info))
                 sym)))

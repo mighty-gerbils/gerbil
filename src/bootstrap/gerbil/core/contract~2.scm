@@ -97,10 +97,7 @@
                                '1
                                '#f
                                '#f))
-                            (class-slot-ref
-                             |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                             __obj82218
-                             'identifier)))
+                            (unchecked-slot-ref __obj82218 'identifier)))
                       false))
                     (if (not _%t45121%_)
                         (gx#raise-syntax-error
@@ -150,8 +147,7 @@
                                     '1
                                     '#f
                                     '#f))
-                                 (class-slot-ref
-                                  |gerbil/core/contract~TypeReference[1]#type-reference::t|
+                                 (unchecked-slot-ref
                                   __obj82219
                                   'identifier)))))
                       (_%loop45094%_
@@ -180,37 +176,31 @@
               (class-instance?
                gerbil/core/mop~MOP-2#class-type-info::t
                _%t45081%_))
-            (let ((__obj82220 _%t45081%_))
+            (let ((__obj82221 _%t45081%_))
               (if (let ()
                     (declare (not safe))
                     (##structure-direct-instance-of?
-                     __obj82220
+                     __obj82221
                      'gerbil.core#class-type-info::t))
                   (let ()
                     (declare (not safe))
-                    (##unchecked-structure-ref __obj82220 '12 '#f '#f))
-                  (class-slot-ref
-                   gerbil/core/mop~MOP-2#class-type-info::t
-                   __obj82220
-                   'type-descriptor)))
+                    (##unchecked-structure-ref __obj82221 '12 '#f '#f))
+                  (unchecked-slot-ref __obj82221 'type-descriptor)))
             (if (let ()
                   (declare (not safe))
                   (class-instance?
                    gerbil/core/contract~InterfaceInfo#interface-info::t
                    _%t45081%_))
-                (let ((__obj82221 _%t45081%_))
+                (let ((__obj82220 _%t45081%_))
                   (if (let ()
                         (declare (not safe))
                         (##structure-direct-instance-of?
-                         __obj82221
+                         __obj82220
                          'gerbil/core/contract~InterfaceInfo#interface-info::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj82221 '4 '#f '#f))
-                      (class-slot-ref
-                       gerbil/core/contract~InterfaceInfo#interface-info::t
-                       __obj82221
-                       'instance-type)))
+                        (##unchecked-structure-ref __obj82220 '4 '#f '#f))
+                      (unchecked-slot-ref __obj82220 'instance-type)))
                 (gx#raise-syntax-error
                  '#f
                  '"unexpected type; expected class, interface or type reference"

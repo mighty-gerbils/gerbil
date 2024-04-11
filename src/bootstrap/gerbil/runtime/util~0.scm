@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1712823024)
+  (define gerbil/runtime/util::timestamp 1712846032)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)
@@ -1685,8 +1685,12 @@
               (display _%x85389%_ _%port85393%_)
               (if (pair? _%x85389%_)
                   (let ()
-                    (__display-as-string (car _%x85389%_) _%port85393%_)
-                    (__display-as-string (cdr _%x85389%_) _%port85393%_))
+                    (__display-as-string
+                     (let () (declare (not safe)) (##car _%x85389%_))
+                     _%port85393%_)
+                    (__display-as-string
+                     (let () (declare (not safe)) (##cdr _%x85389%_))
+                     _%port85393%_))
                   (if (vector? _%x85389%_)
                       (vector-for-each
                        (lambda (_%g8541685418%_)
@@ -1705,11 +1709,15 @@
         (if (string? _%x85372%_)
             _%x85372%_
             (if (symbol? _%x85372%_)
-                (symbol->string _%x85372%_)
+                (let () (declare (not safe)) (##symbol->string _%x85372%_))
                 (if (keyword? _%x85372%_)
-                    (keyword->string _%x85372%_)
+                    (let ()
+                      (declare (not safe))
+                      (##keyword->string _%x85372%_))
                     (if (number? _%x85372%_)
-                        (number->string _%x85372%_)
+                        (let ()
+                          (declare (not safe))
+                          (##number->string _%x85372%_))
                         (call-with-output-string
                          '()
                          (lambda (_%g8537885380%_)
@@ -2497,12 +2505,15 @@
                         (let ((_%start84553%_ _%start84525%_))
                           (if ((lambda (_%o84562%_)
                                  (and (fixnum? _%o84562%_)
-                                      (fx<= _%start84553%_
-                                            _%o84562%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (##u8vector-length
-                                               _%bytes84530%_)))))
+                                      (let ((__tmp89545
+                                             (let ()
+                                               (declare (not safe))
+                                               (##u8vector-length
+                                                _%bytes84530%_))))
+                                        (declare (not safe))
+                                        (##fx<= _%start84553%_
+                                                _%o84562%_
+                                                __tmp89545))))
                                _%end84526%_)
                               (let ((_%end84566%_ _%end84526%_))
                                 (__read-u8vector__%
@@ -2570,18 +2581,18 @@
            _%start84588%_
            _%end84590%_))))
     (define read-u8vector
-      (lambda _g89546_
-        (let ((_g89545_ (let () (declare (not safe)) (##length _g89546_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89545_ 2))
-                 (apply read-u8vector__0 _g89546_))
-                ((let () (declare (not safe)) (##fx= _g89545_ 3))
-                 (apply read-u8vector__1 _g89546_))
-                ((let () (declare (not safe)) (##fx= _g89545_ 4))
-                 (apply read-u8vector__% _g89546_))
+      (lambda _g89547_
+        (let ((_g89546_ (let () (declare (not safe)) (##length _g89547_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89546_ 2))
+                 (apply read-u8vector__0 _g89547_))
+                ((let () (declare (not safe)) (##fx= _g89546_ 3))
+                 (apply read-u8vector__1 _g89547_))
+                ((let () (declare (not safe)) (##fx= _g89546_ 4))
+                 (apply read-u8vector__% _g89547_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   read-u8vector
-                  _g89546_))))))
+                  _g89547_))))))
     (define __read-u8vector__%
       (lambda (_%bytes84462%_ _%port84463%_ _%start84464%_ _%end84465%_)
         (let* ((_%bytes84468%_ _%bytes84462%_)
@@ -2612,18 +2623,18 @@
            _%start84513%_
            _%end84515%_))))
     (define __read-u8vector
-      (lambda _g89548_
-        (let ((_g89547_ (let () (declare (not safe)) (##length _g89548_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89547_ 2))
-                 (apply __read-u8vector__0 _g89548_))
-                ((let () (declare (not safe)) (##fx= _g89547_ 3))
-                 (apply __read-u8vector__1 _g89548_))
-                ((let () (declare (not safe)) (##fx= _g89547_ 4))
-                 (apply __read-u8vector__% _g89548_))
+      (lambda _g89549_
+        (let ((_g89548_ (let () (declare (not safe)) (##length _g89549_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89548_ 2))
+                 (apply __read-u8vector__0 _g89549_))
+                ((let () (declare (not safe)) (##fx= _g89548_ 3))
+                 (apply __read-u8vector__1 _g89549_))
+                ((let () (declare (not safe)) (##fx= _g89548_ 4))
+                 (apply __read-u8vector__% _g89549_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __read-u8vector
-                  _g89548_))))))
+                  _g89549_))))))
     (define write-u8vector__%
       (lambda (_%bytes84387%_ _%port84388%_ _%start84389%_ _%end84390%_)
         (if (u8vector? _%bytes84387%_)
@@ -2635,22 +2646,25 @@
                                 (let ()
                                   (declare (not safe))
                                   (##fx>= _%o84413%_ '0))
-                                (let ((__tmp89549
+                                (let ((__tmp89550
                                        (let ()
                                          (declare (not safe))
                                          (##u8vector-length _%bytes84394%_))))
                                   (declare (not safe))
-                                  (##fx< _%o84413%_ __tmp89549))))
+                                  (##fx< _%o84413%_ __tmp89550))))
                          _%start84389%_)
                         (let ((_%start84417%_ _%start84389%_))
                           (if ((lambda (_%o84426%_)
                                  (and (fixnum? _%o84426%_)
-                                      (fx<= _%start84417%_
-                                            _%o84426%_
-                                            (let ()
-                                              (declare (not safe))
-                                              (##u8vector-length
-                                               _%bytes84394%_)))))
+                                      (let ((__tmp89551
+                                             (let ()
+                                               (declare (not safe))
+                                               (##u8vector-length
+                                                _%bytes84394%_))))
+                                        (declare (not safe))
+                                        (##fx<= _%start84417%_
+                                                _%o84426%_
+                                                __tmp89551))))
                                _%end84390%_)
                               (let ((_%end84430%_ _%end84390%_))
                                 (__write-u8vector__%
@@ -2718,18 +2732,18 @@
            _%start84452%_
            _%end84454%_))))
     (define write-u8vector
-      (lambda _g89551_
-        (let ((_g89550_ (let () (declare (not safe)) (##length _g89551_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89550_ 2))
-                 (apply write-u8vector__0 _g89551_))
-                ((let () (declare (not safe)) (##fx= _g89550_ 3))
-                 (apply write-u8vector__1 _g89551_))
-                ((let () (declare (not safe)) (##fx= _g89550_ 4))
-                 (apply write-u8vector__% _g89551_))
+      (lambda _g89553_
+        (let ((_g89552_ (let () (declare (not safe)) (##length _g89553_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89552_ 2))
+                 (apply write-u8vector__0 _g89553_))
+                ((let () (declare (not safe)) (##fx= _g89552_ 3))
+                 (apply write-u8vector__1 _g89553_))
+                ((let () (declare (not safe)) (##fx= _g89552_ 4))
+                 (apply write-u8vector__% _g89553_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   write-u8vector
-                  _g89551_))))))
+                  _g89553_))))))
     (define __write-u8vector__%
       (lambda (_%bytes84326%_ _%port84327%_ _%start84328%_ _%end84329%_)
         (let* ((_%bytes84332%_ _%bytes84326%_)
@@ -2760,18 +2774,18 @@
            _%start84377%_
            _%end84379%_))))
     (define __write-u8vector
-      (lambda _g89553_
-        (let ((_g89552_ (let () (declare (not safe)) (##length _g89553_))))
-          (cond ((let () (declare (not safe)) (##fx= _g89552_ 2))
-                 (apply __write-u8vector__0 _g89553_))
-                ((let () (declare (not safe)) (##fx= _g89552_ 3))
-                 (apply __write-u8vector__1 _g89553_))
-                ((let () (declare (not safe)) (##fx= _g89552_ 4))
-                 (apply __write-u8vector__% _g89553_))
+      (lambda _g89555_
+        (let ((_g89554_ (let () (declare (not safe)) (##length _g89555_))))
+          (cond ((let () (declare (not safe)) (##fx= _g89554_ 2))
+                 (apply __write-u8vector__0 _g89555_))
+                ((let () (declare (not safe)) (##fx= _g89554_ 3))
+                 (apply __write-u8vector__1 _g89555_))
+                ((let () (declare (not safe)) (##fx= _g89554_ 4))
+                 (apply __write-u8vector__% _g89555_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __write-u8vector
-                  _g89553_))))))
+                  _g89555_))))))
     (define DBG-printer (make-parameter write))
     (define DBG-helper
       (lambda (_%tag84294%_

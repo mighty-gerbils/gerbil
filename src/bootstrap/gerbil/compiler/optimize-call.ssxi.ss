@@ -406,4 +406,19 @@ package: gerbil/compiler
              unchecked:
              #f
              origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
+   gxc#optimize-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
              gerbil/compiler/optimize-call))))

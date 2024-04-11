@@ -1105,7 +1105,10 @@
                                         (_%right6917%_ '()))
                       (if (pair? _%opt-rest6915%_)
                           (let* ((_%hd6921%_ (caar _%opt-rest6915%_))
-                                 (_%rest6924%_ (cdr _%opt-rest6915%_))
+                                 (_%rest6924%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##cdr _%opt-rest6915%_)))
                                  (_%right*6927%_
                                   (cons _%hd6921%_ _%right6917%_))
                                  (_%g69306947%_
@@ -1474,8 +1477,14 @@
                     (let _%recur6609%_ ((_%opt-rest6612%_ _%opt6607%_)
                                         (_%right6614%_ '()))
                       (if (pair? _%opt-rest6612%_)
-                          (let* ((_%hd6616%_ (car _%opt-rest6612%_))
-                                 (_%rest6619%_ (cdr _%opt-rest6612%_))
+                          (let* ((_%hd6616%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##car _%opt-rest6612%_)))
+                                 (_%rest6619%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##cdr _%opt-rest6612%_)))
                                  (_%g66226630%_
                                   (lambda (_%g66236626%_)
                                     (gx#raise-syntax-error
@@ -1716,13 +1725,18 @@
                     (letrec ((_%make-body5986%_
                               (lambda (_%kwargs6473%_ _%kwvals6475%_)
                                 (if (pair? _%kwargs6473%_)
-                                    (let* ((_%kwarg6477%_ (car _%kwargs6473%_))
+                                    (let* ((_%kwarg6477%_
+                                            (let ()
+                                              (declare (not safe))
+                                              (##car _%kwargs6473%_)))
                                            (_%var6480%_ (cadr _%kwarg6477%_))
                                            (_%default6483%_
                                             (caddr _%kwarg6477%_))
                                            (_%kwval6486%_ (car _%kwvals6475%_))
                                            (_%rest-kwargs6489%_
-                                            (cdr _%kwargs6473%_))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##cdr _%kwargs6473%_)))
                                            (_%rest-kwvals6492%_
                                             (cdr _%kwvals6475%_))
                                            (_%g64976520%_
@@ -2222,8 +2236,14 @@
                                             (##make-vector __tmp20988 '#f))))
                       (let _%lp5876%_ ((_%rest5879%_ _%kws5867%_))
                         (if (pair? _%rest5879%_)
-                            (let* ((_%key5882%_ (car _%rest5879%_))
-                                   (_%rest5885%_ (cdr _%rest5879%_))
+                            (let* ((_%key5882%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%rest5879%_)))
+                                   (_%rest5885%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##cdr _%rest5879%_)))
                                    (_%pos5888%_
                                     (let ((__tmp20985
                                            (keyword-hash _%key5882%_))
@@ -4542,14 +4562,20 @@
                     (let ((_%ht11492%_ (make-hash-table-eq)))
                       (let _%lp11495%_ ((_%rest11498%_ _%xs11489%_))
                         (if (pair? _%rest11498%_)
-                            (let* ((_%ix11501%_ (car _%rest11498%_))
+                            (let* ((_%ix11501%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%rest11498%_)))
                                    (_%$e11504%_
                                     (hash-get _%ht11492%_ _%ix11501%_)))
                               (if _%$e11504%_
                                   _%$e11504%_
                                   (begin
                                     (hash-put! _%ht11492%_ _%ix11501%_ '#t)
-                                    (_%lp11495%_ (cdr _%rest11498%_)))))
+                                    (_%lp11495%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%rest11498%_))))))
                             '#f)))))
                  (_%generate-hash-dispatch-table9462%_
                   (lambda (_%indexes11458%_ _%hash-e11460%_)

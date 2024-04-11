@@ -17,6 +17,11 @@ package: gerbil/compiler
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-local-type)
     'procedure::t))
+  (declare-type
+   gxc#current-compile-path-type
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-path-type)
+    'procedure::t))
   (declare-class
    gxc#optimizer-info::t
    (@class gxc#optimizer-info::t
