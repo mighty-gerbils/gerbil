@@ -95,7 +95,7 @@
 
 (def (trivial-struct->json-object struct)
   (with ([strukt . fields] (struct->list struct))
-    (let (f (if (json-symbolic-keys) cons (lambda (slot v) (cons (symbol->string slot) v))))
+    (let (f (if (read-json-key-as-symbol?) cons (lambda (slot v) (cons (symbol->string slot) v))))
       (walist (map f (cdr (vector->list (class-type-slot-vector strukt))) fields)))))
 
 (def (trivial-json-object->struct strukt json (defaults #f))

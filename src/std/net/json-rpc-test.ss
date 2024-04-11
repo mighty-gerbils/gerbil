@@ -54,7 +54,7 @@
                                        method: "foo" params: [42 "hello"] id: 13))
                     "{\"id\":13,\"jsonrpc\":\"2.0\",\"method\":\"foo\",\"params\":[42,\"hello\"]}"))
     (test-case "decode result"
-      (parameterize ((json-symbolic-keys #f))
+      (parameterize ((read-json-key-as-symbol? #f))
         (check-equal? (decode-json-rpc-response
                        1+ 69 (string->json-object "{\"jsonrpc\": \"2.0\", \"result\": 1776, \"id\": 69}"))
                       1777)))
@@ -66,7 +66,7 @@
                ((JSON-RPCError code: -151 message: "foo" data: #!void) #t)
                (else #f)) => #t))
     (test-case "decode errors"
-      (parameterize ((json-symbolic-keys #f))
+      (parameterize ((read-json-key-as-symbol? #f))
         (def response-json-1
           (string->json-object "{\"jsonrpc\": \"2.0\", \"error\": { \"code\": -151, \"message\": \"foo\", \"data\": [1] }, \"id\": 42 }"))
         (check-exception (decode-json-rpc-response 1+ 42 response-json-1)

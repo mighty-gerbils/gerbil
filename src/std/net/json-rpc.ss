@@ -37,7 +37,7 @@
   (only-in :std/net/uri form-url-decode uri-decode)
   (only-in :std/sugar try catch hash)
   (only-in :std/text/base64 u8vector->base64-string base64-string->u8vector)
-  (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
+  (only-in :std/text/json trivial-json-object->class JSON read-json-key-as-symbol?
            bytes->json-object json-object->bytes json-object->string))
 
 (deferror-class (JSON-RPCError IOError)
@@ -124,7 +124,7 @@
   class-instance-init!)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
-  (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
+  (parameterize ((read-json-key-as-symbol? #f)) (bytes->json-object b)))
 
 ;;; Client code
 ;; TODO: implement timeouts, with semi-asynchronous shutdown of the http-post thread itself.
