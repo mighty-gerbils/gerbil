@@ -301,8 +301,14 @@ namespace: gxc
             (bind-type (optimizer-resolve-type sym))
             (expr-type (apply-basic-expression-type #'expr))
             (reduced-type (greatest-common-type stx bind-type expr-type)))
-       (optimizer-declare-type! sym reduced-type
-                                (memq sym (current-compile-local-env)))
+       (cond
+        ((or (not bind-type) (and expr-type (eq? (!type-id bind-type) 'false)))
+         ;; special treatment of false as nil
+         (optimizer-declare-type! sym expr-type
+                                  (memq sym (current-compile-local-env))))
+        (reduced-type
+         (optimizer-declare-type! sym reduced-type
+                                  (memq sym (current-compile-local-env)))))
        (compile-e self #'expr)))))
 
 (def (apply-path-type-if% self stx)
