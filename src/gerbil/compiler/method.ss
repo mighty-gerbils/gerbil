@@ -347,6 +347,9 @@ namespace: gxc
 (def (xform-wrap-source stx src-stx)
   (stx-wrap-source stx (stx-source src-stx)))
 
+(def (xform-wrap-apply stx src-stx ctx)
+  (compile-e ctx (xform-wrap-source stx src-stx)))
+
 (def (xform-begin% self stx)
   (ast-case stx ()
     ((_ . forms)

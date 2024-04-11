@@ -109,9 +109,9 @@ namespace: gxc
          ((and signature signature.unchecked)
           => (lambda (unchecked)
                (if (symbol-in-local-scope? unchecked)
-                 (xform-wrap-source
+                 (xform-wrap-apply
                   (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
-                  stx)
+                  stx ctx)
                  (xform-call% ctx stx))))
          (else
           (xform-call% ctx stx))))
@@ -264,7 +264,9 @@ namespace: gxc
                   ['%#let-values [[[$obj] inline-make-object]]
                                  ['%#begin
                                   (if ctor-impl
-                                    ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                    (xform-wrap-apply
+                                     ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                     stx ctx)
                                     (let ($ctor (make-symbol (gensym '__constructor)))
                                       ['%#let-values [[[$ctor]
                                                        ['%#call ['%#ref 'direct-method-ref] ['%#ref self.id] ['%#ref $obj] ['%#quote ctor]]]]
@@ -283,7 +285,9 @@ namespace: gxc
                   ['%#let-values [[[$obj] inline-make-object]]
                                  ['%#begin
                                   (if metakons
-                                    ['%#call ['%#ref metakons] ['%#ref self.id] ['%#ref $obj] args ...]
+                                    (xform-wrap-apply
+                                     ['%#call ['%#ref metakons] ['%#ref self.id] ['%#ref $obj] args ...]
+                                     stx ctx)
                                     ['%#call ['%#ref 'call-method] ['%#ref self.id] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
                                   ['%#ref $obj]]]
                   stx))))
@@ -484,18 +488,14 @@ namespace: gxc
       (cond
        (inline
         (verbose "inline lambda")
-        (compile-e
-         ctx
-         (xform-wrap-source
+        (xform-wrap-apply
           (inline stx)
-          stx)))
+          stx ctx))
        ((and dispatch (symbol-in-local-scope? dispatch))
         (verbose "dispatch lambda => " dispatch)
-        (compile-e
-         ctx
-         (xform-wrap-source
-          ['%#call ['%#ref dispatch] args ...]
-          stx)))
+        (xform-wrap-apply
+         ['%#call ['%#ref dispatch] args ...]
+         stx ctx))
        (else
         (!procedure::optimize-call self ctx stx args))))))
 
@@ -530,11 +530,9 @@ namespace: gxc
                        (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
                                             stx keys kw)))
                    kwargs)
-                 (compile-e
-                  ctx
-                  (xform-wrap-source
-                   ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
-                   stx)))
+                 (xform-wrap-apply
+                  ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                  stx ctx))
                (let* ((kwt (make-symbol (gensym '__kwt)))
                       (kwvars
                        (map (lambda (_) (make-symbol (gensym '__kw)))
@@ -558,22 +556,20 @@ namespace: gxc
                                ((assgetq key xkwargs))
                                (else '(%#ref absent-value))))
                             keys)))
-                 (compile-e
-                  ctx
-                  (xform-wrap-source
-                   ['%#let-values kwbind
-                                  ['%#let-values [[[kwt]
-                                                   (xform-wrap-source
-                                                    ['%#call '(%#ref make-symbolic-table)
-                                                             ['%#quote (length kwargs)]
-                                                             '(%#quote (length kwvars))]
-                                                    stx)]]
-                                                 ['%#begin
-                                                  kwset ...
+                 (xform-wrap-apply
+                  ['%#let-values kwbind
+                                 ['%#let-values [[[kwt]
                                                   (xform-wrap-source
-                                                   ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
-                                                   stx)]]]
-                   stx))))))
+                                                   ['%#call '(%#ref make-symbolic-table)
+                                                            ['%#quote (length kwargs)]
+                                                            '(%#quote (length kwvars))]
+                                                   stx)]]
+                                                ['%#begin
+                                                 kwset ...
+                                                 (xform-wrap-source
+                                                  ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                                                  stx)]]]
+                  stx ctx)))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
            (xform-call% ctx stx)))
