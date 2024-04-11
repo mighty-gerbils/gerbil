@@ -101,7 +101,7 @@ END
                             ['l3 :: [1 2 3]]
                             ['obj1 :: (walistq [['name . "John Doe"]
                                                 ['age . 33]])]]))
-      (parameterize ((write-json-sort-keys #f)
+      (parameterize ((write-json-sort-keys? #f)
                      (read-json-object-as-walist? #t))
         (check-pretty my-obj #<<END
 {"obj0": {},
