@@ -18,7 +18,8 @@ namespace: gxc
 ;; method to optimize direct procedure calls
 (defcompile-method (apply-optimize-call) (::optimize-call ::basic-xform) ()
   final:
-  (%#call optimize-call%))
+  (%#call optimize-call%)
+  (%#if   optimize-if%))
 
 ;; method to verify the procedure declared return type
 (defcompile-method (apply-check-return-type) (::check-return-type ::void) ()
@@ -35,7 +36,7 @@ namespace: gxc
   (%#letrec-values    apply-body-let-values%)
   (%#letrec*-values   apply-body-let-values%)
   (%#call             apply-operands)
-  (%#if               apply-operands)
+  (%#if               apply-path-type-if%)
   (%#set!             apply-body-setq%))
 
 ;;; apply-optimize-call
@@ -636,3 +637,47 @@ namespace: gxc
        (else
         ;; not happy; we can't verify type
         (raise-compile-error "procedure return type does not match signature" stx type expr-type)))))))
+
+(def (optimize-if% self stx)
+  (ast-case stx (%#call %#ref %#quote)
+    ((_ (%#quote val) K E)
+     (if (stx-e #'val)
+       (compile-e self #'K)
+       (compile-e self #'E)))
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (let* ((test
+                      (xform-wrap-apply #'(%#call (%#ref pred) (%#ref obj))
+                                        stx self))
+                     (K
+                      (delay
+                        (parameterize ((current-compile-path-type
+                                        (cons (cons (identifier-symbol #'obj)
+                                                    (optimizer-resolve-class stx (!type-id pred-type)))
+                                              (current-compile-path-type))))
+                          (compile-e self #'K))))
+                     (E (delay (compile-e self #'E))))
+                (ast-case test (#%quote)
+                  ((%#quote val)
+                   (if (stx-e #'val)
+                     (force K)
+                     (force E)))
+                  (_ (xform-wrap-source
+                      ['%#if test (force K) (force E)]
+                      stx))))
+              (xform-operands self stx))))
+      (else
+       (xform-operands self stx))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (optimize-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
+    ((_ test K E)
+     (xform-operands self stx))))

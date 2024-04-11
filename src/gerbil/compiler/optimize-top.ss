@@ -64,7 +64,7 @@ namespace: gxc
   (%#letrec-values    collect-type-letrec-values%)
   (%#letrec*-values   collect-type-letrec-values%)
   (%#call             apply-operands)
-  (%#if               apply-operands)
+  (%#if               apply-path-type-if%)
   (%#set!             apply-body-setq%))
 
 (defcompile-method (apply-collect-mutable-type-info) (::collect-mutable-type-info ::void)
@@ -81,7 +81,7 @@ namespace: gxc
   (%#letrec-values    collect-type-letrec-values%)
   (%#letrec*-values   collect-type-letrec-values%)
   (%#call             apply-operands)
-  (%#if               apply-operands)
+  (%#if               apply-path-type-if%)
   (%#set!             collect-type-setq%))
 
 ;; methods to find the type of an expression
@@ -304,6 +304,34 @@ namespace: gxc
        (optimizer-declare-type! sym reduced-type
                                 (memq sym (current-compile-local-env)))
        (compile-e self #'expr)))))
+
+(def (apply-path-type-if% self stx)
+  (ast-case stx (%#call %#ref)
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (begin
+                (parameterize ((current-compile-path-type
+                                (cons (cons (identifier-symbol #'obj)
+                                            (optimizer-resolve-class stx (!type-id pred-type)))
+                                      (current-compile-path-type))))
+                  (compile-e self #'K))
+                (compile-e self #'E))
+              (apply-operands self stx))))
+      (else
+       (apply-operands self stx))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (apply-path-type-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
+    ((_ test K E)
+     (apply-operands self stx))))
 
 ;;; apply-basic-expression-type
 (def basic-expression-type-annotations (make-hash-table-eq))
@@ -633,15 +661,45 @@ namespace: gxc
      (optimizer-resolve-type (identifier-symbol #'id)))))
 
 (def (basic-expression-type-if% self stx)
-  (ast-case stx ()
+  (def (type-e type-K type-E)
+    (cond
+     ((!abort? type-E) type-K)
+     ((!abort? type-K) type-E)
+     (else
+      (greatest-common-type stx type-K type-E))))
+
+  (def (basic-type-e K E)
+    (let ((type-K (apply-basic-expression-type K))
+          (type-E (apply-basic-expression-type E)))
+      (type-e type-K type-E)))
+
+  (ast-case stx (%#call %#ref)
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (let* ((type-K
+                      (parameterize ((current-compile-path-type
+                                      (cons (cons (identifier-symbol #'obj)
+                                                  (optimizer-resolve-class stx (!type-id pred-type)))
+                                            (current-compile-path-type))))
+                        (apply-basic-expression-type #'K)))
+                     (type-E (apply-basic-expression-type #'E)))
+                (type-e type-K type-E))
+              (basic-type-e #'K #'E))))
+      (else
+       (basic-type-e #'K #'E))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (basic-expression-type-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
     ((_ test K E)
-     (let ((type-K (apply-basic-expression-type #'K))
-           (type-E (apply-basic-expression-type #'E)))
-       (cond
-        ((!abort? type-E) type-K)
-        ((!abort? type-K) type-E)
-        (else
-         (greatest-common-type stx type-K type-E)))))))
+     (basic-type-e #'K #'E))))
 
 (def (greatest-common-type stx type-a type-b)
   (def (common-e left right)
