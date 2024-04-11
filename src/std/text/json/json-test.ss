@@ -132,7 +132,8 @@ END
 END
                       )))
     (test-case "io zoo"
-      (parameterize ((read-json-key-as-symbol? #t))
+      (parameterize ((read-json-key-as-symbol? #t)
+                     (write-json-sort-keys? #t))
         (def obj (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
         (def str "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
 
