@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1712836653)
+  (define gerbil/core/contract~TypeEnv::timestamp 1712846030)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type

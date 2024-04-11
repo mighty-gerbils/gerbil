@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-top::timestamp 1712836659)
+  (define gerbil/compiler/optimize-top::timestamp 1712846036)
   (begin
     (define gxc#::collect-top-level-type-info::t
       (let ((__tmp167990 (list gxc#::void::t))
@@ -5003,18 +5003,20 @@
                                                           _%stx162852%_
                                                           _%bind-type162918%_
                                                           _%expr-type162920%_)))
-                                                   (let ((__tmp168082
-                                                          (memq _%sym162916%_
-                                                                (let ()
+                                                   (if _%reduced-type162922%_
+                                                       (let ((__tmp168082
+                                                              (memq _%sym162916%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (declare (not safe))
-                          (gxc#current-compile-local-env)))))
+                            (let ()
+                              (declare (not safe))
+                              (gxc#current-compile-local-env)))))
+                 (declare (not safe))
+                 (gxc#optimizer-declare-type!__%
+                  _%sym162916%_
+                  _%reduced-type162922%_
+                  __tmp168082))
+               '#!void)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (declare (not safe))
-                                                     (gxc#optimizer-declare-type!__%
-                                                      _%sym162916%_
-                                                      _%reduced-type162922%_
-                                                      __tmp168082))
                                                    (let ()
                                                      (declare (not safe))
                                                      (gxc#compile-e__1
