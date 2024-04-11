@@ -176,7 +176,7 @@
         (unless lisp-style? (newline-indent indentation))
         (out.write-char-inline close)))
     (def (write-alist alist indentation)
-      (let (alst (if (json-sort-keys) (json-sort-alist alist) alist))
+      (let (alst (if (write-json-sort-keys?) (json-sort-alist alist) alist))
         (write-many write-binding #\{ #\} alst indentation)))
     (def (write-list list indentation)
       (write-many write-value #\[ #\] list indentation))
