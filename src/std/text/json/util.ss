@@ -137,10 +137,9 @@
 (defmethod {:json JSON} trivial-class->json-object)
 
 (def (pretty-json object (output (current-output-port))
-                  indent: (indent 2 ~ fx>0?)
-                  sort-keys?: (sort-keys? (write-json-sort-keys?) : boolean::t)
-                  lisp-style?: (lisp-style? #f : boolean::t))
-  (check-argument-positive-integer indent)
+                  indent: (indent :~ fx>0? :- :fixnum := 2)
+                  sort-keys?: (sort-keys? : :boolean := (write-json-sort-keys?))
+                  lisp-style?: (lisp-style? : :boolean := #f))
   (using (out (open-buffered-string-writer output) : BufferedStringWriter)
     (def env (make-env))
     (def (simple? obj)
