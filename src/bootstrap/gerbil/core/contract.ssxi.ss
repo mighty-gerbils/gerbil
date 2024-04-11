@@ -863,6 +863,21 @@ package: gerbil/core
              origin:
              gerbil/core/contract~Interface)))
   (declare-type
+   |gerbil/core/contract~Interface[1]#signature-has-keywords?|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
+  (declare-type
    |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|
    (@lambda 6
             #f

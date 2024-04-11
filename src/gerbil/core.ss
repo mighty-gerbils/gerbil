@@ -5,17 +5,17 @@
 prelude: :<root>
 package: gerbil
 
+(import "core/module-sugar")
 (import "core/runtime"
         "core/sugar"
-        "core/mop"
+        (except-in "core/mop" @method)
         "core/match"
         "core/more-sugar"
-        "core/module-sugar"
         "core/contract"
         (phi: +1
               "core/runtime"
               "core/sugar"
-              "core/mop"
+              (except-in "core/mop" @method)
               "core/match"
               "core/more-sugar"
               "core/contract"

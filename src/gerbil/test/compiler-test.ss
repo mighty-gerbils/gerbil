@@ -10,7 +10,8 @@
         :gerbil/runtime/init)
 (export compiler-specializer-test
         compiler-safety-test
-        compiler-typed-test)
+        compiler-typed-test
+        compiler-syntax-test)
 
 (def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -75,3 +76,8 @@
       (must-compile-and-execute "compiler-test-support/class-after-use.ss"))
     (test-case "mutable bindings infer the greatest common type"
       (must-compile-and-execute "compiler-test-support/mutable-binding-type.ss"))))
+
+(def compiler-syntax-test
+  (test-suite "compiler syntactic features"
+    (test-case "deep dots"
+      (must-compile-and-execute "compiler-test-support/deep-dots.ss"))))
