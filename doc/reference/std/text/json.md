@@ -84,60 +84,25 @@ Signals an error if it fails to print JSON.
 
 Parses data on given *port* and returns JSON object or signals an error if it fails to parse.
 
-## json-symbolic-keys
+## read-json-key-as-symbol?
 ``` scheme
-json-symbolic-keys
+read-json-key-as-symbol?
 ```
 
-Boolean parameter to control should decoded hashes have symbols as keys? Defaults to `#t`.
-`#f` means that keys will be strings.
+Boolean parameter to control whether JSON “objects” be decoded
+as using symbols rather than strings as keys?
+`#f` the default means strings, `#t` means symbols.
+
+NB: Before v0.18.2, this parameter used to be called `json-symbolic-keys` and default to `#t`.
 
 ::: tip Examples
 ``` scheme
 > (hash->list (string->json-object "{\"a\":1}"))
-((a . 1))
-
-> (parameterize ((json-symbolic-keys #f))
-    (hash->list (string->json-object "{\"a\":1}")))
 (("a" . 1))
-```
 
-## json-list-wrapper
-``` scheme
-json-list-wrapper
-```
-
-Parameter to control how JSON lists should be transformed.
-Defaults to `identity`, which means keep them as lists.
-If bound to `list->vector` then JSON lists will be parsed as vectors.
-
-::: tip Examples
-``` scheme
-> (string->json-object "[\"a\",1]")
-("a" 1)
-
-> (parameterize ((json-list-wrapper list->vector))
-    (string->json-object "[\"a\",1]"))
-#("a" 1)
-```
-
-## json-sort-keys
-``` scheme
-json-sort-keys
-```
-
-This is a parameter that can be used to control how JSON objects should be encoded.
-If true (the default), keys in JSON objects represented by hash-tables will be sorted
-before they are printed.
-
-::: tip Examples
-``` scheme
-> (parameterize ((json-sort-keys #t))
-    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
-"{\"bar\":2,\"baz\":3,\"foo\":1}"
-> (parameterize ((json-sort-keys #f))
-    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
-"{\"baz\":3,\"bar\":2,\"foo\":1}"
+> (parameterize ((read-json-key-as-symbol? #t))
+    (hash->list (string->json-object "{\"a\":1}")))
+((a . 1))
 ```
 
 ## json-object-walist?
@@ -148,12 +113,14 @@ json-object-walist?
 Parameter to control how JSON objects should be decoded.
 If false (the default), JSON objects will be hash-tables.
 If true, JSON objects will be `walistq`
-(or `walist` if json-symbolic-keys is false).
+(or `walist` if read-json-key-as-symbol? is false).
 
 This allows you to preserve the order of keys from JSON text,
 in cases where this order matters, e.g. for the sake of
 pretty-printing JSON or reading pretty-printed JSON,
 where the order will make the data more readable to humans.
+
+NB: This parameter was introduced in Gerbil v0.18.2.
 
 ::: tip Examples
 ``` scheme
@@ -164,6 +131,53 @@ where the order will make the data more readable to humans.
 > (parameterize ((json-object-walist? #t))
     (walist->alist (string->json-object "{\"a\":1,\"b\":2}")))
 ((a . 1) (b . 2))
+```
+
+## read-json-array-as-vector?
+``` scheme
+read-json-array-as-vector?
+```
+
+Parameter to control how JSON “arrays” should be transformed.
+Defaults to `#f`, which means keep them as lists.
+Binding it to `#t` instead will mean read them as vectors.
+
+NB: Since Gerbil v0.18.2, this parameter replaces with reduced but more
+streamlined functionality the previous `json-list-wrapper` parameter.
+
+::: tip Examples
+``` scheme
+> (string->json-object "[\"a\",1,[]]")
+("a" 1 ())
+
+> (parameterize ((read-json-array-as-vector? #t))
+    (string->json-object "[\"a\",1]"))
+#("a" 1 ())
+```
+
+## write-json-sort-keys?
+``` scheme
+write-json-sort-keys?
+```
+
+This is a parameter that can be used to control how JSON objects should be written.
+If false (the default), keys in JSON objects represented by hash-tables will be written
+in no particular predictable order, by iterating as fast as possible through the hash-table.
+If true, keys in JSON objects represented by hash-tables will be written in asciibetical order.
+In either case, JSON objects represented by walists will be written in the order specified
+by the walist. You can sort the walist yourself according to the order that matters to you,
+whether asciibetical or not.
+
+NB: This parameter used to be called `json-sort-keys` and default to `#t` before Gerbil v0.18.2.
+
+::: tip Examples
+``` scheme
+> (parameterize ((write-json-sort-keys? #t))
+    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
+"{\"bar\":2,\"baz\":3,\"foo\":1}"
+> (parameterize ((write-json-sort-keys? #f))
+    (json-object->string (hash (foo 1) (bar 2) (baz 3))))
+"{\"baz\":3,\"bar\":2,\"foo\":1}"
 ```
 
 ## trivial-class->json-object
@@ -206,10 +220,13 @@ as per [open-buffered-string-writer](../stdio.md#open-buffered-reader)
 (defaults to `#f`, i.e. print to string).
 The `indent` keyword specifies how much to increase indentation at each level of nesting
 (must be a positive integer, defaults to 2).
-The `sort-keys?` keyword offers a shortcut to parameterizing `json-sort-keys`.
+The `sort-keys?` keyword offers a shortcut to parameterizing `write-json-sort-keys?`
+which is heeded just like by `write-json`.
 The `lisp-style?` keyword if true specifies a format that follows Lisp style,
 and saves number of lines by starting objects and lists on the same line as the
 square or curly bracket, and closing it on the same line as the last entry,
 as opposed to regular style that uses newlines copiously.
 
-(Since Gerbil v0.18.2, this function no longer invokes `jq -M .` as an external program.)
+NB: Since Gerbil v0.18.2, this function no longer invokes `jq -M .` as an external program,
+and no longer uses `with-output` but instead `open-buffered-string-writer`,
+and has extra keyword arguments.

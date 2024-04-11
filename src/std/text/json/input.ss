@@ -47,7 +47,7 @@
 
            (def (read-json-hash input env)
              (read-char input)
-             (let ((obj (if (&env-symbolic-keys env)
+             (let ((obj (if (&env-read-json-key-as-symbol? env)
                           (make-hash-table-eq)
                           (make-hash-table)))
                    (lst '()))
@@ -59,7 +59,7 @@
                        (error "Duplicate hash key in JSON input" key)
                        (let (val (read-json-object input env))
                          (hash-put! obj key val)
-                         (when (&env-object-walist? env)
+                         (when (&env-read-json-object-as-walist? env)
                            (push! (cons key val) lst))
                          (skip-whitespace input)
                          (let (char (peek-char input))
@@ -71,9 +71,9 @@
                               (read-char input))
                              (else
                               (raise-invalid-token read-json-hash input char)))))))))
-               (if (&env-object-walist? env)
+               (if (&env-read-json-object-as-walist? env)
                  (let (r (reverse! lst))
-                   (if (&env-symbolic-keys env) (walistq r) (walist r)))
+                   (if (&env-read-json-key-as-symbol? env) (walistq r) (walist r)))
                  obj)))
 
            (def (read-json-hash-key input env)
@@ -87,7 +87,7 @@
                       (case char
                         ((#\:)
                          (read-char input)
-                         (if (&env-symbolic-keys env)
+                         (if (&env-read-json-key-as-symbol? env)
                            (string->symbol key)
                            key))
                         (else
@@ -104,7 +104,10 @@
                (let lp ((tl root))
                  (let (next (read-json-list-next input env))
                    (if (eof-object? next)
-                     ((&env-list-wrapper env) (cdr root))
+                     (let (l (cdr root))
+                       (if (&env-read-json-array-as-vector? env)
+                         (list->vector l)
+                         l))
                      (let (tl* [next])
                        (set! (cdr tl) tl*)
                        (lp tl*)))))))

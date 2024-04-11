@@ -140,7 +140,7 @@
 
            (def (write-json-hash obj output env)
              (def lst (hash->list obj))
-             (if (&env-sort-keys env)
+             (if (&env-write-json-sort-keys? env)
                (write-json-alist/sort lst output env)
                (write-json-alist lst output env)))
 

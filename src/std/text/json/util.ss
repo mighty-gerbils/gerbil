@@ -196,7 +196,7 @@
              (space!)
              (newline-indent (1+ indentation)))
            (write-value val indentation)))))
-    (parameterize ((json-sort-keys sort-keys?))
+    (parameterize ((write-json-sort-keys? sort-keys?))
       (write-value object (if lisp-style? -1 0)))
     (newline!)
     (unless output (get-buffer-output-string out))))
