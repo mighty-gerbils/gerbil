@@ -203,7 +203,7 @@
         (set! it.e #f))))
 
   (if stmt.e
-    (let (it (make-iterator e: stmt.i next: next fini: fini))
+    (let (it (make-iterator stmt.i next fini))
       (make-will it fini)
       (stmt.i.query-start)
       it)
