@@ -67,7 +67,7 @@
     (if exit (fnd) 
 	(call/cc (lambda (k) (set! exit k) (fnd)))))
 
-(def (swank:operator-arglist name module)
+(def-swank (swank:operator-arglist name module)
   (try
    (let* ((sym name)
 	  (sym (and (string? sym) (string->symbol sym)))
