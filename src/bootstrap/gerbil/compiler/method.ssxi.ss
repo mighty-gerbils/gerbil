@@ -642,6 +642,21 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/method)))
   (declare-type
+   gxc#xform-wrap-apply
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
    gxc#xform-begin%
    (@lambda 2
             #f
