@@ -70,10 +70,10 @@
    ((char? thing)
     (case thing
       ((#\' #\") (if (and in-attribute? (eqv? thing quote-char))
-		   (write-string (assget thing html-character-escapes) port)
+		   (write-string (aget thing html-character-escapes) port)
 		   (write-char thing port)))
       ((#\< #\> #\&)
-       (write-string (assget thing html-character-escapes) port))
+       (write-string (aget thing html-character-escapes) port))
       (else (write-char thing port))))
    ((string? thing)
     (let* ((str thing)

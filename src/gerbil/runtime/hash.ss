@@ -236,11 +236,11 @@ namespace: #f
 (bind-method! gc-hash-table::t 'clear! gc-table-clear!)
 
 ;; HashTable interface methods
-(def (hash-table? obj)
-  (HashTable? obj))
+(def hash-table?
+  HashTable?)
 
-(def (is-hash-table? obj)
-  (is-HashTable? obj))
+(def is-hash-table?
+  is-HashTable?)
 
 ;; locked hash table methods
 (defrules deflocked-hash-method ()
@@ -361,25 +361,29 @@ namespace: #f
                       ;; these two force gambit hash tables
                       weak-keys: (weak-keys #f)
                       weak-values: (weak-values #f))
+  => HashTable
 
   (def (table-seed)
     (if (fixnum? seed)
       seed
       (random-integer (macro-max-fixnum32))))
 
-  (def (wrap-lock ht)
+  (def (wrap-lock (ht :- HashTable))
+    => HashTable
     (if lock
       (HashTable
        (make-locked-hash-table ht (Locker lock)))
       ht))
 
-  (def (wrap-checked ht implicit)
+  (def (wrap-checked (ht :- HashTable) implicit)
+    => HashTable
     (if check
       (HashTable
        (make-checked-hash-table ht (if (procedure? check) check implicit)))
       ht))
 
   (def (make kons key? hash test)
+    => HashTable
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (HashTable
@@ -389,6 +393,7 @@ namespace: #f
        key?)))
 
   (def (make-gc-hash-table)
+    => HashTable
     (let (ht
           (HashTable
            (make-gc-table size-hint gc-hash-table::t)))
@@ -397,6 +402,7 @@ namespace: #f
        true)))
 
   (def (make-gambit-table)
+    => HashTable
     (let* ((size (or size-hint (macro-absent-obj)))
            (test (or test equal?))
            (hash (cond
@@ -444,9 +450,11 @@ namespace: #f
    ((and (eq? test equal?) (not hash))
     (make make-generic-hash-table true equal?-hash equal?))
    ((not (procedure? test))
-    (error "bad hash table test function; expected procedure" test))
+    (abort!
+     (error "bad hash table test function; expected procedure" test)))
    ((not (procedure? hash))
-    (error "bad hash table hash function; expected procedure" hash))
+    (abort!
+     (error "bad hash table hash function; expected procedure" hash)))
    (else
     (make make-generic-hash-table true hash test))))
 

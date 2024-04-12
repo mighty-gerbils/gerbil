@@ -25,7 +25,7 @@ namespace: gx
        (syntax-pattern-id pat)))
 
     (def (getvar q vars)
-      (assgetq q vars BUG))
+      (agetq q vars BUG))
 
     (def (getarg arg vars)
       (match arg
@@ -340,7 +340,7 @@ namespace: gx
                                      (cons* $lp $lp-tl
                                             (map (lambda (svar lvar)
                                                    (core-list 'cons
-                                                     (assgetq svar hdvars BUG)
+                                                     (agetq svar hdvars BUG)
                                                      lvar))
                                               svars lvars))))))
                               (core-list 'let-values
@@ -429,7 +429,7 @@ namespace: gx
 
     (def (make-body vars)
       ;; remap vars->mvars [order], dispatch to K
-      (cons K (map (lambda (mvar) (assgetq (car mvar) vars BUG)) mvars)))
+      (cons K (map (lambda (mvar) (agetq (car mvar) vars BUG)) mvars)))
 
     (recur hd [] target E make-body))
 

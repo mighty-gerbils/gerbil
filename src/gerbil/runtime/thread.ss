@@ -83,7 +83,7 @@ namespace: #f
     (cond
      ((actor-thread? thr)
       (cond
-       ((actor-thread-locals thr) => values)
+       ((actor-thread-locals thr))
        (else
         (let (tab (make-hash-table-eq))
           (actor-thread-locals-set! thr tab)

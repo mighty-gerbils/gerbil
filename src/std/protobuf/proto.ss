@@ -226,7 +226,7 @@
               (if (and (scalar-type? meta-type)
                        (not (memq (type-name meta-type) '(string bytes)))
                        (or (eq? proto-syntax 'proto3)
-                           (assgetq 'packed (or (syntax->datum #'options) []))))
+                           (agetq 'packed (or (syntax->datum #'options) []))))
                 (cons* packed: #'(id key type) r)
                 (cons* repeated: #'(id key type) r))))
            (#f

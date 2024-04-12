@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1712846033)
+  (define gerbil/runtime/error::timestamp 1712949841)
   (begin
     (define Exception::t
       (let ((__tmp102069 (list)))
@@ -712,22 +712,22 @@
               (##write-string __tmp102086 _%port101530%_))))))
     (define Error::display-exception::specialize
       (lambda (__klass102045 __method-table102046)
-        (let ((__continuation102047
+        (let ((__message102047
                (let ((__slot102051
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass102045 'continuation))))
+                        (class-slot-offset __klass102045 'message))))
                  (if __slot102051
                      __slot102051
-                     (error '"Unknown slot" 'continuation))))
-              (__message102048
+                     (error '"Unknown slot" 'message))))
+              (__continuation102048
                (let ((__slot102052
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass102045 'message))))
+                        (class-slot-offset __klass102045 'continuation))))
                  (if __slot102052
                      __slot102052
-                     (error '"Unknown slot" 'message))))
+                     (error '"Unknown slot" 'continuation))))
               (__irritants102049
                (let ((__slot102053
                       (let ()
@@ -780,7 +780,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self101534%_
-                                   __message102048
+                                   __message102047
                                    '#f
                                    '#f))))
                            (declare (not safe))
@@ -824,7 +824,7 @@
                                       (declare (not safe))
                                       (##unchecked-structure-ref
                                        _%self101534%_
-                                       __continuation102047
+                                       __continuation102048
                                        '#f
                                        '#f))))
                                (if _%cont101555101557%_

@@ -487,8 +487,7 @@ namespace: gx
 
 (def (core-library-package-plist dir (exists? #f))
   (cond
-   ((hash-get __module-pkg-cache dir)
-    => values)
+   ((hash-get __module-pkg-cache dir))
    (else
     (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
            (plist

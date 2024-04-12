@@ -26,8 +26,7 @@
 (def (r7rs-environment . imports)
   (let (ctx
         (cond
-         ((hash-get environments imports)
-          => values)
+         ((hash-get environments imports))
          (else
           (let (ctx (make-environment imports))
             (hash-put! environments imports ctx)

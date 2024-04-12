@@ -107,7 +107,7 @@
 
   (def (trace->name trace)
     (cond
-     ((hash-get traces trace) => values)
+     ((hash-get traces trace))
      (else
       (let (name (##procedure-name trace))
         (hash-put! traces trace name)

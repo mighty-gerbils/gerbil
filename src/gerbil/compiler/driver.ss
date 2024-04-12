@@ -911,7 +911,7 @@ namespace: gxc
 
 (def (compile-exe-output-file ctx opts)
   (cond
-   ((pgetq output-file: opts) => values)
+   ((pgetq output-file: opts))
    (else
     (path-strip-directory (symbol->string (expander-context-id ctx))))))
 

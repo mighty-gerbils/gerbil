@@ -4351,7 +4351,7 @@
                       'slot-types)))))
           (if _%$e48334%_
               ((lambda (_%slot-types48338%_)
-                 (assgetq _%slot48332%_ _%slot-types48338%_))
+                 (agetq _%slot48332%_ _%slot-types48338%_))
                _%$e48334%_)
               '#f))))
     (define |gerbil/core/contract~Using[1]#!class-slot-default|
@@ -4373,7 +4373,7 @@
           (if _%$e48315%_
               ((lambda (_%slot-defaults48319%_)
                  (let ((_%$e48322%_
-                        (assgetq _%slot48313%_ _%slot-defaults48319%_)))
+                        (agetq _%slot48313%_ _%slot-defaults48319%_)))
                    (if _%$e48322%_
                        (gx#syntax-local-introduce _%$e48322%_)
                        '#f)))
@@ -4398,7 +4398,7 @@
           (if _%$e48296%_
               ((lambda (_%slot-defaults48300%_)
                  (let ((_%$e48303%_
-                        (assgetq _%slot48294%_ _%slot-defaults48300%_)))
+                        (agetq _%slot48294%_ _%slot-defaults48300%_)))
                    (if _%$e48303%_
                        (gx#syntax-local-introduce _%$e48303%_)
                        '#f)))
@@ -4820,7 +4820,7 @@
                        gerbil/core/mop~MOP-2#class-type-info::t
                        __obj82234
                        'unchecked-accessors))))
-               (_%$e47801%_ (assgetq _%slot47791%_ _%accessors47796%_)))
+               (_%$e47801%_ (agetq _%slot47791%_ _%accessors47796%_)))
           (if _%$e47801%_
               _%$e47801%_
               (gx#raise-syntax-error
@@ -4870,7 +4870,7 @@
                            gerbil/core/mop~MOP-2#class-type-info::t
                            __obj82236
                            'unchecked-mutators)))))
-               (_%$e47782%_ (assgetq _%slot47771%_ _%mutators47777%_)))
+               (_%$e47782%_ (agetq _%slot47771%_ _%mutators47777%_)))
           (if _%$e47782%_
               _%$e47782%_
               (gx#raise-syntax-error

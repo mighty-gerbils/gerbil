@@ -356,7 +356,7 @@ package: gerbil/core
       (cond
        ((!class-type-slot-types klass)
         => (lambda (slot-types)
-             (assgetq slot slot-types)))
+             (agetq slot slot-types)))
        (else #f)))
 
     (def (!class-slot-default klass slot)
@@ -364,7 +364,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -373,7 +373,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -437,7 +437,7 @@ package: gerbil/core
                       klass-or-id))
              (accessors (!class-type-unchecked-accessors klass)))
         (cond
-         ((assgetq slot accessors))
+         ((agetq slot accessors))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
@@ -449,7 +449,7 @@ package: gerbil/core
                          (!class-type-mutators klass)
                          (!class-type-unchecked-mutators klass))))
         (cond
-         ((assgetq slot mutators))
+         ((agetq slot mutators))
          (else
           (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
 

@@ -268,15 +268,15 @@
     (def request-json
       (try
        (def url-params (form-url-decode (http-request-params req)))
-       (def method (assget "method" url-params (void)))
+       (def method (aget "method" url-params (void)))
        (unless method (raise 'parser-error))
        (def params (bytes->json
                     (base64-string->u8vector
-                     (uri-decode (assget "params" url-params)))))
+                     (uri-decode (aget "params" url-params)))))
        (def json (hash ("method" method) ("params" params)))
-       (alet (jsonrpc (assget "jsonrpc" url-params))
+       (alet (jsonrpc (aget "jsonrpc" url-params))
          (hash-put! json "jsonrpc" jsonrpc))
-       (alet (id (assget "id" url-params))
+       (alet (id (aget "id" url-params))
          (hash-put! json "id" id))
        json
        (catch (_)

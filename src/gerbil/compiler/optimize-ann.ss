@@ -642,7 +642,7 @@ namespace: gxc
          (with ([id . expr] bind)
            (let (sexpr (apply-generate-runtime-repr expr))
              (cond
-              ((assget sexpr env-bind)
+              ((aget sexpr env-bind)
                => (lambda (xid)
                     (lp rest (cons (cons id xid) subst) locals env)))
               (else

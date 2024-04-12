@@ -124,7 +124,7 @@
   (def (hex-byte byte)
     (let (char (integer->char byte))
       (cond
-       ((hash-get hex-bytes char) => values)
+       ((hash-get hex-bytes char))
        (else
         (raise-bad-argument uri-decode "uri encoded string: unexecpted character" str char)))))
 

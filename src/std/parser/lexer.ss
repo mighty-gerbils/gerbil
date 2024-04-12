@@ -70,7 +70,7 @@
   (let (next (token-stream-get ts))
     (if (eof-object? next)
       (cond
-       ((token-stream-$$ ts) => values)
+       ((token-stream-$$ ts))
        (else
         (let (eof ($$ (char-stream-loc (token-stream-cs ts))))
           (set! (token-stream-$$ ts)

@@ -669,7 +669,7 @@ TODO:
          (_ (unless bindir (error "bindir must be specified")))
          (bin
           (cond
-           ((pgetq bin: opts) => values)
+           ((pgetq bin: opts))
            ((string-rindex mod #\/)
             => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
            (else mod)))
