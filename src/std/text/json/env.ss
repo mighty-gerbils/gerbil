@@ -22,6 +22,11 @@
 (def write-json-sort-keys?
   (make-parameter #f))
 
+;; Old names, to be removed in v0.19.
+(def json-symbolic-keys read-json-key-as-symbol?)
+(def json-sort-keys write-json-sort-keys?)
+(def json-list-wrapper (make-parameter identity)) ;; not used anymore, only there for soft migration
+
 (defstruct env (read-json-key-as-symbol?
                 read-json-object-as-walist?
                 read-json-array-as-vector?

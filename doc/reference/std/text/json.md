@@ -1,12 +1,12 @@
 # JSON
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/text/json)
 ```
 :::
 
 ## read-json
-``` scheme
+```scheme
 (read-json [input = (current-input-port)]) -> json | error
 
   input := input source to read JSON data
@@ -20,7 +20,7 @@ The input source can be:
 - A BufferedReader.
 
 ## write-json
-``` scheme
+```scheme
 (write-json obj [sink = (current-output-port)]) -> void | error
 
   obj  := JSON object
@@ -38,7 +38,7 @@ The output sink can be:
 - A Writer.
 
 ## string->json-object
-``` scheme
+```scheme
 (string->json-object str) -> json | error
 
   str := a string of JSON data
@@ -47,7 +47,7 @@ The output sink can be:
 Parses given *str* and returns JSON object or signals an error if it fails to parse.
 
 ## json-object->string
-``` scheme
+```scheme
 (json-object->string obj) -> string | error
 
   obj := JSON object
@@ -57,7 +57,7 @@ Returns a newly allocated string with JSON object as a string. Signals an error 
 fails to print JSON.
 
 ## bytes->json-object
-``` scheme
+```scheme
 (bytes->json-object str) -> json | error
 
   bytes := u8vector encoding a UTF-8 string of JSON data
@@ -66,7 +66,7 @@ fails to print JSON.
 Parses given *bytes* and returns JSON object or signals an error if it fails to parse.
 
 ## json-object->bytes
-``` scheme
+```scheme
 (json-object->bytes obj) -> u8vector | error
 
   obj := JSON object
@@ -76,7 +76,7 @@ Returns a newly allocated u8vector with JSON object as bytes.
 Signals an error if it fails to print JSON.
 
 ## port->json-object
-``` scheme
+```scheme
 (port->json-object port) -> json | error
 
   port := input port
@@ -85,7 +85,7 @@ Signals an error if it fails to print JSON.
 Parses data on given *port* and returns JSON object or signals an error if it fails to parse.
 
 ## read-json-key-as-symbol?
-``` scheme
+```scheme
 read-json-key-as-symbol?
 ```
 
@@ -94,9 +94,11 @@ as using symbols rather than strings as keys?
 `#f` the default means strings, `#t` means symbols.
 
 NB: Before v0.18.2, this parameter used to be called `json-symbolic-keys` and default to `#t`.
+The name is still available as an alias (sharing the default `#f`),
+but may be removed as early as v0.19.
 
 ::: tip Examples
-``` scheme
+```scheme
 > (hash->list (string->json-object "{\"a\":1}"))
 (("a" . 1))
 
@@ -106,7 +108,7 @@ NB: Before v0.18.2, this parameter used to be called `json-symbolic-keys` and de
 ```
 
 ## json-object-walist?
-``` scheme
+```scheme
 json-object-walist?
 ```
 
@@ -123,7 +125,7 @@ where the order will make the data more readable to humans.
 NB: This parameter was introduced in Gerbil v0.18.2.
 
 ::: tip Examples
-``` scheme
+```scheme
 > (parameterize ((json-object-walist? #f))
     (hash->list (string->json-object "{\"a\":1,\"b\":2}")))
 ((a . 1) (b . 2))
@@ -134,7 +136,7 @@ NB: This parameter was introduced in Gerbil v0.18.2.
 ```
 
 ## read-json-array-as-vector?
-``` scheme
+```scheme
 read-json-array-as-vector?
 ```
 
@@ -144,9 +146,10 @@ Binding it to `#t` instead will mean read them as vectors.
 
 NB: Since Gerbil v0.18.2, this parameter replaces with reduced but more
 streamlined functionality the previous `json-list-wrapper` parameter.
+That previous parameter isn’t used anymore, and may be removed as early as v0.19.
 
 ::: tip Examples
-``` scheme
+```scheme
 > (string->json-object "[\"a\",1,[]]")
 ("a" 1 ())
 
@@ -156,7 +159,7 @@ streamlined functionality the previous `json-list-wrapper` parameter.
 ```
 
 ## write-json-sort-keys?
-``` scheme
+```scheme
 write-json-sort-keys?
 ```
 
@@ -169,9 +172,11 @@ by the walist. You can sort the walist yourself according to the order that matt
 whether asciibetical or not.
 
 NB: This parameter used to be called `json-sort-keys` and default to `#t` before Gerbil v0.18.2.
+The name is still available as an alias (sharing the default `#f`),
+but may be removed as early as v0.19.
 
 ::: tip Examples
-``` scheme
+```scheme
 > (parameterize ((write-json-sort-keys? #t))
     (json-object->string (hash (foo 1) (bar 2) (baz 3))))
 "{\"bar\":2,\"baz\":3,\"foo\":1}"
@@ -181,7 +186,7 @@ NB: This parameter used to be called `json-sort-keys` and default to `#t` before
 ```
 
 ## trivial-class->json-object
-``` scheme
+```scheme
 (trivial-class->json-object object) -> json | error
 
   object := an object
@@ -191,7 +196,7 @@ Extracts a printable JSON object from the slots of an `object`,
 or signals an error if it fails.
 
 ## json-object->trivial-class
-``` scheme
+```scheme
 (json-object->trivial-class class-descriptor json) -> object | error
 
   class-descriptor := class-descriptor
@@ -202,13 +207,12 @@ Creates an object of the class corresponding to the `class-descriptor`
 by extracting its slots from a `json` hash-table.
 
 ## JSON
-``` scheme
+```scheme
 JSON -> class
 JSON::t -> class-descriptor
 ```
 A class for object that can be printed as JSON.
 The default `:json` method is `trivial-class->json-object`.
-
 
 ## pretty-json
 ```scheme
