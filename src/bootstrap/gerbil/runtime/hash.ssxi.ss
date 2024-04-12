@@ -706,14 +706,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((update! . _%locked-hash-table::update!103457%_)
-            (for-each . _%locked-hash-table::for-each103463%_)
-            (set! . _%locked-hash-table::set!103454%_)
+           ((length . _%locked-hash-table::length103466%_)
             (ref . _%locked-hash-table::ref103451%_)
-            (length . _%locked-hash-table::length103466%_)
-            (copy . _%locked-hash-table::copy103469%_)
+            (clear! . _%locked-hash-table::clear!103472%_)
+            (update! . _%locked-hash-table::update!103457%_)
             (delete! . _%locked-hash-table::delete!103460%_)
-            (clear! . _%locked-hash-table::clear!103472%_))))
+            (set! . _%locked-hash-table::set!103454%_)
+            (copy . _%locked-hash-table::copy103469%_)
+            (for-each . _%locked-hash-table::for-each103463%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -755,14 +755,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((update! . _%checked-hash-table::update!103757%_)
-            (for-each . _%checked-hash-table::for-each103763%_)
-            (set! . _%checked-hash-table::set!103754%_)
+           ((length . _%checked-hash-table::length103766%_)
             (ref . _%checked-hash-table::ref103751%_)
-            (length . _%checked-hash-table::length103766%_)
-            (copy . _%checked-hash-table::copy103769%_)
+            (clear! . _%checked-hash-table::clear!103772%_)
+            (update! . _%checked-hash-table::update!103757%_)
             (delete! . _%checked-hash-table::delete!103760%_)
-            (clear! . _%checked-hash-table::clear!103772%_))))
+            (set! . _%checked-hash-table::set!103754%_)
+            (copy . _%checked-hash-table::copy103769%_)
+            (for-each . _%checked-hash-table::for-each103763%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
@@ -884,8 +884,22 @@ package: gerbil/runtime
   (declare-type
    make-immediate-hash-table
    (@constructor immediate-hash-table::t))
-  (declare-type hash-table? (@lambda 1 HashTable?))
-  (declare-type is-hash-table? (@lambda 1 is-HashTable?))
+  (declare-type hash-table? (@predicate HashTable::t))
+  (declare-type
+   is-hash-table?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             (pure)
+             arguments:
+             (t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/hash)))
   (declare-type
    _%locked-hash-table::ref103451%_
    (@lambda 3
@@ -1147,7 +1161,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1172,7 +1186,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1187,7 +1201,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1202,7 +1216,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1217,7 +1231,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1232,7 +1246,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:

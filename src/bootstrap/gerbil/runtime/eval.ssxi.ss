@@ -122,7 +122,9 @@ package: gerbil/runtime
   (declare-type
    &__core-special-form-id-set!
    (@mutator __core-special-form::t id #f))
-  (declare-type __core (optimizer-resolve-class '(typedecl __core) 't::t))
+  (declare-type
+   __core
+   (optimizer-resolve-class '(typedecl __core) 'HashTable::t))
   (declare-type
    __current-expander
    (optimizer-resolve-class '(typedecl __current-expander) 'procedure::t))

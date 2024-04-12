@@ -127,7 +127,7 @@ package: gerbil/runtime
              gerbil/runtime/init)))
   (declare-type
    __modstate
-   (optimizer-resolve-class '(typedecl __modstate) 't::t))
+   (optimizer-resolve-class '(typedecl __modstate) 'HashTable::t))
   (declare-type
    __modstate-mx
    (optimizer-resolve-class '(typedecl __modstate-mx) 'mutex::t))

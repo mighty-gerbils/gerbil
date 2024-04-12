@@ -315,10 +315,12 @@ package: gerbil/runtime
              gerbil/runtime/thread)))
   (declare-type
    __primordial-thread-locals
-   (optimizer-resolve-class '(typedecl __primordial-thread-locals) 't::t))
+   (optimizer-resolve-class
+    '(typedecl __primordial-thread-locals)
+    'HashTable::t))
   (declare-type
    __thread-locals
-   (optimizer-resolve-class '(typedecl __thread-locals) 't::t))
+   (optimizer-resolve-class '(typedecl __thread-locals) 'HashTable::t))
   (declare-type
    __thread-locals-mutex
    (optimizer-resolve-class '(typedecl __thread-locals-mutex) 'mutex::t))

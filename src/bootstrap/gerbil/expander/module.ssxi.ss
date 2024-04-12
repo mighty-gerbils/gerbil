@@ -4,10 +4,10 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#__module-registry
-   (optimizer-resolve-class '(typedecl gx#__module-registry) 't::t))
+   (optimizer-resolve-class '(typedecl gx#__module-registry) 'HashTable::t))
   (declare-type
    gx#__module-pkg-cache
-   (optimizer-resolve-class '(typedecl gx#__module-pkg-cache) 't::t))
+   (optimizer-resolve-class '(typedecl gx#__module-pkg-cache) 'HashTable::t))
   (declare-class
    gx#module-import::t
    (@class gx#module-import::t
@@ -279,8 +279,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))

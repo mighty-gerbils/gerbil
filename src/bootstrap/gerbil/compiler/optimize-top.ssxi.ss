@@ -748,7 +748,7 @@ package: gerbil/compiler
    gxc#basic-expression-type-annotations
    (optimizer-resolve-class
     '(typedecl gxc#basic-expression-type-annotations)
-    't::t))
+    'HashTable::t))
   (declare-type
    gxc#basic-expression-type-begin-annotation%
    (@lambda 2
@@ -963,7 +963,7 @@ package: gerbil/compiler
    gxc#basic-expression-type-special
    (optimizer-resolve-class
     '(typedecl gxc#basic-expression-type-special)
-    't::t))
+    'HashTable::t))
   (declare-type
    gxc#basic-expression-type-call%
    (@lambda 2
