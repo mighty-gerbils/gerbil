@@ -724,7 +724,7 @@
       (let (t (buf.read-u8!))
         (if (fx= t 0)
           (let* ((alist (reverse! r))
-                 (msg (assgetq #\M alist)))
+                 (msg (agetq #\M alist)))
             (cons msg alist))
           (let (field (unmarshal-string buf))
             (lp (cons (cons (integer->char t) field) r))))))))

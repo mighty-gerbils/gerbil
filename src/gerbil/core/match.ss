@@ -462,7 +462,7 @@ package: gerbil/core
           (let (ti (car next))
             (append (recur (map syntax-local-value (!class-type-super ti)))
                     (map (lambda (slot)
-                           (or (assgetq slot (!class-type-unchecked-accessors ti))
+                           (or (agetq slot (!class-type-unchecked-accessors ti))
                                (raise-syntax-error #f "no accessor for struct slot" stx info slot)))
                          (!class-type-slots ti)))))))
 
@@ -476,7 +476,7 @@ package: gerbil/core
         (syntax-case rest ()
           ((key pat . rest)
            (cond
-            ((assgetq (string->symbol (keyword->string (stx-e #'key)))
+            ((agetq (string->symbol (keyword->string (stx-e #'key)))
                       (!class-type-unchecked-accessors info))
              => (lambda (getf)
                   (let ($tgt (genident 'e))

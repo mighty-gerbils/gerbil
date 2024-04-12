@@ -36,17 +36,17 @@
       (exit 'bad-request))
 
     (let* ((request-headers (http-request-headers req))
-           (_ (alet (version (assget "Sec-Websocket-Version" request-headers))
+           (_ (alet (version (aget "Sec-Websocket-Version" request-headers))
                 (unless (equal? version +websocket-version+)
                   (bad-request! "unusupported websocket protocol version"))))
            (proto
-            (alet (request-proto (assget "Sec-Websocket-Protocol" request-headers))
+            (alet (request-proto (aget "Sec-Websocket-Protocol" request-headers))
               (cond
                ((select-protocol (string-split request-proto #\,)))
                (else
                 (bad-request! "unsupported websocket protocol")))))
            (auth
-            (alet (nonce64 (assget "Sec-Websocket-Key" request-headers))
+            (alet (nonce64 (aget "Sec-Websocket-Key" request-headers))
               (let* ((digest (make-digest digest::sha1))
                      (_ (digest-update! digest (string->utf8 nonce64)))
                      (_ (digest-update! digest (string->utf8 +websocket-magic+)))

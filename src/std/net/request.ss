@@ -366,12 +366,12 @@
 (def (http-request-read-body req headers)
   (def (length-e headers)
     (cond
-     ((assget "Content-Length" headers)
+     ((aget "Content-Length" headers)
       => string->number)
      (else #f)))
 
   (cond
-   ((assget "Transfer-Encoding" headers)
+   ((aget "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (http-request-read-chunked-body req)

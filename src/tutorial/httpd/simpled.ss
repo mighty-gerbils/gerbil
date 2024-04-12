@@ -25,7 +25,7 @@
 ;; /echo
 (def (echo-handler req res)
   (let* ((content-type
-          (assget "Content-Type" (http-request-headers req)))
+          (aget "Content-Type" (http-request-headers req)))
          (headers
           (if content-type
             [["Content-Type" . content-type]]
