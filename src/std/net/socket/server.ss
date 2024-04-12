@@ -21,7 +21,7 @@
 ;; start the socket server -- takes a server implementation, eg epoll-server
 (def (start-socket-server! (impl (default-server-impl)))
   (cond
-   ((current-socket-server) => values)
+   ((current-socket-server))
    (else
     (start-logger!)
     (let (srv (spawn/group 'socket-server impl))

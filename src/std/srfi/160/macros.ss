@@ -621,7 +621,7 @@
         (let lp ((i 0))
           (if (fx< i end)
             (cond
-             ((pred (@vector-ref v i)) => values)
+             ((pred (@vector-ref v i)))
              (else
               (lp (fx1+ i))))
             #f))))
@@ -634,7 +634,7 @@
         (let lp ((i 0))
           (if (fx< i end)
             (cond
-             ((apply pred (map (cut @vector-ref <> i) vs)) => values)
+             ((apply pred (map (cut @vector-ref <> i) vs)))
              (else
               (lp (fx1+ i))))
             #f)))))))

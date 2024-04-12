@@ -557,8 +557,7 @@ END-C
   (using (obuf :- BufferedWriter)
     (let (text
           (cond
-           ((hash-get +http-response-codes+ status)
-            => values)
+           ((hash-get +http-response-codes+ status))
            (else "Gremlins!")))
       (obuf.write-string "HTTP/1.1")
       (obuf.write-u8-inline SPC)

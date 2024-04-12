@@ -85,7 +85,7 @@
 
 (def (uuid->string uuid)
   (cond
-   ((uuid-str uuid) => values)
+   ((uuid-str uuid))
    (else
     (let* ((bytes (uuid-bytes uuid))
            (a (hex-encode bytes 0 4))

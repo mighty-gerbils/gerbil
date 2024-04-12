@@ -1214,8 +1214,7 @@ namespace: gxc
 
   (def (generate-mark mark)
     (cond
-     ((hash-get (current-compile-marks) mark)
-      => values)
+     ((hash-get (current-compile-marks) mark))
      (else
       (let* ((gid (generate-runtime-temporary #t))
              (repr (serialize-mark mark))
@@ -1273,8 +1272,7 @@ namespace: gxc
     ((_ stxq)
      (if (identifier? #'stxq)
        (cond
-        ((hash-get (current-compile-identifiers) #'stxq)
-         => values)
+        ((hash-get (current-compile-identifiers) #'stxq))
         (else
          (let (marks (syntax-quote-marks #'stxq))
            (if (null? marks)
