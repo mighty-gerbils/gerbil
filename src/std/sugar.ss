@@ -2,7 +2,8 @@
 ;;; (C) vyzo
 ;;; some standard sugar
 
-(import :std/error)
+(import :std/error
+        :std/hash-table)
 (export
   catch
   finally
@@ -200,7 +201,7 @@
   (syntax-case stx ()
     ((macro expr body ...)
      (with-syntax ((@ref (stx-identifier #'macro '%%ref)))
-       #'(let (ht expr)
+       #'(let (ht (: expr HashTable))
            (let-syntax
                ((var-ref
                  (syntax-rules ()
