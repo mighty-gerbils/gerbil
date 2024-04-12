@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/thread::timestamp 1712846033)
+  (define gerbil/runtime/thread::timestamp 1712944162)
   (begin
     (define spawn
       (lambda (_%f108743%_ . _%args108744%_)
@@ -182,7 +182,7 @@
           (if (actor-thread? _%thr108571%_)
               (let ((_%$e108574%_ (actor-thread-locals _%thr108571%_)))
                 (if _%$e108574%_
-                    (values _%$e108574%_)
+                    _%$e108574%_
                     (let ((_%tab108578%_
                            (let () (declare (not safe)) (make-hash-table-eq))))
                       (actor-thread-locals-set! _%thr108571%_ _%tab108578%_)

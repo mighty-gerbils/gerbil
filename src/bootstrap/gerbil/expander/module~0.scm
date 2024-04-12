@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1712846034)
+  (define gerbil/expander/module::timestamp 1712944163)
   (begin
     (declare (not safe))
     (define gx#__module-registry
@@ -1731,7 +1731,7 @@
       (lambda (_%dir125184%_ _%exists?125185%_)
         (let ((_%$e125187%_ (hash-get gx#__module-pkg-cache _%dir125184%_)))
           (if _%$e125187%_
-              (values _%$e125187%_)
+              _%$e125187%_
               (let* ((_%gerbil.pkg125191%_
                       (path-expand '"gerbil.pkg" _%dir125184%_))
                      (_%plist125201%_

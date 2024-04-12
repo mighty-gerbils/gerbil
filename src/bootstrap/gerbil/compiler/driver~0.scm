@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1712846041)
+  (define gerbil/compiler/driver::timestamp 1712944169)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -3036,7 +3036,7 @@
                  (declare (not safe))
                  (pgetq__0 'output-file: _%opts197797%_))))
           (if _%$e197799%_
-              (values _%$e197799%_)
+              _%$e197799%_
               (path-strip-directory
                (symbol->string
                 (##structure-ref

@@ -4146,22 +4146,23 @@
                                   (__tmp39943
                                    (map (lambda (_%slot29324%_)
                                           (let ((_%$e29327%_
-                                                 (assgetq _%slot29324%_
-                                                          (let ((__obj39914
+                                                 (agetq _%slot29324%_
+                                                        (let ((__obj39914
+                                                               _%ti29321%_))
+                                                          (if (let ()
+                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%ti29321%_))
-                    (if (let ()
-                          (declare (not safe))
-                          (##structure-direct-instance-of?
-                           __obj39914
-                           'gerbil.core#class-type-info::t))
-                        (let ()
-                          (declare (not safe))
-                          (##unchecked-structure-ref __obj39914 '17 '#f '#f))
-                        (class-slot-ref
-                         gerbil/core/mop~MOP-2#class-type-info::t
+                          (not safe))
+                        (##structure-direct-instance-of?
                          __obj39914
-                         'unchecked-accessors))))))
+                         'gerbil.core#class-type-info::t))
+                      (let ()
+                        (declare (not safe))
+                        (##unchecked-structure-ref __obj39914 '17 '#f '#f))
+                      (class-slot-ref
+                       gerbil/core/mop~MOP-2#class-type-info::t
+                       __obj39914
+                       'unchecked-accessors))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (if _%$e29327%_
                                                 _%$e29327%_
@@ -4239,31 +4240,29 @@
                         (let ((_%__kont3922539226%_
                                (lambda (_%L29266%_ _%L29268%_ _%L29269%_)
                                  (let ((_%$e29289%_
-                                        (assgetq (let ((__tmp39945
-                                                        (keyword->string
-                                                         (gx#stx-e
-                                                          _%L29269%_))))
-                                                   (declare (not safe))
-                                                   (##string->symbol
-                                                    __tmp39945))
-                                                 (let ((__obj39917
-                                                        _%info29198%_))
-                                                   (if (let ()
-                                                         (declare (not safe))
-                                                         (##structure-direct-instance-of?
-                                                          __obj39917
-                                                          'gerbil.core#class-type-info::t))
-                                                       (let ()
-                                                         (declare (not safe))
-                                                         (##unchecked-structure-ref
-                                                          __obj39917
-                                                          '17
-                                                          '#f
-                                                          '#f))
-                                                       (class-slot-ref
-                                                        gerbil/core/mop~MOP-2#class-type-info::t
+                                        (agetq (let ((__tmp39945
+                                                      (keyword->string
+                                                       (gx#stx-e _%L29269%_))))
+                                                 (declare (not safe))
+                                                 (##string->symbol __tmp39945))
+                                               (let ((__obj39917
+                                                      _%info29198%_))
+                                                 (if (let ()
+                                                       (declare (not safe))
+                                                       (##structure-direct-instance-of?
                                                         __obj39917
-                                                        'unchecked-accessors))))))
+                                                        'gerbil.core#class-type-info::t))
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##unchecked-structure-ref
+                                                        __obj39917
+                                                        '17
+                                                        '#f
+                                                        '#f))
+                                                     (class-slot-ref
+                                                      gerbil/core/mop~MOP-2#class-type-info::t
+                                                      __obj39917
+                                                      'unchecked-accessors))))))
                                    (if _%$e29289%_
                                        ((lambda (_%getf29293%_)
                                           (let ((_%$tgt29296%_

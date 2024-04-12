@@ -706,14 +706,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((length . _%locked-hash-table::length103466%_)
-            (copy . _%locked-hash-table::copy103469%_)
-            (clear! . _%locked-hash-table::clear!103472%_)
+           ((update! . _%locked-hash-table::update!103457%_)
             (for-each . _%locked-hash-table::for-each103463%_)
-            (update! . _%locked-hash-table::update!103457%_)
             (set! . _%locked-hash-table::set!103454%_)
+            (ref . _%locked-hash-table::ref103451%_)
+            (length . _%locked-hash-table::length103466%_)
+            (copy . _%locked-hash-table::copy103469%_)
             (delete! . _%locked-hash-table::delete!103460%_)
-            (ref . _%locked-hash-table::ref103451%_))))
+            (clear! . _%locked-hash-table::clear!103472%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -755,14 +755,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((length . _%checked-hash-table::length103766%_)
-            (copy . _%checked-hash-table::copy103769%_)
-            (clear! . _%checked-hash-table::clear!103772%_)
+           ((update! . _%checked-hash-table::update!103757%_)
             (for-each . _%checked-hash-table::for-each103763%_)
-            (update! . _%checked-hash-table::update!103757%_)
             (set! . _%checked-hash-table::set!103754%_)
+            (ref . _%checked-hash-table::ref103751%_)
+            (length . _%checked-hash-table::length103766%_)
+            (copy . _%checked-hash-table::copy103769%_)
             (delete! . _%checked-hash-table::delete!103760%_)
-            (ref . _%checked-hash-table::ref103751%_))))
+            (clear! . _%checked-hash-table::clear!103772%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1712846035)
+  (define gerbil/compiler/compile::timestamp 1712944163)
   (begin
     (define gxc#gambit-annotations
       '(not gambit-scheme
@@ -12540,7 +12540,7 @@
                              (declare (not safe))
                              (hash-get __tmp147190 _%mark138455%_))))
                       (if _%$e138457%_
-                          (values _%$e138457%_)
+                          _%$e138457%_
                           (let* ((_%gid138461%_
                                   (let ()
                                     (declare (not safe))
@@ -12833,7 +12833,7 @@
                 (hash-get __tmp147196 _%L138350%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (if _%$e138363%_
-                                                     (values _%$e138363%_)
+                                                     _%$e138363%_
                                                      (let ((_%marks138367%_
                                                             (##direct-structure-ref
                                                              _%L138350%_

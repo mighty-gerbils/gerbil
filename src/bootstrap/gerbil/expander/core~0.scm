@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1712846034)
+  (define gerbil/expander/core::timestamp 1712944162)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -2628,7 +2628,7 @@
                               _%ctx117088%_
                               _%key117084%_)))
                         (if _%$e117091%_
-                            (values _%$e117091%_)
+                            _%$e117091%_
                             (if (fxzero? _%dphi117089%_)
                                 '#f
                                 (if (fxpositive? _%dphi117089%_)
@@ -2860,7 +2860,7 @@
                                                     _%subst116923%_
                                                     _%id116909%_)))
                                               (if _%$e116928%_
-                                                  (values _%$e116928%_)
+                                                  _%$e116928%_
                                                   (_%gensubst116885%_
                                                    _%subst116923%_
                                                    _%id116909%_)))))))
@@ -3098,7 +3098,7 @@
           (let ((_%$e116734%_
                  (gx#core-context-get _%ctx116732%_ _%key116728%_)))
             (if _%$e116734%_
-                (values _%$e116734%_)
+                _%$e116734%_
                 (let ((_%$e116737%_
                        (if (##structure-instance-of?
                             _%ctx116732%_
@@ -3325,7 +3325,7 @@
         (if (##structure? _%stx116531%_)
             (let ((_%$e116536%_ (gx#sealed-syntax-unwrap _%stx116531%_)))
               (if _%$e116536%_
-                  (values _%$e116536%_)
+                  _%$e116536%_
                   (if (gx#identifier? _%stx116531%_)
                       (let ((_%id116540%_
                              (gx#stx-unwrap__% _%stx116531%_ _%marks116534%_)))
