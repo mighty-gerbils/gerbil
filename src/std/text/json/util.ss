@@ -177,7 +177,7 @@
                (lp r)))))
         (unless lisp-style? (newline-indent indentation))
         (out.write-char-inline close)))
-    (def (write-alist alist indentation)
+    (def (write-alist alst indentation)
       (write-many write-binding #\{ #\} alst indentation))
     (def (write-list list indentation)
       (write-many write-value #\[ #\] list indentation))
