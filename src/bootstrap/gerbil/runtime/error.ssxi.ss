@@ -62,8 +62,8 @@ package: gerbil/runtime
            #f
            #f
            #f
-           ((display-exception . Error::display-exception)
-            (:init! . Error:::init!))))
+           ((:init! . Error:::init!)
+            (display-exception . Error::display-exception))))
   (declare-type
    Error::t
    (optimizer-resolve-class '(typedecl Error::t) 'class::t))
@@ -193,10 +193,66 @@ package: gerbil/runtime
   (declare-type
    &RuntimeException-continuation-set!
    (@mutator RuntimeException::t continuation #f))
-  (declare-type gerbil-exception-handler-hook (@lambda 2 #f))
-  (declare-type raise (@lambda 1 #f))
-  (declare-type error (@lambda (1) #f))
-  (declare-type __raise-contract-violation-error__% (@lambda 5 #f))
+  (declare-type
+   gerbil-exception-handler-hook
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   raise
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   error
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   __raise-contract-violation-error__%
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    __raise-contract-violation-error__@
    (@kw-lambda-dispatch
@@ -220,13 +276,24 @@ package: gerbil/runtime
              arguments:
              (procedure::t procedure::t)
              unchecked:
-             __with-exception-handler)))
+             __with-exception-handler
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    __with-exception-handler
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    with-catch
    (@lambda 2
@@ -239,13 +306,24 @@ package: gerbil/runtime
              arguments:
              (procedure::t procedure::t)
              unchecked:
-             __with-catch)))
+             __with-catch
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    __with-catch
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    with-exception-catcher
    (@lambda 2
@@ -258,8 +336,24 @@ package: gerbil/runtime
              arguments:
              (procedure::t procedure::t)
              unchecked:
-             __with-catch)))
-  (declare-type wrap-runtime-exception (@lambda 1 #f))
+             __with-catch
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrap-runtime-exception
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type exception? (@predicate Exception::t))
   (declare-type error? (@predicate Error::t))
   (declare-type
@@ -274,54 +368,158 @@ package: gerbil/runtime
              arguments:
              (t::t)
              unchecked:
-             #f)))
-  (declare-type error-message (@lambda 1 #f))
-  (declare-type error-irritants (@lambda 1 #f))
+             #f
+             origin:
+             builtin)))
+  (declare-type
+   error-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   error-irritants
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    error-trace
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type display-exception__% (@lambda 2 #f))
-  (declare-type display-exception__0 (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   display-exception__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   display-exception__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    display-exception
    (@case-lambda
     (1
      #f
      signature:
-     (return: void::t effect: (io) arguments: (t::t) unchecked: #f))
+     (return:
+      void::t
+      effect:
+      (io)
+      arguments:
+      (t::t)
+      unchecked:
+      #f
+      origin:
+      builtin))
     (2
      #f
      signature:
-     (return: void::t effect: (io) arguments: (t::t port::t) unchecked: #f))))
+     (return:
+      void::t
+      effect:
+      (io)
+      arguments:
+      (t::t port::t)
+      unchecked:
+      #f
+      origin:
+      builtin))))
   (declare-type
    Error:::init!
    (@lambda (2)
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t . t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   Error:::init!::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    ContractViolation:::init!
    (@lambda (2)
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t . t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    dump-stack-trace?
    (optimizer-resolve-class '(typedecl dump-stack-trace?) 'procedure::t))
@@ -330,166 +528,2278 @@ package: gerbil/runtime
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   Error::display-exception::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    RuntimeException::display-exception
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
-  (declare-type fix-port-width! (@lambda 1 #f))
-  (declare-type reset-port-width! (@lambda 2 #f))
-  (declare-type datum-parsing-exception-filepos (@lambda 1 #f))
-  (declare-type abandoned-mutex-exception? (@lambda 1 #f))
-  (declare-type cfun-conversion-exception? (@lambda 1 #f))
-  (declare-type cfun-conversion-exception-arguments (@lambda 1 #f))
-  (declare-type cfun-conversion-exception-code (@lambda 1 #f))
-  (declare-type cfun-conversion-exception-message (@lambda 1 #f))
-  (declare-type cfun-conversion-exception-procedure (@lambda 1 #f))
-  (declare-type datum-parsing-exception? (@lambda 1 #f))
-  (declare-type datum-parsing-exception-kind (@lambda 1 #f))
-  (declare-type datum-parsing-exception-parameters (@lambda 1 #f))
-  (declare-type datum-parsing-exception-readenv (@lambda 1 #f))
-  (declare-type deadlock-exception? (@lambda 1 #f))
-  (declare-type divide-by-zero-exception? (@lambda 1 #f))
-  (declare-type divide-by-zero-exception-arguments (@lambda 1 #f))
-  (declare-type divide-by-zero-exception-procedure (@lambda 1 #f))
-  (declare-type error-exception? (@lambda 1 #f))
-  (declare-type error-exception-message (@lambda 1 #f))
-  (declare-type error-exception-parameters (@lambda 1 #f))
-  (declare-type expression-parsing-exception? (@lambda 1 #f))
-  (declare-type expression-parsing-exception-kind (@lambda 1 #f))
-  (declare-type expression-parsing-exception-parameters (@lambda 1 #f))
-  (declare-type expression-parsing-exception-source (@lambda 1 #f))
-  (declare-type file-exists-exception? (@lambda 1 #f))
-  (declare-type file-exists-exception-arguments (@lambda 1 #f))
-  (declare-type file-exists-exception-procedure (@lambda 1 #f))
-  (declare-type fixnum-overflow-exception? (@lambda 1 #f))
-  (declare-type fixnum-overflow-exception-arguments (@lambda 1 #f))
-  (declare-type fixnum-overflow-exception-procedure (@lambda 1 #f))
-  (declare-type heap-overflow-exception? (@lambda 1 #f))
-  (declare-type inactive-thread-exception? (@lambda 1 #f))
-  (declare-type inactive-thread-exception-arguments (@lambda 1 #f))
-  (declare-type inactive-thread-exception-procedure (@lambda 1 #f))
-  (declare-type initialized-thread-exception? (@lambda 1 #f))
-  (declare-type initialized-thread-exception-arguments (@lambda 1 #f))
-  (declare-type initialized-thread-exception-procedure (@lambda 1 #f))
-  (declare-type invalid-hash-number-exception? (@lambda 1 #f))
-  (declare-type invalid-hash-number-exception-arguments (@lambda 1 #f))
-  (declare-type invalid-hash-number-exception-procedure (@lambda 1 #f))
-  (declare-type invalid-utf8-encoding-exception? (@lambda 1 #f))
-  (declare-type invalid-utf8-encoding-exception-arguments (@lambda 1 #f))
-  (declare-type invalid-utf8-encoding-exception-procedure (@lambda 1 #f))
-  (declare-type join-timeout-exception? (@lambda 1 #f))
-  (declare-type join-timeout-exception-arguments (@lambda 1 #f))
-  (declare-type join-timeout-exception-procedure (@lambda 1 #f))
-  (declare-type keyword-expected-exception? (@lambda 1 #f))
-  (declare-type keyword-expected-exception-arguments (@lambda 1 #f))
-  (declare-type keyword-expected-exception-procedure (@lambda 1 #f))
-  (declare-type length-mismatch-exception? (@lambda 1 #f))
-  (declare-type length-mismatch-exception-arg-id (@lambda 1 #f))
-  (declare-type length-mismatch-exception-arguments (@lambda 1 #f))
-  (declare-type length-mismatch-exception-procedure (@lambda 1 #f))
-  (declare-type mailbox-receive-timeout-exception? (@lambda 1 #f))
-  (declare-type mailbox-receive-timeout-exception-arguments (@lambda 1 #f))
-  (declare-type mailbox-receive-timeout-exception-procedure (@lambda 1 #f))
-  (declare-type module-not-found-exception? (@lambda 1 #f))
-  (declare-type module-not-found-exception-arguments (@lambda 1 #f))
-  (declare-type module-not-found-exception-procedure (@lambda 1 #f))
-  (declare-type multiple-c-return-exception? (@lambda 1 #f))
-  (declare-type no-such-file-or-directory-exception? (@lambda 1 #f))
-  (declare-type no-such-file-or-directory-exception-arguments (@lambda 1 #f))
-  (declare-type no-such-file-or-directory-exception-procedure (@lambda 1 #f))
-  (declare-type noncontinuable-exception? (@lambda 1 #f))
-  (declare-type noncontinuable-exception-reason (@lambda 1 #f))
-  (declare-type nonempty-input-port-character-buffer-exception? (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   RuntimeException::display-exception::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             procedure::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   fix-port-width!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   reset-port-width!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   datum-parsing-exception-filepos
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   abandoned-mutex-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   cfun-conversion-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   cfun-conversion-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   cfun-conversion-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   cfun-conversion-exception-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   cfun-conversion-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   datum-parsing-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   datum-parsing-exception-kind
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   datum-parsing-exception-parameters
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   datum-parsing-exception-readenv
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   deadlock-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   divide-by-zero-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   divide-by-zero-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   divide-by-zero-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   error-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   error-exception-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   error-exception-parameters
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   expression-parsing-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   expression-parsing-exception-kind
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   expression-parsing-exception-parameters
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   expression-parsing-exception-source
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   file-exists-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   file-exists-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   file-exists-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   fixnum-overflow-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   fixnum-overflow-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   fixnum-overflow-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   heap-overflow-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   inactive-thread-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   inactive-thread-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   inactive-thread-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   initialized-thread-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   initialized-thread-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   initialized-thread-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-hash-number-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-hash-number-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-hash-number-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-utf8-encoding-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-utf8-encoding-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   invalid-utf8-encoding-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   join-timeout-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   join-timeout-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   join-timeout-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   keyword-expected-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   keyword-expected-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   keyword-expected-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   length-mismatch-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   length-mismatch-exception-arg-id
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   length-mismatch-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   length-mismatch-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   mailbox-receive-timeout-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   mailbox-receive-timeout-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   mailbox-receive-timeout-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   module-not-found-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   module-not-found-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   module-not-found-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   multiple-c-return-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   no-such-file-or-directory-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   no-such-file-or-directory-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   no-such-file-or-directory-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   noncontinuable-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   noncontinuable-exception-reason
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonempty-input-port-character-buffer-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    nonempty-input-port-character-buffer-exception-arguments
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    nonempty-input-port-character-buffer-exception-procedure
-   (@lambda 1 #f))
-  (declare-type nonprocedure-operator-exception? (@lambda 1 #f))
-  (declare-type nonprocedure-operator-exception-arguments (@lambda 1 #f))
-  (declare-type nonprocedure-operator-exception-code (@lambda 1 #f))
-  (declare-type nonprocedure-operator-exception-operator (@lambda 1 #f))
-  (declare-type nonprocedure-operator-exception-rte (@lambda 1 #f))
-  (declare-type not-in-compilation-context-exception? (@lambda 1 #f))
-  (declare-type not-in-compilation-context-exception-arguments (@lambda 1 #f))
-  (declare-type not-in-compilation-context-exception-procedure (@lambda 1 #f))
-  (declare-type number-of-arguments-limit-exception? (@lambda 1 #f))
-  (declare-type number-of-arguments-limit-exception-arguments (@lambda 1 #f))
-  (declare-type number-of-arguments-limit-exception-procedure (@lambda 1 #f))
-  (declare-type os-exception? (@lambda 1 #f))
-  (declare-type os-exception-arguments (@lambda 1 #f))
-  (declare-type os-exception-code (@lambda 1 #f))
-  (declare-type os-exception-message (@lambda 1 #f))
-  (declare-type os-exception-procedure (@lambda 1 #f))
-  (declare-type permission-denied-exception? (@lambda 1 #f))
-  (declare-type permission-denied-exception-arguments (@lambda 1 #f))
-  (declare-type permission-denied-exception-procedure (@lambda 1 #f))
-  (declare-type range-exception? (@lambda 1 #f))
-  (declare-type range-exception-arg-id (@lambda 1 #f))
-  (declare-type range-exception-arguments (@lambda 1 #f))
-  (declare-type range-exception-procedure (@lambda 1 #f))
-  (declare-type rpc-remote-error-exception? (@lambda 1 #f))
-  (declare-type rpc-remote-error-exception-arguments (@lambda 1 #f))
-  (declare-type rpc-remote-error-exception-message (@lambda 1 #f))
-  (declare-type rpc-remote-error-exception-procedure (@lambda 1 #f))
-  (declare-type scheduler-exception? (@lambda 1 #f))
-  (declare-type scheduler-exception-reason (@lambda 1 #f))
-  (declare-type sfun-conversion-exception? (@lambda 1 #f))
-  (declare-type sfun-conversion-exception-arguments (@lambda 1 #f))
-  (declare-type sfun-conversion-exception-code (@lambda 1 #f))
-  (declare-type sfun-conversion-exception-message (@lambda 1 #f))
-  (declare-type sfun-conversion-exception-procedure (@lambda 1 #f))
-  (declare-type stack-overflow-exception? (@lambda 1 #f))
-  (declare-type started-thread-exception? (@lambda 1 #f))
-  (declare-type started-thread-exception-arguments (@lambda 1 #f))
-  (declare-type started-thread-exception-procedure (@lambda 1 #f))
-  (declare-type terminated-thread-exception? (@lambda 1 #f))
-  (declare-type terminated-thread-exception-arguments (@lambda 1 #f))
-  (declare-type terminated-thread-exception-procedure (@lambda 1 #f))
-  (declare-type type-exception? (@lambda 1 #f))
-  (declare-type type-exception-arg-id (@lambda 1 #f))
-  (declare-type type-exception-arguments (@lambda 1 #f))
-  (declare-type type-exception-procedure (@lambda 1 #f))
-  (declare-type type-exception-type-id (@lambda 1 #f))
-  (declare-type unbound-global-exception? (@lambda 1 #f))
-  (declare-type unbound-global-exception-code (@lambda 1 #f))
-  (declare-type unbound-global-exception-rte (@lambda 1 #f))
-  (declare-type unbound-global-exception-variable (@lambda 1 #f))
-  (declare-type unbound-key-exception? (@lambda 1 #f))
-  (declare-type unbound-key-exception-arguments (@lambda 1 #f))
-  (declare-type unbound-key-exception-procedure (@lambda 1 #f))
-  (declare-type unbound-os-environment-variable-exception? (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonprocedure-operator-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonprocedure-operator-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonprocedure-operator-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonprocedure-operator-exception-operator
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   nonprocedure-operator-exception-rte
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   not-in-compilation-context-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   not-in-compilation-context-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   not-in-compilation-context-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   number-of-arguments-limit-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   number-of-arguments-limit-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   number-of-arguments-limit-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   os-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   os-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   os-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   os-exception-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   os-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   permission-denied-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   permission-denied-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   permission-denied-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   range-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   range-exception-arg-id
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   range-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   range-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   rpc-remote-error-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   rpc-remote-error-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   rpc-remote-error-exception-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   rpc-remote-error-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   scheduler-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   scheduler-exception-reason
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   sfun-conversion-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   sfun-conversion-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   sfun-conversion-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   sfun-conversion-exception-message
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   sfun-conversion-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   stack-overflow-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   started-thread-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   started-thread-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   started-thread-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   terminated-thread-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   terminated-thread-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   terminated-thread-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   type-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   type-exception-arg-id
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   type-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   type-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   type-exception-type-id
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-global-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-global-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-global-exception-rte
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-global-exception-variable
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-key-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-key-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-key-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-os-environment-variable-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    unbound-os-environment-variable-exception-arguments
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
   (declare-type
    unbound-os-environment-variable-exception-procedure
-   (@lambda 1 #f))
-  (declare-type unbound-serial-number-exception? (@lambda 1 #f))
-  (declare-type unbound-serial-number-exception-arguments (@lambda 1 #f))
-  (declare-type unbound-serial-number-exception-procedure (@lambda 1 #f))
-  (declare-type uncaught-exception? (@lambda 1 #f))
-  (declare-type uncaught-exception-arguments (@lambda 1 #f))
-  (declare-type uncaught-exception-procedure (@lambda 1 #f))
-  (declare-type uncaught-exception-reason (@lambda 1 #f))
-  (declare-type uninitialized-thread-exception? (@lambda 1 #f))
-  (declare-type uninitialized-thread-exception-arguments (@lambda 1 #f))
-  (declare-type uninitialized-thread-exception-procedure (@lambda 1 #f))
-  (declare-type unknown-keyword-argument-exception? (@lambda 1 #f))
-  (declare-type unknown-keyword-argument-exception-arguments (@lambda 1 #f))
-  (declare-type unknown-keyword-argument-exception-procedure (@lambda 1 #f))
-  (declare-type unterminated-process-exception? (@lambda 1 #f))
-  (declare-type unterminated-process-exception-arguments (@lambda 1 #f))
-  (declare-type unterminated-process-exception-procedure (@lambda 1 #f))
-  (declare-type wrong-number-of-arguments-exception? (@lambda 1 #f))
-  (declare-type wrong-number-of-arguments-exception-arguments (@lambda 1 #f))
-  (declare-type wrong-number-of-arguments-exception-procedure (@lambda 1 #f))
-  (declare-type wrong-number-of-values-exception? (@lambda 1 #f))
-  (declare-type wrong-number-of-values-exception-code (@lambda 1 #f))
-  (declare-type wrong-number-of-values-exception-rte (@lambda 1 #f))
-  (declare-type wrong-number-of-values-exception-vals (@lambda 1 #f))
-  (declare-type wrong-processor-c-return-exception? (@lambda 1 #f)))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-serial-number-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-serial-number-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unbound-serial-number-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uncaught-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uncaught-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uncaught-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uncaught-exception-reason
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uninitialized-thread-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uninitialized-thread-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   uninitialized-thread-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unknown-keyword-argument-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unknown-keyword-argument-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unknown-keyword-argument-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unterminated-process-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unterminated-process-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   unterminated-process-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-arguments-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-arguments-exception-arguments
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-arguments-exception-procedure
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-values-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-values-exception-code
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-values-exception-rte
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-number-of-values-exception-vals
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
+   wrong-processor-c-return-exception?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error))))

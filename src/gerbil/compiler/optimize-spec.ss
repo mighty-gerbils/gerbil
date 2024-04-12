@@ -25,6 +25,18 @@ namespace: gxc
   (%#module        xform-module%)
   (%#define-values generate-method-specializers-define-values%))
 
+;; method to extract the receiver of a method
+(defcompile-method (apply-extract-receiver)
+  (::extract-receiver ::false)
+  ()
+  final:
+  (%#begin                   apply-last-begin%)
+  (%#begin-annotation        extract-receiver-begin-annotation%)
+  (%#let-values              apply-body-last-let-values%)
+  (%#letrec-values           apply-body-last-let-values%)
+  (%#letrec*-values          apply-body-last-let-values%)
+  (%#if                      extract-receiver-if%))
+
 ;; method to collect method receiver references
 (defcompile-method (apply-collect-object-refs receiver: receiver methods: methods slots: slots)
   (::collect-object-refs ::void)
@@ -112,7 +124,6 @@ namespace: gxc
      (let ((method-calls (make-hash-table-eq))
            (slot-refs (make-hash-table-eq))
            (empty (make-hash-table-eq)))
-
        (def (no-specializer?)
          (and (fxzero? (hash-length method-calls))
               (fxzero? (hash-length slot-refs))))
@@ -153,13 +164,13 @@ namespace: gxc
         ((lambda-expr? #'expr)
          (ast-case #'expr ()
            ((_ (self . args) . body)
-            (begin
+            (let (receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
               (for-each
-                (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
+                (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
                 #'body)
               (with-specializer
                ((specializer-body
-                 (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
+                 (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
                       #'body))
                 (specializer-impl
                  (xform-wrap-source
@@ -180,9 +191,10 @@ namespace: gxc
                 (lambda (clause)
                   (ast-case clause ()
                     (((self . args) . body)
-                     (for-each
-                       (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
-                       #'body))
+                     (let (receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                       (for-each
+                         (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
+                         #'body)))
                     (_ (void))))
                 #'(clause ...))
               (with-specializer
@@ -191,9 +203,10 @@ namespace: gxc
                    (lambda (clause)
                      (ast-case clause ()
                        (((self . args) . body)
-                        (let (body
-                              (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
-                                   #'body))
+                        (let* ((receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                               (body
+                                (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
+                                     #'body)))
                           [#'(self . args) . body]))
                        (_ clause)))
                    #'(clause ...)))
@@ -213,25 +226,28 @@ namespace: gxc
             (begin
               (ast-case #'lambda-expr ()
                 ((_ (self . args) . body)
-                 (for-each
-                   (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
-                   #'body)))
+                 (let (receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                   (for-each
+                     (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
+                     #'body))))
               (ast-case #'case-lambda-expr ()
                 ((_ clause ...)
                  (for-each
                    (lambda (clause)
                      (ast-case clause ()
                        (((self . args) . body)
-                        (for-each
-                          (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
-                          #'body))))
+                        (let (receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                          (for-each
+                            (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
+                            #'body)))))
                    #'(clause ...))))
               (with-specializer
                ((specializer-lambda-expr
                  (ast-case #'lambda-expr ()
                    ((_ (self . args) . body)
-                    (let (body (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
-                                    #'body))
+                    (let* ((receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                           (body (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
+                                      #'body)))
                       (xform-wrap-source
                        ['%#lambda #'(self . args) . body]
                        #'lambda-expr)))))
@@ -243,8 +259,9 @@ namespace: gxc
                             (lambda (clause)
                               (ast-case clause ()
                                 (((self . args) . body)
-                                 (let (body (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
-                                                 #'body))
+                                 (let* ((receiver (or (apply-extract-receiver #'(%#begin . body)) #'self))
+                                        (body (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
+                                                   #'body)))
                                    [#'(self . args) . body]))
                                 (_ clause)))
                             #'(clause ...)))
@@ -276,15 +293,16 @@ namespace: gxc
                   ((lambda-expr? #'kw-lambda-main-expr)
                    (ast-case #'kw-lambda-main-expr ()
                      ((_ hd . body)
-                      (let (self (list-ref #'hd self-index))
+                      (let* ((self (list-ref #'hd self-index))
+                             (receiver (or (apply-extract-receiver #'(%#begin . body)) self)))
                         (for-each
-                          (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
+                          (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
                           #'body)
                         (with-specializer
                          ((specializer-impl
                            (let (specializer-body
                                  (map
-                                   (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
+                                   (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
                                    #'body))
                              (xform-wrap-source
                               ['%#let-values [[[#'get-kws]
@@ -306,9 +324,10 @@ namespace: gxc
                       (begin
                         (ast-case #'lambda-expr ()
                           ((_ hd . body)
-                           (let (self (list-ref #'hd self-index))
+                           (let* ((self (list-ref #'hd self-index))
+                                  (receiver (or (apply-extract-receiver #'(%#begin . body)) self)))
                              (for-each
-                               (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
+                               (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
                                #'body))))
                         (ast-case #'case-lambda-expr ()
                           ((_ clause ...)
@@ -316,9 +335,10 @@ namespace: gxc
                              (lambda (clause)
                                (ast-case clause ()
                                  ((hd . body)
-                                  (let (self (list-ref #'hd self-index))
+                                  (let* ((self (list-ref #'hd self-index))
+                                         (receiver (or (apply-extract-receiver #'(%#begin . body)) self)))
                                     (for-each
-                                      (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
+                                      (cut apply-collect-object-refs <> receiver: receiver methods: method-calls slots: slot-refs)
                                       #'body)))))
                              #'(clause ...))))
                         (with-specializer
@@ -326,7 +346,8 @@ namespace: gxc
                            (ast-case #'lambda-expr ()
                              ((_ hd . body)
                               (let* ((self (list-ref #'hd self-index))
-                                     (body (map (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
+                                     (receiver (or (apply-extract-receiver #'(%#begin . body)) self))
+                                     (body (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
                                                 #'body)))
                                 (xform-wrap-source
                                  ['%#lambda #'hd . body]
@@ -340,7 +361,8 @@ namespace: gxc
                                         (ast-case clause ()
                                           ((hd . body)
                                            (let* ((self (list-ref #'hd self-index))
-                                                  (body (map (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
+                                                  (receiver (or (apply-extract-receiver #'(%#begin . body)) self))
+                                                  (body (map (cut apply-subst-object-refs <> receiver: receiver klass: $klass methods: method-calls slots: slot-refs)
                                                              #'body)))
                                              [#'hd . body]))))
                                       #'(clause ...)))
@@ -368,6 +390,18 @@ namespace: gxc
         (else stx))))
        (_ stx)))
 
+;; apply-extract-receiver
+(def (extract-receiver-begin-annotation% self stx)
+  (ast-case stx (@receiver)
+    ((_ (@receiver receiver) _)
+     #'receiver)
+    ((_ ann expr) (compile-e self #'expr))))
+
+(def (extract-receiver-if% self stx)
+  (ast-case stx ()
+    ((_ test K E)
+     (compile-e self #'K))))
+
 ;;; apply-collect-objec-refs
 (def (collect-object-refs-call% self stx)
   (begin-annotation @match:prefix
@@ -378,6 +412,7 @@ namespace: gxc
        (begin
          (hash-put! (@ self methods) (stx-e #'method) #t)
          (for-each (cut compile-e self <>) #'(args ...))))
+
       ((_ (%#ref -apply) (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
        (and (runtime-identifier=? #'-apply 'apply)
             (runtime-identifier=? #'-call-method 'call-method)

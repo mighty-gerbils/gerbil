@@ -305,18 +305,78 @@ package: gerbil/core
    #f)
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
   (declare-type
    gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
   (declare-type
    gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
   (declare-type
    gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?
    (@case-lambda
-    (1 gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0)
-    (2 gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)))
+    (1
+     gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/core/contract~InterfaceInfo))
+    (2
+     gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/core/contract~InterfaceInfo))))
   (declare-class
    |gerbil/core/contract~TypeReference[1]#type-reference::t|
    (@class gerbil/core/contract~TypeReference#type-reference::t
@@ -370,16 +430,61 @@ package: gerbil/core
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeReference)))
   (declare-type
    |gerbil/core/contract~TypeReference[1]#resolve-type|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeReference)))
   (declare-type
    |gerbil/core/contract~TypeReference[1]#resolve-type->identifier|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeReference)))
   (declare-type
    |gerbil/core/contract~TypeReference[1]#resolve-type->type-descriptor|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeReference)))
   (declare-class
    gerbil/core/contract~TypeEnv#type-env::t
    (@class gerbil/core/contract~TypeEnv#type-env::t
@@ -452,44 +557,201 @@ package: gerbil/core
   (declare-type
    gerbil/core/contract~TypeEnv#&type-env-super-set!
    (@mutator gerbil/core/contract~TypeEnv#type-env::t super #f))
-  (declare-type gerbil/core/contract~TypeEnv#current-type-env (@lambda 0 #f))
-  (declare-type gerbil/core/contract~TypeEnv#type-env-lookup (@lambda 1 #f))
+  (declare-type
+   gerbil/core/contract~TypeEnv#current-type-env
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeEnv)))
+  (declare-type
+   gerbil/core/contract~TypeEnv#type-env-lookup
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypeEnv)))
   (declare-type
    |gerbil/core/contract~Using[1]#!class-slot-type|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#!class-slot-default|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#!class-slot-contract|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#!class-slot-checked-method-contract?|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#!class-slot-checked-mutator-contract?|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#dotted-identifier?|
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#split-dotted-identifier|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#get-slot-accessor|
-   (@lambda 3 #f))
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    |gerbil/core/contract~Using[1]#get-slot-mutator|
-   (@lambda 4 #f))
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Using)))
   (declare-type
    gerbil/core/contract~ClassMeta#!class-precedence-list
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__%|
-   (@lambda 6 #f))
+   (@lambda 6
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__@|
    (@kw-lambda-dispatch
@@ -502,10 +764,34 @@ package: gerbil/core
     |gerbil/core/contract~Interface[1]#check-signature!__@|))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-valid-type!|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature-spec!__%|
-   (@lambda 5 #f))
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature-spec!__@|
    (@kw-lambda-dispatch
@@ -518,64 +804,286 @@ package: gerbil/core
     |gerbil/core/contract~Interface[1]#check-signature-spec!__@|))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-contract?|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#check-signature-contract-types!|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-arguments-in|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-arguments-out|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
+  (declare-type
+   |gerbil/core/contract~Interface[1]#signature-has-keywords?|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|
-   (@lambda 6 #f))
+   (@lambda 6
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-interface-method-contract|
-   (@lambda 5 #f))
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-procedure-lambda-signature|
-   (@lambda 4 #f))
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#make-procedure-contract|
-   (@lambda 3 #f))
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#compatible-signatures?|
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#compatible-signature-type-contract?|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#compatible-type-contract?|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#contract-type-subtype?|
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-type-contract|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-arity|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#signature-keywords|
-   (@lambda 1 #f))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#symbol<?|
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~Interface[1]#keyword<?|
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~Interface)))
   (declare-type
    |gerbil/core/contract~TypedDefinitions[1]#is-signature?|
-   (@lambda 1 #f)))
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~TypedDefinitions))))

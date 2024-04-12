@@ -166,7 +166,8 @@ namespace: gxc
            #'(make-!signature arguments: 'args
                               return: 'return
                               effect: 'effect
-                              unchecked: 'unchecked))]))
+                              unchecked: 'unchecked
+                              origin: 'builtin))]))
 
     (verify-procedure! ctx proc)
     (syntax-case sig ()
@@ -188,9 +189,10 @@ namespace: gxc
       ((_ arguments: (quote args)
           return: (quote return)
           effect: (quote effect)
-          unchecked: (quote unchecked))
+          unchecked: (quote unchecked)
+          origin: (quote origin))
        (and (stx-e #'unchecked)
-            #'(unchecked (make-!signature return: 'return)))))))
+            #'(unchecked (make-!signature return: 'return origin: 'origin)))))))
 
 (defsyntax (declare-primitive-predicate stx)
   (syntax-case stx ()
@@ -241,8 +243,9 @@ namespace: gxc
                                       (_ arguments: (quote args)
                                          return: (quote return)
                                          effect: (quote effect)
-                                         unchecked: (quote unchecked)))
-                                     (let ((clause #'(make-!primitive-lambda 'arity #f signature: (make-!signature return: 'return)))
+                                         unchecked: (quote unchecked)
+                                         origin: (quote origin)))
+                                     (let ((clause #'(make-!primitive-lambda 'arity #f signature: (make-!signature return: 'return origin: 'origin)))
                                            (unchecked (stx-e #'unchecked)))
                                        (loop rest
                                              (or unchecked unchecked-proc)

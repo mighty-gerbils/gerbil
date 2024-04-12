@@ -18,6 +18,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-local-type
   (make-parameter #f))
+(def current-compile-path-type
+  (make-parameter []))
 
 (defstruct optimizer-info (type classes ssxi methods)
   constructor: :init!)
@@ -35,15 +37,12 @@ namespace: gxc
   equal: #t)
 
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) (signature)
-  equal: #t print: #t)
 
-(defclass !signature (return effect arguments unchecked)
+(defclass !signature (return effect arguments unchecked origin)
   final: #t equal: #t print: #t)
 
-(defstruct (!primitive-predicate !procedure) ()
-  constructor: :init!
-  equal: #t)
+(defstruct (!procedure !type) ((signature :? !signature))
+  equal: #t print: #t)
 
 ;;; MOP
 (defstruct (!class-meta !type) (class)
@@ -96,10 +95,15 @@ namespace: gxc
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
 (defclass !primitive ())
-(defclass (!primitive-lambda !primitive !lambda) ()
+
+(defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
   equal: #t)
-(defclass (!primitive-case-lambda !primitive !case-lambda) ()
+
+(defstruct (!primitive-lambda !primitive !lambda) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!primitive-case-lambda !primitive !case-lambda) ()
   constructor: :init!
   equal: #t)
 
@@ -368,6 +372,11 @@ namespace: gxc
   (and (!class? type)
        (memq 'interface-instance::t (!class-precedence-list type))))
 
+(def (!procedure-origin proc)
+  (using (proc : !procedure)
+    (and proc.signature
+         proc.signature.origin)))
+
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
@@ -401,6 +410,7 @@ namespace: gxc
   (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
+  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t)
   (let (klass (optimizer-lookup-class type-t))
     (if klass
       (let (vtab (!class-method-table klass))
@@ -423,7 +433,8 @@ namespace: gxc
       (verbose "declare-method: unknown class"  type-t))))
 
 (def (optimizer-lookup-type sym)
-  (or (alet (ht (current-compile-local-type))
+  (or (agetq sym (current-compile-path-type))
+      (alet (ht (current-compile-local-type))
         (hash-get ht sym))
       (hash-get (optimizer-info-type (current-compile-optimizer-info))
                 sym)))
@@ -450,10 +461,6 @@ namespace: gxc
 
 (def (optimizer-lookup-method type-t method)
   (!class-lookup-method (optimizer-resolve-class 'lookup-method type-t) method))
-
-(def (optimizer-top-level-method! sym)
-  (verbose "top-level method: " sym)
-  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t))
 
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))

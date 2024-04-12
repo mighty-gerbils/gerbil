@@ -224,10 +224,12 @@
       (darwin
        `(gxc: "net/ssl/libssl"
 	      "-cc-options" ,(cppflags "libssl" "")
-	      "-ld-options" ,(append-options
-			      (ldflags "libssl" "-lssl")
-			      (ldflags "libcrypto" "-lcrypto")
-			      (string-append "-L" (gerbil-libdir)) "-lgambit")))
+	      "-ld-options" ,(apply append-options
+			               (ldflags "libssl" "-lssl")
+			               (ldflags "libcrypto" "-lcrypto")
+                           (if (enable-shared?)
+                             [(string-append "-L" (gerbil-libdir)) "-lgambit"]
+                             []))))
       (else `(gxc: "net/ssl/libssl"
 		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
     "net/ssl/error"
@@ -252,9 +254,6 @@
     "net/smtp/headers"
     "net/smtp/api"
     "net/smtp"
-    "net/websocket/server"
-    "net/websocket/api"
-    "net/websocket"
     "net/websocket/interface"
     "net/websocket/socket"
     "net/websocket/client"

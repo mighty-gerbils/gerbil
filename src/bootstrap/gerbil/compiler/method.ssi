@@ -137,6 +137,7 @@ namespace: gxc
          (%#define-runtime apply-body-setq% gxc#apply-body-setq%)
          (%#define-runtime apply-operands gxc#apply-operands)
          (%#define-runtime xform-wrap-source gxc#xform-wrap-source)
+         (%#define-runtime xform-wrap-apply gxc#xform-wrap-apply)
          (%#define-runtime xform-begin% gxc#xform-begin%)
          (%#define-runtime xform-begin-syntax% gxc#xform-begin-syntax%)
          (%#define-runtime xform-module% gxc#xform-module%)

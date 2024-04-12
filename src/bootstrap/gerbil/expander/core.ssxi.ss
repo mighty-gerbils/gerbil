@@ -523,53 +523,118 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             void::t
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#phi-context:::init!__0
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#phi-context:::init!
    (@case-lambda
     (2
      gx#phi-context:::init!__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (3
      gx#phi-context:::init!__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#local-context:::init!__%
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#local-context:::init!__0
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#local-context:::init!
    (@case-lambda
     (1
      gx#local-context:::init!__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (2
      gx#local-context:::init!__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-class
    gx#binding::t
    (@class gx#binding::t
@@ -1549,74 +1614,568 @@ package: gerbil/expander
   (declare-type
    gx#&expander-mark-trace-set!
    (@mutator gx#expander-mark::t trace #f))
-  (declare-type gx#raise-syntax-error (@lambda (3) #f))
-  (declare-type gx#eval-syntax__% (@lambda 2 #f))
-  (declare-type gx#eval-syntax__0 (@lambda 1 #f))
+  (declare-type
+   gx#raise-syntax-error
+   (@lambda (3)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#eval-syntax__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#eval-syntax__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#eval-syntax
-   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__%)))
-  (declare-type gx#eval-syntax* (@lambda 1 #f))
-  (declare-type gx#core-expand__% (@lambda 2 #f))
-  (declare-type gx#core-expand__0 (@lambda 1 #f))
+   (@case-lambda
+    (1
+     gx#eval-syntax__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#eval-syntax__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#eval-syntax*
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expand
-   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__%)))
-  (declare-type gx#core-expand-top (@lambda 1 #f))
-  (declare-type gx#core-expand-expression (@lambda 1 #f))
+   (@case-lambda
+    (1
+     gx#core-expand__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-expand__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-expand-top
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-expression
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expand-expression+1
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#core-expand*__% (@lambda 2 #f))
-  (declare-type gx#core-expand*__0 (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand*__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand*__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expand*
-   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__%)))
-  (declare-type gx#core-expand1 (@lambda 1 #f))
-  (declare-type gx#core-expand-head (@lambda 1 #f))
-  (declare-type gx#core-expand-block__% (@lambda 4 #f))
-  (declare-type gx#core-expand-block__0 (@lambda 2 #f))
-  (declare-type gx#core-expand-block__1 (@lambda 3 #f))
+   (@case-lambda
+    (1
+     gx#core-expand*__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-expand*__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-expand1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-head
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-block__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-block__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-block__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expand-block
    (@case-lambda
-    (2 gx#core-expand-block__0)
-    (3 gx#core-expand-block__1)
-    (4 gx#core-expand-block__%)))
-  (declare-type gx#core-expand-block* (@lambda 2 #f))
-  (declare-type gx#core-expand-cond-expand% (@lambda 1 #f))
-  (declare-type gx#core-expand-include%__% (@lambda 2 #f))
-  (declare-type gx#core-expand-include%__0 (@lambda 1 #f))
+    (2
+     gx#core-expand-block__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-expand-block__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (4
+     gx#core-expand-block__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-expand-block*
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-cond-expand%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-include%__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-expand-include%__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expand-include%
    (@case-lambda
-    (1 gx#core-expand-include%__0)
-    (2 gx#core-expand-include%__%)))
-  (declare-type gx#core-apply-expander__% (@lambda 3 #f))
-  (declare-type gx#core-apply-expander__0 (@lambda 2 #f))
+    (1
+     gx#core-expand-include%__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-expand-include%__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-apply-expander__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-apply-expander__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-apply-expander
-   (@case-lambda (2 gx#core-apply-expander__0) (3 gx#core-apply-expander__%)))
+   (@case-lambda
+    (2
+     gx#core-apply-expander__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-apply-expander__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#expander::apply-macro-expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#macro-expander::apply-macro-expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-expander::apply-macro-expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#top-special-form::apply-macro-expander__%
    (@lambda 3
@@ -1627,301 +2186,1666 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             (t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#top-special-form::apply-macro-expander__0
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#top-special-form::apply-macro-expander
    (@case-lambda
     (2
      gx#top-special-form::apply-macro-expander__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (3
      gx#top-special-form::apply-macro-expander__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#module-special-form::apply-macro-expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#rename-macro-expander::apply-macro-expander
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: (t::t t::t) unchecked: #f)))
-  (declare-type gx#core-apply-user-expander__% (@lambda 3 #f))
-  (declare-type gx#core-apply-user-expander__0 (@lambda 2 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-apply-user-expander__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-apply-user-expander__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-apply-user-expander
    (@case-lambda
-    (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__%)))
+    (2
+     gx#core-apply-user-expander__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-apply-user-expander__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#core-apply-user-macro
    (@lambda 5
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#user-expander::apply-macro-expander
    (@case-lambda
-    (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__%)))
-  (declare-type gx#resolve-identifier__% (@lambda 3 #f))
-  (declare-type gx#resolve-identifier__0 (@lambda 1 #f))
-  (declare-type gx#resolve-identifier__1 (@lambda 2 #f))
+    (2
+     gx#core-apply-user-expander__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-apply-user-expander__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#resolve-identifier__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#resolve-identifier__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#resolve-identifier__1
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#resolve-identifier
    (@case-lambda
-    (1 gx#resolve-identifier__0)
-    (2 gx#resolve-identifier__1)
-    (3 gx#resolve-identifier__%)))
-  (declare-type gx#bind-identifier!__% (@lambda 5 #f))
-  (declare-type gx#bind-identifier!__0 (@lambda 2 #f))
-  (declare-type gx#bind-identifier!__1 (@lambda 3 #f))
-  (declare-type gx#bind-identifier!__2 (@lambda 4 #f))
+    (1
+     gx#resolve-identifier__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#resolve-identifier__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#resolve-identifier__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#bind-identifier!__%
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#bind-identifier!__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#bind-identifier!__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#bind-identifier!__2
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#bind-identifier!
    (@case-lambda
-    (2 gx#bind-identifier!__0)
-    (3 gx#bind-identifier!__1)
-    (4 gx#bind-identifier!__2)
-    (5 gx#bind-identifier!__%)))
-  (declare-type gx#core-resolve-identifier__% (@lambda 3 #f))
-  (declare-type gx#core-resolve-identifier__0 (@lambda 1 #f))
-  (declare-type gx#core-resolve-identifier__1 (@lambda 2 #f))
+    (2
+     gx#bind-identifier!__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#bind-identifier!__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (4
+     gx#bind-identifier!__2
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (5
+     gx#bind-identifier!__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-resolve-identifier__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-resolve-identifier__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-resolve-identifier__1
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-resolve-identifier
    (@case-lambda
-    (1 gx#core-resolve-identifier__0)
-    (2 gx#core-resolve-identifier__1)
-    (3 gx#core-resolve-identifier__%)))
-  (declare-type gx#core-resolve-binding (@lambda 5 #f))
-  (declare-type gx#core-bind!__% (@lambda 5 #f))
-  (declare-type gx#core-bind!__0 (@lambda 2 #f))
-  (declare-type gx#core-bind!__1 (@lambda 3 #f))
-  (declare-type gx#core-bind!__2 (@lambda 4 #f))
+    (1
+     gx#core-resolve-identifier__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-resolve-identifier__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-resolve-identifier__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-resolve-binding
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bind!__%
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bind!__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bind!__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bind!__2
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-bind!
    (@case-lambda
-    (2 gx#core-bind!__0)
-    (3 gx#core-bind!__1)
-    (4 gx#core-bind!__2)
-    (5 gx#core-bind!__%)))
-  (declare-type gx#core-identifier-key (@lambda 1 #f))
+    (2
+     gx#core-bind!__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (3
+     gx#core-bind!__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (4
+     gx#core-bind!__2
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (5
+     gx#core-bind!__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-identifier-key
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type gx#&phi-context? (@predicate gx#phi-context::t))
-  (declare-type gx#core-context-shift (@lambda 2 #f))
+  (declare-type
+   gx#core-context-shift
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-get
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-put!
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#core-context-resolve (@lambda 2 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-resolve
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-bind!
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#core-context-top__% (@lambda 2 #f))
-  (declare-type gx#core-context-top__0 (@lambda 0 #f))
-  (declare-type gx#core-context-top__1 (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-top__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-top__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-top__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-top
    (@case-lambda
-    (0 gx#core-context-top__0)
-    (1 gx#core-context-top__1)
-    (2 gx#core-context-top__%)))
-  (declare-type gx#core-context-root__% (@lambda 1 #f))
-  (declare-type gx#core-context-root__0 (@lambda 0 #f))
+    (0
+     gx#core-context-top__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (1
+     gx#core-context-top__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-context-top__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-context-root__%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-root__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-root
-   (@case-lambda (0 gx#core-context-root__0) (1 gx#core-context-root__%)))
-  (declare-type gx#core-context-rebind?__% (@lambda (1) #f))
-  (declare-type gx#core-context-rebind?__0 (@lambda 0 #f))
+   (@case-lambda
+    (0
+     gx#core-context-root__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (1
+     gx#core-context-root__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-context-rebind?__%
+   (@lambda (1)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-context-rebind?__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-rebind?
    (@case-lambda
-    (0 gx#core-context-rebind?__0)
-    (1 gx#core-context-rebind?__%)
-    ((1) gx#core-context-rebind?__%)))
+    (0
+     gx#core-context-rebind?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (1
+     gx#core-context-rebind?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    ((1)
+     gx#core-context-rebind?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#core-context-namespace__%
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-namespace__0
    (@lambda 0
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-context-namespace
    (@case-lambda
     (0
      gx#core-context-namespace__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (1
      gx#core-context-namespace__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type gx#expander-binding?__% (@lambda 2 #f))
-  (declare-type gx#expander-binding?__0 (@lambda 1 #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#expander-binding?__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#expander-binding?__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#expander-binding?
-   (@case-lambda (1 gx#expander-binding?__0) (2 gx#expander-binding?__%)))
-  (declare-type gx#core-expander-binding? (@lambda 1 #f))
-  (declare-type gx#expression-form-binding? (@lambda 1 #f))
-  (declare-type gx#direct-special-form-binding? (@lambda 1 #f))
-  (declare-type gx#special-form-binding? (@lambda 1 #f))
-  (declare-type gx#feature-binding? (@lambda 1 #f))
-  (declare-type gx#private-feature-binding? (@lambda 1 #f))
-  (declare-type gx#core-bound-identifier?__% (@lambda 2 #f))
-  (declare-type gx#core-bound-identifier?__0 (@lambda 1 #f))
+   (@case-lambda
+    (1
+     gx#expander-binding?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#expander-binding?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-expander-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#expression-form-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#direct-special-form-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#special-form-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#feature-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#private-feature-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bound-identifier?__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-bound-identifier?__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-bound-identifier?
    (@case-lambda
-    (1 gx#core-bound-identifier?__0)
-    (2 gx#core-bound-identifier?__%)))
+    (1
+     gx#core-bound-identifier?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-bound-identifier?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#core-identifier=?
    (@lambda 2
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-extern-symbol?
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-quote-syntax__%
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-quote-syntax__0
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-quote-syntax__1
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-quote-syntax__2
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-quote-syntax
    (@case-lambda
     (1
      gx#core-quote-syntax__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (2
      gx#core-quote-syntax__1
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (3
      gx#core-quote-syntax__2
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (4
      gx#core-quote-syntax__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#core-cons
    (@lambda 2
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             pair::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-list
    (@lambda (1)
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             pair::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-cons*
    (@lambda (1)
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             pair::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-resolve-path__%
    (@lambda 2
             #f
             signature:
-            (return: string::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-resolve-path__0
    (@lambda 1
             #f
             signature:
-            (return: string::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-resolve-path
    (@case-lambda
     (1
      gx#core-resolve-path__0
      signature:
-     (return: string::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
     (2
      gx#core-resolve-path__%
      signature:
-     (return: string::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type gx#core-deserialize-mark__% (@lambda 2 #f))
-  (declare-type gx#core-deserialize-mark__0 (@lambda 1 #f))
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#core-deserialize-mark__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#core-deserialize-mark__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#core-deserialize-mark
    (@case-lambda
-    (1 gx#core-deserialize-mark__0)
-    (2 gx#core-deserialize-mark__%)))
+    (1
+     gx#core-deserialize-mark__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#core-deserialize-mark__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
   (declare-type
    gx#syntax-local-rewrap
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gx#syntax-local-unwrap (@lambda 1 #f))
-  (declare-type gx#syntax-local-introduce (@lambda 1 #f))
-  (declare-type gx#syntax-local-e__% (@lambda 2 #f))
-  (declare-type gx#syntax-local-e__0 (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#syntax-local-unwrap
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#syntax-local-introduce
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#syntax-local-e__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#syntax-local-e__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#syntax-local-e
-   (@case-lambda (1 gx#syntax-local-e__0) (2 gx#syntax-local-e__%)))
-  (declare-type gx#syntax-local-value__% (@lambda 2 #f))
-  (declare-type gx#syntax-local-value__0 (@lambda 1 #f))
+   (@case-lambda
+    (1
+     gx#syntax-local-e__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#syntax-local-e__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#syntax-local-value__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#syntax-local-value__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-type
    gx#syntax-local-value
-   (@case-lambda (1 gx#syntax-local-value__0) (2 gx#syntax-local-value__%)))
-  (declare-type gx#raise-syntax-ref-error (@lambda 1 #f)))
+   (@case-lambda
+    (1
+     gx#syntax-local-value__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))
+    (2
+     gx#syntax-local-value__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/expander/core))))
+  (declare-type
+   gx#raise-syntax-ref-error
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core))))

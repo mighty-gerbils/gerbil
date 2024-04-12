@@ -670,7 +670,7 @@ namespace: gxc
 (def (generate-runtime-let-values% self stx (compiled-body? #f))
   (def (generate-simple hd body)
     (coalesce-boolean
-     (coalesce-let
+     (simplify-let
       (generate-runtime-simple-let self 'let hd body compiled-body?))))
 
   (def (coalesce-boolean code)
@@ -685,10 +685,10 @@ namespace: gxc
         (else code))
       code))
 
-  (def (coalesce-let code)
+  (def (simplify-let code)
     (match code
-      (['let [] ['let . body]]
-       ['let . body])
+      (['let [] expr]
+       expr)
       (['let [[id expr]] ['let [] . body]]
        ['let [[id expr]] . body])
       (['let [[id1 expr1]] ['let [[id2 expr2]] . body]]

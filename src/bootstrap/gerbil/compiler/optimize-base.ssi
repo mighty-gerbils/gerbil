@@ -18,6 +18,9 @@ namespace: gxc
          (%#define-runtime
           current-compile-local-type
           gxc#current-compile-local-type)
+         (%#define-runtime
+          current-compile-path-type
+          gxc#current-compile-path-type)
          (%#define-runtime optimizer-info::t gxc#optimizer-info::t)
          (%#define-runtime optimizer-info? gxc#optimizer-info?)
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
@@ -82,22 +85,6 @@ namespace: gxc
          (%#define-runtime &!alias-id gxc#&!alias-id)
          (%#define-runtime &!alias-id-set! gxc#&!alias-id-set!)
          (%#define-syntax !alias |gxc[:0:]#!alias|)
-         (%#define-runtime !procedure::t gxc#!procedure::t)
-         (%#define-runtime !procedure? gxc#!procedure?)
-         (%#define-runtime make-!procedure gxc#make-!procedure)
-         (%#define-runtime !procedure-signature gxc#!procedure-signature)
-         (%#define-runtime !procedure-id gxc#!procedure-id)
-         (%#define-runtime
-          !procedure-signature-set!
-          gxc#!procedure-signature-set!)
-         (%#define-runtime !procedure-id-set! gxc#!procedure-id-set!)
-         (%#define-runtime &!procedure-signature gxc#&!procedure-signature)
-         (%#define-runtime &!procedure-id gxc#&!procedure-id)
-         (%#define-runtime
-          &!procedure-signature-set!
-          gxc#&!procedure-signature-set!)
-         (%#define-runtime &!procedure-id-set! gxc#&!procedure-id-set!)
-         (%#define-syntax !procedure |gxc[:0:]#!procedure|)
          (%#define-runtime !signature::t gxc#!signature::t)
          (%#define-runtime !signature? gxc#!signature?)
          (%#define-runtime make-!signature gxc#make-!signature)
@@ -105,6 +92,7 @@ namespace: gxc
          (%#define-runtime !signature-effect gxc#!signature-effect)
          (%#define-runtime !signature-arguments gxc#!signature-arguments)
          (%#define-runtime !signature-unchecked gxc#!signature-unchecked)
+         (%#define-runtime !signature-origin gxc#!signature-origin)
          (%#define-runtime !signature-return-set! gxc#!signature-return-set!)
          (%#define-runtime !signature-effect-set! gxc#!signature-effect-set!)
          (%#define-runtime
@@ -113,10 +101,12 @@ namespace: gxc
          (%#define-runtime
           !signature-unchecked-set!
           gxc#!signature-unchecked-set!)
+         (%#define-runtime !signature-origin-set! gxc#!signature-origin-set!)
          (%#define-runtime &!signature-return gxc#&!signature-return)
          (%#define-runtime &!signature-effect gxc#&!signature-effect)
          (%#define-runtime &!signature-arguments gxc#&!signature-arguments)
          (%#define-runtime &!signature-unchecked gxc#&!signature-unchecked)
+         (%#define-runtime &!signature-origin gxc#&!signature-origin)
          (%#define-runtime &!signature-return-set! gxc#&!signature-return-set!)
          (%#define-runtime &!signature-effect-set! gxc#&!signature-effect-set!)
          (%#define-runtime
@@ -125,35 +115,31 @@ namespace: gxc
          (%#define-runtime
           &!signature-unchecked-set!
           gxc#&!signature-unchecked-set!)
+         (%#define-runtime &!signature-origin-set! gxc#&!signature-origin-set!)
          (%#define-syntax !signature |gxc[:0:]#!signature|)
-         (%#define-runtime !primitive-predicate::t gxc#!primitive-predicate::t)
-         (%#define-runtime !primitive-predicate? gxc#!primitive-predicate?)
+         (%#define-runtime !procedure::t gxc#!procedure::t)
+         (%#define-runtime !procedure? gxc#!procedure?)
+         (%#define-runtime !procedure-signature gxc#!procedure-signature)
+         (%#define-runtime !procedure-id gxc#!procedure-id)
          (%#define-runtime
-          make-!primitive-predicate
-          gxc#make-!primitive-predicate)
+          !procedure-unchecked-signature-set!
+          gxc#!procedure-unchecked-signature-set!)
+         (%#define-runtime !procedure-id-set! gxc#!procedure-id-set!)
+         (%#define-runtime &!procedure-signature gxc#&!procedure-signature)
+         (%#define-runtime &!procedure-id gxc#&!procedure-id)
          (%#define-runtime
-          !primitive-predicate-signature
-          gxc#!primitive-predicate-signature)
-         (%#define-runtime !primitive-predicate-id gxc#!primitive-predicate-id)
+          &!procedure-unchecked-signature-set!
+          gxc#&!procedure-unchecked-signature-set!)
+         (%#define-runtime &!procedure-id-set! gxc#&!procedure-id-set!)
+         (%#define-syntax !procedure |gxc[:0:]#!procedure|)
+         (%#define-runtime make-!procedure gxc#make-!procedure)
+         (%#define-runtime __make-!procedure gxc#__make-!procedure)
          (%#define-runtime
-          !primitive-predicate-signature-set!
-          gxc#!primitive-predicate-signature-set!)
+          !procedure-signature-set!
+          gxc#!procedure-signature-set!)
          (%#define-runtime
-          !primitive-predicate-id-set!
-          gxc#!primitive-predicate-id-set!)
-         (%#define-runtime
-          &!primitive-predicate-signature
-          gxc#&!primitive-predicate-signature)
-         (%#define-runtime
-          &!primitive-predicate-id
-          gxc#&!primitive-predicate-id)
-         (%#define-runtime
-          &!primitive-predicate-signature-set!
-          gxc#&!primitive-predicate-signature-set!)
-         (%#define-runtime
-          &!primitive-predicate-id-set!
-          gxc#&!primitive-predicate-id-set!)
-         (%#define-syntax !primitive-predicate |gxc[:0:]#!primitive-predicate|)
+          __!procedure-signature-set!
+          gxc#__!procedure-signature-set!)
          (%#define-runtime !class-meta::t gxc#!class-meta::t)
          (%#define-runtime !class-meta? gxc#!class-meta?)
          (%#define-runtime make-!class-meta gxc#make-!class-meta)
@@ -448,6 +434,34 @@ namespace: gxc
          (%#define-runtime !primitive? gxc#!primitive?)
          (%#define-runtime make-!primitive gxc#make-!primitive)
          (%#define-syntax !primitive |gxc[:0:]#!primitive|)
+         (%#define-runtime !primitive-predicate::t gxc#!primitive-predicate::t)
+         (%#define-runtime !primitive-predicate? gxc#!primitive-predicate?)
+         (%#define-runtime
+          make-!primitive-predicate
+          gxc#make-!primitive-predicate)
+         (%#define-runtime
+          !primitive-predicate-signature
+          gxc#!primitive-predicate-signature)
+         (%#define-runtime !primitive-predicate-id gxc#!primitive-predicate-id)
+         (%#define-runtime
+          !primitive-predicate-signature-set!
+          gxc#!primitive-predicate-signature-set!)
+         (%#define-runtime
+          !primitive-predicate-id-set!
+          gxc#!primitive-predicate-id-set!)
+         (%#define-runtime
+          &!primitive-predicate-signature
+          gxc#&!primitive-predicate-signature)
+         (%#define-runtime
+          &!primitive-predicate-id
+          gxc#&!primitive-predicate-id)
+         (%#define-runtime
+          &!primitive-predicate-signature-set!
+          gxc#&!primitive-predicate-signature-set!)
+         (%#define-runtime
+          &!primitive-predicate-id-set!
+          gxc#&!primitive-predicate-id-set!)
+         (%#define-syntax !primitive-predicate |gxc[:0:]#!primitive-predicate|)
          (%#define-runtime !primitive-lambda::t gxc#!primitive-lambda::t)
          (%#define-runtime !primitive-lambda? gxc#!primitive-lambda?)
          (%#define-runtime make-!primitive-lambda gxc#make-!primitive-lambda)
@@ -609,6 +623,7 @@ namespace: gxc
          (%#define-runtime !type-subtype? gxc#!type-subtype?)
          (%#define-runtime !class-subclass? gxc#!class-subclass?)
          (%#define-runtime !interface-instance? gxc#!interface-instance?)
+         (%#define-runtime !procedure-origin gxc#!procedure-origin)
          (%#begin (%#define-runtime
                    optimizer-declare-type!__%
                    gxc#optimizer-declare-type!__%)
@@ -642,9 +657,6 @@ namespace: gxc
           optimizer-lookup-class-name
           gxc#optimizer-lookup-class-name)
          (%#define-runtime optimizer-lookup-method gxc#optimizer-lookup-method)
-         (%#define-runtime
-          optimizer-top-level-method!
-          gxc#optimizer-top-level-method!)
          (%#define-runtime
           optimizer-top-level-method?
           gxc#optimizer-top-level-method?))

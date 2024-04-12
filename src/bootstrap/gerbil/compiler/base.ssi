@@ -45,6 +45,9 @@ namespace: gxc
          (%#define-runtime current-compile-decls gxc#current-compile-decls)
          (%#define-runtime current-compile-context gxc#current-compile-context)
          (%#define-runtime
+          current-compile-parallel
+          gxc#current-compile-parallel)
+         (%#define-runtime
           current-compile-local-env
           gxc#current-compile-local-env)
          (%#define-runtime symbol-table::t gxc#symbol-table::t)
@@ -70,7 +73,7 @@ namespace: gxc
          (%#define-runtime symbol-table:::init! gxc#symbol-table:::init!)
          (%#define-runtime raise-compile-error gxc#raise-compile-error)
          (%#define-runtime verbose gxc#verbose)
-         (%#define-runtime +verbose-mutex+ gxc#+verbose-mutex+)
+         (%#define-runtime __verbose-mutex gxc#__verbose-mutex)
          (%#define-syntax with-verbose-mutex |gxc[:0:]#with-verbose-mutex|)
          (%#define-runtime
           module-path-reserved-chars
@@ -104,5 +107,25 @@ namespace: gxc
                             generate-runtime-gensym-reference
                             gxc#generate-runtime-gensym-reference)))
          (%#define-runtime runtime-identifier=? gxc#runtime-identifier=?)
-         (%#define-runtime identifier-symbol gxc#identifier-symbol))
+         (%#define-runtime identifier-symbol gxc#identifier-symbol)
+         (%#define-runtime __compile-jobs gxc#__compile-jobs)
+         (%#define-runtime __available-cores gxc#__available-cores)
+         (%#define-runtime __jobs-mx gxc#__jobs-mx)
+         (%#define-runtime __jobs-cv gxc#__jobs-cv)
+         (%#begin (%#define-runtime
+                   add-compile-job!__%
+                   gxc#add-compile-job!__%)
+                  (%#begin (%#define-runtime
+                            add-compile-job!__0
+                            gxc#add-compile-job!__0)
+                           (%#define-runtime
+                            add-compile-job!
+                            gxc#add-compile-job!)))
+         (%#define-runtime pending-compile-jobs gxc#pending-compile-jobs)
+         (%#define-runtime
+          execute-pending-compile-jobs!
+          gxc#execute-pending-compile-jobs!)
+         (%#define-runtime make-compile-job gxc#make-compile-job)
+         (%#define-syntax go! |gxc[:0:]#go!|)
+         (%#define-runtime join! gxc#join!))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/base~0"))

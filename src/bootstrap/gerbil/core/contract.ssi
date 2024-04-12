@@ -490,6 +490,9 @@ namespace: gerbil/core/contract
                      signature-arguments-out
                      |gerbil/core/contract~Interface[1]#signature-arguments-out|)
                     (%#define-runtime
+                     signature-has-keywords?
+                     |gerbil/core/contract~Interface[1]#signature-has-keywords?|)
+                    (%#define-runtime
                      make-interface-method-lambda-signature
                      |gerbil/core/contract~Interface[1]#make-interface-method-lambda-signature|)
                     (%#define-runtime
@@ -556,7 +559,11 @@ namespace: gerbil/core/contract
                     (in: #f Interface)
                     (phi: 1 (in: #f InterfaceInfo))
                     (phi: 1 (in: #f TypeEnv))
-                    (phi: 1 (in: #f ClassMeta)))
+                    (phi: 1 (in: #f ClassMeta))
+                    (spec:
+                     (:gerbil/core/mop)
+                     (1 @method~ 1 @method)
+                     (0 @method~ 0 @method)))
                    (%#export #t (phi: 1 #t))
                    (%#begin-syntax
                     (%#call (%#ref load-module)
@@ -586,8 +593,14 @@ namespace: gerbil/core/contract
                     case-lambda/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#case-lambda/c|)
                    (%#define-syntax
+                    @method
+                    |gerbil/core/contract~TypedDefinitions[:0:]#@method|)
+                   (%#define-syntax
                     defmethod/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#defmethod/c|)
+                   (%#define-syntax
+                    with-receiver
+                    |gerbil/core/contract~TypedDefinitions[:0:]#with-receiver|)
                    (%#define-syntax
                     let/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#let/c|)

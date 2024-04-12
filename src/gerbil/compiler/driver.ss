@@ -92,7 +92,8 @@ namespace: gxc
         (verbosity   (pgetq verbose: opts))
         (optimize    (pgetq optimize: opts))
         (debug       (pgetq debug: opts))
-        (gen-ssxi    (pgetq generate-ssxi: opts)))
+        (gen-ssxi    (pgetq generate-ssxi: opts))
+        (parallel?   (pgetq parallel: opts)))
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (when optimize
@@ -107,6 +108,7 @@ namespace: gxc
                    (current-compile-generate-ssxi gen-ssxi)
                    (current-compile-timestamp (compile-timestamp))
                    (current-compile-context `(compile-module ,srcpath))
+                   (current-compile-parallel parallel?)
                    (current-expander-compiling? #t))
       (verbose "compile " srcpath)
       (compile-top-module (with-driver-mutex (import-module srcpath))))))
@@ -120,7 +122,8 @@ namespace: gxc
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
-        (debug       (pgetq debug: opts)))
+        (debug       (pgetq debug: opts))
+        (parallel?   (pgetq parallel: opts)))
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (parameterize ((current-compile-output-dir outdir)
@@ -131,6 +134,7 @@ namespace: gxc
                    (current-compile-debug debug)
                    (current-compile-timestamp (compile-timestamp))
                    (current-compile-context `(compile-exe ,srcpath))
+                   (current-compile-parallel parallel?)
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
       (compile-executable-module (with-driver-mutex (import-module srcpath)) opts))))
@@ -204,10 +208,6 @@ namespace: gxc
     (let* ((gerbil-home      (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
-           (tmp              (path-expand
-                              (string-append "gxc." (number->string (compile-timestamp-nanos)))
-                              "/tmp"))
-           (tmp-path         (lambda (f) (path-expand (path-strip-directory f) tmp)))
            (deps             (find-runtime-module-deps ctx))
            (libgerbil-deps   (filter libgerbil-module? deps))
            (libgerbil-scm    (map find-static-module-file libgerbil-deps))
@@ -231,7 +231,7 @@ namespace: gxc
            (output_-c        (replace-extension output-scm "_.c"))
            (output_-o        (replace-extension output-scm "_.o"))
            (gsc-link-opts    (gsc-link-options))
-           (gsc-cc-opts      (gsc-cc-options))
+           (gsc-cc-opts      (gsc-cc-options static: #t))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil-ld-opts (get-libgerbil-ld-opts gerbil-libdir))
@@ -244,60 +244,70 @@ namespace: gxc
 
       (def (compile-obj scm-path c-path)
         (let (o-path (replace-extension c-path ".o"))
-          (if (and (file-exists? o-path)
-                   (or (not scm-path)
-                       (file-newer? scm-path o-path)))
-            (go! (invoke (gerbil-gsc)
-                         ["-obj"
-                          gsc-cc-opts ...
-                          gsc-static-opts ...
-                          c-path]))
-            #f)))
+          (let* ((lock (string-append o-path ".lock"))
+                 (locked #f)
+                 (unlock
+                  (lambda ()
+                    (close-port locked)
+                    (delete-file lock))))
+            (let retry ()
+              (if (file-exists? lock)
+                (begin
+                  (thread-sleep! .01)
+                  (retry))
+                (begin
+                  (set! locked
+                    (with-catch false (cut open-file [path: lock create: #t])))
+                  (unless locked
+                    (retry)))))
+
+            (unwind-protect
+              (when (or (not (file-exists? o-path))
+                        (not scm-path)
+                        (file-newer? scm-path o-path))
+                (let (gsc-cc-opts (gsc-cc-options static: #f))
+                  (invoke (gerbil-gsc)
+                          ["-obj"
+                           gsc-cc-opts ...
+                           gsc-static-opts ...
+                           c-path])))
+              (unlock)))))
 
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub builtin-modules))
+                                  (cut generate-stub builtin-modules))
       (when (current-compile-invoke-gsc)
-        (with-driver-mutex (create-directory tmp))
-        (invoke (gerbil-gsc)
-                ["-link"
-                 gsc-link-opts ...
-                 libgerbil-c ...
-                 src-deps-scm ...
-                 src-bin-scm
-                 output-scm])
-        ;; do this in parallel, caching compiled objects
-        ;; TODO respect GERBIL_BUILD_CORES
-        (for-each
-          (lambda (maybe-thread) (and maybe-thread (join! maybe-thread)))
-          (map compile-obj
-               [src-deps-scm ... src-bin-scm output-scm #f]
-               [src-deps-c ...   src-bin-c   output-c   output_-c]))
-        (invoke (gerbil-gsc)
-                ["-obj"
-                 gsc-cc-opts ...
-                 gsc-static-opts ...
-                 src-deps-c ...
-                 src-bin-c
-                 output-c output_-c])
-        (invoke (gerbil-gcc)
-                ["-w" "-o" output-bin
-                 src-deps-o ...
-                 src-bin-o
-                 output-o output_-o
-                 libgerbil-o ...
-                 output-ld-opts ...
-                 (if (gerbil-enable-shared?) [rpath] []) ...
-                 "-L" gerbil-libdir "-lgambit"
-                 libgerbil-ld-opts ...])
-        ;; clean up
-        (for-each delete-file [output-c output_-c output-o output_-o]))))
+        (let (compile-it
+              (lambda ()
+                (invoke (gerbil-gsc)
+                        ["-link"
+                         gsc-link-opts ...
+                         libgerbil-c ...
+                         src-deps-scm ...
+                         src-bin-scm
+                         output-scm])
+                (for-each compile-obj
+                          [src-deps-scm ... src-bin-scm output-scm #f]
+                          [src-deps-c ...   src-bin-c   output-c   output_-c])
+                (invoke (gerbil-gcc)
+                        ["-w" "-o" output-bin
+                         src-deps-o ...
+                         src-bin-o
+                         output-o output_-o
+                         libgerbil-o ...
+                         output-ld-opts ...
+                         (if (gerbil-enable-shared?) [rpath] []) ...
+                         "-L" gerbil-libdir "-lgambit"
+                         libgerbil-ld-opts ...])
+                ;; clean up
+                (for-each delete-file [output-c output_-c output-o output_-o])))
+          (if (current-compile-parallel)
+            (add-compile-job! compile-it)
+            (compile-it))))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin "__exe.scm")))
-    (compile-stub output-scm output-bin)
-    (unless (current-compile-keep-scm)
-      (delete-file output-scm))))
+    (compile-stub output-scm output-bin)))
 
 (def (compile-executable-module/full-program-optimization ctx opts)
   (def (reset-declare)
@@ -386,7 +396,7 @@ namespace: gxc
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
            (gsc-link-opts (gsc-link-options))
-           (gsc-cc-opts (gsc-cc-options))
+           (gsc-cc-opts (gsc-cc-options static: #t))
            (gsc-static-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
@@ -406,23 +416,26 @@ namespace: gxc
       (with-output-to-scheme-file output-scm
         (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
-        (invoke (gerbil-gsc)
-                ["-link" "-o" output-c_ gsc-link-opts ... output-scm])
-        (invoke (gerbil-gsc)
-                ["-obj" gsc-cc-opts ... gsc-static-opts ...
-                 output-c output-c_])
-        (invoke (gerbil-gcc)
-                ["-w" "-o" output-bin
-                 output-o output-o_ output-ld-opts ...
-                 (if (gerbil-enable-shared?) [rpath] []) ...
-                 "-L" gerbil-libdir "-lgambit"
-                 default-ld-options ...]))))
+        (let (compile-it
+              (lambda ()
+                (invoke (gerbil-gsc)
+                        ["-link" "-o" output-c_ gsc-link-opts ... output-scm])
+                (invoke (gerbil-gsc)
+                        ["-obj" gsc-cc-opts ... gsc-static-opts ...
+                         output-c output-c_])
+                (invoke (gerbil-gcc)
+                        ["-w" "-o" output-bin
+                         output-o output-o_ output-ld-opts ...
+                         (if (gerbil-enable-shared?) [rpath] []) ...
+                         "-L" gerbil-libdir "-lgambit"
+                         default-ld-options ...])))
+          (if (current-compile-parallel)
+            (add-compile-job! compile-it)
+            (compile-it))))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin "__exe.scm")))
-    (compile-stub output-scm output-bin)
-    (unless (current-compile-keep-scm)
-      (delete-file output-scm))))
+    (compile-stub output-scm output-bin)))
 
 (def (find-export-binding ctx id)
   (cond
@@ -587,14 +600,8 @@ namespace: gxc
       (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
 
-    (if (null? (lift-nested-modules ctx))
-      (let* ((thr1 (go! (compile-runtime-code ctx)))
-             (thr2 (go! (compile-meta-code ctx))))
-        (join! thr1)
-        (join! thr2))
-      (begin
-        (compile-runtime-code ctx)
-        (compile-meta-code ctx)))
+    (compile-runtime-code ctx)
+    (compile-meta-code ctx)
 
     (when (and (current-compile-optimize)
                (current-compile-generate-ssxi))
@@ -607,63 +614,55 @@ namespace: gxc
 (def (compile-runtime-code ctx)
   (def (compile1 ctx)
     (let* ((code (module-context-code ctx))
-           (rt (and (apply-find-runtime-code code)
-                    (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "~0")))))
-      (cond
-       (rt
-        (hash-put! (current-compile-runtime-sections) ctx rt)
-        (generate-runtime-code ctx code))
-       (else
-        ;; just touch empty runtime code file in static
-        (let (path (compile-static-output-file ctx))
-          (with-output-to-scheme-file path void))))
-
-      (generate-loader-code ctx code rt)))
+           (rtm  (let (idstr (module-id->path-string (expander-context-id ctx)))
+                   (string-append idstr "~0")))
+           (rtc? (apply-find-runtime-code code)))
+      (when rtc?
+        (hash-put! (current-compile-runtime-sections) ctx rtm))
+      (generate-runtime-code ctx code (and rtc? rtm))))
 
   (def (context-timestamp ctx)
     (string->symbol
      (string-append (symbol->string (expander-context-id ctx))
                     "::timestamp")))
 
-  (def (generate-runtime-code ctx code)
-    (let* ((lifts (box []))
+  (def (generate-runtime-code ctx code rtm)
+    (let* ((runtime-code? (and rtm #t))
+           (lifts (box []))
            (runtime-code
-            (parameterize ((current-expander-context ctx)
-                           (current-expander-phi 0)
-                           (current-compile-lift lifts)
-                           (current-compile-marks (make-hash-table-eq))
-                           (current-compile-identifiers (make-bound-identifier-table)))
-              (apply-generate-runtime code)))
+            (and runtime-code?
+                 (parameterize ((current-expander-context ctx)
+                                (current-expander-phi 0)
+                                (current-compile-lift lifts)
+                                (current-compile-marks (make-hash-table-eq))
+                                (current-compile-identifiers (make-bound-identifier-table)))
+                   (apply-generate-runtime code))))
            (runtime-code
-            (if (null? (unbox lifts))
-              runtime-code
-              ['begin (reverse (unbox lifts)) ... runtime-code]))
+            (and runtime-code?
+                 (if (null? (unbox lifts))
+                   runtime-code
+                   ['begin (reverse (unbox lifts)) ... runtime-code])))
            (runtime-code
-            ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
-                    runtime-code])
-           (scm0 (compile-output-file ctx 0 ".scm")))
-      (let (scms (compile-static-output-file ctx))
-        ;; copy compiled scm0 to static and delete when not keep-scm
-        (parameterize ((current-compile-keep-scm #t))
-          (compile-scm-file scm0 runtime-code))
-        (when (file-exists? scms)
-          (delete-file scms))
-        (verbose "copy static module " scm0 " => " scms)
-        (copy-file scm0 scms)
-        (unless (current-compile-keep-scm)
-          (delete-file scm0)))))
-
-  (def (generate-loader-code ctx code rt)
-    (let* ((loader-code
+            (and runtime-code?
+                 ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
+                         runtime-code]))
+           (loader-code
             (parameterize ((current-expander-context ctx))
               (apply-generate-loader code)))
            (loader-code
-            (if rt
-              ['begin loader-code ['load-module rt]]
-              loader-code)))
+            ['begin loader-code (if runtime-code? ['load-module rtm] '(begin))])
+           (scm0 (compile-output-file ctx 0 ".scm"))
+           (scmrt (compile-output-file ctx #f ".scm"))
+           (scms (compile-static-output-file ctx)))
+      (when runtime-code?
+        (compile-scm-file scm0 runtime-code))
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
+        (compile-scm-file scmrt loader-code))
+      (when (file-exists? scms)
+        (delete-file scms))
+      (if runtime-code?
+        (copy-file scm0 scms)
+        (call-with-output-file scms void))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -713,9 +712,7 @@ namespace: gxc
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
-    ;; TODO respect GERBIL_BUILD_CORES
-    (let (threads (map (lambda (code) (go! (compile-phi code))) phi-code))
-      (for-each join! threads))))
+    (for-each compile-phi phi-code)))
 
 (def (compile-ssxi-code ctx)
   (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
@@ -768,9 +765,12 @@ namespace: gxc
           ,@(if phi? '((inlining-limit 200)) '())))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
-    (gsc-compile-file path phi?))
-  (unless (current-compile-keep-scm)
-    (delete-file path)))
+    (let (compile-it
+          (lambda ()
+            (gsc-compile-file path phi?)))
+      (if (current-compile-parallel)
+        (add-compile-job! compile-it `(compile-file ,path))
+        (compile-it)))))
 
 (def (gsc-link-options (phi? #f))
   (let lp ((rest (current-compile-gsc-options)) (opts []))
@@ -782,13 +782,21 @@ namespace: gxc
       ([opt . rest]
        (lp rest (cons opt opts)))
       (else
-       (if (and (not phi?) (current-compile-debug))
+       (if (current-compile-debug)
          ["-debug-source" "-track-scheme" (reverse opts) ...]
          (reverse opts))))))
 
-(def (gsc-cc-options (phi? #f))
+(def (gsc-cc-options (phi? #f) static: (static? #f))
+  (if phi?
+    (if (current-compile-debug)
+      ["-cc-options" "-g"]
+      [])
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
+        (["-cc-options" (and opt "-Bstatic") . rest]
+         (if static?
+           (lp rest (cons* opt "-cc-options" opts))
+           (lp rest opts)))
         (["-cc-options" opt . rest]
          (lp rest (cons* opt "-cc-options" opts)))
         (["-ld-options" _ . rest]
@@ -796,9 +804,27 @@ namespace: gxc
         ([_ . rest]
          (lp rest opts))
         (else
-         (if (and (not phi?) (current-compile-debug))
-           ["-cc-options" "-g" (reverse opts) ...]
-           (reverse opts))))))
+         (if (current-compile-debug)
+           ["-cc-options" "-g" (reverse! opts) ...]
+           (reverse! opts)))))))
+
+(def (gsc-ld-options (phi? #f) static: (static? #f))
+  (if phi?
+    []
+    (let lp ((rest (current-compile-gsc-options)) (opts []))
+      (match rest
+        (["-ld-options" (and opt "-static") . rest]
+         (if static?
+           (lp rest (cons* opt "-ld-options" opts))
+           (lp rest opts)))
+        (["-ld-options" opt . rest]
+         (lp rest (cons* opt "-ld-options" opts)))
+        (["-cc-options" _ . rest]
+         (lp rest opts))
+        ([_ . rest]
+         (lp rest opts))
+        (else
+         (reverse! opts))))))
 
 (def (gsc-static-include-options staticdir)
   (let (user-staticdir
@@ -822,31 +848,11 @@ namespace: gxc
   (not (string-empty? str)))
 
 (def (gsc-compile-file path phi?)
-  (def (gsc-link-path base-path)
-    (let lp ((n 1))
-      (let (path (string-append base-path ".o" (number->string n)))
-        (if (file-exists? path)
-          (lp (1+ n))
-          path))))
-
-  (let* ((base-path (path-strip-extension path))
-         (path-c (string-append base-path ".c"))
-         (path-o (string-append base-path ".o"))
-         (link-path (gsc-link-path base-path))
-         (link-path-c (string-append link-path ".c"))
-         (link-path-o (string-append link-path ".o"))
-         (gsc-link-opts (gsc-link-options phi?))
-         (gsc-cc-opts (gsc-cc-options phi?))
-         (gcc-ld-opts (gcc-ld-options)))
+  (let ((gsc-link-opts (gsc-link-options phi?))
+        (gsc-cc-opts (gsc-cc-options phi?))
+        (gsc-ld-opts (gsc-ld-options phi?)))
     (invoke (gerbil-gsc)
-            ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
-            stdout-redirection: #t)
-    (invoke (gerbil-gsc)
-            ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
-            stdout-redirection: #t)
-    (invoke (gerbil-gcc)
-            ["-w" "-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
-    (for-each delete-file [path-c path-o link-path-c link-path-o])))
+            [gsc-cc-opts ... gsc-ld-opts ... gsc-link-opts ... path])))
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
@@ -939,15 +945,3 @@ namespace: gxc
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              [program . args]
                              status)))))
-
-(defrules go! ()
-  ((_ expr)
-   (spawn (lambda () expr))))
-
-(def (join! thread)
-  (with-catch
-   (lambda (exn)
-     (if (uncaught-exception? exn)
-       (raise (uncaught-exception-reason exn))
-       (raise exn)))
-   (cut thread-join! thread)))

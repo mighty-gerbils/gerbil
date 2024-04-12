@@ -81,12 +81,12 @@ static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
    return ___FIX(0);
    default: {
    ___processor_state ___ps = ___GET_PSTATE();
-   ___SCMOBJ result = ___make_pair(___ps, ___FIX(last), ___NUL);
-   ___release_scmobj(result);
-   result = ___make_pair(___ps, ___FIX(err), result);
-   ___release_scmobj(result);
-   result = ___make_pair(___ps, ___FIX(r), result);
-   ___release_scmobj(result);
+   ___SCMOBJ result = ___EXT(___make_pair)(___ps, ___FIX(last), ___NUL);
+   ___EXT(___release_scmobj)(result);
+   result = ___EXT(___make_pair)(___ps, ___FIX(err), result);
+   ___EXT(___release_scmobj)(result);
+   result = ___EXT(___make_pair)(___ps, ___FIX(r), result);
+   ___EXT(___release_scmobj)(result);
    return result;
    }
  }

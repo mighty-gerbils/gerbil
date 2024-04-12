@@ -27,7 +27,7 @@
       xml?: (xml? (current-sxml-output-xml?))
       quote-char: (quote-char #\"))
   (def args [port: port indent: indent xml?: xml? quote-char: quote-char])
-  
+
   (match sxml
     ([(? symbol? sym) _ ...]
      (if (eqv? (string-ref (symbol->string sym) 0) #\*)
@@ -52,7 +52,7 @@
       port: (port (current-sxml-output-port))
       in-attribute?: (in-attribute? #f)
       quote-char: (quote-char #\"))
-  
+
   (def html-character-escapes
     '((#\< . "&lt;")
       (#\> . "&gt;")
@@ -65,7 +65,7 @@
       ((#\" #\') in-attribute?)
       ((#\< #\> #\&) #t)
       (else #f)))
-       
+
   (cond
    ((char? thing)
     (case thing
@@ -146,7 +146,8 @@
 
 ; *** Write Special Elements
 (def (sxml-special-tag? t)
-  (and (pair? t) (symbol? (car t)) (eqv? #\* (string-ref (symbol->string t) 0))))
+  (and (pair? t) (symbol? (car t))
+       (eqv? #\* (string-ref (symbol->string (car t)) 0))))
 
 (def (write-sxml-special-tag sxml
       port: (port (current-sxml-output-port))
@@ -164,7 +165,7 @@
     (when (car bdy) (display (car bdy) port))
     (for-each (lambda (x) (display " " port) (display x port))
 	      (cdr bdy)))
-    
+
 
   (unless (or (and xml? xml-special?) (and (not xml?) html-special?))
     (if xml? (error "Invalid XML tag" tag)

@@ -18,7 +18,8 @@ namespace: gxc
 ;; method to optimize direct procedure calls
 (defcompile-method (apply-optimize-call) (::optimize-call ::basic-xform) ()
   final:
-  (%#call optimize-call%))
+  (%#call optimize-call%)
+  (%#if   optimize-if%))
 
 ;; method to verify the procedure declared return type
 (defcompile-method (apply-check-return-type) (::check-return-type ::void) ()
@@ -35,7 +36,7 @@ namespace: gxc
   (%#letrec-values    apply-body-let-values%)
   (%#letrec*-values   apply-body-let-values%)
   (%#call             apply-operands)
-  (%#if               apply-operands)
+  (%#if               apply-path-type-if%)
   (%#set!             apply-body-setq%))
 
 ;;; apply-optimize-call
@@ -53,11 +54,19 @@ namespace: gxc
          (let (optimized {rator-type.optimize-call self stx #'(rand ...)})
            (ast-case optimized (%#call %#ref)
              ((%#call (%#ref optimized-rator) arg ...)
-              (let (optimized-rator-id (identifier-symbol #'optimized-rator))
-                (if (or (and (!primitive? rator-type)
-                             (eq? optimized-rator-id rator-id))
-                        (memq optimized-rator-id checked-primitives))
-                  ;; %#call-unchecked unsafe in this case
+              (let* ((optimized-rator-id (identifier-symbol #'optimized-rator))
+                     (rator-type (or (optimizer-lookup-type optimized-rator-id)
+                                     rator-type)))
+                (if (or
+                      ;; may be unsafe or unecessary to %#call-unchecked
+                      (!primitive? rator-type)
+                      ;; definitely unsafe, can't #%call-unchecked
+                      (memq optimized-rator-id checked-primitives)
+                      ;; in the current module, no need for %#call-unchecked
+                      ;; because of module block semantics
+                      (and (!procedure? rator-type)
+                           (eq? (!procedure-origin rator-type)
+                                (expander-context-id (current-expander-context)))))
                   optimized
                   ;; %#call-unchecked to known procedure
                   (xform-wrap-source
@@ -78,7 +87,10 @@ namespace: gxc
        (cond
         ((and rator-type
               (eq? (!type-id rator-type) 'procedure)
-              (not (!primitive? rator-type)))
+              (not (!primitive? rator-type))
+              (not (and (!procedure? rator-type)
+                        (eq? (!procedure-origin rator-type)
+                             (expander-context-id (current-expander-context))))))
          ;; known to be procedure, %#call-unchecked
          (xform-wrap-source
           (cons* '%#call-unchecked
@@ -98,9 +110,9 @@ namespace: gxc
          ((and signature signature.unchecked)
           => (lambda (unchecked)
                (if (symbol-in-local-scope? unchecked)
-                 (xform-wrap-source
+                 (xform-wrap-apply
                   (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
-                  stx)
+                  stx ctx)
                  (xform-call% ctx stx))))
          (else
           (xform-call% ctx stx))))
@@ -253,7 +265,9 @@ namespace: gxc
                   ['%#let-values [[[$obj] inline-make-object]]
                                  ['%#begin
                                   (if ctor-impl
-                                    ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                    (xform-wrap-apply
+                                     ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                     stx ctx)
                                     (let ($ctor (make-symbol (gensym '__constructor)))
                                       ['%#let-values [[[$ctor]
                                                        ['%#call ['%#ref 'direct-method-ref] ['%#ref self.id] ['%#ref $obj] ['%#quote ctor]]]]
@@ -272,7 +286,9 @@ namespace: gxc
                   ['%#let-values [[[$obj] inline-make-object]]
                                  ['%#begin
                                   (if metakons
-                                    ['%#call ['%#ref metakons] ['%#ref self.id] ['%#ref $obj] args ...]
+                                    (xform-wrap-apply
+                                     ['%#call ['%#ref metakons] ['%#ref self.id] ['%#ref $obj] args ...]
+                                     stx ctx)
                                     ['%#call ['%#ref 'call-method] ['%#ref self.id] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
                                   ['%#ref $obj]]]
                   stx))))
@@ -473,18 +489,14 @@ namespace: gxc
       (cond
        (inline
         (verbose "inline lambda")
-        (compile-e
-         ctx
-         (xform-wrap-source
+        (xform-wrap-apply
           (inline stx)
-          stx)))
+          stx ctx))
        ((and dispatch (symbol-in-local-scope? dispatch))
         (verbose "dispatch lambda => " dispatch)
-        (compile-e
-         ctx
-         (xform-wrap-source
-          ['%#call ['%#ref dispatch] args ...]
-          stx)))
+        (xform-wrap-apply
+         ['%#call ['%#ref dispatch] args ...]
+         stx ctx))
        (else
         (!procedure::optimize-call self ctx stx args))))))
 
@@ -519,11 +531,9 @@ namespace: gxc
                        (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
                                             stx keys kw)))
                    kwargs)
-                 (compile-e
-                  ctx
-                  (xform-wrap-source
-                   ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
-                   stx)))
+                 (xform-wrap-apply
+                  ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                  stx ctx))
                (let* ((kwt (make-symbol (gensym '__kwt)))
                       (kwvars
                        (map (lambda (_) (make-symbol (gensym '__kw)))
@@ -547,22 +557,20 @@ namespace: gxc
                                ((assgetq key xkwargs))
                                (else '(%#ref absent-value))))
                             keys)))
-                 (compile-e
-                  ctx
-                  (xform-wrap-source
-                   ['%#let-values kwbind
-                                  ['%#let-values [[[kwt]
-                                                   (xform-wrap-source
-                                                    ['%#call '(%#ref make-symbolic-table)
-                                                             ['%#quote (length kwargs)]
-                                                             '(%#quote (length kwvars))]
-                                                    stx)]]
-                                                 ['%#begin
-                                                  kwset ...
+                 (xform-wrap-apply
+                  ['%#let-values kwbind
+                                 ['%#let-values [[[kwt]
                                                   (xform-wrap-source
-                                                   ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
-                                                   stx)]]]
-                   stx))))))
+                                                   ['%#call '(%#ref make-symbolic-table)
+                                                            ['%#quote (length kwargs)]
+                                                            '(%#quote (length kwvars))]
+                                                   stx)]]
+                                                ['%#begin
+                                                 kwset ...
+                                                 (xform-wrap-source
+                                                  ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                                                  stx)]]]
+                  stx ctx)))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
            (xform-call% ctx stx)))
@@ -629,3 +637,47 @@ namespace: gxc
        (else
         ;; not happy; we can't verify type
         (raise-compile-error "procedure return type does not match signature" stx type expr-type)))))))
+
+(def (optimize-if% self stx)
+  (ast-case stx (%#call %#ref %#quote)
+    ((_ (%#quote val) K E)
+     (if (stx-e #'val)
+       (compile-e self #'K)
+       (compile-e self #'E)))
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (let* ((test
+                      (xform-wrap-apply #'(%#call (%#ref pred) (%#ref obj))
+                                        stx self))
+                     (K
+                      (delay
+                        (parameterize ((current-compile-path-type
+                                        (cons (cons (identifier-symbol #'obj)
+                                                    (optimizer-resolve-class stx (!type-id pred-type)))
+                                              (current-compile-path-type))))
+                          (compile-e self #'K))))
+                     (E (delay (compile-e self #'E))))
+                (ast-case test (#%quote)
+                  ((%#quote val)
+                   (if (stx-e #'val)
+                     (force K)
+                     (force E)))
+                  (_ (xform-wrap-source
+                      ['%#if test (force K) (force E)]
+                      stx))))
+              (xform-operands self stx))))
+      (else
+       (xform-operands self stx))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (optimize-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
+    ((_ test K E)
+     (xform-operands self stx))))

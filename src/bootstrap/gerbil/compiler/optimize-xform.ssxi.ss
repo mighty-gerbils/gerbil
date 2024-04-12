@@ -36,42 +36,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-class
-   gxc#::collect-methods::t
-   (@class gxc#::collect-methods::t
-           (gxc#::void::t)
-           (gxc#::void::t
-            gxc#::void-special-form::t
-            gxc#::void-expression::t
-            object::t
-            t::t)
-           ()
-           ()
-           #f
-           #f
-           #t
-           #f
-           #f
-           #f))
-  (declare-type
-   gxc#::collect-methods::t
-   (optimizer-resolve-class '(typedecl gxc#::collect-methods::t) 'class::t))
-  (declare-type gxc#::collect-methods? (@predicate gxc#::collect-methods::t))
-  (declare-type
-   gxc#make-::collect-methods
-   (@constructor gxc#::collect-methods::t))
-  (declare-type
-   gxc#::collect-methods-bind-methods!
-   (optimizer-resolve-class
-    '(typedecl gxc#::collect-methods-bind-methods!)
-    'promise::t))
-  (declare-type
-   gxc#apply-collect-methods
-   (@lambda 1
-            #f
-            signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
   (declare-class
    gxc#::expression-subst::t
    (@class gxc#::expression-subst::t
@@ -126,7 +100,16 @@ package: gerbil/compiler
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
   (declare-type
    gxc#apply-expression-subst__@
    (@kw-lambda-dispatch (id: new-id:) gxc#apply-expression-subst__%))
@@ -177,7 +160,16 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
   (declare-type
    gxc#apply-expression-subst*__@
    (@kw-lambda-dispatch (subst:) gxc#apply-expression-subst*__%))
@@ -249,7 +241,16 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
   (declare-type
    gxc#apply-find-var-refs__@
    (@kw-lambda-dispatch (ids:) gxc#apply-find-var-refs__%))
@@ -302,22 +303,184 @@ package: gerbil/compiler
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
   (declare-type
    gxc#apply-collect-runtime-refs__@
    (@kw-lambda-dispatch (table:) gxc#apply-collect-runtime-refs__%))
   (declare-type
    gxc#apply-collect-runtime-refs
    (@kw-lambda (table:) gxc#apply-collect-runtime-refs__@))
-  (declare-type gxc#collect-mutators-setq% (@lambda 2 #f))
-  (declare-type gxc#collect-methods-call% (@lambda 2 #f))
-  (declare-type gxc#expression-subst-ref% (@lambda 2 #f))
-  (declare-type gxc#expression-subst*-ref% (@lambda 2 #f))
-  (declare-type gxc#expression-subst-setq% (@lambda 2 #f))
-  (declare-type gxc#expression-subst*-setq% (@lambda 2 #f))
-  (declare-type gxc#collect-runtime-refs-ref% (@lambda 2 #f))
-  (declare-type gxc#collect-runtime-refs-setq% (@lambda 2 #f))
-  (declare-type gxc#find-body% (@lambda 2 #f))
-  (declare-type gxc#find-let-values% (@lambda 2 #f))
-  (declare-type gxc#find-var-refs-ref% (@lambda 2 #f))
-  (declare-type gxc#find-var-refs-setq% (@lambda 2 #f)))
+  (declare-type
+   gxc#collect-mutators-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#expression-subst-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#expression-subst*-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#expression-subst-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#expression-subst*-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#collect-runtime-refs-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#collect-runtime-refs-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#find-body%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#find-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#find-var-refs-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#find-var-refs-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform))))
