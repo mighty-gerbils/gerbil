@@ -5,6 +5,8 @@
         :std/error
         :std/sugar
         :std/io
+        :std/misc/list
+        :std/misc/walist
         :std/text/hex
         ./env)
 (export read-json-object/port read-json-object/reader read-json-object/buffer)
@@ -45,17 +47,20 @@
 
            (def (read-json-hash input env)
              (read-char input)
-             (let (obj (if (&env-symbolic-keys env)
-                         (make-hash-table-eq)
-                         (make-hash-table)))
+             (let ((obj (if (&env-read-json-key-as-symbol? env)
+                          (make-hash-table-eq)
+                          (make-hash-table)))
+                   (lst '()))
                (let lp ()
                  (let (key (read-json-hash-key input env))
-                   (if key
+                   (when key
                      ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
                      (if (hash-key? obj key)
                        (error "Duplicate hash key in JSON input" key)
                        (let (val (read-json-object input env))
                          (hash-put! obj key val)
+                         (when (&env-read-json-object-as-walist? env)
+                           (push! (cons key val) lst))
                          (skip-whitespace input)
                          (let (char (peek-char input))
                            (case char
@@ -63,11 +68,13 @@
                               (read-char input)
                               (lp))
                              ((#\})
-                              (read-char input)
-                              obj)
+                              (read-char input))
                              (else
-                              (raise-invalid-token read-json-hash input char))))))
-                     obj)))))
+                              (raise-invalid-token read-json-hash input char)))))))))
+               (if (&env-read-json-object-as-walist? env)
+                 (let (r (reverse! lst))
+                   (if (&env-read-json-key-as-symbol? env) (walistq r) (walist r)))
+                 obj)))
 
            (def (read-json-hash-key input env)
              (skip-whitespace input)
@@ -80,7 +87,7 @@
                       (case char
                         ((#\:)
                          (read-char input)
-                         (if (&env-symbolic-keys env)
+                         (if (&env-read-json-key-as-symbol? env)
                            (string->symbol key)
                            key))
                         (else
@@ -97,7 +104,10 @@
                (let lp ((tl root))
                  (let (next (read-json-list-next input env))
                    (if (eof-object? next)
-                     ((&env-list-wrapper env) (cdr root))
+                     (let (l (cdr root))
+                       (if (&env-read-json-array-as-vector? env)
+                         (list->vector l)
+                         l))
                      (let (tl* [next])
                        (set! (cdr tl) tl*)
                        (lp tl*)))))))

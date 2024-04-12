@@ -4,8 +4,10 @@
 (import
   :gerbil/gambit
   :gerbil/runtime/hash
+  :std/contract
   :std/error
   :std/io
+  :std/io/strio/types
   :std/misc/ports
   :std/misc/process
   :std/iter
@@ -13,6 +15,7 @@
   :std/misc/hash
   :std/misc/list
   :std/misc/list-builder
+  :std/misc/number
   :std/misc/ports
   :std/misc/plist
   :std/misc/walist
@@ -92,7 +95,7 @@
 
 (def (trivial-struct->json-object struct)
   (with ([strukt . fields] (struct->list struct))
-    (let (f (if (json-symbolic-keys) cons (lambda (slot v) (cons (symbol->string slot) v))))
+    (let (f (if (read-json-key-as-symbol?) cons (lambda (slot v) (cons (symbol->string slot) v))))
       (walist (map f (cdr (vector->list (class-type-slot-vector strukt))) fields)))))
 
 (def (trivial-json-object->struct strukt json (defaults #f))
@@ -133,9 +136,67 @@
 (defclass JSON ())
 (defmethod {:json JSON} trivial-class->json-object)
 
-(def (pretty-json object (out #f))
-  (with-output (out)
-    (filter-with-process
-     ["jq" "-M" "."]
-     (cut write-json object <>)
-     (cut copy-port <> out))))
+(def (pretty-json object (output (current-output-port))
+                  indent: (indent :~ fx>0? :- :fixnum := 2)
+                  sort-keys?: (sort-keys? : :boolean := (write-json-sort-keys?))
+                  lisp-style?: (lisp-style? : :boolean := #f))
+  (using (out (open-buffered-string-writer output) : BufferedStringWriter)
+    (def env (make-env))
+    (def (simple? obj)
+      (or (number? obj) (string? obj) (symbol? obj) (keyword? obj)
+          (boolean? obj) (void? obj) (null? obj) (equal? obj #())
+          (and (hash-table? obj) (zero? (hash-length obj)))
+          (and (walist? obj) (null? (walist-alist obj)))))
+    (def (write-value obj indentation)
+      (cond
+       ((simple? obj)
+        (write-json-object/writer obj out env))
+       ((list? obj)
+        (write-list obj indentation))
+       ((vector? obj)
+        (write-list (vector->list obj) indentation))
+       ((hash-table? obj)
+        (let* ((alst (hash->list obj))
+               (alst (if (write-json-sort-keys?) (json-sort-alist alst) alst)))
+          (write-alist alst indentation)))
+       ((walist? obj)
+        (write-alist (walist-alist obj) indentation))
+       (else
+        (write-value {:json obj} indentation))))
+    (def (write-many write-one open close lst indentation)
+      (let (new-indentation (+ indentation indent))
+        (out.write-char-inline open)
+        (unless lisp-style? (newline-indent new-indentation))
+        (let lp ((l lst))
+          (match l
+            ([e . r]
+             (write-one e new-indentation)
+             (unless (null? r)
+               (out.write-char-inline #\,)
+               (newline-indent new-indentation)
+               (lp r)))))
+        (unless lisp-style? (newline-indent indentation))
+        (out.write-char-inline close)))
+    (def (write-alist alst indentation)
+      (write-many write-binding #\{ #\} alst indentation))
+    (def (write-list list indentation)
+      (write-many write-value #\[ #\] list indentation))
+    (def (space!) (out.write-char-inline #\space))
+    (def (newline!) (out.write-char-inline #\newline))
+    (def (newline-indent indentation)
+      (newline!)
+      (for (_ (in-range indentation)) (space!)))
+    (def (write-binding binding indentation)
+      (match binding
+        ([key . val]
+         (let (key (json-key-string key))
+           (write-json-object/writer key out env)
+           (out.write-char-inline #\:)
+           (if (or (not lisp-style?) (simple? val))
+             (space!)
+             (newline-indent (1+ indentation)))
+           (write-value val indentation)))))
+    (parameterize ((write-json-sort-keys? sort-keys?))
+      (write-value object (if lisp-style? -1 0)))
+    (newline!)
+    (unless output (get-buffer-output-string out))))
