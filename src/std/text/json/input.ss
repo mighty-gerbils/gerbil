@@ -30,7 +30,7 @@
        #'(begin
            (def (read-json-object input env)
              (skip-whitespace input)
-             (let (char (peek-char input))
+             (let (char (read-char input))
                (if (eof-object? char)
                  #!eof
                  (case char
@@ -41,12 +41,11 @@
                    ((#\f) (read-json-false input env))
                    ((#\n) (read-json-null input env))
                    ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
-                    (read-json-number input env))
+                    (read-json-number char input env))
                    (else
                     (raise-invalid-token read-json-object input char))))))
 
            (def (read-json-hash input env)
-             (read-char input)
              (let (obj (if (&env-read-json-key-as-symbol? env)
                           (make-hash-table-eq)
                           (make-hash-table)))
@@ -88,7 +87,7 @@
 
            (def (read-json-hash-key input env)
              (skip-whitespace input)
-             (let (char (peek-char input))
+             (let (char (read-char input))
                (case char
                  ((#\")
                   (let (key (read-json-string input env))
@@ -101,14 +100,11 @@
                            key))
                         (else
                          (raise-invalid-token read-json-hash-key input char))))))
-                 ((#\})
-                  (read-char input)
-                  #f)
+                 ((#\}) #f)
                  (else
                   (raise-invalid-token read-json-hash-key input char)))))
 
            (def (read-json-list input env)
-             (read-char input)
              (let (root [#f])
                (let lp ((tl root))
                  (let (next (read-json-list-next input env))
@@ -178,7 +174,6 @@
                 (else
                  (raise-invalid-token hex-value input char))))
 
-             (read-char input)
              (let (root [#f])
                (let lp ((tl root))
                  (let (char (read-char input))
@@ -197,7 +192,7 @@
                           (set! (cdr tl) tl*)
                           (lp tl*)))))))))
 
-           (def (read-json-number input env)
+           (def (read-json-number first-char input env)
              ;; descend parsing terminals: #\] #\} #\, whitespace
              ;; read until a terminal is encountered and let string->number
              ;; parse it liberally
@@ -206,7 +201,7 @@
                  (or (string->number str)
                      (raise-invalid-token read-json-number input str))))
 
-             (let (chars [(read-char input)])
+             (let (chars [first-char])
                (let lp ((tl chars))
                  (let (char (peek-char input))
                    (if (or (eof-object? char)
@@ -218,13 +213,13 @@
                        (lp tl*)))))))
 
            (def (read-json-true input env)
-             (skip-chars '(#\t #\r #\u #\e) input)
+             (skip-chars '(#\r #\u #\e) input)
              #t)
            (def (read-json-false input env)
-             (skip-chars '(#\f #\a #\l #\s #\e) input)
+             (skip-chars '(#\a #\l #\s #\e) input)
              #f)
            (def (read-json-null input env)
-             (skip-chars '(#\n #\u #\l #\l) input)
+             (skip-chars '(#\u #\l #\l) input)
              #!void)
 
            (def (skip-whitespace input)
