@@ -84,6 +84,23 @@ namespace: gxc
   (%#if               apply-path-type-if%)
   (%#set!             collect-type-setq%))
 
+(defcompile-method (apply-refine-type-info) (::refine-type-info ::void)
+  ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
+  (%#define-values    refine-type-define-values%)
+  (%#begin-annotation apply-begin-annotation%)
+  (%#lambda                collect-type-lambda%)
+  (%#case-lambda           collect-type-case-lambda%)
+  (%#let-values       refine-type-let-values%)
+  (%#letrec-values    refine-type-letrec-values%)
+  (%#letrec*-values   refine-type-letrec-values%)
+  (%#call             apply-operands)
+  (%#if               apply-path-type-if%)
+  (%#set!             apply-body-setq%))
+
 ;; methods to find the type of an expression
 (defcompile-method (apply-raw-expression-type) (::raw-expression-type ::false)
   ()
@@ -258,17 +275,16 @@ namespace: gxc
 
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
-     (begin
-       ;; do the bindings twice
-       ;; 1. to get the return types from recursive proc declarations
-       ;; 2. to apply the inference in the bindings and body,
-       ;;    given the recursive return types
-       (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
-         (for-each collect-e #'(hd ...) #'(expr ...))
-         (for-each (cut compile-e self <>) #'(expr ...))
-         (for-each collect-e #'(hd ...) #'(expr ...))
-         (for-each (cut compile-e self <>) #'(expr ...))
-         (compile-e self #'body))))))
+     ;; do the bindings twice
+     ;; 1. to get the return types from recursive proc declarations
+     ;; 2. to apply the inference in the bindings and body,
+     ;;    given the recursive return types
+     (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (compile-e self #'body)))))
 
 (def (collect-top-level-type-let-values% self stx)
   (collect-type-let-values% self stx apply-raw-expression-type))
@@ -333,6 +349,59 @@ namespace: gxc
        stx)))
     ((_ test K E)
      (apply-operands self stx))))
+
+;; apply-refine-type-info
+(def (refine-type-define-values% self stx)
+  (ast-case stx ()
+    ((_ (id) expr)
+     (identifier? #'id)
+     (let (sym (identifier-symbol #'id))
+       (unless (hash-get (current-compile-mutators) sym)
+         (alet (type (apply-basic-expression-type #'expr))
+           (unless (!class-meta? type)
+             (optimizer-declare-type! sym type))))
+       (compile-e self #'expr)))
+    ((_ _ expr)
+     (compile-e self #'expr))))
+
+(def (refine-type-let-values% self stx)
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (identifier? #'id)
+       (let (sym (identifier-symbol #'id))
+         (unless (hash-get (current-compile-mutators) sym)
+           (alet (type (apply-basic-expression-type expr))
+             (unless (!class-meta? type)
+               (optimizer-declare-type! sym type #t))))))
+      (_ (void))))
+
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (begin
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+         (compile-e self #'body))))))
+
+(def (refine-type-letrec-values% self stx)
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (identifier? #'id)
+       (let (sym (identifier-symbol #'id))
+         (unless (hash-get (current-compile-mutators) sym)
+           (alet (type (apply-basic-expression-type expr))
+             (unless (!class-meta? type)
+               (optimizer-declare-type! sym type #t))))))
+      (_ (void))))
+
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (compile-e self #'body)))))
 
 ;;; apply-basic-expression-type
 (def basic-expression-type-annotations (make-hash-table-eq))

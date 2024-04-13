@@ -381,7 +381,7 @@ namespace: gxc
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
-  (verbose "declare-type " sym " " (struct->list type))
+  (verbose "declare-type " sym " " type)
   (let (table (if local?
                 (current-compile-local-type)
                 (optimizer-info-type (current-compile-optimizer-info))))

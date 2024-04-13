@@ -75,7 +75,9 @@
     (test-case "top level classes after use in procedure"
       (must-compile-and-execute "compiler-test-support/class-after-use.ss"))
     (test-case "mutable bindings infer the greatest common type"
-      (must-compile-and-execute "compiler-test-support/mutable-binding-type.ss"))))
+      (must-compile-and-execute "compiler-test-support/mutable-binding-type.ss"))
+    (test-case "mutable bindings with sticky type"
+      (must-compile-and-execute "compiler-test-support/mutable-binding-type-2.ss"))))
 
 (def compiler-syntax-test
   (test-suite "compiler syntactic features"
