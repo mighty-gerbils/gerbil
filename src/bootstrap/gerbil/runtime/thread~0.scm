@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/thread::timestamp 1712949842)
+  (define gerbil/runtime/thread::timestamp 1712991651)
   (begin
     (define spawn
       (lambda (_%f108801%_ . _%args108802%_)
@@ -421,7 +421,9 @@
           (display '"*** Unhandled exception in " _%out108410%_)
           (display (current-thread) _%out108410%_)
           (newline _%out108410%_)
-          (display-exception _%exn108407%_ _%out108410%_)
+          (let ()
+            (declare (not safe))
+            (display-exception__% _%exn108407%_ _%out108410%_))
           (if (let ()
                 (declare (not safe))
                 (class-instance? StackTrace::t _%exn108407%_))

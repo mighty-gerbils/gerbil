@@ -241,6 +241,50 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-top)))
   (declare-class
+   gxc#::refine-type-info::t
+   (@class gxc#::refine-type-info::t
+           (gxc#::void::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::refine-type-info::t
+   (optimizer-resolve-class '(typedecl gxc#::refine-type-info::t) 'class::t))
+  (declare-type gxc#::refine-type-info? (@predicate gxc#::refine-type-info::t))
+  (declare-type
+   gxc#make-::refine-type-info
+   (@constructor gxc#::refine-type-info::t))
+  (declare-type
+   gxc#::refine-type-info-bind-methods!
+   (optimizer-resolve-class
+    '(typedecl gxc#::refine-type-info-bind-methods!)
+    'promise::t))
+  (declare-type
+   gxc#apply-refine-type-info
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-class
    gxc#::raw-expression-type::t
    (@class gxc#::raw-expression-type::t
            (gxc#::false::t)
@@ -731,6 +775,51 @@ package: gerbil/compiler
              gerbil/compiler/optimize-top)))
   (declare-type
    gxc#apply-path-type-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-letrec-values%
    (@lambda 2
             #f
             signature:
@@ -1315,7 +1404,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1330,7 +1419,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1360,7 +1449,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:

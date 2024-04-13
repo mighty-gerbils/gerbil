@@ -71,7 +71,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             false::t
+             t::t
              effect:
              #f
              arguments:
@@ -89,7 +89,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             false::t
+             t::t
              effect:
              #f
              arguments:
@@ -107,7 +107,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             false::t
+             t::t
              effect:
              #f
              arguments:

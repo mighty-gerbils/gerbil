@@ -96,6 +96,14 @@ namespace: gxc
          (%#define-runtime
           apply-collect-mutable-type-info
           gxc#apply-collect-mutable-type-info)
+         (%#define-runtime ::refine-type-info::t gxc#::refine-type-info::t)
+         (%#define-runtime ::refine-type-info? gxc#::refine-type-info?)
+         (%#define-runtime make-::refine-type-info gxc#make-::refine-type-info)
+         (%#define-syntax ::refine-type-info |gxc[:0:]#::refine-type-info|)
+         (%#define-runtime
+          ::refine-type-info-bind-methods!
+          gxc#::refine-type-info-bind-methods!)
+         (%#define-runtime apply-refine-type-info gxc#apply-refine-type-info)
          (%#define-runtime
           ::raw-expression-type::t
           gxc#::raw-expression-type::t)
@@ -205,6 +213,13 @@ namespace: gxc
           gxc#collect-top-level-type-call%)
          (%#define-runtime collect-type-setq% gxc#collect-type-setq%)
          (%#define-runtime apply-path-type-if% gxc#apply-path-type-if%)
+         (%#define-runtime
+          refine-type-define-values%
+          gxc#refine-type-define-values%)
+         (%#define-runtime refine-type-let-values% gxc#refine-type-let-values%)
+         (%#define-runtime
+          refine-type-letrec-values%
+          gxc#refine-type-letrec-values%)
          (%#define-runtime
           basic-expression-type-annotations
           gxc#basic-expression-type-annotations)

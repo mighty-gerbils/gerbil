@@ -487,7 +487,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:

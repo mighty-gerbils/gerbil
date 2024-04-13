@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1712949842)
+  (define gerbil/expander/module::timestamp 1712991652)
   (begin
     (declare (not safe))
     (define gx#__module-registry
@@ -987,7 +987,7 @@
                    (call-with-output-string
                     '""
                     (lambda (_%g125834125836%_)
-                      (display-exception _%exn125832%_ _%g125834125836%_))))
+                      (display-exception__% _%exn125832%_ _%g125834125836%_))))
                  dump-stack-trace?
                  '#f))))
          (lambda () (gx#core-read-module/sexp _%path125830%_)))))

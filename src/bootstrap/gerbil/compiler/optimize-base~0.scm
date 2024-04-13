@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1712949844)
+  (define gerbil/compiler/optimize-base::timestamp 1712991654)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -2969,10 +2969,9 @@
               (error '"bad declaration: expected !type"
                      _%sym147573%_
                      _%type147574%_)))
-        (let ((__tmp150304
-               (let () (declare (not safe)) (struct->list _%type147574%_))))
+        (let ()
           (declare (not safe))
-          (gxc#verbose '"declare-type " _%sym147573%_ '" " __tmp150304))
+          (gxc#verbose '"declare-type " _%sym147573%_ '" " _%type147574%_))
         (let ((_%table147577%_
                (if _%local?147575%_
                    (let ()
@@ -2995,16 +2994,16 @@
            _%type147583%_
            _%local?147585%_))))
     (define gxc#optimizer-declare-type!
-      (lambda _g150306_
-        (let ((_g150305_ (let () (declare (not safe)) (##length _g150306_))))
-          (cond ((let () (declare (not safe)) (##fx= _g150305_ 2))
-                 (apply gxc#optimizer-declare-type!__0 _g150306_))
-                ((let () (declare (not safe)) (##fx= _g150305_ 3))
-                 (apply gxc#optimizer-declare-type!__% _g150306_))
+      (lambda _g150305_
+        (let ((_g150304_ (let () (declare (not safe)) (##length _g150305_))))
+          (cond ((let () (declare (not safe)) (##fx= _g150304_ 2))
+                 (apply gxc#optimizer-declare-type!__0 _g150305_))
+                ((let () (declare (not safe)) (##fx= _g150304_ 3))
+                 (apply gxc#optimizer-declare-type!__% _g150305_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-type!
-                  _g150306_))))))
+                  _g150305_))))))
     (define gxc#optimizer-declare-class!
       (lambda (_%sym147567%_ _%type147568%_)
         (if (let ()
@@ -3024,10 +3023,10 @@
                 '2
                 gxc#optimizer-info::t
                 '#f)))
-          (let ((__tmp150307
+          (let ((__tmp150306
                  (let () (declare (not safe)) (struct->list _%type147568%_))))
             (declare (not safe))
-            (gxc#verbose '"declare-class " _%sym147567%_ '" " __tmp150307))
+            (gxc#verbose '"declare-class " _%sym147567%_ '" " __tmp150306))
           (let ()
             (declare (not safe))
             (hash-put! _%table147570%_ _%sym147567%_ _%type147568%_))
@@ -3058,7 +3057,7 @@
                 (hash-get _%table147565%_ _%sym147562%_))
               '#!void
               (begin
-                (let ((__tmp150308
+                (let ((__tmp150307
                        (let ()
                          (declare (not safe))
                          (struct->list _%type147563%_))))
@@ -3067,7 +3066,7 @@
                    '"declare-builtin-class "
                    _%sym147562%_
                    '" "
-                   __tmp150308))
+                   __tmp150307))
                 (let ()
                   (declare (not safe))
                   (hash-put! _%table147565%_ _%sym147562%_ _%type147563%_))
@@ -3082,11 +3081,11 @@
         (let ()
           (declare (not safe))
           (gxc#verbose '"clear-type " _%sym147560%_))
-        (let ((__tmp150309
+        (let ((__tmp150308
                (let () (declare (not safe)) (gxc#current-compile-local-type))))
           (declare (not safe))
-          (hash-remove! __tmp150309 _%sym147560%_))
-        (let ((__tmp150310
+          (hash-remove! __tmp150308 _%sym147560%_))
+        (let ((__tmp150309
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3095,13 +3094,13 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-remove! __tmp150310 _%sym147560%_))))
+          (hash-remove! __tmp150309 _%sym147560%_))))
     (define gxc#optimizer-declare-method!__%
       (lambda (_%type-t147528%_
                _%method147529%_
                _%sym147530%_
                _%rebind?147531%_)
-        (let ((__tmp150311
+        (let ((__tmp150310
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3110,7 +3109,7 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-put! __tmp150311 _%sym147530%_ '#t))
+          (hash-put! __tmp150310 _%sym147530%_ '#t))
         (let ((_%klass147533%_ (gxc#optimizer-lookup-class _%type-t147528%_)))
           (if _%klass147533%_
               (let* ((_%vtab147535%_ (gxc#!class-method-table _%klass147533%_))
@@ -3137,7 +3136,7 @@
                                 _%sym147530%_)))
                            (if (eq? _%existing147540%_ _%sym147530%_)
                                '#!void
-                               (let ((__tmp150312
+                               (let ((__tmp150311
                                       (cons 'bind-method!
                                             (cons _%type-t147528%_
                                                   (cons _%method147529%_
@@ -3146,7 +3145,7 @@
                                  (declare (not safe))
                                  (gxc#raise-compile-error
                                   '"declare-method: duplicate method declaration"
-                                  __tmp150312
+                                  __tmp150311
                                   _%method147529%_)))))
                      _%$e147537%_)
                     (let ()
@@ -3179,25 +3178,25 @@
            _%sym147551%_
            _%rebind?147553%_))))
     (define gxc#optimizer-declare-method!
-      (lambda _g150314_
-        (let ((_g150313_ (let () (declare (not safe)) (##length _g150314_))))
-          (cond ((let () (declare (not safe)) (##fx= _g150313_ 3))
-                 (apply gxc#optimizer-declare-method!__0 _g150314_))
-                ((let () (declare (not safe)) (##fx= _g150313_ 4))
-                 (apply gxc#optimizer-declare-method!__% _g150314_))
+      (lambda _g150313_
+        (let ((_g150312_ (let () (declare (not safe)) (##length _g150313_))))
+          (cond ((let () (declare (not safe)) (##fx= _g150312_ 3))
+                 (apply gxc#optimizer-declare-method!__0 _g150313_))
+                ((let () (declare (not safe)) (##fx= _g150312_ 4))
+                 (apply gxc#optimizer-declare-method!__% _g150313_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-method!
-                  _g150314_))))))
+                  _g150313_))))))
     (define gxc#optimizer-lookup-type
       (lambda (_%sym147513%_)
         (let ((_%$e147515%_
-               (let ((__tmp150315
+               (let ((__tmp150314
                       (let ()
                         (declare (not safe))
                         (gxc#current-compile-path-type))))
                  (declare (not safe))
-                 (agetq__0 _%sym147513%_ __tmp150315))))
+                 (agetq__0 _%sym147513%_ __tmp150314))))
           (if _%$e147515%_
               _%$e147515%_
               (let ((_%$e147524%_
@@ -3212,7 +3211,7 @@
                            '#f))))
                 (if _%$e147524%_
                     _%$e147524%_
-                    (let ((__tmp150316
+                    (let ((__tmp150315
                            (##structure-ref
                             (let ()
                               (declare (not safe))
@@ -3221,7 +3220,7 @@
                             gxc#optimizer-info::t
                             '#f)))
                       (declare (not safe))
-                      (hash-get __tmp150316 _%sym147513%_))))))))
+                      (hash-get __tmp150315 _%sym147513%_))))))))
     (define gxc#optimizer-resolve-type
       (lambda (_%sym147505%_)
         (let ((_%type147506147508%_ (gxc#optimizer-lookup-type _%sym147505%_)))
@@ -3274,7 +3273,7 @@
                 '#!void)))))
     (define gxc#optimizer-lookup-class-name
       (lambda (_%klass147484%_)
-        (let ((__tmp150317
+        (let ((__tmp150316
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3283,7 +3282,7 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-get __tmp150317 _%klass147484%_))))
+          (hash-get __tmp150316 _%klass147484%_))))
     (define gxc#optimizer-lookup-method
       (lambda (_%type-t147481%_ _%method147482%_)
         (gxc#!class-lookup-method
@@ -3291,7 +3290,7 @@
          _%method147482%_)))
     (define gxc#optimizer-top-level-method?
       (lambda (_%sym147479%_)
-        (let ((__tmp150318
+        (let ((__tmp150317
                (##structure-ref
                 (let ()
                   (declare (not safe))
@@ -3300,4 +3299,4 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (hash-get __tmp150318 _%sym147479%_))))))
+          (hash-get __tmp150317 _%sym147479%_))))))

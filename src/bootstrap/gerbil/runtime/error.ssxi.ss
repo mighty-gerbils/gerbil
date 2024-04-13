@@ -362,15 +362,15 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             boolean::t
+             t::t
              effect:
-             (pure)
+             #f
              arguments:
-             (t::t)
+             #f
              unchecked:
              #f
              origin:
-             builtin)))
+             gerbil/runtime/error)))
   (declare-type
    error-message
    (@lambda 1
@@ -450,31 +450,31 @@ package: gerbil/runtime
    display-exception
    (@case-lambda
     (1
-     #f
+     display-exception__0
      signature:
      (return:
-      void::t
+      t::t
       effect:
-      (io)
+      #f
       arguments:
-      (t::t)
+      #f
       unchecked:
       #f
       origin:
-      builtin))
+      gerbil/runtime/error))
     (2
-     #f
+     display-exception__%
      signature:
      (return:
-      void::t
+      t::t
       effect:
-      (io)
+      #f
       arguments:
-      (t::t port::t)
+      #f
       unchecked:
       #f
       origin:
-      builtin))))
+      gerbil/runtime/error))))
   (declare-type
    Error:::init!
    (@lambda (2)

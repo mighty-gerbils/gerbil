@@ -271,7 +271,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             void::t
+             immediate::t
              effect:
              #f
              arguments:
