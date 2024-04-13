@@ -609,7 +609,10 @@ namespace: gerbil/core/contract
                     |gerbil/core/contract~TypedDefinitions[:0:]#defclass/c|)
                    (%#define-syntax
                     defstruct/c
-                    |gerbil/core/contract~TypedDefinitions[:0:]#defstruct/c|)))
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defstruct/c|)
+                   (%#define-syntax
+                    defmutable
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defmutable|)))
          (%#import
           (in: #f TypeReference)
           (in: #f TypeCast)

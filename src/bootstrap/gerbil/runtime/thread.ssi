@@ -44,6 +44,12 @@ namespace: #f
          (%#define-runtime
           __unhandled-actor-exception-hook-set!
           __unhandled-actor-exception-hook-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/thread~1")))
+                  (%#define-syntax
+                   unhandled-actor-exception-hook
+                   |[:0:]#unhandled-actor-exception-hook|))
          (%#define-runtime current-thread-group current-thread-group)
          (%#define-runtime with-lock with-lock)
          (%#define-runtime __with-lock __with-lock)

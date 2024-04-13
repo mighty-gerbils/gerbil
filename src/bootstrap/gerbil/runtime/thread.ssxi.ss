@@ -339,7 +339,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (procedure::t)
+             (#f)
              unchecked:
              __unhandled-actor-exception-hook-set!
              origin:

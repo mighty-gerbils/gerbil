@@ -21,8 +21,38 @@ package: gerbil/runtime
    gerbil-system-manifest
    (optimizer-resolve-class '(typedecl gerbil-system-manifest) 'pair::t))
   (declare-type
-   build-manifest
-   (optimizer-resolve-class '(typedecl build-manifest) 'pair::t))
+   __build-manifest
+   (optimizer-resolve-class '(typedecl __build-manifest) 'list::t))
+  (declare-type
+   build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t)
+             unchecked:
+             __build-manifest-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    display-build-manifest__%
    (@lambda 2
@@ -215,8 +245,38 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/system)))
   (declare-type
-   gerbil-greeting
-   (optimizer-resolve-class '(typedecl gerbil-greeting) 't::t))
+   __gerbil-greeting
+   (optimizer-resolve-class '(typedecl __gerbil-greeting) 't::t))
+  (declare-type
+   gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (string::t)
+             unchecked:
+             __gerbil-greeting-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-system
    (@lambda 0
