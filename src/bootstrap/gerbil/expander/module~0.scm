@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1712991652)
+  (define gerbil/expander/module::timestamp 1712993616)
   (begin
     (declare (not safe))
     (define gx#__module-registry

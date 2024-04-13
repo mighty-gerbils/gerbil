@@ -220,6 +220,10 @@ namespace: gxc
          (%#define-runtime
           refine-type-letrec-values%
           gxc#refine-type-letrec-values%)
+         (%#define-runtime refine-type-lambda% gxc#refine-type-lambda%)
+         (%#define-runtime
+          refine-type-case-lambda%
+          gxc#refine-type-case-lambda%)
          (%#define-runtime
           basic-expression-type-annotations
           gxc#basic-expression-type-annotations)

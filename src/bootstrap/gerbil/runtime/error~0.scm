@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1712991651)
+  (define gerbil/runtime/error::timestamp 1712993615)
   (begin
     (define Exception::t
       (let ((__tmp102069 (list)))
@@ -712,22 +712,22 @@
               (##write-string __tmp102086 _%port101530%_))))))
     (define Error::display-exception::specialize
       (lambda (__klass102045 __method-table102046)
-        (let ((__message102047
+        (let ((__irritants102047
                (let ((__slot102051
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass102045 'message))))
+                        (class-slot-offset __klass102045 'irritants))))
                  (if __slot102051
                      __slot102051
-                     (error '"Unknown slot" 'message))))
-              (__irritants102048
+                     (error '"Unknown slot" 'irritants))))
+              (__message102048
                (let ((__slot102052
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass102045 'irritants))))
+                        (class-slot-offset __klass102045 'message))))
                  (if __slot102052
                      __slot102052
-                     (error '"Unknown slot" 'irritants))))
+                     (error '"Unknown slot" 'message))))
               (__continuation102049
                (let ((__slot102053
                       (let ()
@@ -780,7 +780,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self101534%_
-                                   __message102047
+                                   __message102048
                                    '#f
                                    '#f))))
                            (declare (not safe))
@@ -790,7 +790,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self101534%_
-                                   __irritants102048
+                                   __irritants102047
                                    '#f
                                    '#f))))
                            (if (null? _%irritants101552%_)
