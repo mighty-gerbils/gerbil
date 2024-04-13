@@ -92,8 +92,8 @@ namespace: gxc
   (%#module           apply-module%)
   (%#define-values    refine-type-define-values%)
   (%#begin-annotation apply-begin-annotation%)
-  (%#lambda                collect-type-lambda%)
-  (%#case-lambda           collect-type-case-lambda%)
+  (%#lambda                refine-type-lambda%)
+  (%#case-lambda           refine-type-case-lambda%)
   (%#let-values       refine-type-let-values%)
   (%#letrec-values    refine-type-letrec-values%)
   (%#letrec*-values   refine-type-letrec-values%)
@@ -402,6 +402,22 @@ namespace: gxc
        (for-each collect-e #'(hd ...) #'(expr ...))
        (for-each (cut compile-e self <>) #'(expr ...))
        (compile-e self #'body)))))
+
+(def (refine-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ args . body)
+     (parameterize ((current-compile-local-env (xform-let-locals #'args)))
+       (apply-body-lambda% self stx)))))
+
+(def (refine-type-case-lambda% self stx)
+  (ast-case stx ()
+    ((_ (hd body) ...)
+     (for-each (lambda (clause)
+                 (ast-case clause ()
+                   ((hd body)
+                    (parameterize ((current-compile-local-env (xform-let-locals #'hd)))
+                      (apply-body-case-lambda% self stx)))))
+               #'((hd body) ...)))))
 
 ;;; apply-basic-expression-type
 (def basic-expression-type-annotations (make-hash-table-eq))
