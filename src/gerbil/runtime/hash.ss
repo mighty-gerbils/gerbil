@@ -305,36 +305,35 @@ namespace: #f
   ((_ (method self arg ...) check hash-method)
    (defmethod {method checked-hash-table}
      (lambda (self arg ...)
+       (declare (not safe))
        (let ((h (&checked-hash-table-table self))
              (key? (&checked-hash-table-key-check self)))
-         (check key?)
-         (hash-method h arg ...))))))
-
-(defrules check-hash-arg ()
-  ((_ check? obj)
-   (unless (check? obj)
-     (error "invalid argument" obj))))
+         (if (check key? arg ...)
+           (hash-method h arg ...)
+           (abort!
+            (raise-contract-violation-error
+             "invalid key"
+             context: 'hash-method
+             value: [arg ...]))))))))
 
 (defchecked-hash-method (ref self key default)
-  (cut check-hash-arg <> key)
+  (lambda (key? key default) (key? key))
   &HashTable-ref)
 
 (defchecked-hash-method (set! self key value)
-  (cut check-hash-arg <> key)
+  (lambda (key? key value) (key? key))
   &HashTable-set!)
 
 (defchecked-hash-method (update! self key update default)
-  (lambda (key?)
-    (check-hash-arg key? key)
-    (check-hash-arg procedure? update))
+  (lambda (key? key update default) (key? key))
   &HashTable-update!)
 
 (defchecked-hash-method (delete! self key)
-  (cut check-hash-arg <> key)
+  (lambda (key? key) (key? key))
   &HashTable-delete!)
 
 (defchecked-hash-method (for-each self proc)
-  (lambda (_) (check-hash-arg procedure? proc))
+  (lambda (key? proc) #t)
   &HashTable-for-each)
 
 (defchecked-hash-method (length self)

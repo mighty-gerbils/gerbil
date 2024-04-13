@@ -193,31 +193,30 @@ namespace: #f
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
-         (%#define-syntax check-hash-arg |[:0:]#check-hash-arg|)
          (%#define-runtime
-          _%checked-hash-table::ref104142%_
-          _%checked-hash-table::ref104141%_)
+          _%checked-hash-table::ref104077%_
+          _%checked-hash-table::ref104076%_)
          (%#define-runtime
-          _%checked-hash-table::set!104145%_
-          _%checked-hash-table::set!104144%_)
+          _%checked-hash-table::set!104080%_
+          _%checked-hash-table::set!104079%_)
          (%#define-runtime
-          _%checked-hash-table::update!104148%_
-          _%checked-hash-table::update!104147%_)
+          _%checked-hash-table::update!104083%_
+          _%checked-hash-table::update!104082%_)
          (%#define-runtime
-          _%checked-hash-table::delete!104151%_
-          _%checked-hash-table::delete!104150%_)
+          _%checked-hash-table::delete!104086%_
+          _%checked-hash-table::delete!104085%_)
          (%#define-runtime
-          _%checked-hash-table::for-each104154%_
-          _%checked-hash-table::for-each104153%_)
+          _%checked-hash-table::for-each104089%_
+          _%checked-hash-table::for-each104088%_)
          (%#define-runtime
-          _%checked-hash-table::length104157%_
-          _%checked-hash-table::length104156%_)
+          _%checked-hash-table::length104092%_
+          _%checked-hash-table::length104091%_)
          (%#define-runtime
-          _%checked-hash-table::copy104160%_
-          _%checked-hash-table::copy104159%_)
+          _%checked-hash-table::copy104095%_
+          _%checked-hash-table::copy104094%_)
          (%#define-runtime
-          _%checked-hash-table::clear!104163%_
-          _%checked-hash-table::clear!104162%_)
+          _%checked-hash-table::clear!104098%_
+          _%checked-hash-table::clear!104097%_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
          (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
                   (%#define-runtime make-hash-table__@ make-hash-table__@)
