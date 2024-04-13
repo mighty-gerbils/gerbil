@@ -239,10 +239,10 @@
    (cond
     ((&iterator-fini it) => (cut <> it)))))
 
-(def (iter-filter (pred : :procedure) (it : iterator))
+(def (iter-filter (pred : :procedure) iterable)
   => iterator
   (def (iterate)
-    (for (val it)
+    (for (val (iter iterable))
       (when (pred val)
         (yield val))))
   (iter-coroutine iterate))

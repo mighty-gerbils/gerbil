@@ -159,6 +159,11 @@
           (cons (cons x y) r)))
       (check (test-filter-when4) => '((3 . d) (1 . b)))
 
+      (def (test-filter-when5)
+        (for/collect ((x '(1 2 3 4) when (odd? x)))
+          x))
+      (check (test-filter-when5) => '(1 3))
+
       (def (test-for-when5)
         (for ((x (in-range 5)) when (odd? x))
           (displayln x)))
