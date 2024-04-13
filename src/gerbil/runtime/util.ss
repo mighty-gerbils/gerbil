@@ -9,7 +9,9 @@ namespace: #f
 (export #t)
 
 ;; predefine this so that we can raise it before it is defined (bootstrap)
-(defmutable raise-contract-violation-error error)
+;; it also needs to be a runtime binding, so we don't defmutable
+(def raise-contract-violation-error error)
+(set! raise-contract-violation-error raise-contract-violation-error)
 
 (defrules declare-inline ()
   ((_ proc inline-rules)

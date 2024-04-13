@@ -111,9 +111,7 @@ namespace: #f
   (make-mutex 'thread-locals))
 
 ;;; actor debug hooks
-(def __unhandled-actor-exception-hook #f)
-(def (unhandled-actor-exception-hook-set! (proc : :procedure))
-  (set! __unhandled-actor-exception-hook proc))
+(defmutable unhandled-actor-exception-hook #f :? :procedure)
 
 ;;; utitilities
 (def (current-thread-group)

@@ -47,7 +47,7 @@
   (begin (def (id . formals) body ...)
          (register-entry-point id id: 'id options ...)))
 
-(defmutable multicall-default 'help)
+(defmutable multicall-default 'help : :symbol)
 
 (def (set-default-entry-point! x)
   (set! multicall-default x))

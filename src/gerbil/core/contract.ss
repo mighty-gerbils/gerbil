@@ -2760,7 +2760,37 @@ package: gerbil/core
        (generate #'hd #'(slot ...) #'body))))
 
   (defrule (defstruct/c hd slots . body)
-    (defclass/c hd slots struct: #t . body)))
+    (defclass/c hd slots struct: #t . body))
+
+  (defsyntax (defmutable stx)
+    (syntax-case stx (:)
+      ((_ var value ~ Type)
+       (and (identifier? #'var)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':?)))
+       (with-syntax ((__var    (stx-identifier #'var "__" #'var))
+                     (var-set! (stx-identifier #'var #'var "-set!")))
+         #'(begin
+             (def __var value)
+             (def/c (var-set! (new-value ~ Type))
+               (set! __var new-value))
+             (defsyntax var
+               (identifier-rules (%%set-dotted! set!)
+                 ((%%set-dotted! the-var new-value)
+                  (var-set! new-value))
+                 ((set! the-var new-value)
+                  (var-set! new-value))
+                 ((the-var args (... ...))
+                  (and (identifier? #'the-var)
+                       (free-identifier=? #'the-var #'var))
+                  (__var args (... ...)))
+                 (the-var
+                  (and (identifier? #'the-var)
+                       (free-identifier=? #'the-var #'var))
+                  __var))))))
+      ((_ var value)
+       #'(defmutable var value : :t)))))
 
 (import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassMeta))
