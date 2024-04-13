@@ -3145,7 +3145,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             class::t
              effect:
              #f
              arguments:

@@ -897,7 +897,7 @@ package: gerbil/runtime
      andmap*
      signature:
      (return:
-      t::t
+      boolean::t
       effect:
       #f
       arguments:
@@ -1161,7 +1161,7 @@ package: gerbil/runtime
      filter-map*
      signature:
      (return:
-      t::t
+      list::t
       effect:
       #f
       arguments:
@@ -2064,7 +2064,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -2079,7 +2079,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -2095,7 +2095,7 @@ package: gerbil/runtime
      as-string__0
      signature:
      (return:
-      t::t
+      string::t
       effect:
       #f
       arguments:
@@ -2108,7 +2108,7 @@ package: gerbil/runtime
      as-string__1
      signature:
      (return:
-      t::t
+      string::t
       effect:
       #f
       arguments:

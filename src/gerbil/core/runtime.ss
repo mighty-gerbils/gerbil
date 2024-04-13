@@ -1524,6 +1524,7 @@ package: gerbil/core
     ;; :gerbil/runtime/system
     gerbil-system-manifest
     build-manifest
+    build-manifest-set!
     display-build-manifest
     build-manifest/layer
     build-manifest/head
@@ -1531,6 +1532,8 @@ package: gerbil/core
     gerbil-version-string
     gerbil-system
     gerbil-system-version-string
+    gerbil-greeting
+    gerbil-greeting-set!
     gerbil-home
     gerbil-path
     gerbil-runtime-smp?

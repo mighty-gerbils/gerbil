@@ -51,10 +51,7 @@ namespace: gerbil/core/sugar
                     |gerbil/core/sugar~Sugar-1[:0:]#unless|)
                    (%#define-syntax
                     syntax-error
-                    |gerbil/core/sugar~Sugar-1[:0:]#syntax-error|)
-                   (%#define-syntax
-                    defmutable
-                    |gerbil/core/sugar~Sugar-1[:0:]#defmutable|)))
+                    |gerbil/core/sugar~Sugar-1[:0:]#syntax-error|)))
          (%#module
           Sugar-2
           (%#begin (%#import (in: #f Sugar-1) (phi: 1 (in: #f Sugar-1)))

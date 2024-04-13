@@ -146,14 +146,7 @@ package: gerbil/core
       ((_ message detail ...)
        (stx-string? #'message)
        (apply raise-syntax-error #f (stx-e #'message) stx
-              (syntax->list #'(detail ...))))))
-
-  (defrules defmutable ()
-    ((_ var value)
-     (begin
-       (def var value)
-       (%#set! var var)
-       (void)))))
+              (syntax->list #'(detail ...)))))))
 
 (module Sugar-2
   (import Sugar-1 (phi: +1 Sugar-1))
