@@ -1746,4 +1746,19 @@ package: gerbil/compiler
              unchecked:
              #f
              origin:
+             gerbil/compiler/optimize-base)))
+  (declare-type
+   gxc#optimizer-current-types
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
              gerbil/compiler/optimize-base))))

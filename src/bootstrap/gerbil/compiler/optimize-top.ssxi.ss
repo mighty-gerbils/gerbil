@@ -1239,7 +1239,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1254,7 +1254,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1464,7 +1464,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1598,7 +1598,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
