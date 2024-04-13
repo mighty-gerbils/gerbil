@@ -71,19 +71,19 @@
                      (if (&env-read-json-key-as-symbol? env)
                        (walistq r)
                        (walist r))))
-                   (let lp ()
-                     (let (key (read-json-hash-key input env))
-                       (if key
-                         (let (val (read-json-object input env))
-                           (hash-put! obj key val)
-                           (skip-whitespace input)
-                           (let (char (read-char input))
-                             (case char
-                               ((#\,) (lp))
-                               ((#\}) obj)
-                               (else
-                                (raise-invalid-token read-json-hash input char)))))
-                         obj))))))
+                 (let lp ()
+                   (let (key (read-json-hash-key input env))
+                     (if key
+                       (let (val (read-json-object input env))
+                         (hash-put! obj key val)
+                         (skip-whitespace input)
+                         (let (char (read-char input))
+                           (case char
+                             ((#\,) (lp))
+                             ((#\}) obj)
+                             (else
+                              (raise-invalid-token read-json-hash input char)))))
+                       obj))))))
 
            (def (read-json-hash-key input env)
              (skip-whitespace input)
