@@ -8,7 +8,7 @@ To get started contributing to Gerbil, follow the [Installation
 Guide](https://cons.io/guide/#installation) to acquire the source code, install
 dependencies, and compile the system. You'll need [git](https://git-scm.com/).
 
-You may also install Gerbil from your package manager or choice, but the source code and
+You may also install Gerbil from your package manager of choice, but the source code and
 dependencies to modify and later test changes are still required.
 
 Gerbil development is manged using [GitHub](https://github.com/mighty-gerbils/gerbil)
@@ -41,9 +41,9 @@ that could be a good place to look. As of now, there are many areas of the Gerbi
 codebase that do not have adequate documentation. The Gerbil Core team is actively
 working to improve this, but help is always appreciated.
 
-Documentation generally lives on the projects main site, [cons.io](https://cons.io)
+Documentation generally lives on the projects main site, [cons.io](https://cons.io).
 
-Code documentation is currently in the [`doc/`
+Code documentation is stored in the [`doc/`
 folder](https://github.com/mighty-gerbils/gerbil/tree/master/doc) as markdown. If you're
 unfamiliar with Markdown, the [Markdown Guide](https://www.markdownguide.org/) is a
 helpful reference. We use [VuePress](https://vuepress.vuejs.org/) to process the
@@ -74,7 +74,7 @@ language and standard library.
 
 Some examples include the [Key-Value Store
 Server](https://cons.io/tutorials/kvstore.html) and [Web programming with the Gerbil
-http server](https://cons.io/tutorials/httpd.html).
+HTTP server](https://cons.io/tutorials/httpd.html).
 
 
 #### Reference
@@ -97,12 +97,12 @@ re-exported by Gerbil.
 
 Finally, `std/` contains references for the Gerbil Standard Library. This folder's
 substructure mirrors the module structure of the standard library closely. Most new
-modules, syntax, and functions should be documented here
+modules, syntax, and functions should be documented here.
 
 ### Previewing Changes
 
-To preview changes, a JS runtime is necessary. [NodeJS](https://nodejs.org/) is a good
-place to start, but other options *may* work.
+To preview changes, a JavaScript runtime is necessary. [NodeJS](https://nodejs.org/) is
+a good place to start, but other options *may* work.
 
 Preview changes to `doc/` with the following commands, run from within `doc/`:
 
@@ -111,7 +111,7 @@ npm install
 npm run dev
 ```
 
-This will setup the dependencies and run a development server on port :8080. Access it
+This will setup the dependencies and run a development server on port `8080`. Access it
 at <http://localhost:8080>.
 
 ### Style Guide
@@ -123,14 +123,16 @@ consistent with other docs in a similar category.
 
 Gerbil aims to have an extensive "batteries included" standard library. That being said,
 not every new feature/module may get included. If there are questions, please reach out
-in the Matrix room or mailing list for guidance or feedback. Most often, if a module or
-package is decided to not be included in the stdlib, it will be added to the
-[directory](https://github.com/mighty-gerbils/gerbil-directory) instead. Do not let this
-discourage from making contributions! The Gerbil ecosystem benefits greatly from
-community library support!
+in the [Matrix room](https://matrix.to/#/#gerbil-scheme-core:gitter.im) or [mailing
+list](https://groups.google.com/a/hackzen.org/g/gerbil-users) for guidance or feedback.
+Most often, if a module or package is decided to not be included in the stdlib, it will
+be added to the [directory](https://github.com/mighty-gerbils/gerbil-directory) instead.
+Do not let this discourage from making contributions! The Gerbil ecosystem benefits
+greatly from community library support!
 
 **Contributions to the standard library should always be accompanied with corresponding
-documentation.**
+documentation.** Pull requests that do not include documentation may not be approved and
+merged.
 
 ### Organization of the Standard Library
 
@@ -150,7 +152,7 @@ interfaces of the module.
 
 Interfaces that are exported by a module are defined in a `interface.ss` file.
 
-Public API symbols are defined in `api.ss`.
+Public API symbols are defined in an `api.ss`.
 
 Other source files may exist in this folder at the authors discretion, but should
 generally not be imported by other modules.
@@ -163,9 +165,9 @@ An example of this structure can be observed with the S3 module:
 
 ### Testing
 
-New code should be tested to the best extent possible. Test for a particular file should
-live next to that file with a `-test` suffix applied to the name. If a test covers an
-entire module, the module name with the `-test` suffix should be used instead.
+New code should be tested to the best extent possible. Tests for a particular file
+should live next to that file with a `-test` suffix applied to the name. If a test
+covers an entire module, the module name with the `-test` suffix should be used instead.
 
 For example, tests covering the `:std/net/websocket` module live in
 `src/std/net/websocket/websocket-test.ss` and the tests for
