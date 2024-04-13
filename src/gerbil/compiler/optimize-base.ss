@@ -468,17 +468,42 @@ namespace: gxc
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
 
 (def (optimizer-current-types)
+  (def (type-e t)
+    (cond
+     ((symbol? t)
+      (type-e (optimizer-lookup-type t)))
+     ((!lambda? t)
+      (lambda-type t))
+     ((!kw-lambda? t)
+      (kw-lambda-type t))
+     ((!kw-lambda-primary? t)
+      (kw-lambda-primary-type t))
+     ((!procedure? t)
+      (cons 'procedure
+            (using (t :- !procedure)
+              (and t.signature t.signature.return))))
+     ((!type? t)
+      (!type-id t))
+     (else #f)))
+
+  (def (lambda-type (t :- !lambda))
+    (if t.dispatch
+      (type-e t.dispatch)
+      (cons 'procedure (and t.signature t.signature.return))))
+
+  (def (kw-lambda-type (t :- !kw-lambda))
+    (type-e t.dispatch))
+
+  (def (kw-lambda-primary-type (t :- !kw-lambda-primary))
+    (type-e t.main))
+
   (let* ((ht1 (optimizer-info-type (current-compile-optimizer-info)))
          (ht2 (current-compile-local-type))
          (result (if ht1 (hash->list ht1) []))
          (result (if ht2 (foldl cons result (hash->list ht2)) result)))
     (for-each (lambda (p)
                 (let* ((t (cdr p))
-                       (tr (if (!procedure? t)
-                             (cons 'procedure
-                                   (using (t :- !procedure)
-                                     (and t.signature t.signature.return)))
-                             (!type-id t))))
+                       (tr (type-e t)))
                   (set-cdr! p tr)))
               result)
     (list-sort (lambda (a b)
