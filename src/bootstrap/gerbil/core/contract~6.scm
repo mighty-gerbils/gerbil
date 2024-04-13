@@ -1,32 +1,32 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/contract~Using[1]#_g82589_|
+  (define |gerbil/core/contract~Using[1]#_g82622_|
     (##structure gx#syntax-quote::t ':~ #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82590_|
+  (define |gerbil/core/contract~Using[1]#_g82623_|
     (##structure gx#syntax-quote::t ':~ #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82591_|
+  (define |gerbil/core/contract~Using[1]#_g82624_|
     (##structure gx#syntax-quote::t ':~ #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82594_|
+  (define |gerbil/core/contract~Using[1]#_g82627_|
     (##structure gx#syntax-quote::t ':~ #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82595_|
+  (define |gerbil/core/contract~Using[1]#_g82628_|
     (##structure gx#syntax-quote::t ':~ #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82598_|
+  (define |gerbil/core/contract~Using[1]#_g82631_|
     (##structure gx#syntax-quote::t ': #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82599_|
+  (define |gerbil/core/contract~Using[1]#_g82632_|
     (##structure gx#syntax-quote::t ':? #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82600_|
+  (define |gerbil/core/contract~Using[1]#_g82633_|
     (##structure gx#syntax-quote::t ':- #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82601_|
+  (define |gerbil/core/contract~Using[1]#_g82634_|
     (##structure gx#syntax-quote::t '::- #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82605_|
+  (define |gerbil/core/contract~Using[1]#_g82638_|
     (##structure gx#syntax-quote::t ': #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82606_|
+  (define |gerbil/core/contract~Using[1]#_g82639_|
     (##structure gx#syntax-quote::t ':? #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82607_|
+  (define |gerbil/core/contract~Using[1]#_g82640_|
     (##structure gx#syntax-quote::t ':- #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82608_|
+  (define |gerbil/core/contract~Using[1]#_g82641_|
     (##structure gx#syntax-quote::t '::- #f (gx#current-expander-context) '()))
-  (define |gerbil/core/contract~Using[1]#_g82612_|
+  (define |gerbil/core/contract~Using[1]#_g82645_|
     (##structure
      gx#syntax-quote::t
      '%%ref-dotted
@@ -36,14 +36,14 @@
   (begin
     (define |gerbil/core/contract~Using[:0:]#using|
       (lambda (_%stx46329%_)
-        (let* ((_%__stx7719177192%_ _%stx46329%_)
+        (let* ((_%__stx7722477225%_ _%stx46329%_)
                (_%g4633846547%_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _%__stx7719177192%_))))
-          (let ((_%__kont7719477195%_
+                   _%__stx7722477225%_))))
+          (let ((_%__kont7722777228%_
                  (lambda (_%L47453%_
                           _%L47455%_
                           _%L47456%_
@@ -66,7 +66,7 @@
                 _%L47453%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (_%__kont7719877199%_
+                (_%__kont7723177232%_
                  (lambda (_%L47297%_
                           _%L47299%_
                           _%L47300%_
@@ -97,7 +97,7 @@
                '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (_%__kont7720277203%_
+                (_%__kont7723577236%_
                  (lambda (_%L47114%_ _%L47116%_ _%L47117%_ _%L47118%_)
                    (let ((_%meta47155%_
                           (let ()
@@ -141,7 +141,7 @@
                               _%stx46329%_
                               _%L47116%_
                               _%meta47155%_))))))
-                (_%__kont7720677207%_
+                (_%__kont7723977240%_
                  (lambda (_%L46992%_ _%L46994%_ _%L46995%_)
                    (cons (gx#datum->syntax '#f 'with-contract)
                          (cons (cons _%L46995%_
@@ -151,7 +151,7 @@
                                         (cons _%g4701847021%_ _%g4701947024%_))
                                       '()
                                       _%L46992%_)))))
-                (_%__kont7721077211%_
+                (_%__kont7724377244%_
                  (lambda (_%L46850%_
                           _%L46852%_
                           _%L46853%_
@@ -176,7 +176,7 @@
                 _%L46850%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (_%__kont7721477215%_
+                (_%__kont7724777248%_
                  (lambda (_%L46708%_ _%L46710%_ _%L46711%_ _%L46712%_)
                    (cons (gx#datum->syntax '#f 'using)
                          (cons (cons _%L46712%_ _%L46711%_)
@@ -190,7 +190,7 @@
                 _%L46708%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (_%__kont7721877219%_
+                (_%__kont7725177252%_
                  (lambda (_%L46604%_)
                    (cons (gx#datum->syntax '#f 'let)
                          (cons '()
@@ -198,14 +198,14 @@
                                         (cons _%g4662246625%_ _%g4662346628%_))
                                       '()
                                       _%L46604%_))))))
-            (let* ((_%__match7752477525%_
+            (let* ((_%__match7755777558%_
                     (lambda (_%e4652746554%_
                              _%hd4652846558%_
                              _%tl4652946561%_
                              _%e4653046564%_
                              _%hd4653146568%_
                              _%tl4653246571%_
-                             _%__splice7722077221%_
+                             _%__splice7725377254%_
                              _%target4653346574%_
                              _%tl4653546577%_)
                       (letrec ((_%loop4653646580%_
@@ -227,10 +227,10 @@
                                                  _%body4654046587%_))))
                                       (let ((_%body4654146600%_
                                              (reverse _%body4654046587%_)))
-                                        (_%__kont7721877219%_
+                                        (_%__kont7725177252%_
                                          _%body4654146600%_))))))
                         (_%loop4653646580%_ _%target4653346574%_ '()))))
-                   (_%__match7750277503%_
+                   (_%__match7753577536%_
                     (lambda (_%e4650546638%_
                              _%hd4650646642%_
                              _%tl4650746645%_
@@ -243,7 +243,7 @@
                              _%e4651446668%_
                              _%hd4651546672%_
                              _%tl4651646675%_
-                             _%__splice7721677217%_
+                             _%__splice7724977250%_
                              _%target4651746678%_
                              _%tl4651946681%_)
                       (letrec ((_%loop4652046684%_
@@ -270,7 +270,7 @@
                                               (_%L46711%_ _%tl4651646675%_)
                                               (_%L46712%_ _%hd4651546672%_))
                                           (if (gx#identifier? _%L46712%_)
-                                              (_%__kont7721477215%_
+                                              (_%__kont7724777248%_
                                                _%L46708%_
                                                _%L46710%_
                                                _%L46711%_
@@ -279,7 +279,7 @@
                                                 (declare (not safe))
                                                 (_%g4633846547%_)))))))))
                         (_%loop4652046684%_ _%target4651746678%_ '()))))
-                   (_%__match7748877489%_
+                   (_%__match7752177522%_
                     (lambda (_%e4650546638%_
                              _%hd4650646642%_
                              _%tl4650746645%_
@@ -301,7 +301,7 @@
                                      (declare (not safe))
                                      (##car _%e4651446668%_))))
                               (if (gx#stx-pair/null? _%tl4651046655%_)
-                                  (let ((_%__splice7721677217%_
+                                  (let ((_%__splice7724977250%_
                                          (gx#syntax-split-splice
                                           _%tl4651046655%_
                                           '0)))
@@ -309,16 +309,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '1)))
                                           (_%target4651746678%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4651946681%_)
-                                          (_%__match7750277503%_
+                                          (_%__match7753577536%_
                                            _%e4650546638%_
                                            _%hd4650646642%_
                                            _%tl4650746645%_
@@ -331,7 +331,7 @@
                                            _%e4651446668%_
                                            _%hd4651546672%_
                                            _%tl4651646675%_
-                                           _%__splice7721677217%_
+                                           _%__splice7724977250%_
                                            _%target4651746678%_
                                            _%tl4651946681%_)
                                           (let ()
@@ -341,7 +341,7 @@
                                     (declare (not safe))
                                     (_%g4633846547%_)))))
                           (let () (declare (not safe)) (_%g4633846547%_)))))
-                   (_%__match7747077471%_
+                   (_%__match7750377504%_
                     (lambda (_%e4647146750%_
                              _%hd4647246754%_
                              _%tl4647346757%_
@@ -363,7 +363,7 @@
                              _%e4648946810%_
                              _%hd4649046814%_
                              _%tl4649146817%_
-                             _%__splice7721277213%_
+                             _%__splice7724577246%_
                              _%target4649246820%_
                              _%tl4649446823%_)
                       (letrec ((_%loop4649546826%_
@@ -413,13 +413,13 @@
                                                         (gx#datum->syntax
                                                          '#f
                                                          ':?))))
-                                              (_%__kont7721077211%_
+                                              (_%__kont7724377244%_
                                                _%L46850%_
                                                _%L46852%_
                                                _%L46853%_
                                                _%L46854%_
                                                _%L46855%_)
-                                              (_%__match7748877489%_
+                                              (_%__match7752177522%_
                                                _%e4647146750%_
                                                _%hd4647246754%_
                                                _%tl4647346757%_
@@ -430,7 +430,7 @@
                                                _%hd4647846774%_
                                                _%tl4647946777%_))))))))
                         (_%loop4649546826%_ _%target4649246820%_ '()))))
-                   (_%__match7741477415%_
+                   (_%__match7744777448%_
                     (lambda (_%e4644246912%_
                              _%hd4644346916%_
                              _%tl4644446919%_
@@ -446,7 +446,7 @@
                              _%e4645446952%_
                              _%hd4645546956%_
                              _%tl4645646959%_
-                             _%__splice7720877209%_
+                             _%__splice7724177242%_
                              _%target4645746962%_
                              _%tl4645946965%_)
                       (letrec ((_%loop4646046968%_
@@ -472,11 +472,11 @@
                                               (_%L46994%_ _%hd4645546956%_)
                                               (_%L46995%_ _%hd4644946936%_))
                                           (if (gx#identifier? _%L46995%_)
-                                              (_%__kont7720677207%_
+                                              (_%__kont7723977240%_
                                                _%L46992%_
                                                _%L46994%_
                                                _%L46995%_)
-                                              (_%__match7748877489%_
+                                              (_%__match7752177522%_
                                                _%e4644246912%_
                                                _%hd4644346916%_
                                                _%tl4644446919%_
@@ -487,7 +487,7 @@
                                                _%hd4644946936%_
                                                _%tl4645046939%_))))))))
                         (_%loop4646046968%_ _%target4645746962%_ '()))))
-                   (_%__match7739477395%_
+                   (_%__match7742777428%_
                     (lambda (_%e4644246912%_
                              _%hd4644346916%_
                              _%tl4644446919%_
@@ -502,7 +502,7 @@
                              _%tl4645346949%_)
                       (if (gx#identifier? _%hd4645246946%_)
                           (if (gx#free-identifier=?
-                               |gerbil/core/contract~Using[1]#_g82589_|
+                               |gerbil/core/contract~Using[1]#_g82622_|
                                _%hd4645246946%_)
                               (if (gx#stx-pair? _%tl4645346949%_)
                                   (let ((_%e4645446952%_
@@ -518,7 +518,7 @@
                                       (if (gx#stx-null? _%tl4645646959%_)
                                           (if (gx#stx-pair/null?
                                                _%tl4644746929%_)
-                                              (let ((_%__splice7720877209%_
+                                              (let ((_%__splice7724177242%_
                                                      (gx#syntax-split-splice
                                                       _%tl4644746929%_
                                                       '0)))
@@ -526,17 +526,17 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7720877209%_
+                                                          _%__splice7724177242%_
                                                           '1)))
                                                       (_%target4645746962%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7720877209%_
+                                                          _%__splice7724177242%_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _%tl4645946965%_)
-                                                      (_%__match7741477415%_
+                                                      (_%__match7744777448%_
                                                        _%e4644246912%_
                                                        _%hd4644346916%_
                                                        _%tl4644446919%_
@@ -552,7 +552,7 @@
                                                        _%e4645446952%_
                                                        _%hd4645546956%_
                                                        _%tl4645646959%_
-                                                       _%__splice7720877209%_
+                                                       _%__splice7724177242%_
                                                        _%target4645746962%_
                                                        _%tl4645946965%_)
                                                       (if (gx#stx-pair?
@@ -618,20 +618,20 @@
                        (let () (declare (not safe)) (##car _%e4648946810%_))))
                   (if (gx#stx-null? _%tl4649146817%_)
                       (if (gx#stx-pair/null? _%tl4644746929%_)
-                          (let ((_%__splice7721277213%_
+                          (let ((_%__splice7724577246%_
                                  (gx#syntax-split-splice _%tl4644746929%_ '0)))
                             (let ((_%tl4649446823%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721277213%_ '1)))
+                                     (##vector-ref _%__splice7724577246%_ '1)))
                                   (_%target4649246820%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721277213%_
+                                      _%__splice7724577246%_
                                       '0))))
                               (if (gx#stx-null? _%tl4649446823%_)
-                                  (_%__match7747077471%_
+                                  (_%__match7750377504%_
                                    _%e4644246912%_
                                    _%hd4644346916%_
                                    _%tl4644446919%_
@@ -653,7 +653,7 @@
                                    _%e4648946810%_
                                    _%hd4649046814%_
                                    _%tl4649146817%_
-                                   _%__splice7721277213%_
+                                   _%__splice7724577246%_
                                    _%target4649246820%_
                                    _%tl4649446823%_)
                                   (if (gx#stx-pair? _%hd4644946936%_)
@@ -700,7 +700,7 @@
                                      (declare (not safe))
                                      (##car _%e4651446668%_))))
                               (if (gx#stx-pair/null? _%tl4644746929%_)
-                                  (let ((_%__splice7721677217%_
+                                  (let ((_%__splice7724977250%_
                                          (gx#syntax-split-splice
                                           _%tl4644746929%_
                                           '0)))
@@ -708,16 +708,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '1)))
                                           (_%target4651746678%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4651946681%_)
-                                          (_%__match7750277503%_
+                                          (_%__match7753577536%_
                                            _%e4644246912%_
                                            _%hd4644346916%_
                                            _%tl4644446919%_
@@ -730,7 +730,7 @@
                                            _%e4651446668%_
                                            _%hd4651546672%_
                                            _%tl4651646675%_
-                                           _%__splice7721677217%_
+                                           _%__splice7724977250%_
                                            _%target4651746678%_
                                            _%tl4651946681%_)
                                           (let ()
@@ -751,20 +751,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4644746929%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4644746929%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4644246912%_
                                    _%hd4644346916%_
                                    _%tl4644446919%_
@@ -777,7 +777,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -803,19 +803,19 @@
                                                              (##car _%e4651446668%_))))
                                                       (if (gx#stx-pair/null?
                                                            _%tl4644746929%_)
-                                                          (let ((_%__splice7721677217%_
+                                                          (let ((_%__splice7724977250%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (gx#syntax-split-splice _%tl4644746929%_ '0)))
                     (let ((_%tl4651946681%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '1)))
+                             (##vector-ref _%__splice7724977250%_ '1)))
                           (_%target4651746678%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '0))))
+                             (##vector-ref _%__splice7724977250%_ '0))))
                       (if (gx#stx-null? _%tl4651946681%_)
-                          (_%__match7750277503%_
+                          (_%__match7753577536%_
                            _%e4644246912%_
                            _%hd4644346916%_
                            _%tl4644446919%_
@@ -828,7 +828,7 @@
                            _%e4651446668%_
                            _%hd4651546672%_
                            _%tl4651646675%_
-                           _%__splice7721677217%_
+                           _%__splice7724977250%_
                            _%target4651746678%_
                            _%tl4651946681%_)
                           (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -850,7 +850,7 @@
                                                  (##car _%e4651446668%_))))
                                           (if (gx#stx-pair/null?
                                                _%tl4644746929%_)
-                                              (let ((_%__splice7721677217%_
+                                              (let ((_%__splice7724977250%_
                                                      (gx#syntax-split-splice
                                                       _%tl4644746929%_
                                                       '0)))
@@ -858,17 +858,17 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '1)))
                                                       (_%target4651746678%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _%tl4651946681%_)
-                                                      (_%__match7750277503%_
+                                                      (_%__match7753577536%_
                                                        _%e4644246912%_
                                                        _%hd4644346916%_
                                                        _%tl4644446919%_
@@ -881,7 +881,7 @@
                                                        _%e4651446668%_
                                                        _%hd4651546672%_
                                                        _%tl4651646675%_
-                                                       _%__splice7721677217%_
+                                                       _%__splice7724977250%_
                                                        _%target4651746678%_
                                                        _%tl4651946681%_)
                                                       (let ()
@@ -905,7 +905,7 @@
                                              (declare (not safe))
                                              (##car _%e4651446668%_))))
                                       (if (gx#stx-pair/null? _%tl4644746929%_)
-                                          (let ((_%__splice7721677217%_
+                                          (let ((_%__splice7724977250%_
                                                  (gx#syntax-split-splice
                                                   _%tl4644746929%_
                                                   '0)))
@@ -913,17 +913,17 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7721677217%_
+                                                      _%__splice7724977250%_
                                                       '1)))
                                                   (_%target4651746678%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7721677217%_
+                                                      _%__splice7724977250%_
                                                       '0))))
                                               (if (gx#stx-null?
                                                    _%tl4651946681%_)
-                                                  (_%__match7750277503%_
+                                                  (_%__match7753577536%_
                                                    _%e4644246912%_
                                                    _%hd4644346916%_
                                                    _%tl4644446919%_
@@ -936,7 +936,7 @@
                                                    _%e4651446668%_
                                                    _%hd4651546672%_
                                                    _%tl4651646675%_
-                                                   _%__splice7721677217%_
+                                                   _%__splice7724977250%_
                                                    _%target4651746678%_
                                                    _%tl4651946681%_)
                                                   (let ()
@@ -960,7 +960,7 @@
                                          (declare (not safe))
                                          (##car _%e4651446668%_))))
                                   (if (gx#stx-pair/null? _%tl4644746929%_)
-                                      (let ((_%__splice7721677217%_
+                                      (let ((_%__splice7724977250%_
                                              (gx#syntax-split-splice
                                               _%tl4644746929%_
                                               '0)))
@@ -968,16 +968,16 @@
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7721677217%_
+                                                  _%__splice7724977250%_
                                                   '1)))
                                               (_%target4651746678%_
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7721677217%_
+                                                  _%__splice7724977250%_
                                                   '0))))
                                           (if (gx#stx-null? _%tl4651946681%_)
-                                              (_%__match7750277503%_
+                                              (_%__match7753577536%_
                                                _%e4644246912%_
                                                _%hd4644346916%_
                                                _%tl4644446919%_
@@ -990,7 +990,7 @@
                                                _%e4651446668%_
                                                _%hd4651546672%_
                                                _%tl4651646675%_
-                                               _%__splice7721677217%_
+                                               _%__splice7724977250%_
                                                _%target4651746678%_
                                                _%tl4651946681%_)
                                               (let ()
@@ -1002,7 +1002,7 @@
                               (let ()
                                 (declare (not safe))
                                 (_%g4633846547%_))))))
-                   (_%__match7737077371%_
+                   (_%__match7740377404%_
                     (lambda (_%e4641547034%_
                              _%hd4641647038%_
                              _%tl4641747041%_
@@ -1018,7 +1018,7 @@
                              _%e4642747074%_
                              _%hd4642847078%_
                              _%tl4642947081%_
-                             _%__splice7720477205%_
+                             _%__splice7723777238%_
                              _%target4643047084%_
                              _%tl4643247087%_)
                       (letrec ((_%loop4643347090%_
@@ -1067,12 +1067,12 @@
                                                         (gx#datum->syntax
                                                          '#f
                                                          ':?))))
-                                              (_%__kont7720277203%_
+                                              (_%__kont7723577236%_
                                                _%L47114%_
                                                _%L47116%_
                                                _%L47117%_
                                                _%L47118%_)
-                                              (_%__match7739477395%_
+                                              (_%__match7742777428%_
                                                _%e4641547034%_
                                                _%hd4641647038%_
                                                _%tl4641747041%_
@@ -1086,7 +1086,7 @@
                                                _%hd4642547068%_
                                                _%tl4642647071%_))))))))
                         (_%loop4643347090%_ _%target4643047084%_ '()))))
-                   (_%__match7733077331%_
+                   (_%__match7736377364%_
                     (lambda (_%e4637847187%_
                              _%hd4637947191%_
                              _%tl4638047194%_
@@ -1111,7 +1111,7 @@
                              _%e4639947257%_
                              _%hd4640047261%_
                              _%tl4640147264%_
-                             _%__splice7720077201%_
+                             _%__splice7723377234%_
                              _%target4640247267%_
                              _%tl4640447270%_)
                       (letrec ((_%loop4640547273%_
@@ -1162,14 +1162,14 @@
                                                         (gx#datum->syntax
                                                          '#f
                                                          ':?))))
-                                              (_%__kont7719877199%_
+                                              (_%__kont7723177232%_
                                                _%L47297%_
                                                _%L47299%_
                                                _%L47300%_
                                                _%L47301%_
                                                _%L47302%_
                                                _%L47303%_)
-                                              (_%__match7739477395%_
+                                              (_%__match7742777428%_
                                                _%e4637847187%_
                                                _%hd4637947191%_
                                                _%tl4638047194%_
@@ -1183,7 +1183,7 @@
                                                _%hd4638847221%_
                                                _%tl4638947224%_))))))))
                         (_%loop4640547273%_ _%target4640247267%_ '()))))
-                   (_%__match7729877299%_
+                   (_%__match7733177332%_
                     (lambda (_%e4637847187%_
                              _%hd4637947191%_
                              _%tl4638047194%_
@@ -1201,7 +1201,7 @@
                              _%tl4639247234%_)
                       (if (gx#identifier? _%hd4639147231%_)
                           (if (gx#free-identifier=?
-                               |gerbil/core/contract~Using[1]#_g82590_|
+                               |gerbil/core/contract~Using[1]#_g82623_|
                                _%hd4639147231%_)
                               (if (gx#stx-pair? _%tl4639247234%_)
                                   (let ((_%e4639347237%_
@@ -1245,19 +1245,19 @@
                                                            _%tl4640147264%_)
                                                           (if (gx#stx-pair/null?
                                                                _%tl4638347204%_)
-                                                              (let ((_%__splice7720077201%_
+                                                              (let ((_%__splice7723377234%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#syntax-split-splice _%tl4638347204%_ '0)))
                         (let ((_%tl4640447270%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7720077201%_ '1)))
+                                 (##vector-ref _%__splice7723377234%_ '1)))
                               (_%target4640247267%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7720077201%_ '0))))
+                                 (##vector-ref _%__splice7723377234%_ '0))))
                           (if (gx#stx-null? _%tl4640447270%_)
-                              (_%__match7733077331%_
+                              (_%__match7736377364%_
                                _%e4637847187%_
                                _%hd4637947191%_
                                _%tl4638047194%_
@@ -1282,7 +1282,7 @@
                                _%e4639947257%_
                                _%hd4640047261%_
                                _%tl4640147264%_
-                               _%__splice7720077201%_
+                               _%__splice7723377234%_
                                _%target4640247267%_
                                _%tl4640447270%_)
                               (if (gx#stx-pair? _%hd4638547211%_)
@@ -1326,7 +1326,7 @@
                                  (declare (not safe))
                                  (##car _%e4651446668%_))))
                           (if (gx#stx-pair/null? _%tl4638347204%_)
-                              (let ((_%__splice7721677217%_
+                              (let ((_%__splice7724977250%_
                                      (gx#syntax-split-splice
                                       _%tl4638347204%_
                                       '0)))
@@ -1334,16 +1334,16 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '1)))
                                       (_%target4651746678%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '0))))
                                   (if (gx#stx-null? _%tl4651946681%_)
-                                      (_%__match7750277503%_
+                                      (_%__match7753577536%_
                                        _%e4637847187%_
                                        _%hd4637947191%_
                                        _%tl4638047194%_
@@ -1356,7 +1356,7 @@
                                        _%e4651446668%_
                                        _%hd4651546672%_
                                        _%tl4651646675%_
-                                       _%__splice7721677217%_
+                                       _%__splice7724977250%_
                                        _%target4651746678%_
                                        _%tl4651946681%_)
                                       (let ()
@@ -1370,27 +1370,27 @@
                                                   (if (gx#identifier?
                                                        _%hd4638847221%_)
                                                       (if (gx#free-identifier=?
-                                                           |gerbil/core/contract~Using[1]#_g82589_|
+                                                           |gerbil/core/contract~Using[1]#_g82622_|
                                                            _%hd4638847221%_)
                                                           (if (gx#stx-null?
                                                                _%tl4639847254%_)
                                                               (if (gx#stx-pair/null?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _%tl4638347204%_)
-                          (let ((_%__splice7721277213%_
+                          (let ((_%__splice7724577246%_
                                  (gx#syntax-split-splice _%tl4638347204%_ '0)))
                             (let ((_%tl4649446823%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721277213%_ '1)))
+                                     (##vector-ref _%__splice7724577246%_ '1)))
                                   (_%target4649246820%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721277213%_
+                                      _%__splice7724577246%_
                                       '0))))
                               (if (gx#stx-null? _%tl4649446823%_)
-                                  (_%__match7747077471%_
+                                  (_%__match7750377504%_
                                    _%e4637847187%_
                                    _%hd4637947191%_
                                    _%tl4638047194%_
@@ -1412,7 +1412,7 @@
                                    _%e4639647247%_
                                    _%hd4639747251%_
                                    _%tl4639847254%_
-                                   _%__splice7721277213%_
+                                   _%__splice7724577246%_
                                    _%target4649246820%_
                                    _%tl4649446823%_)
                                   (if (gx#stx-pair? _%hd4638547211%_)
@@ -1459,7 +1459,7 @@
                                      (declare (not safe))
                                      (##car _%e4651446668%_))))
                               (if (gx#stx-pair/null? _%tl4638347204%_)
-                                  (let ((_%__splice7721677217%_
+                                  (let ((_%__splice7724977250%_
                                          (gx#syntax-split-splice
                                           _%tl4638347204%_
                                           '0)))
@@ -1467,16 +1467,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '1)))
                                           (_%target4651746678%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4651946681%_)
-                                          (_%__match7750277503%_
+                                          (_%__match7753577536%_
                                            _%e4637847187%_
                                            _%hd4637947191%_
                                            _%tl4638047194%_
@@ -1489,7 +1489,7 @@
                                            _%e4651446668%_
                                            _%hd4651546672%_
                                            _%tl4651646675%_
-                                           _%__splice7721677217%_
+                                           _%__splice7724977250%_
                                            _%target4651746678%_
                                            _%tl4651946681%_)
                                           (let ()
@@ -1510,7 +1510,7 @@
                                  (declare (not safe))
                                  (##car _%e4651446668%_))))
                           (if (gx#stx-pair/null? _%tl4638347204%_)
-                              (let ((_%__splice7721677217%_
+                              (let ((_%__splice7724977250%_
                                      (gx#syntax-split-splice
                                       _%tl4638347204%_
                                       '0)))
@@ -1518,16 +1518,16 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '1)))
                                       (_%target4651746678%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '0))))
                                   (if (gx#stx-null? _%tl4651946681%_)
-                                      (_%__match7750277503%_
+                                      (_%__match7753577536%_
                                        _%e4637847187%_
                                        _%hd4637947191%_
                                        _%tl4638047194%_
@@ -1540,7 +1540,7 @@
                                        _%e4651446668%_
                                        _%hd4651546672%_
                                        _%tl4651646675%_
-                                       _%__splice7721677217%_
+                                       _%__splice7724977250%_
                                        _%target4651746678%_
                                        _%tl4651946681%_)
                                       (let ()
@@ -1561,20 +1561,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4638347204%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4638347204%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4637847187%_
                                    _%hd4637947191%_
                                    _%tl4638047194%_
@@ -1587,7 +1587,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -1610,7 +1610,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4638347204%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4638347204%_
                                                               '0)))
@@ -1618,13 +1618,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4637847187%_
                        _%hd4637947191%_
                        _%tl4638047194%_
@@ -1637,7 +1637,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -1648,7 +1648,7 @@
                                                 (_%g4633846547%_))))))
                                   (if (gx#stx-null? _%tl4639247234%_)
                                       (if (gx#stx-pair/null? _%tl4638347204%_)
-                                          (let ((_%__splice7720477205%_
+                                          (let ((_%__splice7723777238%_
                                                  (gx#syntax-split-splice
                                                   _%tl4638347204%_
                                                   '0)))
@@ -1656,17 +1656,17 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7720477205%_
+                                                      _%__splice7723777238%_
                                                       '1)))
                                                   (_%target4643047084%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7720477205%_
+                                                      _%__splice7723777238%_
                                                       '0))))
                                               (if (gx#stx-null?
                                                    _%tl4643247087%_)
-                                                  (_%__match7737077371%_
+                                                  (_%__match7740377404%_
                                                    _%e4637847187%_
                                                    _%hd4637947191%_
                                                    _%tl4638047194%_
@@ -1682,7 +1682,7 @@
                                                    _%e4639047227%_
                                                    _%hd4639147231%_
                                                    _%tl4639247234%_
-                                                   _%__splice7720477205%_
+                                                   _%__splice7723777238%_
                                                    _%target4643047084%_
                                                    _%tl4643247087%_)
                                                   (if (gx#stx-pair?
@@ -1732,7 +1732,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4638347204%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4638347204%_
                                                           '0)))
@@ -1741,18 +1741,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4637847187%_
                                                            _%hd4637947191%_
                                                            _%tl4638047194%_
@@ -1765,7 +1765,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -1780,7 +1780,7 @@
                                             (_%g4633846547%_)))))
                               (if (gx#stx-null? _%tl4639247234%_)
                                   (if (gx#stx-pair/null? _%tl4638347204%_)
-                                      (let ((_%__splice7720477205%_
+                                      (let ((_%__splice7723777238%_
                                              (gx#syntax-split-splice
                                               _%tl4638347204%_
                                               '0)))
@@ -1788,16 +1788,16 @@
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7720477205%_
+                                                  _%__splice7723777238%_
                                                   '1)))
                                               (_%target4643047084%_
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7720477205%_
+                                                  _%__splice7723777238%_
                                                   '0))))
                                           (if (gx#stx-null? _%tl4643247087%_)
-                                              (_%__match7737077371%_
+                                              (_%__match7740377404%_
                                                _%e4637847187%_
                                                _%hd4637947191%_
                                                _%tl4638047194%_
@@ -1813,7 +1813,7 @@
                                                _%e4639047227%_
                                                _%hd4639147231%_
                                                _%tl4639247234%_
-                                               _%__splice7720477205%_
+                                               _%__splice7723777238%_
                                                _%target4643047084%_
                                                _%tl4643247087%_)
                                               (if (gx#stx-pair?
@@ -1857,7 +1857,7 @@
                                             (_%g4633846547%_))))
                                   (if (gx#identifier? _%hd4638847221%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/contract~Using[1]#_g82589_|
+                                           |gerbil/core/contract~Using[1]#_g82622_|
                                            _%hd4638847221%_)
                                           (if (gx#stx-pair? _%tl4639247234%_)
                                               (let ((_%e4648646800%_
@@ -1885,20 +1885,20 @@
                        (let () (declare (not safe)) (##car _%e4648946810%_))))
                   (if (gx#stx-null? _%tl4649146817%_)
                       (if (gx#stx-pair/null? _%tl4638347204%_)
-                          (let ((_%__splice7721277213%_
+                          (let ((_%__splice7724577246%_
                                  (gx#syntax-split-splice _%tl4638347204%_ '0)))
                             (let ((_%tl4649446823%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721277213%_ '1)))
+                                     (##vector-ref _%__splice7724577246%_ '1)))
                                   (_%target4649246820%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721277213%_
+                                      _%__splice7724577246%_
                                       '0))))
                               (if (gx#stx-null? _%tl4649446823%_)
-                                  (_%__match7747077471%_
+                                  (_%__match7750377504%_
                                    _%e4637847187%_
                                    _%hd4637947191%_
                                    _%tl4638047194%_
@@ -1920,7 +1920,7 @@
                                    _%e4648946810%_
                                    _%hd4649046814%_
                                    _%tl4649146817%_
-                                   _%__splice7721277213%_
+                                   _%__splice7724577246%_
                                    _%target4649246820%_
                                    _%tl4649446823%_)
                                   (if (gx#stx-pair? _%hd4638547211%_)
@@ -1967,7 +1967,7 @@
                                      (declare (not safe))
                                      (##car _%e4651446668%_))))
                               (if (gx#stx-pair/null? _%tl4638347204%_)
-                                  (let ((_%__splice7721677217%_
+                                  (let ((_%__splice7724977250%_
                                          (gx#syntax-split-splice
                                           _%tl4638347204%_
                                           '0)))
@@ -1975,16 +1975,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '1)))
                                           (_%target4651746678%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4651946681%_)
-                                          (_%__match7750277503%_
+                                          (_%__match7753577536%_
                                            _%e4637847187%_
                                            _%hd4637947191%_
                                            _%tl4638047194%_
@@ -1997,7 +1997,7 @@
                                            _%e4651446668%_
                                            _%hd4651546672%_
                                            _%tl4651646675%_
-                                           _%__splice7721677217%_
+                                           _%__splice7724977250%_
                                            _%target4651746678%_
                                            _%tl4651946681%_)
                                           (let ()
@@ -2018,20 +2018,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4638347204%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4638347204%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4637847187%_
                                    _%hd4637947191%_
                                    _%tl4638047194%_
@@ -2044,7 +2044,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -2070,19 +2070,19 @@
                                                              (##car _%e4651446668%_))))
                                                       (if (gx#stx-pair/null?
                                                            _%tl4638347204%_)
-                                                          (let ((_%__splice7721677217%_
+                                                          (let ((_%__splice7724977250%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (gx#syntax-split-splice _%tl4638347204%_ '0)))
                     (let ((_%tl4651946681%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '1)))
+                             (##vector-ref _%__splice7724977250%_ '1)))
                           (_%target4651746678%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '0))))
+                             (##vector-ref _%__splice7724977250%_ '0))))
                       (if (gx#stx-null? _%tl4651946681%_)
-                          (_%__match7750277503%_
+                          (_%__match7753577536%_
                            _%e4637847187%_
                            _%hd4637947191%_
                            _%tl4638047194%_
@@ -2095,7 +2095,7 @@
                            _%e4651446668%_
                            _%hd4651546672%_
                            _%tl4651646675%_
-                           _%__splice7721677217%_
+                           _%__splice7724977250%_
                            _%target4651746678%_
                            _%tl4651946681%_)
                           (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -2118,7 +2118,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4638347204%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4638347204%_
                                                               '0)))
@@ -2126,13 +2126,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4637847187%_
                        _%hd4637947191%_
                        _%tl4638047194%_
@@ -2145,7 +2145,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -2168,7 +2168,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4638347204%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4638347204%_
                                                           '0)))
@@ -2177,18 +2177,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4637847187%_
                                                            _%hd4637947191%_
                                                            _%tl4638047194%_
@@ -2201,7 +2201,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -2216,7 +2216,7 @@
                                             (_%g4633846547%_))))))
                           (if (gx#stx-null? _%tl4639247234%_)
                               (if (gx#stx-pair/null? _%tl4638347204%_)
-                                  (let ((_%__splice7720477205%_
+                                  (let ((_%__splice7723777238%_
                                          (gx#syntax-split-splice
                                           _%tl4638347204%_
                                           '0)))
@@ -2224,16 +2224,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7720477205%_
+                                              _%__splice7723777238%_
                                               '1)))
                                           (_%target4643047084%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7720477205%_
+                                              _%__splice7723777238%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4643247087%_)
-                                          (_%__match7737077371%_
+                                          (_%__match7740377404%_
                                            _%e4637847187%_
                                            _%hd4637947191%_
                                            _%tl4638047194%_
@@ -2249,7 +2249,7 @@
                                            _%e4639047227%_
                                            _%hd4639147231%_
                                            _%tl4639247234%_
-                                           _%__splice7720477205%_
+                                           _%__splice7723777238%_
                                            _%target4643047084%_
                                            _%tl4643247087%_)
                                           (if (gx#stx-pair? _%hd4638547211%_)
@@ -2289,7 +2289,7 @@
                                         (_%g4633846547%_))))
                               (if (gx#identifier? _%hd4638847221%_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core/contract~Using[1]#_g82589_|
+                                       |gerbil/core/contract~Using[1]#_g82622_|
                                        _%hd4638847221%_)
                                       (if (gx#stx-pair? _%tl4639247234%_)
                                           (let ((_%e4648646800%_
@@ -2322,19 +2322,19 @@
                                                            _%tl4649146817%_)
                                                           (if (gx#stx-pair/null?
                                                                _%tl4638347204%_)
-                                                              (let ((_%__splice7721277213%_
+                                                              (let ((_%__splice7724577246%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#syntax-split-splice _%tl4638347204%_ '0)))
                         (let ((_%tl4649446823%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721277213%_ '1)))
+                                 (##vector-ref _%__splice7724577246%_ '1)))
                               (_%target4649246820%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721277213%_ '0))))
+                                 (##vector-ref _%__splice7724577246%_ '0))))
                           (if (gx#stx-null? _%tl4649446823%_)
-                              (_%__match7747077471%_
+                              (_%__match7750377504%_
                                _%e4637847187%_
                                _%hd4637947191%_
                                _%tl4638047194%_
@@ -2356,7 +2356,7 @@
                                _%e4648946810%_
                                _%hd4649046814%_
                                _%tl4649146817%_
-                               _%__splice7721277213%_
+                               _%__splice7724577246%_
                                _%target4649246820%_
                                _%tl4649446823%_)
                               (if (gx#stx-pair? _%hd4638547211%_)
@@ -2400,7 +2400,7 @@
                                  (declare (not safe))
                                  (##car _%e4651446668%_))))
                           (if (gx#stx-pair/null? _%tl4638347204%_)
-                              (let ((_%__splice7721677217%_
+                              (let ((_%__splice7724977250%_
                                      (gx#syntax-split-splice
                                       _%tl4638347204%_
                                       '0)))
@@ -2408,16 +2408,16 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '1)))
                                       (_%target4651746678%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '0))))
                                   (if (gx#stx-null? _%tl4651946681%_)
-                                      (_%__match7750277503%_
+                                      (_%__match7753577536%_
                                        _%e4637847187%_
                                        _%hd4637947191%_
                                        _%tl4638047194%_
@@ -2430,7 +2430,7 @@
                                        _%e4651446668%_
                                        _%hd4651546672%_
                                        _%tl4651646675%_
-                                       _%__splice7721677217%_
+                                       _%__splice7724977250%_
                                        _%target4651746678%_
                                        _%tl4651946681%_)
                                       (let ()
@@ -2454,18 +2454,18 @@
                       (_%hd4651546672%_
                        (let () (declare (not safe)) (##car _%e4651446668%_))))
                   (if (gx#stx-pair/null? _%tl4638347204%_)
-                      (let ((_%__splice7721677217%_
+                      (let ((_%__splice7724977250%_
                              (gx#syntax-split-splice _%tl4638347204%_ '0)))
                         (let ((_%tl4651946681%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '1)))
+                                 (##vector-ref _%__splice7724977250%_ '1)))
                               (_%target4651746678%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '0))))
+                                 (##vector-ref _%__splice7724977250%_ '0))))
                           (if (gx#stx-null? _%tl4651946681%_)
-                              (_%__match7750277503%_
+                              (_%__match7753577536%_
                                _%e4637847187%_
                                _%hd4637947191%_
                                _%tl4638047194%_
@@ -2478,7 +2478,7 @@
                                _%e4651446668%_
                                _%hd4651546672%_
                                _%tl4651646675%_
-                               _%__splice7721677217%_
+                               _%__splice7724977250%_
                                _%target4651746678%_
                                _%tl4651946681%_)
                               (let ()
@@ -2501,7 +2501,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4638347204%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4638347204%_
                                                               '0)))
@@ -2509,13 +2509,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4637847187%_
                        _%hd4637947191%_
                        _%tl4638047194%_
@@ -2528,7 +2528,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -2551,7 +2551,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4638347204%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4638347204%_
                                                           '0)))
@@ -2560,18 +2560,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4637847187%_
                                                            _%hd4637947191%_
                                                            _%tl4638047194%_
@@ -2584,7 +2584,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -2610,7 +2610,7 @@
                                                  (##car _%e4651446668%_))))
                                           (if (gx#stx-pair/null?
                                                _%tl4638347204%_)
-                                              (let ((_%__splice7721677217%_
+                                              (let ((_%__splice7724977250%_
                                                      (gx#syntax-split-splice
                                                       _%tl4638347204%_
                                                       '0)))
@@ -2618,17 +2618,17 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '1)))
                                                       (_%target4651746678%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _%tl4651946681%_)
-                                                      (_%__match7750277503%_
+                                                      (_%__match7753577536%_
                                                        _%e4637847187%_
                                                        _%hd4637947191%_
                                                        _%tl4638047194%_
@@ -2641,7 +2641,7 @@
                                                        _%e4651446668%_
                                                        _%hd4651546672%_
                                                        _%tl4651646675%_
-                                                       _%__splice7721677217%_
+                                                       _%__splice7724977250%_
                                                        _%target4651746678%_
                                                        _%tl4651946681%_)
                                                       (let ()
@@ -2653,7 +2653,7 @@
                                       (let ()
                                         (declare (not safe))
                                         (_%g4633846547%_))))))))
-                   (_%__match7726877269%_
+                   (_%__match7730177302%_
                     (lambda (_%e4634547363%_
                              _%hd4634647367%_
                              _%tl4634747370%_
@@ -2672,7 +2672,7 @@
                              _%e4636047413%_
                              _%hd4636147417%_
                              _%tl4636247420%_
-                             _%__splice7719677197%_
+                             _%__splice7722977230%_
                              _%target4636347423%_
                              _%tl4636547426%_)
                       (letrec ((_%loop4636647429%_
@@ -2726,13 +2726,13 @@
                                                         (gx#datum->syntax
                                                          '#f
                                                          ':?))))
-                                              (_%__kont7719477195%_
+                                              (_%__kont7722777228%_
                                                _%L47453%_
                                                _%L47455%_
                                                _%L47456%_
                                                _%L47457%_
                                                _%L47458%_)
-                                              (_%__match7729877299%_
+                                              (_%__match7733177332%_
                                                _%e4634547363%_
                                                _%hd4634647367%_
                                                _%tl4634747370%_
@@ -2749,8 +2749,8 @@
                                                _%hd4635847407%_
                                                _%tl4635947410%_))))))))
                         (_%loop4636647429%_ _%target4636347423%_ '())))))
-              (if (gx#stx-pair? _%__stx7719177192%_)
-                  (let ((_%e4634547363%_ (gx#syntax-e _%__stx7719177192%_)))
+              (if (gx#stx-pair? _%__stx7722477225%_)
+                  (let ((_%e4634547363%_ (gx#syntax-e _%__stx7722477225%_)))
                     (let ((_%tl4634747370%_
                            (let ()
                              (declare (not safe))
@@ -2823,7 +2823,7 @@
                              (##car _%e4636047413%_))))
                       (if (gx#stx-null? _%tl4636247420%_)
                           (if (gx#stx-pair/null? _%tl4635047380%_)
-                              (let ((_%__splice7719677197%_
+                              (let ((_%__splice7722977230%_
                                      (gx#syntax-split-splice
                                       _%tl4635047380%_
                                       '0)))
@@ -2831,16 +2831,16 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7719677197%_
+                                          _%__splice7722977230%_
                                           '1)))
                                       (_%target4636347423%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7719677197%_
+                                          _%__splice7722977230%_
                                           '0))))
                                   (if (gx#stx-null? _%tl4636547426%_)
-                                      (_%__match7726877269%_
+                                      (_%__match7730177302%_
                                        _%e4634547363%_
                                        _%hd4634647367%_
                                        _%tl4634747370%_
@@ -2859,7 +2859,7 @@
                                        _%e4636047413%_
                                        _%hd4636147417%_
                                        _%tl4636247420%_
-                                       _%__splice7719677197%_
+                                       _%__splice7722977230%_
                                        _%target4636347423%_
                                        _%tl4636547426%_)
                                       (if (gx#stx-pair? _%hd4635247387%_)
@@ -2899,7 +2899,7 @@
                                     (_%g4633846547%_))))
                           (if (gx#identifier? _%hd4635847407%_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core/contract~Using[1]#_g82590_|
+                                   |gerbil/core/contract~Using[1]#_g82623_|
                                    _%hd4635847407%_)
                                   (if (gx#stx-pair? _%tl4636247420%_)
                                       (let ((_%e4639647247%_
@@ -2928,19 +2928,19 @@
                                                        _%tl4640147264%_)
                                                       (if (gx#stx-pair/null?
                                                            _%tl4635047380%_)
-                                                          (let ((_%__splice7720077201%_
+                                                          (let ((_%__splice7723377234%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (gx#syntax-split-splice _%tl4635047380%_ '0)))
                     (let ((_%tl4640447270%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7720077201%_ '1)))
+                             (##vector-ref _%__splice7723377234%_ '1)))
                           (_%target4640247267%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7720077201%_ '0))))
+                             (##vector-ref _%__splice7723377234%_ '0))))
                       (if (gx#stx-null? _%tl4640447270%_)
-                          (_%__match7733077331%_
+                          (_%__match7736377364%_
                            _%e4634547363%_
                            _%hd4634647367%_
                            _%tl4634747370%_
@@ -2965,7 +2965,7 @@
                            _%e4639947257%_
                            _%hd4640047261%_
                            _%tl4640147264%_
-                           _%__splice7720077201%_
+                           _%__splice7723377234%_
                            _%target4640247267%_
                            _%tl4640447270%_)
                           (if (gx#stx-pair? _%hd4635247387%_)
@@ -3008,20 +3008,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4635047380%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4635047380%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4634547363%_
                                    _%hd4634647367%_
                                    _%tl4634747370%_
@@ -3034,7 +3034,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -3046,25 +3046,25 @@
                                               (if (gx#identifier?
                                                    _%hd4635547397%_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core/contract~Using[1]#_g82589_|
+                                                       |gerbil/core/contract~Using[1]#_g82622_|
                                                        _%hd4635547397%_)
                                                       (if (gx#stx-null?
                                                            _%tl4639847254%_)
                                                           (if (gx#stx-pair/null?
                                                                _%tl4635047380%_)
-                                                              (let ((_%__splice7721277213%_
+                                                              (let ((_%__splice7724577246%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#syntax-split-splice _%tl4635047380%_ '0)))
                         (let ((_%tl4649446823%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721277213%_ '1)))
+                                 (##vector-ref _%__splice7724577246%_ '1)))
                               (_%target4649246820%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721277213%_ '0))))
+                                 (##vector-ref _%__splice7724577246%_ '0))))
                           (if (gx#stx-null? _%tl4649446823%_)
-                              (_%__match7747077471%_
+                              (_%__match7750377504%_
                                _%e4634547363%_
                                _%hd4634647367%_
                                _%tl4634747370%_
@@ -3086,7 +3086,7 @@
                                _%e4639647247%_
                                _%hd4639747251%_
                                _%tl4639847254%_
-                               _%__splice7721277213%_
+                               _%__splice7724577246%_
                                _%target4649246820%_
                                _%tl4649446823%_)
                               (if (gx#stx-pair? _%hd4635247387%_)
@@ -3130,7 +3130,7 @@
                                  (declare (not safe))
                                  (##car _%e4651446668%_))))
                           (if (gx#stx-pair/null? _%tl4635047380%_)
-                              (let ((_%__splice7721677217%_
+                              (let ((_%__splice7724977250%_
                                      (gx#syntax-split-splice
                                       _%tl4635047380%_
                                       '0)))
@@ -3138,16 +3138,16 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '1)))
                                       (_%target4651746678%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7721677217%_
+                                          _%__splice7724977250%_
                                           '0))))
                                   (if (gx#stx-null? _%tl4651946681%_)
-                                      (_%__match7750277503%_
+                                      (_%__match7753577536%_
                                        _%e4634547363%_
                                        _%hd4634647367%_
                                        _%tl4634747370%_
@@ -3160,7 +3160,7 @@
                                        _%e4651446668%_
                                        _%hd4651546672%_
                                        _%tl4651646675%_
-                                       _%__splice7721677217%_
+                                       _%__splice7724977250%_
                                        _%target4651746678%_
                                        _%tl4651946681%_)
                                       (let ()
@@ -3181,20 +3181,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4635047380%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4635047380%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4634547363%_
                                    _%hd4634647367%_
                                    _%tl4634747370%_
@@ -3207,7 +3207,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -3229,18 +3229,18 @@
                       (_%hd4651546672%_
                        (let () (declare (not safe)) (##car _%e4651446668%_))))
                   (if (gx#stx-pair/null? _%tl4635047380%_)
-                      (let ((_%__splice7721677217%_
+                      (let ((_%__splice7724977250%_
                              (gx#syntax-split-splice _%tl4635047380%_ '0)))
                         (let ((_%tl4651946681%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '1)))
+                                 (##vector-ref _%__splice7724977250%_ '1)))
                               (_%target4651746678%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '0))))
+                                 (##vector-ref _%__splice7724977250%_ '0))))
                           (if (gx#stx-null? _%tl4651946681%_)
-                              (_%__match7750277503%_
+                              (_%__match7753577536%_
                                _%e4634547363%_
                                _%hd4634647367%_
                                _%tl4634747370%_
@@ -3253,7 +3253,7 @@
                                _%e4651446668%_
                                _%hd4651546672%_
                                _%tl4651646675%_
-                               _%__splice7721677217%_
+                               _%__splice7724977250%_
                                _%target4651746678%_
                                _%tl4651946681%_)
                               (let ()
@@ -3276,7 +3276,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4635047380%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4635047380%_
                                                           '0)))
@@ -3285,18 +3285,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4634547363%_
                                                            _%hd4634647367%_
                                                            _%tl4634747370%_
@@ -3309,7 +3309,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -3324,7 +3324,7 @@
                                             (_%g4633846547%_))))
                                   (if (gx#identifier? _%hd4635547397%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/contract~Using[1]#_g82589_|
+                                           |gerbil/core/contract~Using[1]#_g82622_|
                                            _%hd4635547397%_)
                                           (if (gx#stx-pair? _%tl4636247420%_)
                                               (let ((_%e4648946810%_
@@ -3342,19 +3342,19 @@
                                                        _%tl4649146817%_)
                                                       (if (gx#stx-pair/null?
                                                            _%tl4635047380%_)
-                                                          (let ((_%__splice7721277213%_
+                                                          (let ((_%__splice7724577246%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (gx#syntax-split-splice _%tl4635047380%_ '0)))
                     (let ((_%tl4649446823%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721277213%_ '1)))
+                             (##vector-ref _%__splice7724577246%_ '1)))
                           (_%target4649246820%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721277213%_ '0))))
+                             (##vector-ref _%__splice7724577246%_ '0))))
                       (if (gx#stx-null? _%tl4649446823%_)
-                          (_%__match7747077471%_
+                          (_%__match7750377504%_
                            _%e4634547363%_
                            _%hd4634647367%_
                            _%tl4634747370%_
@@ -3376,7 +3376,7 @@
                            _%e4648946810%_
                            _%hd4649046814%_
                            _%tl4649146817%_
-                           _%__splice7721277213%_
+                           _%__splice7724577246%_
                            _%target4649246820%_
                            _%tl4649446823%_)
                           (if (gx#stx-pair? _%hd4635247387%_)
@@ -3419,20 +3419,20 @@
                              (declare (not safe))
                              (##car _%e4651446668%_))))
                       (if (gx#stx-pair/null? _%tl4635047380%_)
-                          (let ((_%__splice7721677217%_
+                          (let ((_%__splice7724977250%_
                                  (gx#syntax-split-splice _%tl4635047380%_ '0)))
                             (let ((_%tl4651946681%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7721677217%_ '1)))
+                                     (##vector-ref _%__splice7724977250%_ '1)))
                                   (_%target4651746678%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7721677217%_
+                                      _%__splice7724977250%_
                                       '0))))
                               (if (gx#stx-null? _%tl4651946681%_)
-                                  (_%__match7750277503%_
+                                  (_%__match7753577536%_
                                    _%e4634547363%_
                                    _%hd4634647367%_
                                    _%tl4634747370%_
@@ -3445,7 +3445,7 @@
                                    _%e4651446668%_
                                    _%hd4651546672%_
                                    _%tl4651646675%_
-                                   _%__splice7721677217%_
+                                   _%__splice7724977250%_
                                    _%target4651746678%_
                                    _%tl4651946681%_)
                                   (let ()
@@ -3471,19 +3471,19 @@
                                                              (##car _%e4651446668%_))))
                                                       (if (gx#stx-pair/null?
                                                            _%tl4635047380%_)
-                                                          (let ((_%__splice7721677217%_
+                                                          (let ((_%__splice7724977250%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (gx#syntax-split-splice _%tl4635047380%_ '0)))
                     (let ((_%tl4651946681%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '1)))
+                             (##vector-ref _%__splice7724977250%_ '1)))
                           (_%target4651746678%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7721677217%_ '0))))
+                             (##vector-ref _%__splice7724977250%_ '0))))
                       (if (gx#stx-null? _%tl4651946681%_)
-                          (_%__match7750277503%_
+                          (_%__match7753577536%_
                            _%e4634547363%_
                            _%hd4634647367%_
                            _%tl4634747370%_
@@ -3496,7 +3496,7 @@
                            _%e4651446668%_
                            _%hd4651546672%_
                            _%tl4651646675%_
-                           _%__splice7721677217%_
+                           _%__splice7724977250%_
                            _%target4651746678%_
                            _%tl4651946681%_)
                           (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -3519,7 +3519,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4635047380%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4635047380%_
                                                               '0)))
@@ -3527,13 +3527,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4634547363%_
                        _%hd4634647367%_
                        _%tl4634747370%_
@@ -3546,7 +3546,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -3569,7 +3569,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4635047380%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4635047380%_
                                                           '0)))
@@ -3578,18 +3578,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4634547363%_
                                                            _%hd4634647367%_
                                                            _%tl4634747370%_
@@ -3602,7 +3602,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -3617,7 +3617,7 @@
                                             (_%g4633846547%_)))))
                               (if (gx#identifier? _%hd4635547397%_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core/contract~Using[1]#_g82589_|
+                                       |gerbil/core/contract~Using[1]#_g82622_|
                                        _%hd4635547397%_)
                                       (if (gx#stx-pair? _%tl4636247420%_)
                                           (let ((_%e4648946810%_
@@ -3635,7 +3635,7 @@
                                                    _%tl4649146817%_)
                                                   (if (gx#stx-pair/null?
                                                        _%tl4635047380%_)
-                                                      (let ((_%__splice7721277213%_
+                                                      (let ((_%__splice7724577246%_
                                                              (gx#syntax-split-splice
                                                               _%tl4635047380%_
                                                               '0)))
@@ -3643,13 +3643,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721277213%_ '1)))
+                         (##vector-ref _%__splice7724577246%_ '1)))
                       (_%target4649246820%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721277213%_ '0))))
+                         (##vector-ref _%__splice7724577246%_ '0))))
                   (if (gx#stx-null? _%tl4649446823%_)
-                      (_%__match7747077471%_
+                      (_%__match7750377504%_
                        _%e4634547363%_
                        _%hd4634647367%_
                        _%tl4634747370%_
@@ -3671,7 +3671,7 @@
                        _%e4648946810%_
                        _%hd4649046814%_
                        _%tl4649146817%_
-                       _%__splice7721277213%_
+                       _%__splice7724577246%_
                        _%target4649246820%_
                        _%tl4649446823%_)
                       (if (gx#stx-pair? _%hd4635247387%_)
@@ -3713,18 +3713,18 @@
                       (_%hd4651546672%_
                        (let () (declare (not safe)) (##car _%e4651446668%_))))
                   (if (gx#stx-pair/null? _%tl4635047380%_)
-                      (let ((_%__splice7721677217%_
+                      (let ((_%__splice7724977250%_
                              (gx#syntax-split-splice _%tl4635047380%_ '0)))
                         (let ((_%tl4651946681%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '1)))
+                                 (##vector-ref _%__splice7724977250%_ '1)))
                               (_%target4651746678%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '0))))
+                                 (##vector-ref _%__splice7724977250%_ '0))))
                           (if (gx#stx-null? _%tl4651946681%_)
-                              (_%__match7750277503%_
+                              (_%__match7753577536%_
                                _%e4634547363%_
                                _%hd4634647367%_
                                _%tl4634747370%_
@@ -3737,7 +3737,7 @@
                                _%e4651446668%_
                                _%hd4651546672%_
                                _%tl4651646675%_
-                               _%__splice7721677217%_
+                               _%__splice7724977250%_
                                _%target4651746678%_
                                _%tl4651946681%_)
                               (let ()
@@ -3760,7 +3760,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4635047380%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4635047380%_
                                                               '0)))
@@ -3768,13 +3768,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4634547363%_
                        _%hd4634647367%_
                        _%tl4634747370%_
@@ -3787,7 +3787,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -3810,7 +3810,7 @@
                                                      (##car _%e4651446668%_))))
                                               (if (gx#stx-pair/null?
                                                    _%tl4635047380%_)
-                                                  (let ((_%__splice7721677217%_
+                                                  (let ((_%__splice7724977250%_
                                                          (gx#syntax-split-splice
                                                           _%tl4635047380%_
                                                           '0)))
@@ -3819,18 +3819,18 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '1)))
                                                           (_%target4651746678%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7721677217%_
+                                                              _%__splice7724977250%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl4651946681%_)
-                                                          (_%__match7750277503%_
+                                                          (_%__match7753577536%_
                                                            _%e4634547363%_
                                                            _%hd4634647367%_
                                                            _%tl4634747370%_
@@ -3843,7 +3843,7 @@
                                                            _%e4651446668%_
                                                            _%hd4651546672%_
                                                            _%tl4651646675%_
-                                                           _%__splice7721677217%_
+                                                           _%__splice7724977250%_
                                                            _%target4651746678%_
                                                            _%tl4651946681%_)
                                                           (let ()
@@ -3869,7 +3869,7 @@
                                                  (##car _%e4651446668%_))))
                                           (if (gx#stx-pair/null?
                                                _%tl4635047380%_)
-                                              (let ((_%__splice7721677217%_
+                                              (let ((_%__splice7724977250%_
                                                      (gx#syntax-split-splice
                                                       _%tl4635047380%_
                                                       '0)))
@@ -3877,17 +3877,17 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '1)))
                                                       (_%target4651746678%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7721677217%_
+                                                          _%__splice7724977250%_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _%tl4651946681%_)
-                                                      (_%__match7750277503%_
+                                                      (_%__match7753577536%_
                                                        _%e4634547363%_
                                                        _%hd4634647367%_
                                                        _%tl4634747370%_
@@ -3900,7 +3900,7 @@
                                                        _%e4651446668%_
                                                        _%hd4651546672%_
                                                        _%tl4651646675%_
-                                                       _%__splice7721677217%_
+                                                       _%__splice7724977250%_
                                                        _%target4651746678%_
                                                        _%tl4651946681%_)
                                                       (let ()
@@ -3914,20 +3914,20 @@
                                         (_%g4633846547%_))))))))
                   (if (gx#stx-null? _%tl4635947410%_)
                       (if (gx#stx-pair/null? _%tl4635047380%_)
-                          (let ((_%__splice7720477205%_
+                          (let ((_%__splice7723777238%_
                                  (gx#syntax-split-splice _%tl4635047380%_ '0)))
                             (let ((_%tl4643247087%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7720477205%_ '1)))
+                                     (##vector-ref _%__splice7723777238%_ '1)))
                                   (_%target4643047084%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7720477205%_
+                                      _%__splice7723777238%_
                                       '0))))
                               (if (gx#stx-null? _%tl4643247087%_)
-                                  (_%__match7737077371%_
+                                  (_%__match7740377404%_
                                    _%e4634547363%_
                                    _%hd4634647367%_
                                    _%tl4634747370%_
@@ -3943,7 +3943,7 @@
                                    _%e4635747403%_
                                    _%hd4635847407%_
                                    _%tl4635947410%_
-                                   _%__splice7720477205%_
+                                   _%__splice7723777238%_
                                    _%target4643047084%_
                                    _%tl4643247087%_)
                                   (if (gx#stx-pair? _%hd4635247387%_)
@@ -3990,7 +3990,7 @@
                                      (declare (not safe))
                                      (##car _%e4651446668%_))))
                               (if (gx#stx-pair/null? _%tl4635047380%_)
-                                  (let ((_%__splice7721677217%_
+                                  (let ((_%__splice7724977250%_
                                          (gx#syntax-split-splice
                                           _%tl4635047380%_
                                           '0)))
@@ -3998,16 +3998,16 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '1)))
                                           (_%target4651746678%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7721677217%_
+                                              _%__splice7724977250%_
                                               '0))))
                                       (if (gx#stx-null? _%tl4651946681%_)
-                                          (_%__match7750277503%_
+                                          (_%__match7753577536%_
                                            _%e4634547363%_
                                            _%hd4634647367%_
                                            _%tl4634747370%_
@@ -4020,7 +4020,7 @@
                                            _%e4651446668%_
                                            _%hd4651546672%_
                                            _%tl4651646675%_
-                                           _%__splice7721677217%_
+                                           _%__splice7724977250%_
                                            _%target4651746678%_
                                            _%tl4651946681%_)
                                           (let ()
@@ -4044,18 +4044,18 @@
                       (_%hd4651546672%_
                        (let () (declare (not safe)) (##car _%e4651446668%_))))
                   (if (gx#stx-pair/null? _%tl4635047380%_)
-                      (let ((_%__splice7721677217%_
+                      (let ((_%__splice7724977250%_
                              (gx#syntax-split-splice _%tl4635047380%_ '0)))
                         (let ((_%tl4651946681%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '1)))
+                                 (##vector-ref _%__splice7724977250%_ '1)))
                               (_%target4651746678%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7721677217%_ '0))))
+                                 (##vector-ref _%__splice7724977250%_ '0))))
                           (if (gx#stx-null? _%tl4651946681%_)
-                              (_%__match7750277503%_
+                              (_%__match7753577536%_
                                _%e4634547363%_
                                _%hd4634647367%_
                                _%tl4634747370%_
@@ -4068,7 +4068,7 @@
                                _%e4651446668%_
                                _%hd4651546672%_
                                _%tl4651646675%_
-                               _%__splice7721677217%_
+                               _%__splice7724977250%_
                                _%target4651746678%_
                                _%tl4651946681%_)
                               (let ()
@@ -4091,7 +4091,7 @@
                                                          (##car _%e4651446668%_))))
                                                   (if (gx#stx-pair/null?
                                                        _%tl4635047380%_)
-                                                      (let ((_%__splice7721677217%_
+                                                      (let ((_%__splice7724977250%_
                                                              (gx#syntax-split-splice
                                                               _%tl4635047380%_
                                                               '0)))
@@ -4099,13 +4099,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '1)))
+                         (##vector-ref _%__splice7724977250%_ '1)))
                       (_%target4651746678%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7721677217%_ '0))))
+                         (##vector-ref _%__splice7724977250%_ '0))))
                   (if (gx#stx-null? _%tl4651946681%_)
-                      (_%__match7750277503%_
+                      (_%__match7753577536%_
                        _%e4634547363%_
                        _%hd4634647367%_
                        _%tl4634747370%_
@@ -4118,7 +4118,7 @@
                        _%e4651446668%_
                        _%hd4651546672%_
                        _%tl4651646675%_
-                       _%__splice7721677217%_
+                       _%__splice7724977250%_
                        _%target4651746678%_
                        _%tl4651946681%_)
                       (let () (declare (not safe)) (_%g4633846547%_)))))
@@ -4129,7 +4129,7 @@
                                                 (_%g4633846547%_))))))
                                   (if (gx#stx-null? _%hd4634947377%_)
                                       (if (gx#stx-pair/null? _%tl4635047380%_)
-                                          (let ((_%__splice7722077221%_
+                                          (let ((_%__splice7725377254%_
                                                  (gx#syntax-split-splice
                                                   _%tl4635047380%_
                                                   '0)))
@@ -4137,24 +4137,24 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7722077221%_
+                                                      _%__splice7725377254%_
                                                       '1)))
                                                   (_%target4653346574%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7722077221%_
+                                                      _%__splice7725377254%_
                                                       '0))))
                                               (if (gx#stx-null?
                                                    _%tl4653546577%_)
-                                                  (_%__match7752477525%_
+                                                  (_%__match7755777558%_
                                                    _%e4634547363%_
                                                    _%hd4634647367%_
                                                    _%tl4634747370%_
                                                    _%e4634847373%_
                                                    _%hd4634947377%_
                                                    _%tl4635047380%_
-                                                   _%__splice7722077221%_
+                                                   _%__splice7725377254%_
                                                    _%target4653346574%_
                                                    _%tl4653546577%_)
                                                   (let ()
@@ -4225,7 +4225,7 @@
                                                   (if (gx#identifier?
                                                        _%hd4754047600%_)
                                                       (if (gx#free-identifier=?
-                                                           |gerbil/core/contract~Using[1]#_g82591_|
+                                                           |gerbil/core/contract~Using[1]#_g82624_|
                                                            _%hd4754047600%_)
                                                           (if (gx#stx-pair?
                                                                _%tl4754147603%_)
@@ -4242,30 +4242,30 @@
                                  (##cdr _%e4754247606%_))))
                           (if (gx#stx-null? _%tl4754447613%_)
                               (if (gx#stx-pair/null? _%tl4753547583%_)
-                                  (let ((_g82592_
+                                  (let ((_g82625_
                                          (gx#syntax-split-splice
                                           _%tl4753547583%_
                                           '0)))
                                     (begin
-                                      (let ((_g82593_
+                                      (let ((_g82626_
                                              (let ()
                                                (declare (not safe))
-                                               (if (##values? _g82592_)
-                                                   (##vector-length _g82592_)
+                                               (if (##values? _g82625_)
+                                                   (##vector-length _g82625_)
                                                    1))))
                                         (if (not (let ()
                                                    (declare (not safe))
-                                                   (##fx= _g82593_ 2)))
+                                                   (##fx= _g82626_ 2)))
                                             (error "Context expects 2 values"
-                                                   _g82593_)))
+                                                   _g82626_)))
                                       (let ((_%target4754547616%_
                                              (let ()
                                                (declare (not safe))
-                                               (##vector-ref _g82592_ 0)))
+                                               (##vector-ref _g82625_ 0)))
                                             (_%tl4754747619%_
                                              (let ()
                                                (declare (not safe))
-                                               (##vector-ref _g82592_ 1))))
+                                               (##vector-ref _g82625_ 1))))
                                         (if (gx#stx-null? _%tl4754747619%_)
                                             (letrec ((_%loop4754847622%_
                                                       (lambda (_%hd4754647626%_
@@ -4336,18 +4336,18 @@
     (define |gerbil/core/contract~Using[1]#!class-slot-type|
       (lambda (_%klass48249%_ _%slot48251%_)
         (let ((_%$e48253%_
-               (let ((__obj82429 _%klass48249%_))
+               (let ((__obj82462 _%klass48249%_))
                  (if (let ()
                        (declare (not safe))
                        (##structure-direct-instance-of?
-                        __obj82429
+                        __obj82462
                         'gerbil.core#class-type-info::t))
                      (let ()
                        (declare (not safe))
-                       (##unchecked-structure-ref __obj82429 '19 '#f '#f))
+                       (##unchecked-structure-ref __obj82462 '19 '#f '#f))
                      (class-slot-ref
                       gerbil/core/mop~MOP-2#class-type-info::t
-                      __obj82429
+                      __obj82462
                       'slot-types)))))
           (if _%$e48253%_
               ((lambda (_%slot-types48257%_)
@@ -4357,18 +4357,18 @@
     (define |gerbil/core/contract~Using[1]#!class-slot-default|
       (lambda (_%klass48230%_ _%slot48232%_)
         (let ((_%$e48234%_
-               (let ((__obj82430 _%klass48230%_))
+               (let ((__obj82463 _%klass48230%_))
                  (if (let ()
                        (declare (not safe))
                        (##structure-direct-instance-of?
-                        __obj82430
+                        __obj82463
                         'gerbil.core#class-type-info::t))
                      (let ()
                        (declare (not safe))
-                       (##unchecked-structure-ref __obj82430 '20 '#f '#f))
+                       (##unchecked-structure-ref __obj82463 '20 '#f '#f))
                      (class-slot-ref
                       gerbil/core/mop~MOP-2#class-type-info::t
-                      __obj82430
+                      __obj82463
                       'slot-defaults)))))
           (if _%$e48234%_
               ((lambda (_%slot-defaults48238%_)
@@ -4382,18 +4382,18 @@
     (define |gerbil/core/contract~Using[1]#!class-slot-contract|
       (lambda (_%klass48211%_ _%slot48213%_)
         (let ((_%$e48215%_
-               (let ((__obj82431 _%klass48211%_))
+               (let ((__obj82464 _%klass48211%_))
                  (if (let ()
                        (declare (not safe))
                        (##structure-direct-instance-of?
-                        __obj82431
+                        __obj82464
                         'gerbil.core#class-type-info::t))
                      (let ()
                        (declare (not safe))
-                       (##unchecked-structure-ref __obj82431 '20 '#f '#f))
+                       (##unchecked-structure-ref __obj82464 '20 '#f '#f))
                      (class-slot-ref
                       gerbil/core/mop~MOP-2#class-type-info::t
-                      __obj82431
+                      __obj82464
                       'slot-defaults)))))
           (if _%$e48215%_
               ((lambda (_%slot-defaults48219%_)
@@ -4412,25 +4412,25 @@
                 _%slot47981%_)))
           (if _%contract4798247984%_
               (let* ((_%contract47988%_ _%contract4798247984%_)
-                     (_%__stx7752777528%_ _%contract47988%_)
+                     (_%__stx7756077561%_ _%contract47988%_)
                      (_%g4799348030%_
                       (lambda ()
                         (gx#raise-syntax-error
                          '#f
                          '"Bad syntax; invalid match target"
-                         _%__stx7752777528%_))))
-                (let ((_%__kont7753077531%_
+                         _%__stx7756077561%_))))
+                (let ((_%__kont7756377564%_
                        (lambda (_%L48180%_ _%L48182%_)
                          (not (gx#free-identifier=?
                                _%L48182%_
                                (gx#datum->syntax '#f ':-)))))
-                      (_%__kont7753277533%_
+                      (_%__kont7756577566%_
                        (lambda (_%L48120%_ _%L48122%_ _%L48123%_)
                          (not (gx#free-identifier=?
                                _%L48122%_
                                (gx#datum->syntax '#f ':-)))))
-                      (_%__kont7753477535%_ (lambda (_%L48057%_) '#f)))
-                  (let* ((_%__match7758077581%_
+                      (_%__kont7756777568%_ (lambda (_%L48057%_) '#f)))
+                  (let* ((_%__match7761377614%_
                           (lambda (_%e4800648080%_
                                    _%hd4800748084%_
                                    _%tl4800848087%_
@@ -4459,14 +4459,14 @@
                                            (gx#free-identifier=?
                                             _%L48122%_
                                             (gx#datum->syntax '#f ':?))))
-                                  (_%__kont7753277533%_
+                                  (_%__kont7756577566%_
                                    _%L48120%_
                                    _%L48122%_
                                    _%L48123%_)
                                   (let ()
                                     (declare (not safe))
                                     (_%g4799348030%_))))))
-                         (_%__match7755077551%_
+                         (_%__match7758377584%_
                           (lambda (_%e4799748160%_
                                    _%hd4799848164%_
                                    _%tl4799948167%_
@@ -4488,12 +4488,12 @@
                                            (gx#free-identifier=?
                                             _%L48182%_
                                             (gx#datum->syntax '#f ':?))))
-                                  (_%__kont7753077531%_ _%L48180%_ _%L48182%_)
+                                  (_%__kont7756377564%_ _%L48180%_ _%L48182%_)
                                   (if (gx#identifier? _%hd4799848164%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/contract~Using[1]#_g82594_|
+                                           |gerbil/core/contract~Using[1]#_g82627_|
                                            _%hd4799848164%_)
-                                          (_%__kont7753477535%_
+                                          (_%__kont7756777568%_
                                            _%hd4800148174%_)
                                           (let ()
                                             (declare (not safe))
@@ -4501,9 +4501,9 @@
                                       (let ()
                                         (declare (not safe))
                                         (_%g4799348030%_))))))))
-                    (if (gx#stx-pair? _%__stx7752777528%_)
+                    (if (gx#stx-pair? _%__stx7756077561%_)
                         (let ((_%e4799748160%_
-                               (gx#syntax-e _%__stx7752777528%_)))
+                               (gx#syntax-e _%__stx7756077561%_)))
                           (let ((_%tl4799948167%_
                                  (let ()
                                    (declare (not safe))
@@ -4524,7 +4524,7 @@
                                            (declare (not safe))
                                            (##car _%e4800048170%_))))
                                     (if (gx#stx-null? _%tl4800248177%_)
-                                        (_%__match7755077551%_
+                                        (_%__match7758377584%_
                                          _%e4799748160%_
                                          _%hd4799848164%_
                                          _%tl4799948167%_
@@ -4533,7 +4533,7 @@
                                          _%tl4800248177%_)
                                         (if (gx#identifier? _%hd4799848164%_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core/contract~Using[1]#_g82594_|
+                                                 |gerbil/core/contract~Using[1]#_g82627_|
                                                  _%hd4799848164%_)
                                                 (if (gx#stx-pair?
                                                      _%tl4800248177%_)
@@ -4559,7 +4559,7 @@
                                (declare (not safe))
                                (##car _%e4801548110%_))))
                         (if (gx#stx-null? _%tl4801748117%_)
-                            (_%__match7758077581%_
+                            (_%__match7761377614%_
                              _%e4799748160%_
                              _%hd4799848164%_
                              _%tl4799948167%_
@@ -4597,22 +4597,22 @@
                 _%slot47749%_)))
           (if _%contract4775047752%_
               (let* ((_%contract47756%_ _%contract4775047752%_)
-                     (_%__stx7760177602%_ _%contract47756%_)
+                     (_%__stx7763477635%_ _%contract47756%_)
                      (_%g4776147798%_
                       (lambda ()
                         (gx#raise-syntax-error
                          '#f
                          '"Bad syntax; invalid match target"
-                         _%__stx7760177602%_))))
-                (let ((_%__kont7760477605%_
+                         _%__stx7763477635%_))))
+                (let ((_%__kont7763777638%_
                        (lambda (_%L47948%_ _%L47950%_)
                          (not (gx#free-identifier=?
                                _%L47950%_
                                (gx#datum->syntax '#f ':-)))))
-                      (_%__kont7760677607%_
+                      (_%__kont7763977640%_
                        (lambda (_%L47888%_ _%L47890%_ _%L47891%_) '#t))
-                      (_%__kont7760877609%_ (lambda (_%L47825%_) '#t)))
-                  (let* ((_%__match7765477655%_
+                      (_%__kont7764177642%_ (lambda (_%L47825%_) '#t)))
+                  (let* ((_%__match7768777688%_
                           (lambda (_%e4777447848%_
                                    _%hd4777547852%_
                                    _%tl4777647855%_
@@ -4641,14 +4641,14 @@
                                            (gx#free-identifier=?
                                             _%L47890%_
                                             (gx#datum->syntax '#f ':?))))
-                                  (_%__kont7760677607%_
+                                  (_%__kont7763977640%_
                                    _%L47888%_
                                    _%L47890%_
                                    _%L47891%_)
                                   (let ()
                                     (declare (not safe))
                                     (_%g4776147798%_))))))
-                         (_%__match7762477625%_
+                         (_%__match7765777658%_
                           (lambda (_%e4776547928%_
                                    _%hd4776647932%_
                                    _%tl4776747935%_
@@ -4670,12 +4670,12 @@
                                            (gx#free-identifier=?
                                             _%L47950%_
                                             (gx#datum->syntax '#f ':?))))
-                                  (_%__kont7760477605%_ _%L47948%_ _%L47950%_)
+                                  (_%__kont7763777638%_ _%L47948%_ _%L47950%_)
                                   (if (gx#identifier? _%hd4776647932%_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/contract~Using[1]#_g82595_|
+                                           |gerbil/core/contract~Using[1]#_g82628_|
                                            _%hd4776647932%_)
-                                          (_%__kont7760877609%_
+                                          (_%__kont7764177642%_
                                            _%hd4776947942%_)
                                           (let ()
                                             (declare (not safe))
@@ -4683,9 +4683,9 @@
                                       (let ()
                                         (declare (not safe))
                                         (_%g4776147798%_))))))))
-                    (if (gx#stx-pair? _%__stx7760177602%_)
+                    (if (gx#stx-pair? _%__stx7763477635%_)
                         (let ((_%e4776547928%_
-                               (gx#syntax-e _%__stx7760177602%_)))
+                               (gx#syntax-e _%__stx7763477635%_)))
                           (let ((_%tl4776747935%_
                                  (let ()
                                    (declare (not safe))
@@ -4706,7 +4706,7 @@
                                            (declare (not safe))
                                            (##car _%e4776847938%_))))
                                     (if (gx#stx-null? _%tl4777047945%_)
-                                        (_%__match7762477625%_
+                                        (_%__match7765777658%_
                                          _%e4776547928%_
                                          _%hd4776647932%_
                                          _%tl4776747935%_
@@ -4715,7 +4715,7 @@
                                          _%tl4777047945%_)
                                         (if (gx#identifier? _%hd4776647932%_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core/contract~Using[1]#_g82595_|
+                                                 |gerbil/core/contract~Using[1]#_g82628_|
                                                  _%hd4776647932%_)
                                                 (if (gx#stx-pair?
                                                      _%tl4777047945%_)
@@ -4741,7 +4741,7 @@
                                (declare (not safe))
                                (##car _%e4778347878%_))))
                         (if (gx#stx-null? _%tl4778547885%_)
-                            (_%__match7765477655%_
+                            (_%__match7768777688%_
                              _%e4776547928%_
                              _%hd4776647932%_
                              _%tl4776747935%_
@@ -4807,18 +4807,18 @@
                        _%klass-or-id47709%_))
                     _%klass-or-id47709%_))
                (_%accessors47715%_
-                (let ((__obj82432 _%klass47712%_))
+                (let ((__obj82465 _%klass47712%_))
                   (if (let ()
                         (declare (not safe))
                         (##structure-direct-instance-of?
-                         __obj82432
+                         __obj82465
                          'gerbil.core#class-type-info::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj82432 '17 '#f '#f))
+                        (##unchecked-structure-ref __obj82465 '17 '#f '#f))
                       (class-slot-ref
                        gerbil/core/mop~MOP-2#class-type-info::t
-                       __obj82432
+                       __obj82465
                        'unchecked-accessors))))
                (_%$e47720%_ (agetq _%slot47710%_ _%accessors47715%_)))
           (if _%$e47720%_
@@ -4844,31 +4844,31 @@
                     _%klass-or-id47689%_))
                (_%mutators47696%_
                 (if _%checked?47691%_
-                    (let ((__obj82433 _%klass47693%_))
+                    (let ((__obj82466 _%klass47693%_))
                       (if (let ()
                             (declare (not safe))
                             (##structure-direct-instance-of?
-                             __obj82433
+                             __obj82466
                              'gerbil.core#class-type-info::t))
                           (let ()
                             (declare (not safe))
-                            (##unchecked-structure-ref __obj82433 '16 '#f '#f))
+                            (##unchecked-structure-ref __obj82466 '16 '#f '#f))
                           (class-slot-ref
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           __obj82433
+                           __obj82466
                            'mutators)))
-                    (let ((__obj82434 _%klass47693%_))
+                    (let ((__obj82467 _%klass47693%_))
                       (if (let ()
                             (declare (not safe))
                             (##structure-direct-instance-of?
-                             __obj82434
+                             __obj82467
                              'gerbil.core#class-type-info::t))
                           (let ()
                             (declare (not safe))
-                            (##unchecked-structure-ref __obj82434 '18 '#f '#f))
+                            (##unchecked-structure-ref __obj82467 '18 '#f '#f))
                           (class-slot-ref
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           __obj82434
+                           __obj82467
                            'unchecked-mutators)))))
                (_%$e47701%_ (agetq _%slot47690%_ _%mutators47696%_)))
           (if _%$e47701%_
@@ -4982,25 +4982,25 @@
                                                      (##cdr _%e4920749291%_))))
                                               (if (gx#stx-pair/null?
                                                    _%hd4920849295%_)
-                                                  (let ((_g82596_
+                                                  (let ((_g82629_
                                                          (gx#syntax-split-splice
                                                           _%hd4920849295%_
                                                           '0)))
                                                     (begin
-                                                      (let ((_g82597_
+                                                      (let ((_g82630_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (if (##values? _g82596_)
-                           (##vector-length _g82596_)
+                       (if (##values? _g82629_)
+                           (##vector-length _g82629_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g82597_ 2)))
-                    (error "Context expects 2 values" _g82597_)))
+                (if (not (let () (declare (not safe)) (##fx= _g82630_ 2)))
+                    (error "Context expects 2 values" _g82630_)))
               (let ((_%target4921049301%_
-                     (let () (declare (not safe)) (##vector-ref _g82596_ 0)))
+                     (let () (declare (not safe)) (##vector-ref _g82629_ 0)))
                     (_%tl4921249304%_
-                     (let () (declare (not safe)) (##vector-ref _g82596_ 1))))
+                     (let () (declare (not safe)) (##vector-ref _g82629_ 1))))
                 (if (gx#stx-null? _%tl4921249304%_)
                     (letrec ((_%loop4921349307%_
                               (lambda (_%hd4921149311%_ _%body4921749314%_)
@@ -5095,22 +5095,22 @@
                                   (_%g4918049224%_ _%g4918149228%_)))))
                       (_%g4917949381%_
                        (list (gx#syntax-local-introduce '@@type)
-                             (let ((__obj82435 _%klass49173%_))
+                             (let ((__obj82468 _%klass49173%_))
                                (if (let ()
                                      (declare (not safe))
                                      (##structure-direct-instance-of?
-                                      __obj82435
+                                      __obj82468
                                       'gerbil.core#class-type-info::t))
                                    (let ()
                                      (declare (not safe))
                                      (##unchecked-structure-ref
-                                      __obj82435
+                                      __obj82468
                                       '12
                                       '#f
                                       '#f))
                                    (class-slot-ref
                                     gerbil/core/mop~MOP-2#class-type-info::t
-                                    __obj82435
+                                    __obj82468
                                     'type-descriptor)))
                              _%var49175%_
                              _%klass49173%_
@@ -5200,22 +5200,22 @@
                                         (_%g4908549104%_ _%g4908649108%_)))))
                             (_%g4908449166%_
                              (list (let ((_%instance?49170%_
-                                          (let ((__obj82436 _%klass49073%_))
+                                          (let ((__obj82469 _%klass49073%_))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (##structure-direct-instance-of?
-                                                   __obj82436
+                                                   __obj82469
                                                    'gerbil.core#class-type-info::t))
                                                 (let ()
                                                   (declare (not safe))
                                                   (##unchecked-structure-ref
-                                                   __obj82436
+                                                   __obj82469
                                                    '14
                                                    '#f
                                                    '#f))
                                                 (class-slot-ref
                                                  gerbil/core/mop~MOP-2#class-type-info::t
-                                                 __obj82436
+                                                 __obj82469
                                                  'predicate)))))
                                      (if _%maybe?49071%_
                                          (cons '?
@@ -5229,14 +5229,14 @@
                                    _%var49065%_
                                    _%expr-body49080%_)))
                           _%expr-body49080%_)))))
-          (let* ((_%__stx7767577676%_ _%stx48262%_)
+          (let* ((_%__stx7770877709%_ _%stx48262%_)
                  (_%g4827348416%_
                   (lambda ()
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _%__stx7767577676%_))))
-            (let ((_%__kont7767877679%_
+                     _%__stx7770877709%_))))
+            (let ((_%__kont7771177712%_
                    (lambda (_%L48993%_ _%L48995%_ _%L48996%_ _%L48997%_)
                      (let* ((_%g4902249030%_
                              (lambda (_%g4902349026%_)
@@ -5260,24 +5260,24 @@
                                                      _%L48993%_))))
                                 _%g4902349034%_))))
                        (_%g4902149057%_
-                        (let ((__obj82437 (gx#syntax-local-value _%L48995%_)))
+                        (let ((__obj82470 (gx#syntax-local-value _%L48995%_)))
                           (if (let ()
                                 (declare (not safe))
                                 (##structure-direct-instance-of?
-                                 __obj82437
+                                 __obj82470
                                  'gerbil/core/contract~TypeReference#type-reference::t))
                               (let ()
                                 (declare (not safe))
                                 (##unchecked-structure-ref
-                                 __obj82437
+                                 __obj82470
                                  '1
                                  '#f
                                  '#f))
                               (class-slot-ref
                                |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                               __obj82437
+                               __obj82470
                                'identifier)))))))
-                  (_%__kont7768277683%_
+                  (_%__kont7771577716%_
                    (lambda (_%L48871%_ _%L48873%_ _%L48874%_)
                      (_%expand48267%_
                       _%L48874%_
@@ -5289,7 +5289,7 @@
                       '#t
                       '#t
                       '#f)))
-                  (_%__kont7768677687%_
+                  (_%__kont7771977720%_
                    (lambda (_%L48749%_ _%L48751%_ _%L48752%_)
                      (_%expand48267%_
                       _%L48752%_
@@ -5301,7 +5301,7 @@
                       '#t
                       '#t
                       '#t)))
-                  (_%__kont7769077691%_
+                  (_%__kont7772377724%_
                    (lambda (_%L48627%_ _%L48629%_ _%L48630%_)
                      (_%expand48267%_
                       _%L48630%_
@@ -5313,7 +5313,7 @@
                       '#f
                       '#f
                       '#f)))
-                  (_%__kont7769477695%_
+                  (_%__kont7772777728%_
                    (lambda (_%L48503%_ _%L48505%_ _%L48506%_)
                      (_%expand48267%_
                       _%L48506%_
@@ -5325,7 +5325,7 @@
                       '#f
                       '#t
                       '#f))))
-              (let* ((_%__match7791477915%_
+              (let* ((_%__match7794777948%_
                       (lambda (_%e4838748423%_
                                _%hd4838848427%_
                                _%tl4838948430%_
@@ -5341,7 +5341,7 @@
                                _%e4839948463%_
                                _%hd4840048467%_
                                _%tl4840148470%_
-                               _%__splice7769677697%_
+                               _%__splice7772977730%_
                                _%target4840248473%_
                                _%tl4840448476%_)
                         (letrec ((_%loop4840548479%_
@@ -5370,7 +5370,7 @@
                                                   (declare (not safe))
                                                   (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
                                                    _%L48505%_))
-                                                (_%__kont7769477695%_
+                                                (_%__kont7772777728%_
                                                  _%L48503%_
                                                  _%L48505%_
                                                  _%L48506%_)
@@ -5378,7 +5378,7 @@
                                                   (declare (not safe))
                                                   (_%g4827348416%_)))))))))
                           (_%loop4840548479%_ _%target4840248473%_ '()))))
-                     (_%__match7787077871%_
+                     (_%__match7790377904%_
                       (lambda (_%e4836048547%_
                                _%hd4836148551%_
                                _%tl4836248554%_
@@ -5394,7 +5394,7 @@
                                _%e4837248587%_
                                _%hd4837348591%_
                                _%tl4837448594%_
-                               _%__splice7769277693%_
+                               _%__splice7772577726%_
                                _%target4837548597%_
                                _%tl4837748600%_)
                         (letrec ((_%loop4837848603%_
@@ -5423,7 +5423,7 @@
                                                   (declare (not safe))
                                                   (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
                                                    _%L48629%_))
-                                                (_%__kont7769077691%_
+                                                (_%__kont7772377724%_
                                                  _%L48627%_
                                                  _%L48629%_
                                                  _%L48630%_)
@@ -5431,7 +5431,7 @@
                                                   (declare (not safe))
                                                   (_%g4827348416%_)))))))))
                           (_%loop4837848603%_ _%target4837548597%_ '()))))
-                     (_%__match7782677827%_
+                     (_%__match7785977860%_
                       (lambda (_%e4833348669%_
                                _%hd4833448673%_
                                _%tl4833548676%_
@@ -5447,7 +5447,7 @@
                                _%e4834548709%_
                                _%hd4834648713%_
                                _%tl4834748716%_
-                               _%__splice7768877689%_
+                               _%__splice7772177722%_
                                _%target4834848719%_
                                _%tl4835048722%_)
                         (letrec ((_%loop4835148725%_
@@ -5476,7 +5476,7 @@
                                                   (declare (not safe))
                                                   (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
                                                    _%L48751%_))
-                                                (_%__kont7768677687%_
+                                                (_%__kont7771977720%_
                                                  _%L48749%_
                                                  _%L48751%_
                                                  _%L48752%_)
@@ -5484,7 +5484,7 @@
                                                   (declare (not safe))
                                                   (_%g4827348416%_)))))))))
                           (_%loop4835148725%_ _%target4834848719%_ '()))))
-                     (_%__match7778277783%_
+                     (_%__match7781577816%_
                       (lambda (_%e4830648791%_
                                _%hd4830748795%_
                                _%tl4830848798%_
@@ -5500,7 +5500,7 @@
                                _%e4831848831%_
                                _%hd4831948835%_
                                _%tl4832048838%_
-                               _%__splice7768477685%_
+                               _%__splice7771777718%_
                                _%target4832148841%_
                                _%tl4832348844%_)
                         (letrec ((_%loop4832448847%_
@@ -5529,7 +5529,7 @@
                                                   (declare (not safe))
                                                   (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
                                                    _%L48873%_))
-                                                (_%__kont7768277683%_
+                                                (_%__kont7771577716%_
                                                  _%L48871%_
                                                  _%L48873%_
                                                  _%L48874%_)
@@ -5537,7 +5537,7 @@
                                                   (declare (not safe))
                                                   (_%g4827348416%_)))))))))
                           (_%loop4832448847%_ _%target4832148841%_ '()))))
-                     (_%__match7776277763%_
+                     (_%__match7779577796%_
                       (lambda (_%e4830648791%_
                                _%hd4830748795%_
                                _%tl4830848798%_
@@ -5552,7 +5552,7 @@
                                _%tl4831748828%_)
                         (if (gx#identifier? _%hd4831648825%_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core/contract~Using[1]#_g82598_|
+                                 |gerbil/core/contract~Using[1]#_g82631_|
                                  _%hd4831648825%_)
                                 (if (gx#stx-pair? _%tl4831748828%_)
                                     (let ((_%e4831848831%_
@@ -5568,7 +5568,7 @@
                                         (if (gx#stx-null? _%tl4832048838%_)
                                             (if (gx#stx-pair/null?
                                                  _%tl4831148808%_)
-                                                (let ((_%__splice7768477685%_
+                                                (let ((_%__splice7771777718%_
                                                        (gx#syntax-split-splice
                                                         _%tl4831148808%_
                                                         '0)))
@@ -5576,17 +5576,17 @@
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _%__splice7768477685%_
+                                                            _%__splice7771777718%_
                                                             '1)))
                                                         (_%target4832148841%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _%__splice7768477685%_
+                                                            _%__splice7771777718%_
                                                             '0))))
                                                     (if (gx#stx-null?
                                                          _%tl4832348844%_)
-                                                        (_%__match7778277783%_
+                                                        (_%__match7781577816%_
                                                          _%e4830648791%_
                                                          _%hd4830748795%_
                                                          _%tl4830848798%_
@@ -5602,7 +5602,7 @@
                                                          _%e4831848831%_
                                                          _%hd4831948835%_
                                                          _%tl4832048838%_
-                                                         _%__splice7768477685%_
+                                                         _%__splice7771777718%_
                                                          _%target4832148841%_
                                                          _%tl4832348844%_)
                                                         (let ()
@@ -5618,7 +5618,7 @@
                                       (declare (not safe))
                                       (_%g4827348416%_)))
                                 (if (gx#free-identifier=?
-                                     |gerbil/core/contract~Using[1]#_g82599_|
+                                     |gerbil/core/contract~Using[1]#_g82632_|
                                      _%hd4831648825%_)
                                     (if (gx#stx-pair? _%tl4831748828%_)
                                         (let ((_%e4834548709%_
@@ -5634,7 +5634,7 @@
                                             (if (gx#stx-null? _%tl4834748716%_)
                                                 (if (gx#stx-pair/null?
                                                      _%tl4831148808%_)
-                                                    (let ((_%__splice7768877689%_
+                                                    (let ((_%__splice7772177722%_
                                                            (gx#syntax-split-splice
                                                             _%tl4831148808%_
                                                             '0)))
@@ -5643,13 +5643,13 @@
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##vector-ref _%__splice7768877689%_ '1)))
+                       (##vector-ref _%__splice7772177722%_ '1)))
                     (_%target4834848719%_
                      (let ()
                        (declare (not safe))
-                       (##vector-ref _%__splice7768877689%_ '0))))
+                       (##vector-ref _%__splice7772177722%_ '0))))
                 (if (gx#stx-null? _%tl4835048722%_)
-                    (_%__match7782677827%_
+                    (_%__match7785977860%_
                      _%e4830648791%_
                      _%hd4830748795%_
                      _%tl4830848798%_
@@ -5665,7 +5665,7 @@
                      _%e4834548709%_
                      _%hd4834648713%_
                      _%tl4834748716%_
-                     _%__splice7768877689%_
+                     _%__splice7772177722%_
                      _%target4834848719%_
                      _%tl4835048722%_)
                     (let () (declare (not safe)) (_%g4827348416%_)))))
@@ -5680,7 +5680,7 @@
                                           (declare (not safe))
                                           (_%g4827348416%_)))
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/contract~Using[1]#_g82600_|
+                                         |gerbil/core/contract~Using[1]#_g82633_|
                                          _%hd4831648825%_)
                                         (if (gx#stx-pair? _%tl4831748828%_)
                                             (let ((_%e4837248587%_
@@ -5698,7 +5698,7 @@
                                                      _%tl4837448594%_)
                                                     (if (gx#stx-pair/null?
                                                          _%tl4831148808%_)
-                                                        (let ((_%__splice7769277693%_
+                                                        (let ((_%__splice7772577726%_
                                                                (gx#syntax-split-splice
                                                                 _%tl4831148808%_
                                                                 '0)))
@@ -5706,13 +5706,13 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice7769277693%_ '1)))
+                           (##vector-ref _%__splice7772577726%_ '1)))
                         (_%target4837548597%_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice7769277693%_ '0))))
+                           (##vector-ref _%__splice7772577726%_ '0))))
                     (if (gx#stx-null? _%tl4837748600%_)
-                        (_%__match7787077871%_
+                        (_%__match7790377904%_
                          _%e4830648791%_
                          _%hd4830748795%_
                          _%tl4830848798%_
@@ -5728,7 +5728,7 @@
                          _%e4837248587%_
                          _%hd4837348591%_
                          _%tl4837448594%_
-                         _%__splice7769277693%_
+                         _%__splice7772577726%_
                          _%target4837548597%_
                          _%tl4837748600%_)
                         (let () (declare (not safe)) (_%g4827348416%_)))))
@@ -5741,7 +5741,7 @@
                                               (declare (not safe))
                                               (_%g4827348416%_)))
                                         (if (gx#free-identifier=?
-                                             |gerbil/core/contract~Using[1]#_g82601_|
+                                             |gerbil/core/contract~Using[1]#_g82634_|
                                              _%hd4831648825%_)
                                             (if (gx#stx-pair? _%tl4831748828%_)
                                                 (let ((_%e4839948463%_
@@ -5759,19 +5759,19 @@
                                                          _%tl4840148470%_)
                                                         (if (gx#stx-pair/null?
                                                              _%tl4831148808%_)
-                                                            (let ((_%__splice7769677697%_
+                                                            (let ((_%__splice7772977730%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#syntax-split-splice _%tl4831148808%_ '0)))
                       (let ((_%tl4840448476%_
                              (let ()
                                (declare (not safe))
-                               (##vector-ref _%__splice7769677697%_ '1)))
+                               (##vector-ref _%__splice7772977730%_ '1)))
                             (_%target4840248473%_
                              (let ()
                                (declare (not safe))
-                               (##vector-ref _%__splice7769677697%_ '0))))
+                               (##vector-ref _%__splice7772977730%_ '0))))
                         (if (gx#stx-null? _%tl4840448476%_)
-                            (_%__match7791477915%_
+                            (_%__match7794777948%_
                              _%e4830648791%_
                              _%hd4830748795%_
                              _%tl4830848798%_
@@ -5787,7 +5787,7 @@
                              _%e4839948463%_
                              _%hd4840048467%_
                              _%tl4840148470%_
-                             _%__splice7769677697%_
+                             _%__splice7772977730%_
                              _%target4840248473%_
                              _%tl4840448476%_)
                             (let () (declare (not safe)) (_%g4827348416%_)))))
@@ -5801,7 +5801,7 @@
                                               (declare (not safe))
                                               (_%g4827348416%_))))))
                             (let () (declare (not safe)) (_%g4827348416%_)))))
-                     (_%__match7773877739%_
+                     (_%__match7777177772%_
                       (lambda (_%e4827948913%_
                                _%hd4828048917%_
                                _%tl4828148920%_
@@ -5817,7 +5817,7 @@
                                _%e4829148953%_
                                _%hd4829248957%_
                                _%tl4829348960%_
-                               _%__splice7768077681%_
+                               _%__splice7771377714%_
                                _%target4829448963%_
                                _%tl4829648966%_)
                         (letrec ((_%loop4829748969%_
@@ -5843,20 +5843,20 @@
                                                 (_%L48995%_ _%hd4829248957%_)
                                                 (_%L48996%_ _%hd4828948947%_)
                                                 (_%L48997%_ _%hd4828648937%_))
-                                            (if (let ((__tmp82602
+                                            (if (let ((__tmp82635
                                                        (gx#syntax-local-value
                                                         _%L48995%_
                                                         false)))
                                                   (declare (not safe))
                                                   (class-instance?
                                                    |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                   __tmp82602))
-                                                (_%__kont7767877679%_
+                                                   __tmp82635))
+                                                (_%__kont7771177712%_
                                                  _%L48993%_
                                                  _%L48995%_
                                                  _%L48996%_
                                                  _%L48997%_)
-                                                (_%__match7776277763%_
+                                                (_%__match7779577796%_
                                                  _%e4827948913%_
                                                  _%hd4828048917%_
                                                  _%tl4828148920%_
@@ -5870,8 +5870,8 @@
                                                  _%hd4828948947%_
                                                  _%tl4829048950%_))))))))
                           (_%loop4829748969%_ _%target4829448963%_ '())))))
-                (if (gx#stx-pair? _%__stx7767577676%_)
-                    (let ((_%e4827948913%_ (gx#syntax-e _%__stx7767577676%_)))
+                (if (gx#stx-pair? _%__stx7770877709%_)
+                    (let ((_%e4827948913%_ (gx#syntax-e _%__stx7770877709%_)))
                       (let ((_%tl4828148920%_
                              (let ()
                                (declare (not safe))
@@ -5929,18 +5929,18 @@
                      (let () (declare (not safe)) (##car _%e4829148953%_))))
                 (if (gx#stx-null? _%tl4829348960%_)
                     (if (gx#stx-pair/null? _%tl4828448930%_)
-                        (let ((_%__splice7768077681%_
+                        (let ((_%__splice7771377714%_
                                (gx#syntax-split-splice _%tl4828448930%_ '0)))
                           (let ((_%tl4829648966%_
                                  (let ()
                                    (declare (not safe))
-                                   (##vector-ref _%__splice7768077681%_ '1)))
+                                   (##vector-ref _%__splice7771377714%_ '1)))
                                 (_%target4829448963%_
                                  (let ()
                                    (declare (not safe))
-                                   (##vector-ref _%__splice7768077681%_ '0))))
+                                   (##vector-ref _%__splice7771377714%_ '0))))
                             (if (gx#stx-null? _%tl4829648966%_)
-                                (_%__match7773877739%_
+                                (_%__match7777177772%_
                                  _%e4827948913%_
                                  _%hd4828048917%_
                                  _%tl4828148920%_
@@ -5956,7 +5956,7 @@
                                  _%e4829148953%_
                                  _%hd4829248957%_
                                  _%tl4829348960%_
-                                 _%__splice7768077681%_
+                                 _%__splice7771377714%_
                                  _%target4829448963%_
                                  _%tl4829648966%_)
                                 (let ()
@@ -6084,25 +6084,25 @@
                                                      (##cdr _%e5043150515%_))))
                                               (if (gx#stx-pair/null?
                                                    _%hd5043250519%_)
-                                                  (let ((_g82603_
+                                                  (let ((_g82636_
                                                          (gx#syntax-split-splice
                                                           _%hd5043250519%_
                                                           '0)))
                                                     (begin
-                                                      (let ((_g82604_
+                                                      (let ((_g82637_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (if (##values? _g82603_)
-                           (##vector-length _g82603_)
+                       (if (##values? _g82636_)
+                           (##vector-length _g82636_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g82604_ 2)))
-                    (error "Context expects 2 values" _g82604_)))
+                (if (not (let () (declare (not safe)) (##fx= _g82637_ 2)))
+                    (error "Context expects 2 values" _g82637_)))
               (let ((_%target5043450525%_
-                     (let () (declare (not safe)) (##vector-ref _g82603_ 0)))
+                     (let () (declare (not safe)) (##vector-ref _g82636_ 0)))
                     (_%tl5043650528%_
-                     (let () (declare (not safe)) (##vector-ref _g82603_ 1))))
+                     (let () (declare (not safe)) (##vector-ref _g82636_ 1))))
                 (if (gx#stx-null? _%tl5043650528%_)
                     (letrec ((_%loop5043750531%_
                               (lambda (_%hd5043550535%_ _%body5044150538%_)
@@ -6198,22 +6198,22 @@
                       (_%g5040350606%_
                        (list (gx#syntax-local-introduce '@@type)
                              _%type50401%_
-                             (let ((__obj82438 _%type50401%_))
+                             (let ((__obj82471 _%type50401%_))
                                (if (let ()
                                      (declare (not safe))
                                      (##structure-direct-instance-of?
-                                      __obj82438
+                                      __obj82471
                                       'gerbil/core/contract~InterfaceInfo#interface-info::t))
                                    (let ()
                                      (declare (not safe))
                                      (##unchecked-structure-ref
-                                      __obj82438
+                                      __obj82471
                                       '4
                                       '#f
                                       '#f))
                                    (class-slot-ref
                                     gerbil/core/contract~InterfaceInfo#interface-info::t
-                                    __obj82438
+                                    __obj82471
                                     'instance-type)))
                              _%var50395%_
                              _%checked?50399%_
@@ -6386,14 +6386,14 @@
                           (if _%$e50391%_
                               _%$e50391%_
                               _%checked-methods?50199%_))))))))
-          (let* ((_%__stx7791777918%_ _%stx49391%_)
+          (let* ((_%__stx7795077951%_ _%stx49391%_)
                  (_%g4940249545%_
                   (lambda ()
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _%__stx7791777918%_))))
-            (let ((_%__kont7792077921%_
+                     _%__stx7795077951%_))))
+            (let ((_%__kont7795377954%_
                    (lambda (_%L50122%_ _%L50124%_ _%L50125%_ _%L50126%_)
                      (let* ((_%g5015150159%_
                              (lambda (_%g5015250155%_)
@@ -6417,24 +6417,24 @@
                                                      _%L50122%_))))
                                 _%g5015250163%_))))
                        (_%g5015050186%_
-                        (let ((__obj82439 (gx#syntax-local-value _%L50124%_)))
+                        (let ((__obj82472 (gx#syntax-local-value _%L50124%_)))
                           (if (let ()
                                 (declare (not safe))
                                 (##structure-direct-instance-of?
-                                 __obj82439
+                                 __obj82472
                                  'gerbil/core/contract~TypeReference#type-reference::t))
                               (let ()
                                 (declare (not safe))
                                 (##unchecked-structure-ref
-                                 __obj82439
+                                 __obj82472
                                  '1
                                  '#f
                                  '#f))
                               (class-slot-ref
                                |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                               __obj82439
+                               __obj82472
                                'identifier)))))))
-                  (_%__kont7792477925%_
+                  (_%__kont7795777958%_
                    (lambda (_%L50000%_ _%L50002%_ _%L50003%_)
                      (_%expand49396%_
                       _%L50003%_
@@ -6446,7 +6446,7 @@
                       '#t
                       '#t
                       '#f)))
-                  (_%__kont7792877929%_
+                  (_%__kont7796177962%_
                    (lambda (_%L49878%_ _%L49880%_ _%L49881%_)
                      (_%expand49396%_
                       _%L49881%_
@@ -6458,7 +6458,7 @@
                       '#t
                       '#t
                       '#t)))
-                  (_%__kont7793277933%_
+                  (_%__kont7796577966%_
                    (lambda (_%L49756%_ _%L49758%_ _%L49759%_)
                      (_%expand49396%_
                       _%L49759%_
@@ -6470,7 +6470,7 @@
                       '#f
                       '#f
                       '#f)))
-                  (_%__kont7793677937%_
+                  (_%__kont7796977970%_
                    (lambda (_%L49632%_ _%L49634%_ _%L49635%_)
                      (_%expand49396%_
                       _%L49635%_
@@ -6482,7 +6482,7 @@
                       '#f
                       '#t
                       '#f))))
-              (let* ((_%__match7815678157%_
+              (let* ((_%__match7818978190%_
                       (lambda (_%e4951649552%_
                                _%hd4951749556%_
                                _%tl4951849559%_
@@ -6498,7 +6498,7 @@
                                _%e4952849592%_
                                _%hd4952949596%_
                                _%tl4953049599%_
-                               _%__splice7793877939%_
+                               _%__splice7797177972%_
                                _%target4953149602%_
                                _%tl4953349605%_)
                         (letrec ((_%loop4953449608%_
@@ -6529,7 +6529,7 @@
                                                        (declare (not safe))
                                                        (gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
                                                         _%L49634%_)))
-                                                (_%__kont7793677937%_
+                                                (_%__kont7796977970%_
                                                  _%L49632%_
                                                  _%L49634%_
                                                  _%L49635%_)
@@ -6537,7 +6537,7 @@
                                                   (declare (not safe))
                                                   (_%g4940249545%_)))))))))
                           (_%loop4953449608%_ _%target4953149602%_ '()))))
-                     (_%__match7811278113%_
+                     (_%__match7814578146%_
                       (lambda (_%e4948949676%_
                                _%hd4949049680%_
                                _%tl4949149683%_
@@ -6553,7 +6553,7 @@
                                _%e4950149716%_
                                _%hd4950249720%_
                                _%tl4950349723%_
-                               _%__splice7793477935%_
+                               _%__splice7796777968%_
                                _%target4950449726%_
                                _%tl4950649729%_)
                         (letrec ((_%loop4950749732%_
@@ -6584,7 +6584,7 @@
                                                        (declare (not safe))
                                                        (gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
                                                         _%L49758%_)))
-                                                (_%__kont7793277933%_
+                                                (_%__kont7796577966%_
                                                  _%L49756%_
                                                  _%L49758%_
                                                  _%L49759%_)
@@ -6592,7 +6592,7 @@
                                                   (declare (not safe))
                                                   (_%g4940249545%_)))))))))
                           (_%loop4950749732%_ _%target4950449726%_ '()))))
-                     (_%__match7806878069%_
+                     (_%__match7810178102%_
                       (lambda (_%e4946249798%_
                                _%hd4946349802%_
                                _%tl4946449805%_
@@ -6608,7 +6608,7 @@
                                _%e4947449838%_
                                _%hd4947549842%_
                                _%tl4947649845%_
-                               _%__splice7793077931%_
+                               _%__splice7796377964%_
                                _%target4947749848%_
                                _%tl4947949851%_)
                         (letrec ((_%loop4948049854%_
@@ -6639,7 +6639,7 @@
                                                        (declare (not safe))
                                                        (gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
                                                         _%L49880%_)))
-                                                (_%__kont7792877929%_
+                                                (_%__kont7796177962%_
                                                  _%L49878%_
                                                  _%L49880%_
                                                  _%L49881%_)
@@ -6647,7 +6647,7 @@
                                                   (declare (not safe))
                                                   (_%g4940249545%_)))))))))
                           (_%loop4948049854%_ _%target4947749848%_ '()))))
-                     (_%__match7802478025%_
+                     (_%__match7805778058%_
                       (lambda (_%e4943549920%_
                                _%hd4943649924%_
                                _%tl4943749927%_
@@ -6663,7 +6663,7 @@
                                _%e4944749960%_
                                _%hd4944849964%_
                                _%tl4944949967%_
-                               _%__splice7792677927%_
+                               _%__splice7795977960%_
                                _%target4945049970%_
                                _%tl4945249973%_)
                         (letrec ((_%loop4945349976%_
@@ -6694,7 +6694,7 @@
                                                        (declare (not safe))
                                                        (gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
                                                         _%L50002%_)))
-                                                (_%__kont7792477925%_
+                                                (_%__kont7795777958%_
                                                  _%L50000%_
                                                  _%L50002%_
                                                  _%L50003%_)
@@ -6702,7 +6702,7 @@
                                                   (declare (not safe))
                                                   (_%g4940249545%_)))))))))
                           (_%loop4945349976%_ _%target4945049970%_ '()))))
-                     (_%__match7800478005%_
+                     (_%__match7803778038%_
                       (lambda (_%e4943549920%_
                                _%hd4943649924%_
                                _%tl4943749927%_
@@ -6717,7 +6717,7 @@
                                _%tl4944649957%_)
                         (if (gx#identifier? _%hd4944549954%_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core/contract~Using[1]#_g82605_|
+                                 |gerbil/core/contract~Using[1]#_g82638_|
                                  _%hd4944549954%_)
                                 (if (gx#stx-pair? _%tl4944649957%_)
                                     (let ((_%e4944749960%_
@@ -6733,7 +6733,7 @@
                                         (if (gx#stx-null? _%tl4944949967%_)
                                             (if (gx#stx-pair/null?
                                                  _%tl4944049937%_)
-                                                (let ((_%__splice7792677927%_
+                                                (let ((_%__splice7795977960%_
                                                        (gx#syntax-split-splice
                                                         _%tl4944049937%_
                                                         '0)))
@@ -6741,17 +6741,17 @@
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _%__splice7792677927%_
+                                                            _%__splice7795977960%_
                                                             '1)))
                                                         (_%target4945049970%_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _%__splice7792677927%_
+                                                            _%__splice7795977960%_
                                                             '0))))
                                                     (if (gx#stx-null?
                                                          _%tl4945249973%_)
-                                                        (_%__match7802478025%_
+                                                        (_%__match7805778058%_
                                                          _%e4943549920%_
                                                          _%hd4943649924%_
                                                          _%tl4943749927%_
@@ -6767,7 +6767,7 @@
                                                          _%e4944749960%_
                                                          _%hd4944849964%_
                                                          _%tl4944949967%_
-                                                         _%__splice7792677927%_
+                                                         _%__splice7795977960%_
                                                          _%target4945049970%_
                                                          _%tl4945249973%_)
                                                         (let ()
@@ -6783,7 +6783,7 @@
                                       (declare (not safe))
                                       (_%g4940249545%_)))
                                 (if (gx#free-identifier=?
-                                     |gerbil/core/contract~Using[1]#_g82606_|
+                                     |gerbil/core/contract~Using[1]#_g82639_|
                                      _%hd4944549954%_)
                                     (if (gx#stx-pair? _%tl4944649957%_)
                                         (let ((_%e4947449838%_
@@ -6799,7 +6799,7 @@
                                             (if (gx#stx-null? _%tl4947649845%_)
                                                 (if (gx#stx-pair/null?
                                                      _%tl4944049937%_)
-                                                    (let ((_%__splice7793077931%_
+                                                    (let ((_%__splice7796377964%_
                                                            (gx#syntax-split-splice
                                                             _%tl4944049937%_
                                                             '0)))
@@ -6808,13 +6808,13 @@
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##vector-ref _%__splice7793077931%_ '1)))
+                       (##vector-ref _%__splice7796377964%_ '1)))
                     (_%target4947749848%_
                      (let ()
                        (declare (not safe))
-                       (##vector-ref _%__splice7793077931%_ '0))))
+                       (##vector-ref _%__splice7796377964%_ '0))))
                 (if (gx#stx-null? _%tl4947949851%_)
-                    (_%__match7806878069%_
+                    (_%__match7810178102%_
                      _%e4943549920%_
                      _%hd4943649924%_
                      _%tl4943749927%_
@@ -6830,7 +6830,7 @@
                      _%e4947449838%_
                      _%hd4947549842%_
                      _%tl4947649845%_
-                     _%__splice7793077931%_
+                     _%__splice7796377964%_
                      _%target4947749848%_
                      _%tl4947949851%_)
                     (let () (declare (not safe)) (_%g4940249545%_)))))
@@ -6845,7 +6845,7 @@
                                           (declare (not safe))
                                           (_%g4940249545%_)))
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/contract~Using[1]#_g82607_|
+                                         |gerbil/core/contract~Using[1]#_g82640_|
                                          _%hd4944549954%_)
                                         (if (gx#stx-pair? _%tl4944649957%_)
                                             (let ((_%e4950149716%_
@@ -6863,7 +6863,7 @@
                                                      _%tl4950349723%_)
                                                     (if (gx#stx-pair/null?
                                                          _%tl4944049937%_)
-                                                        (let ((_%__splice7793477935%_
+                                                        (let ((_%__splice7796777968%_
                                                                (gx#syntax-split-splice
                                                                 _%tl4944049937%_
                                                                 '0)))
@@ -6871,13 +6871,13 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice7793477935%_ '1)))
+                           (##vector-ref _%__splice7796777968%_ '1)))
                         (_%target4950449726%_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _%__splice7793477935%_ '0))))
+                           (##vector-ref _%__splice7796777968%_ '0))))
                     (if (gx#stx-null? _%tl4950649729%_)
-                        (_%__match7811278113%_
+                        (_%__match7814578146%_
                          _%e4943549920%_
                          _%hd4943649924%_
                          _%tl4943749927%_
@@ -6893,7 +6893,7 @@
                          _%e4950149716%_
                          _%hd4950249720%_
                          _%tl4950349723%_
-                         _%__splice7793477935%_
+                         _%__splice7796777968%_
                          _%target4950449726%_
                          _%tl4950649729%_)
                         (let () (declare (not safe)) (_%g4940249545%_)))))
@@ -6906,7 +6906,7 @@
                                               (declare (not safe))
                                               (_%g4940249545%_)))
                                         (if (gx#free-identifier=?
-                                             |gerbil/core/contract~Using[1]#_g82608_|
+                                             |gerbil/core/contract~Using[1]#_g82641_|
                                              _%hd4944549954%_)
                                             (if (gx#stx-pair? _%tl4944649957%_)
                                                 (let ((_%e4952849592%_
@@ -6924,19 +6924,19 @@
                                                          _%tl4953049599%_)
                                                         (if (gx#stx-pair/null?
                                                              _%tl4944049937%_)
-                                                            (let ((_%__splice7793877939%_
+                                                            (let ((_%__splice7797177972%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#syntax-split-splice _%tl4944049937%_ '0)))
                       (let ((_%tl4953349605%_
                              (let ()
                                (declare (not safe))
-                               (##vector-ref _%__splice7793877939%_ '1)))
+                               (##vector-ref _%__splice7797177972%_ '1)))
                             (_%target4953149602%_
                              (let ()
                                (declare (not safe))
-                               (##vector-ref _%__splice7793877939%_ '0))))
+                               (##vector-ref _%__splice7797177972%_ '0))))
                         (if (gx#stx-null? _%tl4953349605%_)
-                            (_%__match7815678157%_
+                            (_%__match7818978190%_
                              _%e4943549920%_
                              _%hd4943649924%_
                              _%tl4943749927%_
@@ -6952,7 +6952,7 @@
                              _%e4952849592%_
                              _%hd4952949596%_
                              _%tl4953049599%_
-                             _%__splice7793877939%_
+                             _%__splice7797177972%_
                              _%target4953149602%_
                              _%tl4953349605%_)
                             (let () (declare (not safe)) (_%g4940249545%_)))))
@@ -6966,7 +6966,7 @@
                                               (declare (not safe))
                                               (_%g4940249545%_))))))
                             (let () (declare (not safe)) (_%g4940249545%_)))))
-                     (_%__match7798077981%_
+                     (_%__match7801378014%_
                       (lambda (_%e4940850042%_
                                _%hd4940950046%_
                                _%tl4941050049%_
@@ -6982,7 +6982,7 @@
                                _%e4942050082%_
                                _%hd4942150086%_
                                _%tl4942250089%_
-                               _%__splice7792277923%_
+                               _%__splice7795577956%_
                                _%target4942350092%_
                                _%tl4942550095%_)
                         (letrec ((_%loop4942650098%_
@@ -7008,20 +7008,20 @@
                                                 (_%L50124%_ _%hd4942150086%_)
                                                 (_%L50125%_ _%hd4941850076%_)
                                                 (_%L50126%_ _%hd4941550066%_))
-                                            (if (let ((__tmp82609
+                                            (if (let ((__tmp82642
                                                        (gx#syntax-local-value
                                                         _%L50124%_
                                                         false)))
                                                   (declare (not safe))
                                                   (class-instance?
                                                    |gerbil/core/contract~TypeReference[1]#type-reference::t|
-                                                   __tmp82609))
-                                                (_%__kont7792077921%_
+                                                   __tmp82642))
+                                                (_%__kont7795377954%_
                                                  _%L50122%_
                                                  _%L50124%_
                                                  _%L50125%_
                                                  _%L50126%_)
-                                                (_%__match7800478005%_
+                                                (_%__match7803778038%_
                                                  _%e4940850042%_
                                                  _%hd4940950046%_
                                                  _%tl4941050049%_
@@ -7035,8 +7035,8 @@
                                                  _%hd4941850076%_
                                                  _%tl4941950079%_))))))))
                           (_%loop4942650098%_ _%target4942350092%_ '())))))
-                (if (gx#stx-pair? _%__stx7791777918%_)
-                    (let ((_%e4940850042%_ (gx#syntax-e _%__stx7791777918%_)))
+                (if (gx#stx-pair? _%__stx7795077951%_)
+                    (let ((_%e4940850042%_ (gx#syntax-e _%__stx7795077951%_)))
                       (let ((_%tl4941050049%_
                              (let ()
                                (declare (not safe))
@@ -7094,18 +7094,18 @@
                      (let () (declare (not safe)) (##car _%e4942050082%_))))
                 (if (gx#stx-null? _%tl4942250089%_)
                     (if (gx#stx-pair/null? _%tl4941350059%_)
-                        (let ((_%__splice7792277923%_
+                        (let ((_%__splice7795577956%_
                                (gx#syntax-split-splice _%tl4941350059%_ '0)))
                           (let ((_%tl4942550095%_
                                  (let ()
                                    (declare (not safe))
-                                   (##vector-ref _%__splice7792277923%_ '1)))
+                                   (##vector-ref _%__splice7795577956%_ '1)))
                                 (_%target4942350092%_
                                  (let ()
                                    (declare (not safe))
-                                   (##vector-ref _%__splice7792277923%_ '0))))
+                                   (##vector-ref _%__splice7795577956%_ '0))))
                             (if (gx#stx-null? _%tl4942550095%_)
-                                (_%__match7798077981%_
+                                (_%__match7801378014%_
                                  _%e4940850042%_
                                  _%hd4940950046%_
                                  _%tl4941050049%_
@@ -7121,7 +7121,7 @@
                                  _%e4942050082%_
                                  _%hd4942150086%_
                                  _%tl4942250089%_
-                                 _%__splice7792277923%_
+                                 _%__splice7795577956%_
                                  _%target4942350092%_
                                  _%tl4942550095%_)
                                 (let ()
@@ -7143,14 +7143,14 @@
                     (let () (declare (not safe)) (_%g4940249545%_)))))))))
     (define |gerbil/core/contract~Using[:0:]#%%app-dotted|
       (lambda (_%stx50616%_)
-        (let* ((_%__stx7815978160%_ _%stx50616%_)
+        (let* ((_%__stx7819278193%_ _%stx50616%_)
                (_%g5062150681%_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _%__stx7815978160%_))))
-          (let ((_%__kont7816278163%_
+                   _%__stx7819278193%_))))
+          (let ((_%__kont7819578196%_
                  (lambda (_%L51243%_ _%L51245%_)
                    (cons (gx#datum->syntax '#f '%%app-dotted)
                          (cons (cons (gx#datum->syntax '#f '%%ref-dotted)
@@ -7159,7 +7159,7 @@
                                         (cons _%g5126151264%_ _%g5126251267%_))
                                       '()
                                       _%L51243%_)))))
-                (_%__kont7816678167%_
+                (_%__kont7819978200%_
                  (lambda (_%L50829%_ _%L50831%_)
                    (if (|gerbil/core/contract~Using[1]#dotted-identifier?|
                         _%L50831%_)
@@ -7229,20 +7229,20 @@
                                                     (lambda (_%rest50961%_
                                                              _%part50963%_)
                                                       (if (and (not _%nil-check?50887%_)
-                                                               (let ((__tmp82610
+                                                               (let ((__tmp82643
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (symbol->string _%part50963%_)))
                          (declare (not safe))
-                         (##string-prefix? '"?" __tmp82610)))
+                         (##string-prefix? '"?" __tmp82643)))
                   (let ((_%str50967%_ (symbol->string _%part50963%_)))
                     (_%loop50879%_
-                     (cons (let ((__tmp82611
+                     (cons (let ((__tmp82644
                                   (substring
                                    _%str50967%_
                                    '1
                                    (string-length _%str50967%_))))
                              (declare (not safe))
-                             (##string->symbol __tmp82611))
+                             (##string->symbol __tmp82644))
                            _%rest50961%_)
                      _%type50884%_
                      _%object50885%_
@@ -7407,21 +7407,21 @@
                                        (gx#stx-identifier
                                         _%L50831%_
                                         (if _%checked-method?50886%_ '"" '"&")
-                                        (let ((__obj82440 _%type50884%_))
+                                        (let ((__obj82473 _%type50884%_))
                                           (if (let ()
                                                 (declare (not safe))
                                                 (##structure-direct-instance-of?
-                                                 __obj82440
+                                                 __obj82473
                                                  'gerbil/core/contract~InterfaceInfo#interface-info::t))
                                               (let ()
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
-                                                 __obj82440
+                                                 __obj82473
                                                  '1
                                                  '#f
                                                  '#f))
                                               (unchecked-slot-ref
-                                               __obj82440
+                                               __obj82473
                                                'name)))
                                         '"-"
                                         _%part50963%_))))
@@ -7491,18 +7491,18 @@
                                                   _%g5117851183%_))
                                           '()
                                           _%L50829%_))))))
-                (_%__kont7817078171%_
+                (_%__kont7820378204%_
                  (lambda (_%L50728%_)
                    (cons (gx#datum->syntax '#f '%%app)
                          (foldr (lambda (_%g5074350746%_ _%g5074450749%_)
                                   (cons _%g5074350746%_ _%g5074450749%_))
                                 '()
                                 _%L50728%_)))))
-            (let* ((_%__match7824678247%_
+            (let* ((_%__match7827978280%_
                     (lambda (_%e5066450688%_
                              _%hd5066550692%_
                              _%tl5066650695%_
-                             _%__splice7817278173%_
+                             _%__splice7820578206%_
                              _%target5066750698%_
                              _%tl5066950701%_)
                       (letrec ((_%loop5067050704%_
@@ -7524,10 +7524,10 @@
                                                  _%arg5067450711%_))))
                                       (let ((_%arg5067550724%_
                                              (reverse _%arg5067450711%_)))
-                                        (_%__kont7817078171%_
+                                        (_%__kont7820378204%_
                                          _%arg5067550724%_))))))
                         (_%loop5067050704%_ _%target5066750698%_ '()))))
-                   (_%__match7823278233%_
+                   (_%__match7826578266%_
                     (lambda (_%e5064250759%_
                              _%hd5064350763%_
                              _%tl5064450766%_
@@ -7540,7 +7540,7 @@
                              _%e5065150789%_
                              _%hd5065250793%_
                              _%tl5065350796%_
-                             _%__splice7816878169%_
+                             _%__splice7820178202%_
                              _%target5065450799%_
                              _%tl5065650802%_)
                       (letrec ((_%loop5065750805%_
@@ -7562,11 +7562,11 @@
                                                  _%rand5066150812%_))))
                                       (let ((_%rand5066250825%_
                                              (reverse _%rand5066150812%_)))
-                                        (_%__kont7816678167%_
+                                        (_%__kont7819978200%_
                                          _%rand5066250825%_
                                          _%hd5065250793%_))))))
                         (_%loop5065750805%_ _%target5065450799%_ '()))))
-                   (_%__match7820678207%_
+                   (_%__match7823978240%_
                     (lambda (_%e5064250759%_
                              _%hd5064350763%_
                              _%tl5064450766%_
@@ -7586,7 +7586,7 @@
                                      (##car _%e5064850779%_))))
                               (if (gx#identifier? _%hd5064950783%_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core/contract~Using[1]#_g82612_|
+                                       |gerbil/core/contract~Using[1]#_g82645_|
                                        _%hd5064950783%_)
                                       (if (gx#stx-pair? _%tl5065050786%_)
                                           (let ((_%e5065150789%_
@@ -7604,7 +7604,7 @@
                                                    _%tl5065350796%_)
                                                   (if (gx#stx-pair/null?
                                                        _%tl5064750776%_)
-                                                      (let ((_%__splice7816878169%_
+                                                      (let ((_%__splice7820178202%_
                                                              (gx#syntax-split-splice
                                                               _%tl5064750776%_
                                                               '0)))
@@ -7612,13 +7612,13 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7816878169%_ '1)))
+                         (##vector-ref _%__splice7820178202%_ '1)))
                       (_%target5065450799%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7816878169%_ '0))))
+                         (##vector-ref _%__splice7820178202%_ '0))))
                   (if (gx#stx-null? _%tl5065650802%_)
-                      (_%__match7823278233%_
+                      (_%__match7826578266%_
                        _%e5064250759%_
                        _%hd5064350763%_
                        _%tl5064450766%_
@@ -7631,28 +7631,28 @@
                        _%e5065150789%_
                        _%hd5065250793%_
                        _%tl5065350796%_
-                       _%__splice7816878169%_
+                       _%__splice7820178202%_
                        _%target5065450799%_
                        _%tl5065650802%_)
                       (if (gx#stx-pair/null? _%tl5064450766%_)
-                          (let ((_%__splice7817278173%_
+                          (let ((_%__splice7820578206%_
                                  (gx#syntax-split-splice _%tl5064450766%_ '0)))
                             (let ((_%tl5066950701%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7817278173%_ '1)))
+                                     (##vector-ref _%__splice7820578206%_ '1)))
                                   (_%target5066750698%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7817278173%_
+                                      _%__splice7820578206%_
                                       '0))))
                               (if (gx#stx-null? _%tl5066950701%_)
-                                  (_%__match7824678247%_
+                                  (_%__match7827978280%_
                                    _%e5064250759%_
                                    _%hd5064350763%_
                                    _%tl5064450766%_
-                                   _%__splice7817278173%_
+                                   _%__splice7820578206%_
                                    _%target5066750698%_
                                    _%tl5066950701%_)
                                   (let ()
@@ -7660,22 +7660,22 @@
                                     (_%g5062150681%_)))))
                           (let () (declare (not safe)) (_%g5062150681%_))))))
               (if (gx#stx-pair/null? _%tl5064450766%_)
-                  (let ((_%__splice7817278173%_
+                  (let ((_%__splice7820578206%_
                          (gx#syntax-split-splice _%tl5064450766%_ '0)))
                     (let ((_%tl5066950701%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '1)))
+                             (##vector-ref _%__splice7820578206%_ '1)))
                           (_%target5066750698%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '0))))
+                             (##vector-ref _%__splice7820578206%_ '0))))
                       (if (gx#stx-null? _%tl5066950701%_)
-                          (_%__match7824678247%_
+                          (_%__match7827978280%_
                            _%e5064250759%_
                            _%hd5064350763%_
                            _%tl5064450766%_
-                           _%__splice7817278173%_
+                           _%__splice7820578206%_
                            _%target5066750698%_
                            _%tl5066950701%_)
                           (let () (declare (not safe)) (_%g5062150681%_)))))
@@ -7683,7 +7683,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#stx-pair/null?
                                                        _%tl5064450766%_)
-                                                      (let ((_%__splice7817278173%_
+                                                      (let ((_%__splice7820578206%_
                                                              (gx#syntax-split-splice
                                                               _%tl5064450766%_
                                                               '0)))
@@ -7691,17 +7691,17 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7817278173%_ '1)))
+                         (##vector-ref _%__splice7820578206%_ '1)))
                       (_%target5066750698%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7817278173%_ '0))))
+                         (##vector-ref _%__splice7820578206%_ '0))))
                   (if (gx#stx-null? _%tl5066950701%_)
-                      (_%__match7824678247%_
+                      (_%__match7827978280%_
                        _%e5064250759%_
                        _%hd5064350763%_
                        _%tl5064450766%_
-                       _%__splice7817278173%_
+                       _%__splice7820578206%_
                        _%target5066750698%_
                        _%tl5066950701%_)
                       (let () (declare (not safe)) (_%g5062150681%_)))))
@@ -7709,7 +7709,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (if (gx#stx-pair/null?
                                                _%tl5064450766%_)
-                                              (let ((_%__splice7817278173%_
+                                              (let ((_%__splice7820578206%_
                                                      (gx#syntax-split-splice
                                                       _%tl5064450766%_
                                                       '0)))
@@ -7717,21 +7717,21 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7817278173%_
+                                                          _%__splice7820578206%_
                                                           '1)))
                                                       (_%target5066750698%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          _%__splice7817278173%_
+                                                          _%__splice7820578206%_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _%tl5066950701%_)
-                                                      (_%__match7824678247%_
+                                                      (_%__match7827978280%_
                                                        _%e5064250759%_
                                                        _%hd5064350763%_
                                                        _%tl5064450766%_
-                                                       _%__splice7817278173%_
+                                                       _%__splice7820578206%_
                                                        _%target5066750698%_
                                                        _%tl5066950701%_)
                                                       (let ()
@@ -7741,7 +7741,7 @@
                                                 (declare (not safe))
                                                 (_%g5062150681%_))))
                                       (if (gx#stx-pair/null? _%tl5064450766%_)
-                                          (let ((_%__splice7817278173%_
+                                          (let ((_%__splice7820578206%_
                                                  (gx#syntax-split-splice
                                                   _%tl5064450766%_
                                                   '0)))
@@ -7749,21 +7749,21 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7817278173%_
+                                                      _%__splice7820578206%_
                                                       '1)))
                                                   (_%target5066750698%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7817278173%_
+                                                      _%__splice7820578206%_
                                                       '0))))
                                               (if (gx#stx-null?
                                                    _%tl5066950701%_)
-                                                  (_%__match7824678247%_
+                                                  (_%__match7827978280%_
                                                    _%e5064250759%_
                                                    _%hd5064350763%_
                                                    _%tl5064450766%_
-                                                   _%__splice7817278173%_
+                                                   _%__splice7820578206%_
                                                    _%target5066750698%_
                                                    _%tl5066950701%_)
                                                   (let ()
@@ -7773,7 +7773,7 @@
                                             (declare (not safe))
                                             (_%g5062150681%_))))
                                   (if (gx#stx-pair/null? _%tl5064450766%_)
-                                      (let ((_%__splice7817278173%_
+                                      (let ((_%__splice7820578206%_
                                              (gx#syntax-split-splice
                                               _%tl5064450766%_
                                               '0)))
@@ -7781,20 +7781,20 @@
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7817278173%_
+                                                  _%__splice7820578206%_
                                                   '1)))
                                               (_%target5066750698%_
                                                (let ()
                                                  (declare (not safe))
                                                  (##vector-ref
-                                                  _%__splice7817278173%_
+                                                  _%__splice7820578206%_
                                                   '0))))
                                           (if (gx#stx-null? _%tl5066950701%_)
-                                              (_%__match7824678247%_
+                                              (_%__match7827978280%_
                                                _%e5064250759%_
                                                _%hd5064350763%_
                                                _%tl5064450766%_
-                                               _%__splice7817278173%_
+                                               _%__splice7820578206%_
                                                _%target5066750698%_
                                                _%tl5066950701%_)
                                               (let ()
@@ -7804,7 +7804,7 @@
                                         (declare (not safe))
                                         (_%g5062150681%_))))))
                           (if (gx#stx-pair/null? _%tl5064450766%_)
-                              (let ((_%__splice7817278173%_
+                              (let ((_%__splice7820578206%_
                                      (gx#syntax-split-splice
                                       _%tl5064450766%_
                                       '0)))
@@ -7812,20 +7812,20 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '1)))
                                       (_%target5066750698%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '0))))
                                   (if (gx#stx-null? _%tl5066950701%_)
-                                      (_%__match7824678247%_
+                                      (_%__match7827978280%_
                                        _%e5064250759%_
                                        _%hd5064350763%_
                                        _%tl5064450766%_
-                                       _%__splice7817278173%_
+                                       _%__splice7820578206%_
                                        _%target5066750698%_
                                        _%tl5066950701%_)
                                       (let ()
@@ -7834,14 +7834,14 @@
                               (let ()
                                 (declare (not safe))
                                 (_%g5062150681%_))))))
-                   (_%__match7819478195%_
+                   (_%__match7822778228%_
                     (lambda (_%e5062551193%_
                              _%hd5062651197%_
                              _%tl5062751200%_
                              _%e5062851203%_
                              _%hd5062951207%_
                              _%tl5063051210%_
-                             _%__splice7816478165%_
+                             _%__splice7819778198%_
                              _%target5063151213%_
                              _%tl5063351216%_)
                       (letrec ((_%loop5063451219%_
@@ -7866,10 +7866,10 @@
                                         (let ((_%L51243%_ _%rand5063951239%_)
                                               (_%L51245%_ _%hd5062951207%_))
                                           (if (gx#identifier? _%L51245%_)
-                                              (_%__kont7816278163%_
+                                              (_%__kont7819578196%_
                                                _%L51243%_
                                                _%L51245%_)
-                                              (_%__match7820678207%_
+                                              (_%__match7823978240%_
                                                _%e5062551193%_
                                                _%hd5062651197%_
                                                _%tl5062751200%_
@@ -7877,8 +7877,8 @@
                                                _%hd5062951207%_
                                                _%tl5063051210%_))))))))
                         (_%loop5063451219%_ _%target5063151213%_ '())))))
-              (if (gx#stx-pair? _%__stx7815978160%_)
-                  (let ((_%e5062551193%_ (gx#syntax-e _%__stx7815978160%_)))
+              (if (gx#stx-pair? _%__stx7819278193%_)
+                  (let ((_%e5062551193%_ (gx#syntax-e _%__stx7819278193%_)))
                     (let ((_%tl5062751200%_
                            (let ()
                              (declare (not safe))
@@ -7899,7 +7899,7 @@
                                      (declare (not safe))
                                      (##car _%e5062851203%_))))
                               (if (gx#stx-pair/null? _%tl5063051210%_)
-                                  (let ((_%__splice7816478165%_
+                                  (let ((_%__splice7819778198%_
                                          (gx#syntax-split-splice
                                           _%tl5063051210%_
                                           '0)))
@@ -7907,23 +7907,23 @@
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7816478165%_
+                                              _%__splice7819778198%_
                                               '1)))
                                           (_%target5063151213%_
                                            (let ()
                                              (declare (not safe))
                                              (##vector-ref
-                                              _%__splice7816478165%_
+                                              _%__splice7819778198%_
                                               '0))))
                                       (if (gx#stx-null? _%tl5063351216%_)
-                                          (_%__match7819478195%_
+                                          (_%__match7822778228%_
                                            _%e5062551193%_
                                            _%hd5062651197%_
                                            _%tl5062751200%_
                                            _%e5062851203%_
                                            _%hd5062951207%_
                                            _%tl5063051210%_
-                                           _%__splice7816478165%_
+                                           _%__splice7819778198%_
                                            _%target5063151213%_
                                            _%tl5063351216%_)
                                           (if (gx#stx-pair? _%hd5062951207%_)
@@ -7941,7 +7941,7 @@
                                                   (if (gx#identifier?
                                                        _%hd5064950783%_)
                                                       (if (gx#free-identifier=?
-                                                           |gerbil/core/contract~Using[1]#_g82612_|
+                                                           |gerbil/core/contract~Using[1]#_g82645_|
                                                            _%hd5064950783%_)
                                                           (if (gx#stx-pair?
                                                                _%tl5065050786%_)
@@ -7957,7 +7957,7 @@
                                  (declare (not safe))
                                  (##car _%e5065150789%_))))
                           (if (gx#stx-pair/null? _%tl5062751200%_)
-                              (let ((_%__splice7817278173%_
+                              (let ((_%__splice7820578206%_
                                      (gx#syntax-split-splice
                                       _%tl5062751200%_
                                       '0)))
@@ -7965,20 +7965,20 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '1)))
                                       (_%target5066750698%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '0))))
                                   (if (gx#stx-null? _%tl5066950701%_)
-                                      (_%__match7824678247%_
+                                      (_%__match7827978280%_
                                        _%e5062551193%_
                                        _%hd5062651197%_
                                        _%tl5062751200%_
-                                       _%__splice7817278173%_
+                                       _%__splice7820578206%_
                                        _%target5066750698%_
                                        _%tl5066950701%_)
                                       (let ()
@@ -7988,24 +7988,24 @@
                                 (declare (not safe))
                                 (_%g5062150681%_)))))
                       (if (gx#stx-pair/null? _%tl5062751200%_)
-                          (let ((_%__splice7817278173%_
+                          (let ((_%__splice7820578206%_
                                  (gx#syntax-split-splice _%tl5062751200%_ '0)))
                             (let ((_%tl5066950701%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _%__splice7817278173%_ '1)))
+                                     (##vector-ref _%__splice7820578206%_ '1)))
                                   (_%target5066750698%_
                                    (let ()
                                      (declare (not safe))
                                      (##vector-ref
-                                      _%__splice7817278173%_
+                                      _%__splice7820578206%_
                                       '0))))
                               (if (gx#stx-null? _%tl5066950701%_)
-                                  (_%__match7824678247%_
+                                  (_%__match7827978280%_
                                    _%e5062551193%_
                                    _%hd5062651197%_
                                    _%tl5062751200%_
-                                   _%__splice7817278173%_
+                                   _%__splice7820578206%_
                                    _%target5066750698%_
                                    _%tl5066950701%_)
                                   (let ()
@@ -8013,22 +8013,22 @@
                                     (_%g5062150681%_)))))
                           (let () (declare (not safe)) (_%g5062150681%_))))
                   (if (gx#stx-pair/null? _%tl5062751200%_)
-                      (let ((_%__splice7817278173%_
+                      (let ((_%__splice7820578206%_
                              (gx#syntax-split-splice _%tl5062751200%_ '0)))
                         (let ((_%tl5066950701%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7817278173%_ '1)))
+                                 (##vector-ref _%__splice7820578206%_ '1)))
                               (_%target5066750698%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7817278173%_ '0))))
+                                 (##vector-ref _%__splice7820578206%_ '0))))
                           (if (gx#stx-null? _%tl5066950701%_)
-                              (_%__match7824678247%_
+                              (_%__match7827978280%_
                                _%e5062551193%_
                                _%hd5062651197%_
                                _%tl5062751200%_
-                               _%__splice7817278173%_
+                               _%__splice7820578206%_
                                _%target5066750698%_
                                _%tl5066950701%_)
                               (let ()
@@ -8036,22 +8036,22 @@
                                 (_%g5062150681%_)))))
                       (let () (declare (not safe)) (_%g5062150681%_))))
               (if (gx#stx-pair/null? _%tl5062751200%_)
-                  (let ((_%__splice7817278173%_
+                  (let ((_%__splice7820578206%_
                          (gx#syntax-split-splice _%tl5062751200%_ '0)))
                     (let ((_%tl5066950701%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '1)))
+                             (##vector-ref _%__splice7820578206%_ '1)))
                           (_%target5066750698%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '0))))
+                             (##vector-ref _%__splice7820578206%_ '0))))
                       (if (gx#stx-null? _%tl5066950701%_)
-                          (_%__match7824678247%_
+                          (_%__match7827978280%_
                            _%e5062551193%_
                            _%hd5062651197%_
                            _%tl5062751200%_
-                           _%__splice7817278173%_
+                           _%__splice7820578206%_
                            _%target5066750698%_
                            _%tl5066950701%_)
                           (let () (declare (not safe)) (_%g5062150681%_)))))
@@ -8059,7 +8059,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#stx-pair/null?
                                                    _%tl5062751200%_)
-                                                  (let ((_%__splice7817278173%_
+                                                  (let ((_%__splice7820578206%_
                                                          (gx#syntax-split-splice
                                                           _%tl5062751200%_
                                                           '0)))
@@ -8068,22 +8068,22 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7817278173%_
+                                                              _%__splice7820578206%_
                                                               '1)))
                                                           (_%target5066750698%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7817278173%_
+                                                              _%__splice7820578206%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl5066950701%_)
-                                                          (_%__match7824678247%_
+                                                          (_%__match7827978280%_
                                                            _%e5062551193%_
                                                            _%hd5062651197%_
                                                            _%tl5062751200%_
-                                                           _%__splice7817278173%_
+                                                           _%__splice7820578206%_
                                                            _%target5066750698%_
                                                            _%tl5066950701%_)
                                                           (let ()
@@ -8106,7 +8106,7 @@
                                                  (##car _%e5064850779%_))))
                                           (if (gx#identifier? _%hd5064950783%_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core/contract~Using[1]#_g82612_|
+                                                   |gerbil/core/contract~Using[1]#_g82645_|
                                                    _%hd5064950783%_)
                                                   (if (gx#stx-pair?
                                                        _%tl5065050786%_)
@@ -8121,22 +8121,22 @@
                       (_%hd5065250793%_
                        (let () (declare (not safe)) (##car _%e5065150789%_))))
                   (if (gx#stx-pair/null? _%tl5062751200%_)
-                      (let ((_%__splice7817278173%_
+                      (let ((_%__splice7820578206%_
                              (gx#syntax-split-splice _%tl5062751200%_ '0)))
                         (let ((_%tl5066950701%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7817278173%_ '1)))
+                                 (##vector-ref _%__splice7820578206%_ '1)))
                               (_%target5066750698%_
                                (let ()
                                  (declare (not safe))
-                                 (##vector-ref _%__splice7817278173%_ '0))))
+                                 (##vector-ref _%__splice7820578206%_ '0))))
                           (if (gx#stx-null? _%tl5066950701%_)
-                              (_%__match7824678247%_
+                              (_%__match7827978280%_
                                _%e5062551193%_
                                _%hd5062651197%_
                                _%tl5062751200%_
-                               _%__splice7817278173%_
+                               _%__splice7820578206%_
                                _%target5066750698%_
                                _%tl5066950701%_)
                               (let ()
@@ -8144,22 +8144,22 @@
                                 (_%g5062150681%_)))))
                       (let () (declare (not safe)) (_%g5062150681%_)))))
               (if (gx#stx-pair/null? _%tl5062751200%_)
-                  (let ((_%__splice7817278173%_
+                  (let ((_%__splice7820578206%_
                          (gx#syntax-split-splice _%tl5062751200%_ '0)))
                     (let ((_%tl5066950701%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '1)))
+                             (##vector-ref _%__splice7820578206%_ '1)))
                           (_%target5066750698%_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref _%__splice7817278173%_ '0))))
+                             (##vector-ref _%__splice7820578206%_ '0))))
                       (if (gx#stx-null? _%tl5066950701%_)
-                          (_%__match7824678247%_
+                          (_%__match7827978280%_
                            _%e5062551193%_
                            _%hd5062651197%_
                            _%tl5062751200%_
-                           _%__splice7817278173%_
+                           _%__splice7820578206%_
                            _%target5066750698%_
                            _%tl5066950701%_)
                           (let () (declare (not safe)) (_%g5062150681%_)))))
@@ -8167,7 +8167,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#stx-pair/null?
                                                        _%tl5062751200%_)
-                                                      (let ((_%__splice7817278173%_
+                                                      (let ((_%__splice7820578206%_
                                                              (gx#syntax-split-splice
                                                               _%tl5062751200%_
                                                               '0)))
@@ -8175,17 +8175,17 @@
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##vector-ref _%__splice7817278173%_ '1)))
+                         (##vector-ref _%__splice7820578206%_ '1)))
                       (_%target5066750698%_
                        (let ()
                          (declare (not safe))
-                         (##vector-ref _%__splice7817278173%_ '0))))
+                         (##vector-ref _%__splice7820578206%_ '0))))
                   (if (gx#stx-null? _%tl5066950701%_)
-                      (_%__match7824678247%_
+                      (_%__match7827978280%_
                        _%e5062551193%_
                        _%hd5062651197%_
                        _%tl5062751200%_
-                       _%__splice7817278173%_
+                       _%__splice7820578206%_
                        _%target5066750698%_
                        _%tl5066950701%_)
                       (let () (declare (not safe)) (_%g5062150681%_)))))
@@ -8193,7 +8193,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#stx-pair/null?
                                                    _%tl5062751200%_)
-                                                  (let ((_%__splice7817278173%_
+                                                  (let ((_%__splice7820578206%_
                                                          (gx#syntax-split-splice
                                                           _%tl5062751200%_
                                                           '0)))
@@ -8202,22 +8202,22 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7817278173%_
+                                                              _%__splice7820578206%_
                                                               '1)))
                                                           (_%target5066750698%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _%__splice7817278173%_
+                                                              _%__splice7820578206%_
                                                               '0))))
                                                       (if (gx#stx-null?
                                                            _%tl5066950701%_)
-                                                          (_%__match7824678247%_
+                                                          (_%__match7827978280%_
                                                            _%e5062551193%_
                                                            _%hd5062651197%_
                                                            _%tl5062751200%_
-                                                           _%__splice7817278173%_
+                                                           _%__splice7820578206%_
                                                            _%target5066750698%_
                                                            _%tl5066950701%_)
                                                           (let ()
@@ -8228,7 +8228,7 @@
                                                     (declare (not safe))
                                                     (_%g5062150681%_))))))
                                       (if (gx#stx-pair/null? _%tl5062751200%_)
-                                          (let ((_%__splice7817278173%_
+                                          (let ((_%__splice7820578206%_
                                                  (gx#syntax-split-splice
                                                   _%tl5062751200%_
                                                   '0)))
@@ -8236,21 +8236,21 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7817278173%_
+                                                      _%__splice7820578206%_
                                                       '1)))
                                                   (_%target5066750698%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _%__splice7817278173%_
+                                                      _%__splice7820578206%_
                                                       '0))))
                                               (if (gx#stx-null?
                                                    _%tl5066950701%_)
-                                                  (_%__match7824678247%_
+                                                  (_%__match7827978280%_
                                                    _%e5062551193%_
                                                    _%hd5062651197%_
                                                    _%tl5062751200%_
-                                                   _%__splice7817278173%_
+                                                   _%__splice7820578206%_
                                                    _%target5066750698%_
                                                    _%tl5066950701%_)
                                                   (let ()
@@ -8260,7 +8260,7 @@
                                             (declare (not safe))
                                             (_%g5062150681%_)))))))
                           (if (gx#stx-pair/null? _%tl5062751200%_)
-                              (let ((_%__splice7817278173%_
+                              (let ((_%__splice7820578206%_
                                      (gx#syntax-split-splice
                                       _%tl5062751200%_
                                       '0)))
@@ -8268,20 +8268,20 @@
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '1)))
                                       (_%target5066750698%_
                                        (let ()
                                          (declare (not safe))
                                          (##vector-ref
-                                          _%__splice7817278173%_
+                                          _%__splice7820578206%_
                                           '0))))
                                   (if (gx#stx-null? _%tl5066950701%_)
-                                      (_%__match7824678247%_
+                                      (_%__match7827978280%_
                                        _%e5062551193%_
                                        _%hd5062651197%_
                                        _%tl5062751200%_
-                                       _%__splice7817278173%_
+                                       _%__splice7820578206%_
                                        _%target5066750698%_
                                        _%tl5066950701%_)
                                       (let ()
@@ -8293,14 +8293,14 @@
                   (let () (declare (not safe)) (_%g5062150681%_))))))))
     (define |gerbil/core/contract~Using[:0:]#%%ref-dotted|
       (lambda (_%stx51277%_)
-        (let* ((_%__stx7824978250%_ _%stx51277%_)
+        (let* ((_%__stx7828278283%_ _%stx51277%_)
                (_%g5128151302%_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _%__stx7824978250%_))))
-          (let ((_%__kont7825278253%_
+                   _%__stx7828278283%_))))
+          (let ((_%__kont7828578286%_
                  (lambda (_%L51370%_)
                    (let* ((_%g5138251389%_
                            (|gerbil/core/contract~Using[1]#split-dotted-identifier|
@@ -8341,20 +8341,20 @@
                                                 (lambda (_%rest51442%_
                                                          _%part51444%_)
                                                   (if (and (not _%nil-check?51417%_)
-                                                           (let ((__tmp82613
+                                                           (let ((__tmp82646
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (symbol->string _%part51444%_)))
                      (declare (not safe))
-                     (##string-prefix? '"?" __tmp82613)))
+                     (##string-prefix? '"?" __tmp82646)))
               (let ((_%str51448%_ (symbol->string _%part51444%_)))
                 (_%loop51410%_
-                 (cons (let ((__tmp82614
+                 (cons (let ((__tmp82647
                               (substring
                                _%str51448%_
                                '1
                                (string-length _%str51448%_))))
                          (declare (not safe))
-                         (##string->symbol __tmp82614))
+                         (##string->symbol __tmp82647))
                        _%rest51442%_)
                  _%type51415%_
                  _%object51416%_
@@ -8542,11 +8542,11 @@
                                   (_%parts51624%_ _%tl5138751618%_))
                              (_%K5138551611%_ _%parts51624%_ _%var51621%_)))
                          (_%E5138451395%_)))))
-                (_%__kont7825478255%_
+                (_%__kont7828778288%_
                  (lambda (_%L51329%_)
                    (cons (gx#datum->syntax '#f '%%ref)
                          (cons _%L51329%_ '())))))
-            (let ((_%__match7827078271%_
+            (let ((_%__match7830378304%_
                    (lambda (_%e5128451350%_
                             _%hd5128551354%_
                             _%tl5128651357%_
@@ -8556,10 +8556,10 @@
                      (let ((_%L51370%_ _%hd5128851364%_))
                        (if (|gerbil/core/contract~Using[1]#dotted-identifier?|
                             _%L51370%_)
-                           (_%__kont7825278253%_ _%L51370%_)
-                           (_%__kont7825478255%_ _%hd5128851364%_))))))
-              (if (gx#stx-pair? _%__stx7824978250%_)
-                  (let ((_%e5128451350%_ (gx#syntax-e _%__stx7824978250%_)))
+                           (_%__kont7828578286%_ _%L51370%_)
+                           (_%__kont7828778288%_ _%hd5128851364%_))))))
+              (if (gx#stx-pair? _%__stx7828278283%_)
+                  (let ((_%e5128451350%_ (gx#syntax-e _%__stx7828278283%_)))
                     (let ((_%tl5128651357%_
                            (let ()
                              (declare (not safe))
@@ -8580,7 +8580,7 @@
                                      (declare (not safe))
                                      (##car _%e5128751360%_))))
                               (if (gx#stx-null? _%tl5128951367%_)
-                                  (_%__match7827078271%_
+                                  (_%__match7830378304%_
                                    _%e5128451350%_
                                    _%hd5128551354%_
                                    _%tl5128651357%_
@@ -8594,14 +8594,14 @@
                   (let () (declare (not safe)) (_%g5128151302%_))))))))
     (define |gerbil/core/contract~Using[:0:]#%%set-dotted!|
       (lambda (_%stx51631%_)
-        (let* ((_%__stx7828778288%_ _%stx51631%_)
+        (let* ((_%__stx7832078321%_ _%stx51631%_)
                (_%g5163551664%_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _%__stx7828778288%_))))
-          (let ((_%__kont7829078291%_
+                   _%__stx7832078321%_))))
+          (let ((_%__kont7832378324%_
                  (lambda (_%L51756%_ _%L51758%_)
                    (let* ((_%g5177251779%_
                            (|gerbil/core/contract~Using[1]#split-dotted-identifier|
@@ -8652,20 +8652,20 @@
                                                 (lambda (_%rest51826%_
                                                          _%part51828%_)
                                                   (if (and (not _%nil-check?51808%_)
-                                                           (let ((__tmp82615
+                                                           (let ((__tmp82648
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (symbol->string _%part51828%_)))
                      (declare (not safe))
-                     (##string-prefix? '"?" __tmp82615)))
+                     (##string-prefix? '"?" __tmp82648)))
               (let ((_%str51832%_ (symbol->string _%part51828%_)))
                 (_%loop51800%_
-                 (cons (let ((__tmp82616
+                 (cons (let ((__tmp82649
                               (substring
                                _%str51832%_
                                '1
                                (string-length _%str51832%_))))
                          (declare (not safe))
-                         (##string->symbol __tmp82616))
+                         (##string->symbol __tmp82649))
                        _%rest51826%_)
                  _%type51805%_
                  _%object51806%_
@@ -8870,12 +8870,12 @@
                                   (_%parts52028%_ _%tl5177752022%_))
                              (_%K5177552015%_ _%parts52028%_ _%var52025%_)))
                          (_%E5177451785%_)))))
-                (_%__kont7829278293%_
+                (_%__kont7832578326%_
                  (lambda (_%L51701%_ _%L51703%_)
                    (let ()
                      (declare (not safe))
                      (|gerbil/core/more-sugar[1]#expand-set!| _%stx51631%_)))))
-            (let ((_%__match7831478315%_
+            (let ((_%__match7834778348%_
                    (lambda (_%e5163951726%_
                             _%hd5164051730%_
                             _%tl5164151733%_
@@ -8889,12 +8889,12 @@
                            (_%L51758%_ _%hd5164351740%_))
                        (if (|gerbil/core/contract~Using[1]#dotted-identifier?|
                             _%L51758%_)
-                           (_%__kont7829078291%_ _%L51756%_ _%L51758%_)
-                           (_%__kont7829278293%_
+                           (_%__kont7832378324%_ _%L51756%_ _%L51758%_)
+                           (_%__kont7832578326%_
                             _%hd5164651750%_
                             _%hd5164351740%_))))))
-              (if (gx#stx-pair? _%__stx7828778288%_)
-                  (let ((_%e5163951726%_ (gx#syntax-e _%__stx7828778288%_)))
+              (if (gx#stx-pair? _%__stx7832078321%_)
+                  (let ((_%e5163951726%_ (gx#syntax-e _%__stx7832078321%_)))
                     (let ((_%tl5164151733%_
                            (let ()
                              (declare (not safe))
@@ -8926,7 +8926,7 @@
                                              (declare (not safe))
                                              (##car _%e5164551746%_))))
                                       (if (gx#stx-null? _%tl5164751753%_)
-                                          (_%__match7831478315%_
+                                          (_%__match7834778348%_
                                            _%e5163951726%_
                                            _%hd5164051730%_
                                            _%tl5164151733%_

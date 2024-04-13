@@ -36,6 +36,9 @@ namespace: #f
          (%#define-runtime __thread-locals __thread-locals)
          (%#define-runtime __thread-locals-mutex __thread-locals-mutex)
          (%#define-runtime
+          __unhandled-actor-exception-hook
+          __unhandled-actor-exception-hook)
+         (%#define-runtime
           unhandled-actor-exception-hook
           unhandled-actor-exception-hook)
          (%#define-runtime

@@ -6,36 +6,6 @@ package: gerbil/runtime
    raise-contract-violation-error
    (optimizer-resolve-class '(typedecl raise-contract-violation-error) 't::t))
   (declare-type
-   raise-contract-violation-error-set!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (procedure::t)
-             unchecked:
-             __raise-contract-violation-error-set!
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
-   __raise-contract-violation-error-set!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/util)))
-  (declare-type
    displayln
    (@lambda (0)
             #f
@@ -2094,7 +2064,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -2109,7 +2079,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -2125,7 +2095,7 @@ package: gerbil/runtime
      as-string__0
      signature:
      (return:
-      t::t
+      string::t
       effect:
       #f
       arguments:
@@ -2138,7 +2108,7 @@ package: gerbil/runtime
      as-string__1
      signature:
      (return:
-      t::t
+      string::t
       effect:
       #f
       arguments:
