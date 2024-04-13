@@ -49,8 +49,8 @@
 
 (defmutable multicall-default 'help : :symbol)
 
-(def (set-default-entry-point! x)
-  (set! multicall-default x))
+(def set-default-entry-point!
+  muticall-default-set!)
 
 (define-entry-point (help (command #f))
   (help: "Print help about available commands"

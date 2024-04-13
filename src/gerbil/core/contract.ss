@@ -2769,11 +2769,13 @@ package: gerbil/core
             (identifier? #'~)
             (or (free-identifier=? #'~ #':)
                 (free-identifier=? #'~ #':?)))
-       (with-syntax ((var-set! (stx-identifier #'var #'var "-set!")))
+       (with-syntax ((__var (stx-identifier #'var "__" #'var))
+                     (var-set! (stx-identifier #'var #'var "-set!")))
          #'(begin
-             (def var value)
+             (def __var value)
+             (def (var) __var)
              (def/c (var-set! (new-value ~ Type))
-               (set! var new-value)))))
+               (set! __var new-value)))))
       ((_ var value)
        #'(defmutable var value : :t)))))
 

@@ -41,7 +41,7 @@ namespace: #f
          (##continuation-capture
           (lambda (cont)
             (when unhandled-actor-exception-hook
-              (with-catch void (cut unhandled-actor-exception-hook cont exn)))
+              (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
             ;; unwind stack and continue with the primordial exception handler
             ;; see discussion in gambit#295 about ##continuation-last
             (##continuation-graft

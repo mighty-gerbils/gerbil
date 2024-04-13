@@ -15,7 +15,8 @@ namespace: #f
 
 (defmutable build-manifest gerbil-system-manifest : :list)
 
-(def (display-build-manifest (manifest build-manifest) (port (current-output-port)))
+(def (display-build-manifest (manifest : :list := __build-manifest)
+                             (port     : :port := (current-output-port)))
   (let ((p (cut display <> port))
         (l (length manifest))
         (i 0))
@@ -30,16 +31,18 @@ namespace: #f
       manifest)))
 
 (def (build-manifest/layer layer)
-  (let (l (assoc layer build-manifest))
+  (let (l (assoc layer __build-manifest))
     (if l [l] [])))
 
 (def (build-manifest/head)
-  [(car build-manifest)])
+  [(car __build-manifest)])
 
-(def (build-manifest-string (manifest build-manifest))
+(def (build-manifest-string (manifest : :list := __build-manifest))
+  => :string
   (call-with-output-string [] (lambda (p) (display-build-manifest manifest p))))
 
 (def (gerbil-system-version-string)
+  => :string
   (build-manifest-string gerbil-system-manifest))
 
 (defmutable gerbil-greeting (gerbil-system-version-string) : :string)
