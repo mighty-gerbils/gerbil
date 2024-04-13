@@ -171,7 +171,11 @@ namespace: gxc
     ;; full type collection for type directed optimizations
     (apply-collect-type-info stx)
     (apply-collect-mutable-type-info stx)
-    (apply-refine-type-info stx)
+    (let fixpoint ((current (optimizer-current-types)))
+      (apply-refine-type-info stx)
+      (let (refined (optimizer-current-types))
+        (unless (equal? current refined)
+          (fixpoint refined))))
     ;; check declared procedure return types
     (apply-check-return-type stx)
     ;; process user declarations

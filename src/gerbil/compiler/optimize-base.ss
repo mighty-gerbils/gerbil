@@ -36,7 +36,8 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 
-(defstruct (!alias !type) ())
+(defstruct (!alias !type) ()
+  equal: #t)
 
 (defclass !signature (return effect arguments unchecked origin)
   final: #t equal: #t print: #t)
@@ -89,12 +90,13 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 (defstruct (!kw-lambda !procedure) (table dispatch)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 (defstruct (!kw-lambda-primary !procedure) (keys main)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
-(defclass !primitive ())
+(defclass !primitive ()
+  equal: #t)
 
 (defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
@@ -464,3 +466,22 @@ namespace: gxc
 
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
+
+(def (optimizer-current-types)
+  (let* ((ht1 (optimizer-info-type (current-compile-optimizer-info)))
+         (ht2 (current-compile-local-type))
+         (result (if ht1 (hash->list ht1) []))
+         (result (if ht2 (foldl cons result (hash->list ht2)) result)))
+    (for-each (lambda (p)
+                (let* ((t (cdr p))
+                       (tr (if (!procedure? t)
+                             (cons 'procedure
+                                   (using (t :- !procedure)
+                                     (and t.signature t.signature.return)))
+                             (!type-id t))))
+                  (set-cdr! p tr)))
+              result)
+    (list-sort (lambda (a b)
+                 (string<? (symbol->string (car a))
+                           (symbol->string (car b))))
+               result)))
