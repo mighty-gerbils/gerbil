@@ -1,48 +1,48 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/contract~TypeReference[2]#_g82582_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82547_|
     (##structure
      gx#syntax-quote::t
      'type-reference::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82584_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82549_|
     (##structure
      gx#syntax-quote::t
      'make-type-reference
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82586_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82551_|
     (##structure
      gx#syntax-quote::t
      'type-reference?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82588_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82553_|
     (##structure
      gx#syntax-quote::t
      'type-reference-identifier
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82590_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82555_|
     (##structure
      gx#syntax-quote::t
      'type-reference-identifier-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82592_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82557_|
     (##structure
      gx#syntax-quote::t
      '&type-reference-identifier
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeReference[2]#_g82594_|
+  (define |gerbil/core/contract~TypeReference[2]#_g82559_|
     (##structure
      gx#syntax-quote::t
      '&type-reference-identifier-set!
@@ -50,7 +50,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/contract~TypeReference[:1:]#type-reference|
-    (let ((__obj82450
+    (let ((__obj82415
            (let ()
              (declare (not safe))
              (##structure
@@ -79,63 +79,63 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj82450
+         __obj82415
          'gerbil/core/contract~TypeReference#type-reference::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 'type-reference '2 '#f '#f))
+        (##unchecked-structure-set! __obj82415 'type-reference '2 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '(identifier) '4 '#f '#f))
+        (##unchecked-structure-set! __obj82415 '(identifier) '4 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '() '3 '#f '#f))
+        (##unchecked-structure-set! __obj82415 '() '3 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '#f '7 '#f '#f))
+        (##unchecked-structure-set! __obj82415 '#f '7 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj82415 '#f '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '#f '10 '#f '#f))
+        (##unchecked-structure-set! __obj82415 '#f '10 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 '#f '11 '#f '#f))
-      (let ((__tmp82581 |gerbil/core/contract~TypeReference[2]#_g82582_|))
+        (##unchecked-structure-set! __obj82415 '#f '11 '#f '#f))
+      (let ((__tmp82546 |gerbil/core/contract~TypeReference[2]#_g82547_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82581 '12 '#f '#f))
-      (let ((__tmp82583 |gerbil/core/contract~TypeReference[2]#_g82584_|))
+        (##unchecked-structure-set! __obj82415 __tmp82546 '12 '#f '#f))
+      (let ((__tmp82548 |gerbil/core/contract~TypeReference[2]#_g82549_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82583 '13 '#f '#f))
-      (let ((__tmp82585 |gerbil/core/contract~TypeReference[2]#_g82586_|))
+        (##unchecked-structure-set! __obj82415 __tmp82548 '13 '#f '#f))
+      (let ((__tmp82550 |gerbil/core/contract~TypeReference[2]#_g82551_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82585 '14 '#f '#f))
-      (let ((__tmp82587
+        (##unchecked-structure-set! __obj82415 __tmp82550 '14 '#f '#f))
+      (let ((__tmp82552
              (cons (cons 'identifier
-                         |gerbil/core/contract~TypeReference[2]#_g82588_|)
+                         |gerbil/core/contract~TypeReference[2]#_g82553_|)
                    '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82587 '15 '#f '#f))
-      (let ((__tmp82589
+        (##unchecked-structure-set! __obj82415 __tmp82552 '15 '#f '#f))
+      (let ((__tmp82554
              (cons (cons 'identifier
-                         |gerbil/core/contract~TypeReference[2]#_g82590_|)
+                         |gerbil/core/contract~TypeReference[2]#_g82555_|)
                    '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82589 '16 '#f '#f))
-      (let ((__tmp82591
+        (##unchecked-structure-set! __obj82415 __tmp82554 '16 '#f '#f))
+      (let ((__tmp82556
              (cons (cons 'identifier
-                         |gerbil/core/contract~TypeReference[2]#_g82592_|)
+                         |gerbil/core/contract~TypeReference[2]#_g82557_|)
                    '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82591 '17 '#f '#f))
-      (let ((__tmp82593
+        (##unchecked-structure-set! __obj82415 __tmp82556 '17 '#f '#f))
+      (let ((__tmp82558
              (cons (cons 'identifier
-                         |gerbil/core/contract~TypeReference[2]#_g82594_|)
+                         |gerbil/core/contract~TypeReference[2]#_g82559_|)
                    '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj82450 __tmp82593 '18 '#f '#f))
-      __obj82450)))
+        (##unchecked-structure-set! __obj82415 __tmp82558 '18 '#f '#f))
+      __obj82415)))

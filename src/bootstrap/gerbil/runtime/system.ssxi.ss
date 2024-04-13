@@ -21,8 +21,8 @@ package: gerbil/runtime
    gerbil-system-manifest
    (optimizer-resolve-class '(typedecl gerbil-system-manifest) 'pair::t))
   (declare-type
-   __build-manifest
-   (optimizer-resolve-class '(typedecl __build-manifest) 'list::t))
+   build-manifest
+   (optimizer-resolve-class '(typedecl build-manifest) 'list::t))
   (declare-type
    build-manifest-set!
    (@lambda 1
@@ -245,8 +245,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/system)))
   (declare-type
-   __gerbil-greeting
-   (optimizer-resolve-class '(typedecl __gerbil-greeting) 't::t))
+   gerbil-greeting
+   (optimizer-resolve-class '(typedecl gerbil-greeting) 't::t))
   (declare-type
    gerbil-greeting-set!
    (@lambda 1

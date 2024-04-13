@@ -7,6 +7,12 @@ namespace: #f
          (%#define-runtime
           raise-contract-violation-error
           raise-contract-violation-error)
+         (%#define-runtime
+          raise-contract-violation-error-set!
+          raise-contract-violation-error-set!)
+         (%#define-runtime
+          __raise-contract-violation-error-set!
+          __raise-contract-violation-error-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/util~1")))

@@ -9,13 +9,9 @@ namespace: #f
           :gerbil/runtime/control)
          (%#define-runtime gerbil-version-string gerbil-version-string)
          (%#define-runtime gerbil-system-manifest gerbil-system-manifest)
-         (%#define-runtime __build-manifest __build-manifest)
+         (%#define-runtime build-manifest build-manifest)
          (%#define-runtime build-manifest-set! build-manifest-set!)
          (%#define-runtime __build-manifest-set! __build-manifest-set!)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/system~1")))
-                  (%#define-syntax build-manifest |[:0:]#build-manifest|))
          (%#begin (%#define-runtime
                    display-build-manifest__%
                    display-build-manifest__%)
@@ -42,10 +38,9 @@ namespace: #f
          (%#define-runtime
           gerbil-system-version-string
           gerbil-system-version-string)
-         (%#define-runtime __gerbil-greeting __gerbil-greeting)
+         (%#define-runtime gerbil-greeting gerbil-greeting)
          (%#define-runtime gerbil-greeting-set! gerbil-greeting-set!)
          (%#define-runtime __gerbil-greeting-set! __gerbil-greeting-set!)
-         (%#define-syntax gerbil-greeting |[:0:]#gerbil-greeting|)
          (%#define-runtime gerbil-system gerbil-system)
          (%#define-runtime gerbil-home gerbil-home)
          (%#define-runtime gerbil-path gerbil-path)
