@@ -4,12 +4,15 @@
         ./api)
 (export main)
 
+(extern namespace: #f time)
+
 (def (main method file)
-  (case method
-    (("port") (benchmark-port file))
-    (("strio") (benchmark-stdio-strio file))
-    (("bio") (benchmark-stdio-bio file))
-    (else (error "unknown method; must be port, strio (for buffered string IO) or bio (for buffered binary IO) " method))))
+  (parameterize ((json-symbolic-keys #t))
+    (case method
+      (("port") (benchmark-port file))
+      (("strio") (benchmark-stdio-strio file))
+      (("bio") (benchmark-stdio-bio file))
+      (else (error "unknown method; must be port, strio (for buffered string IO) or bio (for buffered binary IO) " method)))))
 
 (def (benchmark-port file)
   (##gc)
