@@ -341,8 +341,14 @@ package: gerbil/core
   (extern namespace: #f
     ;; source: gambit.sld
     ;; procedures and globals provided by Gambit
+
+    ;; globals
     default-random-source
 
+    ;; macros
+    time
+
+    ;; procedures
     ->char-set
     abandoned-mutex-exception?
     abort

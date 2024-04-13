@@ -4,8 +4,6 @@
         ./api)
 (export main)
 
-(extern namespace: #f time)
-
 (def (main method file)
   (parameterize ((json-symbolic-keys #t))
     (case method
