@@ -298,6 +298,12 @@ package: gerbil/core
     gerbil/core/contract~InterfaceInfo#interface-info::t
     unchecked-implementation-methods
     #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander
+   (optimizer-resolve-class
+    '(typedecl
+      gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander)
+    't::t))
   (declare-method
    gerbil/core/contract~InterfaceInfo#interface-info::t
    apply-macro-expander

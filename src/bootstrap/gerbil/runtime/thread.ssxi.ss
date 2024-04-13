@@ -330,6 +330,21 @@ package: gerbil/runtime
     '(typedecl __unhandled-actor-exception-hook)
     't::t))
   (declare-type
+   unhandled-actor-exception-hook
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
    unhandled-actor-exception-hook-set!
    (@lambda 1
             #f
@@ -339,7 +354,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (procedure::t)
+             (#f)
              unchecked:
              __unhandled-actor-exception-hook-set!
              origin:

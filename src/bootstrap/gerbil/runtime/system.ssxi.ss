@@ -21,15 +21,15 @@ package: gerbil/runtime
    gerbil-system-manifest
    (optimizer-resolve-class '(typedecl gerbil-system-manifest) 'pair::t))
   (declare-type
-   build-manifest
-   (optimizer-resolve-class '(typedecl build-manifest) 'pair::t))
+   __build-manifest
+   (optimizer-resolve-class '(typedecl __build-manifest) 'list::t))
   (declare-type
-   display-build-manifest__%
-   (@lambda 2
+   build-manifest
+   (@lambda 0
             #f
             signature:
             (return:
-             void::t
+             list::t
              effect:
              #f
              arguments:
@@ -39,12 +39,57 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/system)))
   (declare-type
+   build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t)
+             unchecked:
+             __build-manifest-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   display-build-manifest__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t port::t)
+             unchecked:
+             __display-build-manifest
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
    display-build-manifest__0
    (@lambda 0
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -59,7 +104,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -75,7 +120,7 @@ package: gerbil/runtime
      display-build-manifest__0
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:
@@ -88,7 +133,7 @@ package: gerbil/runtime
      display-build-manifest__1
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:
@@ -101,7 +146,94 @@ package: gerbil/runtime
      display-build-manifest__%
      signature:
      (return:
-      void::t
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
+  (declare-type
+   __display-build-manifest__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest
+   (@case-lambda
+    (0
+     __display-build-manifest__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (1
+     __display-build-manifest__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (2
+     __display-build-manifest__%
+     signature:
+     (return:
+      t::t
       effect:
       #f
       arguments:
@@ -146,13 +278,13 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
-             #f
+             (list::t)
              unchecked:
-             #f
+             __build-manifest-string
              origin:
              gerbil/runtime/system)))
   (declare-type
@@ -161,7 +293,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -177,7 +309,7 @@ package: gerbil/runtime
      build-manifest-string__0
      signature:
      (return:
-      t::t
+      string::t
       effect:
       #f
       arguments:
@@ -190,7 +322,66 @@ package: gerbil/runtime
      build-manifest-string__%
      signature:
      (return:
-      t::t
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
+  (declare-type
+   __build-manifest-string__%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-string__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-string
+   (@case-lambda
+    (0
+     __build-manifest-string__0
+     signature:
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (1
+     __build-manifest-string__%
+     signature:
+     (return:
+      string::t
       effect:
       #f
       arguments:
@@ -205,7 +396,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             string::t
              effect:
              #f
              arguments:
@@ -215,8 +406,53 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/system)))
   (declare-type
+   __gerbil-greeting
+   (optimizer-resolve-class '(typedecl __gerbil-greeting) 'string::t))
+  (declare-type
    gerbil-greeting
-   (optimizer-resolve-class '(typedecl gerbil-greeting) 't::t))
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (string::t)
+             unchecked:
+             __gerbil-greeting-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-system
    (@lambda 0
@@ -271,7 +507,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             void::t
+             immediate::t
              effect:
              #f
              arguments:

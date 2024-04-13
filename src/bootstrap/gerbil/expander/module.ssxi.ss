@@ -279,10 +279,8 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((:init! . gx#export-expander:::init!)
-            (apply-export-expander
-             .
-             gx#export-expander::apply-export-expander))))
+           ((apply-export-expander . gx#export-expander::apply-export-expander)
+            (:init! . gx#export-expander:::init!))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))
@@ -1112,7 +1110,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1127,7 +1125,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1363,7 +1361,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1378,7 +1376,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1393,7 +1391,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1409,7 +1407,7 @@ package: gerbil/expander
      gx#core-module-export->import__0
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:
@@ -1422,7 +1420,7 @@ package: gerbil/expander
      gx#core-module-export->import__1
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:
@@ -1435,7 +1433,7 @@ package: gerbil/expander
      gx#core-module-export->import__%
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:

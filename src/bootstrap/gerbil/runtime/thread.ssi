@@ -39,6 +39,9 @@ namespace: #f
           __unhandled-actor-exception-hook
           __unhandled-actor-exception-hook)
          (%#define-runtime
+          unhandled-actor-exception-hook
+          unhandled-actor-exception-hook)
+         (%#define-runtime
           unhandled-actor-exception-hook-set!
           unhandled-actor-exception-hook-set!)
          (%#define-runtime

@@ -211,7 +211,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
@@ -256,7 +256,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:
@@ -346,7 +346,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             pair::t
              effect:
              #f
              arguments:

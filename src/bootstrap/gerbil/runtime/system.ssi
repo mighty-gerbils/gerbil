@@ -9,7 +9,10 @@ namespace: #f
           :gerbil/runtime/control)
          (%#define-runtime gerbil-version-string gerbil-version-string)
          (%#define-runtime gerbil-system-manifest gerbil-system-manifest)
+         (%#define-runtime __build-manifest __build-manifest)
          (%#define-runtime build-manifest build-manifest)
+         (%#define-runtime build-manifest-set! build-manifest-set!)
+         (%#define-runtime __build-manifest-set! __build-manifest-set!)
          (%#begin (%#define-runtime
                    display-build-manifest__%
                    display-build-manifest__%)
@@ -22,6 +25,18 @@ namespace: #f
                            (%#define-runtime
                             display-build-manifest
                             display-build-manifest)))
+         (%#begin (%#define-runtime
+                   __display-build-manifest__%
+                   __display-build-manifest__%)
+                  (%#begin (%#define-runtime
+                            __display-build-manifest__0
+                            __display-build-manifest__0)
+                           (%#define-runtime
+                            __display-build-manifest__1
+                            __display-build-manifest__1)
+                           (%#define-runtime
+                            __display-build-manifest
+                            __display-build-manifest)))
          (%#define-runtime build-manifest/layer build-manifest/layer)
          (%#define-runtime build-manifest/head build-manifest/head)
          (%#begin (%#define-runtime
@@ -33,10 +48,22 @@ namespace: #f
                            (%#define-runtime
                             build-manifest-string
                             build-manifest-string)))
+         (%#begin (%#define-runtime
+                   __build-manifest-string__%
+                   __build-manifest-string__%)
+                  (%#begin (%#define-runtime
+                            __build-manifest-string__0
+                            __build-manifest-string__0)
+                           (%#define-runtime
+                            __build-manifest-string
+                            __build-manifest-string)))
          (%#define-runtime
           gerbil-system-version-string
           gerbil-system-version-string)
+         (%#define-runtime __gerbil-greeting __gerbil-greeting)
          (%#define-runtime gerbil-greeting gerbil-greeting)
+         (%#define-runtime gerbil-greeting-set! gerbil-greeting-set!)
+         (%#define-runtime __gerbil-greeting-set! __gerbil-greeting-set!)
          (%#define-runtime gerbil-system gerbil-system)
          (%#define-runtime gerbil-home gerbil-home)
          (%#define-runtime gerbil-path gerbil-path)

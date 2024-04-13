@@ -40,7 +40,7 @@ namespace: #f
        (lambda (exn)
          (##continuation-capture
           (lambda (cont)
-            (when __unhandled-actor-exception-hook
+            (when unhandled-actor-exception-hook
               (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
             ;; unwind stack and continue with the primordial exception handler
             ;; see discussion in gambit#295 about ##continuation-last
@@ -111,9 +111,7 @@ namespace: #f
   (make-mutex 'thread-locals))
 
 ;;; actor debug hooks
-(def __unhandled-actor-exception-hook #f)
-(def (unhandled-actor-exception-hook-set! (proc : :procedure))
-  (set! __unhandled-actor-exception-hook proc))
+(defmutable unhandled-actor-exception-hook #f :? :procedure)
 
 ;;; utitilities
 (def (current-thread-group)

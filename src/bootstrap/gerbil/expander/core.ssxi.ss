@@ -3618,7 +3618,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#expander-mark::t
              effect:
              #f
              arguments:
@@ -3633,7 +3633,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#expander-mark::t
              effect:
              #f
              arguments:
@@ -3649,7 +3649,7 @@ package: gerbil/expander
      gx#core-deserialize-mark__0
      signature:
      (return:
-      t::t
+      gx#expander-mark::t
       effect:
       #f
       arguments:
@@ -3662,7 +3662,7 @@ package: gerbil/expander
      gx#core-deserialize-mark__%
      signature:
      (return:
-      t::t
+      gx#expander-mark::t
       effect:
       #f
       arguments:
