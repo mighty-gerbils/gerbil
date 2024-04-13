@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; json reader
-(import :gerbil/gambit
+(import :gerbil/runtime/hash
+        :gerbil/runtime/table
         :std/error
         :std/sugar
         :std/io
@@ -46,19 +47,28 @@
                     (raise-invalid-token read-json-object input char))))))
 
            (def (read-json-hash input env)
-             (let (obj (if (&env-read-json-key-as-symbol? env)
-                          (make-hash-table-eq)
-                          (make-hash-table)))
+             (let* ((obj
+                     (if (&env-read-json-key-as-symbol? env)
+                       (make-gc-table 7 gc-hash-table::t)
+                       (make-hash-table)))
+                    (put!
+                     (if (&env-read-json-key-as-symbol? env)
+                       (lambda (k v) (gc-table-set! obj k v))
+                       (lambda (k v) (hash-put! obj k v))))
+                    (key?
+                     (if (&env-read-json-key-as-symbol? env)
+                       (lambda (k) (eq? (gc-table-ref obj k absent-value) absent-value))
+                       (lambda (k) (hash-key? obj k)))))
                (if (&env-read-json-object-as-walist? env)
                  (let (lst [])
                    (let lp ()
                      (let (key (read-json-hash-key input env))
                        (when key
                          ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
-                         (if (hash-key? obj key)
+                         (if (key? key)
                            (error "Duplicate hash key in JSON input" key)
                            (let (val (read-json-object input env))
-                             (hash-put! obj key val)
+                             (put! key val)
                              (push! (cons key val) lst)
                              (skip-whitespace input)
                              (let (char (read-char input))
@@ -71,19 +81,20 @@
                      (if (&env-read-json-key-as-symbol? env)
                        (walistq r)
                        (walist r))))
-                 (let lp ()
-                   (let (key (read-json-hash-key input env))
-                     (if key
-                       (let (val (read-json-object input env))
-                         (hash-put! obj key val)
-                         (skip-whitespace input)
-                         (let (char (read-char input))
-                           (case char
-                             ((#\,) (lp))
-                             ((#\}) obj)
-                             (else
-                              (raise-invalid-token read-json-hash input char)))))
-                       obj))))))
+                 (let (return (lambda () (HashTable obj)))
+                   (let lp ()
+                     (let (key (read-json-hash-key input env))
+                       (if key
+                         (let (val (read-json-object input env))
+                           (put! key val)
+                           (skip-whitespace input)
+                           (let (char (read-char input))
+                             (case char
+                               ((#\,) (lp))
+                               ((#\}) (return))
+                               (else
+                                (raise-invalid-token read-json-hash input char)))))
+                         (return))))))))
 
            (def (read-json-hash-key input env)
              (skip-whitespace input)
