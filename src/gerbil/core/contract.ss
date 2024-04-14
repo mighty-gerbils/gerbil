@@ -2768,8 +2768,8 @@ package: gerbil/core
           (test fini ...)
           body ...)
        (with-syntax (((var ...)
-                      (stx-map (lambda (b) (if (identifier? b) b (stx-car b)))
-                               #'(var/c ...))))
+                      (map (lambda (b) (if (identifier? b) b (stx-car b)))
+                           #'(var/c ...))))
          #'(let/c $loop ((var/c init) ...)
              (if test
                (do-loop-result fini ...)
