@@ -2763,7 +2763,7 @@ package: gerbil/core
     (defclass/c hd slots struct: #t . body))
 
   (defsyntax (defmutable stx)
-    (syntax-case stx (:)
+    (syntax-case stx ()
       ((_ var value ~ Type)
        (and (identifier? #'var)
             (identifier? #'~)
@@ -2777,7 +2777,35 @@ package: gerbil/core
              (def/c (var-set! (new-value ~ Type))
                (set! __var new-value)))))
       ((_ var value)
-       #'(defmutable var value : :t)))))
+       #'(defmutable var value : :t))))
+
+
+  (defsyntax (defmutable-rules stx)
+    (syntax-case stx ()
+      ((_ var value ~ Type)
+       (and (identifier? #'var)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':?)))
+       (with-syntax ((__var (stx-identifier #'var "__" #'var))
+                     (var-set! (stx-identifier #'var #'var "-set!")))
+         #'(begin
+             (def __var value)
+             (def/c (var-set! (new-value ~ Type))
+               (set! __var new-value))
+             (defsyntax var
+               (identifier-rules (set! %%set-dotted!)
+                 ((set! the-var new-value)
+                  (var-set! new-value))
+                 ((%%set-dotted! the-var new-value)
+                  (var-set! new-value))
+                 (the-var
+                  (identifier? #'the-var)
+                  __var)
+                 ((the-var arg (... ...))
+                  (__var arg (... ...))))))))
+      ((_ var value)
+       #'(defmutable-rules var value : :t)))))
 
 (import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassMeta))
