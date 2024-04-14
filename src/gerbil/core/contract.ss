@@ -2773,7 +2773,7 @@ package: gerbil/core
          #'(let/c $loop ((var/c init) ...)
              (if test
                (do-loop-result fini ...)
-               (let () body ... ($lop (do-loop-step var step ...) ...))))))))
+               (let () body ... ($loop (do-loop-step var step ...) ...))))))))
 
   (defrules do-loop-result ()
     ((_) #!void)
