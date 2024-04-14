@@ -323,6 +323,7 @@ namespace: gerbil/core/runtime
           (%#begin (%#export #t)
                    (%#extern
                     (default-random-source default-random-source)
+                    (time time)
                     (->char-set ->char-set)
                     (abandoned-mutex-exception? abandoned-mutex-exception?)
                     (abort abort)
