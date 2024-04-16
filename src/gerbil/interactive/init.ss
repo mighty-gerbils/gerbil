@@ -3,7 +3,7 @@
 ;;; Gerbil interactive environment initialization
 
 ;; Pleasantly greet user
-(displayln gerbil-greeting)
+(displayln (gerbil-greeting))
 
 ;; Interactive development utilities
 (import :std/interactive)

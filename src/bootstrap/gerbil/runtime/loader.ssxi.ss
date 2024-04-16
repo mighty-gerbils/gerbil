@@ -4,7 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-type
    __modules
-   (optimizer-resolve-class '(typedecl __modules) 't::t))
+   (optimizer-resolve-class '(typedecl __modules) 'HashTable::t))
   (declare-type
    __load-mx
    (optimizer-resolve-class '(typedecl __load-mx) 'mutex::t))

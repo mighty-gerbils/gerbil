@@ -43,8 +43,7 @@
           (defsyntax (macro stx)
             (if (identifier? stx)
               (cond
-               ((syntax-parameter-value (quote-syntax param))
-                => values)
+               ((syntax-parameter-value (quote-syntax param)))
                (else
                 (raise-syntax-error #f errmsg stx)))
               (raise-syntax-error #f "Bad syntax; defsyntax-parameter* expects a macro definition" stx))))))

@@ -315,10 +315,12 @@ package: gerbil/runtime
              gerbil/runtime/thread)))
   (declare-type
    __primordial-thread-locals
-   (optimizer-resolve-class '(typedecl __primordial-thread-locals) 't::t))
+   (optimizer-resolve-class
+    '(typedecl __primordial-thread-locals)
+    'HashTable::t))
   (declare-type
    __thread-locals
-   (optimizer-resolve-class '(typedecl __thread-locals) 't::t))
+   (optimizer-resolve-class '(typedecl __thread-locals) 'HashTable::t))
   (declare-type
    __thread-locals-mutex
    (optimizer-resolve-class '(typedecl __thread-locals-mutex) 'mutex::t))
@@ -327,6 +329,21 @@ package: gerbil/runtime
    (optimizer-resolve-class
     '(typedecl __unhandled-actor-exception-hook)
     't::t))
+  (declare-type
+   unhandled-actor-exception-hook
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
   (declare-type
    unhandled-actor-exception-hook-set!
    (@lambda 1
@@ -337,7 +354,7 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             (procedure::t)
+             (#f)
              unchecked:
              __unhandled-actor-exception-hook-set!
              origin:

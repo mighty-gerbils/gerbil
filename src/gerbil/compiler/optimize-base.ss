@@ -36,7 +36,8 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 
-(defstruct (!alias !type) ())
+(defstruct (!alias !type) ()
+  equal: #t)
 
 (defclass !signature (return effect arguments unchecked origin)
   final: #t equal: #t print: #t)
@@ -89,12 +90,13 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 (defstruct (!kw-lambda !procedure) (table dispatch)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 (defstruct (!kw-lambda-primary !procedure) (keys main)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
-(defclass !primitive ())
+(defclass !primitive ()
+  equal: #t)
 
 (defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
@@ -381,7 +383,7 @@ namespace: gxc
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
-  (verbose "declare-type " sym " " (struct->list type))
+  (verbose "declare-type " sym " " type)
   (let (table (if local?
                 (current-compile-local-type)
                 (optimizer-info-type (current-compile-optimizer-info))))
@@ -464,3 +466,47 @@ namespace: gxc
 
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
+
+(def (optimizer-current-types)
+  (def (type-e t)
+    (cond
+     ((symbol? t)
+      (type-e (optimizer-lookup-type t)))
+     ((!lambda? t)
+      (lambda-type t))
+     ((!kw-lambda? t)
+      (kw-lambda-type t))
+     ((!kw-lambda-primary? t)
+      (kw-lambda-primary-type t))
+     ((!procedure? t)
+      (cons 'procedure
+            (using (t :- !procedure)
+              (and t.signature t.signature.return))))
+     ((!type? t)
+      (!type-id t))
+     (else #f)))
+
+  (def (lambda-type (t :- !lambda))
+    (if t.dispatch
+      (type-e t.dispatch)
+      (cons 'procedure (and t.signature t.signature.return))))
+
+  (def (kw-lambda-type (t :- !kw-lambda))
+    (type-e t.dispatch))
+
+  (def (kw-lambda-primary-type (t :- !kw-lambda-primary))
+    (type-e t.main))
+
+  (let* ((ht1 (optimizer-info-type (current-compile-optimizer-info)))
+         (ht2 (current-compile-local-type))
+         (result (if ht1 (hash->list ht1) []))
+         (result (if ht2 (foldl cons result (hash->list ht2)) result)))
+    (for-each (lambda (p)
+                (let* ((t (cdr p))
+                       (tr (type-e t)))
+                  (set-cdr! p tr)))
+              result)
+    (list-sort (lambda (a b)
+                 (string<? (symbol->string (car a))
+                           (symbol->string (car b))))
+               result)))

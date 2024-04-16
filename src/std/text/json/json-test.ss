@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo at hackzen.org
 ;;; :std/text/json unit test
 
 (import :std/io
         :std/misc/walist
         :std/misc/hash
+        :std/misc/ports
         :std/parser/base
         :std/sugar
         :std/test
@@ -20,12 +21,24 @@
 
 (def (check-encode-decode obj str)
   (let (eqf (if (hash-table? obj) equal-hash? equal?))
-    (parameterize ((json-sort-keys #f))
+    (parameterize ((write-json-sort-keys? #f))
       (check (string->json-object (json-object->string obj)) => obj :: eqf))
 
-    (parameterize ((json-sort-keys #t))
+    (parameterize ((write-json-sort-keys? #t))
       (check (json-object->string obj) => str)
       (check (string->json-object str) => obj :: eqf))))
+
+(defrule (check-encode-decode/ordered obj str)
+  (parameterize ((write-json-sort-keys? #f)
+                 (read-json-key-as-symbol? #t)
+                 (read-json-object-as-walist? #t))
+    (check (json-object->string obj) => str)
+    (check (string->json-object str) => obj)))
+
+(defrule (check-pretty obj str . options)
+  (let (eqf (if (hash-table? obj) equal-hash? equal?))
+    (check (with-output (out #f) (pretty-json obj out . options)) => str)
+    (check (string->json-object str) => obj :: eqf)))
 
 (def (check-encode-decode= obj)
   (checkf = (string->json-object (json-object->string obj)) obj))
@@ -51,30 +64,93 @@
                     .1 .01 1e-3 1e-4 1e-5 1e-6 1e-7 1e-8 1e-9 1e-10))
       (check-encode-decode "a string" "\"a string\"")
       (check-encode-decode [1 2 3 [4 5] ["six" "seven"]] "[1,2,3,[4,5],[\"six\",\"seven\"]]")
-      (check-encode-decode (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5))))
-                           "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
-      (parameterize ((json-symbolic-keys #f))
+      (parameterize ((read-json-key-as-symbol? #t))
+        (check-encode-decode (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5))))
+                             "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
+      (parameterize ((read-json-key-as-symbol? #f))
         (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))
                              "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
-      (check-encode (walist '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
-      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
-      (check-exception (string->json-object "true junk") parse-error?))
+      (parameterize ((write-json-sort-keys? #t))
+        (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}"))
+      (check-exception (string->json-object "true junk") parse-error?)
+      (def my-obj (hash (obj0 (hash)) (l3 [1 2 3]) (obj1 (hash (name "John Doe") (age 33)))))
+      #;(check-pretty my-obj
+                    "{\"l3\":\n  [1,\n   2,\n   3],\n \"obj0\": {},\n \"obj1\":\n  {\"age\": 33,\n   \"name\": \"John doe\"}}\n"
+                      sort-keys?: #t
+                      lisp-style?: #t)
+      (parameterize ((write-json-sort-keys? #t)
+                     (read-json-key-as-symbol? #t)
+                     (read-json-object-as-walist? #f))
+        (check-pretty my-obj #<<END
+{
+  "l3": [
+    1,
+    2,
+    3
+  ],
+  "obj0": {},
+  "obj1": {
+    "age": 33,
+    "name": "John Doe"
+  }
+}
 
+END
+       )))
+    (test-case "encoding and decoding with walist"
+      (parameterize ((read-json-key-as-symbol? #f))
+        (check-encode-decode/ordered (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
+        (check-encode (walistq '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}"))
+      (def my-obj (walistq [['obj0 :: (walistq '())]
+                            ['l3 :: [1 2 3]]
+                            ['obj1 :: (walistq [['name . "John Doe"]
+                                                ['age . 33]])]]))
+      (parameterize ((write-json-sort-keys? #t)
+                     (read-json-key-as-symbol? #t)
+                     (read-json-object-as-walist? #t))
+        (check-pretty my-obj #<<END
+{"obj0": {},
+ "l3":
+  [1,
+   2,
+   3],
+ "obj1":
+  {"name": "John Doe",
+   "age": 33}}
+
+END
+                      lisp-style?: #t)
+        (check-pretty my-obj #<<END
+{
+  "obj0": {},
+  "l3": [
+    1,
+    2,
+    3
+  ],
+  "obj1": {
+    "name": "John Doe",
+    "age": 33
+  }
+}
+
+END
+                      )))
     (test-case "io zoo"
-      (def obj
-        (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
-      (def str
-        "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
+      (parameterize ((read-json-key-as-symbol? #t)
+                     (write-json-sort-keys? #t))
+        (def obj (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
+        (def str "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
 
-      (check (call-with-output-string "" (cut write-json obj <>)) => str)
-      (check (call-with-input-string str read-json) => obj :: equal-hash?)
+        (check (call-with-output-string "" (cut write-json obj <>)) => str)
+        (check (call-with-input-string str read-json) => obj :: equal-hash?)
 
-      (check (do-with-buffered-string-writer (cut write-json obj <>)) => str)
-      (check (do-with-buffered-string-reader str read-json) => obj :: equal-hash?)
+        (check (do-with-buffered-string-writer (cut write-json obj <>)) => str)
+        (check (do-with-buffered-string-reader str read-json) => obj :: equal-hash?)
 
-      (check (do-with-buffered-writer (cut write-json obj <>)) => str)
-      (check (do-with-buffered-reader str read-json) => obj :: equal-hash?))))
+        (check (do-with-buffered-writer (cut write-json obj <>)) => str)
+        (check (do-with-buffered-reader str read-json) => obj :: equal-hash?)))))
 
 (def (do-with-buffered-writer proc)
   (let (buf (open-buffered-writer #f))

@@ -4,10 +4,10 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#__module-registry
-   (optimizer-resolve-class '(typedecl gx#__module-registry) 't::t))
+   (optimizer-resolve-class '(typedecl gx#__module-registry) 'HashTable::t))
   (declare-type
    gx#__module-pkg-cache
-   (optimizer-resolve-class '(typedecl gx#__module-pkg-cache) 't::t))
+   (optimizer-resolve-class '(typedecl gx#__module-pkg-cache) 'HashTable::t))
   (declare-class
    gx#module-import::t
    (@class gx#module-import::t
@@ -224,10 +224,8 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((:init! . gx#import-expander:::init!)
-            (apply-import-expander
-             .
-             gx#import-expander::apply-import-expander))))
+           ((apply-import-expander . gx#import-expander::apply-import-expander)
+            (:init! . gx#import-expander:::init!))))
   (declare-type
    gx#import-expander::t
    (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
@@ -281,10 +279,8 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((:init! . gx#export-expander:::init!)
-            (apply-export-expander
-             .
-             gx#export-expander::apply-export-expander))))
+           ((apply-export-expander . gx#export-expander::apply-export-expander)
+            (:init! . gx#export-expander:::init!))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))
@@ -1114,7 +1110,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1129,7 +1125,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             boolean::t
              effect:
              #f
              arguments:
@@ -1365,7 +1361,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1380,7 +1376,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1395,7 +1391,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             t::t
+             gx#module-import::t
              effect:
              #f
              arguments:
@@ -1411,7 +1407,7 @@ package: gerbil/expander
      gx#core-module-export->import__0
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:
@@ -1424,7 +1420,7 @@ package: gerbil/expander
      gx#core-module-export->import__1
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:
@@ -1437,7 +1433,7 @@ package: gerbil/expander
      gx#core-module-export->import__%
      signature:
      (return:
-      t::t
+      gx#module-import::t
       effect:
       #f
       arguments:

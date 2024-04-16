@@ -1,10 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; json reader
-(import :gerbil/gambit
+(import :gerbil/runtime/hash
+        :gerbil/runtime/table
         :std/error
         :std/sugar
         :std/io
+        :std/misc/list
+        :std/misc/walist
         :std/text/hex
         ./env)
 (export read-json-object/port read-json-object/reader read-json-object/buffer)
@@ -15,7 +18,12 @@
     ((macro name peek-char read-char)
      (with-syntax ((read-json-object    (stx-identifier #'macro "read-json-object/" #'name))
                    (read-json-hash      (stx-identifier #'macro "read-json-hash/" #'name))
-                   (read-json-hash-key  (stx-identifier #'macro "read-json-hash-key/" #'name))
+                   (read-json-hash/symbol  (stx-identifier #'macro "read-json-hash/symbol/" #'name))
+                   (read-json-hash/walistq  (stx-identifier #'macro "read-json-hash/walistq" #'name))
+                   (read-json-hash/string  (stx-identifier #'macro "read-json-hash/string/" #'name))
+                   (read-json-hash/walist  (stx-identifier #'macro "read-json-hash/walist/" #'name))
+                   (read-json-hash-key/symbol  (stx-identifier #'macro "read-json-hash-key/symbol/" #'name))
+                   (read-json-hash-key/string  (stx-identifier #'macro "read-json-hash-key/string/" #'name))
                    (read-json-list      (stx-identifier #'macro "read-json-list/" #'name))
                    (read-json-list-next (stx-identifier #'macro "read-json-list-next/" #'name))
                    (read-json-string    (stx-identifier #'macro "read-json-string/" #'name))
@@ -28,7 +36,7 @@
        #'(begin
            (def (read-json-object input env)
              (skip-whitespace input)
-             (let (char (peek-char input))
+             (let (char (read-char input))
                (if (eof-object? char)
                  #!eof
                  (case char
@@ -39,65 +47,130 @@
                    ((#\f) (read-json-false input env))
                    ((#\n) (read-json-null input env))
                    ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
-                    (read-json-number input env))
+                    (read-json-number char input env))
                    (else
                     (raise-invalid-token read-json-object input char))))))
 
            (def (read-json-hash input env)
-             (read-char input)
-             (let (obj (if (&env-symbolic-keys env)
-                         (make-hash-table-eq)
-                         (make-hash-table)))
+             (if (&env-read-json-key-as-symbol? env)
+               (if (&env-read-json-object-as-walist? env)
+                 (read-json-hash/walistq input env)
+                 (read-json-hash/symbol input env))
+               (if (&env-read-json-object-as-walist? env)
+                 (read-json-hash/walist input env)
+                 (read-json-hash/string input env))))
+
+           (def (read-json-hash/walistq input env)
+             (let* ((obj (make-gc-table 7 gc-hash-table::t))
+                    (put! (lambda (k v) (gc-table-set! obj k v)))
+                    (key? (lambda (k) (not (eq? (gc-table-ref obj k absent-value) absent-value))))
+                    (lst []))
                (let lp ()
-                 (let (key (read-json-hash-key input env))
-                   (if key
+                 (let (key (read-json-hash-key/symbol input env))
+                   (when key
                      ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
-                     (if (hash-key? obj key)
+                     (if (key? key)
                        (error "Duplicate hash key in JSON input" key)
                        (let (val (read-json-object input env))
-                         (hash-put! obj key val)
+                         (put! key val)
+                         (push! (cons key val) lst)
                          (skip-whitespace input)
-                         (let (char (peek-char input))
+                         (let (char (read-char input))
                            (case char
-                             ((#\,)
-                              (read-char input)
-                              (lp))
-                             ((#\})
-                              (read-char input)
-                              obj)
+                             ((#\,) (lp))
+                             ((#\}) (void))
                              (else
-                              (raise-invalid-token read-json-hash input char))))))
-                     obj)))))
+                              (raise-invalid-token read-json-hash input char)))))))))
+               (walistq (reverse! lst))))
 
-           (def (read-json-hash-key input env)
+           (def (read-json-hash/walist input env)
+             (let* ((obj (make-hash-table size: 8))
+                    (put! (lambda (k v) (hash-put! obj k v)))
+                    (key? (lambda (k) (hash-key? obj k)))
+                    (lst []))
+               (let lp ()
+                 (let (key (read-json-hash-key/string input env))
+                   (when key
+                     ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
+                     (if (key? key)
+                       (error "Duplicate hash key in JSON input" key)
+                       (let (val (read-json-object input env))
+                         (put! key val)
+                         (push! (cons key val) lst)
+                         (skip-whitespace input)
+                         (let (char (read-char input))
+                           (case char
+                             ((#\,) (lp))
+                             ((#\}) (void))
+                             (else
+                              (raise-invalid-token read-json-hash input char)))))))))
+               (walist (reverse! lst))))
+
+           (def (read-json-hash/symbol input env)
+             (let* ((obj (make-gc-table 7 gc-hash-table::t))
+                    (put! (lambda (k v) (gc-table-set! obj k v)))
+                    (return (lambda () (HashTable obj))))
+               (let lp ()
+                 (let (key (read-json-hash-key/symbol input env))
+                   (if key
+                     (let (val (read-json-object input env))
+                       (put! key val)
+                       (skip-whitespace input)
+                       (let (char (read-char input))
+                         (case char
+                           ((#\,) (lp))
+                           ((#\}) (return))
+                           (else
+                            (raise-invalid-token read-json-hash input char)))))
+                     (return))))))
+
+           (def (read-json-hash/string input env)
+             (let* ((obj (make-hash-table size: 8))
+                    (put! (lambda (k v) (hash-put! obj k v)))
+                    (return (lambda () obj)))
+               (let lp ()
+                 (let (key (read-json-hash-key/string input env))
+                   (if key
+                     (let (val (read-json-object input env))
+                       (put! key val)
+                       (skip-whitespace input)
+                       (let (char (read-char input))
+                         (case char
+                           ((#\,) (lp))
+                           ((#\}) (return))
+                           (else
+                            (raise-invalid-token read-json-hash input char)))))
+                     (return))))))
+
+           (def (read-json-hash-key/string input env)
              (skip-whitespace input)
-             (let (char (peek-char input))
+             (let (char (read-char input))
                (case char
                  ((#\")
                   (let (key (read-json-string input env))
                     (skip-whitespace input)
-                    (let (char (peek-char input))
+                    (let (char (read-char input))
                       (case char
-                        ((#\:)
-                         (read-char input)
-                         (if (&env-symbolic-keys env)
-                           (string->symbol key)
-                           key))
+                        ((#\:) key)
                         (else
                          (raise-invalid-token read-json-hash-key input char))))))
-                 ((#\})
-                  (read-char input)
-                  #f)
+                 ((#\}) #f)
                  (else
                   (raise-invalid-token read-json-hash-key input char)))))
 
+           (def (read-json-hash-key/symbol input env)
+             (alet (key (read-json-hash-key/string input env))
+               (string->symbol key)))
+
            (def (read-json-list input env)
-             (read-char input)
              (let (root [#f])
                (let lp ((tl root))
                  (let (next (read-json-list-next input env))
                    (if (eof-object? next)
-                     ((&env-list-wrapper env) (cdr root))
+                     (let (l (cdr root))
+                       (if (&env-read-json-array-as-vector? env)
+                         (list->vector l)
+                         l))
                      (let (tl* [next])
                        (set! (cdr tl) tl*)
                        (lp tl*)))))))
@@ -159,7 +232,6 @@
                 (else
                  (raise-invalid-token hex-value input char))))
 
-             (read-char input)
              (let (root [#f])
                (let lp ((tl root))
                  (let (char (read-char input))
@@ -178,7 +250,7 @@
                           (set! (cdr tl) tl*)
                           (lp tl*)))))))))
 
-           (def (read-json-number input env)
+           (def (read-json-number first-char input env)
              ;; descend parsing terminals: #\] #\} #\, whitespace
              ;; read until a terminal is encountered and let string->number
              ;; parse it liberally
@@ -187,7 +259,7 @@
                  (or (string->number str)
                      (raise-invalid-token read-json-number input str))))
 
-             (let (chars [(read-char input)])
+             (let (chars [first-char])
                (let lp ((tl chars))
                  (let (char (peek-char input))
                    (if (or (eof-object? char)
@@ -199,13 +271,13 @@
                        (lp tl*)))))))
 
            (def (read-json-true input env)
-             (skip-chars '(#\t #\r #\u #\e) input)
+             (skip-chars '(#\r #\u #\e) input)
              #t)
            (def (read-json-false input env)
-             (skip-chars '(#\f #\a #\l #\s #\e) input)
+             (skip-chars '(#\a #\l #\s #\e) input)
              #f)
            (def (read-json-null input env)
-             (skip-chars '(#\n #\u #\l #\l) input)
+             (skip-chars '(#\u #\l #\l) input)
              #!void)
 
            (def (skip-whitespace input)

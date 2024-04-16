@@ -356,7 +356,7 @@ package: gerbil/core
       (cond
        ((!class-type-slot-types klass)
         => (lambda (slot-types)
-             (assgetq slot slot-types)))
+             (agetq slot slot-types)))
        (else #f)))
 
     (def (!class-slot-default klass slot)
@@ -364,7 +364,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -373,7 +373,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -437,7 +437,7 @@ package: gerbil/core
                       klass-or-id))
              (accessors (!class-type-unchecked-accessors klass)))
         (cond
-         ((assgetq slot accessors))
+         ((agetq slot accessors))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
@@ -449,7 +449,7 @@ package: gerbil/core
                          (!class-type-mutators klass)
                          (!class-type-unchecked-mutators klass))))
         (cond
-         ((assgetq slot mutators))
+         ((agetq slot mutators))
          (else
           (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
 
@@ -2760,7 +2760,24 @@ package: gerbil/core
        (generate #'hd #'(slot ...) #'body))))
 
   (defrule (defstruct/c hd slots . body)
-    (defclass/c hd slots struct: #t . body)))
+    (defclass/c hd slots struct: #t . body))
+
+  (defsyntax (defmutable stx)
+    (syntax-case stx (:)
+      ((_ var value ~ Type)
+       (and (identifier? #'var)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':?)))
+       (with-syntax ((__var (stx-identifier #'var "__" #'var))
+                     (var-set! (stx-identifier #'var #'var "-set!")))
+         #'(begin
+             (def __var value)
+             (def (var) __var)
+             (def/c (var-set! (new-value ~ Type))
+               (set! __var new-value)))))
+      ((_ var value)
+       #'(defmutable var value : :t)))))
 
 (import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassMeta))

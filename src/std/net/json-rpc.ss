@@ -37,7 +37,7 @@
   (only-in :std/net/uri form-url-decode uri-decode)
   (only-in :std/sugar try catch hash)
   (only-in :std/text/base64 u8vector->base64-string base64-string->u8vector)
-  (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
+  (only-in :std/text/json trivial-json-object->class JSON read-json-key-as-symbol?
            bytes->json-object json-object->bytes json-object->string))
 
 (deferror-class (JSON-RPCError IOError)
@@ -124,7 +124,7 @@
   class-instance-init!)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
-  (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
+  (parameterize ((read-json-key-as-symbol? #f)) (bytes->json-object b)))
 
 ;;; Client code
 ;; TODO: implement timeouts, with semi-asynchronous shutdown of the http-post thread itself.
@@ -155,14 +155,7 @@
                                         message: (error-message e))))))
           (http-post server-url
                      auth: auth
-                     headers: `(("Content-Type" . "application/json-rpc")
-                                ;; The JSON RPC over HTTP standard says we MUST send
-                                ;; some variant of the Accept header below, but actually
-                                ;; no client bothers sending it, no server bothers checking it,
-                                ;; and it can only make things slower and trigger unwanted
-                                ;; edge cases, so we don't bother sending it either.
-                                ;; ("Accept" . "application/json-rpc, application/json, application/jsonrequest")
-                                ,@headers)
+                     headers: headers
                      ssl-context: ssl-context
                      cookies: cookies
                      data: data)))
@@ -187,9 +180,7 @@
                   ("id" .,id))))
           (http-get server-url
                     auth: auth
-                    headers: `(("Content-Type" . "application/json-rpc")
-                               ;; NB: we don't bother with an Accept header here, either.
-                               ,@headers)
+                    headers: headers
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
@@ -268,15 +259,15 @@
     (def request-json
       (try
        (def url-params (form-url-decode (http-request-params req)))
-       (def method (assget "method" url-params (void)))
+       (def method (aget "method" url-params (void)))
        (unless method (raise 'parser-error))
        (def params (bytes->json
                     (base64-string->u8vector
-                     (uri-decode (assget "params" url-params)))))
+                     (uri-decode (aget "params" url-params)))))
        (def json (hash ("method" method) ("params" params)))
-       (alet (jsonrpc (assget "jsonrpc" url-params))
+       (alet (jsonrpc (aget "jsonrpc" url-params))
          (hash-put! json "jsonrpc" jsonrpc))
-       (alet (id (assget "id" url-params))
+       (alet (id (aget "id" url-params))
          (hash-put! json "id" id))
        json
        (catch (_)

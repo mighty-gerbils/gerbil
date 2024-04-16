@@ -69,7 +69,8 @@
                          "bad server response; no websocket upgrade"
                          url Upgrade))
 
-       (unless (and Sec-Websocket-Version (equal? (cdr Sec-Websocket-Version) +websocket-version+))
+       ;; We only support a single version
+       (when Sec-Websocket-Version
          (raise-io-error websocket-connect
                          "bad server response; unsupported websocket version"
                          Sec-Websocket-Version))

@@ -522,7 +522,7 @@ namespace: gxc
                (let (xargs
                      (map (lambda (key)
                             (cond
-                             ((assgetq key kwargs))
+                             ((agetq key kwargs))
                              (else '(%#ref absent-value))))
                           keys))
                  (for-each
@@ -554,7 +554,7 @@ namespace: gxc
                       (xargs
                        (map (lambda (key)
                               (cond
-                               ((assgetq key xkwargs))
+                               ((agetq key xkwargs))
                                (else '(%#ref absent-value))))
                             keys)))
                  (xform-wrap-apply

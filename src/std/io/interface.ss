@@ -122,7 +122,7 @@
   (skip (count :~ nonnegative-fixnum? :- :fixnum))
   => :void
 
-  ;; returns a new StringBufferedReader instance delimiting the input length that shares
+  ;; returns a new BufferedStringReader instance delimiting the input length that shares
   ;; the underlying buffer; the limit must be a fixnum.
   (delimit (limit :~ nonnegative-fixnum? :- :fixnum))
   => @BufferedStringReader

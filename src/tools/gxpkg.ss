@@ -987,8 +987,7 @@
     (let* ((gerbil.pkg (path-expand "gerbil.pkg" (current-directory)))
            (plist (call-with-input-file gerbil.pkg read)))
       (if (eof-object? plist) [] plist)))
-   ((hash-get +pkg-plist+ pkg)
-    => values)
+   ((hash-get +pkg-plist+ pkg))
    (else
     (let* ((gerbil.pkg (pkg-plist-path pkg))
            (_ (unless (file-exists? gerbil.pkg)

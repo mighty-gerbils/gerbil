@@ -34,7 +34,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:
@@ -1754,7 +1754,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             HashTable::t
              effect:
              #f
              arguments:

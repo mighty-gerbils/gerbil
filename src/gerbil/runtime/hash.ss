@@ -236,11 +236,11 @@ namespace: #f
 (bind-method! gc-hash-table::t 'clear! gc-table-clear!)
 
 ;; HashTable interface methods
-(def (hash-table? obj)
-  (HashTable? obj))
+(def hash-table?
+  HashTable?)
 
-(def (is-hash-table? obj)
-  (is-HashTable? obj))
+(def is-hash-table?
+  is-HashTable?)
 
 ;; locked hash table methods
 (defrules deflocked-hash-method ()
@@ -305,36 +305,35 @@ namespace: #f
   ((_ (method self arg ...) check hash-method)
    (defmethod {method checked-hash-table}
      (lambda (self arg ...)
+       (declare (not safe))
        (let ((h (&checked-hash-table-table self))
              (key? (&checked-hash-table-key-check self)))
-         (check key?)
-         (hash-method h arg ...))))))
-
-(defrules check-hash-arg ()
-  ((_ check? obj)
-   (unless (check? obj)
-     (error "invalid argument" obj))))
+         (if (check key? arg ...)
+           (hash-method h arg ...)
+           (abort!
+            (raise-contract-violation-error
+             "invalid key"
+             context: 'hash-method
+             value: [arg ...]))))))))
 
 (defchecked-hash-method (ref self key default)
-  (cut check-hash-arg <> key)
+  (lambda (key? key default) (key? key))
   &HashTable-ref)
 
 (defchecked-hash-method (set! self key value)
-  (cut check-hash-arg <> key)
+  (lambda (key? key value) (key? key))
   &HashTable-set!)
 
 (defchecked-hash-method (update! self key update default)
-  (lambda (key?)
-    (check-hash-arg key? key)
-    (check-hash-arg procedure? update))
+  (lambda (key? key update default) (key? key))
   &HashTable-update!)
 
 (defchecked-hash-method (delete! self key)
-  (cut check-hash-arg <> key)
+  (lambda (key? key) (key? key))
   &HashTable-delete!)
 
 (defchecked-hash-method (for-each self proc)
-  (lambda (_) (check-hash-arg procedure? proc))
+  (lambda (key? proc) #t)
   &HashTable-for-each)
 
 (defchecked-hash-method (length self)
@@ -361,25 +360,29 @@ namespace: #f
                       ;; these two force gambit hash tables
                       weak-keys: (weak-keys #f)
                       weak-values: (weak-values #f))
+  => HashTable
 
   (def (table-seed)
     (if (fixnum? seed)
       seed
       (random-integer (macro-max-fixnum32))))
 
-  (def (wrap-lock ht)
+  (def (wrap-lock (ht :- HashTable))
+    => HashTable
     (if lock
       (HashTable
        (make-locked-hash-table ht (Locker lock)))
       ht))
 
-  (def (wrap-checked ht implicit)
+  (def (wrap-checked (ht :- HashTable) implicit)
+    => HashTable
     (if check
       (HashTable
        (make-checked-hash-table ht (if (procedure? check) check implicit)))
       ht))
 
   (def (make kons key? hash test)
+    => HashTable
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (HashTable
@@ -389,6 +392,7 @@ namespace: #f
        key?)))
 
   (def (make-gc-hash-table)
+    => HashTable
     (let (ht
           (HashTable
            (make-gc-table size-hint gc-hash-table::t)))
@@ -397,6 +401,7 @@ namespace: #f
        true)))
 
   (def (make-gambit-table)
+    => HashTable
     (let* ((size (or size-hint (macro-absent-obj)))
            (test (or test equal?))
            (hash (cond
@@ -444,9 +449,11 @@ namespace: #f
    ((and (eq? test equal?) (not hash))
     (make make-generic-hash-table true equal?-hash equal?))
    ((not (procedure? test))
-    (error "bad hash table test function; expected procedure" test))
+    (abort!
+     (error "bad hash table test function; expected procedure" test)))
    ((not (procedure? hash))
-    (error "bad hash table hash function; expected procedure" hash))
+    (abort!
+     (error "bad hash table hash function; expected procedure" hash)))
    (else
     (make make-generic-hash-table true hash test))))
 

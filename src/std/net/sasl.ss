@@ -46,15 +46,15 @@
 
 (def (scram-client-first-server-message! ctx sfm)
   (let* ((msg (scram-parse-message sfm))
-         (r (or (assget "r" msg)
+         (r (or (aget "r" msg)
                 (fail scram-client-first-server-message!
                       "Invalid server message; missing nonce" msg)))
          (s (base64-decode
-             (or (assget "s" msg)
+             (or (aget "s" msg)
                  (fail scram-client-first-server-message!
                        "Invalid server message; missing salt" msg))))
          (i (string->number
-             (or (assget "i" msg)
+             (or (aget "i" msg)
                  (fail scram-client-first-server-message!
                        "Invalid server message; missing iteration count" msg))))
          (nonce (scram-context-nonce ctx)))
@@ -91,11 +91,11 @@
 (def (scram-client-final-server-message! ctx smsg)
   (let* (msg (scram-parse-message smsg))
     (cond
-     ((assget "e" msg)
+     ((aget "e" msg)
       => (lambda (what)
            (fail scram-client-final-server-message!
                  "Authentication failed" what)))
-     ((assget "v" msg)
+     ((aget "v" msg)
       => (lambda (v)
            (let (verifier (scram-context-v ctx))
              (unless (equal? v verifier)

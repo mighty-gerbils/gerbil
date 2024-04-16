@@ -94,14 +94,11 @@
 
 (def (get-buffer)
   (cond
-   ((thread-local-get buffer-key)
-    => values)
+   ((thread-local-get buffer-key))
    (else
     (let (buf (make-u8vector 4096))
       (thread-local-set! buffer-key buf)
       buf))))
-
-
 
 ;;; FFI impl
 (begin-ffi (_inotify_init
