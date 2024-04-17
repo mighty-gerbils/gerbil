@@ -40,7 +40,7 @@ namespace: #f
        (lambda (exn)
          (##continuation-capture
           (lambda (cont)
-            (when __unhandled-actor-exception-hook
+            (when unhandled-actor-exception-hook
               (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
             ;; unwind stack and continue with the primordial exception handler
             ;; see discussion in gambit#295 about ##continuation-last
@@ -83,7 +83,7 @@ namespace: #f
     (cond
      ((actor-thread? thr)
       (cond
-       ((actor-thread-locals thr) => values)
+       ((actor-thread-locals thr))
        (else
         (let (tab (make-hash-table-eq))
           (actor-thread-locals-set! thr tab)
@@ -111,13 +111,7 @@ namespace: #f
   (make-mutex 'thread-locals))
 
 ;;; actor debug hooks
-(def __unhandled-actor-exception-hook #f)
-(def (unhandled-actor-exception-hook-set! proc)
-  (unless (procedure? proc)
-    (raise (Error "Bad argument; expected procedure or #f"
-                  where: 'unhandler-actor-exception-hook-set!
-                  irritants: [proc])))
-  (set! __unhandled-actor-exception-hook proc))
+(defmutable unhandled-actor-exception-hook #f :? :procedure)
 
 ;;; utitilities
 (def (current-thread-group)

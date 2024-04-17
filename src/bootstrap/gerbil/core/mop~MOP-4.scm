@@ -1,2 +1,2 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(load-module "gerbil/core/mop~MOP-1")
+(begin (load-module "gerbil/core/mop~MOP-1") (begin))

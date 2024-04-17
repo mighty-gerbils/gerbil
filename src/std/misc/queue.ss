@@ -49,7 +49,7 @@
       (set! q.front new-front)
       (set! q.length (fx1+ q.length)))))
 
-(def (dequeue! (q : queue) (default absent-obj))
+(def (dequeue! (q : queue) (default absent-value))
   (cond
    ((eq? q.front q.back)
     (let (v (car q.front))
@@ -63,7 +63,7 @@
       (set! q.front new-front)
       (set! q.length (fx1- q.length))
       v))
-   ((eq? default absent-obj)
+   ((eq? default absent-value)
     (raise-context-error dequeue! "cannot dequeue; empty queue" q))
    (else default)))
 

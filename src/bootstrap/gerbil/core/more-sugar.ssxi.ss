@@ -79,11 +79,43 @@ package: gerbil/core
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/more-sugar)))
   (declare-type
    |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|
    (@lambda 1
             #f
             signature:
-            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type |gerbil/core/more-sugar[1]#expand-set!| (@lambda 1 #f)))
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/more-sugar)))
+  (declare-type
+   |gerbil/core/more-sugar[1]#expand-set!|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/more-sugar))))

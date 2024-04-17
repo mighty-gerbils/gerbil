@@ -19,4 +19,4 @@
           (set! (iterator-e it) rest)
           first)
         iter-end)))
-  (make-iterator e: s next: next))
+  (make-iterator s next))

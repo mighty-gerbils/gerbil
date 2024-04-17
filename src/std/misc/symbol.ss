@@ -8,7 +8,7 @@
   (def cache (make-hash-table-eq))
   (def (do-cache-get x)
     (cond
-     ((hash-get cache x) => values)
+     ((hash-get cache x))
      (else
       (let (str (string-e x))
         (hash-put! cache x str)

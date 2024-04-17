@@ -55,8 +55,7 @@
 
 (def (get-evtptr)
   (cond
-   ((thread-local-get evtptr-key)
-    => values)
+   ((thread-local-get evtptr-key))
    (else
     (let (evtptr (check-ptr (make_epoll_evt 1)))
       (thread-local-set! evtptr-key evtptr)

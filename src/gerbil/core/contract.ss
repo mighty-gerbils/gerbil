@@ -356,7 +356,7 @@ package: gerbil/core
       (cond
        ((!class-type-slot-types klass)
         => (lambda (slot-types)
-             (assgetq slot slot-types)))
+             (agetq slot slot-types)))
        (else #f)))
 
     (def (!class-slot-default klass slot)
@@ -364,7 +364,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -373,7 +373,7 @@ package: gerbil/core
        ((!class-type-slot-defaults klass)
         => (lambda (slot-defaults)
              (cond
-              ((assgetq slot slot-defaults) => syntax-local-introduce)
+              ((agetq slot slot-defaults) => syntax-local-introduce)
               (else #f))))
        (else #f)))
 
@@ -437,7 +437,7 @@ package: gerbil/core
                       klass-or-id))
              (accessors (!class-type-unchecked-accessors klass)))
         (cond
-         ((assgetq slot accessors))
+         ((agetq slot accessors))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
@@ -449,7 +449,7 @@ package: gerbil/core
                          (!class-type-mutators klass)
                          (!class-type-unchecked-mutators klass))))
         (cond
-         ((assgetq slot mutators))
+         ((agetq slot mutators))
          (else
           (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
 
@@ -479,12 +479,17 @@ package: gerbil/core
                            (if maybe?
                              `(? (or not ,instance?))
                              instance?)))
-                        (var var) (expr-body expr-body))
+                        (var var)
+                        (expr-body expr-body))
             #'(with-contract (var :~ predicate)
                 expr-body))
           expr-body)))
 
     (syntax-case stx (: :? :- ::-)
+      ((_ (var ~ @Type) body ...)
+       (type-reference? (syntax-local-value #'@Type false))
+       (with-syntax ((Type (type-reference-identifier (syntax-local-value #'@Type))))
+         #'(with-class (var ~ Type) body ...)))
       ((_ (var : Type) body ...)
        (syntax-local-class-type-info? #'Type)
        (expand #'var #'Type #'(body ...) #t #t #f))
@@ -538,6 +543,10 @@ package: gerbil/core
             #'expr-body))))
 
     (syntax-case stx (: :? :- ::-)
+      ((_ (var ~ @Type) body ...)
+       (type-reference? (syntax-local-value #'@Type false))
+       (with-syntax ((Type (type-reference-identifier (syntax-local-value #'@Type))))
+         #'(with-interface (var ~ Type) body ...)))
       ((_ (var : Interface) body ...)
        (and (identifier? #'var)
             (syntax-local-interface-info? #'Interface))
@@ -1005,32 +1014,58 @@ package: gerbil/core
           (_ (reverse! result)))))
 
     (def (signature-arguments-out signature)
-      (let loop ((rest signature) (has-keywords? #f) (result []))
+      (let loop ((rest signature) (result []))
         (syntax-case rest ()
           ((id . rest)
            (identifier? #'id)
-           (loop #'rest #f (cons #'id result)))
+           (loop #'rest  (cons #'id result)))
           (((id _) . rest)
            (identifier? #'id)
-           (loop #'rest #f (cons #'id result)))
+           (loop #'rest  (cons #'id result)))
           (((id . contract) . rest)
            (and (identifier? #'id)
                 (signature-contract? #'contract))
-           (loop #'rest #f (cons #'id result)))
+           (loop #'rest  (cons #'id result)))
           ((kw id . rest)
            (and (stx-keyword? #'kw) (identifier? #'id))
-           (loop #'rest #t (cons* #'id #'kw result)))
+           (loop #'rest  (cons* #'id #'kw result)))
           ((kw (id default) . rest)
            (and (stx-keyword? #'kw) (identifier? #'id))
-           (loop #'rest #t (cons* #'id #'kw result)))
+           (loop #'rest  (cons* #'id #'kw result)))
           ((kw (id . contract) . rest)
            (and (stx-keyword? #'kw)
                 (identifier? #'id)
                 (signature-contract? #'contract))
-           (loop #'rest #t (cons* #'id #'kw result)))
+           (loop #'rest (cons* #'id #'kw result)))
           (id (identifier? #'id)
               (foldl cons [#'id] result))
           (_ (reverse! result)))))
+
+    (def (signature-has-keywords? signature)
+      (let loop ((rest signature))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest))
+          (((id default) . rest)
+           (identifier? #'id)
+           (loop #'rest))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           #t)
+          ((kw (id default) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           #t)
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           #t)
+          (_ #f))))
 
     (def (make-interface-method-lambda-signature stx self Interface signature return unchecked-proc)
       (if (stx-e unchecked-proc)
@@ -1088,24 +1123,22 @@ package: gerbil/core
            (loop #'rest #t (cons (type-e #'contract) result)))
           (id
            (identifier? #'id)
-           (let* ((arguments (foldl cons (core-quote-syntax 't::t) result))
-                  (arguments (if has-keywords?
-                               (cons (core-quote-syntax 't::t)
-                                     arguments)
-                               arguments))
+           (let* ((arguments (if has-keywords?
+                               (core-quote-syntax 't::t)
+                               (foldl cons (core-quote-syntax 't::t) result)))
                   (return-type (resolve-type->type-descriptor stx return))
-                  (unchecked (and (stx-e unchecked) (core-quote-syntax unchecked))))
+                  (unchecked (and (not has-keywords?)
+                                  (stx-e unchecked)
+                                  (core-quote-syntax unchecked))))
              [arguments: arguments
                          return: return-type
                          unchecked: unchecked]))
           (()
-           (let* ((arguments (reverse! result))
-                  (arguments (if has-keywords?
-                               (cons (core-quote-syntax 't::t)
-                                     arguments)
-                               arguments))
+           (let* ((arguments (if has-keywords? (core-quote-syntax 't::t) (reverse! result)))
                   (return-type (resolve-type->type-descriptor stx return))
-                  (unchecked (and (stx-e unchecked) (core-quote-syntax unchecked))))
+                  (unchecked (and (not has-keywords?)
+                                  (stx-e unchecked)
+                                  (core-quote-syntax unchecked))))
              [arguments: arguments return: return-type unchecked: unchecked])))))
 
     (def (make-procedure-contract stx signature checked?)
@@ -1754,7 +1787,8 @@ package: gerbil/core
 
 (module TypedDefinitions
   (import TypeCast Using ContractRules TypeReference Interface
-          (phi: +1 InterfaceInfo TypeEnv ClassMeta))
+          (phi: +1 InterfaceInfo TypeEnv ClassMeta)
+          (rename-in (only-in "mop" @method) (@method @method~)))
   (export #t (phi: +1 #t))
 
   (begin-syntax
@@ -1786,10 +1820,26 @@ package: gerbil/core
   (defsyntax (def/c stx)
     (def (make-definition id args return body)
       (check-signature! stx args return)
-      (let (unchecked-id (stx-identifier id "__" id))
-        (with-syntax ((defchecked (make-checked-def id unchecked-id args return))
-                      (defunchecked (make-unchecked-def unchecked-id args return body)))
-          #'(begin defchecked defunchecked))))
+      (if (signature-has-keywords? args)
+        (make-keyword-def id args return body)
+        (let (unchecked-id (stx-identifier id "__" id))
+          (with-syntax ((defchecked (make-checked-def id unchecked-id args return))
+                        (defunchecked (make-unchecked-def unchecked-id args return body)))
+            #'(begin defchecked defunchecked)))))
+
+    (def (make-keyword-def id signature return body)
+      (with-syntax ((id id)
+                    (in (signature-arguments-in signature))
+                    (signature signature)
+                    (return return)
+                    (return-type (resolve-type->type-descriptor stx return))
+                    ((body ...) body))
+        (syntax/loc stx
+          (def (id . in)
+            (with-procedure-signature (signature return #f)
+              (begin-annotation (@type return-type)
+                (with-procedure-contract signature
+                  body ...)))))))
 
     (def (make-checked-def id unchecked-id signature return)
       (with-syntax ((id id)
@@ -1930,18 +1980,54 @@ package: gerbil/core
       ((_ clause ...)
        #'(case-lambda clause ...))))
 
+  (defsyntax (@method stx)
+    (syntax-case stx ()
+      ((_ id arg ...)
+       (dotted-identifier? #'id)
+       (let* ((str (symbol->string (stx-e #'id)))
+              (ix  (string-rindex str #\.)))
+         (with-syntax ((receiver (stx-identifier #'id (substring str 0 ix)))
+                       (method   (string->symbol
+                                  (substring str (fx1+ ix) (string-length str)))))
+           #'(call-method (%%ref-dotted receiver) 'method arg ...))))
+      ((_ method receiver arg ...)
+       #'(call-method receiver 'method arg ...))))
+
   (defsyntax (defmethod/c stx)
-    (syntax-case stx (@method lambda/c case-lambda/c)
+    (syntax-case stx (lambda/c case-lambda/c @method-dotted)
       ((_ {method Type} (lambda/c (self . args) body ...) . rest)
-       (identifier? #'self)
-       (with-syntax ((proc (syntax/loc stx (lambda/c ((self ::- Type) . args) body ...))))
-         #'(defmethod {method Type} proc . rest)))
+       (and (identifier? #'self)
+            (identifier? #'method))
+       (with-syntax* ((receiver (genident #'self))
+                      (proc
+                       (syntax/loc stx
+                         (lambda/c (receiver . args)
+                              (using (self receiver ::- Type)
+                                (with-receiver self
+                                  (let () body ...)))))))
+         #'(defmethod (@method~ method Type) proc . rest)))
       ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
-       (identifier-list? #'(self ...))
-       (with-syntax ((proc (syntax/loc stx (case-lambda/c (((self ::- Type) . args) body ...) ...))))
-         #'(defmethod {method Type} proc . rest)))
-      ((_ . body)
-       #'(defmethod . body))))
+       (and (identifier-list? #'(self ...))
+            (identifier? #'method))
+       (with-syntax* (((receiver ...)
+                       (map genident #'(self ...)))
+                      (proc
+                       (syntax/loc stx
+                         (case-lambda/c
+                          ((receiver . args)
+                           (using (self receiver ::- Type)
+                             (with-receiver self
+                               (let () body ...))))
+                          ...))))
+         #'(defmethod (@method~ method Type) proc . rest)))
+      ((_ {method Type} . body)
+       #'(defmethod (@method~ method Type) . body))))
+
+  (defsyntax (with-receiver stx)
+    (syntax-case stx ()
+      ((_ receiver expr)
+       (with-syntax ((receiver (core-quote-syntax #'receiver)))
+         #'(begin-annotation (@receiver receiver) expr)))))
 
   (defsyntax (let/c stx)
     (syntax-case stx (=>)
@@ -2674,7 +2760,24 @@ package: gerbil/core
        (generate #'hd #'(slot ...) #'body))))
 
   (defrule (defstruct/c hd slots . body)
-    (defclass/c hd slots struct: #t . body)))
+    (defclass/c hd slots struct: #t . body))
+
+  (defsyntax (defmutable stx)
+    (syntax-case stx (:)
+      ((_ var value ~ Type)
+       (and (identifier? #'var)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':?)))
+       (with-syntax ((__var (stx-identifier #'var "__" #'var))
+                     (var-set! (stx-identifier #'var #'var "-set!")))
+         #'(begin
+             (def __var value)
+             (def (var) __var)
+             (def/c (var-set! (new-value ~ Type))
+               (set! __var new-value)))))
+      ((_ var value)
+       #'(defmutable var value : :t)))))
 
 (import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassMeta))

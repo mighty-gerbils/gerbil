@@ -7,111 +7,512 @@ package: gerbil/runtime
    (@lambda 0
             #f
             signature:
-            (return: string::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-system-manifest
    (optimizer-resolve-class '(typedecl gerbil-system-manifest) 'pair::t))
   (declare-type
+   __build-manifest
+   (optimizer-resolve-class '(typedecl __build-manifest) 'list::t))
+  (declare-type
    build-manifest
-   (optimizer-resolve-class '(typedecl build-manifest) 'pair::t))
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t)
+             unchecked:
+             __build-manifest-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    display-build-manifest__%
    (@lambda 2
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (list::t port::t)
+             unchecked:
+             __display-build-manifest
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    display-build-manifest__0
    (@lambda 0
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    display-build-manifest__1
    (@lambda 1
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    display-build-manifest
    (@case-lambda
     (0
      display-build-manifest__0
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
     (1
      display-build-manifest__1
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
     (2
      display-build-manifest__%
      signature:
-     (return: void::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
+  (declare-type
+   __display-build-manifest__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __display-build-manifest
+   (@case-lambda
+    (0
+     __display-build-manifest__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (1
+     __display-build-manifest__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (2
+     __display-build-manifest__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
   (declare-type
    build-manifest/layer
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    build-manifest/head
    (@lambda 0
             #f
             signature:
-            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             pair::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    build-manifest-string__%
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             (list::t)
+             unchecked:
+             __build-manifest-string
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    build-manifest-string__0
    (@lambda 0
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    build-manifest-string
    (@case-lambda
     (0
      build-manifest-string__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
     (1
      build-manifest-string__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
+  (declare-type
+   __build-manifest-string__%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-string__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __build-manifest-string
+   (@case-lambda
+    (0
+     __build-manifest-string__0
+     signature:
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))
+    (1
+     __build-manifest-string__%
+     signature:
+     (return:
+      string::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/system))))
   (declare-type
    gerbil-system-version-string
    (@lambda 0
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __gerbil-greeting
+   (optimizer-resolve-class '(typedecl __gerbil-greeting) 'string::t))
   (declare-type
    gerbil-greeting
-   (optimizer-resolve-class '(typedecl gerbil-greeting) 't::t))
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (string::t)
+             unchecked:
+             __gerbil-greeting-set!
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __gerbil-greeting-set!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-system
    (@lambda 0
             #f
             signature:
-            (return: symbol::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             symbol::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-home
    (@lambda 0
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
   (declare-type
    gerbil-path
    (@lambda 0
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system)))
+  (declare-type
+   __smp?
+   (optimizer-resolve-class '(typedecl __smp?) 'immediate::t))
   (declare-type
    gerbil-runtime-smp?
    (@lambda 0
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f))))
+            (return:
+             immediate::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/system))))

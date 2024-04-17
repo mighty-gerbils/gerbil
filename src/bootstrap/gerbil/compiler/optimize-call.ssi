@@ -34,9 +34,12 @@ namespace: gxc
           gxc#::check-return-type-bind-methods!)
          (%#define-runtime apply-check-return-type gxc#apply-check-return-type)
          (%#define-runtime optimize-call% gxc#optimize-call%)
-         (%#define-runtime
-          !procedure::optimize-call
-          gxc#!procedure::optimize-call)
+         (%#begin (%#define-runtime
+                   !procedure::optimize-call
+                   gxc#!procedure::optimize-call)
+                  (%#define-runtime
+                   !procedure::optimize-call::specialize
+                   gxc#!procedure::optimize-call::specialize))
          (%#define-runtime
           !procedure::check-arguments
           gxc#!procedure::check-arguments)
@@ -54,10 +57,18 @@ namespace: gxc
          (%#define-runtime
           !constructor::optimize-call
           gxc#!constructor::optimize-call)
-         (%#define-runtime
-          !accessor::optimize-call
-          gxc#!accessor::optimize-call)
-         (%#define-runtime !mutator::optimize-call gxc#!mutator::optimize-call)
+         (%#begin (%#define-runtime
+                   !accessor::optimize-call
+                   gxc#!accessor::optimize-call)
+                  (%#define-runtime
+                   !accessor::optimize-call::specialize
+                   gxc#!accessor::optimize-call::specialize))
+         (%#begin (%#define-runtime
+                   !mutator::optimize-call
+                   gxc#!mutator::optimize-call)
+                  (%#define-runtime
+                   !mutator::optimize-call::specialize
+                   gxc#!mutator::optimize-call::specialize))
          (%#define-runtime !lambda::optimize-call gxc#!lambda::optimize-call)
          (%#define-runtime
           !case-lambda::optimize-call
@@ -72,5 +83,6 @@ namespace: gxc
          (%#define-runtime
           apply-check-return-type-begin-annotation%
           gxc#apply-check-return-type-begin-annotation%)
-         (%#define-runtime check-return-type! gxc#check-return-type!))
+         (%#define-runtime check-return-type! gxc#check-return-type!)
+         (%#define-runtime optimize-if% gxc#optimize-if%))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-call~0"))

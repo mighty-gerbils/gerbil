@@ -9,7 +9,9 @@
         :gerbil/runtime/syntax
         :gerbil/runtime/init)
 (export compiler-specializer-test
-        compiler-safety-test)
+        compiler-safety-test
+        compiler-typed-test
+        compiler-syntax-test)
 
 (def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -22,16 +24,20 @@
            ? true)
     (let (current-load-path (load-path))
       (add-load-path! output-dir)
-      (check (import-module
-              (string->symbol
-               (string-append "test/"
-                              (path-strip-extension
-                               (path-strip-directory
-                                path))))
-              #f #t)
-             ? true)
+      (let* ((modid (string->symbol
+                     (string-append ":test/"
+                                    (path-strip-extension
+                                     (path-strip-directory
+                                      path)))))
+             (mod (import-module modid))
+             (main-binding
+              (parameterize ((current-expander-context mod))
+                (resolve-identifier 'main))))
+        (eval `(import ,modid))
+        (when main-binding
+          ((eval (binding-id main-binding))))
       (set-load-path! current-load-path)
-      (delete-file-or-directory output-dir #t))))
+      (delete-file-or-directory output-dir #t)))))
 
 (def (must-not-compile path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -63,3 +69,19 @@
       (must-not-compile "compiler-test-support/non-procedure-4.ss"))
     (test-case "bad return type"
       (must-not-compile "compiler-test-support/bad-return-type.ss"))))
+
+(def compiler-typed-test
+  (test-suite "compiler type inference tests"
+    (test-case "top level classes after use in procedure"
+      (must-compile-and-execute "compiler-test-support/class-after-use.ss"))
+    (test-case "mutable bindings infer the greatest common type"
+      (must-compile-and-execute "compiler-test-support/mutable-binding-type.ss"))
+    (test-case "mutable bindings with sticky type"
+      (must-compile-and-execute "compiler-test-support/mutable-binding-type-2.ss"))
+    (test-case "mutable bindings with fixpoint sticky type"
+      (must-compile-and-execute "compiler-test-support/mutable-binding-type-3.ss"))))
+
+(def compiler-syntax-test
+  (test-suite "compiler syntactic features"
+    (test-case "deep dots"
+      (must-compile-and-execute "compiler-test-support/deep-dots.ss"))))

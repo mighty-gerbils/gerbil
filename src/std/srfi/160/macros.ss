@@ -190,7 +190,7 @@
        (error "Bad argument" to))
      (unless (@vector? from)
        (error "Bad argument" from))
-     (unless (and (fixnum? at) (fx<= 0 at (fx1- (@vector-length at))))
+     (unless (and (fixnum? at) (fx<= 0 at (fx1- (@vector-length from))))
        (error "Index out of range" to at))
      (unless (and (fixnum? start) (fx<= 0 start (fx1- (@vector-length from))))
        (error "Index out of range" from start))
@@ -218,7 +218,7 @@
        (error "Bad argument" to))
      (unless (@vector? from)
        (error "Bad argument" from))
-     (unless (and (fixnum? at) (fx<= 0 at (fx1- (@vector-length at))))
+     (unless (and (fixnum? at) (fx<= 0 at (fx1- (@vector-length to))))
        (error "Index out of range" to at))
      (unless (and (fixnum? start) (fx<= 0 start (fx1- (@vector-length from))))
        (error "Index out of range" from start))
@@ -621,7 +621,7 @@
         (let lp ((i 0))
           (if (fx< i end)
             (cond
-             ((pred (@vector-ref v i)) => values)
+             ((pred (@vector-ref v i)))
              (else
               (lp (fx1+ i))))
             #f))))
@@ -634,7 +634,7 @@
         (let lp ((i 0))
           (if (fx< i end)
             (cond
-             ((apply pred (map (cut @vector-ref <> i) vs)) => values)
+             ((apply pred (map (cut @vector-ref <> i) vs)))
              (else
               (lp (fx1+ i))))
             #f)))))))

@@ -362,7 +362,7 @@
   (def port (current-error-port))
   (defrules ignore-errors () ((_ body ...) (with-catch void (lambda () body ...))))
   (ignore-errors (force-output port))
-  (ignore-errors (display-build-manifest build-manifest port))
+  (ignore-errors (display-build-manifest (build-manifest) port))
   (ignore-errors (newline port))
   (ignore-errors (display-exception e port))
   ;; If the stack trace was printed, making the message out of reach of the user,

@@ -142,7 +142,7 @@
 
 (def (start-logger! (output (current-error-port)))
   (cond
-   ((current-logger) => values)
+   ((current-logger))
    (else
     (let* (((values port own-port?)
             (cond

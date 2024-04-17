@@ -40,7 +40,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::collect-top-level-declarations::t
    (@class gxc#::collect-top-level-declarations::t
@@ -79,7 +88,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::basic-expression-top-level-type::t
    (@class gxc#::basic-expression-top-level-type::t
@@ -118,7 +136,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::collect-type-info::t
    (@class gxc#::collect-type-info::t
@@ -155,7 +182,108 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-class
+   gxc#::collect-mutable-type-info::t
+   (@class gxc#::collect-mutable-type-info::t
+           (gxc#::void::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::collect-mutable-type-info::t
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-mutable-type-info::t)
+    'class::t))
+  (declare-type
+   gxc#::collect-mutable-type-info?
+   (@predicate gxc#::collect-mutable-type-info::t))
+  (declare-type
+   gxc#make-::collect-mutable-type-info
+   (@constructor gxc#::collect-mutable-type-info::t))
+  (declare-type
+   gxc#::collect-mutable-type-info-bind-methods!
+   (optimizer-resolve-class
+    '(typedecl gxc#::collect-mutable-type-info-bind-methods!)
+    'promise::t))
+  (declare-type
+   gxc#apply-collect-mutable-type-info
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-class
+   gxc#::refine-type-info::t
+   (@class gxc#::refine-type-info::t
+           (gxc#::void::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::refine-type-info::t
+   (optimizer-resolve-class '(typedecl gxc#::refine-type-info::t) 'class::t))
+  (declare-type gxc#::refine-type-info? (@predicate gxc#::refine-type-info::t))
+  (declare-type
+   gxc#make-::refine-type-info
+   (@constructor gxc#::refine-type-info::t))
+  (declare-type
+   gxc#::refine-type-info-bind-methods!
+   (optimizer-resolve-class
+    '(typedecl gxc#::refine-type-info-bind-methods!)
+    'promise::t))
+  (declare-type
+   gxc#apply-refine-type-info
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::raw-expression-type::t
    (@class gxc#::raw-expression-type::t
@@ -194,7 +322,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::basic-expression-type::t
    (@class gxc#::basic-expression-type::t
@@ -234,7 +371,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::lift-top-lambdas::t
    (@class gxc#::lift-top-lambdas::t
@@ -271,7 +417,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::extract-lambda-signature::t
    (@class gxc#::extract-lambda-signature::t
@@ -310,61 +465,639 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#collect-top-level-type-define-values% (@lambda 2 #f))
-  (declare-type gxc#collect-top-level-decl-begin-annotation% (@lambda 2 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-top-level-type-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-top-level-decl-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#eval-in-ssxi-context
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#collect-type-define-values% (@lambda 2 #f))
-  (declare-type gxc#collect-type-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#collect-type-lambda% (@lambda 2 #f))
-  (declare-type gxc#collect-type-case-lambda% (@lambda 2 #f))
-  (declare-type gxc#collect-type-lambda-formals-tail (@lambda 2 #f))
-  (declare-type gxc#collect-type-let-values%__% (@lambda 3 #f))
-  (declare-type gxc#collect-type-let-values%__0 (@lambda 2 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-case-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-lambda-formals-tail
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-let-values%__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-let-values%__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#collect-type-let-values%
    (@case-lambda
-    (2 gxc#collect-type-let-values%__0)
-    (3 gxc#collect-type-let-values%__%)))
-  (declare-type gxc#collect-type-letrec-values%__% (@lambda 3 #f))
-  (declare-type gxc#collect-type-letrec-values%__0 (@lambda 2 #f))
+    (2
+     gxc#collect-type-let-values%__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))
+    (3
+     gxc#collect-type-let-values%__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))))
+  (declare-type
+   gxc#collect-type-letrec-values%__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-letrec-values%__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#collect-type-letrec-values%
    (@case-lambda
-    (2 gxc#collect-type-letrec-values%__0)
-    (3 gxc#collect-type-letrec-values%__%)))
-  (declare-type gxc#collect-top-level-type-let-values% (@lambda 2 #f))
-  (declare-type gxc#collect-top-level-type-letrec-values% (@lambda 2 #f))
-  (declare-type gxc#collect-type-call% (@lambda 2 #f))
-  (declare-type gxc#collect-type-setq% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-typedecl (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-mop.class (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-mop.system (@lambda 2 #f))
+    (2
+     gxc#collect-type-letrec-values%__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))
+    (3
+     gxc#collect-type-letrec-values%__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))))
+  (declare-type
+   gxc#collect-top-level-type-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-top-level-type-letrec-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-top-level-type-call%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#collect-type-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#apply-path-type-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-letrec-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#refine-type-case-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotations
+   (optimizer-resolve-class
+    '(typedecl gxc#basic-expression-type-annotations)
+    'HashTable::t))
+  (declare-type
+   gxc#basic-expression-type-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-typedecl
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.class
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.system
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#basic-expression-type-annotation-mop.constructor
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#basic-expression-type-annotation-mop.predicate
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#basic-expression-type-annotation-mop.accessor
-   (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#basic-expression-type-annotation-mop.mutator
-   (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-interface (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-predicate (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-annotation-abort (@lambda 2 #f))
-  (declare-type gxc#raw-expression-type-lambda% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-lambda% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-case-lambda% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-call% (@lambda 2 #f))
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-interface
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-predicate
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-annotation-abort
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#raw-expression-type-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-case-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-special
+   (optimizer-resolve-class
+    '(typedecl gxc#basic-expression-type-special)
+    'HashTable::t))
+  (declare-type
+   gxc#basic-expression-type-call%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!procedure::return-type
    (@lambda 4
@@ -375,9 +1108,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!procedure::apply-return-type
    (@lambda 4
@@ -388,9 +1123,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!lambda::return-type
    (@lambda 4
@@ -401,9 +1138,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!lambda::apply-return-type
    (@lambda 4
@@ -414,9 +1153,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!case-lambda::return-type
    (@lambda 4
@@ -427,9 +1168,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!case-lambda::apply-return-type
    (@lambda 4
@@ -440,9 +1183,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!kw-lambda::return-type
    (@lambda 4
@@ -453,9 +1198,11 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#!kw-lambda::apply-return-type
    (@lambda 4
@@ -466,35 +1213,397 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             (t::t t::t t::t t::t)
+             #f
              unchecked:
-             #f)))
-  (declare-type gxc#extract-keyword-args (@lambda 1 #f))
-  (declare-type gxc#!lambda-arity-match? (@lambda 2 #f))
-  (declare-type gxc#!lambda-arity-match-apply? (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-special-cast (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-special-apply (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-ref% (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-if% (@lambda 2 #f))
-  (declare-type gxc#greatest-common-type (@lambda 3 #f))
-  (declare-type gxc#basic-expression-type-quote% (@lambda 2 #f))
-  (declare-type gxc#dispatch-lambda-form? (@lambda 1 #f))
-  (declare-type gxc#dispatch-lambda-form-delegate (@lambda 1 #f))
-  (declare-type gxc#lambda-form-arity (@lambda 1 #f))
-  (declare-type gxc#lambda-form-infer-signature (@lambda 1 #f))
-  (declare-type gxc#extract-lambda-signature-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#lambda-expr? (@lambda 1 #f))
-  (declare-type gxc#case-lambda-expr? (@lambda 1 #f))
-  (declare-type gxc#opt-lambda-expr? (@lambda 1 #f))
-  (declare-type gxc#kw-lambda-expr? (@lambda 1 #f))
-  (declare-type gxc#lift-case-lambda-clauses__% (@lambda 4 #f))
-  (declare-type gxc#lift-case-lambda-clauses__0 (@lambda 3 #f))
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#extract-keyword-args
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#!lambda-arity-match?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#!lambda-arity-match-apply?
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-special-cast
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-special-apply
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#greatest-common-type
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#basic-expression-type-quote%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#dispatch-lambda-form?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#dispatch-lambda-form-delegate
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lambda-form-arity
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lambda-form-infer-signature
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#extract-lambda-signature-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lambda-expr?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#case-lambda-expr?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#opt-lambda-expr?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#kw-lambda-expr?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lift-case-lambda-clauses__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lift-case-lambda-clauses__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-type
    gxc#lift-case-lambda-clauses
    (@case-lambda
-    (3 gxc#lift-case-lambda-clauses__0)
-    (4 gxc#lift-case-lambda-clauses__%)))
-  (declare-type gxc#lift-top-lambda-define-values% (@lambda 2 #f))
-  (declare-type gxc#lift-top-lambda-let-values% (@lambda 2 #f))
-  (declare-type gxc#lift-top-lambda-letrec-values% (@lambda 2 #f))
-  (declare-type gxc#lift-top-lambda-binding? (@lambda 1 #f)))
+    (3
+     gxc#lift-case-lambda-clauses__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))
+    (4
+     gxc#lift-case-lambda-clauses__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/optimize-top))))
+  (declare-type
+   gxc#lift-top-lambda-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lift-top-lambda-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lift-top-lambda-letrec-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
+  (declare-type
+   gxc#lift-top-lambda-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top))))

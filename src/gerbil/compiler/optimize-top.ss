@@ -23,14 +23,14 @@ namespace: gxc
   (%#begin-syntax     apply-begin-syntax%)
   (%#module           apply-module%)
   (%#define-values    collect-top-level-type-define-values%)
-  (%#lambda                apply-body-lambda%)
-  (%#case-lambda           apply-body-case-lambda%)
+  (%#lambda                collect-type-lambda%)
+  (%#case-lambda           collect-type-case-lambda%)
   (%#let-values       collect-top-level-type-let-values%)
   (%#letrec-values    collect-top-level-type-letrec-values%)
   (%#letrec*-values   collect-top-level-type-letrec-values%)
-  (%#call             collect-type-call%)
+  (%#call             collect-top-level-type-call%)
   (%#if               apply-operands)
-  (%#set!             collect-type-setq%))
+  (%#set!             apply-body-setq%))
 
 ;; method to collect top level user type related declarations
 (defcompile-method (apply-collect-top-level-declarations)
@@ -63,9 +63,43 @@ namespace: gxc
   (%#let-values       collect-type-let-values%)
   (%#letrec-values    collect-type-letrec-values%)
   (%#letrec*-values   collect-type-letrec-values%)
-  (%#call             collect-type-call%)
-  (%#if               apply-operands)
+  (%#call             apply-operands)
+  (%#if               apply-path-type-if%)
+  (%#set!             apply-body-setq%))
+
+(defcompile-method (apply-collect-mutable-type-info) (::collect-mutable-type-info ::void)
+  ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
+  (%#define-values    apply-define-values%)
+  (%#begin-annotation apply-begin-annotation%)
+  (%#lambda                collect-type-lambda%)
+  (%#case-lambda           collect-type-case-lambda%)
+  (%#let-values       collect-type-let-values%)
+  (%#letrec-values    collect-type-letrec-values%)
+  (%#letrec*-values   collect-type-letrec-values%)
+  (%#call             apply-operands)
+  (%#if               apply-path-type-if%)
   (%#set!             collect-type-setq%))
+
+(defcompile-method (apply-refine-type-info) (::refine-type-info ::void)
+  ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
+  (%#define-values    refine-type-define-values%)
+  (%#begin-annotation apply-begin-annotation%)
+  (%#lambda                refine-type-lambda%)
+  (%#case-lambda           refine-type-case-lambda%)
+  (%#let-values       refine-type-let-values%)
+  (%#letrec-values    refine-type-letrec-values%)
+  (%#letrec*-values   refine-type-letrec-values%)
+  (%#call             apply-operands)
+  (%#if               apply-path-type-if%)
+  (%#set!             apply-body-setq%))
 
 ;; methods to find the type of an expression
 (defcompile-method (apply-raw-expression-type) (::raw-expression-type ::false)
@@ -115,7 +149,7 @@ namespace: gxc
        ;; signatures for lambda
        ;; the apply-collect-type-info pass is later applied to collect
        ;; exact type signatures.
-       (apply-collect-top-level-type-info #'expr)
+       (compile-e self #'expr)
        (alet (type (apply-basic-expression-top-level-type #'expr))
          (if (!class-meta? type)
            (begin
@@ -176,26 +210,32 @@ namespace: gxc
   (ast-case stx ()
     ((_ args . body)
      (begin
-       (collect-type-lambda-formals-tail stx #'args)
-       (apply-body-lambda% self stx)))))
+       (parameterize ((current-compile-local-env (xform-let-locals #'args)))
+         (collect-type-lambda-formals-tail stx #'args)
+         (apply-body-lambda% self stx))))))
 
 (def (collect-type-case-lambda% self stx)
   (ast-case stx ()
-    ((_ (args . _) ...)
+    ((_ (hd body) ...)
      (begin
-       (for-each (cut collect-type-lambda-formals-tail stx <>) #'(args ...))
-       (apply-body-case-lambda% self stx)))))
+       (for-each (cut collect-type-lambda-formals-tail stx <>) #'(hd ...))
+       (for-each (lambda (clause)
+                   (ast-case clause ()
+                     ((hd body)
+                      (parameterize ((current-compile-local-env (xform-let-locals #'hd)))
+                        (apply-body-case-lambda% self stx)))))
+                 #'((hd body) ...))))))
 
 (def (collect-type-lambda-formals-tail stx formals)
   (let loop ((rest formals))
-    (ast-case #'rest ()
+    (ast-case rest ()
       ((_ . rest) (loop #'rest))
-      (() (void))
       (id
        (identifier? #'id)
        (optimizer-declare-type! (identifier-symbol #'id)
                                 (optimizer-resolve-class stx 'list::t)
-                                #t)))))
+                                #t))
+      (_ (void)))))
 
 (def (collect-type-let-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)
@@ -207,7 +247,7 @@ namespace: gxc
            (if (!class-meta? type)
              (begin
                (optimizer-declare-class! sym (!class-meta-class type))
-               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
+               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t) #t))
              (optimizer-declare-type! sym type #t)))))
       (_ (void))))
 
@@ -216,7 +256,8 @@ namespace: gxc
      (begin
        (for-each collect-e #'(hd ...) #'(expr ...))
        (for-each (cut compile-e self <>) #'(expr ...))
-       (compile-e self #'body)))))
+       (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+         (compile-e self #'body))))))
 
 (def (collect-type-letrec-values% self stx (expression-type apply-basic-expression-type))
   (def (collect-e hd expr)
@@ -228,17 +269,17 @@ namespace: gxc
            (if (!class-meta? type)
              (begin
                (optimizer-declare-class! sym (!class-meta-class type))
-               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
+               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t) #t))
              (optimizer-declare-type! sym type #t)))))
       (_ (void))))
 
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
-     (begin
-       ;; do the bindings twice
-       ;; 1. to get the return types from recursive proc declarations
-       ;; 2. to apply the inference in the bindings and body,
-       ;;    given the recursive return types
+     ;; do the bindings twice
+     ;; 1. to get the return types from recursive proc declarations
+     ;; 2. to apply the inference in the bindings and body,
+     ;;    given the recursive return types
+     (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
        (for-each collect-e #'(hd ...) #'(expr ...))
        (for-each (cut compile-e self <>) #'(expr ...))
        (for-each collect-e #'(hd ...) #'(expr ...))
@@ -251,17 +292,19 @@ namespace: gxc
 (def (collect-top-level-type-letrec-values% self stx)
   (collect-type-letrec-values% self stx apply-raw-expression-type))
 
-(def (collect-type-call% self stx)
+(def (collect-top-level-type-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)
      (optimizer-declare-method! (identifier-symbol #'type-t)
-                                (stx-e #'method) (identifier-symbol #'impl)
+                                (stx-e #'method)
+                                (identifier-symbol #'impl)
                                 (stx-e #'rebind?)))
     ((_ (%#ref -bind-method!) (%#ref type-t) (%#quote method) (%#ref impl))
      (runtime-identifier=? #'-bind-method 'bind-method!)
      (optimizer-declare-method! (identifier-symbol #'type-t)
-                                (stx-e #'method) (identifier-symbol #'impl)
+                                (stx-e #'method)
+                                (identifier-symbol #'impl)
                                 #f))
 
     ((_ expr ...)
@@ -270,11 +313,111 @@ namespace: gxc
 (def (collect-type-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
-     (let ((bind-type (optimizer-resolve-type (identifier-symbol #'id)))
-           (expr-type (apply-basic-expression-type #'expr)))
-       (unless (!type-subtype? expr-type bind-type)
-         ;; mutation with incompatible class types destroys type information
-         (optimizer-clear-type! (identifier-symbol #'id)))))))
+     (let* ((sym (identifier-symbol #'id))
+            (bind-type (optimizer-resolve-type sym))
+            (expr-type (apply-basic-expression-type #'expr))
+            (reduced-type (greatest-common-type stx bind-type expr-type)))
+       (when reduced-type
+         (optimizer-declare-type! sym reduced-type
+                                  (memq sym (current-compile-local-env))))
+       (compile-e self #'expr)))))
+
+(def (apply-path-type-if% self stx)
+  (ast-case stx (%#call %#ref)
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (begin
+                (parameterize ((current-compile-path-type
+                                (cons (cons (identifier-symbol #'obj)
+                                            (optimizer-resolve-class stx (!type-id pred-type)))
+                                      (current-compile-path-type))))
+                  (compile-e self #'K))
+                (compile-e self #'E))
+              (apply-operands self stx))))
+      (else
+       (apply-operands self stx))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (apply-path-type-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
+    ((_ test K E)
+     (apply-operands self stx))))
+
+;; apply-refine-type-info
+(def (refine-type-define-values% self stx)
+  (ast-case stx ()
+    ((_ (id) expr)
+     (identifier? #'id)
+     (let (sym (identifier-symbol #'id))
+       (unless (hash-get (current-compile-mutators) sym)
+         (alet (type (apply-basic-expression-type #'expr))
+           (unless (!class-meta? type)
+             (optimizer-declare-type! sym type))))
+       (compile-e self #'expr)))
+    ((_ _ expr)
+     (compile-e self #'expr))))
+
+(def (refine-type-let-values% self stx)
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (identifier? #'id)
+       (let (sym (identifier-symbol #'id))
+         (unless (hash-get (current-compile-mutators) sym)
+           (alet (type (apply-basic-expression-type expr))
+             (unless (!class-meta? type)
+               (optimizer-declare-type! sym type #t))))))
+      (_ (void))))
+
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (begin
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+         (compile-e self #'body))))))
+
+(def (refine-type-letrec-values% self stx)
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (identifier? #'id)
+       (let (sym (identifier-symbol #'id))
+         (unless (hash-get (current-compile-mutators) sym)
+           (alet (type (apply-basic-expression-type expr))
+             (unless (!class-meta? type)
+               (optimizer-declare-type! sym type #t))))))
+      (_ (void))))
+
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (parameterize ((current-compile-local-env (xform-let-locals #'(hd ...))))
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (compile-e self #'body)))))
+
+(def (refine-type-lambda% self stx)
+  (ast-case stx ()
+    ((_ args . body)
+     (parameterize ((current-compile-local-env (xform-let-locals #'args)))
+       (apply-body-lambda% self stx)))))
+
+(def (refine-type-case-lambda% self stx)
+  (ast-case stx ()
+    ((_ (hd body) ...)
+     (for-each (lambda (clause)
+                 (ast-case clause ()
+                   ((hd body)
+                    (parameterize ((current-compile-local-env (xform-let-locals #'hd)))
+                      (apply-body-case-lambda% self stx)))))
+               #'((hd body) ...)))))
 
 ;;; apply-basic-expression-type
 (def basic-expression-type-annotations (make-hash-table-eq))
@@ -472,12 +615,7 @@ namespace: gxc
      ((not rator-type) #f)
      ((!procedure? rator-type)
       {rator-type.return-type self stx args})
-     ((and (!class? rator-type)
-           (or (eq? (!type-id rator-type) 'procedure)
-               (eq? (!type-id rator-type) 't)))
-      #f)
-     (else
-      (raise-compile-error "operator is not a procedure" stx rator rator-type))))
+     (else #f)))
 
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
@@ -491,9 +629,8 @@ namespace: gxc
 
 (defmethod {return-type !procedure}
   (lambda (self ctx stx args)
-    (alet* ((signature self.signature)
-            (return (&!signature-return signature)))
-      (optimizer-resolve-class stx return))))
+    (and self.signature
+         (optimizer-resolve-class stx self.signature.return))))
 
 (defmethod {apply-return-type !procedure}
   !procedure::return-type)
@@ -502,7 +639,8 @@ namespace: gxc
   (lambda (self ctx stx args)
     (if self.dispatch
       (alet (dispatch-type (optimizer-lookup-type self.dispatch))
-        {dispatch-type.return-type ctx stx args})
+        (and (!procedure? dispatch-type)
+             {dispatch-type.return-type ctx stx args}))
       (!procedure::return-type self ctx stx args))))
 
 (defmethod {apply-return-type !lambda}
@@ -586,15 +724,8 @@ namespace: gxc
 
 (def (basic-expression-type-special-apply ctx stx)
   (def (type-e rator rator-type args)
-    (cond
-     ((!procedure? rator-type)
-      {rator-type.apply-return-type ctx stx args})
-     ((and (!class? rator-type)
-           (or (eq? (!type-id rator-type) 'procedure)
-               (eq? (!type-id rator-type) 't)))
-      #f)
-     (else
-      (raise-compile-error "applied operator is not a procedure" stx #'rator rator-type))))
+    (and (!procedure? rator-type)
+         {rator-type.apply-return-type ctx stx args}))
   (ast-case stx (%#ref)
     ((_ _ (%#ref -kw-dispatch) kwt rator . args)
      (free-identifier=? #'-kw-dispatch 'keyword-dispatch)
@@ -616,27 +747,59 @@ namespace: gxc
      (optimizer-resolve-type (identifier-symbol #'id)))))
 
 (def (basic-expression-type-if% self stx)
-  (ast-case stx ()
+  (def (type-e type-K type-E)
+    (cond
+     ((!abort? type-E) type-K)
+     ((!abort? type-K) type-E)
+     (else
+      (greatest-common-type stx type-K type-E))))
+
+  (def (basic-type-e K E)
+    (let ((type-K (apply-basic-expression-type K))
+          (type-E (apply-basic-expression-type E)))
+      (type-e type-K type-E)))
+
+  (ast-case stx (%#call %#ref)
+    ((_ (%#call (%#ref pred) (%#ref obj)) K E)
+     (cond
+      ((optimizer-lookup-type (identifier-symbol #'pred))
+       => (lambda (pred-type)
+            (if (or (!predicate? pred-type)
+                    (!primitive-predicate? pred-type))
+              (let* ((type-K
+                      (parameterize ((current-compile-path-type
+                                      (cons (cons (identifier-symbol #'obj)
+                                                  (optimizer-resolve-class stx (!type-id pred-type)))
+                                            (current-compile-path-type))))
+                        (apply-basic-expression-type #'K)))
+                     (type-E (apply-basic-expression-type #'E)))
+                (type-e type-K type-E))
+              (basic-type-e #'K #'E))))
+      (else
+       (basic-type-e #'K #'E))))
+    ((_ (%#call (%#ref -not) expr) K E)
+     (runtime-identifier=? #'-not 'not)
+     (basic-expression-type-if%
+      self
+      (xform-wrap-source
+       #'(%#if expr E K)
+       stx)))
     ((_ test K E)
-     (let ((type-K (apply-basic-expression-type #'K))
-           (type-E (apply-basic-expression-type #'E)))
-       (cond
-        ((!abort? type-E) type-K)
-        ((!abort? type-K) type-E)
-        (else
-         (greatest-common-type stx type-K type-E)))))))
+     (basic-type-e #'K #'E))))
 
 (def (greatest-common-type stx type-a type-b)
-  (cond
-   ((or (not type-a) (not type-b))
-    #f)
-   ((!type-subtype? type-a type-b)
-    type-b)
-   ((!type-subtype? type-b type-a)
-    type-a)
-   ((and (!class? type-a) (!class? type-b))
-    (let* ((rev-precedence-list-a (reverse (!class-precedence-list type-a)))
-           (rev-precedence-list-b (reverse (!class-precedence-list type-b))))
+  (def (common-e left right)
+    (let loop ((rest left))
+      (match rest
+        ([klass-name . rest]
+         (if (memq klass-name right)
+           (optimizer-resolve-class stx klass-name)
+           (loop rest)))
+        (else (optimizer-resolve-class stx 't::t)))))
+
+  (def (common-tail precedence-list-a precedence-list-b)
+    (let* ((rev-precedence-list-a (reverse precedence-list-a))
+           (rev-precedence-list-b (reverse precedence-list-b)))
       (let loop ((rest-a rev-precedence-list-a)
                  (rest-b rev-precedence-list-b)
                  (result #f))
@@ -651,6 +814,24 @@ namespace: gxc
               (and result (optimizer-resolve-class stx result)))))
           (else
            (and result (optimizer-resolve-class stx result)))))))
+
+  (cond
+   ((or (not type-a) (not type-b))
+    (optimizer-resolve-class stx 't::t))
+   ((!type-subtype? type-a type-b)
+    type-b)
+   ((!type-subtype? type-b type-a)
+    type-a)
+   ((and (!class? type-a) (!class? type-b))
+    (let* ((precedence-list-a (!class-precedence-list type-a))
+           (precedence-list-b (!class-precedence-list type-b)))
+      (cond
+       ((> (length precedence-list-a) (length precedence-list-b))
+        (common-e precedence-list-b precedence-list-a))
+       ((< (length precedence-list-a) (length precedence-list-b))
+        (common-e precedence-list-a precedence-list-b))
+       (else
+        (common-tail precedence-list-a precedence-list-b)))))
    ((and (eq? (!type-id type-a) 'procedure) (eq? (!type-id type-b) 'procedure))
     (optimizer-resolve-class stx 'procedure::t))
    (else #f)))
@@ -744,6 +925,10 @@ namespace: gxc
        (rest [0])))))
 
 (def (lambda-form-infer-signature form)
+  (def (default-signature)
+    (make-!signature return: 't::t
+                     origin: (expander-context-id (current-expander-context))))
+
   (ast-case form ()
     ((hd body)
      (cond
@@ -752,12 +937,14 @@ namespace: gxc
        => (lambda (return-type)
             (cond
              ((!procedure? return-type)
-              (make-!signature return: 'procedure::t))
+              (make-!signature return: 'procedure::t
+                               origin: (expander-context-id (current-expander-context))))
              ((optimizer-lookup-class-name return-type)
               => (lambda (return-type-name)
-                   (make-!signature return: return-type-name)))
-             (else #f))))
-      (else #f)))))
+                   (make-!signature return: return-type-name
+                                    origin: (expander-context-id (current-expander-context)))))
+             (else (default-signature)))))
+      (else (default-signature))))))
 
 (def (extract-lambda-signature-begin-annotation% self stx)
   (ast-case stx (@type.signature)
@@ -780,7 +967,9 @@ namespace: gxc
                    (cons* unchecked: (identifier-symbol arg) result)))
             (else
              (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
-         ([] (apply make-!signature result))
+         ([] (apply make-!signature
+               origin: (expander-context-id (current-expander-context))
+               result))
          (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
     ((_ ann body)
      (compile-e self #'body))))

@@ -48,6 +48,13 @@ A variety of HTTP or JSON-RPC errors can be raised during the query
 that you may or may not want to report, log or inspect, but otherwise
 this is the only function you need to call as a JSON RPC client.
 
+As for headers, you should follow the documentation and examples
+for the services you're using, and lacking that may try some as follows:
+```
+headers: '(("Content-Type" . "application/json-rpc")
+           ("Accept" . "application/json-rpc, application/json, application/jsonrequest"))
+```
+
 ## json-rpc-handler
 ```
 (json-rpc-handler processor log: (log #f))

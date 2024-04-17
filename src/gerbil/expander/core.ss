@@ -487,7 +487,7 @@ namespace: gx
   (def (resolve ctx src-phi key)
     (let lp ((ctx (core-context-shift ctx phi)) (dphi (fx- phi src-phi)))
       (cond
-       ((core-context-resolve ctx key) => values)
+       ((core-context-resolve ctx key))
        ((fxzero? dphi) #f)
        ;; phi-displaced macro
        ((fxpositive? dphi)
@@ -553,7 +553,7 @@ namespace: gx
            (let (subst (make-hash-table-eq))
              (set! (&expander-mark-subst mark) subst)
              (gensubst subst id)))
-          ((hash-get subst id) => values)
+          ((hash-get subst id))
           (else
            (gensubst subst id)))))
       (else key)))
@@ -638,7 +638,7 @@ namespace: gx
 (def (core-context-resolve ctx key)
   (let lp ((ctx ctx))
     (cond
-     ((core-context-get ctx key) => values)
+     ((core-context-get ctx key))
      ((and (&phi-context? ctx) (&phi-context-super ctx)) => lp)
      (else #f))))
 
@@ -728,7 +728,7 @@ namespace: gx
                         (marks (current-expander-marks)))
   (if (##structure? stx)
     (cond
-     ((sealed-syntax-unwrap stx) => values)
+     ((sealed-syntax-unwrap stx))
      ((identifier? stx)
       (let (id (stx-unwrap stx marks))
         (make-syntax-quote (&AST-e id) (or (&AST-source id) src)

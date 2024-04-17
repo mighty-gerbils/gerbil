@@ -75,6 +75,7 @@
                         debug: #f
                         optimize: (not (getenv "GERBIL_BUILD_NOOPT" #f))
                         generate-ssxi: #t
+                        parallel: #t
                         gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
@@ -99,3 +100,6 @@
 (compile-group gerbil-modules-compiler)
 ;; compile gambit prelude (TODO: obsolete, it is just an empty shim now)
 (compile-group gerbil-prelude-gambit)
+
+;; run the compile jobs to complete the build
+(execute-pending-compile-jobs!)

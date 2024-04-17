@@ -167,57 +167,56 @@ namespace: #f
          (%#define-runtime is-hash-table? is-hash-table?)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#define-runtime
-          _%locked-hash-table::ref102190%_
-          _%locked-hash-table::ref102189%_)
+          _%locked-hash-table::ref103842%_
+          _%locked-hash-table::ref103841%_)
          (%#define-runtime
-          _%locked-hash-table::set!102192%_
-          _%locked-hash-table::set!102191%_)
+          _%locked-hash-table::set!103845%_
+          _%locked-hash-table::set!103844%_)
          (%#define-runtime
-          _%locked-hash-table::update!102194%_
-          _%locked-hash-table::update!102193%_)
+          _%locked-hash-table::update!103848%_
+          _%locked-hash-table::update!103847%_)
          (%#define-runtime
-          _%locked-hash-table::delete!102196%_
-          _%locked-hash-table::delete!102195%_)
+          _%locked-hash-table::delete!103851%_
+          _%locked-hash-table::delete!103850%_)
          (%#define-runtime
-          _%locked-hash-table::for-each102198%_
-          _%locked-hash-table::for-each102197%_)
+          _%locked-hash-table::for-each103854%_
+          _%locked-hash-table::for-each103853%_)
          (%#define-runtime
-          _%locked-hash-table::length102200%_
-          _%locked-hash-table::length102199%_)
+          _%locked-hash-table::length103857%_
+          _%locked-hash-table::length103856%_)
          (%#define-runtime
-          _%locked-hash-table::copy102202%_
-          _%locked-hash-table::copy102201%_)
+          _%locked-hash-table::copy103860%_
+          _%locked-hash-table::copy103859%_)
          (%#define-runtime
-          _%locked-hash-table::clear!102204%_
-          _%locked-hash-table::clear!102203%_)
+          _%locked-hash-table::clear!103863%_
+          _%locked-hash-table::clear!103862%_)
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
-         (%#define-syntax check-hash-arg |[:0:]#check-hash-arg|)
          (%#define-runtime
-          _%checked-hash-table::ref102482%_
-          _%checked-hash-table::ref102481%_)
+          _%checked-hash-table::ref104077%_
+          _%checked-hash-table::ref104076%_)
          (%#define-runtime
-          _%checked-hash-table::set!102484%_
-          _%checked-hash-table::set!102483%_)
+          _%checked-hash-table::set!104080%_
+          _%checked-hash-table::set!104079%_)
          (%#define-runtime
-          _%checked-hash-table::update!102486%_
-          _%checked-hash-table::update!102485%_)
+          _%checked-hash-table::update!104083%_
+          _%checked-hash-table::update!104082%_)
          (%#define-runtime
-          _%checked-hash-table::delete!102488%_
-          _%checked-hash-table::delete!102487%_)
+          _%checked-hash-table::delete!104086%_
+          _%checked-hash-table::delete!104085%_)
          (%#define-runtime
-          _%checked-hash-table::for-each102490%_
-          _%checked-hash-table::for-each102489%_)
+          _%checked-hash-table::for-each104089%_
+          _%checked-hash-table::for-each104088%_)
          (%#define-runtime
-          _%checked-hash-table::length102492%_
-          _%checked-hash-table::length102491%_)
+          _%checked-hash-table::length104092%_
+          _%checked-hash-table::length104091%_)
          (%#define-runtime
-          _%checked-hash-table::copy102494%_
-          _%checked-hash-table::copy102493%_)
+          _%checked-hash-table::copy104095%_
+          _%checked-hash-table::copy104094%_)
          (%#define-runtime
-          _%checked-hash-table::clear!102496%_
-          _%checked-hash-table::clear!102495%_)
+          _%checked-hash-table::clear!104098%_
+          _%checked-hash-table::clear!104097%_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
          (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
                   (%#define-runtime make-hash-table__@ make-hash-table__@)

@@ -7,31 +7,140 @@ package: gerbil/compiler
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-method)
     'procedure::t))
-  (declare-type gxc#compile-e__0 (@lambda 1 #f))
-  (declare-type gxc#compile-e__1 (@lambda 2 #f))
+  (declare-type
+   gxc#compile-e__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#compile-e__1
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-type
    gxc#compile-e
-   (@case-lambda (1 gxc#compile-e__0) (2 gxc#compile-e__1)))
-  (declare-type gxc#stx-car-e (@lambda 1 #f))
+   (@case-lambda
+    (1
+     gxc#compile-e__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/method))
+    (2
+     gxc#compile-e__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/compiler/method))))
+  (declare-type
+   gxc#stx-car-e
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-type
    gxc#void-method
    (@lambda 2
             #f
             signature:
-            (return: void::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-type
    gxc#false-method
    (@lambda 2
             #f
             signature:
-            (return: false::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             false::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-type
    gxc#true-method
    (@lambda 2
             #f
             signature:
-            (return: true::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#identity-method (@lambda 2 #f))
+            (return:
+             true::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#identity-method
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-class
    gxc#::void-expression::t
    (@class gxc#::void-expression::t
@@ -322,36 +431,438 @@ package: gerbil/compiler
    (optimizer-resolve-class
     '(typedecl gxc#::basic-xform-bind-methods!)
     'promise::t))
-  (declare-type gxc#apply-begin% (@lambda 2 #f))
-  (declare-type gxc#apply-last-begin% (@lambda 2 #f))
+  (declare-type
+   gxc#apply-begin%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-last-begin%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
   (declare-type
    gxc#apply-begin-syntax%
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#apply-module% (@lambda 2 #f))
-  (declare-type gxc#apply-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#apply-define-values% (@lambda 2 #f))
-  (declare-type gxc#apply-define-syntax% (@lambda 2 #f))
-  (declare-type gxc#apply-body-lambda% (@lambda 2 #f))
-  (declare-type gxc#apply-body-case-lambda% (@lambda 2 #f))
-  (declare-type gxc#apply-body-let-values% (@lambda 2 #f))
-  (declare-type gxc#apply-body-last-let-values% (@lambda 2 #f))
-  (declare-type gxc#apply-body-setq% (@lambda 2 #f))
-  (declare-type gxc#apply-operands (@lambda 2 #f))
-  (declare-type gxc#xform-wrap-source (@lambda 2 #f))
-  (declare-type gxc#xform-begin% (@lambda 2 #f))
-  (declare-type gxc#xform-begin-syntax% (@lambda 2 #f))
-  (declare-type gxc#xform-module% (@lambda 2 #f))
-  (declare-type gxc#xform-define-values% (@lambda 2 #f))
-  (declare-type gxc#xform-define-syntax% (@lambda 2 #f))
-  (declare-type gxc#xform-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#xform-lambda% (@lambda 2 #f))
-  (declare-type gxc#xform-case-lambda% (@lambda 2 #f))
-  (declare-type gxc#xform-let-values% (@lambda 2 #f))
-  (declare-type gxc#xform-letrec-values% (@lambda 2 #f))
-  (declare-type gxc#xform-let-locals (@lambda 1 #f))
-  (declare-type gxc#xform-operands (@lambda 2 #f))
-  (declare-type gxc#xform-call% (@lambda 2 #f))
-  (declare-type gxc#xform-setq% (@lambda 2 #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-module%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-define-syntax%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-body-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-body-case-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-body-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-body-last-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-body-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#apply-operands
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-wrap-source
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-wrap-apply
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-begin%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-begin-syntax%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-module%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-define-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-define-syntax%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-begin-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-case-lambda%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-letrec-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-let-locals
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-operands
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-call%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method)))
+  (declare-type
+   gxc#xform-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/method))))

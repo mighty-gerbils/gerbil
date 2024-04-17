@@ -18,6 +18,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-local-type
   (make-parameter #f))
+(def current-compile-path-type
+  (make-parameter []))
 
 (defstruct optimizer-info (type classes ssxi methods)
   constructor: :init!)
@@ -34,16 +36,14 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 
-(defstruct (!alias !type) ())
-(defstruct (!procedure !type) (signature)
-  equal: #t print: #t)
+(defstruct (!alias !type) ()
+  equal: #t)
 
-(defclass !signature (return effect arguments unchecked)
+(defclass !signature (return effect arguments unchecked origin)
   final: #t equal: #t print: #t)
 
-(defstruct (!primitive-predicate !procedure) ()
-  constructor: :init!
-  equal: #t)
+(defstruct (!procedure !type) ((signature :? !signature))
+  equal: #t print: #t)
 
 ;;; MOP
 (defstruct (!class-meta !type) (class)
@@ -90,16 +90,22 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 (defstruct (!kw-lambda !procedure) (table dispatch)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 (defstruct (!kw-lambda-primary !procedure) (keys main)
-  constructor: :init!)
+  equal: #t constructor: :init!)
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
-(defclass !primitive ())
-(defclass (!primitive-lambda !primitive !lambda) ()
+(defclass !primitive ()
+  equal: #t)
+
+(defstruct (!primitive-predicate !primitive !procedure) ()
   constructor: :init!
   equal: #t)
-(defclass (!primitive-case-lambda !primitive !case-lambda) ()
+
+(defstruct (!primitive-lambda !primitive !lambda) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!primitive-case-lambda !primitive !case-lambda) ()
   constructor: :init!
   equal: #t)
 
@@ -368,11 +374,16 @@ namespace: gxc
   (and (!class? type)
        (memq 'interface-instance::t (!class-precedence-list type))))
 
+(def (!procedure-origin proc)
+  (using (proc : !procedure)
+    (and proc.signature
+         proc.signature.origin)))
+
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
-  (verbose "declare-type " sym " " (struct->list type))
+  (verbose "declare-type " sym " " type)
   (let (table (if local?
                 (current-compile-local-type)
                 (optimizer-info-type (current-compile-optimizer-info))))
@@ -401,6 +412,7 @@ namespace: gxc
   (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
+  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t)
   (let (klass (optimizer-lookup-class type-t))
     (if klass
       (let (vtab (!class-method-table klass))
@@ -423,7 +435,8 @@ namespace: gxc
       (verbose "declare-method: unknown class"  type-t))))
 
 (def (optimizer-lookup-type sym)
-  (or (alet (ht (current-compile-local-type))
+  (or (agetq sym (current-compile-path-type))
+      (alet (ht (current-compile-local-type))
         (hash-get ht sym))
       (hash-get (optimizer-info-type (current-compile-optimizer-info))
                 sym)))
@@ -451,9 +464,49 @@ namespace: gxc
 (def (optimizer-lookup-method type-t method)
   (!class-lookup-method (optimizer-resolve-class 'lookup-method type-t) method))
 
-(def (optimizer-top-level-method! sym)
-  (verbose "top-level method: " sym)
-  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t))
-
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
+
+(def (optimizer-current-types)
+  (def (type-e t)
+    (cond
+     ((symbol? t)
+      (type-e (optimizer-lookup-type t)))
+     ((!lambda? t)
+      (lambda-type t))
+     ((!kw-lambda? t)
+      (kw-lambda-type t))
+     ((!kw-lambda-primary? t)
+      (kw-lambda-primary-type t))
+     ((!procedure? t)
+      (cons 'procedure
+            (using (t :- !procedure)
+              (and t.signature t.signature.return))))
+     ((!type? t)
+      (!type-id t))
+     (else #f)))
+
+  (def (lambda-type (t :- !lambda))
+    (if t.dispatch
+      (type-e t.dispatch)
+      (cons 'procedure (and t.signature t.signature.return))))
+
+  (def (kw-lambda-type (t :- !kw-lambda))
+    (type-e t.dispatch))
+
+  (def (kw-lambda-primary-type (t :- !kw-lambda-primary))
+    (type-e t.main))
+
+  (let* ((ht1 (optimizer-info-type (current-compile-optimizer-info)))
+         (ht2 (current-compile-local-type))
+         (result (if ht1 (hash->list ht1) []))
+         (result (if ht2 (foldl cons result (hash->list ht2)) result)))
+    (for-each (lambda (p)
+                (let* ((t (cdr p))
+                       (tr (type-e t)))
+                  (set-cdr! p tr)))
+              result)
+    (list-sort (lambda (a b)
+                 (string<? (symbol->string (car a))
+                           (symbol->string (car b))))
+               result)))

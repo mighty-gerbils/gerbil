@@ -102,8 +102,7 @@
 
 (def (get-kevent-ptr)
   (cond
-   ((thread-local-get kevent-ptr-key)
-    => values)
+   ((thread-local-get kevent-ptr-key))
    (else
     (let (kevent-ptr (check-ptr (make_kevents 1)))
       (thread-local-set! kevent-ptr-key kevent-ptr)

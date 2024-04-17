@@ -17,8 +17,14 @@
   yield
   )
 
-(defstruct iterator (e (next : :procedure) (fini :? :procedure := #f))
-  final: #t)
+(defstruct iterator (e (next :- :procedure) (fini :- :procedure))
+  final: #t constructor: :init!)
+
+(defmethod {:init! iterator}
+  (lambda (self e (next : :procedure) (fini :? :procedure := #f))
+    (set! self.e e)
+    (set! self.next next)
+    (when fini (set! self.fini fini))))
 
 (defstruct :iter-end ())
 (def iter-end
@@ -60,7 +66,7 @@
          (set! it.e rest)
          hd)
         (else iter-end))))
-  (make-iterator e: lst next: next))
+  (make-iterator lst next))
 
 (defrules defiter-vector ()
   ((_ iter-vector type length-e ref-e)
@@ -75,7 +81,7 @@
                (set! (cdr it.e) (fx1+ index))
                v)
              iter-end))))
-     (make-iterator e: (cons vec 0) next: next))))
+     (make-iterator (cons vec 0) next))))
 
 (defiter-vector iter-vector :vector ##vector-length ##vector-ref)
 (defiter-vector iter-string :string ##string-length ##string-ref)
@@ -93,7 +99,7 @@
     (using (it :- iterator)
       (continue it.e)))
   (let (cort (coroutine (lambda () (proc) iter-end)))
-    (make-iterator e: cort next: next)))
+    (make-iterator cort next)))
 
 (def (iter-cothread (proc : :procedure))
   => iterator
@@ -106,7 +112,7 @@
         (cothread-stop! it.e)
         (set! it.e #f))))
   (let* ((cothr (cothread (lambda () (proc) iter-end)))
-         (it (make-iterator e: cothr next: next fini: fini)))
+         (it (make-iterator cothr next fini)))
     (make-will it fini)
     it))
 
@@ -120,7 +126,7 @@
         (if (eof-object? val)
           iter-end
           val))))
-  (make-iterator e: port next: next))
+  (make-iterator port next))
 
 (def (iter-in-iota (start : :number) (count : :fixnum) (step : :number))
   => iterator
@@ -135,7 +141,7 @@
               (set! (cdr it.e) (fx1- limit))
               value)
             iter-end)))))
-  (make-iterator e: (cons start count) next: next))
+  (make-iterator (cons start count) next))
 
 (def* in-iota
   ((count) (iter-in-iota 0 count 1))
@@ -154,7 +160,7 @@
              (set! it.e (+ e step))
              e)
            iter-end)))
-     (make-iterator e: start next: next))))
+     (make-iterator start next))))
 
 (defiter-in-range iter-in-range< <)
 (defiter-in-range iter-in-range> >)
@@ -179,7 +185,7 @@
         (let (value+step (+ value step))
           (set! it.e value+step)
           value))))
-  (make-iterator e: start next: next))
+  (make-iterator start next))
 
 (def (in-hash (ht : HashTable))
   => iterator
@@ -233,10 +239,10 @@
    (cond
     ((&iterator-fini it) => (cut <> it)))))
 
-(def (iter-filter (pred : :procedure) (it : iterator))
+(def (iter-filter (pred : :procedure) iterable)
   => iterator
   (def (iterate)
-    (for (val it)
+    (for (val (iter iterable))
       (when (pred val)
         (yield val))))
   (iter-coroutine iterate))

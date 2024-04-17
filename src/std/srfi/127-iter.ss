@@ -15,4 +15,4 @@
           (set! (iterator-e it) rest)
           first)
         iter-end)))
-  (make-iterator e: ls next: next))
+  (make-iterator ls next))

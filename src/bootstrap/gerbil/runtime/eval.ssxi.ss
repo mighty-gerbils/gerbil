@@ -123,6 +123,9 @@ package: gerbil/runtime
    &__core-special-form-id-set!
    (@mutator __core-special-form::t id #f))
   (declare-type
+   __core
+   (optimizer-resolve-class '(typedecl __core) 'HashTable::t))
+  (declare-type
    __current-expander
    (optimizer-resolve-class '(typedecl __current-expander) 'procedure::t))
   (declare-type
@@ -136,63 +139,594 @@ package: gerbil/runtime
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type __core-bound-id?__% (@lambda 2 #f))
-  (declare-type __core-bound-id?__0 (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __core-bound-id?__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __core-bound-id?__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
   (declare-type
    __core-bound-id?
-   (@case-lambda (1 __core-bound-id?__0) (2 __core-bound-id?__%)))
+   (@case-lambda
+    (1
+     __core-bound-id?__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))
+    (2
+     __core-bound-id?__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))))
   (declare-type
    __core-bind-syntax!__%
    (@lambda 3
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
   (declare-type
    __core-bind-syntax!__0
    (@lambda 2
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
   (declare-type
    __core-bind-syntax!
    (@case-lambda
     (2
      __core-bind-syntax!__0
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))
     (3
      __core-bind-syntax!__%
      signature:
-     (return: t::t effect: #f arguments: #f unchecked: #f))))
-  (declare-type __SRC__% (@lambda 2 #f))
-  (declare-type __SRC__0 (@lambda 1 #f))
-  (declare-type __SRC (@case-lambda (1 __SRC__0) (2 __SRC__%)))
-  (declare-type __locat (@lambda 1 #f))
-  (declare-type __check-values (@lambda 2 #f))
-  (declare-type __compile (@lambda 1 #f))
-  (declare-type __compile-error__% (@lambda 2 #f))
-  (declare-type __compile-error__0 (@lambda 1 #f))
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))))
+  (declare-type
+   __SRC__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __SRC__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __SRC
+   (@case-lambda
+    (1
+     __SRC__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))
+    (2
+     __SRC__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))))
+  (declare-type
+   __locat
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __check-values
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-error__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-error__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
   (declare-type
    __compile-error
-   (@case-lambda (1 __compile-error__0) (2 __compile-error__%)))
-  (declare-type __compile-ignore% (@lambda 1 #f))
-  (declare-type __compile-begin% (@lambda 1 #f))
-  (declare-type __compile-begin-foreign% (@lambda 1 #f))
-  (declare-type __compile-import% (@lambda 1 #f))
-  (declare-type __compile-begin-annotation% (@lambda 1 #f))
-  (declare-type __compile-define-values% (@lambda 1 #f))
-  (declare-type __compile-head-id (@lambda 1 #f))
-  (declare-type __compile-lambda-head (@lambda 1 #f))
-  (declare-type __compile-lambda% (@lambda 1 #f))
-  (declare-type __compile-case-lambda% (@lambda 1 #f))
-  (declare-type __compile-let-form (@lambda 3 #f))
-  (declare-type __compile-let-values% (@lambda 1 #f))
-  (declare-type __compile-letrec-values% (@lambda 1 #f))
-  (declare-type __compile-letrec*-values% (@lambda 1 #f))
-  (declare-type __compile-call% (@lambda 1 #f))
-  (declare-type __compile-ref% (@lambda 1 #f))
-  (declare-type __compile-setq% (@lambda 1 #f))
-  (declare-type __compile-if% (@lambda 1 #f))
-  (declare-type __compile-quote% (@lambda 1 #f))
-  (declare-type __compile-quote-syntax% (@lambda 1 #f)))
+   (@case-lambda
+    (1
+     __compile-error__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))
+    (2
+     __compile-error__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/eval))))
+  (declare-type
+   __compile-ignore%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-begin%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-begin-foreign%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-import%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-begin-annotation%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-define-values%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-head-id
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-lambda-head
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-lambda%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-case-lambda%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-let-form
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-let-values%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-letrec-values%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-letrec*-values%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-call%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-ref%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-setq%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-if%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-quote%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval)))
+  (declare-type
+   __compile-quote-syntax%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/eval))))

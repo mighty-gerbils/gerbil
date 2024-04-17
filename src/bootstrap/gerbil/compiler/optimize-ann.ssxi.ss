@@ -40,7 +40,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
   (declare-class
    gxc#::generate-runtime-repr::t
    (@class gxc#::generate-runtime-repr::t
@@ -78,7 +87,16 @@ package: gerbil/compiler
    (@lambda 1
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
   (declare-class
    gxc#::push-match-vars::t
    (@class gxc#::push-match-vars::t
@@ -133,7 +151,16 @@ package: gerbil/compiler
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
   (declare-type
    gxc#apply-push-match-vars__@
    (@kw-lambda-dispatch (vars: K:) gxc#apply-push-match-vars__%))
@@ -145,31 +172,273 @@ package: gerbil/compiler
    (optimizer-resolve-class
     '(typedecl gxc#current-annotation-optimizer)
     'procedure::t))
-  (declare-type gxc#optimize-annotation% (@lambda 2 #f))
-  (declare-type gxc#optimize-match (@lambda 1 #f))
+  (declare-type
+   gxc#optimize-annotation%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
   (declare-type
    gxc#optimize-match-body
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimize-match-basic-blocks (@lambda 1 #f))
-  (declare-type gxc#optimize-match-lift-basic-blocks (@lambda 2 #f))
-  (declare-type gxc#optimize-match-fold-basic-blocks (@lambda 1 #f))
-  (declare-type gxc#optimize-match-block (@lambda 4 #f))
-  (declare-type gxc#optimize-match-prune-blocks (@lambda 2 #f))
-  (declare-type gxc#optimize-match-fuse-restart-blocks (@lambda 2 #f))
-  (declare-type gxc#optimize-match-assert-restart (@lambda 2 #f))
-  (declare-type gxc#optimize-syntax-case (@lambda 1 #f))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-basic-blocks
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-lift-basic-blocks
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-fold-basic-blocks
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-block
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-prune-blocks
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-fuse-restart-blocks
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-match-assert-restart
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-syntax-case
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
   (declare-type
    gxc#optimize-syntax-case-body
    (@lambda 4
             #f
             signature:
-            (return: t::t effect: #f arguments: #f unchecked: #f)))
-  (declare-type gxc#optimize-syntax-case-clauses (@lambda 2 #f))
-  (declare-type gxc#optimize-syntax-case-closure (@lambda 3 #f))
-  (declare-type gxc#push-match-vars-let-values% (@lambda 2 #f))
-  (declare-type gxc#push-match-vars-if% (@lambda 2 #f))
-  (declare-type gxc#push-match-vars-call% (@lambda 2 #f))
-  (declare-type gxc#push-match-vars-stop (@lambda 2 #f)))
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-syntax-case-clauses
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#optimize-syntax-case-closure
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#push-match-vars-let-values%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#push-match-vars-if%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#push-match-vars-call%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann)))
+  (declare-type
+   gxc#push-match-vars-stop
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-ann))))

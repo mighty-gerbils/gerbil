@@ -33,6 +33,14 @@ namespace: gxc
          (%#define-runtime
           apply-generate-method-specializers
           gxc#apply-generate-method-specializers)
+         (%#define-runtime ::extract-receiver::t gxc#::extract-receiver::t)
+         (%#define-runtime ::extract-receiver? gxc#::extract-receiver?)
+         (%#define-runtime make-::extract-receiver gxc#make-::extract-receiver)
+         (%#define-syntax ::extract-receiver |gxc[:0:]#::extract-receiver|)
+         (%#define-runtime
+          ::extract-receiver-bind-methods!
+          gxc#::extract-receiver-bind-methods!)
+         (%#define-runtime apply-extract-receiver gxc#apply-extract-receiver)
          (%#define-runtime
           ::collect-object-refs::t
           gxc#::collect-object-refs::t)
@@ -160,6 +168,10 @@ namespace: gxc
          (%#define-runtime
           generate-method-specializers-define-values%
           gxc#generate-method-specializers-define-values%)
+         (%#define-runtime
+          extract-receiver-begin-annotation%
+          gxc#extract-receiver-begin-annotation%)
+         (%#define-runtime extract-receiver-if% gxc#extract-receiver-if%)
          (%#define-runtime
           collect-object-refs-call%
           gxc#collect-object-refs-call%)

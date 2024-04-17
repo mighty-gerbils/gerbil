@@ -40,15 +40,6 @@ namespace: gxc
   (%#struct-unchecked-ref    apply-operands)
   (%#struct-unchecked-set!   apply-operands))
 
-;; method to collect class method bindings
-(defcompile-method (apply-collect-methods) (::collect-methods ::void) ()
-  final:
-  (%#begin          apply-begin%)
-  (%#begin-syntax   apply-begin-syntax%)
-  (%#module         apply-module%)
-  (%#call           collect-methods-call%)
-  (%#call-unchecked collect-methods-call%))
-
 ;; method to substitute an identifier for another one
 (defcompile-method (apply-expression-subst id: id new-id: new-id)
   (::expression-subst ::basic-xform-expression)
@@ -105,7 +96,6 @@ namespace: gxc
   (%#ref  collect-runtime-refs-ref%)
   (%#set! collect-runtime-refs-setq%))
 
-
 ;;; apply-collect-mutators
 (def (collect-mutators-setq% self stx)
   (ast-case stx ()
@@ -114,17 +104,6 @@ namespace: gxc
        (verbose "collect mutator " sym)
        (hash-put! (current-compile-mutators) sym #t) ; just set for now
        (compile-e self #'expr)))))
-
-;;; apply-collect-methods
-(def (collect-methods-call% self stx)
-  (ast-case stx (%#ref %#quote)
-    ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
-     (runtime-identifier=? #'-bind-method 'bind-method!)
-     (optimizer-top-level-method! (identifier-symbol #'impl)))
-    ((_ (%#ref -bind-method!) (%#ref type-t) (%#quote method) (%#ref impl))
-     (runtime-identifier=? #'-bind-method 'bind-method!)
-     (optimizer-top-level-method! (identifier-symbol #'impl)))
-    (_ (void))))
 
 ;;; apply-subst-refs
 (def (expression-subst-ref% self stx)

@@ -14,7 +14,7 @@
 (def +websocket-version+ "13")
 (def +websocket-magic+ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 
-;; creates an httpd handler that handles ws/wss requests
+;; Creates an httpd handler that handles ws/wss requests
 ;; - continue is a procedure that receives a newly accepted websocket to handle
 ;;   the request. When this process returns the handler closes the request.
 ;; - protocol is a procedure to select a protocol, if the client has specified
@@ -30,44 +30,42 @@
       (websocket-handle-request req res continue select-protocol max-frame-size))))
 
 (def (websocket-handle-request req res continue select-protocol max-frame-size)
-  (let/cc exit
-    (def (bad-request! message)
-      (http-response-write res 400 [] message)
-      (exit 'bad-request))
+  (def (bad-request! message)
+    (http-response-write res 400 [["Sec-Websocket-Version" . +websocket-version+]] message)
+    (raise 'bad-request))
 
-    (let* ((request-headers (http-request-headers req))
-           (_ (alet (version (assget "Sec-Websocket-Version" request-headers))
-                (unless (equal? version +websocket-version+)
-                  (bad-request! "unusupported websocket protocol version"))))
-           (proto
-            (alet (request-proto (assget "Sec-Websocket-Protocol" request-headers))
-              (cond
-               ((select-protocol (string-split request-proto #\,)))
-               (else
-                (bad-request! "unsupported websocket protocol")))))
-           (auth
-            (alet (nonce64 (assget "Sec-Websocket-Key" request-headers))
-              (let* ((digest (make-digest digest::sha1))
-                     (_ (digest-update! digest (string->utf8 nonce64)))
-                     (_ (digest-update! digest (string->utf8 +websocket-magic+)))
-                     (auth (digest-final! digest)))
-                (base64-encode auth))))
-           ;; TODO do we need any more headers?
-           (upgrade-headers
-            [["Upgrade" . "websocket"]
-             ["Sec-Websocket-Version" . +websocket-version+]
-             (if auth
-               [["Sec-Websocket-Accept" . auth]]
-               [])
-             ...
-             (if proto
-               [["Sec-Websocket-Protocol" . proto]]
-               [])
-             ...])
-           ((values sock reader writer)
-            (http-response-upgrade! res upgrade-headers)))
-      (continue
-       (WebSocket (make-websocket sock reader writer
-                                  #t    ; server socket
-                                  proto
-                                  max-frame-size))))))
+  (let* ((request-headers (http-request-headers req))
+         (_ (alet (version (aget "Sec-Websocket-Version" request-headers))
+              (unless (equal? version +websocket-version+)
+                (bad-request! "unsupported websocket protocol version"))))
+         (proto
+          (alet (request-proto (aget "Sec-Websocket-Protocol" request-headers))
+            (cond
+             ((select-protocol (string-split request-proto #\,)))
+             (else
+              (bad-request! "unsupported websocket protocol")))))
+         (auth
+          (alet (nonce64 (aget "Sec-Websocket-Key" request-headers))
+            (let* ((digest (make-digest digest::sha1))
+                   (_ (digest-update! digest (string->utf8 nonce64)))
+                   (_ (digest-update! digest (string->utf8 +websocket-magic+)))
+                   (auth (digest-final! digest)))
+              (base64-encode auth))))
+         ;; TODO do we need any more headers?
+         (upgrade-headers
+          [["Upgrade" . "websocket"]
+           (if auth
+             [["Sec-Websocket-Accept" . auth]]
+             [])
+           ...
+           (if proto
+             [["Sec-Websocket-Protocol" . proto]]
+             [])
+           ...])
+         ((values sock reader writer)
+          (http-response-upgrade! res upgrade-headers)))
+    (continue
+     (WebSocket (make-websocket sock reader writer
+                                #t    ; server socket
+                                proto
+                                max-frame-size)))))
