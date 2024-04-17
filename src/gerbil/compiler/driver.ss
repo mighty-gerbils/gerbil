@@ -10,13 +10,14 @@ namespace: gxc
         "base"
         "compile"
         "optimize")
-(export compile-module compile-exe)
+(export compile-module compile-exe gerbil-gcc)
 
 (extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
 
 (def default-gerbil-gsc
   (path-expand "gsc" (path-expand "bin" (path-expand "~~"))))
 (def default-gerbil-gcc "gcc")
+(def %default-gerbil-gcc #f)
 (def default-gerbil-ar "ar")
 
 (def +driver-mutex+ (make-mutex 'compiler/driver))
@@ -44,7 +45,9 @@ namespace: gxc
 (def +gerbil-gcc+ #f)
 (def (gerbil-gcc)
   (unless +gerbil-gcc+
-    (set! +gerbil-gcc+ (getenv "GERBIL_GCC" default-gerbil-gcc)))
+    (set! +gerbil-gcc+
+      (getenv "GERBIL_GCC"
+	      (or %default-gerbil-gcc default-gerbil-gcc))))
   +gerbil-gcc+)
 
 (def +gerbil-ar+ #f)
@@ -945,3 +948,6 @@ namespace: gxc
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              [program . args]
                              status)))))
+
+;; Added auto via ./configure
+(set! %default-gerbil-gcc "/opt/local/bin/gcc-mp-13")
