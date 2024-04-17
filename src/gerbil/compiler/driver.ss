@@ -948,6 +948,3 @@ namespace: gxc
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              [program . args]
                              status)))))
-
-;; Added auto via ./configure
-(set! %default-gerbil-gcc "/opt/local/bin/gcc-mp-13")
