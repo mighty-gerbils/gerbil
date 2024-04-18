@@ -2793,7 +2793,7 @@ package: gerbil/core
                      (var-set! (stx-identifier #'var #'var "-set!")))
          #'(begin
              (def __var value)
-             (def/c (var-set! (new-value ~ Type . contract))
+             (def/c (var-set! (new-value ~ . contract))
                (set! __var new-value))
              (defsyntax var
                (identifier-rules (set! %%set-dotted!)
