@@ -2762,7 +2762,7 @@ package: gerbil/core
   (defrule (defstruct/c hd slots . body)
     (defclass/c hd slots struct: #t . body))
 
-  (defsyntax (defmutable stx)
+  (defsyntax (defmutable* stx)
     (syntax-case stx ()
       ((_ var value ~ Type)
        (and (identifier? #'var)
@@ -2777,10 +2777,10 @@ package: gerbil/core
              (def/c (var-set! (new-value ~ Type))
                (set! __var new-value)))))
       ((_ var value)
-       #'(defmutable var value : :t))))
+       #'(defmutable* var value : :t))))
 
 
-  (defsyntax (defmutable-rules stx)
+  (defsyntax (defmutable stx)
     (syntax-case stx ()
       ((_ var value ~ Type)
        (and (identifier? #'var)
@@ -2805,7 +2805,7 @@ package: gerbil/core
                  ((the-var arg (... ...))
                   (__var arg (... ...))))))))
       ((_ var value)
-       #'(defmutable-rules var value : :t)))))
+       #'(defmutable var value : :t)))))
 
 (import TypeReference TypeCast Using ContractRules Interface TypedDefinitions
         (phi: +1 InterfaceInfo TypeEnv ClassMeta))
