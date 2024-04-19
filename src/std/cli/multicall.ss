@@ -73,7 +73,7 @@
   (help: "Print software version"
    getopt: [(flag 'all? "-a" "--all" help: "also show versions of previous layers")
             (option 'layer "-l" "--layer" help: "show versions for specified layer")])
-  (display-build-manifest (cond (all? build-manifest)
+  (display-build-manifest (cond (all? (build-manifest))
                                 (layer (build-manifest/layer layer))
                                 (else (build-manifest/head))))
   (newline))
