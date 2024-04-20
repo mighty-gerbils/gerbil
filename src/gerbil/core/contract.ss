@@ -1873,7 +1873,7 @@ package: gerbil/core
           (def (unchecked-id . in)
             (with-procedure-signature (#f return #f)
               (with-procedure-unchecked-contract signature
-                body ...))))))
+                                                 body ...))))))
 
     (syntax-case stx (=>)
       ((_ (id . args) => return body ...)
@@ -2002,9 +2002,9 @@ package: gerbil/core
                       (proc
                        (syntax/loc stx
                          (lambda/c (receiver . args)
-                              (using (self receiver ::- Type)
-                                (with-receiver self
-                                  (let () body ...)))))))
+                                   (using (self receiver ::- Type)
+                                     (with-receiver self
+                                                    (let () body ...)))))))
          #'(defmethod (@method~ method Type) proc . rest)))
       ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
        (and (identifier-list? #'(self ...))
@@ -2017,7 +2017,7 @@ package: gerbil/core
                           ((receiver . args)
                            (using (self receiver ::- Type)
                              (with-receiver self
-                               (let () body ...))))
+                                            (let () body ...))))
                           ...))))
          #'(defmethod (@method~ method Type) proc . rest)))
       ((_ {method Type} . body)
@@ -2240,19 +2240,19 @@ package: gerbil/core
       (for-each
         (lambda (slot)
           (for-each
-             (lambda (super-type)
-               (let (klass (syntax-local-value super-type))
-                 (cond
-                  ((hash-get tab slot)
-                   => (lambda (a)
-                        (cond
-                         ((getf klass slot)
-                          => (lambda (b)
-                               (hash-put! tab slot (mixf slot a b)))))))
-                  ((getf klass slot)
-                   => (lambda (a)
-                        (hash-put! tab slot a))))))
-             super))
+            (lambda (super-type)
+              (let (klass (syntax-local-value super-type))
+                (cond
+                 ((hash-get tab slot)
+                  => (lambda (a)
+                       (cond
+                        ((getf klass slot)
+                         => (lambda (b)
+                              (hash-put! tab slot (mixf slot a b)))))))
+                 ((getf klass slot)
+                  => (lambda (a)
+                       (hash-put! tab slot a))))))
+            super))
         mixin-slots)
       (for-each
         (lambda (slot-spec)
@@ -2461,9 +2461,9 @@ package: gerbil/core
                        ((slot ...)
                         slots)
                        ((ordered-slot ...) ordered-slots)
-                       ((getf ...)   ; no contract
+                       ((getf ...)      ; no contract
                         (stx-map (cut make-id name "-" <>) slots))
-                       ((setf ...)   ; with contract, if any
+                       ((setf ...)      ; with contract, if any
                         (stx-map (cut make-id name "-" <> "-set!") slots))
                        ((rawsetf ...) ; without contract, defclass-type
                         (stx-map (cut make-id name "-unchecked-" <> "-set!") slots))
@@ -2506,18 +2506,18 @@ package: gerbil/core
                          (else
                           [mixin:
                            (map
-                            (lambda (slot getf setf rawsetf)
-                              (with-syntax ((slot slot)
-                                            (getf getf)
-                                            (setf setf)
-                                            (rawsetf rawsetf))
-                                (if (hash-get slot-contract-table (stx-e #'slot))
-                                  #'(slot getf rawsetf)
-                                  #'(slot getf setf))))
-                            #'(mixin-slot ...)
-                            #'(mixin-getf ...)
-                            #'(mixin-setf ...)
-                            #'(mixin-rawsetf ...))])))
+                             (lambda (slot getf setf rawsetf)
+                               (with-syntax ((slot slot)
+                                             (getf getf)
+                                             (setf setf)
+                                             (rawsetf rawsetf))
+                                 (if (hash-get slot-contract-table (stx-e #'slot))
+                                   #'(slot getf rawsetf)
+                                   #'(slot getf setf))))
+                             #'(mixin-slot ...)
+                             #'(mixin-getf ...)
+                             #'(mixin-setf ...)
+                             #'(mixin-rawsetf ...))])))
                        ((values type-name)
                         [name: (or (stx-getq name: body) id)])
                        ((values type-id)
@@ -2585,10 +2585,10 @@ package: gerbil/core
                           #'make-type
                           #f))
                        (defklass
-                        (wrap
-                         #'(defclass-type type::t type-super
-                             raw-make type?
-                             type-body ...)))
+                         (wrap
+                          #'(defclass-type type::t type-super
+                              raw-make type?
+                              type-body ...)))
                        (meta-type-id
                         (with-syntax (((id: id) type-id))
                           #'(quote id)))
@@ -2656,87 +2656,87 @@ package: gerbil/core
                                             #'(mixin-rawsetf ...))))
                           #'[slot-usetf ... mixin-slot-usetf ...]))
                        (defmeta
-                        (wrap
-                         #'(defsyntax type
-                             (make-class-type-info
-                              id: meta-type-id
-                              name: meta-type-name
-                              slots: meta-type-slots
-                              ordered-slots: meta-type-ordered-slots
-                              super: meta-type-super
-                              struct?: meta-type-struct?
-                              final?: meta-type-final?
-                              metaclass: meta-type-metaclass
-                              constructor-method: meta-type-constructor-method
-                              type-descriptor: meta-type-descriptor
-                              constructor: meta-type-constructor
-                              predicate: meta-type-predicate
-                              accessors: meta-type-accessors
-                              mutators: meta-type-mutators
-                              unchecked-accessors: meta-type-unchecked-accessors
-                              unchecked-mutators: meta-type-unchecked-mutators
-                              slot-types: meta-type-slot-types
-                              slot-contracts: meta-type-slot-contracts
-                              slot-defaults: meta-type-slot-defaults))))
+                         (wrap
+                          #'(defsyntax type
+                              (make-class-type-info
+                               id: meta-type-id
+                               name: meta-type-name
+                               slots: meta-type-slots
+                               ordered-slots: meta-type-ordered-slots
+                               super: meta-type-super
+                               struct?: meta-type-struct?
+                               final?: meta-type-final?
+                               metaclass: meta-type-metaclass
+                               constructor-method: meta-type-constructor-method
+                               type-descriptor: meta-type-descriptor
+                               constructor: meta-type-constructor
+                               predicate: meta-type-predicate
+                               accessors: meta-type-accessors
+                               mutators: meta-type-mutators
+                               unchecked-accessors: meta-type-unchecked-accessors
+                               unchecked-mutators: meta-type-unchecked-mutators
+                               slot-types: meta-type-slot-types
+                               slot-contracts: meta-type-slot-contracts
+                               slot-defaults: meta-type-slot-defaults))))
                        (defmake
-                        (cond
-                         ((or (not (null? type-constructor))
-                              (and (zero? (hash-length slot-contract-table))
-                                   (zero? (hash-length slot-default-table)))
-                              metaclass)
-                          ;; use the raw constructor from defclass-type
-                          #'(begin))
-                         ;; synthesize struct constructor procedure
-                         ((and struct? (zero? (hash-length slot-default-table)))
-                          ;; no defaults -- define plain struct constructor
-                          (with-syntax ((contract
-                                         (foldr
-                                           (lambda (slot r)
-                                             (cond
-                                              ((hash-get slot-contract-table (stx-e slot))
-                                               => (lambda (contract)
-                                                    (with-syntax ((slot slot)
-                                                                  ((contract ...) contract))
-                                                        (cons #'(slot contract ... )
-                                                              r))))
-                                              (else
-                                               (cons slot r))))
-                                           []
-                                           #'(ordered-slot ...)))
-                                        (type::t (core-quote-syntax #'type::t)))
-                            (wrap
-                             #'(def/c (make-type . contract) => type
-                                 (begin-annotation (@type type::t)
-                                   (##structure type::t ordered-slot ...))))))
-                         (else
-                          ;; define keyword constructor
-                          (with-syntax ((contract
-                                         (foldr
-                                           (lambda (slot r)
-                                             (let (default (hash-get slot-default-table (stx-e slot)))
-                                               (cond
-                                                ((hash-get slot-contract-table (stx-e slot))
-                                                 => (lambda (contract)
-                                                      (with-syntax ((slot slot)
-                                                                    ((contract ...) contract)
-                                                                    ((default ...)
-                                                                     (if default
-                                                                       [':= default]
-                                                                       [])))
-                                                        (cons* (symbol->keyword (stx-e #'slot))
-                                                               #'(slot contract ... default ...)
-                                                               r))))
-                                                (else
-                                                 (cons* (symbol->keyword (stx-e slot))
-                                                        [slot default]
-                                                        r)))))
-                                           []
-                                           #'(ordered-slot ...)))
-                                        (type::t (core-quote-syntax #'type::t)))
-                            (wrap
-                             #'(def/c (make-type . contract) => type
-                                 (begin-annotation (@type type::t)
-                                   (##structure type::t ordered-slot ...))))))))
+                         (cond
+                          ((or (not (null? type-constructor))
+                               (and (zero? (hash-length slot-contract-table))
+                                    (zero? (hash-length slot-default-table)))
+                               metaclass)
+                           ;; use the raw constructor from defclass-type
+                           #'(begin))
+                          ;; synthesize struct constructor procedure
+                          ((and struct? (zero? (hash-length slot-default-table)))
+                           ;; no defaults -- define plain struct constructor
+                           (with-syntax ((contract
+                                          (foldr
+                                            (lambda (slot r)
+                                              (cond
+                                               ((hash-get slot-contract-table (stx-e slot))
+                                                => (lambda (contract)
+                                                     (with-syntax ((slot slot)
+                                                                   ((contract ...) contract))
+                                                       (cons #'(slot contract ... )
+                                                             r))))
+                                               (else
+                                                (cons slot r))))
+                                            []
+                                            #'(ordered-slot ...)))
+                                         (type::t (core-quote-syntax #'type::t)))
+                             (wrap
+                              #'(def/c (make-type . contract) => type
+                                  (begin-annotation (@type type::t)
+                                    (##structure type::t ordered-slot ...))))))
+                          (else
+                           ;; define keyword constructor
+                           (with-syntax ((contract
+                                          (foldr
+                                            (lambda (slot r)
+                                              (let (default (hash-get slot-default-table (stx-e slot)))
+                                                (cond
+                                                 ((hash-get slot-contract-table (stx-e slot))
+                                                  => (lambda (contract)
+                                                       (with-syntax ((slot slot)
+                                                                     ((contract ...) contract)
+                                                                     ((default ...)
+                                                                      (if default
+                                                                        [':= default]
+                                                                        [])))
+                                                         (cons* (symbol->keyword (stx-e #'slot))
+                                                                #'(slot contract ... default ...)
+                                                                r))))
+                                                 (else
+                                                  (cons* (symbol->keyword (stx-e slot))
+                                                         [slot default]
+                                                         r)))))
+                                            []
+                                            #'(ordered-slot ...)))
+                                         (type::t (core-quote-syntax #'type::t)))
+                             (wrap
+                              #'(def/c (make-type . contract) => type
+                                  (begin-annotation (@type type::t)
+                                    (##structure type::t ordered-slot ...))))))))
                        ((defsetf ...)
                         (filter
                          identity
@@ -2761,6 +2761,35 @@ package: gerbil/core
 
   (defrule (defstruct/c hd slots . body)
     (defclass/c hd slots struct: #t . body))
+
+  (defsyntax (do/c stx)
+    (syntax-case stx ()
+      ((_ ((var/c init step ...) ...)
+          (test fini ...)
+          body ...)
+       (with-syntax (((var ...)
+                      (stx-map (lambda (b) (if (identifier? b) b (stx-car b))
+                                  #'(var/c ...)))))
+         #'(let/c $loop ((var/c init) ...)
+             (if test
+               (do-loop-result fini ...)
+               (let () body ... ($lop (do-loop-step var step ...) ...))))))))
+
+  (defrules do-loop-result ()
+    ((_) #!void)
+    ((_ expr) expr)
+    ((_ expr rest ...)
+     (begin expr rest ...)))
+
+  (defrules do-loop-step ()
+    ((_ var) var)
+    ((_ var expr) expr)
+    ((_ var expr rest ...)
+     (begin expr rest ...)))
+
+  (defrules do-while/c ()
+    ((_ hd (test . fini) . body)
+     (do/c hd ((not test) . fini) . body)))
 
   (defsyntax (defmutable* stx)
     (syntax-case stx ()
