@@ -611,6 +611,9 @@ namespace: gerbil/core/contract
                     defstruct/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#defstruct/c|)
                    (%#define-syntax
+                    defmutable*
+                    |gerbil/core/contract~TypedDefinitions[:0:]#defmutable*|)
+                   (%#define-syntax
                     defmutable
                     |gerbil/core/contract~TypedDefinitions[:0:]#defmutable|)))
          (%#import

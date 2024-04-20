@@ -1,18 +1,18 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/system::timestamp 1713044314)
+  (define gerbil/runtime/system::timestamp 1713454409)
   (begin
-    (define gerbil-version-string (lambda () '"v0.18.1-104-g01eec2b8e"))
+    (define gerbil-version-string (lambda () '"v0.18.1-110-g2544c9061"))
     (define gerbil-system-manifest
       (cons (cons '"Gerbil" (gerbil-version-string))
             (cons (cons '"Gambit" (system-version-string)) '())))
     (define __build-manifest gerbil-system-manifest)
     (define build-manifest (lambda () __build-manifest))
     (define build-manifest-set!
-      (lambda (_%new-value93005%_)
-        (if (list? _%new-value93005%_)
-            (let ((_%new-value93009%_ _%new-value93005%_))
-              (__build-manifest-set! _%new-value93009%_))
+      (lambda (_%new-value93279%_)
+        (if (list? _%new-value93279%_)
+            (let ((_%new-value93283%_ _%new-value93279%_))
+              (__build-manifest-set! _%new-value93283%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -21,21 +21,21 @@
                'contract:
                'list?
                'value:
-               _%new-value93005%_)
+               _%new-value93279%_)
               '#!void))))
     (define __build-manifest-set!
-      (lambda (_%new-value92992%_)
-        (let ((_%new-value92996%_ _%new-value92992%_))
-          (set! __build-manifest _%new-value92996%_))))
+      (lambda (_%new-value93266%_)
+        (let ((_%new-value93270%_ _%new-value93266%_))
+          (set! __build-manifest _%new-value93270%_))))
     (define display-build-manifest__%
-      (lambda (_%manifest92952%_ _%port92953%_)
-        (if (list? _%manifest92952%_)
-            (let ((_%manifest92957%_ _%manifest92952%_))
-              (if (port? _%port92953%_)
-                  (let ((_%port92967%_ _%port92953%_))
+      (lambda (_%manifest93226%_ _%port93227%_)
+        (if (list? _%manifest93226%_)
+            (let ((_%manifest93231%_ _%manifest93226%_))
+              (if (port? _%port93227%_)
+                  (let ((_%port93241%_ _%port93227%_))
                     (__display-build-manifest__%
-                     _%manifest92957%_
-                     _%port92967%_))
+                     _%manifest93231%_
+                     _%port93241%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -44,7 +44,7 @@
                      'contract:
                      'port?
                      'value:
-                     _%port92953%_)
+                     _%port93227%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -54,111 +54,111 @@
                'contract:
                'list?
                'value:
-               _%manifest92952%_)
+               _%manifest93226%_)
               '#!void))))
     (define display-build-manifest__0
       (lambda ()
-        (let* ((_%manifest92981%_ __build-manifest)
-               (_%port92983%_ (current-output-port)))
-          (__display-build-manifest__% _%manifest92981%_ _%port92983%_))))
+        (let* ((_%manifest93255%_ __build-manifest)
+               (_%port93257%_ (current-output-port)))
+          (__display-build-manifest__% _%manifest93255%_ _%port93257%_))))
     (define display-build-manifest__1
-      (lambda (_%manifest92985%_)
-        (let ((_%port92987%_ (current-output-port)))
-          (display-build-manifest__% _%manifest92985%_ _%port92987%_))))
+      (lambda (_%manifest93259%_)
+        (let ((_%port93261%_ (current-output-port)))
+          (display-build-manifest__% _%manifest93259%_ _%port93261%_))))
     (define display-build-manifest
-      (lambda _g93021_
-        (let ((_g93020_ (let () (declare (not safe)) (##length _g93021_))))
-          (cond ((let () (declare (not safe)) (##fx= _g93020_ 0))
-                 (apply display-build-manifest__0 _g93021_))
-                ((let () (declare (not safe)) (##fx= _g93020_ 1))
-                 (apply display-build-manifest__1 _g93021_))
-                ((let () (declare (not safe)) (##fx= _g93020_ 2))
-                 (apply display-build-manifest__% _g93021_))
+      (lambda _g93295_
+        (let ((_g93294_ (let () (declare (not safe)) (##length _g93295_))))
+          (cond ((let () (declare (not safe)) (##fx= _g93294_ 0))
+                 (apply display-build-manifest__0 _g93295_))
+                ((let () (declare (not safe)) (##fx= _g93294_ 1))
+                 (apply display-build-manifest__1 _g93295_))
+                ((let () (declare (not safe)) (##fx= _g93294_ 2))
+                 (apply display-build-manifest__% _g93295_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   display-build-manifest
-                  _g93021_))))))
+                  _g93295_))))))
     (define __display-build-manifest__%
-      (lambda (_%manifest92874%_ _%port92875%_)
-        (let* ((_%manifest92878%_ _%manifest92874%_)
-               (_%port92886%_ _%port92875%_))
-          (let ((_%p92899%_
-                 (lambda (_%g9289492896%_)
-                   (display _%g9289492896%_ _%port92886%_)))
-                (_%l92900%_
-                 (let () (declare (not safe)) (##length _%manifest92878%_)))
-                (_%i92901%_ '0))
-            (let ((__tmp93022
-                   (lambda (_%layer92903%_)
-                     (if (zero? _%i92901%_)
+      (lambda (_%manifest93148%_ _%port93149%_)
+        (let* ((_%manifest93152%_ _%manifest93148%_)
+               (_%port93160%_ _%port93149%_))
+          (let ((_%p93173%_
+                 (lambda (_%g9316893170%_)
+                   (display _%g9316893170%_ _%port93160%_)))
+                (_%l93174%_
+                 (let () (declare (not safe)) (##length _%manifest93152%_)))
+                (_%i93175%_ '0))
+            (let ((__tmp93296
+                   (lambda (_%layer93177%_)
+                     (if (zero? _%i93175%_)
                          '#!void
-                         (if (= _%i92901%_ '1)
-                             (_%p92899%_ '" on ")
-                             (_%p92899%_ '", ")))
-                     (let* ((_%layer9290792914%_ _%layer92903%_)
-                            (_%E9290992918%_
+                         (if (= _%i93175%_ '1)
+                             (_%p93173%_ '" on ")
+                             (_%p93173%_ '", ")))
+                     (let* ((_%layer9318193188%_ _%layer93177%_)
+                            (_%E9318393192%_
                              (lambda ()
                                (error '"No clause matching"
-                                      _%layer9290792914%_
+                                      _%layer9318193188%_
                                       '([name . version]))
                                '#!void))
-                            (_%K9291092924%_
-                             (lambda (_%version92921%_ _%name92922%_)
-                               (_%p92899%_ _%name92922%_)
-                               (_%p92899%_ '" ")
-                               (_%p92899%_ _%version92921%_))))
+                            (_%K9318493198%_
+                             (lambda (_%version93195%_ _%name93196%_)
+                               (_%p93173%_ _%name93196%_)
+                               (_%p93173%_ '" ")
+                               (_%p93173%_ _%version93195%_))))
                        (if (let ()
                              (declare (not safe))
-                             (##pair? _%layer9290792914%_))
-                           (let ((_%hd9291192927%_
+                             (##pair? _%layer9318193188%_))
+                           (let ((_%hd9318593201%_
                                   (let ()
                                     (declare (not safe))
-                                    (##car _%layer9290792914%_)))
-                                 (_%tl9291292929%_
+                                    (##car _%layer9318193188%_)))
+                                 (_%tl9318693203%_
                                   (let ()
                                     (declare (not safe))
-                                    (##cdr _%layer9290792914%_))))
-                             (let* ((_%name92932%_ _%hd9291192927%_)
-                                    (_%version92934%_ _%tl9291292929%_))
-                               (_%K9291092924%_
-                                _%version92934%_
-                                _%name92932%_)))
-                           (_%E9290992918%_)))
-                     (set! _%i92901%_ (+ _%i92901%_ '1)))))
+                                    (##cdr _%layer9318193188%_))))
+                             (let* ((_%name93206%_ _%hd9318593201%_)
+                                    (_%version93208%_ _%tl9318693203%_))
+                               (_%K9318493198%_
+                                _%version93208%_
+                                _%name93206%_)))
+                           (_%E9318393192%_)))
+                     (set! _%i93175%_ (+ _%i93175%_ '1)))))
               (declare (not safe))
-              (##for-each __tmp93022 _%manifest92878%_))))))
+              (##for-each __tmp93296 _%manifest93152%_))))))
     (define __display-build-manifest__0
       (lambda ()
-        (let* ((_%manifest92940%_ __build-manifest)
-               (_%port92942%_ (current-output-port)))
-          (__display-build-manifest__% _%manifest92940%_ _%port92942%_))))
+        (let* ((_%manifest93214%_ __build-manifest)
+               (_%port93216%_ (current-output-port)))
+          (__display-build-manifest__% _%manifest93214%_ _%port93216%_))))
     (define __display-build-manifest__1
-      (lambda (_%manifest92944%_)
-        (let ((_%port92946%_ (current-output-port)))
-          (__display-build-manifest__% _%manifest92944%_ _%port92946%_))))
+      (lambda (_%manifest93218%_)
+        (let ((_%port93220%_ (current-output-port)))
+          (__display-build-manifest__% _%manifest93218%_ _%port93220%_))))
     (define __display-build-manifest
-      (lambda _g93024_
-        (let ((_g93023_ (let () (declare (not safe)) (##length _g93024_))))
-          (cond ((let () (declare (not safe)) (##fx= _g93023_ 0))
-                 (apply __display-build-manifest__0 _g93024_))
-                ((let () (declare (not safe)) (##fx= _g93023_ 1))
-                 (apply __display-build-manifest__1 _g93024_))
-                ((let () (declare (not safe)) (##fx= _g93023_ 2))
-                 (apply __display-build-manifest__% _g93024_))
+      (lambda _g93298_
+        (let ((_g93297_ (let () (declare (not safe)) (##length _g93298_))))
+          (cond ((let () (declare (not safe)) (##fx= _g93297_ 0))
+                 (apply __display-build-manifest__0 _g93298_))
+                ((let () (declare (not safe)) (##fx= _g93297_ 1))
+                 (apply __display-build-manifest__1 _g93298_))
+                ((let () (declare (not safe)) (##fx= _g93297_ 2))
+                 (apply __display-build-manifest__% _g93298_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __display-build-manifest
-                  _g93024_))))))
+                  _g93298_))))))
     (define build-manifest/layer
-      (lambda (_%layer92869%_)
-        (let ((_%l92871%_ (assoc _%layer92869%_ __build-manifest)))
-          (if _%l92871%_ (cons _%l92871%_ '()) '()))))
+      (lambda (_%layer93143%_)
+        (let ((_%l93145%_ (assoc _%layer93143%_ __build-manifest)))
+          (if _%l93145%_ (cons _%l93145%_ '()) '()))))
     (define build-manifest/head (lambda () (cons (car __build-manifest) '())))
     (define build-manifest-string__%
-      (lambda (_%manifest92846%_)
-        (if (list? _%manifest92846%_)
-            (let ((_%manifest92850%_ _%manifest92846%_))
-              (__build-manifest-string__% _%manifest92850%_))
+      (lambda (_%manifest93120%_)
+        (if (list? _%manifest93120%_)
+            (let ((_%manifest93124%_ _%manifest93120%_))
+              (__build-manifest-string__% _%manifest93124%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -167,54 +167,54 @@
                'contract:
                'list?
                'value:
-               _%manifest92846%_)
+               _%manifest93120%_)
               '#!void))))
     (define build-manifest-string__0
       (lambda ()
-        (let ((_%manifest92864%_ __build-manifest))
-          (__build-manifest-string__% _%manifest92864%_))))
+        (let ((_%manifest93138%_ __build-manifest))
+          (__build-manifest-string__% _%manifest93138%_))))
     (define build-manifest-string
-      (lambda _g93026_
-        (let ((_g93025_ (let () (declare (not safe)) (##length _g93026_))))
-          (cond ((let () (declare (not safe)) (##fx= _g93025_ 0))
-                 (apply build-manifest-string__0 _g93026_))
-                ((let () (declare (not safe)) (##fx= _g93025_ 1))
-                 (apply build-manifest-string__% _g93026_))
+      (lambda _g93300_
+        (let ((_g93299_ (let () (declare (not safe)) (##length _g93300_))))
+          (cond ((let () (declare (not safe)) (##fx= _g93299_ 0))
+                 (apply build-manifest-string__0 _g93300_))
+                ((let () (declare (not safe)) (##fx= _g93299_ 1))
+                 (apply build-manifest-string__% _g93300_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   build-manifest-string
-                  _g93026_))))))
+                  _g93300_))))))
     (define __build-manifest-string__%
-      (lambda (_%manifest92823%_)
-        (let ((_%manifest92826%_ _%manifest92823%_))
+      (lambda (_%manifest93097%_)
+        (let ((_%manifest93100%_ _%manifest93097%_))
           (call-with-output-string
            '()
-           (lambda (_%p92835%_)
-             (display-build-manifest__% _%manifest92826%_ _%p92835%_))))))
+           (lambda (_%p93109%_)
+             (display-build-manifest__% _%manifest93100%_ _%p93109%_))))))
     (define __build-manifest-string__0
       (lambda ()
-        (let ((_%manifest92841%_ __build-manifest))
-          (__build-manifest-string__% _%manifest92841%_))))
+        (let ((_%manifest93115%_ __build-manifest))
+          (__build-manifest-string__% _%manifest93115%_))))
     (define __build-manifest-string
-      (lambda _g93028_
-        (let ((_g93027_ (let () (declare (not safe)) (##length _g93028_))))
-          (cond ((let () (declare (not safe)) (##fx= _g93027_ 0))
-                 (apply __build-manifest-string__0 _g93028_))
-                ((let () (declare (not safe)) (##fx= _g93027_ 1))
-                 (apply __build-manifest-string__% _g93028_))
+      (lambda _g93302_
+        (let ((_g93301_ (let () (declare (not safe)) (##length _g93302_))))
+          (cond ((let () (declare (not safe)) (##fx= _g93301_ 0))
+                 (apply __build-manifest-string__0 _g93302_))
+                ((let () (declare (not safe)) (##fx= _g93301_ 1))
+                 (apply __build-manifest-string__% _g93302_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __build-manifest-string
-                  _g93028_))))))
+                  _g93302_))))))
     (define gerbil-system-version-string
       (lambda () (__build-manifest-string__% gerbil-system-manifest)))
     (define __gerbil-greeting (gerbil-system-version-string))
     (define gerbil-greeting (lambda () __gerbil-greeting))
     (define gerbil-greeting-set!
-      (lambda (_%new-value92805%_)
-        (if (string? _%new-value92805%_)
-            (let ((_%new-value92809%_ _%new-value92805%_))
-              (__gerbil-greeting-set! _%new-value92809%_))
+      (lambda (_%new-value93079%_)
+        (if (string? _%new-value93079%_)
+            (let ((_%new-value93083%_ _%new-value93079%_))
+              (__gerbil-greeting-set! _%new-value93083%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -223,34 +223,34 @@
                'contract:
                'string?
                'value:
-               _%new-value92805%_)
+               _%new-value93079%_)
               '#!void))))
     (define __gerbil-greeting-set!
-      (lambda (_%new-value92791%_)
-        (let ((_%new-value92795%_ _%new-value92791%_))
-          (set! __gerbil-greeting _%new-value92795%_))))
+      (lambda (_%new-value93065%_)
+        (let ((_%new-value93069%_ _%new-value93065%_))
+          (set! __gerbil-greeting _%new-value93069%_))))
     (define gerbil-system (lambda () 'gerbil-gambit))
     (define gerbil-home
       (lambda ()
-        (let ((_%$e92787%_
+        (let ((_%$e93061%_
                (let () (declare (not safe)) (##getenv '"GERBIL_HOME" '#f))))
-          (if _%$e92787%_ _%$e92787%_ (path-expand '"~~")))))
+          (if _%$e93061%_ _%$e93061%_ (path-expand '"~~")))))
     (define gerbil-path
       (lambda ()
-        (let ((_%$e92783%_
+        (let ((_%$e93057%_
                (let () (declare (not safe)) (##getenv '"GERBIL_PATH" '#f))))
-          (if _%$e92783%_ _%$e92783%_ (path-expand '"~/.gerbil")))))
+          (if _%$e93057%_ _%$e93057%_ (path-expand '"~/.gerbil")))))
     (define __smp? '#!void)
     (define gerbil-runtime-smp?
       (lambda ()
         (if (eq? __smp? '#!void)
             (set! __smp?
-                  (if (let ((__tmp93029
-                             (let ((__tmp93030 (configure-command-string)))
+                  (if (let ((__tmp93303
+                             (let ((__tmp93304 (configure-command-string)))
                                (declare (not safe))
-                               (__string-split __tmp93030 '#\'))))
+                               (__string-split __tmp93304 '#\'))))
                         (declare (not safe))
-                        (##member '"--enable-smp" __tmp93029))
+                        (##member '"--enable-smp" __tmp93303))
                       '#t
                       '#f))
             '#!void)

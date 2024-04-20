@@ -13,7 +13,7 @@ namespace: #f
   [["Gerbil" :: (gerbil-version-string)]
    ["Gambit" :: (system-version-string)]])
 
-(defmutable build-manifest gerbil-system-manifest : :list)
+(defmutable* build-manifest gerbil-system-manifest : :list)
 
 (def (display-build-manifest (manifest : :list := __build-manifest)
                              (port     : :port := (current-output-port)))
@@ -45,7 +45,7 @@ namespace: #f
   => :string
   (build-manifest-string gerbil-system-manifest))
 
-(defmutable gerbil-greeting (gerbil-system-version-string) : :string)
+(defmutable* gerbil-greeting (gerbil-system-version-string) : :string)
 
 (def (gerbil-system)
   'gerbil-gambit)
