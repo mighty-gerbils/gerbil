@@ -611,6 +611,18 @@ namespace: gerbil/core/contract
                     defstruct/c
                     |gerbil/core/contract~TypedDefinitions[:0:]#defstruct/c|)
                    (%#define-syntax
+                    do/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#do/c|)
+                   (%#define-syntax
+                    do-loop-result
+                    |gerbil/core/contract~TypedDefinitions[:0:]#do-loop-result|)
+                   (%#define-syntax
+                    do-loop-step
+                    |gerbil/core/contract~TypedDefinitions[:0:]#do-loop-step|)
+                   (%#define-syntax
+                    do-while/c
+                    |gerbil/core/contract~TypedDefinitions[:0:]#do-while/c|)
+                   (%#define-syntax
                     defmutable*
                     |gerbil/core/contract~TypedDefinitions[:0:]#defmutable*|)
                    (%#define-syntax
