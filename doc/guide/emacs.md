@@ -32,6 +32,76 @@ And you can now run Gerbil with `M-x run-scheme`.
 Note that both `gerbil-mode.el` and `gambit.el` are installed by
 default in `$GERBIL_INSTAL_PREFIX/share/emacs/site-lisp` when installing gerbil.
 
+## Doom Emacs Setup
+
+Gerbil is easy to setup in [Doom Emacs](https://github.com/doomemacs/doomemacs). Open Doom Emacs.
+Ensure you are at the Doom Emacs splash creeen.
+Type `SPC f P` and choose `packages.el`. This will open the Doom Emacs package configuration file.
+
+To add Gambit and Gerbil modes, go to the bottom of `package.el` and add the following:
+
+```
+(package! gambit :recipe
+  (:host github
+   :repo "gambit/gambit"
+   :files ("misc/gambit.el")
+   :branch "master"))
+
+(package! gerbil-mode :recipe
+  (:host github
+   :repo "mighty-gerbils/gerbil"
+   :files ("etc/gerbil-mode.el")
+   :branch "master"))
+```
+
+Save the file with `:w` and close the buffer with `SPC b d`.
+You should arrive back at the Doom Emacs splash screen.
+
+Let's create a convenient key sequence that opens a Gerbil REPL in a nice window layout.
+Type `SPC f P` again and choose `config.el`.
+This opens the private configuration file for your Doom Emacs installation.
+Go to the bottom of `config.el` and add the following:
+
+```
+(defun gerbil-setup-buffers ()
+    "Change current buffer mode to gerbil-mode and start a REPL"
+    (interactive)
+    (gerbil-mode)
+    (split-window-right)
+    (shrink-window-horizontally 2)
+    (let ((buf (buffer-name)))
+      (other-window 1)
+      (run-scheme "gxi")
+      (switch-to-buffer-other-window "*scheme*" nil)
+      (switch-to-buffer buf)))
+
+  (global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers)
+```
+
+Save the file with `:w` and close the buffer with `SPC b d`.
+You should arrive back at the Doom Emacs splash screen.
+
+Let's set up some built-in Doom Emacs initializations that can make our life easier.
+Emacs is a parentheses generating machine. Let's make some changes for Gerbil programming in evil mode.
+Type `SPC f P` and select `init.el`.
+To load a built-in Doom Emacs package, just uncomment it. For Gerbil programming, we recommend:
+- `scheme`
+- `(default +bindings +smartparens)`
+
+After you enable the built-in packages you want by uncommenting, save the `init.el` with `:w` and close the buffer with `SPC b d`.
+You should be back at the Doom Emacs spash screen.
+
+In evil mode, you can get key conflicts with the paranthesis handling in `lisp` and `scheme` modes. Let's fix that.
+Type `SPC f P` and select `packages.el` again. Add the following at the end of the file:
+
+```
+(package! evil-cleverparens)
+```
+
+`evil-cleverparens` removes the key conflicts in evil mode. It uses functions in the 'smartparens` package, which is why we previously enabled it in `init.el`.
+
+That's it. You should be ready to plot and scheme with an apocalyptic Doom Emacs. Your Gerbil programs will be pleased.
+
 ## TAGS
 
 Gerbil comes with a tool to build emacs tags from Gerbil sources, called `gxtags`.
