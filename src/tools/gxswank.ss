@@ -23,13 +23,12 @@
 
 (def (main . args)
   (call-with-getopt gxswank-main args
-    program: "gxhttpd"
-    help: "The Gerbil HTTP Daemon"
+    program: "gxswank"
+    help: "The Gerbil Swank Daemon"
     global-env-flag
     host-option
     port-option
-    persist-option
-    ))
+    persist-option))
 
 (def port-option
   (option
