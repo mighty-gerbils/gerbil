@@ -11,4 +11,4 @@
 ;; hook the repl path normalization -- it breaks buffer location popping
 ;; in gerbil mode for out of tree sources
 (when (getenv "EMACS" #f)
-  (set! ##repl-path-normalize-hook values))
+  (set! ##repl-path-normalize-hook identity))

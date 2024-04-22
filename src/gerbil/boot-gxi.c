@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     }
 
     if (!strcmp(argv[1], "-v")) {
-      char *args[] = {"-e", "(displayln gerbil-greeting)"};
+      char *args[] = {"-e", "(displayln (gerbil-greeting))"};
       exec_gxi(gerbil_gsi, gerbil_home, NULL, 2, args);
       return 2;
     }

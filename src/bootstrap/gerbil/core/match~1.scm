@@ -2410,7 +2410,7 @@
                                      (cons 'if
                                            (cons (cons (gx#datum->syntax
                                                         '#f
-                                                        '##pair?)
+                                                        'pair?)
                                                        (cons _%L30374%_ '()))
                                                  (cons (let ((_%hd-pat31587%_
                                                               (gx#stx-e
@@ -2502,7 +2502,7 @@
                                             (cons 'if
                                                   (cons (cons (gx#datum->syntax
                                                                '#f
-                                                               '##null?)
+                                                               'null?)
                                                               (cons _%L30374%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))
@@ -2531,7 +2531,7 @@
                                                                (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                     '#f
-                                    '##box?)
+                                    'box?)
                                    (cons _%L30374%_ '()))
                              (cons (cons 'let
                                          (cons (cons (cons _%L31367%_
@@ -2687,7 +2687,7 @@
                        (lambda (_%g3107831089%_)
                          ((lambda (_%L31092%_)
                             (cons 'if
-                                  (cons (cons (gx#datum->syntax '#f '##vector?)
+                                  (cons (cons (gx#datum->syntax '#f 'vector?)
                                               (cons _%L30374%_ '()))
                                         (cons (cons 'if
                                                     (cons (cons (gx#datum->syntax
@@ -2715,7 +2715,7 @@
                                                              (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                   '#f
-                                  '##vector?)
+                                  'vector?)
                                  (cons _%L30374%_ '()))
                            (cons (_%generate-list-vector29110%_
                                   _%tgt30353%_
