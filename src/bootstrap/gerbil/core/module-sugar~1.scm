@@ -1386,7 +1386,7 @@
              (_%K4285442878%_
               (lambda (_%mark42874%_ _%id42876%_)
                 (cons (make-symbol _%pre42849%_ _%id42876%_) _%mark42874%_))))
-        (if (let () (declare (not safe)) (##pair? _%name4285042858%_))
+        (if (pair? _%name4285042858%_)
             (let ((_%hd4285542882%_
                    (let () (declare (not safe)) (##car _%name4285042858%_)))
                   (_%tl4285642885%_

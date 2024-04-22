@@ -33,7 +33,8 @@ package: gerbil
                   "core/more-sugar"
                   "core/module-sugar"
                   "core/contract")
-         lambda case-lambda let def def* defmethod defclass defstruct set!)
+         lambda case-lambda let def def* defmethod defclass defstruct set!
+         do do-while)
         (rename: %%app-dotted %%app)
         (rename: %%ref-dotted %%ref)
         (rename: %%set-dotted! set!)
@@ -45,6 +46,8 @@ package: gerbil
         (rename: defmethod/c defmethod)
         (rename: defclass/c defclass)
         (rename: defstruct/c defstruct)
+        (rename: do/c do)
+        (rename: do-while/c do-while)
         (phi: +1
               (except-out
                (import: "core/runtime"
@@ -56,7 +59,8 @@ package: gerbil
                         "core/expander"
                         "core/macro-object"
                         "core/more-syntax-sugar")
-               lambda case-lambda let def def* defmethod defclass defstruct set!)
+               lambda case-lambda let def def* defmethod defclass defstruct set!
+               do do-while)
               (rename: %%app-dotted %%app)
               (rename: %%ref-dotted %%ref)
               (rename: %%set-dotted! set!)
@@ -67,6 +71,8 @@ package: gerbil
               (rename: def*/c def*)
               (rename: defmethod/c defmethod)
               (rename: defclass/c defclass)
-              (rename: defstruct/c defstruct))
+              (rename: defstruct/c defstruct)
+              (rename: do/c do)
+              (rename: do-while/c do-while))
         (phi: +2 (import: "core/runtime"
                           "core/expander")))
