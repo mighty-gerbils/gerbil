@@ -98,7 +98,7 @@ Type `SPC f P` and select `packages.el` again. Add the following at the end of t
 (package! evil-cleverparens)
 ```
 
-`evil-cleverparens` removes the key conflicts in evil mode. It uses functions in the 'smartparens` package, which is why we previously enabled it in `init.el`.
+`evil-cleverparens` removes the key conflicts in evil mode. It uses functions in the `smartparens` package, which is why we previously enabled it in `init.el`.
 
 That's it. You should be ready to plot and scheme with an apocalyptic Doom Emacs. Your Gerbil programs will be pleased.
 
