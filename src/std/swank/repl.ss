@@ -94,9 +94,3 @@
 
   (let (thread (spawn :repl-thread))
     (table-set! repl-thread-client-table client thread)))
-
-  
-  
-  
-  
-  

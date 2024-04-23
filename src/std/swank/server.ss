@@ -1,10 +1,10 @@
 (import :std/misc/string
-      :std/logger
-      :std/contract
-      :std/io
-      :std/net/address
+	:std/logger
+	:std/contract
+	:std/io
+	:std/net/address
   	:std/swank/api :std/swank/message :std/swank/presentation
-     :std/swank/handlers :std/swank/autodoc :std/swank/eval
+	:std/swank/handlers :std/swank/autodoc :std/swank/eval
   	:std/sugar :gerbil/gambit)
 (export #t)
 
@@ -19,9 +19,6 @@
 	(let ((msg (read-message reader)))
           (when msg
   	    (swank-handle-message msg writer) (lp)))))))
-
-
-
   	 
 (def (run-swank-server (port 2005) (host "localhost"))
   (let (laddr (resolve-address

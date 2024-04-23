@@ -1162,7 +1162,6 @@ package: gerbil
  (open-tcp-server (t::t) port::t effect: (io))
  (open-u8vector [(() port::t effect: (io))
                  ((t::t) port::t effect: (io))])
-
  (open-u8vector-pipe [(() port::t effect: (io))
                       ((t::t) port::t effect: (io))])
  (open-udp (t::t) port::t effect: (io))
