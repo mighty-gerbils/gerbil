@@ -37,7 +37,7 @@
 
 (def host-option
   (option
-   'host "-h" "--host" default: "localhost"
+   'host "-a" "--address" default: "localhost"
    help: "The IP or hostname to listen on"))
 
 (def persist-option

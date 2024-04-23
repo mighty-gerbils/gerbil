@@ -9,7 +9,6 @@ for developing Lisp applications.
 SLIME uses a backend called Swank that is loaded into Lisp to turn
 Emacs into a featured REPL along with an IDE for lisp use.
 
-
 * Minimal Emacs setup
 
 There are some developers that (**gasp**) don't use Emacs as their
@@ -82,201 +81,19 @@ Or you could [[https://slime.common-lisp.dev/doc/html/Getting-started.html#Getti
 
 * Running the Swank Server in Gerbil
 
-
 #+begin_src sh
-  gxi -:te  \
-      -e '(import (prefix-in (only-in :std/swank create-server) swank#))'\
-      -e '(swank#create-server port: 4015)'\
-      -
-#+end_src
+gerbil swank --help
+gxswank: The Gerbil HTTP Daemon
 
-* Getting Started with Emacs
+Usage: gxwank [option ...]
 
-** =use-package= to use a package.
+Options:
+ -g --global-env                  use the user global env even in local package context
+ -a --address <host>              The IP or hostname to listen on [default: localhost]
+ -p --port <port>                 The port number on which the Swank server listens for connections [default: 4005]
+ -d --dont-close <dont-close>     Close the acceptor on client disconnect if anything but true [default: true]
+ -h --help                        display help
 
-#+begin_src 
-  
-#+end_src
-
-
-
-
-
-* Presentations
-
-[[file:~/me/src/emacs.d/straight/repos/slime/contrib/swank-presentations.lisp::;;; swank-presentations.lisp --- imitate LispM's presentations][CL version]]
-
-#+begin_src scheme :tangle "presentation.ss"
-  (import :std/swank/api :std/swank/message
-    	:std/swank/repl :std/swank/context
-    	:gerbil/gambit)
-  (export #t)
-
-  (extern namespace: #f
-    swank:lookup-presented-object
-    swank:lookup-presented-object-or-lose
-    swank:get-presented-object)
-
-  ;;;; Recording and accessing results of computations
-
-  (def +record-repl-results+ #t)
-  (def object-to-presentation-id-table
-    (##make-table weak-keys: #t))
-  (def presentation-id-to-object-table
-    (##make-table weak-values: #t))
-
-  (def (clrhash tbl)
-    (table-for-each (lambda (k _) (table-set! tbl k)) tbl))
-
-  (def (clear-presentation-tables)
-    (clrhash object-to-presentation-id-table)
-    (clrhash presentation-id-to-object-table))
-
-  (def nil-surrogate (gensym 'nil-surrogate))
-
-  (def presentation-counter 0)
-
-  ;; XXX thread safety? [2006-09-13] mb: not in the slightest (fwiw the
-  ;; rest of slime isn't thread safe either), do we really care?
-  (def (save-presented-object obj)
-    "Save OBJECT and return the assigned id.
-    If OBJECT was saved previously return the old id."
-    (let ((ref (table-ref object-to-presentation-id-table obj #f)))
-      (or ref
-    	(let ((id (begin0 presentation-counter
-    		    (set! presentation-counter (1+ presentation-counter)))))
-    	  (table-set! presentation-id-to-object-table id obj)
-    	  (table-set! object-to-presentation-id-table obj id)
-    	  id))))
-
-  (def (present-repl-results object (writer #f))
-    (unless writer (set! writer (current-slime-writer)))
-  					;(def id (current-slime-id))
-    (def (writeme val (iden #f))
-      (write-message
-       writer
-       `(:write-string ,(if iden val (##object->string val)) :repl-result)))
-    (def (present val)
-      (let ((id (if (not +record-repl-results+) 'nil
-    		  (save-presented-object val))))
-        (write-message
-         writer `(:presentation-start ,id :repl-result))
-        (writeme val)
-        (write-message
-         writer `(:presentation-end ,id :repl-result))
-        (writeme "\n" #t)))
-    
-    (if (##values? object)
-      (for-each present (values->list object))
-      (present object)))
-
-  (def-swank (swank:init-presentations)
-    (begin0 'present-repl-results
-      (current-swank-repl-results-function present-repl-results)))
-
-
-
-  (set-swank!
-    (swank:get-presented-object id)
-    (table-ref presentation-id-to-object-table (exact id) nil-surrogate))
-
-  (set-swank!
-   (swank:lookup-presented-object id)
-   (let* ((val (swank:get-presented-object id))
-    	(found? (not (eq? val nil-surrogate))))
-     (values val (if found? 't 'nil))))
-
-  (set-swank!
-   (swank:lookup-presented-object-or-lose id)
-   (with ((values object found?) (swank:lookup-presented-object id))
-     (if (eq? found? 't)
-       `(swank:get-presented-object ,id)
-       (error "Attempt to access unrecorded object" id))))
-
-  (def-swank (cl:nth-value n vs)
-    (set! vs (eval vs))
-    (if (not (##values? vs))
-      (if (= n 0) vs (error "Invalid nth-value request" n vs))
-      (##values-ref vs n)))
-
-
-#+end_src
-
-* Debugger and Stacktrace
-
-In SBCL
-
-#+begin_src emacs-lisp
-  (:emacs-rex
- (swank-repl:listener-eval "(error \"Backtrace!\")\n")
- "COMMON-LISP-USER" :repl-thread 92)
-(:debug 5 1
-	("Backtrace!" "   [Condition of type SIMPLE-ERROR]" nil)
-	(("RETRY" "Retry SLIME REPL evaluation request.")
-	 ("*ABORT" "Return to SLIME's top level.")
-	 ("ABORT" "abort thread (#<THREAD \"repl-thread\" RUNNING {70095D04B3}>)"))
-	((0 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (ERROR \"Backtrace!\") #<NULL-LEXENV>)")
-	 (1 "(EVAL (ERROR \"Backtrace!\"))")
-	 (2 "(SWANK::EVAL-REGION \"(error \\\"Backtrace!\\\") ..)"
-	    (:restartable t))
-	 (3 "((LAMBDA NIL :IN SWANK-REPL::REPL-EVAL))"
-	    (:restartable t))
-	 (4 "(SWANK-REPL::TRACK-PACKAGE #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE74DB}>)"
-	    (:restartable t))
-	 (5 "(SWANK::CALL-WITH-RETRY-RESTART \"Retry SLIME REPL evaluation request.\" #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE74BB}>)"
-	    (:restartable t))
-	 (6 "(SWANK::CALL-WITH-BUFFER-SYNTAX NIL #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE749B}>)"
-	    (:restartable t))
-	 (7 "(SWANK-REPL::REPL-EVAL \"(error \\\"Backtrace!\\\") ..)"
-	    (:restartable t))
-	 (8 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)")
-	 (9 "(EVAL (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)")
-	 (10 "(SWANK:EVAL-FOR-EMACS (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)"
-	     (:restartable t))
-	 (11 "(SWANK::PROCESS-REQUESTS NIL)"
-	     (:restartable t))
-	 (12 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
-	     (:restartable t))
-	 (13 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
-	     (:restartable t))
-	 (14 "(SWANK/SBCL::CALL-WITH-BREAK-HOOK #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {700897043B}>)")
-	 (15 "((FLET SWANK/BACKEND:CALL-WITH-DEBUGGER-HOOK :IN \"/Users/drewc/me/src/emacs.d/straight/repos/slime/swank/sbcl.lisp\") #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQU..")
-	 (16 "(SWANK::CALL-WITH-BINDINGS ((*STANDARD-INPUT* . #<SWANK/GRAY::SLIME-INPUT-STREAM {70089700D3}>)) #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {700897040B}>)"
-	     (:restartable t))
-	 (17 "(SWANK::HANDLE-REQUESTS #<SWANK::MULTITHREADED-CONNECTION {7008970003}> NIL)"
-	     (:restartable t))
-	 (18 "((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))")
-	 (19 "((FLET \"WITHOUT-INTERRUPTS-BODY-167\" :IN SB-THREAD::RUN))"))
-	(92))
-(:debug-activate 5 1 nil)
-#+end_src
-
-* HACKING
-
-#+begin_src sh
-  cd src/std
-  gxpkg link github.com/mighty-gerbils/gerbil-swank "`pwd`"
-#+end_src
-
-#+begin_src scheme :shebang #!/usr/bin/env gxi
-;; -*- Gerbil -*-
-
-(import :std/build-script)
-
-(defbuild-script
-  '("swank/api"
-    "swank/message" 
-    "swank/context"
-    "swank/autodoc"
-    "swank/presentation"
-    "swank/top"
-    "swank/eval"
-    "swank/completions"
-    "swank/handlers"
-    "swank/server"
-    "swank"
-    )
-  verbose: 10)
 #+end_src
 
 
