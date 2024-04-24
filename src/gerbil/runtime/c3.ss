@@ -136,7 +136,9 @@ namespace: #f
   ;; compatible with. Reset the precedence-lists to be in the C3 most-specific to
   ;; least-specific order excluding any class in the single-inheritance suffix.
   (append1! rpls (reverse supers))
-  (set! pls (map unsisr-rpl rpls))
+  (def hpls (map unsisr-rpl rpls))
+
+  (def super-struct (match sis ([s . _] s) (else #f)))
 
   ;; Now for the C3 algorithm proper (that technically includes the append1! above)
 
@@ -168,16 +170,24 @@ namespace: #f
 
   ;; Now for the regular C3 loop
   (def precedence-list
-    (let c3loop ((rhead rhead) (tails pls))
-      (let (tails (remove-nulls! tails))
-        (match tails
-          ([]
-           (append-reverse rhead sis))
-          ([tail]
-           (append-reverse rhead (append tail sis)))
-          (else
-           (let* ((next (c3-select-next tails)))
-             (c3loop (cons next rhead)
-                     (remove-next! next tails))))))))
-  (def super-struct (match sis ([s . _] s) (else #f)))
+    (cond
+     ((null? supers) [])
+     ((null? (cdr supers)) (car pls)) ;; share the structure in case of effective single inheritance
+     ;; NB: if we cached the lengths of the precedence lists,
+     ;; we could walk the precedence list to check which longest tail has the same length
+     ;; as that of the precedence list of its top element, thereby being that very same list,
+     ;; and then share the tail. But we don't, so we eschew that sharing optimization.
+     (else
+      (let c3loop ((rhead rhead) (tails hpls))
+        (let (tails (remove-nulls! tails))
+          (match tails
+            ([]
+             (append-reverse rhead sis))
+            ([tail]
+             (append-reverse rhead (append tail sis)))
+            (else
+             (let* ((next (c3-select-next tails)))
+               (c3loop (cons next rhead)
+                       (remove-next! next tails))))))))))
+
   (values precedence-list super-struct))

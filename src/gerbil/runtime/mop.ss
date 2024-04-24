@@ -639,7 +639,7 @@ namespace: #f
   (let (maybe-super-class-id (##type-id maybe-super-class))
     (:- (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
                (&class-type-precedence-list maybe-sub-class))
-        :boolean))))
+        :boolean)))
 
 ;;; generic object utilities
 (def (object? o)
