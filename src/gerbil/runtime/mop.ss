@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; Gerbil MOP - Meta-Object Protocol
+;;; Gerbil MOP
 prelude: "../core"
 package: gerbil/runtime
 namespace: #f
@@ -23,7 +23,7 @@ namespace: #f
 ;;  3  ##type-flags                : Fixnum
 ;;  4  ##type-super                : (OrFalse StructTypeDescriptor)
 ;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...)
-;;  6  class-type-precedence-list  : (List TypeDescriptor) ; starts with the class itself
+;;  6  class-type-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
 ;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always __class
 ;;  8  class-type-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
 ;;  9  class-type-properties       : AList ; NB: not PList, despite the name "properties"
@@ -123,7 +123,6 @@ namespace: #f
                  #f                  ; class-type-constructor
                  #f)))               ; class-type-methods
         (##structure-type-set! t t)  ; self reference
-        (&class-type-precedence-list-set! t [t]) ; precedence list
         t)))
 
 
@@ -185,9 +184,6 @@ namespace: #f
   (fxflag-set? (##type-flags klass) class-type-flag-system))
 
 ;; Compute the flags and field-info and create a class type
-;; NB: the argument "precedence-list" necessarily does *not* contain the class itself (yet),
-;; but the precedence-list stored in the class object will.
-;; The metaclass if any will have to do that trick, too.
 (def (make-class-type-descriptor type-id type-name type-super
                                  precedence-list slot-vector properties
                                  constructor slot-table methods)
@@ -267,15 +263,12 @@ namespace: #f
                         precedence-list slot-vector slot-table properties constructor methods)
          :class)
       ;; this we know is a class
-      (let (klass
-            (:- (##structure class::t
-                             ;; gambit type fields
-                             type-id type-name type-flags type-super field-info
-                             ;; gerbil class fields
-                             precedence-list slot-vector slot-table properties constructor methods)
-                :class))
-        (&class-type-precedence-list-set! klass (cons klass precedence-list))
-        klass))))
+      (:- (##structure class::t
+                       ;; gambit type fields
+                       type-id type-name type-flags type-super field-info
+                       ;; gerbil class fields
+                       precedence-list slot-vector slot-table properties constructor methods)
+          :class))))
 
 ;;; class type utilities
 (defsyntax (defrefset stx)
@@ -395,7 +388,7 @@ namespace: #f
       (else constructor))))
 
 ;; Given a struct super class (or false if none),
-;; a precedence list of super-classes (*not* including the class being created), and
+;; a list of super-classes (not including the class being created), and
 ;; a list of direct slots from the class being created,
 ;; return the slot-vector vector of slots (with #f in position 0) and the slot-table.
 ;; a table mapping symbol and keyword names to offset, and
@@ -464,9 +457,10 @@ namespace: #f
                                 precedence-list slot-vector properties
                                 constructor* slot-table #f)))
 
-(def class-precedence-list &class-type-precedence-list)
+(def (class-precedence-list (klass : :class)) => :list
+  (cons klass (&class-type-precedence-list klass)))
 
-;; class precedence list, excluding current class; also return super struct if any
+;; class precedence list, excluding current class; super struct if any
 ;; (List TypeDescriptor) -> (List TypeDescriptor) (OrFalse TypeDescriptor)
 (def (compute-precedence-list direct-supers) => :values
   (c4-linearize [] direct-supers
@@ -637,9 +631,10 @@ namespace: #f
 (def (subclass? (maybe-sub-class : :class) (maybe-super-class : :class))
   => :boolean
   (let (maybe-super-class-id (##type-id maybe-super-class))
-    (:- (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
-               (&class-type-precedence-list maybe-sub-class))
-        :boolean)))
+    (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
+        (:- (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
+                   (&class-type-precedence-list maybe-sub-class))
+            :boolean))))
 
 ;;; generic object utilities
 (def (object? o)
@@ -945,7 +940,7 @@ namespace: #f
    (else #f)))
 
 (def (mixin-method-ref (klass : :class) obj (id : :symbol))
-  (mixin-find-method (cdr (class-type-precedence-list klass)) obj id))
+  (mixin-find-method (class-type-precedence-list klass) obj id))
 
 (def (bind-method! klass (id : :symbol) (proc : :procedure) (rebind? #f))
   (def (bind! ht)
@@ -1064,7 +1059,7 @@ namespace: #f
       (error "bad class; cannot specialize" klass)))
    ((class-type-metaclass? klass)
     (call-method klass 'specialize-class))
-   ((find class-type-metaclass? (cdr (&class-type-precedence-list klass)))
+   ((find class-type-metaclass? (&class-type-precedence-list klass))
     (error "cannot specialize class that extends metaclass without a metaclass" klass))
    (else
     (let (method-table (make-symbolic-table #f 0))
@@ -1086,7 +1081,7 @@ namespace: #f
     (cond
      ((class-type-metaclass? klass)
       (call-method klass 'seal-class!))
-     ((find class-type-metaclass? (cdr (&class-type-precedence-list klass)))
+     ((find class-type-metaclass? (&class-type-precedence-list klass))
       (error "cannot seal class that extends metaclass without a metaclass" klass))
      (else
       (let (method-table (specialize-class klass))
