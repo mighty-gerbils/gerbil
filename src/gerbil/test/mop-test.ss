@@ -107,4 +107,4 @@
       (check (equal? (CC 0 1) (CC 0 1)) => #t)
       (check (equal? (CC 0 2) (CC 1 2)) => #f)
       (check (equal? (CC 0 2) (CC 0 3)) => #t)
-      (check (equal? (CC 0 2) (CC 1 3)) => #f)))
+      (check (equal? (CC 0 2) (CC 1 3)) => #f))))
