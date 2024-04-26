@@ -226,7 +226,7 @@ namespace: #f
             metaclass))
          (system? (agetq system: properties))
          (opaque?
-          (and (not (agetq equal: properties))
+          (and (not (or transparent? (agetq equal: properties)))
                (or (not type-super) (type-opaque? type-super))))
          (type-flags
           (##fxior type-flag-id type-flag-concrete
