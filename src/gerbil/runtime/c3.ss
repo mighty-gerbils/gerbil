@@ -138,8 +138,6 @@ namespace: #f
   (append1! rpls (reverse supers))
   (def hpls (map unsisr-rpl rpls))
 
-  (def super-struct (match sis ([s . _] s) (else #f)))
-
   ;; Now for the C3 algorithm proper (that technically includes the append1! above)
 
   ;; Next super selection loop, enforcing the ordering constraint and
@@ -171,8 +169,8 @@ namespace: #f
   ;; Now for the regular C3 loop
   (def precedence-list
     (cond
-     ((null? supers) [])
-     ((null? (cdr supers)) (car pls)) ;; share the structure in case of effective single inheritance
+     ((null? supers) (reverse rhead))
+     ((null? (cdr supers)) (append-reverse rhead (car pls))) ;; share the structure in case of effective single inheritance
      ;; NB: if we cached the lengths of the precedence lists,
      ;; we could walk the precedence list to check which longest tail has the same length
      ;; as that of the precedence list of its top element, thereby being that very same list,
@@ -189,5 +187,5 @@ namespace: #f
              (let* ((next (c3-select-next tails)))
                (c3loop (cons next rhead)
                        (remove-next! next tails))))))))))
-
+  (def super-struct (match sis ([s . _] s) (else #f)))
   (values precedence-list super-struct))
