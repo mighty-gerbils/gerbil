@@ -17,7 +17,7 @@
 ;;(define gerbil/runtime 'gerbil/runtime)
 ;;(define :gerbil/core ':gerbil/core)
 ;;(include "../../gerbil/runtime/util.ss")
-;;(include "../../gerbil/runtime/c3.ss")
+;;(include "../runtime/c3.ss")
 ;;(extern namespace: #f append-reverse-until)
 
 (module <tsi>
