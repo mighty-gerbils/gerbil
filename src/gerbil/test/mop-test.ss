@@ -99,7 +99,7 @@
       (check (equal? (DD 0 2) (DD 1 3)) => #f)
       (defstruct (DDD d) () equal: #t) ;; inherit from opaque, become equal(!)
       (check (equal? (DDD 1) (DDD 2)) => #t)
-      (defstruct (C c) (y)) ;; inherit from equal, remain equal
+      (defstruct (C c) (y) equal: #t) ;; inherit from equal, remain equal
       (check (equal? (C 1 2) (C 1 2)) => #t)
       (check (equal? (C 1 2) (C 1 3)) => #f)
       (check (equal? (C 1 2) (C 0 2)) => #f)
