@@ -57,6 +57,8 @@ To add Gambit and Gerbil modes, go to the bottom of `package.el` and add the fol
 Save the file with `:w` and close the buffer with `SPC b d`.
 You should arrive back at the Doom Emacs splash screen.
 
+In order to fetch and install these packaged you must first exit doom emacs using `SPC q K` and then run `doom sync`.
+
 Let's create a convenient key sequence that opens a Gerbil REPL in a nice window layout.
 Type `SPC f P` again and choose `config.el`.
 This opens the private configuration file for your Doom Emacs installation.
