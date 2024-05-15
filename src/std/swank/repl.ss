@@ -1,7 +1,7 @@
 (import
   :std/swank/message :std/swank/api :std/swank/context
   :gerbil/gambit
-  :std/sugar)
+  :std/sugar :std/format :std/srfi/13)
 (export #t)
 
 ;;; client->thread mapping
@@ -11,12 +11,18 @@
 (def (client->repl-thread client)
   (table-ref repl-thread-client-table client #f))
 
+(def (print-object-to-string obj (maxlen (* 80 5)))
+  (def str (string-trim-right (format (if (list? obj) "~Y" "~a") obj)
+			      char-whitespace?))
+  (if (< (string-length str) (- maxlen 3)) str
+      (format "~a..."(substring str 0 (max 1 (- maxlen 3))))))
+
 (def (swank-default-repl-results-function object (writer #f))
   (unless writer (set! writer (current-slime-writer)))
   (def (writeme val)
     (write-message
      writer
-     `(:write-string ,(##object->string val) :repl-result)))
+     `(:write-string ,(print-object-to-string val) :repl-result)))
   (if (##values? object)
     (for-each writeme (values->list object))
     (writeme object)))
@@ -62,16 +68,21 @@
 		       (current-error-port stdout))
 	  (let (outt (spawn :repl-output-thread))
 	    (try
-	     
-	     (let (res (swank-eval-in-context
-			`(eval (call-with-input-string ,str
-				(lambda (p)
-				  (input-port-readtable-set!
-				   p
-				   (readtable-eval-allowed?-set
-				    (input-port-readtable p) #t))
-				  (read p))))
-			cxt))
+	     (let (res
+		   (swank-eval-in-context
+		    `(eval
+		      (call-with-input-string
+		       ,str
+		       (lambda (p)
+			 (input-port-readtable-set!
+			  p
+			  (readtable-eval-allowed?-set
+			   (input-port-readtable p) #t))
+			 (let lp ((form (read p)) (lst []))
+			   (if (eof-object? form)
+			     (cons 'begin (reverse lst))
+			     (lp (read p) (cons form lst)))))))
+		    cxt))
 	       (force-output stdout)
 	       (close-port stdout)
 	       (thread-join! outt)
