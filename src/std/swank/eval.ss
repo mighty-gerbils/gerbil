@@ -6,8 +6,10 @@
 	:std/swank/context)
 
 (def-swank (swank:interactive-eval str)
-  (##object->string
-   (swank-eval-in-context `(eval (with-input-from-string , str read)))))
+  (let* ((form (swank-read-from-string-in-context str))
+	 (res
+	  (swank-eval-in-context form)))
+  (##object->string res)))
 
 (def-swank (swank-repl:listener-eval str)
  ;; (displayln "Evaling " str)
