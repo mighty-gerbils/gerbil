@@ -39,6 +39,26 @@
 		   gx#__module-registry))))
     ...]))
 
+(def (swank-read-from-string-in-context str (cxt-name (current-slime-package)))
+  (let (form
+	(swank-eval-in-context
+	 `(call-with-input-string
+	   ,str
+	   (lambda (p)
+	     (input-port-readtable-set!
+	      p
+	      (readtable-eval-allowed?-set
+	       (input-port-readtable p) #t))
+	     (let lp ((form (read p)) (lst []))
+	       (if (eof-object? form)
+		 (reverse lst)
+		 (lp (read p) (cons form lst))))))
+	 cxt-name))
+    (case (length form)
+      ((0) (eof-object))
+      ((1) (car form))
+      (else (cons 'begin form)))))
+
 (def-swank (swank:list-all-package-names . _)
   (list-all-context-names))
 
