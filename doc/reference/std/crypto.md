@@ -8,147 +8,201 @@ Cryptography based on libcrypto.
 
 ## Digests
 
-### make-digest
+::: tip Basic usage
+```scheme
+(import :std/crypto
+        (only-in :std/text/hex hex-encode))
+
+(let ((d (make-digest digest::sha256)))
+  (digest-update! d (@bytes "Hello Gerbil"))
+  (hex-encode (digest-final! d)))
+;; => "b202f46d2ef4fc97f3628d6619b50911bc09c29550102b2c0d3976b8ad33f204"
+
+(hex-encode (sha256 (@bytes "Hello Gerbil")))
+;; => "b202f46d2ef4fc97f3628d6619b50911bc09c29550102b2c0d3976b8ad33f204"
 ```
-(make-digest ...)
+:::
+
+### make-digest
+```scheme
+(make-digest type) => digest
 ```
 
-Please document me!
+Create a new digest using the given type of cryptographic hash function.
+
+#### Available cryptographic hash functions
+
+* `digest::blake2b512`
+* `digest::blake2s256`
+* `digest::keccak256`
+* `digest::md5`
+* `digest::ripemd160`
+* `digest::sha1`
+* `digest::sha224`
+* `digest::sha256`
+* `digest::sha3_224`
+* `digest::sha3_256`
+* `digest::sha3_384`
+* `digest::sha3_512`
+* `digest::sha384`
+* `digest::sha512`
+* `digest::shake128`
+* `digest::shake256`
+* `digest::whirlpool`
 
 ### digest?
-```
-(digest? ...)
+```scheme
+(digest? var) => boolean
 ```
 
-Please document me!
+Test if variable is a digest.
 
 ### digest-update!
-```
-(digest-update! ...)
+```scheme
+(digest-update! digest bytes (start #f) (end #f)) => :fixnum
 ```
 
-Please document me!
+Update a digest object. Returns 1 for success and 0 for failure.
 
 ### digest-update*
-```
-(digest-update* ...)
+```scheme
+(digest-update* digest input (start #f) (end #f)) => :fixnum
 ```
 
-Please document me!
+Like `digest-update!`, but uses `call-with-binary-input` to accept either a `u8vector`, `string` or `input-port`.
 
 ### digest-final!
-```
-(digest-final! ...)
+```scheme
+(digest-final! digest (bytes #f)) => :u8vector
 ```
 
-Please document me!
+Finalize the digest and extract the hash from the digest. 
+The digest will not longer be usable after finalization.
+Use `:std/text/hex#hex-encode` to convert to a hex string.
 
 ### digest-size
-```
-(digest-size ...)
+```scheme
+(digest-size digest) => :fixnum
 ```
 
-Please document me!
+Returns the digest or block size in bytes or -1 for failure.
 
 ### digest-name
-```
-(digest-name ...)
+```scheme
+(digest-name digest) => :string
 ```
 
-Please document me!
+Get the name of the cryptographic hash function by a digest or digest type.
+
+```scheme
+(digest-name digest::sha256)
+;; => "SHA256"
+(digest-name (make-digest digest::sha256))
+;; => "SHA256"
+```
 
 ### digest-copy
-```
-(digest-copy ...)
+```scheme
+(digest-copy digest) => digest
 ```
 
-Please document me!
+Create a new digest that is a copy of an existing.
+This is useful if large amounts of data are to be hashed which only differ in the last few bytes.
 
 ### md5
-```
-(md5 ...)
+```scheme
+(md5 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### sha1
-```
-(sha1 ...)
+```scheme
+(sha1 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### sha224
-```
-(sha224 ...)
+```scheme
+(sha224 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### sha256
-```
-(sha256 ...)
+```scheme
+(sha256 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### sha384
-```
-(sha384 ...)
+```scheme
+(sha384 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### whirlpool
-```
-(whirlpool ...)
+```scheme
+(whirlpool in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 ### ripemd160
-```
-(ripemd160 ...)
+```scheme
+(ripemd160 in) => :u8vector
 ```
 
-Please document me!
+Convenience function to hash a `u8vector`, `string` or `input-port` and return the finalized bytes.
 
 
 ### Digest Objects
+
+Various symbols are created for each cryptographic hash function.
+For instance, for "sha512" the following are created:
+
+* Type for digest constructor :: `digest::sha512`
+* Typed digest constructor :: `make-sha512-digest`
+* Digest type predicate :: `sha512-digest?`
+* Input to byte vector convenience function :: `sha512`
+
+The list of cryptographic hash functions that follow this patterns are:
+* `blake2s256`
+* `keccak256`
+* `md5`
+* `ripemd160`
+* `sha1`
+* `sha224`
+* `sha256`
+* `sha3_224`
+* `sha3_256`
+* `sha3_384`
+* `sha3_512`
+* `sha384`
+* `sha512`
+* `shake128`
+* `shake256`
+* `whirlpool`
+
+Example
 ```
 digest::whirlpool
 make-whirlpool-digest
 whirlpool-digest?
+whirlpool
 
-digest::ripemd160
-make-ripemd160-digest
-ripemd160-digest?
-
-digest::sha512
-make-sha512-digest
-sha512-digest?
-sha512
-
-digest::sha384
-make-sha384-digest
-sha384-digest?
-
-digest::sha256
-make-sha256-digest
-sha256-digest?
-
-digest::sha224
-make-sha224-digest
-sha224-digest?
-
-digest::sha1
-make-sha1-digest
-sha1-digest?
+digest::sha3_256
+make-sha3_256-digest
+sha3_256-digest?
+sha3_256
 
 digest::md5
 make-md5-digest
 md5-digest?
-
+md5
 ```
 
 ## Ciphers
