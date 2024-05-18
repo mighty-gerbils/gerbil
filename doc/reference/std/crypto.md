@@ -52,7 +52,7 @@ Create a new digest using the given type of cryptographic hash function.
 
 ### digest?
 ```scheme
-(digest? var) => boolean
+(digest? var) => :boolean
 ```
 
 Test if variable is a digest.
@@ -208,82 +208,161 @@ md5
 ## Ciphers
 
 ### cipher
-```
-(cipher ...)
-```
 
-Please document me!
+These are used to create ciphers, which are used for encryption.
 
 ### make-cipher
 ```
-(make-cipher ...)
+(make-cipher type) => cipher
 ```
 
-Please document me!
+Create a `cipher` with the specified cipher type.
+
+
+### Cipher Types
+
+These follow the pattern "cipher::TYPE".
+A convenience function also exists for each type to create the cipher as well as a type checker.
+
+Examples:
+* `cipher::aes-256-cfb`
+* `make-aes-256-cfb-cipher`
+* `aes-256-cfb-cipher?`
+
+#### Recommended for Modern Security Standards
+
+These ciphers are considered secure and are recommended for modern security standards:
+
+1. AES (Advanced Encryption Standard)
+   * `cipher::aes-128-ccm`
+   * `cipher::aes-128-ctr`
+   * `cipher::aes-128-gcm`
+   * `cipher::aes-192-ccm`
+   * `cipher::aes-192-ctr`
+   * `cipher::aes-192-gcm`
+   * `cipher::aes-256-ccm`
+   * `cipher::aes-256-ctr`
+   * `cipher::aes-256-gcm`
+
+2. Camellia
+   * `cipher::camellia-128-cbc`
+   * `cipher::camellia-128-cfb`
+   * `cipher::camellia-128-ecb`
+   * `cipher::camellia-128-ofb`
+   * `cipher::camellia-192-cbc`
+   * `cipher::camellia-192-cfb`
+   * `cipher::camellia-192-ecb`
+   * `cipher::camellia-192-ofb`
+   * `cipher::camellia-256-cbc`
+   * `cipher::camellia-256-cfb`
+   * `cipher::camellia-256-ecb`
+   * `cipher::camellia-256-ofb`
+
+#### Not Recommended for Modern Security Standards
+
+These ciphers are not recommended due to known vulnerabilities or weaker security:
+
+1. AES (using ECB mode)
+   * `cipher::aes-128-ecb`
+   * `cipher::aes-192-ecb`
+   * `cipher::aes-256-ecb`
+
+2. Blowfish
+   * `cipher::bf-cbc`
+   * `cipher::bf-cfb`
+   * `cipher::bf-ecb`
+   * `cipher::bf-ofb`
+
+3. CAST5
+   * `cipher::cast5-cbc`
+   * `cipher::cast5-cfb`
+   * `cipher::cast5-ecb`
+   * `cipher::cast5-ofb`
+
+4. RC4
+   * `cipher::rc4`
+
+#### Neutral or Situational Use
+
+These ciphers can be secure in certain contexts but might have specific use cases or be less commonly recommended:
+
+1. AES (other modes)
+   - `cipher::aes-128-cbc`
+   - `cipher::aes-128-cfb`
+   - `cipher::aes-128-ofb`
+   - `cipher::aes-128-xts`
+   - `cipher::aes-192-cbc`
+   - `cipher::aes-192-cfb`
+   - `cipher::aes-192-ofb`
+   - `cipher::aes-256-cbc`
+   - `cipher::aes-256-cfb`
+   - `cipher::aes-256-ofb`
+   - `cipher::aes-256-xts`
 
 ### cipher?
 ```
-(cipher? ...)
+(cipher? var) => :boolean
 ```
 
-Please document me!
+Test if variable is a cipher.
 
 ### cipher-type
 ```
-(cipher-type ...)
+(cipher-type cipher) => EVP_CIPHER*
 ```
 
-Please document me!
+Returns the cipher type, like `cipher::aes-256-cfb`.
 
 ### cipher-ctx
 ```
-(cipher-ctx ...)
+(cipher-ctx cipher) => EVP_CIPHER_CTX*
 ```
 
-Please document me!
+Get the context from the cipher.
+Returns #f if cipher already finalized.
 
 ### cipher-context
 ```
-(cipher-context ...)
+(cipher-context cipher) => EVP_CIPHER_CTX*
 ```
 
-Please document me!
+Get the context from the cipher.
+Errors if cipher already finalized.
 
 ### cipher-name
 ```
-(cipher-name ...)
+(cipher-name cipher) => :string
 ```
 
-Please document me!
+Gets the string name of the cipher, like "AES-256-ECB".
 
 ### cipher-block-size
 ```
-(cipher-block-size ...)
+(cipher-block-size cipher) => :fixnum
 ```
 
-Please document me!
+Get the number of bytes used per block.
 
 ### cipher-key-length
 ```
-(cipher-key-length ...)
+(cipher-key-length cipher) => :fixnum
 ```
 
-Please document me!
+Get the number of bytes used for keys for this cipher.
 
 ### cipher-iv-length
 ```
-(cipher-iv-length ...)
+(cipher-iv-length cipher) => :fixnum
 ```
 
-Please document me!
+Get the number of bytes used for the IV for this cipher.
 
 ### cipher-copy
 ```
-(cipher-copy ...)
+(cipher-copy cipher) => cipher
 ```
 
-Please document me!
-
+Create a copy of a cipher.
 
 ### Cipher Objects
 ```
