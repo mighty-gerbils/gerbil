@@ -622,91 +622,87 @@ Mirror of [encrypt-final!](#encrypt-final-bang).
 
 ## HMAC
 
-
-### hmac
-```
-(hmac ...)
-```
-
-Please document me!
+Hash-based message authentication code.
+It may be used to simultaneously verify both the data integrity and authenticity of a message.
 
 ### hmac?
 ```
-(hmac? ...)
+(hmac? var) => :boolean
 ```
 
-Please document me!
+Test if variable is an hmac object.
 
 ### make-hmac
 ```
-(make-hmac ...)
+(make-hmac md) => hmac
 ```
 
-Please document me!
+Create a hmac using a [digest type][#digest_objects], such as `digest::sha256`.
 
 ### hmac-init!
 ```
-(hmac-init! ...)
+(hmac-init! hmac key)
 ```
 
-Please document me!
+Initialize the `hmac` to use the given `key`.
 
 ### hmac-update!
 ```
-(hmac-update! ...)
+(hmac-update! hmac bytes (start #f) (end #f))
 ```
 
-Please document me!
+Update hmac with chunk of message to be authenticated.
+Can be called repeatedly with chunks of the message to be authenticated.
 
 ### hmac-final!
 ```
-(hmac-final! ...)
+(hmac-final! hmac (bytes #f)) => :u8vector
 ```
 
-Please document me!
+Returns the message authentication code.
+Output buffer may be passed in as `bytes`, which must have space for the hash function output.
 
 ### hmac-digest
 ```
-(hmac-digest ...)
+(hmac-digest md key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
+Create an authentication code using a [digest type][#digest_objects], such as `digest::sha256`.
 
 ### hmac-md5
 ```
-(hmac-md5 ...)
+(hmac-md5 key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
+Create an authentication code using MD5.
 
 ### hmac-sha1
 ```
-(hmac-sha1 ...)
+(hmac-sha1 key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
+Create an authentication code using SHA1.
 
 ### hmac-sha256
 ```
-(hmac-sha256 ...)
+(hmac-sha256 key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
+Create an authentication code using SHA256.
 
 ### hmac-sha384
 ```
-(hmac-sha384 ...)
+(hmac-sha384 key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
+Create an authentication code using SHA384.
 
 ### hmac-sha512
 ```
-(hmac-sha512 ...)
+(hmac-sha512 key bytes (start #f) (end #f)) => :u8vector
 ```
 
-Please document me!
-
+Create an authentication code using SHA512.
 
 ## DH Key Exchange
 
