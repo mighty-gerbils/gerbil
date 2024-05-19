@@ -706,49 +706,54 @@ Create an authentication code using SHA512.
 
 ## DH Key Exchange
 
-
 ### DH-generate-key
 ```
-(DH-generate-key ...)
+(DH-generate-key dh)
 ```
 
-Please document me!
+Setup the dh, which is provided by the `DH-get-` functions.
+`DH-generate-key` performs the first step of a Diffie-Hellman key exchange by generating private and public DH values.
+By calling `DH-compute-key`, these are combined with the other party's public value to compute the shared key.
 
 ### DH-get-2048-256
 ```
-(DH-get-2048-256 ...)
+(DH-get-2048-256) => DH*
 ```
 
-Please document me!
+Deprecated in OpenSSL.
+Create a DH object.
 
 ### DH-get-2048-224
 ```
-(DH-get-2048-224 ...)
+(DH-get-2048-224) => DH*
 ```
 
-Please document me!
+Deprecated in OpenSSL.
+Create a DH object.
 
 ### DH-get-1024-160
 ```
-(DH-get-1024-160 ...)
+(DH-get-1024-160) => DH*
 ```
 
-Please document me!
+Deprecated in OpenSSL.
+Create a DH object.
 
 ### DH-compute-key
 ```
-(DH-compute-key ...)
+(DH-compute-key dh bn) => :u8vector
 ```
 
-Please document me!
+`dh` is the `DH*` returned from functions like `DH-get-1024-160`.
+`bn` is the pubkey created by `DH-pub-key`.
+The computed shared secret is returned.
 
 ### DH-pub-key
 ```
-(DH-pub-key ...)
+(DH-pub-key dh) => BN-borrow*
 ```
 
-Please document me!
-
+Returns public key from dh.
 
 ## etc
 
