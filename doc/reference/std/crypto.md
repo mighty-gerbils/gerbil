@@ -76,7 +76,7 @@ Like `digest-update!`, but uses `call-with-binary-input` to accept either a `u8v
 (digest-final! digest (bytes #f)) => :u8vector
 ```
 
-Finalize the digest and extract the hash from the digest. 
+Finalize the digest and extract the hash from the digest.
 The digest will not longer be usable after finalization.
 Use `:std/text/hex#hex-encode` to convert to a hex string.
 
@@ -717,7 +717,7 @@ By calling `DH-compute-key`, these are combined with the other party's public va
 
 ### DH-get-2048-256
 ```
-(DH-get-2048-256) => DH*
+(DH-get-2048-256) => DH
 ```
 
 Deprecated in OpenSSL.
@@ -725,7 +725,7 @@ Create a DH object.
 
 ### DH-get-2048-224
 ```
-(DH-get-2048-224) => DH*
+(DH-get-2048-224) => DH
 ```
 
 Deprecated in OpenSSL.
@@ -733,7 +733,7 @@ Create a DH object.
 
 ### DH-get-1024-160
 ```
-(DH-get-1024-160) => DH*
+(DH-get-1024-160) => DH
 ```
 
 Deprecated in OpenSSL.
@@ -744,51 +744,50 @@ Create a DH object.
 (DH-compute-key dh bn) => :u8vector
 ```
 
-`dh` is the `DH*` returned from functions like `DH-get-1024-160`.
+`dh` is the `DH` returned from functions like `DH-get-1024-160`.
 `bn` is the pubkey created by `DH-pub-key`.
 The computed shared secret is returned.
 
 ### DH-pub-key
 ```
-(DH-pub-key dh) => BN-borrow*
+(DH-pub-key dh) => BN
 ```
 
 Returns public key from dh.
 
 ## etc
 
-
 ### libcrypto-error?
 ```
-(libcrypto-error? ...)
+(libcrypto-error? e) => :boolean
 ```
 
-Please document me!
+Test if error is a libcrypto-error.
 
 ### random-bytes
 ```
-(random-bytes ...)
+(random-bytes len) => :u8vector
 ```
 
-Please document me!
+Generate random bytes.
 
 ### random-bytes!
 ```
-(random-bytes! ...)
+(random-bytes! bytes (start 0) (end (u8vector-length bytes)))
 ```
 
-Please document me!
+Generate random bytes into an existing buffer.
 
 ### bytes->BN
 ```
-(bytes->BN ...)
+(BN->bytes bn) => :u8vector
 ```
 
-Please document me!
+Converts the absolute value of bn into big-endian form and returns it as a vector.
 
 ### BN->bytes
 ```
-(BN->bytes ...)
+(bytes->BN bytes (start 0) (end #f)) => BN
 ```
 
-Please document me!
+Convert bytes into BN.
