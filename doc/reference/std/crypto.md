@@ -212,7 +212,7 @@ md5
 These are used to create ciphers, which are used for encryption.
 
 ### make-cipher
-```
+```scheme
 (make-cipher type) => cipher
 ```
 
@@ -300,21 +300,21 @@ These ciphers can be secure in certain contexts but might have specific use case
    - `cipher::aes-256-xts`
 
 ### cipher?
-```
+```scheme
 (cipher? var) => :boolean
 ```
 
 Test if variable is a cipher.
 
 ### cipher-type
-```
+```scheme
 (cipher-type cipher) => EVP_CIPHER*
 ```
 
 Returns the cipher type, like `cipher::aes-256-cfb`.
 
 ### cipher-ctx
-```
+```scheme
 (cipher-ctx cipher) => EVP_CIPHER_CTX*
 ```
 
@@ -322,7 +322,7 @@ Get the context from the cipher.
 Returns #f if cipher already finalized.
 
 ### cipher-context
-```
+```scheme
 (cipher-context cipher) => EVP_CIPHER_CTX*
 ```
 
@@ -330,35 +330,35 @@ Get the context from the cipher.
 Errors if cipher already finalized.
 
 ### cipher-name
-```
+```scheme
 (cipher-name cipher) => :string
 ```
 
 Gets the string name of the cipher, like "AES-256-ECB".
 
 ### cipher-block-size
-```
+```scheme
 (cipher-block-size cipher) => :fixnum
 ```
 
 Get the number of bytes used per block.
 
 ### cipher-key-length
-```
+```scheme
 (cipher-key-length cipher) => :fixnum
 ```
 
 Get the number of bytes used for keys for this cipher.
 
 ### cipher-iv-length
-```
+```scheme
 (cipher-iv-length cipher) => :fixnum
 ```
 
 Get the number of bytes used for the IV for this cipher.
 
 ### cipher-copy
-```
+```scheme
 (cipher-copy cipher) => cipher
 ```
 
@@ -626,28 +626,28 @@ Hash-based message authentication code.
 It may be used to simultaneously verify both the data integrity and authenticity of a message.
 
 ### hmac?
-```
+```scheme
 (hmac? var) => :boolean
 ```
 
 Test if variable is an hmac object.
 
 ### make-hmac
-```
+```scheme
 (make-hmac md) => hmac
 ```
 
 Create a hmac using a [digest type][#digest_objects], such as `digest::sha256`.
 
 ### hmac-init!
-```
+```scheme
 (hmac-init! hmac key)
 ```
 
 Initialize the `hmac` to use the given `key`.
 
 ### hmac-update!
-```
+```scheme
 (hmac-update! hmac bytes (start #f) (end #f))
 ```
 
@@ -655,7 +655,7 @@ Update hmac with chunk of message to be authenticated.
 Can be called repeatedly with chunks of the message to be authenticated.
 
 ### hmac-final!
-```
+```scheme
 (hmac-final! hmac (bytes #f)) => :u8vector
 ```
 
@@ -663,42 +663,42 @@ Returns the message authentication code.
 Output buffer may be passed in as `bytes`, which must have space for the hash function output.
 
 ### hmac-digest
-```
+```scheme
 (hmac-digest md key bytes (start #f) (end #f)) => :u8vector
 ```
 
 Create an authentication code using a [digest type][#digest_objects], such as `digest::sha256`.
 
 ### hmac-md5
-```
+```scheme
 (hmac-md5 key bytes (start #f) (end #f)) => :u8vector
 ```
 
 Create an authentication code using MD5.
 
 ### hmac-sha1
-```
+```scheme
 (hmac-sha1 key bytes (start #f) (end #f)) => :u8vector
 ```
 
 Create an authentication code using SHA1.
 
 ### hmac-sha256
-```
+```scheme
 (hmac-sha256 key bytes (start #f) (end #f)) => :u8vector
 ```
 
 Create an authentication code using SHA256.
 
 ### hmac-sha384
-```
+```scheme
 (hmac-sha384 key bytes (start #f) (end #f)) => :u8vector
 ```
 
 Create an authentication code using SHA384.
 
 ### hmac-sha512
-```
+```scheme
 (hmac-sha512 key bytes (start #f) (end #f)) => :u8vector
 ```
 
@@ -707,7 +707,7 @@ Create an authentication code using SHA512.
 ## DH Key Exchange
 
 ### DH-generate-key
-```
+```scheme
 (DH-generate-key dh)
 ```
 
@@ -716,7 +716,7 @@ Setup the dh, which is provided by the `DH-get-` functions.
 By calling `DH-compute-key`, these are combined with the other party's public value to compute the shared key.
 
 ### DH-get-2048-256
-```
+```scheme
 (DH-get-2048-256) => DH
 ```
 
@@ -724,7 +724,7 @@ Deprecated in OpenSSL.
 Create a DH object.
 
 ### DH-get-2048-224
-```
+```scheme
 (DH-get-2048-224) => DH
 ```
 
@@ -732,7 +732,7 @@ Deprecated in OpenSSL.
 Create a DH object.
 
 ### DH-get-1024-160
-```
+```scheme
 (DH-get-1024-160) => DH
 ```
 
@@ -740,7 +740,7 @@ Deprecated in OpenSSL.
 Create a DH object.
 
 ### DH-compute-key
-```
+```scheme
 (DH-compute-key dh bn) => :u8vector
 ```
 
@@ -749,7 +749,7 @@ Create a DH object.
 The computed shared secret is returned.
 
 ### DH-pub-key
-```
+```scheme
 (DH-pub-key dh) => BN
 ```
 
@@ -758,35 +758,35 @@ Returns public key from dh.
 ## etc
 
 ### libcrypto-error?
-```
+```scheme
 (libcrypto-error? e) => :boolean
 ```
 
 Test if error is a libcrypto-error.
 
 ### random-bytes
-```
+```scheme
 (random-bytes len) => :u8vector
 ```
 
 Generate random bytes.
 
 ### random-bytes!
-```
+```scheme
 (random-bytes! bytes (start 0) (end (u8vector-length bytes)))
 ```
 
 Generate random bytes into an existing buffer.
 
 ### bytes->BN
-```
+```scheme
 (BN->bytes bn) => :u8vector
 ```
 
 Converts the absolute value of bn into big-endian form and returns it as a vector.
 
 ### BN->bytes
-```
+```scheme
 (bytes->BN bytes (start 0) (end #f)) => BN
 ```
 
