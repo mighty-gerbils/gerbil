@@ -8,7 +8,7 @@ Cryptography based on libcrypto.
 
 ## Digests
 
-::: tip Basic usage
+::: tip Examples:
 ```scheme
 (import :std/crypto
         (only-in :std/text/hex hex-encode))
@@ -506,90 +506,119 @@ aes-128-ecb-cipher?
 
 ## Encryption and Decryption
 
-### encrypt
-```
-(encrypt ...)
+::: tip Example:
+```scheme
+(let* ((plaintext "Hello Gerbil!")
+       (cipher (make-aes-256-cfb-cipher))
+       (key-length (cipher-key-length cipher))
+       (key (random-bytes key-length))
+       (iv-length (cipher-iv-length cipher))
+       (iv (random-bytes iv-length))
+       (encrypted-data (encrypt cipher key iv plaintext)))
+  (utf8->string (decrypt (make-aes-256-cfb-cipher) key iv encrypted-data)))
+  ;; => "Hello Gerbil!"
 ```
 
-Please document me!
+### encrypt
+```scheme
+(encrypt cipher key iv in) => :u8vector
+```
+
+Encrypt a `u8vector`, `string` or `input-port` and return the encrypted bytes.
 
 ### encrypt-u8vector
-```
-(encrypt-u8vector ...)
+```scheme
+(encrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in))) => :u8vector
 ```
 
-Please document me!
+Encrypt a u8vector, with optional parameters to specify the start and end indices for the portion of the vector to be encrypted.
+Returns the encrypted bytes.
 
 ### encrypt-u8vector!
-```
-(encrypt-u8vector! ...)
+```scheme
+(encrypt-u8vector! cipher key iv bytes start end buf) => :fixnum
 ```
 
-Please document me!
+Encrypt and finalize buffer `buf` using input from `bytes`.
+Returns the number of bytes written.
 
 ### encrypt-init!
-```
-(encrypt-init! ...)
+```scheme
+(encrypt-init! cipher key iv)
 ```
 
-Please document me!
+Initializes the cipher with the key and IV.
 
 ### encrypt-update!
-```
-(encrypt-update! ...)
+```scheme
+(encrypt-update! cipher out out-start in start end) => :fixnum
 ```
 
-Please document me!
+Encrypts data from `in` buffer writes it to `out` then returns the number of bytes written.
+This function can be called multiple times to encrypt successive blocks of data.
+The amount of data written depends on the block alignment of the encrypted data.
+For most ciphers and modes, the amount of data written can be anything from zero bytes to `in-length + cipher-block-size - 1` bytes.
+For wrap cipher modes, the amount of data written can be anything from zero bytes to `in-length + cipher-block-size` bytes.
+For stream ciphers, the amount of data written can be anything from zero bytes to `in-length` bytes.
+Thus, out should contain sufficient room for the operation being performed.
+It also checks if in and out are partially overlapping, and if they are an error is thrown.
 
 ### encrypt-final!
-```
-(encrypt-final! ...)
+```scheme
+(encrypt-final! cipher out (out-start 0)) => :fixnum
 ```
 
-Please document me!
+Encrypts the "final" data, that is any data that remains in a partial block.
+It uses standard block padding (aka PKCS padding).
+The encrypted final data is written to out which should have sufficient space for one cipher block.
+The number of bytes written is returned.
+After this function is called the encryption operation is finished and the cipher may no longer be used.
 
 ### decrypt
-```
-(decrypt ...)
+```scheme
+(decrypt cipher key iv in) => :u8vector
 ```
 
-Please document me!
+Decrypt a `u8vector` or `input-port` and return the decrypted bytes.
 
 ### decrypt-u8vector
-```
-(decrypt-u8vector ...)
+```scheme
+(decrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in))) => :u8vector
 ```
 
-Please document me!
+Decrypt a u8vector, with optional parameters to specify the start and end indices for the portion of the vector to be decrypted.
+Returns the decrypted bytes.
 
 ### decrypt-u8vector!
-```
-(decrypt-u8vector! ...)
+```scheme
+(decrypt-u8vector! cipher key iv bytes start end buf) => :fixnum
 ```
 
-Please document me!
+Decrypt and finalize buffer `buf` using input from `bytes`.
+Returns the number of bytes written.
 
 ### decrypt-init!
-```
-(decrypt-init! ...)
+```scheme
+(decrypt-init! cipher key iv)
 ```
 
-Please document me!
+Initializes the cipher with the key and IV.
 
 ### decrypt-update!
-```
-(decrypt-update! ...)
+```scheme
+(decrypt-update! cipher out out-start in start end) => :fixnum
 ```
 
-Please document me!
+Decrypts data from `in` buffer writes it to `out` then returns the number of bytes written.
+Mirrors [encrypt-update!](#encrypt-update-bang).
+The parameters and restrictions are identical except that the decrypted data buffer out passed to `decrypt-update!` should have sufficient room for `in-length + cipher-block-size` bytes unless the cipher block size is 1 in which case `in-length` bytes is sufficient.
 
 ### decrypt-final!
-```
-(decrypt-final! ...)
+```scheme
+(decrypt-final! cipher out (out-start 0)) => :fixnum
 ```
 
-Please document me!
-
+Mirror of [encrypt-final!](#encrypt-final-bang).
 
 ## HMAC
 
