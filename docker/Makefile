@@ -155,7 +155,7 @@ amazonlinux:
 	--build-arg distro="amazonlinux" \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/amazonlinux:$(arch)-$(BRANCH)
@@ -169,7 +169,7 @@ centos:
 	--build-arg distro="centos" \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/centos:$(arch)-$(BRANCH)
@@ -182,7 +182,7 @@ fedora:
 	--build-arg distro="fedora" \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/fedora:$(arch)-$(BRANCH)
@@ -196,7 +196,7 @@ ubuntu:
 	--build-arg distro="ubuntu" \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
@@ -210,7 +210,7 @@ debian:
 	--build-arg distro="debian" \
 	--build-arg packages="$(debian_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
