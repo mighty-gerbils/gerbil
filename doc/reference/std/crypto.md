@@ -518,6 +518,7 @@ aes-128-ecb-cipher?
   (utf8->string (decrypt (make-aes-256-cfb-cipher) key iv encrypted-data)))
   ;; => "Hello Gerbil!"
 ```
+:::
 
 ### encrypt
 ```scheme
