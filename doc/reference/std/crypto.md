@@ -755,6 +755,65 @@ The computed shared secret is returned.
 
 Returns public key from dh.
 
+## EVP Key and Parameter Generation
+### keygen/ed25519
+```scheme
+(keygen/ed25519) => pkey
+```
+
+Performs a key generation operation using the ED25519 keytype.
+
+### bytes->private-key
+```scheme
+(bytes->private-key type bytes engine: (engine #f)) => pkey
+```
+
+Convert `bytes` to a private key `pkey`.
+
+### bytes->public-key
+```scheme
+(bytes->public-key type bytes engine: (engine #f)) => pkey
+```
+
+Convert `bytes` to a public key `pkey`.
+
+### private-key->bytes
+```scheme
+(private-key->bytes pkey (bytes #f)) => :u8vector
+```
+
+Get the private key from a `pkey`.
+Optional buffer `bytes` can be passed in to be used and returned.
+Returns `#f` if invalid pkey passed in.
+
+### public-key->bytes
+```scheme
+(public-key->bytes pkey (bytes #f))
+```
+
+Get the public key from a `pkey`.
+Optional buffer `bytes` can be passed in to be used and returned.
+Returns `#f` if invalid pkey passed in.
+
+### digest-sign
+```scheme
+(digest-sign pkey bytes sig: (sig #f)) => :u8vector
+```
+
+Sign bytes using pkey.
+Optional buffer `siq` can be passed in to be used and returned.
+
+### digest-verify
+```scheme
+(digest-verify pkey sig bytes) => :boolean
+```
+
+Verify `bytes` matches `sig` using `pkey`.
+
+### EVP Key types
+
+* `EVP_PKEY_ED25519`
+
 ## etc
 
 ### libcrypto-error?
