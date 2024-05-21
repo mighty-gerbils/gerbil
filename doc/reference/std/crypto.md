@@ -810,6 +810,21 @@ Optional buffer `siq` can be passed in to be used and returned.
 
 Verify `bytes` matches `sig` using `pkey`.
 
+### scrypt
+```scheme
+(scrypt pass salt size (N 1024) (r 8) (p 16)) => :u8vector
+```
+
+The scrypt algorithm implements the scrypt password based key derivation function, as described in RFC 7914.
+It is memory-hard in the sense that it deliberately requires a significant amount of RAM for efficient computation.
+The intention of this is to render brute forcing of passwords on systems that lack large amounts of main memory (such as GPUs or ASICs) computationally infeasible.
+
+`scrypt` provides three work factors that can be customized: `N`, `r` and `p`.
+`N`, which has to be a positive power of two, is the general work factor and scales CPU time in an approximately linear fashion.
+`r` is the block size of the internally used hash function and `p` is the parallelization factor.
+Both `r` and `p` need to be greater than zero.
+The amount of RAM that `scrypt` requires for its computation is roughly `128 * N * r * p` bytes.
+
 ### EVP Key types
 
 * `EVP_PKEY_ED25519`
