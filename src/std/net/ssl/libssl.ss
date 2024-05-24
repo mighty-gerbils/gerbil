@@ -417,7 +417,9 @@ END-C
 )
 
   (c-initialize #<<END-C
-OPENSSL_init_ssl(0, NULL);
+#if (OPENSSL_VERSION_MAJOR < 1) || ((OPENSSL_VERSION_MAJOR == 1) && (OPENSSL_VERSION_MINOR == 0))
+OPENSSL_init_crypto(0, NULL);
+#endif
 ffi_ssl_gerbil_data_index = SSL_get_ex_new_index(0, "gerbil data", NULL, NULL, NULL);
 END-C
 )

@@ -82,7 +82,9 @@ END-C
 )
 
 (c-initialize #<<END-C
+#if (OPENSSL_VERSION_MAJOR < 1) || ((OPENSSL_VERSION_MAJOR == 1) && (OPENSSL_VERSION_MINOR == 0))
 OPENSSL_init_crypto(0, NULL);
+#endif
 END-C
 )
 
