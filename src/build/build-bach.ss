@@ -24,6 +24,8 @@
   (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
 (cond-expand
+ (freebsd
+  (def default-ld-options "-lutil"))
  (netbsd
   (def default-ld-options ["-lm"]))
  (else
