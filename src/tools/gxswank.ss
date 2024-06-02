@@ -7,7 +7,7 @@
         :std/cli/getopt
         :std/net/address
         :std/net/httpd
-	:std/swank
+	:std/ide/swank
         :std/mime/types
         :std/actor
         :std/iter
