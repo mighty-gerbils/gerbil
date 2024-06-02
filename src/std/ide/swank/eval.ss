@@ -1,9 +1,10 @@
 (import :gerbil/expander :gerbil/gambit
-        :std/swank/api
-        :std/swank/message
-	:std/swank/presentation
-	:std/swank/repl
-	:std/swank/context)
+        ./api
+        ./message
+	./presentation
+	./repl
+	./context)
+(export #t)
 
 (def-swank (swank:interactive-eval str)
   (let* ((form (swank-read-from-string-in-context str))

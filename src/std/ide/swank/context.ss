@@ -1,4 +1,4 @@
-(import :gerbil/expander :std/swank/api :std/swank/message)
+(import :gerbil/expander ./api ./message)
 (export #t)
 
 (def (swank-context (:mod (current-slime-package)))

@@ -1,6 +1,4 @@
-(import :std/swank/api :std/swank/message
-  	:std/swank/repl :std/swank/context
-  	:gerbil/gambit)
+(import ./api ./message ./repl ./context :gerbil/gambit)
 (export #t)
   ;;;; Recording and accessing results of computations
 

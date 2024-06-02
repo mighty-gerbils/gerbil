@@ -1,6 +1,6 @@
 (import
-  :std/interactive :std/swank/api
-  :std/swank/presentation)
+  :std/interactive ./api
+  ./presentation)
 (export #t apropos (import: :std/interactive))
 
 (extern namespace: #f

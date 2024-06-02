@@ -3,8 +3,8 @@
 	:std/contract
 	:std/io
 	:std/net/address
-  	:std/swank/api :std/swank/message :std/swank/presentation
-	:std/swank/handlers :std/swank/autodoc :std/swank/eval
+  	./api ./message ./presentation
+	./handlers ./autodoc ./eval
   	:std/sugar :gerbil/gambit)
 (export #t)
 

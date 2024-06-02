@@ -1,6 +1,6 @@
 (import
-  :gerbil/expander :std/swank/message :std/sugar
-  :std/swank/context :std/swank/api :std/srfi/13 :std/iter :std/srfi/1)
+  :gerbil/expander ./message :std/sugar
+  ./context ./api :std/srfi/13 :std/iter :std/srfi/1)
 (export #t)
 
 

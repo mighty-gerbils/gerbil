@@ -1,4 +1,6 @@
-(import :std/swank/api :std/text/utf8 :std/io :std/contract :std/interface :gerbil/gambit)
+(import
+  ./api
+  :std/text/utf8 :std/io :std/contract :std/interface :gerbil/gambit)
 (export #t)
 
 (def default-swank-buffer-size (expt 2 15)) ; 32K
@@ -15,10 +17,6 @@
 		       buffer-or-size))
 	     (mbytes (and size (reader.read buffer 0 size size)))
 	     (port (open-input-u8vector buffer)))
-      #;(input-port-readtable-set!
-       port
-       (readtable-keywords-allowed?-set
-	(input-port-readtable port) 'prefix))
       (input-port-readtable-set!
        port
        (readtable-eval-allowed?-set
@@ -69,7 +67,6 @@
 	(and ret (write-message writer ret))
         #t)
       #f)))
-
 
 (def (write-message writer msg)
   (let* ((str (cond ((string? msg) msg)

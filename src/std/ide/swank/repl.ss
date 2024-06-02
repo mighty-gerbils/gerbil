@@ -1,7 +1,6 @@
 (import
-  :std/swank/message :std/swank/api :std/swank/context
-  :gerbil/gambit
-  :std/sugar :std/format :std/srfi/13)
+  ./message ./api ./context
+  :gerbil/gambit :std/sugar :std/format :std/srfi/13)
 (export #t)
 
 ;;; client->thread mapping
@@ -15,7 +14,7 @@
   (def str (string-trim-right (format (if (list? obj) "~Y" "~a") obj)
 			      char-whitespace?))
   (if (< (string-length str) (- maxlen 3)) str
-      (format "~a..."(substring str 0 (max 1 (- maxlen 3))))))
+      (format "~a..." (substring str 0 (max 1 (- maxlen 3))))))
 
 (def (swank-default-repl-results-function object (writer #f))
   (unless writer (set! writer (current-slime-writer)))

@@ -1,7 +1,5 @@
-(import :std/misc/string
-  	:std/swank/api :std/swank/message :std/swank/presentation
-      :std/swank/top
-  	:std/sugar :gerbil/gambit)
+(import :std/misc/string :std/sugar :gerbil/gambit
+  	./api ./message ./presentation ./top)
 (export #t)
 
 (def-swank (:emacs-rex form package thread id)
@@ -18,8 +16,6 @@
   	    (error "No Handler Found" form)))
   	(catch (e)
   	  `(:return (:abort ,(call-with-output-string (cut display-exception e <>))) ,id)))))))
-
-
 
 (def-swank (swank:connection-info)
   `(:pid
@@ -39,7 +35,6 @@
     :modules ,(swank-modules)
     :package (:name "TOP" :prompt "TOP")
     :version "2.29.1"))
-
 
 (def-swank (swank:swank-require modules) (swank-modules))
 (def-swank (swank-repl:create-repl nil . plist) '("TOP" "TOP"))
