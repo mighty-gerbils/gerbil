@@ -1310,22 +1310,24 @@
 ;
 ; This procedure tests for the namespace constraints:
 ; http://www.w3.org/TR/REC-xml-names/#nsc-NSDeclared
-
+(define ssax:current-resolve-namespaces (make-parameter #f))
 (define (ssax:resolve-name port unres-name namespaces apply-default-ns?)
   (cond
-   ((pair? unres-name)		; it's a QNAME
-    (cons
-     (cond
-     ((assq (car unres-name) namespaces) => cadr)
-     ((eq? (car unres-name) ssax:Prefix-XML) ssax:Prefix-XML)
-     (else
-      (parser-error port "[nsc-NSDeclared] broken; prefix " (car unres-name))))
-     (cdr unres-name)))
-   (apply-default-ns?		; Do apply the default namespace, if any
+   ((pair? unres-name) ;; it's a QNAME
+    (if (not (ssax:current-resolve-namespaces))
+      unres-name
+      (cons
+       (cond
+	((assq (car unres-name) namespaces) => cadr)
+	((eq? (car unres-name) ssax:Prefix-XML) ssax:Prefix-XML)
+	(else
+	 (parser-error port "[nsc-NSDeclared] broken; prefix " (car unres-name))))
+       (cdr unres-name))))
+   (apply-default-ns?	      ; Do apply the default namespace, if any
     (let ((default-ns (assq '*DEFAULT* namespaces)))
-      (if (and default-ns (cadr default-ns))
-	  (cons (cadr default-ns) unres-name)
-	  unres-name)))		; no default namespace declared
+      (if (and (ssax:current-resolve-namespaces) default-ns (cadr default-ns))
+	(cons (cadr default-ns) unres-name)
+	unres-name)))	       ; no default namespace declared
    (else unres-name)))		; no prefix, don't apply the default-ns
 
 
@@ -1401,7 +1403,6 @@
 
 ; Procedure:  ssax:complete-start-tag tag-head port elems entities namespaces
 (define ssax:complete-start-tag
-
  (let ((xmlns (string->symbol "xmlns"))
        (largest-dummy-decl-attr (list ssax:largest-unres-name #f #f #f)))
 
@@ -1527,8 +1528,12 @@
     ((merged-attrs) (if decl-attrs (validate-attrs port attlist decl-attrs)
 		      (attlist->alist attlist)))
     ((proper-attrs namespaces)
-     (adjust-namespace-decl port merged-attrs namespaces))
-    )
+     (let*-values
+	 (((pas nss) (adjust-namespace-decl port merged-attrs namespaces)))
+       (values (if (ssax:current-resolve-namespaces)
+		 pas
+		 merged-attrs)
+	       namespaces))))
    ;(cerr "proper attrs: " proper-attrs nl)
    ; build the return value
    (values
