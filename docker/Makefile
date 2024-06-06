@@ -220,17 +220,17 @@ ubuntu-current-jedi:
 	docker tag ubuntu-current-jedi gerbil/jedi:ubuntu
 
 package-ubuntu:
-	docker run -v $(PWD):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "gem install fpm && \
 	fpm -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-tgz:
-	docker run -v $(PWD):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "tar -czvf /src/gerbil-$(BRANCH).$(arch).tgz /opt/gerbil"
 
 package-fedora:
-	docker run -v $(PWD):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
@@ -238,7 +238,7 @@ package-fedora:
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
-	docker run -v $(PWD):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
 	bash -c "amazon-linux-extras install -y ruby2.6 && \
 	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
