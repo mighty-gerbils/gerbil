@@ -6,11 +6,11 @@ arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
 ifeq ($(BRANCH),)
-BRANCH := "master"
+BRANCH := master
 endif
 
 ifeq ($(REPO),)
-REPO := "mighty-gerbils/gerbil"
+REPO := mighty-gerbils/gerbil
 endif
 
 cores := $(shell nproc)
@@ -59,12 +59,12 @@ amazon_packages := cmake \
 centos_packages := cmake \
 		   git \
 		   leveldb-devel \
-                   libsqlite3x-devel \
-                   libxml2-devel \
-                   libyaml-devel \
-                   lmdb-devel \
-                   openssl-devel \
-                   sqlite-devel
+           libsqlite3x-devel \
+		   libxml2-devel \
+		   libyaml-devel \
+		   lmdb-devel \
+		   openssl-devel \
+	       sqlite-devel
 
 fedora_packages := cmake \
 		   leveldb-devel \
@@ -213,7 +213,7 @@ debian:
 	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
+	docker tag final gerbil/debian:$(arch)-$(BRANCH)
 
 ubuntu-current-jedi:
 	docker build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi
@@ -222,7 +222,8 @@ ubuntu-current-jedi:
 package-ubuntu:
 	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "gem install fpm && \
-	fpm -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
+	fpm -f -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
+	-d libsqlite3-dev \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-tgz:
@@ -233,8 +234,9 @@ package-fedora:
 	docker run -v $(ROOT_DIR):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
-	fpm -s dir -p /src/ -t rpm \
+	fpm -f -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
+    -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
