@@ -233,7 +233,7 @@ package-fedora:
 	docker run -v $(ROOT_DIR):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
-	fpm -s dir -p /src/ -t rpm \
+	fpm -f -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
     -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
