@@ -56,8 +56,11 @@
         ((member hd '("-r" "--run"))
          (match rest
            ([x . rest]
-            (eval `(import ,x))
-            (try-main! rest (lambda (args) (error "cannot run module" x args))))
+            (let (mod (if (string-prefix? ":" x)
+                        (string->symbol x)
+                        x))
+              (eval `(import ,mod))
+              (try-main! rest (lambda (args) (error "cannot run module" x args)))))
            (else
             (error "missing argument for module to run"))))
         ((member hd '("-l" "--lang"))
