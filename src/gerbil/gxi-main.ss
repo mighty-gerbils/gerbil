@@ -9,6 +9,7 @@
   (displayln "  -h|--help|help                   display this help message exit")
   (displayln "  -v||--version|version            display the system version and exit")
   (displayln "  -L|--load module|file            import a module (if begins with :) or load a file")
+  (displayln "  -r|--run module                  import a module and run its main function with the remaining arguments")
   (displayln "  -l|--lang module                 set the current interpretation language; must precede any evaluation")
   (displayln "  -e|--eval <expr>                 evaluate an expression")
   (displayln)
@@ -52,6 +53,13 @@
             (lp rest))
            (else
             (error "missing argument for file to load"))))
+        ((member hd '("-r" "--run"))
+         (match rest
+           ([x . rest]
+            (eval `(import ,x))
+            (try-main! rest (lambda (args) (error "cannot run module" x args))))
+           (else
+            (error "missing argument for module to run"))))
         ((member hd '("-l" "--lang"))
          (if can-set-lang?
            (match rest
