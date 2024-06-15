@@ -1556,7 +1556,7 @@ package: gerbil/core
                       (predicate (stx-identifier #'name #'name "?"))
                       (instance-predicate (stx-identifier #'name "is-" #'name "?"))
                       ((mixin ...)
-                       (if (identifier? #'hd) [] (stx-cdr #'hd)))
+                       (if (identifier? #'hd) [] (syntax->list (stx-cdr #'hd))))
                       ((method ...)
                        (fold-methods #'(mixin ...) #'(spec ...)))
                       ((method-name ...)
