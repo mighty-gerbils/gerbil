@@ -84,4 +84,6 @@
 (def compiler-syntax-test
   (test-suite "compiler syntactic features"
     (test-case "deep dots"
-      (must-compile-and-execute "compiler-test-support/deep-dots.ss"))))
+      (must-compile-and-execute "compiler-test-support/deep-dots.ss"))
+    (test-case "interface mixins"
+      (must-compile-and-execute "compiler-test-support/interface-mixin.ss"))))
