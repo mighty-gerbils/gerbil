@@ -1081,7 +1081,7 @@ package: gerbil/core
 
     (def (make-procedure-lambda-signature stx signature return unchecked)
       (def (type-e contract)
-        (syntax-case contract (: :? :~ :- ::= :=)
+        (syntax-case contract (: :? :~ :- ::- :=)
           ((: type . maybe-default)
            (resolve-type->type-descriptor stx #'type))
           ((~ type . maybe-default)
