@@ -1203,30 +1203,39 @@ package: gerbil/core
           (_ (reverse! (filter identity result))))))
 
     (def (compatible-signatures? left right)
-      (let/cc return
-        (let ((left-arity (signature-arity left))
-              (right-arity (signature-arity right)))
-          (unless (equal? left-arity right-arity)
-            (return #f)))
-        (let ((left-kws (signature-keywords left))
-              (right-kws (signature-keywords right)))
-          (unless (equal? left-kws right-kws)
-            (return #f)))
-        (let (((values left-positional-contract left-kw-contract)
-               (signature-type-contract left))
-              ((values right-positional-contract right-kw-contract)
-               (signature-type-contract right)))
-          (let ((left-contract
-                 (append left-positional-contract
-                         (foldr (lambda (kwc r) (cons (cdr kwc) r))
-                                [] left-kw-contract)))
-                (right-contract
-                 (append right-positional-contract
-                         (foldr (lambda (kwc r) (cons (cdr kwc) r))
-                                [] right-kw-contract))))
-            (unless (compatible-signature-type-contract? left-contract right-contract)
-              (return #f))))
-        #t))
+      (let ((left (syntax->list left))
+            (right (syntax->list right)))
+        (let ((left-args (cadr left))
+              (left-return (caddr left))
+              (right-args (cadr right))
+              (right-return (caddr right)))
+          (let/cc return
+            (let ((left-arity (signature-arity left-args))
+                  (right-arity (signature-arity right-args)))
+              (unless (equal? left-arity right-arity)
+                (return #f)))
+            (let ((left-kws (signature-keywords left-args))
+                  (right-kws (signature-keywords right-args)))
+              (unless (equal? left-kws right-kws)
+                (return #f)))
+            (let (((values left-positional-contract left-kw-contract)
+                   (signature-type-contract left-args))
+                  ((values right-positional-contract right-kw-contract)
+                   (signature-type-contract right-args)))
+              (let ((left-contract
+                     (append left-positional-contract
+                             (foldr (lambda (kwc r) (cons (cdr kwc) r))
+                                    [] left-kw-contract)))
+                    (right-contract
+                     (append right-positional-contract
+                             (foldr (lambda (kwc r) (cons (cdr kwc) r))
+                                    [] right-kw-contract))))
+                (unless (compatible-signature-type-contract? left-contract right-contract)
+                  (return #f))))
+            (unless (free-identifier=? (resolve-type->identifier left left-return)
+                                       (resolve-type->identifier right right-return))
+              (return #f))
+            #t))))
 
     (def (compatible-signature-type-contract? left right)
       (let loop ((left-rest left) (right-rest right))
@@ -1425,7 +1434,7 @@ package: gerbil/core
 
 
     (def (signature-arity spec)
-      (let lp ((rest (stx-cdr spec)) (required 0) (optional 0))
+      (let lp ((rest spec) (required 0) (optional 0))
         (syntax-case rest (:=)
           ((id . rest)
            (identifier? #'id)
