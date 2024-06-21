@@ -223,7 +223,7 @@ package-ubuntu:
 	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "gem install fpm && \
 	fpm -f -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
-	-d libsqlite3-dev \
+	-d libsqlite3-dev -d libssl-dev \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-tgz:
@@ -236,7 +236,7 @@ package-fedora:
 	gem install fpm && \
 	fpm -f -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
-    -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
+        -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:

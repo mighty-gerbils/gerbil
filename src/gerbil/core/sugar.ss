@@ -134,12 +134,12 @@ package: gerbil/core
      (if test (let () body ...) (recur . rest))))
 
   (defrules when ()
-    ((_ test expr ...)
-     (if test (begin expr ...) #!void)))
+    ((_ test expr rest ...)
+     (if test (begin expr rest ...) #!void)))
 
   (defrules unless ()
-    ((_ test expr ...)
-     (if test #!void (begin expr ...))))
+    ((_ test expr rest ...)
+     (if test #!void (begin expr rest ...))))
 
   (defsyntax% (syntax-error stx)
     (syntax-case stx ()

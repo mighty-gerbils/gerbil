@@ -1294,7 +1294,7 @@ The difference between the 3 executable compilation modes can be summarized as f
   to the  precompiled gerbil library (`libgerbil`).
   If the system was configured with `--enable-shared` (the default), then this
   will be a shared library; otherwise it will be a static library archive.
-  Note that the executable may have some additionl dynamic library
+  Note that the executable may have some additional dynamic library
   dependencies from stdlib foreign code, and also links to `libgambit` which will be
   a shared library when the system is configured with `--enable-shared`.
 - When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
