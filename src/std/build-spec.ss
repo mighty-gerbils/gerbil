@@ -38,6 +38,7 @@
     "amb"
     "contract"
     (gxc: "interface" ,@(include-gambit-sharp))
+    "instance"
     ;; cli
     "cli/getopt"
     "cli/shell"
