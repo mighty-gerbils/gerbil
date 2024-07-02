@@ -19,7 +19,7 @@
 :END:
 
 
-* Instance :: defmethod's for interface
+* Instance
 :PROPERTIES:
 :CUSTOM_ID: instance--defmethods-for-interface
 :END:
