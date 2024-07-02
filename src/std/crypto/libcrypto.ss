@@ -81,31 +81,14 @@
 END-C
 )
 
-(c-initialize #<<END-C
-OPENSSL_init_crypto(0, NULL);
-END-C
-)
-
 ;;; version features -- the whole setup for computing the version number drives me crazy
 (c-declare #<<END-C
-#if (OPENSSL_VERSION_MAJOR >= 1)
-#define FEATURES_OPENSSL_v1
+#if (OPENSSL_VERSION_MAJOR < 3)
+#  error "OpenSSL v3 required"
 #endif
 
-#if (OPENSSL_VERSION_MAJOR > 1) || ((OPENSSL_VERSION_MAJOR == 1) && (OPENSSL_VERSION_MINOR >= 1))
-#define FEATURES_OPENSSL_v1_1
-#endif
-
-#if (OPENSSL_VERSION_MAJOR > 1) || ((OPENSSL_VERSION_MAJOR == 1) && ((OPENSSL_VERSION_MINOR > 1) || ((OPENSSL_VERSION_MINOR == 1) && (OPENSSL_VERSION_PATCH >= 1))))
-#define FEATURES_OPENSSL_v1_1_1
-#endif
-
-#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL)
-#define FEATURES_LIBRESSL_v3_5_0
-#endif
-
-#if (LIBRESSL_VERSION_NUMBER >= 0x3070000fL)
-#define FEATURES_LIBRESSL_v3_7_0
+#if defined (LIBRESSL_VERSION_NUMBER) && (LIBRESSL_VERSION_NUMBER < 0x3070000fL)
+#  error "LibreSSL v3.7.0 or later required"
 #endif
 END-C
 )
@@ -215,15 +198,15 @@ END-C
 (define-c-lambda/const-pointer EVP_sha512 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_ripemd160 () EVP_MD* "!defined(OPENSSL_NO_RMD160)")
 (define-c-lambda/const-pointer EVP_whirlpool () EVP_MD* "!defined(OPENSSL_NO_WHIRLPOOL)")
-(define-c-lambda/const-pointer EVP_blake2b512 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1) && !defined(OPENSSL_NO_BLAKE2)")
-(define-c-lambda/const-pointer EVP_blake2s256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1) && !defined(OPENSSL_NO_BLAKE2)")
-(define-c-lambda/const-pointer EVP_sha3_224 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_5_0)")
-(define-c-lambda/const-pointer EVP_sha3_256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_5_0)")
-(define-c-lambda/const-pointer EVP_sha3_384 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_5_0)")
-(define-c-lambda/const-pointer EVP_sha3_512 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_5_0)")
-(define-c-lambda/const-pointer EVP_shake128 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-c-lambda/const-pointer EVP_shake256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-c-lambda/const-pointer EVP_keccak256 () EVP_MD* "0") ;; still not available as of 3.0.0-alpha6
+(define-c-lambda/const-pointer EVP_blake2b512 () EVP_MD* "!defined(OPENSSL_NO_BLAKE2)")
+(define-c-lambda/const-pointer EVP_blake2s256 () EVP_MD* "!defined(OPENSSL_NO_BLAKE2)")
+(define-c-lambda/const-pointer EVP_sha3_224 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_sha3_256 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_sha3_384 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_sha3_512 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_shake128 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_shake256 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_keccak256 () EVP_MD* "0") ;; still not available as of 3.0.10
 
 (define-c-lambda EVP_MD_type (EVP_MD*) int)
 (define-c-lambda EVP_MD_pkey_type (EVP_MD*) int)
@@ -561,23 +544,14 @@ static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx) {
 }
 static EVP_PKEY *ffi_EVP_PKEY_new_raw_private_key (int type, ENGINE* e, ___SCMOBJ o)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   return EVP_PKEY_new_raw_private_key(type, e, U8_DATA(o), (size_t)U8_LEN(o));
-#else
-  return NULL;
-#endif
 }
 static EVP_PKEY *ffi_EVP_PKEY_new_raw_public_key (int type, ENGINE* e, ___SCMOBJ o)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   return EVP_PKEY_new_raw_public_key(type, e, U8_DATA(o), (size_t)U8_LEN(o));
-#else
-  return NULL;
-#endif
 }
 static int ffi_EVP_PKEY_get_raw_private_key (EVP_PKEY* pkey, ___SCMOBJ o)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   size_t len;
   if ((void*)o == (void*)___FAL) {
     EVP_PKEY_get_raw_private_key(pkey, NULL, &len);
@@ -587,13 +561,9 @@ static int ffi_EVP_PKEY_get_raw_private_key (EVP_PKEY* pkey, ___SCMOBJ o)
   } else {
     return 0;
   }
-#else
-  return 0;
-#endif
 }
 static int ffi_EVP_PKEY_get_raw_public_key (EVP_PKEY* pkey, ___SCMOBJ o)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   size_t len;
   if ((void*)o == (void*)___FAL) {
     EVP_PKEY_get_raw_public_key(pkey, NULL, &len);
@@ -601,107 +571,45 @@ static int ffi_EVP_PKEY_get_raw_public_key (EVP_PKEY* pkey, ___SCMOBJ o)
   } else {
     return EVP_PKEY_get_raw_public_key(pkey, U8_DATA(o), &len) ? (int)len : 0;
   }
-#else
-  return 0;
-#endif
 }
 static int ffi_EVP_DigestSign(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 {
   size_t siglen = U8_LEN(sig);
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   return EVP_DigestSign(ctx, U8_DATA(sig), &siglen, U8_DATA(tbs), U8_LEN(tbs)) ? siglen : 0;
-#else
-  return 0;
-#endif
 }
 static int ffi_EVP_DigestVerify(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
   return EVP_DigestVerify(ctx, U8_DATA(sig), U8_LEN(sig), U8_DATA(tbs), U8_LEN(tbs));
-#else
-  return 0;
-#endif
 }
 
 static int ffi_EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
  return EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey);
-#else
- return 0;
-#endif
 }
 
 static int ffi_EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)
  return EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey);
-#else
- return 0;
-#endif
 }
-
-#if !(defined FEATURES_OPENSSL_v1_1_1)
-void EVP_MD_CTX_set_pkey_ctx(EVP_MD_CTX *ctx, EVP_PKEY_CTX *pctx) { return; }
-#endif
 
 static int ffi_EVP_PKEY_CTX_set1_pbe_pass(EVP_PKEY_CTX *ctx, ___SCMOBJ pass)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1)
  return EVP_PKEY_CTX_set1_pbe_pass(ctx, U8_DATA(pass), U8_LEN(pass));
-#else
- return 0;
-#endif
 }
 
 static int ffi_EVP_PKEY_CTX_set1_scrypt_salt(EVP_PKEY_CTX *ctx, ___SCMOBJ salt)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1)
  return EVP_PKEY_CTX_set1_scrypt_salt(ctx, U8_DATA(salt), U8_LEN(salt));
-#else
- return 0;
-#endif
-}
-
-static int ffi_EVP_PKEY_CTX_set_scrypt_N(EVP_PKEY_CTX *ctx, int N)
-{
-#if defined(FEATURES_OPENSSL_v1_1_1)
- return EVP_PKEY_CTX_set_scrypt_N(ctx, N);
-#else
- return 0;
-#endif
-}
-
-static int ffi_EVP_PKEY_CTX_set_scrypt_r(EVP_PKEY_CTX *ctx, int r)
-{
-#if defined(FEATURES_OPENSSL_v1_1_1)
- return EVP_PKEY_CTX_set_scrypt_r(ctx, r);
-#else
- return 0;
-#endif
-}
-
-static int ffi_EVP_PKEY_CTX_set_scrypt_p(EVP_PKEY_CTX *ctx, int p)
-{
-#if defined(FEATURES_OPENSSL_v1_1_1)
- return EVP_PKEY_CTX_set_scrypt_p(ctx, p);
-#else
- return 0;
-#endif
 }
 
 static int ffi_EVP_PKEY_derive(EVP_PKEY_CTX *ctx, ___SCMOBJ output)
 {
-#if defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_5_0)
  size_t outlen = U8_LEN(output);
  int r = EVP_PKEY_derive(ctx, U8_DATA(output), &outlen);
  if (r > 0) {
   return (int)outlen;
  }
  return r;
-#else
- return 0;
-#endif
 }
 
 static int ffi_RAND_bytes (___SCMOBJ bytes, int start, int end)
@@ -717,21 +625,7 @@ END-C
 (c-define-type EVP_PKEY_CTX* (pointer EVP_PKEY_CTX (EVP_PKEY_CTX*) "ffi_release_EVP_PKEY_CTX"))
 
 (define-macro (define-consts . cs) `(begin ,@(map (lambda (c) `(define-const ,c)) cs)))
-(define-consts EVP_PKEY_NONE EVP_PKEY_RSA EVP_PKEY_RSA2 EVP_PKEY_DSA EVP_PKEY_DSA1 EVP_PKEY_DSA2 EVP_PKEY_DSA3 EVP_PKEY_DSA4 EVP_PKEY_DH EVP_PKEY_EC EVP_PKEY_HMAC)
-(define-const* EVP_PKEY_DHX "defined(FEATURES_OPENSSL_v1_1)")
-(define-const* EVP_PKEY_CMAC "defined(FEATURES_OPENSSL_v1_1) || defined(FEATURES_LIBRESSL_v3_7_0)")
-(define-const* EVP_PKEY_TLS1_PRF "defined(FEATURES_OPENSSL_v1_1)")
-(define-const* EVP_PKEY_HKDF "defined(FEATURES_OPENSSL_v1_1) || defined(FEATURES_LIBRESSL_v3_7_0)")
-
-(define-const* EVP_PKEY_RSA_PSS "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)")
-(define-const* EVP_PKEY_SM2 "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-const* EVP_PKEY_SCRYPT "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-const* EVP_PKEY_SIPHASH "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-const* EVP_PKEY_POLY1305 "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-const* EVP_PKEY_X25519 "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)")
-(define-const* EVP_PKEY_ED25519 "defined(FEATURES_OPENSSL_v1_1_1) || defined(FEATURES_LIBRESSL_v3_7_0)")
-(define-const* EVP_PKEY_X448 "defined(FEATURES_OPENSSL_v1_1_1)")
-(define-const* EVP_PKEY_ED448 "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-consts EVP_PKEY_NONE EVP_PKEY_RSA EVP_PKEY_RSA2 EVP_PKEY_DSA EVP_PKEY_DSA1 EVP_PKEY_DSA2 EVP_PKEY_DSA3 EVP_PKEY_DSA4 EVP_PKEY_DH EVP_PKEY_EC EVP_PKEY_HMAC EVP_PKEY_DHX EVP_PKEY_CMAC EVP_PKEY_TLS1_PRF EVP_PKEY_HKDF EVP_PKEY_RSA_PSS EVP_PKEY_SM2 EVP_PKEY_SCRYPT EVP_PKEY_SIPHASH EVP_PKEY_POLY1305 EVP_PKEY_X25519 EVP_PKEY_ED25519 EVP_PKEY_X448 EVP_PKEY_ED448)
 
 (define-c-lambda EVP_PKEY_CTX_new (EVP_PKEY* ENGINE*) EVP_PKEY_CTX*)
 (define-c-lambda EVP_PKEY_CTX_new_id (int ENGINE*) EVP_PKEY_CTX*)
@@ -751,9 +645,9 @@ END-C
 (define-c-lambda EVP_PKEY_derive_init (EVP_PKEY_CTX*) int)
 (define-c-lambda EVP_PKEY_CTX_set1_pbe_pass (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_CTX_set1_pbe_pass")
 (define-c-lambda EVP_PKEY_CTX_set1_scrypt_salt (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_CTX_set1_scrypt_salt")
-(define-c-lambda EVP_PKEY_CTX_set_scrypt_N (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_N")
-(define-c-lambda EVP_PKEY_CTX_set_scrypt_r (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_r")
-(define-c-lambda EVP_PKEY_CTX_set_scrypt_p (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_p")
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_N (EVP_PKEY_CTX* int) int)
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_r (EVP_PKEY_CTX* int) int)
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_p (EVP_PKEY_CTX* int) int)
 (define-c-lambda EVP_PKEY_derive (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_derive")
 
 (define-c-lambda EVP_MD_CTX_set_pkey_ctx (EVP_MD_CTX* EVP_PKEY_CTX*) void)

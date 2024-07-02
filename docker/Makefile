@@ -6,11 +6,11 @@ arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
 ifeq ($(BRANCH),)
-BRANCH := "master"
+BRANCH := master
 endif
 
 ifeq ($(REPO),)
-REPO := "mighty-gerbils/gerbil"
+REPO := mighty-gerbils/gerbil
 endif
 
 cores := $(shell nproc)
@@ -59,12 +59,12 @@ amazon_packages := cmake \
 centos_packages := cmake \
 		   git \
 		   leveldb-devel \
-                   libsqlite3x-devel \
-                   libxml2-devel \
-                   libyaml-devel \
-                   lmdb-devel \
-                   openssl-devel \
-                   sqlite-devel
+           libsqlite3x-devel \
+		   libxml2-devel \
+		   libyaml-devel \
+		   lmdb-devel \
+		   openssl-devel \
+	       sqlite-devel
 
 fedora_packages := cmake \
 		   leveldb-devel \
@@ -155,7 +155,7 @@ amazonlinux:
 	--build-arg distro="amazonlinux" \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/amazonlinux:$(arch)-$(BRANCH)
@@ -169,7 +169,7 @@ centos:
 	--build-arg distro="centos" \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/centos:$(arch)-$(BRANCH)
@@ -182,7 +182,7 @@ fedora:
 	--build-arg distro="fedora" \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/fedora:$(arch)-$(BRANCH)
@@ -196,7 +196,7 @@ ubuntu:
 	--build-arg distro="ubuntu" \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
@@ -210,35 +210,37 @@ debian:
 	--build-arg distro="debian" \
 	--build-arg packages="$(debian_packages)" \
 	--build-arg repo="$(REPO)" \
-	--build-arg shared="yes" \
+	--build-arg shared="no" \
 	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
+	docker tag final gerbil/debian:$(arch)-$(BRANCH)
 
 ubuntu-current-jedi:
 	docker build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi
 	docker tag ubuntu-current-jedi gerbil/jedi:ubuntu
 
 package-ubuntu:
-	docker run -v $(PWD):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "gem install fpm && \
-	fpm -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
+	fpm -f -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
+	-d libsqlite3-dev -d libssl-dev \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-tgz:
-	docker run -v $(PWD):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "tar -czvf /src/gerbil-$(BRANCH).$(arch).tgz /opt/gerbil"
 
 package-fedora:
-	docker run -v $(PWD):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
-	fpm -s dir -p /src/ -t rpm \
+	fpm -f -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
+        -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
-	docker run -v $(PWD):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
+	docker run -v $(ROOT_DIR):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
 	bash -c "amazon-linux-extras install -y ruby2.6 && \
 	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \

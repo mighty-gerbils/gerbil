@@ -226,8 +226,8 @@ namespace: #f
             metaclass))
          (system? (agetq system: properties))
          (opaque?
-          (or (not all-slots-equalable?)
-              (and type-super (type-opaque? type-super))))
+          (and (not (or transparent? (agetq equal: properties)))
+               (or (not type-super) (type-opaque? type-super))))
          (type-flags
           (##fxior type-flag-id type-flag-concrete
                    (if final? 0 type-flag-extensible)
@@ -1118,7 +1118,7 @@ namespace: #f
 
 ;;; custom writers
 (def (write-style we)
-  (macro-writeenv-style we))
+  (values (macro-writeenv-style we)))
 
 (def (write-object we obj)
   (cond

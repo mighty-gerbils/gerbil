@@ -291,5 +291,42 @@ module.exports = {
       },
     ],
   },
+  markdown: {
+      slugify: function(str) {
+          if (!/^[a-zA-Z][\-0-9a-zA-Z]$/.test(str) // not basic dash + alphanum
+              || /^-/.test(str) // or starts with dash
+              || /-$/.test(str) // or ends with dash
+              || /--/.test(str) // or has multiple dashes in a row
+             ) {
+              return str
+                  .replace(/^\-\-+/g, 'dashes-')
+                  .replace(/\-\-+$/g, '-dashes')
+                  .replace(/\-\-+/g, '-dashes-')
+                  .replace(/^\-/g, 'dash-')
+                  .replace(/\-$/g, '-dash')
+                  .replace(/([a-zA-Z0-9])\->([a-zA-Z0-9])/g, '$1-to-$2')
+                  .replace(/([a-zA-Z0-9])<\-([a-zA-Z0-9])/g, '$1-from-$2')
+                  .replace(/\$/g, '-dollar-')
+                  .replace(/\//g, '-slash-')
+                  .replace(/:/g, '-colon-')
+                  .replace(/~/g, '-tilde-')
+                  .replace(/=/g, '-eq-')
+                  .replace(/@/g, '-at-')
+                  .replace(/!/g, '-bang-')
+                  .replace(/\+/g, '-plus-')
+                  .replace(/</g, '-lt-')
+                  .replace(/>/g, '-gt-')
+                  .replace(/\?/g, '-qm-')
+                  .replace(/\*/g, '-star-')
+                  .replace(/\-{2,}/g, '-')
+                  .replace(/^\-+|\-+$/g, '')
+                  .replace(/[^-a-zA-Z0-9]/g, '_')
+                  .replace(/\_{2,}/g, '_')
+                  .replace(/^(\d)/, '_$1')
+                  .toLowerCase();
+          }
+          return str.toLowerCase(); // Good as is
+      }
+  },
   current_version: 'v0.12'
 }

@@ -302,7 +302,7 @@
      ;; Use hash so only one of result: or error: shall be printed
      (def result (processor method params))
      (if notification? (void) (hash ("jsonrpc" jsonrpc) ("id" id) ("result" result)))
-     (catch (e) (return-error (if (json-rpc-error? e) e (internal-error)))))))
+     (catch (e) (return-error (if (json-rpc-error? e) e (internal-error (error-message e))))))))
 
 (def (json-rpc-handler/response res log request-json response-json)
   (let/cc return
