@@ -81,11 +81,25 @@ namespace: gxc
 (def (delete-directory* dir)
   (delete-file-or-directory dir #t))
 
+(def compile-output-dir
+  (let (path-separator "/")
+    (lambda (output)
+      (let* ((output-prefix (current-compile-output-dir))
+             (output-prefix (and output-prefix (path-normalize output-prefix))))
+        (if (and output output-prefix (not (string-prefix? output-prefix output)))
+          (let* ((output-path (path-expand (if (string-prefix? path-separator output)
+                                             (string-append "." output) output)
+                                           output-prefix))
+                 (output-dir (path-directory output-path)))
+            (create-directory* output-dir)
+            output-path)
+          output)))))
+
 (def (compile-module srcpath (opts []))
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
 
-  (let ((outdir      (pgetq output-dir: opts))
+  (let ((outdir      (compile-output-dir (pgetq output-dir: opts)))
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
@@ -117,7 +131,7 @@ namespace: gxc
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
 
-  (let ((outdir      (pgetq output-dir: opts))
+  (let ((outdir      (compile-output-dir (pgetq output-dir: opts)))
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
@@ -205,35 +219,39 @@ namespace: gxc
         (else (reverse! result)))))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gerbil-home      (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
-           (gerbil-libdir    (path-expand "lib" gerbil-home))
+    (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+           (gerbil-libdir (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
-           (deps             (find-runtime-module-deps ctx))
-           (libgerbil-deps   (filter libgerbil-module? deps))
-           (libgerbil-scm    (map find-static-module-file libgerbil-deps))
-           (libgerbil-scm    (fold-libgerbil-runtime-scm gerbil-staticdir libgerbil-scm))
-           (libgerbil-c      (map (cut replace-extension <> ".c") libgerbil-scm))
-           (libgerbil-o      (map (cut replace-extension <> ".o") libgerbil-scm))
-           (src-deps         (filter userlib-module? deps))
-           (src-deps-scm     (map find-static-module-file src-deps))
-           (src-deps-scm     (filter not-file-empty? src-deps-scm))
-           (src-deps-scm     (map path-expand src-deps-scm))
-           (src-deps-c       (map (cut replace-extension <> ".c") src-deps-scm))
-           (src-deps-o       (map (cut replace-extension <> ".o") src-deps-scm))
-           (src-bin-scm      (find-static-module-file ctx))
-           (src-bin-scm      (path-expand src-bin-scm))
-           (src-bin-c        (replace-extension src-bin-scm ".c"))
-           (src-bin-o        (replace-extension src-bin-scm ".o"))
-           (output-bin       (path-expand output-bin))
-           (output-scm       (path-expand output-scm))
-           (output-c         (replace-extension output-scm ".c"))
-           (output-o         (replace-extension output-scm ".o"))
-           (output_-c        (replace-extension output-scm "_.c"))
-           (output_-o        (replace-extension output-scm "_.o"))
-           (gsc-link-opts    (gsc-link-options))
-           (gsc-cc-opts      (gsc-cc-options static: #t))
-           (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
-           (output-ld-opts   (gcc-ld-options))
+           (deps (find-runtime-module-deps ctx))
+           (libgerbil-deps (filter libgerbil-module? deps))
+           (libgerbil-scm (map find-static-module-file libgerbil-deps))
+           (libgerbil-scm (fold-libgerbil-runtime-scm gerbil-staticdir libgerbil-scm))
+           (libgerbil-c (map (cut replace-extension <> ".c") libgerbil-scm))
+           (libgerbil-o (map (cut replace-extension <> ".o") libgerbil-scm))
+           (src-deps (filter userlib-module? deps))
+           (src-deps-scm (map find-static-module-file src-deps))
+           (src-deps-scm (filter not-file-empty? src-deps-scm))
+           (src-deps-scm (map path-expand src-deps-scm))
+           (src-deps-o (map (cut replace-extension <> ".o") src-deps-scm))
+           (src-deps-o (map compile-output-dir src-deps-o))
+           (src-bin-scm (find-static-module-file ctx))
+           (src-bin-scm (path-expand src-bin-scm))
+           (src-bin-o (replace-extension src-bin-scm ".o"))
+           (src-deps-c (map (lambda (scm-path)
+                              (compile-output-dir
+                               (replace-extension scm-path ".c")))
+                            src-deps-scm))
+           (src-bin-c (replace-extension src-bin-scm ".c"))
+           (output-bin (path-expand output-bin))
+           (output-scm (path-expand output-scm))
+           (output-c (replace-extension output-scm ".c"))
+           (output-o (replace-extension output-scm ".o"))
+           (output_-c (replace-extension output-scm "_.c"))
+           (output_-o (replace-extension output-scm "_.o"))
+           (gsc-link-opts (gsc-link-options))
+           (gsc-cc-opts (gsc-cc-options static: #t))
+           (gsc-static-opts (gsc-static-include-options gerbil-staticdir))
+           (output-ld-opts (gcc-ld-options))
            (libgerbil-ld-opts (get-libgerbil-ld-opts gerbil-libdir))
            (rpath (gerbil-rpath gerbil-libdir))
            (builtin-modules
@@ -242,36 +260,35 @@ namespace: gxc
                      (map (lambda (mod) (symbol->string (expander-context-id mod)))
                           (cons ctx deps))))))
 
-      (def (compile-obj scm-path c-path)
-        (let (o-path (replace-extension c-path ".o"))
-          (let* ((lock (string-append o-path ".lock"))
-                 (locked #f)
-                 (unlock
-                  (lambda ()
-                    (close-port locked)
-                    (delete-file lock))))
-            (let retry ()
-              (if (file-exists? lock)
-                (begin
-                  (thread-sleep! .01)
-                  (retry))
-                (begin
-                  (set! locked
-                    (with-catch false (cut open-file [path: lock create: #t])))
-                  (unless locked
-                    (retry)))))
+      (def (compile-obj scm-path c-path o-path)
+        (let* ((lock (string-append o-path ".lock"))
+               (locked #f)
+               (unlock
+                (lambda ()
+                  (close-port locked)
+                  (delete-file lock))))
+          (let retry ()
+            (if (file-exists? lock)
+              (begin
+                (thread-sleep! .01)
+                (retry))
+              (begin
+                (set! locked
+                  (with-catch false (cut open-file [path: lock create: #t])))
+                (unless locked
+                  (retry)))))
 
-            (unwind-protect
-              (when (or (not (file-exists? o-path))
-                        (not scm-path)
-                        (file-newer? scm-path o-path))
-                (let (gsc-cc-opts (gsc-cc-options static: #f))
-                  (invoke (gerbil-gsc)
-                          ["-obj"
-                           gsc-cc-opts ...
-                           gsc-static-opts ...
-                           c-path])))
-              (unlock)))))
+          (unwind-protect
+            (when (or (not (file-exists? o-path))
+                      (not scm-path)
+                      (file-newer? scm-path o-path))
+              (let (gsc-cc-opts (gsc-cc-options static: #f))
+                (invoke (gerbil-gsc)
+                        ["-obj" "-o" o-path
+                         gsc-cc-opts ...
+                         gsc-static-opts ...
+                         c-path])))
+            (unlock))))
 
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
@@ -286,9 +303,12 @@ namespace: gxc
                          src-deps-scm ...
                          src-bin-scm
                          output-scm])
-                (for-each compile-obj
+                (for-each (lambda (scm-path c-path)
+                            (compile-obj scm-path c-path
+                                         (compile-output-dir
+                                          (replace-extension c-path ".o"))))
                           [src-deps-scm ... src-bin-scm output-scm #f]
-                          [src-deps-c ...   src-bin-c   output-c   output_-c])
+                          [src-deps-c ... src-bin-c output-c output_-c])
                 (invoke (gerbil-gcc)
                         ["-w" "-o" output-bin
                          src-deps-o ...
@@ -307,7 +327,7 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin "__exe.scm")))
-    (compile-stub output-scm output-bin)))
+    (compile-stub (compile-output-dir output-scm) output-bin)))
 
 (def (compile-executable-module/full-program-optimization ctx opts)
   (def (reset-declare)
@@ -435,7 +455,7 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin "__exe.scm")))
-    (compile-stub output-scm output-bin)))
+    (compile-stub (compile-output-dir output-scm) output-bin)))
 
 (def (find-export-binding ctx id)
   (cond
@@ -933,9 +953,15 @@ namespace: gxc
              stdout-redirection: (stdout-redirection #f)
              stderr-redirection: (stderr-redirection #f))
   (verbose "invoke " [program . args])
-  (let* ((proc (open-process [path: program arguments: args
+  (let* ((output-dir (current-compile-output-dir))
+         (env (and output-dir
+                   [(##os-environ) ...
+                    (string-append "GAMBIT_OUTPUT_PREFIX="
+                                   output-dir)]))
+         (proc (open-process [path: program arguments: args
                                     stdout-redirection: stdout-redirection
-                                    stderr-redirection: stderr-redirection]))
+                                    stderr-redirection: stderr-redirection
+                                    environment: env]))
          (output (and (or stdout-redirection stderr-redirection)
                       (read-line proc #f))))
     (let (status (process-status proc))
