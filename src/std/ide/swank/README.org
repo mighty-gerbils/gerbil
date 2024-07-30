@@ -24,7 +24,7 @@ to your init file.
     :hook ((gerbil-mode . slime-mode)))
 
   (defun gerbil-slime-init-function (file encoding)
-    (format "(begin (import (prefix-in :std/swank swank#))
+    (format "(begin (import (prefix-in :std/ide/swank swank#))
     (let ((port (+ 10000 (random-integer 55535))))
       (swank#create-server port: port)
       (with-output-to-file %S (cut write port))))\n\n"
