@@ -85,6 +85,8 @@
 ;;; ensemble-supervisor-id: symbol|#f
 ;;; ;;; ensemble-registry: [optional] list of registry addresses
 ;;; ensemble-registry: (actor-address ...)
+;;; ;;; max-token-length: The request handler parser buffer size
+;;; max-token-length: integer
 ;;;----------------------------------------------------------------
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -281,8 +283,10 @@
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
+	 (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
          (run-httpd
           (lambda ()
+	    (set-httpd-max-token-length! max-token-length)
             (parameterize ((current-http-server-config cfg))
               (let (srv (apply start-http-server!
                           mux: mux
@@ -337,7 +341,7 @@
           (servlets? (: (config-get cfg enable-servlets:) :boolean)))
       (set! self.root root)
       (set! self.cache (make-hash-table-string))
-      (set! self.cache-ttl (: (config-get cfg cache-ttl: 120) :real))
+      (set! self.cache-ttl (: (inexact (config-get cfg cache-ttl: 120)) :real))
       (set! self.cache-max-size (: (config-get cfg cache-max-size: 16384) :fixnum))
       (set! self.handlers (make-hash-table-string))
       (when servlets?
