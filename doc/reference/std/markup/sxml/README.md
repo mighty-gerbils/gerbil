@@ -139,6 +139,12 @@ When set to `xml?` things are different.
 
 ## SXML Queries
 
+SXPath is an XPath-conforming XML query language that internally relies on SXML as a representation of the XML Infoset.
+
+TODO: <https://gitlab.com/wak/wak-sxml-tools/> <&#x2014; there's an XPath->SXPath parser.
+
+It's by Lizorkin who also has a good tutorial [here](https://web.archive.org/web/20070414181503/http://modis.ispras.ru/Lizorkin/sxml-tutorial.html),
+
 
 ### sxpath
 
@@ -148,7 +154,26 @@ When set to `xml?` things are different.
   path := list
 ```
 
-Evaluate an abbreviated SXPath
+Evaluate an abbreviated SXPath. The syntax will follow but assume it's a sexp version of XPath similar to how SXML is a sexp version of XML.
+
+The easy way is to think of SXPath as a list of path components. It's also important to realize that attributes are themselves a node of type `@`.
+
+So `'(html head title)` is like the `"​/​html/​head/​title"` XPath and the `//row[@r​='8']` instead can be said like `(// (row (@ r (equal? "8"))))`
+
+There are a few special path components:
+
+-   **\* :** matches an element node.
+-   **//:** matches any one or many consecutive path components.
+-   **@ :** selects the attribute list node.
+
+If a path component is a list it's one of these forms:
+
+-   **(equal? x):** matches if the node under examination matches x using node-equal?
+-   **(eq? x):** matches if the node under examination matches x using node-eq?
+-   **(<path> n) :: - :** matches the n-th node matching same path component. n starts from 1. Negative numbers start from the end of the node list backward. This is `path[n]` syntax in XPath.
+-   **(<path> (<predicate>&#x2026;)):** matches a path component path and `(sxpath (<predicate>...))` on those nodes are not empty. This is `path[predicate...]` syntax in XPath.
+
+Here's the syntax:
 
 ```
 sxpath:: AbbrPath -> Converter, or
@@ -174,6 +199,8 @@ AbbrPath is a list. It is translated to the full SXPath according to the followi
 (sxpathr number)      -> (node-pos number)
 (sxpathr path-filter) -> (filter (sxpath path-filter))
 ```
+
+The `sxpath1` and `sxpathr` operators are not exported and just there for show.
 
 
 ### sxml-select

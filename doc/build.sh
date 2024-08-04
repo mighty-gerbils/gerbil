@@ -24,6 +24,7 @@ weave ../src/std/markup/sxml/README.org
 weave ../src/std/markup/sxml/xml.org
 weave ../src/std/markup/sxml/html/README.org
 weave ../src/std/markup/sxml/tal/README.org
+weave ./reference/std/instance.org
 
 
 npm install

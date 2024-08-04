@@ -74,6 +74,7 @@ module.exports = {
                       'web',
                       'foreign',
                       'interface',
+                      'instance',
                       'contract',
                       'stdio',
                       'actor',
