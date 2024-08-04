@@ -107,7 +107,7 @@ boilerplate around argument parsing with getopt.
 It creates a getopt parser that parses with options `gopts`, automatically
 including a help option or command accordingly.
 
-It then uses the parser to pare `args`, handling the exceptions and
+It then uses the parser to pair `args`, handling the exceptions and
 displayin help accordingly; if `exit-on-error` is true (the default),
 then parsing errors will exit the program.
 
