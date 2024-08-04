@@ -122,13 +122,13 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
 
     ```scheme
     (make-html-parser start: #f end: #f text: #f
-                      comment: #f decl: #f process: #f
-                      entity: #f entities: *default-entities*
-                      tag-levels: *tag-levels*
-                      unnestables: *unnestables*
-                      bodyless:  (current-html-void-tags)
-                      literals:  (current-html-raw-tags)
-                      terminators: *terminators*)
+                    comment: #f decl: #f process: #f
+                    entity: #f entities: *default-entities*
+                    tag-levels: *tag-levels*
+                    unnestables: *unnestables*
+                    bodyless:  (current-html-void-tags)
+                    literals:  (current-html-raw-tags)
+                    terminators: *terminators*)
     ```
     
     Returns a procedure of two arguments, an initial seed and an optional input port, which parses the HTML document from the port with the callbacks specified by a keyword.
@@ -171,7 +171,7 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
     ```
     decl: name attrs seed
         fhere on declaration data
-        
+    
     process: list seed
         fhere on process-instruction data
     ```

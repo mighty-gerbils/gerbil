@@ -1,0 +1,389 @@
+#+TITLE: The `instance` syntax
+#+EXPORT_FILE_NAME: ./instance.md
+#+OPTIONS: toc:nil
+
+
+* Contents                                                         :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 4 :ignore (this)
+:END:
+:CONTENTS:
+- [[#instance--defmethods-for-interface][Instance :: defmethod's for interface]]
+  - [[#introduction][Introduction]]
+  - [[#the-instance-syntax][The instance Syntax]]
+  - [[#with-an-interface-but-no-object][With an interface but no object]]
+  - [[#using-a-interface-and-an-object][Using a interface and an object]]
+  - [[#no-interface-but-an-object-and-class][No interface, but an object and class.]]
+  - [[#time-to-rebind][Time to rebind:]]
+- [[#footnotes][Footnotes]]
+:END:
+
+
+* Instance
+:PROPERTIES:
+:CUSTOM_ID: instance--defmethods-for-interface
+:END:
+
+When defining many methods on a class, possibly with an interface
+wrapper, a short form is nice to reduce bloat.
+
+::: tip To use the bindings from this module:
+#+begin_src scheme
+  (import :std/instance)
+#+end_src
+:::
+
+** Introduction
+:PROPERTIES:
+:CUSTOM_ID: introduction
+:END:
+
+Gerbil has a strong type system which is close a
+"Meta-language"(=ML=)! That is to say: a functional programming
+language with a polymorphic Hindley–Milner type system.
+
+Let's take a =Monad= typeclass as an example. Here's one in a
+=Gofer=[fn:1] like syntax.
+
+#+begin_src haskell
+  class Monad m where
+    return :: a -> m a
+    bind :: m a -> (a -> m b) -> m b
+#+end_src
+
+Using Gerbil's =interface='s we can do something quite similar. 
+
+#+begin_src scheme
+  (import :std/interface)
+  ;; The comments are just for show.
+  (interface Monad #;(ref:m)
+    (return a) #;| -> m a |
+    (bind m a) #;| -> (a -> m b) -> m b |)
+#+end_src
+
+
+To declare an =instance= of a typeclass also has some syntax.  Here's
+an =ML= instance declaration.
+
+#+begin_src haskell
+  instance Monad Parser where
+    -- return :: a -> Parser a
+    return v = \inp -> [(v,inp)]
+    -- bind :: Parser a -> (a -> Parser b) -> Parser b
+    p ‘bind‘ f = \inp -> concat [f v out | (v,out) <- p inp]
+#+end_src
+
+
+A translation to gerbil uses *Interface Passing Style*.  We'll take a
+struct as the interface object.
+
+#+begin_src scheme
+  (defstruct parser ())
+#+end_src
+
+If using the builtin =defmethod= it's not that far off the functional
+version.
+
+#+begin_src scheme
+  (import :std/srfi/1)
+  ;; return :: a -> Parser a
+  (defmethod {return parser} (lambda (_ v) (lambda (inp) [[v inp ...]])))
+  ;; bind :: Parser a -> (a -> Parser b) -> Parser b
+  (defmethod {bind parser}
+   (lambda (_ p f)
+     (lambda (inp)
+       (append-map (cut match <> ([v . out] ((f v) out)))
+  		  (p inp)))))
+#+end_src
+
+But we can do better. Introducting the =instance= syntax.
+
+#+begin_src scheme
+  (instance Monad parser
+   ;; return :: a -> Parser a
+   ((return v) (lambda (inp) [[v inp ...]]))
+   ;; bind :: Parser a -> (a -> Parser b) -> Parser b
+   ((bind p f)
+    (lambda (inp) (append-map (cut match <> ([v . out] ((f v) out))) (p inp)))))
+  	  
+#+end_src
+
+** The =instance= Syntax
+:PROPERTIES:
+:CUSTOM_ID: the-instance-syntax
+:END:
+
+#+begin_src scheme
+  (instance Interface Klass
+   method-def ...
+   [rebind: <boolean>])
+
+  <Interface>:
+   <symbol> ;; The name of the interface
+   (instance Interface) ;; both <symbol>'s, the name and instance of interface.
+   <boolean> ;; The interface is unused/blank
+
+  <Klass>:
+   <symbol> ;; The name of the class we are defining methods on
+   (self Klass) ;; both <symbol>'s, the name of the class and self thereof.
+
+  <method-def>:
+   ((name . args) body ...) ;; The definition of a method. Note the
+                            ;; object is inferred so not in the lambda list.
+
+  <rebind>:
+   <boolean> ;; Default: #f ; Error if not true and any method already
+  	   ;; been bound.. Otherwise rebind the klass.
+#+end_src
+
+The idea here is simply to reduce typing while putting things in a
+concise container.
+
+** With an =interface= but no object
+:PROPERTIES:
+:CUSTOM_ID: with-an-interface-but-no-object
+:END:
+
+For example let's start with a bigger =Monad=.
+
+We've seen a [[(m)][Monad Interface]].
+
+By default Haskell has one more function that simply "combinds" two
+monadic functions.
+
+#+begin_src haskell
+  class  Monad m  where
+    bind  :: m a -> (a -> m b) -> m b
+    seq   :: m a -> m b -> m b
+    return :: a -> m a
+
+        -- Minimal complete definition:
+        --      (>>=), return
+    m >> k  =  m >>= \_ -> k
+#+end_src
+
+We can add that to our interface:
+
+#+begin_src scheme :noweb-ref monad-interface
+  (interface Monad
+    (return a) #;| -> m a |
+    (bind m a) #;| -> (a -> m b) -> m b |
+    (seq ma mb) #;| m a -> m b -> m b |)
+#+end_src
+
+And make the =:t= class into an identity monad with a minimal complete
+definition. 
+
+#+begin_src scheme :noweb-ref monad-:t
+  (instance (m Monad) :t
+   ((return a) a)
+   ((bind ma f) (f ma))
+   ((seq ma mb) (m.bind ma (lambda _ mb))))
+#+end_src
+
+The =((return a) a)= form expands to:
+
+#+begin_src scheme
+(defmethod {return :t} (lambda (self a) (using (m self : Monad) a)) rebind: #f)
+#+end_src
+
+A binding of =self= is just made up and hygenic as it's not used.
+
+And the =seq= expansion becomes obvious as well. 
+
+#+begin_src scheme
+  (defmethod {seq :t}
+    (lambda (self ma mb) (using (m self : Monad) (m.bind ma (lambda _ mb))))
+    rebind: #f)
+#+end_src
+
+That now means that everyting is an instance of a monad, as the form
+said. We'll just use =#t= as the object which is, after all, also of
+the =:t= class, as is everything.
+
+#+begin_src scheme :noweb-ref test-monad-:t
+  > (using (m #t : Monad) 
+         (let* ((ma (m.return 41))
+  	      (mb (m.return 42)))
+  	 (m.seq ma mb)))
+  42
+#+end_src
+
+
+** Using a =interface= and an =object=
+:PROPERTIES:
+:CUSTOM_ID: using-a-interface-and-an-object
+:END:
+
+We can use interface passing style AND object-orientation together!
+
+For example here's the start of a a parser similar to *Parsec*[fn:2].
+
+#+begin_src scheme :noweb-ref def-Parser
+  (import :std/srfi/1)
+  (interface (Parser Monad) (item))
+
+  (defstruct parser (string))
+
+  (instance (m Parser) (self parser)
+   ((item) (lambda (inp)
+  	   (def (%item i)
+  	     (cond ((number? i) ((m.return (string-ref self.string i)) (1+ i)))
+  		   ((string? i) (if (zero? (string-length i)) []
+  				    (begin (set! self.string i) (%item 0))))))
+  	   (%item inp)))	 
+   ((return v) (lambda (inp) [[v inp ...]]))
+   ((bind p f)
+    (lambda (inp) (append-map (cut match <> ([v . out] ((f v) out))) (p inp)))))
+#+end_src
+
+Because it's a =Monad= that means =seq= is available.
+
+#+begin_src scheme :noweb-ref test-parser-seq
+  > (def foop (parser ""))
+  > ((using (m foop : Parser) 
+  	(let* ((ma (m.return 41))
+  	       (mb (m.item)))
+  	  (m.seq ma mb))) "input")
+  ((#\i . 1))
+  > (parser-string foop)
+  "input"
+#+end_src
+
+
+** No interface, but an object and class.
+:PROPERTIES:
+:CUSTOM_ID: no-interface-but-an-object-and-class
+:END:
+
+In the =item= method for the [[#using-a-interface-and-an-object][Parser/parser]] defined beforhand there's
+an =%item= function that could be abstacted a few ways.
+
+Keeping things dynamic there is no interface.
+
+#+begin_src scheme :noweb-ref define-first-parsable
+  (import :std/ref)
+  (defstruct parsable (inp state))
+
+  (instance
+   #t (pa parsable)
+   ((update-state fn) (set! pa.state (fn pa.state)) pa.state)
+   ((ref (n 0)) (ref pa.inp n)))
+#+end_src
+
+So we can, dynamically, use and update and reference using the state. In
+this case we'll make the =state= just the offset to peek and/or read.
+
+#+begin_src scheme :noweb-ref test-first-parsable
+  > (def pstr (parsable "string" 0))
+  > {ref pstr}
+  #\s
+  > (using (pstr :- parsable) {pstr.ref pstr.state})
+  #\s
+  > (using (pstr :- parsable) {pstr.update-state 1+})
+  > (using (pstr :- parsable) {pstr.ref pstr.state})
+  #\t
+#+end_src
+
+
+** Time to =rebind:=
+:PROPERTIES:
+:CUSTOM_ID: time-to-rebind
+:END:
+
+Now that we've changed the way our parser does the state we should
+change the [[#using-a-interface-and-an-object][Parser/parser]] itself.
+
+#+begin_src scheme :noweb-ref redef-parser
+  (defstruct parser ())
+  (instance (m Parser) (self parser)
+   ((item) (lambda (inp)
+  	   (using (inp :- parsable)
+  	     (let (i {inp.ref inp.state})
+  	       {inp.update-state 1+}
+  	       ((m.return i) inp)))))
+   ((return v) (lambda (inp) [[v inp ...]]))
+   ((bind p f)
+    (lambda (inp) (append-map (cut match <> ([v . out] ((f v) out))) (p inp))))
+   rebind: #t)
+#+end_src
+
+
+#+begin_src scheme :noweb-ref redef-testing
+  > (def inpp (parsable "foobar" 0))
+  > (caar ((using (p (parser) : Parser) (p.item)) inpp))
+  #\f
+  > (parsable-state inpp)
+  1
+#+end_src
+
+* The Test File                                                :noexport:
+:PROPERTIES:
+:CUSTOM_ID: the-test-file
+:END:
+
+#+begin_src scheme :noweb yes :tangle ../../../src/std/instance-test.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/instance unit-tests
+
+  (import :std/test
+          :std/error
+         ; :std/instance
+         "instance"
+          (only-in :std/sugar hash try)
+          (only-in :gerbil/core error-object? with-catch))
+  (export instance-test)
+
+  (defsyntax (test-inline stx)
+    (syntax-case stx (>)
+      ((_ test-case: name rest ...)
+       #'(test-case name (test-inline rest ...)))
+      ((_ > form > rest ...)
+       #'(begin (displayln "... " 'form) form (test-inline > rest ...)))
+      ((_ > test result rest ...)
+       #'(begin (check test => 'result) (test-inline rest ...)))
+      ((_) #!void)))
+         
+
+  <<monad-interface>>
+  <<monad-:t>>
+
+  <<def-Parser>>
+  <<define-first-parsable>>
+
+
+  (def instance-test
+    (test-suite "Test :std/instance"
+      (test-inline
+       test-case: "Test Monad for :t"
+       <<test-monad-:t>>)
+      (test-inline
+       test-case: "Test interface and object seq parsec"
+       <<test-parser-seq>>)
+      (test-inline
+       test-case: "Test First Parsable"
+       <<test-first-parsable>>)
+      (test-inline
+       test-case: "Test rebind and redef"
+       > (begin 
+  	 <<redef-parser>>)
+       <<redef-testing>>
+       > #t #t)))
+        
+  		  
+
+       
+
+
+
+
+#+end_src
+
+* Footnotes
+:PROPERTIES:
+:CUSTOM_ID: footnotes
+:END:
+[fn:2] https://en.wikipedia.org/wiki/Parsec_(parser) 
+
+[fn:1] https://en.wikipedia.org/wiki/Gofer_(programming_language) 
