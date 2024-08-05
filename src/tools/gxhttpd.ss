@@ -283,7 +283,7 @@
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
-	 (max-token-length (config-get cfg max-token-length: 1024))
+         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
          (run-httpd
           (lambda ()
 	    (set-httpd-max-token-length! max-token-length)
