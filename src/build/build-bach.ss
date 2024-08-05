@@ -12,9 +12,6 @@
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" default-gerbil-gsc))
 
-(def (gerbil-gcc)
-  (getenv "GERBIL_GCC" "gcc"))
-
 (def gerbil-bindir
   (path-expand "bin" build-home))
 (def gerbil-libdir
