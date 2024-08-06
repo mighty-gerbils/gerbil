@@ -16,6 +16,7 @@
 (defclass (SourceFilePos Source File Pos) ())
 (defclass (SourceFileSpan Source File Span) ())
 (defclass (SourceFileString SourceString File) ())
+(defclass (SourceModuleString SourceString) ((module : :symbol)))
 
 ;; uniquely identifiable entities
 (defclass (Entity Serializable)
