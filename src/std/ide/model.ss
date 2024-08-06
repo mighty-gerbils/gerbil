@@ -13,10 +13,11 @@
 (defclass (File Serializable) ((path : :string)))
 (defclass (Pos Serializable) ((line : :fixnum) (col : :fixnum)))
 (defclass (Span Serializable) ((start : Pos) (end : Pos)))
-(defclass (ModuleRef Serializable) ((module : :symbol)))
+
 (defclass (SourceFilePos Source File Pos) ())
 (defclass (SourceFileSpan Source File Span) ())
 (defclass (SourceFileString SourceString File) ())
+(defclass (ModuleRef Serializable) ((module : :symbol)))
 (defclass (SourceModuleString SourceString ModuleRef) ())
 (defclass (SourceFileModuleString SourceModuleString File) ())
 
@@ -90,13 +91,16 @@
 (declare-serializable
  Serializable
  Source
+ SourceString
  File
  Pos
  Span
- SourceString
  SourceFilePos
  SourceFileSpan
  SourceFileString
+ ModuleRef
+ SourceModuleString
+ SourceFileModuleString
  Entity
  Type
  Identifier

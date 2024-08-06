@@ -41,7 +41,7 @@
   (visit-file (path : :string)) => Result
 
   ;; updates the in-memory reprsentation of a file/module
-  (update-file (data : :string) (edit : SourceFileSpan) (replace : SourceFileSpan)))
+  (edit-file (replace-at : SourceFileSpan) (data : :string) (span : Span) ))
 
 (def (reference-scope? o)
   (or (not o)
