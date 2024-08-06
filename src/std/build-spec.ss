@@ -168,6 +168,8 @@
     "srfi/160/c64"
     "srfi/160/c128"
     "srfi/212"
+    "ide/model"
+    "ide/interface"
     "ide/swank/api"
     "ide/swank/message"
     "ide/swank/context"
