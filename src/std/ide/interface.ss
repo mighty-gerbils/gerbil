@@ -38,7 +38,10 @@
 
   ;; visits a file/module
   ;; Returns a parsed representation (SExpr) of the file/module's code
-  (visit (path : :string)) => Result)
+  (visit-file (path : :string)) => Result
+
+  ;; updates the in-memory reprsentation of a file/module
+  (update-file (edit : SourceFileEditSpan)))
 
 (def (reference-scope? o)
   (or (not o)

@@ -19,6 +19,7 @@
 (defclass (SourceFileString SourceString File) ())
 (defclass (SourceModuleString SourceString ModuleRef) ())
 (defclass (SourceFileModuleString SourceModuleString File) ())
+(defclass (SourceFileEditSpan SourceString SourceFileSpan) ())
 
 ;; uniquely identifiable entities
 (defclass (Entity Serializable)
