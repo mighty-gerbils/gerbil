@@ -1,15 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor v18 api
-(import :std/error
-        :std/sugar
-        :std/iter
-        :std/logger
-        :std/os/hostname
-        ./message
+(import ./message
         ./proto
         ./server
         ./ensemble
+        ./ensemble-server
+        ./ensemble-supervisor
         ./cookie
         ./tls
         ./admin
@@ -73,76 +70,9 @@
   (import: ./admin)
   ;; ./ensemble
   (import: ./ensemble)
+  ;; ./ensemble-server
+  (import: ./ensemble-server)
+  ;; ./ensemble-supervisor
+  (import: ./ensemble-supervisor)
   ;; ./path
-  ensemble-base-path
-  ensemble-server-path)
-
-;; call a thunk in the context of an ensemble server
-;; this is the programmatic equivalent of gxensemble run
-(def (call-with-ensemble-server server-id thunk
-                                log-level:   (log-level 'INFO)
-                                log-file:    (log-file #f)
-                                listen:      (listen-addrs [])
-                                announce:    (public-addrs #f)
-                                registry:    (registry-addrs #f)
-                                roles:       (roles [])
-                                tls-context: (tls-context (get-actor-tls-context server-id))
-                                cookie:      (cookie (get-actor-server-cookie))
-                                admin:       (admin (get-admin-pubkey))
-                                auth:        (auth #f))
-  (current-logger-options log-level)
-  (when log-file
-    (let (path
-          (if (equal? log-file "-")
-            (path-expand "log" (ensemble-server-path server-id))
-            (path-expand log-file)))
-      (create-directory* (path-strip-directory path))
-      (start-logger! path)))
-  (let* ((known-servers
-          (cond
-           ((eq? server-id 'registry)
-            (hash-eq))
-           (registry-addrs
-            (hash-eq (registry registry-addrs)))
-           (else
-            (hash-eq (registry (default-registry-addresses))))))
-         (unix-addr [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))])
-         (listen-addrs
-          (cons unix-addr listen-addrs))
-         (public-addrs
-          (or public-addrs
-              listen-addrs)))
-    ;; start the actor server
-    (start-actor-server! identifier: server-id
-                         tls-context: tls-context
-                         cookie: cookie
-                         admin:  admin
-                         auth: auth
-                         addresses: listen-addrs
-                         ensemble: known-servers)
-    ;; start the loader
-    (start-loader!)
-    ;; add the server to the ensemble
-    (unless (eq? server-id 'registry)
-      (ensemble-add-server! server-id public-addrs roles))
-    ;; run it!
-    (try
-     (thunk)
-     (catch (e)
-       (display "*** ERROR " (current-error-port))
-       (display-exception e (current-error-port))))
-    (thread-join! (current-actor-server))
-    ;; clean up unix sockets
-    (for (addr listen-addrs)
-      (match addr
-        ([unix: _ path]
-         (delete-file path))
-        (else (void))))
-    ;; remove the server from the ensemble
-    (unless (eq? server-id 'registry)
-      (remove-from-registry! cookie known-servers server-id))))
-
-(def (remove-from-registry! cookie known-servers server-id)
-  (start-actor-server! cookie: cookie ensemble: known-servers identifier: server-id)
-  (with-catch void (cut ensemble-remove-server! server-id))
-  (stop-actor-server!))
+  (import: ./path))
