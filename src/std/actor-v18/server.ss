@@ -16,6 +16,7 @@
         (only-in :std/logger start-logger!)
         (only-in :std/srfi/1 reverse!)
         ./logger
+        ./path
         ./message
         ./proto
         ./cookie
@@ -107,25 +108,26 @@
   (->> srv (!list-connections #f))
   error: "error retrieving server connections")
 
-;; Default registry addresses: unix /tmp/ensemble/registry
-(def +default-registry-addresses+
-  [[unix: (hostname) "/tmp/ensemble/registry"]])
+(def +default-registry-addresses+ [])
 
-(def (default-registry-addresses)
-  +default-registry-addresses+)
-
-(def (set-default-registry-addresses! addrs)
+(def (set-default-registry-addresses! (addrs : :list))
   (set! +default-registry-addresses+ addrs))
 
+(def (default-registry-addresses)
+  (if (null? +default-registry-addresses+)
+    [(ensemble-server-unix-addr 'registry)]
+    +default-registry-addresses+))
+
 ;; Default known servers: registry at default address
-(def +default-known-servers+
-  (hash-eq (registry (default-registry-addresses))))
+(def +default-known-servers+ [])
+
+(def (set-default-known-servers! (servers : :list))
+  (set! +default-known-servers+ servers))
 
 (def (default-known-servers)
-  +default-known-servers+)
-
-(def (set-default-known-servers! servers)
-  (set! +default-known-servers+ servers))
+  (if (null? +default-known-servers+)
+    (list->hash-table [(cons 'registry (default-registry-addresses))])
+    (list->hash-table +default-known-servers+)))
 
 ;; Default server address cache ttl
 (def +server-address-cache-ttl+ 300) ; 5min

@@ -411,6 +411,8 @@
     "actor-v18/registry"
     "actor-v18/loader"
     "actor-v18/ensemble"
+    "actor-v18/ensemble-server"
+    "actor-v18/ensemble-supervisor"
     "actor-v18/tls"
     "actor-v18/api"
     "actor"
