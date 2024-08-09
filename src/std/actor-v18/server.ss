@@ -29,10 +29,19 @@
   (make-parameter #f))
 
 ;; actor references
-;; - server is the actor-server identifier: a symbol identifying the server in your
-;;   ensemble
+;; - server is the actor-server identifier: a symbol uniquely identifying an
+;;   actor within the domain.
 ;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
-(defmessage reference (server id))
+;; - domain is the ensemble domain; a symbol using / as the subdomain separator
+;;   or false for the default flat domain.
+(defmessage reference (server actor domain)
+  constructor: :init!)
+
+(defmethod {:init! reference}
+  (lambda (self server actor (domain (ensemble-domain)))
+    (set! self.server server)
+    (set! self.actor actor)
+    (set! self.domain domain)))
 
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))
@@ -776,7 +785,8 @@
                      ;; rewrite the envelope and forward
                      (set! msg.source
                        (handle (current-thread)
-                               (reference src-id msg.source)
+                               ;; TODO appropriate domain
+                               (reference src-id msg.source XXX)
                                (actor-capabilities src-id)))
                      (set! msg.dest actor)
                      (thread-send/check actor msg)))
@@ -790,7 +800,7 @@
         (debugf "connected to server ~a at ~a [~a]" srv-id addr dir)
         (hash-update! conns srv-id (cut cons notification <>) [])
         (when cert
-          (let (cap (actor-tls-certificate-cap cert))
+          (let (cap (actor-tls-certificate-capabilities cert))
             (when cap
               (update-capabilities! srv-id cap 'connected))))
         (dispatch-pending-conns! srv-id (!ok notification)))

@@ -58,7 +58,7 @@
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (sock.reader)))
             (writer (open-buffered-writer (sock.writer)))
-            (peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
+            (peer-id (actor-tls-certificate-server-id (TLS-peer-certificate sock))))
         (if peer-id
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in)
           (begin
@@ -148,7 +148,7 @@
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (sock.reader)))
             (writer (open-buffered-writer (sock.writer)))
-            (cert-peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
+            (cert-peer-id (actor-tls-certificate-server-id (TLS-peer-certificate sock))))
         (if (eq? peer-id cert-peer-id)
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
           (begin

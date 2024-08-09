@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble supervisors
-(import ./message
+(import ./path
+        ./message
         ./proto)
 (export #t)
