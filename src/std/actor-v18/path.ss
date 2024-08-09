@@ -9,17 +9,26 @@
   (make-parameter #f))
 
 (def (ensemble-base-path)
-  (let (base (path-expand "ensemble" (gerbil-path)))
-    (cond
-     ((ensemble-domain)
-      => (lambda (domain)
-           (path-expand (symbol->string domain) base)))
-     (else base))))
+  (path-expand "ensemble" (gerbil-path)))
+
+(def (ensemble-domain-path)
+  (let ((base (ensemble-base-path))
+        (ensemble-domain (ensemble-domain)))
+    (if ensemble-domain
+      (let (domain-path
+            (filter (? (not string-empty?))
+                    (string-split (symbol->string ensemble-domain) #\/)))
+        (let loop ((rest domain-path) (path base))
+          (match rest
+            ([dom . rest]
+             (loop rest (path-expand dom (path-expand "+" path))))
+            (else path))))
+      base)))
 
 (def (ensemble-server-path server-id)
   (path-expand (symbol->string server-id)
                (path-expand "server"
-                            (ensemble-base-path))))
+                            (ensemble-domain-path))))
 
 (def (ensemble-server-unix-path server-id)
   (let (base

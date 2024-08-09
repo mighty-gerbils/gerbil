@@ -13,9 +13,11 @@
         ensemble-tls-server-path
         ensemble-tls-cafile
         get-actor-tls-context
-        actor-tls-certificate-id
-        actor-tls-certificate-cap
+        actor-tls-certificate-server-id
+        actor-tls-certificate-ensemble-domain
+        actor-tls-certificate-capabilities
         actor-tls-host
+        actor-tls-domain
         generate-actor-tls-root-ca!
         generate-actor-tls-sub-ca!
         generate-actor-tls-cafiles!
@@ -49,26 +51,55 @@
     (and (andmap file-exists? [cafile server-base chain.pem server.key])
          (make-actor-tls-context caroot cafile capath chain.pem server.key))))
 
-(def (actor-tls-certificate-id x509)
-  (let (name (X509_get_subject_name x509))
-    (and name
-         (string->symbol (car (string-split name #\.))))))
+(def (sans-uri-value->symbol pre value)
+  (and (string-prefix? pre value)
+       (string->symbol
+        (substring value (string-length pre) (string-length value)))))
 
-(def (actor-tls-certificate-cap x509)
+(def (actor-tls-certificate-server-id x509)
   (let (san-uris (X509_get_san_uris x509))
-    (and san-uris
-         (filter-map (lambda (x)
-                       (and (string-prefix? "cap:" x)
-                            (string->symbol
-                             (substring x (string-length "cap:") (string-length x)))))
-                     (string-split san-uris #\,)))))
+    (or (and san-uris
+             (ormap (cut sans-uri-value->symbol "srv:" <>)
+                    (string-split san-uris #\,)))
+        (let (name (X509_get_subject_name x509))
+          (and name
+               (string->symbol (car (string-split name #\.))))))))
 
+(def (actor-tls-certificate-ensemble-domain x509)
+  (alet (san-uris (X509_get_san_uris x509))
+    (ormap (cut sans-uri-value->symbol "dom:" <>)
+           (string-split san-uris #\,))))
+
+(def (actor-tls-certificate-capabilities x509)
+  (alet (san-uris (X509_get_san_uris x509))
+    (filter-map (cut sans-uri-value->symbol "cap:" <>)
+                (string-split san-uris #\,))))
+
+
+(def +tls-domain+ #f)
 (def (actor-tls-domain)
-  (read-file-string (path-expand "domain" (ensemble-tls-base-path))))
+  (cond
+   (+tls-domain+)
+   (else
+    (let (tls-domain (read-file-string (path-expand "domain" (ensemble-tls-base-path))))
+      (set! +tls-domain+ tls-domain)
+      tls-domain))))
 
-(def (actor-tls-host server-id)
-  (let (domain (actor-tls-domain))
-    (string-append (symbol->string server-id) "." domain)))
+(def (actor-tls-host server-id
+                     (~ensemble-domain (ensemble-domain))
+                     (tls-domain (actor-tls-domain)))
+  (let (server-id-str (symbol->string server-id))
+    (if ~ensemble-domain
+      (string-append
+       server-id-str
+       "."
+       (string-join
+        (reverse
+         (filter (? (not string-empty?))
+                 (string-split (symbol->string ~ensemble-domain) #\/)))
+        #\.)
+       "." tls-domain)
+      (string-append server-id-str "." tls-domain))))
 
 (def (generate-actor-tls-root-ca! root-ca-passphrase
                                   domain: (domain "ensemble.local")
@@ -232,6 +263,8 @@
 
 (def (generate-actor-tls-cert! sub-ca-passphrase
                                server-id: server-id
+                               ensemble-domain: (~ensemble-domain (ensemble-domain))
+                               tls-domain: (tls-domain (actor-tls-domain))
                                capabilities: (capabilities [])
                                country-name: (country-name "UN")
                                organization-name: (organization-name "Mighty Gerbils")
@@ -241,13 +274,13 @@
          (root-ca-path (path-expand "root-ca" base-path))
          (sub-ca-path  (path-expand "sub-ca" base-path))
          (sub-ca.conf  (path-expand "sub-ca.conf" sub-ca-path))
-         (server-path  (ensemble-tls-server-path server-id))
+         (server-path  (parameterize ((ensemble-domain ~ensemble-domain))
+                         (ensemble-tls-server-path server-id)))
          (server.conf  (path-expand "server.conf" server-path))
          (server.key   (path-expand "server.key" server-path))
          (server.csr   (path-expand "server.csr" server-path))
          (server.crt   (path-expand "server.crt" server-path))
-         (chain.pem    (path-expand "chain.pem" server-path))
-         (domain       (actor-tls-domain)))
+         (chain.pem    (path-expand "chain.pem" server-path)))
 
     ;; sanity check: must have a sub-ca
     (unless (file-exists? sub-ca-path)
@@ -260,15 +293,20 @@
     (displayln "... generate " server.conf)
     (call-with-output-file server.conf
       (cut write-template server.conf-template <>
-           server-id: server-id
+           server:
+           (string-append "URI.0 = srv:" (symbol->string server-id) "\n")
+           ensemble-domain:
+           (if ~ensemble-domain
+             (string-append "URI.1 = dom:" (symbol->string ~ensemble-domain) "\n")
+             "")
            capabilities:
            (string-join
             (map (lambda (i x)
                    (string-append "URI." (number->string i) " = cap:" x))
-                 (iota (length capabilities))
+                 (iota (length capabilities) (if ~ensemble-domain 2 1))
                  (map symbol->string capabilities))
             "\n")
-           domain: domain
+           server-host: (actor-tls-host server-id ~ensemble-domain tls-domain)
            country-name: country-name
            organization-name: organization-name
            location: location))
@@ -477,7 +515,7 @@ distinguished_name = dn
 req_extensions = ext
 
 [dn]
-CN = ${server-id}.${domain}
+CN = ${server-host}
 O  = ${organization-name}
 L  = ${location}
 C  = ${country-name}
@@ -486,7 +524,9 @@ C  = ${country-name}
 subjectAltName          = @sans
 
 [sans]
-DNS = ${server-id}.${domain}
+DNS = ${server-host}
+${server}
+${ensemble-domain}
 ${capabilities}
 END
 )
