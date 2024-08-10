@@ -137,7 +137,7 @@
 (def (default-known-servers)
   (if (null? +default-known-servers+)
     (list->hash-table
-     [(cons (cons 'registry (ensemble-domain))
+     [(cons (server-identifier 'registry)
             (default-registry-addresses))])
     (list->hash-table +default-known-servers+)))
 
@@ -225,7 +225,7 @@
   ;; pending registry lookups; server id -> [continuation ...]
   (def pending-lookups (make-hash-table))
   ;; pending lookup timeout nonces
-  (def pending-lookup-nonce (make-hash-table-eqv))
+  (def pending-lookup-nonce (make-hash-table))
   ;; actor table: actor-id [name or numeric identifier] -> actor thread
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
@@ -281,7 +281,10 @@
                (get-server-addrs-from-registry srv-id cont))
              (cont (!ok (cdr entry))))))
      ((equal? registry@domain srv-id)
-      (cont (!error "no registry server")))
+      (cont
+       ;;(!error "no registry server")
+       (!error (string-append "no registry server -- " (object->string (hash->list server-addrs))))
+       ))
      (else
       (get-server-addrs-from-registry srv-id cont))))
 
@@ -375,7 +378,7 @@
      (for/fold (r []) ([srv-id . notifications] (hash->list conns))
        (cons (cons srv-id (map !connected-addr notifications)) r))
      (lambda (a b)
-       (symbol<? (car a) (car b)))))
+       (symbol<? (caar a) (caar b)))))
 
   (def (send-remote-message! msg srv-id dest-actor-id actor-id)
     (using (msg :- envelope)

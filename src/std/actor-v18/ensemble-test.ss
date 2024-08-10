@@ -12,6 +12,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./registry
         ./cookie
@@ -35,7 +36,7 @@
       (let* ((registry-file-path (make-temporary-file-name "registry-file"))
              (registry-sock      (make-temporary-file-name "registry-sock"))
              (registry-addr      [unix: (hostname) registry-sock])
-             (known-servers      (hash-eq (registry [registry-addr])))
+             (known-servers      (hash ((registry . /) [registry-addr])))
              (addr1-sock         (make-temporary-file-name "echo1"))
              (addr1              [unix: (hostname) addr1-sock])
              (addr2-sock         (make-temporary-file-name "echo2"))
@@ -64,9 +65,9 @@
                                ensemble: known-servers))
 
         (def srv1-id
-          (actor-server-id srv1))
+          (actor-server-identifier srv1))
         (def srv2-id
-          (actor-server-id srv2))
+          (actor-server-identifier srv2))
 
         ;; make sure they are not there yet
         (check-exception (ensemble-lookup-server srv1-id registry-srv)
@@ -110,7 +111,7 @@
         ;; and do some echoing; the servers should connect through a registry lookup
         (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
         (check (list-connections srv2)
-               => [[srv1-id addr1] ['registry registry-addr]])
+               => [[srv1-id addr1] ['(registry . /) registry-addr]])
         (check (->> actor2-proxy-srv1 'world) =>  '(hello . world))
         (check (list-connections srv1)
                => [[srv2-id [unix: (hostname) "(local)"]]])
@@ -139,7 +140,7 @@
       (let* ((registry-file-path (make-temporary-file-name "registry-file"))
              (registry-sock      (make-temporary-file-name "registry-sock"))
              (registry-addr      [unix: (hostname) registry-sock])
-             (known-servers      (hash-eq (registry [registry-addr])))
+             (known-servers      (hash ((registry . /) [registry-addr])))
              (addr1-sock         (make-temporary-file-name "echo1"))
              (addr1              [unix: (hostname) addr1-sock])
              (addr2-sock         (make-temporary-file-name "echo2"))
@@ -168,9 +169,9 @@
                                ensemble: known-servers))
 
         (def srv1-id
-          (actor-server-id srv1))
+          (actor-server-identifier srv1))
         (def srv2-id
-          (actor-server-id srv2))
+          (actor-server-identifier srv2))
 
         ;; add them
         (ensemble-add-server! srv1-id [addr1] '(test) srv1)

@@ -54,7 +54,7 @@
          (member what (error-irritants exn)))))
 
 (def (sort-server-list lst)
-  (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
+  (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
 
 (def (test-ipc srv1-id addr1 srv2-id addr2 (same-cookie? #t))
   (reset-thread!)

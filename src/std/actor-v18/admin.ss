@@ -5,7 +5,8 @@
         :std/crypto
         :std/text/utf8
         :std/misc/ports
-        ./path)
+        ./path
+        ./server-identifier)
 (export default-admin-pubkey-path
         default-admin-privkey-path
         get-admin-pubkey
@@ -89,8 +90,8 @@
         (u8vector-append
          (string->utf8
           (string-append "[gerbil:ensemble:auth:"
-                         (symbol->string server-id) ":"
-                         (symbol->string client-id) "]"))
+                         (server-identifier->string server-id) ":"
+                         (server-identifier->string client-id) "]"))
          challenge-bytes))
     (digest-sign privk challenge)))
 
@@ -99,8 +100,8 @@
         (u8vector-append
          (string->utf8
           (string-append "[gerbil:ensemble:auth:"
-                         (symbol->string server-id) ":"
-                         (symbol->string client-id) "]"))
+                         (server-identifier->string server-id) ":"
+                         (server-identifier->string client-id) "]"))
          challenge-bytes))
     (digest-verify pubk sig challenge)))
 

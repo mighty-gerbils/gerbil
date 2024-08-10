@@ -44,11 +44,11 @@
            (known-servers
             (cond
              ((eq? server-id 'registry)
-              (hash-eq))
+              (hash))
              (registry-addrs
-              (hash-eq (registry registry-addrs)))
+              (hash (`(registry . ,domain) registry-addrs)))
              (else
-              (hash-eq (registry (default-registry-addresses))))))
+              (hash (`(registry . ,domain) (default-registry-addresses))))))
            (unix-addr (ensemble-server-unix-addr server-id))
            (listen-addrs
             (cons unix-addr listen-addrs))
