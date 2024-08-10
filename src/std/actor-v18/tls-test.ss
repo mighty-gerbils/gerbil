@@ -6,6 +6,7 @@
         :std/net/ssl/libssl
         :std/io
         ./tls
+        ./server-identifier
         "test-util")
 (export actor-tls-test
         test-setup!
@@ -16,8 +17,8 @@
 
 (def root-ca-pass "abc")
 (def sub-ca-pass "123")
-(def test-server1-id 'test-server1)
-(def test-server2-id 'test-server2)
+(def test-server1-id '(test-server1 . /))
+(def test-server2-id '(test-server2 . /))
 (def test-server1-cap '(shutdown foo))
 (def test-server2-cap '(shutdown bar))
 
@@ -43,7 +44,7 @@
     (test-case "certificates"
       (def (check-cert server-id cap)
         (let (x509 (X509_read (path-expand "server.crt" (ensemble-tls-server-path server-id))))
-          (check (actor-tls-certificate-id x509) => server-id)
+          (check (actor-tls-certificate-server-id x509) => server-id)
           (check (actor-tls-certificate-cap x509) => cap)))
 
       (check-cert test-server1-id test-server1-cap)
