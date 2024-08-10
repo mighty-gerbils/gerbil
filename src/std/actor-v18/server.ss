@@ -136,7 +136,9 @@
 
 (def (default-known-servers)
   (if (null? +default-known-servers+)
-    (list->hash-table [(cons 'registry (default-registry-addresses))])
+    (list->hash-table
+     [(cons (cons 'registry (ensemble-domain))
+            (default-registry-addresses))])
     (list->hash-table +default-known-servers+)))
 
 ;; Default server address cache ttl
@@ -213,9 +215,8 @@
   (def server-addrs
     (let (server-addrs (make-hash-table))
       (for ([srv-id . addrs] (hash->list known-servers))
-        (let (srv-id (if (symbol? srv-id) (cons srv-id domain) srv-id))
-          ;; user supplied addrs don't expire
-          (hash-put! server-addrs srv-id (cons +inf.0 addrs))))
+        ;; user supplied addrs don't expire
+        (hash-put! server-addrs srv-id (cons +inf.0 addrs)))
       server-addrs))
   ;; server connections:  server identifier -> [!connected ...] notification
   (def conns (make-hash-table))
@@ -646,11 +647,12 @@
                       ;; update our known address mapping
                       (hash-remove! server-addrs srv-id)
                       ;; and our authorization table
-                      (cond
-                       ((hash-get capabilities srv-id)
-                        => (lambda (state)
-                             (when (eq? (car state) 'connected)
-                               (hash-remove! capabilities srv-id)))))
+                      (alet (state (hash-get capabilities srv-id))
+                        (when (eq? (car state) 'connected)
+                          (hash-remove! capabilities srv-id)
+                          ;; restore pre-authorized capabilities, if any
+                          (alet (cap (hash-get auth srv-id))
+                            (hash-put! capabilities srv-id (cons 'preauth cap)))))
                       (hash-remove! pending-admin-auth srv-id)
                       ;; update the registry
                       (send-to-registry! actor-id msg))
