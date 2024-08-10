@@ -11,9 +11,13 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie)
 (export #t)
+
+(def (actor-server-id srv)
+  (car (actor-server-identifier srv)))
 
 (def (reset-nonce!)
   (thread-local-set! 'nonce 0))
