@@ -9,6 +9,7 @@
         :std/os/hostname
         :std/os/temporaries
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie
         ./admin
