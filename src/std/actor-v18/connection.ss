@@ -336,9 +336,9 @@
 (def (digest srv-id cli-id salt cookie)
   (sha256 (u8vector-append salt
                            '#u8(#x3a)
-                           (string->utf8 (symbol->string srv-id))
+                           (string->utf8 (server-identifier->string srv-id))
                            '#u8(#x3a)
-                           (string->utf8 (symbol->string cli-id))
+                           (string->utf8 (server-identifier->string cli-id))
                            '#u8(#x3a)
                            cookie)))
 

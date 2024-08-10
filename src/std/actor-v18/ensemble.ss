@@ -22,19 +22,19 @@
 
 ;; lists the registered actors in a remote server
 (defcall-actor (remote-list-actors srv-id (srv (current-actor-server)))
-  (->> srv (!list-actors srv-id))
+  (->> srv (!list-actors (server-identifier srv-id)))
   error: "error listing actors" srv-id)
 
 ;; ensures there is a connection to a server in the ensemble.
 ;; if the addresses are not specified, it is looked up in the registry.
 ;; Raises an error if the connection fails.
 (defcall-actor (remote-connect-to-server! from-id to-id (addrs #f) (srv (current-actor-server)))
-  (->> srv (!connect from-id to-id addrs))
+  (->> srv (!connect (server-identifier from-id) (server-identifier to-id) addrs))
   error: "error remotely connecting to server" from-id to-id)
 
 ;; list the server connections for a remote server
 (defcall-actor (remote-list-connections srv-id (srv (current-actor-server)))
-  (->> srv (!list-connections srv-id))
+  (->> srv (!list-connections (server-identifier srv-id)))
   error: "error retrieving server connections" srv-id)
 
 ;; loads a library module in a remote server
@@ -88,12 +88,12 @@
 
 ;; adds a server to the ensemble
 (defcall-actor (ensemble-add-server! id addrs roles (srv (current-actor-server)))
-  (->> srv (!ensemble-add-server id addrs roles))
+  (->> srv (!ensemble-add-server (server-identifier id) addrs roles))
   error: "error adding server")
 
 ;; removes a server from the ensemble
 (defcall-actor (ensemble-remove-server! id (srv (current-actor-server)))
-  (->> srv (!ensemble-remove-server id))
+  (->> srv (!ensemble-remove-server (server-identifier id)))
   error: "error removing server")
 
 ;; lists all known servers in the ensemble.
@@ -105,7 +105,7 @@
 ;; looks up a server in the ensemble through the registry
 ;; returns the server addresses: [addr ...]
 (defcall-actor (ensemble-lookup-server id (srv (current-actor-server)))
-  (->> srv (!ensemble-lookup-server id #f))
+  (->> srv (!ensemble-lookup-server (server-identifier id) #f))
   error: "error looking up server" id)
 
 ;; looks up servers in the ensemble registry that fullfill a role.
@@ -119,7 +119,9 @@
 (defcall-actor (admin-authorize privk srv-id authorized-server-id
                                 (srv (current-actor-server))
                                 capabilities: (cap '(admin)))
-  (let (remote-root (handle srv (reference srv-id 0)))
+  (let* ((srv-id (server-identifier srv-id))
+         (authorized-server-id (server-identifier authorized-server-id))
+         (remote-root (handle srv (reference srv-id 0))))
     (unless (and (list? cap) (andmap symbol? cap))
       (raise-bad-argument authorize "capabilities: list of symbols" cap))
     (match (->> remote-root (!admin-auth authorized-server-id cap))

@@ -43,7 +43,7 @@
              (eq? (reference-server (handle-ref actor)) server-id))))
 
   (def (sort-server-list lst)
-    (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
+    (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
   (def flush-ticker
     (spawn/name 'ticker ticker (current-thread)))
 
@@ -111,8 +111,8 @@
     (let (path (path-expand path))
       (create-directory* (path-directory path))
       (set! self.path path)
-      (set! self.servers (make-hash-table-eq))
-      (set! self.roles (make-hash-table-eq))
+      (set! self.servers (make-hash-table))
+      (set! self.roles (make-hash-table))
       (when (file-exists? path)
         (call-with-input-file path
           (lambda (file)
@@ -129,7 +129,7 @@
   (lambda (self id addrs roles)
     ;; is it an update? if so remove first
     (when (hash-key? self.servers id)
-      (registry::__remove-server self id))
+      {self.__remove-server id})
     ;; and now add it
     (hash-put! self.servers id (cons roles addrs))
     (when roles
