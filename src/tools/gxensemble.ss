@@ -480,7 +480,7 @@
 (def (do-list-actors opt)
   (start-actor-server-with-options! opt)
   (display-result-list
-   (map reference-id (remote-list-actors (hash-ref opt 'server-id))))
+   (map reference-actor (remote-list-actors (hash-ref opt 'server-id))))
   (stop-actor-server!))
 
 (def (do-list-servers opt)
