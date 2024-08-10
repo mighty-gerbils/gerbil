@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server
-(import :gerbil/gambit
-        :std/error
+(import :std/error
         :std/sugar
         :std/iter
         :std/io
@@ -22,11 +21,9 @@
         ./cookie
         ./tls
         ./admin
-        ./connection)
+        ./connection
+        ./server-identifier)
 (export #t)
-
-(def current-actor-server
-  (make-parameter #f))
 
 ;; actor references
 ;; - server is the actor-server identifier: a symbol uniquely identifying an
@@ -34,14 +31,22 @@
 ;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
 ;; - domain is the ensemble domain; a symbol using / as the subdomain separator
 ;;   or false for the default flat domain.
-(defmessage reference (server actor domain)
+(defmessage reference (server actor)
   constructor: :init!)
 
 (defmethod {:init! reference}
   (lambda (self server actor (domain (ensemble-domain)))
-    (set! self.server server)
-    (set! self.actor actor)
-    (set! self.domain domain)))
+    (let (server
+          (cond
+           ((pair? server) server)
+           ((symbol? server)
+            (if domain
+              (cons server domain)
+              server))
+           (else
+            (raise-bad-argument reference:::init! "symbol or symbol pair" server))))
+      (set! self.server server)
+      (set! self.actor actor))))
 
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))
@@ -62,7 +67,7 @@
 ;;   Addresses can be:
 ;;   - [unix: hostname  path]: a path for a unix domain socket in a host
 ;;   - [tcp: addr]: an internet address; see :std/net/address
-;;   - TODO: TLS address
+;;   - [tls: addr]: an internet address secured with TLSv1.3 or later.
 ;; - known-servers is the set of known servers.
 ;;   it is a hash table mapping server identifiers to list of addresses.
 ;;   all servers in the ensemble must share the same cookie.
@@ -85,10 +90,6 @@
 (def (stop-actor-server! (srv (current-actor-server)))
   (-> srv (!shutdown))
   (thread-join! srv))
-
-;; returns the actor server's identifier
-(def (actor-server-identifier (srv (current-actor-server)))
-  (thread-specific srv))
 
 ;; registers the current thread as an actor with the actor server
 ;; - name is a symbol; the actor's name in the server
@@ -203,21 +204,23 @@
        (reverse socks)))))
 
 (def (actor-server id known-servers tls-context cookie admin auth socks)
+  (def domain (or (ensemble-domain) '/))
+  (def id@domain (cons id domain))
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
   (def server-addrs
-    (let (server-addrs (make-hash-table-eq))
+    (let (server-addrs (make-hash-table))
       (for ([srv-id . addrs] (hash->list known-servers))
         ;; user supplied addrs don't expire
         (hash-put! server-addrs srv-id (cons +inf.0 addrs)))
       server-addrs))
   ;; server connections:  server identifier -> [!connected ...] notification
-  (def conns (make-hash-table-eq))
+  (def conns (make-hash-table))
   ;; pending outbound conns; server id -> [contiuation ...]
-  (def pending-conns (make-hash-table-eq))
+  (def pending-conns (make-hash-table))
   ;; pending registry lookups; server id -> [continuation ...]
-  (def pending-lookups (make-hash-table-eq))
+  (def pending-lookups (make-hash-table))
   ;; pending lookup timeout nonces
   (def pending-lookup-nonce (make-hash-table-eqv))
   ;; actor table: actor-id [name or numeric identifier] -> actor thread
@@ -227,11 +230,11 @@
   ;; server capability table: server-id -> [delegated|connected|preauth cap ...]
   (def capabilities
     (if auth
-      (list->hash-table-eq (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
-      (make-hash-table-eq)))
+      (list->hash-table (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
+      (make-hash-table)))
   ;; pending administrative server authorization: server-id -> [server-id cap challenge
   (def pending-admin-auth
-    (make-hash-table-eq))
+    (make-hash-table))
   ;; actor listener threads
   (def listeners
     (map (cut spawn/name 'actor-listener actor-listener (current-thread) <>  cookie) socks))
@@ -274,7 +277,7 @@
                (hash-remove! server-addrs srv-id)
                (get-server-addrs-from-registry srv-id cont))
              (cont (!ok (cdr entry))))))
-     ((eq? srv-id 'registry)
+     ((eq? 'registry srv-id)
       (cont (!error "no registry server")))
      (else
       (get-server-addrs-from-registry srv-id cont))))
@@ -332,8 +335,6 @@
 
   (def (connect-to-server! srv-id cont)
     (cond
-     ((not (symbol? srv-id))
-      (cont (!error "bad server identifier")))
      ((hash-get conns srv-id)
       => (lambda (notifications)
            (cont (!ok (car notifications)))))
@@ -464,12 +465,16 @@
     (if (or admin tls-context)
       (lambda (srv-id authorized-server-id)
         (cond
-         ((eq? srv-id authorized-server-id))
+         ((equal? srv-id authorized-server-id))
          ((hash-get capabilities srv-id)
           => (lambda (state) (memq 'admin (cdr state))))
          (else #f)))
       (lambda (srv-id authorized-server-id)
         #t)))
+
+  (def (is-self? other-srv)
+    (or (eq? id other-srv)
+        (equal? id@domain other-srv)))
 
   (def actor-capabilities
     (if (or admin tls-context)
@@ -549,8 +554,8 @@
                 (using ((dest msg.dest :- handle)
                         (dest-ref dest.ref :- reference))
                   (let* ((dest-srv-id dest-ref.server)
-                         (dest-actor-id dest-ref.id))
-                    (if (or (not dest-srv-id) (eq? dest-srv-id id))
+                         (dest-actor-id dest-ref.actor))
+                    (if (or (not dest-srv-id) (is-self? dest-srv-id))
                       ;; local send
                       (cond
                        ((hash-get actors dest-actor-id)
@@ -578,12 +583,12 @@
                         (begin
                           (hash-put! actors name source)
                           (hash-update! actor-threads source (cut cons name <>))
-                          (let (result (!ok (reference id name)))
+                          (let (result (!ok (reference id@domain name)))
                             (send-control-reply! msg result)))))
 
                      ;; actor listing
                      ((!list-actors srv)
-                      (if (or (not srv) (eq? srv id))
+                      (if (or (not srv) (is-self? srv))
                         (let (result (!ok (get-actors)))
                           (send-control-reply! msg result ))
                         ;; remote list
@@ -591,7 +596,7 @@
 
                      ;; connection listing
                      ((!list-connections srv)
-                      (if (or (not srv) (eq? srv id))
+                      (if (or (not srv) (is-self? srv))
                         (let (result (!ok (get-conns)))
                           (send-control-reply! msg result))
                         ;; remote list
@@ -599,9 +604,9 @@
 
                      ;; make a connection
                      ((!connect srv other-srv addrs)
-                      (if (or (not srv) (eq? srv id))
+                      (if (or (not srv) (is-self? srv))
                         (cond
-                         ((eq? id other-srv)
+                         ((is-self? other-srv)
                           ;; don't self connect
                           (let (result (!error "cannot connect to self"))
                             (send-control-reply! msg result)))
@@ -629,7 +634,7 @@
 
                      ;; ensemble control
                      ((!ensemble-add-server srv-id addrs roles)
-                      (unless (eq? srv-id id)
+                      (unless (is-self? srv-id)
                         ;; update our known address mapping
                         (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
                       ;; update the registry
@@ -709,7 +714,7 @@
                                 (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
                                 (update-capabilities! authorized-server-id
                                                       cap
-                                                      (if (eq? src-id authorized-server-id)
+                                                      (if (equal? src-id authorized-server-id)
                                                         'connected
                                                         'delegated))
                                 (send-remote-control-reply! src-id msg (!ok (void))))
@@ -731,20 +736,20 @@
 
                   ((!list-actors srv-id)
                    (send-remote-control-reply! src-id msg
-                                               (if (or (not srv-id) (eq? srv-id id))
+                                               (if (or (not srv-id) (is-self? srv-id))
                                                  (!ok (get-actors))
                                                  (!error "server id mismatch"))))
 
                   ((!list-connections srv-id)
                    (send-remote-control-reply! src-id msg
-                                               (if (or (not srv-id) (eq? srv-id id))
+                                               (if (or (not srv-id) (is-self? srv-id))
                                                  (!ok (get-conns))
                                                  (!error "server id mismatch"))))
 
                   ((!connect from-id to-id addrs)
-                   (if (or (not from-id) (eq? from-id id))
+                   (if (or (not from-id) (is-self? from-id))
                      (cond
-                      ((eq? id to-id)
+                      ((is-self? to-id)
                        ;; don't self connect
                        (let (result (!error "cannot connect to self"))
                          (send-remote-control-reply! src-id msg result)))
@@ -785,8 +790,7 @@
                      ;; rewrite the envelope and forward
                      (set! msg.source
                        (handle (current-thread)
-                               ;; TODO appropriate domain
-                               (reference src-id msg.source XXX)
+                               (reference src-id msg.source)
                                (actor-capabilities src-id)))
                      (set! msg.dest actor)
                      (thread-send/check actor msg)))

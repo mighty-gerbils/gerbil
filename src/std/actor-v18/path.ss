@@ -11,13 +11,12 @@
 (def (ensemble-base-path)
   (path-expand "ensemble" (gerbil-path)))
 
-(def (ensemble-domain-path)
-  (let ((base (ensemble-base-path))
-        (ensemble-domain (ensemble-domain)))
-    (if ensemble-domain
+(def (ensemble-domain-path (domain (ensemble-domain)))
+  (let (base (ensemble-base-path))
+    (if domain
       (let (domain-path
             (filter (? (not string-empty?))
-                    (string-split (symbol->string ensemble-domain) #\/)))
+                    (string-split (symbol->string domain) #\/)))
         (let loop ((rest domain-path) (path base))
           (match rest
             ([dom . rest]
@@ -25,10 +24,12 @@
             (else path))))
       base)))
 
-(def (ensemble-server-path server-id)
-  (path-expand (symbol->string server-id)
-               (path-expand "server"
-                            (ensemble-domain-path))))
+(def (ensemble-server-path server-id (domain (ensemble-domain)))
+  (if (pair? server-id)
+    (ensemble-server-path (car server-id) (cdr server-id))
+    (path-expand (symbol->string server-id)
+                 (path-expand "server"
+                              (ensemble-domain-path domain)))))
 
 (def (ensemble-server-unix-path server-id)
   (let (base

@@ -6,6 +6,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./admin)
 (export #t)
 

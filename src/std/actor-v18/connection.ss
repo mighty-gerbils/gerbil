@@ -16,7 +16,8 @@
         ./message
         ./proto
         ./io
-        ./tls)
+        ./tls
+        ./server-identifier)
 (export #t)
 
 (def version-magic 18)
@@ -77,7 +78,7 @@
                 (reader (open-buffered-reader reader))
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
-                (srv-id (thread-specific srv)))
+                (srv-id (actor-server-identifier srv)))
            (using ((reader :- BufferedReader)
                    (writer :- BufferedWriter))
                ;; set handshake timeouts
@@ -94,7 +95,9 @@
                   (cond
                    ((not peer-id)
                     (fail! "bad hello; no server id"))
-                   ((eq? srv-id peer-id)
+                   ((not (pair? peer-id))
+                    (fail! "bad hello; peer-id is not fully qualified"))
+                   ((equal? srv-id peer-id)
                     (fail! "bad hello; client claims to be our server"))
                    (else
                     (let (salt (random-bytes (u8vector-length cookie)))
@@ -146,10 +149,18 @@
   (using (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
-      (let ((reader (open-buffered-reader (sock.reader)))
-            (writer (open-buffered-writer (sock.writer)))
-            (cert-peer-id (actor-tls-certificate-server-id (TLS-peer-certificate sock))))
-        (if (eq? peer-id cert-peer-id)
+      (let* ((reader (open-buffered-reader (sock.reader)))
+             (writer (open-buffered-writer (sock.writer)))
+             (cert   (TLS-peer-certificate sock))
+             (cert-peer-id (actor-tls-certificate-server-id cert)))
+        (if (and (equal? peer-id cert-peer-id)
+                 ;; Also check that it is in the same tls domain -- this is the
+                 ;; application security barrier.
+                 ;; Note: we want to relax this in the future,
+                 ;; but this measure is to stop bugs from leaking across domains
+                 ;; and we'd like to have a solid policy in place.
+                 (equal? (actor-tls-certificate-host cert)
+                         (actor-tls-host peer-id)))
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
           (begin
             (warnf "peer id mismatch for TLS authenticated peer ~a" (peer-address sock))
@@ -168,7 +179,7 @@
                 (reader (open-buffered-reader reader))
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
-                (srv-id (thread-specific srv)))
+                (srv-id (actor-server-identifier srv)))
            (using ((reader :- BufferedReader)
                    (writer :- BufferedWriter))
                ;; set handshake timeouts
@@ -185,9 +196,11 @@
                   (cond
                    ((not remote-id)
                     (fail! "bad challenge; no server id"))
-                   ((eq? remote-id srv-id)
+                   ((not (pair? remote-id))
+                    (fail! "bad hello; remote-id is not fully qualified"))
+                   ((equal? remote-id srv-id)
                     (fail! "bad challenge; server claims to be our server"))
-                   ((not (eq? remote-id peer-id))
+                   ((not (equal? remote-id peer-id))
                     (fail! "bad challenge; server id mismatch"))
                    (else
                     (let (cli-salt (random-bytes (u8vector-length cookie)))
