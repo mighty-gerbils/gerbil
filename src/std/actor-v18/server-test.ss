@@ -120,14 +120,14 @@
                                admin: #f
                                addresses: [addr1]))
         (def srv1-id
-          (actor-server-identifier srv1))
+          (actor-server-id srv1))
         (def srv2
           (start-actor-server! cookie: cookie
                                admin: #f
                                addresses: []
                                ensemble: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
-          (actor-server-identifier srv2))
+          (actor-server-id srv2))
 
         (def actor1
           (spawn/name 'echo1 echo-actor srv1 (current-thread)))
@@ -171,9 +171,9 @@
         (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
-        (actor-server-identifier srv1))
+        (actor-server-id srv1))
       (def srv2-id
-        (actor-server-identifier srv2))
+        (actor-server-id srv2))
 
       (check-exception (connect-to-server! srv2-id #f srv1)
                        (actor-error-with? "no usable addresses"))
@@ -194,9 +194,9 @@
         (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
-        (actor-server-identifier srv1))
+        (actor-server-id srv1))
       (def srv2-id
-        (actor-server-identifier srv2))
+        (actor-server-id srv2))
 
       (check-exception
        (connect-to-server! srv2-id
@@ -222,14 +222,14 @@
                                admin: #f
                                addresses: [addr1]))
         (def srv1-id
-          (actor-server-identifier srv1))
+          (actor-server-id srv1))
 
         (def cookie2 (make-random-cookie))
         (def srv2
           (start-actor-server! cookie: cookie2
                                admin: #f))
         (def srv2-id
-          (actor-server-identifier srv2))
+          (actor-server-id srv2))
 
         (check-exception (connect-to-server! srv1-id [addr1] srv2)
                          (actor-error-with? "incomplete handshake"))
@@ -271,7 +271,7 @@
                              addresses: [remote-addr]
                              admin: pubk))
       (def remote-srv-id
-        (actor-server-identifier remote-srv))
+        (actor-server-id remote-srv))
 
       (def local-srv
         (start-actor-server! cookie: cookie
@@ -283,7 +283,7 @@
                        (actor-error-with? "not authorized"))
 
       ;; now authorize administrative privileges and try again
-      (check (admin-authorize privk remote-srv-id (actor-server-identifier local-srv) local-srv)
+      (check (admin-authorize privk remote-srv-id (actor-server-id local-srv) local-srv)
              => (void))
       (check (remote-stop-server! remote-srv-id local-srv) => (void))
       (check (thread-join! remote-srv) => 'shutdown)

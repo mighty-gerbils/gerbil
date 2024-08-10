@@ -64,9 +64,9 @@
                                ensemble: known-servers))
 
         (def srv1-id
-          (actor-server-identifier srv1))
+          (actor-server-id srv1))
         (def srv2-id
-          (actor-server-identifier srv2))
+          (actor-server-id srv2))
 
         ;; make sure they are not there yet
         (check-exception (ensemble-lookup-server srv1-id registry-srv)
@@ -168,9 +168,9 @@
                                ensemble: known-servers))
 
         (def srv1-id
-          (actor-server-identifier srv1))
+          (actor-server-id srv1))
         (def srv2-id
-          (actor-server-identifier srv2))
+          (actor-server-id srv2))
 
         ;; add them
         (ensemble-add-server! srv1-id [addr1] '(test) srv1)
