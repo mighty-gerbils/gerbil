@@ -12,6 +12,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie
         ./admin
@@ -97,16 +98,16 @@
     (test-case "UNIX IPC"
       (let* ((tmp1 (make-temporary-file-name "actor-server"))
              (tmp2 (make-temporary-file-name "actor-server")))
-        (test-ipc 'test-server1 [unix: (hostname) tmp1]
-                  'test-server2 [unix: (hostname) tmp2])
+        (test-ipc '(test-server1 . /) [unix: (hostname) tmp1]
+                  '(test-server2 . /) [unix: (hostname) tmp2])
         (delete-file tmp1)
         (delete-file tmp2)))
 
     (test-case "TCP IPC"
       (let* ((addr1 (cons localhost4 33333))
              (addr2 (cons localhost4 44444)))
-        (test-ipc 'test-server1 [tcp: addr1]
-                  'test-server2 [tcp: addr2])))
+        (test-ipc '(test-server1 . /) [tcp: addr1]
+                  '(test-server2 . /) [tcp: addr2])))
 
     (test-case "implicit connection"
       (reset-thread!)
@@ -120,14 +121,14 @@
                                admin: #f
                                addresses: [addr1]))
         (def srv1-id
-          (actor-server-id srv1))
+          (actor-server-identifier srv1))
         (def srv2
           (start-actor-server! cookie: cookie
                                admin: #f
                                addresses: []
                                ensemble: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
-          (actor-server-id srv2))
+          (actor-server-identifier srv2))
 
         (def actor1
           (spawn/name 'echo1 echo-actor srv1 (current-thread)))
@@ -171,9 +172,9 @@
         (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
-        (actor-server-id srv1))
+        (actor-server-identifier srv1))
       (def srv2-id
-        (actor-server-id srv2))
+        (actor-server-identifier srv2))
 
       (check-exception (connect-to-server! srv2-id #f srv1)
                        (actor-error-with? "no usable addresses"))
@@ -194,9 +195,9 @@
         (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
-        (actor-server-id srv1))
+        (actor-server-identifier srv1))
       (def srv2-id
-        (actor-server-id srv2))
+        (actor-server-identifier srv2))
 
       (check-exception
        (connect-to-server! srv2-id
@@ -222,14 +223,14 @@
                                admin: #f
                                addresses: [addr1]))
         (def srv1-id
-          (actor-server-id srv1))
+          (actor-server-identifier srv1))
 
         (def cookie2 (make-random-cookie))
         (def srv2
           (start-actor-server! cookie: cookie2
                                admin: #f))
         (def srv2-id
-          (actor-server-id srv2))
+          (actor-server-identifier srv2))
 
         (check-exception (connect-to-server! srv1-id [addr1] srv2)
                          (actor-error-with? "incomplete handshake"))
@@ -271,19 +272,21 @@
                              addresses: [remote-addr]
                              admin: pubk))
       (def remote-srv-id
-        (actor-server-id remote-srv))
+        (actor-server-identifier remote-srv))
 
       (def local-srv
         (start-actor-server! cookie: cookie
                              admin: #f
                              ensemble: (hash (,remote-srv-id [remote-addr]))))
+      (def local-srv-id
+        (actor-server-identifier local-srv))
 
       ;; try to shutdown remote-srv without authorization first; this should fail
       (check-exception (remote-stop-server! remote-srv-id local-srv)
                        (actor-error-with? "not authorized"))
 
       ;; now authorize administrative privileges and try again
-      (check (admin-authorize privk remote-srv-id (actor-server-id local-srv) local-srv)
+      (check (admin-authorize privk remote-srv-id local-srv-id local-srv)
              => (void))
       (check (remote-stop-server! remote-srv-id local-srv) => (void))
       (check (thread-join! remote-srv) => 'shutdown)

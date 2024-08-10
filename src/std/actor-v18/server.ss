@@ -716,7 +716,7 @@
                      => (lambda (state)
                           (with ([authorized-server-id cap bytes] state)
                             (hash-remove! pending-admin-auth src-id)
-                            (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
+                            (if (admin-auth-challenge-verify admin id@domain authorized-server-id bytes sig)
                               (begin
                                 (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
                                 (update-capabilities! authorized-server-id

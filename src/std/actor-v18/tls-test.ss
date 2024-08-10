@@ -5,6 +5,7 @@
         :std/os/temporaries
         :std/net/ssl/libssl
         :std/io
+        :std/logger
         ./tls
         ./server-identifier
         "test-util")
@@ -23,18 +24,22 @@
 (def test-server2-cap '(shutdown bar))
 
 (def (test-setup!)
+  ;; uncomment this if you are debugging test failures
+  ;; (current-logger-options 'VERBOSE)
   (setenv "GERBIL_PATH" gerbil-path)
   (generate-actor-tls-root-ca! root-ca-pass)
   (generate-actor-tls-sub-ca! root-ca-pass sub-ca-pass)
   (generate-actor-tls-cafiles!)
   (generate-actor-tls-cert! sub-ca-pass
-                            server-id: test-server1-id
+                            server-id: (car test-server1-id)
                             capabilities: test-server1-cap)
   (generate-actor-tls-cert! sub-ca-pass
-                            server-id: test-server2-id
+                            server-id: (car test-server2-id)
                             capabilities: test-server2-cap))
 
 (def (test-cleanup!)
+  ;; uncomment this if you uncommented above
+  ;; (current-logger-options 'WARN)
   (when (file-exists? gerbil-path)
     (delete-file-or-directory gerbil-path #t))
   (setenv "GERBIL_PATH"))
@@ -45,7 +50,7 @@
       (def (check-cert server-id cap)
         (let (x509 (X509_read (path-expand "server.crt" (ensemble-tls-server-path server-id))))
           (check (actor-tls-certificate-server-id x509) => server-id)
-          (check (actor-tls-certificate-cap x509) => cap)))
+          (check (actor-tls-certificate-capabilities x509) => cap)))
 
       (check-cert test-server1-id test-server1-cap)
       (check-cert test-server2-id test-server2-cap))

@@ -58,14 +58,11 @@
         (substring value (string-length pre) (string-length value)))))
 
 (def (actor-tls-certificate-server-id x509)
-  (let* ((id (actor-tls-certificate-ensemble-srv x509))
-         (domain (actor-tls-certificate-ensemble-domain x509)))
-    (cons id (or domain '/))))
+  (cons (actor-tls-certificate-ensemble-srv x509)
+        (actor-tls-certificate-ensemble-domain x509)))
 
 (def (actor-tls-certificate-host x509)
-  (let (name (X509_get_subject_name x509))
-          (and name
-               (string->symbol (car (string-split name #\.))))))
+  (X509_get_subject_name x509))
 
 (def (actor-tls-certificate-ensemble-srv x509)
   (let (san-uris (X509_get_san_uris x509))
@@ -78,8 +75,9 @@
 
 (def (actor-tls-certificate-ensemble-domain x509)
   (alet (san-uris (X509_get_san_uris x509))
-    (ormap (cut sans-uri-value->symbol "dom:" <>)
-           (string-split san-uris #\,))))
+    (or (ormap (cut sans-uri-value->symbol "dom:" <>)
+               (string-split san-uris #\,))
+        '/)))
 
 (def (actor-tls-certificate-capabilities x509)
   (alet (san-uris (X509_get_san_uris x509))
@@ -91,7 +89,9 @@
   (cond
    (+tls-domain+)
    (else
-    (let (tls-domain (read-file-string (path-expand "domain" (ensemble-tls-base-path))))
+    (let (tls-domain
+          (call-with-input-file (path-expand "domain" (ensemble-tls-base-path))
+            read-line))
       (set! +tls-domain+ tls-domain)
       tls-domain))))
 
@@ -101,15 +101,14 @@
   (if (pair? server-id)
     (actor-tls-host (car server-id) (cdr server-id) tls-domain)
     (let (server-id-str (symbol->string server-id))
-      (string-append
-       server-id-str
-       "."
-       (string-join
+      (string-join
+       [server-id-str
         (reverse
          (filter (? (not string-empty?))
                  (string-split (symbol->string ~ensemble-domain) #\/)))
-        #\.)
-       "." tls-domain))))
+        ...
+        tls-domain]
+       #\.))))
 
 (def (generate-actor-tls-root-ca! root-ca-passphrase
                                   domain: (domain "ensemble.internal")

@@ -68,12 +68,12 @@
       (make-random-cookie)))
 
   (def srv1
-    (start-actor-server! identifier: srv1-id
+    (start-actor-server! identifier: (car srv1-id)
                          cookie: cookie1
                          admin: #f
                          addresses: [addr1]))
   (def srv2
-    (start-actor-server! identifier: srv2-id
+    (start-actor-server! identifier: (car srv2-id)
                          cookie: cookie2
                          admin: #f
                          addresses: [addr2]))
