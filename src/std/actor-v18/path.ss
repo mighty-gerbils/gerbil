@@ -6,7 +6,7 @@
 
 ;; symbol or #f
 (def ensemble-domain
-  (make-parameter #f))
+  (make-parameter '/))
 
 (def (ensemble-base-path)
   (path-expand "ensemble" (gerbil-path)))

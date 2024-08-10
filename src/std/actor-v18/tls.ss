@@ -101,17 +101,15 @@
   (if (pair? server-id)
     (actor-tls-host (car server-id) (cdr server-id) tls-domain)
     (let (server-id-str (symbol->string server-id))
-      (if ~ensemble-domain
-        (string-append
-         server-id-str
-         "."
-         (string-join
-          (reverse
-           (filter (? (not string-empty?))
-                   (string-split (symbol->string ~ensemble-domain) #\/)))
-          #\.)
-         "." tls-domain)
-        (string-append server-id-str "." tls-domain)))))
+      (string-append
+       server-id-str
+       "."
+       (string-join
+        (reverse
+         (filter (? (not string-empty?))
+                 (string-split (symbol->string ~ensemble-domain) #\/)))
+        #\.)
+       "." tls-domain))))
 
 (def (generate-actor-tls-root-ca! root-ca-passphrase
                                   domain: (domain "ensemble.internal")
@@ -308,14 +306,12 @@
            server:
            (string-append "URI.0 = srv:" (symbol->string server-id) "\n")
            ensemble-domain:
-           (if ~ensemble-domain
-             (string-append "URI.1 = dom:" (symbol->string ~ensemble-domain) "\n")
-             "")
+           (string-append "URI.1 = dom:" (symbol->string ~ensemble-domain) "\n")
            capabilities:
            (string-join
             (map (lambda (i x)
                    (string-append "URI." (number->string i) " = cap:" x))
-                 (iota (length capabilities) (if ~ensemble-domain 2 1))
+                 (iota (length capabilities) 2)
                  (map symbol->string capabilities))
             "\n")
            server-host: (actor-tls-host server-id ~ensemble-domain tls-domain)
