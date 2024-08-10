@@ -159,11 +159,14 @@
                  ;; Note: we want to relax this in the future,
                  ;; but this measure is to stop bugs from leaking across domains
                  ;; and we'd like to have a solid policy in place.
-                 (equal? (actor-tls-certificate-host cert)
-                         (actor-tls-host peer-id)))
+                 (equal? (actor-tls-host peer-id)
+                         (actor-tls-certificate-host cert)))
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
           (begin
-            (warnf "peer id mismatch for TLS authenticated peer ~a" (peer-address sock))
+            (warnf "peer id mismatch for TLS authenticated peer ~a [~a ~a] [~s ~s]"
+                   (peer-address sock)
+                   peer-id cert-peer-id
+                   (actor-tls-host peer-id) (actor-tls-certificate-host cert))
             (with-catch void (cut sock.close))
             'error)))
       ;; no TLS; do cookie authentication handshake
