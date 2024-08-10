@@ -408,6 +408,7 @@
     "actor-v18/proto"
     "actor-v18/connection"
     "actor-v18/server"
+    "actor-v18/server-identifier"
     "actor-v18/registry"
     "actor-v18/loader"
     "actor-v18/ensemble"

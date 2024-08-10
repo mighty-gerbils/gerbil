@@ -8,6 +8,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie
         ./tls
@@ -26,7 +27,7 @@
                                 registry:    (registry-addrs #f)
                                 roles:       (roles [])
                                 domain:      (domain (ensemble-domain))
-                                tls-context: (tls-context (get-actor-tls-context server-id))
+                                tls-context: (maybe-tls-context #f)
                                 cookie:      (cookie (get-actor-server-cookie))
                                 admin:       (admin (get-admin-pubkey))
                                 auth:        (auth #f))
@@ -39,7 +40,8 @@
               (path-expand log-file)))
         (create-directory* (path-strip-directory path))
         (start-logger! path)))
-    (let* ((known-servers
+    (let* ((tls-context (or maybe-tls-context (get-actor-tls-context server-id)))
+           (known-servers
             (cond
              ((eq? server-id 'registry)
               (hash-eq))

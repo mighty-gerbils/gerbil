@@ -16,6 +16,7 @@
         actor-tls-certificate-server-id
         actor-tls-certificate-ensemble-domain
         actor-tls-certificate-capabilities
+        actor-tls-certificate-host
         actor-tls-host
         actor-tls-domain
         generate-actor-tls-root-ca!
@@ -57,6 +58,16 @@
         (substring value (string-length pre) (string-length value)))))
 
 (def (actor-tls-certificate-server-id x509)
+  (let* ((id (actor-tls-certificate-ensemble-srv x509))
+         (domain (actor-tls-certificate-ensemble-domain x509)))
+    (cons id (or domain '/))))
+
+(def (actor-tls-certificate-host x509)
+  (let (name (X509_get_subject_name x509))
+          (and name
+               (string->symbol (car (string-split name #\.))))))
+
+(def (actor-tls-certificate-ensemble-srv x509)
   (let (san-uris (X509_get_san_uris x509))
     (or (and san-uris
              (ormap (cut sans-uri-value->symbol "srv:" <>)
@@ -75,7 +86,6 @@
     (filter-map (cut sans-uri-value->symbol "cap:" <>)
                 (string-split san-uris #\,))))
 
-
 (def +tls-domain+ #f)
 (def (actor-tls-domain)
   (cond
@@ -88,21 +98,23 @@
 (def (actor-tls-host server-id
                      (~ensemble-domain (ensemble-domain))
                      (tls-domain (actor-tls-domain)))
-  (let (server-id-str (symbol->string server-id))
-    (if ~ensemble-domain
-      (string-append
-       server-id-str
-       "."
-       (string-join
-        (reverse
-         (filter (? (not string-empty?))
-                 (string-split (symbol->string ~ensemble-domain) #\/)))
-        #\.)
-       "." tls-domain)
-      (string-append server-id-str "." tls-domain))))
+  (if (pair? server-id)
+    (actor-tls-host (car server-id) (cdr server-id) tls-domain)
+    (let (server-id-str (symbol->string server-id))
+      (if ~ensemble-domain
+        (string-append
+         server-id-str
+         "."
+         (string-join
+          (reverse
+           (filter (? (not string-empty?))
+                   (string-split (symbol->string ~ensemble-domain) #\/)))
+          #\.)
+         "." tls-domain)
+        (string-append server-id-str "." tls-domain)))))
 
 (def (generate-actor-tls-root-ca! root-ca-passphrase
-                                  domain: (domain "ensemble.local")
+                                  domain: (domain "ensemble.internal")
                                   country-name: (country-name "UN")
                                   organization-name: (organization-name "Mighty Gerbils")
                                   common-name: (common-name (string-append organization-name " Root CA")))

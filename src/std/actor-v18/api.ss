@@ -4,6 +4,7 @@
 (import ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./ensemble-server
         ./ensemble-supervisor
@@ -66,6 +67,8 @@
   set-default-registry-addresses!
   server-address-cache-ttl
   set-server-address-cache-ttl!
+  ;; ./server-identifier
+  (import: ./server-identifier)
   ;; ./admin
   (import: ./admin)
   ;; ./ensemble
