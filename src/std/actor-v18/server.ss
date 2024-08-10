@@ -204,16 +204,18 @@
        (reverse socks)))))
 
 (def (actor-server id known-servers tls-context cookie admin auth socks)
-  (def domain (or (ensemble-domain) '/))
+  (def domain (ensemble-domain))
   (def id@domain (cons id domain))
+  (def registry@domain (cons 'registry domain))
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
   (def server-addrs
     (let (server-addrs (make-hash-table))
       (for ([srv-id . addrs] (hash->list known-servers))
-        ;; user supplied addrs don't expire
-        (hash-put! server-addrs srv-id (cons +inf.0 addrs)))
+        (let (srv-id (if (symbol? srv-id) (cons srv-id domain) srv-id))
+          ;; user supplied addrs don't expire
+          (hash-put! server-addrs srv-id (cons +inf.0 addrs))))
       server-addrs))
   ;; server connections:  server identifier -> [!connected ...] notification
   (def conns (make-hash-table))
@@ -230,7 +232,7 @@
   ;; server capability table: server-id -> [delegated|connected|preauth cap ...]
   (def capabilities
     (if auth
-      (list->hash-table (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
+      (list->hash-table (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth))
       (make-hash-table)))
   ;; pending administrative server authorization: server-id -> [server-id cap challenge
   (def pending-admin-auth
@@ -261,7 +263,7 @@
         actor-id))))
 
   (def (update-server-addrs! srv-id addrs ttl)
-    (let (ttl (if (eq? srv-id 'registry)
+    (let (ttl (if (equal? srv-id registry@domain)
                 ;; don't expire the registry!
                 +inf.0
                 ttl))
@@ -277,7 +279,7 @@
                (hash-remove! server-addrs srv-id)
                (get-server-addrs-from-registry srv-id cont))
              (cont (!ok (cdr entry))))))
-     ((eq? 'registry srv-id)
+     ((equal? registry@domain srv-id)
       (cont (!error "no registry server")))
      (else
       (get-server-addrs-from-registry srv-id cont))))
@@ -290,7 +292,7 @@
      (else
       (debugf "looking up server in registry: ~a" srv-id)
       (hash-put! pending-lookups srv-id [cont])
-      (connect-to-server! 'registry
+      (connect-to-server! registry@domain
         (lambda (result)
           (match result
             ((!ok notification)
@@ -404,7 +406,7 @@
           ;; but the registry actor isn't here!!!
           (send-control-reply! msg (!error "no registry actor"))))
         ;; reach out to the registry
-        (send-remote-message! msg 'registry 'registry actor-id))))
+        (send-remote-message! msg registry@domain 'registry actor-id))))
 
   (def (send-remote-control-message! srv-id msg actor-id)
     (using (msg :- envelope)
