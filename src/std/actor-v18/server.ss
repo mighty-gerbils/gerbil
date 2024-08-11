@@ -109,7 +109,7 @@
 ;; if the addresses are not specified, it is looked up in the registry.
 ;; Raises an error if the connection fails.
 (defcall-actor (connect-to-server! id (addrs #f) (srv (current-actor-server)))
-  (->> srv (!connect #f id addrs))
+  (->> srv (!connect #f (server-identifier id) addrs))
   error: "error connecting to server" id)
 
 ;; lists the server connections.
