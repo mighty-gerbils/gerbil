@@ -79,11 +79,12 @@
                           admin:         (admin (get-admin-pubkey))
                           auth:          (auth #f)
                           addresses:     (addrs [])
-                          known-servers: (known-servers (default-known-servers))
-                          supervisor:    (supervisor #f))
+                          known-servers: (known-servers #f)
+                          supervisor:    (supervisor #f)
+                          registry:      (registry #f))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs tls-context))
-         (server (spawn/group 'actor-server actor-server id roles supervisor known-servers tls-context cookie admin auth socks)))
+         (server (spawn/group 'actor-server actor-server id roles supervisor registry known-servers tls-context cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -129,19 +130,6 @@
   (if (null? +default-registry-addresses+)
     [(ensemble-server-unix-addr 'registry)]
     +default-registry-addresses+))
-
-;; Default known servers: registry at default address
-(def +default-known-servers+ [])
-
-(def (set-default-known-servers! (servers : :list))
-  (set! +default-known-servers+ servers))
-
-(def (default-known-servers)
-  (if (null? +default-known-servers+)
-    (list->hash-table
-     [(cons (server-identifier 'registry)
-            (default-registry-addresses))])
-    (list->hash-table +default-known-servers+)))
 
 ;; Default server address cache ttl
 (def +server-address-cache-ttl+ 300) ; 5min
@@ -207,10 +195,9 @@
       (else
        (reverse socks)))))
 
-(def (actor-server id roles supervisor known-servers tls-context cookie admin auth socks)
+(def (actor-server id roles supervisor registry known-servers tls-context cookie admin auth socks)
   (def domain (ensemble-domain))
   (def id@domain (cons id domain))
-  (def registry@domain (cons 'registry domain))
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
@@ -266,7 +253,7 @@
         actor-id))))
 
   (def (update-server-addrs! srv-id addrs ttl)
-    (let (ttl (if (equal? srv-id registry@domain)
+    (let (ttl (if (equal? srv-id registry)
                 ;; don't expire the registry!
                 +inf.0
                 ttl))
@@ -282,7 +269,7 @@
                (hash-remove! server-addrs srv-id)
                (get-server-addrs-from-registry srv-id cont))
              (cont (!ok (cdr entry))))))
-     ((equal? registry@domain srv-id)
+     ((equal? registry srv-id)
       (cont
        ;;(!error "no registry server")
        (!error (string-append "no registry server -- " (object->string (hash->list server-addrs))))
@@ -298,7 +285,7 @@
      (else
       (debugf "looking up server in registry: ~a" srv-id)
       (hash-put! pending-lookups srv-id [cont])
-      (connect-to-server! registry@domain
+      (connect-to-server! registry
         (lambda (result)
           (match result
             ((!ok notification)
@@ -412,7 +399,7 @@
           ;; but the registry actor isn't here!!!
           (send-control-reply! msg (!error "no registry actor"))))
         ;; reach out to the registry
-        (send-remote-message! msg registry@domain 'registry actor-id))))
+        (send-remote-message! msg registry 'registry actor-id))))
 
   (def (send-remote-control-message! srv-id msg actor-id)
     (using (msg :- envelope)
@@ -649,7 +636,7 @@
                         ;; update our known address mapping
                         (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
                       ;; update the registry
-                      (unless (equal? srv-id registry@domain)
+                      (unless (equal? srv-id registry)
                         (send-to-registry! actor-id msg)))
 
                      ((!ensemble-remove-server srv-id)
@@ -664,7 +651,7 @@
                             (hash-put! capabilities srv-id (cons 'preauth cap)))))
                       (hash-remove! pending-admin-auth srv-id)
                       ;; update the registry
-                      (unless (equal? srv-id registry@domain)
+                      (unless (equal? srv-id registry)
                         (send-to-registry! actor-id msg)))
 
                      ((!ensemble-lookup-server srv-id role)

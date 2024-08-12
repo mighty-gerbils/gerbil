@@ -61,8 +61,6 @@
   connect-to-server!
   list-actors
   list-connections
-  default-known-servers
-  set-default-known-servers!
   default-registry-addresses
   set-default-registry-addresses!
   server-address-cache-ttl
