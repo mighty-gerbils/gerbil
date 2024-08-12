@@ -78,10 +78,11 @@
                           admin:       (admin (get-admin-pubkey))
                           auth:        (auth #f)
                           addresses:   (addrs [])
-                          ensemble:    (known-servers (default-known-servers)))
+                          ensemble:    (known-servers (default-known-servers))
+                          supervisor:  (supervisor #f))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs tls-context))
-         (server (spawn/group 'actor-server actor-server id known-servers tls-context cookie admin auth socks)))
+         (server (spawn/group 'actor-server actor-server id supervisor known-servers tls-context cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -205,7 +206,7 @@
       (else
        (reverse socks)))))
 
-(def (actor-server id known-servers tls-context cookie admin auth socks)
+(def (actor-server id supervisor known-servers tls-context cookie admin auth socks)
   (def domain (ensemble-domain))
   (def id@domain (cons id domain))
   (def registry@domain (cons 'registry domain))
@@ -460,6 +461,7 @@
     (if (or admin tls-context)
       (lambda (srv-id)
         (cond
+         ((equal? srv-id supervisor))
          ((hash-get capabilities srv-id)
          => (lambda (state)
               (find (lambda (cap) (memq cap '(admin shutdown))) (cdr state))))
@@ -472,6 +474,7 @@
       (lambda (srv-id authorized-server-id)
         (cond
          ((equal? srv-id authorized-server-id))
+         ((equal? srv-id supervisor))
          ((hash-get capabilities srv-id)
           => (lambda (state) (memq 'admin (cdr state))))
          (else #f)))
@@ -487,6 +490,7 @@
       (lambda (srv-id)
         (cond
          ((hash-get capabilities srv-id) => cdr)
+         ((equal? srv-id supervisor) '(admin))
          (else #f)))
       (lambda (srv-id)
         '(admin))))
