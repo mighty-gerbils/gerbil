@@ -25,13 +25,14 @@
                                 listen:      (listen-addrs [])
                                 announce:    (public-addrs #f)
                                 registry:    (registry-addrs #f)
-                                roles:       (roles [])
-                                domain:      (domain (ensemble-domain))
-                                tls-context: (maybe-tls-context #f)
-                                cookie:      (cookie (get-actor-server-cookie))
-                                admin:       (admin (get-admin-pubkey))
-                                auth:        (auth #f)
-                                supervisor:  (supervisor #f))
+                                roles:         (roles [])
+                                domain:        (domain (ensemble-domain))
+                                tls-context:   (maybe-tls-context #f)
+                                cookie:        (cookie (get-actor-server-cookie))
+                                admin:         (admin (get-admin-pubkey))
+                                auth:          (auth #f)
+                                known-servers: (known-servers #f)
+                                supervisor:    (supervisor #f))
   (current-logger-options log-level)
   (parameterize ((ensemble-domain domain))
     (when log-file
@@ -44,7 +45,8 @@
     (let* ((tls-context (or maybe-tls-context (get-actor-tls-context server-id)))
            (known-servers
             (cond
-             ((eq? server-id 'registry)
+             (known-servers known-servers)
+             ((memq server-id '(registry supervisor))
               (hash))
              (registry-addrs
               (hash (`(registry . ,domain) registry-addrs)))
@@ -63,7 +65,7 @@
                            admin:  admin
                            auth: auth
                            addresses: listen-addrs
-                           ensemble: known-servers
+                           known-servers: known-servers
                            supervisor: supervisor)
       ;; start the loader
       (start-loader!)
@@ -88,6 +90,6 @@
         (remove-from-registry! cookie known-servers server-id)))))
 
 (def (remove-from-registry! cookie known-servers server-id)
-  (start-actor-server! cookie: cookie ensemble: known-servers identifier: server-id)
+  (start-actor-server! cookie: cookie known-servers: known-servers identifier: server-id)
   (with-catch void (cut ensemble-remove-server! server-id))
   (stop-actor-server!))
