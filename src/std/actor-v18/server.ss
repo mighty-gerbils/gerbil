@@ -648,7 +648,8 @@
                         ;; update our known address mapping
                         (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
                       ;; update the registry
-                      (send-to-registry! actor-id msg))
+                      (unless (equal? srv-id registry@domain)
+                        (send-to-registry! actor-id msg)))
 
                      ((!ensemble-remove-server srv-id)
                       ;; update our known address mapping
@@ -662,7 +663,8 @@
                             (hash-put! capabilities srv-id (cons 'preauth cap)))))
                       (hash-remove! pending-admin-auth srv-id)
                       ;; update the registry
-                      (send-to-registry! actor-id msg))
+                      (unless (equal? srv-id registry@domain)
+                        (send-to-registry! actor-id msg)))
 
                      ((!ensemble-lookup-server srv-id role)
                       (send-to-registry! actor-id msg))
