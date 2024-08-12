@@ -962,7 +962,7 @@
     (start-actor-server! identifier: server-id
                          cookie: cookie
                          addresses: listen-addrs
-                         ensemble: known-servers)))
+                         known-servers: known-servers)))
 
 (def +admin-privkey+ #f)
 (def (get-privkey)
