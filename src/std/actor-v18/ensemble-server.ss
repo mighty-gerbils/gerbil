@@ -32,7 +32,7 @@
                                 auth:          (auth #f)
                                 known-servers: (known-servers #f)
                                 supervisor:    (supervisor #f)
-                                registry-id:   (registry #f)
+                                registry:      (registry #f)
                                 registry-addrs: (registry-addrs #f))
   (current-logger-options log-level)
   (parameterize ((ensemble-domain domain))

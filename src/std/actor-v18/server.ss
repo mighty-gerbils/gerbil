@@ -73,15 +73,15 @@
 ;;   all servers in the ensemble must share the same cookie.
 ;; Returns the server thread.
 (def (start-actor-server! identifier:    (id (make-random-identifier))
-                          roles:         (roles [id])
+                          roles:         (roles [])
                           tls-context:   (tls-context (get-actor-tls-context id))
                           cookie:        (cookie (get-actor-server-cookie))
                           admin:         (admin (get-admin-pubkey))
                           auth:          (auth #f)
                           addresses:     (addrs [])
-                          known-servers: (known-servers #f)
-                          supervisor:    (supervisor #f)
-                          registry:      (registry #f))
+                          known-servers: (known-servers (default-known-servers))
+                          registry:      (registry (default-registry-server))
+                          supervisor:    (supervisor #f))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs tls-context))
          (server (spawn/group 'actor-server actor-server id roles supervisor registry known-servers tls-context cookie admin auth socks)))
@@ -130,6 +130,12 @@
   (if (null? +default-registry-addresses+)
     [(ensemble-server-unix-addr 'registry)]
     +default-registry-addresses+))
+
+(def (default-registry-server)
+  (server-identifier 'registry))
+
+(def (default-known-servers)
+  (hash (,(default-registry-server) (default-registry-addresses))))
 
 ;; Default server address cache ttl
 (def +server-address-cache-ttl+ 300) ; 5min
