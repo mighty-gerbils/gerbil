@@ -5,8 +5,7 @@
 (import :gerbil/gambit
         :std/error
         :std/sugar
-        :std/format
-        :std/srfi/19)
+        :std/format)
 (export start-logger!
         current-logger
         current-logger-options
@@ -87,7 +86,7 @@
     (let ((level (object->level level))
           (threshold (object->level threshold)))
       (when (##fx<= level threshold)
-        (let ((now (current-date))
+        (let ((now (##current-time-point))
               (msg (if (null? args) fmt (apply format fmt (map exception->string args)))))
           (thread-send logger (!log-message now level source msg))))))
 
@@ -161,7 +160,7 @@
     (match (thread-receive)
       ((!log-message ts level source msg)
        (fprintf port "~a ~a ~a ~a~n"
-                (date->string ts "~4")
+                ts
                 (level->symbolic level)
                 source msg)
        (force-output port)
