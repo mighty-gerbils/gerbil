@@ -30,7 +30,8 @@
                                 tls-context: (maybe-tls-context #f)
                                 cookie:      (cookie (get-actor-server-cookie))
                                 admin:       (admin (get-admin-pubkey))
-                                auth:        (auth #f))
+                                auth:        (auth #f)
+                                supervisor:  (supervisor #f))
   (current-logger-options log-level)
   (parameterize ((ensemble-domain domain))
     (when log-file
@@ -62,11 +63,12 @@
                            admin:  admin
                            auth: auth
                            addresses: listen-addrs
-                           ensemble: known-servers)
+                           ensemble: known-servers
+                           supervisor: supervisor)
       ;; start the loader
       (start-loader!)
       ;; add the server to the ensemble
-      (unless (eq? server-id 'registry)
+      (unless (or supervisor (memq server-id '(registry supervisor)))
         (ensemble-add-server! server-id public-addrs roles))
       ;; run it!
       (try
@@ -81,8 +83,8 @@
           ([unix: _ path]
            (delete-file path))
           (else (void))))
-      ;; remove the server from the ensemble
-      (unless (eq? server-id 'registry)
+      ;; remove the server from the ensemble if we are not supervised
+      (unless (or supervisor (memq server-id '(registry supervisor)))
         (remove-from-registry! cookie known-servers server-id)))))
 
 (def (remove-from-registry! cookie known-servers server-id)
