@@ -46,7 +46,7 @@
            (known-servers
             (cond
              (known-servers known-servers)
-             ((memq server-id '(registry supervisor))
+             ((or (memq 'registry roles) (memq 'supervisor roles))
               (hash))
              (registry-addrs
               (hash (`(registry . ,domain) registry-addrs)))
@@ -60,6 +60,7 @@
                 listen-addrs)))
       ;; start the actor server
       (start-actor-server! identifier: server-id
+                           roles: roles
                            tls-context: tls-context
                            cookie: cookie
                            admin:  admin
@@ -70,7 +71,7 @@
       ;; start the loader
       (start-loader!)
       ;; add the server to the ensemble
-      (unless (or supervisor (memq server-id '(registry supervisor)))
+      (unless (or supervisor (memq 'registry roles) (memq 'supervisor roles))
         (ensemble-add-server! server-id public-addrs roles))
       ;; run it!
       (try
@@ -86,7 +87,7 @@
            (delete-file path))
           (else (void))))
       ;; remove the server from the ensemble if we are not supervised
-      (unless (or supervisor (memq server-id '(registry supervisor)))
+      (unless (or supervisor (memq 'registry roles) (memq 'supervisor roles))
         (remove-from-registry! cookie known-servers server-id)))))
 
 (def (remove-from-registry! cookie known-servers server-id)
