@@ -73,6 +73,7 @@
 ;;   all servers in the ensemble must share the same cookie.
 ;; Returns the server thread.
 (def (start-actor-server! identifier:    (id (make-random-identifier))
+                          roles:         (roles [id])
                           tls-context:   (tls-context (get-actor-tls-context id))
                           cookie:        (cookie (get-actor-server-cookie))
                           admin:         (admin (get-admin-pubkey))
@@ -82,7 +83,7 @@
                           supervisor:    (supervisor #f))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs tls-context))
-         (server (spawn/group 'actor-server actor-server id supervisor known-servers tls-context cookie admin auth socks)))
+         (server (spawn/group 'actor-server actor-server id roles supervisor known-servers tls-context cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -206,7 +207,7 @@
       (else
        (reverse socks)))))
 
-(def (actor-server id supervisor known-servers tls-context cookie admin auth socks)
+(def (actor-server id roles supervisor known-servers tls-context cookie admin auth socks)
   (def domain (ensemble-domain))
   (def id@domain (cons id domain))
   (def registry@domain (cons 'registry domain))
@@ -399,7 +400,7 @@
 
   (def (send-to-registry! actor-id msg)
     (using (msg :- envelope)
-      (if (eq? id 'registry)
+      (if (memq 'registry roles)
         ;; we are the registry
         (cond
          ((hash-get actors 'registry)
