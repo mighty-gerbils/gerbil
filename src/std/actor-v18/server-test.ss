@@ -126,7 +126,7 @@
           (start-actor-server! cookie: cookie
                                admin: #f
                                addresses: []
-                               ensemble: (hash-eq (,srv1-id [addr1]))))
+                               known-servers: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
           (actor-server-identifier srv2))
 
@@ -277,7 +277,7 @@
       (def local-srv
         (start-actor-server! cookie: cookie
                              admin: #f
-                             ensemble: (hash (,remote-srv-id [remote-addr]))))
+                             known-servers: (hash (,remote-srv-id [remote-addr]))))
       (def local-srv-id
         (actor-server-identifier local-srv))
 

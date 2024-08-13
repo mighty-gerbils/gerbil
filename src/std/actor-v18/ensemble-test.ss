@@ -46,6 +46,7 @@
         (def registry-srv
           (start-actor-server! cookie: cookie
                                identifier: 'registry
+                               roles: '(registry)
                                addresses: [registry-addr]))
         (def registry-actor
           (start-ensemble-registry! registry-file-path registry-srv))
@@ -58,11 +59,11 @@
         (def srv1
           (start-actor-server! cookie: cookie
                                addresses: [addr1]
-                               ensemble: known-servers))
+                               known-servers: known-servers))
         (def srv2
           (start-actor-server! cookie: cookie
                                addresses: [addr2]
-                               ensemble: known-servers))
+                               known-servers: known-servers))
 
         (def srv1-id
           (actor-server-identifier srv1))
@@ -150,6 +151,7 @@
         (def registry-srv
           (start-actor-server! cookie: cookie
                                identifier: 'registry
+                               roles: '(registry)
                                addresses: [registry-addr]))
         (def registry-actor
           (start-ensemble-registry! registry-file-path registry-srv))
@@ -162,11 +164,11 @@
         (def srv1
           (start-actor-server! cookie: cookie
                                addresses: [addr1]
-                               ensemble: known-servers))
+                               known-servers: known-servers))
         (def srv2
           (start-actor-server! cookie: cookie
                                addresses: [addr2]
-                               ensemble: known-servers))
+                               known-servers: known-servers))
 
         (def srv1-id
           (actor-server-identifier srv1))
