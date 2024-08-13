@@ -55,7 +55,8 @@
 (define-entry-point (help (command #f))
   (help: "Print help about available commands"
    getopt: [(optional-argument 'command help: "subcommand for which to display help")])
-  (displayln (display-build-manifest (build-manifest/head)))
+  (display-build-manifest (build-manifest/head))
+  (newline)
   (def gopt (apply getopt (entry-points-getopt-spec)))
   (def program (current-program-string (cdr (current-program))))
   (if command
