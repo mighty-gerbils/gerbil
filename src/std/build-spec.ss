@@ -182,6 +182,14 @@
     "ide/swank/handlers"
     "ide/swank/server"
     "ide/swank"
+    ;; :std/monad
+    "monad/interface"
+    "monad/syntax"
+    "monad/identity"
+    "monad/list"
+    "monad/state"
+    "monad/error"
+    "monad"
     ;; :std/mime
     "mime/struct"
     (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))
