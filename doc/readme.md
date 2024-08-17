@@ -4,7 +4,7 @@ heroImage: /img/gerbil-detailed-consio_OPT.svg
 tagline: A LISP for the 21st Century
 actionText: Get Started →
 actionLink: /guide/
-# footer: XYZ Licensed | Copyright © 2018-present Zyx
+# footer: Apache/LGPL Licensed | Copyright © 2017-present the Mighty Gerbils
 ---
 
 <div class="features">
@@ -28,8 +28,9 @@ actionLink: /guide/
         <h2>Systems Language</h2>
         <ul>
             <li>Tiny Microkernel</li>
-            <li>Optimizing Native Compiler</li>
             <li>Integrated FFI</li>
+            <li>Optimizing Native Compiler</li>
+            <li>Static Binaries</li>
         </ul>
     </div>
     <div class="feature">
