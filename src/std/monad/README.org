@@ -23,56 +23,26 @@ attempt to Monadize Gerbil.
 - [[#fail-ure-is-an-option][Fail-ure IS an option]]
   - [[#the-maybe-test-type][The maybe test type]]
   - [[#fail-and-list-are-natural-friends][Fail and :list are natural friends]]
-- [[#monadpluszeroor][Monad[Plus|Zero|Or]​]]
-- [[#transformers-statet-redo-state-with-others-in-mind][Transformers! stateT Redo state with others in mind.]]
+- [[#monadzeroorplus][MonadZeroOrPlus]]
+- [[#transformers][Transformers]]
+  - [[#a-statet-for-wrapping-state][A stateT for wrapping state]]
   - [[#the-identity-identity-monad][The Identity identity monad]]
   - [[#the-monad-for-statet][The Monad for stateT]]
   - [[#run-it][Run it]]
   - [[#the-state-for-statet][The State for stateT]]
-- [[#first-parser-manual-tranform][First Parser, manual tranform]]
-- [[#hindleymilner-types-and-instances][Hindley–Milner type's and instance's]]
-- [[#the-monad-interface][The Monad interface]]
-- [[#the-identity-singleton][The Identity singleton.]]
-- [[#the-list-singleton][The List singleton]]
-- [[#monadfail-another-monad-interface][MonadFail, another monad interface.]]
-  - [[#empty-list-is-a-failure][Empty List is a failure.]]
-- [[#the-interface-aka-typeclass-monad-definition][The interface AKA typeclass monad definition]]
-- [[#the-type-form-for-a-singleton][The type form for a singleton]]
-- [[#state-and-statet-transformer][State and StateT Transformer]]
-- [[#failure-is-always-an-option-the-maybe-monad][Failure is always an option! The Maybe monad]]
-- [[#the-monaderror-exception-handling][The MonadError: exception handling]]
-- [[#wrapping-with-errort][Wrapping with ErrorT]]
-- [[#next-method-vs-inner][Next Method vs inner]]
-- [[#general-monad-utility-functions][General Monad Utility Functions]]
-- [[#the-monad-module][The Monad module]]
-- [[#gerbil][Gerbil]]
+  - [[#the-zeroorplus-and-fail-transformations][The ZeroOrPlus and Fail transformations]]
+  - [[#how-to-lift-from-inner][How to lift from inner]]
+- [[#monadic-parser-combinators---part-01][Monadic Parser Combinators - Part 0.1]]
+- [[#catchthrow-equals-errorhandler-from-errort][Catch/Throw equals ErrorHandler from errorT]]
+  - [[#transform-state-to-errort][Transform State to errorT]]
 - [[#emacs][Emacs]]
-- [[#append-me][Append me]]
-  - [[#type-class-aka-interface]["Type Class", AKA Interface]]
-  - [[#an-instance-of-an-type-class-is-a-struct-that-has-the-interface-described][An Instance of an "Type Class" is a Struct that has the Interface described.]]
-    - [[#the-identity-monad][The Identity Monad.]]
-- [[#instance-syntax][Instance Syntax]]
-- [[#syntax-test-repl][Syntax test-repl]]
-  - [[#the-standard-testing-library][The Standard Testing Library]]
-    - [[#test-suite][test-suite]]
-    - [[#test-case][test-case]]
-    - [[#check][check]]
-    - [[#checkf][checkf]]
-    - [[#check-eq][check-eq?]]
-    - [[#check-not-eq][check-not-eq?]]
-    - [[#check-eqv][check-eqv?]]
-    - [[#check-not-eqv][check-not-eqv?]]
-    - [[#check-equal][check-equal?]]
-    - [[#check-not-equal][check-not-equal?]]
-    - [[#check-output][check-output]]
-    - [[#check-predicate][check-predicate]]
-    - [[#check-exception][check-exception]]
-  - [[#file-interfacess][File interface.ss]]
-  - [[#file-identityss][File identity.ss]]
-  - [[#file-listss][File list.ss]]
-  - [[#file-statess][File state.ss]]
-  - [[#file-syntaxss][File syntax.ss]]
-  - [[#file-monadss][File ../monad.ss]]
+- [[#file-interfacess][File interface.ss]]
+- [[#file-identityss][File identity.ss]]
+- [[#file-listss][File list.ss]]
+- [[#file-statess][File state.ss]]
+- [[#file-errorss][File error.ss]]
+- [[#file-syntaxss][File syntax.ss]]
+- [[#file-monadss][File ../monad.ss]]
 :END:
 
  
@@ -499,9 +469,9 @@ concepts.
 #+end_src
 
 
-* =Monad[Plus|Zero|Or]=
+* =MonadZeroOrPlus=
 :PROPERTIES:
-:CUSTOM_ID: monadpluszeroor
+:CUSTOM_ID: monadzeroorplus
 :END:
 
 For a list there should be a way to add items. =MonadPlus= is just
@@ -545,6 +515,9 @@ So a =:list= is of those three...
 #+end_src
 
 * Transformers
+:PROPERTIES:
+:CUSTOM_ID: transformers
+:END:
 
 Different transformers may need to tranform one another or some
 such. Beyond that there's =lift=.
@@ -556,7 +529,7 @@ such. Beyond that there's =lift=.
 
 ** A =stateT= for wrapping state
 :PROPERTIES:
-:CUSTOM_ID: transformers-statet-redo-state-with-others-in-mind
+:CUSTOM_ID: a-statet-for-wrapping-state
 :END:
 
 Previously, all the monad instances are separate. What if we want to
@@ -675,6 +648,9 @@ And the =state= procedure.
 #+end_src
 
 ** The =ZeroOrPlus= and =Fail= transformations
+:PROPERTIES:
+:CUSTOM_ID: the-zeroorplus-and-fail-transformations
+:END:
 
 Choices can be a big part of programming.
 
@@ -718,6 +694,9 @@ Choices can be a big part of programming.
 #+end_src
 
 ** How to =lift= from inner
+:PROPERTIES:
+:CUSTOM_ID: how-to-lift-from-inner
+:END:
 
 Just because we're tried to make the =stateT= wrap most monadic
 computations does not mean that we can trivially wrap any monadic
@@ -745,6 +724,9 @@ So we can take a function for the inner monad and lift it up!
 #+end_src
 
 * Monadic Parser Combinators - Part 0.1
+:PROPERTIES:
+:CUSTOM_ID: monadic-parser-combinators---part-01
+:END:
 
 I'm not at all sure how I came across this but after writing my first
 =Org Mode= parser, I found this quote:
@@ -817,6 +799,9 @@ All we really need is a =char​=?= and we could have a parser!
 #+end_src
 
 * Catch/Throw equals =ErrorHandler= from =errorT=
+:PROPERTIES:
+:CUSTOM_ID: catchthrow-equals-errorhandler-from-errort
+:END:
 
 We all know about throwing and catching errors. The =...Handler= is
 there to play nice with =:std/error= of course.
@@ -887,6 +872,9 @@ Testing it makes it clear.
 #+end_src
 
 ** Transform =State= to =errorT=
+:PROPERTIES:
+:CUSTOM_ID: transform-state-to-errort
+:END:
 
 This is after state in the train of thought so is defined here.
 
