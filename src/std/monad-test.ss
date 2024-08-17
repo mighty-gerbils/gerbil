@@ -6,14 +6,13 @@
         :std/error
         :std/interactive
         :srfi/13
-       ; :std/instance
-       "instance"
-       "monad/interface"
-       "monad/identity"
-       "monad/list"
-       "monad/state"
-       "monad/syntax"
-       "monad/error"
+        :std/instance #;"instance"
+        :std/monad/interface #;"monad/interface"
+       :std/monad/identity #;"monad/identity"
+       :std/monad/list #;"monad/list"
+       :std/monad/state #;"monad/state"
+       :std/monad/syntax #;"monad/syntax"
+       :std/monad/error #;"monad/error"
         (only-in :std/sugar hash try)
         (only-in :gerbil/core error-object? with-catch))
 (export monad-test)
