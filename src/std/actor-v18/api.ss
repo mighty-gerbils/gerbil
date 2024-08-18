@@ -6,6 +6,7 @@
         ./server
         ./server-identifier
         ./ensemble
+        ./ensemble-config
         ./ensemble-server
         ./ensemble-supervisor
         ./cookie
@@ -14,14 +15,13 @@
         ./path
         ./loader)
 (export
-  call-with-ensemble-server
   ;; ./message
   actor-error?
   raise-actor-error
-  (struct-out envelope)
+  (struct-out envelope handle reference)
+  reference->handle
   defmessage
   message?
-  make-handle handle? handle-proxy handle-ref
   actor-authorized?
   send-message
   -> ->> --> -->?
@@ -51,8 +51,7 @@
   @unexpected
   @shutdown
   ;; ./server
-  (struct-out reference)
-  reference->handle
+
   current-actor-server
   start-actor-server!
   stop-actor-server!
@@ -65,12 +64,16 @@
   set-default-registry-addresses!
   server-address-cache-ttl
   set-server-address-cache-ttl!
+  ;; ./cookie
+  (import: ./cookie)
   ;; ./server-identifier
   (import: ./server-identifier)
   ;; ./admin
   (import: ./admin)
   ;; ./ensemble
   (import: ./ensemble)
+  ;; ./ensemble-config
+  (import: ./ensemble-config)
   ;; ./ensemble-server
   (import: ./ensemble-server)
   ;; ./ensemble-supervisor

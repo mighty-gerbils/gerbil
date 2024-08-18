@@ -68,7 +68,7 @@
 
   ;; prepare filesystem layout
   (for (dir ["bin" "env" "fs" "blob" "log"])
-    (create-directory dir))
+    (create-directory* dir))
 
   ;; and run the actor loop
   (let/cc exit
@@ -200,6 +200,8 @@
         (-> source (!ok (void))
             replyto: nonce
             expiry: expiry)))
+
+    (infof "filesystem running ...")
 
     (while #t
       (<-

@@ -10,6 +10,10 @@
         ./server-identifier)
 (export #t)
 
+;; message types registry
+(def +message-types+ (make-hash-table-eq))
+(def +message-types-mx+ (make-mutex 'message-types))
+
 ;; actor errors
 (deferror-class ActorError () actor-error?)
 (defraise/context (raise-actor-error where message irritants ...)
@@ -314,9 +318,6 @@
     (raise-bad-argument expiry "real or time" timeo))))
 
 ;; message type registry
-(def +message-types+ (make-hash-table-eq))
-(def +message-types-mx+ (make-mutex 'message-type-registry))
-
 (def (register-message-type! klass)
   (let (klass-id (##type-id klass))
     (unless (interned-symbol? klass-id)

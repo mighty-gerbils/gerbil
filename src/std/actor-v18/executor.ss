@@ -144,6 +144,8 @@
           (filter (lambda (str) (not (string-prefix? pre str))) lst))
 
         (let* ((env-path (if env (path-expand env root/env) (gerbil-path)))
+               (_ (unless (file-exists? env-path)
+                    (create-directory* env-path)))
                ($env-path (string-append "GERBIL_PATH=" env-path))
                (path (or (find-envvar-prefix "PATH=" envvars)
                          (getenv "PATH")))
@@ -263,6 +265,8 @@
               replyto: nonce
               expiry: expiry)))
 
+      (infof "executor running...")
+
       (while #t
         (<-
          ((!executor-exec exe args env envvars)
@@ -314,7 +318,6 @@
          ,(@shutdown
            (infof "executor shutting down ...")
            (shutdown! @source @nonce @expiry @reply-expected?)
-           (-> ticker (!shutdown))
            (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf))))))

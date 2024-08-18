@@ -23,7 +23,7 @@
 
 (def (write-config cfg (output (current-output-port)) pretty: (pretty? #f))
   (if pretty?
-    (for-each (lambda (x) (pretty-print x output) (newline output)) cfg)
+    (for-each (lambda (x) (pretty-print x output)) cfg)
     (for-each (lambda (x) (write x output) (newline output)) cfg)))
 
 (def (read-config (input (current-input-port)))

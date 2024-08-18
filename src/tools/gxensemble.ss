@@ -27,6 +27,7 @@
     global-env-flag
     run-cmd
     registry-cmd
+    supervisor-cmd
     load-cmd
     eval-cmd
     repl-cmd
@@ -41,6 +42,12 @@
 ;;;
 ;;; getopt objects
 ;;;
+(def domain-option
+  (option 'ensemble-domain "-D" "--ensemble-domain"
+          value: string->symbol
+          default: '/
+          help: "specifies the ensemble domain"))
+
 (def logging-option
   (option 'logging "--log"
     value: string->symbol
@@ -91,12 +98,12 @@
 (def server-id-argument
   (argument 'server-id
     help: "the server id"
-    value: string->symbol))
+    value: string->object))
 
 (def server-id-optional-argument
   (optional-argument 'server-id
     help: "the server id"
-    value: string->symbol))
+    value: string->object))
 
 (def actor-id-optional-argument
   (optional-argument 'actor-id
@@ -182,11 +189,17 @@
 
 (def registry-cmd
   (command 'registry
+    domain-option
     logging-option
     logging-file-option
     listen-option
     announce-option
+    server-id-optional-argument
     help: "runs the ensemble registry"))
+
+(def supervisor-cmd
+  (command 'supervisor
+    help: "runs the ensemble supervisor"))
 
 (def load-cmd
   (command 'load
@@ -371,6 +384,7 @@
 (defcommand-table main-commands
   (run              do-run)
   (registry         do-registry)
+  (supervisor       do-supervisor)
   (load             do-load)
   (eval             do-eval)
   (repl             do-repl)
@@ -836,12 +850,11 @@
          (remote-load-code server-id object-file)))
       (stop-actor-server!))))
 
-(extern namespace: #f find-library-module)
-
 (def (find-object-file ctx-or-id)
   (if (module-context? ctx-or-id)
     (find-object-file (expander-context-id ctx-or-id))
-    (find-library-module (string-append (module-id->string ctx-or-id) "__0"))))
+    ;;(find-library-module (string-append (module-id->string ctx-or-id) "__0"))
+    (error "FIXME")))
 
 (def (module-id->string module-id)
   (let (mod-str (symbol->string module-id))
@@ -895,15 +908,28 @@
               (values object-files (reverse libraries))))))))))
 
 (def (do-registry opt)
-  (call-with-ensemble-server 'registry
-                             (cut start-ensemble-registry!)
-                             log-level: (hash-ref opt 'logging)
-                             log-file:  (hash-ref opt 'logging-file)
-                             listen:    (hash-ref opt 'listen)
-                             announce:  (hash-ref opt 'announce)
-                             registry:  #f
-                             roles:     #f
-                             cookie:    (get-actor-server-cookie)))
+  (let ((server-id (hash-get opt 'server-id))
+        (domain    (hash-ref opt 'ensemble-domain)))
+    (if server-id
+      ;; run as a supervisory process
+      (let (cfg (load-ensemble-server-config (server-identifier-at-domain server-id domain)))
+        (become-ensemble-server! cfg (cut start-ensemble-registry!)))
+      ;; standalone registry mode
+      (call-with-ensemble-server
+       (cons 'registry domain)
+       (cut start-ensemble-registry!)
+       domain:    domain
+       log-level: (hash-ref opt 'logging)
+       log-file:  (hash-ref opt 'logging-file)
+       listen:    (hash-ref opt 'listen)
+       announce:  (hash-ref opt 'announce)
+       registry:  #f
+       roles:     #f
+       cookie:    (get-actor-server-cookie)))))
+
+(def (do-supervisor opt)
+  (let (config (load-ensemble-config))
+    (become-ensemble-supervisor! config)))
 
 (def (do-run opt)
   (let ((module-main (get-module-main (hash-ref opt 'module-id)))

@@ -8,7 +8,10 @@
 (export #t)
 
 (def (default-cookie-path)
-  (path-expand "cookie" (ensemble-base-path)))
+  (ensemble-cookie-path))
+
+(def (ensemble-cookie-path (base (ensemble-base-path)))
+  (path-expand "cookie" base))
 
 (def (get-actor-server-cookie (path (default-cookie-path)))
   (let (path (path-expand path))

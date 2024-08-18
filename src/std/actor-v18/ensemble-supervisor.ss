@@ -23,7 +23,7 @@
 (def (become-ensemble-supervisor! cfg (thunk void))
   (check-ensemble-config! cfg)
   (let* ((root     (: (config-get! cfg root:)     :string))
-         (domain   (: (config-get! cfg domain:)   :string))
+         (domain   (: (config-get! cfg domain:)   :symbol))
          (services (: (config-get! cfg services:) :list)))
     (create-directory* root)
     (parameterize ((current-directory root)

@@ -43,7 +43,7 @@
 (def supervisor-restarting-too-fast 1)
 
 (def (start-ensemble-supervisor! cfg (srv (current-actor-server)))
-  (spawn/name 'supervisor ensemble-supervisor srv))
+  (spawn/name 'supervisor ensemble-supervisor cfg srv))
 
 (def (ensemble-supervisor ensemble-cfg srv)
   (register-actor! 'supervisor srv)
@@ -64,16 +64,42 @@
       (def @executor (handle srv (reference #f 'executor)))
       (def @filesystem (handle srv (reference #f 'filesystem)))
 
+      (def @registry-config #f)
+
       (def (registry-config)
-        (or (pgetq (config-get! ensemble-cfg services:) registry:)
-            (error "missing registry configuration")))
+        (or @registry-config
+            (let* ((services-cfg (config-get! ensemble-cfg services:))
+                   (registry-cfg (config-get! services-cfg registry:))
+                   (registry-id  (config-get! registry-cfg identifier:))
+                   (base-cfg     (get-base-registry-config registry-id))
+                   (cfg          (ensemble-server-config-merge base-cfg registry-cfg)))
+              (set! @registry-config cfg)
+              cfg)))
+
+      (def (get-base-registry-config server-id)
+        [config: 'ensemble-server-v0
+                 ;; ensemble
+                 domain: (cdr server-id)
+                 identifier: server-id
+                 supervisor: (actor-server-identifier)
+                 cookie: (default-cookie-path)
+                 admin:  (default-admin-pubkey-path)
+                 ;; execution
+                 role: 'registry
+                 ;; logging
+                 log-level: 'INFO
+                 log-dir:   (get-server-log-dir server-id)
+                 log-file:  (get-server-log-file server-id "server.log")
+                 ;; bindings
+                 addresses: (get-server-default-addresses server-id)
+                 auth: [[(actor-server-identifier) 'admin]]
+                 ])
 
       (def (registry-server-id)
-        (config-get! (registry-config) addresses:))
-
-      (def (registry-addrs)
         (config-get! (registry-config) identifier:))
 
+      (def (registry-addrs)
+        (config-get! (registry-config) addresses:))
 
       (def (get-base-server-config server-id)
         [config: 'ensemble-server-v0
@@ -93,6 +119,8 @@
                  known-servers: [[(registry-server-id) (registry-addrs) ...]]
                  auth: [[(actor-server-identifier) 'admin]]
                  ])
+
+
 
       (def (get-role-server-config role server-id)
         (alet* ((roles-alist (config-get ensemble-cfg roles:))
@@ -127,7 +155,9 @@
 
       (def (get-server-log-dir server-id)
         (with ([id . domain] server-id)
-          (path-expand (symbol->string domain) root/log)))
+          (path-expand (symbol->string id)
+                       (path-expand (ensemble-domain->relative-path domain)
+                                    root/log))))
 
       (def (get-server-log-file server-id file)
         (path-expand file (get-server-log-dir server-id)))
@@ -159,7 +189,7 @@
 
       (def (write-ensemble-config!)
         (call-with-output-file [path: (path-expand "config" (ensemble-base-path))
-                                      create: #t truncate: #t]
+                                      create: 'maybe truncate: #t]
           (cut write-config ensemble-cfg <>)))
 
       (def (write-server-config! server-id server-cfg)
@@ -169,7 +199,9 @@
                   => (cut path-expand root/env <>))
                  (else (gerbil-path))))
                (server-path (ensemble-server-path server-id #f base-path)))
-          (call-with-output-file [path: server-path truncate: #t create: #t]
+          (create-directory* server-path)
+          (call-with-output-file [path: (path-expand "config" server-path)
+                                        create: 'maybe truncate: #t ]
             (cut write-config server-cfg <>))))
 
       (def (server-id<? s1 s2)
@@ -197,31 +229,34 @@
             (do-start-server! server-id server-cfg))))
 
       (def (do-start-server! server-id server-cfg)
-        (if (hash-key? servers server-id)
-          (begin
-            (infof "server ~a is running" server-id)
-            (!error "server running"))
-          (begin
-            (infof "start-server: ~a ~a" server-id server-cfg)
-            (write-server-config! server-id server-cfg)
-            (match (->> @executor
-                        (!executor-exec (config-get! server-cfg exe:)
-                                        (config-get! server-cfg arguments:)
-                                        (config-get  server-cfg env:)
-                                        (config-get  server-cfg envvars: [])))
-              ((!ok pid)
-               (infof "started server ~a with pid ~a" server-id pid)
-               (hash-put! servers server-id
-                          (Server pid: pid
-                                  config: server-cfg
-                                  state: 'running
-                                  start-time: (##current-time-point)))
-               (hash-put! servers-by-pid pid server-id)
-               (ensemble-add-server! server-id
-                                     (config-get! server-cfg addresses:)
-                                     (config-get! server-cfg role:))
-               (!ok (cons server-id pid)))
-              (result result)))))
+        (infof "start server ~a" server-id)
+        (with-error-handler "start-server"
+          (if (hash-key? servers server-id)
+            (begin
+              (infof "server ~a is running" server-id)
+              (!error "server running"))
+            (begin
+              (infof "starting server ~a: ~a" server-id server-cfg)
+              (write-server-config! server-id server-cfg)
+              (match (->> @executor
+                          (!executor-exec (config-get! server-cfg exe:)
+                                          (config-get! server-cfg args:)
+                                          (config-get  server-cfg env:)
+                                          (config-get  server-cfg envvars: [])))
+                ((!ok pid)
+                 (infof "started server ~a: ~a" server-id pid)
+                 (hash-put! servers server-id
+                            (Server pid: pid
+                                    config: server-cfg
+                                    state: 'running
+                                    start-time: (##current-time-point)))
+                 (hash-put! servers-by-pid pid server-id)
+                 (unless (equal? server-id (registry-server-id))
+                   (ensemble-add-server! server-id
+                                         (config-get! server-cfg addresses:)
+                                         (config-get! server-cfg role:)))
+                 (!ok (cons server-id pid)))
+                (result result))))))
 
       (def (start-workers! role domain prefix count)
         (infof "start-workers: ~a ~a ~a ~a" role domain prefix count)
@@ -284,16 +319,17 @@
 
       (def (restart-server! server-id (server :- Server))
         (infof "restart-server ~a" server-id)
-        (set! server.state 'restart)
-        (write-server-config! server-id server.config) ; might have changed from update
-        (match (->> @executor (!executor-restart server.pid))
-          ((!ok pid)
-           (hash-remove! servers-by-pid server.pid)
-           (hash-put! servers-by-pid pid server-id)
-           (set! server.pid pid)
-           (set! server.state 'running)
-           (!ok pid))
-          (result result)))
+        (with-error-handler "restart-server"
+          (set! server.state 'restart)
+          (write-server-config! server-id server.config) ; might have changed from update
+          (match (->> @executor (!executor-restart server.pid))
+            ((!ok pid)
+             (hash-remove! servers-by-pid server.pid)
+             (hash-put! servers-by-pid pid server-id)
+             (set! server.pid pid)
+             (set! server.state 'running)
+             (!ok pid))
+            (result result))))
 
       (def (get-server-log server-id file)
         (with-error-handler "get-server-log"
@@ -340,6 +376,7 @@
                 config
                 (ensemble-config-merge ensemble-cfg config)))
           (set! ensemble-cfg new-config)
+          (set! @registry-config #f)
           (write-ensemble-config!)
           (!ok (void))))
 
@@ -365,25 +402,32 @@
                                ((!ok pid)
                                 (infof "restarted server ~a as ~a" server-id pid))
                                ((!error what)
-                                (warnf "error restarting server ~a: ~a" server-id what)))
-                             (warnf "server ~a is restarting too fast; keeping stopped" server-id)))))))
+                                (warnf "error restarting server ~a: ~a" server-id what)
+                                (unless (equal? server-id (registry-server-id))
+                                  (ensemble-remove-server! server-id))))
+                             (begin
+                               (warnf "server ~a is restarting too fast; stay down" server-id)
+                               (unless (equal? server-id (registry-server-id))
+                                  (ensemble-remove-server! server-id)))))))))
                 (else
                  (debugf "unknown server ~a" server-id)))))
          (else
           (debugf "notification for unknown server pid ~a" pid))))
 
       (def (shutdown! source nonce expiry reply-expected?)
+        (do-shutdown!)
+        (when reply-expected?
+          (-> source (!ok (void))
+              replyto: nonce
+              expiry: expiry)))
+
+      (def (do-shutdown!)
         (with-error-log "stop-servers"
           (do-stop-servers! (hash-keys servers)))
         (with-error-log "stop-executor"
           (->> @executor (!shutdown)))
         (with-error-log "stop-filesystem"
-          (->> @filesystem (!shutdown)))
-
-        (when reply-expected?
-          (-> source (!ok (void))
-              replyto: nonce
-              expiry: expiry)))
+          (->> @filesystem (!shutdown))))
 
       (def (restart!)
         (with-error-handler "restart"
@@ -426,8 +470,22 @@
                 ((!error what)
                  (errorf "error starting preloaded workers for ~a: ~a" domain what)))))))
 
-      (start-services!)
-      (start-preloaded!)
+      (infof "supervisor starting supervisory services")
+      (try
+       (start-services!)
+       (catch (e)
+         (errorf "error starting supervisor services: ~a" e)
+         (exit 'error)))
+
+      (infof "supervisor starting preloaded servers and workers")
+      (try
+       (start-preloaded!)
+       (catch (e)
+         (errorf "error starting preloaded servers: ~a" e)
+         (do-shutdown!)
+         (exit 'error)))
+
+      (infof "supervisor running...")
 
       (while #t
         (<-

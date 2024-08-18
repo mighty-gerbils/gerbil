@@ -135,7 +135,7 @@
      ((not right)
       [key left])
      (else
-      (let loop ((rest (reverse left)) (result right))
+      (let loop ((rest left) (result right))
         (match rest
           ([val . rest]
            (if (memf val result)
@@ -235,7 +235,7 @@
 
 (def (load-ensemble-config (base (gerbil-path)))
   (let (cfg (load-config (ensemble-config-path base)
-                         'ensemble-config-v0))
+                         'ensemble-v0))
     (check-ensemble-config! cfg)
     cfg))
 
