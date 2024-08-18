@@ -5,17 +5,41 @@
         :std/sugar
         :std/iter
         :std/logger
+        :std/config
         ./message
         ./proto
         ./server
         ./server-identifier
         ./ensemble
+        ./ensemble-config
         ./cookie
         ./tls
         ./admin
         ./path
         ./loader)
-(export #t)
+(export become-ensemble-server!
+        call-with-ensemble-server)
+
+;;; cfg: <ensemble-server-config>
+(def (become-ensemble-server! cfg thunk)
+  (check-ensemble-server-config! cfg)
+  (call-with-ensemble-server
+   (config-get! cfg identifier:) thunk
+   domain:        (config-get! cfg domain:)
+   supervisor:    (config-get cfg supervisor:)
+   registry:      (config-get cfg registry:)
+   cookie:        (get-actor-server-cookie
+                   (config-get! cfg cookie:))
+   admin:         (let (admin-path (config-get! cfg admin:))
+                    (and (file-exists? admin-path)
+                         (get-admin-pubkey admin-path)))
+   roles:         (cons (config-get! cfg role:) (config-get cfg secondary-roles: []))
+   log-level:     (config-get! cfg log-level:)
+   log-file:      (config-get! cfg log-file:)
+   listen:        (config-get! cfg addresses:)
+   known-servers: (alet (known-servers (config-get cfg known-servers:))
+                    (list->hash-table known-servers))))
+
 
 ;; call a thunk in the context of an ensemble server
 ;; this is the programmatic equivalent of gxensemble run
@@ -34,8 +58,8 @@
                                 supervisor:    (supervisor #f)
                                 registry:      (registry #f)
                                 registry-addrs: (registry-addrs #f))
-  (current-logger-options log-level)
-  (parameterize ((ensemble-domain domain))
+  (parameterize ((ensemble-domain domain)
+                 (current-logger-options log-level))
     (when log-file
       (let (path
             (if (equal? log-file "-")
@@ -56,7 +80,7 @@
               (hash (,(cons registry domain) (default-registry-addresses))))))
            (unix-addr (ensemble-server-unix-addr server-id))
            (listen-addrs
-            (cons unix-addr listen-addrs))
+            (or listen-addrs [(ensemble-server-unix-addr server-id)]))
            (public-addrs
             (or public-addrs
                 listen-addrs)))
@@ -80,14 +104,15 @@
       (try
        (thunk)
        (catch (e)
-         (display "*** ERROR " (current-error-port))
-         (display-exception e (current-error-port))))
+         (errorf "error executing actor server services: ~a" e)
+         (stop-actor-server! (current-actor-server))))
       (thread-join! (current-actor-server))
       ;; clean up unix sockets
       (for (addr listen-addrs)
         (match addr
           ([unix: _ path]
-           (delete-file path))
+           (when (file-exists? path)
+             (delete-file path)))
           (else (void))))
       ;; remove the server from the ensemble if we are not supervised
       (unless (or supervisor (memq 'registry roles) (memq 'supervisor roles))

@@ -45,7 +45,7 @@
   (def (sort-server-list lst)
     (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
   (def flush-ticker
-    (spawn/name 'ticker ticker (current-thread)))
+    (spawn/name 'ticker ticker (current-thread) 60))
 
   (using (registry :- Registry)
     (let/cc exit

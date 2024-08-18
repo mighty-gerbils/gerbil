@@ -5,7 +5,9 @@
         :gerbil/gambit
         :std/error
         :std/sugar
-        :std/stxparam)
+        :std/stxparam
+        ./path
+        ./server-identifier)
 (export #t)
 
 ;; actor errors
@@ -66,7 +68,7 @@
 ;; - authorized? is a boolean indicating whether the origin is authorized for
 ;;   for administrative actions.
 (defstruct handle (proxy ref capabilities)
-   final: #t transparent: #t
+   final: #t print: (ref)
   constructor: :init!)
 
 (defmethod {:init! handle}
@@ -89,6 +91,34 @@
       (alet (capabilities actor.capabilities)
         (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities))))
    (else #f)))
+
+;; actor references
+;; - server is the actor-server identifier: a symbol uniquely identifying an
+;;   actor within the domain.
+;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
+;; - domain is the ensemble domain; a symbol using / as the subdomain separator
+;;   or false for the default flat domain.
+(defmessage reference (server actor)
+  constructor: :init!)
+
+(defmethod {:init! reference}
+  (lambda (self server actor (domain (ensemble-domain)))
+    (let (server
+          (cond
+           ((pair? server) server)
+           ((symbol? server)
+            (if domain
+              (cons server domain)
+              server))
+           ((not #f) #f)
+           (else
+            (raise-bad-argument reference:::init! "symbol or symbol pair" server))))
+      (set! self.server server)
+      (set! self.actor actor))))
+
+;; creates a proxy handle from a reference
+(def (reference->handle ref (srv (current-actor-server)))
+  (make-handle srv ref))
 
 ;; sends a message to an actor
 ;; - actor must be a thread or handle

@@ -1,11 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; actor ensemble utilities
+;;; actor ensemble basic utilities
 (import :std/error
         (only-in :std/misc/ports read-file-u8vector)
         ./message
         ./proto
-        ./server
         ./server-identifier
         ./admin)
 (export #t)
@@ -96,7 +95,7 @@
   (->> srv (!ensemble-remove-server (server-identifier id)))
   error: "error removing server")
 
-;; lists all known servers in the ensemble.
+;; lists all known servers in the ensemble registry.
 ;; returns a list [[id roles addr ...] ...]
 (defcall-actor (ensemble-list-servers (srv (current-actor-server)))
   (->> srv (!ensemble-lookup-server #f #f))

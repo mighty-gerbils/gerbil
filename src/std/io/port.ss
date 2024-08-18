@@ -70,7 +70,7 @@
   => close-input-port)
 
 (defport-method raw-binary-input-port (read port u8v start end need)
-  (let (rd (read-subu8vector u8v start end port need))
+  (let (rd (read-subu8vector u8v start end port (if (fx> need 0) need 1)))
     (if (fx< rd need)
       (raise-premature-end-of-input raw-binary-input-port)
       rd)))

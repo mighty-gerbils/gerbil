@@ -25,33 +25,6 @@
         ./server-identifier)
 (export #t)
 
-;; actor references
-;; - server is the actor-server identifier: a symbol uniquely identifying an
-;;   actor within the domain.
-;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
-;; - domain is the ensemble domain; a symbol using / as the subdomain separator
-;;   or false for the default flat domain.
-(defmessage reference (server actor)
-  constructor: :init!)
-
-(defmethod {:init! reference}
-  (lambda (self server actor (domain (ensemble-domain)))
-    (let (server
-          (cond
-           ((pair? server) server)
-           ((symbol? server)
-            (if domain
-              (cons server domain)
-              server))
-           (else
-            (raise-bad-argument reference:::init! "symbol or symbol pair" server))))
-      (set! self.server server)
-      (set! self.actor actor))))
-
-;; creates a proxy handle from a reference
-(def (reference->handle ref (srv (current-actor-server)))
-  (make-handle srv ref))
-
 ;; starts the actor server
 ;; - identifier is the server identifier in your ensemble; a symbol.
 ;;   defaults to a random identifier.
@@ -179,7 +152,12 @@
           (if (or (not host) (equal? host (hostname)))
             (let* ((path (path-expand path))
                    (_ (create-directory* (path-directory path)))
-                   (maybe-sock (with-catch values (cut unix-listen path))))
+                   (maybe-sock
+                    (with-catch identity
+                                (lambda (path)
+                                  (when (file-exists? path)
+                                    (delete-file path))
+                                  (unix-listen path)))))
               (if (ServerSocket? maybe-sock)
                 (lp rest (cons maybe-sock socks))
                 (fail! maybe-sock)))
@@ -556,7 +534,7 @@
               (cond
                ((routed-message? msg)
                 (using ((dest msg.dest :- handle)
-                        (dest-ref dest.ref :- reference))
+                        (dest-ref dest.ref : reference))
                   (let* ((dest-srv-id dest-ref.server)
                          (dest-actor-id dest-ref.actor))
                     (if (or (not dest-srv-id) (is-self? dest-srv-id))
