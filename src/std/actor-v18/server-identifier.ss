@@ -31,3 +31,17 @@
       (raise-bad-argument server-identifier "symbol or pair of symbols" id)))
    (else
     (raise-bad-argument server-identifier "symbol or pair of symbols" id))))
+
+(def (server-identifier-at-domain server-id global-domain)
+  (cond
+   ((symbol? server-id)
+    (cons server-id global-domain))
+   ((pair? server-id)
+    (with ([id . dom] server-id)
+      (let (dom-str (symbol->string dom))
+        (if (string-prefix? "/" dom-str)
+          server-id
+          (let (global-domain-str (symbol->string global-domain))
+            (cons id (string-append global-domain-str "/" dom-str)))))))
+   (else
+    (raise-bad-argument server-identifier "symbol or pair of symbols" server-id))))
