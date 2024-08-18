@@ -9,6 +9,12 @@
 (def ensemble-domain
   (make-parameter '/))
 
+(def (ensemble-domain->relative-path (domain (ensemble-domain)))
+  (string-join
+   (filter (? (not string-empty?))
+           (string-split (symbol->string domain) #\/))
+   #\/))
+
 (def (ensemble-base-path (base (gerbil-path)))
   (path-expand "ensemble" base))
 
@@ -41,13 +47,11 @@
 (def (ensemble-server-unix-path server-id (domain (ensemble-domain)))
   (if (pair? server-id)
     (ensemble-server-unix-path (car server-id) (cdr server-id))
-    (let (base
-          (cond
-           ((ensemble-domain)
-            => (lambda (domain)
-                 (path-expand (symbol->string domain) "/tmp/ensemble")))
-           (else "/tmp/ensemble")))
-      (path-expand (symbol->string server-id) base))))
+    (let* ((domain-path (ensemble-domain->relative-path domain))
+           (base (if (string-empty? domain-path)
+                   "/tmp/ensemble"
+                   (path-expand domain-path "/tmp/ensemble"))))
+      (path-expand (string-append (symbol->string server-id) ".sock") base))))
 
 (def (ensemble-server-unix-addr server-id)
   [unix: (hostname) (ensemble-server-unix-path server-id)])

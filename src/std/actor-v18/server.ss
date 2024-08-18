@@ -154,7 +154,7 @@
                    (_ (create-directory* (path-directory path)))
                    (maybe-sock
                     (with-catch identity
-                                (lambda (path)
+                                (lambda ()
                                   (when (file-exists? path)
                                     (delete-file path))
                                   (unix-listen path)))))

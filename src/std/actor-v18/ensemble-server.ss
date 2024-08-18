@@ -23,6 +23,7 @@
 ;;; cfg: <ensemble-server-config>
 (def (become-ensemble-server! cfg thunk)
   (check-ensemble-server-config! cfg)
+  (create-directory* (config-get! cfg log-dir:))
   (call-with-ensemble-server
    (config-get! cfg identifier:) thunk
    domain:        (config-get! cfg domain:)
@@ -30,7 +31,7 @@
    registry:      (config-get cfg registry:)
    cookie:        (get-actor-server-cookie
                    (config-get! cfg cookie:))
-   admin:         (let (admin-path (config-get! cfg admin:))
+   admin:         (alet (admin-path (config-get cfg admin:))
                     (and (file-exists? admin-path)
                          (get-admin-pubkey admin-path)))
    roles:         (cons (config-get! cfg role:) (config-get cfg secondary-roles: []))
@@ -61,11 +62,13 @@
   (parameterize ((ensemble-domain domain)
                  (current-logger-options log-level))
     (when log-file
-      (let (path
-            (if (equal? log-file "-")
-              (path-expand "log" (ensemble-server-path server-id))
-              (path-expand log-file)))
-        (create-directory* (path-strip-directory path))
+      (let* ((path
+              (if (equal? log-file "-")
+                (path-expand "log" (ensemble-server-path server-id))
+                (path-expand log-file)))
+             (dir (path-directory path)))
+        (unless (file-exists? dir)
+          (create-directory* dir))
         (start-logger! path)))
     (let* ((tls-context (or maybe-tls-context (get-actor-tls-context server-id)))
            (registry (or registry (cons 'registry domain)))
