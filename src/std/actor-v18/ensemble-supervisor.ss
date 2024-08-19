@@ -204,18 +204,22 @@
   supervisor: super)
 
 ;; restart the entire ensemble
-(def (ensemble-restart! actor-server: (srv (current-actor-server)))
+(def (ensemble-restart!
+      restart-services: (restart-services? #f)
+      actor-server: (srv (current-actor-server)))
   (ensemble-supervisors-collect srv
     (ensemble-supervisor-restart!
      supervisor: super
+     restart-services: restart-services?
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-restart!
                 supervisor: super
+                restart-services: (restart-services? #f)
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)
-       (!supervisor-restart))
-  error: "error restarting supervisor"
+       (!supervisor-restart restart-services?))
+  error: "error restarting supervisor ensemble"
   supervisor: super)
 
 ;; update a server configuration for a supervisor

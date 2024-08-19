@@ -31,9 +31,9 @@
 (defmessage !supervisor-update-server (server-id config mode restart?))
 (defmessage !supervisor-get-config ())
 (defmessage !supervisor-update-config (config mode))
-(defmessage !supervisor-restart ())
+(defmessage !supervisor-restart (services?))
 
-(defclass Server (pid config state start-time)
+(defclass Server (pid config state service start-time)
   final: #t)
 
 (def (server-role-includes? (server : Server) role)
@@ -110,6 +110,7 @@
                  registry: (registry-server-id)
                  cookie: (default-cookie-path)
                  admin:  (default-admin-pubkey-path)
+                 policy: 'restart
                  ;; logging
                  log-level: 'INFO
                  log-dir:   (get-server-log-dir server-id)
@@ -119,8 +120,6 @@
                  known-servers: [[(registry-server-id) (registry-addrs) ...]]
                  auth: [[(actor-server-identifier) 'admin]]
                  ])
-
-
 
       (def (get-role-server-config role server-id)
         (alet* ((roles-alist (config-get ensemble-cfg roles:))
@@ -217,7 +216,7 @@
            (sort
             (map (lambda (server-id)
                    (using (server (hash-ref servers server-id) :- Server)
-                     (cons server-id server.state)))
+                     [server-id server.pid server.state]))
                  server-list)
             (lambda (s1 s2) (server-id<? (car s1) (car s2)))))))
 
@@ -245,17 +244,22 @@
                                           (config-get  server-cfg envvars: [])))
                 ((!ok pid)
                  (infof "started server ~a: ~a" server-id pid)
-                 (hash-put! servers server-id
-                            (Server pid: pid
-                                    config: server-cfg
-                                    state: 'running
-                                    start-time: (##current-time-point)))
-                 (hash-put! servers-by-pid pid server-id)
-                 (unless (equal? server-id (registry-server-id))
-                   (ensemble-add-server! server-id
-                                         (config-get! server-cfg addresses:)
-                                         (config-get! server-cfg role:)))
-                 (!ok (cons server-id pid)))
+                 (match (->> @executor (!executor-monitor pid))
+                   ((!ok)
+                    (hash-put! servers server-id
+                               (Server pid: pid
+                                       config: server-cfg
+                                       state: 'running
+                                       start-time: (##current-time-point)))
+                    (hash-put! servers-by-pid pid server-id)
+                    (unless (equal? server-id (registry-server-id))
+                      (ensemble-add-server! server-id
+                                            (config-get! server-cfg addresses:)
+                                            (config-get! server-cfg role:)))
+                    (!ok (cons server-id pid)))
+                   ((!error what)
+                    (warnf "failed to monitor process ~a: ~a" pid what)
+                    (!error "monitor failure"))))
                 (result result))))))
 
       (def (start-workers! role domain prefix count)
@@ -384,35 +388,36 @@
         (!ok ensemble-cfg))
 
       (def (notify! pid exit-code)
-        (cond
-         ((hash-get servers-by-pid pid)
-          => (lambda (server-id)
-               (hash-remove! servers-by-pid pid)
-               (cond
-                ((hash-get servers server-id)
-                 => (lambda ((server :- Server))
-                      (infof "server ~a has stopped" server-id)
-                      (hash-remove! servers server-id)
-                      (when (eq? server.state 'running)
-                        (case (config-get! server.config policy:)
-                          ((restart)
-                           (if (> (##current-time-point)
-                                  (+ server.start-time supervisor-restarting-too-fast))
-                             (match (do-start-server! server-id server.config)
-                               ((!ok pid)
-                                (infof "restarted server ~a as ~a" server-id pid))
-                               ((!error what)
-                                (warnf "error restarting server ~a: ~a" server-id what)
-                                (unless (equal? server-id (registry-server-id))
-                                  (ensemble-remove-server! server-id))))
-                             (begin
-                               (warnf "server ~a is restarting too fast; stay down" server-id)
-                               (unless (equal? server-id (registry-server-id))
-                                  (ensemble-remove-server! server-id)))))))))
-                (else
-                 (debugf "unknown server ~a" server-id)))))
-         (else
-          (debugf "notification for unknown server pid ~a" pid))))
+        (with-error-log "notify"
+          (cond
+           ((hash-get servers-by-pid pid)
+            => (lambda (server-id)
+                 (hash-remove! servers-by-pid pid)
+                 (cond
+                  ((hash-get servers server-id)
+                   => (lambda ((server :- Server))
+                        (infof "server ~a has stopped" server-id)
+                        (hash-remove! servers server-id)
+                        (when (eq? server.state 'running)
+                          (case (config-get! server.config policy:)
+                            ((restart)
+                             (if (> (##current-time-point)
+                                    (+ server.start-time supervisor-restarting-too-fast))
+                               (match (do-start-server! server-id server.config)
+                                 ((!ok p)
+                                  (infof "restarted server ~a as ~a" server-id (cdr p)))
+                                 ((!error what)
+                                  (warnf "error restarting server ~a: ~a" server-id what)
+                                  (unless (equal? server-id (registry-server-id))
+                                    (ensemble-remove-server! server-id))))
+                               (begin
+                                 (warnf "server ~a is restarting too fast; stay down" server-id)
+                                 (unless (equal? server-id (registry-server-id))
+                                   (ensemble-remove-server! server-id)))))))))
+                  (else
+                   (debugf "notification for unknown server ~a" server-id)))))
+           (else
+            (debugf "notification for unknown pid ~a" pid)))))
 
       (def (shutdown! source nonce expiry reply-expected?)
         (do-shutdown!)
@@ -429,9 +434,18 @@
         (with-error-log "stop-filesystem"
           (->> @filesystem (!shutdown))))
 
-      (def (restart!)
+      (def (restart! services?)
         (with-error-handler "restart"
-          (do-restart-servers! (hash-keys servers))))
+          (do-restart-servers!
+           (if services?
+             (hash-keys servers)
+             (filter-map
+              (lambda (p)
+                (with ([server-id . server] p)
+                  (using (server :- Server)
+                    (and (not server.service)
+                         server-id))))
+              (hash->list servers))))))
 
       (def (start-services!)
         (for (role [registry: resolver: broadcast:])
@@ -439,7 +453,9 @@
             (let (server-id (config-get! server-cfg identifier:))
               (infof "starting service ~a ~a" role server-id)
               (match (do-start-server! server-id server-cfg)
-                ((!ok) (void))
+                ((!ok)
+                 (using (server (hash-ref servers server-id) :- Server)
+                   (set! server.service (keyword->symbol role))))
                 ((!error what)
                  (errorf "error starting service ~a ~a" role what)))))))
 
@@ -529,14 +545,15 @@
           (with-authorization 'supervisor
             (get-config)))
 
-         ((!supervisor-restart)
+         ((!supervisor-restart services?)
           (if (actor-authorized? @source 'supervisor)
-            (--> (restart!))
+            (--> (restart! services?))
             (--> (!error "not authorized"))))
 
          ((!executor-notify pid exit-code)
-          (when (local-actor? @source)
-            (notify! pid exit-code)))
+          (if (local-actor? @source 'executor)
+            (notify! pid exit-code)
+            (warnf "unexpected notification from ~a: ~a" @source pid)))
 
          ;; management protocol
          ,(@shutdown
