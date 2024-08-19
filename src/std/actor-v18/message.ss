@@ -75,8 +75,9 @@
    final: #t print: (ref)
   constructor: :init!)
 
+(deftype @reference reference)
 (defmethod {:init! handle}
-  (lambda (self proxy ref (capabilities #f))
+  (lambda (self (proxy : :thread) (ref : @reference) (capabilities #f))
     (set! self.proxy proxy)
     (set! self.ref   ref)
     (set! self.capabilities capabilities)))
@@ -151,8 +152,9 @@
 ;; sends a message and receives the reply with a timeout.
 (def (->> dest msg
           replyto: (replyto #f)
-          timeout: (timeo +default-reply-timeout+))
-  (let* ((expiry (timeout->expiry timeo))
+          timeout: (timeo +default-reply-timeout+)
+          expiry:  (expiry #f)) ; supersedes timeout
+  (let* ((expiry (or expiry (timeout->expiry timeo)))
          (nonce (current-thread-nonce!)))
     (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry #t))
       (raise-actor-error send-message "actor is dead" dest))
