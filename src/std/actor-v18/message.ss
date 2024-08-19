@@ -66,36 +66,6 @@
     (alet (expiry msg.expiry)
       (< (time->seconds expiry) (##current-time-point)))))
 
-;; actor handle base type.
-;; - proxy is the thread that handles messages on behalf of another actor.
-;; - ref is a reference to an actor; see ./server
-;; - authorized? is a boolean indicating whether the origin is authorized for
-;;   for administrative actions.
-(defstruct handle (proxy ref capabilities)
-   final: #t print: (ref)
-  constructor: :init!)
-
-(deftype @reference reference)
-(defmethod {:init! handle}
-  (lambda (self (proxy : :thread) (ref : @reference) (capabilities #f))
-    (set! self.proxy proxy)
-    (set! self.ref   ref)
-    (set! self.capabilities capabilities)))
-
-;; checks whether an actor is authorized for administrative actions.
-;; Local (in-process) actors are always authorized.
-;; Remote actors are authorized by the actor server (see ./server) if configured
-;; to require authorization for administrative actions.
-;; cap is a symbol denoting a capability; admin capabilities in a handle imply
-;; all other capabilities
-(def (actor-authorized? actor (cap 'admin))
-  (cond
-   ((thread? actor) #t)
-   ((handle? actor)
-    (using (actor :- handle)
-      (alet (capabilities actor.capabilities)
-        (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities))))
-   (else #f)))
 
 ;; actor references
 ;; - server is the actor-server identifier: a symbol uniquely identifying an
@@ -120,6 +90,37 @@
             (raise-bad-argument reference:::init! "symbol or symbol pair" server))))
       (set! self.server server)
       (set! self.actor actor))))
+
+;; actor handles
+;; - proxy is the thread that handles messages on behalf of another actor.
+;; - ref is a reference to an actor; see ./server
+;; - capabilities is an (optional) list of capabilities of the actor (server)
+(defstruct handle (proxy ref capabilities)
+  final: #t print: (ref)
+  constructor: :init!)
+
+(defmethod {:init! handle}
+  (lambda (self (proxy : :thread)
+           (ref : reference)
+           (capabilities #f))
+    (set! self.proxy proxy)
+    (set! self.ref   ref)
+    (set! self.capabilities capabilities)))
+
+;; checks whether an actor is authorized for administrative actions.
+;; Local (in-process) actors are always authorized.
+;; Remote actors are authorized by the actor server (see ./server) if configured
+;; to require authorization for administrative actions.
+;; cap is a symbol denoting a capability; admin capabilities in a handle imply
+;; all other capabilities
+(def (actor-authorized? actor (cap 'admin))
+  (cond
+   ((thread? actor) #t)
+   ((handle? actor)
+    (using (actor :- handle)
+      (alet (capabilities actor.capabilities)
+        (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities))))
+   (else #f)))
 
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))

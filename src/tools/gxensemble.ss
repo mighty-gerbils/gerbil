@@ -17,6 +17,7 @@
         :std/os/hostname
         :std/sugar
         :std/text/hex
+        :std/os/temporaries
         ./env)
 (export main)
 
@@ -25,9 +26,14 @@
     program: "gxensemble"
     help: "the Gerbil Actor Ensemble Manager"
     global-env-flag
-    run-cmd
-    registry-cmd
+
     supervisor-cmd
+    registry-cmd
+    run-cmd
+    env-cmd
+
+    control-cmd
+
     load-cmd
     eval-cmd
     repl-cmd
@@ -42,11 +48,42 @@
 ;;;
 ;;; getopt objects
 ;;;
-(def domain-option
+(def ensemble-domain-option
   (option 'ensemble-domain "-D" "--ensemble-domain"
-          value: string->symbol
-          default: '/
-          help: "specifies the ensemble domain"))
+    value: string->symbol
+    default: #f
+    help: "specifies the ensemble domain"))
+
+(def control-domain-option
+  (option 'domain "-d" "--domain"
+    value: string->symbol
+    help: "specifies the control operation domain"))
+
+(def supervisor-option
+  (option 'ensemble-supervisor "-S" "--supervisor"
+    help: "specifies the ensemble supervisor"))
+
+(def config-option
+  (option 'config "-C" "--config"
+    help: "configuration file"))
+
+(def exec-env-option
+  (option 'env "--env"
+    help: "execution GERBIL_PATH env"
+    default: "default"))
+
+(def exec-envvars-option
+  (option 'envvars "--env-vars"
+    help: "execution environment variables; as list of strings of the form ENV=value"
+    value: string->object))
+
+(def exec-path-argument
+  (argument 'exe-path
+    help: "executable path in the supervisor contextr"))
+
+(def exec-rest-arguments
+  (rest-arguments 'exe-args
+    help: "executable arguments"))
 
 (def logging-option
   (option 'logging "--log"
@@ -83,17 +120,31 @@
     default: #f
     help: "additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry"))
 
+(def role-argument
+  (argument 'role
+    value: string->symbol
+    help: "server role"))
+
+(def role-option
+  (option 'role "--role"
+    value: string->symbol
+    help: "server role; a symbol"))
+
 (def roles-option
   (option 'roles "--roles"
     value: string->object
     default: []
-    help: "server role(s); a list of symbols"))
+    help: "server roles; a list of symbols"))
 
 (def library-prefix-option
   (option 'library-prefix "--library-prefix"
     value: string->object
     default: '(gerbil scheme std)
     help: "list of package prefixes to consider as library modules installed in the server"))
+
+(def config-argument
+  (argument 'config
+    help: "configuration file"))
 
 (def server-id-argument
   (argument 'server-id
@@ -104,6 +155,34 @@
   (optional-argument 'server-id
     help: "the server id"
     value: string->object))
+
+(def server-id-rest-arguments
+  (rest-arguments 'server-ids
+    help: "server-id"
+    value: string->object))
+
+(def domain-optional-argument
+  (optional-argument 'domain
+    help: "the domain"
+    value: string->symbol))
+
+(def server-log-file-optional-argument
+  (optional-argument 'file
+    help: "the server log file to retrieve; default is server.log"))
+
+(def server-addresses-rest-arguments
+  (rest-arguments 'server-addresses
+    help: "server addresses"))
+
+(def pid-argument
+  (argument 'pid
+    value: string->integer
+    help: "process pid"))
+
+(def signo-argument
+  (argument 'signo
+    value: string->integer
+    help: "signal number"))
 
 (def actor-id-optional-argument
   (optional-argument 'actor-id
@@ -119,6 +198,23 @@
   (argument 'server-or-role
     help: "the server or role to lookup"
     value: string->symbol))
+
+(def worker-count-argument
+  (argument 'count
+    help: "number of workers"
+    value: string->integer))
+
+(def upload-file-argument
+  (argument 'file
+    help: "file to upload"))
+
+(def upload-path-argument
+  (argument 'path
+    help: "upload path"))
+
+(def shell-command-argument
+  (argument 'command
+    help: "command to execute"))
 
 (def authorized-server-id-argument
   (argument 'authorized-server-id
@@ -139,6 +235,50 @@
 (def main-arguments
   (rest-arguments 'main-args
     help: "arguments for the module's main procedure"))
+
+(def supervised-flag
+  (flag 'supervised "--supervised"
+    help: "the operation is supervised by the ensemble supervisor"))
+
+(def env-add-flag
+  (flag 'add "--add"
+    help: "add to the environment"))
+
+(def env-set-flag
+  (flag 'add "--set"
+    help: "set the environment"))
+
+(def env-remove-flag
+  (flag 'add "--remove"
+    help: "remove from the environment"))
+
+(def pretty-flag
+  (flag 'pretty "--pretty"
+    help: "pretty print"))
+
+(def restart-flag
+  (option 'restart "--restart"
+    help: "restart server(s) after update"))
+
+(def replace-mode-flag
+  (flag 'replace "--replace"
+    help: "replace the configuration instead of upserting"))
+
+(def restart-services-flag
+  (flag 'restart-services "--services"
+    help: "include supervisory services in the restart set"))
+
+(def upload-executable-flag
+  (flag 'exe "--exe"
+    help: "file is executable"))
+
+(def upload-env-flag
+  (flag 'env "--env"
+    help: "file is a (gzip) compressed tar archive for a gerbil environment"))
+
+(def upload-fs-flag
+  (flag 'fs "--fs"
+    help: "file is a (gzip) compressed tar archive for a filesystem overlay"))
 
 (def library-flag
   (flag 'library "--library"
@@ -161,6 +301,12 @@
     help: help
     value: string->symbol))
 
+(def subcommand-env
+  (subcommand "what to do: known-servers|domain|supervisor"))
+
+(def subcommand-control
+  (subcommand "what to do: list-servers|start-server|start-workers|stop-server|restart-server|get-server-log|update-server-config|get-server-config|update-ensemble-config|get-ensemble-config|upload|shell|exec-process|kill-process|restart-process|get-process-output|shutdown|restart"))
+
 (def subcommand-list
   (subcommand "what to do: servers|actors|connections"))
 
@@ -174,8 +320,24 @@
   (rest-arguments 'subcommand-args
     help: "arguments for the subcommand"))
 
+(def supervisor-cmd
+  (command 'supervisor
+    help: "runs the ensemble supervisor"))
+
+(def registry-cmd
+  (command 'registry
+    ensemble-domain-option
+    logging-option
+    logging-file-option
+    listen-option
+    announce-option
+    server-id-optional-argument
+    help: "runs the ensemble registry"))
+
 (def run-cmd
   (command 'run
+    supervised-flag
+    ensemble-domain-option
     logging-option
     logging-file-option
     listen-option
@@ -187,19 +349,17 @@
     main-arguments
     help: "run a server in the ensemble"))
 
-(def registry-cmd
-  (command 'registry
-    domain-option
-    logging-option
-    logging-file-option
-    listen-option
-    announce-option
-    server-id-optional-argument
-    help: "runs the ensemble registry"))
+(def env-cmd
+  (command 'env
+    subcommand-env
+    subcommand-arguments
+    help: "ensemble environment operations"))
 
-(def supervisor-cmd
-  (command 'supervisor
-    help: "runs the ensemble supervisor"))
+(def control-cmd
+  (command 'control
+    subcommand-control
+    subcommand-arguments
+    help: "ensemble supervisory control operations"))
 
 (def load-cmd
   (command 'load
@@ -270,6 +430,202 @@
     subcommand-ca
     subcommand-arguments
     help: "ensemble CA operations"))
+
+;; env subcommands
+(def env-known-servers-cmd
+  (command 'known-servers
+    env-add-flag
+    env-set-flag
+    env-remove-flag
+    pretty-flag
+    server-id-optional-argument
+    server-addresses-rest-arguments
+    help: "edit the known-servers for the ensemble environment"))
+
+(def env-domain-cmd
+  (command 'domain
+    domain-optional-argument
+    help: "edit the known-servers for the ensemble environment"))
+
+(def env-supervisor-cmd
+  (command 'supervisor
+    server-id-optional-argument
+    help: "edit the known-servers for the ensemble environment"))
+
+;; control subcommands
+(def control-list-servers-cmd
+  (command 'list-servers
+    ensemble-domain-option
+    console-option
+    supervisor-option
+    control-domain-option
+    role-option
+    help: "list supervised servers in the ensemble"))
+
+(def control-start-server-cmd
+  (command 'start-server
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    control-domain-option
+    config-option
+    role-argument
+    server-id-argument
+    help: "start a supervised ensemble server"))
+
+(def control-start-workers-cmd
+  (command 'start-workers
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    config-option
+    control-domain-option
+    role-argument
+    server-id-argument
+    worker-count-argument
+    help: "start supervised ensemble workers"))
+
+(def control-stop-server-cmd
+  (command 'stop-server
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    control-domain-option
+    role-option
+    server-id-rest-arguments
+    help: "stop some supervised ensemble servers"))
+
+(def control-restart-server-cmd
+  (command 'restart-server
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    control-domain-option
+    role-option
+    server-id-rest-arguments
+    help: "restart some supervised ensemble servers"))
+
+(def control-get-server-log-cmd
+  (command 'get-server-log
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    server-id-argument
+    server-log-file-optional-argument
+    help: "retrieve a supervised server log"))
+
+(def control-get-server-config-cmd
+  (command 'get-server-config
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    pretty-flag
+    server-id-argument
+    help: "retrieve a server configuration"))
+
+(def control-update-server-config-cmd
+  (command 'update-server-config
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    restart-flag
+    replace-mode-flag
+    server-id-argument
+    config-argument
+    help: "update a supervisor server configuration"))
+
+(def control-update-config-cmd
+  (command 'update-ensemble-config
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    replace-mode-flag
+    config-argument
+    help: "update the supervised ensemble configuration"))
+
+(def control-get-config-cmd
+  (command 'get-ensemble-config
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    pretty-flag
+    help: "retrieve the supervised ensemble configuration"))
+
+(def control-upload-cmd
+  (command 'upload
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    upload-executable-flag
+    upload-env-flag
+    upload-fs-flag
+    upload-file-argument
+    upload-path-argument
+    help: "upload an executable, environment overlay image, or file system overlay image as a tarball"))
+
+(def control-shell-cmd
+  (command 'shell
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    shell-command-argument
+    help: "execute a shell command in the context of an ensemble supervisor"))
+
+(def control-list-processes-cmd
+  (command 'list-processes
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    help: "list processes running in the context of an ensemble supervisor"))
+
+(def control-exec-process-cmd
+  (command 'exec-process
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    exec-env-option
+    exec-envvars-option
+    exec-path-argument
+    exec-rest-arguments
+    help: "execute a process in the context of an ensemble supervisor"))
+
+(def control-kill-process-cmd
+  (command 'killprocess
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    pid-argument
+    signo-argument))
+
+(def control-restart-process-cmd
+  (command 'restart-process
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    pid-argument
+    help: "restart a process by pid"))
+
+(def control-get-process-output-cmd
+  (command 'get-process-output
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    pid-argument))
+
+(def control-shutdown-cmd
+  (command 'shutdown
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    help: "shutdown a supervised ensemble, including the supervisor"))
+
+(def control-restart-cmd
+  (command 'restart
+    ensemble-domain-option
+    supervisor-option
+    console-option
+    restart-services-flag
+    help: "mass restart servers in a supervised ensemble"))
 
 ;; list subcommands
 (def list-servers-cmd
@@ -356,6 +712,7 @@
   (command 'cert
     force-flag
     view-flag
+    ensemble-domain-option
     ca-subject/C-option
     ca-subject/O-option
     ca-subject/L-option
@@ -385,6 +742,9 @@
   (run              do-run)
   (registry         do-registry)
   (supervisor       do-supervisor)
+  (env              do-env)
+  (control          do-control)
+
   (load             do-load)
   (eval             do-eval)
   (repl             do-repl)
@@ -395,6 +755,31 @@
   (admin            do-admin)
   (ca               do-ca)
   (package          do-package))
+
+(defcommand-table env-commands
+  (known-servers do-env-known-servers)
+  (domain        do-env-domain)
+  (supervisor    do-env-supervisor))
+
+(defcommand-table control-commands
+  (list-servers           do-control-list-servers)
+  (start-server           do-control-start-server)
+  (start-workers          do-control-start-workers)
+  (stop-server            do-control-stop-server)
+  (restart-server         do-control-restart-server)
+  (get-server-log         do-control-get-server-log)
+  (update-server-config   do-control-update-server-config)
+  (get-server-config      do-control-get-server-config)
+  (update-ensemble-config do-control-update-config)
+  (get-ensemble-config    do-control-get-config)
+  (shutdown               do-control-shutdown)
+  (restart                do-control-restart)
+  (upload                 do-control-upload)
+  (shell                  do-control-shell)
+  (exec-process           do-control-exec-process)
+  (kill-process           do-control-kill-process)
+  (restart-process        do-control-restart-process)
+  (get-process-output     do-control-get-process-output))
 
 (defcommand-table list-commands
   (servers     do-list-servers)
@@ -480,6 +865,408 @@
        (ensemble-lookup-server what))))
   (stop-actor-server!))
 
+(defcommand-nested do-env env-commands "gxensemble env"
+  env-known-servers-cmd
+  env-domain-cmd
+  env-supervisor-cmd)
+
+(def (do-env-known-servers opt)
+  (def (write-known-servers! known-servers)
+    (call-with-output-file [path: (ensemble-known-servers-path)
+                                  create: 'maybe truncate: #t]
+      (cut write (hash->list known-servers) <>)))
+  (cond
+   ((hash-get opt 'add)
+    (let ((server-id (hash-get opt 'server-id))
+          (server-addrs (hash-get opt 'server-addresses)))
+      (unless server-id
+        (error "missing server id"))
+      (unless (not (null? server-addrs))
+        (error "missing server addresses"))
+      (let* ((known-servers
+              (or (ensemble-known-servers)
+                  (make-hash-table)))
+             (current-addrs
+              (hash-ref known-servers server-id [])))
+        (for (addr server-addrs)
+          (unless (member addr current-addrs)
+            (set! current-addrs (append current-addrs [addr]))))
+        (hash-put! known-servers server-id current-addrs)
+        (write-known-servers! known-servers))))
+   ((hash-get opt 'remove)
+    (let ((server-id (hash-get opt 'server-id))
+          (server-addrs (hash-get opt 'server-addresses)))
+      (unless server-id
+        (error "missing server id"))
+      (alet (known-servers (ensemble-known-servers))
+        (if server-addrs
+          (let* ((current-addrs
+                  (hash-ref known-servers server-id []))
+                 (new-addrs
+                  (filter (lambda (addr) (not (member addr current-addrs)))
+                          current-addrs)))
+            (if (null? new-addrs)
+              (hash-remove! known-servers server-id)
+              (hash-put! known-servers server-id new-addrs)))
+          (hash-remove! known-servers server-id))
+        (write-known-servers! known-servers))))
+   ((hash-get opt 'set)
+    (let ((server-id (hash-get opt 'server-id))
+          (server-addrs (hash-get opt 'server-addresses)))
+      (unless server-id
+        (error "missing server id"))
+      (let (known-servers
+            (or (ensemble-known-servers)
+                (make-hash-table)))
+        (hash-put! known-servers server-id server-addrs)
+        (write-known-servers! known-servers))))
+   ((hash-get opt 'server-id)
+    => (lambda (server-id)
+         (unless (null? (hash-get opt 'server-addresses))
+           (error "unexpected addresses"))
+         (alet* ((known-servers (ensemble-known-servers))
+                 (addrs (hash-get known-servers server-id)))
+           (write-result opt addrs))))
+   (else
+    (alet (known-servers (ensemble-known-servers))
+      (write-result opt (hash->list known-servers))))))
+
+(def (do-env-domain opt)
+  (let (path (ensemble-domain-file-path))
+  (cond
+   ((hash-get opt 'domain)
+    => (lambda (domain)
+         (call-with-output-file [path: path create: 'maybe truncate: #t]
+           (cut write domain <>))))
+   (else
+    (displayln (get-ensemble-domain opt))))))
+
+(def (do-env-supervisor opt)
+  (let (path (ensemble-domain-supervisor-path))
+    (cond
+     ((hash-get opt 'server-id)
+      => (lambda (server-id)
+           (call-with-output-file [path: path create: 'maybe truncate: #t]
+             (cut write server-id <>))))
+     (else
+      (ensemble-domain-supervisor)))))
+
+(defcommand-nested do-control control-commands "gxensemble control"
+  control-list-servers-cmd
+  control-start-server-cmd
+  control-start-workers-cmd
+  control-stop-server-cmd
+  control-restart-server-cmd
+  control-get-server-log-cmd
+  control-get-server-config-cmd
+  control-update-server-config-cmd
+  control-get-config-cmd
+  control-update-config-cmd
+  control-list-processes-cmd
+  control-exec-process-cmd
+  control-kill-process-cmd
+  control-restart-process-cmd
+  control-get-process-output-cmd
+  control-upload-cmd
+  control-shell-cmd
+  control-shutdown-cmd
+  control-restart-cmd)
+
+(def (do-control-list-servers opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (domain (or (hash-get opt 'domain) (ensemble-domain)))
+          (role (hash-get opt 'role)))
+      (call-with-console-server opt
+       (lambda (srv)
+         (let (result (ensemble-supervisor-list-servers
+                       supervisor: supervisor
+                       domain: domain
+                       role: role
+                       actor-server: srv))
+           (write-result opt result)))))))
+
+(def (do-control-start-server opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (role (hash-ref opt 'role))
+           (server-id (hash-ref opt 'server-id))
+           (config-path (hash-get opt 'config))
+           (config (and config-path (call-with-input-file config-path read))))
+      (when config
+        (check-ensemble-server-config! config))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-start-server!
+                        supervisor: supervisor
+                        role: role
+                        server-id: server-id
+                        domain: domain
+                        config: config
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-start-workers opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (role (hash-ref opt 'role))
+           (server-id (hash-ref opt 'server-id))
+           (worker-count (hash-ref opt 'count))
+           (config-path (hash-get opt 'config))
+           (config (and config-path (call-with-input-file config-path read))))
+      (when config
+        (check-ensemble-server-config! config))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-start-workers!
+                        supervisor: supervisor
+                        role: role
+                        server-id-prefix: server-id
+                        workers: worker-count
+                        domain: domain
+                        config: config
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-stop-server opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (role (hash-get opt 'role))
+           (server-ids (hash-get opt 'server-ids)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-stop-servers!
+                        supervisor: supervisor
+                        servers: server-ids
+                        domain: domain
+                        role: role
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-restart-server opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (role (hash-get opt 'role))
+           (server-ids (hash-get opt 'server-ids)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-restart-servers!
+                        supervisor: supervisor
+                        servers: server-ids
+                        domain: domain
+                        role: role
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-get-server-log opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (server-id (hash-ref opt 'server-id))
+           (file      (hash-ref opt 'file "server.log")))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-get-server-log
+                        supervisor: supervisor
+                        server: server-id
+                        file: file
+                        actor-server: srv))
+            (displayln result)))))))
+
+(def (do-control-get-server-config opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (server-id (hash-ref opt 'server-id)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-get-server-config
+                        supervisor: supervisor
+                        server: server-id
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-update-server-config opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (server-id (hash-ref opt 'server-id))
+           (restart?  (hash-get opt 'restart))
+           (replace?  (hash-get opt 'replace))
+           (config-path (hash-ref opt 'config))
+           (config (call-with-input-file config-path read)))
+      (check-ensemble-server-config! config)
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-update-server-config!
+                        supervisor: supervisor
+                        server: server-id
+                        config: config
+                        mode: (if replace? 'replace 'upsert)
+                        restart: restart?
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-get-config opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let (supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-get-config
+                        supervisor: supervisor
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-update-config opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (replace?  (hash-get opt 'replace))
+           (config-path (hash-ref opt 'config))
+           (config (call-with-input-file config-path read)))
+      (check-ensemble-config! config)
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-update-config!
+                        supervisor: supervisor
+                        config: config
+                        mode: (if replace? 'replace 'upsert)
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-shutdown opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let (supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-shutdown!
+                        supervisor: supervisor
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-restart opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (restart-services? (hash-get opt 'restart-services)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-restart!
+                        supervisor: supervisor
+                        restart-services: restart-services?
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-upload opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (exe?        (hash-get opt 'exe))
+          (env?        (hash-get opt 'env))
+          (fs?         (hash-get opt 'fs))
+          (file        (hash-ref opt 'file))
+          (path        (hash-ref opt 'upload)))
+      (unless (file-exists? file)
+        (error "upload file does not exist" file))
+      (unless (= (+ (if exe? 1 0) (if env? 1 0) (if fs? 1 0)) 1)
+        (error "exactly one of --exe, --env, --fs must be specified"))
+
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result
+                (cond
+                 (exe?
+                  ;; compress the executable first
+                  (call-with-temporary-file-name "exe"
+                    (lambda (tmp)
+                      (copy-file file tmp)
+                      (invoke "gzip" [tmp])
+                      (ensemble-supervisor-upload-executable!
+                       supervisor: supervisor
+                       path: tmp
+                       deployment-path: path
+                       actor-server: srv))))
+                 (env?
+                  (ensemble-supervisor-upload-environment!
+                   supervisor: supervisor
+                   path: file
+                   deployment-path: path
+                   actor-server: srv))
+                 (fs?
+                  (ensemble-supervisor-upload-filesystem-overlay!
+                   supervisor: supervisor
+                   path: file
+                   deployment-path: path
+                   actor-server: srv))))
+            (write-result opt result)))))))
+
+(def (do-control-shell opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (command (hash-get opt 'command)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-shell-command
+                        supervisor: supervisor
+                        command: command
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-exec-process opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (exe (hash-ref opt 'exe-path))
+          (args (hash-ref opt 'exe-args))
+          (env  (hash-get opt 'env))
+          (envvars  (hash-get opt 'envvars)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-exec-process!
+                        supervisor: supervisor
+                        exe: exe
+                        args: args
+                        env: env
+                        envvars: envvars
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-kill-process opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (pid (hash-ref opt 'pid))
+          (signo (hash-ref opt 'signo)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-kill-process!
+                        supervisor: supervisor
+                        pid: pid
+                        signo: signo
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-restart-process opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (pid (hash-ref opt 'pid)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-restart-process!
+                        supervisor: supervisor
+                        pid: pid
+                        actor-server: srv))
+            (write-result opt result)))))))
+
+(def (do-control-get-process-output opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+          (pid (hash-ref opt 'pid)))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ensemble-supervisor-get-process-output
+                        supervisor: supervisor
+                        pid: pid
+                        actor-server: srv))
+            (displayln result)))))))
+
 (defcommand-nested do-list list-commands "gxensemble list"
   list-servers-cmd
   list-actors-cmd
@@ -542,23 +1329,25 @@
                                 location: (hash-ref opt 'subject/L)))))))
 
 (def (do-ca-cert opt)
-  (let* ((server-id (hash-ref opt 'server-id))
-         (base-path (ensemble-tls-server-path server-id)))
-  (cond
-   ((hash-get opt 'view)
-    (let (cert (path-expand "server.crt" base-path))
-      (invoke "openssl" ["-text" "-in" cert])))
-   ((and (not (hash-get opt 'force))
-         (file-exists?  (path-expand "server.crt" base-path)))
-    (displayln "server.crt already exists; use --force to force certificate generation"))
-   (else
-    (let (sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
-      (generate-actor-tls-cert! sub-passphrase
-                                server-id: server-id
-                                capabilities: (hash-ref opt 'capabilities)
-                                country-name: (hash-ref opt 'subject/C)
-                                organization-name: (hash-ref opt 'subject/O)
-                                location: (hash-ref opt 'subject/L)))))))
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let* ((server-id (hash-ref opt 'server-id))
+           (base-path (ensemble-tls-server-path server-id)))
+      (cond
+       ((hash-get opt 'view)
+        (let (cert (path-expand "server.crt" base-path))
+          (invoke "openssl" ["-text" "-in" cert])))
+       ((and (not (hash-get opt 'force))
+             (file-exists?  (path-expand "server.crt" base-path)))
+        (displayln "server.crt already exists; use --force to force certificate generation"))
+       (else
+        (let (sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
+          (generate-actor-tls-cert! sub-passphrase
+                                    server-id: server-id
+                                    ensemble-domain: (ensemble-domain)
+                                    capabilities: (hash-ref opt 'capabilities)
+                                    country-name: (hash-ref opt 'subject/C)
+                                    organization-name: (hash-ref opt 'subject/O)
+                                    location: (hash-ref opt 'subject/L))))))))
 
 (def (do-package opt)
   (let* ((server-id (hash-ref opt 'server-id))
@@ -909,7 +1698,7 @@
 
 (def (do-registry opt)
   (let ((server-id (hash-get opt 'server-id))
-        (domain    (hash-ref opt 'ensemble-domain)))
+        (domain    (get-ensemble-domain opt)))
     (if server-id
       ;; run as a supervisory process
       (let (cfg (load-ensemble-server-config (server-identifier-at-domain server-id domain)))
@@ -934,15 +1723,21 @@
 (def (do-run opt)
   (let ((module-main (get-module-main (hash-ref opt 'module-id)))
         (main-args (hash-ref opt 'main-args)))
-    (call-with-ensemble-server (hash-ref opt 'server-id)
-                               (cut apply module-main main-args)
-                               log-level: (hash-ref opt 'logging)
-                               log-file:  (hash-ref opt 'logging-file)
-                               listen:    (hash-ref opt 'listen)
-                               announce:  (hash-ref opt 'announce)
-                               registry:  (hash-ref opt 'registry)
-                               roles:     (hash-ref opt 'roles)
-                               cookie:    (get-actor-server-cookie))))
+    (if (hash-get opt 'supervised)
+      (let* ((domain (get-ensemble-domain opt))
+             (server-id (hash-ref opt 'server-id))
+             (cfg (load-ensemble-server-config server-id domain)))
+        (become-ensemble-server! cfg (cut apply module-main main-args)))
+      (call-with-ensemble-server (hash-ref opt 'server-id)
+                                 (cut apply module-main main-args)
+                                 log-level: (hash-ref opt 'logging)
+                                 log-file:  (hash-ref opt 'logging-file)
+                                 listen:    (hash-ref opt 'listen)
+                                 announce:  (hash-ref opt 'announce)
+                                 registry:  (hash-ref opt 'registry)
+                                 roles:     (hash-ref opt 'roles)
+                                 domain:    (hash-ref opt 'ensemble-domain)
+                                 cookie:    (get-actor-server-cookie)))))
 
 (def (get-module-main module-id)
   (def (runtime-export? exported)
@@ -958,6 +1753,13 @@
       (error "module does not export main" module-id))))
 
 ;;; utilities
+(def (write-result opt result)
+  (if (hash-get opt 'pretty)
+    (pretty-print result)
+    (begin
+      (write result)
+      (newline))))
+
 (def (display-result-list lst)
   (for (result lst)
     (display-result result)))
@@ -969,26 +1771,53 @@
 (def (string->object str)
   (call-with-input-string str read))
 
-(def (start-actor-server-with-options! opt)
+(def (string->integer str)
+  (let (input (string->number str))
+    (unless (integer? input)
+      (error "expected integer" str))
+    input))
+
+(def (get-ensemble-domain opt)
   (cond
-   ((hash-get opt 'logging)
-    => current-logger-options))
-  (let* ((known-servers
-         (cond
-          ((hash-get opt 'registry)
-           => (lambda (addrs)
-                (hash-eq (registry (append (default-registry-addresses) addrs)))))
-          (else
-           (hash-eq (registry (default-registry-addresses))))))
-         (server-id
-          (hash-ref opt 'console))
-        (listen-addrs
-         (hash-ref opt 'listen []))
-        (cookie (get-actor-server-cookie)))
-    (start-actor-server! identifier: server-id
-                         cookie: cookie
-                         addresses: listen-addrs
-                         known-servers: known-servers)))
+   ((hash-get opt 'ensemble-domain))
+   ((file-exists? (ensemble-domain-file-path))
+    (call-with-input-file (ensemble-domain-file-path) read))
+   (else (ensemble-domain))))
+
+(def (call-with-console-server opt thunk)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let (srv (start-actor-server-with-options! opt))
+      (maybe-authorize! (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+      (with-catch display-exception thunk)
+      (stop-actor-server! srv))))
+
+(def (start-actor-server-with-options! opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt))
+                 (current-logger-options (hash-ref opt 'logging 'WARN)))
+    (let* ((known-servers (ensemble-known-servers))
+           (known-servers
+            (cond
+             ((hash-get opt 'registry)
+              => (lambda (addrs)
+                   (let ((key (default-registry-server))
+                         (addrs (append (default-registry-addresses) addrs)))
+                     (if known-servers
+                       (begin
+                         (hash-put! known-servers key addrs)
+                         known-servers)
+                       (hash (,key addrs))))))
+             ((not known-servers)
+              (hash (,(default-registry-server) (default-registry-addresses))))
+             (else known-servers)))
+           (server-id
+            (hash-ref opt 'console))
+           (listen-addrs
+            (hash-ref opt 'listen []))
+           (cookie (get-actor-server-cookie)))
+      (start-actor-server! identifier: server-id
+                           cookie: cookie
+                           addresses: listen-addrs
+                           known-servers: known-servers))))
 
 (def +admin-privkey+ #f)
 (def (get-privkey)

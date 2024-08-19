@@ -9,6 +9,7 @@
 (export start-logger!
         current-logger
         current-logger-options
+        current-log-directory
         make-logger-options
         logger-options?
         deflogger
@@ -16,8 +17,7 @@
         warnf
         infof
         debugf
-        verbosef
-        )
+        verbosef)
 
 (def default-level 1) ; WARN
 (def verbose-level 4)
@@ -46,6 +46,10 @@
     (hash-ref symbolic-levels level verbose-level))
    (else
     (raise-bad-argument logger "log level: fixnum or symbol" level))))
+
+;; utility parameter to help systems find where to put their logs
+(def current-log-directory
+  (make-parameter #f))
 
 ;; the current logger actor
 (def current-logger
