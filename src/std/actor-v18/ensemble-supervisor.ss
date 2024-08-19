@@ -53,7 +53,7 @@
    ((ensemble-lookup-servers/role 'supervisor srv)
     => (cut map car <>))
    (else
-    (raise-actor-error ensmeble-list-domain-servers "cannot find any supervisors"))))
+    (raise-actor-error ensmeble-lookup-supervisors "cannot find any supervisors"))))
 
 (defsyntax (ensemble-supervisors-collect stx)
   (syntax-case stx ()
@@ -90,7 +90,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-list-servers
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 domain: (domain (ensemble-domain))
                 role: (role #f)
                 actor-server: (srv (current-actor-server)))
@@ -127,9 +127,10 @@
                 server-id-prefix: prefix
                 workers: count
                 domain: (domain (ensemble-domain))
+                config: (config #f)
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)
-       (!supervisor-start-workers role domain prefix count))
+       (!supervisor-start-workers role domain prefix count config))
   error: "error starting workers"
   supervisor: super
   role: role
@@ -223,7 +224,7 @@
   supervisor: super)
 
 ;; update a server configuration for a supervisor
-(defcall-actor (ensemble-supervisor-update-server!
+(defcall-actor (ensemble-supervisor-update-server-config!
                 supervisor: super
                 server: server-id
                 config: cfg

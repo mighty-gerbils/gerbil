@@ -6,6 +6,7 @@
         :std/iter
         :std/logger
         :std/config
+        (only-in :std/logger current-log-directory)
         ./message
         ./proto
         ./server
@@ -23,24 +24,28 @@
 ;;; cfg: <ensemble-server-config>
 (def (become-ensemble-server! cfg thunk)
   (check-ensemble-server-config! cfg)
-  (create-directory* (config-get! cfg log-dir:))
-  (call-with-ensemble-server
-   (config-get! cfg identifier:) thunk
-   domain:        (config-get! cfg domain:)
-   supervisor:    (config-get cfg supervisor:)
-   registry:      (config-get cfg registry:)
-   cookie:        (get-actor-server-cookie
-                   (config-get! cfg cookie:))
-   admin:         (alet (admin-path (config-get cfg admin:))
-                    (and (file-exists? admin-path)
-                         (get-admin-pubkey admin-path)))
-   roles:         (cons (config-get! cfg role:) (config-get cfg secondary-roles: []))
-   log-level:     (config-get! cfg log-level:)
-   log-file:      (config-get! cfg log-file:)
-   listen:        (config-get! cfg addresses:)
-   known-servers: (alet (known-servers (config-get cfg known-servers:))
-                    (list->hash-table known-servers))))
-
+  (let (logdir (config-get! cfg log-dir:))
+    (create-directory* logdir)
+    (parameterize ((current-log-directory logdir))
+      (call-with-ensemble-server
+       (config-get! cfg identifier:) thunk
+       domain:        (config-get! cfg domain:)
+       supervisor:    (config-get cfg supervisor:)
+       registry:      (config-get cfg registry:)
+       cookie:        (get-actor-server-cookie
+                       (config-get! cfg cookie:))
+       admin:         (alet (admin-path (config-get cfg admin:))
+                        (and (file-exists? admin-path)
+                             (get-admin-pubkey admin-path)))
+       roles:         (cons (config-get! cfg role:) (config-get cfg secondary-roles: []))
+       log-level:     (config-get! cfg log-level:)
+       log-file:      (config-get! cfg log-file:)
+       listen:        (config-get! cfg addresses:)
+       known-servers: (cond
+                       ((config-get cfg known-servers:)
+                        => (lambda (known-servers)
+                             (list->hash-table known-servers)))
+                       (else (ensemble-known-servers)))))))
 
 ;; call a thunk in the context of an ensemble server
 ;; this is the programmatic equivalent of gxensemble run
@@ -55,7 +60,7 @@
                                 cookie:        (cookie (get-actor-server-cookie))
                                 admin:         (admin (get-admin-pubkey))
                                 auth:          (auth #f)
-                                known-servers: (known-servers #f)
+                                known-servers: (known-servers (ensemble-known-servers))
                                 supervisor:    (supervisor #f)
                                 registry:      (registry #f)
                                 registry-addrs: (registry-addrs #f))

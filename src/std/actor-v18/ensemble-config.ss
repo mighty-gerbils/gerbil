@@ -41,6 +41,8 @@
 ;;;    exe: <program>
 ;;;    ;;; optional executable argument prefix
 ;;;    prefix: (<string> ...)
+;;;    ;;; optional executable argument suffix
+;;;    suffix: (<string> ...)
 ;;;    ;;; supervision policy
 ;;;    policy: <supervisory-policy>
 ;;;    ;;; optional role server configuration template
@@ -72,6 +74,8 @@
 ;;;    servers: <fixnum>
 ;;;    ;;; primary role
 ;;;    role: <role>
+;;;    ;;; [optional] server configuration, the role template is overlayed
+;;;    server-config: <ensemble-server-config>
 ;;;   )
 ;;;  ...)
 ;;; )

@@ -23,7 +23,7 @@
 
 (defmessage !supervisor-list-servers (role domain))
 (defmessage !supervisor-start-server (role domain server-id config))
-(defmessage !supervisor-start-workers (role domain prefix count))
+(defmessage !supervisor-start-workers (role domain prefix count config))
 (defmessage !supervisor-stop-servers (role domain server-ids))
 (defmessage !supervisor-restart-servers (role domain server-ids))
 (defmessage !supervisor-get-server-log (server-id file))
@@ -127,7 +127,8 @@
                 (role-cfg (agetq roles-alist role)))
           (let* ((exe    (: (config-get! role-cfg exe:) :string))
                  (prefix (:~ (config-get role-cfg prefix: []) (list-of? string?)))
-                 (args (append prefix [(object->string server-id)]))
+                 (suffix (:~ (config-get role-cfg suffix: []) (list-of? string?)))
+                 (args (append prefix [(object->string server-id) suffix ...]))
                  (policy (: (config-get role-cfg prolicy: 'restart) :symbol))
                  (base-role-cfg
                   [config: 'ensemble-server-v0
@@ -263,13 +264,13 @@
                     (!error "monitor failure"))))
                 (result result))))))
 
-      (def (start-workers! role domain prefix count)
+      (def (start-workers! role domain prefix count config)
         (infof "start-workers: ~a ~a ~a ~a" role domain prefix count)
         (with-error-handler "start-workers"
           (!ok
            (for/fold (r []) (i (in-range count))
              (let (server-id (make-symbol prefix "-" i))
-               (match (start-server! role domain server-id #f)
+               (match (start-server! role domain server-id config)
                  ((!ok value)
                   (cons value r))
                  ((!error what)
@@ -482,7 +483,8 @@
               (match (start-workers! (config-get! cfg role:)
                                      domain
                                      (config-get! cfg prefix:)
-                                     (config-get! cfg servers:))
+                                     (config-get! cfg servers:)
+                                     (config-get  cfg server-config:))
                 ((!ok) (void))
                 ((!error what)
                  (errorf "error starting preloaded workers for ~a: ~a" domain what)))))))
@@ -514,9 +516,9 @@
           (with-authorization 'supervisor
             (start-server! role domain server-id cfg)))
 
-         ((!supervisor-start-workers role domain prefix count)
+         ((!supervisor-start-workers role domain prefix count config)
           (with-authorization 'supervisor
-            (start-workers! role domain prefix count)))
+            (start-workers! role domain prefix count config)))
 
          ((!supervisor-stop-servers role domain server-ids)
           (with-authorization 'supervisor

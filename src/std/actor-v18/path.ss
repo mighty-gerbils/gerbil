@@ -5,7 +5,6 @@
         :std/os/hostname)
 (export #t)
 
-;; symbol or #f
 (def ensemble-domain
   (make-parameter '/))
 
@@ -55,3 +54,24 @@
 
 (def (ensemble-server-unix-addr server-id)
   [unix: (hostname) (ensemble-server-unix-path server-id)])
+
+(def (ensemble-known-servers-path (base (ensemble-base-path)))
+  (path-expand "known-servers" base))
+
+(def (ensemble-known-servers (base (ensemble-base-path)))
+  (let (path (ensemble-known-servers-path base))
+    (and (file-exists? path)
+         (list->hash-table
+          (call-with-input-file path (cut read <>))))))
+
+(def (ensemble-domain-supervisor-path (base (ensemble-base-path)))
+  (path-expand "supervisor" base))
+
+(def (ensemble-domain-supervisor (base (ensemble-base-path)))
+  (let (path (ensemble-domain-supervisor-path base))
+    (if (file-exists? path)
+      (call-with-input-file path read)
+      (cons 'supervisor (ensemble-domain)))))
+
+(def (ensemble-domain-file-path (base (ensemble-base-path)))
+  (path-expand "domain" base))
