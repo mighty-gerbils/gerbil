@@ -485,3 +485,16 @@
   error: "error executing process"
   supervisor: super
   pid: pid)
+
+;;; priviledged message invocations
+(defcall-actor (ensemble-supervisor-invoke!
+                supervisor: super
+                actor: actor
+                message: msg
+                actor-server: (srv (current-actor-server)))
+  (->> (@supervisor super srv)
+       (!supervisor-invoke actor msg))
+  error: "error invoking actor"
+  supervisor: super
+  actor: actor
+  message: msg)

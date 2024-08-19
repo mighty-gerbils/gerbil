@@ -32,6 +32,7 @@
 (defmessage !supervisor-get-config ())
 (defmessage !supervisor-update-config (config mode))
 (defmessage !supervisor-restart (services?))
+(defmessage !supervisor-invoke (actor message))
 
 (defclass Server (pid config state service start-time)
   final: #t)
@@ -546,9 +547,19 @@
             (get-config)))
 
          ((!supervisor-restart services?)
-          (if (actor-authorized? @source 'supervisor)
-            (--> (restart! services?))
-            (--> (!error "not authorized"))))
+          (with-authorization 'supervisor
+            (restart! services?)))
+
+         ((!supervisor-invoke actor msg)
+          (with-authorization 'supervisor
+            (spawn/name 'invoke
+              (lambda ()
+                (try
+                 (--> (->> (reference->handle actor) msg
+                           expiry: @expiry))
+                 (catch (e)
+                   (debugf "actor invocation error: ~a: ~a" actor e)
+                   (--> (!error (error-message e)))))))))
 
          ((!executor-notify pid exit-code)
           (if (local-actor? @source 'executor)
