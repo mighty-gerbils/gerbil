@@ -130,8 +130,9 @@
 
 ;;; Internals
 (def (make-random-identifier)
-  (string->symbol
-   (string-append "actor-server-" (hex-encode (subu8vector (sha256 (random-bytes 32)) 0 8)))))
+  (server-identifier
+   (string->symbol
+    (string-append "actor-server-" (hex-encode (subu8vector (sha256 (random-bytes 32)) 0 8))))))
 
 (def (actor-server-listen! addrs tls-context)
   (let lp ((rest addrs) (socks []))
@@ -181,7 +182,7 @@
 
 (def (actor-server id roles supervisor registry known-servers tls-context cookie admin auth socks)
   (def domain (ensemble-domain))
-  (def id@domain (cons id domain))
+  (def id@domain (server-identifier id))
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache

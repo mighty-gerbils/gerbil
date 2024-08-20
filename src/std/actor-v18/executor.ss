@@ -234,7 +234,7 @@
         (kill pid SIGTERM)
         (unless proc.kill?
           (set! proc.kill? #t)
-          (after executor-terminate-grace-period (current-thread) pid))
+          (spawn after executor-terminate-grace-period (current-thread) pid))
         (set! proc.continuations (cons cont proc.continuations)))
 
       (def (force-terminate-process! pid)
@@ -251,7 +251,7 @@
           (using (proc :- Process)
             (unless proc.kill?
               (set! proc.kill? #t)
-              (after executor-terminate-grace-period (current-thread) pid))))
+              (spawn after executor-terminate-grace-period (current-thread) pid))))
 
         (while (fx> (hash-length procs) 0)
           (<-

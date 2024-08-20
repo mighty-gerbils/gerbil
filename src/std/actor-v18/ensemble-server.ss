@@ -83,9 +83,9 @@
              ((or (memq 'registry roles) (memq 'supervisor roles))
               (hash))
              (registry-addrs
-              (hash (,(cons registry domain) registry-addrs)))
+              (hash (,registry registry-addrs)))
              (else
-              (hash (,(cons registry domain) (default-registry-addresses))))))
+              (hash (,registry (default-registry-addresses))))))
            (unix-addr (ensemble-server-unix-addr server-id))
            (listen-addrs
             (or listen-addrs [(ensemble-server-unix-addr server-id)]))

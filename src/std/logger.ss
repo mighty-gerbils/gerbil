@@ -92,7 +92,7 @@
       (when (##fx<= level threshold)
         (let ((now (##current-time-point))
               (msg (if (null? args) fmt (apply format fmt (map exception->string args)))))
-          (thread-send logger (!log-message now level source msg))))))
+          (thread-send logger (!log-message (current-thread) now level source msg))))))
 
   (cond
    ((get-logger)
@@ -141,7 +141,7 @@
 (deflogger default)
 
 ;;; logger implementation
-(defstruct !log-message (ts level source msg))
+(defstruct !log-message (thread ts level source msg))
 
 (def (start-logger! (output (current-error-port)))
   (cond
@@ -162,8 +162,9 @@
 (def (logger-server port own-port?)
   (def (loop)
     (match (thread-receive)
-      ((!log-message ts level source msg)
-       (fprintf port "~a ~a ~a ~a~n"
+      ((!log-message thread ts level source msg)
+       (fprintf port "~a ~a ~a ~a ~a~n"
+                (or (thread-name thread) "?")
                 ts
                 (level->symbolic level)
                 source msg)

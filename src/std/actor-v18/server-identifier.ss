@@ -10,16 +10,17 @@
 
 ;; returns the actor server's identifier
 (def (actor-server-identifier (srv (current-actor-server)))
-  (cons (thread-specific srv)
-        (ensemble-domain)))
+  (server-identifier (thread-specific srv)))
 
-(def (server-identifier->string server-id)
+(def (server-identifier->flat-string server-id)
   (with ([id . domain] server-id)
     (string-append
      (symbol->string id)
      "@"
      (symbol->string domain))))
 
+(def (string->server-identifier str)
+  (server-identifier (call-with-input-string str read)))
 
 (def (server-identifier id)
   (cond

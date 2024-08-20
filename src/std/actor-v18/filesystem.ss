@@ -52,7 +52,7 @@
 (def (upload-blob-key (cksum : :u8vector))
   (hex-encode cksum))
 
-(def (upload-blob-path (type : :pair) (key : :string))
+(def (upload-blob-path (key : :string))
   (path-expand key (path-expand "blob" (current-directory))))
 
 (def (upload-expiration-time)
@@ -103,7 +103,7 @@
                      (!filesystem-upload-continue blob-key up.offset))
                    (!error "upload in progress"))))
            (else
-            (let (blob-path (upload-blob-path type blob-key))
+            (let (blob-path (upload-blob-path blob-key))
               (if (file-exists? blob-path)
                 ;; already uploaded, but potentially incomplete because of a restart
                 (let (cksum2 (file-digest blob-path))
@@ -116,12 +116,13 @@
       (let* ((wr (open-file-writer blob-path mode: #o640))
              (up (Upload cksum: cksum
                          blob: blob-path
+                         path: path
                          type: type
                          writer: wr
                          offset: offset
                          expire: (upload-expiration-time))))
         (when (> offset 0)
-          (using (seeker up : Seeker)
+          (using (seeker wr : Seeker)
             (seeker.seek offset)))
         (hash-put! uploads key up)
         (debugf "begin upload ~a" key)
@@ -147,7 +148,7 @@
         (cond
          ((hash-get uploads key)
           => (lambda ((up :- Upload))
-               (hash-remove! uploads up)
+               (hash-remove! uploads key)
                (up.writer.close)
                (if (equal? (file-digest up.blob) up.cksum)
                  (upload-finish key up.type up.blob up.path)
@@ -210,7 +211,7 @@
         (with-authorization 'filesystem (upload-begin type path cksum)))
 
        ((!filesystem-upload-chunk token offset data)
-        (when (actor-authorized? 'filesystem)
+        (when (actor-authorized? @source 'filesystem)
           (upload-chunk token offset data)))
 
        ((!filesystem-upload-end token)
