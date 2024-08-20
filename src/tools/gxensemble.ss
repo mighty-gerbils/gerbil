@@ -593,12 +593,13 @@
     help: "execute a process in the context of an ensemble supervisor"))
 
 (def control-kill-process-cmd
-  (command 'killprocess
+  (command 'kill-process
     ensemble-domain-option
     supervisor-option
     console-option
     pid-argument
-    signo-argument))
+    signo-argument
+    help: "send a signal to a process"))
 
 (def control-restart-process-cmd
   (command 'restart-process
@@ -613,7 +614,8 @@
     ensemble-domain-option
     supervisor-option
     console-option
-    pid-argument))
+    pid-argument
+    help: "get a process's output"))
 
 (def control-shutdown-cmd
   (command 'shutdown
