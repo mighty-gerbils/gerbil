@@ -5,6 +5,9 @@
         :std/os/hostname)
 (export #t)
 
+(def current-ensemble-server-config
+  (make-parameter #f))
+
 (def ensemble-domain
   (make-parameter '/))
 
@@ -59,19 +62,33 @@
   (path-expand "known-servers" base))
 
 (def (ensemble-known-servers (base (ensemble-base-path)))
-  (let (path (ensemble-known-servers-path base))
-    (and (file-exists? path)
-         (list->hash-table
-          (call-with-input-file path (cut read <>))))))
+  (def (infer)
+    (let (path (ensemble-known-servers-path base))
+      (and (file-exists? path)
+           (list->hash-table
+            (call-with-input-file path (cut read <>))))))
+  (cond
+   ((current-ensemble-server-config)
+    => (lambda (config)
+           (or (config-get config known-servers:)
+               (infer))))
+   (else (infer))))
 
 (def (ensemble-domain-supervisor-path (base (ensemble-base-path)))
   (path-expand "supervisor" base))
 
 (def (ensemble-domain-supervisor (base (ensemble-base-path)))
-  (let (path (ensemble-domain-supervisor-path base))
-    (if (file-exists? path)
-      (call-with-input-file path read)
-      (cons 'supervisor (ensemble-domain)))))
+  (def (infer)
+    (let (path (ensemble-domain-supervisor-path base))
+      (if (file-exists? path)
+        (call-with-input-file path read)
+        (cons 'supervisor (ensemble-domain)))))
+  (cond
+   ((current-ensemble-server-config)
+    => (lambda (config)
+         (or (config-get config supervisor:)
+             (infer))))
+   (else (infer))))
 
 (def (ensemble-domain-file-path (base (ensemble-base-path)))
   (path-expand "domain" base))
