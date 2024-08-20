@@ -91,7 +91,7 @@
 
 (defcall-actor (ensemble-supervisor-list-servers
                 supervisor: (super (ensemble-domain-supervisor))
-                domain: (domain (ensemble-domain))
+                domain: (domain #f)
                 role: (role #f)
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)

@@ -10,6 +10,7 @@
         :std/crypto
         :std/os/error
         :std/os/hostname
+        :std/format
         (only-in :std/os/socket AF_UNIX SOL_SOCKET SO_KEEPALIVE)
         (only-in :std/srfi/1 partition)
         ./logger
@@ -171,10 +172,11 @@
             'error)))
       ;; no TLS; do cookie authentication handshake
       (let/cc exit
-        (def (fail! what)
+        (def (fail! what (detail #f))
           (warnf "handshake with ~a failed: ~a" peer-id what)
           (with-catch void (cut sock.close))
-          (thread-send/check srv (!connection-failed peer-id what))
+          (let (what (if detail (format "~a: ~a" what detail) what))
+            (thread-send/check srv (!connection-failed peer-id what)))
           (exit 'error))
 
         (try
@@ -200,11 +202,11 @@
                    ((not remote-id)
                     (fail! "bad challenge; no server id"))
                    ((not (pair? remote-id))
-                    (fail! "bad hello; remote-id is not fully qualified"))
+                    (fail! "bad hello; remote-id is not fully qualified" remote-id))
                    ((equal? remote-id srv-id)
                     (fail! "bad challenge; server claims to be our server"))
                    ((not (equal? remote-id peer-id))
-                    (fail! "bad challenge; server id mismatch"))
+                    (fail! "bad challenge; server id mismatch" [peer-id remote-id]))
                    (else
                     (let (cli-salt (random-bytes (u8vector-length cookie)))
                       (write-delimited writer (!response (digest peer-id srv-id salt cookie) cli-salt))
@@ -339,9 +341,9 @@
 (def (digest srv-id cli-id salt cookie)
   (sha256 (u8vector-append salt
                            '#u8(#x3a)
-                           (string->utf8 (server-identifier->string srv-id))
+                           (string->utf8 (server-identifier->flat-string srv-id))
                            '#u8(#x3a)
-                           (string->utf8 (server-identifier->string cli-id))
+                           (string->utf8 (server-identifier->flat-string cli-id))
                            '#u8(#x3a)
                            cookie)))
 

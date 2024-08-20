@@ -90,8 +90,8 @@
         (u8vector-append
          (string->utf8
           (string-append "[gerbil:ensemble:auth:"
-                         (server-identifier->string server-id) ":"
-                         (server-identifier->string client-id) "]"))
+                         (server-identifier->flat-string server-id) ":"
+                         (server-identifier->flat-string client-id) "]"))
          challenge-bytes))
     (digest-sign privk challenge)))
 
@@ -100,8 +100,8 @@
         (u8vector-append
          (string->utf8
           (string-append "[gerbil:ensemble:auth:"
-                         (server-identifier->string server-id) ":"
-                         (server-identifier->string client-id) "]"))
+                         (server-identifier->flat-string server-id) ":"
+                         (server-identifier->flat-string client-id) "]"))
          challenge-bytes))
     (digest-verify pubk sig challenge)))
 

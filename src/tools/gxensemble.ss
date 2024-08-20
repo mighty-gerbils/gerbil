@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/expander
+        :std/config
         :std/actor
         :std/actor-v18/cookie
         :std/actor-v18/server
@@ -110,7 +111,7 @@
 
 (def console-option
   (option 'console "-c" "--console"
-    value: string->symbol
+    value: string->object
     default: 'console
     help: "console server id"))
 
@@ -168,7 +169,8 @@
 
 (def server-log-file-optional-argument
   (optional-argument 'file
-    help: "the server log file to retrieve; default is server.log"))
+    help: "the server log file to retrieve; default is server.log"
+    default: "server.log"))
 
 (def server-addresses-rest-arguments
   (rest-arguments 'server-addresses
@@ -459,6 +461,7 @@
     console-option
     supervisor-option
     control-domain-option
+    pretty-flag
     role-option
     help: "list supervised servers in the ensemble"))
 
@@ -776,6 +779,7 @@
   (restart                do-control-restart)
   (upload                 do-control-upload)
   (shell                  do-control-shell)
+  (list-processes         do-control-list-processes)
   (exec-process           do-control-exec-process)
   (kill-process           do-control-kill-process)
   (restart-process        do-control-restart-process)
@@ -877,12 +881,14 @@
       (cut write (hash->list known-servers) <>)))
   (cond
    ((hash-get opt 'add)
-    (let ((server-id (hash-get opt 'server-id))
-          (server-addrs (hash-get opt 'server-addresses)))
+    (let* ((server-id (hash-get opt 'server-id))
+           (server-addrs (hash-get opt 'server-addresses))
+           (server-addrs
+            (if (null? server-addrs)
+              [(ensemble-server-unix-addr server-id)]
+              server-addrs)))
       (unless server-id
         (error "missing server id"))
-      (unless (not (null? server-addrs))
-        (error "missing server addresses"))
       (let* ((known-servers
               (or (ensemble-known-servers)
                   (make-hash-table)))
@@ -949,7 +955,7 @@
            (call-with-output-file [path: path create: 'maybe truncate: #t]
              (cut write server-id <>))))
      (else
-      (ensemble-domain-supervisor)))))
+      (displayln (ensemble-domain-supervisor))))))
 
 (defcommand-nested do-control control-commands "gxensemble control"
   control-list-servers-cmd
@@ -975,7 +981,7 @@
 (def (do-control-list-servers opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
-          (domain (or (hash-get opt 'domain) (ensemble-domain)))
+          (domain (hash-get opt 'domain))
           (role (hash-get opt 'role)))
       (call-with-console-server opt
        (lambda (srv)
@@ -993,7 +999,7 @@
            (role (hash-ref opt 'role))
            (server-id (hash-ref opt 'server-id))
            (config-path (hash-get opt 'config))
-           (config (and config-path (call-with-input-file config-path read))))
+           (config (and config-path (call-with-input-file config-path read-config))))
       (when config
         (check-ensemble-server-config! config))
       (call-with-console-server opt
@@ -1015,7 +1021,7 @@
            (server-id (hash-ref opt 'server-id))
            (worker-count (hash-ref opt 'count))
            (config-path (hash-get opt 'config))
-           (config (and config-path (call-with-input-file config-path read))))
+           (config (and config-path (call-with-input-file config-path read-config))))
       (when config
         (check-ensemble-server-config! config))
       (call-with-console-server opt
@@ -1033,7 +1039,7 @@
 (def (do-control-stop-server opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
-           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (domain (hash-get opt 'domain))
            (role (hash-get opt 'role))
            (server-ids (hash-get opt 'server-ids)))
       (call-with-console-server opt
@@ -1049,7 +1055,7 @@
 (def (do-control-restart-server opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
-           (domain (or (hash-get opt 'domain) (ensemble-domain)))
+           (domain (hash-get opt 'domain))
            (role (hash-get opt 'role))
            (server-ids (hash-get opt 'server-ids)))
       (call-with-console-server opt
@@ -1095,7 +1101,7 @@
            (restart?  (hash-get opt 'restart))
            (replace?  (hash-get opt 'replace))
            (config-path (hash-ref opt 'config))
-           (config (call-with-input-file config-path read)))
+           (config (call-with-input-file config-path read-config)))
       (check-ensemble-server-config! config)
       (call-with-console-server opt
         (lambda (srv)
@@ -1124,7 +1130,7 @@
            (domain (or (hash-get opt 'domain) (ensemble-domain)))
            (replace?  (hash-get opt 'replace))
            (config-path (hash-ref opt 'config))
-           (config (call-with-input-file config-path read)))
+           (config (call-with-input-file config-path read-config)))
       (check-ensemble-config! config)
       (call-with-console-server opt
         (lambda (srv)
@@ -1164,7 +1170,7 @@
           (env?        (hash-get opt 'env))
           (fs?         (hash-get opt 'fs))
           (file        (hash-ref opt 'file))
-          (path        (hash-ref opt 'upload)))
+          (path        (hash-ref opt 'path)))
       (unless (file-exists? file)
         (error "upload file does not exist" file))
       (unless (= (+ (if exe? 1 0) (if env? 1 0) (if fs? 1 0)) 1)
@@ -1182,7 +1188,7 @@
                       (invoke "gzip" [tmp])
                       (ensemble-supervisor-upload-executable!
                        supervisor: supervisor
-                       path: tmp
+                       path: (string-append tmp ".gz")
                        deployment-path: path
                        actor-server: srv))))
                  (env?
@@ -1210,6 +1216,16 @@
                         command: command
                         actor-server: srv))
             (write-result opt result)))))))
+
+(def (do-control-list-processes opt)
+  (parameterize ((ensemble-domain (get-ensemble-domain opt)))
+    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor))))
+      (call-with-console-server opt
+       (lambda (srv)
+         (let (result (ensemble-supervisor-list-processes
+                       supervisor: supervisor
+                       actor-server: srv))
+           (write-result opt result)))))))
 
 (def (do-control-exec-process opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
@@ -1322,7 +1338,7 @@
                                   organization-name: (hash-ref opt 'subject/O))
       (generate-actor-tls-cafiles!)
       (generate-actor-tls-cert! sub-passphrase
-                                server-id: 'console
+                                server-id: '(console . /)
                                 capabilities: '(admin)
                                 country-name: (hash-ref opt 'subject/C)
                                 organization-name: (hash-ref opt 'subject/O)
@@ -1754,11 +1770,12 @@
 
 ;;; utilities
 (def (write-result opt result)
-  (if (hash-get opt 'pretty)
-    (pretty-print result)
-    (begin
-      (write result)
-      (newline))))
+  (unless (void? result)
+    (if (hash-get opt 'pretty)
+      (pretty-print result)
+      (begin
+        (write result)
+        (newline)))))
 
 (def (display-result-list lst)
   (for (result lst)
@@ -1784,11 +1801,11 @@
     (call-with-input-file (ensemble-domain-file-path) read))
    (else (ensemble-domain))))
 
-(def (call-with-console-server opt thunk)
+(def (call-with-console-server opt proc)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let (srv (start-actor-server-with-options! opt))
       (maybe-authorize! (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
-      (with-catch display-exception thunk)
+      (with-catch display-exception (cut proc srv))
       (stop-actor-server! srv))))
 
 (def (start-actor-server-with-options! opt)
@@ -1810,7 +1827,7 @@
               (hash (,(default-registry-server) (default-registry-addresses))))
              (else known-servers)))
            (server-id
-            (hash-ref opt 'console))
+            (server-identifier (hash-ref opt 'console)))
            (listen-addrs
             (hash-ref opt 'listen []))
            (cookie (get-actor-server-cookie)))

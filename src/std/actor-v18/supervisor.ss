@@ -37,9 +37,12 @@
 (defclass Server (pid config state service start-time)
   final: #t)
 
+(def (server-config-roles cfg)
+  (cons (config-get! cfg role:)
+        (config-get cfg secondary-roles: [])))
+
 (def (server-role-includes? (server : Server) role)
-  (let (roles (config-get! server.config role:))
-    (memq role roles)))
+  (memq role (server-config-roles server.config)))
 
 (def supervisor-restarting-too-fast 1)
 
@@ -124,7 +127,7 @@
 
       (def (get-role-server-config role server-id)
         (alet* ((roles-alist (config-get ensemble-cfg roles:))
-                (role-cfg (agetq roles-alist role)))
+                (role-cfg (agetq role roles-alist)))
           (let* ((exe    (: (config-get! role-cfg exe:) :string))
                  (prefix (:~ (config-get role-cfg prefix: []) (list-of? string?)))
                  (suffix (:~ (config-get role-cfg suffix: []) (list-of? string?)))
@@ -138,7 +141,7 @@
                            policy: policy
                            env: "default"])
                  (role-server-cfg (config-get role-cfg server-config:)))
-            (ensemble-server-config-merge base-role-cfg role-cfg))))
+            (ensemble-server-config-merge base-role-cfg role-server-cfg))))
 
       (def (get-server-config role domain server-id)
         (let* ((server-id (server-identifier-at-domain server-id domain))
@@ -168,13 +171,15 @@
 
       (def (get-server-list role domain server-ids)
         (if (null? server-ids)
-          (let (server-list (get-server-list-by-domain domain))
-            (if role
-              (filter (lambda (server-id)
-                        (using (server (hash-ref servers server-id) :- Server)
-                          (server-role-includes? server role)))
-                      server-list)
-              server-list))
+          (if domain
+            (let (server-list (get-server-list-by-domain domain))
+              (if role
+                (filter (lambda (server-id)
+                          (using (server (hash-ref servers server-id) :- Server)
+                            (server-role-includes? server role)))
+                        server-list)
+                server-list))
+            (hash-keys servers))
           (filter (lambda (server-id) (hash-key? servers server-id))
                   server-ids)))
 
@@ -197,7 +202,7 @@
         (let* ((base-path
                 (cond
                  ((config-get server-cfg env:)
-                  => (cut path-expand root/env <>))
+                  => (cut path-expand <> root/env))
                  (else (gerbil-path))))
                (server-path (ensemble-server-path server-id #f base-path)))
           (create-directory* server-path)
@@ -257,7 +262,7 @@
                     (unless (equal? server-id (registry-server-id))
                       (ensemble-add-server! server-id
                                             (config-get! server-cfg addresses:)
-                                            (config-get! server-cfg role:)))
+                                            (server-config-roles server-cfg)))
                     (!ok (cons server-id pid)))
                    ((!error what)
                     (warnf "failed to monitor process ~a: ~a" pid what)
@@ -292,17 +297,17 @@
                (map (lambda (server-id)
                       (using (server (hash-ref servers server-id) :- Server)
                         (set! server.state 'stopping)
-                        (spawn
-                         (lambda ()
-                           (try
-                            (match (->> @executor (!executor-stop server.pid))
-                              ((!ok pid) pid)
-                              ((!error what)
-                               (warnf "error stopping server ~a: ~a" server-id what)
-                               #f))
-                            (catch (e)
-                              (warnf "error stopping server ~a: ~a" server-id e)
-                              #f))))))
+                        (spawn/name 'stop-server
+                          (lambda ()
+                            (try
+                             (match (->> @executor (!executor-stop server.pid))
+                               ((!ok pid) pid)
+                               ((!error what)
+                                (warnf "error stopping server ~a: ~a" server-id what)
+                                #f))
+                             (catch (e)
+                               (warnf "error stopping server ~a: ~a" server-id e)
+                               #f))))))
                     server-list))))
 
       (def (restart-servers! role domain server-ids)
@@ -339,7 +344,7 @@
 
       (def (get-server-log server-id file)
         (with-error-handler "get-server-log"
-          (let (log-file (get-server-log-file server-id file))
+          (let (log-file (get-server-log-file server-id (or file "server.log")))
             (if (file-exists? log-file)
               (!ok (read-file-string log-file))
               (!error "no log")))))

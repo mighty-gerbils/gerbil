@@ -12,6 +12,7 @@
         ./proto
         ./server
         ./server-identifier
+        ./ensemble-util
         ./path)
 (export #t)
 
@@ -52,40 +53,43 @@
       (while #t
         (<-
          ((!ensemble-add-server id addrs roles)
-          (if (authorized-for? @source id)
-            (begin
-              (infof "adding server ~a ~a at ~a" id roles addrs)
-              (registry.add-server id addrs roles)
-              (--> (!ok (void))))
-            (--> (!error "not authorized"))))
+          (--> (with-error-handler "add-server"
+                 (if (authorized-for? @source id)
+                   (begin
+                     (infof "adding server ~a ~a at ~a" id roles addrs)
+                     (registry.add-server id addrs roles)
+                     (!ok (void)))
+                   (!error "not authorized")))))
 
          ((!ensemble-remove-server id)
-          (if (authorized-for? @source id)
-            (begin
-              (infof "removing server ~a" id)
-              (registry.remove-server id)
-              (--> (!ok (void))))
-            (--> (!error "not authorized"))))
+          (--> (with-error-handler "remove-server"
+                 (if (authorized-for? @source id)
+                   (begin
+                     (infof "removing server ~a" id)
+                     (registry.remove-server id)
+                     (!ok (void)))
+                   (!error "not authorized")))))
 
          ((!ensemble-lookup-server id role)
-          (cond
-           (id
-            (debugf "looking up server ~a for ~a" id @source)
-            (cond
-             ((registry.lookup-server id)
-              => (lambda (value) (--> (!ok value))))
-             (else
-              (--> (!error "unknown server")))))
-           (role
-            (debugf "looking up servers by role ~a for ~a" role @source)
-            (let* ((result (registry.lookup-servers/role role))
-                   (result (sort-server-list result)))
-              (--> (!ok result))))
-           (else
-            (debugf "listing servers for ~a" @source)
-            (let* ((result (registry.list-servers))
-                   (result (sort-server-list result)))
-              (--> (!ok result))))))
+          (--> (with-error-handler "lookup-server"
+                 (cond
+                  (id
+                   (debugf "looking up server ~a for ~a" id @source)
+                   (cond
+                    ((registry.lookup-server id)
+                     => (lambda (value) (!ok value)))
+                    (else
+                     (!error "unknown server"))))
+                  (role
+                   (debugf "looking up servers by role ~a for ~a" role @source)
+                   (let* ((result (registry.lookup-servers/role role))
+                          (result (sort-server-list result)))
+                     (!ok result)))
+                  (else
+                   (debugf "listing servers for ~a" @source)
+                   (let* ((result (registry.list-servers))
+                          (result (sort-server-list result)))
+                     (!ok result)))))))
 
          ((!tick)
           (registry.flush))
