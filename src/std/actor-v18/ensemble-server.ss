@@ -26,7 +26,8 @@
   (check-ensemble-server-config! cfg)
   (let (logdir (config-get! cfg log-dir:))
     (create-directory* logdir)
-    (parameterize ((current-log-directory logdir))
+    (parameterize ((current-log-directory logdir)
+                   (current-ensemble-server-config cfg))
       (call-with-ensemble-server
        (config-get! cfg identifier:) thunk
        domain:        (config-get! cfg domain:)

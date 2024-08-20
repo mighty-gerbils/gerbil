@@ -104,7 +104,7 @@
 ;; start a new server for a (primary) role
 ;; returns the server identifier
 (defcall-actor (ensemble-supervisor-start-server!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 role: role
                 server-id: server-id
                 domain: (domain (ensemble-domain))
@@ -122,7 +122,7 @@
 ;; start a number of worker servers
 ;; returns a list of server identifiers
 (defcall-actor (ensemble-supervisor-start-workers!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 role: role
                 server-id-prefix: prefix
                 workers: count
@@ -147,7 +147,7 @@
 ;; if a domain but no roles or server-ids are specified, the entire domain
 ;; is shutdown
 (defcall-actor (ensemble-supervisor-stop-servers!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 servers: (server-ids #f)
                 domain: (domain #f)
                 role: (role #f)
@@ -163,7 +163,7 @@
 ;; restart some servers
 ;; semantics as in stop-servers! above
 (defcall-actor (ensemble-supervisor-restart-servers!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 servers: (server-ids #f)
                 domain: (domain #f)
                 role: (role #f)
@@ -178,7 +178,7 @@
 
 ;; get the log for some server
 (defcall-actor (ensemble-supervisor-get-server-log
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 server: server-id
                 file: (logf "server.log")
                 actor-server: (srv (current-actor-server)))
@@ -195,7 +195,7 @@
 
 ;; shutdown the (part of the) ensemble managed by a specific supervisor
 (defcall-actor (ensemble-supervisor-shutdown!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 actor-server: (srv (current-actor-server)))
   (let (result (->> (@supervisor super srv) (!shutdown)))
     (when (!error? result)
@@ -215,7 +215,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-restart!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 restart-services: (restart-services? #f)
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)
@@ -225,7 +225,7 @@
 
 ;; update a server configuration for a supervisor
 (defcall-actor (ensemble-supervisor-update-server-config!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 server: server-id
                 config: cfg
                 mode: (mode 'upsert)
@@ -239,7 +239,7 @@
   config: cfg)
 
 (defcall-actor (ensemble-supervisor-get-server-config
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 server: server-id
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)
@@ -261,7 +261,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-update-config!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 config: config
                 mode: (mode 'upsert)
                 actor-server: (srv (current-actor-server)))
@@ -279,7 +279,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-get-config
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 actor-server: (srv (current-actor-server)))
   (->> (@supervisor super srv)
        (!supervisor-get-config))
@@ -299,7 +299,7 @@
      actor-server: srv)))
 
 (def (ensemble-supervisor-upload-executable!
-      supervisor: super
+      supervisor: (super (ensemble-domain-supervisor))
       path: executable-gz-path
       deployment-path: deployment-path
       actor-server: (srv (current-actor-server)))
@@ -323,7 +323,7 @@
      actor-server: srv)))
 
 (def (ensemble-supervisor-upload-environment!
-      supervisor: super
+      supervisor: (super (ensemble-domain-supervisor))
       path: env-targz-path
       deployment-path: deployment-path
       actor-server: (srv (current-actor-server)))
@@ -348,7 +348,7 @@
      actor-server: srv)))
 
 (def (ensemble-supervisor-upload-filesystem-overlay!
-      supervisor: super
+      supervisor: (super (ensemble-domain-supervisor))
       path: fs-targz-path
       deployment-path: deployment-path
       actor-server: (srv (current-actor-server)))
@@ -362,7 +362,7 @@
 
 ;; generic upload functionality
 (defcall-actor (ensemble-supervisor-filesystem-upload!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 type: type
                 path: path
                 deployment-path: deployment-path
@@ -404,7 +404,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-shell-command
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 command: cmd
                 actor-server: (srv (current-actor-server)))
   (->> (@executor super srv)
@@ -420,7 +420,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-list-processes
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 actor-server: (srv (current-actor-server)))
   (->> (@executor super srv)
        (!executor-list-processes))
@@ -428,7 +428,7 @@
   supervisor: super)
 
 (defcall-actor (ensemble-supervisor-kill-process!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 pid: pid
                 signo: signo
                 actor-server: (srv (current-actor-server)))
@@ -453,7 +453,7 @@
      actor-server: srv)))
 
 (defcall-actor (ensemble-supervisor-exec-process!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 exe: exe
                 args: args
                 env: (env "default")
@@ -468,7 +468,7 @@
 
 
 (defcall-actor (ensemble-supervisor-get-process-output
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 pid: pid
                 actor-server: (srv (current-actor-server)))
   (->> (@executor super srv)
@@ -478,7 +478,7 @@
   pid: pid)
 
 (defcall-actor (ensemble-supervisor-restart-process!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 pid: pid
                 actor-server: (srv (current-actor-server)))
   (->> (@executor super srv)
@@ -489,7 +489,7 @@
 
 ;;; priviledged message invocations
 (defcall-actor (ensemble-supervisor-invoke!
-                supervisor: super
+                supervisor: (super (ensemble-domain-supervisor))
                 actor: actor
                 message: msg
                 actor-server: (srv (current-actor-server)))
