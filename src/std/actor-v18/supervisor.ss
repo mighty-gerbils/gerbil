@@ -494,14 +494,14 @@
                 ((!error what)
                  (errorf "error starting preloaded workers for ~a: ~a" domain what)))))))
 
-      (infof "supervisor starting supervisory services")
+      (infof "starting supervisory services")
       (try
        (start-services!)
        (catch (e)
          (errorf "error starting supervisor services: ~a" e)
          (exit 'error)))
 
-      (infof "supervisor starting preloaded servers and workers")
+      (infof "starting preloaded servers and workers")
       (try
        (start-preloaded!)
        (catch (e)
