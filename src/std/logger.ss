@@ -163,10 +163,10 @@
   (def (loop)
     (match (thread-receive)
       ((!log-message thread ts level source msg)
-       (fprintf port "~a [~a] ~a ~a ~a~n"
+       (fprintf port "~a ~a [~a] ~a ~a~n"
                 ts
-                (or (thread-name thread) "?")
                 (level->symbolic level)
+                (or (thread-name thread) "?")
                 source msg)
        (force-output port)
        (loop))
