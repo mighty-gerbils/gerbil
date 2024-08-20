@@ -106,24 +106,27 @@
         (config-get! (registry-config) addresses:))
 
       (def (get-base-server-config server-id)
-        [config: 'ensemble-server-v0
-                 ;; ensemble
-                 domain: (cdr server-id)
-                 identifier: server-id
-                 supervisor: (actor-server-identifier)
-                 registry: (registry-server-id)
-                 cookie: (default-cookie-path)
-                 admin:  (default-admin-pubkey-path)
-                 policy: 'restart
-                 ;; logging
-                 log-level: 'INFO
-                 log-dir:   (get-server-log-dir server-id)
-                 log-file:  (get-server-log-file server-id "server.log")
-                 ;; bindings
-                 addresses: (get-server-default-addresses server-id)
-                 known-servers: [[(registry-server-id) (registry-addrs) ...]]
-                 auth: [[(actor-server-identifier) 'admin]]
-                 ])
+        (let* ((self (actor-server-identifier))
+               (self-addrs (get-server-default-addresses self)))
+          [config: 'ensemble-server-v0
+                   ;; ensemble
+                   domain: (cdr server-id)
+                   identifier: server-id
+                   supervisor: self
+                   registry: (registry-server-id)
+                   cookie: (default-cookie-path)
+                   admin:  (default-admin-pubkey-path)
+                   policy: 'restart
+                   ;; logging
+                   log-level: 'INFO
+                   log-dir:   (get-server-log-dir server-id)
+                   log-file:  (get-server-log-file server-id "server.log")
+                   ;; bindings
+                   addresses: (get-server-default-addresses server-id)
+                   known-servers: [[self self-addrs ...]
+                                   [(registry-server-id) (registry-addrs) ...]]
+                   auth: [[self 'admin]]
+                   ]))
 
       (def (get-role-server-config role server-id)
         (alet* ((roles-alist (config-get ensemble-cfg roles:))
