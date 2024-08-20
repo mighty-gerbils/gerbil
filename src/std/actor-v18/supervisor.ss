@@ -434,7 +434,8 @@
         (when reply-expected?
           (-> source (!ok (void))
               replyto: nonce
-              expiry: expiry)))
+              expiry: expiry))
+        (-> srv (!shutdown)))
 
       (def (do-shutdown!)
         (with-error-log "stop-servers"
@@ -580,7 +581,6 @@
          ,(@shutdown
            (infof "supervisor shutting down ...")
            (shutdown! @source @nonce @expiry @reply-expected?)
-           (-> ticker (!shutdown))
            (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf))))))

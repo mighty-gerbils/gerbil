@@ -200,7 +200,7 @@
   (let (result (->> (@supervisor super srv) (!shutdown)))
     (when (!error? result)
       (warnf "error shutting down supervisor ~a: ~a" super (!error-message result)))
-    (remote-stop-server! super srv))
+    result)
   error: "error shutting down supervisor"
   supervisor: super)
 
