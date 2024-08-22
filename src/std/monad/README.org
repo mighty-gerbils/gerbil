@@ -568,13 +568,13 @@ Even though, or perhaps because =:t= does "nothing" there is a simple
 
   (instance (m Monad) (st stateT) 
     ((return a)
-       (using (inner st.inner : Monad) (lambda (s) (inner.return [a . s]))))
+     (using (inner st.inner : Monad) (lambda (s) (inner.return [a . s]))))
     ((>>= ma f)
-       (using (inner st.inner : Monad)
-         (lambda (s)
-           (du inner
-  	     pair <- (ma s)
-  	     (with ((cons v s!) pair) ((f v) s!)))))))
+     (using (inner st.inner : Monad)
+       (lambda (s)
+         (du inner
+    	 pair <- (ma s)
+    	 (with ((cons v s!) pair) ((f v) s!)))))))
 
 #+end_src
 
@@ -839,7 +839,13 @@ Making the handler is easy.
      (du (inner et.inner :- Monad)
        val <- exp
        (if (me.error? val) (handler val) (inner.return val)))))
-  
+
+  (instance Fail (et errorT) ((fail) (using (i et.inner : Fail) (i.fail))))
+  (instance Or (et errorT) ((or a b) (using (i et.inner : Or) (i.or a b))))
+  (instance Plus (et errorT) ((plus a b) (using (i et.inner : Plus) (i.plus a b))))
+  (instance Run (et errorT) ((run fn arg) (using (i et.inner : Run) (i.run fn arg))))
+  (instance Zero (et errorT) ((zero) (using (i et.inner : Zero) (i.zero))))
+
 #+end_src
 
 Testing it makes it clear.
@@ -1107,14 +1113,13 @@ This is after state in the train of thought so is defined here.
           :std/error
           :std/interactive
           :srfi/13
-         ; :std/instance
-         "instance"
-         "monad/interface"
-         "monad/identity"
-         "monad/list"
-         "monad/state"
-         "monad/syntax"
-         "monad/error"
+          :std/instance
+          :std/monad/interface
+          :std/monad/identity
+          :std/monad/list
+          :std/monad/state
+          :std/monad/syntax
+          :std/monad/error
           (only-in :std/sugar hash try)
           (only-in :gerbil/core error-object? with-catch))
   (export monad-test)

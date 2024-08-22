@@ -27,6 +27,12 @@
      val <- exp
      (if (me.error? val) (handler val) (inner.return val)))))
 
+(instance Fail (et errorT) ((fail) (using (i et.inner : Fail) (i.fail))))
+(instance Or (et errorT) ((or a b) (using (i et.inner : Or) (i.or a b))))
+(instance Plus (et errorT) ((plus a b) (using (i et.inner : Plus) (i.plus a b))))
+(instance Run (et errorT) ((run fn arg) (using (i et.inner : Run) (i.run fn arg))))
+(instance Zero (et errorT) ((zero) (using (i et.inner : Zero) (i.zero))))
+
 (instance MonadState (et errorT)
  ((get) (du (inner et.inner :- MonadState) (inner.get)))
  ((put! s) (du (inner et.inner :- MonadState) (inner.put! s)))

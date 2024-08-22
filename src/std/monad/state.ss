@@ -32,13 +32,13 @@
 
 (instance (m Monad) (st stateT) 
   ((return a)
-     (using (inner st.inner : Monad) (lambda (s) (inner.return [a . s]))))
+   (using (inner st.inner : Monad) (lambda (s) (inner.return [a . s]))))
   ((>>= ma f)
-     (using (inner st.inner : Monad)
-       (lambda (s)
-         (du inner
-	     pair <- (ma s)
-	     (with ((cons v s!) pair) ((f v) s!)))))))
+   (using (inner st.inner : Monad)
+     (lambda (s)
+       (du inner
+  	 pair <- (ma s)
+  	 (with ((cons v s!) pair) ((f v) s!)))))))
 
 (instance Run (st stateT)
   ((run mv (state (void))) (mv state)))
