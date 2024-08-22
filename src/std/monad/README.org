@@ -105,7 +105,8 @@ definition.
     (instance (m Monad) :t
       ((return a) a)
       ((>>= ma f) (f ma))
-      ((>> ma mb) (m.>>= ma (lambda (_) mb)))))
+      ((>> ma mb) (m.>>= ma (lambda (_) mb))))
+    rebind: #t)
 #+end_src
 
 Essentially that's that! a monad is just an abstraction around those
