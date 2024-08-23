@@ -237,11 +237,13 @@
      (merge-alist old new application:) ...
      ])))
 
-(def (load-ensemble-config (base (gerbil-path)))
-  (let (cfg (load-config (ensemble-config-path base)
-                         'ensemble-v0))
+(def (load-ensemble-config-file path)
+  (let (cfg (load-config path 'ensemble-v0))
     (check-ensemble-config! cfg)
     cfg))
+
+(def (load-ensemble-config (base (gerbil-path)))
+  (load-ensemble-config-file (ensemble-config-path base)))
 
 (def (load-ensemble-server-config server-id
                                   (domain (ensemble-domain))
@@ -250,3 +252,9 @@
                          'ensemble-server-v0))
     (check-ensemble-server-config! cfg)
     cfg))
+
+(def (empty-ensemble-config)
+  [config: 'ensemble-v0])
+
+(def (empty-ensemble-server-config)
+  [config: 'ensemble-server-v0])

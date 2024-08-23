@@ -161,10 +161,7 @@
             (ensemble-server-config-merge base-cfg service-cfg))))
 
       (def (get-server-log-dir server-id)
-        (with ([id . domain] server-id)
-          (path-expand (symbol->string id)
-                       (path-expand (ensemble-domain->relative-path domain)
-                                    root/log))))
+        (ensemble-server-log-directory server-id root/log))
 
       (def (get-server-log-file server-id file)
         (path-expand file (get-server-log-dir server-id)))

@@ -6,6 +6,8 @@
         :std/iter
         :std/io
         ./path
+        ./cookie
+        ./admin
         ./ensemble
         ./ensemble-config
         ./ensemble-util
@@ -22,7 +24,10 @@
 ;;; cfg: <ensemble-config>
 (def (become-ensemble-supervisor! cfg (thunk void))
   (check-ensemble-config! cfg)
-  (let* ((root     (: (config-get! cfg root:)     :string))
+  (let* ((cfg      (ensemble-config-merge
+                    (default-ensemble-config (config-get! cfg domain:))
+                    cfg))
+         (root     (: (config-get! cfg root:)     :string))
          (domain   (: (config-get! cfg domain:)   :symbol))
          (services (: (config-get! cfg services:) :list)))
     (create-directory* root)
@@ -38,6 +43,41 @@
             (start-ensemble-supervisor! cfg)
             (wait-for-actor! 'supervisor)
             (thunk)))))))
+
+(def (default-ensemble-config domain)
+  [config: 'ensemble-v0
+           domain: domain
+           root: (path-normalize (current-directory))
+           services: [[supervisor: (default-ensemble-supervisor-config domain) ...]
+                      [registry:   (default-ensemble-registry-config domain) ...]]])
+
+(def (default-ensemble-supervisor-config domain)
+  (parameterize ((ensemble-domain domain))
+    (let ((supervisor-id (cons 'supervisor domain))
+          (registry-id (cons 'registry domain)))
+      [config: 'ensemble-server-v0
+               domain: domain
+               identifier: supervisor-id
+               registry: registry-id
+               cookie: (default-cookie-path)
+               admin:  (default-admin-pubkey-path)
+               role: 'supervisor
+               exe: "gerbil"
+               args: '("ensemble" "supervisor")
+               root: (path-normalize (current-directory))
+               log-level: 'INFO
+               log-dir: (ensemble-server-log-directory supervisor-id)
+               log-file: (ensemble-server-log-file supervisor-id "server.log")
+               addresses: [(ensemble-server-unix-addr supervisor-id)]
+               known-servers: [[registry-id (ensemble-server-unix-addr registry-id)]]])))
+
+(def (default-ensemble-registry-config domain)
+  (let (registry-id (cons 'registry domain))
+    [config: 'ensemble-server-v0
+             identifier: registry-id
+             role: 'registry
+             exe:   "gerbil"
+             args: ["ensemble" "registry" (object->string registry-id)]]))
 
 (def (@supervisor super-id srv)
   (handle srv (reference super-id 'supervisor)))
