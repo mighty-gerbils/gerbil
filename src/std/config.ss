@@ -26,6 +26,10 @@
     (for-each (lambda (x) (pretty-print x output)) cfg)
     (for-each (lambda (x) (write x output) (newline output)) cfg)))
 
+(def (save-config! cfg path)
+  (call-with-output-file [path: path create: 'maybe truncate: #t]
+    (cut write-config cfg <>)))
+
 (def (read-config (input (current-input-port)))
   (read-all input))
 
@@ -33,3 +37,12 @@
   (let (cfg (call-with-input-file path read-config))
     (config-check! cfg type)
     cfg))
+
+(def (string->object str)
+  (call-with-input-string str read))
+
+(def (string->integer str)
+  (let (input (string->number str))
+    (unless (integer? input)
+      (error "expected integer" str))
+    input))

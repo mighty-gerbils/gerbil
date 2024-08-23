@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; ensemble path utils
 (import :std/config
-        :std/os/hostname)
+        :std/os/hostname
+        (only-in :std/logger current-log-directory))
 (export #t)
 
 (def current-ensemble-server-config
@@ -10,6 +11,13 @@
 
 (def ensemble-domain
   (make-parameter '/))
+
+(def (ensemble-subdomain sub (domain (ensemble-domain)))
+  (let (sub-str (symbol->string sub))
+    (if (string-prefix? "/" sub-str)
+      sub
+      (string->symbol
+       (path-expand sub-str (symbol->string domain))))))
 
 (def (ensemble-domain->relative-path (domain (ensemble-domain)))
   (string-join
@@ -92,3 +100,20 @@
 
 (def (ensemble-domain-file-path (base (ensemble-base-path)))
   (path-expand "domain" base))
+
+(def (ensemble-server-log-directory server-id (root (ensemble-log-directory)))
+  (with ([id . domain] server-id)
+    (let (relpath (ensemble-domain->relative-path domain))
+      (path-expand (symbol->string id)
+        (path-expand relpath root)))))
+
+(def (ensemble-server-log-file server-id
+                               (file "server.log")
+                               (root (ensemble-log-directory)))
+  (path-expand file (ensemble-server-log-directory server-id root)))
+
+(def (ensemble-log-directory (base (gerbil-path)))
+  (cond
+   ((current-log-directory))
+   (else
+    (path-expand "log" (ensemble-base-path base)))))
