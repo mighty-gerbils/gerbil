@@ -1787,15 +1787,6 @@
     (write result)
     (newline))
 
-(def (string->object str)
-  (call-with-input-string str read))
-
-(def (string->integer str)
-  (let (input (string->number str))
-    (unless (integer? input)
-      (error "expected integer" str))
-    input))
-
 (def (get-ensemble-domain opt)
   (cond
    ((hash-get opt 'ensemble-domain))
