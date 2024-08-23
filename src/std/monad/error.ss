@@ -14,16 +14,16 @@
     (set! self.inner inner)))
 
 (instance (me MonadError) (et errorT)
-  ((return a) (du (inner et.inner :- Monad) (inner.return a)))
-  ((>>= ma f) (du (inner et.inner :- Monad)
+  ((return a) (du (inner et.inner : Monad) (inner.return a)))
+  ((>>= ma f) (du (inner et.inner : Monad)
                 a <- ma
 		  (if (me.error? a) (inner.return a) (f a))))
   ((error? thing) (Error? thing))
   ((throw msg . irritants)
-   (du (inner et.inner :- Monad)
+   (du (inner et.inner : Monad)
      (inner.return (Error msg irritants: irritants))))
   ((catch exp handler)
-   (du (inner et.inner :- Monad)
+   (du (inner et.inner : Monad)
      val <- exp
      (if (me.error? val) (handler val) (inner.return val)))))
 
@@ -34,16 +34,16 @@
 (instance Zero (et errorT) ((zero) (using (i et.inner : Zero) (i.zero))))
 
 (instance MonadState (et errorT)
- ((get) (du (inner et.inner :- MonadState) (inner.get)))
- ((put! s) (du (inner et.inner :- MonadState) (inner.put! s)))
- ((state f)(du (inner et.inner :- MonadState) (inner.state f))))
+ ((get) (du (inner et.inner : MonadState) (inner.get)))
+ ((put! s) (du (inner et.inner : MonadState) (inner.put! s)))
+ ((state f)(du (inner et.inner : MonadState) (inner.state f))))
 
 (instance MonadError (st stateT)
   ((error? e?) (lambda (s)
-                 (du (inner st.inner :- MonadError)
+                 (du (inner st.inner : MonadError)
                  [(inner.error? e?) s ...])))
   ((throw message . args)
    (lambda (s)
    [ (apply MonadError-throw st.inner message args) s ...]))
-  ((catch exp handler) (lambda (s) (du (inner st.inner :- MonadError)
+  ((catch exp handler) (lambda (s) (du (inner st.inner : MonadError)
 		      [(inner.catch exp handler) s ...]))))

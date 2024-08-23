@@ -12,8 +12,8 @@
    (instance (m Monad) :t
      ((return a) a)
      ((>>= ma f) (f ma))
-     ((>> ma mb) (m.>>= ma (lambda (_) mb))))
-   rebind: #t)
+     ((>> ma mb) (m.>>= ma (lambda (_) mb)))
+     rebind: #t))
 
  (interface Run (run . args))
 
