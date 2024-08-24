@@ -579,6 +579,7 @@
     ensemble-domain-option
     supervisor-option
     console-option
+    pretty-flag
     help: "list processes running in the context of an ensemble supervisor"))
 
 (def control-exec-process-cmd

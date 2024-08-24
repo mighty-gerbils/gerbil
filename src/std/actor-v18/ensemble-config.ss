@@ -3,12 +3,7 @@
 ;;; ensemble configuration
 (import :std/config
         ./path)
-(export check-ensemble-config!
-        check-ensemble-server-config!
-        ensemble-config-merge
-        ensemble-server-config-merge
-        load-ensemble-config
-        load-ensemble-server-config)
+(export #t)
 
 ;;; <ensemble-config> configures the ensemble supervisory domain
 ;;; ------------------------------------------------------------------------

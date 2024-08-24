@@ -20,11 +20,13 @@
        (catch (e)
          (errorf "error in ~a: ~a" what e))))
 
-(def (wait-for-actor! actor (srv (current-actor-server)) wait: (wait-for .1))
-  (let (dest (handle srv (reference #f actor)))
+(def (wait-for-actor! actor (srv (current-actor-server))
+                      wait: (wait-for .1)
+                      attempts: (attempts 5))
+  (let (dest (handle srv (if (reference? actor) actor (reference #f actor))))
     (let loop ((n 0) (wait-for wait-for))
       (thread-yield!)
-      (if (fx< n 3)
+      (if (fx< n attempts)
         (match (with-catch void (cut ->> dest (!ping)))
           ((!ok) (void))
           (else

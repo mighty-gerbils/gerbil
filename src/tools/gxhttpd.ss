@@ -3,20 +3,19 @@
 ;;; The Gerbil HTTP Daemon
 ;;;
 (import :std/sugar
-        :std/contract
+        :std/config
         :std/cli/getopt
         :std/net/address
         :std/net/httpd
         :std/mime/types
         :std/actor
         :std/iter
-        :std/hash-table
         :std/misc/ports
-        (only-in :std/logger start-logger! deflogger current-logger-options)
+        :std/hash-table
+        (only-in :std/logger start-logger! deflogger current-logger-options current-log-directory)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
         (only-in :std/srfi/13 string-contains)
         :gerbil/expander
-        :gerbil/gambit
         ./env)
 (export main)
 
@@ -25,38 +24,176 @@
     program: "gxhttpd"
     help: "The Gerbil HTTP Daemon"
     global-env-flag
-    config-option
-    ensemble-flag
-    ))
+    server-cmd
+    ensemble-cmd
+    config-cmd))
 
-(def config-option
+(def server-config-option
   (option 'config "-c" "--config"
-          help: "location of configuration file; defaults to $GERBIL_PATH/httpd/config for single server configuration and $GERBIL_PATH/ensemble/httpd-ensemble/config for ensemble configuration"))
+    help: "location of the httpd configuration; when running as a standalone server it defaults to $GERBIL_PATH/httpd/config; when running as part of an ensemble this option is ignored"))
 
-(def ensemble-flag
-  (flag 'ensemble "-e" "--ensemble"
-        help: "run an ensemble of httpds with SO_REUSEPORT."))
+(def ensemble-config-option
+  (option 'config "-c" "--config"
+    help: "location of the httpd ensemble configuration; it defaults to $GERBIL_PATH/ensemble/config"))
 
-(def (gxhttpd-main opt)
+(def server-id-optional-argument
+  (optional-argument 'server-id
+    value: string->object
+    help: "when running as part of an ensemble, this is the ensemble server id"))
+
+(def server-cmd
+  (command 'server
+    server-config-option
+    server-id-optional-argument
+    help: "runs a single httpd server"))
+
+(def ensemble-cmd
+  (command 'ensemble
+    ensemble-config-option
+    help: "runs a supervied httpd server ensemble"))
+
+(def config-ensemble-flag
+  (flag 'ensemble "--ensemble"
+    help: "configure the httpd ensemble"))
+
+(def config-print-flag
+  (flag 'print "-p" "--print"
+    help: "print the configuration"))
+
+(def config-set-flag
+  (flag 'set "--set"
+    help: "override the configuration instead of merging"))
+
+(def config-path-option
+  (option 'config "-c" "--config"
+    help: "specify the configuration path"))
+
+(def config-httpd-root-option
+  (option 'root "--root"
+    default: "www"
+    help: "specify the httpd server's content root path"))
+
+(def config-httpd-listen-option
+  (option 'listen "--listen"
+    value: string->object
+    default: '("0.0.0.0:8080")
+    help: "specify the httpd server's listen addresses"))
+
+(def config-httpd-handlers-option
+  (option 'handlers "--handlers"
+    value: string->object
+    default: []
+    help: "specify the httpd server's handler list"))
+
+(def config-httpd-servlets-flag
+  (flag 'enable-servlets "--enable-servlets"
+    help: "enable servlets"))
+
+(def config-httpd-log-option
+  (option 'log-dir "--log-dir"
+    help: "specify the httpd log directory"))
+
+(def config-httpd-max-token-length-option
+  (option 'max-token-length "--max-token-length"
+    value: string->integer
+    help: "specify the httpd max token length"))
+
+(def config-ensemble-workers-option
+  (option 'workers "-n" "--workers"
+    value: string->integer
+    help: "specify the preloaded number of httpd workers in the ensemble"))
+
+(def config-ensemble-domain-option
+  (option 'ensemble-domain "-D" "--ensemble-domain"
+    value: string->symbol
+    default: '/
+    help: "specify the ensemble domain"))
+
+(def config-ensemble-worker-domain-option
+  (option 'worker-domain  "--worker-domain"
+    value: string->symbol
+    default: 'www
+    help: "specify the httpd ensemble worker (sub) domain"))
+
+(def config-ensemble-root-option
+  (option 'ensemble-root "--ensemble-root"
+    help: "specify the ensemble root directory"))
+
+(def config-cmd
+  (command 'config
+    config-ensemble-flag
+    config-set-flag
+    config-print-flag
+    config-path-option
+    ;; server configuration options
+    config-httpd-root-option
+    config-httpd-listen-option
+    config-httpd-handlers-option
+    config-httpd-servlets-flag
+    config-httpd-log-option
+    config-httpd-max-token-length-option
+    ;; ensemble configuration options
+    config-ensemble-domain-option
+    config-ensemble-root-option
+    config-ensemble-workers-option
+    config-ensemble-worker-domain-option
+    ;; help!
+    help: "edit httpd server or ensemble configuration"))
+
+(def (gxhttpd-main cmd opt)
   (setup-local-env! opt)
   (let-hash opt
-    (if .?ensemble
-      (let (cfg
-            (cond
-             (.?config => load-ensemble-config)
-             (else (load-default-ensemble-config))))
-        (run-ensemble! cfg))
-      (let (cfg
-            (cond
-             (.?config => load-server-config)
-             (else (load-default-server-config))))
-        (run-server! cfg)))))
+    (case cmd
+      ;; run a server
+      ((server)
+       (if .?server-id
+         ;; run as part of an ensemble
+         (let (cfg (load-ensemble-server-config .server-id))
+           (become-ensemble-server! cfg (cut run-ensemble-server! cfg)))
+         ;; run standalone
+         (let (cfg (get-httpd-config opt))
+           (run-server! cfg))))
+      ;; run an ensemble of httpds
+      ((ensemble)
+       (let (cfg (get-ensemble-config opt))
+         (prepare-ensemble-filesystem! cfg)
+         (become-ensemble-supervisor! cfg)))
+      ;; configure the server or the ensemble
+      ((config)
+       (do-config opt)))))
+
+(def (prepare-ensemble-filesystem! cfg)
+  (let* ((root (config-get cfg root: (current-directory)))
+         (root (path-normalize root))
+         (fs   (path-expand "fs" root))
+         (www  (config-get!
+                (agetq 'httpd
+                       (config-get!
+                        (config-get!
+                         (agetq 'httpd (config-get! cfg roles:))
+                         server-config:)
+                        application:))
+                root:)))
+    (unless (file-exists? www)
+      (error "httpd content root directory doesn't exist" www))
+    (unless (string-prefix? "/" www)
+      (let (fs/www (path-expand www fs))
+        (create-directory* (path-directory fs/www))
+        (unless (file-exists? fs/www)
+          (create-symbolic-link www fs/www))))))
+
+(def (run-ensemble-server! cfg)
+  (cond
+   ((agetq 'httpd (config-get! cfg application:))
+    => run-server!)
+   (else
+    (error "missing httpd configuration" cfg))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Server Config: a flat (keyword) plist with the following keys
 ;;; User is free to have additional configuration, interpreted by handlers
 ;;;-----------------------------------------------------------------
-;;; ;;; config: config versioned type, current is httpd-v0
+;;; ;;; config: httpd-v0
 ;;; config: httpd-v0
 ;;; ;;; root: the root for serving files
 ;;; root: "path/to/server/root"
@@ -65,206 +202,136 @@
 ;;; ;;; with the signature of a request handler.
 ;;; ;;; if the module also exports a handler-init! procedure, it will be invoked
 ;;; ;;; with the current config after loading the module.
-;;; handlers: (("path/to/handler" . module) ...)
+;;; handlers: (("/path/to/handler" . module) ...)
 ;;; ;;; servlets: a boolean indicating whether servlets are enabled
 ;;; enable-servlets: #t | #f
 ;;; ;;; request-log: [optional] the file path for logging requests
 ;;; request-log: "path/to/request-log-file" | #f
-;;; ;;; server-log: the file path for the server logger
-;;; server-log:  "path/to/server-log-file"
 ;;; ;;; listen: a list of addresses where the server should listen
 ;;; ;;; use (ssl: path-to-cert inet-address) for https
 ;;; listen: (server-address ...)
-;;; ;;; reuse-port: whether to bind with SO_REUSEPORT; used for ensembles
-;;; reuse-port: #t|#f
-;;; ;;; log-level: [optional] log level
-;;; log-level: symbol
-;;; ;;; ensemble-server-id: [optional] run as an ensemble server with the given id
-;;; ensemble-server-id: symbol|#f
-;;; ;;; ensemble-supervisor-id: [optional] ensemble supervisor id to authorize
-;;; ensemble-supervisor-id: symbol|#f
-;;; ;;; ensemble-registry: [optional] list of registry addresses
-;;; ensemble-registry: (actor-address ...)
 ;;; ;;; max-token-length: The request handler parser buffer size
 ;;; max-token-length: integer
 ;;;----------------------------------------------------------------
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Ensemble Config: a flat (keyword) plist with the following keys
-;;; Additional configuration keys are _ignored_
-;;;----------------------------------------------------------------
-;;; ;;; config: config versioned type, current is httpd-ensemble-v0
-;;; config: httpd-ensemble-v0
-;;; ;;; ensemble-supervisor-id: [optional] id of the ensemble supervisor.
-;;; ;;; defaults to httpd-ensemble
-;;; ensemble-supervisor-id: symbol | #f
-;;; ;;; servers: list of httpd server ids to start in the ensemble
-;;; ensemble-servers: (symbol ...)
-;;; ;;; ensemble-registry: [optional] list of registry addresses for the ensemble
-;;; ensemble-registry: (actor-address ...) | #f
-;;; ;;; ensemble-listen: [optional] list of supervisor listen addresses
-;;; ensemble-listen: (actor-address ...)
-;;; ;;; ensemble-announce: [optional] list of supervisor announced addresses
-;;; ensemble-announce: (actor-address ...) | #f
-;;; ;;; ensemble-request-log: boolean, whether to enable request logging
-;;; ensemble-request-log: #t | #f
-;;; ;;; server-configuration: the server specific configuration
-;;; server-configuration: (key: value ...)
-;;; ;;; log-level: [optional] log level
-;;; log-level: symbol
-;;;-------------------------------------------------------------------
+(def (do-config opt)
+  (let-hash opt
+    (cond
+     (.?print
+      (if .?ensemble
+        (write-config (get-ensemble-config opt) pretty: #t)
+        (write-config (get-httpd-config opt) pretty: #t)))
+     (.?ensemble
+      (cond
+       (.?set
+        (do-ensemble-config opt (empty-ensemble-config)))
+       (else
+        (do-ensemble-config opt (get-ensemble-config opt)))))
+     (.?set
+      (do-httpd-config opt (empty-httpd-config)))
+     (else
+      (do-httpd-config opt (get-httpd-config opt))))))
 
-(def (load-ensemble-config path)
-  (load-config path 'httpd-ensemble-v0))
 
-(def (load-default-ensemble-config)
-  (load-ensemble-config
-   (path-expand "config" (ensemble-server-path 'httpd-ensemble))))
+(def (do-ensemble-config opt cfg)
+  (let (cfg (set-ensemble-config! opt cfg))
+    (save-config! cfg (or (hash-get opt 'config) (ensemble-config-path)))))
 
-(def (load-server-config path)
-  (load-config path 'httpd-v0))
+(def (do-httpd-config opt cfg)
+  (let (cfg (set-httpd-config! opt cfg))
+    (save-config! cfg (or (hash-get opt 'config) (httpd-config-path)))))
 
-(def (load-default-server-config)
-  (load-server-config
-   (path-expand "httpd/config" (gerbil-path))))
+(def (set-ensemble-config! opt cfg)
+  (let-hash opt
+    (let* ((domain .ensemble-domain)
+           (worker-domain (ensemble-subdomain (or .?worker-domain 'www) domain))
+           (role 'httpd)
+           (role-alist (config-get cfg roles: []))
+           (role-cfg   (agetq role role-alist []))
+           (httpd-server-cfg
+            (config-get role-cfg server-config: (empty-ensemble-server-config)))
+           (httpd-app-alist
+            (config-get httpd-server-cfg application: []))
+           (httpd-cfg
+            (agetq role httpd-app-alist (empty-httpd-config)))
+           (preload-cfg (config-get cfg preload: []))
+           (worker-alist (config-get preload-cfg workers: []))
+           (worker-cfg   (agetq worker-domain worker-alist [])))
 
-(def (load-config path type)
-  (let (cfg (call-with-input-file path read-all))
-    (unless (eq? type (config-get! cfg config:))
-      (error "Bad configuration file; configuration type mismatch" path type cfg))
+      (set! httpd-cfg (set-httpd-config! opt httpd-cfg))
+      (cond
+       ((assq role httpd-app-alist)
+        => (lambda (p)
+             (set-cdr! p httpd-cfg)))
+       (else
+        (set! httpd-app-alist [[role httpd-cfg ...] httpd-app-alist ...])))
+      (config-push! httpd-server-cfg application: httpd-app-alist)
+      (config-push! httpd-server-cfg env: #f)
+      (config-push! role-cfg server-config: httpd-server-cfg)
+
+      (config-push! role-cfg exe: "gerbil")
+      (config-push! role-cfg prefix: '("httpd" "server"))
+      (config-push! role-cfg policy: 'restart)
+      (cond
+       ((assq role role-alist)
+        => (lambda (p)
+             (set-cdr! p role-cfg)))
+       (else
+        (set! role-alist [[role role-cfg ...] role-alist ...])))
+      (config-push! cfg roles: role-alist)
+
+      (config-push! worker-cfg prefix: 'httpd)
+      (config-push! worker-cfg role: role)
+      (cond
+         (.?workers => (cut config-push! worker-cfg servers: <>))
+         ((not (config-get worker-cfg servers:))
+          (config-push! worker-cfg servers: 1)))
+      (cond
+       ((assq worker-domain worker-alist)
+        => (lambda (p)
+             (set-cdr! p worker-cfg)))
+       (else
+        (set! worker-alist [[worker-domain worker-cfg ...] worker-alist ...])))
+      (config-push! preload-cfg workers: worker-alist)
+      (config-push! cfg preload: preload-cfg)
+      (config-push! cfg domain: domain)
+      (cond (.ensemble-root => (cut config-push! cfg root: <>))))
     cfg))
 
-(def (config-get cfg key (default #f))
-  (pgetq key cfg default))
+(def (set-httpd-config! opt cfg)
+  (let-hash opt
+    (cond (.?root             => (cut config-push! cfg root: <>)))
+    (cond (.?listen           => (cut config-push! cfg listen: <>)))
+    (cond (.?handlers         => (cut config-push! cfg handlers: <>)))
+    (cond (.?enable-servlets  => (cut config-push! cfg enable-servlets: <>)))
+    (cond (.?log-dir          => (cut config-push! cfg log-dir: <>)))
+    (cond (.?max-token-length => (cut config-push! cfg max-token-length: <>))))
+  cfg)
 
-(def (config-get! cfg key)
-  (or (pgetq key cfg)
-      (error "missing configuration key" key: key config: cfg)))
+(def (empty-httpd-config)
+  [config: 'httpd-v0])
 
-(def (config-set! cfg key val)
-  (cond
-   ((memq key cfg)
-    => (lambda (pos) (set-car! (cdr pos) val)))
-   (else
-    (append cfg [key val]))))
+(def (load-httpd-config path)
+  (load-config path 'httpd-v0))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Ensemble Supervisor Implementation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def (run-ensemble! cfg)
-  (create-ensemble-paths! cfg)
-  (let ((log-level (config-get cfg log-level: 'INFO))
-        (server-id (config-get cfg ensemble-supervisor-id: 'httpd-ensemble)))
-  (let (run-ensemble (cut start-httpd-ensemble! cfg))
-    (call-with-ensemble-server
-     server-id run-ensemble
-     log-level: log-level
-     log-file: "-"
-     listen: (config-get cfg ensemble-listen: [])
-     announce: (config-get cfg ensemble-announce:)
-     registry: (config-get cfg ensemble-registry:)
-     roles: '(httpd-supervisor)
-     ;; for testing mostly
-     auth: (or (alet (auth (config-get cfg ensemble-auth:))
-                 (list->hash-table-eq auth))
-               (hash-eq (console '(admin))))))))
+(def (load-default-httpd-config)
+  (load-httpd-config (httpd-config-path)))
 
-(def (start-httpd-ensemble! cfg)
-  (let (thread (spawn/name 'ensemble-supervisor ensemble-supervisor cfg))
-    (thread-join! thread)))
+(def (load-default-server-config)
+  (load-httpd-config (httpd-config-path)))
 
-(def (ensemble-supervisor cfg)
-  (register-actor! 'ensemble-supervisor)
-  (let/cc exit
-    (deflogger supervisor)
-    (def servers (make-hash-table-symbolic))
+(def (httpd-config-path (base (gerbil-path)))
+  (path-expand "httpd/config" (gerbil-path)))
 
-    (def (start-server! srv-id)
-      (let (srv-address (path-expand (symbol->string srv-id) "/tmp/ensemble"))
-        (when (file-exists? srv-address)
-          (delete-file srv-address)))
-      (let* ((config-path (path-expand "config" (ensemble-server-path srv-id)))
-             (process (open-process [path: "gerbil"
-                                           arguments: ["httpd" "-c" config-path]])))
-        (hash-put! servers srv-id process)
-        (spawn process-monitor (current-thread) srv-id process)))
+(def (get-ensemble-config opt)
+  (let (path (or (hash-get opt 'config) (ensemble-config-path)))
+    (if (file-exists? path)
+      (load-ensemble-config-file path)
+      (empty-ensemble-config))))
 
-    (def (shutdown!)
-      (for ((values srv-id process) (in-hash servers))
-        (try
-         (infof "shutting down ~a" srv-id)
-         (remote-stop-server! srv-id)
-         ;; TODO maybe kill it after a second or two?
-         (process-status process)
-         (catch (e)
-           (warnf "error shutting down ~a: ~a" srv-id e)))))
-
-    (def (prepare!)
-      ;; shutdown extant httpd workers in case of restart
-      (let (wait? #f)
-      (for (srv-id (config-get! cfg ensemble-servers:))
-        (ignore-errors
-         (when (eq? 'OK (ping-server srv-id))
-           (infof "shutting down leftover server ~a" srv-id)
-           (remote-stop-server! srv-id)
-           (set! wait? #t))))
-      (when wait?
-        (thread-sleep! 1))))
-
-    (try
-     (prepare!)
-     (for (srv-id (config-get! cfg ensemble-servers:))
-       (start-server! srv-id))
-     (catch (e)
-       (errorf "error starting httpd server: ~a" e)
-       (shutdown!)
-       (exit 'error)))
-
-    (while #t
-      (<-
-       ((process-dead srv-id status)
-        (warnf "http server ~a has exited with status ~a; restarting" srv-id status)
-        ;; TODO maybe delay restarting and have an adaptive policy for too many
-        ;;      crashes?
-        (start-server! srv-id))
-       ,(@shutdown
-         (infof "shutting down httpd ensemble...")
-         (shutdown!)
-         (exit 'shutdown))
-       ,(@ping)
-       ,(@unexpected warnf)))))
-
-(defmessage process-dead (srv-id status))
-
-(def (process-monitor supervisor srv-id process)
-  (let (status (process-status process))
-    (-> supervisor (process-dead srv-id status))))
-
-(def (create-ensemble-paths! cfg)
-  (create-directory* (ensemble-server-path (config-get cfg ensemble-supervisor-id: 'httpd-ensemble)))
-  (for (srv-id (config-get! cfg ensemble-servers:))
-    (let* ((srv-path (ensemble-server-path srv-id))
-           (srv-config-path (path-expand "config" srv-path))
-           (srv-config (make-ensemble-server-config cfg srv-id)))
-      (create-directory* srv-path)
-      (call-with-output-file [path: srv-config-path truncate: #t]
-        (lambda (output)
-          (for (el srv-config)
-            (write el output)
-            (newline output)))))))
-
-(def (make-ensemble-server-config cfg srv-id)
-  (let (srv-path (ensemble-server-path srv-id))
-    `(config:
-      httpd-v0
-      request-log: ,(and (config-get cfg ensemble-request-log:) (path-expand "request.log" srv-path))
-      server-log: ,(path-expand "server.log" srv-path)
-      reuse-port: #t
-      log-level: ,(config-get cfg log-level: 'INFO)
-      ensemble-server-id: ,srv-id
-      ensemble-supervisor-id: ,(config-get cfg ensemble-supervisor-id: 'httpd-ensemble)
-      ensemble-registry: ,(config-get cfg ensemble-registry:)
-      ,@(config-get cfg server-configuration: []))))
+(def (get-httpd-config opt)
+  (let (path (or (hash-get opt 'config) (httpd-config-path)))
+    (load-httpd-config path)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Server Implementation
@@ -273,48 +340,27 @@
   (make-parameter #f))
 
 (def (run-server! cfg)
-  (create-server-paths! cfg)
-  (current-logger-options (config-get cfg log-level: 'INFO))
-  (start-logger! (config-get! cfg server-log:))
-  (let* ((sockopts
-          (if (config-get cfg reuse-port:)
-            [SO_REUSEADDR SO_REUSEPORT]
-            [SO_REUSEADDR]))
+  (let* ((sockopts [SO_REUSEADDR SO_REUSEPORT])
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
-         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
-         (run-httpd
-          (lambda ()
-	    (set-httpd-max-token-length! max-token-length)
-            (parameterize ((current-http-server-config cfg))
-              (let (srv (apply start-http-server!
-                          mux: mux
-                          sockopts: sockopts
-                          request-logger: request-logger
-                          addresses))
-                (thread-join! srv))))))
-    (cond
-     ((config-get cfg ensemble-server-id:)
-      => (lambda (server-id)
-           (call-with-ensemble-server
-            server-id run-httpd
-            registry: (config-get cfg ensemble-registry:)
-            roles: '(httpd)
-            auth: (hash-eq (,(config-get cfg ensemble-supervisor-id:
-                                         'httpd-ensemble)
-                            '(admin))))))
-     (else
-      (run-httpd)))))
-
-(def (create-server-paths! cfg)
-  (create-directory* (config-get! cfg root:))
-  (alet (request-log (config-get cfg request-log:))
-    (create-directory* (path-directory request-log)))
-  (create-directory* (path-directory (config-get! cfg server-log:))))
+         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum)))
+    (set-httpd-max-token-length! max-token-length)
+    (parameterize ((current-http-server-config cfg))
+      (let (srv (apply start-http-server!
+                  mux: mux
+                  sockopts: sockopts
+                  request-logger: request-logger
+                  addresses))
+        (thread-join! srv)))))
 
 (def (get-request-logger cfg)
-  (alet (path (config-get cfg request-log:))
+  (alet (path
+         (cond
+          ((config-get cfg request-log:))
+          ((current-log-directory)
+           => (lambda (logdir)
+                (path-expand "httpd/request.log" logdir)))))
     (make-request-logger path)))
 
 (def (make-mux cfg)

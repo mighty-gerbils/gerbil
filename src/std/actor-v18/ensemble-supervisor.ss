@@ -5,6 +5,7 @@
         :std/sugar
         :std/iter
         :std/io
+        (only-in :std/logger current-log-directory)
         ./path
         ./cookie
         ./admin
@@ -24,32 +25,38 @@
 ;;; cfg: <ensemble-config>
 (def (become-ensemble-supervisor! cfg (thunk void))
   (check-ensemble-config! cfg)
-  (let* ((cfg      (ensemble-config-merge
-                    (default-ensemble-config (config-get! cfg domain:))
-                    cfg))
-         (root     (: (config-get! cfg root:)     :string))
-         (domain   (: (config-get! cfg domain:)   :symbol))
-         (services (: (config-get! cfg services:) :list)))
-    (create-directory* root)
-    (parameterize ((current-directory root)
-                   (ensemble-domain domain))
-      (let (supervisor-cfg (config-get! services supervisor:))
-        (become-ensemble-server! supervisor-cfg
-          (lambda ()
-            (start-ensemble-filesystem!)
-            (wait-for-actor! 'filesystem)
-            (start-ensemble-executor!)
-            (wait-for-actor! 'executor)
-            (start-ensemble-supervisor! cfg)
-            (wait-for-actor! 'supervisor)
-            (thunk)))))))
+  (let* ((root (config-get cfg root:))
+         (root (and root (path-normalize root)))
+         (root/log (and root (path-expand "log" root))))
+    (when root/log
+      (create-directory* root/log))
+    (parameterize ((current-log-directory (or root/log (ensemble-log-directory))))
+      (let* ((cfg      (ensemble-config-merge
+                        (default-ensemble-config (config-get! cfg domain:))
+                        cfg))
+             (root     (: (config-get! cfg root:)     :string))
+             (domain   (: (config-get! cfg domain:)   :symbol))
+             (services (: (config-get! cfg services:) :list)))
+        (create-directory* root)
+        (parameterize ((current-directory root)
+                       (ensemble-domain domain))
+          (let (supervisor-cfg (config-get! services supervisor:))
+            (become-ensemble-server! supervisor-cfg
+              (lambda ()
+                (start-ensemble-filesystem!)
+                (wait-for-actor! 'filesystem)
+                (start-ensemble-executor!)
+                (wait-for-actor! 'executor)
+                (start-ensemble-supervisor! cfg)
+                (wait-for-actor! 'supervisor)
+                (thunk)))))))))
 
 (def (default-ensemble-config domain)
   [config: 'ensemble-v0
            domain: domain
            root: (path-normalize (current-directory))
-           services: [[supervisor: (default-ensemble-supervisor-config domain) ...]
-                      [registry:   (default-ensemble-registry-config domain) ...]]])
+           services: [supervisor: (default-ensemble-supervisor-config domain)
+                      registry:   (default-ensemble-registry-config domain)]])
 
 (def (default-ensemble-supervisor-config domain)
   (parameterize ((ensemble-domain domain))
