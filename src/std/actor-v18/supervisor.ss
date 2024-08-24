@@ -275,12 +275,13 @@
           (!ok
            (for/fold (r []) (i (in-range count))
              (let (server-id (make-symbol prefix "-" i))
-               (match (start-server! role domain server-id config)
-                 ((!ok value)
-                  (cons value r))
-                 ((!error what)
-                  (warnf "failed to start worker ~a: ~a" server-id what)
-                  r)))))))
+               (unless (hash-get servers server-id)
+                 (match (start-server! role domain server-id config)
+                   ((!ok value)
+                    (cons value r))
+                   ((!error what)
+                    (warnf "failed to start worker ~a: ~a" server-id what)
+                    r))))))))
 
       (def (stop-servers! role domain server-ids)
         (with-error-handler "stop-servers"
@@ -416,11 +417,11 @@
                                  ((!error what)
                                   (warnf "error restarting server ~a: ~a" server-id what)
                                   (unless (equal? server-id (registry-server-id))
-                                    (ensemble-remove-server! server-id))))
+                                    (with-catch void (cut ensemble-remove-server! server-id)))))
                                (begin
                                  (warnf "server ~a is restarting too fast; stay down" server-id)
                                  (unless (equal? server-id (registry-server-id))
-                                   (ensemble-remove-server! server-id)))))))))
+                                   (with-catch void (cut ensemble-remove-server! server-id))))))))))
                   (else
                    (debugf "notification for unknown server ~a" server-id)))))
            (else
@@ -436,11 +437,36 @@
 
       (def (do-shutdown!)
         (with-error-log "stop-servers"
-          (do-stop-servers! (hash-keys servers)))
+          (infof "stopping application servers")
+          (do-stop-servers! (get-application-servers))
+          (wait-for-notifications (lambda () (> (length (get-application-servers)) 0))))
+        (with-error-log "stop-services"
+          (infof "stopping services")
+          (do-stop-servers! (get-service-servers))
+          (wait-for-notifications (lambda () (> (length (get-service-servers)) 0))))
         (with-error-log "stop-executor"
           (->> @executor (!shutdown)))
         (with-error-log "stop-filesystem"
           (->> @filesystem (!shutdown))))
+
+      (def (wait-for-notifications wait?)
+        (while (wait?)
+          (let loop ()
+            (<- ((!executor-notify pid exit-code)
+                 (when (local-actor? @source 'executor)
+                   (notify! pid exit-code)
+                   (loop)))
+                (else (void))))))
+
+      (def (get-application-servers)
+        (for/fold (r []) (([id . server] (hash->list servers)))
+          (using (server :- Server)
+            (if server.service r (cons id r)))))
+
+      (def (get-service-servers)
+        (for/fold (r []) (([id . server] (hash->list servers)))
+          (using (server :- Server)
+            (if server.service (cons id r) r))))
 
       (def (restart! services?)
         (with-error-handler "restart"
@@ -465,7 +491,8 @@
                  (using (server (hash-ref servers server-id) :- Server)
                    (set! server.service (keyword->symbol role))))
                 ((!error what)
-                 (errorf "error starting service ~a ~a" role what)))))))
+                 (errorf "error starting service ~a ~a" role what)))
+              (wait-for-actor! (reference server-id (keyword->symbol role)))))))
 
       (def (start-preloaded!)
         (alet (preload-cfg (config-get ensemble-cfg preload:))

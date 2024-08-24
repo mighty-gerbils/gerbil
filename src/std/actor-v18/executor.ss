@@ -193,8 +193,11 @@
             (lambda ()
               (call-with-output-file proc/pid/output
                 (lambda (output)
-                  (io-copy! (make-raw-binary-input-port process)
-                            (make-raw-binary-output-port output))))))
+                  (with-catch
+                   void
+                   (cut io-copy!
+                        (make-raw-binary-input-port process)
+                        (make-raw-binary-output-port output)))))))
           (spawn/name 'executor-notify
             (lambda ()
               (let (exit-code (process-status process))

@@ -13,9 +13,14 @@
 (def (config-set! cfg key val)
   (cond
    ((memq key cfg)
-    => (lambda (pos) (set-car! (cdr pos) val)))
+    => (lambda (pos)
+         (set-car! (cdr pos) val)
+         cfg))
    (else
     (append cfg [key val]))))
+
+(defrule (config-push! cfg key val)
+  (set! cfg (config-set! cfg key val)))
 
 (def (config-check! cfg type)
   (unless (eq? type (config-get! cfg config:))
@@ -27,6 +32,9 @@
     (for-each (lambda (x) (write x output) (newline output)) cfg)))
 
 (def (save-config! cfg path)
+  (let (base (path-directory path))
+    (unless (or (string-empty? base) (file-exists? base))
+      (create-directory* base)))
   (call-with-output-file [path: path create: 'maybe truncate: #t]
     (cut write-config cfg <>)))
 
