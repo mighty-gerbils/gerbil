@@ -8,6 +8,17 @@
     "gxtags"
     "gxpkg"
     "gxtest"
+    "gxensemble/opt"
+    "gxensemble/util"
+    "gxensemble/cmd"
+    "gxensemble/admin"
+    "gxensemble/env"
+    "gxensemble/control"
+    "gxensemble/ca"
+    "gxensemble/list"
+    "gxensemble/misc"
+    "gxensemble/repl"
+    "gxensemble/srv"
     "gxensemble"
     "gxhttpd")
   libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
