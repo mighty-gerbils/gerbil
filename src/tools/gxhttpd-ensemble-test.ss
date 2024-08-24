@@ -18,7 +18,7 @@
 (def (test-setup!)
   (when (file-exists? "/tmp/ensemble")
     (delete-file-or-directory "/tmp/ensemble" #t))
-  (set! current-gerbil-path (getenv "GERBIL_PATH"))
+  (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (invoke "gerbil" ["build"] directory: test-directory)
   (invoke "gerbil" ["httpd" "config"
@@ -55,7 +55,9 @@
     (thread-sleep! 1))
   (let (test-directory-dot-gerbil (path-expand ".gerbil" test-directory))
     (delete-file-or-directory test-directory-dot-gerbil #t))
-  (setenv "GERBIL_PATH" current-gerbil-path))
+  (if current-gerbil-path
+    (setenv "GERBIL_PATH" current-gerbil-path)
+    (setenv "GERBIL_PATH")))
 
 (def gxhttpd-ensemble-test
   (test-suite "httpd ensemble"
