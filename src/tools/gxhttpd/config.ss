@@ -132,9 +132,6 @@
 (def (load-httpd-config path)
   (load-config path 'httpd-v0))
 
-(def (load-default-httpd-config)
-  (load-httpd-config (httpd-config-path)))
-
 (def (load-default-server-config)
   (load-httpd-config (httpd-config-path)))
 
@@ -149,4 +146,6 @@
 
 (def (get-httpd-config opt)
   (let (path (or (hash-get opt 'config) (httpd-config-path)))
-    (load-httpd-config path)))
+    (if (file-exists? path)
+      (load-httpd-config path)
+      (empty-httpd-config))))

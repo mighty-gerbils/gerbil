@@ -41,7 +41,8 @@
           ((config-get cfg request-log:))
           ((current-log-directory)
            => (lambda (logdir)
-                (path-expand "httpd/request.log" logdir)))))
+                (path-expand "httpd/request.log" logdir)))
+          (else #f)))
     (make-request-logger path)))
 
 (def (make-mux cfg)
