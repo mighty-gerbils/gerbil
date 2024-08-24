@@ -51,8 +51,6 @@
   @unexpected
   @shutdown
   ;; ./server
-
-  current-actor-server
   start-actor-server!
   stop-actor-server!
   actor-server-identifier
