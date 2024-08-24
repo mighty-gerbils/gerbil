@@ -191,16 +191,11 @@
             (delete-file up.blob)
             (hash-remove! uploads key)))))
 
-    (def (shutdown! source nonce expiry reply-expected?)
+    (def (shutdown!)
       (for (up (hash-values uploads))
         (using (up :- Upload)
           (up.writer.close)
-          (delete-file up.blob)))
-
-      (when reply-expected?
-        (-> source (!ok (void))
-            replyto: nonce
-            expiry: expiry)))
+          (delete-file up.blob))))
 
     (infof "filesystem running ...")
 
@@ -224,7 +219,7 @@
        ;; management protocol
        ,(@shutdown
          (infof "filesystem shutting down ...")
-         (shutdown! @source @nonce @expiry @reply-expected?)
+         (shutdown!)
          (-> gc-ticker (!shutdown))
          (exit 'shutdown))
        ,(@ping)

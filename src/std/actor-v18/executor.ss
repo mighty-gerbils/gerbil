@@ -248,7 +248,7 @@
                  (infof "killing process ~a" pid)
                  (kill pid SIGKILL))))))
 
-      (def (shutdown! source nonce expiry reply-expected?)
+      (def (shutdown!)
         (for ([pid . proc] (hash->list procs))
           (kill pid SIGTERM)
           (using (proc :- Process)
@@ -261,12 +261,7 @@
            ((!executor-notify pid exit-code)
             (notify! @source pid exit-code))
            ((!tick pid)
-            (force-terminate-process! pid))))
-
-        (when reply-expected?
-          (-> source (!ok (void))
-              replyto: nonce
-              expiry: expiry)))
+            (force-terminate-process! pid)))))
 
       (infof "executor running...")
 
@@ -320,7 +315,7 @@
          ;; management protocol
          ,(@shutdown
            (infof "executor shutting down ...")
-           (shutdown! @source @nonce @expiry @reply-expected?)
+           (shutdown!)
            (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf))))))
