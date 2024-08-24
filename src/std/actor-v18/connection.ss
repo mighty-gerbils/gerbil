@@ -245,7 +245,7 @@
       (warnf "unrecognized address ~a for ~a:" addr peer-id)
       #f))
    (catch (exn)
-     (warnf "error connecting to ~a at ~a: ~a" peer-id addr exn)
+     (debugf "error connecting to ~a at ~a: ~a" peer-id addr exn)
      #f)))
 
 (def (actor-connection srv peer-id sock reader writer direction)
