@@ -19,8 +19,15 @@
   (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (invoke "gerbil" ["build"] directory: test-directory)
+  (invoke "gerbil" ["httpd" "config"
+                    "--root" "content"
+                    "--listen" (object->string '("127.0.0.1:8080"))
+                    "--handlers" (object->string '(("/handler" . :test/site/handler)))
+                    "--enable-servlets"]
+          directory: test-directory)
   (set! httpd-process
-    (open-process [path: "gerbil" arguments: ["httpd" "-c" "server.config"] directory: test-directory]))
+    (open-process [path: "gerbil" arguments: ["httpd" "server"]
+                         directory: test-directory]))
   (thread-sleep! 1))
 
 (def (test-cleanup!)
