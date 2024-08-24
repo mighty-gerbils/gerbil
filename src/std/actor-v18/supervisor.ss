@@ -427,12 +427,8 @@
            (else
             (debugf "notification for unknown pid ~a" pid)))))
 
-      (def (shutdown! source nonce expiry reply-expected?)
+      (def (shutdown!)
         (do-shutdown!)
-        (when reply-expected?
-          (-> source (!ok (void))
-              replyto: nonce
-              expiry: expiry))
         (-> srv (!shutdown)))
 
       (def (do-shutdown!)
@@ -604,7 +600,7 @@
          ;; management protocol
          ,(@shutdown
            (infof "supervisor shutting down ...")
-           (shutdown! @source @nonce @expiry @reply-expected?)
+           (shutdown!)
            (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf))))))
