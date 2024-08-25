@@ -2,30 +2,104 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/expander
+        :gerbil/runtime/loader
         :std/actor
+        :std/actor-v18/proto
         :std/iter
         :std/sugar
+        :std/error
         ./util)
 (export #t)
 
 (def (do-eval opt)
-  (start-actor-server-with-options! opt)
-  (let ((server-id (hash-ref opt 'server-id))
-        (expr (hash-ref opt 'expr)))
-    (maybe-authorize! server-id)
-    (displayln
-     (remote-eval server-id expr)))
-  (stop-actor-server!))
+  (let* ((server-id (hash-ref opt 'server-id))
+         (expr (hash-ref opt 'expr))
+         (eval-it
+          (if (hash-get opt 'supervised)
+            (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+                  (actor-ref  (reference server-id 'loader)))
+              (lambda ()
+                (ensemble-supervisor-invoke!
+                 supervisor: supervisor
+                 actor: actor-ref
+                 message: (!eval expr))))
+            (lambda () (remote-eval server-id expr)))))
+    (call-with-console-server opt
+      (lambda (srv)
+        (write-result opt (eval-it))))))
 
 (def (do-repl opt)
-  (start-actor-server-with-options! opt)
-  (let ((server-id (hash-ref opt 'server-id))
-        (library-prefix (hash-ref opt 'library-prefix)))
-    (maybe-authorize! server-id)
-    (do-repl-for-server server-id library-prefix)
-    (stop-actor-server!)))
+  (let* ((server-id (hash-ref opt 'server-id))
+         (library-prefix (hash-ref opt 'library-prefix))
+         ((values eval-it load-code load-library-module connect! stop!)
+          (if (hash-get opt 'supervised)
+            (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+                  (actor-ref  (reference server-id 'loader)))
+              (values
+               (lambda (expr)
+                 (ensemble-supervisor-invoke!
+                  supervisor: supervisor
+                  actor: actor-ref
+                  message: (!eval expr)))
+               (lambda (object-file-path)
+                 (let ((code
+                        (cond
+                         ((string? object-file-path)
+                          (read-file-u8vector object-file-path))
+                         (else
+                          (raise-bad-argument load-code "path: code object file" object-file-path))))
+                       (linker (path-strip-directory object-file-path)))
+                   (ensemble-supervisor-invoke!
+                    supervisor: supervisor
+                    actor: actor-ref
+                    message: (!load-code code linker))))
+               (lambda (mod)
+                 (let (mod-str
+                       (cond
+                        ((string? mod) mod)
+                        ((symbol? mod)
+                         (let* ((mod-str (symbol->string mod))
+                                (mod-str
+                                 (if (string-prefix? ":" mod-str)
+                                   (substring mod-str 1 (string-length mod-str))
+                                   mod-str)))
+                           mod-str))
+                        (else
+                         (raise-bad-argument load-library-module "string or symbol" mod))))
+                   (ensemble-supervisor-invoke!
+                    supervisor: supervisor
+                    actor: actor-ref
+                    message: (!load-library-module mod-str))))
+               (lambda ()
+                 (connect-to-server! supervisor))
+               (lambda ()
+                 (error "Cannot stop supervised server like that..."))))
+            (values
+             (lambda (expr)
+               (remote-eval server-id expr))
+             (lambda (object-file-path)
+               (remote-load-code server-id object-file-path))
+             (lambda (mod)
+               (remote-load-library-module server-id mod))
+             (lambda ()
+               (connect-to-server! server-id))
+             (lambda ()
+               (remote-stop-server! server-id))))))
+    (call-with-console-server opt
+      (lambda (srv)
+        (do-repl-for-server server-id library-prefix
+                            eval-it
+                            load-code
+                            load-library-module
+                            connect!
+                            stop!)))))
 
-(def (do-repl-for-server server-id library-prefix)
+(def (do-repl-for-server server-id library-prefix
+                         eval-it
+                         remote-load-code
+                         remote-load-library-module
+                         connect!
+                         stop!)
   (def (display-help)
     (displayln "Control commands: ")
     (displayln "  ,(import module-id)    -- import a module locally for expansion")
@@ -76,30 +150,32 @@
     (unless (object-file-loaded? object-file)
       (displayln "loading code object file " object-file)
       (hash-put! loaded-object-files object-file #t)
-      (remote-load-code server-id object-file)))
+      (remote-load-code object-file)))
 
   (def (load-library-module lib)
     (unless (library-module-loaded? lib)
       (displayln "loading library module " lib)
-      (remote-load-library-module server-id lib)
-      (set! module-registry
-        (remote-eval server-id '(current-module-registry)))))
+      (remote-load-library-module lib)
+      (get-module-registry)))
+
+  (def (get-module-registry)
+    (set! module-registry
+      (list->hash-table (eval-it '(hash->list __modules)))))
 
   (def (eval-expr expr)
     (let* ((expanded-expr (core-expand expr))
            (compiled-expr (core-compile-top-syntax expanded-expr))
            (raw-compiled-expr (__compile compiled-expr))
-           (result (remote-eval server-id raw-compiled-expr)))
+           (result (eval-it raw-compiled-expr)))
       (unless (void? result)
         (if (##values? result)
           (display-result-list (values->list result))
           (display-result result)))))
 
   (gerbil-load-expander!)
-  (connect-to-server! server-id)
-  (remote-eval server-id '(##expand-source-set! identity))
-  (set! module-registry
-    (remote-eval server-id '(current-module-registry)))
+  (connect!)
+  (eval-it '(##expand-source-set! identity))
+  (get-module-registry)
   (let/cc exit
     (parameterize ((current-expander-context (make-top-context)))
       ;; prepare the context
@@ -169,7 +245,7 @@
                           (##thread-continuation-capture thread)
                           p #t)))))))
               (['shutdown]
-               (remote-stop-server! server-id)
+               (stop!)
                (exit (void)))
               ((or 'h 'help)
                (display-help))
@@ -186,6 +262,7 @@
 (extern namespace: #f __compile)
 
 (def (do-load opt)
+  (error "FIXME: do-load")
   (gerbil-load-expander!)
   (if (hash-get opt 'library)
     (do-load-library opt)
@@ -202,6 +279,7 @@
     (stop-actor-server!)))
 
 (def (do-load-code opt)
+  (error "FIXME: do-load-code")
   (let ((module-id (hash-ref opt 'module-id))
         (library-prefix (hash-ref opt 'library-prefix))
         (server-id (hash-ref opt 'server-id)))
@@ -225,8 +303,7 @@
 (def (find-object-file ctx-or-id)
   (if (module-context? ctx-or-id)
     (find-object-file (expander-context-id ctx-or-id))
-    ;;(find-library-module (string-append (module-id->string ctx-or-id) "__0"))
-    (error "FIXME")))
+    (__find-library-module (string-append (module-id->string ctx-or-id) "__0"))))
 
 (def (module-id->string module-id)
   (let (mod-str (symbol->string module-id))

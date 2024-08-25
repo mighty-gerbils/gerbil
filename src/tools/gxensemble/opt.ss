@@ -398,6 +398,8 @@
   (command 'eval
     console-option
     registry-option
+    supervised-flag
+    supervisor-option
     server-id-argument
     expr-argument
     help: "evals code in a running server"))
@@ -407,6 +409,8 @@
     console-option
     registry-option
     library-prefix-option
+    supervised-flag
+    supervisor-option
     server-id-argument
     help: "provides a repl for a running server"))
 
