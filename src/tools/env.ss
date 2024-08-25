@@ -16,10 +16,11 @@
   (cond
    ((hash-get opt 'gerbil-path)
     => (lambda (path)
-         (unless (file-exists? path)
-           (create-directory* path))
-         (setenv "GERBIL_PATH" path)
-         (add-load-path! (path-expand "lib" path))))
+         (let (path (path-expand path))
+           (unless (file-exists? path)
+             (create-directory* path))
+           (setenv "GERBIL_PATH" path)
+           (add-load-path! (path-expand "lib" path)))))
    ((not (hash-get opt 'global-env))
     (setup-local-pkg-env! #f))))
 
