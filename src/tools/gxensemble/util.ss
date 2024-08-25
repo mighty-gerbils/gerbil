@@ -12,11 +12,15 @@
 ;;; utilities
 (def (write-result opt result)
   (unless (void? result)
-    (if (hash-get opt 'pretty)
-      (pretty-print result)
-      (begin
-        (write result)
-        (newline)))))
+    (cond
+     ((##values? result)
+      (for (val (##values->list result))
+        (write-result opt val)))
+     ((hash-get opt 'pretty)
+      (pretty-print result))
+     (else
+      (write result)
+      (newline)))))
 
 (def (display-result-list lst)
   (for (result lst)
