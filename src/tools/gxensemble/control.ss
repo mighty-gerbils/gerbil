@@ -158,7 +158,6 @@
 (def (do-control-update-config opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
-           (domain (or (hash-get opt 'domain) (ensemble-domain)))
            (replace?  (hash-get opt 'replace))
            (config-path (hash-ref opt 'config))
            (config (call-with-input-file config-path read-config)))
