@@ -136,7 +136,7 @@
   (load-httpd-config (httpd-config-path)))
 
 (def (httpd-config-path (base (gerbil-path)))
-  (path-expand "httpd/config" (gerbil-path)))
+  (path-expand "config/httpd" (gerbil-path)))
 
 (def (get-ensemble-config opt)
   (let (path (or (hash-get opt 'config) (ensemble-config-path)))

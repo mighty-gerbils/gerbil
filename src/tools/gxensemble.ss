@@ -13,6 +13,7 @@
     program: "gxensemble"
     help: "the Gerbil Actor Ensemble Manager"
     global-env-flag
+    gerbil-path-option
     supervisor-cmd
     registry-cmd
     run-cmd
@@ -27,7 +28,8 @@
     admin-cmd
     list-cmd
     ca-cmd
-    package-cmd))
+    package-cmd
+    config-cmd))
 
 (defrule (defcommand-table name body ...)
   (def name
@@ -49,7 +51,8 @@
   (shutdown         do-shutdown)
   (admin            do-admin)
   (ca               do-ca)
-  (package          do-package))
+  (package          do-package)
+  (config           do-config))
 
 (defcommand-table env-commands
   (known-servers do-env-known-servers)
@@ -92,6 +95,12 @@
   (setup   do-ca-setup)
   (cert    do-ca-cert))
 
+(defcommand-table config-commands
+  (ensemble do-config-ensemble)
+  (role     do-config-role)
+  (server   do-config-server)
+  (workers  do-config-workers))
+
 (defrule (dispatch-command cmd opt commands)
   (let (table (force commands))
     (cond
@@ -109,10 +118,6 @@
       (call-with-getopt cmd-main cmd-args
         program: name
         gopts ...))))
-
-(def (gxensemble-main cmd opt)
-  (setup-local-env! opt)
-  (dispatch-command cmd opt main-commands))
 
 (defcommand-nested do-admin admin-commands "gxensemble admin"
   admin-cookie-cmd
@@ -146,6 +151,12 @@
   control-shutdown-cmd
   control-restart-cmd)
 
+(defcommand-nested do-config config-commands "gxensemble config"
+  config-ensemble-cmd
+  config-role-cmd
+  config-preload-server-cmd
+  config-preload-workers-cmd)
+
 (defcommand-nested do-list list-commands "gxensemble list"
   list-servers-cmd
   list-actors-cmd
@@ -154,3 +165,7 @@
 (defcommand-nested do-ca ca-commands "gxensemble ca"
   ca-setup-cmd
   ca-cert-cmd)
+
+(def (gxensemble-main cmd opt)
+  (setup-local-env! opt)
+  (dispatch-command cmd opt main-commands))
