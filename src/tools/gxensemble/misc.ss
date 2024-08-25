@@ -138,13 +138,23 @@
   (stop-actor-server!))
 
 (def (do-ping opt)
-  (start-actor-server-with-options! opt)
-  (let (server-id (hash-ref opt 'server-id))
-    (cond
-     ((hash-get opt 'actor-id)
-      => (lambda (actor-id)
-           (displayln
-            (ping-actor (reference server-id actor-id)))))
-     (else
-      (displayln
-       (ping-server server-id))))))
+  (let* ((server-id (hash-ref opt 'server-id))
+         (actor-ref
+          (cond
+           ((hash-get opt 'actor-id)
+            => (lambda (actor-id) (reference server-id actor-id)))
+           (else (reference server-id 0)))))
+    (if (hash-get opt 'supervised)
+      (let (supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+        (call-with-console-server opt
+          (lambda (srv)
+            (let (result (ensemble-supervisor-invoke!
+                          supervisor: supervisor
+                          actor: actor-ref
+                          message: (!ping)
+                          actor-server: srv))
+              (write-result opt result)))))
+      (call-with-console-server opt
+        (lambda (srv)
+          (let (result (ping-actor actor-ref srv))
+            (write-result opt result)))))))

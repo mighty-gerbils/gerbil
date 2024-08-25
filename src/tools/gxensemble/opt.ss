@@ -414,6 +414,8 @@
   (command 'ping
     console-option
     registry-option
+    supervised-flag
+    supervisor-option
     server-id-argument
     actor-id-optional-argument
     help: "pings a server or actor in the server"))

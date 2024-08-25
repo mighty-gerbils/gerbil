@@ -11,7 +11,7 @@
 ;;; gerbil ensemble control
 (def (do-control-list-servers opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (domain (hash-get opt 'domain))
           (role (hash-get opt 'role)))
       (call-with-console-server opt
@@ -25,7 +25,7 @@
 
 (def (do-control-start-server opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (domain (or (hash-get opt 'domain) (ensemble-domain)))
            (role (hash-ref opt 'role))
            (server-id (hash-ref opt 'server-id))
@@ -46,7 +46,7 @@
 
 (def (do-control-start-workers opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (domain (or (hash-get opt 'domain) (ensemble-domain)))
            (role (hash-ref opt 'role))
            (server-id (hash-ref opt 'server-id))
@@ -69,7 +69,7 @@
 
 (def (do-control-stop-server opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (domain (hash-get opt 'domain))
            (role (hash-get opt 'role))
            (server-ids (hash-get opt 'server-ids)))
@@ -85,7 +85,7 @@
 
 (def (do-control-restart-server opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (domain (hash-get opt 'domain))
            (role (hash-get opt 'role))
            (server-ids (hash-get opt 'server-ids)))
@@ -101,7 +101,7 @@
 
 (def (do-control-get-server-log opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (server-id (hash-ref opt 'server-id))
            (file      (hash-ref opt 'file "server.log")))
       (call-with-console-server opt
@@ -115,7 +115,7 @@
 
 (def (do-control-get-server-config opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (server-id (hash-ref opt 'server-id)))
       (call-with-console-server opt
         (lambda (srv)
@@ -127,7 +127,7 @@
 
 (def (do-control-update-server-config opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (server-id (hash-ref opt 'server-id))
            (restart?  (hash-get opt 'restart))
            (replace?  (hash-get opt 'replace))
@@ -147,7 +147,7 @@
 
 (def (do-control-get-config opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let (supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let (supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
       (call-with-console-server opt
         (lambda (srv)
           (let (result (ensemble-supervisor-get-config
@@ -157,7 +157,7 @@
 
 (def (do-control-update-config opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let* ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let* ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
            (replace?  (hash-get opt 'replace))
            (config-path (hash-ref opt 'config))
            (config (call-with-input-file config-path read-config)))
@@ -173,7 +173,7 @@
 
 (def (do-control-shutdown opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let (supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let (supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
       (call-with-console-server opt
         (lambda (srv)
           (let (result (ensemble-supervisor-shutdown!
@@ -183,7 +183,7 @@
 
 (def (do-control-restart opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (restart-services? (hash-get opt 'restart-services)))
       (call-with-console-server opt
         (lambda (srv)
@@ -195,7 +195,7 @@
 
 (def (do-control-upload opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (exe?        (hash-get opt 'exe))
           (env?        (hash-get opt 'env))
           (fs?         (hash-get opt 'fs))
@@ -237,7 +237,7 @@
 
 (def (do-control-shell opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (command (hash-get opt 'command)))
       (call-with-console-server opt
         (lambda (srv)
@@ -249,7 +249,7 @@
 
 (def (do-control-list-processes opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor (hash-ref opt 'supervisor (ensemble-domain-supervisor))))
+    (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor))))
       (call-with-console-server opt
        (lambda (srv)
          (let (result (ensemble-supervisor-list-processes
@@ -259,7 +259,7 @@
 
 (def (do-control-exec-process opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (exe (hash-ref opt 'exe-path))
           (args (hash-ref opt 'exe-args))
           (env  (hash-get opt 'env))
@@ -277,7 +277,7 @@
 
 (def (do-control-kill-process opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (pid (hash-ref opt 'pid))
           (signo (hash-ref opt 'signo)))
       (call-with-console-server opt
@@ -291,7 +291,7 @@
 
 (def (do-control-restart-process opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (pid (hash-ref opt 'pid)))
       (call-with-console-server opt
         (lambda (srv)
@@ -303,7 +303,7 @@
 
 (def (do-control-get-process-output opt)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
-    (let ((supervisor  (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+    (let ((supervisor  (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
           (pid (hash-ref opt 'pid)))
       (call-with-console-server opt
         (lambda (srv)

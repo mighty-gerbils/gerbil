@@ -36,7 +36,7 @@
 (def (call-with-console-server opt proc)
   (parameterize ((ensemble-domain (get-ensemble-domain opt)))
     (let (srv (start-actor-server-with-options! opt))
-      (maybe-authorize! (hash-ref opt 'supervisor (ensemble-domain-supervisor)))
+      (maybe-authorize! (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
       (with-catch display-exception (cut proc srv))
       (stop-actor-server! srv))))
 
