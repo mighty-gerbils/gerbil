@@ -25,6 +25,8 @@
 ;;; cfg: <ensemble-config>
 (def (become-ensemble-supervisor! cfg (thunk void))
   (check-ensemble-config! cfg)
+  (unless (file-exists? (ensemble-cookie-path))
+    (generate-ensemble-cookie!))
   (let* ((root (config-get cfg root:))
          (root (and root (path-normalize root)))
          (root/log (and root (path-expand "log" root))))
@@ -68,8 +70,8 @@
                domain: domain
                identifier: supervisor-id
                registry: registry-id
-               cookie: (default-cookie-path)
-               admin:  (default-admin-pubkey-path)
+               cookie: (ensemble-cookie-path)
+               admin:  (ensemble-admin-pubkey-path)
                role: 'supervisor
                exe: "gerbil"
                args: '("ensemble" "supervisor")

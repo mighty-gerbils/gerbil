@@ -18,32 +18,45 @@
   (stop-actor-server!))
 
 (def (do-package opt)
-  (let* ((server-id (hash-ref opt 'server-id))
-         (output    (hash-ref opt 'output))
-         (output    (path-expand output (current-directory)))
-         (ensemble-base "ensemble/")
-         (ensemble-rebase
-          (lambda files
-            (map (cut string-append ensemble-base <>) files)))
-         (server-base
-          (string-append ensemble-base
-                         "server/"
-                         (symbol->string server-id) "/"))
-         (server-rebase
-          (lambda files
-            (map (cut string-append server-base <>) files))))
-
-    (current-directory (gerbil-path))
-    (invoke "tar"
-            ["cavf" output
-             (ensemble-rebase
-              "cookie"
-              "admin.pub"
-              "tls/ca-certificates"
-              "tls/ca.pem"
-              "tls/caroot.pem"
-              "tls/domain") ...
-              (server-rebase "tls/chain.pem" "tls/server.key") ...])))
+  (parameterize ((ensemble-domain (or (hash-get opt 'ensemble-domain) (ensemble-domain))))
+    (let* ((server-id   (hash-ref opt 'server-id))
+           (output      (hash-ref opt 'output))
+           (output      (path-expand output (path-normalize (current-directory))))
+           (base-path   (ensemble-base-path))
+           (server-path (ensemble-server-path server-id))
+           (rebase-path
+            (lambda (path)
+              (if (string-prefix? base-path path)
+                (path-expand (substring path (1+ (string-length base-path)) (string-length path))
+                  "ensemble")
+                (error "unexpected path: not a base subpath" base-path path))))
+           (ensemble-rebase
+            (lambda files
+              (filter-map
+               (lambda (file)
+                 (and (file-exists? file)
+                      (rebase-path file)))
+               files)))
+           (ensemble-file
+            (lambda (file)
+              (path-expand file base-path)))
+           (server-file
+            (lambda (file)
+              (path-expand file server-path))))
+      (current-directory (gerbil-path))
+      (invoke "tar"
+              ["cavf" output
+               (ensemble-rebase
+                (ensemble-file "cookie")
+                (ensemble-file "admin.pub")
+                (ensemble-file "tls/ca-certificates")
+                (ensemble-file "tls/ca.pem")
+                (ensemble-file "tls/caroot.pem")
+                (ensemble-file "tls/domain")
+                (server-file "tls/chain.pem")
+                (server-file "tls/server.key"))
+               ...]
+              directory: (gerbil-path)))))
 
 (def (do-shutdown opt)
   (start-actor-server-with-options! opt)

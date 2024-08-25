@@ -737,7 +737,7 @@
 ;; ca subcommands
 (def ca-domain-option
   (option 'domain "--domain"
-    default: "ensemble.local"
+    default: "ensemble.internal"
     help: "ensemble TLS domain"))
 
 (def ca-subject/C-option
@@ -783,6 +783,7 @@
 
 (def package-cmd
   (command 'package
+    ensemble-domain-option
     package-output-option
     server-id-argument
     help: "package ensemble state to ship an actor server environment"))

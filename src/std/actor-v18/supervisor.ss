@@ -86,8 +86,8 @@
                  domain: (cdr server-id)
                  identifier: server-id
                  supervisor: (actor-server-identifier)
-                 cookie: (default-cookie-path)
-                 admin:  (default-admin-pubkey-path)
+                 cookie: (ensemble-cookie-path)
+                 admin:  (ensemble-admin-pubkey-path)
                  ;; execution
                  role: 'registry
                  ;; logging
@@ -114,8 +114,8 @@
                    identifier: server-id
                    supervisor: self
                    registry: (registry-server-id)
-                   cookie: (default-cookie-path)
-                   admin:  (default-admin-pubkey-path)
+                   cookie: (ensemble-cookie-path)
+                   admin:  (ensemble-admin-pubkey-path)
                    policy: 'restart
                    ;; logging
                    log-level: 'INFO
