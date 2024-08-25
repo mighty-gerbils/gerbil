@@ -12,11 +12,11 @@
   (if (hash-get opt 'view)
     (let (cookie (get-actor-server-cookie))
       (displayln (hex-encode cookie)))
-    (generate-actor-server-cookie! force: (hash-get opt 'force))))
+    (generate-ensemble-cookie! force: (hash-get opt 'force))))
 
 (def (do-admin-creds opt)
   (if (hash-get opt 'view)
-    (let* ((pubk-path (default-admin-pubkey-path))
+    (let* ((pubk-path (ensemble-admin-pubkey-path))
            (pubk-raw (read-file-u8vector pubk-path)))
       (displayln (hex-encode pubk-raw)))
     (let* ((passphrase (read-password prompt: "Enter passphrase: "))

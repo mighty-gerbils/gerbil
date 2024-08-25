@@ -7,27 +7,27 @@
         :std/misc/ports
         ./path
         ./server-identifier)
-(export default-admin-pubkey-path
-        default-admin-privkey-path
+(export ensemble-admin-pubkey-path
+        ensemble-admin-privkey-path
         get-admin-pubkey
         get-admin-privkey
         generate-admin-keypair!
         admin-auth-challenge-sign
         admin-auth-challenge-verify)
 
-(def (default-admin-pubkey-path)
+(def (ensemble-admin-pubkey-path)
   (path-expand "admin.pub" (ensemble-base-path)))
 
-(def (default-admin-privkey-path)
+(def (ensemble-admin-privkey-path)
   (path-expand "admin.priv" (ensemble-base-path)))
 
-(def (get-admin-pubkey (path (default-admin-pubkey-path)))
+(def (get-admin-pubkey (path (ensemble-admin-pubkey-path)))
   (let (path (path-expand path))
     (if (file-exists? path)
       (bytes->public-key EVP_PKEY_ED25519 (read-file-u8vector path))
       #f)))
 
-(def (get-admin-privkey passphrase (path (default-admin-privkey-path)))
+(def (get-admin-privkey passphrase (path (ensemble-admin-privkey-path)))
   (let (path (path-expand path))
     (if (file-exists? path)
       (let* ((blob (read-file-u8vector path))
@@ -49,8 +49,8 @@
       #f)))
 
 (def (generate-admin-keypair! passphrase
-                              (pubk-path  (default-admin-pubkey-path))
-                              (privk-path (default-admin-privkey-path))
+                              (pubk-path  (ensemble-admin-pubkey-path))
+                              (privk-path (ensemble-admin-privkey-path))
                               force: (force? #f))
   (let ((pubk-path (path-expand pubk-path))
         (privk-path (path-expand privk-path)))

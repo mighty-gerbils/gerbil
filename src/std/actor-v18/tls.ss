@@ -8,7 +8,8 @@
         :std/misc/template
         :std/misc/process
         :std/misc/ports
-        ./path)
+        ./path
+        ./server-identifier)
 (export ensemble-tls-base-path
         ensemble-tls-server-path
         ensemble-tls-cafile
@@ -278,87 +279,90 @@
                                country-name: (country-name "UN")
                                organization-name: (organization-name "Mighty Gerbils")
                                location: (location "Internet"))
+  (parameterize ((ensemble-domain ~ensemble-domain))
+    (let* ((base-path (ensemble-tls-base-path))
+           (root-ca-path (path-expand "root-ca" base-path))
+           (sub-ca-path  (path-expand "sub-ca" base-path))
+           (sub-ca.conf  (path-expand "sub-ca.conf" sub-ca-path))
+           (server-path  (ensemble-tls-server-path server-id))
+           (server.conf  (path-expand "server.conf" server-path))
+           (server.key   (path-expand "server.key" server-path))
+           (server.csr   (path-expand "server.csr" server-path))
+           (server.crt   (path-expand "server.crt" server-path))
+           (chain.pem    (path-expand "chain.pem" server-path)))
 
-  (let* ((base-path (ensemble-tls-base-path))
-         (root-ca-path (path-expand "root-ca" base-path))
-         (sub-ca-path  (path-expand "sub-ca" base-path))
-         (sub-ca.conf  (path-expand "sub-ca.conf" sub-ca-path))
-         (server-path  (parameterize ((ensemble-domain ~ensemble-domain))
-                         (ensemble-tls-server-path server-id)))
-         (server.conf  (path-expand "server.conf" server-path))
-         (server.key   (path-expand "server.key" server-path))
-         (server.csr   (path-expand "server.csr" server-path))
-         (server.crt   (path-expand "server.crt" server-path))
-         (chain.pem    (path-expand "chain.pem" server-path)))
+      ;; sanity check: must have a sub-ca
+      (unless (file-exists? sub-ca-path)
+        (error "sub-ca does not exist" sub-ca-path))
 
-    ;; sanity check: must have a sub-ca
-    (unless (file-exists? sub-ca-path)
-      (error "sub-ca does not exist" sub-ca-path))
+      (unless (file-exists? server-path)
+        (create-directory* server-path))
 
-    (unless (file-exists? server-path)
-      (create-directory* server-path))
+      ;; server.conf
+      (displayln "... generate " server.conf)
+      (call-with-output-file server.conf
+        (cut write-template server.conf-template <>
+             server:
+             (string-append "URI.0 = srv:"
+                            (symbol->string (server-identifier-id server-id))
+                            "\n")
+             ensemble-domain:
+             (string-append "URI.1 = dom:"
+                            (symbol->string (server-identifier-domain server-id))
+                            "\n")
+             capabilities:
+             (string-join
+              (map (lambda (i x)
+                     (string-append "URI." (number->string i) " = cap:" x))
+                   (iota (length capabilities) 2)
+                   (map symbol->string capabilities))
+              "\n")
+             server-host: (actor-tls-host server-id ~ensemble-domain tls-domain)
+             country-name: country-name
+             organization-name: organization-name
+             location: location))
 
-    ;; server.conf
-    (displayln "... generate " server.conf)
-    (call-with-output-file server.conf
-      (cut write-template server.conf-template <>
-           server:
-           (string-append "URI.0 = srv:" (symbol->string server-id) "\n")
-           ensemble-domain:
-           (string-append "URI.1 = dom:" (symbol->string ~ensemble-domain) "\n")
-           capabilities:
-           (string-join
-            (map (lambda (i x)
-                   (string-append "URI." (number->string i) " = cap:" x))
-                 (iota (length capabilities) 2)
-                 (map symbol->string capabilities))
-            "\n")
-           server-host: (actor-tls-host server-id ~ensemble-domain tls-domain)
-           country-name: country-name
-           organization-name: organization-name
-           location: location))
+      ;; server.key
+      (unless (file-exists? server.key)
+        (displayln "... generate " server.key)
+        (invoke "openssl"
+                ["genpkey"
+                 "-quiet"
+                 "-algorithm" "RSA"
+                 "-pkeyopt" "rsa_keygen_bits:4096"
+                 "-out" server.key]))
 
-    ;; server.key
-    (unless (file-exists? server.key)
-      (displayln "... generate " server.key)
+      ;; server.csr
+      (when (file-exists? server.csr)
+        (rename-file server.csr
+                     (string-append server.csr ".bak." (number->string (current-time-seconds)))))
+      (displayln "... generate " server.csr)
       (invoke "openssl"
-              ["genpkey"
-               "-quiet"
-               "-algorithm" "RSA"
-               "-pkeyopt" "rsa_keygen_bits:4096"
-               "-out" server.key]))
+              ["req" "-new"
+               "-config" server.conf
+               "-key" server.key
+               "-out" server.csr])
 
-    ;; server.csr
-    (when (file-exists? server.csr)
-      (rename-file server.csr
-                   (string-append server.csr ".bak." (number->string (current-time-seconds)))))
-    (displayln "... generate " server.csr)
-    (invoke "openssl"
-            ["req" "-new"
-             "-config" server.conf
-             "-key" server.key
-             "-out" server.csr])
+      ;; server.cert
+      (when (file-exists? server.crt)
+        (rename-file server.crt
+                     (string-append server.crt ".bak." (number->string (current-time-seconds)))))
+      (displayln "... generate " server.crt)
+      (invoke "openssl"
+              ["ca" "-batch" "-notext"
+               "-config" sub-ca.conf
+               "-in" server.csr
+               "-out" server.crt
+               "-extensions" "actor_ext"
+               ;; TODO see above
+               "-passin" (string-append "pass:" sub-ca-passphrase)])
 
-    ;; server.cert
-    (when (file-exists? server.crt)
-      (rename-file server.crt
-                   (string-append server.crt ".bak." (number->string (current-time-seconds)))))
-    (displayln "... generate " server.crt)
-    (invoke "openssl"
-            ["ca" "-batch" "-notext"
-             "-config" sub-ca.conf
-             "-in" server.csr
-             "-out" server.crt
-             "-extensions" "actor_ext"
-             ;; TODO see above
-             "-passin" (string-append "pass:" sub-ca-passphrase)])
-
-    (displayln "... generate " chain.pem)
-    (call-with-output-file chain.pem
-      (lambda(output)
-        (for (f [server.crt (ensemble-tls-cafile)])
-          (let (blob (read-file-u8vector f))
-            (write-subu8vector blob 0 (u8vector-length blob) output)))))))
+      (displayln "... generate " chain.pem)
+      (call-with-output-file chain.pem
+        (lambda(output)
+          (for (f [server.crt (ensemble-tls-cafile)])
+            (let (blob (read-file-u8vector f))
+              (write-subu8vector blob 0 (u8vector-length blob) output))))))))
 
 (def root-ca.conf-template #<<END
 [default]

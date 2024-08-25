@@ -33,6 +33,16 @@
    (else
     (raise-bad-argument server-identifier "symbol or pair of symbols" id))))
 
+(def (server-identifier-id server-id)
+  (if (symbol? server-id)
+    server-id
+    (car server-id)))
+
+(def (server-identifier-domain server-id)
+  (if (pair? server-id)
+    (cdr server-id)
+    (ensemble-domain)))
+
 (def (server-identifier-at-domain server-id global-domain)
   (cond
    ((symbol? server-id)

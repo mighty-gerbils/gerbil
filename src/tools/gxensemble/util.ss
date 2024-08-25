@@ -71,7 +71,7 @@
 (def +admin-privkey+ #f)
 (def (get-privkey)
   (or +admin-privkey+
-      (if (file-exists? (default-admin-privkey-path))
+      (if (file-exists? (ensemble-admin-privkey-path))
         (let* ((passphrase (read-password prompt: "Enter administrative passphrase: "))
                (privk (get-admin-privkey passphrase)))
           (set! +admin-privkey+ privk)
@@ -81,6 +81,6 @@
 (def (maybe-authorize! server-id)
   (let (addr (connect-to-server! server-id))
     (unless (eq? tls: (car addr))
-      (when (file-exists? (default-admin-privkey-path))
+      (when (file-exists? (ensemble-admin-privkey-path))
         (let (privk (get-privkey))
           (admin-authorize +admin-privkey+ server-id (actor-server-identifier)))))))
