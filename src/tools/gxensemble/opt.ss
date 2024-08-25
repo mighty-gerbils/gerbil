@@ -28,7 +28,8 @@
     help: "specifies the control operation domain"))
 
 (def supervisor-option
-  (option 'ensemble-supervisor "-S" "--supervisor"
+  (option 'supervisor "-S" "--supervisor"
+    value: string->object
     help: "specifies the ensemble supervisor"))
 
 (def config-option
@@ -141,6 +142,7 @@
 
 (def server-addresses-rest-arguments
   (rest-arguments 'server-addresses
+    value: string->object
     help: "server addresses"))
 
 (def pid-argument
@@ -785,5 +787,6 @@
   (command 'package
     ensemble-domain-option
     package-output-option
+    config-option
     server-id-argument
     help: "package ensemble state to ship an actor server environment"))
