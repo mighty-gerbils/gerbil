@@ -14,6 +14,7 @@
     "gxensemble/admin"
     "gxensemble/env"
     "gxensemble/control"
+    "gxensemble/config"
     "gxensemble/ca"
     "gxensemble/list"
     "gxensemble/misc"

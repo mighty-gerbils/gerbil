@@ -32,7 +32,9 @@
       (create-directory* root/log))
     (parameterize ((current-log-directory (or root/log (ensemble-log-directory))))
       (let* ((cfg      (ensemble-config-merge
-                        (default-ensemble-config (config-get! cfg domain:))
+                        (default-ensemble-config
+                          (config-get! cfg domain:)
+                          (config-get  cfg public-address:))
                         cfg))
              (root     (: (config-get! cfg root:)     :string))
              (domain   (: (config-get! cfg domain:)   :symbol))
@@ -51,14 +53,14 @@
                 (wait-for-actor! 'supervisor)
                 (thunk)))))))))
 
-(def (default-ensemble-config domain)
+(def (default-ensemble-config domain (public-address #f))
   [config: 'ensemble-v0
            domain: domain
            root: (path-normalize (current-directory))
-           services: [supervisor: (default-ensemble-supervisor-config domain)
+           services: [supervisor: (default-ensemble-supervisor-config domain public-address)
                       registry:   (default-ensemble-registry-config domain)]])
 
-(def (default-ensemble-supervisor-config domain)
+(def (default-ensemble-supervisor-config domain (public-address #f))
   (parameterize ((ensemble-domain domain))
     (let ((supervisor-id (cons 'supervisor domain))
           (registry-id (cons 'registry domain)))
@@ -75,7 +77,10 @@
                log-level: 'INFO
                log-dir: (ensemble-server-log-directory supervisor-id)
                log-file: (ensemble-server-log-file supervisor-id "server.log")
-               addresses: [(ensemble-server-unix-addr supervisor-id)]
+               addresses: [(ensemble-server-unix-addr supervisor-id)
+                           (if public-address
+                             [[tls: public-address]]
+                             []) ...]
                known-servers: [[registry-id (ensemble-server-unix-addr registry-id)]]])))
 
 (def (default-ensemble-registry-config domain)

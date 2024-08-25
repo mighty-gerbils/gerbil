@@ -17,6 +17,7 @@
     program: "gxhttpd"
     help: "The Gerbil HTTP Daemon"
     global-env-flag
+    gerbil-path-option
     server-cmd
     ensemble-cmd
     config-cmd))

@@ -147,7 +147,8 @@
             (ensemble-server-config-merge base-role-cfg role-server-cfg))))
 
       (def (get-server-config role domain server-id)
-        (let* ((server-id (server-identifier-at-domain server-id domain))
+        (let* ((domain (ensemble-subdomain domain))
+               (server-id (server-identifier-at-domain server-id domain))
                (base-cfg  (get-base-server-config server-id))
                (role-cfg  (get-role-server-config role server-id)))
           (ensemble-server-config-merge base-cfg role-cfg)))

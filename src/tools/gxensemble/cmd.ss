@@ -5,6 +5,7 @@
         ./admin
         ./env
         ./control
+        ./config
         ./ca
         ./list
         ./misc
@@ -14,6 +15,7 @@
   (import: ./admin
            ./env
            ./control
+           ./config
            ./ca
            ./list
            ./misc

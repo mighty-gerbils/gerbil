@@ -7,11 +7,20 @@
 ;;;
 ;;; getopt objects
 ;;;
+
 (def ensemble-domain-option
   (option 'ensemble-domain "-D" "--ensemble-domain"
     value: string->symbol
     default: #f
     help: "specifies the ensemble domain"))
+
+(def ensemble-public-address-option
+  (option 'ensemble-public-address "--public"
+    help: "specifies the ensemble supervisor public address for TLS"))
+
+(def ensemble-root-option
+  (option 'ensemble-root "--root"
+    help: "specifies the ensemble root directory"))
 
 (def control-domain-option
   (option 'domain "-d" "--domain"
@@ -197,7 +206,7 @@
     help: "arguments for the module's main procedure"))
 
 (def supervised-flag
-  (flag 'supervised "--supervised"
+  (flag 'supervised "-s" "--supervised"
     help: "the operation is supervised by the ensemble supervisor"))
 
 (def env-add-flag
@@ -256,25 +265,70 @@
   (flag 'view "--view"
     help: "inspect existing, don't generate"))
 
+(def role-exe-option
+  (option 'exe "--exe"
+    help: "role executable path"))
+
+(def role-exe-prefix-option
+  (option 'prefix "--prefix"
+    value: string->object
+    help: "role executable arguments prefix; a list"))
+
+(def role-exe-suffix-option
+  (option 'suffix "--suffix"
+    value: string->object
+    help: "role executable arguments suffix; a list"))
+
+(def supervisor-policy-option
+  (option 'policy "--policy"
+    value: string->symbol
+    help: "role supervisory policy"))
+
+(def server-env-option
+  (option 'env "--env"
+    help: "role server environment"))
+
+(def server-envvars-option
+  (option 'envvars "--envvars"
+    value: string->object
+    help: "role server environment variables"))
+
+(def server-known-servers-option
+  (option 'known-servers "--known-servers"
+    value: string->object
+    help: "role server known servers for external communication"))
+
+(def server-application-option
+  (option 'application "--application"
+    value: string->symbol
+    help: "role server application name"))
+
+(def server-application-config-option
+  (option 'config "-C" "--config"
+    help: "role server application configuration"))
+
 (def (subcommand help)
   (argument 'subcommand
     help: help
     value: string->symbol))
 
 (def subcommand-env
-  (subcommand "what to do: known-servers|domain|supervisor"))
+  (subcommand "see gerbil ensemble env help"))
 
 (def subcommand-control
-  (subcommand "what to do: list-servers|start-server|start-workers|stop-server|restart-server|get-server-log|update-server-config|get-server-config|update-ensemble-config|get-ensemble-config|upload|shell|exec-process|kill-process|restart-process|get-process-output|shutdown|restart"))
+  (subcommand "see gerbil ensemble control help"))
 
 (def subcommand-list
-  (subcommand "what to do: servers|actors|connections"))
+  (subcommand "see gerbil ensemble list help"))
 
 (def subcommand-admin
-  (subcommand "what to do: cookie|creds|authorize|retract"))
+  (subcommand "see gerbil ensemble admin help"))
 
 (def subcommand-ca
-  (subcommand "what to do: setup|cert"))
+  (subcommand "see gerbil ensemble ca help"))
+
+(def subcommand-config
+  (subcommand "see gerbil ensemble config help"))
 
 (def subcommand-arguments
   (rest-arguments 'subcommand-args
@@ -320,6 +374,12 @@
     subcommand-control
     subcommand-arguments
     help: "ensemble supervisory control operations"))
+
+(def config-cmd
+  (command 'config
+    subcommand-config
+    subcommand-arguments
+    help: "configure the ensemble"))
 
 (def load-cmd
   (command 'load
@@ -590,6 +650,38 @@
     console-option
     restart-services-flag
     help: "mass restart servers in a supervised ensemble"))
+
+;; config
+(def config-ensemble-cmd
+  (command 'ensemble
+    view-flag
+    pretty-flag
+    ensemble-domain-option
+    ensemble-root-option
+    ensemble-public-address-option
+    help: "configure the ensemble as a whole"))
+
+(def config-role-cmd
+  (command 'role
+    role-option
+    role-exe-option
+    role-exe-prefix-option
+    role-exe-suffix-option
+    supervisor-policy-option
+    server-env-option
+    server-envvars-option
+    server-known-servers-option
+    server-application-option
+    server-application-config-option
+    help: "configure an ensemble role"))
+
+(def config-preload-server-cmd
+  (command 'server
+    help: "TODO: configure a preloaded server"))
+
+(def config-preload-workers-cmd
+  (command 'workers
+    help: "TODO: configure preloaded workers"))
 
 ;; list subcommands
 (def list-servers-cmd

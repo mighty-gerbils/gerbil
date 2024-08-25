@@ -160,9 +160,12 @@
 
     (def (upload-finish key type blob-path deploy-path)
       (def (tar-expand base)
-        (let (expand-path (path-expand deploy-path base))
+        (let (expand-path
+              (if (string-empty? deploy-path)
+                base
+                (path-expand deploy-path base)))
           (create-directory* expand-path)
-          (invoke "tar" ["xzf" "-C" expand-path blob-path])))
+          (invoke "tar" ["xzf" blob-path] directory: expand-path)))
       (try
        (cond
         ((equal? type '(exe . gz))
