@@ -583,7 +583,7 @@
             (restart! services?)))
 
          ((!supervisor-invoke actor msg)
-          (with-authorization 'supervisor
+          (if (actor-authorized? @source 'supervisor)
             (spawn/name 'invoke
               (lambda ()
                 (try
@@ -591,7 +591,8 @@
                            expiry: @expiry))
                  (catch (e)
                    (debugf "actor invocation error: ~a: ~a" actor e)
-                   (--> (!error (error-message e)))))))))
+                   (--> (!error (error-message e)))))))
+            (--> (!error "not authorized"))))
 
          ((!executor-notify pid exit-code)
           (if (local-actor? @source 'executor)
