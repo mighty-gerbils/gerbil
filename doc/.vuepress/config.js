@@ -22,7 +22,7 @@ module.exports = {
           '/tutorials/': [
               {
                   title: 'Tutorials',
-                  children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble']
+                  children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble', 'advanced-ensemble']
               }
           ], '/reference/gerbil/runtime/': [
 	          { title: "Gerbil Runtime",
