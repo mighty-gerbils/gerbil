@@ -1,18 +1,73 @@
 # Advanced Actor Ensembles
 
-TODO words
+So far, in the [basic ensemble tutorial](ensemble.md) we have explored
+the basics of actor ensembles in Gerbil. This is the foundation and basic
+interaction, giving you the tools to control and debug unstructured ensembles.
+
+In this tutorial we introduce advanced ensemble concepts and structured ensembles,
+whereby a supervisor controls the ensemble for some domain in a host. We explore
+distributed ensembles by creating a network of such local ensembles,
+connected through TLS. Control of such distributed ensembles can be operational
+through a console server for scripting and operator access.
+
+::: tip Note
+Future Work (soon enough! Planned for v0.19) will be to introduce
+orchestrators, which can run in a host to setup, heathcheck and
+maintain an ensemble through a dedicated tool. We will also introduce
+additional supervisory services, besides the registry: a vault server
+for sharing secrets without hitting the disk, a resolver for
+distributed name resolution of servers, and broadcast facilities for
+connecting nodes in an implicit ensemble wide network.
+:::
 
 ## Ensemble Domains
 
-TODO words
+As we all know, naming is one of the hardest problems in Computer
+Sciences.  Names need to be intentional, and convey information about
+the role while on the same time avoiding clashes within the global
+namespaces.
 
-## Supervised Actor Ensembles
+Gerbil implements ensemble domains as a hierarchical
+namespace. Servers have identifiers which are pairs of a symbol (the
+_name_ or id of the server) and another symbol which is the
+_domain_. Names cannot contain slashes while domains are hierarchically
+partitioned with slashes.
 
-TODO words
+The hierarchical structure of the domain namespace serves two purposes:
+- it designates control structure, where we can easily refer to the subensemble
+  that operations under a particular subdomain.
+- it eliminates names clashes with easy conventions; for example a convention
+  for the namespace would be `/project/host-id/application/...` and so on.
+
+In addition, each server in a domain has a primary _role_, which
+defines its purpose and its configuration. Servers can also have
+secondary roles and provide a selector for refering to groups of
+servers spanning multiple domains.
+
+## Structured Ensembles
+
+In a _structured ensemble_, a supervisor controls a subdomain and
+provide necessary services for maintaining the ensemble. It manages
+creation of servers, local server-level supervision, and automatically
+spanws and supervises a registry for the entire subdomain in the
+localhost.
+
+Supervisors can be recursive, whereby a supervisor supervises a nested
+supervisor in a local ensemble or meta-supervises remotely as part of
+an orchestrator. In general we recommend as best practice to use a
+single supervisor for a local subdomain and configure meta-supervision
+through orchestrators.
 
 ## Case Study: The Gerbil httpd
 
-TODO words
+A common requirement is to spawn an httpd that can utilize all cores,
+and preferably with process isolation so that a bug can't bring down
+the whole server.
+
+Gerbil comes with a builtin httpd, runnable as `gerbil httpd`. The
+server is quite capable, supports static file serving with a small
+file cache, dynamically loadable handlers, and servlets which are interpreted
+handlers in the server content.
 
 ### Using a Standalone httpd
 Here we walk through an example www project and how to serve it with `gerbil httpd server`.
