@@ -91,7 +91,7 @@
              identifier: registry-id
              role: 'registry
              exe:   "gerbil"
-             args: ["ensemble" "registry" (object->string registry-id)]]))
+             args: ["ensemble" "registry" "--supervised" (object->string registry-id)]]))
 
 (def (@supervisor super-id srv)
   (handle srv (reference super-id 'supervisor)))

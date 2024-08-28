@@ -9,15 +9,16 @@
 (export #t)
 
 (def (do-registry opt)
-  (let ((server-id (hash-get opt 'server-id))
-        (domain    (get-ensemble-domain opt)))
-    (if server-id
+  (let* ((domain    (get-ensemble-domain opt))
+         (server-id (or (hash-get opt 'server-id)
+                        (cons 'registry domain))))
+    (if (hash-get opt 'supervised)
       ;; run as a supervisory process
       (let (cfg (load-ensemble-server-config (server-identifier-at-domain server-id domain)))
         (become-ensemble-server! cfg (cut start-ensemble-registry!)))
       ;; standalone registry mode
       (call-with-ensemble-server
-       (cons 'registry domain)
+       server-id
        (cut start-ensemble-registry!)
        domain:    domain
        log-level: (hash-ref opt 'logging)

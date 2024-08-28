@@ -342,6 +342,7 @@
 
 (def registry-cmd
   (command 'registry
+    supervised-flag
     ensemble-domain-option
     logging-option
     logging-file-option
