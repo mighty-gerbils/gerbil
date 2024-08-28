@@ -10,6 +10,7 @@
 
 ;;; misc commands
 (def (do-lookup opt)
+  (error "FIXME: do-lookup")
   (start-actor-server-with-options! opt)
   (let (what (hash-ref opt 'server-or-role))
     (display-result-list
@@ -102,6 +103,7 @@
           (delete-file-or-directory tmp #t))))))
 
 (def (do-shutdown opt)
+  (error "FIXME: do-shutdown")
   (start-actor-server-with-options! opt)
   (cond
    ((hash-get opt 'server-id)

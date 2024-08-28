@@ -26,6 +26,7 @@
       (generate-admin-keypair! passphrase force: (hash-get opt 'force)))))
 
 (def (do-admin-authorize opt)
+  (error "FIXME: do-admin-authorize")
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (authorized-server-id (hash-ref opt 'authorized-server-id))
@@ -34,6 +35,7 @@
                      capabilities: capabilities)))
 
 (def (do-admin-retract opt)
+  (error "FIXME: do-admin-retract")
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (authorized-server-id (hash-ref opt 'authorized-server-id)))
