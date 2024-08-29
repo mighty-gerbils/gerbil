@@ -695,12 +695,18 @@
 ;; list subcommands
 (def list-servers-cmd
   (command 'servers
+    pretty-flag
+    supervised-flag
+    supervisor-option
     console-option
     registry-option
     help: "lists known servers"))
 
 (def list-actors-cmd
   (command 'actors
+    pretty-flag
+    supervised-flag
+    supervisor-option
     console-option
     registry-option
     server-id-argument
@@ -708,6 +714,9 @@
 
 (def list-connections-cmd
   (command 'connections
+    pretty-flag
+    supervised-flag
+    supervisor-option
     console-option
     registry-option
     server-id-argument

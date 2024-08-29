@@ -2,27 +2,55 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :std/actor
-        ./util)
+        :std/actor-v18/proto
+        ./util
+        ./control)
 (export #t)
 
 ;;; gerbil ensemble list
 (def (do-list-connections opt)
-  (error "FIXME: do-list-connections")
-  (start-actor-server-with-options! opt)
-  (display-result-list
-   (remote-list-connections (hash-ref opt 'server-id)))
-  (stop-actor-server!))
+  (let* ((server-id (hash-ref opt 'server-id))
+         (list-connections
+          (if (hash-get opt 'supervised)
+            (let (supervisor (or (hash-get opt 'supervisor)
+                                 (ensemble-domain-supervisor)))
+              (lambda (srv)
+                (let (result (ensemble-supervisor-invoke!
+                              supervisor: supervisor
+                              actor: (reference server-id 0)
+                              message: (!list-connections server-id)
+                              actor-server: srv))
+                  (write-result opt result))))
+            (lambda (srv)
+              (let (result (remote-list-connections server-id srv))
+                (write-result opt result))))))
+    (call-with-console-server opt list-connections)))
 
 (def (do-list-actors opt)
-  (error "FIXME: do-list-actors")
-  (start-actor-server-with-options! opt)
-  (display-result-list
-   (map reference-actor (remote-list-actors (hash-ref opt 'server-id))))
-  (stop-actor-server!))
+  (let* ((server-id (hash-ref opt 'server-id))
+         (write-result
+          (lambda (opt result)
+            (write-result opt (map reference-actor result))))
+         (list-actors
+          (if (hash-get opt 'supervised)
+            (let (supervisor (or (hash-get opt 'supervisor)
+                                 (ensemble-domain-supervisor)))
+              (lambda (srv)
+                (let (result (ensemble-supervisor-invoke!
+                              supervisor: supervisor
+                              actor: (reference server-id 0)
+                              message: (!list-actors server-id)
+                              actor-server: srv))
+                  (write-result opt result))))
+            (lambda (srv)
+              (let (result (remote-list-connections server-id srv))
+                (write-result opt result))))))
+    (call-with-console-server opt list-actors)))
 
 (def (do-list-servers opt)
-  (error "FIXME: do-list-servers")
-  (start-actor-server-with-options! opt)
-  (display-result-list
-   (ensemble-list-servers))
-  (stop-actor-server!))
+  (if (hash-get opt 'supervised)
+    (do-control-list-servers opt)
+    (call-with-console-server opt
+      (lambda (srv)
+        (let (result (ensemble-list-servers srv))
+          (write-result opt result))))))
