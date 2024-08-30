@@ -94,7 +94,7 @@ hello world
 
 ## Use case: loading a configuration file at run-time.
 
-Suppose you'd like to use scheme as the configuration language for your program. For the sake of simplicity, let's assume that its default place is `$HOME/.config/eval-test/config.scm`.
+Suppose you'd like to use scheme as the configuration language for your program. For the sake of simplicity, let's assume that the config file is `$HOME/.config/eval-test/config.scm`.
 
 Let's create a project like this:
 
@@ -117,7 +117,7 @@ In `eval/main.ss`, there is a call to `(eval (include ...) ...)`.
   (eval '(include "~/.config/eval-test/config.scm")))
 ```
 
-If the configuration file only needs functions from your main program, them we're done. But if it also needs functions from a library use provide, then you'll need to find the correct namespace. Let's define the library, `eval/lib.ss`:
+If the configuration file only needs symbols from your main program, then you already know what to do. But if it also needs functions from a library use provide, then you'll need to find the correct namespace. Let's define the library, `eval/lib.ss`:
 
 ```scheme
 (export #t)
