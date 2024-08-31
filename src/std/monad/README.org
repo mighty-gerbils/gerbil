@@ -1130,7 +1130,7 @@ This is after state in the train of thought so is defined here.
       ((_ test-case: name rest ...)
        #'(test-case name (test-inline rest ...)))
       ((_ > form > rest ...)
-       #'(begin (when std/test#*test-versbose* (displayln "... " 'form)) form (test-inline > rest ...)))
+       #'(begin (when std/test#*test-verbose* (displayln "... " 'form)) form (test-inline > rest ...)))
       ((_ > test result rest ...)
        #'(begin (check test => 'result) (test-inline rest ...)))
       ((_) #!void)))
