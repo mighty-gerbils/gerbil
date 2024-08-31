@@ -12,6 +12,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie
         ./admin
@@ -97,16 +98,16 @@
     (test-case "UNIX IPC"
       (let* ((tmp1 (make-temporary-file-name "actor-server"))
              (tmp2 (make-temporary-file-name "actor-server")))
-        (test-ipc 'test-server1 [unix: (hostname) tmp1]
-                  'test-server2 [unix: (hostname) tmp2])
+        (test-ipc '(test-server1 . /) [unix: (hostname) tmp1]
+                  '(test-server2 . /) [unix: (hostname) tmp2])
         (delete-file tmp1)
         (delete-file tmp2)))
 
     (test-case "TCP IPC"
       (let* ((addr1 (cons localhost4 33333))
              (addr2 (cons localhost4 44444)))
-        (test-ipc 'test-server1 [tcp: addr1]
-                  'test-server2 [tcp: addr2])))
+        (test-ipc '(test-server1 . /) [tcp: addr1]
+                  '(test-server2 . /) [tcp: addr2])))
 
     (test-case "implicit connection"
       (reset-thread!)
@@ -125,7 +126,7 @@
           (start-actor-server! cookie: cookie
                                admin: #f
                                addresses: []
-                               ensemble: (hash-eq (,srv1-id [addr1]))))
+                               known-servers: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
           (actor-server-identifier srv2))
 
@@ -276,14 +277,16 @@
       (def local-srv
         (start-actor-server! cookie: cookie
                              admin: #f
-                             ensemble: (hash (,remote-srv-id [remote-addr]))))
+                             known-servers: (hash (,remote-srv-id [remote-addr]))))
+      (def local-srv-id
+        (actor-server-identifier local-srv))
 
       ;; try to shutdown remote-srv without authorization first; this should fail
       (check-exception (remote-stop-server! remote-srv-id local-srv)
                        (actor-error-with? "not authorized"))
 
       ;; now authorize administrative privileges and try again
-      (check (admin-authorize privk remote-srv-id (actor-server-identifier local-srv) local-srv)
+      (check (admin-authorize privk remote-srv-id local-srv-id local-srv)
              => (void))
       (check (remote-stop-server! remote-srv-id local-srv) => (void))
       (check (thread-join! remote-srv) => 'shutdown)
