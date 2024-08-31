@@ -27,13 +27,13 @@
     ((_ test-case: name rest ...)
      #'(test-case name (test-inline rest ...)))
     ((_ > form > rest ...)
-     #'(begin (displayln "... " 'form) form (test-inline > rest ...)))
+     #'(begin (when std/test#*test-verbose* (displayln "... " 'form)) form (test-inline > rest ...)))
     ((_ > test result rest ...)
      #'(begin (check test => 'result) (test-inline rest ...)))
     ((_) #!void)))
 
-(set-test-verbose! #t)
 
+;; (set-test-verbose! #f)
 (def parsec-test 
   (test-suite "Test :std/parsec"
    (test-inline
@@ -287,10 +287,11 @@
      > (def-parse EOL (.or (.eof) (.newline)))
      
      > (def-parse KEY
-     	    (.>> (.string "#+")
-      		 (.many-till
-      		  (.satisfy (? (not char-whitespace?)))
-      		  (.string ": "))))
+         (.>> (.string "#+")
+      	 (.many-till
+      	  (.satisfy (? (not char-whitespace?)))
+      	  (.string ": "))))
+     
      > (def-parse VALUE (.many-till (.any-token) EOL))
      
      > (def-parse KEYWORD

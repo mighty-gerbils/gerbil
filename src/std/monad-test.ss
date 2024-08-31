@@ -22,12 +22,12 @@
     ((_ test-case: name rest ...)
      #'(test-case name (test-inline rest ...)))
     ((_ > form > rest ...)
-     #'(begin (displayln "... " 'form) form (test-inline > rest ...)))
+     #'(begin (when *test-versbose* (displayln "... " 'form)) form (test-inline > rest ...)))
     ((_ > test result rest ...)
      #'(begin (check test => 'result) (test-inline rest ...)))
     ((_) #!void)))
 
-(set-test-verbose! #t)
+;; (set-test-verbose! #t)
 
 (def monad-test
   (test-suite "Test :std/monad"
