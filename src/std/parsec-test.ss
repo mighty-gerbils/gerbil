@@ -267,49 +267,59 @@
 
     (test-inline
      test-case: "Dot tests"
-     > (caar (do-parse (.run (.return 42) "")))
+     > (caar (do-parsec (.run (.return 42) "")))
      42
-     > (def-parse FourTwo (.char #\4) (.char #\2) (.return 42))
-     > (caar (do-parse (.run FourTwo "42")))
+     > (def-parsec FourTwo (.char #\4) (.char #\2) (.return 42))
+     > (caar (do-parsec (.run FourTwo "42")))
      42
 
      )
     (test-inline
      test-case: "Character Parsing tests"
-     > (caar (do-parse (.run (.string "asd") "asdfjkl;")))
+     > (caar (do-parsec (.run (.string "asd") "asdfjkl;")))
      "asd"
-     > (caar (do-parse (.run (.string "asd" char-ci=?) "AsDfjkl;")))
+     > (caar (do-parsec (.run (.string "asd" char-ci=?) "AsDfjkl;")))
      "AsD"
 
      )
     (test-inline
      test-case: "Org Syntax Parsing tests"
-     > (def-parse EOL (.or (.eof) (.newline)))
+     > (def-parsec-bnf
+         EOL ::= (.or (.eof) (.newline))
      
-     > (def-parse KEY
-         (.>> (.string "#+")
-      	 (.many-till
-      	  (.satisfy (? (not char-whitespace?)))
-      	  (.string ": "))))
+         KEY ::= (.>> (.string "#+")
+      		 (.many-till
+      		  (.satisfy (? (not char-whitespace?)))
+      		  (.string ": ")))
      
-     > (def-parse VALUE (.many-till (.any-token) EOL))
+         VALUE ::= (.many-till (.any-token) EOL)
      
-     > (def-parse KEYWORD
-         key <- (.liftM list->string KEY)
-         value <- (.liftM list->string VALUE)
-         (.return ['keyword key: key value: value]))
+         KEYWORD ::= key <- (.liftM list->string KEY)
+                     value <- (.liftM list->string VALUE)
+                     (.return ['keyword key: key value: value]))
      
      > (run-parser KEYWORD "#+TITLE: Org Mode keyword!")
      (keyword key: "TITLE" value: "Org Mode keyword!")
-     		 
+     > (def-parsec-bnf
+         GENERIC-LINE ::=  (.many-till (.any-token) EOL)
+         
+         LINE-NO-TRY ::= (.or KEYWORD GENERIC-LINE))
      
-        
-        
+     > (run-parser LINE-NO-TRY "asd\njkl")
+     (#\a #\s #\d)
+     > (run-parser LINE-NO-TRY "#+TITLE: Org Mode keyword!")
+     (keyword key: "TITLE" value: "Org Mode keyword!")
+     > (run-parser LINE-NO-TRY "#+heh yeah!")
+     #f
+     > (def-parsec-bnf
+         LINE ::= (.or (.try KEYWORD) GENERIC-LINE))
      
-        
-        
-        
-      
+     > (run-parser LINE "asd\njkl")
+     (#\a #\s #\d)
+     > (run-parser LINE "#+TITLE: Org Mode keyword!")
+     (keyword key: "TITLE" value: "Org Mode keyword!")
+     > (list->string (run-parser LINE "#+heh yeah!"))
+     "#+heh yeah!"
 
      )
 

@@ -34,5 +34,5 @@
 (def (run-parser p inp)
  (using (P (current-parsec) : Parsec)
   (let (res (P.run p inp))
-   (if (null? res) res
+   (if (null? res) #f
        (caar res)))))

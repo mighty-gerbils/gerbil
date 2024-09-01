@@ -48,9 +48,11 @@
             [ret orig-stream ...]
   	  ;; failure
   	  [Nothing (ret-stream s) ...])))
-       (if (eq? new Nothing)
-         (if (pair? ret) (P.return (cdr ret)) (P.fail))
-         (P.return new)))))
+       (begin #;(displayln "In try new: " ret new (eq? new Nothing))
+         (if (eq? new Nothing)
+           (if (and (pair? ret) (not (null? (cdr ret))))
+  	    (P.return (cdr ret)) (P.fail))
+           (P.return new))))))
   
   ((many p) (manyAccum P p))
   ((many1 p) (du P

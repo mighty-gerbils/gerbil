@@ -65,9 +65,10 @@
         (P.read-char))))
   ((only-at xoff parser)
      (du P yoff <- (P.xoff)
+        (begin #;(displayln "End or @ xoff " yoff)
          (if (= yoff xoff)
   	 parser
-  	 (P.zero))))
+  	 (P.zero)))))
   ((or a b (Nothing (gensym)))
    (using (inner pt.inner :- ParsecT-inner)
      (du P
@@ -78,7 +79,7 @@
   ((plus a b) (using (inner pt.inner :- ParsecT-inner)
                (du P
   	       soff <- (P.xoff)
-                 (inner.plus a (P.only-at soff b)))))
+                (inner.plus a (P.only-at soff b)))))
   ((zero) (using (inner pt.inner :- ParsecT-inner) (inner.zero)))
   ((catch e h) (using (inner pt.inner :- ParsecT-inner) (inner.catch e h)))
   ((throw msg . irritants) (apply ParsecT-inner-throw pt.inner msg irritants))

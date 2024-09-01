@@ -52,7 +52,9 @@ Here's a quick example...
 #+end_src
 
 ... with the first two lines helping to explain the exact reasoning
-behind recursive descent and backtracking.
+behind recursive descent and backtracking
+.
+*** First Line
 
 The first line is a keyword.
 
@@ -65,32 +67,64 @@ The first line is a keyword.
   - VALUE :: A string consisting of any characters but a newline.
 
 #+begin_src scheme :noweb-ref org-mode-parser-test
-  > (def-parse EOL (.or (.eof) (.newline)))
+  > (def-parsec-bnf
+      EOL ::= (.or (.eof) (.newline))
 
-  > (def-parse KEY
-      (.>> (.string "#+")
-   	 (.many-till
-   	  (.satisfy (? (not char-whitespace?)))
-   	  (.string ": "))))
+      KEY ::= (.>> (.string "#+")
+   		 (.many-till
+   		  (.satisfy (? (not char-whitespace?)))
+   		  (.string ": ")))
   
-  > (def-parse VALUE (.many-till (.any-token) EOL))
+      VALUE ::= (.many-till (.any-token) EOL)
 
-  > (def-parse KEYWORD
-      key <- (.liftM list->string KEY)
-      value <- (.liftM list->string VALUE)
-      (.return ['keyword key: key value: value]))
+      KEYWORD ::= key <- (.liftM list->string KEY)
+                  value <- (.liftM list->string VALUE)
+                  (.return ['keyword key: key value: value]))
 
   > (run-parser KEYWORD "#+TITLE: Org Mode keyword!")
   (keyword key: "TITLE" value: "Org Mode keyword!")
-  		 
+#+end_src
 
-     
-     
+*** Second Line :: =.try= a keyword!
 
-     
-     
-     
-   
+The second line is not a keyword but the first 6 characters means it
+could be. =LL(6)=? Infinite lookahead!
+
+Without a conflicting prefix it works great.
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (def-parsec-bnf
+      GENERIC-LINE ::=  (.many-till (.any-token) EOL)
+      
+      LINE-NO-TRY ::= (.or KEYWORD GENERIC-LINE))
+
+  > (run-parser LINE-NO-TRY "asd\njkl")
+  (#\a #\s #\d)
+  > (run-parser LINE-NO-TRY "#+TITLE: Org Mode keyword!")
+  (keyword key: "TITLE" value: "Org Mode keyword!")
+#+end_src
+
+But we run into issues if we have a conflict.
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (run-parser LINE-NO-TRY "#+heh yeah!")
+  #f
+#+end_src
+
+That's because =.or= is always =LL(1)=.
+
+We can fix that using =.try=. 
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (def-parsec-bnf
+      LINE ::= (.or (.try KEYWORD) GENERIC-LINE))
+
+  > (run-parser LINE "asd\njkl")
+  (#\a #\s #\d)
+  > (run-parser LINE "#+TITLE: Org Mode keyword!")
+  (keyword key: "TITLE" value: "Org Mode keyword!")
+  > (list->string (run-parser LINE "#+heh yeah!"))
+  "#+heh yeah!"
 #+end_src
 
 
@@ -110,49 +144,88 @@ The first line is a keyword.
 Here's the thing. I want gerbil parsec to be popular and short form.
 
 #+begin_src scheme :noweb-ref dot-test
-  > (caar (do-parse (.run (.return 42) "")))
+  > (caar (do-parsec (.run (.return 42) "")))
   42
-  > (def-parse FourTwo (.char #\4) (.char #\2) (.return 42))
-  > (caar (do-parse (.run FourTwo "42")))
+  > (def-parsec FourTwo (.char #\4) (.char #\2) (.return 42))
+  > (caar (do-parsec (.run FourTwo "42")))
   42
 #+end_src
 
 #+begin_src scheme :tangle "syntax.ss"
-  (import :std/monad/syntax :std/sugar
-      (for-syntax :gerbil/expander :std/sugar)
-          #;./transformer "transformer"
-          #;./mid-level "char")
-  (export #t)
-  (begin-syntax (def (dot-identifier? id)
-      (and (identifier? id)
-           (let (id-str (symbol->string (stx-e id)))
-  	   (eqv? (string-ref id-str 0) #\.)))))
+    (import :std/monad/syntax :std/sugar
+        (for-syntax :gerbil/expander :std/sugar)
+            #;./transformer "transformer"
+            #;./mid-level "char")
+    (export #t)
+    (begin-syntax (def (dot-identifier? id)
+        (and (identifier? id)
+             (let (id-str (symbol->string (stx-e id)))
+    	   (eqv? (string-ref id-str 0) #\.)))))
 
-  (defsyntax (do-parse stx)
-       (syntax-case stx ()
-      ((_ parser ps ...)
-       (with-syntax ((@app (syntax-local-introduce '%%app))
-  		   (@parser (syntax-local-introduce '%%parse)))
-      #'(let-syntax ((__app
-                      (syntax-rules ()
-                        ((_ rator rand (... ...))
-                         (@app rator rand (... ...))))))
-          (let-syntax ((@app
-                        (lambda (stx)
-                          (syntax-case stx ()
-                            ((_ rator . args)
-                             (dot-identifier? #'rator)
-                               (with-syntax ((method (stx-identifier #'rator '@parser #'rator)))
-                                 (syntax/loc stx
-                                   (method . args))))
-                            ((_ . args)
-                             (syntax/loc stx
-                               (__app . args)))))))
-  	  (du (@parser (current-parsec) : Parsec)
-  	    parser ps ...)))))))
+    (defsyntax (do-parsec stx)
+         (syntax-case stx ()
+        ((_ parser ps ...)
+         (with-syntax ((@app (syntax-local-introduce '%%app))
+    		   (@parser (syntax-local-introduce '%%parse)))
+        #'(let-syntax ((__app
+                        (syntax-rules ()
+                          ((_ rator rand (... ...))
+                           (@app rator rand (... ...))))))
+            (let-syntax ((@app
+                          (lambda (stx)
+                            (syntax-case stx ()
+                              ((_ rator . args)
+                               (dot-identifier? #'rator)
+                                 (with-syntax ((method (stx-identifier #'rator '@parser #'rator)))
+                                   (syntax/loc stx
+                                     (method . args))))
+                              ((_ . args)
+                               (syntax/loc stx
+                                 (__app . args)))))))
+    	  (du (@parser (current-parsec) : Parsec)
+    	    parser ps ...)))))))
 
-  (defrule (def-parse id forms ...) (def id (do-parse forms ...)))
+    (defrule (def-parsec id forms ...) (def id (do-parsec forms ...)))
+
+    (defsyntax (def-parsec-bnf stx)
+      (def (expand-body forms)
+        (with-syntax (((frms ...)
+    		   (stx-foldr
+    		    (lambda (x xs)
+    		      (if (and
+    			    (stx-pair? xs)
+    			    (identifier? (stx-car xs))
+    			    (free-identifier=?
+    			     (stx-car xs) #'::=))
+    			[]
+    			(cons x xs)))
+    		    [] forms))
+    		  (forms forms))
+          (syntax-case #'(frms ...) ()
+    	((foo ...)	 
+    	 #'(do-parsec frms ...)))))
+      (def (expand-tail forms)
+        (with-syntax* (((rest ...)
+    		   (let lp ((forms forms))
+    		     (if (stx-null? forms) forms
+    		    (let (id (and (not (stx-null? (stx-cdr forms)))
+  				  (stx-car (stx-cdr forms))))
+    		      (if (and (identifier? id)
+    			        (free-identifier=?
+    				 id #'::=))
+    			forms
+    			(lp (stx-cdr forms))))))))
+          (if (stx-null? #'(rest ...))
+    	#'(begin rest ...)
+    	#'(def-parsec-bnf rest ...))))
+      (syntax-case stx (:body :tail)
+        ((macro ID cceq forms ...)
+         (with-syntax ((body (expand-body #'(forms ...)))
+    		   (tail (expand-tail #'(forms ...))))
+           #'(begin (def ID body) tail)))))
+
 #+end_src
+
 
 
 * Character Parsers
@@ -187,7 +260,7 @@ There are times when we want to match against a string rather than
 single characters.
 
 #+begin_src scheme :noweb-ref char-test
-  > (caar (do-parse (.run (.string "asd") "asdfjkl;")))
+  > (caar (do-parsec (.run (.string "asd") "asdfjkl;")))
   "asd"
 #+end_src
 
@@ -195,7 +268,7 @@ Case is often not a concern so insensitive is sometimes prefered and not
 frowed upon.
 
 #+begin_src scheme :noweb-ref char-test
-  > (caar (do-parse (.run (.string "asd" char-ci=?) "AsDfjkl;")))
+  > (caar (do-parsec (.run (.string "asd" char-ci=?) "AsDfjkl;")))
   "AsD"
 #+end_src
 
@@ -237,7 +310,7 @@ frowed upon.
   (def (run-parser p inp)
    (using (P (current-parsec) : Parsec)
     (let (res (P.run p inp))
-     (if (null? res) res
+     (if (null? res) #f
          (caar res)))))
 
 
@@ -308,25 +381,27 @@ But occaisionally there's a need to look further ahead, consume input,
 fail, and backtrack!
 
 #+begin_src scheme :noweb-ref comb-impl
-  ((try parser (Nothing (gensym)))
-   (def (ret-stream la (p? #t))
-     (using ((la :- lookahead-char-stream)
-  	   (b la.bcr :- buffered-char-reader))
-       (if (= b.lo b.hi) b.port b)))
-   (using (inner pt.inner : ParsecT-inner)
-     (du P
-       orig-stream <- (P.state (lambda (s) [s (make-lookahead-char-stream s) ...]))
-       ret <- (P.catch (inner.or parser (P.return [Nothing])) (lambda (e) (P.return [Nothing e ...])))
-       new <- (P.state
-        (lambda (s) 
-  	(if (not (and (pair? ret) (eq? (car ret) Nothing)))
-  	  ;; success!
-            [ret orig-stream ...]
-  	  ;; failure
-  	  [Nothing (ret-stream s) ...])))
-       (if (eq? new Nothing)
-         (if (pair? ret) (P.return (cdr ret)) (P.fail))
-         (P.return new)))))
+   ((try parser (Nothing (gensym)))
+    (def (ret-stream la (p? #t))
+      (using ((la :- lookahead-char-stream)
+   	   (b la.bcr :- buffered-char-reader))
+        (if (= b.lo b.hi) b.port b)))
+    (using (inner pt.inner : ParsecT-inner)
+      (du P
+        orig-stream <- (P.state (lambda (s) [s (make-lookahead-char-stream s) ...]))
+        ret <- (P.catch (inner.or parser (P.return [Nothing])) (lambda (e) (P.return [Nothing e ...])))
+        new <- (P.state
+         (lambda (s) 
+   	(if (not (and (pair? ret) (eq? (car ret) Nothing)))
+   	  ;; success!
+             [ret orig-stream ...]
+   	  ;; failure
+   	  [Nothing (ret-stream s) ...])))
+        (begin #;(displayln "In try new: " ret new (eq? new Nothing))
+          (if (eq? new Nothing)
+            (if (and (pair? ret) (not (null? (cdr ret))))
+  	    (P.return (cdr ret)) (P.fail))
+            (P.return new))))))
 
 #+end_src
 
@@ -538,9 +613,10 @@ AND the first parser does not consume any characters.
 #+begin_src scheme :noweb-ref only-at-or-plus
   ((only-at xoff parser)
      (du P yoff <- (P.xoff)
+        (begin #;(displayln "End or @ xoff " yoff)
          (if (= yoff xoff)
   	 parser
-  	 (P.zero))))
+  	 (P.zero)))))
   ((or a b (Nothing (gensym)))
    (using (inner pt.inner :- ParsecT-inner)
      (du P
@@ -551,7 +627,7 @@ AND the first parser does not consume any characters.
   ((plus a b) (using (inner pt.inner :- ParsecT-inner)
                (du P
   	       soff <- (P.xoff)
-                 (inner.plus a (P.only-at soff b)))))
+                (inner.plus a (P.only-at soff b)))))
 #+end_src
 
 ** Interface and instance
@@ -945,6 +1021,7 @@ non-determanistic parsers that's a possibility!
   		     (string-copy! str 0 bcr.buf)
   		     (set! bcr.buf str)
   		     str))))
+        #;(displayln "ungetc " bcr.hi " C " char)
         (set! (string-ref str bcr.hi) char)
         (set! bcr.hi new-hi))))
 
@@ -989,8 +1066,9 @@ non-determanistic parsers that's a possibility!
      (cond ((eqv? lcs.lo lcs.hi) (eof-object))
   	 ((= lcs.lo bcr.hi)
   	  (let (c (buffered-char-reader-getc lcs.bcr #t))
+              (when (not (eof-object? c))
   	    (buffered-char-reader-ungetc lcs.bcr c)
-  	    (set! lcs.lo (1+ lcs.lo))
+  	    (set! lcs.lo (1+ lcs.lo)))
   	    c))
   	 (else (let (c (string-ref bcr.buf lcs.lo))
   	    (set! lcs.lo (1+ lcs.lo))
