@@ -5,6 +5,7 @@
         :gerbil/gambit
         :std/cli/getopt
         :std/format
+        :std/misc/ports
         :std/iter
         :std/pregexp
         :std/sort
@@ -14,13 +15,18 @@
         ./env)
 (export main)
 
+(extern namespace: "std/test"
+  !test-suite-error)
+
 (def (main . args)
   (call-with-getopt gxtest-main args
     program: "gxtest"
     help: "run Gerbil tests in the command line"
     global-env-flag
     (flag 'verbose "-v"
-           help: "run in verbose mode where all test execution progress is displayed in stdout.")
+          help: "run in verbose mode where all test execution progress is displayed in stdout.")
+    (flag 'quiet "--quiet"
+	  help: "run in in quiet mode where only errors are displayed")
     (option 'run "-r" "--run"
             help: "only run test suites whose name matches a given regex")
      ;; TODO this should be a multi-option for multiple features
@@ -34,11 +40,11 @@
   (let-hash opt
     (cond
      ((null? .args)
-      (run-tests ["."] .run .features .?verbose))
+      (run-tests ["."] .run .features .?verbose .?quiet))
      (else
-      (run-tests .args .run .features .?verbose)))))
+      (run-tests .args .run .features .?verbose .?quiet)))))
 
-(def (run-tests args filter features verbose?)
+(def (run-tests args filter features verbose? quiet?)
   (def import-errors [])
   (def filter-rx (and filter (pregexp filter)))
 
@@ -67,7 +73,15 @@
              (setup!))
            (for ([name . suite] suites)
              (displayln ">>> run " name)
-             (run-test-suite! suite))
+	     (let (buf (and quiet? (open-string "")))
+	       (parameterize ((current-error-port
+			       (or buf (current-error-port)))
+			      (current-output-port
+			       (or buf (current-output-port))))
+		 (run-test-suite! suite))
+	       (when buf (close-port buf))
+	       (when (and quiet? (!test-suite-error suite))
+		 (copy-port buf (current-output-port)))))
            (finally
             (when cleanup!
               (displayln ">>> cleanup")
