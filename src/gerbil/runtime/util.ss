@@ -755,9 +755,11 @@ namespace: #f
 
 (def (write-u8vector (bytes : :u8vector)
                      (port  :~ output-port? :- :port)
-                     (start :~ (in-range? 0 (u8vector-length bytes)) :- :fixnum
-                           := 0)
-                     (end   :~ (in-range-inclusive? start (u8vector-length bytes))  :- :fixnum
+                     (start :~ (in-range? 0 (max 1 (u8vector-length bytes)))
+			    :- :fixnum
+                            := 0)
+                     (end   :~ (in-range-inclusive? start (u8vector-length bytes))
+			    :- :fixnum
                             := (u8vector-length bytes)))
   => :void
   (:- (##write-subu8vector bytes start end port)
