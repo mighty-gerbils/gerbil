@@ -121,7 +121,7 @@
 	    (module ,mod
 	      (export (rename-out #t (,nname ,exprt)))
 	      (import :std/sugar :std/text/utf8
-		      :std/html (rename-in :std/markup/sxml/tal/iter (tal:repeat? tal-iter?))
+		      :std/markup/html (rename-in :std/markup/sxml/tal/iter (tal:repeat? tal-iter?))
 		      :std/markup/sxml/tal/toplevel :std/markup/sxml/tal/expander
 		      :std/markup/sxml/tal/syntax)
 	      (def (,nname ,@aargs)

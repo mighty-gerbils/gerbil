@@ -91,3 +91,78 @@ $ gxc -exe eval-example.ss
 $ ./eval-example
 hello world
 ```
+
+## Use case: loading a configuration file at run-time.
+
+Suppose you'd like to use scheme as the configuration language for your program. For the sake of simplicity, let's assume that the config file is `$HOME/.config/eval-test/config.scm`.
+
+Let's create a project like this:
+
+- guide
+  - gerbil.pkg
+  - build.ss
+  - eval
+    - main.ss
+    - lib.ss
+
+In `eval/main.ss`, there is a call to `(eval (include ...) ...)`.
+```scheme
+(import :gerbil/expander
+        ./lib)
+
+(export main)
+
+(def (main . args)
+  (gerbil-load-expander!)
+  (eval '(include "~/.config/eval-test/config.scm")))
+```
+
+If the configuration file only needs symbols from your main program, then you already know what to do. But if it also needs functions from a library use provide, then you'll need to find the correct namespace. Let's define the library, `eval/lib.ss`:
+
+```scheme
+(export #t)
+
+(def (greeting)
+  (displayln "Hello from module!"))
+```
+
+The exact namespace name can be determined in multiple ways, I'll show one.
+
+Inside `gerbil.pkg`, there is this:
+
+```scheme
+(package: guide)
+```
+
+This means that the root of the namespace is 'guide'. The library file was `eval/lib.ss`, so the namespace name is `guide/eval/lib`.
+
+This is `build.ss` so that you can replicate the project easier.
+
+```scheme
+#!/usr/bin/env gxi
+;;; -*- Gerbil -*-
+(import :std/build-script)
+
+(defbuild-script
+  '("eval/lib"
+    (exe: "eval/main" bin: "eval")))
+```
+
+The config file (`~/.config/eval-test/config.scm`) will look like this:
+
+```scheme
+(extern namespace: guide/eval/lib
+  greeting)
+
+(greeting)
+```
+
+## Tips and tricks
+
+Sometimes, you can use quasiquotation in eval to "smuggle" variables into the code, to avoid having to define externs:
+
+```scheme
+> (let ((a 1))
+>   (eval `(+ ,a 2)))
+3
+```
