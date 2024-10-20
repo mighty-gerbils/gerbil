@@ -11,9 +11,13 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie)
 (export #t)
+
+(def (actor-server-id srv)
+  (car (actor-server-identifier srv)))
 
 (def (reset-nonce!)
   (thread-local-set! 'nonce 0))
@@ -50,7 +54,7 @@
          (member what (error-irritants exn)))))
 
 (def (sort-server-list lst)
-  (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
+  (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
 
 (def (test-ipc srv1-id addr1 srv2-id addr2 (same-cookie? #t))
   (reset-thread!)
@@ -64,12 +68,12 @@
       (make-random-cookie)))
 
   (def srv1
-    (start-actor-server! identifier: srv1-id
+    (start-actor-server! identifier: (car srv1-id)
                          cookie: cookie1
                          admin: #f
                          addresses: [addr1]))
   (def srv2
-    (start-actor-server! identifier: srv2-id
+    (start-actor-server! identifier: (car srv2-id)
                          cookie: cookie2
                          admin: #f
                          addresses: [addr2]))

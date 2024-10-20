@@ -9,6 +9,7 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
         ./path)
 (export #t)
 

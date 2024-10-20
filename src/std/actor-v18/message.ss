@@ -5,8 +5,14 @@
         :gerbil/gambit
         :std/error
         :std/sugar
-        :std/stxparam)
+        :std/stxparam
+        ./path
+        ./server-identifier)
 (export #t)
+
+;; message types registry
+(def +message-types+ (make-hash-table-eq))
+(def +message-types-mx+ (make-mutex 'message-types))
 
 ;; actor errors
 (deferror-class ActorError () actor-error?)
@@ -60,17 +66,43 @@
     (alet (expiry msg.expiry)
       (< (time->seconds expiry) (##current-time-point)))))
 
-;; actor handle base type.
+
+;; actor references
+;; - server is the actor-server identifier: a symbol uniquely identifying an
+;;   actor within the domain.
+;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
+;; - domain is the ensemble domain; a symbol using / as the subdomain separator
+;;   or false for the default flat domain.
+(defmessage reference (server actor)
+  constructor: :init!)
+
+(defmethod {:init! reference}
+  (lambda (self server actor (domain (ensemble-domain)))
+    (let (server
+          (cond
+           ((pair? server) server)
+           ((symbol? server)
+            (if domain
+              (cons server domain)
+              server))
+           ((not #f) #f)
+           (else
+            (raise-bad-argument reference:::init! "symbol or symbol pair" server))))
+      (set! self.server server)
+      (set! self.actor actor))))
+
+;; actor handles
 ;; - proxy is the thread that handles messages on behalf of another actor.
 ;; - ref is a reference to an actor; see ./server
-;; - authorized? is a boolean indicating whether the origin is authorized for
-;;   for administrative actions.
+;; - capabilities is an (optional) list of capabilities of the actor (server)
 (defstruct handle (proxy ref capabilities)
-   final: #t transparent: #t
+  final: #t print: (ref)
   constructor: :init!)
 
 (defmethod {:init! handle}
-  (lambda (self proxy ref (capabilities #f))
+  (lambda (self (proxy : :thread)
+           (ref : reference)
+           (capabilities #f))
     (set! self.proxy proxy)
     (set! self.ref   ref)
     (set! self.capabilities capabilities)))
@@ -89,6 +121,10 @@
       (alet (capabilities actor.capabilities)
         (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities))))
    (else #f)))
+
+;; creates a proxy handle from a reference
+(def (reference->handle ref (srv (current-actor-server)))
+  (make-handle srv ref))
 
 ;; sends a message to an actor
 ;; - actor must be a thread or handle
@@ -117,8 +153,9 @@
 ;; sends a message and receives the reply with a timeout.
 (def (->> dest msg
           replyto: (replyto #f)
-          timeout: (timeo +default-reply-timeout+))
-  (let* ((expiry (timeout->expiry timeo))
+          timeout: (timeo +default-reply-timeout+)
+          expiry:  (expiry #f)) ; supersedes timeout
+  (let* ((expiry (or expiry (timeout->expiry timeo)))
          (nonce (current-thread-nonce!)))
     (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry #t))
       (raise-actor-error send-message "actor is dead" dest))
@@ -284,9 +321,6 @@
     (raise-bad-argument expiry "real or time" timeo))))
 
 ;; message type registry
-(def +message-types+ (make-hash-table-eq))
-(def +message-types-mx+ (make-mutex 'message-type-registry))
-
 (def (register-message-type! klass)
   (let (klass-id (##type-id klass))
     (unless (interned-symbol? klass-id)

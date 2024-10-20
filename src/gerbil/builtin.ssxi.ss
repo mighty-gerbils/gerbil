@@ -794,7 +794,7 @@ package: gerbil
  (file-mode (string::t) fixnum::t effect: (io))
  (file-number-of-links (string::t) fixnum::t effect: (io))
  (file-owner (string::t) fixnum::t effect: (io))
- (file-size (string::t) fixnum::t effect: (io))
+ (file-size (string::t) integer::t effect: (io))
  (file-type (string::t) fixnum::t effect: (io))
  (filter (procedure::t list::t) list::t effect: (alloc) unchecked:)
  (filter! (procedure::t list::t) list::t effect: (mut))

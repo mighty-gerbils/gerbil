@@ -5,11 +5,11 @@
 (import :gerbil/gambit
         :std/error
         :std/sugar
-        :std/format
-        :std/srfi/19)
+        :std/format)
 (export start-logger!
         current-logger
         current-logger-options
+        current-log-directory
         make-logger-options
         logger-options?
         deflogger
@@ -17,8 +17,7 @@
         warnf
         infof
         debugf
-        verbosef
-        )
+        verbosef)
 
 (def default-level 1) ; WARN
 (def verbose-level 4)
@@ -47,6 +46,10 @@
     (hash-ref symbolic-levels level verbose-level))
    (else
     (raise-bad-argument logger "log level: fixnum or symbol" level))))
+
+;; utility parameter to help systems find where to put their logs
+(def current-log-directory
+  (make-parameter #f))
 
 ;; the current logger actor
 (def current-logger
@@ -87,9 +90,9 @@
     (let ((level (object->level level))
           (threshold (object->level threshold)))
       (when (##fx<= level threshold)
-        (let ((now (current-date))
+        (let ((now (##current-time-point))
               (msg (if (null? args) fmt (apply format fmt (map exception->string args)))))
-          (thread-send logger (!log-message now level source msg))))))
+          (thread-send logger (!log-message (current-thread) now level source msg))))))
 
   (cond
    ((get-logger)
@@ -138,7 +141,7 @@
 (deflogger default)
 
 ;;; logger implementation
-(defstruct !log-message (ts level source msg))
+(defstruct !log-message (thread ts level source msg))
 
 (def (start-logger! (output (current-error-port)))
   (cond
@@ -159,11 +162,13 @@
 (def (logger-server port own-port?)
   (def (loop)
     (match (thread-receive)
-      ((!log-message ts level source msg)
-       (fprintf port "~a ~a ~a ~a~n"
-                (date->string ts "~4")
+      ((!log-message thread ts level source msg)
+       (fprintf port "~a ~a ~a [~a] ~a~n"
+                ts
                 (level->symbolic level)
-                source msg)
+                source
+                (or (thread-name thread) "?")
+                 msg)
        (force-output port)
        (loop))
       ('shutdown
