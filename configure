@@ -47,6 +47,34 @@ EOF
 }
 
 
+set_gerbil_gcc () {
+	echo "\n;; Added auto via ./configure\n(set! %default-gerbil-gcc \"$1\")" >> \
+	     ./src/gerbil/compiler/driver.ss
+}
+
+find_gerbil_gcc () {
+    local cc=''
+
+    [[ -n "${CC}" ]] && cc="$CC";
+    [[ -n "${GERBIL_GCC}" ]] && cc="$GERBIL_GCC";
+
+    if [[ -n "${cc}" ]];
+    then
+	set_gerbil_gcc "${cc}"
+    elif which gcc;
+    then
+	set_gerbil_gcc "$(which gcc)"
+    elif which cc ;
+    then
+	set_gerbil_gcc "$(which cc)"
+    else
+
+	echo "ERROR: Cannot find a C compiler.\nSet CC or GERBIL_GCC"  && exit 42	
+    fi
+}
+
+find_gerbil_gcc
+
 std_patch_feature() {
     sed -i -e "$1" src/std/build-features.ss
 }
