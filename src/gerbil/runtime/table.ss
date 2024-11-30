@@ -9,6 +9,9 @@ namespace: #f
 (export #t)
 (declare (not safe))
 
+
+(provide compilation-target-js)
+
 ;; this is defined as a raw gambit type, as we don't have MOP yet -- it needs tables!
 (def __table::t.id 'gerbil#__table::t)
 
@@ -67,6 +70,7 @@ namespace: #f
     (__table-ref table seed hash test key default)))
 
 (def (raw-table-set! tab key value)
+  (displayln "raw table set" tab " " key " " value)
   (when (fx< (&raw-table-free tab)
              (fxquotient (vector-length (&raw-table-table tab)) 4))
     (__raw-table-rehash! tab))
@@ -111,11 +115,15 @@ namespace: #f
   (set! (&raw-table-free tab)
     (fxquotient (vector-length (&raw-table-table tab)) 2)))
 
+(def ##_raw_table_setting '())
 (def (__raw-table-set! tab key value)
+  (displayln "start __raw table set" tab)
   (let ((table (&raw-table-table tab))
         (seed (&raw-table-seed tab))
         (hash (&raw-table-hash tab))
         (test (&raw-table-test tab)))
+    (when (void? hash)
+    (error "deep in raw table set" tab key value hash test))
     (__table-set! table seed hash test key value
                   (lambda () ; insert
                     (set! (&raw-table-free tab) (fx- (&raw-table-free tab) 1))
@@ -228,7 +236,7 @@ namespace: #f
 
 (defrules __symbolic-hash ()
   ((_ obj)
-   (macro-slot 1 obj)))
+   (##symbol-hash obj)))
 
 (def (string-hash obj)
   (##string=?-hash obj))
@@ -347,6 +355,7 @@ namespace: #f
           (size    (vector-length table))
           (entries (fxquotient size 2))
           (start   (fxarithmetic-shift-left (fxmodulo h entries) 1)))
+     (displayln "In the __table-set! rule" key value)
      (let loop ((probe start) (i 1) (deleted #f))
        (let (k (vector-ref table probe))
          (cond
@@ -452,14 +461,19 @@ namespace: #f
       (set! (&gc-table-immediate tab) immediate)
       immediate))))
 
-(def (__gc-table-new size flags)
-  (let* ((flags
-          (fxand flags (fxnot (macro-gc-hash-table-flag-need-rehash))))
-         (flags
-          (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys)))
-         (gcht
-          (##gc-hash-table-allocate size flags __gc-table-loads)))
-    gcht))
+(cond-expand
+  (compilation-target-js
+   (def (__gc-table-new size flags)
+     (##make-table size: size test: eq?)))
+  (else 
+   (def (__gc-table-new size flags)
+     (let* ((flags
+             (fxand flags (fxnot (macro-gc-hash-table-flag-need-rehash))))
+            (flags
+             (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys)))
+            (gcht
+             (##gc-hash-table-allocate size flags __gc-table-loads)))
+       gcht))))
 
 (def (__gc-table-e tab)
   (declare (not interrupts-enabled))
@@ -480,7 +494,7 @@ namespace: #f
     (set! (&gc-table-gcht tab) gcht)))
 
 (def (gc-table-ref tab key default)
-  (declare (not interrupts-enabled))
+  (declare (not interrupts-enabled) (safe))
   (cond
    ((##mem-allocated? key)
     (let (gcht (__gc-table-e tab))
@@ -495,14 +509,23 @@ namespace: #f
 
 (def (gc-table-set! tab key value)
   (declare (not interrupts-enabled))
-  (if (##mem-allocated? key)
-    (let (gcht (__gc-table-e tab))
-      (when (##gc-hash-table-set! gcht key value)
-        (__gc-table-rehash! tab)
-        (gc-table-set! tab key value)))
-    (immediate-table-set! (__gc-table-immediate tab) key value)))
+  (cond-expand
+    (compilation-target-js
+     (let ((tbl (if (##table? tab) tab (__gc-table-e tab))))
+       #;(error "GC-TABLE-SET" tab tbl key value)
+       (if (##table? tbl)
+	 (##table-set! tbl key value)
+	 (error "Wrong table inside gc table:" tbl))))
+    (else 
+     (if (##mem-allocated? key)
+       (let (gcht (__gc-table-e tab))
+	 (when (##gc-hash-table-set! gcht key value)
+           (__gc-table-rehash! tab)
+           (gc-table-set! tab key value)))
+       (immediate-table-set! (__gc-table-immediate tab) key value)))))
 
 (def (gc-table-update! tab key update default)
+  (error "undefined")
   (if (##mem-allocated? key)
     (let (value (gc-table-ref tab key default))
       (gc-table-set! tab key (update value)))
@@ -510,6 +533,7 @@ namespace: #f
 
 (def (gc-table-delete! tab key)
   (declare (not interrupts-enabled))
+  (error "undefined")
   (cond
    ((##mem-allocated? key)
     (let (gcht (__gc-table-e tab))
@@ -523,7 +547,8 @@ namespace: #f
 (def (gc-table-for-each tab proc)
   (declare (not interrupts-enabled))
   ;; mem allocated first
-  (let (gcht (__gc-table-e tab))
+  (error "undefined")
+ (let (gcht (__gc-table-e tab))
     (let loop ((i (macro-gc-hash-table-key0)))
       (when (fx< i (##vector-length gcht))
         (let (key (##vector-ref gcht i))
@@ -540,6 +565,7 @@ namespace: #f
       (raw-table-for-each immediate proc)))))
 
 (def (gc-table-copy tab)
+  (error "undefined")
   (let* ((gcht (__gc-table-e tab))
          (new-table
           (__gc-table-new
@@ -552,6 +578,7 @@ namespace: #f
     result))
 
 (def (gc-table-clear! tab)
+  (error "undefined")
   (let* ((gcht (__gc-table-e tab))
          (new-table
           (__gc-table-new 16 (macro-gc-hash-table-flags gcht))))
@@ -559,6 +586,7 @@ namespace: #f
     (set! (&gc-table-immediate tab) #f)))
 
 (def (gc-table-length tab)
+  (error "undefined")
   (let (gcht (__gc-table-e tab))
     (fx+ (macro-gc-hash-table-count gcht)
          (cond
@@ -568,7 +596,11 @@ namespace: #f
 ;;; object->eq-hash
 (def __object-eq-hash-next 0)
 (def __object-eq-hash
-  (make-gc-table 1024 __gc-table::t (macro-gc-hash-table-flag-weak-keys)))
+  (cond-expand
+    #;(compilation-target-js
+     (##make-table size: 1024 weak-keys: #t test: eq?))
+    (else 
+     (make-gc-table 1024 __gc-table::t (macro-gc-hash-table-flag-weak-keys)))))
 
 (def (__object->eq-hash obj)
   (declare (not interrupts-enabled))
@@ -579,5 +611,11 @@ namespace: #f
              (ptr (##type-cast obj 0))
              (h (fxand (fxxor mix ptr) (macro-max-fixnum32))))
         (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
-        (gc-table-set! __object-eq-hash obj h)
+
+	((cond-expand
+	   (compilation-target-js ##table-set!)
+	   (else gc-table-set!))
+	 __object-eq-hash obj h)
+
+	
         h))))

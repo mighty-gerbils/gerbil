@@ -8,6 +8,9 @@ namespace: #f
 (import "gambit" "util" "table" "mop" "error" "interface")
 (export #t)
 
+(begin-foreign
+  (##include "~~lib/_system#.scm"))
+
 (defclass (UnboundKeyError Error) ()
   constructor: :init!)
 

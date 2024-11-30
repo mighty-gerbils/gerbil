@@ -108,6 +108,8 @@ build_prepare() {
   feedback_mid "Preparing build"
   feedback_low "preparing ${GERBIL_STAGE0}"
   target_setup "${GERBIL_STAGE0}"
+  feedback_low "preparing ${GERBIL_STAGE0}/js"
+  target_setup "${GERBIL_STAGE0}"/js
   feedback_low "preparing ${GERBIL_BUILD_PREFIX}"
   target_setup "${GERBIL_BUILD_PREFIX}"
 }
@@ -118,9 +120,14 @@ build_gambit() {
   (cd gambit && rm -rf boot gsc-boot) || die
   (cd gambit && m="make -j ${GERBIL_BUILD_CORES:-1}" && $m bootstrap && $m from-scratch)
 
-  feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
+  cp_gambit
+
+ }
+
+cp_gambit() {
+ feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
   cp -v gambit/gsi/gsi "${GERBIL_STAGE0}/bin"
-  cp -v gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
+  cp -v gambit/gsc/gsc gambit/bin/gambuild-js gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
   cp -v gambit/include/gambit.h gambit/include/gambit-not*.h "${GERBIL_BUILD_PREFIX}/include"
   cp -v gambit/lib/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
   cp -v gambit/lib/_define-syntax.scm "${GERBIL_BUILD_PREFIX}/lib"
@@ -165,12 +172,13 @@ finalize_stage1 () {
   (cd "${target_bin}" && ln -sf gerbil gxc)
 }
 
-build_stage0 () {
-  local target_bin="${GERBIL_STAGE0}/bin"
-  local target_lib="${GERBIL_STAGE0}/lib"
+build_stage0_target() {
+  local GERBIL_STAGE0_P="$1"
+  local target_bin="${GERBIL_STAGE0_P}/bin"
+  local target_lib="${GERBIL_STAGE0_P}/lib"
 
   ## feedback
-  feedback_low "Building Gerbil bootstrap"
+  feedback_low "Building Gerbil bootstrap for $2"
 
   ## gerbil bootstrap
   feedback_mid "preparing bootstrap"
@@ -187,6 +195,23 @@ build_stage0 () {
   feedback_mid "finalizing bootstrap"
   finalize_stage0 "${target_lib}" "${target_bin}"
 }
+
+build_stage0_C () {
+    build_stage0_target "$GERBIL_STAGE0" C
+}
+
+build_stage0_js () {
+    GERBIL_TARGET=js
+    export GERBIL_TARGET
+    build_stage0_target "$GERBIL_STAGE0"/js js
+    unset GERBIL_TARGET
+}
+
+build_stage0 () {
+    build_stage0_C
+    build_stage0_js
+}
+
 
 build_stage1 () {
   ## constants
@@ -303,11 +328,20 @@ else
       "gambit")
          build_gambit || die
          ;;
+      "cp_gambit")
+         cp_gambit || die
+         ;;
       "boot-gxi")
          build_boot_gxi || die
          ;;
        "stage0")
-         build_stage0 || die
+        build_stage0 || die
+        ;;
+       "stage0_js")
+        build_stage0_js || die
+         ;;
+       "clean_stage0")
+         clean_stage0 || die
          ;;
        "stage1")
          build_stage1 || die

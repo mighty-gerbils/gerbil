@@ -8,6 +8,7 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "table" "c3")
 
+(provide compilation-target-js)
 ;; Gambit structure rtd [runtime type descriptor]
 ;;  (define-type type
 ;;    (id      unprintable: equality-test:)
@@ -1191,7 +1192,59 @@ namespace: #f
         (loop (##type-super super) (cons super hierarchy))))))))
 
 ;; the class-of operator
-(def (class-of obj) => :class
+(def (universal-class-of obj) => :class
+  (declare (not interrupts-enabled))
+  (:- 
+   (cond
+    ;; Structs
+    ((##structure? obj)
+     (let (klass (##structure-type obj))
+       (if (class-type? klass)
+	 klass
+	 (__shadow-class klass))))
+    ;; Values
+    ((##values? obj) (__system-class 'values))
+    ;; Boxes
+    ((##box? obj)     (__system-class 'box))
+    ((char? obj)      (__system-class 'char))
+    ((vector? obj)    (__system-class 'vector))
+    ((##ratnum? obj)  (__system-class 'ratnum))
+    ((##fixnum? obj)  (__system-class 'fixnum))
+    ((##pair? obj)    (__system-class 'pair))
+    ((##cpxnum? obj)  (__system-class 'cpxnum))
+    ((##symbol? obj)  (__system-class 'symbol))
+    ((##keyword? obj) (__system-class 'keyword))
+    ((##frame? obj)   (__system-class 'frame))
+    ((##continuation? obj)
+     (__system-class 'continuation))
+    ((##promise? obj) (__system-class 'promise))
+    ((##weak? obj)    (__system-class 'weak))
+    ((##procedure? obj)
+     (__system-class 'procedure))
+    ((##return? obj)  (__system-class 'return))
+    ((##foreign? obj) (__system-class 'foreign))
+    ((##string? obj)  (__system-class 'string))
+    ((##s8vector? obj) (__system-class 's8vector))
+    ((##u8vector? obj) (__system-class 'u8vector))
+    ((##s16vector? obj) (__system-class 's16vector))
+    ((##u16vector? obj) (__system-class 'u16vector))
+    ((##s32vector? obj) (__system-class 's32vector))
+    ((##u32vector? obj) (__system-class 'u32vector))
+    ((##s64vector? obj) (__system-class 's64vector))
+    ((##u64vector? obj)  (__system-class 'u64vector))
+    ((##flonum? obj)  (__system-class 'flonum))
+    ((##bignum? obj)  (__system-class 'bignum))
+    ((eq? obj '())    (__system-class 'null))
+    ((eq? obj #f)     (__system-class 'boolean))
+    ((eq? obj #t)     (__system-class 'boolean))
+    ((eq? obj #!void) (__system-class 'void))
+    ((eq? obj #!eof)  (__system-class 'eof))
+    (else
+     (__system-class 'special)))
+
+      :class))
+
+(def (C-class-of obj) => :class
   (declare (not interrupts-enabled))
   (:- (let (t (##type obj))
         (cond
@@ -1224,6 +1277,10 @@ namespace: #f
            (else
             (__system-class 'special))))))
       :class))
+
+(def class-of (cond-expand 
+		(compilation-target-js universal-class-of)
+		(else C-class-of)))
 
 (def __subtype-id (make-vector 32 #f))
 

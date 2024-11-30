@@ -531,7 +531,7 @@ namespace: gxc
 
 (def (generate-runtime-values-count var)
   (def (generate-inline)
-    ['if ['##values? var] ['##vector-length var] 1])
+    ['if ['##values? var] ['##values-length var] 1])
 
   ;; see gambit#422
   (with-inline-unsafe-primitives (generate-inline)
@@ -542,8 +542,8 @@ namespace: gxc
 (def (generate-runtime-values-ref var i rest)
   (def (generate-inline)
     (if (and (fx= i 0) (not (stx-pair? rest)))
-      ['if ['##values? var] ['##vector-ref var 0] var]
-      ['##vector-ref var i]))
+      ['if ['##values? var] ['##values-ref var 0] var]
+      ['##values-ref var i]))
 
   ;; see gambit#422
   (with-inline-unsafe-primitives (generate-inline)
@@ -555,22 +555,22 @@ namespace: gxc
   (cond
    ((fx= i 0)
     (with-inline-unsafe-primitives
-        ['if ['##values? var] ['##vector->list var] ['list var]]
+        ['if ['##values? var] ['##values->list var] ['list var]]
       ['let []
         '(declare (not safe))
-        ['if ['##values? var] ['##vector->list var] ['list var]]]))
+        ['if ['##values? var] ['##values->list var] ['list var]]]))
    ((fx= i 1)
     (with-inline-unsafe-primitives
-        ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())]
+        ['if ['##values? var] ['##cdr ['##values->list var]] '(quote ())]
       ['let []
         '(declare (not safe))
-        ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())]]))
+        ['if ['##values? var] ['##cdr ['##values->list var]] '(quote ())]]))
    (else
     (with-inline-unsafe-primitives
-        ['##list-tail ['##vector->list var] i]
+        ['##list-tail ['##values->list var] i]
       ['let []
         '(declare (not safe))
-        ['##list-tail ['##vector->list var] i]]))))
+        ['##list-tail ['##values->list var] i]]))))
 
 (def (generate-runtime-lambda% self stx)
   (ast-case stx ()

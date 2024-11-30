@@ -71,7 +71,7 @@ if [ -f MANIFEST ] ; then
 else
   readonly gerbil_version="$(git describe --tags --always)"
 fi
-readonly gerbil_targets=""
+readonly gerbil_targets="js"
 readonly default_gambit_tag=09335d95cab6931791c0a8497cbe915053ff8af3
 readonly default_gambit_config="--enable-targets=${gerbil_targets} --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=tE8,f8,-8 --enable-trust-c-tco"
 prefix="/opt/gerbil"
@@ -234,7 +234,8 @@ if [ ! -f MANIFEST -o ! -f src/gambit/configure ] ; then
 fi
 
 gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_shared} ${gambit_config}"
-(export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config ) || die
+
+(export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config --enable-default-compile-options='(compactness 9)') || die
 
 if [ -n "$gambit_stamp_version" ] ; then
   sed -i -e "s/^stamp:/stamp-orig:/" src/gambit/include/makefile
