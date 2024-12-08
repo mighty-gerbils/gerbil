@@ -34,6 +34,12 @@ namespace: #f
                            (%#define-runtime
                             __create-directory*
                             __create-directory*)))
+         (%#begin (%#define-runtime move-file__% move-file__%)
+                  (%#begin (%#define-runtime move-file__0 move-file__0)
+                           (%#define-runtime move-file move-file)))
+         (%#begin (%#define-runtime __move-file__% __move-file__%)
+                  (%#begin (%#define-runtime __move-file__0 __move-file__0)
+                           (%#define-runtime __move-file __move-file)))
          (%#define-runtime absent-obj absent-obj)
          (%#define-runtime absent-value absent-value)
          (%#define-runtime true true)

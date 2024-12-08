@@ -3066,7 +3066,21 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/mop)))
-  (declare-type write-style (@lambda 1 macro-writeenv-style))
+  (declare-type
+   write-style
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
   (declare-type
    write-object
    (@lambda 2
