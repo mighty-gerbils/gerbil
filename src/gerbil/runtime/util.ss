@@ -96,6 +96,40 @@ namespace: #f
         (create1 dir)))))
   (void))
 
+(def (move-file (src : :string) (dest : :string) (replace? : :boolean := #t))
+  => :void
+  (def (force-move-it)
+    (let (tmp (and replace?
+                   (file-exists? dest)
+                   (string-append dest "." (number->string (##current-time-point)))))
+      (when tmp
+        (rename-file dest tmp))
+      (with-exception-catcher
+       (lambda (e)
+         (when tmp
+           (rename-file tmp dest #t))
+         (raise e))
+       (lambda ()
+         (let (fi (file-info src #f))
+           (if (eq? (file-info-type fi) 'symbolic-link)
+             ;; there is no portable way to get the immediate link, so the
+             ;; best we can do is to normalize the path
+             (create-symbolic-link (path-normalize src) dest)
+             (copy-file src dest)))
+         (delete-file src)
+         (when tmp
+           (with-exception-catcher void (cut delete-file tmp)))))))
+
+  (with-exception-catcher
+   (lambda (e)
+     ;; ideally we would check the exception for errno=EXDEV, but this is
+     ;; not portable, so we just try to force move it if it exists
+     (if (file-exists? src)
+       (force-move-it)
+       (raise e)))
+   (cut rename-file src dest replace?))
+  (void))
+
 (def absent-obj
   (##absent-object))
 
