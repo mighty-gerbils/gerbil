@@ -170,7 +170,7 @@
             (for (entry (hash->list self.servers))
               (write entry file)
               (newline file))))
-        (rename-file tmp self.path)
+        (move-file tmp self.path)
         (set! self.dirty? #f)))))
 
 (defmethod {close registry}
