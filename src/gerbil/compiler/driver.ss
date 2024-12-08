@@ -10,9 +10,7 @@ namespace: gxc
         "base"
         "compile"
         "optimize")
-(export compile-module compile-exe
-	current-compilation-target
-	compilation-target?)
+(export compile-module compile-exe)
 
 (extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
 
@@ -20,9 +18,6 @@ namespace: gxc
   (path-expand "gsc" (path-expand "bin" (path-expand "~~"))))
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
-
-(def current-compilation-target (make-parameter #f))
-(defrule (compilation-target? sym) (eq? (current-compilation-target) 'sym))
 
 (def +driver-mutex+ (make-mutex 'compiler/driver))
 (defrules with-driver-mutex ()
