@@ -87,6 +87,7 @@ namespace: gxc
 
   (let ((outdir      (pgetq output-dir: opts))
         (invoke-gsc? (pgetq invoke-gsc: opts))
+        (target      (pgetq target: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
@@ -99,6 +100,7 @@ namespace: gxc
     (when optimize
       (with-driver-mutex (optimizer-info-init!)))
     (parameterize ((current-compile-output-dir outdir)
+                   (current-compilation-target (or target 'C))
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
@@ -119,6 +121,7 @@ namespace: gxc
 
   (let ((outdir      (pgetq output-dir: opts))
         (invoke-gsc? (pgetq invoke-gsc: opts))
+        (target      (pgetq target: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
@@ -128,6 +131,7 @@ namespace: gxc
       (with-driver-mutex (create-directory* outdir)))
     (parameterize ((current-compile-output-dir outdir)
                    (current-compile-invoke-gsc invoke-gsc?)
+                   (current-compilation-target (or target 'C))
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)

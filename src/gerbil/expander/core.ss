@@ -37,6 +37,9 @@ namespace: gx
 (def current-expander-compiling?
   (make-parameter #f))
 
+(def current-compilation-target
+  (make-parameter #f))
+
 ;; expander context
 (defstruct expander-context (id table)
   constructor: :init!

@@ -146,7 +146,10 @@ package: gerbil/core
       ((_ message detail ...)
        (stx-string? #'message)
        (apply raise-syntax-error #f (stx-e #'message) stx
-              (syntax->list #'(detail ...)))))))
+              (syntax->list #'(detail ...))))))
+
+  (defrules compilation-target? ()
+    ((_ sym) (eq? (current-compilation-target) 'sym))))
 
 (module Sugar-2
   (import Sugar-1 (phi: +1 Sugar-1))
