@@ -1,13 +1,13 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/thread::timestamp 1713631265)
+  (define gerbil/runtime/thread::timestamp 1733687559)
   (begin
     (define spawn
-      (lambda (_%f110553%_ . _%args110554%_)
-        (if (procedure? _%f110553%_)
-            (let ((_%f110558%_ _%f110553%_))
+      (lambda (_%f110712%_ . _%args110713%_)
+        (if (procedure? _%f110712%_)
+            (let ((_%f110717%_ _%f110712%_))
               (declare (not safe))
-              (##apply __spawn _%f110558%_ _%args110554%_))
+              (##apply __spawn _%f110717%_ _%args110713%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -16,18 +16,18 @@
                'contract:
                'procedure?
                'value:
-               _%f110553%_)
+               _%f110712%_)
               '#!void))))
     (define __spawn
-      (lambda (_%f110540%_ . _%args110541%_)
-        (let ((_%f110544%_ _%f110540%_))
-          (spawn-actor _%f110544%_ _%args110541%_ '#!void '#f))))
+      (lambda (_%f110699%_ . _%args110700%_)
+        (let ((_%f110703%_ _%f110699%_))
+          (spawn-actor _%f110703%_ _%args110700%_ '#!void '#f))))
     (define spawn/name
-      (lambda (_%name110524%_ _%f110525%_ . _%args110526%_)
-        (if (procedure? _%f110525%_)
-            (let ((_%f110530%_ _%f110525%_))
+      (lambda (_%name110683%_ _%f110684%_ . _%args110685%_)
+        (if (procedure? _%f110684%_)
+            (let ((_%f110689%_ _%f110684%_))
               (declare (not safe))
-              (##apply __spawn/name _%name110524%_ _%f110530%_ _%args110526%_))
+              (##apply __spawn/name _%name110683%_ _%f110689%_ _%args110685%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -36,21 +36,21 @@
                'contract:
                'procedure?
                'value:
-               _%f110525%_)
+               _%f110684%_)
               '#!void))))
     (define __spawn/name
-      (lambda (_%name110510%_ _%f110511%_ . _%args110512%_)
-        (let ((_%f110515%_ _%f110511%_))
-          (spawn-actor _%f110515%_ _%args110512%_ _%name110510%_ '#f))))
+      (lambda (_%name110669%_ _%f110670%_ . _%args110671%_)
+        (let ((_%f110674%_ _%f110670%_))
+          (spawn-actor _%f110674%_ _%args110671%_ _%name110669%_ '#f))))
     (define spawn/group
-      (lambda (_%name110494%_ _%f110495%_ . _%args110496%_)
-        (if (procedure? _%f110495%_)
-            (let ((_%f110500%_ _%f110495%_))
+      (lambda (_%name110653%_ _%f110654%_ . _%args110655%_)
+        (if (procedure? _%f110654%_)
+            (let ((_%f110659%_ _%f110654%_))
               (declare (not safe))
               (##apply __spawn/group
-                       _%name110494%_
-                       _%f110500%_
-                       _%args110496%_))
+                       _%name110653%_
+                       _%f110659%_
+                       _%args110655%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -59,148 +59,148 @@
                'contract:
                'procedure?
                'value:
-               _%f110495%_)
+               _%f110654%_)
               '#!void))))
     (define __spawn/group
-      (lambda (_%name110478%_ _%f110479%_ . _%args110480%_)
-        (let* ((_%f110483%_ _%f110479%_)
-               (_%tgroup110492%_ (make-thread-group _%name110478%_)))
+      (lambda (_%name110637%_ _%f110638%_ . _%args110639%_)
+        (let* ((_%f110642%_ _%f110638%_)
+               (_%tgroup110651%_ (make-thread-group _%name110637%_)))
           (spawn-actor
-           _%f110483%_
-           _%args110480%_
-           _%name110478%_
-           _%tgroup110492%_))))
+           _%f110642%_
+           _%args110639%_
+           _%name110637%_
+           _%tgroup110651%_))))
     (define spawn-actor
-      (lambda (_%f110450%_ _%args110451%_ _%name110452%_ _%tgroup110453%_)
-        (letrec ((_%thread-main110456%_
-                  (lambda (_%thunk110470%_)
+      (lambda (_%f110609%_ _%args110610%_ _%name110611%_ _%tgroup110612%_)
+        (letrec ((_%thread-main110615%_
+                  (lambda (_%thunk110629%_)
                     (lambda ()
-                      (let ((__tmp110567
-                             (lambda (_%exn110473%_)
-                               (let ((__tmp110568
-                                      (lambda (_%cont110475%_)
+                      (let ((__tmp110726
+                             (lambda (_%exn110632%_)
+                               (let ((__tmp110727
+                                      (lambda (_%cont110634%_)
                                         (if unhandled-actor-exception-hook
-                                            (let ((__tmp110569
+                                            (let ((__tmp110728
                                                    (lambda ()
                                                      (__unhandled-actor-exception-hook
-                                                      _%cont110475%_
-                                                      _%exn110473%_))))
+                                                      _%cont110634%_
+                                                      _%exn110632%_))))
                                               (declare (not safe))
-                                              (__with-catch void __tmp110569))
+                                              (__with-catch void __tmp110728))
                                             '#!void)
-                                        (let ((__tmp110570
+                                        (let ((__tmp110729
                                                (let ()
                                                  (declare (not safe))
                                                  (##continuation-last
-                                                  _%cont110475%_))))
+                                                  _%cont110634%_))))
                                           (declare (not safe))
                                           (##continuation-graft
-                                           __tmp110570
+                                           __tmp110729
                                            ##primordial-exception-handler
-                                           _%exn110473%_)))))
+                                           _%exn110632%_)))))
                                  (declare (not safe))
-                                 (##continuation-capture __tmp110568)))))
+                                 (##continuation-capture __tmp110727)))))
                         (declare (not safe))
                         (with-exception-handler
-                         __tmp110567
-                         _%thunk110470%_))))))
-          (let* ((_%thunk110459%_
-                  (if (null? _%args110451%_)
-                      _%f110450%_
-                      (lambda () (apply _%f110450%_ _%args110451%_))))
-                 (_%thunk110462%_
-                  (lambda () (with-exception-stack-trace__0 _%thunk110459%_)))
-                 (_%tgroup110467%_
-                  (let ((_%$e110464%_ _%tgroup110453%_))
-                    (if _%$e110464%_ _%$e110464%_ (current-thread-group)))))
+                         __tmp110726
+                         _%thunk110629%_))))))
+          (let* ((_%thunk110618%_
+                  (if (null? _%args110610%_)
+                      _%f110609%_
+                      (lambda () (apply _%f110609%_ _%args110610%_))))
+                 (_%thunk110621%_
+                  (lambda () (with-exception-stack-trace__0 _%thunk110618%_)))
+                 (_%tgroup110626%_
+                  (let ((_%$e110623%_ _%tgroup110612%_))
+                    (if _%$e110623%_ _%$e110623%_ (current-thread-group)))))
             (thread-start!
              (thread-init!
               (construct-actor-thread '#f '0)
-              (_%thread-main110456%_ _%thunk110462%_)
-              _%name110452%_
-              _%tgroup110467%_))))))
+              (_%thread-main110615%_ _%thunk110621%_)
+              _%name110611%_
+              _%tgroup110626%_))))))
     (define spawn-thread__%
-      (lambda (_%thunk110428%_ _%name110429%_ _%tgroup110430%_)
+      (lambda (_%thunk110587%_ _%name110588%_ _%tgroup110589%_)
         (thread-start!
-         (make-thread _%thunk110428%_ _%name110429%_ _%tgroup110430%_))))
+         (make-thread _%thunk110587%_ _%name110588%_ _%tgroup110589%_))))
     (define spawn-thread__0
-      (lambda (_%thunk110435%_)
-        (let* ((_%name110437%_ absent-obj) (_%tgroup110439%_ absent-obj))
-          (spawn-thread__% _%thunk110435%_ _%name110437%_ _%tgroup110439%_))))
+      (lambda (_%thunk110594%_)
+        (let* ((_%name110596%_ absent-obj) (_%tgroup110598%_ absent-obj))
+          (spawn-thread__% _%thunk110594%_ _%name110596%_ _%tgroup110598%_))))
     (define spawn-thread__1
-      (lambda (_%thunk110441%_ _%name110442%_)
-        (let ((_%tgroup110444%_ absent-obj))
-          (spawn-thread__% _%thunk110441%_ _%name110442%_ _%tgroup110444%_))))
+      (lambda (_%thunk110600%_ _%name110601%_)
+        (let ((_%tgroup110603%_ absent-obj))
+          (spawn-thread__% _%thunk110600%_ _%name110601%_ _%tgroup110603%_))))
     (define spawn-thread
-      (lambda _g110572_
-        (let ((_g110571_ (let () (declare (not safe)) (##length _g110572_))))
-          (cond ((let () (declare (not safe)) (##fx= _g110571_ 1))
-                 (apply spawn-thread__0 _g110572_))
-                ((let () (declare (not safe)) (##fx= _g110571_ 2))
-                 (apply spawn-thread__1 _g110572_))
-                ((let () (declare (not safe)) (##fx= _g110571_ 3))
-                 (apply spawn-thread__% _g110572_))
+      (lambda _g110731_
+        (let ((_g110730_ (let () (declare (not safe)) (##length _g110731_))))
+          (cond ((let () (declare (not safe)) (##fx= _g110730_ 1))
+                 (apply spawn-thread__0 _g110731_))
+                ((let () (declare (not safe)) (##fx= _g110730_ 2))
+                 (apply spawn-thread__1 _g110731_))
+                ((let () (declare (not safe)) (##fx= _g110730_ 3))
+                 (apply spawn-thread__% _g110731_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   spawn-thread
-                  _g110572_))))))
+                  _g110731_))))))
     (define thread-local-ref__%
-      (lambda (_%key110412%_ _%default110413%_)
-        (let ((_%tab110415%_ (thread-local-table)))
+      (lambda (_%key110571%_ _%default110572%_)
+        (let ((_%tab110574%_ (thread-local-table)))
           (declare (not safe))
-          (hash-ref__% _%tab110415%_ _%key110412%_ _%default110413%_))))
+          (hash-ref__% _%tab110574%_ _%key110571%_ _%default110572%_))))
     (define thread-local-ref__0
-      (lambda (_%key110420%_)
-        (let ((_%default110422%_ absent-obj))
-          (thread-local-ref__% _%key110420%_ _%default110422%_))))
+      (lambda (_%key110579%_)
+        (let ((_%default110581%_ absent-obj))
+          (thread-local-ref__% _%key110579%_ _%default110581%_))))
     (define thread-local-ref
-      (lambda _g110574_
-        (let ((_g110573_ (let () (declare (not safe)) (##length _g110574_))))
-          (cond ((let () (declare (not safe)) (##fx= _g110573_ 1))
-                 (apply thread-local-ref__0 _g110574_))
-                ((let () (declare (not safe)) (##fx= _g110573_ 2))
-                 (apply thread-local-ref__% _g110574_))
+      (lambda _g110733_
+        (let ((_g110732_ (let () (declare (not safe)) (##length _g110733_))))
+          (cond ((let () (declare (not safe)) (##fx= _g110732_ 1))
+                 (apply thread-local-ref__0 _g110733_))
+                ((let () (declare (not safe)) (##fx= _g110732_ 2))
+                 (apply thread-local-ref__% _g110733_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   thread-local-ref
-                  _g110574_))))))
+                  _g110733_))))))
     (define thread-local-get
-      (lambda (_%key110409%_) (thread-local-ref__% _%key110409%_ '#f)))
+      (lambda (_%key110568%_) (thread-local-ref__% _%key110568%_ '#f)))
     (define thread-local-set!
-      (lambda (_%key110404%_ _%value110405%_)
-        (let ((_%tab110407%_ (thread-local-table)))
+      (lambda (_%key110563%_ _%value110564%_)
+        (let ((_%tab110566%_ (thread-local-table)))
           (declare (not safe))
-          (hash-put! _%tab110407%_ _%key110404%_ _%value110405%_))))
+          (hash-put! _%tab110566%_ _%key110563%_ _%value110564%_))))
     (define thread-local-delete!
-      (lambda (_%key110400%_)
-        (let ((_%tab110402%_ (thread-local-table)))
+      (lambda (_%key110559%_)
+        (let ((_%tab110561%_ (thread-local-table)))
           (declare (not safe))
-          (hash-remove! _%tab110402%_ _%key110400%_))))
+          (hash-remove! _%tab110561%_ _%key110559%_))))
     (define thread-local-table
       (lambda ()
-        (let ((_%thr110381%_ (current-thread)))
-          (if (actor-thread? _%thr110381%_)
-              (let ((_%$e110384%_ (actor-thread-locals _%thr110381%_)))
-                (if _%$e110384%_
-                    _%$e110384%_
-                    (let ((_%tab110388%_
+        (let ((_%thr110540%_ (current-thread)))
+          (if (actor-thread? _%thr110540%_)
+              (let ((_%$e110543%_ (actor-thread-locals _%thr110540%_)))
+                (if _%$e110543%_
+                    _%$e110543%_
+                    (let ((_%tab110547%_
                            (let () (declare (not safe)) (make-hash-table-eq))))
-                      (actor-thread-locals-set! _%thr110381%_ _%tab110388%_)
-                      _%tab110388%_)))
-              (if (eq? _%thr110381%_ ##primordial-thread)
+                      (actor-thread-locals-set! _%thr110540%_ _%tab110547%_)
+                      _%tab110547%_)))
+              (if (eq? _%thr110540%_ ##primordial-thread)
                   __primordial-thread-locals
                   (let ()
                     (mutex-lock! __thread-locals-mutex)
-                    (let ((_%$e110392%_
+                    (let ((_%$e110551%_
                            (let ()
                              (declare (not safe))
-                             (__hash-get __thread-locals _%thr110381%_))))
-                      (if _%$e110392%_
-                          ((lambda (_%tab110395%_)
+                             (__hash-get __thread-locals _%thr110540%_))))
+                      (if _%$e110551%_
+                          ((lambda (_%tab110554%_)
                              (mutex-unlock! __thread-locals-mutex)
-                             _%tab110395%_)
-                           _%$e110392%_)
-                          (let ((_%tab110398%_
+                             _%tab110554%_)
+                           _%$e110551%_)
+                          (let ((_%tab110557%_
                                  (let ()
                                    (declare (not safe))
                                    (make-hash-table-eq))))
@@ -208,10 +208,10 @@
                               (declare (not safe))
                               (__hash-put!
                                __thread-locals
-                               _%thr110381%_
-                               _%tab110398%_))
+                               _%thr110540%_
+                               _%tab110557%_))
                             (mutex-unlock! __thread-locals-mutex)
-                            _%tab110398%_)))))))))
+                            _%tab110557%_)))))))))
     (define __primordial-thread-locals
       (let () (declare (not safe)) (make-hash-table-eq)))
     (define __thread-locals
@@ -221,12 +221,12 @@
     (define unhandled-actor-exception-hook
       (lambda () __unhandled-actor-exception-hook))
     (define unhandled-actor-exception-hook-set!
-      (lambda (_%new-value110359%_)
-        (if ((lambda (_%$obj110362%_)
-               (or (not _%$obj110362%_) (procedure? _%$obj110362%_)))
-             _%new-value110359%_)
-            (let ((_%new-value110369%_ _%new-value110359%_))
-              (__unhandled-actor-exception-hook-set! _%new-value110369%_))
+      (lambda (_%new-value110518%_)
+        (if ((lambda (_%$obj110521%_)
+               (or (not _%$obj110521%_) (procedure? _%$obj110521%_)))
+             _%new-value110518%_)
+            (let ((_%new-value110528%_ _%new-value110518%_))
+              (__unhandled-actor-exception-hook-set! _%new-value110528%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -235,21 +235,21 @@
                'contract:
                '(? (or not procedure?))
                'value:
-               _%new-value110359%_)
+               _%new-value110518%_)
               '#!void))))
     (define __unhandled-actor-exception-hook-set!
-      (lambda (_%new-value110346%_)
-        (let ((_%new-value110350%_ _%new-value110346%_))
-          (set! __unhandled-actor-exception-hook _%new-value110350%_))))
+      (lambda (_%new-value110505%_)
+        (let ((_%new-value110509%_ _%new-value110505%_))
+          (set! __unhandled-actor-exception-hook _%new-value110509%_))))
     (define current-thread-group
       (lambda () (thread-thread-group (current-thread))))
     (define with-lock
-      (lambda (_%mx110320%_ _%proc110321%_)
-        (if (mutex? _%mx110320%_)
-            (let ((_%mx110325%_ _%mx110320%_))
-              (if (procedure? _%proc110321%_)
-                  (let ((_%proc110335%_ _%proc110321%_))
-                    (__with-lock _%mx110325%_ _%proc110335%_))
+      (lambda (_%mx110479%_ _%proc110480%_)
+        (if (mutex? _%mx110479%_)
+            (let ((_%mx110484%_ _%mx110479%_))
+              (if (procedure? _%proc110480%_)
+                  (let ((_%proc110494%_ _%proc110480%_))
+                    (__with-lock _%mx110484%_ _%proc110494%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -258,7 +258,7 @@
                      'contract:
                      'procedure?
                      'value:
-                     _%proc110321%_)
+                     _%proc110480%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -268,42 +268,42 @@
                'contract:
                'mutex?
                'value:
-               _%mx110320%_)
+               _%mx110479%_)
               '#!void))))
     (define __with-lock
-      (lambda (_%mx110291%_ _%proc110292%_)
-        (let* ((_%mx110295%_ _%mx110291%_)
-               (_%proc110303%_ _%proc110292%_)
-               (_%handler110312%_ (current-exception-handler)))
-          (let ((__tmp110576
-                 (lambda (_%e110314%_)
-                   (let ((__tmp110577
+      (lambda (_%mx110450%_ _%proc110451%_)
+        (let* ((_%mx110454%_ _%mx110450%_)
+               (_%proc110462%_ _%proc110451%_)
+               (_%handler110471%_ (current-exception-handler)))
+          (let ((__tmp110735
+                 (lambda (_%e110473%_)
+                   (let ((__tmp110736
                           (lambda ()
-                            (mutex-unlock! _%mx110295%_)
+                            (mutex-unlock! _%mx110454%_)
                             (let ()
                               (declare (not safe))
-                              (_%handler110312%_ _%e110314%_)))))
+                              (_%handler110471%_ _%e110473%_)))))
                      (declare (not safe))
-                     (__with-catch void __tmp110577))
+                     (__with-catch void __tmp110736))
                    (let ()
                      (declare (not safe))
-                     (##thread-end-with-uncaught-exception! _%e110314%_))))
-                (__tmp110575
+                     (##thread-end-with-uncaught-exception! _%e110473%_))))
+                (__tmp110734
                  (lambda ()
-                   (mutex-lock! _%mx110295%_)
-                   (let ((_%result110318%_
-                          (let () (declare (not safe)) (_%proc110303%_))))
-                     (mutex-unlock! _%mx110295%_)
-                     _%result110318%_))))
+                   (mutex-lock! _%mx110454%_)
+                   (let ((_%result110477%_
+                          (let () (declare (not safe)) (_%proc110462%_))))
+                     (mutex-unlock! _%mx110454%_)
+                     _%result110477%_))))
             (declare (not safe))
-            (__with-exception-handler __tmp110576 __tmp110575)))))
+            (__with-exception-handler __tmp110735 __tmp110734)))))
     (define with-dynamic-lock
-      (lambda (_%mx110266%_ _%proc110267%_)
-        (if (mutex? _%mx110266%_)
-            (let ((_%mx110271%_ _%mx110266%_))
-              (if (procedure? _%proc110267%_)
-                  (let ((_%proc110281%_ _%proc110267%_))
-                    (__with-dynamic-lock _%mx110271%_ _%proc110281%_))
+      (lambda (_%mx110425%_ _%proc110426%_)
+        (if (mutex? _%mx110425%_)
+            (let ((_%mx110430%_ _%mx110425%_))
+              (if (procedure? _%proc110426%_)
+                  (let ((_%proc110440%_ _%proc110426%_))
+                    (__with-dynamic-lock _%mx110430%_ _%proc110440%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -312,7 +312,7 @@
                      'contract:
                      'procedure?
                      'value:
-                     _%proc110267%_)
+                     _%proc110426%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -322,24 +322,24 @@
                'contract:
                'mutex?
                'value:
-               _%mx110266%_)
+               _%mx110425%_)
               '#!void))))
     (define __with-dynamic-lock
-      (lambda (_%mx110243%_ _%proc110244%_)
-        (let* ((_%mx110247%_ _%mx110243%_) (_%proc110255%_ _%proc110244%_))
-          (let ((__tmp110579 (lambda () (mutex-lock! _%mx110247%_)))
-                (__tmp110578 (lambda () (mutex-unlock! _%mx110247%_))))
+      (lambda (_%mx110402%_ _%proc110403%_)
+        (let* ((_%mx110406%_ _%mx110402%_) (_%proc110414%_ _%proc110403%_))
+          (let ((__tmp110738 (lambda () (mutex-lock! _%mx110406%_)))
+                (__tmp110737 (lambda () (mutex-unlock! _%mx110406%_))))
             (declare (not safe))
-            (##dynamic-wind __tmp110579 _%proc110255%_ __tmp110578)))))
+            (##dynamic-wind __tmp110738 _%proc110414%_ __tmp110737)))))
     (define with-exception-stack-trace__%
-      (lambda (_%thunk110208%_ _%error-port110209%_)
-        (if (procedure? _%thunk110208%_)
-            (let ((_%thunk110213%_ _%thunk110208%_))
-              (if (port? _%error-port110209%_)
-                  (let ((_%error-port110223%_ _%error-port110209%_))
+      (lambda (_%thunk110367%_ _%error-port110368%_)
+        (if (procedure? _%thunk110367%_)
+            (let ((_%thunk110372%_ _%thunk110367%_))
+              (if (port? _%error-port110368%_)
+                  (let ((_%error-port110382%_ _%error-port110368%_))
                     (__with-exception-stack-trace__%
-                     _%thunk110213%_
-                     _%error-port110223%_))
+                     _%thunk110372%_
+                     _%error-port110382%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -348,7 +348,7 @@
                      'contract:
                      'port?
                      'value:
-                     _%error-port110209%_)
+                     _%error-port110368%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -358,105 +358,105 @@
                'contract:
                'procedure?
                'value:
-               _%thunk110208%_)
+               _%thunk110367%_)
               '#!void))))
     (define with-exception-stack-trace__0
-      (lambda (_%thunk110236%_)
-        (let ((_%error-port110238%_ (current-error-port)))
+      (lambda (_%thunk110395%_)
+        (let ((_%error-port110397%_ (current-error-port)))
           (with-exception-stack-trace__%
-           _%thunk110236%_
-           _%error-port110238%_))))
+           _%thunk110395%_
+           _%error-port110397%_))))
     (define with-exception-stack-trace
-      (lambda _g110581_
-        (let ((_g110580_ (let () (declare (not safe)) (##length _g110581_))))
-          (cond ((let () (declare (not safe)) (##fx= _g110580_ 1))
-                 (apply with-exception-stack-trace__0 _g110581_))
-                ((let () (declare (not safe)) (##fx= _g110580_ 2))
-                 (apply with-exception-stack-trace__% _g110581_))
+      (lambda _g110740_
+        (let ((_g110739_ (let () (declare (not safe)) (##length _g110740_))))
+          (cond ((let () (declare (not safe)) (##fx= _g110739_ 1))
+                 (apply with-exception-stack-trace__0 _g110740_))
+                ((let () (declare (not safe)) (##fx= _g110739_ 2))
+                 (apply with-exception-stack-trace__% _g110740_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   with-exception-stack-trace
-                  _g110581_))))))
+                  _g110740_))))))
     (define __with-exception-stack-trace__%
-      (lambda (_%thunk110169%_ _%error-port110170%_)
-        (let* ((_%thunk110173%_ _%thunk110169%_)
-               (_%error-port110182%_ _%error-port110170%_)
-               (__tmp110582
-                (let ((_%E110191%_ (current-exception-handler)))
-                  (lambda (_%exn110193%_)
-                    (let ((__tmp110583
-                           (lambda (_%cont110195%_)
+      (lambda (_%thunk110328%_ _%error-port110329%_)
+        (let* ((_%thunk110332%_ _%thunk110328%_)
+               (_%error-port110341%_ _%error-port110329%_)
+               (__tmp110741
+                (let ((_%E110350%_ (current-exception-handler)))
+                  (lambda (_%exn110352%_)
+                    (let ((__tmp110742
+                           (lambda (_%cont110354%_)
                              (if (let ()
                                    (declare (not safe))
                                    (dump-stack-trace?))
                                  (dump-stack-trace!__%
-                                  _%cont110195%_
-                                  _%exn110193%_
-                                  _%error-port110182%_)
+                                  _%cont110354%_
+                                  _%exn110352%_
+                                  _%error-port110341%_)
                                  '#!void)
                              (let ()
                                (declare (not safe))
-                               (_%E110191%_ _%exn110193%_)))))
+                               (_%E110350%_ _%exn110352%_)))))
                       (declare (not safe))
-                      (##continuation-capture __tmp110583))))))
+                      (##continuation-capture __tmp110742))))))
           (declare (not safe))
-          (__with-exception-handler __tmp110582 _%thunk110173%_))))
+          (__with-exception-handler __tmp110741 _%thunk110332%_))))
     (define __with-exception-stack-trace__0
-      (lambda (_%thunk110200%_)
-        (let ((_%error-port110202%_ (current-error-port)))
+      (lambda (_%thunk110359%_)
+        (let ((_%error-port110361%_ (current-error-port)))
           (__with-exception-stack-trace__%
-           _%thunk110200%_
-           _%error-port110202%_))))
+           _%thunk110359%_
+           _%error-port110361%_))))
     (define __with-exception-stack-trace
-      (lambda _g110585_
-        (let ((_g110584_ (let () (declare (not safe)) (##length _g110585_))))
-          (cond ((let () (declare (not safe)) (##fx= _g110584_ 1))
-                 (apply __with-exception-stack-trace__0 _g110585_))
-                ((let () (declare (not safe)) (##fx= _g110584_ 2))
-                 (apply __with-exception-stack-trace__% _g110585_))
+      (lambda _g110744_
+        (let ((_g110743_ (let () (declare (not safe)) (##length _g110744_))))
+          (cond ((let () (declare (not safe)) (##fx= _g110743_ 1))
+                 (apply __with-exception-stack-trace__0 _g110744_))
+                ((let () (declare (not safe)) (##fx= _g110743_ 2))
+                 (apply __with-exception-stack-trace__% _g110744_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __with-exception-stack-trace
-                  _g110585_))))))
+                  _g110744_))))))
     (define dump-stack-trace!__%
-      (lambda (_%cont110150%_ _%exn110151%_ _%error-port110152%_)
-        (let ((_%out110154%_ (open-output-string)))
-          (let () (declare (not safe)) (fix-port-width! _%out110154%_))
-          (display '"*** Unhandled exception in " _%out110154%_)
-          (display (current-thread) _%out110154%_)
-          (newline _%out110154%_)
+      (lambda (_%cont110309%_ _%exn110310%_ _%error-port110311%_)
+        (let ((_%out110313%_ (open-output-string)))
+          (let () (declare (not safe)) (fix-port-width! _%out110313%_))
+          (display '"*** Unhandled exception in " _%out110313%_)
+          (display (current-thread) _%out110313%_)
+          (newline _%out110313%_)
           (let ()
             (declare (not safe))
-            (display-exception__% _%exn110151%_ _%out110154%_))
+            (display-exception__% _%exn110310%_ _%out110313%_))
           (if (let ()
                 (declare (not safe))
-                (class-instance? StackTrace::t _%exn110151%_))
+                (class-instance? StackTrace::t _%exn110310%_))
               '#!void
               (begin
-                (display '"Continuation backtrace: " _%out110154%_)
-                (newline _%out110154%_)
-                (display-continuation-backtrace _%cont110150%_ _%out110154%_)))
-          (let ((__tmp110586 (get-output-string _%out110154%_)))
+                (display '"Continuation backtrace: " _%out110313%_)
+                (newline _%out110313%_)
+                (display-continuation-backtrace _%cont110309%_ _%out110313%_)))
+          (let ((__tmp110745 (get-output-string _%out110313%_)))
             (declare (not safe))
-            (##write-string __tmp110586 _%error-port110152%_)))))
+            (##write-string __tmp110745 _%error-port110311%_)))))
     (define dump-stack-trace!__0
-      (lambda (_%cont110159%_ _%exn110160%_)
-        (let ((_%error-port110162%_ (current-error-port)))
+      (lambda (_%cont110318%_ _%exn110319%_)
+        (let ((_%error-port110321%_ (current-error-port)))
           (dump-stack-trace!__%
-           _%cont110159%_
-           _%exn110160%_
-           _%error-port110162%_))))
+           _%cont110318%_
+           _%exn110319%_
+           _%error-port110321%_))))
     (define dump-stack-trace!
-      (lambda _g110588_
-        (let ((_g110587_ (let () (declare (not safe)) (##length _g110588_))))
-          (cond ((let () (declare (not safe)) (##fx= _g110587_ 2))
-                 (apply dump-stack-trace!__0 _g110588_))
-                ((let () (declare (not safe)) (##fx= _g110587_ 3))
-                 (apply dump-stack-trace!__% _g110588_))
+      (lambda _g110747_
+        (let ((_g110746_ (let () (declare (not safe)) (##length _g110747_))))
+          (cond ((let () (declare (not safe)) (##fx= _g110746_ 2))
+                 (apply dump-stack-trace!__0 _g110747_))
+                ((let () (declare (not safe)) (##fx= _g110746_ 3))
+                 (apply dump-stack-trace!__% _g110747_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   dump-stack-trace!
-                  _g110588_))))))
+                  _g110747_))))))
     (define-type-of-thread
      actor-thread
      constructor:

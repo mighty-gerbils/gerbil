@@ -1430,6 +1430,7 @@ package: gerbil/core
     display*
     file-newer?
     create-directory*
+    move-file
     absent-obj
     absent-value
     true

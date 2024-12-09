@@ -1528,6 +1528,7 @@ namespace: gerbil/core/runtime
                     (display* display*)
                     (file-newer? file-newer?)
                     (create-directory* create-directory*)
+                    (move-file move-file)
                     (absent-obj absent-obj)
                     (absent-value absent-value)
                     (true true)
