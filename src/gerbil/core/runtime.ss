@@ -1833,6 +1833,8 @@ package: gerbil/core
     set-load-path!
     load-module
     reload-module!
+    list-modules
+    module-load-order
 
     ;; :gerbil/runtime/init
     gerbil-load-expander!
