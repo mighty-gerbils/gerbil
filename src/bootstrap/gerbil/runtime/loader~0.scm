@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1733868035)
+  (define gerbil/runtime/loader::timestamp 1733870074)
   (begin
     (define __modules
       (let ()
@@ -237,7 +237,7 @@
                                           _%modpath115251%_))
                                        (mutex-unlock! __load-mx)
                                        (__load-module _%modpath115251%_))
-                                     '#!void))
+                                     (mutex-unlock! __load-mx)))
                                (if (and (pair? _%state115263%_)
                                         (eq? (let ()
                                                (declare (not safe))
@@ -347,7 +347,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/loader.ss\"@135.26-135.33"
+               '"\"gerbil/runtime/loader.ss\"@137.26-137.33"
                'contract:
                'string?
                'value:

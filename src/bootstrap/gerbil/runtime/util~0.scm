@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1733868033)
+  (define gerbil/runtime/util::timestamp 1733870072)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)

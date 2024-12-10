@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1733868034)
+  (define gerbil/runtime/error::timestamp 1733870073)
   (begin
     (define Exception::t
       (let ((__tmp104024 (list)))
@@ -712,38 +712,38 @@
               (##write-string __tmp104041 _%port103485%_))))))
     (define Error::display-exception::specialize
       (lambda (__klass104000 __method-table104001)
-        (let ((__continuation104002
+        (let ((__where104002
                (let ((__slot104006
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass104000 'continuation))))
+                        (class-slot-offset __klass104000 'where))))
                  (if __slot104006
                      __slot104006
-                     (error '"Unknown slot" 'continuation))))
-              (__message104003
+                     (error '"Unknown slot" 'where))))
+              (__irritants104003
                (let ((__slot104007
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass104000 'message))))
+                        (class-slot-offset __klass104000 'irritants))))
                  (if __slot104007
                      __slot104007
-                     (error '"Unknown slot" 'message))))
-              (__where104004
+                     (error '"Unknown slot" 'irritants))))
+              (__continuation104004
                (let ((__slot104008
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass104000 'where))))
+                        (class-slot-offset __klass104000 'continuation))))
                  (if __slot104008
                      __slot104008
-                     (error '"Unknown slot" 'where))))
-              (__irritants104005
+                     (error '"Unknown slot" 'continuation))))
+              (__message104005
                (let ((__slot104009
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass104000 'irritants))))
+                        (class-slot-offset __klass104000 'message))))
                  (if __slot104009
                      __slot104009
-                     (error '"Unknown slot" 'irritants)))))
+                     (error '"Unknown slot" 'message)))))
           (lambda (_%self102155103483%_ _%port103485%_)
             (let* ((_%self103487%_ _%self102155103483%_)
                    (_%self103489%_ _%self103487%_))
@@ -760,7 +760,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self103489%_
-                                   __where104004
+                                   __where104002
                                    '#f
                                    '#f))))
                            (if _%$e103503%_
@@ -780,7 +780,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self103489%_
-                                   __message104003
+                                   __message104005
                                    '#f
                                    '#f))))
                            (declare (not safe))
@@ -790,7 +790,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self103489%_
-                                   __irritants104005
+                                   __irritants104003
                                    '#f
                                    '#f))))
                            (if (null? _%irritants103507%_)
@@ -824,7 +824,7 @@
                                       (declare (not safe))
                                       (##unchecked-structure-ref
                                        _%self103489%_
-                                       __continuation104002
+                                       __continuation104004
                                        '#f
                                        '#f))))
                                (if _%cont103510103512%_
