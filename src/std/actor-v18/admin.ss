@@ -81,8 +81,8 @@
         (lambda (out) (write-subu8vector pubk-bytes 0 (u8vector-length pubk-bytes) out)))
       (call-with-output-file privk-path-tmp
         (lambda (out) (write-subu8vector privk-blob 0 (u8vector-length privk-blob) out)))
-      (rename-file pubk-path-tmp pubk-path)
-      (rename-file privk-path-tmp privk-path))))
+      (move-file pubk-path-tmp pubk-path)
+      (move-file privk-path-tmp privk-path))))
 
 (def (admin-auth-challenge-sign privk server-id client-id challenge-bytes)
   (let (challenge

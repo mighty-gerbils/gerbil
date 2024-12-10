@@ -1,328 +1,328 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83922_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83968_|
     (##structure
      gx#syntax-quote::t
      'interface-info::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83924_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83970_|
     (##structure
      gx#syntax-quote::t
      'make-interface-info
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83926_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83972_|
     (##structure
      gx#syntax-quote::t
      'interface-info?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83928_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83974_|
     (##structure
      gx#syntax-quote::t
      'interface-info-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83929_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83975_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-mixin
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83930_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83976_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83931_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83977_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-type
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83932_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83978_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83933_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83979_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83934_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83980_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-try-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83935_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83981_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83936_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83982_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-satisfies-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83937_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83983_|
     (##structure
      gx#syntax-quote::t
      'interface-info-implementation-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83938_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83984_|
     (##structure
      gx#syntax-quote::t
      'interface-info-unchecked-implementation-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83940_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83986_|
     (##structure
      gx#syntax-quote::t
      'interface-info-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83941_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83987_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-mixin-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83942_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83988_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83943_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83989_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-type-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83944_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83990_|
     (##structure
      gx#syntax-quote::t
      'interface-info-interface-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83945_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83991_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83946_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83992_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-try-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83947_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83993_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83948_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83994_|
     (##structure
      gx#syntax-quote::t
      'interface-info-instance-satisfies-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83949_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83995_|
     (##structure
      gx#syntax-quote::t
      'interface-info-implementation-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83950_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83996_|
     (##structure
      gx#syntax-quote::t
      'interface-info-unchecked-implementation-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83952_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83998_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83953_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g83999_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-mixin
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83954_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84000_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83955_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84001_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-type
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83956_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84002_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83957_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84003_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83958_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84004_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-try-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83959_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84005_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83960_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84006_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-satisfies-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83961_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84007_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-implementation-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83962_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84008_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-unchecked-implementation-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83964_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84010_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83965_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84011_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-mixin-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83966_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84012_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83967_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84013_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-type-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83968_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84014_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-interface-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83969_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84015_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83970_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84016_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-try-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83971_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84017_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83972_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84018_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-instance-satisfies-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83973_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84019_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-implementation-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~InterfaceInfo[1]#_g83974_|
+  (define |gerbil/core/contract~InterfaceInfo[1]#_g84020_|
     (##structure
      gx#syntax-quote::t
      '&interface-info-unchecked-implementation-methods-set!
@@ -330,7 +330,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/contract~InterfaceInfo[:0:]#interface-info|
-    (let ((__obj83837
+    (let ((__obj83883
            (let ()
              (declare (not safe))
              (##structure
@@ -359,18 +359,18 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj83837
+         __obj83883
          'gerbil/core/contract~InterfaceInfo#interface-info::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 'interface-info '2 '#f '#f))
+        (##unchecked-structure-set! __obj83883 'interface-info '2 '#f '#f))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj83837
+         __obj83883
          '(name interface-mixin
                 interface-methods
                 instance-type
@@ -386,138 +386,138 @@
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 '() '3 '#f '#f))
+        (##unchecked-structure-set! __obj83883 '() '3 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 '#f '7 '#f '#f))
+        (##unchecked-structure-set! __obj83883 '#f '7 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj83883 '#f '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 '#f '10 '#f '#f))
+        (##unchecked-structure-set! __obj83883 '#f '10 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 '#f '11 '#f '#f))
-      (let ((__tmp83921 |gerbil/core/contract~InterfaceInfo[1]#_g83922_|))
+        (##unchecked-structure-set! __obj83883 '#f '11 '#f '#f))
+      (let ((__tmp83967 |gerbil/core/contract~InterfaceInfo[1]#_g83968_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83921 '12 '#f '#f))
-      (let ((__tmp83923 |gerbil/core/contract~InterfaceInfo[1]#_g83924_|))
+        (##unchecked-structure-set! __obj83883 __tmp83967 '12 '#f '#f))
+      (let ((__tmp83969 |gerbil/core/contract~InterfaceInfo[1]#_g83970_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83923 '13 '#f '#f))
-      (let ((__tmp83925 |gerbil/core/contract~InterfaceInfo[1]#_g83926_|))
+        (##unchecked-structure-set! __obj83883 __tmp83969 '13 '#f '#f))
+      (let ((__tmp83971 |gerbil/core/contract~InterfaceInfo[1]#_g83972_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83925 '14 '#f '#f))
-      (let ((__tmp83927
+        (##unchecked-structure-set! __obj83883 __tmp83971 '14 '#f '#f))
+      (let ((__tmp83973
              (cons (cons 'name
-                         |gerbil/core/contract~InterfaceInfo[1]#_g83928_|)
+                         |gerbil/core/contract~InterfaceInfo[1]#_g83974_|)
                    (cons (cons 'interface-mixin
-                               |gerbil/core/contract~InterfaceInfo[1]#_g83929_|)
+                               |gerbil/core/contract~InterfaceInfo[1]#_g83975_|)
                          (cons (cons 'interface-methods
-                                     |gerbil/core/contract~InterfaceInfo[1]#_g83930_|)
+                                     |gerbil/core/contract~InterfaceInfo[1]#_g83976_|)
                                (cons (cons 'instance-type
-                                           |gerbil/core/contract~InterfaceInfo[1]#_g83931_|)
+                                           |gerbil/core/contract~InterfaceInfo[1]#_g83977_|)
                                      (cons (cons 'interface-descriptor
-                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83932_|)
+                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83978_|)
                                            (cons (cons 'instance-constructor
-                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83933_|)
+                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83979_|)
                                                  (cons (cons 'instance-try-constructor
-                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83934_|)
+                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83980_|)
                                                        (cons (cons 'instance-predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/contract~InterfaceInfo[1]#_g83935_|)
+                           |gerbil/core/contract~InterfaceInfo[1]#_g83981_|)
                      (cons (cons 'instance-satisfies-predicate
-                                 |gerbil/core/contract~InterfaceInfo[1]#_g83936_|)
+                                 |gerbil/core/contract~InterfaceInfo[1]#_g83982_|)
                            (cons (cons 'implementation-methods
-                                       |gerbil/core/contract~InterfaceInfo[1]#_g83937_|)
+                                       |gerbil/core/contract~InterfaceInfo[1]#_g83983_|)
                                  (cons (cons 'unchecked-implementation-methods
-                                             |gerbil/core/contract~InterfaceInfo[1]#_g83938_|)
+                                             |gerbil/core/contract~InterfaceInfo[1]#_g83984_|)
                                        '())))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83927 '15 '#f '#f))
-      (let ((__tmp83939
+        (##unchecked-structure-set! __obj83883 __tmp83973 '15 '#f '#f))
+      (let ((__tmp83985
              (cons (cons 'name
-                         |gerbil/core/contract~InterfaceInfo[1]#_g83940_|)
+                         |gerbil/core/contract~InterfaceInfo[1]#_g83986_|)
                    (cons (cons 'interface-mixin
-                               |gerbil/core/contract~InterfaceInfo[1]#_g83941_|)
+                               |gerbil/core/contract~InterfaceInfo[1]#_g83987_|)
                          (cons (cons 'interface-methods
-                                     |gerbil/core/contract~InterfaceInfo[1]#_g83942_|)
+                                     |gerbil/core/contract~InterfaceInfo[1]#_g83988_|)
                                (cons (cons 'instance-type
-                                           |gerbil/core/contract~InterfaceInfo[1]#_g83943_|)
+                                           |gerbil/core/contract~InterfaceInfo[1]#_g83989_|)
                                      (cons (cons 'interface-descriptor
-                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83944_|)
+                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83990_|)
                                            (cons (cons 'instance-constructor
-                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83945_|)
+                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83991_|)
                                                  (cons (cons 'instance-try-constructor
-                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83946_|)
+                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83992_|)
                                                        (cons (cons 'instance-predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/contract~InterfaceInfo[1]#_g83947_|)
+                           |gerbil/core/contract~InterfaceInfo[1]#_g83993_|)
                      (cons (cons 'instance-satisfies-predicate
-                                 |gerbil/core/contract~InterfaceInfo[1]#_g83948_|)
+                                 |gerbil/core/contract~InterfaceInfo[1]#_g83994_|)
                            (cons (cons 'implementation-methods
-                                       |gerbil/core/contract~InterfaceInfo[1]#_g83949_|)
+                                       |gerbil/core/contract~InterfaceInfo[1]#_g83995_|)
                                  (cons (cons 'unchecked-implementation-methods
-                                             |gerbil/core/contract~InterfaceInfo[1]#_g83950_|)
+                                             |gerbil/core/contract~InterfaceInfo[1]#_g83996_|)
                                        '())))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83939 '16 '#f '#f))
-      (let ((__tmp83951
+        (##unchecked-structure-set! __obj83883 __tmp83985 '16 '#f '#f))
+      (let ((__tmp83997
              (cons (cons 'name
-                         |gerbil/core/contract~InterfaceInfo[1]#_g83952_|)
+                         |gerbil/core/contract~InterfaceInfo[1]#_g83998_|)
                    (cons (cons 'interface-mixin
-                               |gerbil/core/contract~InterfaceInfo[1]#_g83953_|)
+                               |gerbil/core/contract~InterfaceInfo[1]#_g83999_|)
                          (cons (cons 'interface-methods
-                                     |gerbil/core/contract~InterfaceInfo[1]#_g83954_|)
+                                     |gerbil/core/contract~InterfaceInfo[1]#_g84000_|)
                                (cons (cons 'instance-type
-                                           |gerbil/core/contract~InterfaceInfo[1]#_g83955_|)
+                                           |gerbil/core/contract~InterfaceInfo[1]#_g84001_|)
                                      (cons (cons 'interface-descriptor
-                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83956_|)
+                                                 |gerbil/core/contract~InterfaceInfo[1]#_g84002_|)
                                            (cons (cons 'instance-constructor
-                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83957_|)
+                                                       |gerbil/core/contract~InterfaceInfo[1]#_g84003_|)
                                                  (cons (cons 'instance-try-constructor
-                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83958_|)
+                                                             |gerbil/core/contract~InterfaceInfo[1]#_g84004_|)
                                                        (cons (cons 'instance-predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/contract~InterfaceInfo[1]#_g83959_|)
+                           |gerbil/core/contract~InterfaceInfo[1]#_g84005_|)
                      (cons (cons 'instance-satisfies-predicate
-                                 |gerbil/core/contract~InterfaceInfo[1]#_g83960_|)
+                                 |gerbil/core/contract~InterfaceInfo[1]#_g84006_|)
                            (cons (cons 'implementation-methods
-                                       |gerbil/core/contract~InterfaceInfo[1]#_g83961_|)
+                                       |gerbil/core/contract~InterfaceInfo[1]#_g84007_|)
                                  (cons (cons 'unchecked-implementation-methods
-                                             |gerbil/core/contract~InterfaceInfo[1]#_g83962_|)
+                                             |gerbil/core/contract~InterfaceInfo[1]#_g84008_|)
                                        '())))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83951 '17 '#f '#f))
-      (let ((__tmp83963
+        (##unchecked-structure-set! __obj83883 __tmp83997 '17 '#f '#f))
+      (let ((__tmp84009
              (cons (cons 'name
-                         |gerbil/core/contract~InterfaceInfo[1]#_g83964_|)
+                         |gerbil/core/contract~InterfaceInfo[1]#_g84010_|)
                    (cons (cons 'interface-mixin
-                               |gerbil/core/contract~InterfaceInfo[1]#_g83965_|)
+                               |gerbil/core/contract~InterfaceInfo[1]#_g84011_|)
                          (cons (cons 'interface-methods
-                                     |gerbil/core/contract~InterfaceInfo[1]#_g83966_|)
+                                     |gerbil/core/contract~InterfaceInfo[1]#_g84012_|)
                                (cons (cons 'instance-type
-                                           |gerbil/core/contract~InterfaceInfo[1]#_g83967_|)
+                                           |gerbil/core/contract~InterfaceInfo[1]#_g84013_|)
                                      (cons (cons 'interface-descriptor
-                                                 |gerbil/core/contract~InterfaceInfo[1]#_g83968_|)
+                                                 |gerbil/core/contract~InterfaceInfo[1]#_g84014_|)
                                            (cons (cons 'instance-constructor
-                                                       |gerbil/core/contract~InterfaceInfo[1]#_g83969_|)
+                                                       |gerbil/core/contract~InterfaceInfo[1]#_g84015_|)
                                                  (cons (cons 'instance-try-constructor
-                                                             |gerbil/core/contract~InterfaceInfo[1]#_g83970_|)
+                                                             |gerbil/core/contract~InterfaceInfo[1]#_g84016_|)
                                                        (cons (cons 'instance-predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/contract~InterfaceInfo[1]#_g83971_|)
+                           |gerbil/core/contract~InterfaceInfo[1]#_g84017_|)
                      (cons (cons 'instance-satisfies-predicate
-                                 |gerbil/core/contract~InterfaceInfo[1]#_g83972_|)
+                                 |gerbil/core/contract~InterfaceInfo[1]#_g84018_|)
                            (cons (cons 'implementation-methods
-                                       |gerbil/core/contract~InterfaceInfo[1]#_g83973_|)
+                                       |gerbil/core/contract~InterfaceInfo[1]#_g84019_|)
                                  (cons (cons 'unchecked-implementation-methods
-                                             |gerbil/core/contract~InterfaceInfo[1]#_g83974_|)
+                                             |gerbil/core/contract~InterfaceInfo[1]#_g84020_|)
                                        '())))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj83837 __tmp83963 '18 '#f '#f))
-      __obj83837)))
+        (##unchecked-structure-set! __obj83883 __tmp84009 '18 '#f '#f))
+      __obj83883)))

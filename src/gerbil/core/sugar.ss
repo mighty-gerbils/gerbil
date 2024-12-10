@@ -149,7 +149,7 @@ package: gerbil/core
               (syntax->list #'(detail ...))))))
 
   (defrules compilation-target? ()
-    ((_ sym) (eq? (gx#current-compilation-target) 'sym))))
+    ((_ sym) (eq? (current-compilation-target) 'sym))))
 
 (module Sugar-2
   (import Sugar-1 (phi: +1 Sugar-1))

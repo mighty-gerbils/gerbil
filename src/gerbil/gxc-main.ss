@@ -133,7 +133,6 @@
          (("-target")
           (match rest
             ([opt . rest]
-             (add-gsc-option! ["-target" opt])
 	     (set! target (string->symbol opt))
              (lp rest))
             (else
