@@ -606,7 +606,7 @@ namespace: #f
         (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
 
 	((cond-expand
-	   (,(compilation-target js ##table-set!))
+	   (,(compilation-target? js) ##table-set!)
 	   (else gc-table-set!))
 	 __object-eq-hash obj h)
 
