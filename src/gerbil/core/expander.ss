@@ -41,6 +41,7 @@ package: gerbil/core
     current-expander-path
     current-expander-phi
     current-expander-compiling?
+    current-compilation-target
     current-module-reader-path
     current-module-reader-args
     local-context? top-context? module-context? prelude-context?
