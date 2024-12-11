@@ -9,6 +9,7 @@
   (displayln " -h,--help                   display this help message and exit")
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
+  (displayln " -target                     the compilation output target: C or js; defaults to C")
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")
   (displayln " -full-program-optimization  perform full program optimization")
@@ -29,6 +30,7 @@
 (def (gxc-parse-args args)
   (def outdir (path-expand "lib" (gerbil-path)))
   (def invoke-gsc #t)
+  (def target 'C)
   (def keep-scm #f)
   (def verbose #f)
   (def optimize #f)
@@ -48,6 +50,7 @@
   (def (make-opts)
     [invoke-gsc: invoke-gsc
      keep-scm: keep-scm
+     target: target
      verbose: verbose
      optimize: optimize
      full-program-optimization: full-program-optimization
@@ -127,7 +130,15 @@
               (else
                `("-e" ,include-gambit-sharp)))))
           (lp rest))
-         (("-prelude")
+         (("-target")
+          (match rest
+            ([opt . rest]
+	     (set! target (string->symbol opt))
+             (lp rest))
+            (else
+             (gxc-print-usage!)
+             (exit 1))))
+	 (("-prelude")
           (match rest
             ([opt . rest]
              (add-gsc-option! ["-prelude" opt])
