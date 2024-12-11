@@ -1901,6 +1901,8 @@ namespace: gerbil/core/runtime
                     (set-load-path! set-load-path!)
                     (load-module load-module)
                     (reload-module! reload-module!)
+                    (list-modules list-modules)
+                    (module-load-order module-load-order)
                     (gerbil-load-expander! gerbil-load-expander!))))
          (%#module
           RuntimeAliases
