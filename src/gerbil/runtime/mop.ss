@@ -8,7 +8,6 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "table" "c3")
 
-(provide compilation-target-js)
 ;; Gambit structure rtd [runtime type descriptor]
 ;;  (define-type type
 ;;    (id      unprintable: equality-test:)
@@ -1279,7 +1278,7 @@ namespace: #f
       :class))
 
 (def class-of (cond-expand 
-		(compilation-target-js universal-class-of)
+		(,(compilation-target? js) universal-class-of)
 		(else C-class-of)))
 
 (def __subtype-id (make-vector 32 #f))

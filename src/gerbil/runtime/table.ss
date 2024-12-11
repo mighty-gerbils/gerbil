@@ -9,9 +9,6 @@ namespace: #f
 (export #t)
 (declare (not safe))
 
-
-(provide compilation-target-js)
-
 ;; this is defined as a raw gambit type, as we don't have MOP yet -- it needs tables!
 (def __table::t.id 'gerbil#__table::t)
 
@@ -70,7 +67,7 @@ namespace: #f
     (__table-ref table seed hash test key default)))
 
 (def (raw-table-set! tab key value)
-  (displayln "raw table set" tab " " key " " value)
+  ;; (displayln "raw table set" tab " " key " " value)
   (when (fx< (&raw-table-free tab)
              (fxquotient (vector-length (&raw-table-table tab)) 4))
     (__raw-table-rehash! tab))
@@ -117,7 +114,7 @@ namespace: #f
 
 (def ##_raw_table_setting '())
 (def (__raw-table-set! tab key value)
-  (displayln "start __raw table set" tab)
+  ;;(displayln "start __raw table set" tab)
   (let ((table (&raw-table-table tab))
         (seed (&raw-table-seed tab))
         (hash (&raw-table-hash tab))
@@ -355,7 +352,7 @@ namespace: #f
           (size    (vector-length table))
           (entries (fxquotient size 2))
           (start   (fxarithmetic-shift-left (fxmodulo h entries) 1)))
-     (displayln "In the __table-set! rule" key value)
+     ;; (displayln "In the __table-set! rule" key value)
      (let loop ((probe start) (i 1) (deleted #f))
        (let (k (vector-ref table probe))
          (cond
@@ -462,7 +459,7 @@ namespace: #f
       immediate))))
 
 (cond-expand
-  (compilation-target-js
+  (,(compilation-target? js)
    (def (__gc-table-new size flags)
      (##make-table size: size test: eq?)))
   (else 
@@ -510,7 +507,7 @@ namespace: #f
 (def (gc-table-set! tab key value)
   (declare (not interrupts-enabled))
   (cond-expand
-    (compilation-target-js
+    (,(compilation-target? js)
      (let ((tbl (if (##table? tab) tab (__gc-table-e tab))))
        #;(error "GC-TABLE-SET" tab tbl key value)
        (if (##table? tbl)
@@ -596,11 +593,7 @@ namespace: #f
 ;;; object->eq-hash
 (def __object-eq-hash-next 0)
 (def __object-eq-hash
-  (cond-expand
-    #;(compilation-target-js
-     (##make-table size: 1024 weak-keys: #t test: eq?))
-    (else 
-     (make-gc-table 1024 __gc-table::t (macro-gc-hash-table-flag-weak-keys)))))
+     (make-gc-table 1024 __gc-table::t (macro-gc-hash-table-flag-weak-keys)))
 
 (def (__object->eq-hash obj)
   (declare (not interrupts-enabled))
@@ -613,7 +606,7 @@ namespace: #f
         (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
 
 	((cond-expand
-	   (compilation-target-js ##table-set!)
+	   (,(compilation-target js ##table-set!))
 	   (else gc-table-set!))
 	 __object-eq-hash obj h)
 
