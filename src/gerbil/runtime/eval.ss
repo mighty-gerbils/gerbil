@@ -53,7 +53,7 @@ namespace: #f
       (error (if (fx< count k)
                "Too few values for context"
                "Too many values for context")
-        (if (##values? obj) (##vector->list obj) obj)
+        (if (##values? obj) (##values->list obj) obj)
         k))))
 
 (def (__compile stx)
@@ -114,7 +114,7 @@ namespace: #f
                 (lambda (id k)
                   (and (__AST-e id)
                        (__SRC
-                        `(define ,(__SRC id) (##vector-ref ,tmp ,k))
+                        `(define ,(__SRC id) (##values-ref ,tmp ,k))
                         stx)))
                 ids (iota len)))
            stx)))))))
@@ -263,7 +263,7 @@ namespace: #f
              (foldr (lambda (hd r)
                       (match hd
                         ([id . k]
-                         (cons `(,id (##vector-ref ,tmp ,k)) r))))
+                         (cons `(,id (##values-ref ,tmp ,k)) r))))
                     bind init)))
         (else
          (__SRC
@@ -337,7 +337,7 @@ namespace: #f
              (foldr (lambda (hd r)
                       (match hd
                         ([id . k]
-                         (cons `(set! ,id (##vector-ref ,tmp ,k)) r))))
+                         (cons `(set! ,id (##values-ref ,tmp ,k)) r))))
                     bind init)))
         (else
          (__SRC
@@ -416,7 +416,7 @@ namespace: #f
                               (match hd
                                 ([id . k]
                                  (__SRC
-                                  `(set! ,id (##vector-ref ,tmp ,k))
+                                  `(set! ,id (##values-ref ,tmp ,k))
                                   stx))))
                             init))
                   stx)
