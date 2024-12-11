@@ -12,6 +12,8 @@ namespace: #f
 (def __load-mx (make-mutex 'loader))
 (def __load-cv (make-condition-variable 'loader))
 (def __load-path [])
+(def __load-order (make-hash-table))
+(def __load-order-next 1)
 
 (def (load-path) => :list
   __load-path)
@@ -60,6 +62,9 @@ namespace: #f
              (let (loaded-path (load path))
                (mutex-lock! __load-mx)
                (hash-put! __modules modpath loaded-path)
+               (unless (hash-get __load-order modpath)
+                 (hash-put! __load-order modpath __load-order-next)
+                 (set! __load-order-next (1+ __load-order-next)))
                (condition-variable-broadcast! __load-cv)
                (mutex-unlock! __load-mx)
                loaded-path)))))
@@ -81,11 +86,13 @@ namespace: #f
            (error "module is still loading"))
           ((string? state)
            (let (latest-path (__find-library-module modpath))
-             (when (or (equal? (path-extension state) ".scm")
-                       (not (equal? state latest-path)))
-               (hash-remove! __modules modpath)
-               (mutex-unlock! __load-mx)
-               (load-module modpath))))
+             (if (or (equal? (path-extension state) ".scm")
+                     (not (equal? state latest-path)))
+               (begin
+                 (hash-remove! __modules modpath)
+                 (mutex-unlock! __load-mx)
+                 (load-module modpath))
+               (mutex-unlock! __load-mx))))
           ((and (pair? state) (eq? (car state) 'error))
            (hash-remove! __modules modpath)
            (mutex-unlock! __load-mx)
@@ -119,3 +126,23 @@ namespace: #f
           ((find-source-file npath) => path-normalize)
           (else (lp rest)))))
       (else #f))))
+
+(def (list-modules)
+  => :list
+  (mutex-lock! __load-mx)
+  (let (result (hash->list __modules))
+    (mutex-unlock! __load-mx)
+    (:- result :list)))
+
+(def (module-load-order (modpath : :string))
+  => :integer
+  (mutex-lock! __load-mx)
+  (let (ord
+        (cond
+         ((eq? (hash-get __modules modpath) 'builtin) 0)
+         ((hash-get __load-order modpath))
+         (else #f)))
+    (mutex-unlock! __load-mx)
+    (if (exact-integer? ord)
+      ord
+      (abort! (error "unknown module load order" module: modpath)))))
