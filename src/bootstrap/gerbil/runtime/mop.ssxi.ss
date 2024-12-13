@@ -3117,6 +3117,23 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/mop)))
+  (declare-type __type (optimizer-resolve-class '(typedecl __type) 't::t))
+  (declare-type __class (optimizer-resolve-class '(typedecl __class) 't::t))
+  (declare-type
+   type-of
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             symbol::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
   (declare-type
    class-of
    (@lambda 1
