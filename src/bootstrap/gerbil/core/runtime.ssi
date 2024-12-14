@@ -1700,6 +1700,7 @@ namespace: gerbil/core/runtime
                     (seal-class! seal-class!)
                     (next-method next-method)
                     (call-next-method call-next-method)
+                    (type-of type-of)
                     (class-of class-of)
                     (t::t t::t)
                     (class::t class::t)

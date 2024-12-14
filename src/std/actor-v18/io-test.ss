@@ -32,8 +32,8 @@
     (check-exception (BufferedWriter-marshal buf value) io-error?)))
 
 (def (equal-values? a b)
-  (and (= (##type a) 1)
-       (= (##type b) 1)
+  (and (eq? (type-of a) 'subtyped)
+       (eq? (type-of b) 'subtyped)
        (= (##subtype a) 5)
        (= (##subtype b) 5)
        (= (##vector-length a) (##vector-length b))

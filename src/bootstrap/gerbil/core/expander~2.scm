@@ -47,7 +47,7 @@
                                                            (declare (not safe))
                                                            (if (##values?
                                                                 _g1917_)
-                                                               (##vector-length
+                                                               (##values-length
                                                                 _g1917_)
                                                                1))))
                                             (if (not (let ()
@@ -58,11 +58,11 @@
                                           (let ((_%target375416%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##vector-ref _g1917_ 0)))
+                                                   (##values-ref _g1917_ 0)))
                                                 (_%tl377419%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##vector-ref _g1917_ 1))))
+                                                   (##values-ref _g1917_ 1))))
                                             (if (gx#stx-null? _%tl377419%_)
                                                 (letrec ((_%loop378422%_
                                                           (lambda (_%hd376426%_
@@ -187,7 +187,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (declare (not safe))
                             (if (##values? _g1919_)
-                                (##vector-length _g1919_)
+                                (##values-length _g1919_)
                                 1))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (if (not (let ()
@@ -201,14 +201,14 @@
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (##vector-ref
+                                                            (##values-ref
                                                              _g1919_
                                                              0)))
                                                          (_%tl620642%_
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (##vector-ref
+                                                            (##values-ref
                                                              _g1919_
                                                              1))))
                                                      (if (gx#stx-null?

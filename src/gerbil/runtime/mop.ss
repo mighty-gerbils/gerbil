@@ -1190,74 +1190,150 @@ namespace: #f
        (else
         (loop (##type-super super) (cons super hierarchy))))))))
 
-;; the class-of operator
-(def (class-of obj) => :class
-  (declare (not interrupts-enabled))
-  (:- (let (t (##type obj))
-        (cond
-         ((fx= t (macro-type-subtyped)) ; subtyped
-          (let (st (##subtype obj))
-            (cond
-             ((fx= st (macro-subtype-structure)) ; object
-              (let (klass (##structure-type obj))
-                (if (class-type? klass) klass (__shadow-class klass))))
-             ((fx= st (macro-subtype-boxvalues)) ; box or values?
-              (if (fx= (##vector-length obj) 1)
-                (__system-class 'box)
-                (__system-class 'values)))
-             ((##vector-ref __subtype-id st)
-              => __system-class)
-             (else
-              (error "unknown class" subtype: st object: obj)))))
-         ((fx= t (macro-type-mem2))     ; pair
-          (__system-class 'pair))
-         ((fx= t (macro-type-fixnum))   ; fixnum
-          (__system-class 'fixnum))
-         (else                          ; special (immediate)
-          (cond
-           ((char? obj)      (__system-class 'char))
-           ((eq? obj '())    (__system-class 'null))
-           ((eq? obj #f)     (__system-class 'boolean))
-           ((eq? obj #t)     (__system-class 'boolean))
-           ((eq? obj #!void) (__system-class 'void))
-           ((eq? obj #!eof)  (__system-class 'eof))
-           (else
-            (__system-class 'special))))))
-      :class))
+;; support for the type-of/class-of operators
+(cond-expand
+  (,(compilation-target? C)
+   ;; we crate the type mapping vector at runtime so that we are configuration independent
+   (def __type
+     (let (tb (##c-code "___RESULT = ___FIX(___TB);"))
+       (case tb
+         ((2)
+          '#(fixnum subtyped special pair))
+         ((3)
+          (let ((flonum-self-tagging-tags
+                 (##c-code "___RESULT = ___FIX(___FLONUM_SELF_TAGGING_TAGS);"))
+                (fixnum-tag-bits
+                 (##c-code #<<END-C
+#ifdef ___USE_2_TAG_BITS_FOR_FIXNUMS
+___RESULT = ___FIX(2) ;
+#else
+___RESULT = ___FIX(3) ;
+#endif
+END-C
+)))
+            (case flonum-self-tagging-tags
+              ((0)
+               (if (##fx= fixnum-tag-bits 2)
+                 '#(fixnum subtyped special vector fixnum pair undefined flonum)
+                 '#(fixnum subtyped undefined vector special pair undefined flonum)))
+              ((1)
+               (if (##fx= fixnum-tag-bits 2)
+                 '#(fixnum subtyped special vector fixnum pair flonum flonum)
+                 '#(fixnum subtyped undefined vector special pair flonum flonum)))
+              ((2)
+               '#(fixnum subtyped flonum flonum special pair flonum undefined))
+              ((3)
+               '#(fixnum subtyped flonum flonum special pair flonum flonum))
+              ((4)
+               '#(fixnum subtyped flonum flonum special pair flonum flonum))
+              (else
+               (error "unexpected flonum self tagging tags" flonum-self-tagging-tags)))))
+         (else
+          (error "unexpected tag width" tb)))))
 
-(def __subtype-id (make-vector 32 #f))
+   (def __class
+     (let* ((len (##vector-length __type))
+            (cv (##make-vector len #f)))
+       (let loop ((i 0))
+         (if (##fx< i len)
+           (let* ((t (##vector-ref __type i))
+                  (f
+                   (cond
+                    ((eq? t 'undefined)
+                     (lambda (obj) (error "object type is undefined" obj)))
+                    ((memq t '(fixnum flonum pair vector))
+                     (lambda (obj)
+                       (declare (not interrupts-enabled) (not safe))
+                       (__system-class t)))
+                    ((eq? t 'subtyped)
+                     (lambda (obj)
+                       (declare (not interrupts-enabled) (not safe))
+                       (let (st (##subtype obj))
+                         (cond
+                          ((##fx= st (macro-subtype-structure)) ; object
+                           (let (klass (##structure-type obj))
+                             (if (class-type? klass)
+                               klass
+                               (__shadow-class klass))))
+                          ((##fx= st (macro-subtype-boxvalues)) ; box or values?
+                           (if (fx= (##vector-length obj) 1)
+                             (__system-class 'box)
+                             (__system-class 'values)))
+                          ((##vector-ref __subtype-id st)
+                           => __system-class)
+                          (else
+                           (error "unknown class" subtype: st object: obj))))))
+                    ((eq? t 'special)
+                     (lambda (obj)
+                       (declare (not interrupts-enabled) (not safe))
+                       (cond
+                        ((char? obj)      (__system-class 'char))
+                        ((eq? obj '())    (__system-class 'null))
+                        ((eq? obj #f)     (__system-class 'boolean))
+                        ((eq? obj #t)     (__system-class 'boolean))
+                        ((eq? obj #!void) (__system-class 'void))
+                        ((eq? obj #!eof)  (__system-class 'eof))
+                        (else
+                         (__system-class 'special)))))
+                    (else
+                     (error "unexpected object type" t)))))
+             (##vector-set! cv i f)
+             (loop (##fx+ i 1)))
+           cv))))
 
-(defrules defsubtype ()
-  ((_ (t name) ...)
-   (begin (vector-set! __subtype-id t 'name) ...)))
+   ;; the type-of operator
+   (def (type-of obj) => :symbol
+     (declare
+       (not safe)
+       (not interrupts-enabled))
+     (:- (##vector-ref __type (##type obj)) :symbol))
 
-(defsubtype
-  ((macro-subtype-vector)       vector)
-  ((macro-subtype-pair)         pair)
-  ((macro-subtype-ratnum)       ratnum)
-  ((macro-subtype-cpxnum)       cpxnum)
-  ((macro-subtype-symbol)       symbol)
-  ((macro-subtype-keyword)      keyword)
-  ((macro-subtype-frame)        frame)
-  ((macro-subtype-continuation) continuation)
-  ((macro-subtype-promise)      promise)
-  ((macro-subtype-weak)         weak)
-  ((macro-subtype-procedure)    procedure)
-  ((macro-subtype-return)       return)
-  ((macro-subtype-foreign)      foreign)
-  ((macro-subtype-string)       string)
-  ((macro-subtype-s8vector)     s8vector)
-  ((macro-subtype-u8vector)     u8vector)
-  ((macro-subtype-s16vector)    s16vector)
-  ((macro-subtype-u16vector)    u16vector)
-  ((macro-subtype-s32vector)    s32vector)
-  ((macro-subtype-u32vector)    u32vector)
-  ((macro-subtype-f32vector)    f32vector)
-  ((macro-subtype-s64vector)    s64vector)
-  ((macro-subtype-u64vector)    u64vector)
-  ((macro-subtype-f64vector)    f64vector)
-  ((macro-subtype-flonum)       flonum)
-  ((macro-subtype-bignum)       bignum))
+   ;; the class-of operator
+   (def (class-of obj) => :class
+     (declare
+       (not safe)
+       (not interrupts-enabled))
+     (:- (let* ((t (##type obj))
+                (f (##vector-ref __class t)))
+           (f obj))
+         :class))
+
+   (def __subtype-id (make-vector 32 #f))
+
+   (defrules defsubtype ()
+     ((_ (t name) ...)
+      (begin (vector-set! __subtype-id t 'name) ...)))
+
+   (defsubtype
+     ((macro-subtype-vector)       vector)
+     ((macro-subtype-pair)         pair)
+     ((macro-subtype-ratnum)       ratnum)
+     ((macro-subtype-cpxnum)       cpxnum)
+     ((macro-subtype-symbol)       symbol)
+     ((macro-subtype-keyword)      keyword)
+     ((macro-subtype-frame)        frame)
+     ((macro-subtype-continuation) continuation)
+     ((macro-subtype-promise)      promise)
+     ((macro-subtype-weak)         weak)
+     ((macro-subtype-procedure)    procedure)
+     ((macro-subtype-return)       return)
+     ((macro-subtype-foreign)      foreign)
+     ((macro-subtype-string)       string)
+     ((macro-subtype-s8vector)     s8vector)
+     ((macro-subtype-u8vector)     u8vector)
+     ((macro-subtype-s16vector)    s16vector)
+     ((macro-subtype-u16vector)    u16vector)
+     ((macro-subtype-s32vector)    s32vector)
+     ((macro-subtype-u32vector)    u32vector)
+     ((macro-subtype-f32vector)    f32vector)
+     ((macro-subtype-s64vector)    s64vector)
+     ((macro-subtype-u64vector)    u64vector)
+     ((macro-subtype-f64vector)    f64vector)
+     ((macro-subtype-flonum)       flonum)
+     ((macro-subtype-bignum)       bignum)))
+  (else
+   ;; TODO js and other target support
+   (syntax-error "unsupported compilation target")))
 
 ;; system classes for primitive types
 (def __system-classes

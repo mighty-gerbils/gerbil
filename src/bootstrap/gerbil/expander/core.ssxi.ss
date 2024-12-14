@@ -55,6 +55,11 @@ package: gerbil/expander
    (optimizer-resolve-class
     '(typedecl gx#current-expander-compiling?)
     'procedure::t))
+  (declare-type
+   gx#current-compilation-target
+   (optimizer-resolve-class
+    '(typedecl gx#current-compilation-target)
+    'procedure::t))
   (declare-class
    gx#expander-context::t
    (@class gx#expander-context::t
