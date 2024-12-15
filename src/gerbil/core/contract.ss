@@ -64,19 +64,19 @@ package: gerbil/core
   (def (interface-flatten-mixin mixin)
     (let ((values linearized _)
           (c4-linearize [] mixin
-                  get-precedence-list:
-                  (lambda (id)
-                    (cons id
-                          (interface-info-interface-mixin
-                           (syntax-local-value id))))
-                  struct: false
-                  eq: free-identifier=?
-                  get-name:
-                  (lambda (id)
-                    (let (info (syntax-local-value id))
-                      (make-symbol (interface-info-namespace info)
-                                   "::"
-                                   (interface-info-name info))))))
+                        get-precedence-list:
+                        (lambda (id)
+                          (cons id
+                                (interface-info-flatten-mixin
+                                 (syntax-local-value id))))
+                        struct: false
+                        eq: free-identifier=?
+                        get-name:
+                        (lambda (id)
+                          (let (info (syntax-local-value id))
+                            (make-symbol (interface-info-namespace info)
+                                         "::"
+                                         (interface-info-name info))))))
       linearized))
 
   (def (syntax-local-interface-info? stx (is? true))
@@ -1570,19 +1570,17 @@ package: gerbil/core
         (make-symbol (gensym name))))
 
     (def (make-method-name-spec method-name namespace mixin)
-      (let* ((linearized (interface-flatten-mixin mixin))
-             (infos (map syntax-local-value linearized)))
-        (let loop ((rest infos) (result [(make-symbol namespace "::" method-name)]))
-          (match rest
-            ([info . rest]
-             (if (find (lambda (ms) (eq? method-name (car ms)))
-                       (interface-info-interface-methods info))
-               (loop rest
-                     (cons (make-symbol (interface-info-namespace info) "::" method-name)
-                           result))
-               (loop rest result)))
-            (else
-             (reverse! (cons method-name result)))))))
+      (let loop ((rest mixin) (result [(make-symbol namespace "::" method-name)]))
+        (match rest
+          ([info . rest]
+           (if (find (lambda (ms) (eq? method-name (car ms)))
+                     (interface-info-interface-methods info))
+             (loop rest
+                   (cons (make-symbol (interface-info-namespace info) "::" method-name)
+                         result))
+             (loop rest result)))
+          (else
+           (reverse! (cons method-name result))))))
 
     (syntax-case stx ()
       ((_ hd spec ...)
@@ -1604,8 +1602,10 @@ package: gerbil/core
                        (fold-methods #'(mixin ...) #'(spec ...)))
                       ((method-name ...)
                        (map stx-car #'(method ...)))
+                      ((values linearized-mixins)
+                       (map syntax-local-value (interface-flatten-mixin #'(mixin ...))))
                       ((method-name-spec ...)
-                       (map (cut make-method-name-spec <> (stx-e #'namespace) #'(mixin ...))
+                       (map (cut make-method-name-spec <> (stx-e #'namespace) linearized-mixins)
                             (map stx-e #'(method-name ...))))
                       ((method-signature ...)
                        (map stx-cdr #'(method ...)))
