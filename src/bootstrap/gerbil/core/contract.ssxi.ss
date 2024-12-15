@@ -7,7 +7,8 @@ package: gerbil/core
    (@class gerbil/core/contract~InterfaceInfo#interface-info::t
            ()
            (object::t t::t)
-           (name interface-mixin
+           (name namespace
+                 interface-mixin
                  interface-methods
                  instance-type
                  interface-descriptor
@@ -17,7 +18,8 @@ package: gerbil/core
                  instance-satisfies-predicate
                  implementation-methods
                  unchecked-implementation-methods)
-           (name interface-mixin
+           (name namespace
+                 interface-mixin
                  interface-methods
                  instance-type
                  interface-descriptor
@@ -49,6 +51,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-name
    (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-namespace
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    namespace
+    #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin
    (@accessor
@@ -113,6 +121,12 @@ package: gerbil/core
    gerbil/core/contract~InterfaceInfo#interface-info-name-set!
    (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-namespace-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    namespace
+    #t))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin-set!
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
@@ -176,6 +190,12 @@ package: gerbil/core
    gerbil/core/contract~InterfaceInfo#&interface-info-name
    (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-namespace
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    namespace
+    #f))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
@@ -238,6 +258,12 @@ package: gerbil/core
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-name-set!
    (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-namespace-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    namespace
+    #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin-set!
    (@mutator
@@ -311,6 +337,21 @@ package: gerbil/core
    #f)
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-flatten-mixin
    (@lambda 1
             #f
             signature:

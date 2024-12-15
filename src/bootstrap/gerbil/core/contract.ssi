@@ -47,6 +47,9 @@ namespace: gerbil/core/contract
                     interface-info-name
                     gerbil/core/contract~InterfaceInfo#interface-info-name)
                    (%#define-runtime
+                    interface-info-namespace
+                    gerbil/core/contract~InterfaceInfo#interface-info-namespace)
+                   (%#define-runtime
                     interface-info-interface-mixin
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin)
                    (%#define-runtime
@@ -79,6 +82,9 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-info-name-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-name-set!)
+                   (%#define-runtime
+                    interface-info-namespace-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-namespace-set!)
                    (%#define-runtime
                     interface-info-interface-mixin-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-mixin-set!)
@@ -113,6 +119,9 @@ namespace: gerbil/core/contract
                     &interface-info-name
                     gerbil/core/contract~InterfaceInfo#&interface-info-name)
                    (%#define-runtime
+                    &interface-info-namespace
+                    gerbil/core/contract~InterfaceInfo#&interface-info-namespace)
+                   (%#define-runtime
                     &interface-info-interface-mixin
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin)
                    (%#define-runtime
@@ -145,6 +154,9 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     &interface-info-name-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-name-set!)
+                   (%#define-runtime
+                    &interface-info-namespace-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-namespace-set!)
                    (%#define-runtime
                     &interface-info-interface-mixin-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-mixin-set!)
@@ -187,6 +199,9 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-info-flatten-mixin
                     gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin)
+                   (%#define-runtime
+                    interface-flatten-mixin
+                    gerbil/core/contract~InterfaceInfo#interface-flatten-mixin)
                    (%#begin (%#define-runtime
                              syntax-local-interface-info?__%
                              gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)
