@@ -11,7 +11,8 @@
         :std/io/socket/basic
         :std/os/fd
         ./libssl
-        ./error)
+        ./error
+        ./interface)
 
 (defstruct (ssl-socket basic-socket) (ssl peer-cert)
   final: #t
@@ -37,135 +38,146 @@
 (defmethod {shutdown ssl-socket}
   (lambda (self dir)
     ;; there is no unidirectional shutdown in ssl sockets
-    (ssl-socket::close self)))
+    (ssl-socket::__close self))
+  interface: StreamSocket)
+
+(defmethod {__close ssl-socket}
+  (lambda (self)
+    (with-basic-socket-write-lock self
+      (unless self.closed?
+        (try
+         (let ((rsock self.sock)
+               (ssl self.ssl))
+           (let lp ()
+             (let (result (SSL_shutdown ssl))
+               (cond
+                ((and (fixnum? result) (fx> result 0)) (void))
+                ((eqv? result SSL_ERROR_WANT_READ)
+                 (basic-socket-wait-io! self (fd-io-in rsock) #f)
+                 (lp))
+                ((eqv? result SSL_ERROR_WANT_WRITE)
+                 (basic-socket-wait-io! self (fd-io-out rsock) #f)
+                 (lp))))))
+         (catch (e) (void)))
+        (basic-socket-close/lock self)
+        (foreign-release! self.ssl)
+        (set! self.ssl #f)))))
 
 (defmethod {close ssl-socket}
-  (lambda (self)
-    (using (self :-  ssl-socket)
-      (with-basic-socket-write-lock self
-        (unless self.closed?
-          (try
-           (let ((rsock self.sock)
-                 (ssl self.ssl))
-             (let lp ()
-               (let (result (SSL_shutdown ssl))
-                 (cond
-                  ((and (fixnum? result) (fx> result 0)) (void))
-                  ((eqv? result SSL_ERROR_WANT_READ)
-                   (basic-socket-wait-io! self (fd-io-in rsock) #f)
-                   (lp))
-                  ((eqv? result SSL_ERROR_WANT_WRITE)
-                   (basic-socket-wait-io! self (fd-io-out rsock) #f)
-                   (lp))))))
-           (catch (e) (void)))
-          (basic-socket-close/lock self)
-          (foreign-release! self.ssl)
-          (set! self.ssl #f))))))
+  ssl-socket::__close
+  interface: Closer)
 
 (defmethod {peer-certificate ssl-socket}
   (lambda (self)
-    (using (self :-  ssl-socket)
-      (or self.peer-cert
-          (let* ((ssl self.ssl)
-                 (cert (SSL_get_peer_certificate ssl)))
-            (set! self.peer-cert cert)
-            cert)))))
+    (or self.peer-cert
+        (let* ((ssl self.ssl)
+               (cert (SSL_get_peer_certificate ssl)))
+          (set! self.peer-cert cert)
+          cert)))
+  interface: TLS)
+
+(defmethod {__recv ssl-socket}
+  (lambda (self output output-start output-end _)
+    (with-basic-socket-read-lock self
+      (let ((rsock self.sock)
+            (ssl self.ssl))
+        (let lp ()
+          (when self.closed?
+            (raise-io-closed ssl-socket-recv "socket input has been shutdown"))
+          (let (result (SSL_read ssl output output-start output-end))
+            (cond
+             ((and (fixnum? result) (fx>= result 0)) result)
+             ((eqv? result SSL_ERROR_WANT_READ)
+              (let (wait-result
+                    (basic-socket-wait-io! self (fd-io-in rsock) self.timeo-in))
+                (if wait-result
+                  (lp)
+                  (raise-timeout ssl-socket-recv "receive timeout"))))
+             ((eqv? result SSL_ERROR_WANT_WRITE)
+              (let (wait-result
+                    (basic-socket-wait-io! self (fd-io-out rsock) self.timeo-out))
+                (if wait-result
+                  (lp)
+                  (raise-timeout ssl-socket-recv "receive timeout"))))
+             (else
+              (raise-ssl-error ssl-socket-recv result)))))))))
 
 (defmethod {recv ssl-socket}
-  (lambda (self output output-start output-end _)
-    (using (self :-  ssl-socket)
-      (with-basic-socket-read-lock self
-        (let ((rsock self.sock)
-              (ssl self.ssl))
-          (let lp ()
-            (when self.closed?
-              (raise-io-closed ssl-socket-recv "socket input has been shutdown"))
-            (let (result (SSL_read ssl output output-start output-end))
-              (cond
-               ((and (fixnum? result) (fx>= result 0)) result)
-               ((eqv? result SSL_ERROR_WANT_READ)
-                (let (wait-result
-                      (basic-socket-wait-io! self (fd-io-in rsock) self.timeo-in))
-                  (if wait-result
-                    (lp)
-                    (raise-timeout ssl-socket-recv "receive timeout"))))
-               ((eqv? result SSL_ERROR_WANT_WRITE)
-                (let (wait-result
-                      (basic-socket-wait-io! self (fd-io-out rsock) self.timeo-out))
-                  (if wait-result
-                    (lp)
-                    (raise-timeout ssl-socket-recv "receive timeout"))))
-               (else
-                (raise-ssl-error ssl-socket-recv result))))))))))
+  ssl-socket::__recv
+  interface: StreamSocket)
+
+(defmethod {__send ssl-socket}
+  (lambda (self input input-start input-end _)
+    (with-basic-socket-read-lock self
+      (let ((rsock self.sock)
+            (ssl   self.ssl))
+        (let lp ()
+          (when self.closed?
+            (raise-io-closed ssl-socket-send "socket output has been shutdown"))
+          (let (result (SSL_write ssl input input-start input-end))
+            (cond
+             ((and (fixnum? result) (fx> result 0)) result)
+             ((eqv? result SSL_ERROR_WANT_READ)
+              (let (wait-result (basic-socket-wait-io! self (fd-io-in rsock) self.timeo-in))
+                (if wait-result
+                  (lp)
+                  (raise-timeout ssl-socket-send "receive timeout"))))
+             ((eqv? result SSL_ERROR_WANT_WRITE)
+              (let (wait-result (basic-socket-wait-io! self (fd-io-out rsock) self.timeo-out))
+                (if wait-result
+                  (lp)
+                  (raise-timeout ssl-socket-send "receive timeout"))))
+             (else
+              (raise-ssl-error ssl-socket-send result)))))))))
 
 (defmethod {send ssl-socket}
-  (lambda (self input input-start input-end _)
-    (using (self :-  ssl-socket)
-      (with-basic-socket-read-lock self
-        (let ((rsock self.sock)
-              (ssl   self.ssl))
-          (let lp ()
-            (when self.closed?
-              (raise-io-closed ssl-socket-send "socket output has been shutdown"))
-            (let (result (SSL_write ssl input input-start input-end))
-              (cond
-               ((and (fixnum? result) (fx> result 0)) result)
-               ((eqv? result SSL_ERROR_WANT_READ)
-                (let (wait-result (basic-socket-wait-io! self (fd-io-in rsock) self.timeo-in))
-                  (if wait-result
-                    (lp)
-                    (raise-timeout ssl-socket-send "receive timeout"))))
-               ((eqv? result SSL_ERROR_WANT_WRITE)
-                (let (wait-result (basic-socket-wait-io! self (fd-io-out rsock) self.timeo-out))
-                  (if wait-result
-                    (lp)
-                    (raise-timeout ssl-socket-send "receive timeout"))))
-               (else
-                (raise-ssl-error ssl-socket-send result))))))))))
-
+  ssl-socket::__send
+  interface: StreamSocket)
 
 (defmethod {reader ssl-socket}
   (lambda (self)
-    (Reader (make-ssl-socket-reader self))))
+    (Reader (make-ssl-socket-reader self)))
+  interface: StreamSocket)
 
 (defmethod {writer ssl-socket}
   (lambda (self)
-    (Writer (make-ssl-socket-writer self))))
+    (Writer (make-ssl-socket-writer self)))
+  interface: StreamSocket)
 
 (defmethod {read ssl-socket-reader}
   (lambda (self output output-start output-end input-need)
-    (using (self :- ssl-socket-reader)
-      (let (sock self.sock)
-        (let lp ((output-start output-start) (input-need input-need) (result 0))
-          (if (fx< output-start output-end)
-            (let (read (ssl-socket::recv sock output output-start output-end 0))
-              (cond
-               ((fx= read 0)
-                (if (fx> input-need result)
-                  (raise-premature-end-of-input ssl-socket-read input-need)
-                  result))
-               ((fx> read input-need)
-                (fx+ result read))
-               (else
-                (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
-            result))))))
+    (let (sock self.sock)
+      (let lp ((output-start output-start) (input-need input-need) (result 0))
+        (if (fx< output-start output-end)
+          (let (read (ssl-socket::__recv sock output output-start output-end 0))
+            (cond
+             ((fx= read 0)
+              (if (fx> input-need result)
+                (raise-premature-end-of-input ssl-socket-read input-need)
+                result))
+             ((fx> read input-need)
+              (fx+ result read))
+             (else
+              (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
+          result))))
+  interface: Reader)
 
 (defmethod {close ssl-socket-reader}
   (lambda (self)
-    (using (self :- ssl-socket-reader)
-      (ssl-socket::shutdown self.sock 'in))))
+    (ssl-socket::__close self.sock))
+  interface: Closer)
 
 (defmethod {write ssl-socket-writer}
   (lambda (self input input-start input-end)
-    (using (self :- ssl-socket-writer)
-      (let (sock self.sock)
-        (let lp ((input-start input-start) (result 0))
-          (if (fx< input-start input-end)
-            (let (wrote (ssl-socket::send sock input input-start input-end 0))
-              (lp (fx+ input-start wrote) (fx+ result wrote)))
-            result))))))
+    (let (sock self.sock)
+      (let lp ((input-start input-start) (result 0))
+        (if (fx< input-start input-end)
+          (let (wrote (ssl-socket::__send sock input input-start input-end 0))
+            (lp (fx+ input-start wrote) (fx+ result wrote)))
+          result))))
+  interface: Writer)
 
 (defmethod {close ssl-socket-writer}
   (lambda (self)
-    (using (self :- ssl-socket-writer)
-      (ssl-socket::shutdown self.sock 'out))))
+    (ssl-socket::__close self.sock))
+  interface: Closer)

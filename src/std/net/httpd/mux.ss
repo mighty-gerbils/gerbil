@@ -29,11 +29,13 @@
 
 (defmethod {put-handler! default-http-mux}
   (lambda (self host path handler)
-    (hash-put! self.t path handler)))
+    (hash-put! self.t path handler))
+  interface: Mux)
 
 (defmethod {get-handler default-http-mux}
   (lambda (self host path)
-    (hash-ref self.t path self.default)))
+    (hash-ref self.t path self.default))
+  interface: Mux)
 
 ;; recursive mux -- resolves paths up to their parent
 (defstruct (recursive-http-mux default-http-mux) ())
@@ -48,7 +50,8 @@
        ((hash-get self.t path))
        ((string-rindex path #\/)
         => (lambda (ix) (lp (substring path 0 ix))))
-       (else self.default)))))
+       (else self.default))))
+  interface: Mux)
 
 ;; static mux -- paths are resolved in a static hash table, which elides the need for a mutex
 (defstruct static-http-mux ((t :- HashTable) (default :- :procedure))
@@ -60,11 +63,13 @@
 
 (defmethod {put-handler! static-http-mux}
   (lambda (self host path handler)
-    (error "mux does not support dynamic handler registration")))
+    (error "mux does not support dynamic handler registration"))
+  interface: Mux)
 
 (defmethod {get-handler static-http-mux}
   (lambda (self host path)
-    (hash-ref self.t path self.default)))
+    (hash-ref self.t path self.default))
+  interface: Mux)
 
 ;; recursive static mux -- resolves paths up to their parent
 (defstruct (recursive-static-http-mux static-http-mux) ())
@@ -79,7 +84,8 @@
        ((hash-get self.t path))
        ((string-rindex path #\/)
         => (lambda (ix) (lp (substring path 0 ix))))
-       (else self.default)))))
+       (else self.default))))
+  interface: Mux)
 
 ;; custom mux -- it dispatches all resolutions/registrations to user supplied functions
 (defstruct custom-http-mux ((get :- :procedure) (put :- :procedure))
@@ -91,8 +97,10 @@
 
 (defmethod {get-handler custom-http-mux}
   (lambda (self host path)
-    (self.get host path)))
+    (self.get host path))
+  interface: Mux)
 
 (defmethod {put-handler! custom-http-mux}
   (lambda (self host path handler)
-    (self.put host path handler)))
+    (self.put host path handler))
+  interface: Mux)

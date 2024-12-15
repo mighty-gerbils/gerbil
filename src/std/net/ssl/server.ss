@@ -50,7 +50,8 @@
        (ssl-server-upgrade clisock self.ctx)
        (catch (e)
          (clisock.close)
-         (raise e))))))
+         (raise e)))))
+  interface: ServerSocket)
 
 (def (ssl-server-upgrade clisock ctx)
   (using (bsock (&interface-instance-object clisock) :- basic-socket)

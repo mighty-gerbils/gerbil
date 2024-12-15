@@ -136,58 +136,83 @@
 ;;; Interface
 ;; input-buffer BufferedReader implementation
 (defmethod {read input-buffer}
-  bio-read-bytes)
+  bio-read-bytes
+  interface: Reader)
 (defmethod {read-u8 input-buffer}
-  bio-read-u8)
+  bio-read-u8
+  interface: PeekableReader)
 (defmethod {peek-u8 input-buffer}
-  bio-peek-u8)
+  bio-peek-u8
+  interface: PeekableReader)
 (defmethod {put-back input-buffer}
-  bio-put-back)
+  bio-put-back
+  interface: BufferedReader)
 (defmethod {skip input-buffer}
-  bio-skip-input)
+  bio-skip-input
+  interface: BufferedReader)
 (defmethod {delimit input-buffer}
-  bio-delimit-input)
+  bio-delimit-input
+  interface: BufferedReader)
 (defmethod {reset! input-buffer}
-  bio-reset-input!)
+  bio-reset-input!
+  interface: BufferedReader)
 (defmethod {available input-buffer}
-  bio-available)
+  bio-available
+  interface: BufferedReader)
 (defmethod {close input-buffer}
-  bio-close-input)
+  bio-close-input
+  interface: Closer)
 
 ;; delimited-input-buffer BufferedReader implementation
 (defmethod {read delimited-input-buffer}
-  bio-delimited-read-bytes)
+  bio-delimited-read-bytes
+  interface: Reader)
 (defmethod {read-u8 delimited-input-buffer}
-  bio-delimited-read-u8)
+  bio-delimited-read-u8
+  interface: PeekableReader)
 (defmethod {peek-u8 delimited-input-buffer}
-  bio-delimited-peek-u8)
+  bio-delimited-peek-u8
+  interface: PeekableReader)
 (defmethod {put-back delimited-input-buffer}
-  bio-delimited-put-back)
+  bio-delimited-put-back
+  interface: BufferedReader)
 (defmethod {skip delimited-input-buffer}
-  bio-delimited-skip-input)
+  bio-delimited-skip-input
+  interface: BufferedReader)
 (defmethod {delimit delimited-input-buffer}
-  bio-delimited-delimit-input)
+  bio-delimited-delimit-input
+  interface: BufferedReader)
 (defmethod {reset! delimited-input-buffer}
-  bio-delimited-reset-input!)
+  bio-delimited-reset-input!
+  interface: BufferedReader)
 (defmethod {available delimited-input-buffer}
-  bio-delimited-available)
+  bio-delimited-available
+  interface: BufferedReader)
 (defmethod {close delimited-input-buffer}
-  bio-delimited-close)
+  bio-delimited-close
+  interface: Closer)
 
 ;; output-buffer BufferedWriter implementation
 (defmethod {write output-buffer}
-  bio-write-bytes)
+  bio-write-bytes
+  interface: Writer)
 (defmethod {write-u8 output-buffer}
-  bio-write-u8)
+  bio-write-u8
+  interface: BufferedWriter)
 (defmethod {flush output-buffer}
-  bio-flush-output)
+  bio-flush-output
+  interface: BufferedWriter)
 (defmethod {reset! output-buffer}
-  bio-reset-output!)
+  bio-reset-output!
+  interface: BufferedWriter)
 (defmethod {close output-buffer}
-  bio-close-output)
+  bio-close-output
+  interface: Closer)
 
 ;; chunked-output-buffer Writer implementation
 (defmethod {write chunked-output-buffer}
-  bio-chunked-write-bytes)
+  bio-chunked-write-bytes
+  interface: Writer)
 (defmethod {close chunked-output-buffer}
-  bio-chunked-close)
+  bio-chunked-close
+  interface: Closer)

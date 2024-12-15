@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; read-write locks
 (import :std/error
-        :std/sugar)
+        :std/sugar
+        :gerbil/runtime)
 (export make-rwlock
         rwlock?
         rwlock-read-lock!
@@ -107,16 +108,20 @@
 ;; methods for the Locker interface
 (defmethod {read-lock! rwlock}
   (lambda (self)
-    (rwlock-read-lock! self)))
+    (rwlock-read-lock! self))
+  interface: Locker)
 
 (defmethod {read-unlock! rwlock}
   (lambda (self)
-    (rwlock-read-unlock! self)))
+    (rwlock-read-unlock! self))
+  interface: Locker)
 
 (defmethod {write-lock! rwlock}
   (lambda (self)
-    (rwlock-write-lock! self)))
+    (rwlock-write-lock! self))
+  interface: Locker)
 
 (defmethod {write-unlock! rwlock}
   (lambda (self)
-    (rwlock-write-unlock! self)))
+    (rwlock-write-unlock! self))
+  interface: Locker)

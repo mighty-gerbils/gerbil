@@ -43,11 +43,13 @@
                   output-end))
                (read (self.reader.read output output-start output-end input-need)))
           (set! self.remaining (fx- remaining read))
-          read))))))
+          read)))))
+  interface: Reader)
 
 (defmethod {close delimited-reader}
   (lambda (self)
-    (self.reader.close)))
+    (self.reader.close))
+  interface: Closer)
 
 (defmethod {read-string delimited-string-reader}
   (lambda (self (output       :- :string)
@@ -67,8 +69,10 @@
                   output-end))
                (read (self.reader.read-string output output-start output-end input-need)))
           (set! self.remaining (fx- remaining read))
-          read))))))
+          read)))))
+  interface: StringReader)
 
 (defmethod {close delimited-string-reader}
   (lambda (self)
-    (self.reader.close)))
+    (self.reader.close))
+  interface: Closer)
