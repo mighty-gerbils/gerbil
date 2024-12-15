@@ -336,7 +336,22 @@ package: gerbil/core
    gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander
    #f)
   (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
+   gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             pair::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
    (@lambda 1
             #f
             signature:
@@ -351,7 +366,7 @@ package: gerbil/core
              origin:
              gerbil/core/contract~InterfaceInfo)))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-flatten-mixin
+   gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list
    (@lambda 1
             #f
             signature:

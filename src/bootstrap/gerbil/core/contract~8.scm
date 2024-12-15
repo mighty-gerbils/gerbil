@@ -5660,7 +5660,7 @@
                                       (if (member _%type-b53397%_
                                                   (let ()
                                                     (declare (not safe))
-                                                    (gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
+                                                    (gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
                                                      _%klass-a53410%_)))
                                           '#t
                                           '#f)
@@ -8112,7 +8112,7 @@
                                                '()
                                                _%L60670%_)))
                                    (declare (not safe))
-                                   (gerbil/core/contract~InterfaceInfo#interface-flatten-mixin
+                                   (gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list
                                     __tmp84995))))
                            (_%g6084060857%_
                             (lambda (_%g6084160853%_)

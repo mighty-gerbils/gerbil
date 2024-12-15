@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~InterfaceInfo::timestamp 1734279323)
+  (define gerbil/core/contract~InterfaceInfo::timestamp 1734280441)
   (begin
     (define gerbil/core/contract~InterfaceInfo#_g84795_
       (##structure
@@ -500,10 +500,15 @@
        'apply-macro-expander
        gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander
        '#f)
-      (define gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
-        (lambda (_%info44717%_)
-          (gerbil/core/contract~InterfaceInfo#interface-flatten-mixin
-           (let ((__obj84721 _%info44717%_))
+      (define gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list
+        (lambda (_%id44717%_)
+          (cons _%id44717%_
+                (gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
+                 (gx#syntax-local-value _%id44717%_)))))
+      (define gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
+        (lambda (_%info44715%_)
+          (gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list
+           (let ((__obj84721 _%info44715%_))
              (if (let ()
                    (declare (not safe))
                    (##structure-direct-instance-of?
@@ -516,17 +521,14 @@
                   gerbil/core/contract~InterfaceInfo#interface-info::t
                   __obj84721
                   'interface-mixin))))))
-      (define gerbil/core/contract~InterfaceInfo#interface-flatten-mixin
-        (lambda (_%mixin44710%_)
+      (define gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list
+        (lambda (_%lst44710%_)
           (let ((_g84797_
                  (c4-linearize
                   '()
-                  _%mixin44710%_
+                  _%lst44710%_
                   'get-precedence-list:
-                  (lambda (_%id44712%_)
-                    (cons _%id44712%_
-                          (gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
-                           (gx#syntax-local-value _%id44712%_))))
+                  gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list
                   'struct:
                   false
                   'eq:
@@ -540,11 +542,11 @@
                            1))))
                 (if (not (let () (declare (not safe)) (##fx= _g84798_ 2)))
                     (error "Context expects 2 values" _g84798_)))
-              (let ((_%linearized44714%_
+              (let ((_%linearized44712%_
                      (let () (declare (not safe)) (##values-ref _g84797_ 0)))
-                    (_%_44715%_
+                    (_%_44713%_
                      (let () (declare (not safe)) (##values-ref _g84797_ 1))))
-                _%linearized44714%_)))))
+                _%linearized44712%_)))))
       (define gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
         (lambda (_%stx44691%_ _%is?44692%_)
           (if (gx#identifier? _%stx44691%_)

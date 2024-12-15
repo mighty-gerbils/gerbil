@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1734279329)
+  (define gerbil/expander/root::timestamp 1734280447)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -330,18 +330,18 @@
                   _g132550_))))))
     (define gx#root-context:::init!::specialize
       (lambda (__klass132501 __method-table132502)
-        (let ((__bind-core-syntax-expanders!132503
+        (let ((__bind-core-macro-expanders!132503
                (__make-promise
                 (lambda ()
                   (let ((__method132506
                          (symbolic-table-ref
                           __method-table132502
-                          'bind-core-syntax-expanders!
+                          'bind-core-macro-expanders!
                           '#f)))
                     (if __method132506
                         __method132506
                         (error '"Missing method"
-                               'bind-core-syntax-expanders!))))))
+                               'bind-core-macro-expanders!))))))
               (__bind-core-features!132504
                (__make-promise
                 (lambda ()
@@ -353,18 +353,18 @@
                     (if __method132507
                         __method132507
                         (error '"Missing method" 'bind-core-features!))))))
-              (__bind-core-macro-expanders!132505
+              (__bind-core-syntax-expanders!132505
                (__make-promise
                 (lambda ()
                   (let ((__method132508
                          (symbolic-table-ref
                           __method-table132502
-                          'bind-core-macro-expanders!
+                          'bind-core-syntax-expanders!
                           '#f)))
                     (if __method132508
                         __method132508
                         (error '"Missing method"
-                               'bind-core-macro-expanders!)))))))
+                               'bind-core-syntax-expanders!)))))))
           (let ((_%opt-lambda132474132492%_
                  (lambda (_%self131396132476%_ _%bind?132478%_)
                    (let* ((_%self132480%_ _%self131396132476%_)
@@ -390,9 +390,9 @@
                                 (##vector-length _%self132482%_)))
                      (if _%bind?132478%_
                          (begin
-                           ((force __bind-core-syntax-expanders!132503)
+                           ((force __bind-core-syntax-expanders!132505)
                             _%self132482%_)
-                           ((force __bind-core-macro-expanders!132505)
+                           ((force __bind-core-macro-expanders!132503)
                             _%self132482%_)
                            ((force __bind-core-features!132504)
                             _%self132482%_))

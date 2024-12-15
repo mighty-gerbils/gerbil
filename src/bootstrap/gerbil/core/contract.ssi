@@ -197,11 +197,14 @@ namespace: gerbil/core/contract
                     interface-info::apply-macro-expander
                     gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander)
                    (%#define-runtime
-                    interface-info-flatten-mixin
-                    gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin)
+                    interface-identifier->precedence-list
+                    gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list)
                    (%#define-runtime
-                    interface-flatten-mixin
-                    gerbil/core/contract~InterfaceInfo#interface-flatten-mixin)
+                    interface-info->precedence-list
+                    gerbil/core/contract~InterfaceInfo#interface-info->precedence-list)
+                   (%#define-runtime
+                    interface-mixin->precedence-list
+                    gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list)
                    (%#begin (%#define-runtime
                              syntax-local-interface-info?__%
                              gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)

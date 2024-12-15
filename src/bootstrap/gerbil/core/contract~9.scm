@@ -8016,13 +8016,13 @@
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
+                        (gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
                          _%klass-b76468%_)))
               _%type-b76453%_
               (if (member _%type-b76453%_
                           (let ()
                             (declare (not safe))
-                            (gerbil/core/contract~InterfaceInfo#interface-info-flatten-mixin
+                            (gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
                              _%klass-a76466%_)))
                   _%type-a76452%_
                   (gx#raise-syntax-error
