@@ -70,13 +70,7 @@ package: gerbil/core
                                 (interface-info-flatten-mixin
                                  (syntax-local-value id))))
                         struct: false
-                        eq: free-identifier=?
-                        get-name:
-                        (lambda (id)
-                          (let (info (syntax-local-value id))
-                            (make-symbol (interface-info-namespace info)
-                                         "::"
-                                         (interface-info-name info))))))
+                        eq: free-identifier=?))
       linearized))
 
   (def (syntax-local-interface-info? stx (is? true))
@@ -796,8 +790,7 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value klass-id)))
-                            eq: free-identifier=?
-                            get-name: stx-e))
+                            eq: free-identifier=?))
              (precedence-list
               (cond
                ((memq (!class-type-id klass) '(t object class))
@@ -2460,8 +2453,7 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value/context klass-id)))
-                            eq: free-identifier=?
-                            get-name: stx-e))
+                            eq: free-identifier=?))
              (base-fields
               (if base-struct
                 (let (klass (syntax-local-value base-struct))
