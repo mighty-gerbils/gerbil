@@ -58,17 +58,16 @@ package: gerbil/core
              (with-syntax ((descriptor (interface-info-interface-descriptor self)))
                #'descriptor))))))
 
-  (def (interface-info-flatten-mixin info)
-    (interface-flatten-mixin (interface-info-interface-mixin info)))
+  (def (interface-identifier->precedence-list id)
+    (cons id (interface-info->precedence-list (syntax-local-value id))))
 
-  (def (interface-flatten-mixin mixin)
+  (def (interface-info->precedence-list info)
+    (interface-mixin->precedence-list (interface-info-interface-mixin info)))
+
+  (def (interface-mixin->precedence-list lst)
     (let ((values linearized _)
-          (c4-linearize [] mixin
-                        get-precedence-list:
-                        (lambda (id)
-                          (cons id
-                                (interface-info-flatten-mixin
-                                 (syntax-local-value id))))
+          (c4-linearize [] lst
+                        get-precedence-list: interface-identifier->precedence-list
                         struct: false
                         eq: free-identifier=?))
       linearized))
@@ -1369,7 +1368,7 @@ package: gerbil/core
             (cond
              ((interface-info? klass-b)
               (cond
-               ((member type-b (interface-info-flatten-mixin klass-a))
+               ((member type-b (interface-info->precedence-list klass-a))
                 #t)
                (else #f)))
              ((type-reference? klass-b)
@@ -1596,7 +1595,8 @@ package: gerbil/core
                       ((method-name ...)
                        (map stx-car #'(method ...)))
                       ((values linearized-mixins)
-                       (map syntax-local-value (interface-flatten-mixin #'(mixin ...))))
+                       (map syntax-local-value
+                            (interface-mixin->precedence-list #'(mixin ...))))
                       ((method-name-spec ...)
                        (map (cut make-method-name-spec <> (stx-e #'namespace) linearized-mixins)
                             (map stx-e #'(method-name ...))))
@@ -2235,9 +2235,9 @@ package: gerbil/core
             (cond
              ((interface-info? klass-b)
               (cond
-               ((member type-a (interface-info-flatten-mixin klass-b))
+               ((member type-a (interface-info->precedence-list klass-b))
                 type-b)
-               ((member type-b (interface-info-flatten-mixin klass-a))
+               ((member type-b (interface-info->precedence-list klass-a))
                 type-a)
                (else
                 (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
