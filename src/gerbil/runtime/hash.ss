@@ -51,14 +51,16 @@ namespace: #f
 (bind-method! __table::t 'copy raw-table-copy)
 (bind-method! __table::t 'clear! raw-table-clear!)
 
-(bind-method! __gc-table::t 'ref gc-table-ref)
-(bind-method! __gc-table::t 'set! gc-table-set!)
-(bind-method! __gc-table::t 'update! gc-table-update!)
-(bind-method! __gc-table::t 'delete! gc-table-delete!)
-(bind-method! __gc-table::t 'for-each gc-table-for-each)
-(bind-method! __gc-table::t 'length gc-table-length)
-(bind-method! __gc-table::t 'copy gc-table-copy)
-(bind-method! __gc-table::t 'clear! gc-table-clear!)
+(cond-expand
+  (,(compilation-target? c)
+   (bind-method! __gc-table::t 'ref gc-table-ref)
+   (bind-method! __gc-table::t 'set! gc-table-set!)
+   (bind-method! __gc-table::t 'update! gc-table-update!)
+   (bind-method! __gc-table::t 'delete! gc-table-delete!)
+   (bind-method! __gc-table::t 'for-each gc-table-for-each)
+   (bind-method! __gc-table::t 'length gc-table-length)
+   (bind-method! __gc-table::t 'copy gc-table-copy)
+   (bind-method! __gc-table::t 'clear! gc-table-clear!)))
 
 (def (gambit-table-update! table key update default)
   (let (result (table-ref table key default))
@@ -122,48 +124,50 @@ namespace: #f
        #f                            ; class-type-constructor
        #f))))
 
-;; immediate gc-hash-table class; reifies the gc-table type
-(def gc-hash-table::t
-  (begin-annotation
-      (@mop.class gerbil#gc-hash-table::t ; type-id
-                  (object::t)             ; super
-                  (gcht immediate)        ; slots
-                  #f                      ; constructor
-                  #t                      ; struct?
-                  #f                      ; final?
-                  #f)                               ; metaclass
-    (let* ((slots '(gcht immediate))
-           (slot-vector
-            (list->vector (cons #f slots)))
-           (slot-table
-            (let (slot-table (make-symbolic-table #f 0))
-              (for-each
-                (lambda (slot field)
-                  (symbolic-table-set! slot-table slot field)
-                  (symbolic-table-set! slot-table (symbol->keyword slot) field))
-                slots
-                (iota (length slots) 1))
-              slot-table))
-           (flags
-            (##fxior type-flag-extensible type-flag-concrete type-flag-id
-                     class-type-flag-struct))
-           (fields '#())
-           (properties
-            `((direct-slots: ,@slots)
-              (struct: . #t))))
-      (##structure
-       class::t                         ; type
-       'gerbil#gc-hash-table::t         ; type-id
-       'hash-table                      ; type-name
-       flags                            ; type-flags
-       __gc-table::t                    ; type-super
-       fields                           ; type-fields
-       [object::t t::t]                 ; class-type-precedence-list
-       slot-vector                      ; class-type-slot-vector
-       slot-table                       ; class-type-slot-table
-       properties                       ; class-type-properties
-       #f                               ; class-type-constructor
-       #f))))
+(cond-expand
+  (,(compilation-target? C)
+   ;; immediate gc-hash-table class; reifies the gc-table type
+   (def gc-hash-table::t
+     (begin-annotation
+	 (@mop.class gerbil#gc-hash-table::t ; type-id
+                     (object::t)             ; super
+                     (gcht immediate)        ; slots
+                     #f                      ; constructor
+                     #t                      ; struct?
+                     #f                      ; final?
+                     #f)		     ; metaclass
+       (let* ((slots '(gcht immediate))
+              (slot-vector
+               (list->vector (cons #f slots)))
+              (slot-table
+               (let (slot-table (make-symbolic-table #f 0))
+		 (for-each
+                   (lambda (slot field)
+                     (symbolic-table-set! slot-table slot field)
+                     (symbolic-table-set! slot-table (symbol->keyword slot) field))
+                   slots
+                   (iota (length slots) 1))
+		 slot-table))
+              (flags
+               (##fxior type-flag-extensible type-flag-concrete type-flag-id
+			class-type-flag-struct))
+              (fields '#())
+              (properties
+               `((direct-slots: ,@slots)
+		 (struct: . #t))))
+	 (##structure
+	  class::t			; type
+	  'gerbil#gc-hash-table::t	; type-id
+	  'hash-table			; type-name
+	  flags				; type-flags
+	  __gc-table::t			; type-super
+	  fields			; type-fields
+	  [object::t t::t]		; class-type-precedence-list
+	  slot-vector			; class-type-slot-vector
+	  slot-table			; class-type-slot-table
+	  properties			; class-type-properties
+	  #f				; class-type-constructor
+	  #f))))))
 
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
 (defstruct locked-hash-table (table lock)
@@ -229,14 +233,16 @@ namespace: #f
 (bind-method! immediate-hash-table::t 'update! immediate-table-update!)
 (bind-method! immediate-hash-table::t 'delete! immediate-table-delete!)
 
-(bind-method! gc-hash-table::t 'ref gc-table-ref)
-(bind-method! gc-hash-table::t 'set! gc-table-set!)
-(bind-method! gc-hash-table::t 'update! gc-table-update!)
-(bind-method! gc-hash-table::t 'delete! gc-table-delete!)
-(bind-method! gc-hash-table::t 'for-each gc-table-for-each)
-(bind-method! gc-hash-table::t 'length gc-table-length)
-(bind-method! gc-hash-table::t 'copy gc-table-copy)
-(bind-method! gc-hash-table::t 'clear! gc-table-clear!)
+(cond-expand
+  (,(compilation-target? C)
+   (bind-method! gc-hash-table::t 'ref gc-table-ref)
+   (bind-method! gc-hash-table::t 'set! gc-table-set!)
+   (bind-method! gc-hash-table::t 'update! gc-table-update!)
+   (bind-method! gc-hash-table::t 'delete! gc-table-delete!)
+   (bind-method! gc-hash-table::t 'for-each gc-table-for-each)
+   (bind-method! gc-hash-table::t 'length gc-table-length)
+   (bind-method! gc-hash-table::t 'copy gc-table-copy)
+   (bind-method! gc-hash-table::t 'clear! gc-table-clear!)))
 
 ;; HashTable interface methods
 (def hash-table?
@@ -394,14 +400,16 @@ namespace: #f
        (wrap-lock ht)
        key?)))
 
-  (def (make-gc-hash-table)
-    => HashTable
-    (let (ht
-          (HashTable
-           (make-gc-table size-hint gc-hash-table::t)))
-      (wrap-checked
-       (wrap-lock ht)
-       true)))
+  (cond-expand
+    (,(compilation-target? C)
+     (def (make-gc-hash-table)
+       => HashTable
+       (let (ht
+	     (HashTable
+	      (make-gc-table size-hint gc-hash-table::t)))
+	 (wrap-checked
+	  (wrap-lock ht)
+	  true)))))
 
   (def (make-gambit-table)
     => HashTable
@@ -430,10 +438,14 @@ namespace: #f
   (cond
    ((or weak-keys weak-values)
     (make-gambit-table))
-   ((and (or (eq? test eq?) (eq? test ##eq?))
-         (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash))
-         (not seed))
-    (make-gc-hash-table))
+   ((and
+      (or (eq? test eq?) (eq? test ##eq?))
+      (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash))
+      (not seed))
+    (cond-expand (,(compilation-target? C)
+		  (make-gc-hash-table))
+		 (else 
+		  (make make-eq-hash-table true eq-hash eq?))))
    ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash)))
     (make make-eq-hash-table true eq-hash eq?))
