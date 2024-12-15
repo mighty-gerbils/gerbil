@@ -31,6 +31,7 @@ package: gerbil/core
   (import "expander")
   (export #t)
   (defclass interface-info (name
+                            namespace
                             interface-mixin
                             interface-methods
                             instance-type interface-descriptor
@@ -58,16 +59,25 @@ package: gerbil/core
                #'descriptor))))))
 
   (def (interface-info-flatten-mixin info)
-    (let loop ((rest (interface-info-interface-mixin info)) (result []))
-      (match rest
-        ([id . rest]
-         (let (mixin (interface-info-interface-mixin (syntax-local-value id)))
-           (let (result
-                 (if (member id result free-identifier=?)
-                   result
-                   (cons id result)))
-             (loop (foldl cons rest mixin) result))))
-        (else result))))
+    (interface-flatten-mixin (interface-info-interface-mixin info)))
+
+  (def (interface-flatten-mixin mixin)
+    (let ((values linearized _)
+          (c4-linearize [] mixin
+                  get-precedence-list:
+                  (lambda (id)
+                    (cons id
+                          (interface-info-interface-mixin
+                           (syntax-local-value id))))
+                  struct: false
+                  eq: free-identifier=?
+                  get-name:
+                  (lambda (id)
+                    (let (info (syntax-local-value id))
+                      (make-symbol (interface-info-namespace info)
+                                   "::"
+                                   (interface-info-name info))))))
+      linearized))
 
   (def (syntax-local-interface-info? stx (is? true))
     (and (identifier? stx)
@@ -1551,11 +1561,35 @@ package: gerbil/core
                         (f   (##unchecked-structure-ref self offset #f 'method-name)))
                     (##apply f obj out ...)))))))))
 
+    (def (make-interface-namespace name)
+      (if (module-context? (current-expander-context))
+        (cond
+         ((module-context-ns (current-expander-context))
+          => (lambda (ns) (make-symbol ns "::" name)))
+         (else name))
+        (make-symbol (gensym name))))
+
+    (def (make-method-name-spec method-name namespace mixin)
+      (let* ((linearized (interface-flatten-mixin mixin))
+             (infos (map syntax-local-value linearized)))
+        (let loop ((rest infos) (result [(make-symbol namespace "::" method-name)]))
+          (match rest
+            ([info . rest]
+             (if (find (lambda (ms) (eq? method-name (car ms)))
+                       (interface-info-interface-methods info))
+               (loop rest
+                     (cons (make-symbol (interface-info-namespace info) "::" method-name)
+                           result))
+               (loop rest result)))
+            (else
+             (reverse! (cons method-name result)))))))
+
     (syntax-case stx ()
       ((_ hd spec ...)
        (or (identifier? #'hd)
            (identifier-list? #'hd))
        (with-syntax* ((name (if (identifier? #'hd) #'hd (stx-car #'hd)))
+                      (namespace (make-interface-namespace (stx-e #'name)))
                       (klass (stx-identifier #'name #'name "::t"))
                       (klass-quoted (core-quote-syntax #'klass))
                       (klass-type-id (make-class-type-id #'name))
@@ -1570,6 +1604,9 @@ package: gerbil/core
                        (fold-methods #'(mixin ...) #'(spec ...)))
                       ((method-name ...)
                        (map stx-car #'(method ...)))
+                      ((method-name-spec ...)
+                       (map (cut make-method-name-spec <> (stx-e #'namespace) #'(mixin ...))
+                            (map stx-e #'(method-name ...))))
                       ((method-signature ...)
                        (map stx-cdr #'(method ...)))
                       ((method-impl-name ...)
@@ -1599,7 +1636,7 @@ package: gerbil/core
                       (defdescriptor
                         #'(def descriptor
                             (begin-annotation (@interface klass-quoted (method-name ...))
-                              (make-interface-descriptor klass '(method-name ...)))))
+                              (make-interface-descriptor klass '(method-name-spec ...)))))
                       (defmake
                         #'(def (make obj)
                             (begin-annotation (@type.signature return: klass-quoted
@@ -1628,6 +1665,7 @@ package: gerbil/core
                         #'(defsyntax name
                             (make-interface-info
                              name: 'name
+                             namespace: 'namespace
                              interface-mixin: [(quote-syntax mixin) ...]
                              interface-methods: '(method ...)
                              instance-type: (quote-syntax klass)
@@ -2003,6 +2041,33 @@ package: gerbil/core
        #'(call-method receiver 'method arg ...))))
 
   (defsyntax (defmethod/c stx)
+    ;; TODO check signatures and inject type decls when implementing an interface method
+    (def (make-method-name method rest)
+      (let loop ((rest rest))
+        (syntax-case rest ()
+          ((interface: Interface . _)
+           (let (info (resolve-type stx #'Interface))
+             (if (interface-info? info)
+               (if (find (lambda (ms) (eq? (stx-e method) (car ms)))
+                         (interface-info-interface-methods info))
+                 (stx-identifier method (interface-info-namespace info) "::" method)
+                 (raise-syntax-error #f "unknown interface method" stx #'Interface method))
+               (raise-syntax-error #f "not an interface type" stx #'Interface))))
+          ((kw _ . rest)
+           (stx-keyword? #'kw)
+           (loop #'rest))
+          (() method))))
+
+    (def (defmethod-rest rest)
+      (let recur ((rest rest))
+        (syntax-case rest ()
+          ((interface: _ . rest)
+           (recur #'rest))
+          ((kw val . rest)
+           (stx-keyword? #'kw)
+           (cons* #'kw #'val (recur #'rest)))
+          (() []))))
+
     (syntax-case stx (lambda/c case-lambda/c @method-dotted)
       ((_ {method Type} (lambda/c (self . args) body ...) . rest)
        (and (identifier? #'self)
@@ -2011,10 +2076,11 @@ package: gerbil/core
                       (proc
                        (syntax/loc stx
                          (lambda/c (receiver . args)
-                                   (using (self receiver ::- Type)
-                                     (with-receiver self
-                                                    (let () body ...)))))))
-         #'(defmethod (@method~ method Type) proc . rest)))
+                              (using (self receiver ::- Type)
+                                (with-receiver self (let () body ...))))))
+                      (method-name (make-method-name #'method #'rest))
+                      (rest (defmethod-rest #'rest)))
+         #'(defmethod (@method~ method-name Type) proc . rest)))
       ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
        (and (identifier-list? #'(self ...))
             (identifier? #'method))
@@ -2025,12 +2091,15 @@ package: gerbil/core
                          (case-lambda/c
                           ((receiver . args)
                            (using (self receiver ::- Type)
-                             (with-receiver self
-                                            (let () body ...))))
-                          ...))))
-         #'(defmethod (@method~ method Type) proc . rest)))
-      ((_ {method Type} . body)
-       #'(defmethod (@method~ method Type) . body))))
+                             (with-receiver self (let () body ...))))
+                          ...)))
+                      (method-name (make-method-name #'method #'rest))
+                      (rest (defmethod-rest #'rest)))
+         #'(defmethod (@method~ method-name Type) proc . rest)))
+      ((_ {method Type} impl . rest)
+       (with-syntax ((method-name (make-method-name #'method #'rest))
+                     (rest (defmethod-rest #'rest)))
+         #'(defmethod (@method~ method-name Type) impl . rest)))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
