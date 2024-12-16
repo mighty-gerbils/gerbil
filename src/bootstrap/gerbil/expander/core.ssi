@@ -29,6 +29,9 @@ namespace: gx
          (%#define-runtime
           current-expander-compiling?
           gx#current-expander-compiling?)
+         (%#define-runtime
+          current-compilation-target
+          gx#current-compilation-target)
          (%#define-runtime expander-context::t gx#expander-context::t)
          (%#define-runtime expander-context? gx#expander-context?)
          (%#define-runtime make-expander-context gx#make-expander-context)

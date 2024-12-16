@@ -1614,6 +1614,7 @@ package: gerbil/core
     seal-class!
     next-method
     call-next-method
+    type-of
     class-of
     t::t
     class::t

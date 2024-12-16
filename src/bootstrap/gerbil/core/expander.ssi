@@ -81,6 +81,7 @@ namespace: gerbil/core/expander
                     (current-expander-phi gx#current-expander-phi)
                     (current-expander-compiling?
                      gx#current-expander-compiling?)
+                    (current-compilation-target gx#current-compilation-target)
                     (current-module-reader-path gx#current-module-reader-path)
                     (current-module-reader-args gx#current-module-reader-args)
                     (local-context? gx#local-context?)
