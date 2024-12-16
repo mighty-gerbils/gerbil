@@ -34,7 +34,9 @@ package: gerbil/core
                             namespace
                             interface-mixin
                             interface-methods
-                            instance-type interface-descriptor
+                            interface-precedence-list
+                            interface-descriptor
+                            instance-type
                             instance-constructor instance-try-constructor
                             instance-predicate instance-satisfies-predicate
                             implementation-methods
@@ -59,10 +61,7 @@ package: gerbil/core
                #'descriptor))))))
 
   (def (interface-identifier->precedence-list id)
-    (cons id (interface-info->precedence-list (syntax-local-value id))))
-
-  (def (interface-info->precedence-list info)
-    (interface-mixin->precedence-list (interface-info-interface-mixin info)))
+    (cons id (interface-info-interface-precedence-list (syntax-local-value id))))
 
   (def (interface-mixin->precedence-list lst)
     (let ((values linearized _)
@@ -1368,7 +1367,8 @@ package: gerbil/core
             (cond
              ((interface-info? klass-b)
               (cond
-               ((member type-b (interface-info->precedence-list klass-a))
+               ((member type-b (interface-info-interface-precedence-list klass-a)
+                        free-identifier=?)
                 #t)
                (else #f)))
              ((type-reference? klass-b)
@@ -1594,9 +1594,10 @@ package: gerbil/core
                        (fold-methods #'(mixin ...) #'(spec ...)))
                       ((method-name ...)
                        (map stx-car #'(method ...)))
+                      ((mixin-precedence-list ...)
+                       (interface-mixin->precedence-list #'(mixin ...)))
                       ((values linearized-mixins)
-                       (map syntax-local-value
-                            (interface-mixin->precedence-list #'(mixin ...))))
+                       (map syntax-local-value #'(mixin-precedence-list ...)))
                       ((method-name-spec ...)
                        (map (cut make-method-name-spec <> (stx-e #'namespace) linearized-mixins)
                             (map stx-e #'(method-name ...))))
@@ -1660,6 +1661,7 @@ package: gerbil/core
                              name: 'name
                              namespace: 'namespace
                              interface-mixin: [(quote-syntax mixin) ...]
+                             interface-precedence-list: [(quote-syntax mixin-precedence-list) ...]
                              interface-methods: '(method ...)
                              instance-type: (quote-syntax klass)
                              interface-descriptor: (quote-syntax descriptor)
@@ -2235,9 +2237,11 @@ package: gerbil/core
             (cond
              ((interface-info? klass-b)
               (cond
-               ((member type-a (interface-info->precedence-list klass-b))
+               ((member type-a (interface-info-interface-precedence-list klass-b)
+                        free-identifier=?)
                 type-b)
-               ((member type-b (interface-info->precedence-list klass-a))
+               ((member type-b (interface-info-interface-precedence-list klass-a)
+                        free-identifier=?)
                 type-a)
                (else
                 (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
