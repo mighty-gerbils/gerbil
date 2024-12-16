@@ -25,7 +25,7 @@
     global-env-flag
     (flag 'verbose "-v"
           help: "run in verbose mode where all test execution progress is displayed in stdout.")
-    (flag 'quiet "--quiet"
+    (flag 'quiet "-q" "--quiet"
 	  help: "run in in quiet mode where only errors are displayed")
     (option 'run "-r" "--run"
             help: "only run test suites whose name matches a given regex")

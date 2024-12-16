@@ -35,8 +35,7 @@
 
 (defmethod {send websocket}
   (lambda (self msg)
-    (using ((self :- websocket)
-            (msg :- message))
+    (using (msg :- message)
       (when self.closed?
         (raise-io-closed send "websocket has been closed" self))
       (let* ((data
@@ -51,21 +50,22 @@
                        (message->frame-type msg.type)
                        (if msg.partial? 0 1)
                        self.mask)
-          (raise-io-error websocket-send "message exceeds max frame size" len self.max-frame-size))))))
+          (raise-io-error websocket-send "message exceeds max frame size" len self.max-frame-size)))))
+  interface: WebSocket)
 
 (defmethod {recv websocket}
   (lambda (self)
-    (using (self :- websocket)
-      (when self.closed?
-        (raise-io-closed send "websocket has been closed" self))
+    (when self.closed?
+      (raise-io-closed send "websocket has been closed" self))
 
-      (let* (((values data typ fin) (read-frame self.reader self.max-frame-size))
-             (type (frame->message-type typ))
-             (data (if (memq type '(text close))
-                     (utf8->string data)
-                     data))
-             (partial? (fx= fin 0)))
-        (message data type partial?)))))
+    (let* (((values data typ fin) (read-frame self.reader self.max-frame-size))
+           (type (frame->message-type typ))
+           (data (if (memq type '(text close))
+                   (utf8->string data)
+                   data))
+           (partial? (fx= fin 0)))
+      (message data type partial?)))
+  interface: WebSocket)
 
 ;; Base Framing Protocol [RFC 6455]
 ;;
@@ -169,32 +169,34 @@
       (lp (fx+ i 1) (fxmodulo (fx+ mask-i 1) 4)))))
 
 (defmethod {protocol websocket}
-  &websocket-proto)
+  &websocket-proto
+  interface: WebSocket)
 
 (defmethod {max-frame-size websocket}
-  &websocket-max-frame-size)
+  &websocket-max-frame-size
+  interface: WebSocket)
 
 ;; Closer interface implementation
 (defmethod {close websocket}
   (lambda (self)
-    (using (self :- websocket)
-      (unless self.closed?
-        (set! self.closed? #t)
+    (unless self.closed?
+      (set! self.closed? #t)
 
-        ;; Note we don't do the graceful shutdown part of the spec for good reason
-        ;; - it is borderline useless
-        ;; - it is hard to implement correctly
-        ;; - adding an rwlock in the websocket would make it impossible to
-        ;;   close the socket from a third thread as the socket already has one.
-        ;; - i don't understand the rationale for including it in the RFC
-        ;; - and honestly, it is not needed.
-        ;; What we do instead is pass the "close" message to the user and let them
-        ;; handle it as they see fit.
-        ;; Here, we just close the socket.
-        (using ((reader self.reader :- BufferedReader)
-                (writer self.writer :- BufferedWriter))
-            (reader.close)
-            (writer.close))))))
+      ;; Note we don't do the graceful shutdown part of the spec for good reason
+      ;; - it is borderline useless
+      ;; - it is hard to implement correctly
+      ;; - adding an rwlock in the websocket would make it impossible to
+      ;;   close the socket from a third thread as the socket already has one.
+      ;; - i don't understand the rationale for including it in the RFC
+      ;; - and honestly, it is not needed.
+      ;; What we do instead is pass the "close" message to the user and let them
+      ;; handle it as they see fit.
+      ;; Here, we just close the socket.
+      (using ((reader self.reader :- BufferedReader)
+              (writer self.writer :- BufferedWriter))
+        (reader.close)
+        (writer.close))))
+  interface: Closer)
 
 ;;; Socket interface implementation passhtrough
 (defsyntax (defsocket-dispatch-method stx)
@@ -202,11 +204,11 @@
     ((_ (method arg ...))
      (with-syntax ((sock.method (make-symbol 'sock "." (stx-e #'method))))
        #'(defmethod {method websocket}
-         (lambda (self arg ...)
-           (using (self :- websocket)
+           (lambda (self arg ...)
              (let (sock self.sock)
                (using (sock :- StreamSocket)
-                 (sock.method arg ...))))))))))
+                 (sock.method arg ...))))
+           interface: Socket)))))
 
 (defsocket-dispatch-method (domain))
 (defsocket-dispatch-method (address))

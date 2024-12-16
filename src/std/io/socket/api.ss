@@ -93,60 +93,84 @@
 ;;; Interface
 ;; basic-socket Socket implementation
 (defmethod {domain basic-socket}
-  &basic-socket-domain)
+  &basic-socket-domain
+  interface: Socket)
 (defmethod {address basic-socket}
-  basic-socket-local-address)
+  basic-socket-local-address
+  interface: Socket)
 (defmethod {peer-address basic-socket}
-  basic-socket-peer-address)
+  basic-socket-peer-address
+  interface: Socket)
 (defmethod {getsockopt basic-socket}
-  basic-socket-getsockopt)
+  basic-socket-getsockopt
+  interface: Socket)
 (defmethod {setsockopt basic-socket}
-  basic-socket-setsockopt)
+  basic-socket-setsockopt
+  interface: Socket)
 (defmethod {set-input-timeout! basic-socket}
-  &basic-socket-timeo-in-set!)
+  &basic-socket-timeo-in-set!
+  interface: Socket)
 (defmethod {set-output-timeout! basic-socket}
-  &basic-socket-timeo-out-set!)
+  &basic-socket-timeo-out-set!
+  interface: Socket)
 (defmethod {close basic-socket}
-  basic-socket-close)
+  basic-socket-close
+  interface: Closer)
 
 ;; stream-socket StreamSocket implementation
 (defmethod {recv stream-socket}
-  stream-socket-recv)
+  stream-socket-recv
+  interface: StreamSocket)
 (defmethod {send stream-socket}
-  stream-socket-send)
+  stream-socket-send
+  interface: StreamSocket)
 (defmethod {reader stream-socket}
-  stream-socket-get-reader)
+  stream-socket-get-reader
+  interface: StreamSocket)
 (defmethod {writer stream-socket}
-  stream-socket-get-writer)
+  stream-socket-get-writer
+  interface: StreamSocket)
 (defmethod {shutdown stream-socket}
-  stream-socket-shutdown)
+  stream-socket-shutdown
+  interface: StreamSocket)
 (defmethod {close stream-socket}
-  stream-socket-close)
+  stream-socket-close
+  interface: Closer)
 
 ;; stream-socket-reader Reader implementation
 (defmethod {read stream-socket-reader}
-  stream-socket-read)
+  stream-socket-read
+  interface: Reader)
 (defmethod {close stream-socket-reader}
-  stream-socket-close-reader)
+  stream-socket-close-reader
+  interface: Closer)
 
 ;; stream-socket-writer Writer implementation
 (defmethod {write stream-socket-writer}
-  stream-socket-write)
+  stream-socket-write
+  interface: Writer)
 (defmethod {close stream-socket-writer}
-  stream-socket-close-writer)
+  stream-socket-close-writer
+  interface: Closer)
 
 ;; basic-server-socket ServerSocket implementation
 (defmethod {accept basic-server-socket}
-  server-socket-accept)
+  server-socket-accept
+  interface: ServerSocket)
 
 ;; datagram-socket DatagramSocket implementation
 (defmethod {recvfrom datagram-socket}
-  datagram-socket-recvfrom)
+  datagram-socket-recvfrom
+  interface: DatagramSocket)
 (defmethod {sendto datagram-socket}
-  datagram-socket-sendto)
+  datagram-socket-sendto
+  interface: DatagramSocket)
 (defmethod {connect datagram-socket}
-  datagram-socket-connect)
+  datagram-socket-connect
+  interface: DatagramSocket)
 (defmethod {recv datagram-socket}
-  datagram-socket-recv)
+  datagram-socket-recv
+  interface: DatagramSocket)
 (defmethod {send datagram-socket}
-  datagram-socket-send)
+  datagram-socket-send
+  interface: DatagramSocket)

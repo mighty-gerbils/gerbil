@@ -377,7 +377,8 @@
               (else
                {self.__get-handler path})))))
      (else
-      {self.__get-handler path}))))
+      {self.__get-handler path})))
+  interface: Mux)
 
 (defmethod {__get-handler dynamic-mux}
   (lambda (self (path :- :string))
@@ -418,7 +419,8 @@
 
 (defmethod {put-handler! dynamic-mux}
   (lambda (self host (path :- :string) (handler :- :procedure))
-    (hash-put! self.handlers path handler)))
+    (hash-put! self.handlers path handler))
+  interface: Mux)
 
 (def (not-found-handler req res)
   (http-response-write-condition res Not-Found))
