@@ -10,8 +10,9 @@ package: gerbil/core
            (name namespace
                  interface-mixin
                  interface-methods
-                 instance-type
+                 interface-precedence-list
                  interface-descriptor
+                 instance-type
                  instance-constructor
                  instance-try-constructor
                  instance-predicate
@@ -21,8 +22,9 @@ package: gerbil/core
            (name namespace
                  interface-mixin
                  interface-methods
-                 instance-type
+                 interface-precedence-list
                  interface-descriptor
+                 instance-type
                  instance-constructor
                  instance-try-constructor
                  instance-predicate
@@ -70,16 +72,22 @@ package: gerbil/core
     interface-methods
     #t))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-instance-type
+   gerbil/core/contract~InterfaceInfo#interface-info-interface-precedence-list
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
+    interface-precedence-list
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
+    #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-instance-type
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    instance-type
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor
@@ -139,16 +147,22 @@ package: gerbil/core
     interface-methods
     #t))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!
+   gerbil/core/contract~InterfaceInfo#interface-info-interface-precedence-list-set!
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
+    interface-precedence-list
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor-set!
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
+    #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    instance-type
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor-set!
@@ -208,16 +222,22 @@ package: gerbil/core
     interface-methods
     #f))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-interface-precedence-list
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
+    interface-precedence-list
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
+    #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    instance-type
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor
@@ -277,16 +297,22 @@ package: gerbil/core
     interface-methods
     #f))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!
+   gerbil/core/contract~InterfaceInfo#&interface-info-interface-precedence-list-set!
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
+    interface-precedence-list
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor-set!
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
+    #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    instance-type
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor-set!
@@ -342,21 +368,6 @@ package: gerbil/core
             signature:
             (return:
              pair::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/core/contract~InterfaceInfo)))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info->precedence-list
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
              effect:
              #f
              arguments:

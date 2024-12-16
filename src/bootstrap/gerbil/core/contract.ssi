@@ -56,11 +56,14 @@ namespace: gerbil/core/contract
                     interface-info-interface-methods
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-methods)
                    (%#define-runtime
-                    interface-info-instance-type
-                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type)
+                    interface-info-interface-precedence-list
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-precedence-list)
                    (%#define-runtime
                     interface-info-interface-descriptor
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor)
+                   (%#define-runtime
+                    interface-info-instance-type
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type)
                    (%#define-runtime
                     interface-info-instance-constructor
                     gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor)
@@ -92,11 +95,14 @@ namespace: gerbil/core/contract
                     interface-info-interface-methods-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-methods-set!)
                    (%#define-runtime
-                    interface-info-instance-type-set!
-                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!)
+                    interface-info-interface-precedence-list-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-interface-precedence-list-set!)
                    (%#define-runtime
                     interface-info-interface-descriptor-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-interface-descriptor-set!)
+                   (%#define-runtime
+                    interface-info-instance-type-set!
+                    gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!)
                    (%#define-runtime
                     interface-info-instance-constructor-set!
                     gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor-set!)
@@ -128,11 +134,14 @@ namespace: gerbil/core/contract
                     &interface-info-interface-methods
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-methods)
                    (%#define-runtime
-                    &interface-info-instance-type
-                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type)
+                    &interface-info-interface-precedence-list
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-precedence-list)
                    (%#define-runtime
                     &interface-info-interface-descriptor
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor)
+                   (%#define-runtime
+                    &interface-info-instance-type
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type)
                    (%#define-runtime
                     &interface-info-instance-constructor
                     gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor)
@@ -164,11 +173,14 @@ namespace: gerbil/core/contract
                     &interface-info-interface-methods-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-methods-set!)
                    (%#define-runtime
-                    &interface-info-instance-type-set!
-                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!)
+                    &interface-info-interface-precedence-list-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-interface-precedence-list-set!)
                    (%#define-runtime
                     &interface-info-interface-descriptor-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-interface-descriptor-set!)
+                   (%#define-runtime
+                    &interface-info-instance-type-set!
+                    gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!)
                    (%#define-runtime
                     &interface-info-instance-constructor-set!
                     gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor-set!)
@@ -199,9 +211,6 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-identifier->precedence-list
                     gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list)
-                   (%#define-runtime
-                    interface-info->precedence-list
-                    gerbil/core/contract~InterfaceInfo#interface-info->precedence-list)
                    (%#define-runtime
                     interface-mixin->precedence-list
                     gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list)
