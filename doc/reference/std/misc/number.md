@@ -335,7 +335,7 @@ starting with `from` up to and not including `below`.
 
 Given an integer `n`, return half of `n` if it is even, or half of `n-1` if it is odd.
 
-### least-integer?
+### least-integer
 ```scheme
 (least-integer pred? start end) -> integer
 ```
