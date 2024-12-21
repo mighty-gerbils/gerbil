@@ -216,70 +216,99 @@
 
 ;; string-reader implements StringReader
 (defmethod {read-string string-reader}
-  strio-read-string)
+  strio-read-string
+  interface: StringReader)
 (defmethod {close string-reader}
-  strio-close-input)
+  strio-close-input
+  interface: Closer)
 
 ;; string-input-buffer implements BufferedStringReader
-(defmethod {read-char string-input-buffer}
-  strbuf-read-char)
-(defmethod {peek-char string-input-buffer}
-  strbuf-peek-char)
 (defmethod {read-string string-input-buffer}
-  strbuf-read-string)
+  strbuf-read-string
+  interface: StringReader)
+(defmethod {read-char string-input-buffer}
+  strbuf-read-char
+  interface: PeekableStringReader)
+(defmethod {peek-char string-input-buffer}
+  strbuf-peek-char
+  interface: PeekableStringReader)
 (defmethod {put-back string-input-buffer}
-  strbuf-put-back)
+  strbuf-put-back
+  interface: BufferedStringReader)
 (defmethod {skip string-input-buffer}
-  strbuf-skip-input)
+  strbuf-skip-input
+  interface: BufferedStringReader)
 (defmethod {delimit string-input-buffer}
-  strbuf-delimit-input)
+  strbuf-delimit-input
+  interface: BufferedStringReader)
 (defmethod {reset! string-input-buffer}
-  strbuf-reset-input!)
+  strbuf-reset-input!
+  interface: BufferedStringReader)
 (defmethod {available string-input-buffer}
-  strbuf-available)
+  strbuf-available
+  interface: BufferedStringReader)
 (defmethod {close string-input-buffer}
-  strbuf-close-input)
+  strbuf-close-input
+  interface: Closer)
 
 ;; delimited-string-input-buffer BufferedReader implementation
 (defmethod {read-string delimited-string-input-buffer}
-  strbuf-delimited-read-string)
+  strbuf-delimited-read-string
+  interface: StringReader)
 (defmethod {read-char delimited-string-input-buffer}
-  strbuf-delimited-read-char)
+  strbuf-delimited-read-char
+  interface: PeekableStringReader)
 (defmethod {peek-char delimited-string-input-buffer}
-  strbuf-delimited-peek-char)
+  strbuf-delimited-peek-char
+  interface: PeekableStringReader)
 (defmethod {put-back delimited-string-input-buffer}
-  strbuf-delimited-put-back)
+  strbuf-delimited-put-back
+  interface: BufferedStringReader)
 (defmethod {skip delimited-string-input-buffer}
-  strbuf-delimited-skip-input)
+  strbuf-delimited-skip-input
+  interface: BufferedStringReader)
 (defmethod {delimit delimited-string-input-buffer}
-  strbuf-delimited-delimit-input)
+  strbuf-delimited-delimit-input
+  interface: BufferedStringReader)
 (defmethod {reset! delimited-string-input-buffer}
-  strbuf-delimited-reset-input!)
+  strbuf-delimited-reset-input!
+  interface: BufferedStringReader)
 (defmethod {available delimited-string-input-buffer}
-  strbuf-delimited-available)
+  strbuf-delimited-available
+  interface: BufferedStringReader)
 (defmethod {close delimited-string-input-buffer}
-  strbuf-delimited-close)
+  strbuf-delimited-close
+  interface: Closer)
 
 ;; string-writer implements StringWriter
 (defmethod {write-string string-writer}
-  strio-write-string)
+  strio-write-string
+  interface: StringWriter)
 (defmethod {close string-writer}
-  strio-close-output)
+  strio-close-output
+  interface: Closer)
 
 ;; chunked-string-output-buffer implements StringWriter
 (defmethod {write-string chunked-string-output-buffer}
-  strio-chunked-write-string)
+  strio-chunked-write-string
+  interface: StringWriter)
 (defmethod {close chunked-string-output-buffer}
-  strio-chunked-close)
+  strio-chunked-close
+  interface: Closer)
 
 ;; string-output-buffer implements BufferedStringWriter
-(defmethod {write-char string-output-buffer}
-  strbuf-write-char)
 (defmethod {write-string string-output-buffer}
-  strbuf-write-string)
+  strbuf-write-string
+  interface: StringWriter)
+(defmethod {write-char string-output-buffer}
+  strbuf-write-char
+  interface: BufferedStringWriter)
 (defmethod {flush string-output-buffer}
-  strbuf-flush-output)
+  strbuf-flush-output
+  interface: BufferedStringWriter)
 (defmethod {reset! string-output-buffer}
-  strbuf-reset-output!)
+  strbuf-reset-output!
+  interface: BufferedStringWriter)
 (defmethod {close string-output-buffer}
-  strbuf-close-output)
+  strbuf-close-output
+  interface: Closer)

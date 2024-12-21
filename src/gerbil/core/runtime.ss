@@ -1430,6 +1430,7 @@ package: gerbil/core
     display*
     file-newer?
     create-directory*
+    move-file
     absent-obj
     absent-value
     true
@@ -1613,6 +1614,7 @@ package: gerbil/core
     seal-class!
     next-method
     call-next-method
+    type-of
     class-of
     t::t
     class::t
@@ -1832,6 +1834,8 @@ package: gerbil/core
     set-load-path!
     load-module
     reload-module!
+    list-modules
+    module-load-order
 
     ;; :gerbil/runtime/init
     gerbil-load-expander!

@@ -278,4 +278,4 @@
          (lines (read-file-lines tagfile))
          (sorted (sort lines string<?)))
     (write-file-lines tmp sorted)
-    (rename-file tmp tagfile)))
+    (move-file tmp tagfile)))

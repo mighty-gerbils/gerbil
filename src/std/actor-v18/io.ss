@@ -243,7 +243,7 @@
 
 ;;; internals
 (def +type-tag+
-  (make-vector 4 false))
+  (make-hash-table-eq))
 (def +subtype-tag+
   (make-vector 32 false))
 (def +marshal+
@@ -252,7 +252,7 @@
   (make-vector 256 #f))
 
 (def (object-tag obj)
-  (or ((vector-ref +type-tag+ (##type obj)) obj)
+  (or ((hash-ref +type-tag+ (type-of obj)) obj)
       serde-tag))
 
 ;;; io registry
@@ -301,9 +301,9 @@
 ;; tags
 (defrules deftype-tag (=>)
   ((_ (type tag))
-   (vector-set! +type-tag+ type (lambda (obj) tag)))
+   (hash-put! +type-tag+ 'type (lambda (obj) tag)))
   ((_ (type => fun))
-   (vector-set! +type-tag+ type fun)))
+   (hash-put! +type-tag+ 'type fun)))
 
 (defrule (deftype-tags defn ...)
   (begin (deftype-tag defn) ...))
@@ -339,10 +339,6 @@
    (else #f)))
 
 (extern namespace: #f
-  macro-type-fixnum
-  macro-type-mem1
-  macro-type-special
-  macro-type-mem2
   macro-subtype-vector
   macro-subtype-pair
   macro-subtype-structure
@@ -355,10 +351,12 @@
   macro-subtype-bignum)
 
 (deftype-tags
-  ((macro-type-fixnum)  integer-tag)
-  ((macro-type-mem1)    => subtyped-tag)
-  ((macro-type-special) => immediate-tag)
-  ((macro-type-mem2)    pair-tag))
+  (fixnum   integer-tag)
+  (subtyped => subtyped-tag)
+  (special  => immediate-tag)
+  (pair     pair-tag)
+  (vector   vector-tag)
+  (flonum   double-tag))
 
 (defsubtype-tags
   ((macro-subtype-vector)    vector-tag)

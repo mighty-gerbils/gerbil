@@ -137,10 +137,12 @@
   (cut socks-proxy-init! <> <> <> 'SOCKS5))
 
 (defmethod {protocol socks-proxy}
-  &socks-proxy-protocol)
+  &socks-proxy-protocol
+  interface: SOCKS)
 
 (defmethod {proxy-address socks-proxy}
-  &socks-proxy-address)
+  &socks-proxy-address
+  interface: SOCKS)
 
 (defrule (defconnect-method proxy-type connect-e)
   (defmethod {connect proxy-type}
@@ -154,7 +156,8 @@
        self.sock
        (catch (e)
          (self.sock.close)
-         (raise e))))))
+         (raise e))))
+    interface: SOCKS))
 
 (defconnect-method socks4-proxy socks4-connect)
 (defconnect-method socks4a-proxy socks4a-connect)
@@ -171,7 +174,8 @@
        (ServerSocket (make-server-socket self.sock))
        (catch (e)
          (self.sock.close)
-         (raise e))))))
+         (raise e))))
+    interface: SOCKS))
 
 (defbind-method socks4-proxy socks4-bind make-socks4-server-socket)
 (defbind-method socks4a-proxy socks4-bind make-socks4-server-socket)
@@ -181,7 +185,8 @@
   (lambda (self)
     (when self.sock
       (self.sock.close)
-      (set! self.sock #f))))
+      (set! self.sock #f)))
+  interface: Closer)
 
 (defsyntax (defserver-dispatch-method stx)
   (syntax-case stx ()
@@ -192,7 +197,8 @@
                      (make-symbol "self.sock." (stx-e #'method)))))
        #'(defmethod {method socks-server-socket}
            (lambda (self arg ...)
-             (self.sock.method arg ...)))))))
+             (self.sock.method arg ...))
+           interface: Socket)))))
 
 (defserver-dispatch-method (domain))
 (defserver-dispatch-method (address))
@@ -203,7 +209,8 @@
 
 (defmethod {peer-address socks-server-socket}
   (lambda (self)
-    (raise-unsupported-method peer-address)))
+    (raise-unsupported-method peer-address))
+  interface: Socket)
 
 (defrule (defserver-accept-method server-type receive-e)
   (defmethod {accept server-type}
@@ -215,7 +222,8 @@
           (let (sock self.sock)
             (set! self.sock #f)
             sock))
-        (raise-context-error accept "proxy client has already accepted a connection")))))
+        (raise-context-error accept "proxy client has already accepted a connection")))
+    interface: ServerSocket))
 
 (defserver-accept-method socks4-server-socket socks4-recv-reply)
 (defserver-accept-method socks5-server-socket socks5-recv-reply)

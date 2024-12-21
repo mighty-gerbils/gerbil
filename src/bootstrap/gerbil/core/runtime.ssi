@@ -1528,6 +1528,7 @@ namespace: gerbil/core/runtime
                     (display* display*)
                     (file-newer? file-newer?)
                     (create-directory* create-directory*)
+                    (move-file move-file)
                     (absent-obj absent-obj)
                     (absent-value absent-value)
                     (true true)
@@ -1699,6 +1700,7 @@ namespace: gerbil/core/runtime
                     (seal-class! seal-class!)
                     (next-method next-method)
                     (call-next-method call-next-method)
+                    (type-of type-of)
                     (class-of class-of)
                     (t::t t::t)
                     (class::t class::t)
@@ -1900,6 +1902,8 @@ namespace: gerbil/core/runtime
                     (set-load-path! set-load-path!)
                     (load-module load-module)
                     (reload-module! reload-module!)
+                    (list-modules list-modules)
+                    (module-load-order module-load-order)
                     (gerbil-load-expander! gerbil-load-expander!))))
          (%#module
           RuntimeAliases

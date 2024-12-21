@@ -39,23 +39,23 @@ namespace: #f
   (write-unlock!) => :void)
 
 ;; raw/builtin table methods
-(bind-method! __table::t 'ref raw-table-ref)
-(bind-method! __table::t 'set! raw-table-set!)
-(bind-method! __table::t 'update! raw-table-update!)
-(bind-method! __table::t 'delete! raw-table-delete!)
-(bind-method! __table::t 'for-each raw-table-for-each)
-(bind-method! __table::t 'length &raw-table-count)
-(bind-method! __table::t 'copy raw-table-copy)
-(bind-method! __table::t 'clear! raw-table-clear!)
+(bind-method! __table::t 'HashTable::ref raw-table-ref)
+(bind-method! __table::t 'HashTable::set! raw-table-set!)
+(bind-method! __table::t 'HashTable::update! raw-table-update!)
+(bind-method! __table::t 'HashTable::delete! raw-table-delete!)
+(bind-method! __table::t 'HashTable::for-each raw-table-for-each)
+(bind-method! __table::t 'HashTable::length &raw-table-count)
+(bind-method! __table::t 'HashTable::copy raw-table-copy)
+(bind-method! __table::t 'HashTable::clear! raw-table-clear!)
 
-(bind-method! __gc-table::t 'ref gc-table-ref)
-(bind-method! __gc-table::t 'set! gc-table-set!)
-(bind-method! __gc-table::t 'update! gc-table-update!)
-(bind-method! __gc-table::t 'delete! gc-table-delete!)
-(bind-method! __gc-table::t 'for-each gc-table-for-each)
-(bind-method! __gc-table::t 'length gc-table-length)
-(bind-method! __gc-table::t 'copy gc-table-copy)
-(bind-method! __gc-table::t 'clear! gc-table-clear!)
+(bind-method! __gc-table::t 'HashTable::ref gc-table-ref)
+(bind-method! __gc-table::t 'HashTable::set! gc-table-set!)
+(bind-method! __gc-table::t 'HashTable::update! gc-table-update!)
+(bind-method! __gc-table::t 'HashTable::delete! gc-table-delete!)
+(bind-method! __gc-table::t 'HashTable::for-each gc-table-for-each)
+(bind-method! __gc-table::t 'HashTable::length gc-table-length)
+(bind-method! __gc-table::t 'HashTable::copy gc-table-copy)
+(bind-method! __gc-table::t 'HashTable::clear! gc-table-clear!)
 
 (def (gambit-table-update! table key update default)
   (let (result (table-ref table key default))
@@ -67,14 +67,14 @@ namespace: #f
 (def (gambit-table-clear! table)
   (##unchecked-structure-set! table 0 5 #f #f))
 
-(bind-method! (macro-type-table) 'ref table-ref)
-(bind-method! (macro-type-table) 'set! table-set!)
-(bind-method! (macro-type-table) 'update! gambit-table-update!)
-(bind-method! (macro-type-table) 'delete! table-set!)
-(bind-method! (macro-type-table) 'for-each gambit-table-for-each)
-(bind-method! (macro-type-table) 'length table-length)
-(bind-method! (macro-type-table) 'copy table-copy)
-(bind-method! (macro-type-table) 'clear! gambit-table-clear!)
+(bind-method! (macro-type-table) 'HashTable::ref table-ref)
+(bind-method! (macro-type-table) 'HashTable::set! table-set!)
+(bind-method! (macro-type-table) 'HashTable::update! gambit-table-update!)
+(bind-method! (macro-type-table) 'HashTable::delete! table-set!)
+(bind-method! (macro-type-table) 'HashTable::for-each gambit-table-for-each)
+(bind-method! (macro-type-table) 'HashTable::length table-length)
+(bind-method! (macro-type-table) 'HashTable::copy table-copy)
+(bind-method! (macro-type-table) 'HashTable::clear! gambit-table-clear!)
 
 ;; immediate hash-table class; reifies the raw-table type
 (def hash-table::t
@@ -192,48 +192,48 @@ namespace: #f
   id: gerbil#immediate-hash-table::t
   name: hash-table)
 
-(bind-method! hash-table::t 'ref raw-table-ref)
-(bind-method! hash-table::t 'set! raw-table-set!)
-(bind-method! hash-table::t 'update! raw-table-update!)
-(bind-method! hash-table::t 'delete! raw-table-delete!)
-(bind-method! hash-table::t 'for-each raw-table-for-each)
-(bind-method! hash-table::t 'length &raw-table-count)
-(bind-method! hash-table::t 'copy raw-table-copy)
-(bind-method! hash-table::t 'clear! raw-table-clear!)
+(bind-method! hash-table::t 'HashTable::ref raw-table-ref)
+(bind-method! hash-table::t 'HashTable::set! raw-table-set!)
+(bind-method! hash-table::t 'HashTable::update! raw-table-update!)
+(bind-method! hash-table::t 'HashTable::delete! raw-table-delete!)
+(bind-method! hash-table::t 'HashTable::for-each raw-table-for-each)
+(bind-method! hash-table::t 'HashTable::length &raw-table-count)
+(bind-method! hash-table::t 'HashTable::copy raw-table-copy)
+(bind-method! hash-table::t 'HashTable::clear! raw-table-clear!)
 
-(bind-method! eq-hash-table::t 'ref eq-table-ref)
-(bind-method! eq-hash-table::t 'set! eq-table-set!)
-(bind-method! eq-hash-table::t 'update! eq-table-update!)
-(bind-method! eq-hash-table::t 'delete! eq-table-delete!)
+(bind-method! eq-hash-table::t 'HashTable::ref eq-table-ref)
+(bind-method! eq-hash-table::t 'HashTable::set! eq-table-set!)
+(bind-method! eq-hash-table::t 'HashTable::update! eq-table-update!)
+(bind-method! eq-hash-table::t 'HashTable::delete! eq-table-delete!)
 
-(bind-method! eqv-hash-table::t 'ref eqv-table-ref)
-(bind-method! eqv-hash-table::t 'set! eqv-table-set!)
-(bind-method! eqv-hash-table::t 'update! eqv-table-update!)
-(bind-method! eqv-hash-table::t 'delete! eqv-table-delete!)
+(bind-method! eqv-hash-table::t 'HashTable::ref eqv-table-ref)
+(bind-method! eqv-hash-table::t 'HashTable::set! eqv-table-set!)
+(bind-method! eqv-hash-table::t 'HashTable::update! eqv-table-update!)
+(bind-method! eqv-hash-table::t 'HashTable::delete! eqv-table-delete!)
 
-(bind-method! symbol-hash-table::t 'ref symbolic-table-ref)
-(bind-method! symbol-hash-table::t 'set! symbolic-table-set!)
-(bind-method! symbol-hash-table::t 'update! symbolic-table-update!)
-(bind-method! symbol-hash-table::t 'delete! symbolic-table-delete!)
+(bind-method! symbol-hash-table::t 'HashTable::ref symbolic-table-ref)
+(bind-method! symbol-hash-table::t 'HashTable::set! symbolic-table-set!)
+(bind-method! symbol-hash-table::t 'HashTable::update! symbolic-table-update!)
+(bind-method! symbol-hash-table::t 'HashTable::delete! symbolic-table-delete!)
 
-(bind-method! string-hash-table::t 'ref string-table-ref)
-(bind-method! string-hash-table::t 'set! string-table-set!)
-(bind-method! string-hash-table::t 'update! string-table-update!)
-(bind-method! string-hash-table::t 'delete! string-table-delete!)
+(bind-method! string-hash-table::t 'HashTable::ref string-table-ref)
+(bind-method! string-hash-table::t 'HashTable::set! string-table-set!)
+(bind-method! string-hash-table::t 'HashTable::update! string-table-update!)
+(bind-method! string-hash-table::t 'HashTable::delete! string-table-delete!)
 
-(bind-method! immediate-hash-table::t 'ref immediate-table-ref)
-(bind-method! immediate-hash-table::t 'set! immediate-table-set!)
-(bind-method! immediate-hash-table::t 'update! immediate-table-update!)
-(bind-method! immediate-hash-table::t 'delete! immediate-table-delete!)
+(bind-method! immediate-hash-table::t 'HashTable::ref immediate-table-ref)
+(bind-method! immediate-hash-table::t 'HashTable::set! immediate-table-set!)
+(bind-method! immediate-hash-table::t 'HashTable::update! immediate-table-update!)
+(bind-method! immediate-hash-table::t 'HashTable::delete! immediate-table-delete!)
 
-(bind-method! gc-hash-table::t 'ref gc-table-ref)
-(bind-method! gc-hash-table::t 'set! gc-table-set!)
-(bind-method! gc-hash-table::t 'update! gc-table-update!)
-(bind-method! gc-hash-table::t 'delete! gc-table-delete!)
-(bind-method! gc-hash-table::t 'for-each gc-table-for-each)
-(bind-method! gc-hash-table::t 'length gc-table-length)
-(bind-method! gc-hash-table::t 'copy gc-table-copy)
-(bind-method! gc-hash-table::t 'clear! gc-table-clear!)
+(bind-method! gc-hash-table::t 'HashTable::ref gc-table-ref)
+(bind-method! gc-hash-table::t 'HashTable::set! gc-table-set!)
+(bind-method! gc-hash-table::t 'HashTable::update! gc-table-update!)
+(bind-method! gc-hash-table::t 'HashTable::delete! gc-table-delete!)
+(bind-method! gc-hash-table::t 'HashTable::for-each gc-table-for-each)
+(bind-method! gc-hash-table::t 'HashTable::length gc-table-length)
+(bind-method! gc-hash-table::t 'HashTable::copy gc-table-copy)
+(bind-method! gc-hash-table::t 'HashTable::clear! gc-table-clear!)
 
 ;; HashTable interface methods
 (def hash-table?
@@ -252,7 +252,8 @@ namespace: #f
          (dynamic-wind
              (cut begin-lock l)
              (cut hash-method h arg ...)
-             (cut end-lock l)))))))
+             (cut end-lock l))))
+     interface: HashTable)))
 
 (deflocked-hash-method (ref key default)
   &Locker-read-lock!
@@ -296,10 +297,10 @@ namespace: #f
 
 ;; checked hash table methods
 ;; make mutexes implement the hash table lock interface
-(bind-method! (macro-type-mutex) 'read-lock! mutex-lock!)
-(bind-method! (macro-type-mutex) 'read-unlock! mutex-unlock!)
-(bind-method! (macro-type-mutex) 'write-lock! mutex-lock!)
-(bind-method! (macro-type-mutex) 'write-unlock! mutex-unlock!)
+(bind-method! (macro-type-mutex) 'Locker::read-lock! mutex-lock!)
+(bind-method! (macro-type-mutex) 'Locker::read-unlock! mutex-unlock!)
+(bind-method! (macro-type-mutex) 'Locker::write-lock! mutex-lock!)
+(bind-method! (macro-type-mutex) 'Locker::write-unlock! mutex-unlock!)
 
 (defrules defchecked-hash-method ()
   ((_ (method self arg ...) check hash-method)
@@ -314,7 +315,8 @@ namespace: #f
             (raise-contract-violation-error
              "invalid key"
              context: 'hash-method
-             value: [arg ...]))))))))
+             value: [arg ...])))))
+     interface: HashTable)))
 
 (defchecked-hash-method (ref self key default)
   (lambda (key? key default) (key? key))

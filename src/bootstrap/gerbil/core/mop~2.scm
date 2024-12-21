@@ -1,601 +1,601 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/mop~MOP-3[1]#_g27115_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27214_|
     (##structure
      gx#syntax-quote::t
      'class-type-info::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27117_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27216_|
     (##structure
      gx#syntax-quote::t
      'make-class-type-info
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27119_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27218_|
     (##structure
      gx#syntax-quote::t
      'class-type-info?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27121_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27220_|
     (##structure
      gx#syntax-quote::t
      '!class-type-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27122_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27221_|
     (##structure
      gx#syntax-quote::t
      '!class-type-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27123_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27222_|
     (##structure
      gx#syntax-quote::t
      '!class-type-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27124_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27223_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27125_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27224_|
     (##structure
      gx#syntax-quote::t
      '!class-type-precedence-list
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27126_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27225_|
     (##structure
      gx#syntax-quote::t
      '!class-type-ordered-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27127_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27226_|
     (##structure
      gx#syntax-quote::t
      '!class-type-struct?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27128_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27227_|
     (##structure
      gx#syntax-quote::t
      '!class-type-final?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27129_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27228_|
     (##structure
      gx#syntax-quote::t
      '!class-type-system?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27130_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27229_|
     (##structure
      gx#syntax-quote::t
      '!class-type-metaclass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27131_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27230_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-method
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27132_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27231_|
     (##structure
      gx#syntax-quote::t
      '!class-type-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27133_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27232_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27134_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27233_|
     (##structure
      gx#syntax-quote::t
      '!class-type-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27135_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27234_|
     (##structure
      gx#syntax-quote::t
      '!class-type-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27136_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27235_|
     (##structure
      gx#syntax-quote::t
      '!class-type-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27137_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27236_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27138_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27237_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27139_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27238_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-types
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27140_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27239_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-defaults
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27141_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27240_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-contracts
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27143_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27242_|
     (##structure
      gx#syntax-quote::t
      '!class-type-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27144_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27243_|
     (##structure
      gx#syntax-quote::t
      '!class-type-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27145_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27244_|
     (##structure
      gx#syntax-quote::t
      '!class-type-super-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27146_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27245_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27147_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27246_|
     (##structure
      gx#syntax-quote::t
      '!class-type-precedence-list-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27148_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27247_|
     (##structure
      gx#syntax-quote::t
      '!class-type-ordered-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27149_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27248_|
     (##structure
      gx#syntax-quote::t
      '!class-type-struct?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27150_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27249_|
     (##structure
      gx#syntax-quote::t
      '!class-type-final?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27151_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27250_|
     (##structure
      gx#syntax-quote::t
      '!class-type-system?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27152_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27251_|
     (##structure
      gx#syntax-quote::t
      '!class-type-metaclass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27153_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27252_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-method-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27154_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27253_|
     (##structure
      gx#syntax-quote::t
      '!class-type-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27155_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27254_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27156_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27255_|
     (##structure
      gx#syntax-quote::t
      '!class-type-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27157_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27256_|
     (##structure
      gx#syntax-quote::t
      '!class-type-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27158_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27257_|
     (##structure
      gx#syntax-quote::t
      '!class-type-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27159_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27258_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27160_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27259_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27161_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27260_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-types-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27162_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27261_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-defaults-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27163_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27262_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slot-contracts-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27165_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27264_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27166_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27265_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27167_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27266_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27168_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27267_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27169_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27268_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-precedence-list
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27170_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27269_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-ordered-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27171_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27270_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-struct?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27172_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27271_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-final?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27173_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27272_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-system?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27174_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27273_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-method
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27175_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27274_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27176_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27275_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27177_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27276_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27178_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27277_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27179_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27278_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27180_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27279_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27181_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27280_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27182_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27281_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-types
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27183_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27282_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-defaults
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27184_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27283_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-contracts
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27186_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27285_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27187_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27286_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27188_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27287_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-super-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27189_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27288_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27190_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27289_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-precedence-list-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27191_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27290_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-ordered-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27192_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27291_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-struct?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27193_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27292_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-final?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27194_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27293_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-system?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27195_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27294_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-metaclass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27196_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27295_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-method-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27197_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27296_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27198_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27297_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27199_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27298_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27200_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27299_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27201_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27300_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27202_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27301_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27203_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27302_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27204_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27303_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-types-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27205_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27304_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-defaults-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop~MOP-3[1]#_g27206_|
+  (define |gerbil/core/mop~MOP-3[1]#_g27305_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slot-contracts-set!
@@ -603,7 +603,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/mop~MOP-3[:0:]#class-type-info|
-    (let ((__obj27023
+    (let ((__obj27122
            (let ()
              (declare (not safe))
              (##structure
@@ -632,21 +632,21 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj27023
+         __obj27122
          'gerbil.core#class-type-info::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 'class-type-info '2 '#f '#f))
+        (##unchecked-structure-set! __obj27122 'class-type-info '2 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 '() '3 '#f '#f))
+        (##unchecked-structure-set! __obj27122 '() '3 '#f '#f))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj27023
+         __obj27122
          '(id name
               super
               slots
@@ -672,219 +672,219 @@
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 '#f '7 '#f '#f))
+        (##unchecked-structure-set! __obj27122 '#f '7 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj27122 '#f '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 '#f '9 '#f '#f))
+        (##unchecked-structure-set! __obj27122 '#f '9 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 '#f '11 '#f '#f))
-      (let ((__tmp27114 |gerbil/core/mop~MOP-3[1]#_g27115_|))
+        (##unchecked-structure-set! __obj27122 '#f '11 '#f '#f))
+      (let ((__tmp27213 |gerbil/core/mop~MOP-3[1]#_g27214_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27114 '12 '#f '#f))
-      (let ((__tmp27116 |gerbil/core/mop~MOP-3[1]#_g27117_|))
+        (##unchecked-structure-set! __obj27122 __tmp27213 '12 '#f '#f))
+      (let ((__tmp27215 |gerbil/core/mop~MOP-3[1]#_g27216_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27116 '13 '#f '#f))
-      (let ((__tmp27118 |gerbil/core/mop~MOP-3[1]#_g27119_|))
+        (##unchecked-structure-set! __obj27122 __tmp27215 '13 '#f '#f))
+      (let ((__tmp27217 |gerbil/core/mop~MOP-3[1]#_g27218_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27118 '14 '#f '#f))
-      (let ((__tmp27120
-             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27121_|)
-                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27122_|)
+        (##unchecked-structure-set! __obj27122 __tmp27217 '14 '#f '#f))
+      (let ((__tmp27219
+             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27220_|)
+                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27221_|)
                          (cons (cons 'super
-                                     |gerbil/core/mop~MOP-3[1]#_g27123_|)
+                                     |gerbil/core/mop~MOP-3[1]#_g27222_|)
                                (cons (cons 'slots
-                                           |gerbil/core/mop~MOP-3[1]#_g27124_|)
+                                           |gerbil/core/mop~MOP-3[1]#_g27223_|)
                                      (cons (cons 'precedence-list
-                                                 |gerbil/core/mop~MOP-3[1]#_g27125_|)
+                                                 |gerbil/core/mop~MOP-3[1]#_g27224_|)
                                            (cons (cons 'ordered-slots
-                                                       |gerbil/core/mop~MOP-3[1]#_g27126_|)
+                                                       |gerbil/core/mop~MOP-3[1]#_g27225_|)
                                                  (cons (cons 'struct?
-                                                             |gerbil/core/mop~MOP-3[1]#_g27127_|)
+                                                             |gerbil/core/mop~MOP-3[1]#_g27226_|)
                                                        (cons (cons 'final?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/mop~MOP-3[1]#_g27128_|)
-                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27129_|)
+                           |gerbil/core/mop~MOP-3[1]#_g27227_|)
+                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27228_|)
                            (cons (cons 'metaclass
-                                       |gerbil/core/mop~MOP-3[1]#_g27130_|)
+                                       |gerbil/core/mop~MOP-3[1]#_g27229_|)
                                  (cons (cons 'constructor-method
-                                             |gerbil/core/mop~MOP-3[1]#_g27131_|)
+                                             |gerbil/core/mop~MOP-3[1]#_g27230_|)
                                        (cons (cons 'type-descriptor
-                                                   |gerbil/core/mop~MOP-3[1]#_g27132_|)
+                                                   |gerbil/core/mop~MOP-3[1]#_g27231_|)
                                              (cons (cons 'constructor
-                                                         |gerbil/core/mop~MOP-3[1]#_g27133_|)
+                                                         |gerbil/core/mop~MOP-3[1]#_g27232_|)
                                                    (cons (cons 'predicate
-                                                               |gerbil/core/mop~MOP-3[1]#_g27134_|)
+                                                               |gerbil/core/mop~MOP-3[1]#_g27233_|)
                                                          (cons (cons 'accessors
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop~MOP-3[1]#_g27135_|)
+                             |gerbil/core/mop~MOP-3[1]#_g27234_|)
                        (cons (cons 'mutators
-                                   |gerbil/core/mop~MOP-3[1]#_g27136_|)
+                                   |gerbil/core/mop~MOP-3[1]#_g27235_|)
                              (cons (cons 'unchecked-accessors
-                                         |gerbil/core/mop~MOP-3[1]#_g27137_|)
+                                         |gerbil/core/mop~MOP-3[1]#_g27236_|)
                                    (cons (cons 'unchecked-mutators
-                                               |gerbil/core/mop~MOP-3[1]#_g27138_|)
+                                               |gerbil/core/mop~MOP-3[1]#_g27237_|)
                                          (cons (cons 'slot-types
-                                                     |gerbil/core/mop~MOP-3[1]#_g27139_|)
+                                                     |gerbil/core/mop~MOP-3[1]#_g27238_|)
                                                (cons (cons 'slot-defaults
-                                                           |gerbil/core/mop~MOP-3[1]#_g27140_|)
+                                                           |gerbil/core/mop~MOP-3[1]#_g27239_|)
                                                      (cons (cons 'slot-contracts
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core/mop~MOP-3[1]#_g27141_|)
+                         |gerbil/core/mop~MOP-3[1]#_g27240_|)
                    '())))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27120 '15 '#f '#f))
-      (let ((__tmp27142
-             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27143_|)
-                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27144_|)
+        (##unchecked-structure-set! __obj27122 __tmp27219 '15 '#f '#f))
+      (let ((__tmp27241
+             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27242_|)
+                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27243_|)
                          (cons (cons 'super
-                                     |gerbil/core/mop~MOP-3[1]#_g27145_|)
+                                     |gerbil/core/mop~MOP-3[1]#_g27244_|)
                                (cons (cons 'slots
-                                           |gerbil/core/mop~MOP-3[1]#_g27146_|)
+                                           |gerbil/core/mop~MOP-3[1]#_g27245_|)
                                      (cons (cons 'precedence-list
-                                                 |gerbil/core/mop~MOP-3[1]#_g27147_|)
+                                                 |gerbil/core/mop~MOP-3[1]#_g27246_|)
                                            (cons (cons 'ordered-slots
-                                                       |gerbil/core/mop~MOP-3[1]#_g27148_|)
+                                                       |gerbil/core/mop~MOP-3[1]#_g27247_|)
                                                  (cons (cons 'struct?
-                                                             |gerbil/core/mop~MOP-3[1]#_g27149_|)
+                                                             |gerbil/core/mop~MOP-3[1]#_g27248_|)
                                                        (cons (cons 'final?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/mop~MOP-3[1]#_g27150_|)
-                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27151_|)
+                           |gerbil/core/mop~MOP-3[1]#_g27249_|)
+                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27250_|)
                            (cons (cons 'metaclass
-                                       |gerbil/core/mop~MOP-3[1]#_g27152_|)
+                                       |gerbil/core/mop~MOP-3[1]#_g27251_|)
                                  (cons (cons 'constructor-method
-                                             |gerbil/core/mop~MOP-3[1]#_g27153_|)
+                                             |gerbil/core/mop~MOP-3[1]#_g27252_|)
                                        (cons (cons 'type-descriptor
-                                                   |gerbil/core/mop~MOP-3[1]#_g27154_|)
+                                                   |gerbil/core/mop~MOP-3[1]#_g27253_|)
                                              (cons (cons 'constructor
-                                                         |gerbil/core/mop~MOP-3[1]#_g27155_|)
+                                                         |gerbil/core/mop~MOP-3[1]#_g27254_|)
                                                    (cons (cons 'predicate
-                                                               |gerbil/core/mop~MOP-3[1]#_g27156_|)
+                                                               |gerbil/core/mop~MOP-3[1]#_g27255_|)
                                                          (cons (cons 'accessors
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop~MOP-3[1]#_g27157_|)
+                             |gerbil/core/mop~MOP-3[1]#_g27256_|)
                        (cons (cons 'mutators
-                                   |gerbil/core/mop~MOP-3[1]#_g27158_|)
+                                   |gerbil/core/mop~MOP-3[1]#_g27257_|)
                              (cons (cons 'unchecked-accessors
-                                         |gerbil/core/mop~MOP-3[1]#_g27159_|)
+                                         |gerbil/core/mop~MOP-3[1]#_g27258_|)
                                    (cons (cons 'unchecked-mutators
-                                               |gerbil/core/mop~MOP-3[1]#_g27160_|)
+                                               |gerbil/core/mop~MOP-3[1]#_g27259_|)
                                          (cons (cons 'slot-types
-                                                     |gerbil/core/mop~MOP-3[1]#_g27161_|)
+                                                     |gerbil/core/mop~MOP-3[1]#_g27260_|)
                                                (cons (cons 'slot-defaults
-                                                           |gerbil/core/mop~MOP-3[1]#_g27162_|)
+                                                           |gerbil/core/mop~MOP-3[1]#_g27261_|)
                                                      (cons (cons 'slot-contracts
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core/mop~MOP-3[1]#_g27163_|)
+                         |gerbil/core/mop~MOP-3[1]#_g27262_|)
                    '())))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27142 '16 '#f '#f))
-      (let ((__tmp27164
-             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27165_|)
-                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27166_|)
+        (##unchecked-structure-set! __obj27122 __tmp27241 '16 '#f '#f))
+      (let ((__tmp27263
+             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27264_|)
+                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27265_|)
                          (cons (cons 'super
-                                     |gerbil/core/mop~MOP-3[1]#_g27167_|)
+                                     |gerbil/core/mop~MOP-3[1]#_g27266_|)
                                (cons (cons 'slots
-                                           |gerbil/core/mop~MOP-3[1]#_g27168_|)
+                                           |gerbil/core/mop~MOP-3[1]#_g27267_|)
                                      (cons (cons 'precedence-list
-                                                 |gerbil/core/mop~MOP-3[1]#_g27169_|)
+                                                 |gerbil/core/mop~MOP-3[1]#_g27268_|)
                                            (cons (cons 'ordered-slots
-                                                       |gerbil/core/mop~MOP-3[1]#_g27170_|)
+                                                       |gerbil/core/mop~MOP-3[1]#_g27269_|)
                                                  (cons (cons 'struct?
-                                                             |gerbil/core/mop~MOP-3[1]#_g27171_|)
+                                                             |gerbil/core/mop~MOP-3[1]#_g27270_|)
                                                        (cons (cons 'final?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/mop~MOP-3[1]#_g27172_|)
-                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27173_|)
+                           |gerbil/core/mop~MOP-3[1]#_g27271_|)
+                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27272_|)
                            (cons (cons 'metaclass
-                                       |gerbil/core/mop~MOP-3[1]#_g27130_|)
+                                       |gerbil/core/mop~MOP-3[1]#_g27229_|)
                                  (cons (cons 'constructor-method
-                                             |gerbil/core/mop~MOP-3[1]#_g27174_|)
+                                             |gerbil/core/mop~MOP-3[1]#_g27273_|)
                                        (cons (cons 'type-descriptor
-                                                   |gerbil/core/mop~MOP-3[1]#_g27175_|)
+                                                   |gerbil/core/mop~MOP-3[1]#_g27274_|)
                                              (cons (cons 'constructor
-                                                         |gerbil/core/mop~MOP-3[1]#_g27176_|)
+                                                         |gerbil/core/mop~MOP-3[1]#_g27275_|)
                                                    (cons (cons 'predicate
-                                                               |gerbil/core/mop~MOP-3[1]#_g27177_|)
+                                                               |gerbil/core/mop~MOP-3[1]#_g27276_|)
                                                          (cons (cons 'accessors
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop~MOP-3[1]#_g27178_|)
+                             |gerbil/core/mop~MOP-3[1]#_g27277_|)
                        (cons (cons 'mutators
-                                   |gerbil/core/mop~MOP-3[1]#_g27179_|)
+                                   |gerbil/core/mop~MOP-3[1]#_g27278_|)
                              (cons (cons 'unchecked-accessors
-                                         |gerbil/core/mop~MOP-3[1]#_g27180_|)
+                                         |gerbil/core/mop~MOP-3[1]#_g27279_|)
                                    (cons (cons 'unchecked-mutators
-                                               |gerbil/core/mop~MOP-3[1]#_g27181_|)
+                                               |gerbil/core/mop~MOP-3[1]#_g27280_|)
                                          (cons (cons 'slot-types
-                                                     |gerbil/core/mop~MOP-3[1]#_g27182_|)
+                                                     |gerbil/core/mop~MOP-3[1]#_g27281_|)
                                                (cons (cons 'slot-defaults
-                                                           |gerbil/core/mop~MOP-3[1]#_g27183_|)
+                                                           |gerbil/core/mop~MOP-3[1]#_g27282_|)
                                                      (cons (cons 'slot-contracts
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core/mop~MOP-3[1]#_g27184_|)
+                         |gerbil/core/mop~MOP-3[1]#_g27283_|)
                    '())))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27164 '17 '#f '#f))
-      (let ((__tmp27185
-             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27186_|)
-                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27187_|)
+        (##unchecked-structure-set! __obj27122 __tmp27263 '17 '#f '#f))
+      (let ((__tmp27284
+             (cons (cons 'id |gerbil/core/mop~MOP-3[1]#_g27285_|)
+                   (cons (cons 'name |gerbil/core/mop~MOP-3[1]#_g27286_|)
                          (cons (cons 'super
-                                     |gerbil/core/mop~MOP-3[1]#_g27188_|)
+                                     |gerbil/core/mop~MOP-3[1]#_g27287_|)
                                (cons (cons 'slots
-                                           |gerbil/core/mop~MOP-3[1]#_g27189_|)
+                                           |gerbil/core/mop~MOP-3[1]#_g27288_|)
                                      (cons (cons 'precedence-list
-                                                 |gerbil/core/mop~MOP-3[1]#_g27190_|)
+                                                 |gerbil/core/mop~MOP-3[1]#_g27289_|)
                                            (cons (cons 'ordered-slots
-                                                       |gerbil/core/mop~MOP-3[1]#_g27191_|)
+                                                       |gerbil/core/mop~MOP-3[1]#_g27290_|)
                                                  (cons (cons 'struct?
-                                                             |gerbil/core/mop~MOP-3[1]#_g27192_|)
+                                                             |gerbil/core/mop~MOP-3[1]#_g27291_|)
                                                        (cons (cons 'final?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core/mop~MOP-3[1]#_g27193_|)
-                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27194_|)
+                           |gerbil/core/mop~MOP-3[1]#_g27292_|)
+                     (cons (cons 'system? |gerbil/core/mop~MOP-3[1]#_g27293_|)
                            (cons (cons 'metaclass
-                                       |gerbil/core/mop~MOP-3[1]#_g27195_|)
+                                       |gerbil/core/mop~MOP-3[1]#_g27294_|)
                                  (cons (cons 'constructor-method
-                                             |gerbil/core/mop~MOP-3[1]#_g27196_|)
+                                             |gerbil/core/mop~MOP-3[1]#_g27295_|)
                                        (cons (cons 'type-descriptor
-                                                   |gerbil/core/mop~MOP-3[1]#_g27197_|)
+                                                   |gerbil/core/mop~MOP-3[1]#_g27296_|)
                                              (cons (cons 'constructor
-                                                         |gerbil/core/mop~MOP-3[1]#_g27198_|)
+                                                         |gerbil/core/mop~MOP-3[1]#_g27297_|)
                                                    (cons (cons 'predicate
-                                                               |gerbil/core/mop~MOP-3[1]#_g27199_|)
+                                                               |gerbil/core/mop~MOP-3[1]#_g27298_|)
                                                          (cons (cons 'accessors
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop~MOP-3[1]#_g27200_|)
+                             |gerbil/core/mop~MOP-3[1]#_g27299_|)
                        (cons (cons 'mutators
-                                   |gerbil/core/mop~MOP-3[1]#_g27201_|)
+                                   |gerbil/core/mop~MOP-3[1]#_g27300_|)
                              (cons (cons 'unchecked-accessors
-                                         |gerbil/core/mop~MOP-3[1]#_g27202_|)
+                                         |gerbil/core/mop~MOP-3[1]#_g27301_|)
                                    (cons (cons 'unchecked-mutators
-                                               |gerbil/core/mop~MOP-3[1]#_g27203_|)
+                                               |gerbil/core/mop~MOP-3[1]#_g27302_|)
                                          (cons (cons 'slot-types
-                                                     |gerbil/core/mop~MOP-3[1]#_g27204_|)
+                                                     |gerbil/core/mop~MOP-3[1]#_g27303_|)
                                                (cons (cons 'slot-defaults
-                                                           |gerbil/core/mop~MOP-3[1]#_g27205_|)
+                                                           |gerbil/core/mop~MOP-3[1]#_g27304_|)
                                                      (cons (cons 'slot-contracts
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core/mop~MOP-3[1]#_g27206_|)
+                         |gerbil/core/mop~MOP-3[1]#_g27305_|)
                    '())))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         (declare (not safe))
-        (##unchecked-structure-set! __obj27023 __tmp27185 '18 '#f '#f))
-      __obj27023)))
+        (##unchecked-structure-set! __obj27122 __tmp27284 '18 '#f '#f))
+      __obj27122)))

@@ -61,12 +61,23 @@ namespace: #f
                 (count 0)
                 (methods []))
        (match rest
-         ([method-name . rest]
+         ([method-spec . rest]
           (cond
-           ((symbolic-table-ref method-table method-name #f)
+           ((pair? method-spec)
+            (let loop-inner ((methods-rest method-spec))
+              (match methods-rest
+                ([method-name . methods-rest]
+                 (cond
+                  ((symbolic-table-ref method-table method-name #f)
+                   => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
+                  (else
+                   (loop-inner methods-rest))))
+                (else
+                 (fail! klass obj-klass method-spec)))))
+           ((symbolic-table-ref method-table method-spec #f)
             => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
            (else
-            (fail! klass obj-klass method-name))))
+            (fail! klass obj-klass method-spec))))
          (else
           (let (prototype (make-object klass (##fx+ count 2)))
             (let loop ((rest methods) (off (##fx+ count 1)))

@@ -42,7 +42,8 @@
               (fx+ result read))
              (else
               (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
-          result)))))
+          result))))
+  interface: Reader)
 
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
@@ -58,20 +59,23 @@
               (lp input-start result))
              (else
               (lp (fx+ input-start wrote) (fx+ result wrote)))))
-          result)))))
+          result))))
+  interface: Writer)
 
 (defmethod {close file-io}
   (lambda (self)
     (unless self.closed?
       (set! self.closed? #t)
-      (close-port self.fd))))
+      (close-port self.fd)))
+  interface: Closer)
 
 (defmethod {seek file-io}
   (lambda (self position from)
     (when self.closed?
       (raise-io-closed file-io "file is closed"))
     (fdseek self.fd position from)
-    (void)))
+    (void))
+  interface: Seeker)
 
 (defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))

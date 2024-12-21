@@ -4,11 +4,13 @@
 
 (export #t (for-syntax #t))
 
-(module <util>
-  (import :gerbil/core/expander)
+(module Util
+  (import :gerbil/core/expander
+          :gerbil/runtime/loader
+          :std/sort)
   (export #t)
   ;; Module reloading
-  (def (reload-module! mod)
+  (def (do-reload-module! mod)
     (cond
      ((string? mod)                     ; file path, resource it
       (import-module mod #t #t))
@@ -18,19 +20,39 @@
          ((string-empty? str)
           (error "Invalid module path" mod))
          ((eq? (string-ref str 0) #\:)  ; library module
-          (reload-module! (substring str 1 (string-length str)))
-          (import-module mod #t #t))
+          (let (base (substring str 1 (string-length str)))
+            (reload-all! base)
+            (import-module mod #t #t)))
          (else                          ; top module
           (void)))))
      (else
-      (error "Invalid module path" mod)))))
-(import (for-syntax <util>))
+      (error "Invalid module path" mod))))
+
+  (def (reload-all! modbase)
+    (let* ((loaded-modules (list-modules))
+           (to-reload
+            (filter-map
+             (lambda (p)
+               (with ([modpath . state] p)
+                 (and (not (eq? state 'builtin))
+                      (string-prefix? modbase modpath)
+                      modpath)))
+             loaded-modules))
+           (load-order
+            (list->hash-table
+             (map (lambda (modpath) (cons modpath (module-load-order modpath)))
+                  to-reload)))
+           (to-reload
+            (sort to-reload
+                  (lambda (x y) (< (hash-ref load-order x) (hash-ref load-order y))))))
+      (for-each reload-module! to-reload))))
+(import (for-syntax Util))
 
 (defsyntax (reload! stx)
   (syntax-case stx ()
     ((_ mod)
      (begin
-       (reload-module! (stx-e #'mod))
+       (do-reload-module! (stx-e #'mod))
        #'(import mod)))))
 
 (defrules reload ()

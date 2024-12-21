@@ -120,15 +120,15 @@
                 (unless (eof-object? next)
                   (match next
                     ([id roles . addrs]
-                     (registry::add-server self id addrs roles)
+                     (registry::__add-server self id addrs roles)
                      (lp))))))))
         (set! self.dirty? #f)))))
 
-(defmethod {add-server registry}
+(defmethod {__add-server registry}
   (lambda (self id addrs roles)
     ;; is it an update? if so remove first
     (when (hash-key? self.servers id)
-      (registry::remove-server self id))
+      (registry::__remove-server self id))
     ;; and now add it
     (hash-put! self.servers id (cons roles addrs))
     (when roles
@@ -136,7 +136,11 @@
         (hash-update! self.roles role (cut cons id <>) [])))
     (set! self.dirty? #t)))
 
-(defmethod {remove-server registry}
+(defmethod {add-server registry}
+  registry::__add-server
+  interface: Registry)
+
+(defmethod {__remove-server registry}
   (lambda (self id)
     (cond
      ((hash-get self.servers id)
@@ -146,22 +150,29 @@
            (hash-remove! self.servers id)
            (set! self.dirty? #t))))))
 
+(defmethod {remove-server registry}
+  registry::__remove-server
+  interface: Registry)
+
 (defmethod {lookup-server registry}
   (lambda (self id)
     (alet (entry (hash-get self.servers id))
-      (cdr entry))))
+      (cdr entry)))
+  interface: Registry)
 
 (defmethod {lookup-servers/role registry}
   (lambda (self role)
     (let (servers (hash-ref self.roles role []))
       (map (lambda (id) (cons id (cdr (hash-ref self.servers id []))))
-           servers))))
+           servers)))
+  interface: Registry)
 
 (defmethod {list-servers registry}
   (lambda (self)
-    (hash->list self.servers)))
+    (hash->list self.servers))
+  interface: Registry)
 
-(defmethod {flush registry}
+(defmethod {__flush registry}
   (lambda (self)
     (when self.dirty?
       (let (tmp (string-append self.path ".tmp"))
@@ -170,8 +181,13 @@
             (for (entry (hash->list self.servers))
               (write entry file)
               (newline file))))
-        (rename-file tmp self.path)
+        (move-file tmp self.path)
         (set! self.dirty? #f)))))
 
+(defmethod {flush registry}
+  registry::__flush
+  interface: Registry)
+
 (defmethod {close registry}
-  registry::flush)
+  registry::__flush
+  interface: Registry)

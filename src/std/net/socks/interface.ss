@@ -17,7 +17,9 @@
   ;; open a connection through the proxy
   ;; :- StreamSocket
   (connect (address :~ address?))
+  => StreamSocket
 
   ;; Bind an address at the proxy
   ;; :- ServerSocket
-  (bind (address :~ (maybe address?) := #f)))
+  (bind (address :~ (maybe address?) := #f))
+  => ServerSocket)

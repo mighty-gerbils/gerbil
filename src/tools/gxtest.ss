@@ -25,8 +25,8 @@
     global-env-flag
     (flag 'verbose "-v"
           help: "run in verbose mode where all test execution progress is displayed in stdout.")
-    (flag 'quiet "--quiet"
-	  help: "run in in quiet mode where only errors are displayed")
+    (flag 'quiet "-q" "--quiet"
+	        help: "run in in quiet mode where only errors are displayed")
     (option 'run "-r" "--run"
             help: "only run test suites whose name matches a given regex")
      ;; TODO this should be a multi-option for multiple features

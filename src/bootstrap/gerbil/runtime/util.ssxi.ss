@@ -184,6 +184,124 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/util))))
   (declare-type
+   move-file__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             (string::t string::t boolean::t)
+             unchecked:
+             __move-file
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   move-file__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   move-file
+   (@case-lambda
+    (2
+     move-file__0
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (3
+     move-file__%
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
+  (declare-type
+   __move-file__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __move-file__0
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/util)))
+  (declare-type
+   __move-file
+   (@case-lambda
+    (2
+     __move-file__0
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))
+    (3
+     __move-file__%
+     signature:
+     (return:
+      void::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/util))))
+  (declare-type
    absent-value
    (optimizer-resolve-class '(typedecl absent-value) 'vector::t))
   (declare-type
