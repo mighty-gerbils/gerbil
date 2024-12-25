@@ -9,11 +9,14 @@ ifeq ($(BRANCH),)
 BRANCH := $(shell git branch --show-current)
 endif
 
+TAG := $(shell git describe --tags)
+
 ifeq ($(REPO),)
 REPO := $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d:)
 endif
 
 cores := $(shell nproc)
+
 $(info the branch is $(BRANCH) and the repo is $(REPO) cores are: $(cores))
 
 alpine_packages := autoconf \
@@ -118,6 +121,10 @@ debian_packages := autoconf \
                    rubygems \
                    texinfo \
                    zlib1g-dev
+
+debug:
+	$(info the branch is $(BRANCH) and the repo is $(REPO) cores are: $(cores))
+
 
 gerbilxx:
 	docker build --target final \
