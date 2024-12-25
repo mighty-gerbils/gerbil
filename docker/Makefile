@@ -6,7 +6,7 @@ arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
 ifeq ($(BRANCH),)
-BRANCH := master
+BRANCH := $(shell git branch --show-current)
 endif
 
 TAG := $(shell git describe --tags)
