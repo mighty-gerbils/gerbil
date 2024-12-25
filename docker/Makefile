@@ -222,7 +222,7 @@ ubuntu-current-jedi:
 package-ubuntu:
 	docker run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "gem install fpm && \
-	fpm -f -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
+	fpm -f -s dir -p /src/ -t deb -n gerbil-scheme.ubuntu -v $(TAG) \
 	-d libsqlite3-dev -d libssl-dev \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
