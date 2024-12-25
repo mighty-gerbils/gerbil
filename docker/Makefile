@@ -9,10 +9,8 @@ ifeq ($(BRANCH),)
 BRANCH := $(shell git branch --show-current)
 endif
 
-TAG := $(shell git describe --tags)
-
 ifeq ($(REPO),)
-REPO := mighty-gerbils/gerbil
+REPO := $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d:)
 endif
 
 cores := $(shell nproc)
