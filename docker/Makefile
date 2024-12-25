@@ -9,6 +9,8 @@ ifeq ($(BRANCH),)
 BRANCH := master
 endif
 
+TAG := $(shell git describe --tags)
+
 ifeq ($(REPO),)
 REPO := mighty-gerbils/gerbil
 endif
