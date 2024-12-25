@@ -242,8 +242,8 @@ package-fedora:
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -f -s dir -p /src/ -t rpm \
-	-n gerbil-$(BRANCH).fedora \
-    -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel -v $(TAG) \
+	-n gerbil-$(BRANCH).fedora -v $(TAG} \
+    -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
