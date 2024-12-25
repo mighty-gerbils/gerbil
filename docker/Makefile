@@ -243,7 +243,7 @@ package-fedora:
 	gem install fpm && \
 	fpm -f -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
-        -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
+    -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel -v $(TAG) \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
