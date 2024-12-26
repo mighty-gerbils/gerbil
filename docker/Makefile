@@ -1,4 +1,4 @@
-.PHONY: alpine amazonlinux debian ubuntu fedora ubuntu-current-jedi final
+.PHONY: alpine debian ubuntu fedora ubuntu-current-jedi final
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell nproc)
@@ -153,20 +153,6 @@ gerbil:
 	-t final $(ROOT_DIR)
 	docker tag final gerbil/gerbil:$(arch)-$(BRANCH)
 
-amazonlinux:
-	docker build --target final \
-	--rm=true --no-cache \
-	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
-	--build-arg cores=$(cores) \
-	--build-arg distro="amazonlinux" \
-	--build-arg packages="$(amazon_packages)" \
-	--build-arg repo="$(REPO)" \
-	--build-arg shared="no" \
-	--build-arg with_db="YES" \
-	-t final $(ROOT_DIR)
-	docker tag final gerbil/amazonlinux:$(arch)-$(BRANCH)
-
 centos:
 	docker build --target final \
 	--rm=true --no-cache \
@@ -246,26 +232,16 @@ package-fedora:
     -d zlib-devel -d zlib-static -d openssl-devel -d sqlite-devel \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
-package-amazonlinux:
-	docker run -v $(ROOT_DIR):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
-	bash -c "amazon-linux-extras install -y ruby2.6 && \
-	yum install -y ruby-devel rubygems rpm-build && \
-	gem install fpm && \
-	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(BRANCH).amazonlinux \
-	--description 'Gerbil Package' /opt/gerbil"
-
 packages: package-ubuntu package-fedora
 
 push-all:
 	docker push gerbil/alpine
 	docker push gerbil/ubuntu
 	docker push gerbil/fedora
-	docker push gerbil/amazonlinux
 
 manifest:
 	docker manifest create gerbil/alpine:latest --amend gerbil/alpine:aarch64 --amend gerbil/alpine:x86_64
 
-all: alpine amazonlinux fedora ubuntu
+all: alpine fedora ubuntu
 
 docker: ubuntu
