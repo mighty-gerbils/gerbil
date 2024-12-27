@@ -125,13 +125,15 @@
           ["-e" include-gambit-sharp]))
        (output-bin
         (path-expand "gerbil" gerbil-bindir))
-       (gerbil-shared?
-        (member "--enable-shared" (string-split (configure-command-string) #\')))
+       (configure-flags (string-split (configure-command-string) #\'))
+       (gerbil-shared? (member "--enable-shared" configure-flags))
+       (enable-openssl? (member "--enable-openssl" configure-flags))
        (rpath-options
         (if gerbil-shared?
           [(string-append (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
 		                  gambit-libdir)]
-          [])))
+          []))
+       (extra-ld-options (if enable-openssl? ["-lssl" "-lcrypto"] [])))
   (displayln "... link " output-bin)
   (invoke (gerbil-gsc)
           ["-link" "-o" bach-link-c
@@ -153,7 +155,8 @@
            bach-main-o
            bach-link-o
            "-L" gerbil-libdir "-lgambit"
-           default-ld-options ...])
+           default-ld-options ...
+           extra-ld-options ...])
   ;; clean up
   (delete-file bach-main-scm)
   (delete-file bach-link-c)
