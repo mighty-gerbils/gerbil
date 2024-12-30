@@ -1,0 +1,1191 @@
+#+TITLE: Monads in Gerbil
+
+Here's the thing. I like my Monadic Parser. It uses monads. Gerbil now
+has a very fast Interface that can make it quick and easy. This is my
+attempt to Monadize Gerbil.
+
+ https://wiki.haskell.org/All_About_Monad
+ https://wiki.haskell.org/Monad
+
+* Table Of Contents
+:PROPERTIES:
+:TOC:      :include siblings :depth 5 :ignore (this)
+:END:
+:CONTENTS:
+- [[#what-is-a-monad-exactly][What is a Monad exactly?]]
+- [[#the-monad-interface-aka-typeclass][The Monad interface AKA "typeclass"]]
+  - [[#almost-the-identity-monad][Almost the Identity monad.]]
+  - [[#getting-to-the-list-monad][Getting to the List monad]]
+  - [[#return-as-constructor--as-destructor][return as constructor, >>= as destructor.]]
+- [[#runing-things][Run'ing things]]
+- [[#keeping-state-with-state][Keeping State with state.]]
+- [[#the-du-syntax-sugar-for--and-][The du syntax: sugar for >>= and >>]]
+- [[#fail-ure-is-an-option][Fail-ure IS an option]]
+  - [[#the-maybe-test-type][The maybe test type]]
+  - [[#fail-and-list-are-natural-friends][Fail and :list are natural friends]]
+- [[#monadzeroorplus][MonadZeroOrPlus]]
+- [[#transformers][Transformers]]
+  - [[#a-statet-for-wrapping-state][A stateT for wrapping state]]
+  - [[#the-identity-identity-monad][The Identity identity monad]]
+  - [[#the-monad-for-statet][The Monad for stateT]]
+  - [[#run-it][Run it]]
+  - [[#the-state-for-statet][The State for stateT]]
+  - [[#the-zeroorplus-and-fail-transformations][The ZeroOrPlus and Fail transformations]]
+  - [[#how-to-lift-from-inner][How to lift from inner]]
+- [[#monadic-parser-combinators---part-01][Monadic Parser Combinators - Part 0.1]]
+- [[#catchthrow-equals-errorhandler-from-errort][Catch/Throw equals ErrorHandler from errorT]]
+  - [[#transform-state-to-errort][Transform State to errorT]]
+- [[#emacs][Emacs]]
+- [[#file-interfacess][File interface.ss]]
+- [[#file-identityss][File identity.ss]]
+- [[#file-listss][File list.ss]]
+- [[#file-statess][File state.ss]]
+- [[#file-errorss][File error.ss]]
+- [[#file-syntaxss][File syntax.ss]]
+- [[#file-monadss][File ../monad.ss]]
+:END:
+
+ 
+* What is a Monad exactly?
+:PROPERTIES:
+:CUSTOM_ID: what-is-a-monad-exactly
+:END:
+
+#+begin_quote
+*monad*, (from Greek /monas/ “unit”), an elementary individual
+substance that reflects the order of the world and from which material
+properties are derived. [...]
+
+The objects of the material world are simply appearances of
+collections of monads.
+.
+-- https://www.britannica.com/topic/monad
+#+end_quote
+
+In the abstract programming sense, a =Monad= is a generic way of
+looking at a problem with a specific *soul*-ution almost hidden within
+the wrapper.
+
+It's a strategy for going about a wide range of problems. It starts
+with two abstractions, =return= and =>>==, that help to encompass
+a lot about a program.
+
+* The =Monad= interface AKA "typeclass"
+:PROPERTIES:
+:CUSTOM_ID: the-monad-interface-aka-typeclass
+:END:
+
+Gerbil has an incredible =interface= definition and usage. They
+similar to =typeclass='s but for a dynamic language.
+
+Have a look [[https://cons.io/reference/std/interface.html][at the docs]] for information on how they work.
+
+In Haskell the typeclass for a monad looks like this:
+
+#+begin_src haskell
+  class Monad m  where
+    (>>=)  :: m a -> (a -> m b) -> m b
+    (>>)   :: m a -> m b -> m b
+    return :: a -> m a
+        -- Minimal complete definition:
+        --      (>>=), return
+    m >> k  =  m >>= \_ -> k 
+#+end_src
+
+Since we don't have a way to create a method within a typeclass we'll
+make a monad that does nothing in order to have that global method
+definition.
+
+#+begin_src scheme :noweb-ref monad-interface
+  (begin
+    ;; class Monad m 
+    (interface Monad (return a) (>>= ma f) (>> ma mb))
+    ;; -- Minimal complete definition:
+    ;; --     return, >>= and >>
+    (instance (m Monad) :t
+      ((return a) a)
+      ((>>= ma f) (f ma))
+      ((>> ma mb) (m.>>= ma (lambda (_) mb)))
+      rebind: #t))
+#+end_src
+
+Essentially that's that! a monad is just an abstraction around those
+two procedures with those signatures.
+
+** Almost the =Identity= monad.
+:PROPERTIES:
+:CUSTOM_ID: almost-the-identity-monad
+:END:
+
+To see what is does, or even what it doesn't, let us first import the
+interface and contract libraries.
+
+#+begin_src scheme 
+  > (import :std/interface :std/contract :std/instance)
+#+end_src
+
+Because we have that =:t= monad we should be able to use it. We'll
+just pass a symbol for now.
+
+#+begin_src scheme :noweb-ref test-m
+  > (using (m 'identity : Monad)
+      (m.>>= (m.return 41)
+  	   (lambda (a) (m.return (1+ a)))))
+  42
+  > (using (m 'identity : Monad) (m.>> 'anything 42))
+  42
+#+end_src
+
+That minimal "do nothing" monad is known as the =Identity Monad= and
+is actually quite important.
+
+** Getting to the =List= monad
+:PROPERTIES:
+:CUSTOM_ID: getting-to-the-list-monad
+:END:
+
+Because this is lisp let's look at another simple monad, the =List
+Monad=.
+
+#+begin_src scheme :noweb-ref instance-mlist
+  (instance Monad :list
+   ((return a) [a]) ((>>= ma f) (append-map f ma)))
+#+end_src
+
+Now what happens with our =1+= test?
+
+#+begin_src scheme :noweb-ref test-mlist
+  > (using (m [] : Monad)
+        (m.>>= (m.return 41)
+    	    (lambda (a) (m.return (1+ a)))))
+  (42)
+  > (using (m [] : Monad) (m.>> ['anything] [42]))
+  (42)
+#+end_src
+
+In the first test the same forms are used but now it is a list as a
+result.
+
+In the second test we have to pass lists as that's what a =Monadic
+Value= is for a =List Monad=.
+
+** =return= as constructor, =>>== as destructor.
+:PROPERTIES:
+:CUSTOM_ID: return-as-constructor--as-destructor
+:END:
+
+That's all a monad really is.
+
+ - The =return= procedure, typed ~a -> m a~, take "a" value and makes
+   it a =Monadic Value=. It can be thought of as a wrapper.
+
+ - The =>>== prodedure is also known as =bind=. It "unwraps" the
+   value and then calls a function with that value.
+
+#+begin_src scheme :noweb-ref test-lr-identity
+> (using (m [] : Monad) (m.>>= (m.return 42) (cut m.return <>)))
+(42)
+> (using (m 'identity : Monad) (m.>>= (m.return 42) (cut m.return <>)))
+42
+#+end_src
+
+We can of course rid ourselves of the duplication. That's the whole point.
+
+#+begin_src scheme :noweb-ref test-lr-identity
+  > (def (monad-test-lr-identity monad v)
+      (using (m monad : Monad)
+        (m.>>= (m.return v)
+  	     (lambda (ov) (if (eq? v ov) (m.return ov)
+  			 (error "Wrap/Unwrap failed"))))))
+
+  > (monad-test-lr-identity 'foo 42)
+  42
+  > (monad-test-lr-identity [] 42)
+  (42)
+#+end_src
+
+* =Run='ing things
+:PROPERTIES:
+:CUSTOM_ID: runing-things
+:END:
+
+#+begin_src scheme :noweb-ref run-interface
+  (interface Run (run . args))
+#+end_src
+
+* Keeping =State= with =state=.
+:PROPERTIES:
+:CUSTOM_ID: keeping-state-with-state
+:END:
+
+There are more things to wrap than just a list. We could be passing a
+state. That's quite common. 
+
+#+begin_src scheme :noweb-ref state-interface
+  (interface (State Run) (get) (put! s) (state f))
+  (interface (MonadState Monad State) (state f))
+#+end_src
+
+We'll make a =state= struct. First, it's just for specialization.
+#+begin_src scheme :noweb-ref state-struct
+  (defstruct state (e))
+
+  (instance (m Monad) state
+   ((return a) (lambda (s) [a . s]))
+   ((>>= ma f) (lambda (s) (with ((cons v new-state) (ma s)) ((f v) new-state)))))
+#+end_src
+
+Using our past things we see that we need to call the function.
+
+#+begin_src scheme :noweb-ref first-state-test
+    > ((using (s (make-state 'state) : Monad) (s.return 42)) 'hey!)
+    (42 . hey!)
+    > (def (monad-test-lr-identity monad v)
+         (using (m monad : Monad)
+           (m.>>= (m.return v)
+     	     (lambda (ov) (if (eq? v ov) (m.return ov)
+     			 (error "Wrap/Unwrap failed"))))))
+    > (let ((fn (monad-test-lr-identity (make-state 'here) 42)))
+             (fn 'foo))
+      (42 . foo)
+    > ((using (s (make-state 'state) : Monad)
+         (s.>>= (s.return 42) (lambda (v) (s.return (+ 1 v))))) 'hey!)
+    (43 . hey!)
+#+end_src
+
+That call is also known as a run, as in we are running the state.
+
+#+begin_src scheme :noweb-ref state-run
+  (instance (r Run) (s state)
+    ((run m . _) (m s.e))) 
+#+end_src
+
+There's a reason for the MonadState interface as verbosity happens.
+
+#+begin_src scheme :noweb-ref first-state-test
+  > (let (state (make-state 'hey!))
+      (using ((m state : Monad)
+  	    (r state : Run))
+        (r.run (m.return 42))))
+  (42 . hey!)
+#+end_src
+
+Before we use it we need to define an instance of it for the =state= structure.
+
+#+begin_src scheme :noweb-ref state-State
+    (instance State state
+      ((get) (lambda (s) [s . s]))
+      ((put! new) (lambda (s) [s . new])))
+      
+#+end_src
+
+Easy, right? We've defined everything now to have a working =MonadState=
+
+#+begin_src scheme :noweb-ref MonadState
+  (instance (m MonadState) state
+    ((state f)
+     (m.>>= (m.get)
+  	  (lambda (s)
+  	    (with ((cons a _s) (f s))
+  	      (m.>> (m.put! _s)
+  		    (m.return a)))))))
+  	    
+#+end_src
+
+#+begin_src scheme :noweb-ref first-state-test
+  > (let (state (make-state 'hey!))
+      (using (s state : MonadState)
+        (s.run (s.return 42))))
+  (42 . hey!)
+
+  > (let (state (make-state 'no!))
+      (using (s state : MonadState)
+        (s.run (s.>>= (s.put! 'hey!) (lambda _ (s.return 42))))))
+  (42 . hey!)
+
+  > (let (state (make-state 42))
+      (using (s state : MonadState)
+        (s.run (s.>>= (s.put! 'hey!) (lambda (old) (s.return old))))))
+  (42 . hey!)
+
+  > (let (state (make-state 'no!))
+      (using (s state : MonadState)
+        (s.run (s.>> (s.put! 42)
+  		   (s.>>= (s.put! 'hey!) (lambda (old) (s.return old)))))))
+  (42 . hey!)
+
+  > (using (s (make-state 41) : MonadState)
+      (s.run (s.state (lambda (s_) ['!yeh  (+ s_ 1) ...]))))
+  (!yeh . 42)
+#+end_src
+
+
+* The =du= syntax: sugar for =>>== and =>>=
+:PROPERTIES:
+:CUSTOM_ID: the-du-syntax-sugar-for--and-
+:END:
+
+Binding variables is a big part of programming. Sequential steps down
+a path are also important, as well as knowing what has passed. 
+
+In =Lisp= the =let*= form is kinda what I'm talking about. The =begin=
+form plays a role as well.
+
+In =Haskell= this is called =do= but that's already taken and as luck
+would have it =using= is a part of our "Do Using" (aka =du=) so it all
+works out.
+
+Here's an example.
+
+#+begin_src scheme :noweb-ref first-du-test
+  > (du (m 'identity : Monad) 
+       n <- (m.return 41)
+       v <- (m.return (+ n 1))
+     (= v 42))
+  #t
+#+end_src
+
+
+So =n <- mv ...= is just ~(m.>>= mv (n) ...)~ in short form,
+
+#+begin_src scheme :noweb-ref first-du-test
+  > (using (m 'identity : Monad) 
+      (m.>>=
+       (m.return 41)
+       (lambda (n)
+         (m.>>=
+  	(m.return (+ n 1))
+  	(lambda (v) (= v 42))))))
+  #t
+#+end_src
+
+There are a few ways to go about using =du=. Because things inside it
+are basically inside the monad "wrapper" that means that, for example,
+the =Run= interface needs to be used outside of it.
+
+The first attempt is just to use it to bind an identifier to run.
+
+#+begin_src scheme :noweb-ref first-du-test
+  > (let* ((s (make-state 0))
+  	 (ms (du (s : MonadState)
+  	          (s.put! 41)
+  	          (s.state (lambda (s_) ['!yeh  (+ s_ 1) ...])))))
+      (Run-run s ms))
+  (!yeh . 42)
+#+end_src
+
+This is such a simple task that all we are doing is using the =>>=
+operation. We could just use that with =using= and not =du= at all.
+
+#+begin_src scheme :noweb-ref first-du-test
+  > (using (s (make-state 0) : MonadState)
+      (s.run (s.>>
+              (s.put! 41)
+              (s.state (lambda (s_) ['!yeh  (+ s_ 1) ...])))))
+  (!yeh . 42)
+#+end_src
+
+But most things are not as simple as a single =>>= or even a binding
+=>>== .
+
+Do that there's an "inline" =(du id ...)= syntax. We use both of those
+operations hidden here.
+#+begin_src scheme :noweb-ref first-du-test
+  > (def (testme n)
+      (using (s (make-state n) : MonadState)
+        (s.run (du s
+  	       n <- (s.get)
+  	       (let (v (+ n 1))
+  	         (if (eqv? v 42) (s.put! v) (s.put! error:)))
+  	       (s.return '!yeh)))))
+  > (testme 41)
+  (!yeh . 42)
+  > (testme 46)
+  (!yeh . error:)
+#+end_src
+
+* =Fail=-ure IS an option
+:PROPERTIES:
+:CUSTOM_ID: fail-ure-is-an-option
+:END:
+
+There are times when things fail.
+
+#+begin_src scheme :noweb-ref fail-interface
+  (interface Fail (fail))
+  (interface (MonadFail Monad Fail))
+#+end_src
+
+** The =maybe= test type
+:PROPERTIES:
+:CUSTOM_ID: the-maybe-test-type
+:END:
+
+For example there could be the abstract =maybe= and =nothing=
+concepts.
+
+#+begin_src scheme :noweb-ref maybe-test
+  > (defstruct maybe (nothing))
+  > (instance MonadFail (m maybe)
+      ((return a) a)
+      ((>>= ma f)
+       (if (eqv? m.nothing ma) ma (f ma)))
+      ((fail) m.nothing))
+
+  > (def (testme o (no #f))
+      (du (mf (maybe no) : MonadFail)
+  	n <- 1
+  	m <- (if (even? o) (mf.fail) o)
+        (+ m n)))
+
+  > (testme 4)
+  #f
+  > (testme 5)
+  6
+  > (testme 2 'huh)
+  huh
+  > (testme 3)
+  4
+#+end_src
+
+
+** =Fail= and =:list= are natural friends
+:PROPERTIES:
+:CUSTOM_ID: fail-and-list-are-natural-friends
+:END:
+
+#+begin_src scheme :noweb-ref fail-list
+  (instance MonadFail :list ((fail) []))
+#+end_src
+
+#+begin_src scheme :noweb-ref fail-list-test
+  > (def (testl lst)
+      (du (mf [] : MonadFail)
+          n <- lst
+  	m <- (if (even? n) (mf.fail) (mf.return (+ 41 n)))
+        (mf.return (eqv? 42 m))))
+
+  > (testl [1 2 3 4 5 6])
+  (#t #f #f)
+#+end_src
+
+
+* =MonadZeroOrPlus=
+:PROPERTIES:
+:CUSTOM_ID: monadzeroorplus
+:END:
+
+For a list there should be a way to add items. =MonadPlus= is just
+that. An Empty list is =Zero=. And =Or= is like a deterministic
+version of =Plus=.
+
+For the Haskell foreground read [[https://wiki.haskell.org/MonadPlus_reform_proposal][here]].
+
+#+begin_src scheme :noweb-ref zpo-interfaces
+  (interface Plus (plus a b))
+  (interface (MonadPlus Monad Plus))
+  (interface Zero (zero))
+  (interface (MonadZero Monad Zero))
+  (interface (MonadZeroPlus Monad Zero Plus))
+  (interface Or (or x y))
+  (interface (MonadZeroOrPlus Monad Or Plus Zero))
+#+end_src
+
+So a =:list= is of those three...
+
+#+begin_src scheme :noweb-ref zpo-list
+  (instance Plus :list ((plus a b) (append a b)))
+  (instance Zero :list ((zero) []))
+  (instance Or :list ((or l1 l2) (if (null? l1) l2 l1)))
+#+end_src
+
+... and because it's already a monad we can play with it like that.
+
+#+begin_src scheme :noweb-ref test-list-zpo
+  > (du (m [] : MonadPlus)
+      (m.plus (m.return 42) [42]))
+  (42 42)
+  > (du (m [] : MonadZero)
+      (m.zero))
+  ()
+  > (du (m [] : MonadZeroOrPlus)
+        (m.or (m.plus (m.return 42) (m.zero)) (m.zero)))
+  (42)
+      
+
+#+end_src
+
+* Transformers
+:PROPERTIES:
+:CUSTOM_ID: transformers
+:END:
+
+Different transformers may need to tranform one another or some
+such. Beyond that there's =lift=.
+
+#+begin_src scheme :noweb-ref trans-interfaces
+  (interface Transformer (lift c))
+  (interface (MonadTrans Monad Transformer))
+#+end_src
+
+** A =stateT= for wrapping state
+:PROPERTIES:
+:CUSTOM_ID: a-statet-for-wrapping-state
+:END:
+
+Previously, all the monad instances are separate. What if we want to
+combine them?
+
+That's where transformers come in.
+
+A transformer is something with something else inside.
+
+
+** The =Identity= identity monad
+:PROPERTIES:
+:CUSTOM_ID: the-identity-identity-monad
+:END:
+
+Even though, or perhaps because =:t= does "nothing" there is a simple
+"inner that does nothing" we can create.
+
+
+#+begin_src scheme :noweb-ref Identity-struct
+  (defstruct Identity ())
+
+  (instance (m Monad) Identity
+    ((return a) a)
+    ((>>= ma f) (f ma))
+    ((>> ma mb) (m.>>= ma (lambda _ mb))))
+#+end_src
+
+** The =Monad= for =stateT=
+:PROPERTIES:
+:CUSTOM_ID: the-monad-for-statet
+:END:
+
+#+begin_src scheme :noweb-ref stateT-struct
+  (defstruct stateT (inner))
+
+  (instance (m Monad) (st stateT) 
+    ((return a)
+     (using (inner st.inner : Monad) (lambda (s) (inner.return [a . s]))))
+    ((>>= ma f)
+     (using (inner st.inner : Monad)
+       (lambda (s)
+         (du inner
+    	 pair <- (ma s)
+    	 (with ((cons v s!) pair) ((f v) s!)))))))
+
+#+end_src
+
+
+#+begin_src scheme :noweb-ref test-stateT
+  > (def (test-stateT-monad state)
+      (du (m state : Monad)
+  	n <- (m.return 42)
+        (m.return [n (= n 42)])))
+  > ((test-stateT-monad (make-stateT (Monad (Identity)))) 'state)
+   ((42 #t) . state)
+  > ((test-stateT-monad (make-stateT (Monad []))) 'state)
+   (((42 #t) . state))
+#+end_src
+
+** =Run= it
+:PROPERTIES:
+:CUSTOM_ID: run-it
+:END:
+
+
+#+begin_src scheme :noweb-ref stateT-struct
+  (instance Run (st stateT)
+    ((run mv (state (void))) (mv state)))
+#+end_src
+
+** The =State= for =stateT=
+:PROPERTIES:
+:CUSTOM_ID: the-state-for-statet
+:END:
+
+The state transformer is for state after all.
+
+#+begin_src scheme :noweb-ref stateT-struct
+  (instance State (st stateT)
+    ((get) (lambda (s) (du (m st.inner : Monad) (m.return [s . s]))))
+    ((put! s!) (lambda (s) (du (m st.inner : Monad) (m.return [s . s!])))))
+  (instance MonadState (st stateT)
+    ((state f) (using (m st.inner : Monad) (lambda (s) (let (ret (f s)) (m.return ret))))))
+  
+#+end_src
+
+First the =get= and =put!=.
+
+#+begin_src scheme :noweb-ref test-stateT
+  > (def (test-stateT-State statet first-state)
+      (def run (du (m statet : MonadState)
+  	       first <- (m.put! 42)
+                 second <- (m.get)
+                (m.put! 'final)
+                (m.return [first second])))
+      (run first-state))
+  > (test-stateT-State (make-stateT (Monad (Identity))) 'first)
+   ((first 42) . final)
+  > (test-stateT-State  (make-stateT (Monad [])) 'second)
+   (((second 42) . final))
+#+end_src
+
+And the =state= procedure.
+
+#+begin_src scheme :noweb-ref test-stateT
+      > (def (test-stateT-state statet)
+          (du (m statet : MonadState)
+           (m.state (lambda (s!) [s! . 42]))))
+      > (using (s (make-stateT (Monad (Identity))) : Run)
+          (s.run (test-stateT-state s) 'first))
+       (first . 42)
+      > (using (s (make-stateT (Monad [])) : Run)
+          (s.run (test-stateT-state s) 'second))
+       ((second . 42))
+#+end_src
+
+** The =ZeroOrPlus= and =Fail= transformations
+:PROPERTIES:
+:CUSTOM_ID: the-zeroorplus-and-fail-transformations
+:END:
+
+Choices can be a big part of programming.
+
+#+begin_src scheme :noweb-ref stateT-struct
+  (instance Or (st stateT)
+    ((or x y) (lambda (s) (du (inner st.inner : Or)
+  		      (inner.or (x s) (y s))))))
+   (instance Plus (st stateT)
+    ((plus x y) (lambda (s) (du (inner st.inner : Plus)
+  		      (inner.plus (x s) (y s))))))
+   (instance Zero (st stateT)
+    ((zero) (lambda (s) (du (inner st.inner : Zero)
+  		      (inner.zero)))))
+   (instance Fail (st stateT)
+    ((fail) (lambda (s) (du (inner st.inner : Fail)
+  		      (inner.fail)))))
+   
+
+#+end_src
+
+#+begin_src scheme :noweb-ref test-stateT
+  > ((du (m (make-stateT []) : MonadZeroOrPlus)
+        ab <- (m.plus (m.return 'a) (m.return 'b))
+        
+        (m.return ab))
+     42)
+  ((a . 42) (b . 42))
+   > ((du (m (make-stateT []) : MonadZeroOrPlus)
+        a <- (m.or (m.return 'a) (m.return 'b))
+        
+        (m.return a))
+      42)
+  ((a . 42))
+   > ((du (m (make-stateT []) : MonadZeroOrPlus)
+        b <- (m.or (m.zero) (m.return 'b))
+        
+        (m.return b))
+      42)
+  ((b . 42))
+     
+#+end_src
+
+** How to =lift= from inner
+:PROPERTIES:
+:CUSTOM_ID: how-to-lift-from-inner
+:END:
+
+Just because we're tried to make the =stateT= wrap most monadic
+computations does not mean that we can trivially wrap any monadic
+value from the =inner=.
+
+#+begin_src scheme :noweb-ref stateT-struct
+  (instance MonadTrans (st stateT)
+    ((lift c) (lambda (s)
+  	      (du (inner st.inner : Monad)
+  		x <- c
+  	       (inner.return [x . s])))))
+#+end_src
+
+So we can take a function for the inner monad and lift it up!
+#+begin_src scheme :noweb-ref test-stateT
+  > (def (listM-fn)
+      (du (m (MonadPlus []) :- MonadPlus)
+        (m.plus (m.return 41) (m.return 43))))
+  > (listM-fn)
+  (41 43)
+  > ((du (m (make-stateT []) : MonadTrans)
+       foo <- (m.lift (listM-fn))
+       (m.return (+ foo 1))) "state")
+  ((42 . "state") (44 . "state"))
+#+end_src
+
+* Monadic Parser Combinators - Part 0.1
+:PROPERTIES:
+:CUSTOM_ID: monadic-parser-combinators---part-01
+:END:
+
+I'm not at all sure how I came across this but after writing my first
+=Org Mode= parser, I found this quote:
+
+  #+begin_quote
+   A Parser for Things is a function from Strings to Lists of Pairs of
+   Things and Strings!
+   
+   --Fritz Ruehr
+  #+end_quote
+
+
+... along with the [[https://nottingham-repository.worktribe.com/output/1024440/monadic-parser-combinators][Monadic Parser Combinators]] paper. So we arrive at
+this point.
+
+With the state transformer as is this should just work!
+
+Very simple. We'll just parse strings. 
+
+
+#+begin_src scheme :noweb-ref first-parser-test
+  > (interface (Parser MonadState Fail Or Plus) (item))
+  > (defstruct (parser stateT) ())
+  > (def current-parsee (make-parameter "42"))
+  > (def current-parser (make-parameter (make-parser (Monad []))))
+
+  > (instance (P Parser) (p parser)
+      ((item) (du P  
+  	      idx <- (P.get)
+  	      len <- (P.return (string-length (current-parsee)))
+  	      (P.put! (1+ idx))
+  	      (if (>= idx len) (P.fail)
+  		  (P.return (string-ref (current-parsee) idx))))))
+
+  > ((using (p (current-parser) : Parser) (p.item)) 0)
+  ((#\4 . 1))
+  > ((using (p (current-parser) : Parser) (p.plus (p.item) (p.item))) 0)
+  ((#\4 . 1)(#\4 . 1))
+#+end_src
+
+
+All we really need is a =char​=?= and we could have a parser!
+
+
+#+begin_src scheme :noweb-ref first-parser-test
+  > (interface (Parsec Parser) (char=? char))
+  > (defstruct (parsec parser) ())
+  > (instance (P Parsec) (p parsec)
+      ((char=? char)
+       (du P
+         c <- (P.item)
+         (if (char=? char c) (P.return c) (P.fail)))))
+  > (current-parser (make-parsec (Monad [])))
+  > ((using (p (current-parser) : Parsec)
+        (p.char=? #\4)) 0)
+    ((#\4 . 1))
+   > ((using (p (current-parser) : Parsec)
+        (p.char=? #\4)) 1)
+    ()
+
+   > (def (test-ltuae str)
+      (parameterize ((current-parsee str))
+       (let (ret ((du (p (current-parser) : Parsec)
+  		  (p.>> (p.char=? #\4) (p.char=? #\2))) 0))
+         (not (null? ret)))))
+  > (test-ltuae "42")
+  #t
+  > (test-ltuae "41")
+  #f
+#+end_src
+
+* Catch/Throw equals =ErrorHandler= from =errorT=
+:PROPERTIES:
+:CUSTOM_ID: catchthrow-equals-errorhandler-from-errort
+:END:
+
+We all know about throwing and catching errors. The =...Handler= is
+there to play nice with =:std/error= of course.
+
+#+begin_src scheme :noweb-ref Error-interface
+  (interface ErrorHandler (throw . args) (catch thunk handler) (error? thing))
+  (interface (MonadError Monad ErrorHandler))
+#+end_src
+
+The Error wrapper can be another transformer.
+
+#+begin_src scheme :noweb-ref errorT-struct
+  (defstruct errorT (inner) constructor: :init!)
+  (defmethod {:init! errorT}
+    (lambda (self (inner (Monad (Identity))))
+      (unless (Monad? inner)
+        (set! inner (Monad inner)))
+      (set! self.inner inner)))
+  
+#+end_src
+
+Making the handler is easy. 
+
+#+begin_src scheme :noweb-ref errorT-struct
+  (instance (me MonadError) (et errorT)
+    ((return a) (du (inner et.inner : Monad) (inner.return a)))
+    ((>>= ma f) (du (inner et.inner : Monad)
+                  a <- ma
+  		  (if (me.error? a) (inner.return a) (f a))))
+    ((error? thing) (Error? thing))
+    ((throw msg . irritants)
+     (du (inner et.inner : Monad)
+       (inner.return (Error msg irritants: irritants))))
+    ((catch exp handler)
+     (du (inner et.inner : Monad)
+       val <- exp
+       (if (me.error? val) (handler val) (inner.return val)))))
+
+  (instance Fail (et errorT) ((fail) (using (i et.inner : Fail) (i.fail))))
+  (instance Or (et errorT) ((or a b) (using (i et.inner : Or) (i.or a b))))
+  (instance Plus (et errorT) ((plus a b) (using (i et.inner : Plus) (i.plus a b))))
+  (instance Run (et errorT) ((run fn arg) (using (i et.inner : Run) (i.run fn arg))))
+  (instance Zero (et errorT) ((zero) (using (i et.inner : Zero) (i.zero))))
+
+#+end_src
+
+Testing it makes it clear.
+
+#+begin_src scheme :noweb-ref errorT-test
+  > (du (m (make-errorT) : MonadError) (m.return 42))
+  42
+  > (du (m (make-errorT []) : MonadError) (m.return 42))
+  (42)
+  > (def (test mo n (m (make-errorT mo)))
+     (du (m : MonadError)
+       foo <- (m.return n)
+       (if (eqv? 42 foo) (m.throw "LTUAE") (m.return foo))
+       (m.return (- foo 1))))
+
+  > (Error-message (test (Identity) 42))
+  "LTUAE"
+  > (map Error-message (test [] 42))
+  ("LTUAE")
+  > (test (Identity) 43)
+  42
+  > (test [] 43)
+  (42)
+  > (using (m (make-errorT []) : MonadError)
+      (m.catch (test #f 43 m) (lambda (e) 'fourtwo)))
+  (42)
+  > (using (m (make-errorT []) : MonadError)
+      (m.catch (test #f 42 m) (lambda (e) 'fourtwo)))
+  fourtwo
+#+end_src
+
+** Transform =State= to =errorT=
+:PROPERTIES:
+:CUSTOM_ID: transform-state-to-errort
+:END:
+
+This is after state in the train of thought so is defined here.
+
+#+begin_src scheme :noweb-ref errorT-struct
+  (instance MonadState (et errorT)
+   ((get) (du (inner et.inner : MonadState) (inner.get)))
+   ((put! s) (du (inner et.inner : MonadState) (inner.put! s)))
+   ((state f)(du (inner et.inner : MonadState) (inner.state f))))
+
+  (instance MonadError (st stateT)
+    ((error? e?) (lambda (s)
+                   (du (inner st.inner : MonadError)
+                   [(inner.error? e?) s ...])))
+    ((throw message . args)
+     (lambda (s)
+     [ (apply MonadError-throw st.inner message args) s ...]))
+    ((catch exp handler) (lambda (s) (du (inner st.inner : MonadError)
+  		      [(inner.catch exp handler) s ...]))))	  
+#+end_src
+
+#+begin_src scheme :noweb-ref errorT-test
+  > (def parsr (make-stateT (make-errorT [])))
+  > (def parse (make-errorT (make-stateT [])))
+  > ((Monad-return parsr 42) 42)
+  ((42 . 42))
+  > ((Monad-return parse 42) 42)
+  ((42 . 42))
+  > (with ([[e . s]] ((MonadError-throw parse "Here") 42))
+  	 [(cons (Error-message e) s)]) 
+  (("Here" . 42))
+
+#+end_src
+
+
+
+* Emacs
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
+
+#+begin_src emacs-lisp
+  (require 'gerbil-mode)
+  (gerbil-put-indent '(du) 1)
+  (gerbil-put-indent '(instance) 2)
+#+end_src
+
+
+* /File/ interface.ss
+:PROPERTIES:
+:CUSTOM_ID: file-interfacess
+:END:
+#+begin_src scheme :noweb yes :tangle interface.ss
+  (import :std/interface :std/contract
+  	#;"../instance":std/instance)
+   (export
+     #t
+     (interface-out unchecked: #t Monad Run State))
+
+   <<monad-interface>>
+
+   <<run-interface>>
+
+   <<state-interface>>
+
+   <<fail-interface>>
+
+   <<zpo-interfaces>>
+
+   <<Error-interface>>
+
+   <<trans-interfaces>>
+    
+#+end_src
+
+* /File/ identity.ss
+:PROPERTIES:
+:CUSTOM_ID: file-identityss
+:END:
+
+#+begin_src scheme :noweb yes :tangle identity.ss
+  (import ../instance #;"../instance"
+          ./interface #;"interface"
+          :std/interface :std/srfi/1)
+  (export #t)
+
+   <<Identity-struct>>
+#+end_src
+
+* /File/ list.ss
+:PROPERTIES:
+:CUSTOM_ID: file-listss
+:END:
+
+#+begin_src scheme :noweb yes :tangle list.ss
+  (import ../instance #;"../instance"
+          ../interface #;"interface"
+          :std/interface :std/srfi/1)
+  (export #t)
+
+  <<instance-mlist>>
+
+  <<fail-list>>
+
+  <<zpo-list>>
+
+#+end_src
+
+* /File/ state.ss
+:PROPERTIES:
+:CUSTOM_ID: file-statess
+:END:
+
+#+begin_src scheme :noweb yes :tangle state.ss
+  (import ../instance #;"../instance"
+           ./interface #;"interface"
+           ./syntax #;"syntax"
+           ./identity #;"identity"
+          :std/interface :std/srfi/1)
+  (export #t)
+
+  <<state-struct>>
+
+  <<state-run>>
+
+  <<state-State>>
+
+  <<MonadState>>
+
+  <<stateT-struct>>
+
+#+end_src
+
+* /File/ error.ss
+:PROPERTIES:
+:CUSTOM_ID: file-errorss
+:END:
+
+#+begin_src scheme :noweb yes :tangle error.ss
+  (import ../instance #;"../instance"
+           ./interface "interface"
+           ./syntax #;"syntax"
+           ./identity #;"identity"
+           ./state #;"state"
+          :std/interface :std/srfi/1 :std/error)
+  (export #t)
+
+  <<errorT-struct>>
+#+end_src
+
+* /File/ syntax.ss
+:PROPERTIES:
+:CUSTOM_ID: file-syntaxss
+:END:
+
+#+begin_src scheme :noweb-ref du-syntax
+  (defsyntax (du stx)
+    (def (expand-bind id stx)
+      (with-syntax* ((id id)
+  		   (bind (stx-identifier #'id #'id ".>>="))
+  		   (seq (stx-identifier #'id #'id ".>>")))
+      (syntax-case stx (<-)
+        ((var <- from body ... end)
+         #'(bind from (lambda (var) (du id body ... end))))
+        ((>> body ... end)
+         #'(seq >> (du id body ... end)))
+        ((end) #'end))))
+
+    (syntax-case stx ()
+      ((_ id body ...)
+       (identifier? #'id)
+       (with-syntax ((bindings (expand-bind #'id #'(body ...))))
+         #'bindings))
+      ((_ (id expr ~ Monad) body ...)
+       (and (identifier? #'id)
+            (identifier? #'~))
+       #'(using (id expr ~ Monad)
+             (du id body ...)))
+      ((_ (id ~ Monad) body ...)
+       (and (identifier? #'id)
+            (identifier? #'~))
+       #'(using (id ~ Monad)
+         (du id body ...)))
+      ((_ ((id this ...) rest ...) body ...)
+       #'(using ((id this ...) rest ...)
+  	 (du id body ...)))))
+  	      
+       
+#+end_src
+
+#+begin_src scheme :noweb yes :tangle syntax.ss
+  (import :std/contract)
+  (export #t)
+
+  <<du-syntax>>
+#+end_src
+
+* /File/ ../monad.ss
+:PROPERTIES:
+:CUSTOM_ID: file-monadss
+:END:
+
+#+begin_src scheme :tangle ../monad.ss
+    (import
+      ./monad/interface
+      ./monad/identity
+      ./monad/list
+      ./monad/state
+      ./monad/syntax
+      ./monad/error)
+    (export
+      (import: ./monad/interface)
+      (import: ./monad/identity)
+      (import: ./monad/list)
+      (import: ./monad/state)
+      (import: ./monad/syntax)
+      (import: ./monad/error))
+#+end_src
+
+* The Test File                                                :noexport:
+:PROPERTIES:
+:CUSTOM_ID: the-test-file
+:END:
+
+#+begin_src scheme :noweb yes :tangle ../../../src/std/monad-test.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/monad unit-tests
+
+  (import :std/test
+          :std/error
+          :std/interactive
+          :srfi/13
+          :std/instance
+          :std/monad/interface
+          :std/monad/identity
+          :std/monad/list
+          :std/monad/state
+          :std/monad/syntax
+          :std/monad/error
+          (only-in :std/sugar hash try)
+          (only-in :gerbil/core error-object? with-catch))
+  (export monad-test)
+
+  (defsyntax (test-inline stx)
+    (syntax-case stx (>)
+      ((_ test-case: name rest ...)
+       #'(test-case name (test-inline rest ...)))
+      ((_ > form > rest ...)
+       #'(begin (when std/test#*test-verbose* (displayln "... " 'form)) form (test-inline > rest ...)))
+      ((_ > test result rest ...)
+       #'(begin (check test => 'result) (test-inline rest ...)))
+      ((_) #!void)))
+
+  ;; (set-test-verbose! #t)
+
+  (def monad-test
+    (test-suite "Test :std/monad"
+      
+    (test-inline
+     test-case: ":t as Identity"
+     <<test-m>>
+     > #t #t)
+    (test-inline
+     test-case: ":list as List"
+     <<test-mlist>>)
+
+    (test-inline
+     test-case: ":list and :t Left and Right identity"
+     <<test-lr-identity>>)
+
+    (test-inline
+     test-case: "First State Tests"
+     <<first-state-test>>)
+
+    (test-inline
+     test-case: "First du Tests"
+     <<first-du-test>>)
+
+      (test-inline
+     test-case: "Fail Tests"
+     <<maybe-test>>
+     <<fail-list-test>>)
+
+    (test-inline
+     test-case: "ZPO tests"
+     <<test-list-zpo>>)
+
+
+    (test-inline
+     test-case: "StateT tests"
+     <<test-stateT>>)
+
+    (test-inline
+      test-case: "First Parser Tests"
+      <<first-parser-test>>)
+
+    (test-inline
+      test-case: "ErrorT tests"
+      <<errorT-test>>)))
+        
+  		 
+       
+
+
+
+
+#+end_src

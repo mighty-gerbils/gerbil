@@ -9,11 +9,15 @@
 
 ;; ns is an assoc or a hash table of mapping uri (string) -> namespace (string)
 ;;  same interface as parse-xml so that implementations can be swapped
+
 (def (read-xml source namespaces: (ns []))
   (let* ((ns (if (hash-table? ns)
                (hash->list ns)
                ns))
-         (ns (map (match <> ([uri . id] (cons (string->symbol id) uri)))
+         (ns (map (match <> ([uri . id]
+			     (cons (if (string? id)
+				     (string->symbol id)
+				     id) uri)))
                   ns)))
     (cond
      ((input-port? source)
