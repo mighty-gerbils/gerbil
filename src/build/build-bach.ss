@@ -41,13 +41,16 @@
     (visualc ".obj")
     (else ".o")))
 
-(def (path->string-literal path)
-  (string-append
-    "\""
-    (string-map
-      (lambda (c) (if (char=? c #\\) #\/ c))
-      path)
-    "\""))
+; generates an `include` form for use in a source code, gsc's -e option etc.
+; It takes care of windows paths where we need to escape the path.
+; e.g. (displayln (include-source "d:\\gerbil\\mycode.scm")) should print
+; (include "d:\\gerbil\\mycode.scm")
+; instead of:
+; (include "d:\gerbil\mycode.scm")
+; which results in an error:
+; *** ERROR -- Invalid escaped character: #\g
+(def (include-source path)
+  (string-append "(include " (object->string path) ")"))
 
 (def (link-output-options output-bin)
   (cond-expand
@@ -131,6 +134,12 @@
 (def (replace-extension path ext)
   (string-append (path-strip-extension path) ext))
 
+(def (replace-extension-with-c path)
+  (replace-extension path ".c"))
+
+(def (replace-extension-with-object path)
+  (replace-extension path compiler-obj-suffix))
+
 ;; first compile the module
 (displayln "... compile " bach-main)
 (compile-module (string-append bach-main ".ss")
@@ -141,16 +150,15 @@
 
 ;; and then compile the binary
 (let* ((builtin-modules-scm (map static-file-name builtin-modules))
-       (builtin-modules-c (map (cut replace-extension <> ".c") builtin-modules-scm))
-       (builtin-modules-o (map (cut replace-extension <> compiler-obj-suffix) builtin-modules-scm))
+       (builtin-modules-c (map replace-extension-with-c builtin-modules-scm))
+       (builtin-modules-o (map replace-extension-with-object builtin-modules-scm))
        (bach-main-scm (static-file-name bach-main))
-       (bach-main-c (replace-extension bach-main-scm ".c"))
-       (bach-main-o (replace-extension bach-main-scm compiler-obj-suffix))
+       (bach-main-c (replace-extension-with-c bach-main-scm))
+       (bach-main-o (replace-extension-with-object bach-main-scm))
        (bach-link-c (path-expand "gerbil-link.c" gerbil-libdir))
        (bach-link-o (replace-extension bach-link-c compiler-obj-suffix))
        (gambit-sharp (path-expand "_gambit#.scm" gerbil-libdir))
-       (include-gambit-sharp
-        (string-append "(include " (path->string-literal gambit-sharp) ")"))
+       (include-gambit-sharp (include-source gambit-sharp))
        (gsc-gx-macros
         (if (gerbil-runtime-smp?)
           ["-e" "(define-cond-expand-feature|enable-smp|)"
