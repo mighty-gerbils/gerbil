@@ -134,6 +134,13 @@
   (c-declare "#include <errno.h>")
   (c-declare "#include <string.h>")
 
+  ; I don't know why, but it's the only error code msvc doesn't define
+  (c-declare "
+  #ifdef _WINDOWS
+  #define ENOTBLK 15
+  #endif
+  ")
+
   (define-const EPERM)
   (define-const ENOENT)
   (define-const ESRCH)

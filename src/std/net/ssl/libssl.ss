@@ -338,6 +338,10 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const
  return ctx;
 }
 
+#ifdef _MSC_VER
+#define __thread __declspec(thread)
+#endif
+
 __thread char openssl_x509_name_buf[16384];
 static char *ffi_X509_get_subject_name(X509 *cert)
 {

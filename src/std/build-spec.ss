@@ -201,9 +201,15 @@
     "text/json/api"
     "text/json"
     ,@(if config-enable-zlib
-        `((gsc: "text/_zlib"
-                "-cc-options" ,(cppflags "zlib" "")
-                "-ld-options" ,(ldflags "zlib" "-lz"))
+        `(,(cond-expand
+            (visualc
+             `(gsc: "text/_zlib"
+               "-cc-options" ,(cppflags "zlib" "")
+               "-ld-options" ,(ldflags "zlib" "zlibstatic.lib")))
+            (else
+             `(gsc: "text/_zlib"
+               "-cc-options" ,(cppflags "zlib" "")
+               "-ld-options" ,(ldflags "zlib" "-lz"))))
           (ssi: "text/_zlib")
           "text/zlib")
         '())
@@ -219,6 +225,10 @@
                            (if (enable-shared?)
                              [(string-append "-L" (gerbil-libdir)) "-lgambit"]
                              []))))
+      (visualc 
+       `(gxc: "net/ssl/libssl"
+	      "-cc-options" ,(cppflags "libssl" "")
+	      "-ld-options" ,(ldflags "libssl" "libssl.lib libcrypto.lib")))
       (else `(gxc: "net/ssl/libssl"
 		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
     "net/ssl/error"
@@ -257,16 +267,16 @@
     "net/socks"
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
-    (gxc: "os/fd" ,@(include-gambit-sharp))
-    (gxc: "os/fdio" ,@(include-gambit-sharp))
-    (gxc: "os/fcntl" ,@(include-gambit-sharp))
-    (gxc: "os/flock" ,@(include-gambit-sharp))
-    (gxc: "os/pipe" ,@(include-gambit-sharp))
+    (gxc: "os/fd"    ,@(include-gambit-sharp))
+    (gxc: "os/fdio"  ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
+    (gxc: "os/fcntl" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
+    (gxc: "os/flock" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
+    (gxc: "os/pipe"  ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
         `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
        (else
-        `(gsc: "os/_socket" ,@(include-gambit-sharp))))
+        `(gsc: "os/_socket" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
     "os/socket"
     ,@(cond-expand
@@ -282,9 +292,9 @@
          `((gxc: "os/signalfd" ,@(include-gambit-sharp))))
         (else '()))
     "os/signal-handler"
-    "os/pid"
+    (gxc: "os/pid" ,@(non-posix-extra-gsc-options))
     "os/temporaries"
-    "os/hostname"
+    (gxc: "os/hostname" ,@(non-posix-extra-gsc-options))
     ,@(if config-enable-deprecated
         ;; :std/net/bio -- DEPRECATED
         ["net/bio/input"
@@ -339,10 +349,17 @@
     "xml"
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
-    (gxc: "crypto/libcrypto"
-          "-cc-options" ,(append-options (cppflags "libcrypto" "") "-Wno-deprecated-declarations -Wno-implicit-function-declaration")
-          "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
-          ,@(include-gambit-sharp))
+    ,(cond-expand
+        (visualc 
+          `(gxc: "crypto/libcrypto"
+            "-cc-options" ,(append-options (cppflags "libcrypto" "") "")
+            "-ld-options" ,(ldflags "libcrypto" "libcrypto.lib")
+            ,@(include-gambit-sharp)))
+        (else
+          `(gxc: "crypto/libcrypto"
+            "-cc-options" ,(append-options (cppflags "libcrypto" "") "-Wno-deprecated-declarations -Wno-implicit-function-declaration")
+            "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
+            ,@(include-gambit-sharp))))
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
     "crypto/digest"
     "crypto/cipher"
@@ -436,9 +453,15 @@
     "db/postgresql-driver"
     "db/postgresql"
     ,@(if config-enable-sqlite
-        `((gsc: "db/_sqlite"
+        `(,(cond-expand
+            (visualc
+              `(gsc: "db/_sqlite"
                 "-cc-options" ,(cppflags "sqlite3" "")
-                "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
+                "-ld-options" ,(append-options (ldflags "sqlite3" "sqlite3.lib") "")))
+            (else
+              `(gsc: "db/_sqlite"
+                "-cc-options" ,(cppflags "sqlite3" "")
+                "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())))

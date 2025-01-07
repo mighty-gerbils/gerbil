@@ -40,6 +40,13 @@
 
 (begin-ffi (_pipe make_pipe_ptr pipe_ptr_ref)
   (c-declare "#include <unistd.h>")
+  (c-declare "
+  #ifdef _WINDOWS
+  int pipe(int p[2]) {
+    return 0;
+  }
+  #endif
+  ")
 
   (namespace ("std/os/pipe#" __pipe))
 
