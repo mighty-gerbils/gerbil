@@ -58,6 +58,22 @@ namespace: gxc
    (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
    gerbil-libdir))
 
+(def compiler-obj-suffix
+  (cond-expand
+    (visualc ".obj")
+    (else ".o")))
+
+; generates an `include` form for use in a source code, gsc's -e option etc.
+; It takes care of windows paths where we need to escape the path.
+; e.g. (displayln (include-source "d:\\gerbil\\mycode.scm")) should print
+; (include "d:\\gerbil\\mycode.scm")
+; instead of:
+; (include "d:\gerbil\mycode.scm")
+; which results in an error:
+; *** ERROR -- Invalid escaped character: #\g
+(def (include-source path)
+  (string-append "(include " (object->string path) ")"))
+
 (def gerbil-runtime-modules
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
@@ -174,6 +190,12 @@ namespace: gxc
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
 
+  (def (replace-extension-with-c path)
+    (replace-extension path ".c"))
+
+  (def (replace-extension-with-object path)
+    (replace-extension path compiler-obj-suffix))
+
   (def (userlib-module? ctx)
     (and (not (exclude-module? ctx))
          (not (libgerbil-module? ctx))))
@@ -221,24 +243,24 @@ namespace: gxc
            (libgerbil-deps   (filter libgerbil-module? deps))
            (libgerbil-scm    (map find-static-module-file libgerbil-deps))
            (libgerbil-scm    (fold-libgerbil-runtime-scm gerbil-staticdir libgerbil-scm))
-           (libgerbil-c      (map (cut replace-extension <> ".c") libgerbil-scm))
-           (libgerbil-o      (map (cut replace-extension <> ".o") libgerbil-scm))
+           (libgerbil-c      (map replace-extension-with-c libgerbil-scm))
+           (libgerbil-o      (map replace-extension-with-object libgerbil-scm))
            (src-deps         (filter userlib-module? deps))
            (src-deps-scm     (map find-static-module-file src-deps))
            (src-deps-scm     (filter not-file-empty? src-deps-scm))
            (src-deps-scm     (map path-expand src-deps-scm))
-           (src-deps-c       (map (cut replace-extension <> ".c") src-deps-scm))
-           (src-deps-o       (map (cut replace-extension <> ".o") src-deps-scm))
+           (src-deps-c       (map replace-extension-with-c src-deps-scm))
+           (src-deps-o       (map replace-extension-with-object src-deps-scm))
            (src-bin-scm      (find-static-module-file ctx))
            (src-bin-scm      (path-expand src-bin-scm))
-           (src-bin-c        (replace-extension src-bin-scm ".c"))
-           (src-bin-o        (replace-extension src-bin-scm ".o"))
+           (src-bin-c        (replace-extension-with-c src-bin-scm))
+           (src-bin-o        (replace-extension-with-object src-bin-scm))
            (output-bin       (path-expand output-bin))
            (output-scm       (path-expand output-scm))
-           (output-c         (replace-extension output-scm ".c"))
-           (output-o         (replace-extension output-scm ".o"))
+           (output-c         (replace-extension-with-c output-scm))
+           (output-o         (replace-extension-with-object output-scm))
            (output_-c        (replace-extension output-scm "_.c"))
-           (output_-o        (replace-extension output-scm "_.o"))
+           (output_-o        (replace-extension output-scm (string-append "_" compiler-obj-suffix)))
            (gsc-link-opts    (gsc-link-options))
            (gsc-cc-opts      (gsc-cc-options static: #t))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
@@ -252,7 +274,7 @@ namespace: gxc
                           (cons ctx deps))))))
 
       (def (compile-obj scm-path c-path)
-        (let (o-path (replace-extension c-path ".o"))
+        (let (o-path (replace-extension c-path compiler-obj-suffix))
           (let* ((lock (string-append o-path ".lock"))
                  (locked #f)
                  (unlock
@@ -393,7 +415,7 @@ namespace: gxc
            (gerbil-libdir (path-expand "lib" gerbil-home))
            (runtime (map find-static-module-file gerbil-runtime-modules))
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
-           (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
+           (include-gambit-sharp (include-source gambit-sharp))
            (bin-scm (find-static-module-file ctx))
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
@@ -401,9 +423,9 @@ namespace: gxc
            (deps (filter (lambda (f) (not (member f runtime))) deps))
            (output-base (string-append (path-strip-extension output-scm)))
            (output-c (string-append output-base ".c"))
-           (output-o (string-append output-base ".o"))
+           (output-o (string-append output-base compiler-obj-suffix))
            (output-c_ (string-append output-base "_.c"))
-           (output-o_ (string-append output-base "_.o"))
+           (output-o_ (string-append output-base (string-append "_" compiler-obj-suffix)))
            (gsc-link-opts (gsc-link-options))
            (gsc-cc-opts (gsc-cc-options static: #t))
            (gsc-static-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))

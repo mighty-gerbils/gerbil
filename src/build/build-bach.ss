@@ -13,7 +13,10 @@
   (getenv "GERBIL_GSC" default-gerbil-gsc))
 
 (def (gerbil-gcc)
-  (getenv "GERBIL_GCC" "gcc"))
+  (getenv "GERBIL_GCC" 
+    (cond-expand
+      (visualc "cl")
+      (else "gcc"))))
 
 (def gerbil-bindir
   (path-expand "bin" build-home))
@@ -28,8 +31,41 @@
   (def default-ld-options ["-lutil" "-lm"]))
  (netbsd
   (def default-ld-options ["-lm"]))
+ (visualc
+  (def default-ld-options ["Kernel32.Lib" "User32.Lib" "Gdi32.Lib" "WS2_32.Lib" "/subsystem:console" "/entry:WinMainCRTStartup"]))
  (else
   (def default-ld-options ["-ldl" "-lm"])))
+
+(def compiler-obj-suffix
+  (cond-expand
+    (visualc ".obj")
+    (else ".o")))
+
+; generates an `include` form for use in a source code, gsc's -e option etc.
+; It takes care of windows paths where we need to escape the path.
+; e.g. (displayln (include-source "d:\\gerbil\\mycode.scm")) should print
+; (include "d:\\gerbil\\mycode.scm")
+; instead of:
+; (include "d:\gerbil\mycode.scm")
+; which results in an error:
+; *** ERROR -- Invalid escaped character: #\g
+(def (include-source path)
+  (string-append "(include " (object->string path) ")"))
+
+(def (link-output-options output-bin)
+  (cond-expand
+    (visualc [(string-append "/Fe" output-bin)])
+    (else ["-o" output-bin]))) 
+
+(def (link-with-libgambit-options)
+  (cond-expand
+    (visualc ["/link" (string-append "/LIBPATH:" "\"" gerbil-libdir "\"") "libgambit.lib"])
+    (else ["-L" gerbil-libdir "-lgambit"])))
+
+(def compiler-debug-option
+  (cond-expand
+    (visualc "/Zi")
+    (else "-g")))
 
 (def builtin-modules
   '(;; :gerbil/runtime
@@ -98,6 +134,12 @@
 (def (replace-extension path ext)
   (string-append (path-strip-extension path) ext))
 
+(def (replace-extension-with-c path)
+  (replace-extension path ".c"))
+
+(def (replace-extension-with-object path)
+  (replace-extension path compiler-obj-suffix))
+
 ;; first compile the module
 (displayln "... compile " bach-main)
 (compile-module (string-append bach-main ".ss")
@@ -108,16 +150,15 @@
 
 ;; and then compile the binary
 (let* ((builtin-modules-scm (map static-file-name builtin-modules))
-       (builtin-modules-c (map (cut replace-extension <> ".c") builtin-modules-scm))
-       (builtin-modules-o (map (cut replace-extension <> ".o") builtin-modules-scm))
+       (builtin-modules-c (map replace-extension-with-c builtin-modules-scm))
+       (builtin-modules-o (map replace-extension-with-object builtin-modules-scm))
        (bach-main-scm (static-file-name bach-main))
-       (bach-main-c (replace-extension bach-main-scm ".c"))
-       (bach-main-o (replace-extension bach-main-scm ".o"))
+       (bach-main-c (replace-extension-with-c bach-main-scm))
+       (bach-main-o (replace-extension-with-object bach-main-scm))
        (bach-link-c (path-expand "gerbil-link.c" gerbil-libdir))
-       (bach-link-o (replace-extension bach-link-c ".o"))
+       (bach-link-o (replace-extension bach-link-c compiler-obj-suffix))
        (gambit-sharp (path-expand "_gambit#.scm" gerbil-libdir))
-       (include-gambit-sharp
-        (string-append "(include \"" gambit-sharp "\")"))
+       (include-gambit-sharp (include-source gambit-sharp))
        (gsc-gx-macros
         (if (gerbil-runtime-smp?)
           ["-e" "(define-cond-expand-feature|enable-smp|)"
@@ -141,18 +182,18 @@
            bach-main-scm])
   (for-each (lambda (path-c)
               (add-compile-job!
-               (lambda () (invoke (gerbil-gsc) ["-obj" "-cc-options" "-g" path-c]))
+               (lambda () (invoke (gerbil-gsc) ["-obj" "-cc-options" compiler-debug-option path-c]))
                `(compile ,path-c)))
             [builtin-modules-c ... bach-main-c bach-link-c])
   (execute-pending-compile-jobs!)
   (displayln "... build " output-bin)
   (invoke (gerbil-gcc)
-          ["-o" output-bin
+          [(link-output-options output-bin) ...
            rpath-options ...
            builtin-modules-o ...
            bach-main-o
            bach-link-o
-           "-L" gerbil-libdir "-lgambit"
+           (link-with-libgambit-options) ...
            default-ld-options ...])
   ;; clean up
   (delete-file bach-main-scm)
