@@ -29,7 +29,7 @@ RUN case ${distro} in \
     eval yum install -y ${packages} \
     ;; \
     fedora) \
-    yum update -y && yum groupinstall -y 'Development Tools' && \
+    yum update -y && yum group install -y development-tools && \
     eval yum install -y ${packages} \
     ;; \
     debian|ubuntu) \
