@@ -283,7 +283,7 @@
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
-	 (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
+         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
          (run-httpd
           (lambda ()
 	    (set-httpd-max-token-length! max-token-length)
@@ -478,11 +478,11 @@
   => :procedure
   (let* ((content-type (path-extension->mime-type-name path))
          (headers
-          [(if content-type
+          [["Content-Length" :: (number->string (file-info-size info))]
+	   (if content-type
              ["Content-Type" :: content-type]
              ["Content-Type" :: "application/octet-stream"])
-           ["Last-Modified" :: (number->string (exact (floor (time->seconds (file-info-last-modification-time info)))))]
-           ["Content-Length" :: (number->string (file-info-size info))]]))
+           ["Last-Modified" :: (number->string (exact (floor (time->seconds (file-info-last-modification-time info)))))]]))
 
     (if (fx<= (file-info-size info) max-file-cache-size)
       ;; cache the content
@@ -501,11 +501,15 @@
         (using (req :- http-request)
           (case req.method
             ((GET)
-             (http-response-file res headers path))
+	     ;; RFC 9112 states that "a sender (server) MUST NOT send
+	     ;; a Content-Length header field in any message that
+	     ;; contains a Transfer-Encoding header field.".
+             (http-response-file res (cdr headers) path))
             ((HEAD)
              (http-response-write res 200 headers #f))
             (else
              (http-response-write-condition res Forbidden))))))))
+
 
 (def (find-handler tab server-path)
   (let loop ((path server-path))
