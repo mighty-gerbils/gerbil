@@ -283,7 +283,7 @@
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
-	 (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
+         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
          (run-httpd
           (lambda ()
 	    (set-httpd-max-token-length! max-token-length)
@@ -501,6 +501,9 @@
         (using (req :- http-request)
           (case req.method
             ((GET)
+	     ;; RFC 9112 states that "a sender (server) MUST NOT send
+	     ;; a Content-Length header field in any message that
+	     ;; contains a Transfer-Encoding header field.".
              (http-response-file res (cdr headers) path))
             ((HEAD)
              (http-response-write res 200 headers #f))
