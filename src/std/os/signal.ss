@@ -110,7 +110,7 @@
   (c-declare "
   #ifdef _WINDOWS
   int kill(int pid, int signo) {
-    return 0;
+    return -1;
   }
   #endif
   ")

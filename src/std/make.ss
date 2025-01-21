@@ -472,6 +472,11 @@ TODO:
      (else
       `("-e" ,include-gambit-sharp)))))
 
+; For native windows support, we need win32ports's sys_time_h (https://github.com/win32ports/sys_time_h) and unistd_h (https://github.com/win32ports/unistd_h). 
+; That means we need to specify an external include path (in theory MSVC can have "default include path" but most of the time we want to avoid it). 
+; However, currently many codes are compiled even without using the default cc options from environment, so we need this function.
+; In theory, we don't need `cond-expand`, because in POSIX systems, respecting `env-cppflags` looks like the correct behavior, too.
+; However, let's keep the current behavior for POSIX systems and remove the `cond-expand` only when we really need to.
 (def (non-posix-extra-gsc-options)
   (cond-expand
     (visualc 

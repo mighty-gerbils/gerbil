@@ -104,7 +104,7 @@
   #define LOCK_UN 2
   #define LOCK_NB 3
   int flock(int fd, int op) {
-    return 0;
+    return -1;
   }
   #endif
   ")

@@ -583,7 +583,7 @@ int ffi_socket_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int
 
  return sendmsg (fd, &msg, flags);
 #else
- return 0;
+ return -1;
 #endif
 }
 
@@ -646,7 +646,7 @@ int ffi_socket_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCM
 
  return r;
 #else
- return 0;
+ return -1;
 #endif
 }
 
@@ -753,14 +753,14 @@ int ffi_socket_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (U8_DATA (bytes), sa, salen);
- return 0;
+ return -1;
 }
 
 int ffi_socket_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (sa, U8_DATA (bytes), salen);
- return 0;
+ return -1;
 }
 
 int ffi_socket_getsockopt_int (int fd, int level, int opt)

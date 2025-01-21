@@ -43,7 +43,7 @@
   (c-declare "
   #ifdef _WINDOWS
   int pipe(int p[2]) {
-    return 0;
+    return -1;
   }
   #endif
   ")

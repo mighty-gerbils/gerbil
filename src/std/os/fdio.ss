@@ -88,7 +88,7 @@
   (c-declare "
   #ifdef _WINDOWS
   int fsync(int fd) {
-    return 0;
+    return -1;
   }
   #endif
   ")

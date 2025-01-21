@@ -11,7 +11,7 @@
   (c-declare "
   #ifdef _WINDOWS
   int getppid() {
-    return 0;
+    return -1;
   }
   #endif
   ")

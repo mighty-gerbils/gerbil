@@ -136,7 +136,7 @@
   (c-declare "
   #ifdef _WINDOWS
   int fcntl (int __fd, int __cmd, ...) {
-    return 0;
+    return -1;
   }
   #endif
   ")
