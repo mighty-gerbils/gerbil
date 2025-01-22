@@ -267,11 +267,11 @@
     "net/socks"
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
-    (gxc: "os/fd"    ,@(include-gambit-sharp))
-    (gxc: "os/fdio"  ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
+    (gxc: "os/fd" ,@(include-gambit-sharp))
+    (gxc: "os/fdio" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
     (gxc: "os/fcntl" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
     (gxc: "os/flock" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
-    (gxc: "os/pipe"  ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
+    (gxc: "os/pipe" ,@(non-posix-extra-gsc-options) ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
         `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
