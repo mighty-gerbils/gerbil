@@ -302,15 +302,23 @@
 
 (begin-ffi (http-date)
   (c-declare #<<END-C
+#ifdef _MSC_VER
+#define __thread __declspec(thread)
+#endif
+
 #include <time.h>
 #include <string.h>
 __thread char date_buf[64];
 static char *ffi_httpd_date () {
+#ifndef _WINDOWS
  struct tm tm;
  time_t t = time(NULL);
  asctime_r (gmtime_r (&t, &tm), date_buf);
  // clobber newline
  date_buf[strlen(date_buf)-1] = 0;
+#else
+ date_buf[0] = 0;
+#endif
  return date_buf;
 }
 END-C

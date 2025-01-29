@@ -18,6 +18,10 @@
   (c-declare "
 #include <unistd.h>
 
+#ifdef _MSC_VER
+#define __thread __declspec(thread)
+#endif
+
 __thread char hostname_buf[1024];
 static char* ffi_gethostname() {
   gethostname(hostname_buf, sizeof(hostname_buf));

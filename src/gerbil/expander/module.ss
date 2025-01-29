@@ -38,7 +38,10 @@ namespace: gx
 (def current-module-reader-args
   (make-parameter #f))
 
-(def source-file-settings '(char-encoding: UTF-8 eol-encoding: lf))
+(def source-file-settings
+  (cond-expand
+    (visualc '(char-encoding: UTF-8 eol-encoding: cr-lf))
+    (else '(char-encoding: UTF-8 eol-encoding: lf))))
 
 (def (call-with-input-source-file path fun)
   (call-with-input-file [path: path . source-file-settings] fun))
