@@ -4,7 +4,7 @@
         (prefix-in :std/misc/ports _)
         (only-in :std/test test-suite test-case check)
         (only-in :std/sugar with-destroy)
-        (only-in :std/net/repl start-repl-server! stop-repl-server!))
+        (only-in ./repl start-repl-server! stop-repl-server!))
 
 (def server-address "127.0.0.1:7000")
 (def repld #f)
