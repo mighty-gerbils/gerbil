@@ -22,6 +22,6 @@
     (test-case "repl connection"
       (let ((client (open-tcp-client server-address)))
         (with-destroy client
-          (display "(+ 1 2)" client)
+          (display "(+ 1 2)\r" client)
           (force-output client)
           (check (read-line client) => "> 3\r"))))))
