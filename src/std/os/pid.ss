@@ -8,6 +8,13 @@
 (begin-ffi (getpid getppid)
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <unistd.h>")
+  (c-declare "
+  #ifdef _WINDOWS
+  int getppid() {
+    return -1;
+  }
+  #endif
+  ")
 
   (define-c-lambda getpid () int)
   (define-c-lambda getppid () int))

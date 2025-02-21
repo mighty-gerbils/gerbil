@@ -127,6 +127,10 @@ END-C
 
 ;; error handling
 (c-declare #<<END-C
+#ifdef _MSC_VER
+#define __thread __declspec(thread)
+#endif
+
 __thread char openssl_error_buf[256];
 static char *ffi_openssl_error_string(unsigned long err)
 {

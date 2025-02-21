@@ -25,6 +25,8 @@
   (def default-ld-options "-lutil"))
  (netbsd
   (def default-ld-options "-lm"))
+ (visualc
+  (def default-ld-options "/link Kernel32.Lib User32.Lib Gdi32.Lib WS2_32.Lib /subsystem:console /entry:WinMainCRTStartup"))
  (else
   (def default-ld-options "-ldl -lm")))
 
@@ -244,8 +246,24 @@
 (def (module-c-file f)
   (file-replace-extension f ".c"))
 
+(def compiler-obj-suffix
+  (cond-expand
+    (visualc ".obj")
+    (else ".o")))
+
+; generates an `include` form for use in a source code, gsc's -e option etc.
+; It takes care of windows paths where we need to escape the path.
+; e.g. (displayln (include-source "d:\\gerbil\\mycode.scm")) should print
+; (include "d:\\gerbil\\mycode.scm")
+; instead of:
+; (include "d:\gerbil\mycode.scm")
+; which results in an error:
+; *** ERROR -- Invalid escaped character: #\g
+(def (include-source path)
+  (string-append "(include " (object->string path) ")"))
+
 (def (module-o-file f)
-  (file-replace-extension f ".o"))
+  (file-replace-extension f compiler-obj-suffix))
 
 (def (library-file-path f)
   (path-expand f (gerbil-lib-dir)))
@@ -323,8 +341,7 @@
          (static-module-c-paths   (map module-c-file static-module-scm-paths))
          (static-module-o-paths   (map module-o-file static-module-c-paths))
          (gambit-sharp (library-file-path "_gambit#.scm"))
-         (include-gambit-sharp
-          (string-append "(include \"" gambit-sharp "\")"))
+         (include-gambit-sharp (include-source gambit-sharp))
          (gsc-gx-macros
           (if (gerbil-runtime-smp?)
             ["-e" "(define-cond-expand-feature|enable-smp|)"

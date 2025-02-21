@@ -18,12 +18,26 @@
 (c-declare #<<END-C
 #include <errno.h>
 #include <sys/types.h>
+#ifdef _WINDOWS
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+// workaround: define mandatory consts
+// constants defined by define-const* (e.g. AF_NETLINK) is optional
+// TODO: check their actual values
+#define AF_LOCAL  0
+#define SHUT_RD   0
+#define SHUT_WR   0
+#define SHUT_RDWR 0
+
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <sys/un.h>
+#endif
 #include <sys/time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -456,8 +470,10 @@ static socklen_t ___sockaddr_family_len (int family)
    return sizeof (struct sockaddr_in);
   case AF_INET6:
    return sizeof (struct sockaddr_in6);
+#ifndef _WINDOWS
   case AF_UNIX:
    return sizeof (struct sockaddr_un);
+#endif
 #ifdef __linux__
   case AF_NETLINK:
    return sizeof (struct sockaddr_nl);
@@ -531,6 +547,7 @@ int ffi_socket_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, s
 
 int ffi_socket_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
 {
+#ifndef _WINDOWS
  void *msg_name = NULL;
  socklen_t msg_namelen = 0;
  struct iovec msg_iov = {NULL, 0};
@@ -565,6 +582,9 @@ int ffi_socket_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int
  msg.msg_flags = 0;
 
  return sendmsg (fd, &msg, flags);
+#else
+ return -1;
+#endif
 }
 
 int ffi_socket_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags)
@@ -580,6 +600,7 @@ int ffi_socket_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags,
 
 int ffi_socket_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags)
 {
+#ifndef _WINDOWS
  void *msg_name = NULL;
  socklen_t msg_namelen = 0;
  struct iovec msg_iov = {NULL, 0};
@@ -624,6 +645,9 @@ int ffi_socket_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCM
   *rflags = msg.msg_flags;
 
  return r;
+#else
+ return -1;
+#endif
 }
 
 int ffi_socket_getpeername (int fd, struct sockaddr *sa)
@@ -703,14 +727,20 @@ void ffi_socket_sockaddr_in6_port_set (struct sockaddr *sa, int port)
 
 char *ffi_socket_sockaddr_un_path (struct sockaddr *sa)
 {
+#ifndef _WINDOWS
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
  return sa_un->sun_path;
+#else
+ return NULL;
+#endif
 }
 
 void ffi_socket_sockaddr_un_path_set (struct sockaddr *sa, char *path)
 {
+#ifndef _WINDOWS
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
  strncpy (sa_un->sun_path, path, sizeof (sa_un->sun_path));
+#endif
 }
 
 int ffi_socket_sockaddr_len (struct sockaddr *sa)
@@ -723,14 +753,14 @@ int ffi_socket_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (U8_DATA (bytes), sa, salen);
- return 0;
+ return -1;
 }
 
 int ffi_socket_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (sa, U8_DATA (bytes), salen);
- return 0;
+ return -1;
 }
 
 int ffi_socket_getsockopt_int (int fd, int level, int opt)
