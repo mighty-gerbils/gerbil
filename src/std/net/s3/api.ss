@@ -239,5 +239,6 @@
       (begin
         (request-close req)
         (raise-s3-error
-          (request-status req)
-          (request-status-text req))))))
+          s3-client::request
+          (request-status-text req)
+          (request-status req))))))
