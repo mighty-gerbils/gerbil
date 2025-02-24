@@ -193,7 +193,7 @@
              (host (if bucket
                      (string-append bucket "." (s3-client-endpoint self))
                      (s3-client-endpoint self)))
-             (headers [["Host" :: (string-append host ":443")]
+             (headers [["Host" :: host]
                        ["x-amz-date" :: ts]
                        ["x-amz-content-sha256" :: (hex-encode hash)]
                        (if body [["Content-Type" :: content-type]] []) ...
