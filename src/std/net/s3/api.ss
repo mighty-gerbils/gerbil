@@ -226,7 +226,8 @@
 
 (def (s3-parse-xml req)
   (read-xml (request-content req)
-    namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3"))))
+    namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3")
+                  ("http://doc.s3.amazonaws.com/2006-03-01" . "s3"))))
 
 (defrule (s3-response-error? xml)
   (sxml-find xml (sxml-e? 'Error)))
