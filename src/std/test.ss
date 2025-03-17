@@ -110,8 +110,8 @@
 (def (equal-values? obj-a obj-b)
   (if (##values? obj-a)
     (and (##values? obj-b)
-         (equal? (##vector->list obj-a)
-                 (##vector->list obj-b)))
+         (equal? (##values->list obj-a)
+                 (##values->list obj-b)))
     (equal? obj-a obj-b)))
 
 (def (not-equal-values? x y)
