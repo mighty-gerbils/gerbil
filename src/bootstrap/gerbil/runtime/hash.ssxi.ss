@@ -706,7 +706,15 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
+           ((HashTable::for-each
+             .
+             _%locked-hash-table::HashTable::for-each106445%_)
+            (HashTable::ref . _%locked-hash-table::HashTable::ref106433%_)
+            (HashTable::copy . _%locked-hash-table::HashTable::copy106451%_)
+            (HashTable::length
+             .
+             _%locked-hash-table::HashTable::length106448%_)
+            (HashTable::update!
              .
              _%locked-hash-table::HashTable::update!106439%_)
             (HashTable::delete!
@@ -715,14 +723,6 @@ package: gerbil/runtime
             (HashTable::clear!
              .
              _%locked-hash-table::HashTable::clear!106454%_)
-            (HashTable::ref . _%locked-hash-table::HashTable::ref106433%_)
-            (HashTable::for-each
-             .
-             _%locked-hash-table::HashTable::for-each106445%_)
-            (HashTable::length
-             .
-             _%locked-hash-table::HashTable::length106448%_)
-            (HashTable::copy . _%locked-hash-table::HashTable::copy106451%_)
             (HashTable::set! . _%locked-hash-table::HashTable::set!106436%_))))
   (declare-type
    locked-hash-table::t
@@ -765,7 +765,15 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
+           ((HashTable::for-each
+             .
+             _%checked-hash-table::HashTable::for-each106680%_)
+            (HashTable::ref . _%checked-hash-table::HashTable::ref106668%_)
+            (HashTable::copy . _%checked-hash-table::HashTable::copy106686%_)
+            (HashTable::length
+             .
+             _%checked-hash-table::HashTable::length106683%_)
+            (HashTable::update!
              .
              _%checked-hash-table::HashTable::update!106674%_)
             (HashTable::delete!
@@ -774,14 +782,6 @@ package: gerbil/runtime
             (HashTable::clear!
              .
              _%checked-hash-table::HashTable::clear!106689%_)
-            (HashTable::ref . _%checked-hash-table::HashTable::ref106668%_)
-            (HashTable::for-each
-             .
-             _%checked-hash-table::HashTable::for-each106680%_)
-            (HashTable::length
-             .
-             _%checked-hash-table::HashTable::length106683%_)
-            (HashTable::copy . _%checked-hash-table::HashTable::copy106686%_)
             (HashTable::set!
              .
              _%checked-hash-table::HashTable::set!106671%_))))

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-xform::timestamp 1742222171)
+  (define gerbil/compiler/optimize-xform::timestamp 1742223875)
   (begin
     (define gxc#::collect-mutators::t
       (let ((__tmp155076 (list gxc#::void::t))
@@ -1632,43 +1632,43 @@
                             (if (let ()
                                   (declare (not safe))
                                   (gx#stx-pair? _%lp-hd154241154299%_))
-                                (let ((_%e154247154304%_
+                                (let ((_%e154250154304%_
                                        (let ()
                                          (declare (not safe))
                                          (gx#stx-e _%lp-hd154241154299%_))))
-                                  (let ((_%hd154248154307%_
+                                  (let ((_%hd154251154307%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%e154247154304%_)))
-                                        (_%tl154249154309%_
+                                           (##car _%e154250154304%_)))
+                                        (_%tl154252154309%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%e154247154304%_))))
+                                           (##cdr _%e154250154304%_))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-pair? _%tl154249154309%_))
-                                        (let ((_%e154250154312%_
+                                          (gx#stx-pair? _%tl154252154309%_))
+                                        (let ((_%e154253154312%_
                                                (let ()
                                                  (declare (not safe))
                                                  (gx#stx-e
-                                                  _%tl154249154309%_))))
-                                          (let ((_%hd154251154315%_
+                                                  _%tl154252154309%_))))
+                                          (let ((_%hd154254154315%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _%e154250154312%_)))
-                                                (_%tl154252154317%_
+                                                   (##car _%e154253154312%_)))
+                                                (_%tl154255154317%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _%e154250154312%_))))
+                                                   (##cdr _%e154253154312%_))))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-null?
-                                                   _%tl154252154317%_))
+                                                   _%tl154255154317%_))
                                                 (_%loop154239154286%_
                                                  _%lp-tl154242154301%_
-                                                 (cons _%hd154251154315%_
+                                                 (cons _%hd154254154315%_
                                                        _%expr154243154291%_)
-                                                 (cons _%hd154248154307%_
+                                                 (cons _%hd154251154307%_
                                                        _%bind154244154293%_))
                                                 (_%g154225154260%_
                                                  _%g154226154263%_))))
@@ -1682,21 +1682,21 @@
                           (if (let ()
                                 (declare (not safe))
                                 (gx#stx-pair? _%tl154235154278%_))
-                              (let ((_%e154253154325%_
+                              (let ((_%e154247154325%_
                                      (let ()
                                        (declare (not safe))
                                        (gx#stx-e _%tl154235154278%_))))
-                                (let ((_%hd154254154328%_
+                                (let ((_%hd154248154328%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%e154253154325%_)))
-                                      (_%tl154255154330%_
+                                         (##car _%e154247154325%_)))
+                                      (_%tl154249154330%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%e154253154325%_))))
+                                         (##cdr _%e154247154325%_))))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-null? _%tl154255154330%_))
+                                        (gx#stx-null? _%tl154249154330%_))
                                       ((lambda (_%L154333%_
                                                 _%L154334%_
                                                 _%L154335%_)
@@ -1728,7 +1728,7 @@
                                                  (gxc#compile-e__1
                                                   _%self154222%_
                                                   _%L154333%_)))))
-                                       _%hd154254154328%_
+                                       _%hd154248154328%_
                                        _%expr154245154320%_
                                        _%bind154246154322%_)
                                       (_%g154225154260%_ _%g154226154263%_))))
