@@ -279,7 +279,10 @@
              (let loop ((i 0))
                (if (##fx< i len)
                  (macro-walk-object-seq
-                  obj i (##vector-ref obj i)
+                  obj i
+                  (if (##vector? obj)
+                    (##vector-ref obj i)
+                    (##unchecked-structure-ref obj i #f #f))
                   (loop (##fx+ i 1)))
                  (macro-walk-continue)))))
 
