@@ -822,7 +822,7 @@ namespace: gxc
               (id (core-quote-syntax id))
               (_ (core-bind-runtime! id))
               (body (xform-e #'body kont-id kont-box negation-id)))
-         ['%#let-values [[[id] #'(%#call (%#ref split-splice) . args)]]
+         ['%#let-values [[[id] #'(%#call (%#ref gx#syntax-split-splice->vector) . args)]]
            ['%#let-values [[[#'tgt] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 0)]]
                            [[#'tl] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 1)]]]
               body]]))

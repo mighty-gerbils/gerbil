@@ -423,7 +423,7 @@ package: gerbil/core
                         ((vector->list)
                          #'(##vector->list target))
                         ((struct->list)
-                         #'(##cdr (##structure->list target)))
+                         #'(##cdr (struct->list target)))
                         (else
                          (raise-syntax-error #f "Unexpected list conversion" stx ->list)))))
         ['let #'(($tgt target->list))

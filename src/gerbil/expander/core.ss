@@ -587,7 +587,7 @@ namespace: gx
   (gerbil-core
    (defrules &phi-context? ()
      ((_ ctx)
-      (fx> (##vector-length ctx) 3))))
+      (fx> (##structure-length ctx) 3))))
   (else
    (def &phi-context? phi-context?)))
 
