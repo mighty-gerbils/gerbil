@@ -533,7 +533,7 @@ package: gerbil/runtime
       (%#call %#ref)
       ((%#call _ (%#ref var))
        #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector-length) (%#ref var))
+               (%#call (%#ref ##values-length) (%#ref var))
                (%#quote 1)))
       ((%#call recur expr)
        (with-syntax
@@ -592,7 +592,7 @@ package: gerbil/runtime
       (%#call %#ref)
       ((%#call _ (%#ref var))
        #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector->list) (%#ref var))
+               (%#call (%#ref ##values->list) (%#ref var))
                (%#call (%#ref list) (%#ref var))))
       ((%#call recur expr)
        (with-syntax

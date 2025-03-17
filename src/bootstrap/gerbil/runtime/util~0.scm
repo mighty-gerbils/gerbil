@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1734357959)
+  (define gerbil/runtime/util::timestamp 1742222160)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)
@@ -347,7 +347,7 @@
     (define values-count
       (lambda (_%obj90128%_)
         (if (let () (declare (not safe)) (##values? _%obj90128%_))
-            (let () (declare (not safe)) (##vector-length _%obj90128%_))
+            (let () (declare (not safe)) (##values-length _%obj90128%_))
             '1)))
     (define values-ref
       (lambda (_%obj90113%_ _%k90114%_)
@@ -370,12 +370,12 @@
           (if (let () (declare (not safe)) (##values? _%obj90100%_))
               (let ()
                 (declare (not safe))
-                (##vector-ref _%obj90100%_ _%k90104%_))
+                (##values-ref _%obj90100%_ _%k90104%_))
               _%obj90100%_))))
     (define values->list
       (lambda (_%obj90097%_)
         (if (let () (declare (not safe)) (##values? _%obj90097%_))
-            (let () (declare (not safe)) (##vector->list _%obj90097%_))
+            (let () (declare (not safe)) (##values->list _%obj90097%_))
             (list _%obj90097%_))))
     (define foldl1
       (lambda (_%f90081%_ _%iv90082%_ _%lst90083%_)

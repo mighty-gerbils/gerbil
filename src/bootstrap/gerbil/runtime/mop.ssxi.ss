@@ -1858,7 +1858,7 @@ package: gerbil/runtime
                         (%#quote "struct-instance-init!: too many arguments for struct")
                         (%#ref self)
                         (%#quote count)
-                        (%#call (%#ref ##vector-length) (%#ref self))))))
+                        (%#call (%#ref ##structure-length) (%#ref self))))))
       ((%#call recur self arg ...)
        (with-syntax
         (($self (make-symbol (gensym '__self))))
@@ -2691,7 +2691,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             fixnum::t
              effect:
              #f
              arguments:

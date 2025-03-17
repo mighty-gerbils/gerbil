@@ -302,7 +302,7 @@
                                      (##car _%e4657746731%_))))
                               (if (gx#stx-pair/null? _%tl4657346718%_)
                                   (let ((_%__splice7934479345%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4657346718%_
                                           '0)))
                                     (let ((_%tl4658246744%_
@@ -519,7 +519,7 @@
                                           (if (gx#stx-pair/null?
                                                _%tl4651046992%_)
                                               (let ((_%__splice7933679337%_
-                                                     (gx#syntax-split-splice
+                                                     (gx#syntax-split-splice->vector
                                                       _%tl4651046992%_
                                                       '0)))
                                                 (let ((_%tl4652247028%_
@@ -619,7 +619,9 @@
                   (if (gx#stx-null? _%tl4655446880%_)
                       (if (gx#stx-pair/null? _%tl4651046992%_)
                           (let ((_%__splice7934079341%_
-                                 (gx#syntax-split-splice _%tl4651046992%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4651046992%_
+                                  '0)))
                             (let ((_%tl4655746886%_
                                    (let ()
                                      (declare (not safe))
@@ -701,7 +703,7 @@
                                      (##car _%e4657746731%_))))
                               (if (gx#stx-pair/null? _%tl4651046992%_)
                                   (let ((_%__splice7934479345%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4651046992%_
                                           '0)))
                                     (let ((_%tl4658246744%_
@@ -752,7 +754,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4651046992%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4651046992%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4651046992%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -805,7 +809,7 @@
                                                            _%tl4651046992%_)
                                                           (let ((_%__splice7934479345%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-split-splice _%tl4651046992%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl4651046992%_ '0)))
                     (let ((_%tl4658246744%_
                            (let ()
                              (declare (not safe))
@@ -851,7 +855,7 @@
                                           (if (gx#stx-pair/null?
                                                _%tl4651046992%_)
                                               (let ((_%__splice7934479345%_
-                                                     (gx#syntax-split-splice
+                                                     (gx#syntax-split-splice->vector
                                                       _%tl4651046992%_
                                                       '0)))
                                                 (let ((_%tl4658246744%_
@@ -906,7 +910,7 @@
                                              (##car _%e4657746731%_))))
                                       (if (gx#stx-pair/null? _%tl4651046992%_)
                                           (let ((_%__splice7934479345%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl4651046992%_
                                                   '0)))
                                             (let ((_%tl4658246744%_
@@ -961,7 +965,7 @@
                                          (##car _%e4657746731%_))))
                                   (if (gx#stx-pair/null? _%tl4651046992%_)
                                       (let ((_%__splice7934479345%_
-                                             (gx#syntax-split-splice
+                                             (gx#syntax-split-splice->vector
                                               _%tl4651046992%_
                                               '0)))
                                         (let ((_%tl4658246744%_
@@ -1247,7 +1251,9 @@
                                                                _%tl4644647267%_)
                                                               (let ((_%__splice7932879329%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4644647267%_
+                              '0)))
                         (let ((_%tl4646747333%_
                                (let ()
                                  (declare (not safe))
@@ -1327,7 +1333,7 @@
                                  (##car _%e4657746731%_))))
                           (if (gx#stx-pair/null? _%tl4644647267%_)
                               (let ((_%__splice7934479345%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl4644647267%_
                                       '0)))
                                 (let ((_%tl4658246744%_
@@ -1378,7 +1384,9 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _%tl4644647267%_)
                           (let ((_%__splice7934079341%_
-                                 (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4644647267%_
+                                  '0)))
                             (let ((_%tl4655746886%_
                                    (let ()
                                      (declare (not safe))
@@ -1460,7 +1468,7 @@
                                      (##car _%e4657746731%_))))
                               (if (gx#stx-pair/null? _%tl4644647267%_)
                                   (let ((_%__splice7934479345%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4644647267%_
                                           '0)))
                                     (let ((_%tl4658246744%_
@@ -1511,7 +1519,7 @@
                                  (##car _%e4657746731%_))))
                           (if (gx#stx-pair/null? _%tl4644647267%_)
                               (let ((_%__splice7934479345%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl4644647267%_
                                       '0)))
                                 (let ((_%tl4658246744%_
@@ -1562,7 +1570,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4644647267%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4644647267%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -1611,7 +1621,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4644647267%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4644647267%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -1649,7 +1659,7 @@
                                   (if (gx#stx-null? _%tl4645547297%_)
                                       (if (gx#stx-pair/null? _%tl4644647267%_)
                                           (let ((_%__splice7933279333%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl4644647267%_
                                                   '0)))
                                             (let ((_%tl4649547150%_
@@ -1733,7 +1743,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4644647267%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4644647267%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -1781,7 +1791,7 @@
                               (if (gx#stx-null? _%tl4645547297%_)
                                   (if (gx#stx-pair/null? _%tl4644647267%_)
                                       (let ((_%__splice7933279333%_
-                                             (gx#syntax-split-splice
+                                             (gx#syntax-split-splice->vector
                                               _%tl4644647267%_
                                               '0)))
                                         (let ((_%tl4649547150%_
@@ -1886,7 +1896,9 @@
                   (if (gx#stx-null? _%tl4655446880%_)
                       (if (gx#stx-pair/null? _%tl4644647267%_)
                           (let ((_%__splice7934079341%_
-                                 (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4644647267%_
+                                  '0)))
                             (let ((_%tl4655746886%_
                                    (let ()
                                      (declare (not safe))
@@ -1968,7 +1980,7 @@
                                      (##car _%e4657746731%_))))
                               (if (gx#stx-pair/null? _%tl4644647267%_)
                                   (let ((_%__splice7934479345%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4644647267%_
                                           '0)))
                                     (let ((_%tl4658246744%_
@@ -2019,7 +2031,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4644647267%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4644647267%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -2072,7 +2086,7 @@
                                                            _%tl4644647267%_)
                                                           (let ((_%__splice7934479345%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl4644647267%_ '0)))
                     (let ((_%tl4658246744%_
                            (let ()
                              (declare (not safe))
@@ -2119,7 +2133,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4644647267%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4644647267%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -2169,7 +2183,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4644647267%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4644647267%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -2217,7 +2231,7 @@
                           (if (gx#stx-null? _%tl4645547297%_)
                               (if (gx#stx-pair/null? _%tl4644647267%_)
                                   (let ((_%__splice7933279333%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4644647267%_
                                           '0)))
                                     (let ((_%tl4649547150%_
@@ -2324,7 +2338,9 @@
                                                                _%tl4644647267%_)
                                                               (let ((_%__splice7934079341%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4644647267%_
+                              '0)))
                         (let ((_%tl4655746886%_
                                (let ()
                                  (declare (not safe))
@@ -2401,7 +2417,7 @@
                                  (##car _%e4657746731%_))))
                           (if (gx#stx-pair/null? _%tl4644647267%_)
                               (let ((_%__splice7934479345%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl4644647267%_
                                       '0)))
                                 (let ((_%tl4658246744%_
@@ -2455,7 +2471,9 @@
                        (let () (declare (not safe)) (##car _%e4657746731%_))))
                   (if (gx#stx-pair/null? _%tl4644647267%_)
                       (let ((_%__splice7934479345%_
-                             (gx#syntax-split-splice _%tl4644647267%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4644647267%_
+                              '0)))
                         (let ((_%tl4658246744%_
                                (let ()
                                  (declare (not safe))
@@ -2502,7 +2520,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4644647267%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4644647267%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -2552,7 +2570,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4644647267%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4644647267%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -2611,7 +2629,7 @@
                                           (if (gx#stx-pair/null?
                                                _%tl4644647267%_)
                                               (let ((_%__splice7934479345%_
-                                                     (gx#syntax-split-splice
+                                                     (gx#syntax-split-splice->vector
                                                       _%tl4644647267%_
                                                       '0)))
                                                 (let ((_%tl4658246744%_
@@ -2824,7 +2842,7 @@
                       (if (gx#stx-null? _%tl4642547483%_)
                           (if (gx#stx-pair/null? _%tl4641347443%_)
                               (let ((_%__splice7932479325%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl4641347443%_
                                       '0)))
                                 (let ((_%tl4642847489%_
@@ -2930,7 +2948,7 @@
                                                            _%tl4641347443%_)
                                                           (let ((_%__splice7932879329%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl4641347443%_ '0)))
                     (let ((_%tl4646747333%_
                            (let ()
                              (declare (not safe))
@@ -3009,7 +3027,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4641347443%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4641347443%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -3054,7 +3074,9 @@
                                                                _%tl4641347443%_)
                                                               (let ((_%__splice7934079341%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4641347443%_
+                              '0)))
                         (let ((_%tl4655746886%_
                                (let ()
                                  (declare (not safe))
@@ -3131,7 +3153,7 @@
                                  (##car _%e4657746731%_))))
                           (if (gx#stx-pair/null? _%tl4641347443%_)
                               (let ((_%__splice7934479345%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl4641347443%_
                                       '0)))
                                 (let ((_%tl4658246744%_
@@ -3182,7 +3204,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4641347443%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4641347443%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -3230,7 +3254,9 @@
                        (let () (declare (not safe)) (##car _%e4657746731%_))))
                   (if (gx#stx-pair/null? _%tl4641347443%_)
                       (let ((_%__splice7934479345%_
-                             (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4641347443%_
+                              '0)))
                         (let ((_%tl4658246744%_
                                (let ()
                                  (declare (not safe))
@@ -3277,7 +3303,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4641347443%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4641347443%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -3344,7 +3370,7 @@
                                                            _%tl4641347443%_)
                                                           (let ((_%__splice7934079341%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl4641347443%_ '0)))
                     (let ((_%tl4655746886%_
                            (let ()
                              (declare (not safe))
@@ -3420,7 +3446,9 @@
                              (##car _%e4657746731%_))))
                       (if (gx#stx-pair/null? _%tl4641347443%_)
                           (let ((_%__splice7934479345%_
-                                 (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4641347443%_
+                                  '0)))
                             (let ((_%tl4658246744%_
                                    (let ()
                                      (declare (not safe))
@@ -3473,7 +3501,7 @@
                                                            _%tl4641347443%_)
                                                           (let ((_%__splice7934479345%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl4641347443%_ '0)))
                     (let ((_%tl4658246744%_
                            (let ()
                              (declare (not safe))
@@ -3520,7 +3548,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4641347443%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4641347443%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -3570,7 +3598,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4641347443%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4641347443%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -3636,7 +3664,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4641347443%_)
                                                       (let ((_%__splice7934079341%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4641347443%_
                                                               '0)))
                                                         (let ((_%tl4655746886%_
@@ -3714,7 +3742,9 @@
                        (let () (declare (not safe)) (##car _%e4657746731%_))))
                   (if (gx#stx-pair/null? _%tl4641347443%_)
                       (let ((_%__splice7934479345%_
-                             (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4641347443%_
+                              '0)))
                         (let ((_%tl4658246744%_
                                (let ()
                                  (declare (not safe))
@@ -3761,7 +3791,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4641347443%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4641347443%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -3811,7 +3841,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl4641347443%_)
                                                   (let ((_%__splice7934479345%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl4641347443%_
                                                           '0)))
                                                     (let ((_%tl4658246744%_
@@ -3870,7 +3900,7 @@
                                           (if (gx#stx-pair/null?
                                                _%tl4641347443%_)
                                               (let ((_%__splice7934479345%_
-                                                     (gx#syntax-split-splice
+                                                     (gx#syntax-split-splice->vector
                                                       _%tl4641347443%_
                                                       '0)))
                                                 (let ((_%tl4658246744%_
@@ -3915,7 +3945,9 @@
                   (if (gx#stx-null? _%tl4642247473%_)
                       (if (gx#stx-pair/null? _%tl4641347443%_)
                           (let ((_%__splice7933279333%_
-                                 (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl4641347443%_
+                                  '0)))
                             (let ((_%tl4649547150%_
                                    (let ()
                                      (declare (not safe))
@@ -3991,7 +4023,7 @@
                                      (##car _%e4657746731%_))))
                               (if (gx#stx-pair/null? _%tl4641347443%_)
                                   (let ((_%__splice7934479345%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl4641347443%_
                                           '0)))
                                     (let ((_%tl4658246744%_
@@ -4045,7 +4077,9 @@
                        (let () (declare (not safe)) (##car _%e4657746731%_))))
                   (if (gx#stx-pair/null? _%tl4641347443%_)
                       (let ((_%__splice7934479345%_
-                             (gx#syntax-split-splice _%tl4641347443%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl4641347443%_
+                              '0)))
                         (let ((_%tl4658246744%_
                                (let ()
                                  (declare (not safe))
@@ -4092,7 +4126,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl4641347443%_)
                                                       (let ((_%__splice7934479345%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl4641347443%_
                                                               '0)))
                                                         (let ((_%tl4658246744%_
@@ -4130,7 +4164,7 @@
                                   (if (gx#stx-null? _%hd4641247440%_)
                                       (if (gx#stx-pair/null? _%tl4641347443%_)
                                           (let ((_%__splice7934879349%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl4641347443%_
                                                   '0)))
                                             (let ((_%tl4659846640%_
@@ -5569,7 +5603,7 @@
                                             (if (gx#stx-pair/null?
                                                  _%tl4837448871%_)
                                                 (let ((_%__splice7981279813%_
-                                                       (gx#syntax-split-splice
+                                                       (gx#syntax-split-splice->vector
                                                         _%tl4837448871%_
                                                         '0)))
                                                   (let ((_%tl4838648907%_
@@ -5635,7 +5669,7 @@
                                                 (if (gx#stx-pair/null?
                                                      _%tl4837448871%_)
                                                     (let ((_%__splice7981679817%_
-                                                           (gx#syntax-split-splice
+                                                           (gx#syntax-split-splice->vector
                                                             _%tl4837448871%_
                                                             '0)))
                                                       (let ((_%tl4841348785%_
@@ -5699,7 +5733,7 @@
                                                     (if (gx#stx-pair/null?
                                                          _%tl4837448871%_)
                                                         (let ((_%__splice7982079821%_
-                                                               (gx#syntax-split-splice
+                                                               (gx#syntax-split-splice->vector
                                                                 _%tl4837448871%_
                                                                 '0)))
                                                           (let ((_%tl4844048663%_
@@ -5761,7 +5795,9 @@
                                                              _%tl4837448871%_)
                                                             (let ((_%__splice7982479825%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (gx#syntax-split-splice _%tl4837448871%_ '0)))
+                           (gx#syntax-split-splice->vector
+                            _%tl4837448871%_
+                            '0)))
                       (let ((_%tl4846748539%_
                              (let ()
                                (declare (not safe))
@@ -5930,7 +5966,9 @@
                 (if (gx#stx-null? _%tl4835649023%_)
                     (if (gx#stx-pair/null? _%tl4834748993%_)
                         (let ((_%__splice7980879809%_
-                               (gx#syntax-split-splice _%tl4834748993%_ '0)))
+                               (gx#syntax-split-splice->vector
+                                _%tl4834748993%_
+                                '0)))
                           (let ((_%tl4835949029%_
                                  (let ()
                                    (declare (not safe))
@@ -6734,7 +6772,7 @@
                                             (if (gx#stx-pair/null?
                                                  _%tl4950350000%_)
                                                 (let ((_%__splice8005480055%_
-                                                       (gx#syntax-split-splice
+                                                       (gx#syntax-split-splice->vector
                                                         _%tl4950350000%_
                                                         '0)))
                                                   (let ((_%tl4951550036%_
@@ -6800,7 +6838,7 @@
                                                 (if (gx#stx-pair/null?
                                                      _%tl4950350000%_)
                                                     (let ((_%__splice8005880059%_
-                                                           (gx#syntax-split-splice
+                                                           (gx#syntax-split-splice->vector
                                                             _%tl4950350000%_
                                                             '0)))
                                                       (let ((_%tl4954249914%_
@@ -6864,7 +6902,7 @@
                                                     (if (gx#stx-pair/null?
                                                          _%tl4950350000%_)
                                                         (let ((_%__splice8006280063%_
-                                                               (gx#syntax-split-splice
+                                                               (gx#syntax-split-splice->vector
                                                                 _%tl4950350000%_
                                                                 '0)))
                                                           (let ((_%tl4956949792%_
@@ -6926,7 +6964,9 @@
                                                              _%tl4950350000%_)
                                                             (let ((_%__splice8006680067%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (gx#syntax-split-splice _%tl4950350000%_ '0)))
+                           (gx#syntax-split-splice->vector
+                            _%tl4950350000%_
+                            '0)))
                       (let ((_%tl4959649668%_
                              (let ()
                                (declare (not safe))
@@ -7095,7 +7135,9 @@
                 (if (gx#stx-null? _%tl4948550152%_)
                     (if (gx#stx-pair/null? _%tl4947650122%_)
                         (let ((_%__splice8005080051%_
-                               (gx#syntax-split-splice _%tl4947650122%_ '0)))
+                               (gx#syntax-split-splice->vector
+                                _%tl4947650122%_
+                                '0)))
                           (let ((_%tl4948850158%_
                                  (let ()
                                    (declare (not safe))
@@ -7601,7 +7643,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl5071050839%_)
                                                       (let ((_%__splice8029680297%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl5071050839%_
                                                               '0)))
                                                         (let ((_%tl5071950865%_
@@ -7632,7 +7674,9 @@
                        _%tl5071950865%_)
                       (if (gx#stx-pair/null? _%tl5070750829%_)
                           (let ((_%__splice8030080301%_
-                                 (gx#syntax-split-splice _%tl5070750829%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl5070750829%_
+                                  '0)))
                             (let ((_%tl5073250764%_
                                    (let ()
                                      (declare (not safe))
@@ -7657,7 +7701,7 @@
                           (let () (declare (not safe)) (_%g5068450744%_))))))
               (if (gx#stx-pair/null? _%tl5070750829%_)
                   (let ((_%__splice8030080301%_
-                         (gx#syntax-split-splice _%tl5070750829%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl5070750829%_ '0)))
                     (let ((_%tl5073250764%_
                            (let ()
                              (declare (not safe))
@@ -7680,7 +7724,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl5070750829%_)
                                                       (let ((_%__splice8030080301%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl5070750829%_
                                                               '0)))
                                                         (let ((_%tl5073250764%_
@@ -7706,7 +7750,7 @@
                                           (if (gx#stx-pair/null?
                                                _%tl5070750829%_)
                                               (let ((_%__splice8030080301%_
-                                                     (gx#syntax-split-splice
+                                                     (gx#syntax-split-splice->vector
                                                       _%tl5070750829%_
                                                       '0)))
                                                 (let ((_%tl5073250764%_
@@ -7738,7 +7782,7 @@
                                                 (_%g5068450744%_))))
                                       (if (gx#stx-pair/null? _%tl5070750829%_)
                                           (let ((_%__splice8030080301%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl5070750829%_
                                                   '0)))
                                             (let ((_%tl5073250764%_
@@ -7770,7 +7814,7 @@
                                             (_%g5068450744%_))))
                                   (if (gx#stx-pair/null? _%tl5070750829%_)
                                       (let ((_%__splice8030080301%_
-                                             (gx#syntax-split-splice
+                                             (gx#syntax-split-splice->vector
                                               _%tl5070750829%_
                                               '0)))
                                         (let ((_%tl5073250764%_
@@ -7801,7 +7845,7 @@
                                         (_%g5068450744%_))))))
                           (if (gx#stx-pair/null? _%tl5070750829%_)
                               (let ((_%__splice8030080301%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl5070750829%_
                                       '0)))
                                 (let ((_%tl5073250764%_
@@ -7896,7 +7940,7 @@
                                      (##car _%e5069151266%_))))
                               (if (gx#stx-pair/null? _%tl5069351273%_)
                                   (let ((_%__splice8029280293%_
-                                         (gx#syntax-split-splice
+                                         (gx#syntax-split-splice->vector
                                           _%tl5069351273%_
                                           '0)))
                                     (let ((_%tl5069651279%_
@@ -7954,7 +7998,7 @@
                                  (##car _%e5071450852%_))))
                           (if (gx#stx-pair/null? _%tl5069051263%_)
                               (let ((_%__splice8030080301%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl5069051263%_
                                       '0)))
                                 (let ((_%tl5073250764%_
@@ -7985,7 +8029,9 @@
                                 (_%g5068450744%_)))))
                       (if (gx#stx-pair/null? _%tl5069051263%_)
                           (let ((_%__splice8030080301%_
-                                 (gx#syntax-split-splice _%tl5069051263%_ '0)))
+                                 (gx#syntax-split-splice->vector
+                                  _%tl5069051263%_
+                                  '0)))
                             (let ((_%tl5073250764%_
                                    (let ()
                                      (declare (not safe))
@@ -8010,7 +8056,9 @@
                           (let () (declare (not safe)) (_%g5068450744%_))))
                   (if (gx#stx-pair/null? _%tl5069051263%_)
                       (let ((_%__splice8030080301%_
-                             (gx#syntax-split-splice _%tl5069051263%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl5069051263%_
+                              '0)))
                         (let ((_%tl5073250764%_
                                (let ()
                                  (declare (not safe))
@@ -8033,7 +8081,7 @@
                       (let () (declare (not safe)) (_%g5068450744%_))))
               (if (gx#stx-pair/null? _%tl5069051263%_)
                   (let ((_%__splice8030080301%_
-                         (gx#syntax-split-splice _%tl5069051263%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl5069051263%_ '0)))
                     (let ((_%tl5073250764%_
                            (let ()
                              (declare (not safe))
@@ -8056,7 +8104,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl5069051263%_)
                                                   (let ((_%__splice8030080301%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl5069051263%_
                                                           '0)))
                                                     (let ((_%tl5073250764%_
@@ -8118,7 +8166,9 @@
                        (let () (declare (not safe)) (##car _%e5071450852%_))))
                   (if (gx#stx-pair/null? _%tl5069051263%_)
                       (let ((_%__splice8030080301%_
-                             (gx#syntax-split-splice _%tl5069051263%_ '0)))
+                             (gx#syntax-split-splice->vector
+                              _%tl5069051263%_
+                              '0)))
                         (let ((_%tl5073250764%_
                                (let ()
                                  (declare (not safe))
@@ -8141,7 +8191,7 @@
                       (let () (declare (not safe)) (_%g5068450744%_)))))
               (if (gx#stx-pair/null? _%tl5069051263%_)
                   (let ((_%__splice8030080301%_
-                         (gx#syntax-split-splice _%tl5069051263%_ '0)))
+                         (gx#syntax-split-splice->vector _%tl5069051263%_ '0)))
                     (let ((_%tl5073250764%_
                            (let ()
                              (declare (not safe))
@@ -8164,7 +8214,7 @@
                                                   (if (gx#stx-pair/null?
                                                        _%tl5069051263%_)
                                                       (let ((_%__splice8030080301%_
-                                                             (gx#syntax-split-splice
+                                                             (gx#syntax-split-splice->vector
                                                               _%tl5069051263%_
                                                               '0)))
                                                         (let ((_%tl5073250764%_
@@ -8190,7 +8240,7 @@
                                               (if (gx#stx-pair/null?
                                                    _%tl5069051263%_)
                                                   (let ((_%__splice8030080301%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%tl5069051263%_
                                                           '0)))
                                                     (let ((_%tl5073250764%_
@@ -8225,7 +8275,7 @@
                                                     (_%g5068450744%_))))))
                                       (if (gx#stx-pair/null? _%tl5069051263%_)
                                           (let ((_%__splice8030080301%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl5069051263%_
                                                   '0)))
                                             (let ((_%tl5073250764%_
@@ -8257,7 +8307,7 @@
                                             (_%g5068450744%_)))))))
                           (if (gx#stx-pair/null? _%tl5069051263%_)
                               (let ((_%__splice8030080301%_
-                                     (gx#syntax-split-splice
+                                     (gx#syntax-split-splice->vector
                                       _%tl5069051263%_
                                       '0)))
                                 (let ((_%tl5073250764%_

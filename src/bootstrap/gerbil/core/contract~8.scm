@@ -286,7 +286,7 @@
                                            (declare (not safe))
                                            (##fx>= __tmp85031 '2))
                                          (let ((_%__splice8047080471%_
-                                                (gx#syntax-split-splice
+                                                (gx#syntax-split-splice->vector
                                                  _%__stx8046580466%_
                                                  '2)))
                                            (let ((_%tl5979359830%_
@@ -417,7 +417,7 @@
                                                    (declare (not safe))
                                                    (##fx>= __tmp85033 '2))
                                                  (let ((_%__splice8050880509%_
-                                                        (gx#syntax-split-splice
+                                                        (gx#syntax-split-splice->vector
                                                          _%__stx8050380504%_
                                                          '2)))
                                                    (let ((_%tl5990759944%_
@@ -1659,7 +1659,7 @@
                                      (declare (not safe))
                                      (##fx>= __tmp85039 '2))
                                    (let ((_%__splice8094880949%_
-                                          (gx#syntax-split-splice
+                                          (gx#syntax-split-splice->vector
                                            _%__stx8094380944%_
                                            '2)))
                                      (let ((_%tl5845458491%_
@@ -1794,7 +1794,7 @@
                                      (declare (not safe))
                                      (##fx>= __tmp85041 '2))
                                    (let ((_%__splice8091080911%_
-                                          (gx#syntax-split-splice
+                                          (gx#syntax-split-splice->vector
                                            _%__stx8090580906%_
                                            '2)))
                                      (let ((_%tl5818758224%_
@@ -6292,7 +6292,7 @@
                                         (declare (not safe))
                                         (##fx>= __tmp85072 '2))
                                       (let ((_%__splice8259882599%_
-                                             (gx#syntax-split-splice
+                                             (gx#syntax-split-splice->vector
                                               _%hd5266152919%_
                                               '2)))
                                         (let ((_%tl5267652844%_
@@ -6452,7 +6452,7 @@
                     (declare (not safe))
                     (##fx>= __tmp85074 '2))
                   (let ((_%__splice8259882599%_
-                         (gx#syntax-split-splice _%hd5265552975%_ '2)))
+                         (gx#syntax-split-splice->vector _%hd5265552975%_ '2)))
                     (let ((_%tl5267652844%_
                            (let ()
                              (declare (not safe))
@@ -6561,7 +6561,7 @@
                                                     (declare (not safe))
                                                     (##fx>= __tmp85075 '2))
                                                   (let ((_%__splice8259882599%_
-                                                         (gx#syntax-split-splice
+                                                         (gx#syntax-split-splice->vector
                                                           _%hd5265552975%_
                                                           '2)))
                                                     (let ((_%tl5267652844%_
@@ -6677,7 +6677,7 @@
                                             (declare (not safe))
                                             (##fx>= __tmp85076 '2))
                                           (let ((_%__splice8259882599%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%hd5265552975%_
                                                   '2)))
                                             (let ((_%tl5267652844%_
@@ -8587,24 +8587,24 @@
                          (cons _%L60377%_ '()))
                    (cons 'interface-mixin:
                          (cons (cons (gx#datum->syntax '#f '@list)
-                                     (foldr (lambda (_%g6148261485%_
-                                                     _%g6148361488%_)
+                                     (foldr (lambda (_%g6147461485%_
+                                                     _%g6147561488%_)
                                               (cons (cons (gx#datum->syntax
                                                            '#f
                                                            'quote-syntax)
-                                                          (cons _%g6148261485%_
+                                                          (cons _%g6147461485%_
                                                                 '()))
-                                                    _%g6148361488%_))
+                                                    _%g6147561488%_))
                                             '()
                                             _%L60668%_))
                                (cons 'interface-precedence-list:
                                      (cons (cons (gx#datum->syntax '#f '@list)
-                                                 (foldr (lambda (_%g6148061491%_
+                                                 (foldr (lambda (_%g6147661491%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%g6148161494%_)
+                         _%g6147761494%_)
                   (cons (cons (gx#datum->syntax '#f 'quote-syntax)
-                              (cons _%g6148061491%_ '()))
-                        _%g6148161494%_))
+                              (cons _%g6147661491%_ '()))
+                        _%g6147761494%_))
                 '()
                 _%L60881%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -8651,24 +8651,24 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '#f
                           '@list)
-                         (foldr (lambda (_%g6147661503%_ _%g6147761506%_)
+                         (foldr (lambda (_%g6148061503%_ _%g6148161506%_)
                                   (cons (cons (gx#datum->syntax
                                                '#f
                                                'quote-syntax)
-                                              (cons _%g6147661503%_ '()))
-                                        _%g6147761506%_))
+                                              (cons _%g6148061503%_ '()))
+                                        _%g6148161506%_))
                                 '()
                                 _%L61106%_))
                    (cons 'unchecked-implementation-methods:
                          (cons (cons (gx#datum->syntax '#f '@list)
-                                     (foldr (lambda (_%g6147461509%_
-                                                     _%g6147561512%_)
+                                     (foldr (lambda (_%g6148261509%_
+                                                     _%g6148361512%_)
                                               (cons (cons (gx#datum->syntax
                                                            '#f
                                                            'quote-syntax)
-                                                          (cons _%g6147461509%_
+                                                          (cons _%g6148261509%_
                                                                 '()))
-                                                    _%g6147561512%_))
+                                                    _%g6148361512%_))
                                             '()
                                             _%L61177%_))
                                '())))))))))))))))))))))))))))
@@ -8835,20 +8835,20 @@
                                                                '@interface)
                                                               (cons _%L60433%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons (foldr (lambda (_%g6153661539%_
-                                                  _%g6153761542%_)
-                                           (cons _%g6153661539%_
-                                                 _%g6153761542%_))
+                            (cons (foldr (lambda (_%g6153461539%_
+                                                  _%g6153561542%_)
+                                           (cons _%g6153461539%_
+                                                 _%g6153561542%_))
                                          '()
                                          _%L60810%_)
                                   '())))
                 (cons (cons (gx#datum->syntax '#f 'make-interface-descriptor)
                             (cons _%L60405%_
                                   (cons (cons (gx#datum->syntax '#f 'quote)
-                                              (cons (foldr (lambda (_%g6153461545%_
+                                              (cons (foldr (lambda (_%g6153661545%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _%g6153561548%_)
-                     (cons _%g6153461545%_ _%g6153561548%_))
+                            _%g6153761548%_)
+                     (cons _%g6153661545%_ _%g6153761548%_))
                    '()
                    _%L60963%_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -8875,8 +8875,8 @@
                             '#f
                             'interface-instance::t)
                            '())
-                     (cons (foldr (lambda (_%g6155661559%_ _%g6155761562%_)
-                                    (cons _%g6155661559%_ _%g6155761562%_))
+                     (cons (foldr (lambda (_%g6155461559%_ _%g6155561562%_)
+                                    (cons _%g6155461559%_ _%g6155561562%_))
                                   '()
                                   _%L60810%_)
                            (cons '#f (cons '#t (cons '#t (cons '#f '()))))))))
@@ -8897,10 +8897,10 @@
                                               'interface-instance::t)
                                              '()))
                                  (cons (cons (gx#datum->syntax '#f 'quote)
-                                             (cons (foldr (lambda (_%g6155461565%_
+                                             (cons (foldr (lambda (_%g6155661565%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _%g6155561568%_)
-                    (cons _%g6155461565%_ _%g6155561568%_))
+                           _%g6155761568%_)
+                    (cons _%g6155661565%_ _%g6155761568%_))
                   '()
                   _%L60810%_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -11199,7 +11199,7 @@
                                                    (if (gx#stx-pair/null?
                                                         _%tl6400064138%_)
                                                        (let ((_%__splice8281682817%_
-                                                              (gx#syntax-split-splice
+                                                              (gx#syntax-split-splice->vector
                                                                _%tl6400064138%_
                                                                '0)))
                                                          (let ((_%tl6400364144%_
@@ -11228,7 +11228,7 @@
                         _%tl6400364144%_)
                        (if (gx#stx-pair/null? _%tl6399364114%_)
                            (let ((_%__splice8282082821%_
-                                  (gx#syntax-split-splice
+                                  (gx#syntax-split-splice->vector
                                    _%tl6399364114%_
                                    '0)))
                              (let ((_%tl6401664048%_
@@ -11257,7 +11257,9 @@
                            (let () (declare (not safe)) (_%g6398764028%_))))))
                (if (gx#stx-pair/null? _%tl6399364114%_)
                    (let ((_%__splice8282082821%_
-                          (gx#syntax-split-splice _%tl6399364114%_ '0)))
+                          (gx#syntax-split-splice->vector
+                           _%tl6399364114%_
+                           '0)))
                      (let ((_%tl6401664048%_
                             (let ()
                               (declare (not safe))
@@ -11280,7 +11282,7 @@
                                                (if (gx#stx-pair/null?
                                                     _%tl6399364114%_)
                                                    (let ((_%__splice8282082821%_
-                                                          (gx#syntax-split-splice
+                                                          (gx#syntax-split-splice->vector
                                                            _%tl6399364114%_
                                                            '0)))
                                                      (let ((_%tl6401664048%_
@@ -11316,7 +11318,7 @@
                                            (if (gx#stx-pair/null?
                                                 _%tl6399364114%_)
                                                (let ((_%__splice8282082821%_
-                                                      (gx#syntax-split-splice
+                                                      (gx#syntax-split-splice->vector
                                                        _%tl6399364114%_
                                                        '0)))
                                                  (let ((_%tl6401664048%_
@@ -11348,7 +11350,7 @@
                                                  (_%g6398764028%_)))))
                                      (if (gx#stx-pair/null? _%tl6399364114%_)
                                          (let ((_%__splice8282082821%_
-                                                (gx#syntax-split-splice
+                                                (gx#syntax-split-splice->vector
                                                  _%tl6399364114%_
                                                  '0)))
                                            (let ((_%tl6401664048%_
@@ -11380,7 +11382,7 @@
                                            (_%g6398764028%_))))))
                              (if (gx#stx-pair/null? _%tl6399364114%_)
                                  (let ((_%__splice8282082821%_
-                                        (gx#syntax-split-splice
+                                        (gx#syntax-split-splice->vector
                                          _%tl6399364114%_
                                          '0)))
                                    (let ((_%tl6401664048%_
