@@ -118,7 +118,7 @@
     (let (p (get-pos k))
       (when (vector-ref bound? p) (error "field multiply defined" k strukt json))
       (vector-set! bound? p #t)
-      (##vector-set! object p v)))
+      (##structure-set! object p v)))
   (def unbounds
     (with-list-builder (c)
      (for ((p (in-range 1 n)))
@@ -126,7 +126,7 @@
              (slot (vector-ref slots p)))
          (cond
           (b? (void))
-          ((hash-key? defaults slot) (##vector-set! object p (hash-ref defaults slot)))
+          ((hash-key? defaults slot) (##structure-set! object p (hash-ref defaults slot)))
           (else (c slot)))))))
   (unless (null? unbounds)
     (error "unbound fields" unbounds strukt json))

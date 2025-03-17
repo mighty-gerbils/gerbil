@@ -94,7 +94,7 @@
                      (current-user-interrupt-handler (cut ##user-interrupt-current-thread! #f)))
         (replx))
       (close-port client)
-      (thread-terminate! state.reader))))
+      (thread-join! state.reader))))
 
 (def (repl-client-reader state in out repl-thread)
   (using (state :- repl-state)
