@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-top::timestamp 1742226234)
+  (define gerbil/compiler/optimize-top::timestamp 1742237314)
   (begin
     (define gxc#::collect-top-level-type-info::t
       (let ((__tmp172248 (list gxc#::void::t))
