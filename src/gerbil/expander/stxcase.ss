@@ -524,6 +524,12 @@ namespace: gx
         (else (void))))))
 
 (def (syntax-split-splice stx n)
+  (syntax-split-splice* stx n values))
+
+(def (syntax-split-splice->vector stx n)
+  (syntax-split-splice* stx n vector))
+
+(defrule (syntax-split-splice* stx n return)
   (let lp ((rest stx) (r []))
     (if (stx-pair? rest)
       (match (syntax-e rest)
@@ -532,8 +538,8 @@ namespace: gx
       (let lp ((n n) (l r) (r rest))
         (cond
          ((null? l)
-          (values l r))
+          (return l r))
          ((fxpositive? n)
           (lp (fx1- n) (cdr l) (cons (car l) r)))
          (else
-          (values (reverse l) r)))))))
+          (return (reverse! l) r)))))))

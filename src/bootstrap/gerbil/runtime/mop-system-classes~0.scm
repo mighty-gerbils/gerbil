@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop-system-classes::timestamp 1734357960)
+  (define gerbil/runtime/mop-system-classes::timestamp 1742237311)
   (begin
     (declare
       (not optimize-dead-definitions
@@ -53,141 +53,141 @@
     (define immediate::t
       (let () (declare (not safe)) (__make-system-class 'immediate '())))
     (define char::t
-      (let ((__tmp103050 (cons immediate::t '())))
+      (let ((__tmp103003 (cons immediate::t '())))
         (declare (not safe))
-        (__make-system-class 'char __tmp103050)))
+        (__make-system-class 'char __tmp103003)))
     (define boolean::t
-      (let ((__tmp103051 (cons immediate::t '())))
+      (let ((__tmp103004 (cons immediate::t '())))
         (declare (not safe))
-        (__make-system-class 'boolean __tmp103051)))
+        (__make-system-class 'boolean __tmp103004)))
     (define atom::t
-      (let ((__tmp103052 (cons immediate::t '())))
+      (let ((__tmp103005 (cons immediate::t '())))
         (declare (not safe))
-        (__make-system-class 'atom __tmp103052)))
+        (__make-system-class 'atom __tmp103005)))
     (define void::t
-      (let ((__tmp103053 (cons atom::t '())))
+      (let ((__tmp103006 (cons atom::t '())))
         (declare (not safe))
-        (__make-system-class 'void __tmp103053)))
+        (__make-system-class 'void __tmp103006)))
     (define eof::t
-      (let ((__tmp103054 (cons atom::t '())))
+      (let ((__tmp103007 (cons atom::t '())))
         (declare (not safe))
-        (__make-system-class 'eof __tmp103054)))
+        (__make-system-class 'eof __tmp103007)))
     (define true::t
-      (let ((__tmp103055 (cons boolean::t (cons atom::t '()))))
+      (let ((__tmp103008 (cons boolean::t (cons atom::t '()))))
         (declare (not safe))
-        (__make-system-class 'true __tmp103055)))
+        (__make-system-class 'true __tmp103008)))
     (define false::t
-      (let ((__tmp103056 (cons boolean::t (cons atom::t '()))))
+      (let ((__tmp103009 (cons boolean::t (cons atom::t '()))))
         (declare (not safe))
-        (__make-system-class 'false __tmp103056)))
+        (__make-system-class 'false __tmp103009)))
     (define special::t
-      (let ((__tmp103057 (cons atom::t '())))
+      (let ((__tmp103010 (cons atom::t '())))
         (declare (not safe))
-        (__make-system-class 'special __tmp103057)))
+        (__make-system-class 'special __tmp103010)))
     (define number::t
       (let () (declare (not safe)) (__make-system-class 'number '())))
     (define real::t
-      (let ((__tmp103058 (cons number::t '())))
+      (let ((__tmp103011 (cons number::t '())))
         (declare (not safe))
-        (__make-system-class 'real __tmp103058)))
+        (__make-system-class 'real __tmp103011)))
     (define integer::t
-      (let ((__tmp103059 (cons real::t '())))
+      (let ((__tmp103012 (cons real::t '())))
         (declare (not safe))
-        (__make-system-class 'integer __tmp103059)))
+        (__make-system-class 'integer __tmp103012)))
     (define fixnum::t
-      (let ((__tmp103060 (cons integer::t (cons immediate::t '()))))
+      (let ((__tmp103013 (cons integer::t (cons immediate::t '()))))
         (declare (not safe))
-        (__make-system-class 'fixnum __tmp103060)))
+        (__make-system-class 'fixnum __tmp103013)))
     (define bignum::t
-      (let ((__tmp103061 (cons integer::t '())))
+      (let ((__tmp103014 (cons integer::t '())))
         (declare (not safe))
-        (__make-system-class 'bignum __tmp103061)))
+        (__make-system-class 'bignum __tmp103014)))
     (define ratnum::t
-      (let ((__tmp103062 (cons real::t '())))
+      (let ((__tmp103015 (cons real::t '())))
         (declare (not safe))
-        (__make-system-class 'ratnum __tmp103062)))
+        (__make-system-class 'ratnum __tmp103015)))
     (define flonum::t
-      (let ((__tmp103063 (cons real::t '())))
+      (let ((__tmp103016 (cons real::t '())))
         (declare (not safe))
-        (__make-system-class 'flonum __tmp103063)))
+        (__make-system-class 'flonum __tmp103016)))
     (define cpxnum::t
-      (let ((__tmp103064 (cons number::t '())))
+      (let ((__tmp103017 (cons number::t '())))
         (declare (not safe))
-        (__make-system-class 'cpxnum __tmp103064)))
+        (__make-system-class 'cpxnum __tmp103017)))
     (define symbolic::t
       (let () (declare (not safe)) (__make-system-class 'symbolic '())))
     (define symbol::t
-      (let ((__tmp103065 (cons symbolic::t '())))
+      (let ((__tmp103018 (cons symbolic::t '())))
         (declare (not safe))
-        (__make-system-class 'symbol __tmp103065)))
+        (__make-system-class 'symbol __tmp103018)))
     (define keyword::t
-      (let ((__tmp103066 (cons symbolic::t '())))
+      (let ((__tmp103019 (cons symbolic::t '())))
         (declare (not safe))
-        (__make-system-class 'keyword __tmp103066)))
+        (__make-system-class 'keyword __tmp103019)))
     (define list::t
       (let () (declare (not safe)) (__make-system-class 'list '())))
     (define pair::t
-      (let ((__tmp103067 (cons list::t '())))
+      (let ((__tmp103020 (cons list::t '())))
         (declare (not safe))
-        (__make-system-class 'pair __tmp103067)))
+        (__make-system-class 'pair __tmp103020)))
     (define null::t
-      (let ((__tmp103068 (cons list::t (cons atom::t '()))))
+      (let ((__tmp103021 (cons list::t (cons atom::t '()))))
         (declare (not safe))
-        (__make-system-class 'null __tmp103068)))
+        (__make-system-class 'null __tmp103021)))
     (define sequence::t
       (let () (declare (not safe)) (__make-system-class 'sequence '())))
     (define vector::t
-      (let ((__tmp103069 (cons sequence::t '())))
+      (let ((__tmp103022 (cons sequence::t '())))
         (declare (not safe))
-        (__make-system-class 'vector __tmp103069)))
+        (__make-system-class 'vector __tmp103022)))
     (define string::t
-      (let ((__tmp103070 (cons sequence::t '())))
+      (let ((__tmp103023 (cons sequence::t '())))
         (declare (not safe))
-        (__make-system-class 'string __tmp103070)))
+        (__make-system-class 'string __tmp103023)))
     (define hvector::t
-      (let ((__tmp103071 (cons sequence::t '())))
+      (let ((__tmp103024 (cons sequence::t '())))
         (declare (not safe))
-        (__make-system-class 'hvector __tmp103071)))
+        (__make-system-class 'hvector __tmp103024)))
     (define u8vector::t
-      (let ((__tmp103072 (cons hvector::t '())))
+      (let ((__tmp103025 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'u8vector __tmp103072)))
+        (__make-system-class 'u8vector __tmp103025)))
     (define s8vector::t
-      (let ((__tmp103073 (cons hvector::t '())))
+      (let ((__tmp103026 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 's8vector __tmp103073)))
+        (__make-system-class 's8vector __tmp103026)))
     (define u16vector::t
-      (let ((__tmp103074 (cons hvector::t '())))
+      (let ((__tmp103027 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'u16vector __tmp103074)))
+        (__make-system-class 'u16vector __tmp103027)))
     (define s16vector::t
-      (let ((__tmp103075 (cons hvector::t '())))
+      (let ((__tmp103028 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 's16vector __tmp103075)))
+        (__make-system-class 's16vector __tmp103028)))
     (define u32vector::t
-      (let ((__tmp103076 (cons hvector::t '())))
+      (let ((__tmp103029 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'u32vector __tmp103076)))
+        (__make-system-class 'u32vector __tmp103029)))
     (define s32vector::t
-      (let ((__tmp103077 (cons hvector::t '())))
+      (let ((__tmp103030 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 's32vector __tmp103077)))
+        (__make-system-class 's32vector __tmp103030)))
     (define u64vector::t
-      (let ((__tmp103078 (cons hvector::t '())))
+      (let ((__tmp103031 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'u64vector __tmp103078)))
+        (__make-system-class 'u64vector __tmp103031)))
     (define s64vector::t
-      (let ((__tmp103079 (cons hvector::t '())))
+      (let ((__tmp103032 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 's64vector __tmp103079)))
+        (__make-system-class 's64vector __tmp103032)))
     (define f32vector::t
-      (let ((__tmp103080 (cons hvector::t '())))
+      (let ((__tmp103033 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'f32vector __tmp103080)))
+        (__make-system-class 'f32vector __tmp103033)))
     (define f64vector::t
-      (let ((__tmp103081 (cons hvector::t '())))
+      (let ((__tmp103034 (cons hvector::t '())))
         (declare (not safe))
-        (__make-system-class 'f64vector __tmp103081)))
+        (__make-system-class 'f64vector __tmp103034)))
     (define values::t
       (let () (declare (not safe)) (__make-system-class 'values '())))
     (define box::t
@@ -207,294 +207,294 @@
     (define return::t
       (let () (declare (not safe)) (__make-system-class 'return '())))
     (define time::t
-      (let ((__tmp103082 (macro-type-time)))
+      (let ((__tmp103035 (macro-type-time)))
         (declare (not safe))
-        (__shadow-class __tmp103082)))
+        (__shadow-class __tmp103035)))
     (define thread::t
-      (let ((__tmp103083 (macro-type-thread)))
+      (let ((__tmp103036 (macro-type-thread)))
         (declare (not safe))
-        (__shadow-class __tmp103083)))
+        (__shadow-class __tmp103036)))
     (define thread-group::t
-      (let ((__tmp103084 (macro-type-tgroup)))
+      (let ((__tmp103037 (macro-type-tgroup)))
         (declare (not safe))
-        (__shadow-class __tmp103084)))
+        (__shadow-class __tmp103037)))
     (define mutex::t
-      (let ((__tmp103085 (macro-type-mutex)))
+      (let ((__tmp103038 (macro-type-mutex)))
         (declare (not safe))
-        (__shadow-class __tmp103085)))
+        (__shadow-class __tmp103038)))
     (define condvar::t
-      (let ((__tmp103086 (macro-type-condvar)))
+      (let ((__tmp103039 (macro-type-condvar)))
         (declare (not safe))
-        (__shadow-class __tmp103086)))
+        (__shadow-class __tmp103039)))
     (define port::t
-      (let ((__tmp103087 (macro-type-port)))
+      (let ((__tmp103040 (macro-type-port)))
         (declare (not safe))
-        (__shadow-class __tmp103087)))
+        (__shadow-class __tmp103040)))
     (define object-port::t
-      (let ((__tmp103088 (macro-type-object-port)))
+      (let ((__tmp103041 (macro-type-object-port)))
         (declare (not safe))
-        (__shadow-class __tmp103088)))
+        (__shadow-class __tmp103041)))
     (define character-port::t
-      (let ((__tmp103089 (macro-type-character-port)))
+      (let ((__tmp103042 (macro-type-character-port)))
         (declare (not safe))
-        (__shadow-class __tmp103089)))
+        (__shadow-class __tmp103042)))
     (define byte-port::t
-      (let ((__tmp103090 (macro-type-byte-port)))
+      (let ((__tmp103043 (macro-type-byte-port)))
         (declare (not safe))
-        (__shadow-class __tmp103090)))
+        (__shadow-class __tmp103043)))
     (define device-port::t
-      (let ((__tmp103091 (macro-type-device-port)))
+      (let ((__tmp103044 (macro-type-device-port)))
         (declare (not safe))
-        (__shadow-class __tmp103091)))
+        (__shadow-class __tmp103044)))
     (define vector-port::t
-      (let ((__tmp103092 (macro-type-vector-port)))
+      (let ((__tmp103045 (macro-type-vector-port)))
         (declare (not safe))
-        (__shadow-class __tmp103092)))
+        (__shadow-class __tmp103045)))
     (define string-port::t
-      (let ((__tmp103093 (macro-type-string-port)))
+      (let ((__tmp103046 (macro-type-string-port)))
         (declare (not safe))
-        (__shadow-class __tmp103093)))
+        (__shadow-class __tmp103046)))
     (define u8vector-port::t
-      (let ((__tmp103094 (macro-type-u8vector-port)))
+      (let ((__tmp103047 (macro-type-u8vector-port)))
         (declare (not safe))
-        (__shadow-class __tmp103094)))
+        (__shadow-class __tmp103047)))
     (define raw-device-port::t
-      (let ((__tmp103095 (macro-type-raw-device-port)))
+      (let ((__tmp103048 (macro-type-raw-device-port)))
         (declare (not safe))
-        (__shadow-class __tmp103095)))
+        (__shadow-class __tmp103048)))
     (define tcp-server-port::t
-      (let ((__tmp103096 (macro-type-tcp-server-port)))
+      (let ((__tmp103049 (macro-type-tcp-server-port)))
         (declare (not safe))
-        (__shadow-class __tmp103096)))
+        (__shadow-class __tmp103049)))
     (define udp-port::t
-      (let ((__tmp103097 (macro-type-udp-port)))
+      (let ((__tmp103050 (macro-type-udp-port)))
         (declare (not safe))
-        (__shadow-class __tmp103097)))
+        (__shadow-class __tmp103050)))
     (define directory-port::t
-      (let ((__tmp103098 (macro-type-directory-port)))
+      (let ((__tmp103051 (macro-type-directory-port)))
         (declare (not safe))
-        (__shadow-class __tmp103098)))
+        (__shadow-class __tmp103051)))
     (define event-queue-port::t
-      (let ((__tmp103099 (macro-type-event-queue-port)))
+      (let ((__tmp103052 (macro-type-event-queue-port)))
         (declare (not safe))
-        (__shadow-class __tmp103099)))
+        (__shadow-class __tmp103052)))
     (define table::t
-      (let ((__tmp103100 (macro-type-table)))
+      (let ((__tmp103053 (macro-type-table)))
         (declare (not safe))
-        (__shadow-class __tmp103100)))
+        (__shadow-class __tmp103053)))
     (define readenv::t
-      (let ((__tmp103101 (macro-type-readenv)))
+      (let ((__tmp103054 (macro-type-readenv)))
         (declare (not safe))
-        (__shadow-class __tmp103101)))
+        (__shadow-class __tmp103054)))
     (define writeenv::t
-      (let ((__tmp103102 (macro-type-writeenv)))
+      (let ((__tmp103055 (macro-type-writeenv)))
         (declare (not safe))
-        (__shadow-class __tmp103102)))
+        (__shadow-class __tmp103055)))
     (define readtable::t
-      (let ((__tmp103103 (macro-type-readtable)))
+      (let ((__tmp103056 (macro-type-readtable)))
         (declare (not safe))
-        (__shadow-class __tmp103103)))
+        (__shadow-class __tmp103056)))
     (define processor::t
-      (let ((__tmp103104 (macro-type-processor)))
+      (let ((__tmp103057 (macro-type-processor)))
         (declare (not safe))
-        (__shadow-class __tmp103104)))
+        (__shadow-class __tmp103057)))
     (define vm::t
-      (let ((__tmp103105 (macro-type-vm)))
+      (let ((__tmp103058 (macro-type-vm)))
         (declare (not safe))
-        (__shadow-class __tmp103105)))
+        (__shadow-class __tmp103058)))
     (define file-info::t
-      (let ((__tmp103106 (macro-type-file-info)))
+      (let ((__tmp103059 (macro-type-file-info)))
         (declare (not safe))
-        (__shadow-class __tmp103106)))
+        (__shadow-class __tmp103059)))
     (define socket-info::t
-      (let ((__tmp103107 (macro-type-socket-info)))
+      (let ((__tmp103060 (macro-type-socket-info)))
         (declare (not safe))
-        (__shadow-class __tmp103107)))
+        (__shadow-class __tmp103060)))
     (define address-info::t
-      (let ((__tmp103108 (macro-type-address-info)))
+      (let ((__tmp103061 (macro-type-address-info)))
         (declare (not safe))
-        (__shadow-class __tmp103108)))
+        (__shadow-class __tmp103061)))
     (define atom?
-      (lambda (_%obj103049%_)
-        (if (let () (declare (not safe)) (immediate? _%obj103049%_))
-            (if (char? _%obj103049%_) '#f (not (fixnum? _%obj103049%_)))
+      (lambda (_%obj103002%_)
+        (if (let () (declare (not safe)) (immediate? _%obj103002%_))
+            (if (char? _%obj103002%_) '#f (not (fixnum? _%obj103002%_)))
             '#f)))
     (define special?
-      (lambda (_%obj103047%_)
-        (if (let ((__tmp103109
-                   (let () (declare (not safe)) (##type _%obj103047%_))))
+      (lambda (_%obj103000%_)
+        (if (let ((__tmp103062
+                   (let () (declare (not safe)) (##type _%obj103000%_))))
               (declare (not safe))
-              (##fx= __tmp103109 '2))
-            (if (char? _%obj103047%_)
+              (##fx= __tmp103062 '2))
+            (if (char? _%obj103000%_)
                 '#f
-                (if (null? _%obj103047%_)
+                (if (null? _%obj103000%_)
                     '#f
-                    (if (boolean? _%obj103047%_)
+                    (if (boolean? _%obj103000%_)
                         '#f
-                        (if (eq? _%obj103047%_ '#!void)
+                        (if (eq? _%obj103000%_ '#!void)
                             '#f
-                            (not (eof-object? _%obj103047%_))))))
+                            (not (eof-object? _%obj103000%_))))))
             '#f)))
     (define sequence?
-      (lambda (_%obj103039%_)
-        (let ((_%$e103041%_ (vector? _%obj103039%_)))
-          (if _%$e103041%_
-              _%$e103041%_
-              (let ((_%$e103044%_ (string? _%obj103039%_)))
-                (if _%$e103044%_ _%$e103044%_ (hvector? _%obj103039%_)))))))
+      (lambda (_%obj102992%_)
+        (let ((_%$e102994%_ (vector? _%obj102992%_)))
+          (if _%$e102994%_
+              _%$e102994%_
+              (let ((_%$e102997%_ (string? _%obj102992%_)))
+                (if _%$e102997%_ _%$e102997%_ (hvector? _%obj102992%_)))))))
     (define hvector?
-      (lambda (_%obj103010%_)
-        (let ((_%$e103012%_ (u8vector? _%obj103010%_)))
-          (if _%$e103012%_
-              _%$e103012%_
-              (let ((_%$e103015%_ (s8vector? _%obj103010%_)))
-                (if _%$e103015%_
-                    _%$e103015%_
-                    (let ((_%$e103018%_ (u16vector? _%obj103010%_)))
-                      (if _%$e103018%_
-                          _%$e103018%_
-                          (let ((_%$e103021%_ (s16vector? _%obj103010%_)))
-                            (if _%$e103021%_
-                                _%$e103021%_
-                                (let ((_%$e103024%_
-                                       (u32vector? _%obj103010%_)))
-                                  (if _%$e103024%_
-                                      _%$e103024%_
-                                      (let ((_%$e103027%_
-                                             (s32vector? _%obj103010%_)))
-                                        (if _%$e103027%_
-                                            _%$e103027%_
-                                            (let ((_%$e103030%_
-                                                   (u64vector? _%obj103010%_)))
-                                              (if _%$e103030%_
-                                                  _%$e103030%_
-                                                  (let ((_%$e103033%_
+      (lambda (_%obj102963%_)
+        (let ((_%$e102965%_ (u8vector? _%obj102963%_)))
+          (if _%$e102965%_
+              _%$e102965%_
+              (let ((_%$e102968%_ (s8vector? _%obj102963%_)))
+                (if _%$e102968%_
+                    _%$e102968%_
+                    (let ((_%$e102971%_ (u16vector? _%obj102963%_)))
+                      (if _%$e102971%_
+                          _%$e102971%_
+                          (let ((_%$e102974%_ (s16vector? _%obj102963%_)))
+                            (if _%$e102974%_
+                                _%$e102974%_
+                                (let ((_%$e102977%_
+                                       (u32vector? _%obj102963%_)))
+                                  (if _%$e102977%_
+                                      _%$e102977%_
+                                      (let ((_%$e102980%_
+                                             (s32vector? _%obj102963%_)))
+                                        (if _%$e102980%_
+                                            _%$e102980%_
+                                            (let ((_%$e102983%_
+                                                   (u64vector? _%obj102963%_)))
+                                              (if _%$e102983%_
+                                                  _%$e102983%_
+                                                  (let ((_%$e102986%_
                                                          (s64vector?
-                                                          _%obj103010%_)))
-                                                    (if _%$e103033%_
-                                                        _%$e103033%_
-                                                        (let ((_%$e103036%_
+                                                          _%obj102963%_)))
+                                                    (if _%$e102986%_
+                                                        _%$e102986%_
+                                                        (let ((_%$e102989%_
                                                                (f32vector?
-                                                                _%obj103010%_)))
-                                                          (if _%$e103036%_
-                                                              _%$e103036%_
+                                                                _%obj102963%_)))
+                                                          (if _%$e102989%_
+                                                              _%$e102989%_
                                                               (f64vector?
-                                                               _%obj103010%_)))))))))))))))))))))
+                                                               _%obj102963%_)))))))))))))))))))))
     (define weak?
-      (lambda (_%obj103008%_)
-        (if (let () (declare (not safe)) (##subtyped? _%obj103008%_))
-            (eq? (let () (declare (not safe)) (##subtype _%obj103008%_))
+      (lambda (_%obj102961%_)
+        (if (let () (declare (not safe)) (##subtyped? _%obj102961%_))
+            (eq? (let () (declare (not safe)) (##subtype _%obj102961%_))
                  (macro-subtype-weak))
             '#f)))
     (define object-port?
-      (lambda (_%obj103006%_)
-        (let ((__tmp103110
-               (let ((__tmp103111 (macro-type-object-port)))
+      (lambda (_%obj102959%_)
+        (let ((__tmp103063
+               (let ((__tmp103064 (macro-type-object-port)))
                  (declare (not safe))
-                 (##type-id __tmp103111))))
+                 (##type-id __tmp103064))))
           (declare (not safe))
-          (##structure-instance-of? _%obj103006%_ __tmp103110))))
+          (##structure-instance-of? _%obj102959%_ __tmp103063))))
     (define character-port?
-      (lambda (_%obj103004%_)
-        (let ((__tmp103112
-               (let ((__tmp103113 (macro-type-character-port)))
+      (lambda (_%obj102957%_)
+        (let ((__tmp103065
+               (let ((__tmp103066 (macro-type-character-port)))
                  (declare (not safe))
-                 (##type-id __tmp103113))))
+                 (##type-id __tmp103066))))
           (declare (not safe))
-          (##structure-instance-of? _%obj103004%_ __tmp103112))))
+          (##structure-instance-of? _%obj102957%_ __tmp103065))))
     (define device-port?
-      (lambda (_%obj103002%_)
-        (let ((__tmp103114
-               (let ((__tmp103115 (macro-type-device-port)))
+      (lambda (_%obj102955%_)
+        (let ((__tmp103067
+               (let ((__tmp103068 (macro-type-device-port)))
                  (declare (not safe))
-                 (##type-id __tmp103115))))
+                 (##type-id __tmp103068))))
           (declare (not safe))
-          (##structure-instance-of? _%obj103002%_ __tmp103114))))
+          (##structure-instance-of? _%obj102955%_ __tmp103067))))
     (define vector-port?
-      (lambda (_%obj103000%_)
-        (let ((__tmp103116
-               (let ((__tmp103117 (macro-type-vector-port)))
+      (lambda (_%obj102953%_)
+        (let ((__tmp103069
+               (let ((__tmp103070 (macro-type-vector-port)))
                  (declare (not safe))
-                 (##type-id __tmp103117))))
+                 (##type-id __tmp103070))))
           (declare (not safe))
-          (##structure-instance-of? _%obj103000%_ __tmp103116))))
+          (##structure-instance-of? _%obj102953%_ __tmp103069))))
     (define string-port?
-      (lambda (_%obj102998%_)
-        (let ((__tmp103118
-               (let ((__tmp103119 (macro-type-string-port)))
+      (lambda (_%obj102951%_)
+        (let ((__tmp103071
+               (let ((__tmp103072 (macro-type-string-port)))
                  (declare (not safe))
-                 (##type-id __tmp103119))))
+                 (##type-id __tmp103072))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102998%_ __tmp103118))))
+          (##structure-instance-of? _%obj102951%_ __tmp103071))))
     (define u8vector-port?
-      (lambda (_%obj102996%_)
-        (let ((__tmp103120
-               (let ((__tmp103121 (macro-type-u8vector-port)))
+      (lambda (_%obj102949%_)
+        (let ((__tmp103073
+               (let ((__tmp103074 (macro-type-u8vector-port)))
                  (declare (not safe))
-                 (##type-id __tmp103121))))
+                 (##type-id __tmp103074))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102996%_ __tmp103120))))
+          (##structure-instance-of? _%obj102949%_ __tmp103073))))
     (define raw-device-port?
-      (lambda (_%obj102994%_)
-        (let ((__tmp103122
-               (let ((__tmp103123 (macro-type-raw-device-port)))
+      (lambda (_%obj102947%_)
+        (let ((__tmp103075
+               (let ((__tmp103076 (macro-type-raw-device-port)))
                  (declare (not safe))
-                 (##type-id __tmp103123))))
+                 (##type-id __tmp103076))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102994%_ __tmp103122))))
+          (##structure-instance-of? _%obj102947%_ __tmp103075))))
     (define tcp-server-port?
-      (lambda (_%obj102992%_)
-        (let ((__tmp103124
-               (let ((__tmp103125 (macro-type-tcp-server-port)))
+      (lambda (_%obj102945%_)
+        (let ((__tmp103077
+               (let ((__tmp103078 (macro-type-tcp-server-port)))
                  (declare (not safe))
-                 (##type-id __tmp103125))))
+                 (##type-id __tmp103078))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102992%_ __tmp103124))))
+          (##structure-instance-of? _%obj102945%_ __tmp103077))))
     (define udp-port?
-      (lambda (_%obj102990%_)
-        (let ((__tmp103126
-               (let ((__tmp103127 (macro-type-udp-port)))
+      (lambda (_%obj102943%_)
+        (let ((__tmp103079
+               (let ((__tmp103080 (macro-type-udp-port)))
                  (declare (not safe))
-                 (##type-id __tmp103127))))
+                 (##type-id __tmp103080))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102990%_ __tmp103126))))
+          (##structure-instance-of? _%obj102943%_ __tmp103079))))
     (define directory-port?
-      (lambda (_%obj102988%_)
-        (let ((__tmp103128
-               (let ((__tmp103129 (macro-type-directory-port)))
+      (lambda (_%obj102941%_)
+        (let ((__tmp103081
+               (let ((__tmp103082 (macro-type-directory-port)))
                  (declare (not safe))
-                 (##type-id __tmp103129))))
+                 (##type-id __tmp103082))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102988%_ __tmp103128))))
+          (##structure-instance-of? _%obj102941%_ __tmp103081))))
     (define event-queue-port?
-      (lambda (_%obj102986%_)
-        (let ((__tmp103130
-               (let ((__tmp103131 (macro-type-event-queue-port)))
+      (lambda (_%obj102939%_)
+        (let ((__tmp103083
+               (let ((__tmp103084 (macro-type-event-queue-port)))
                  (declare (not safe))
-                 (##type-id __tmp103131))))
+                 (##type-id __tmp103084))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102986%_ __tmp103130))))
+          (##structure-instance-of? _%obj102939%_ __tmp103083))))
     (define readenv?
-      (lambda (_%obj102984%_)
-        (let ((__tmp103132
-               (let ((__tmp103133 (macro-type-readenv)))
+      (lambda (_%obj102937%_)
+        (let ((__tmp103085
+               (let ((__tmp103086 (macro-type-readenv)))
                  (declare (not safe))
-                 (##type-id __tmp103133))))
+                 (##type-id __tmp103086))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102984%_ __tmp103132))))
+          (##structure-instance-of? _%obj102937%_ __tmp103085))))
     (define writeenv?
-      (lambda (_%obj102982%_)
-        (let ((__tmp103134
-               (let ((__tmp103135 (macro-type-writeenv)))
+      (lambda (_%obj102935%_)
+        (let ((__tmp103087
+               (let ((__tmp103088 (macro-type-writeenv)))
                  (declare (not safe))
-                 (##type-id __tmp103135))))
+                 (##type-id __tmp103088))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102982%_ __tmp103134))))
+          (##structure-instance-of? _%obj102935%_ __tmp103087))))
     (define vm?
-      (lambda (_%obj102980%_)
-        (let ((__tmp103136
-               (let ((__tmp103137 (macro-type-vm)))
+      (lambda (_%obj102933%_)
+        (let ((__tmp103089
+               (let ((__tmp103090 (macro-type-vm)))
                  (declare (not safe))
-                 (##type-id __tmp103137))))
+                 (##type-id __tmp103090))))
           (declare (not safe))
-          (##structure-instance-of? _%obj102980%_ __tmp103136))))))
+          (##structure-instance-of? _%obj102933%_ __tmp103089))))))
