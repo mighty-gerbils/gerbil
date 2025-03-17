@@ -245,12 +245,8 @@
 
 (def (hash-table-empty-copy ht)
   (if (hash-table? ht)
-    (let (copy (make-hash-table))
-      (##vector-set! copy 1 (##vector-ref ht 1)) ; flags
-      (##vector-set! copy 2 (##vector-ref ht 2)) ; test
-      (##vector-set! copy 3 (##vector-ref ht 3)) ; hash
-      (##vector-set! copy 4 (##vector-ref ht 4)) ; loads
-      (##vector-set! copy 6 (##vector-ref ht 6)) ; init
+    (let (copy (hash-copy ht))
+      (hash-clear! copy)
       copy)
     (error "Invalid argument" ht)))
 
@@ -291,11 +287,7 @@
     ht1))
 
 (def (hash-table-equivalence-function ht)
-  (if (hash-table? ht)
-    (##vector-ref ht 2)
-    (error "Invalid argument" ht)))
+  (error "not implemented"))
 
 (def (hash-table-hash-function ht)
-  (if (hash-table? ht)
-    (##vector-ref ht 3)
-    (error "Invalid argument" ht)))
+  (error "not implemented"))
