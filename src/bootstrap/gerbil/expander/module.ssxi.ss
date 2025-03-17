@@ -224,8 +224,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type
    gx#import-expander::t
    (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
