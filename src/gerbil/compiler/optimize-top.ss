@@ -849,6 +849,7 @@ namespace: gxc
           ((void? obj)       (optimizer-resolve-class stx 'void::t))
           ((eof-object? obj) (optimizer-resolve-class stx 'eof::t))
           ((fixnum? obj)     (optimizer-resolve-class stx 'fixnum::t))
+          ((flonum? obj)     (optimizer-resolve-class stx 'flonum::t))
           ((null? obj)       (optimizer-resolve-class stx 'null::t))
           (else              (optimizer-resolve-class stx 'special::t))))
         ((number? obj)
