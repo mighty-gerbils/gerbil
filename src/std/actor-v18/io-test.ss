@@ -36,8 +36,8 @@
        (eq? (type-of b) 'subtyped)
        (= (##subtype a) 5)
        (= (##subtype b) 5)
-       (= (##vector-length a) (##vector-length b))
-       (andmap equal? (##vector->list a) (##vector->list b))))
+       (= (##values-length a) (##values-length b))
+       (andmap equal? (##values->list a) (##values->list b))))
 
 (def (equal-time? a b)
   (and (time? a)
