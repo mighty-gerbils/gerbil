@@ -1,0 +1,1213 @@
+
+#+TITLE: Parsec, a library for writing parsers
+Recursive descent higher-order parser combinators?
+
+So a complicated parser can be made out of many smaller ones?
+
+Let's do it!
+
+* Cable of Toncents
+:PROPERTIES:
+:TOC:      :include siblings :depth 5 :ignore (this)
+:END:
+:CONTENTS:
+
+:END:
+
+
+* Introduction
+
+Parsing is such a common task that there are many different ways to go
+about it. While =LL(1)= and =PEG= are the common and thus most
+documented and implemented technique there are times when looking
+ahead and falling back with =LL(k)= is nice.
+
+Sometimes being informal is easier, non? :)
+
+** Parsing Org Mode
+
+According to [[https://orgmode.org/worg/org-syntax.html][Org Syntax]] "Any Org document is represented by a sequence
+of elements, that can recursively contain other elements and/or
+objects".
+
+Here's a quick example...
+
+#+begin_src org
+  ,#+TITLE: This is an outline
+  ,#+this is not a keyword
+  This is the zeroth section
+
+  ,* Heading 1
+  This is the first section
+  ,**this is not a headline or section.
+
+  This is an object: https://orgmode.org/worg/dev/org-element-api.html
+
+  ,**    Heading 1.1
+   This is the first nested section
+
+  ,* Heading 2
+
+  This is the end
+#+end_src
+
+... with the first two lines helping to explain the exact reasoning
+behind recursive descent and backtracking
+.
+*** First Line
+
+The first line is a keyword.
+
+ Keywords are structured according to the following pattern:
+ 
+  =#+KEY: VALUE=
+
+  - KEY :: A string consisting of any non-whitespace characters, other
+    than call (which would forms a babel call element).
+  - VALUE :: A string consisting of any characters but a newline.
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (def-parsec-bnf
+      EOL ::= (.or (.eof) (.newline))
+
+      KEY ::= (.>> (.string "#+")
+   		 (.many-till
+   		  (.satisfy (? (not char-whitespace?)))
+   		  (.string ": ")))
+  
+      VALUE ::= (.many-till (.any-token) EOL)
+
+      KEYWORD ::= key <- (.liftM list->string KEY)
+                  value <- (.liftM list->string VALUE)
+                  (.return ['keyword key: key value: value]))
+
+  > (run-parser KEYWORD "#+TITLE: Org Mode keyword!")
+  (keyword key: "TITLE" value: "Org Mode keyword!")
+#+end_src
+
+*** Second Line :: =.try= a keyword!
+
+The second line is not a keyword but the first 6 characters means it
+could be. =LL(6)=? Infinite lookahead!
+
+Without a conflicting prefix it works great.
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (def-parsec-bnf
+      GENERIC-LINE ::=  (.many-till (.any-token) EOL)
+      
+      LINE-NO-TRY ::= (.or KEYWORD GENERIC-LINE))
+
+  > (run-parser LINE-NO-TRY "asd\njkl")
+  (#\a #\s #\d)
+  > (run-parser LINE-NO-TRY "#+TITLE: Org Mode keyword!")
+  (keyword key: "TITLE" value: "Org Mode keyword!")
+#+end_src
+
+But we run into issues if we have a conflict.
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (run-parser LINE-NO-TRY "#+heh yeah!")
+  #f
+#+end_src
+
+That's because =.or= is always =LL(1)=.
+
+We can fix that using =.try=. 
+
+#+begin_src scheme :noweb-ref org-mode-parser-test
+  > (def-parsec-bnf
+      LINE ::= (.or (.try KEYWORD) GENERIC-LINE))
+
+  > (run-parser LINE "asd\njkl")
+  (#\a #\s #\d)
+  > (run-parser LINE "#+TITLE: Org Mode keyword!")
+  (keyword key: "TITLE" value: "Org Mode keyword!")
+  > (list->string (run-parser LINE "#+heh yeah!"))
+  "#+heh yeah!"
+#+end_src
+
+
+* Emacs
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
+
+#+begin_src emacs-lisp
+  (require 'gerbil-mode)
+  (gerbil-put-indent '(parse) 1)
+  (gerbil-put-indent '(def-parse) 1)
+#+end_src
+
+* The dotted syntax
+
+Here's the thing. I want gerbil parsec to be popular and short form.
+
+#+begin_src scheme :noweb-ref dot-test
+  > (caar (do-parsec (.run (.return 42) "")))
+  42
+  > (def-parsec FourTwo (.char #\4) (.char #\2) (.return 42))
+  > (caar (do-parsec (.run FourTwo "42")))
+  42
+#+end_src
+
+#+begin_src scheme :tangle "syntax.ss"
+    (import :std/monad/syntax :std/sugar
+        (for-syntax :gerbil/expander :std/sugar)
+            #;./transformer "transformer"
+            #;./mid-level "char")
+    (export #t)
+    (begin-syntax (def (dot-identifier? id)
+        (and (identifier? id)
+             (let (id-str (symbol->string (stx-e id)))
+    	   (eqv? (string-ref id-str 0) #\.)))))
+
+    (defsyntax (do-parsec stx)
+         (syntax-case stx ()
+        ((_ parser ps ...)
+         (with-syntax ((@app (syntax-local-introduce '%%app))
+    		   (@parser (syntax-local-introduce '%%parse)))
+        #'(let-syntax ((__app
+                        (syntax-rules ()
+                          ((_ rator rand (... ...))
+                           (@app rator rand (... ...))))))
+            (let-syntax ((@app
+                          (lambda (stx)
+                            (syntax-case stx ()
+                              ((_ rator . args)
+                               (dot-identifier? #'rator)
+                                 (with-syntax ((method (stx-identifier #'rator '@parser #'rator)))
+                                   (syntax/loc stx
+                                     (method . args))))
+                              ((_ . args)
+                               (syntax/loc stx
+                                 (__app . args)))))))
+    	  (du (@parser (current-parsec) : Parsec)
+    	    parser ps ...)))))))
+
+    (defrule (def-parsec id forms ...) (def id (do-parsec forms ...)))
+
+    (defsyntax (def-parsec-bnf stx)
+      (def (expand-body forms)
+        (with-syntax (((frms ...)
+    		   (stx-foldr
+    		    (lambda (x xs)
+    		      (if (and
+    			    (stx-pair? xs)
+    			    (identifier? (stx-car xs))
+    			    (free-identifier=?
+    			     (stx-car xs) #'::=))
+    			[]
+    			(cons x xs)))
+    		    [] forms))
+    		  (forms forms))
+          (syntax-case #'(frms ...) ()
+    	((foo ...)	 
+    	 #'(do-parsec frms ...)))))
+      (def (expand-tail forms)
+        (with-syntax* (((rest ...)
+    		   (let lp ((forms forms))
+    		     (if (stx-null? forms) forms
+    		    (let (id (and (not (stx-null? (stx-cdr forms)))
+  				  (stx-car (stx-cdr forms))))
+    		      (if (and (identifier? id)
+    			        (free-identifier=?
+    				 id #'::=))
+    			forms
+    			(lp (stx-cdr forms))))))))
+          (if (stx-null? #'(rest ...))
+    	#'(begin rest ...)
+    	#'(def-parsec-bnf rest ...))))
+      (syntax-case stx (:body :tail)
+        ((macro ID cceq forms ...)
+         (with-syntax ((body (expand-body #'(forms ...)))
+    		   (tail (expand-tail #'(forms ...))))
+           #'(begin (def ID body) tail)))))
+
+#+end_src
+
+
+
+* Character Parsers
+
+
+** =.letter= :: Parse a single letter
+
+Parses an alphabetic Unicode characters (lower-case, upper-case and
+title-case letters, plus letters of caseless scripts and modifiers
+letters according to =char-alphabetic?=). Returns the parsed
+character.
+
+#+begin_src scheme :noweb-ref char-impl
+  ((letter) (P.satisfy char-alphabetic?))
+#+end_src
+
+** =.char= :: Parse a specific character
+
+#+begin_src scheme :noweb-ref char-impl
+  ((char c) (P.satisfy (cut char=? c <>)))
+#+end_src
+
+** =.newline= ::
+
+#+begin_src scheme :noweb-ref char-impl
+  ((newline) (P.char #\newline))
+#+end_src
+
+** =.string= :: Parse and return a string
+
+There are times when we want to match against a string rather than
+single characters.
+
+#+begin_src scheme :noweb-ref char-test
+  > (caar (do-parsec (.run (.string "asd") "asdfjkl;")))
+  "asd"
+#+end_src
+
+Case is often not a concern so insensitive is sometimes prefered and not
+frowed upon.
+
+#+begin_src scheme :noweb-ref char-test
+  > (caar (do-parsec (.run (.string "asd" char-ci=?) "AsDfjkl;")))
+  "AsD"
+#+end_src
+
+#+begin_src scheme :noweb-ref char-impl
+  ((string str (c=? char=?))
+   (def lst (if (list? str) str (string->list str)))
+   (def (pchars cs)
+     (if (null? cs) (P.return [])
+         (du P
+  	 x <- (P.satisfy (cut c=? <> (car cs)))
+  	 xs <- (pchars (cdr cs))
+  	 (P.return (cons x xs)))))
+   (du P
+     cs <- (pchars lst)
+     (P.return (list->string cs))))
+#+end_src
+
+#+begin_src scheme :tangle char.ss :noweb yes
+      (import
+        :std/interface :std/contract :std/instance :std/monad/syntax
+        #;./transformer "transformer"
+        #;./stream "stream"
+        #;./combinators "combinators")
+      (export #t)
+
+  (interface (ParsecChar ParsecCombinators)
+   (letter) (char c) (string str (c=? char=?)) (newline))
+
+  (instance (P ParsecChar) (pt parsecT)
+    <<char-impl>>)
+
+
+  ;; TODO: This is here for now but should be higher level.
+
+  (interface (Parsec ParsecChar))
+
+  (def current-parsec (make-parameter (Parsec (make-parsecT))))
+
+  (def (run-parser p inp)
+   (using (P (current-parsec) : Parsec)
+    (let (res (P.run p inp))
+     (if (null? res) #f
+         (caar res)))))
+
+
+
+#+end_src
+
+
+* Combinators
+
+These are the building blocks of parsers.
+
+#+begin_src scheme :noweb-ref test-parse-syntax
+  > (def current-parser (make-parameter (ParsecCombinators (make-parsecT))))
+  > (defrule (parse id body ...) (using (id (current-parser) :- ParsecCombinators) body ...))
+#+end_src
+
+
+** Predictive =or= :: a or b ?
+
+This combinator is a primitive that implements choice. The parser
+~(p.or a b)~ first applies =a=. If it succeeds, the value of =a= is
+returned. If p fails without consuming any input, parser =b= is
+tried.
+
+This combinator is also a member of the =MonadOr=
+interface.
+
+The parser is called predictive since =a= is only tried when parser p
+didn't =read= anything but may have =peek='d.
+
+This non-backtracking behaviour allows for an efficient implementation
+of the parser combinators as we are still =LL(1)=.
+
+#+begin_src scheme :noweb-ref comb-test
+  > (def (test-or a b input)
+      (parse _ (_.run (_.or a b) input)))
+  > (caar (parse _ (test-or (_.any-token) (_.return 42) "asdf")))
+  #\a
+  > (caar (parse _ (test-or (_.satisfy char-numeric?) (_.return 42) "asdf")))
+  42
+  > (parse _ (test-or (du _ c <- (_.any-token)
+  			(if (char-numeric? c) (_.return c) (_.zero)))
+  		    (_.return 42)
+  		    "fourty-two"))
+  () ;; null is one message that represent failure and what zero does by
+     ;; default
+#+end_src
+
+** TODO The =?= operator
+
+Sometimes where the parser fails and how it does so is not helpful
+when trying to express that error to the user.
+
+So ~(_.? p "This is where it fails")~, for instance, will error with
+that message if =p= fails /without consuming any input/.
+
+
+** The =try= operation : LL(+inf)
+
+To make things efficient and "normal" by default Parsec is predictive
+and non-backtracking AKA =LL(1)=.
+
+There's a number of reasons to be that way. Effeciancy and errors at
+the "right place right time" for reporting, simple use of uncached
+streams, etc.
+
+But occaisionally there's a need to look further ahead, consume input,
+fail, and backtrack!
+
+#+begin_src scheme :noweb-ref comb-impl
+   ((try parser (Nothing (gensym)))
+    (def (ret-stream la (p? #t))
+      (using ((la :- lookahead-char-stream)
+   	   (b la.bcr :- buffered-char-reader))
+        (if (= b.lo b.hi) b.port b)))
+    (using (inner pt.inner : ParsecT-inner)
+      (du P
+        orig-stream <- (P.state (lambda (s) [s (make-lookahead-char-stream s) ...]))
+        ret <- (P.catch (inner.or parser (P.return [Nothing])) (lambda (e) (P.return [Nothing e ...])))
+        new <- (P.state
+         (lambda (s) 
+   	(if (not (and (pair? ret) (eq? (car ret) Nothing)))
+   	  ;; success!
+             [ret orig-stream ...]
+   	  ;; failure
+   	  [Nothing (ret-stream s) ...])))
+        (begin #;(displayln "In try new: " ret new (eq? new Nothing))
+          (if (eq? new Nothing)
+            (if (and (pair? ret) (not (null? (cdr ret))))
+  	    (P.return (cdr ret)) (P.fail))
+            (P.return new))))))
+
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-test
+  ;> (def current-parser (make-parameter (ParsecCombinators (make-parsecT))))
+  > (defrule (u id body ...) (using (id (current-parser) :- ParsecCombinators) body ...))
+  > (caar ((u t (let (la #f)
+  		(t.or
+  		 (t.try (du t second <- (t.>> (t.any-token) (t.any-token))
+  			    (begin (set! la second)(t.throw "This Failed"))))
+  		 (du t first <- (t.any-token)
+  		     (t.return [la first]))))) (open-input-string "asdf")))
+  (#\s #\a)
+#+end_src
+
+** =many= :: parse zero or more times
+
+~(parse.many p)~ applies the parser p zero or more times. Returns a
+list of the returned values of p.
+
+#+begin_src scheme :noweb-ref comb-test
+  > (def token
+      (du (_ (make-parsecT) : ParsecChar)
+        c <- (_.letter)
+        cs <- (_.many (_.or (_.letter) (_.char #\_)))
+        (_.return (list->string (cons c cs)))))
+  	       
+  > (caar (parse _ (_.run token "foo_bar bad")))
+  "foo_bar"
+  > (caar (parse _ (_.run token "x+y")))
+  "x"
+
+
+
+#+end_src
+
+#+begin_src scheme :noweb-ref manyAccum
+  (def (manyAccum P p)
+  (using (P : ParsecCombinators)
+    (def (parse?)
+      (du P
+        soff <- (P.xoff)
+        ret <- (P.or p (P.return Nothing))
+        (if (Nothing? ret) (P.return ret)
+  	  (du P eoff <- (P.xoff)
+  	      (if (= soff eoff)
+  		(P.fail "combinator 'many' is applied to a parser that does not consume")
+  		(P.return ret))))))
+    (def (recur)
+      (du P kar <- (parse?)
+  	(if (Nothing? kar) (P.return '())
+  	    (du P kdr <- (recur)
+  		(P.return (cons kar kdr))))))
+    (recur)))
+  		
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-test
+  > (caar (parse _ (_.run  (_.many (_.any-token)) "asd")))
+  (#\a #\s #\d)
+
+#+end_src
+#+begin_src scheme :noweb-ref comb-impl
+  ((many p) (manyAccum P p))
+#+end_src
+
+** =many1= :: Many, but at least one
+#+begin_src scheme :noweb-ref comb-impl
+  ((many1 p) (du P
+  	     x <- p
+  	     xs <- (manyAccum P p)
+  	     (P.return (cons x xs))))
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-test
+  > (caar (parse _ (_.run  (_.many1 (_.any-token)) "asd")))
+  (#\a #\s #\d)
+
+#+end_src
+
+** =many-till=
+
+#+begin_src scheme :noweb-ref comb-test
+  > (caar (parse _ (_.run  (_.many-till (_.any-token) (_.satisfy (cut char=? <> #\:))) "asd:")))
+  (#\a #\s #\d)
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-impl
+  ((many-till p end)
+   (def scan
+     (P.or (P.>> end (P.return []))
+  	 (du P
+  	   x <- p
+  	   xs <- scan
+  	   (P.return (cons x xs)))))
+
+   scan)
+    
+#+end_src
+
+
+** =.eof=
+
+#+begin_src scheme :noweb-ref comb-impl
+  ((eof)
+   (du P tok? <- (P.token eof-object? Nothing: Nothing)
+     (if (Nothing? tok?) (P.zero) (P.return tok?))))
+#+end_src
+
+
+** =any-token= => <token>
+
+The parser =any-token= accepts any kind of token that is not an
+=eof-object?=. It returns the token.
+
+#+begin_src scheme :noweb-ref comb-impl
+  ((any-token (Nothing #f))
+   (du P tok? <- (P.token (? (not eof-object?)))
+     (if (eq? tok? Nothing) (P.zero) (P.return tok?))))
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-test
+  > (u parse (caar (parse.run (parse.any-token) "a")))
+  #\a
+  > (u parse (parse.run (parse.any-token) ""))
+  ()
+  > (u parse (caar (parse.run (parse.or (parse.any-token) (parse.return 42)) "")))
+  42
+
+
+#+end_src
+
+** =satisfy f= => <token> or fail
+
+The parser =satisfy= accepts any kind of token that passes the =f=
+predicate.
+
+#+begin_src scheme :noweb-ref comb-impl
+  ((satisfy f)
+   (du P tok? <- (P.token f Nothing: Nothing)
+     (if (eq? tok? Nothing) (P.zero) (P.return tok?))))
+#+end_src
+
+#+begin_src scheme :noweb-ref comb-test
+  > (caar (parse _ (_.run (_.satisfy char-numeric?) "42")))
+  #\4
+  > (parse _ (_.run (_.satisfy char-numeric?) "fourtwo"))
+  ()
+
+
+#+end_src
+
+#+begin_src scheme :tangle combinators.ss :noweb yes
+      (import
+        :std/interface :std/contract :std/instance :std/monad/syntax
+        :std/sugar
+        #;./transformer "transformer"
+        #;./stream "stream")
+      (export #t)
+  (def Nothing (gensym))
+  (def (Nothing? t) (eq? Nothing t))
+  (interface (ParsecCombinators ParsecT)
+    (satisfy f) (eof)
+    (any-token)
+    (try p)
+    (many p) (many1 p) (many-till p end))
+
+  <<manyAccum>>
+
+  (instance (P ParsecCombinators) (pt parsecT)
+    <<comb-impl>>)
+#+end_src
+
+
+* A =[P|p]arsecT= transformer
+
+The =Parsec= concept is a =Monad= so we must transform into that.
+
+Essentially, =ParsecT= takes our streams and unites them with a monad.
+
+
+
+** =only-at xoff= for =.or= and =.plus= 
+
+The only time the second parser can run is if the first parser fails
+AND the first parser does not consume any characters.
+
+#+begin_src scheme :noweb-ref parsect-only-at-test
+  > (defrule (use p body ...) (using (p (ParsecT (make-parsecT)) :- ParsecT) body ...))
+  > (map car (use p (p.run (p.plus (p.return 42) (p.return 43)) "")))
+  (42 43)
+  
+  > (map car (use p (p.run (p.plus (p.>> (p.return 42) (p.fail)) (p.return 43)) "")))
+  (43)
+  > (map car (use p (p.run (p.plus (p.read-char) (p.return 43)) "heh")))
+  > (map car (use p (p.run (p.or (p.return 42) (p.return 42)) "42")))
+  (42)
+  > (caar (use p (p.run (p.or (p.return 42) (p.return 43)) "")))
+  42
+  > (caar (use p (p.run (p.or (p.>> (p.return 42) (p.fail)) (p.return 43)) "")))
+  43
+  > (caar (use p (p.run (p.or (p.read-char) (p.return 43)) "heh")))
+  #\h
+  > (use p (p.run (p.or (p.>> (p.read-char) (p.fail)) (p.return 43)) "heh"))
+  ()
+
+#+end_src
+*** The source code
+#+begin_src scheme :noweb-ref only-at-or-plus
+  ((only-at xoff parser)
+     (du P yoff <- (P.xoff)
+        (begin #;(displayln "End or @ xoff " yoff)
+         (if (= yoff xoff)
+  	 parser
+  	 (P.zero)))))
+  ((or a b (Nothing (gensym)))
+   (using (inner pt.inner :- ParsecT-inner)
+     (du P
+       soff <- (P.xoff)
+       ret <- (P.catch (inner.or a (P.return Nothing)) (lambda (e) (P.return Nothing)))
+       (begin #;(displayln "In or, a was" ret " xoff " soff)
+       (if (eq? ret Nothing) (P.only-at soff b) (P.return ret))))))
+  ((plus a b) (using (inner pt.inner :- ParsecT-inner)
+               (du P
+  	       soff <- (P.xoff)
+                (inner.plus a (P.only-at soff b)))))
+#+end_src
+
+** Interface and instance
+#+begin_src scheme :noweb-ref ParsecT :noweb yes
+
+  (instance (me MonadError) (et errorT)
+    ((return a) (du (inner et.inner : Monad) (inner.return a)))
+    ((>>= ma f) (du (inner et.inner : Monad)
+                  a <- ma
+  		  (if (me.error? a) (inner.return a) (f a))))
+    ((error? thing) (Error? thing))
+    ((throw msg . irritants)
+     (du (inner et.inner : Monad)
+       (inner.return (Error msg irritants: irritants))))
+    ((catch exp handler)
+     (du (inner et.inner : Monad)
+       val <- exp
+       ret <- (if (me.error? val)
+  	      (handler val)
+  	      (inner.return val))
+       (inner.return ret)))
+    rebind: #t)
+
+
+
+  (interface (ParsecT-inner MonadState ErrorHandler Zero Or Plus Fail))
+  (interface (ParsecT CharReader Token Location ParsecT-inner)
+    (only-at xoff parser) (liftM fn . args))
+  (defstruct parsecT (inner) constructor: :init!)
+  (defmethod {:init! parsecT}
+    (lambda (self (inner (ParsecT-inner (make-errorT (make-stateT [])))))
+      (struct-instance-init! self inner)))
+
+  (instance (P ParsecT) (pt parsecT) 
+    ((return a) (using (inner pt.inner :- ParsecT-inner) (inner.return a)))
+    ((>>= ma f) (using (inner pt.inner :- ParsecT-inner) (inner.>>= ma f)))
+    ((liftM fn ma)
+     (using (inner pt.inner :- ParsecT-inner)
+       (du inner x1 <- ma (inner.return (fn x1)))))
+    ((fail (msg "ParserError") . irritants)
+     (apply ParsecT-throw P msg irritants))
+    ((get) (using (inner pt.inner :- ParsecT-inner) (inner.get)))
+    ((put! s) (using (inner pt.inner :- ParsecT-inner) (inner.put! s)))
+    ((run fn s) (using (inner pt.inner :- ParsecT-inner)
+  		(def state (if (string? s) (open-input-string s) s))
+  		 (inner.run fn state)))
+    ((state f) (using (inner pt.inner :- ParsecT-inner) (inner.state f)))
+    ((location)
+     (du P stream <- (P.get)
+       (P.return (Location-location stream))))
+    ((xoff) (P.>>= (P.get) (lambda (stream)
+         (P.return (Location-xoff stream)))))
+    ((peek-char) (du P stream <- (P.get) (P.return (CharReader-peek-char stream))))
+    ((read-char) (du P stream <- (P.get) (P.return (CharReader-read-char stream))))
+    ((token (test identity) Nothing: (Nothing #f) . args)
+      (du P tok? <- (P.peek-char)
+        (if (not (test tok?)) (P.return Nothing)
+          (P.read-char))))
+    <<only-at-or-plus>>
+    ((zero) (using (inner pt.inner :- ParsecT-inner) (inner.zero)))
+    ((catch e h) (using (inner pt.inner :- ParsecT-inner) (inner.catch e h)))
+    ((throw msg . irritants) (apply ParsecT-inner-throw pt.inner msg irritants))
+    ((error? e?) (using (inner pt.inner :- ParsecT-inner) (inner.error? e?))))
+#+end_src
+
+
+#+begin_src scheme :noweb-ref parsect-test
+  > (defrule (use p body ...) (using (p (make-parsecT) : ParsecT) body ...))
+  > (with ([[ret . state]] (use p (p.run (p.return 42) "")))
+      (check-eqv? ret 42)
+      (Location-xoff state))
+  0
+  > (map car (use p (p.run (p.return 42) "as")))
+  (42)
+  > (map car (use p (p.run (p.plus (p.return 42) (p.return 42)) "42")))
+  (42 42)
+  > (map car (use p (p.run (p.or (p.return 42) (p.return 42)) "42")))
+  (42)
+  > (caar (use p (p.run (p.or (p.return 42) (p.return 43)) "")))
+  42
+  > (caar (use p (p.run (p.or (p.>> (p.return 42) (p.fail)) (p.return 43)) "")))
+  43
+  > (caar (use p (p.run (p.or (p.read-char) (p.return 43)) "heh")))
+  #\h
+  > (use p (p.run (p.or (p.>> (p.read-char) (p.fail)) (p.return 43)) "heh"))
+  ()
+
+#+end_src
+
+
+** /File/ parsec.ss
+
+#+begin_src scheme :tangle transformer.ss :noweb yes
+  (import :std/monad/error
+          :std/error
+          :std/monad/state
+          :std/monad/list
+          :std/monad/interface
+          :std/monad/syntax
+          :std/interface
+          :std/instance
+          #;./stream "stream")
+  (export #t (import: :std/monad/state))
+
+  <<ParsecT>>
+#+end_src
+
+* Streams
+
+** The minimal =CharReader= interface
+
+All parsers start with this front end.
+
+#+begin_src scheme :noweb-ref CharReader
+  (interface CharReader (peek-char) (read-char))
+  (interface (BufferedCharReader CharReader) (put-back previous-input))
+#+end_src
+
+A character port is all we need to start.
+#+begin_src scheme :noweb-ref CharReader
+  (instance CharReader (p :character-port)
+    ((read-char) (read-char p))
+    ((peek-char) (peek-char p)))
+#+end_src
+
+#+begin_src scheme :noweb-ref char-reader-test
+  > (def rdr (open-input-string "42!"))
+  > (CharReader-peek-char rdr)
+  #\4
+  > (using (rdr : CharReader)
+     (let ((one (rdr.read-char))
+           (two (rdr.read-char)))
+       (string->number (list->string [one two]))))
+  42
+  > (CharReader-read-char rdr)
+  #\!
+  > (CharReader-read-char rdr)
+  #!eof
+#+end_src
+
+** Locations
+
+For parsing it's often very important to know where you are.
+
+#+begin_src scheme
+  (defstruct location (port line col off xoff))
+#+end_src
+
+There may be a few times where we only care about the number of the
+current char AKA =xoff=.
+
+#+begin_src scheme :noweb-ref Location
+  (interface Location (location) (xoff))
+#+end_src
+
+#+begin_src scheme :noweb-ref Location
+  (instance Location (p :character-port)
+    ((location) (port-location p))
+    ((xoff) (##fx+ (macro-character-port-rchars p)
+                        (macro-character-port-rlo p))))
+   
+#+end_src
+
+#+begin_src scheme :noweb-ref location-test
+  > (interface (testLoc CharReader Location))
+  > (def rdr (open-input-string "42\n!"))
+  > (using (l rdr : Location) (location-line (l.location)))
+  0
+  > (testLoc-read-char rdr)
+  #\4
+  > (using ((r rdr : testLoc)
+            (loc (r.location) : location))
+      loc.xoff)
+  1
+  > (using ((r rdr : testLoc)
+            (loc (r.location) : location))
+     (let* ((a (r.read-char))
+            (l0 loc.line)
+            (off1 (r.xoff))
+            (c2 (location-col (r.location)))
+            (b (r.read-char))
+            (l1 (location-line (r.location)))
+            (c (r.peek-char))
+            (_ (r.read-char))
+            (off2 (r.xoff))
+            (eof (r.read-char))
+            (off3 (r.xoff)))
+
+       [a off1 l0 c2 b  l1 c off2 eof off3]))
+  (#\2 2 0 2 #\newline 1 #\! 4 #!eof 4)  
+
+#+end_src
+
+** Tokens? Tokenizer!
+
+Regardless of the fact that with enough specialization a =CharReader=
+can be made from anything there may be other tokens beyond characters.
+
+Even with chars there's a simple reason: combine peek and read! 
+
+#+begin_src scheme :noweb-ref Token
+  (interface Token
+    (token (test identity) Nothing: (Nothing #f) . args))
+  (interface (TokenCharReader Token CharReader))
+
+  (instance (t TokenCharReader) :t
+    ((token (test identity) Nothing: (Nothing #f) . args)
+     (if (not (test (t.peek-char))) Nothing
+       (t.read-char))))
+
+  (instance Token (p :character-port)
+    ((token (test identity) Nothing: (Nothing #f) . args)
+     (if (not (test (peek-char p))) Nothing
+       (read-char p))))
+#+end_src
+
+
+#+begin_src scheme :noweb-ref token-test
+  > (interface (testTok Token Location))
+  > (def port (open-input-string "(def ltuae 42)"))
+
+  > (testTok-xoff port)
+  0
+  > (testTok-token port char-alphabetic?)
+  #f
+  > (testTok-xoff port)
+  0
+  > (testTok-token port (? (or char-alphabetic? char-numeric?)))
+  #f
+  > (testTok-token port (? (not (or char-alphabetic? char-numeric?))))
+  #\(
+  > (testTok-xoff port)
+  1
+#+end_src
+
+*** Buffered Streams
+
+If we allow infinite lookahead we need to copy and on the new
+one.
+
+#+begin_src scheme :noweb-ref stream-test
+  > (def port (open-input-string "42\n is the answer"))
+  > (def stream (make-buffered-char-reader port))
+  > [(Location-xoff port) (Location-xoff stream)]
+  (0 0)
+  > (location-col (Location-location stream))
+  0
+  > (CharReader-peek-char stream)
+  #\4
+  > [(Location-xoff port) (Location-xoff stream)]
+  (0 0)
+  > (CharReader-read-char stream)
+  #\4
+  > [(Location-xoff port) (Location-xoff stream)]
+  (1 1)
+  > (BufferedCharReader-put-back stream #\4)
+  > [(Location-xoff port) (Location-xoff stream)]
+  (1 0)
+
+  > (Token-token stream)
+  #\4
+  > (Token-token stream char-numeric?)
+  #\2
+  > [(Location-xoff port) (Location-xoff stream)]
+  (2 2)
+  > (Token-token stream)
+  #\newline
+  > (using (stream :- buffered-char-reader) stream.lines)
+  (3)
+  > (Token-token stream)
+  #\space
+  > (location-line (Location-location stream))
+  1
+  > (location-col (Location-location stream))
+  1
+  > (Token-token stream)
+  #\i
+  > (location-col (Location-location stream))
+  2
+  > (using (stream : BufferedCharReader)
+      (stream.put-back #\f)
+      (stream.put-back #\f))
+  > (location-line (Location-location stream))
+  0
+  > (location-col (Location-location stream))
+  1
+   
+  #+end_src
+
+*** Lookahead streams
+
+What if we want/need to be anywhere in the stream? With
+non-determanistic parsers that's a possibility!
+
+#+begin_src scheme :noweb-ref lstream-test
+  > (def port (open-input-string "42\n is the answer"))
+  > (def bstream (make-buffered-char-reader port))
+  > (def stream (make-lookahead-char-stream bstream))
+
+  > (lookahead-char-stream-lo stream)
+  0
+  > (buffered-char-reader-hi bstream)
+  0
+  > (Token-token stream)
+  #\4
+  > (Token-token (make-lookahead-char-stream bstream))
+  #\4
+  > (lookahead-char-stream-lo stream)
+  1
+  > (Token-token stream)
+  #\2
+  > (Token-token (make-lookahead-char-stream bstream))
+  #\4
+  > (Location-xoff stream)
+  2
+  > (Location-xoff bstream)
+  0
+  > (Token-token bstream)
+  #\4
+#+end_src
+
+
+*** /File/ parsec/stream.ss
+
+#+begin_src scheme :tangle stream.ss :noweb yes
+  (import :std/parser/stream :std/parser/base
+  	:std/contract :std/srfi/1 :std/srfi/13
+      :std/error :std/instance)
+  (export
+    #t
+    (import: :std/parser/base))
+    
+  (extern namespace: std/parser/stream
+    char-stream-buf char-stream-port char-stream-lines
+    char-stream-buf-set! location-getc)
+
+  (begin-foreign (include "~~lib/_gambit#.scm"))
+   (extern namespace: #f
+  macro-character-input-port?
+  macro-character-port-rlines
+  macro-character-port-rchars
+  macro-character-port-rcurline
+  macro-character-port-rlo)
+
+  <<CharReader>>
+
+  <<Location>>
+
+  <<Token>>
+
+  (defstruct buffered-char-reader (port start buf lo hi lines)
+    constructor: :init!
+    final: #t)
+
+  (def default-buffered-char-reader-buffer-size 1024)
+  (defmethod {:init! buffered-char-reader}
+   (lambda (self port)
+    (unless (macro-character-input-port? port)
+      (raise-bad-argument
+       make-buffered-char-reader "input source; character-input-port" port))
+    (let (start (using (l port : Location) (l.location)))
+    (struct-instance-init!
+     self port start
+     (make-string default-buffered-char-reader-buffer-size)
+      0 0 []))))
+
+  (def (buffered-char-reader-getc bcr (unbuffered #f))
+    (using (bcr :- buffered-char-reader)
+      (if (or unbuffered (eqv? bcr.lo bcr.hi))
+        (let (c (read-char bcr.port))
+           (when (eq? #\newline c)
+             (set! (buffered-char-reader-lines bcr)
+              [(Location-xoff bcr.port) bcr.lines ...]))
+           c)
+        (let (c (string-ref bcr.buf bcr.lo))
+  	(set! bcr.lo (1+ bcr.lo))
+  	c))))
+
+  (def (buffered-char-reader-peekc bcr)
+    (using (bcr :- buffered-char-reader)
+      (if (eqv? bcr.lo bcr.hi)
+        (peek-char bcr.port)
+        (string-ref bcr.buf bcr.lo))))
+
+  (def (buffered-char-reader-ungetc bcr char)
+    (using (bcr :- buffered-char-reader)
+      (let* ((new-hi (1+ bcr.hi))
+  	   (len (string-length bcr.buf))
+  	   (str (if (not (= bcr.hi len)) bcr.buf
+  		   (let (str (make-string (* 2 len)))
+  		     (string-copy! str 0 bcr.buf)
+  		     (set! bcr.buf str)
+  		     str))))
+        #;(displayln "ungetc " bcr.hi " C " char)
+        (set! (string-ref str bcr.hi) char)
+        (set! bcr.hi new-hi))))
+
+  (instance BufferedCharReader (bcr buffered-char-reader)
+    ((read-char) (buffered-char-reader-getc bcr))
+    ((peek-char) (buffered-char-reader-peekc bcr))
+    ((put-back char) (buffered-char-reader-ungetc bcr char)))
+
+  (instance (L Location) (bcr buffered-char-reader)
+    ((xoff) (if (= bcr.lo bcr.hi)
+                (Location-xoff bcr.port)
+                (+ (location-xoff bcr.start)
+                   bcr.lo)))
+    ((location)
+     (if (= bcr.lo bcr.hi)
+       (Location-location bcr.port)
+       (let* ((xoff (L.xoff))
+  	    (lines (find-tail (cut < <> xoff) bcr.lines))
+              (base (if lines (car lines) -1))
+              (col (##fx- xoff base 1))
+  	    (line (if lines (length lines) 0)))
+         (make-location bcr.port line col 1 xoff)))))
+   
+  ;; lookahead-char-stream
+  ;; bcr : a buffered char reader
+  ;; lo : The starting xoff
+  ;; hi : Either #f or the end xoff (for delimit!)
+
+  (defstruct lookahead-char-stream (bcr lo hi)
+    constructor: :init!
+    final: #t)
+
+  (defmethod {:init! lookahead-char-stream}
+   (lambda (self reader (lo 0) (hi #f))
+     (unless (buffered-char-reader? reader)
+       (set! reader (make-buffered-char-reader reader)))
+     (struct-instance-init! self reader lo hi)))
+
+  (def (lookahead-char-stream-getc lcs)
+   (using ((lcs :- lookahead-char-stream)
+           (bcr lcs.bcr :- buffered-char-reader))
+     (cond ((eqv? lcs.lo lcs.hi) (eof-object))
+  	 ((= lcs.lo bcr.hi)
+  	  (let (c (buffered-char-reader-getc lcs.bcr #t))
+              (when (not (eof-object? c))
+  	    (buffered-char-reader-ungetc lcs.bcr c)
+  	    (set! lcs.lo (1+ lcs.lo)))
+  	    c))
+  	 (else (let (c (string-ref bcr.buf lcs.lo))
+  	    (set! lcs.lo (1+ lcs.lo))
+  	    c)))))
+
+  (def (lookahead-char-stream-peekc lcs)
+   (using ((lcs :- lookahead-char-stream)
+           (bcr lcs.bcr :- buffered-char-reader))
+     (cond ((eqv? lcs.lo lcs.hi) (eof-object))
+  	 ((= lcs.lo bcr.hi)
+            (peek-char bcr.port))
+  	 (else (string-ref bcr.buf lcs.lo)))))
+
+  (instance CharReader (lcs lookahead-char-stream)
+    ((read-char) (lookahead-char-stream-getc lcs))
+    ((peek-char) (lookahead-char-stream-peekc lcs)))
+
+
+  (instance (L Location) (lcs lookahead-char-stream)
+    ((xoff) (using (bcr lcs.bcr :- buffered-char-reader)
+  	    (if (= lcs.lo bcr.hi)
+                (Location-xoff bcr.port)
+                (+ (location-xoff bcr.start)
+                   lcs.lo))))
+    ((location)
+     (using (bcr lcs.bcr :- buffered-char-reader)
+     (if (= lcs.lo bcr.hi)
+       (Location-location bcr.port)
+       (let* ((xoff (L.xoff))
+  	    (lines (find-tail (cut < <> xoff) bcr.lines))
+              (base (if lines (car lines) -1))
+              (col (##fx- xoff base 1))
+  	    (line (if lines (length lines) 0)))
+         (make-location bcr.port line col 1 xoff))))))
+#+end_src
+
+
+* /File/ parsec-test.ss
+#+begin_src scheme :noweb yes :tangle ../../../src/std/parsec-test.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/parsec unit-tests
+
+  (import :std/test
+          :std/error
+          :std/interactive
+          :srfi/13
+          :std/parser/stream
+          :std/parser/base
+          :std/monad/interface
+          ;;:std/monad/error
+          :std/monad/list
+          :std/monad/syntax
+         "instance"
+         "parsec/stream"
+         "parsec/transformer"
+         "parsec/combinators"
+         "parsec/char"
+         "parsec/syntax"
+          (only-in :std/sugar hash try)
+          (only-in :gerbil/core error-object? with-catch))
+  (export parsec-test)
+  (begin-foreign (include "~~lib/_gambit#.scm"))
+  (defsyntax (test-inline stx)
+    (syntax-case stx (>)
+      ((_ test-case: name rest ...)
+       #'(test-case name (test-inline rest ...)))
+      ((_ > form > rest ...)
+       #'(begin (when std/test#*test-verbose* (displayln "... " 'form)) form (test-inline > rest ...)))
+      ((_ > test result rest ...)
+       #'(begin (check test => 'result) (test-inline rest ...)))
+      ((_) #!void)))
+
+
+  ;; (set-test-verbose! #f)
+  (def parsec-test 
+    (test-suite "Test :std/parsec"
+     (test-inline
+      test-case: "Char Reader tests"
+      <<char-reader-test>>
+      )
+
+    (test-inline
+      test-case: "Location tests"
+      <<location-test>>
+      )
+     (test-inline
+      test-case: "Token tests"
+      <<token-test>>
+      )
+
+
+    (test-inline
+      test-case: "Stream tests"
+      <<stream-test>>
+      )
+     (test-inline
+      test-case: "Lookahead Stream tests"
+      <<lstream-test>>
+      )
+      (test-inline
+      test-case: "ParsecT tests"
+      <<parsect-test>>
+      )
+
+      (test-inline
+       test-case: "Combinator tests"
+       <<test-parse-syntax>>
+       <<comb-test>>
+
+       )
+
+      (test-inline
+       test-case: "Dot tests"
+       <<dot-test>>
+
+       )
+      (test-inline
+       test-case: "Character Parsing tests"
+       <<char-test>>
+
+       )
+      (test-inline
+       test-case: "Org Syntax Parsing tests"
+       <<org-mode-parser-test>>
+
+       )
+
+
+
+
+
+
+    ))
+        
+  		 
+       
+
+
+
+
+#+end_src

@@ -1,0 +1,2 @@
+(instance Monad :list
+ ((return a) [a]) ((>>= ma f) (append-map f ma)))

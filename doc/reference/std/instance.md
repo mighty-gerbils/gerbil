@@ -3,13 +3,10 @@
 When defining many methods on a class, possibly with an interface wrapper, a short form is nice to reduce bloat.
 
 ::: tip To use the bindings from this module:
-
 ```scheme
 (import :std/instance)
 ```
-
 :::
-
 
 ## Introduction
 

@@ -200,6 +200,14 @@ When set to =xml?= things are different.
 :CUSTOM_ID: sxml-queries
 :END:
 
+SXPath is an XPath-conforming XML query language that internally
+relies on SXML as a representation of the XML Infoset.
+
+TODO: https://gitlab.com/wak/wak-sxml-tools/ <--- there's an
+XPath->SXPath parser.
+
+It's by Lizorkin who also has a good tutorial [[https://web.archive.org/web/20070414181503/http://modis.ispras.ru/Lizorkin/sxml-tutorial.html][here]],
+
 *** sxpath
 :PROPERTIES:
 :CUSTOM_ID: sxpath
@@ -210,15 +218,45 @@ When set to =xml?= things are different.
   path := list
 #+end_src
 
-Evaluate an abbreviated SXPath
+Evaluate an abbreviated SXPath. The syntax will follow but assume it's
+a sexp version of XPath similar to how SXML is a sexp version of XML.
 
+The easy way is to think of SXPath as a list of path components. It's
+also important to realize that attributes are themselves a node of
+type =@=.
+
+So ='(html head title)= is like the ="​/​html/​head/​title"= XPath and the
+=//row[@r​='8']= instead can be said like =(// (row (@ r (equal?
+"8"))))=
+
+There are a few special path components:
+
+ - *  :: matches an element node.
+ - // :: matches any one or many consecutive path components. 
+ - @  :: selects the attribute list node.
+
+ If a path component is a list it's one of these forms:
+
+ - (equal? x) :: matches if the node under examination matches x using
+   node-equal?
+ - (eq? x) :: matches if the node under examination matches x using
+   node-eq?
+ - (<path> n) :: -  :: matches the n-th node matching same path
+   component. n starts from 1. Negative numbers start from the end of
+   the node list backward. This is =path[n]= syntax in XPath.
+ -  (<path> (<predicate>...)) :: matches a path component path and
+   =(sxpath (<predicate>...))= on those nodes are not empty. This is
+   =path[predicate...]= syntax in XPath.
+
+Here's the syntax: 
+   
 #+begin_example
     sxpath:: AbbrPath -> Converter, or
     sxpath:: AbbrPath -> Node|Nodeset -> Nodeset
 #+end_example
 
-AbbrPath is a list. It is translated to the full SXPath according to the
-following rewriting rules:
+AbbrPath is a list. It is translated to the full SXPath according to
+the following rewriting rules:
 
 #+begin_src scheme
  (sxpath '()) -> (node-join)
@@ -238,6 +276,8 @@ following rewriting rules:
  (sxpathr path-filter) -> (filter (sxpath path-filter))
 #+end_src
 
+The =sxpath1= and =sxpathr= operators are not exported and just there
+for show.
 *** sxml-select
 :PROPERTIES:
 :CUSTOM_ID: sxml-select
