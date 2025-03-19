@@ -1,0 +1,20 @@
+#+TITLE: Distributing Gerbil
+
+Gerbil is a simple language and runtime that can be distributed many
+ways. This is where any extra items exist in the source tree so anyone
+can see how things work in other streams.
+
+* MacOS
+
+There are those of us that got sucked into MacOS. It's a UNIX, so
+there's that. Anyway there's a few different approaches and they're
+outlined [[file:macos/README.org][here]].
+
+* Docker
+
+There's some docker things that I don't understand (lol) [[file:docker][here]].
+
+* Guix
+
+At one point I(drewc) was using Guix. My work on it is [[file:guix/README.org][here]].
+
