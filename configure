@@ -17,17 +17,17 @@ die() {
 
 usage() {
     local gambit_config_help="$(cd src/gambit && ./configure --help | tail -n +63)"
-
     cat <<EOF
 This script configures the Gerbil and integrated Gambit build.
 
 Usage: $0 [option] ... [var=value]...
 
-Options controlling integrated Gambit configuration:
-${gambit_config_help}
-
 Options understood and processed by Gerbil:
   --prefix=PREFIX       where to install Gerbil; default prefix is /opt/gerbil
+  --dist[=no|maybe|yes]	conform with the Filesystem Hierarchy Standard (FHS) for installation.
+  			If \${prefix}/bin exists as a directory this is likely not a Gerbil-only installation and "maybe" tests for that.
+			defaults to "maybe".
+
   --with-gambit=TAG     integrated gambit git tag to check out for the build;
                         defaults to ${default_gambit_tag}
   --enable-march=ARCH   specify the machine architecture; it can be empty.
@@ -43,7 +43,13 @@ Gerbil Standard Library features:
   --disable-sqlite
 
 Default integrated Gambit configuration: ${default_gambit_config}
+
+Options controlling integrated Gambit configuration:
+${gambit_config_help}
+
+
 EOF
+
 }
 
 
@@ -63,6 +69,15 @@ package_out_of_tree() {
     local pkg="$1"
     echo "*** ERROR package ${pkg} has been moved out of the master Gerbil tree"
     echo "It is now available as an external package: github.com/mighty-gerbils/gerbil-${pkg}"
+}
+
+gerbil_dist="maybe"
+gerbil_maybe_in_dist () {
+    if [ -d "${prefix}/bin" ] && [ ! -L "${prefix}/bin" ];  then
+	gerbil_dist="yes"
+    else
+	gerbil_dist="no"
+    fi
 }
 
 if [ -f MANIFEST ] ; then
@@ -108,6 +123,18 @@ while [ $# -gt 0 ]; do
 
         --prefix=*)
             prefix=$(echo "$1" | cut -d = -f 2-)
+	    # Trim trailing /
+	    prefix=${prefix%/}
+            shift
+            ;;
+
+        --enable-dist)
+            gerbil_dist=yes
+            shift
+            ;;
+
+	--enable-dist=*)
+            gerbil_dist=$(echo "$1" | cut -d = -f 2-)
             shift
             ;;
 
@@ -208,8 +235,15 @@ while [ $# -gt 0 ]; do
         ;;
     esac
 done
+if [ "${gerbil_dist}" = "maybe" ] ; then
+    gerbil_maybe_in_dist
+fi
 
-gerbil_prefix="${prefix}/${gerbil_version}"
+if [ "${gerbil_dist}" = "no" ] ; then
+    gerbil_prefix="${prefix}/${gerbil_version}"
+else
+    gerbil_prefix="${prefix}/libexec/gerbil/${gerbil_version}"
+fi
 
 if [ -z "${CFLAGS}" ]; then
     CFLAGS="${cflags_opt}"
@@ -257,8 +291,10 @@ fi
 rm -f build-env.sh
 cat > build-env.sh <<EOF
 GERBIL_PREFIX=${gerbil_prefix}
+GERBIL_DIST=${gerbil_dist}
+GERBIL_FHS=${prefix}
 GERBIL_VERSION=${gerbil_version}
-export GERBIL_PREFIX GERBIL_VERSION
+export GERBIL_PREFIX GERBIL_VERSION GERBIL_DIST GERBIL_FHS
 EOF
 
 exit 0
