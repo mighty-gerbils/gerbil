@@ -34,7 +34,7 @@ namespace: #f
 
 ;; prototype table
 (def (__interface-hash-key key)
-  (##fxxor (__symbolic-hash (##car key)) (__symbolic-hash (##cdr key))))
+  (##fxxor (##symbol-hash (##car key)) (##symbol-hash (##cdr key))))
 (def (__interface-test-key a b)
   (and (##eq? (##car a) (##car b))
        (##eq? (##cdr a) (##cdr b))))

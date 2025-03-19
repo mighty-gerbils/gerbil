@@ -35,6 +35,8 @@ namespace: gxc
          (%#define-runtime +gerbil-ar+ gxc#+gerbil-ar+)
          (%#define-runtime gerbil-ar gxc#gerbil-ar)
          (%#define-runtime gerbil-rpath gxc#gerbil-rpath)
+         (%#define-runtime compiler-obj-suffix gxc#compiler-obj-suffix)
+         (%#define-runtime include-source gxc#include-source)
          (%#define-runtime gerbil-runtime-modules gxc#gerbil-runtime-modules)
          (%#define-runtime delete-directory* gxc#delete-directory*)
          (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)

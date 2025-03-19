@@ -415,7 +415,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             t::t
+             fixnum::t
              effect:
              #f
              arguments:
@@ -484,21 +484,7 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/table)))
-  (declare-type
-   symbolic-hash
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/table)))
+  (declare-type symbolic-hash (@lambda 1 ##symbol-hash))
   (declare-type string-hash (@lambda 1 ##string=?-hash))
   (declare-type
    immediate-hash

@@ -46,7 +46,7 @@ namespace: #f
            (match hd-rest
              ([val . rest]
               (when kwt
-                (let ((pos (##fxmodulo (keyword-hash hd) (##vector-length kwt))))
+                (let ((pos (##fxmodulo (##keyword-hash hd) (##vector-length kwt))))
                   (unless (eq? hd (##vector-ref kwt pos))
                     (error "Unexpected keyword argument" K hd))))
               (unless (eq? (symbolic-table-ref keys hd absent-value)

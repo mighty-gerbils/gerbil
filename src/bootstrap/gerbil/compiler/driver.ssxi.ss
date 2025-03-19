@@ -132,6 +132,24 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/driver)))
   (declare-type
+   gxc#compiler-obj-suffix
+   (optimizer-resolve-class '(typedecl gxc#compiler-obj-suffix) 'string::t))
+  (declare-type
+   gxc#include-source
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             string::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/driver)))
+  (declare-type
    gxc#gerbil-runtime-modules
    (optimizer-resolve-class '(typedecl gxc#gerbil-runtime-modules) 'pair::t))
   (declare-type

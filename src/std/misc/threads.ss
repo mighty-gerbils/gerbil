@@ -102,18 +102,18 @@
             (prev (macro-tgroup-tgroups-deq-prev tg)))
         (cond-expand
           (enable-smp
-           (##vector-set! prev 2 next)
-           (##vector-set! next 3 prev))
+           (##unchecked-structure-set! prev next 2 #f #f)
+           (##unchecked-structure-set! next prev 3 #f #f))
           (else
-           (##vector-set! prev 1 next)
-           (##vector-set! next 2 prev)))
+           (##unchecked-structure-set! prev next 1 #f #f)
+           (##unchecked-structure-set! next prev 2 #f #f)))
         (macro-tgroup-tgroups-deq-next-set! tg tg)
         (macro-tgroup-tgroups-deq-prev-set! tg tg))
       ;; and mark it as unreachable
       (cond-expand
         (gerbil-smp
          ;; no parent field mutator defined
-         (##vector-set! tg 8 #f))
+         (##unchecked-structure-set! tg #f 8 #f #f))
         (else
          (macro-tgroup-parent-set! tg #f))))))
 

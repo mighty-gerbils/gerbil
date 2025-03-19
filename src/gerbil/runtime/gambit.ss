@@ -87,7 +87,6 @@ namespace: #f
   macro-gc-hash-table-free-set!
   macro-gc-hash-table-size
   macro-gc-hash-table-key0
-  macro-slot
   macro-type-fixnum
   macro-type-mem1
   macro-type-mem2
