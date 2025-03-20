@@ -3,9 +3,13 @@
 	:std/format
 	:std/srfi/13
 	
-	:std/ide/swank/message
-	:std/ide/swank/context
-	:std/ide/swank/api
+	;; :std/ide/swank/message
+	;; :std/ide/swank/context
+	;; :std/ide/swank/api
+
+	./message
+	./context
+	./api
 	
 	:gerbil/compiler/optimize-base
 	:gerbil/compiler/optimize)
@@ -23,7 +27,7 @@
   (getenv "GERBIL_SOURCE"
 	  (path-expand "src/" (gerbil-home))))
 
-(try
+(ignore-errors
  (import-module
   (path-expand "gerbil/builtin.ssxi.ss" src) #t #t)
  (import-module
@@ -32,8 +36,7 @@
 	(fs (filter (cut string-suffix? ".ssxi.ss" <>)
 		    (directory-files lpath)))
 	(mods (map (cut path-expand <> lpath) fs)))
-   (for-each (cut import-module <> #t #t) mods))
- (catch (_) #f))
+   (for-each (cut import-module <> #t #t) mods)))
 
 (def (swank-pp-proc-args args)
   (def (strim sym)
