@@ -3,7 +3,7 @@
 The expander procedures are part of the expander API and accessible at
 phi=+1 (syntax definition time) in the core prelude.
 
-These symbols are part of the `<expander-runtime>` module, defined at
+These symbols are part of the `:gerbil/expander` module, defined at
 the core prelude, which you can import directly if you need to work
 with the expander at phi=0, for instance in source processing tools.
 
