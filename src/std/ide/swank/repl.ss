@@ -51,8 +51,10 @@
 
 	(def (:repl-output-thread)
 	  (let lp ()
-	    (let* ((char (peek-char stdout))
-		   (str (get-output-string stdout)))
+	    (let* ((char (ignore-errors (peek-char stdout)))
+		   (str (if (not char)
+			  (eof-object)
+			  (get-output-string stdout))))
 	      (if (or (eof-object? str) (eof-object? char)
 		      (equal? str ""))
 		str

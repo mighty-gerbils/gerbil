@@ -9,6 +9,43 @@ for developing Lisp applications.
 SLIME uses a backend called Swank that is loaded into Lisp to turn
 Emacs into a featured REPL along with an IDE for lisp use.
 
+* Running the Swank Server
+
+If you already know SLIME and have it setup then all that's needed is
+to run a server and =M-x slime-connect= to it from emacs.
+
+** At the command line: gerbil swank AKA gxswank
+
+#+begin_src sh
+  gerbil swank --help
+  gxswank: The Gerbil Swank Daemon
+
+  Usage: gxwank [option ...]
+
+  Options
+   -g --global-env                  use the user global env even in local package context
+   -a --address <host>              The IP or hostname to listen on [default: localhost]
+   -p --port <port>                 The port number on which the Swank server listens for connections [default: 4005]
+   -d --dont-close <dont-close>     Close the acceptor on client disconnect if anything but true [default: true]
+   -h --help                        display help
+#+end_src
+
+** From the REPL: swank#create-server
+
+#+begin_src sh
+  $ gerbil
+  Gerbil v0.19-178-gec4ff997 on Gambit v4.9.6-208-g2686dd61
+  > (import (prefix-in :std/ide/swank swank#))
+  > (def swank-port (+ 10000 (random-integer 55535)))
+  > (swank#create-server port: swank-port)
+  #<thread #20>
+  > Running Swank Server on localhost:45657
+#+end_src
+
+
+* The =create-server= function
+
+
 * Minimal Emacs setup
 
 There are some developers that (**gasp**) don't use Emacs as their
@@ -78,27 +115,4 @@ to your init file.
 #+end_src
 
 Or you could [[https://slime.common-lisp.dev/doc/html/Getting-started.html#Getting-started][download it]] and put it in your =load-path=.
-
-* Running the Swank Server in Gerbil
-
-#+begin_src sh
-gerbil swank --help
-gxswank: The Gerbil HTTP Daemon
-
-Usage: gxwank [option ...]
-
-Options:
- -g --global-env                  use the user global env even in local package context
- -a --address <host>              The IP or hostname to listen on [default: localhost]
- -p --port <port>                 The port number on which the Swank server listens for connections [default: 4005]
- -d --dont-close <dont-close>     Close the acceptor on client disconnect if anything but true [default: true]
- -h --help                        display help
-
-#+end_src
-
-
-
-
-
-
 

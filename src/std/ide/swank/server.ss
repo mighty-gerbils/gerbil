@@ -23,7 +23,7 @@
 (def (run-swank-server (port 2005) (host "localhost"))
   (let (laddr (resolve-address
   	       (string-append host":"(number->string port))))
-    (displayln "Running Swank Server on " laddr)
+    (displayln "Running Swank Server on "host":"port)
     (using (sock (tcp-listen laddr) : ServerSocket)
       (while #t
         (try

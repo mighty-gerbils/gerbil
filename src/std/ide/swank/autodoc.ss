@@ -1,28 +1,38 @@
-(import :gerbil/expander ./message :std/sugar
-	./context ./api :std/format
-	:std/srfi/13)
+(import :gerbil/expander
+	:std/sugar
+	:std/format
+	:std/srfi/13
+	
+	:std/ide/swank/message
+	:std/ide/swank/context
+	:std/ide/swank/api
+	
+	:gerbil/compiler/optimize-base
+	:gerbil/compiler/optimize)
 (export #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Completions, Autodoc and Signature
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; search for a procedure in 0gambit-procedures
+;; search for a procedure in gambit-procedures
 ;; returns the procedure symbol if it finds it
 
-(gxc#optimizer-info-init!)
-(def src (path-expand "src/" (gerbil-home)))
+(optimizer-info-init!)
+(def src
+  (getenv "GERBIL_SOURCE"
+	  (path-expand "src/" (gerbil-home))))
 
 (try
- (gx#import-module
+ (import-module
   (path-expand "gerbil/builtin.ssxi.ss" src) #t #t)
- (gx#import-module
+ (import-module
   (path-expand "gerbil/builtin-inline-rules.ssxi.ss" src) #t #t)
  (let* ((lpath  (path-expand "lib/gerbil/runtime/" (gerbil-home)))
 	(fs (filter (cut string-suffix? ".ssxi.ss" <>)
 		    (directory-files lpath)))
 	(mods (map (cut path-expand <> lpath) fs)))
-   (for-each (cut gx#import-module <> #t #t) mods))
+   (for-each (cut import-module <> #t #t) mods))
  (catch (_) #f))
 
 (def (swank-pp-proc-args args)
@@ -31,18 +41,20 @@
      (string-trim-both
       (symbol->string sym)  
       (? (or (cut char=? <> #\_) char-numeric?)))))
-  (let lp ((lst args))
-    (if (null? lst) lst
-	(with ([kar . kdr] lst)
-	  (cons (strim kar)
-		(if (pair? kdr) (lp kdr) (strim kdr)))))))
+  (if (not (list? args)) args
+      (let lp ((lst args))
+	(if (null? lst) lst
+	    (with ([kar . kdr] lst)
+	      (cons (strim kar)
+		    (if (null? kdr) kdr
+			(if (pair? kdr) (lp kdr) (strim kdr)))))))))
 
 (def (swank-autodoc-procedure sym proc)
   (def name (##procedure-name proc))
-  (def opti (and name (gxc#optimizer-lookup-type name)))
-  (def sig (and opti (gxc#!procedure? opti) (gxc#!procedure-signature opti)))
-  (def ret (and sig (gxc#!signature? sig) (gxc#!signature-return sig)))
-  (def args (and sig (gxc#!signature? sig) (gxc#!signature-arguments sig)))
+  (def opti (and name (optimizer-lookup-type name)))
+  (def sig (and opti (!procedure? opti) (!procedure-signature opti)))
+  (def ret (and sig (!signature? sig) (!signature-return sig)))
+  (def args (and sig (!signature? sig) (!signature-arguments sig)))
   (def call (cons sym args))
   
 

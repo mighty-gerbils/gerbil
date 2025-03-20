@@ -45,8 +45,19 @@
    'dont-close "-d" "--dont-close" default: "true"
    help: "Close the acceptor on client disconnect if anything but true"))
 
-
 (def (gxswank-main opt)
+  (def number-of-errors 0)
+  (def (runrepl server)
+    (let lp ((res (ignore-errors (##repl))))
+      (if (> number-of-errors 127)
+	(begin
+	  (displayln "Command Line REPL had "number-of-errors
+		     " unhandled errors. No more stdio REPL thread")
+	  (thread-join! server))
+	(begin
+	  (set! number-of-errors (1+ number-of-errors))
+	  (lp (ignore-errors (##repl)))))))
+	
   (setup-local-env! opt)
   (let-hash opt
     (let ((server (create-server
@@ -55,6 +66,6 @@
 		   dont-close: (equal? "true" .dont-close))))
       
       (thread-yield!)
-      (##repl)
+      (runrepl server)
       (thread-join! server))))
       

@@ -10,14 +10,14 @@
   (with ([cpu os kern] ##os-system-type-saved)
     (if (eq? os 'apple)
       (string-trim-eol
-       (cdr (##shell-command "sysctl -n machdep.cpu.brand_string" #t)))
+       (cdr (shell-command "sysctl -n machdep.cpu.brand_string" #t)))
       "Dunno")))
 (def (swank-machine:type)
-  (##string-upcase (string-trim-eol
-   (cdr (##shell-command "uname -m" #t)))))
+  (string-upcase (string-trim-eol
+   (cdr (shell-command "uname -m" #t)))))
 
 (def (swank-lisp-implementation:program)
-  (path-expand (string-append "bin/" (##command-name)) (gerbil-home)))
+  (path-expand (string-append "bin/" (command-name)) (gerbil-home)))
 
 (def (swank-modules)
   '("SWANK-ARGLISTS" "SWANK-REPL" "SWANK-PRESENTATIONS"))
