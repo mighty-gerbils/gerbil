@@ -91,10 +91,10 @@
       (parameterize ((current-input-port  (##repl-input-port))
                      (current-output-port (##repl-output-port))
                      (current-error-port  (##repl-output-port))
-                     (##current-user-interrupt-handler (cut ##handle-interrupt #f)))
+                     (current-user-interrupt-handler (cut ##user-interrupt-current-thread! #f)))
         (replx))
       (close-port client)
-      (thread-terminate! state.reader))))
+      (thread-join! state.reader))))
 
 (def (repl-client-reader state in out repl-thread)
   (using (state :- repl-state)
@@ -147,7 +147,7 @@
   (let* (((values in-rd in-wr)
           (open-string-pipe '(direction: input permanent-close: #f)))
          (_ (macro-port-name-set! in-rd (lambda (port) '(repl)))) ; more descriptive port name
-         (channel (##make-repl-channel-ports in-rd client))
+         (channel (##make-repl-channel-ports in-rd client client))
          (_ (macro-repl-channel-last-owner-set! channel thread)) ; suppress REPL is now... message
          (state (make-repl-state client channel #f #f))
          (reader (make-thread (lambda () (repl-client-reader state client in-wr thread))

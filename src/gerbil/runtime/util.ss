@@ -216,7 +216,7 @@ namespace: #f
 (def (values-count obj)
   => :fixnum
   (if (##values? obj)
-    (##vector-length obj)
+    (:- (##values-length obj) :fixnum)
     1))
 
 (declare-inline values-count
@@ -224,7 +224,7 @@ namespace: #f
     (ast-case ast (%#call %#ref)
       ((%#call _ (%#ref var))
        #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector-length) (%#ref var))
+               (%#call (%#ref ##values-length) (%#ref var))
                (%#quote 1)))
       ((%#call recur expr)
        (with-syntax (($values (make-symbol (gensym '__values))))
@@ -233,13 +233,13 @@ namespace: #f
 
 (def (values-ref obj (k : :fixnum))
   (if (##values? obj)
-    (##vector-ref obj k)
+    (##values-ref obj k)
     obj))
 
 (def (values->list obj)
   => :list
   (if (##values? obj)
-    (##vector->list obj)
+    (:- (##values->list obj) :list)
     (list obj)))
 
 (declare-inline values->list
@@ -247,7 +247,7 @@ namespace: #f
     (ast-case ast (%#call %#ref)
       ((%#call _ (%#ref var))
        #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector->list) (%#ref var))
+               (%#call (%#ref ##values->list) (%#ref var))
                (%#call (%#ref list) (%#ref var))))
       ((%#call recur expr)
        (with-syntax (($values (make-symbol (gensym '__values))))

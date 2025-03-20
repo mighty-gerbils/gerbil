@@ -54,5 +54,9 @@ namespace: gx
          (%#define-runtime
           syntax-check-splice-targets
           gx#syntax-check-splice-targets)
-         (%#define-runtime syntax-split-splice gx#syntax-split-splice))
+         (%#define-runtime syntax-split-splice gx#syntax-split-splice)
+         (%#define-runtime
+          syntax-split-splice->vector
+          gx#syntax-split-splice->vector)
+         (%#define-syntax syntax-split-splice* |gx[:0:]#syntax-split-splice*|))
 (%#call (%#ref load-module) (%#quote "gerbil/expander/stxcase~0"))

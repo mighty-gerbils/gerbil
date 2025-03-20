@@ -602,9 +602,9 @@ namespace: #f
     (not-an-instance obj klass)))
 
 (def (unchecked-field-ref obj off)
-  (##unchecked-structure-ref obj off (##structure-type obj) #f))
+  (##unchecked-structure-ref obj off #f #f))
 (def (unchecked-field-set! obj off val)
-  (##unchecked-structure-set! obj val off (##structure-type obj) #f))
+  (##unchecked-structure-set! obj val off #f #f))
 
 (def (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (__class-slot-offset (##structure-type obj) slot)))
@@ -776,7 +776,7 @@ namespace: #f
                          (%#quote "struct-instance-init!: too many arguments for struct")
                          (%#ref self)
                          (%#quote count)
-                         (%#call (%#ref ##vector-length) (%#ref self))))))
+                         (%#call (%#ref ##structure-length) (%#ref self))))))
       ((%#call recur self arg ...)
        (with-syntax (($self (make-symbol (gensym '__self))))
          #'(%#let-values ((($self) self))
@@ -832,7 +832,12 @@ namespace: #f
   (:- (##structure-copy struct) :object))
 
 (def (struct->list (obj : :object)) => :list
-  (##vector->list obj))
+  (let (len (##structure-length obj))
+    (let recur ((i 0)) => :list
+      (if (##fx< i len)
+        (cons (##unchecked-structure-ref obj i #f #f)
+              (recur (##fx+ i 1)))
+        []))))
 
 (def (class->list (obj : :object)) => :list
   (let (klass (##structure-type obj))
@@ -1256,7 +1261,7 @@ END-C
                                klass
                                (__shadow-class klass))))
                           ((##fx= st (macro-subtype-boxvalues)) ; box or values?
-                           (if (fx= (##vector-length obj) 1)
+                           (if (fx= (##values-length obj) 1)
                              (__system-class 'box)
                              (__system-class 'values)))
                           ((##vector-ref __subtype-id st)

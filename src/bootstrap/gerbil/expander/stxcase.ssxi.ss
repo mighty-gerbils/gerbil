@@ -233,4 +233,19 @@ package: gerbil/expander
              unchecked:
              #f
              origin:
+             gerbil/expander/stxcase)))
+  (declare-type
+   gx#syntax-split-splice->vector
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
              gerbil/expander/stxcase))))

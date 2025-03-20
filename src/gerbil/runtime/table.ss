@@ -224,11 +224,7 @@ namespace: #f
   (or (symbol? obj) (keyword? obj)))
 
 (def (symbolic-hash obj)
-  (__symbolic-hash obj))
-
-(defrules __symbolic-hash ()
-  ((_ obj)
-   (macro-slot 1 obj)))
+  (##symbol-hash obj))
 
 (def (string-hash obj)
   (##string=?-hash obj))
@@ -524,15 +520,7 @@ namespace: #f
   (declare (not interrupts-enabled))
   ;; mem allocated first
   (let (gcht (__gc-table-e tab))
-    (let loop ((i (macro-gc-hash-table-key0)))
-      (when (fx< i (##vector-length gcht))
-        (let (key (##vector-ref gcht i))
-          (if (and (not (eq? key (macro-unused-obj)))
-                   (not (eq? key (macro-deleted-obj))))
-            (proc key (##vector-ref gcht (fx+ i 1))))
-          (let ()
-            (declare (interrupts-enabled))
-            (loop (fx+ i 2)))))))
+    (##gc-hash-table-for-each proc gcht))
   ;; immediates next
   (cond
    ((&gc-table-immediate tab) =>

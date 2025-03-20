@@ -165,7 +165,7 @@
                                              (##car _%e1776817879%_))))
                                       (if (gx#stx-pair/null? _%tl1776717876%_)
                                           (let ((_%__splice2084220843%_
-                                                 (gx#syntax-split-splice
+                                                 (gx#syntax-split-splice->vector
                                                   _%tl1776717876%_
                                                   '0)))
                                             (let ((_%tl1777317892%_
