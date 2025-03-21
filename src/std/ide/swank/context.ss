@@ -39,25 +39,43 @@
 		   __module-registry))))
     ...]))
 
-(def (swank-read-from-string-in-context str (cxt-name (current-slime-package)))
+(def (swank-read-from-string-form
+      str (read-eval? #t))
+  `(call-with-input-string
+    ,str
+    (lambda (p)
+      ;; For "SWANK-PRESENTATIONS" the emacs REPL allows a copy of a
+      ;; past result to actually be that past result.
+
+      ;; So, ```
+      ;; (swank-repl:listener-eval "(eq?
+      ;;  #.(swank:lookup-presented-object-or-lose 2.)
+      ;;  #.(swank:lookup-presented-object-or-lose 2.))\n")
+      ;; ```
+
+      ;; That read time evaluation means we have to allow it.
+      (input-port-readtable-set!
+       p
+       (readtable-eval-allowed?-set
+	(input-port-readtable p) ,read-eval?))
+      (let lp ((form (read p)) (lst []))
+	(if (eof-object? form)
+	  (reverse lst)
+	  (lp (read p) (cons form lst)))))))
+  
+(def (swank-read-from-string-in-context
+      str (cxt-name (current-slime-package))
+      (add-begin? #f) (read-eval? #t))
   (let (form
 	(swank-eval-in-context
-	 `(call-with-input-string
-	   ,str
-	   (lambda (p)
-	     (input-port-readtable-set!
-	      p
-	      (readtable-eval-allowed?-set
-	       (input-port-readtable p) #t))
-	     (let lp ((form (read p)) (lst []))
-	       (if (eof-object? form)
-		 (reverse lst)
-		 (lp (read p) (cons form lst))))))
+	 (swank-read-from-string-form str read-eval?)
 	 cxt-name))
-    (case (length form)
-      ((0) (eof-object))
-      ((1) (car form))
-      (else (cons 'begin form)))))
+	(case (length form)
+	  ((0) (eof-object))
+	  ((1) (if add-begin?
+		 (cons 'begin form)
+		 (car form)))
+	  (else (cons 'begin form)))))
 
 (def-swank (swank:list-all-package-names . _)
   (list-all-context-names))

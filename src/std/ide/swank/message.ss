@@ -1,6 +1,10 @@
 (import
   ./api
-  :std/text/utf8 :std/io :std/contract :std/interface :gerbil/gambit)
+  :std/text/utf8
+  :std/io
+  :std/contract
+  :std/interface
+  :gerbil/gambit)
 (export #t)
 
 (def default-swank-buffer-size (expt 2 15)) ; 32K
@@ -17,11 +21,11 @@
 		       buffer-or-size))
 	     (mbytes (and size (reader.read buffer 0 size size)))
 	     (port (open-input-u8vector buffer)))
-      (input-port-readtable-set!
+      ;; "SWANK-PRESENTATIONS" not needed for messages?
+      #;(input-port-readtable-set!
        port
        (readtable-eval-allowed?-set
 	(input-port-readtable port) #t))
-
       (and size (read port)))))
 
 (def swank-message-handlers (make-hash-table-eq))

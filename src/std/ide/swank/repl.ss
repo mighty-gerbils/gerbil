@@ -74,21 +74,12 @@
 		       (current-error-port stdout))
 	  (let (outt (spawn :repl-output-thread))
 	    (try
-	     (let (res
-		   (swank-eval-in-context
-		    `(eval
-		      (call-with-input-string
-		       ,str
-		       (lambda (p)
-			 (input-port-readtable-set!
-			  p
-			  (readtable-eval-allowed?-set
-			   (input-port-readtable p) #t))
-			 (let lp ((form (read p)) (lst []))
-			   (if (eof-object? form)
-			     (cons 'begin (reverse lst))
-			     (lp (read p) (cons form lst)))))))
-		    cxt))
+	     (let* ((form
+		     (swank-read-from-string-in-context
+		      str cxt #t #t))
+		    (res 
+		     (swank-eval-in-context
+		      `(eval ',form) cxt)))
 	       (force-output stdout)
 	       (close-port stdout)
 	       (thread-join! outt)
