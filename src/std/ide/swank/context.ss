@@ -7,15 +7,15 @@
      (cond
       ((string? :mod)
        (if (string=? "TOP" :mod)
-	 (gx#current-expander-context)
+	 (current-expander-context)
 	 (swank-context
 	  (string->symbol (string-append ":" :mod)))))
-      ((not :mod) (gx#current-expander-context))
-      ((symbol? :mod) (gx#import-module :mod #f #t))
+      ((not :mod) (current-expander-context))
+      ((symbol? :mod) (import-module :mod #f #t))
       (else (error "Unknown Module" :mod)))))
-  (parameterize ((gx#current-expander-context cxt))
+  (parameterize ((current-expander-context cxt))
     ;; TODO: This should be a shadow context or something.
-    (gx#eval-syntax '(extern namespace: #f
+    (eval-syntax '(extern namespace: #f
 		       swank:lookup-presented-object
 		       swank:lookup-presented-object-or-lose
 		       swank:get-presented-object
@@ -23,7 +23,7 @@
   cxt)
 
 (def (swank-eval-in-context form (cxt-name (current-slime-package)))
-  (parameterize ((gx#current-expander-context (swank-context cxt-name)))
+  (parameterize ((current-expander-context (swank-context cxt-name)))
     (eval form)))
 
 (def (list-all-context-names)
@@ -32,11 +32,11 @@
    ["TOP"
     (map
       (lambda (cxt)
-	(symbol->string (gx#expander-context-id cxt)))
-      (filter gx#module-context?
+	(symbol->string (expander-context-id cxt)))
+      (filter module-context?
 	      (map cdr
 		   (hash->list
-		   gx#__module-registry))))
+		   __module-registry))))
     ...]))
 
 (def (swank-read-from-string-in-context str (cxt-name (current-slime-package)))
