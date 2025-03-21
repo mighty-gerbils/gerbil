@@ -1,7 +1,11 @@
 (import
-  :std/interactive ./api
+  :std/interactive
+  ./api
   ./presentation)
-(export #t apropos (import: :std/interactive))
+(export
+  #t
+  apropos
+  (import: :std/interactive))
 
 (extern namespace: #f
   apropos
@@ -30,7 +34,3 @@
 
 (set! repl-result-history-ref swank:repl-result-history-ref)
 
-  
-  
-      
-		

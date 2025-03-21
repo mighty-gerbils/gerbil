@@ -1,15 +1,18 @@
-(import ./api ./message ./repl ./context :gerbil/gambit)
+(import :gerbil/gambit
+	./api
+	./message
+	./repl
+	./context)
 (export #t)
   ;;;; Recording and accessing results of computations
 
 (def +record-repl-results+ #t)
 (def object-to-presentation-id-table
-  (##make-table weak-keys: #t))
+  (make-hash-table weak-keys: #t))
 (def presentation-id-to-object-table
-  (##make-table weak-values: #t))
+  (make-hash-table weak-values: #t))
 
-(def (clrhash tbl)
-  (table-for-each (lambda (k _) (table-set! tbl k)) tbl))
+(def clrhash hash-clear!)
 
 (def (clear-presentation-tables)
   (clrhash object-to-presentation-id-table)
@@ -24,12 +27,12 @@
 (def (save-presented-object obj)
   "Save OBJECT and return the assigned id.
   If OBJECT was saved previously return the old id."
-  (let ((ref (table-ref object-to-presentation-id-table obj #f)))
+  (let ((ref (hash-ref object-to-presentation-id-table obj #f)))
     (or ref
   	(let ((id (begin0 presentation-counter
   		    (set! presentation-counter (1+ presentation-counter)))))
-  	  (table-set! presentation-id-to-object-table id obj)
-  	  (table-set! object-to-presentation-id-table obj id)
+  	  (hash-put! presentation-id-to-object-table id obj)
+  	  (hash-put! object-to-presentation-id-table obj id)
   	  id))))
 
 (def (present-repl-results object (writer #f))
@@ -64,7 +67,7 @@
 
 (set-swank!
   (swank:get-presented-object id)
-  (table-ref presentation-id-to-object-table (exact id) nil-surrogate))
+  (hash-ref presentation-id-to-object-table (exact id) nil-surrogate))
 
 (set-swank!
  (swank:lookup-presented-object id)
@@ -83,4 +86,4 @@
   (set! vs (eval vs))
   (if (not (##values? vs))
     (if (= n 0) vs (error "Invalid nth-value request" n vs))
-    (##values-ref vs n)))
+    (values-ref vs n)))

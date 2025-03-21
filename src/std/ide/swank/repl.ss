@@ -1,14 +1,19 @@
 (import
-  ./message ./api ./context
-  :gerbil/gambit :std/sugar :std/format :std/srfi/13)
+  :gerbil/gambit
+  :std/sugar
+  :std/format
+  :std/srfi/13
+  ./message
+  ./api
+  ./context)
 (export #t)
 
 ;;; client->thread mapping
 (def repl-thread-client-table
-  (##make-table weak-keys: #t))
+  (make-hash-table weak-keys: #t))
 
 (def (client->repl-thread client)
-  (table-ref repl-thread-client-table client #f))
+  (hash-ref repl-thread-client-table client #f))
 
 (def (print-object-to-string obj (maxlen (* 80 5)))
   (def str (string-trim-right (format (if (list? obj) "~Y" "~a") obj)
@@ -98,11 +103,11 @@
 	     (finally
 	      (close-port stdout)
 	      (thread-terminate! outt)
-	      (table-set! repl-thread-client-table client))))))))
+	      (hash-remove! repl-thread-client-table client))))))))
 
   (when (let (thr (client->repl-thread client))
 	  (and thr (thread-state-running? thr)))
     (error "REPL thread already running"))
 
   (let (thread (spawn :repl-thread))
-    (table-set! repl-thread-client-table client thread)))
+    (hash-put! repl-thread-client-table client thread)))
