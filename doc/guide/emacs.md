@@ -32,6 +32,17 @@ And you can now run Gerbil with `M-x run-scheme`.
 Note that both `gerbil-mode.el` and `gambit.el` are installed by
 default in `$GERBIL_INSTAL_PREFIX/share/emacs/site-lisp` when installing gerbil.
 
+## SLIME Integration
+
+There's a `SLIME: The Superior Lisp Interaction Mode for Emacs` server that provides a near IDE experience for gerbil inside emacs.
+
+This is very useful for connecting emacs to a gerbil instance and controlling it that way. 
+
+Until there's more detail in this documentation have a look at the README in the ide/swank directory of the [Gerbil Source Tree](https://github.com/mighty-gerbils/gerbil/tree/master/src/std). 
+
+
+
+
 ## Doom Emacs Setup
 
 Gerbil is easy to setup in [Doom Emacs](https://github.com/doomemacs/doomemacs). Open Doom Emacs.
@@ -160,15 +171,6 @@ M-x gerbil-build
 
 This function builds the current Gerbil source tree by invoking the first
 build.ss script discovered by walking up the directory hierarchy.
-
-## SLIME Integration
-
-There is preliminary support for SLIME using ecraven's [r7rs-swank](https://github.com/ecraven/r7rs-swank).
-
-See drewc's [guide](https://gist.github.com/drewc/5f260537b7914a2b999c8a539fb48098) for how to set it up.
-
-Note that this is being phased out as we plan to implement a Gerbil
-LSP server for the next Gerbil release (v0.19).
 
 ## Use-Package Example Configuration
 
