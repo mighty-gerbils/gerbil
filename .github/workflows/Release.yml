@@ -20,7 +20,7 @@ jobs:
     - name: list all github action env vars
       run: env
     - name: build artifacts
-      run: make -C docker BRANCH=${{ github.event.release.tag_name }} fedora ubuntu package-tgz package-fedora package-ubuntu
+      run: make -C dist/docker BRANCH=${{ github.event.release.tag_name }} fedora ubuntu package-tgz package-fedora package-ubuntu
     - name: upload fedora artifact
       uses: actions/upload-release-asset@v1
       env:
