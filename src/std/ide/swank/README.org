@@ -1,5 +1,6 @@
 #+TITLE: Swank, a SLIME backend for an IDE
-
+#+EXPORT_FILE_NAME: ../../../../doc/reference/std/ide/swank.md
+#+OPTIONS: toc:nil
 * SLIME and Swank: Graphical REPL
 
 SLIME, the Superior Lisp Interaction Mode for Emacs, is an Emacs mode
@@ -35,9 +36,9 @@ to run a server and =M-x slime-connect= to it from emacs.
 #+begin_src sh
   $ gerbil
   Gerbil v0.19-178-gec4ff997 on Gambit v4.9.6-208-g2686dd61
-  > (import (prefix-in :std/ide/swank swank#))
+  > (import (prefix-in :std/ide/swank swank-))
   > (def swank-port (+ 10000 (random-integer 55535)))
-  > (swank#create-server port: swank-port)
+  > (swank-create-server port: swank-port)
   #<thread #20>
   > Running Swank Server on localhost:45657
 #+end_src
@@ -61,9 +62,9 @@ to your init file.
     :hook ((gerbil-mode . slime-mode)))
 
   (defun gerbil-slime-init-function (file encoding)
-    (format "(begin (import (prefix-in :std/ide/swank swank#))
+    (format "(begin (import (prefix-in :std/ide/swank swank-))
     (let ((port (+ 10000 (random-integer 55535))))
-      (swank#create-server port: port)
+      (swank-create-server port: port)
       (with-output-to-file %S (cut write port))))\n\n"
   	 file))
 

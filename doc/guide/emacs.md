@@ -36,11 +36,9 @@ default in `$GERBIL_INSTAL_PREFIX/share/emacs/site-lisp` when installing gerbil.
 
 There's a `SLIME: The Superior Lisp Interaction Mode for Emacs` server that provides a near IDE experience for gerbil inside emacs.
 
-This is very useful for connecting emacs to a gerbil instance and controlling it that way. 
+This is very useful for connecting emacs to a gerbil instance and controlling it that way.
 
-Until there's more detail in this documentation have a look at the README in the ide/swank directory of the [Gerbil Source Tree](https://github.com/mighty-gerbils/gerbil/tree/master/src/std). 
-
-
+The easy way is to run `gerbil swank` at the command line. The [Gerbil Swank Server](../reference/std/ide/swank.md) has a lot more options and ways of use so follow that link and have a look.
 
 
 ## Doom Emacs Setup
