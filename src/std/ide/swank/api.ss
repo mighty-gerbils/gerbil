@@ -26,9 +26,11 @@
   (with ([cpu os kern] ##os-system-type-saved)
     (let (cmd (case os
 		 ((apple) "sysctl -n machdep.cpu.brand_string")
-		 ((pc) "lscpu | sed -nr '/Model name/ s/.*:\\s*(.*) @ .*/\\1/p'")))
-       (or (ignore-errors (string-trim-eol
-			   (cdr (shell-command cmd #t))))
+		 ((pc) "lscpu | sed -nr '/Model name/ s/.*:\\s*(.*) @ .*/\\1/p'")
+		 (else #f)))
+      (or (and cmd
+	       (ignore-errors (string-trim-eol
+			       (cdr (shell-command cmd #t)))))
 	   ""))))
 
 (def (swank-machine:type)
