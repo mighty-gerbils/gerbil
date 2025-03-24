@@ -1,5 +1,12 @@
-(import :std/misc/string :std/sugar :gerbil/gambit
-  	./api ./message ./presentation ./top)
+(import
+  :std/misc/string
+  :std/sugar
+  :gerbil/gambit
+
+  ./api
+  ./message
+  ./presentation
+  ./top)
 (export #t)
 
 (def-swank (:emacs-rex form package thread id)
@@ -27,8 +34,7 @@
   			  :name "gerbil"
   			  :version ,(gerbil-version-string)
   			  :program ,(swank-lisp-implementation:program))
-    :machine (:instance
-  	      ,(##host-name)
+    :machine (:instance ,(##host-name)
   	      :type ,(swank-machine:type)
   	      :version ,(swank-machine:version))
     :features (:swank)
