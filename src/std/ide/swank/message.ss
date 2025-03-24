@@ -84,7 +84,9 @@
 	 (filler (make-u8vector (- 6 (u8vector-length hex)))))
     (u8vector-fill! filler 48)
     (using (writer :- Writer)
-      (writer.write (u8vector-append filler hex bytes)))))
+      (writer.write filler)
+      (writer.write hex)
+      (writer.write bytes))))
 
 (def (send-to-emacs msg)
   (write-message (current-slime-writer) msg))
