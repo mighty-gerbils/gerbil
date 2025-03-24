@@ -62,10 +62,7 @@
        p
        (readtable-eval-allowed?-set
 	(input-port-readtable p) ,read-eval?))
-      (let lp ((form (read p)) (lst []))
-	(if (eof-object? form)
-	  (reverse lst)
-	  (lp (read p) (cons form lst)))))))
+      (read-all p))))
   
 (def (swank-read-from-string-in-context
       str (cxt-name (current-slime-package))
