@@ -18,20 +18,19 @@ to run a server and =M-x slime-connect= to it from emacs.
 ** At the command line: gerbil swank AKA gxswank
 
 #+begin_src sh
-  gerbil swank --help
   gxswank: The Gerbil Swank Daemon
 
-  Usage: gxwank [option ...]
+  Usage: gxswank [option ...]
 
-  Options
+  Options:
    -g --global-env                  use the user global env even in local package context
    -a --address <host>              The IP or hostname to listen on [default: localhost]
    -p --port <port>                 The port number on which the Swank server listens for connections [default: 4005]
-   -d --dont-close <dont-close>     Close the acceptor on client disconnect if anything but true [default: true]
+   -d --dont-close <dont-close>     If true. keep the socket accepting for more than one connection. Any other value makes it only accept once. [default: false]
    -h --help                        display help
 #+end_src
 
-** From the REPL: swank#create-server
+** From the REPL: std/ide/swank#create-server
 
 #+begin_src sh
   $ gerbil
@@ -45,6 +44,8 @@ to run a server and =M-x slime-connect= to it from emacs.
 
 
 * The =create-server= function
+
+
 
 
 * Minimal Emacs setup
