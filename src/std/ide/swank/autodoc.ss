@@ -2,17 +2,13 @@
 	:std/sugar
 	:std/format
 	:std/srfi/13
-	
-	;; :std/ide/swank/message
-	;; :std/ide/swank/context
-	;; :std/ide/swank/api
 
+	:gerbil/compiler/optimize-base
+	:gerbil/compiler/optimize
+	
 	./message
 	./context
-	./api
-	
-	:gerbil/compiler/optimize-base
-	:gerbil/compiler/optimize)
+	./api)
 (export #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
