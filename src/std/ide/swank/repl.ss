@@ -93,7 +93,8 @@
 		       ':abort))
 	     (finally
 	      (close-port stdout)
-	      (thread-terminate! outt)
+	      ;; this is quite dangerous --vyzo
+	      #;(thread-terminate! outt)
 	      (hash-remove! repl-thread-client-table client))))))))
 
   (when (let (thr (client->repl-thread client))
