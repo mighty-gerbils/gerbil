@@ -2,8 +2,6 @@
   ./api
   :std/text/utf8
   :std/io
-  :std/contract
-  :std/interface
   :gerbil/gambit)
 (export #t)
 
