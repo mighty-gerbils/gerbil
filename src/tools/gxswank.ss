@@ -42,11 +42,14 @@
 
 (def persist-option
   (option
-   'dont-close "-d" "--dont-close" default: "true"
-   help: "Close the acceptor on client disconnect if anything but true"))
+   'dont-close "-d" "--dont-close" default: "false"
+   help: "If \"true\". keep the socket accepting for more than one connection. Any other value makes it only accept once."))
 
 (def (gxswank-main opt)
   (def number-of-errors 0)
+  ;;; I find it nice to have a REPL at the command line. But there are
+  ;;; currently issues with that and no terminal so after a while no
+  ;;; REPL.
   (def (runrepl server)
     (let lp ((res (ignore-errors (##repl))))
       (if (> number-of-errors 127)
