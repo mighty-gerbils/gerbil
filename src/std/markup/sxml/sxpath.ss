@@ -3,17 +3,8 @@
 ;;; SXPath interface
 
 (import :std/error)
-(export (import: oleg-SXpath))
+(export sxpath)
 
 (extern namespace: #f pretty-print)
-
-(module oleg-myenv
-  (export #t)
-  (include "oleg/myenv-gerbil.scm"))
-
-(module oleg-SXpath
-  (import oleg-myenv)
-  (export #t)
-  (include "oleg/SXPath.scm"))
-
-(import oleg-SXpath)
+(include "oleg/myenv-gerbil.scm")
+(include "oleg/SXPath.scm")

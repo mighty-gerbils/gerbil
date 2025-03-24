@@ -35,8 +35,6 @@ exports the [[file:README.org][SXML]] procedures.
 :PROPERTIES:
 :CUSTOM_ID: parsing
 :END:
-
-
 *** read-xml
 :PROPERTIES:
 :CUSTOM_ID: read-xml
@@ -56,57 +54,15 @@ swapped. Signals an error on invalid /source/ value.
 ::: tip Examples
 
 #+begin_src scheme
-  > (import :std/markup/xml)
-  > (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
-  (*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
-  > (call-with-input-string "<b xmlns=\"FOO\" xmlns:bar=\"bAr\"> <baz/>  <bar:g/></b>" read-xml)
-  (*TOP* (FOO:b (FOO:baz) (bAr:g)))
+> (import :std/markup/xml)
+> (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
+(*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
 #+end_src
 
 :::
-
-*** Namespaces: =xmlns= and =SXML=
-
-XML has namespaces. While they can be very useful the translation to
-s-expressions and back again needs some explaining.
-
-For example when working with Excel Spreadsheets the =workbook.xml=
-has namespaces.
-
-::: tip Pretend workbook
-
-#+begin_src scheme :noweb yes
-  (def pretend-workbook-text (symbol->string '|
-   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-   <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-             xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="x15 xr xr6 xr10 xr2">
-     <fileVersion appName="xl" lastEdited="7" lowestEdited="6" rupBuild="27328"/>
-     <workbookPr/>
-     <mc:AlternateContent
-         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
-       <mc:Choice Requires="x15"/>
-     </mc:AlternateContent>
-   </workbook>|
-  ))
-
-  (def pretend-workbook-sxml (read-xml pretend-workbook-text))
-#+end_src
-
-:::
-
-
-
-
-
-
- 
-
- 
 ** Printing
 :PROPERTIES:
-:CUSTOM_ID: printing 
+:CUSTOM_ID: printing
 :END:
 *** write-xml
 :PROPERTIES:
