@@ -1,4 +1,8 @@
-(import :gerbil/expander ./api ./message)
+(import
+  :std/srfi/1
+  :gerbil/expander
+  ./api
+  ./message)
 (export #t)
 
 (def (swank-context (:mod (current-slime-package)))
@@ -27,7 +31,7 @@
     (eval form)))
 
 (def (list-all-context-names)
-  (##list-sort
+  (list-sort
    string<?
    ["TOP"
     (map
