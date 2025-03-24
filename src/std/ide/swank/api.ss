@@ -31,6 +31,8 @@
       (or (and cmd
 	       (ignore-errors (string-trim-eol
 			       (cdr (shell-command cmd #t)))))
+	  ;; "" is a perfectly valid system type according to the goo
+	  ;; in the slime source tree
 	   ""))))
 
 (def (swank-machine:type)
