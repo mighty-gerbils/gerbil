@@ -859,11 +859,9 @@
         (offset (date-zone-offset date)))
     (+ (tm:encode-julian-day-number day month year)
        (- 1/2)
-       (+ (if (every zero? [nanosecond second minute hour]) 0
-	      (/ (/ (+ (* hour 60 60)
-                       (* minute 60) second (if (zero? nanosecond) 0 (/ nanosecond tm:nano)))
-		    tm:sid)
-		 (if (zero? offset) 1 (- offset))))))))
+       (+ (/ (/ (+ (* hour 60 60)
+                   (* minute 60) second (/ nanosecond tm:nano)) tm:sid)
+             (- offset))))))
 
 (define (date->modified-julian-day date)
   (- (date->julian-day date)
