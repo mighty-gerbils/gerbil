@@ -17,7 +17,7 @@
   macro-code-cprc
   macro-continuation-denv)
 
-;; This is so we can export it without qualms
+;; This is so we can export it without qualms even though it's a macro
 (def (code-cprc $code) (macro-code-cprc $code))
 (def (continuation-denv cont) (macro-continuation-denv cont))
 

@@ -172,10 +172,12 @@
     "ide/swank/message"
     "ide/swank/context"
     "ide/swank/autodoc"
+    (gxc: "ide/swank/debug" ,@(include-gambit-sharp))
     "ide/swank/repl"
     "ide/swank/presentation"
     "ide/swank/top"
     "ide/swank/eval"
+    "ide/swank/restart"
     "ide/swank/completions"
     "ide/swank/handlers"
     "ide/swank/server"

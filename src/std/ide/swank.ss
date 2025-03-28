@@ -3,6 +3,7 @@
   ./swank/message
   ./swank/context
   ./swank/presentation
+  ./swank/restart
   ./swank/eval
   ./swank/top
   ./swank/completions
@@ -16,6 +17,7 @@
    ./swank/context
    ./swank/presentation
    ./swank/eval
+   ./swank/restart
    ./swank/top
    ./swank/completions
    ./swank/autodoc

@@ -1,10 +1,12 @@
-(import :gerbil/gambit
-	./api
-	./message
-	./repl
-	./context)
+(import
+  :gerbil/gambit
+  ./api
+  ./message
+  ./repl
+  ./context)
 (export #t)
-  ;;;; Recording and accessing results of computations
+
+;; Recording and accessing results of computations
 
 (def +record-repl-results+ #t)
 (def object-to-presentation-id-table
@@ -22,8 +24,6 @@
 
 (def presentation-counter 0)
 
-;; XXX thread safety? [2006-09-13] mb: not in the slightest (fwiw the
-;; rest of slime isn't thread safe either), do we really care?
 (def (save-presented-object obj)
   "Save OBJECT and return the assigned id.
   If OBJECT was saved previously return the old id."
@@ -66,8 +66,15 @@
   swank:get-presented-object)
 
 (set-swank!
-  (swank:get-presented-object id)
-  (hash-ref presentation-id-to-object-table (exact id) nil-surrogate))
+ (swank:get-presented-object id)
+ (if (number? id)
+   (hash-ref presentation-id-to-object-table (exact id) nil-surrogate)
+   (if (list? id)
+     (let ((type (car id)))
+       (cond ((equal? type ':frame-var)
+	      (apply find-swank-debug-frame-var (cdr id)))
+	     (else (error "Unknown presentation id" id))))
+     (error "Unknown presentation id" id))))
 
 (set-swank!
  (swank:lookup-presented-object id)
