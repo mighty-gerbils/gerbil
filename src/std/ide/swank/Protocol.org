@@ -1,0 +1,701 @@
+#+TITLE: Swank Protocol Description
+
+Slime is a very popular Emacs based IDE for Lisp and Lisp-like
+languages. It runs a Lisp process in the background to allow a
+developer using emacs to write his code within a running Lisp image,
+allow for such features as code evaluation and compilation, online
+documentation, completion etc. Slime is divided into a front-end and a
+back-end, the former being a major-mode for Emacs and the later being
+a server, called 'Swank', embedded into the Lisp image which runs in
+the background.  These two communicate with a simple but undocumented
+protocol.
+
+This document is an attempt to provide a partial documentation of this
+protocol according to my own experience in reading the Slime and Swank
+source code and snooping on running sessions using the
+=*slime-events*= buffer.
+
+Seeing as there is an apparent demand for alternative front ends and
+back ends for Slime, (ie.  for other languages or editors/IDEs) I hope
+that this will aid in enriching the Slime ecosystem.
+
+This document is based on the publically available [[https://github.com/astine/swank-client/tree/master][Swank Description]].
+
+* Table of Contents
+:PROPERTIES:
+:TOC:      :include all :depth 5 :ignore (this)
+:END:
+:CONTENTS:
+- [[#slime-packets-and-messages][Slime Packets and Messages]]
+- [[#swank-message-types][Swank Message Types]]
+  - [[#emacs-rex][​:emacs-rex]]
+  - [[#return][:return]]
+  - [[#write-string][:write-string]]
+  - [[#new-package][:new-package]]
+  - [[#debug][:debug]]
+  - [[#debug-activate][:debug-activate]]
+  - [[#indentation-update][:indentation-update]]
+- [[#rpc-calls][RPC Calls]]
+  - [[#swankconnection-info][swank:connection-info]]
+  - [[#swankswank-require][swank:swank-require]]
+  - [[#swankinit-presentations][swank:init-presentations]]
+  - [[#swankinteractive-eval][swank:interactive-eval]]
+  - [[#swanklistener-eval][swank:listener-eval]]
+  - [[#swankinvoke-nth-restart-for-emacs][​swank:invoke-nth-restart-for-emacs]]
+  - [[#swankbacktrace][swank:backtrace]]
+  - [[#swankframe-locals-and-catch-tags][swank:frame-locals-and-catch-tags]]
+  - [[#swankthrow-to-toplevel][​swank:throw-to-toplevel]]
+:END:
+
+
+* Slime Packets and Messages
+:PROPERTIES:
+:CUSTOM_ID: slime-packets-and-messages
+:END:
+
+The basic Slime packet consists of a 6 character hex-string followed
+by an s-expression and terminated with a newline. For example:
+
+#+begin_example
+    000016(:return (:ok nil) 1)\n
+#+end_example
+
+The hex-string contains the length of the message (s-expression plus
+newline) to follow. The s-expresssion is read by either Slime or Swank
+in a standard lisp fashion. The first element (a keyword) of the
+s-expression is the type of message being sent and any following
+elements are arguments. Message types beginning with 'emacs' such as
+=:emacs-rex= and =:emacs-interrupt= originate with emacs while all
+other message type originate with Swank.
+
+Gerbil takes care of that in [[file:message.ss::def (write-message writer msg][:std/ide/swank/message]].
+
+* Swank Message Types
+:PROPERTIES:
+:CUSTOM_ID: swank-message-types
+:END:
+
+Here is a (partial) listing of message types:
+
+** ​:emacs-rex
+:PROPERTIES:
+:CUSTOM_ID: emacs-rex
+:END:
+
+=(:emacs-rex 'form 'package 'thread 'continuation)=
+
+Remote Procedure Call
+
+- form :: An s-expression containing the RPC call.
+- package :: The current active Slime package (typically the package
+  of the buffer the RPC is being sent from)
+- thread :: The Swank-side thread that the command will be executed
+  in.  (Defaults to the thread in which the REPL runs)
+- continuation :: RPC exchanges are numbered so that Slime can match
+  responses to requests.
+
+ *example*::
+
+#+begin_example
+    (:emacs-rex (swank:buffer-first-change "../program/file.lisp") "cl-user" t 4)
+#+end_example
+
+Emacs-rex signals an RPC call from Slime. This is the primary means of
+communication from Slime to Swank. These commands are executed in the
+Swank package/namespace on the server side. Available RPC calls are
+documented later in this document.
+
+** :return
+:PROPERTIES:
+:CUSTOM_ID: return
+:END:
+
+=(:return 'return-expression 'continuation)=
+
+Return from RPC
+
+- return-expression :: An s-expression which contains the return
+  status and value of the RPC call
+- continuation :: RPC exchanges are numbered so that Slime can match
+  responses to requests.
+
+Return signals that an RPC call has completed, either successfully or
+unsuccessfully. The first value of 'return-expression' is return
+status.
+
+- :ok :: signals that the RPC call was successful and a second
+value is the actual return value from the call.
+
+- :abort :: signals that the call was interrupted.
+
+
+ *example*::
+
+ #+begin_src emacs-lisp
+   (:return (:ok 14) 5)
+   (:return (:ok (:not-available t)) 6)
+ #+end_src
+
+
+** :write-string
+:PROPERTIES:
+:CUSTOM_ID: write-string
+:END:
+
+=(:write-string 'value &optional :repl-result)=
+
+Text written to standard out from the Lisp image
+
+- value: A string which the Lisp image has written to standard output
+- :repl-result: An optional value signaling that a value was returned by
+  evaluated code
+
+ *example*::
+
+#+begin_example
+    (:write-string "foo bar baz\n")
+#+end_example
+
+Write-string transports code which is to appear in the Slime REPL.
+Usually this is code that was written by the Lisp image to standard
+output, but sometimes this is code returned by an expression sent to
+Swank from the Slime REPL with the intent to be evaluated.
+
+** :new-package
+:PROPERTIES:
+:CUSTOM_ID: new-package
+:END:
+
+=(:new-package 'package-name 'prompt-string)=
+
+Signals that the current thread has changed packages/namespaces
+
+- package-name: The name of the new package
+- prompt-string: A new string to be used for the REPL prompt (usually
+  the same as package-name)
+
+ *example*::
+
+#+begin_example
+    (:new-package "foo" "foo")
+#+end_example
+
+New-package signals that the current thread is changing packages. This
+is returned when Slime sends code from the REPL to be evaluated which
+results in a package or namespace change.
+
+** :debug
+:PROPERTIES:
+:CUSTOM_ID: debug
+:END:
+
+=(:debug 'id 'level 'condition 'restarts 'frames 'continuations)=
+
+Full description of an un-handled condition/exception
+
+- id :: The id of this debugger instance
+- level :: The depth of the condition (IE. values greater than one
+  indicate condition generated from within the debugger)
+- condition :: An s-expression with a description of the condition
+  thrown
+- restarts :: A list of available restarts for this condition
+- frames :: A backtrace
+- continuations :: Pending continuations
+
+ *example*::
+
+ #+begin_src emacs-lisp
+   (:emacs-rex
+    (swank-repl:listener-eval "(test-err)\n")
+    "COMMON-LISP-USER" :repl-thread 118)
+   (:debug
+    2 1
+    ("p: #<PACKAGE \"COMMON-LISP\">" "   [Condition of type SIMPLE-ERROR]" nil)
+    (
+     ("*ABORT" "Return to SLIME's top level.")
+     ("ABORT" "abort thread (#<THREAD \"new-repl-thread\" RUNNING {7007E93EA3}>)"))
+    ((0 "(TEST-ERR)"
+        (:restartable t))
+     (1 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (TEST-ERR) #<NULL-LEXENV>)")
+     (2 "(EVAL (TEST-ERR))")
+     (3 "(SWANK::EVAL-REGION \"(test-err) ..)"
+        (:restartable t))
+     (4 "((LAMBDA NIL :IN SWANK-REPL::REPL-EVAL))"
+        (:restartable t))
+     (5 "(SWANK-REPL::TRACK-PACKAGE #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700815A80B}>)"
+        (:restartable t))
+     (6 "(SWANK::CALL-WITH-RETRY-RESTART \"Retry SLIME REPL evaluation request.\" #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700815A7EB}>)"
+        (:restartable t))
+     (7 "(SWANK::CALL-WITH-BUFFER-SYNTAX NIL #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700815A7CB}>)"
+        (:restartable t))
+     (8 "(SWANK-REPL::REPL-EVAL \"(test-err) ..)"
+        (:restartable t))
+     (9 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)")
+     (10 "(EVAL (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)")
+     (11 "(SWANK:EVAL-FOR-EMACS (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)"
+         (:restartable t))
+     (12 "(SWANK::PROCESS-REQUESTS NIL)"
+         (:restartable t))
+     (13 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+         (:restartable t))
+     (14 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+         (:restartable t))
+     (15 "(SWANK/SBCL::CALL-WITH-BREAK-HOOK #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {7007EC002B}>)")
+     (16 "((FLET SWANK/BACKEND:CALL-WITH-DEBUGGER-HOOK :IN \"/Users/drewc/me/src/emacs.d/straight/repos/slime/swank/sbcl.lisp\") #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQU..")
+     (17 "(SWANK::CALL-WITH-BINDINGS ((*STANDARD-INPUT* . #<SWANK/GRAY::SLIME-INPUT-STREAM {7006CD23B3}>)) #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {7007EC004B}>)"
+         (:restartable t))
+     (18 "(SWANK::HANDLE-REQUESTS #<SWANK::MULTITHREADED-CONNECTION {7005E00003}> NIL)"
+         (:restartable t))
+     (19 "((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))"))
+    (118))
+
+ #+end_src
+Debug provides a full description of an unhandled condition/exception.
+
+** :debug-activate
+:PROPERTIES:
+:CUSTOM_ID: debug-activate
+:END:
+
+=(:debug-activate 'thread 'level)=
+
+Triggers Slime to begin a debugging session.
+
+- thread: The thread which threw the condition
+- level: The depth of the condition (IE. values greater than one
+  indicate condition generated from within the debugger)
+
+Slime should display the corresponging condition/exception to the user
+and prompt for a restart.
+
+** :indentation-update
+:PROPERTIES:
+:CUSTOM_ID: indentation-update
+:END:
+
+=(:indentation-update 'description)=
+
+A description of the current indentation depth/level
+
+- description: An s-expression listing the forms which surround the
+  point (cursor location) in Slime
+
+ *example*::
+
+#+begin_example
+    (:indentation-update
+       ((rec-seq . 1)
+        (with-command-line . 3) (dothread-keeping-clj . 1) (dothread-keeping . 1)
+        (dothread . 0) (binding-map . 1) (with-pretty-writer . 1)
+        (with-pprint-dispatch . 1) (def-impl-write! . 0) (def-impl-enabled? . 0)
+        (with-logs . 1) (def-impl-get-log . 0) (def-impl-name . 0)
+        (with-connection . 1) (binding-map . 1) (with-pretty-writer . 1)
+        (with-pprint-dispatch . 1) (with-system-properties . 1) (with-bindings . 0)
+        (with-system-properties . 1) (with-emacs-package . 0) (dothread-swank . 0)
+        (with-package-tracking . 0) (with-db-cond . 0) (doseq . 1)
+        (letfn . 1) (cond . 0) (with-open . 1)
+        (sync . 1) (let . 1) (dotimes . 1)
+        (with-in-str . 1) (loop . 1) (with-out-str . 0)
+        (when-not . 1) (with-loading-context . 0) (future . 0)
+        (when-first . 1) (comment . 0) (condp . 2)
+        (with-local-vars . 1) (with-bindings . 1) (when-let . 1)
+        (while . 1) (case . 1) (locking . 1)
+        (delay . 0) (io! . 0) (lazy-seq . 0)
+        (when . 1) (binding . 1) (defslimefn . defun)
+        (with-query-results . 2) (transaction . 0) (with-connection . 1)
+        (catch-error . 0) (with-flags . 0) (with-base-url . 1)
+        (ANY . 2) (POST . 2) (bind-request . 2)
+        (DELETE . 2) (GET . 2) (HEAD . 2)
+        (PUT . 2) (lex . 1) (docodepoints . 1)
+        (dochars . 1) (with-in-reader . 1) (with-out-append-writer . 1)
+        (with-out-writer . 1) (returning . 1) (continuously . 0)
+        (failing-gracefully . 0))) 
+#+end_example
+
+List the forms surrounding the point and the level of indentation each
+one implies. Slime uses this information to properly auto-indent code
+while it is being typed.
+
+--------------
+
+* RPC Calls
+:PROPERTIES:
+:CUSTOM_ID: rpc-calls
+:END:
+Here is a (partial) list of available RPC calls
+
+** swank:connection-info
+:PROPERTIES:
+:CUSTOM_ID: swankconnection-info
+:END:
+
+=(swank:connection-info)=
+
+This is the client asking what the server can do.
+
+Gerbil answers in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/handlers.ss::def-swank (swank:connection-info][:std/ide/swank/handlers]].
+
+ *example*::
+
+#+begin_src emacs-lisp
+  (:emacs-rex
+   (swank:connection-info)
+   "MAXCLAIMS" t 1)
+  (:return
+   (:ok
+    (:pid 4198 :style :spawn :encoding
+   	(:coding-systems
+   	 ("utf-8-unix"))
+   	:lisp-implementation
+   	(:type
+  	 "Scheme"
+  	 :name "gerbil"
+  	 :version "v0.18.1-167-g4b83b165"
+  	 :program "/opt/gerbil/v0.18.1-157-gba5bd427/bin/gerbil")
+   	:machine
+   	(:instance "mbp.lan" :type "ARM64" :version "Apple M3 Pro")
+   	:features
+   	(:swank)
+   	:modules
+   	("SWANK-ARGLISTS" "SWANK-REPL" "SWANK-PRESENTATIONS")
+   	:package
+   	(:name "TOP" :prompt "TOP")
+   	:version "2.29.1"))
+   1)
+#+end_src
+
+
+** swank:swank-require
+:PROPERTIES:
+:CUSTOM_ID: swankswank-require
+:END:
+
+This one is the client asking for/turning on swank features the server
+may provide.
+
+=(swank:swank-require list-of-requirements=
+
+  - list-of-requirements :: A quoted list of symbols 
+
+Gerbil answers in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/handlers.ss::def-swank (swank:swank-require modules) (swank-modules)][:std/ide/swank/handlers]].
+
+ *example*::
+
+#+begin_src emacs-lisp
+  (:emacs-rex
+   (swank:swank-require
+    '(swank-indentation swank-trace-dialog swank-package-fu swank-presentations swank-macrostep swank-fuzzy swank-fancy-inspector swank-c-p-c swank-arglists swank-repl))
+   "COMMON-LISP-USER" t 2)
+  (:return
+   (:ok
+    ("SWANK-ARGLISTS" "SWANK-REPL" "SWANK-PRESENTATIONS"))
+   2)
+#+end_src
+
+
+** swank:init-presentations
+:PROPERTIES:
+:CUSTOM_ID: swankinit-presentations
+:END:
+
+If the client [[#swankswank-require][swank:swank-require]]'s =swank-presentations= and we
+answer with it as a module we support and the client wants
+presentations we do so.
+
+A presentation is where the client can refer to the exact same object.
+
+For example imagine I evaluate, at the REPL, a list of the number 42.
+
+#+begin_src scheme
+TOP> [42]
+(42)
+TOP>
+#+end_src
+
+Now I want to refer to that result exactly in the following
+form. While using the =#= character does seem to work =SLIME= has
+another way.
+
+If I type =(eq?= and =space= at the *REPL* and then go back to the
+=(42)= result with the uparrow and hit =return= what happens is cool!
+the =(42)= is copied. I do so again, =uparrow return=, then close the
+paren =)= and the form appears in the repl.
+
+#+begin_src scheme
+TOP> [42]
+(42)
+TOP> (eq? (42) (42))
+#+end_src
+
+That's interesting because =(42)= is invalid syntax. But when I hit =return= again what happens?
+
+
+#+begin_src scheme
+TOP> [42]
+(42)
+TOP> (eq? (42) (42))
+#t
+TOP> 
+#+end_src
+
+Cool! Emacs takes a presentation and turns it into an object. That
+allows us to do a bunch of great things without needing to define a
+variable.
+
+ *example*::
+ 
+#+begin_src emacs-lisp
+  (:emacs-rex (swank:init-presentations) "TOP" t 3)
+  (:return (:ok present-repl-results) 3)
+  ;; [...]
+  (:emacs-rex (swank-repl:listener-eval "[43]\n") "TOP" :repl-thread 39)
+  (:presentation-start 2 :repl-result)
+  (:write-string "(43)" :repl-result)
+  (:presentation-end 2 :repl-result)
+  (:write-string "\n" :repl-result)
+  (:return (:ok nil) 39)
+  ;; Now at the REPL it looks like: `TOP> (eq? (43) (43))`
+  ;; Hitting return sends the following
+  (:emacs-rex
+   (swank-repl:listener-eval "(eq? #.(swank:lookup-presented-object-or-lose 2.) #.(swank:lookup-presented-object-or-lose 2.))\n")
+   "TOP" :repl-thread 67)
+  ;; Because there has already been a `#t` presented the presentation is
+  ;; the same object!
+  (:presentation-start 1 :repl-result)
+  (:write-string "#t" :repl-result)
+  (:presentation-end 1 :repl-result)
+  (:write-string "\n" :repl-result)
+  (:return (:ok nil) 67)
+#+end_src
+
+Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presentation.ss][:std/ide/swank/presentation]].
+
+** swank:lookup-presented-object
+
+
+Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presentation.ss][:std/ide/swank/presentation]].
+
+** swank:inspect-presentation
+
+=(swank:inspect-presentation id thread)=
+
+- id :: The id of the presented object. ie: 42 or '(:frame-var 1 2 1)
+- thread :: The name of this inspector
+
+  
+
+  #+begin_src emacs-lisp
+    (:emacs-rex
+     (swank:inspect-presentation
+      '(:frame-var 1 2 1)
+      t)
+     "COMMON-LISP-USER" 1 172)
+    (:return
+     (:ok
+      (:title "#<(SIMPLE-ARRAY CHARACTER (17)) {700890005F}>" :id 0 :content
+    	  (("Dimensions" ": "
+    	    (:value "(17)" 1)
+    	    "\n" "Element type" ": "
+    	    (:value "CHARACTER" 2)
+    	    "\n" "Total size" ": "
+    	    (:value "17" 3)
+    	    "\n" "Adjustable" ": "
+    	    (:value "NIL" 4)
+    	    "\n" "Fill pointer" ": "
+    	    (:value "NIL" 5)
+    	    "\n" ...)
+    	   90 0 500)))
+     172)
+  #+end_src
+
+  (swank:inspect-presentation
+  t)
+
+
+
+
+** swank:interactive-eval
+:PROPERTIES:
+:CUSTOM_ID: swankinteractive-eval
+:END:
+
+=(swank:interactive-eval 'form)=
+
+Evaluate code Lisp image Slime is controlling
+
+- form: Form to be evaluated in Lisp image
+
+** swank:listener-eval
+:PROPERTIES:
+:CUSTOM_ID: swanklistener-eval
+:END:
+
+=(swank:listener-eval "string")=
+
+Evaluate code Lisp image Slime is controlling
+
+- string: A form to be evaluated in Lisp image
+
+This is one of the most useful events as a *REPL* is one of the big
+reasons we like the LISP family and having a GUI is such a bonus.
+
+
+ *examples*::
+
+ In the *REPL* we type and see what differs a lot from the forms
+ passed to/from emacs.
+
+ Here's what we see. 
+ 
+#+begin_src scheme
+TOP> (begin (displayln "As you were") (+ 40 2))
+As you were
+42
+TOP> 
+#+end_src
+
+Now, the *"As you were"* is not a presentation and is green in my
+emacs. The =42= is a presentation and is orange here.
+
+That distinction is apparent in the =*slime-events*=.
+
+#+begin_src emacs-lisp
+  (:emacs-rex
+   (swank-repl:listener-eval "(begin (displayln \"As you were\") (+ 40 2))\n")
+   "TOP" :repl-thread 136)
+  (:write-string "As you were\n" nil 136)
+  (:write-done 136)
+  (:presentation-start 3 :repl-result)
+  (:write-string "42" :repl-result)
+  (:presentation-end 3 :repl-result)
+  (:write-string "\n" :repl-result)
+  (:return (:ok nil) 136)
+#+end_src
+
+
+The details of that are taken care of in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/repl.ss::def (swank-repl-eval str][:std/ide/swank/repl]].
+
+
+** ​swank:invoke-nth-restart-for-emacs 
+:PROPERTIES:
+:CUSTOM_ID: swankinvoke-nth-restart-for-emacs
+:END:
+
+=(swank:invoke-nth-restart-for-emacs 'level 'restart-number)=
+
+Invoke a restart
+
+- level :: The condition on which to invoke the restart
+- restart-number :: The number of the restart to invoke
+
+
+Because this is an [[#emacs-rex][​:emacs-rex]] the =thread= is the debug id. 
+
+ *examples*::
+#+begin_src emacs-lisp
+(:emacs-rex
+ (swank:invoke-nth-restart-for-emacs 1 1)
+ "COMMON-LISP-USER" 1 11)
+(:return
+ (:abort "NIL")
+ 11)
+(:debug-return 1 1 nil)
+(:return
+ (:abort "#<SIMPLE-ERROR \"p: ~A\" {7007C7FB83}>")
+ 7)
+#+end_src
+
+** swank:backtrace
+:PROPERTIES:
+:CUSTOM_ID: swankbacktrace
+:END:
+
+=(swank:backtrace 'from 'to)=
+
+- from :: The starting number of the frames requested
+- to ::  The last of the frames requested
+
+
+Because this is an [[#emacs-rex][​:emacs-rex]] the =thread= is the debug id.
+
+ *examples*::
+
+#+begin_src emacs-lisp
+  (:emacs-rex
+   (swank:backtrace 3 43)
+   "COMMON-LISP-USER" 1 33)
+  (:return
+   (:ok
+    ((3 "(SWANK::EVAL-REGION \"(test-err) ..)"
+        (:restartable t))
+     (4 "((LAMBDA NIL :IN SWANK-REPL::REPL-EVAL))"
+        (:restartable t))
+     (5 "(SWANK-REPL::TRACK-PACKAGE #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700656004B}>)"
+        (:restartable t))
+     (6 "(SWANK::CALL-WITH-RETRY-RESTART \"Retry SLIME REPL evaluation request.\" #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700656002B}>)"
+        (:restartable t))
+     (7 "(SWANK::CALL-WITH-BUFFER-SYNTAX NIL #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {700656000B}>)"
+        (:restartable t))
+     (8 "(SWANK-REPL::REPL-EVAL \"(test-err) ..)"
+        (:restartable t))
+     (9 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)")
+     (10 "(EVAL (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)")
+     (11 "(SWANK:EVAL-FOR-EMACS (SWANK-REPL:LISTENER-EVAL \"(test-err) ..)"
+         (:restartable t))
+     (12 "(SWANK::PROCESS-REQUESTS NIL)"
+         (:restartable t))
+     (13 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+         (:restartable t))
+     (14 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+         (:restartable t))
+     (15 "(SWANK/SBCL::CALL-WITH-BREAK-HOOK #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {700936012B}>)")
+     (16 "((FLET SWANK/BACKEND:CALL-WITH-DEBUGGER-HOOK :IN \"/Users/drewc/me/src/emacs.d/straight/repos/slime/swank/sbcl.lisp\") #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQU..")
+     (17 "(SWANK::CALL-WITH-BINDINGS ((*STANDARD-INPUT* . #<SWANK/GRAY::SLIME-INPUT-STREAM {7009360103}>)) #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {70093600DB}>)"
+         (:restartable t))
+     (18 "(SWANK::HANDLE-REQUESTS #<SWANK::MULTITHREADED-CONNECTION {7009360003}> NIL)"
+         (:restartable t))
+     (19 "((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))")
+     (20 "((FLET \"WITHOUT-INTERRUPTS-BODY-167\" :IN SB-THREAD::RUN))")
+     (21 "((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))")
+     (22  "((FLET \"WITHOUT-INTERRUPTS-BODY-160\" :IN SB-THREAD::RUN))"
+     (23  "(SB-THREAD::RUN)"))))
+   33)
+#+end_src
+
+** swank:frame-locals-and-catch-tags
+:PROPERTIES:
+:CUSTOM_ID: swankframe-locals-and-catch-tags
+:END:
+
+=(swank:frame-locals-and-catch-tags 'number)=
+
+This displays the local and dynamic variables, and catch tags of the
+frame.
+
+Because this is an [[#emacs-rex][​:emacs-rex]] the =thread= is the debug id.
+
+  *example*::
+  
+#+begin_src emacs-lisp
+  (:emacs-rex
+   (swank:frame-locals-and-catch-tags 0)
+   "COMMON-LISP-USER" 1 8)
+  (:return
+   (:ok
+    (((:name "SB-KERNEL:LEXENV" :id 0 :value "#<NULL-LEXENV>")
+      (:name "SB-IMPL::ORIGINAL-EXP" :id 0 :value "(ERROR \"here\")"))
+     nil))
+   8)
+#+end_src
+
+** ​swank:throw-to-toplevel
+:PROPERTIES:
+:CUSTOM_ID: swankthrow-to-toplevel
+:END:
+
+=(swank:throw-to-toplevel)=
+
+
+Breaks out of the debugger
+
+
