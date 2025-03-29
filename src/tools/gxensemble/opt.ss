@@ -438,6 +438,8 @@
   (command 'lookup
     console-option
     registry-option
+    supervised-flag
+    supervisor-option
     role-flag
     server-id-or-role-argument
     help: "looks up a server by id or role"))

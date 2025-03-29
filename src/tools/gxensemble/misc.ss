@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :std/actor
+        :std/actor-v18/proto
         :std/iter
         :std/misc/process
         :std/os/temporaries
@@ -10,14 +11,28 @@
 
 ;;; misc commands
 (def (do-lookup opt)
-  (error "FIXME: do-lookup")
-  (start-actor-server-with-options! opt)
-  (let (what (hash-ref opt 'server-or-role))
-    (display-result-list
-     (if (hash-get opt 'role)
-       (ensemble-lookup-servers/role what)
-       (ensemble-lookup-server what))))
-  (stop-actor-server!))
+  (let ((what (hash-ref opt 'server-or-role))
+        (role? (hash-get opt 'role)))
+    (if (hash-get opt 'supervised)
+      (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+            (registry-ref (server-identifier 'registry)))
+        (call-with-console-server opt
+          (lambda (srv)
+            (let (result (ensemble-supervisor-invoke!
+                          supervisor: supervisor
+                          actor: registry-ref
+                          message:
+                          (if role?
+                            (!ensemble-lookup-server #f what)
+                            (!ensemble-lookup-server what #f))
+                          actor-server: srv))
+              (write-result opt result)))))
+      (call-with-console-server opt
+        (lambda (srv)
+          (write-result opt
+            (if role?
+              (ensemble-lookup-servers/role what srv)
+              (ensemble-lookup-server what srv))))))))
 
 (def (do-package opt)
   (parameterize ((ensemble-domain (or (hash-get opt 'ensemble-domain) (ensemble-domain))))
