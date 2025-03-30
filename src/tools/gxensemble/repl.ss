@@ -262,43 +262,71 @@
 (extern namespace: #f __compile)
 
 (def (do-load opt)
-  (error "FIXME: do-load")
   (gerbil-load-expander!)
-  (if (hash-get opt 'library)
-    (do-load-library opt)
-    (do-load-code opt)))
+  (call-with-console-server opt
+    (lambda (srv)
+      (if (hash-get opt 'library)
+        (do-load-library opt)
+        (do-load-code opt)))))
 
 (def (do-load-library opt)
   (let ((module-id (hash-ref opt 'module-id))
         (server-id (hash-ref opt 'server-id)))
-    (start-actor-server-with-options! opt)
-    (maybe-authorize! server-id)
-    (displayln "... loading library module " module-id)
-    (displayln
-     (remote-load-library-module server-id module-id))
-    (stop-actor-server!)))
+    (if (hash-get opt 'supervised)
+      (let* ((mod-str
+              (symbol->string module-id))
+             (mod-str
+              (if (string-prefix? ":" mod-str)
+                (substring mod-str 1 (string-length mod-str))
+                mod-str))
+             (supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+             (actor-ref  (reference server-id 'loader)))
+        (write-result opt
+          (ensemble-supervisor-invoke!
+           supervisor: supervisor
+           actor: actor-ref
+           message: (!load-library-module mod-str))))
+      (begin
+        (maybe-authorize! server-id)
+        (write-result opt
+          (remote-load-library-module server-id module-id))))))
 
 (def (do-load-code opt)
-  (error "FIXME: do-load-code")
-  (let ((module-id (hash-ref opt 'module-id))
-        (library-prefix (hash-ref opt 'library-prefix))
-        (server-id (hash-ref opt 'server-id)))
-    (let ((values object-files library-modules)
+  (let* ((module-id (hash-ref opt 'module-id))
+         (server-id (hash-ref opt 'server-id))
+         (library-prefix (hash-ref opt 'library-prefix))
+         ((values object-files library-modules)
           (get-module-objects module-id library-prefix))
-      (start-actor-server-with-options! opt)
-      (maybe-authorize! server-id)
-      ;; when forcing, we don't load the library modules
-      ;; useful for static executables
-      (unless (hash-get opt 'force)
-        (for (lib library-modules)
-          (displayln "... loading library module " lib)
-          (displayln
-           (remote-load-library-module server-id lib))))
-      (for (object-file object-files)
-        (displayln "... loading code object file " object-file)
-        (displayln
-         (remote-load-code server-id object-file)))
-      (stop-actor-server!))))
+         (supervised? (hash-get opt 'supervisec))
+         (supervisor
+          (and supervised?
+               (or (hash-get opt 'supervisor)
+                   (ensemble-domain-supervisor))))
+         (actor-ref (reference server-id 'loader)))
+    (unless supervised?
+      (maybe-authorize! server-id))
+
+    (unless (hash-get opt 'force)
+      (for (lib library-modules)
+        (write-result opt
+          (if supervised?
+            (let (mod-str (symbol->string lib))
+              (ensemble-supervisor-invoke!
+               supervisor: supervisor
+               actor: actor-ref
+               message: (!load-library-module mod-str)))
+            (remote-load-library-module server-id lib)))))
+
+    (for (object-file-path object-files)
+      (write-result opt
+        (if supervised?
+          (let ((code (read-file-u8vector object-file-path))
+                (linker (path-strip-directory object-file-path)))
+            (ensemble-supervisor-invoke!
+             supervisor: supervisor
+             actor: actor-ref
+             message: (!load-code code linker)))
+          (remote-load-code server-id object-file-path))))))
 
 (def (find-object-file ctx-or-id)
   (if (module-context? ctx-or-id)

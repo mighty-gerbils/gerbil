@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :std/actor
+        :std/actor-v18/proto
         :std/text/hex
         :std/misc/ports
         ./util)
@@ -26,18 +27,37 @@
       (generate-admin-keypair! passphrase force: (hash-get opt 'force)))))
 
 (def (do-admin-authorize opt)
-  (error "FIXME: do-admin-authorize")
-  (start-actor-server-with-options! opt)
-  (let ((server-id (hash-ref opt 'server-id))
-        (authorized-server-id (hash-ref opt 'authorized-server-id))
-        (capabilities (hash-ref opt 'capabilities)))
-    (admin-authorize (get-privkey) server-id authorized-server-id
-                     capabilities: capabilities)))
+  (call-with-console-server opt
+    (lambda (srv)
+      (let ((server-id (hash-ref opt 'server-id))
+            (authorized-server-id (hash-ref opt 'authorized-server-id))
+            (cap (hash-ref opt 'capabilities)))
+        (if (hash-get opt 'supervised)
+          (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+                (server-root-ref (reference server-id 0)))
+            (ensemble-supervisor-invoke!
+             supervisor: supervisor
+             actor: server-root-ref
+             message: (!admin-auth authorized-server-id cap)
+             actor-server: srv))
+          (begin
+            (maybe-authorize! server-id)
+            (admin-authorize (get-privkey) server-id authorized-server-id srv
+                             capabilities: cap)))))))
 
 (def (do-admin-retract opt)
-  (error "FIXME: do-admin-retract")
-  (start-actor-server-with-options! opt)
-  (let ((server-id (hash-ref opt 'server-id))
-        (authorized-server-id (hash-ref opt 'authorized-server-id)))
-    (maybe-authorize! server-id)
-    (admin-retract server-id authorized-server-id)))
+  (call-with-console-server opt
+    (lambda (srv)
+      (let ((server-id (hash-ref opt 'server-id))
+            (authorized-server-id (hash-ref opt 'authorized-server-id)))
+        (if (hash-get opt 'supervised)
+          (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+                (server-root-ref (reference server-id 0)))
+            (ensemble-supervisor-invoke!
+             supervisor: supervisor
+             actor: server-root-ref
+             message: (!admin-retract authorized-server-id)
+             actor-server: srv))
+          (begin
+            (maybe-authorize! server-id)
+            (admin-retract server-id authorized-server-id srv)))))))

@@ -24,7 +24,6 @@
        log-level: (hash-ref opt 'logging)
        log-file:  (hash-ref opt 'logging-file)
        listen:    (hash-ref opt 'listen)
-       announce:  (hash-ref opt 'announce)
        registry:  #f
        roles:     #f
        cookie:    (get-actor-server-cookie)))))

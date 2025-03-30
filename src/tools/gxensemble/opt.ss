@@ -347,7 +347,6 @@
     logging-option
     logging-file-option
     listen-option
-    announce-option
     server-id-optional-argument
     help: "runs the ensemble registry"))
 
@@ -387,10 +386,12 @@
 (def load-cmd
   (command 'load
     console-option
-    force-flag
     library-flag
     registry-option
     library-prefix-option
+    force-flag
+    supervised-flag
+    supervisor-option
     server-id-argument
     module-id-argument
     help: "loads code in a running server"))
@@ -731,6 +732,8 @@
   (command 'authorize
     console-option
     registry-option
+    supervised-flag
+    supervisor-option
     server-id-argument
     authorized-server-id-argument
     capabilities-optional-argument
@@ -740,6 +743,8 @@
   (command 'retract
     console-option
     registry-option
+    supervised-flag
+    supervisor-option
     server-id-argument
     authorized-server-id-argument
     help: "retract all capabilities granted to a server by an administrator"))
