@@ -6,7 +6,8 @@
         :std/iter
         :std/misc/process
         :std/os/temporaries
-        ./util)
+        ./util
+        ./control)
 (export #t)
 
 ;;; misc commands
@@ -118,41 +119,54 @@
           (delete-file-or-directory tmp #t))))))
 
 (def (do-shutdown opt)
-  (error "FIXME: do-shutdown")
-  (start-actor-server-with-options! opt)
-  (cond
-   ((hash-get opt 'server-id)
-    => (lambda (server-id)
-         (cond
-          ((hash-get opt 'actor-id)
-           => (lambda (actor-id)
-                (maybe-authorize! server-id)
-                (displayln "... shutting down " actor-id "@" server-id)
-                (stop-actor! (reference server-id actor-id))))
-          (else
-           (maybe-authorize! server-id)
-           (displayln "... shutting down " server-id)
-           (remote-stop-server! server-id)))))
-   (else
-    (let/cc nope
-      (unless (hash-get opt 'force)
-        (displayln "This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]")
+  (let/cc return
+    (let ((maybe-server-id (hash-get opt 'server-id))
+          (maybe-actor-id  (hash-get opt 'actor-id))
+          (supervised? (hash-get opt 'supervised)))
+      (when (and (not maybe-server-id) (not (hash-get opt 'force)))
+        (displayln "This will shutdown the entire ensemble. Proceed? [y/n]")
         (unless (memq (read) '(y yes Y YES))
-          (nope (void))))
-
-      (let (servers (ensemble-list-servers))
-        (for (server-id (map car servers))
-          (maybe-authorize! server-id)
-          (displayln "... shutting down " server-id)
-          (with-catch void (cut remote-stop-server! server-id)))
-        ;; wait a second before shutting down the registry, so that servers can remove
-        ;; themselves.
-        (unless (null? servers)
-          (thread-sleep! 3)))
-      (displayln "... shutting down registry")
-      (maybe-authorize! 'registry)
-      (remote-stop-server! 'registry))))
-  (stop-actor-server!))
+          (return (void))))
+      (if supervised?
+        (cond
+         (maybe-actor-id
+          (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
+                (actor-ref  (reference maybe-server-id maybe-actor-id)))
+            (call-with-console-server opt
+              (lambda (srv)
+                (let (result (ensemble-supervisor-invoke!
+                              supervisor: supervisor
+                              actor: actor-ref
+                              message: (!shutdown)
+                              actor-server: srv))
+                  (write-result opt result))))))
+         (maybe-server-id
+          (hash-put! opt 'server-ids [maybe-server-id])
+          (do-control-stop-server opt))
+         (else
+          (do-control-shutdown opt)))
+        (call-with-console-server opt
+          (lambda (srv)
+            (cond
+             (maybe-actor-id
+              (maybe-authorize! maybe-server-id)
+              (stop-actor! (reference maybe-server-id maybe-actor-id) srv))
+             (maybe-server-id
+              (maybe-authorize! maybe-server-id)
+              (remote-stop-server! maybe-server-id srv))
+             (else
+              (let (servers (ensemble-list-servers))
+                (for (server-id (map car servers))
+                  (maybe-authorize! server-id)
+                  (displayln "... shutting down " server-id)
+                  (with-catch void (cut remote-stop-server! server-id srv)))
+                ;; wait a little before shutting down the registry, so that servers can remove
+                ;; themselves.
+                (unless (null? servers)
+                  (thread-sleep! 3)))
+              (displayln "... shutting down registry")
+              (maybe-authorize! 'registry)
+              (remote-stop-server! 'registry srv)))))))))
 
 (def (do-ping opt)
   (let* ((server-id (hash-ref opt 'server-id))
