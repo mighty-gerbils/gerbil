@@ -435,7 +435,7 @@
     supervisor-option
     server-id-optional-argument
     actor-id-optional-argument
-    help: "shuts down an actor, server, or the entire ensemble including the registry"))
+    help: "shuts down an actor, server, or the entire ensemble"))
 
 (def lookup-cmd
   (command 'lookup
