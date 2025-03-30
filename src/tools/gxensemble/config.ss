@@ -34,6 +34,7 @@
       (cond (.?env           => (cut config-push! role-server-cfg env: <>)))
       (cond (.?envvars       => (cut config-push! role-server-cfg envvars: <>)))
       (cond (.?known-servers => (cut config-push! role-server-cfg known-server: <>)))
+      (cond (.?auth-servers  => (cut config-push! role-server-cfg auth: <>)))
       (when .?application
         (let (default-config-path
                (path-expand (symbol->string .application)

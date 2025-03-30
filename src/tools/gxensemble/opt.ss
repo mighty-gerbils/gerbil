@@ -269,36 +269,41 @@
 
 (def role-exe-option
   (option 'exe "--exe"
-    help: "role executable path"))
+    help: "executable path"))
 
 (def role-exe-prefix-option
   (option 'prefix "--prefix"
     value: string->object
-    help: "role executable arguments prefix; a list"))
+    help: "executable arguments prefix; a list"))
 
 (def role-exe-suffix-option
   (option 'suffix "--suffix"
     value: string->object
-    help: "role executable arguments suffix; a list"))
+    help: "executable arguments suffix; a list"))
 
 (def supervisor-policy-option
   (option 'policy "--policy"
     value: string->symbol
-    help: "role supervisory policy"))
+    help: "supervisory policy"))
 
 (def server-env-option
   (option 'env "--env"
-    help: "role server environment"))
+    help: "server environment"))
 
 (def server-envvars-option
   (option 'envvars "--envvars"
     value: string->object
-    help: "role server environment variables"))
+    help: "server environment variables"))
 
 (def server-known-servers-option
   (option 'known-servers "--known-servers"
     value: string->object
-    help: "role server known servers for external communication"))
+    help: "server known servers for external communication"))
+
+(def server-auth-servers-option
+  (option 'auth-servers "--auth"
+    value: string->object
+    help: "server pre-authorized servers"))
 
 (def server-application-option
   (option 'application "--application"
@@ -685,6 +690,7 @@
     server-env-option
     server-envvars-option
     server-known-servers-option
+    server-auth-servers-option
     server-application-option
     server-application-config-option
     help: "configure an ensemble role"))
