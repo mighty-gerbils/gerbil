@@ -36,6 +36,14 @@
   (option 'config "-C" "--config"
     help: "configuration file"))
 
+(def server-config-option
+  (option 'config "-C" "--config"
+    help: "server configuration file"))
+
+(def server-application-config-option
+  (option 'config "-C" "--config"
+    help: "server application configuration file"))
+
 (def exec-env-option
   (option 'env "--env"
     help: "execution GERBIL_PATH env"
@@ -76,6 +84,12 @@
     value: string->object
     default: #f
     help: "public addresses to announce to the registry; by default these are the listen addresses"))
+
+(def server-addresses-option
+  (option 'addresses "-a" "--addresses"
+    value: string->object
+    default: #f
+    help: "server public addresses"))
 
 (def console-option
   (option 'console "-c" "--console"
@@ -286,6 +300,11 @@
     value: string->symbol
     help: "supervisory policy"))
 
+(def server-secondary-roles-option
+  (option 'log-level "--secondary-roles"
+    value: string->object
+    help: "the server secondary roles; a list of symbols"))
+
 (def server-env-option
   (option 'env "--env"
     help: "server environment"))
@@ -294,6 +313,11 @@
   (option 'envvars "--envvars"
     value: string->object
     help: "server environment variables"))
+
+(def server-log-level-option
+  (option 'log-level "--log-level"
+    value: string->symbol
+    help: "the server log level"))
 
 (def server-known-servers-option
   (option 'known-servers "--known-servers"
@@ -309,10 +333,6 @@
   (option 'application "--application"
     value: string->symbol
     help: "role server application name"))
-
-(def server-application-config-option
-  (option 'config "-C" "--config"
-    help: "role server application configuration"))
 
 (def (subcommand help)
   (argument 'subcommand
@@ -508,7 +528,7 @@
     supervisor-option
     console-option
     control-domain-option
-    config-option
+    server-config-option
     role-argument
     server-id-argument
     help: "start a supervised ensemble server"))
@@ -518,7 +538,7 @@
     ensemble-domain-option
     supervisor-option
     console-option
-    config-option
+    server-config-option
     control-domain-option
     role-argument
     server-id-argument
@@ -687,8 +707,11 @@
     role-exe-prefix-option
     role-exe-suffix-option
     supervisor-policy-option
+    server-secondary-roles-option
     server-env-option
     server-envvars-option
+    server-log-level-option
+    server-addresses-option
     server-known-servers-option
     server-auth-servers-option
     server-application-option
@@ -696,12 +719,27 @@
     help: "configure an ensemble role"))
 
 (def config-preload-server-cmd
-  (command 'server
-    help: "TODO: configure a preloaded server"))
+  (command 'preload-server
+    help: "TODO: configure a preloaded server for supervised execution as part of an ensemble"))
 
 (def config-preload-workers-cmd
-  (command 'workers
-    help: "TODO: configure preloaded workers"))
+  (command 'preload-workers
+    help: "TODO: configure preloaded workers for supervised execution as part of an ensemble"))
+
+(def config-server-cmd
+  (command 'server
+    role-option
+    server-secondary-roles-option
+    server-env-option
+    server-envvars-option
+    server-log-level-option
+    server-addresses-option
+    server-known-servers-option
+    server-auth-servers-option
+    server-application-option
+    server-application-config-option
+    server-id-argument
+    help: "partially configure a server for supervised execution as part of an ensemble"))
 
 ;; list subcommands
 (def list-servers-cmd

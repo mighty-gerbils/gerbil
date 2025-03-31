@@ -253,13 +253,15 @@
 (def (load-ensemble-config (base (gerbil-path)))
   (load-ensemble-config-file (ensemble-config-path base)))
 
+(def (load-ensemble-server-config-file path)
+  (let (cfg (load-config path 'ensemble-server-v0))
+    (check-ensemble-server-config! cfg)
+    cfg))
+
 (def (load-ensemble-server-config server-id
                                   (domain (ensemble-domain))
                                   (base (gerbil-path)))
-  (let (cfg (load-config (ensemble-server-config-path server-id domain base)
-                         'ensemble-server-v0))
-    (check-ensemble-server-config! cfg)
-    cfg))
+  (load-ensemble-server-config-file (ensemble-server-config-path server-id domain base)))
 
 (def (empty-ensemble-config)
   [config: 'ensemble-v0])

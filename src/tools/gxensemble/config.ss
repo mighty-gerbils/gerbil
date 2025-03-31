@@ -19,9 +19,34 @@
           (cond (.?ensemble-public-address => (cut config-push! cfg public-address: <>)))
           (save-config! cfg (ensemble-config-path)))))))
 
+(defrule (config-server! opt cfg)
+  (let-hash opt
+    (cond (.?secondary-roles => (cut config-push! cfg secondary-roles: <>)))
+    (cond (.?env             => (cut config-push! cfg env: <>)))
+    (cond (.?envvars         => (cut config-push! cfg envvars: <>)))
+    (cond (.?log-level       => (cut config-push! cfg log-level: <>)))
+    (cond (.?addresses       => (cut config-push! cfg addresses: <>)))
+    (cond (.?auth-servers    => (cut config-push! cfg auth: <>)))
+    (cond (.?known-servers   => (cut config-push! cfg known-servers: <>)))
+    (when .?application
+      (let (default-app-config-path
+             (path-expand (symbol->string .application)
+                          (path-expand "config" (gerbil-path))))
+        (unless (or .?config (file-exists? default-app-config-path))
+          (error "no application configuration"))
+        (let* ((app-config-path (or .?config default-app-config-path))
+               (app-config (call-with-input-file app-config-path read-config))
+               (app-alist  (config-get cfg application: [])))
+          (cond
+           ((assq .application app-alist)
+            => (lambda (p) (set-cdr! p app-config)))
+           (else
+            (set! app-alist [[.application :: app-config] :: app-alist])))
+          (config-push! cfg application: app-alist))))))
+
 (def (do-config-role opt)
   (let-hash opt
-    (let* ((cfg (get-ensemble-config))
+    (let* ((cfg        (get-ensemble-config))
            (role       (or .?role (error "role must be specified")))
            (role-alist (config-get cfg roles: []))
            (role-cfg   (agetq role role-alist []))
@@ -31,26 +56,7 @@
       (cond (.?prefix        => (cut config-push! role-cfg prefix: <>)))
       (cond (.?suffix        => (cut config-push! role-cfg suffix: <>)))
       (cond (.?policy        => (cut config-push! role-cfg policy: <>)))
-      (cond (.?env           => (cut config-push! role-server-cfg env: <>)))
-      (cond (.?envvars       => (cut config-push! role-server-cfg envvars: <>)))
-      (cond (.?known-servers => (cut config-push! role-server-cfg known-server: <>)))
-      (cond (.?auth-servers  => (cut config-push! role-server-cfg auth: <>)))
-      (when .?application
-        (let (default-config-path
-               (path-expand (symbol->string .application)
-                 (path-expand "config"
-                   (gerbil-path))))
-          (unless (or .?config (file-exists? default-config-path))
-            (error "application config must be specified"))
-          (let* ((config-path (or .config default-config-path))
-                 (app-config (call-with-input-file config-path read-config))
-                 (app-alist  (config-get role-server-cfg application: [])))
-            (cond
-             ((assq .application app-alist)
-              => (lambda (p) (set-cdr! p app-config)))
-             (else
-              (set! app-alist [[.application app-config ...] app-alist ...])))
-            (config-push! role-server-cfg application: app-alist))))
+      (config-server! opt role-server-cfg)
       (config-push! role-cfg server-config: role-server-cfg)
       (cond
        ((assq role role-alist)
@@ -60,12 +66,22 @@
       (config-push! cfg roles: role-alist)
       (save-config! cfg (ensemble-config-path)))))
 
-(def (do-config-server opt)
+(def (do-config-preload-server opt)
   (error "TODO: configure preloaded server"))
 
-(def (do-config-workers opt)
+(def (do-config-preload-workers opt)
   (error "TODO: configure preloaded workers"))
 
+(def (do-config-server opt)
+  (let-hash opt
+    (let* ((server-id .server-id)
+           (cfg-path (ensemble-server-config-path server-id))
+           (cfg
+            (if (file-exists? cfg-path)
+              (load-ensemble-server-config-file cfg-path)
+              (empty-ensemble-server-config))))
+      (config-server! opt cfg)
+      (save-config! cfg cfg-path))))
 
 (def (get-ensemble-config)
   (let (path (ensemble-config-path))

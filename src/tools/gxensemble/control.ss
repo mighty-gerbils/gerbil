@@ -29,10 +29,11 @@
            (domain (or (hash-get opt 'domain) (ensemble-domain)))
            (role (hash-ref opt 'role))
            (server-id (hash-ref opt 'server-id))
-           (config-path (hash-get opt 'config))
-           (config (and config-path (call-with-input-file config-path read-config))))
-      (when config
-        (check-ensemble-server-config! config))
+           (config-path
+            (or (hash-get opt 'config)
+                (let (config-path (ensemble-server-config-path server-id domain))
+                  (and (file-exists? config-path) config-path))))
+           (config (and config-path (load-ensemble-config-file config-path))))
       (call-with-console-server opt
         (lambda (srv)
           (let (result (ensemble-supervisor-start-server!
@@ -51,10 +52,11 @@
            (role (hash-ref opt 'role))
            (server-id (hash-ref opt 'server-id))
            (worker-count (hash-ref opt 'count))
-           (config-path (hash-get opt 'config))
-           (config (and config-path (call-with-input-file config-path read-config))))
-      (when config
-        (check-ensemble-server-config! config))
+           (config-path
+            (or (hash-get opt 'config)
+                (let (config-path (ensemble-server-config-path server-id domain))
+                  (and (file-exists? config-path) config-path))))
+           (config (and config-path (load-ensemble-config-file config-path))))
       (call-with-console-server opt
         (lambda (srv)
           (let (result (ensemble-supervisor-start-workers!

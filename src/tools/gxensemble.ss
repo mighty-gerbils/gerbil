@@ -96,10 +96,11 @@
   (cert    do-ca-cert))
 
 (defcommand-table config-commands
-  (ensemble do-config-ensemble)
-  (role     do-config-role)
-  (server   do-config-server)
-  (workers  do-config-workers))
+  (ensemble         do-config-ensemble)
+  (role             do-config-role)
+  (preload-server   do-config-preload-server)
+  (preload-workers  do-config-preload-workers)
+  (server           do-config-server))
 
 (defrule (dispatch-command cmd opt commands)
   (let (table (force commands))
@@ -155,7 +156,8 @@
   config-ensemble-cmd
   config-role-cmd
   config-preload-server-cmd
-  config-preload-workers-cmd)
+  config-preload-workers-cmd
+  config-server-cmd)
 
 (defcommand-nested do-list list-commands "gxensemble list"
   list-servers-cmd
