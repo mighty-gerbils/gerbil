@@ -5,6 +5,7 @@
 ;; Author: Dimitris Vyzovitis <vyzo@hackzen.org>
 ;; URL: https://github.com/mighty-gerbils/gerbil
 ;; Version: 1.0
+;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: gerbil major-mode
 ;;
 ;; This file is not part of GNU Emacs.
@@ -531,15 +532,9 @@
 ;;;###autoload
 (define-derived-mode gerbil-mode scheme-mode
   "Gerbil" "Major mode for Gerbil."
-  (kill-all-local-variables)
-  (use-local-map gerbil-mode-map)
-  (setq mode-name "Gerbil")
-  (setq major-mode 'gerbil-mode)
   (setq scheme-program-name gerbil-program-name)
-  (setq comment-start ";;")
-  (scheme-mode-variables)
-  (gerbil-init)
-  (run-hooks 'gerbil-mode-hook))
+  (setq-local comment-start ";;")
+  (gerbil-init))
 
 ;;;###autoload
 (progn
