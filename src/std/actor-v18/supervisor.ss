@@ -494,11 +494,11 @@
       (def (start-preloaded!)
         (alet (preload-cfg (config-get ensemble-cfg preload:))
           (alet (servers-alist (config-get preload-cfg servers:))
-            (for ([server-id . cfg] servers-alist)
+            (for ([domain . cfg] servers-alist)
               (let* ((server-cfg
                       (get-server-config (config-get! cfg role:)
-                                         (config-get cfg domain: (ensemble-domain))
-                                         server-id))
+                                         domain
+                                         (config-get! cfg server:)))
                      (server-cfg
                       (ensemble-server-config-merge server-cfg
                                                     (config-get cfg server-config)))

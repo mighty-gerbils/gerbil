@@ -67,10 +67,68 @@
       (save-config! cfg (ensemble-config-path)))))
 
 (def (do-config-preload-server opt)
-  (error "TODO: configure preloaded server"))
+  (let-hash opt
+    (let* ((cfg             (get-ensemble-config))
+           (preload         (config-get cfg preload: []))
+           (preload-servers (config-get preload servers: []))
+           (server-id       .server-id)
+           (server-domain   (or .?domain (ensemble-domain)))
+           (server-cfg-path
+            (or .?config (ensemble-server-config-path server-id server-domain)))
+           (server-config
+            (and (file-exists? server-cfg-path)
+                 (load-ensemble-server-config-file server-cfg-path)))
+           (preload-cfg-entry
+            (find (lambda (p)
+                    (with ([domain . preload-server-cfg] p)
+                      (and (eq? server-domain domain)
+                           (eq? server-id (config-get! preload-server-cfg server:)))))
+                  preload-servers)))
+      (if preload-cfg-entry
+        (let (preload-cfg (cdr preload-cfg-entry))
+          (cond (.?role => (cut config-push! preload-cfg role: <>)))
+          (cond (server-config => (cut config-push! preload-cfg server-config: <>)))
+          (set! (cdr preload-cfg-entry) preload-cfg))
+        (let (preload-cfg [server: server-id])
+          (cond (.?role => (cut config-push! preload-cfg role: <>)))
+          (cond (server-config => (cut config-push! preload-cfg server-config: <>)))
+          (set! preload-servers [[server-domain :: preload-cfg] :: preload-servers])
+          (config-push! preload servers: preload-servers)
+          (config-push! cfg preload preload:)))
+      (save-config! cfg (ensemble-config-path)))))
 
 (def (do-config-preload-workers opt)
-  (error "TODO: configure preloaded workers"))
+  (let-hash opt
+    (let* ((cfg             (get-ensemble-config))
+           (preload         (config-get cfg preload: []))
+           (preload-workers (config-get preload workers: []))
+           (server-id       .server-id)
+           (server-domain   (or .?domain (ensemble-domain)))
+           (server-cfg-path
+            (or .?config (ensemble-server-config-path server-id server-domain)))
+           (server-config
+            (and (file-exists? server-cfg-path)
+                 (load-ensemble-server-config-file server-cfg-path)))
+           (preload-cfg-entry
+            (find (lambda (p)
+                    (with ([domain . preload-server-cfg] p)
+                      (and (eq? server-domain domain)
+                           (eq? server-id (config-get! preload-server-cfg prefix:)))))
+                  preload-workers)))
+      (if preload-cfg-entry
+        (let (preload-cfg (cdr preload-cfg-entry))
+          (cond (.?role => (cut config-push! preload-cfg role: <>)))
+          (cond (.?count => (cut config-push! preload-cfg servers: <>)))
+          (cond (server-config => (cut config-push! preload-cfg server-config: <>)))
+          (set! (cdr preload-cfg-entry) preload-cfg))
+        (let (preload-cfg [prefix: server-id])
+          (config-push! preload-cfg role: .role)
+          (config-push! preload-cfg servers: .count)
+          (cond (server-config => (cut config-push! preload-cfg server-config: <>)))
+          (set! preload-workers [[server-domain :: preload-cfg] :: preload-workers])
+          (config-push! preload workers: preload-workers)
+          (config-push! cfg preload preload:)))
+      (save-config! cfg (ensemble-config-path)))))
 
 (def (do-config-server opt)
   (let-hash opt

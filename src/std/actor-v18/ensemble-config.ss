@@ -53,9 +53,9 @@
 ;;; preload: (
 ;;;  ;;; static preloaded server configuration
 ;;;  servers:
-;;;  ((<server-identifier>
-;;;    ;;; domain
-;;;    domain: <domain>
+;;;  ((domain
+;;;    ;;; server identifier
+;;;    server: <server-identifier>
 ;;;    ;;; primary role
 ;;;    role: <role>
 ;;;    ;;; [optional] server configuration, the role template is overlayed
@@ -65,7 +65,7 @@
 ;;;
 ;;;  ;;; dynamic preloaded worker server configuration
 ;;;  workers:
-;;;  ((<domain>
+;;;  ((domain
 ;;;    ;;; server id prefix; the actual server id will be <prefix>-<seqno>
 ;;;    prefix: <id>
 ;;;    ;;; number of servers

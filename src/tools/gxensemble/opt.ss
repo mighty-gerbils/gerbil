@@ -36,6 +36,11 @@
   (option 'config "-C" "--config"
     help: "configuration file"))
 
+(def server-domain-option
+  (option 'domain "-d" "--domain"
+    value: string->symbol
+    help: "specifies the server domain"))
+
 (def server-config-option
   (option 'config "-C" "--config"
     help: "server configuration file"))
@@ -186,6 +191,11 @@
 
 (def worker-count-argument
   (argument 'count
+    help: "number of workers"
+    value: string->integer))
+
+(def worker-count-option
+  (option 'count "-n" "--workers"
     help: "number of workers"
     value: string->integer))
 
@@ -720,10 +730,19 @@
 
 (def config-preload-server-cmd
   (command 'preload-server
+    server-domain-option
+    role-option
+    server-config-option
+    server-id-argument
     help: "TODO: configure a preloaded server for supervised execution as part of an ensemble"))
 
 (def config-preload-workers-cmd
   (command 'preload-workers
+    server-domain-option
+    role-option
+    worker-count-option
+    server-config-option
+    server-id-argument
     help: "TODO: configure preloaded workers for supervised execution as part of an ensemble"))
 
 (def config-server-cmd
