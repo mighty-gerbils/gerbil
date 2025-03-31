@@ -734,7 +734,7 @@
     role-option
     server-config-option
     server-id-argument
-    help: "TODO: configure a preloaded server for supervised execution as part of an ensemble"))
+    help: "configure a preloaded server for supervised execution as part of an ensemble"))
 
 (def config-preload-workers-cmd
   (command 'preload-workers
@@ -743,7 +743,7 @@
     worker-count-option
     server-config-option
     server-id-argument
-    help: "TODO: configure preloaded workers for supervised execution as part of an ensemble"))
+    help: "configure preloaded workers for supervised execution as part of an ensemble"))
 
 (def config-server-cmd
   (command 'server
