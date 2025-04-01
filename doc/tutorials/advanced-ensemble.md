@@ -370,6 +370,7 @@ Finally, we can shutdown the entire ensemble, including the supervisor:
 2$ gerbil ensemble -G env/local control shutdown
 ```
 
+
 ## Distributed Ensembles
 
 Naturally, we are not limited to controlling a local ensemble behind a
@@ -601,3 +602,310 @@ This functionality is planned for v0.19
 TODO vault, broadcast, resolver
 
 This functionality is planned for v0.19
+
+## More on Ensemble Configuration
+
+As we have seen, configuring the ensemble is a key step along the way;
+we have seen examples of configuration and relevant commands to create
+the appropriate configurations. Here we dive into some more detail
+regarding configuration.
+
+### Ensemble Configuration Structure
+
+First, let's look at what really goes into an ensemble configuration.
+The configuration is actually a plist, flat printed in a file (that is
+without the enclosing list), with the following structure:
+```
+config: ensemble-v0
+
+;;; supervisory domain for the ensemble
+domain: <domain>
+;;; [optional] root path for ensemble executions
+root: <path>
+;;; [optional] supervisor public address (over TLS)
+public-address: <inet-address>
+;;; ;;; supervisory services
+services: (
+ ;;; supervisor config
+ supervisor: <ensemble-server-config>
+ ;;; registry config for the local ensemble
+ registry: <ensemble-server-config>
+ ;;; [optional] resolver config for distributed ensemble name resolution
+ resolver: <ensemble-server-config>
+ ;;; [optional] broadcast config
+ broadcast: <ensemble-server-config>
+)
+
+;;; roles -> execution mapping
+roles:
+ ((<role>  ; symbol
+   ;;; for each role define an execution rule:
+   ;;; the program is started as <exec> <prefix> ... <server-identifier>
+   ;;; the server configuration will be in the <ensemble-server-path>/config
+   ;;; <program>: the symbol 'self for single binary deployments
+   ;;; or an executable path (string)
+   exe: <program>
+   ;;; optional executable argument prefix
+   prefix: (<string> ...)
+   ;;; optional executable argument suffix
+   suffix: (<string> ...)
+   ;;; supervision policy
+   policy: <supervisory-policy>
+   ;;; optional role server configuration template
+   server-config: <ensemble-server-config>
+   )
+ ...)
+
+;;; [optional] preloaded server configuration; the supervisor on its own is capable
+;;; of receiving remote updates, executables, and server execution instructions.
+preload: (
+ ;;; static preloaded server configuration
+ servers:
+ ((domain
+   ;;; server identifier
+   server: <server-identifier>
+   ;;; primary role
+   role: <role>
+   ;;; [optional] server configuration, the role template is overlayed
+   server-config: <ensemble-server-config>
+  )
+  ... )
+
+ ;;; preloaded worker server configuration
+ workers:
+ ((domain
+   ;;; server id prefix; the actual server id will be <prefix>-<seqno>
+   prefix: <id>
+   ;;; number of servers
+   servers: <fixnum>
+   ;;; primary role
+   role: <role>
+   ;;; [optional] server configuration, the role template is overlayed
+   server-config: <ensemble-server-config>
+  )
+ ...)
+)
+```
+Individual server configuration has the following structure:
+```
+config: ensemble-server-v0
+
+;;; ensemble
+domain: <symbol>
+identifier: <server-identifier>
+supervisor: <server-identifier>
+registry:   <server-identifier>
+cookie:     <path>
+admin:      <path>
+
+;;; execution
+role:    <symbol>
+secondary-roles: (<symbol> ...)
+exe:     <string>
+args:    (<string> ...)
+policy:  <symbol>
+env:     <string>
+envvars: (<string> ...)
+
+;;; logging
+log-level: <symbol>
+log-file:  <path>
+log-dir:   <path>
+
+;;; bindings
+addresses: (<address> ...)
+auth: ((<server-identifier> <capability>) ...)
+known-servers: ((<server-identifier> <address> ...) ...)
+
+;;; application specific configuration
+application: ((<symbol> config ...) ...)
+```
+
+Note that a lot of the details, especially for server configuration
+are filled in by the supervisor. The user can however provide a
+partial configuration, which is composed with the supervisor generated
+configuration. What you as the programmer or administrator really care
+to configure is roles and applications.
+
+Every server must have a (primary) role, and can
+also have any number of secondary roles. The primary role is used for
+instantiating the specific configuration of the server. So as an
+administrator you will want to configure appropriate roles for the
+various servers in your ensemble.
+
+Similarly, applications are the actors that live inside the server and
+provide the application level functionality. Application specific
+configuration is user controlled, any primitive object can be used for
+said configuration but it is still recommended that you use the same
+configuration format -- see [:std/config](/reference/std/config).
+
+### Configuration Tooling
+
+The `gerbil ensemble` tool provides a number of configuration commands
+that can help you create the appropriate configurations; note that
+there is nothing wrong with creating the programmatically or even by
+hand, but it does help to have a tool that can do it for you and avoid
+potential errors.
+
+```
+$ gerbil ensemble config help
+Usage: gxensemble config  <command> command-arg ...
+
+Commands:
+ ensemble                         configure the ensemble as a whole
+ role                             configure an ensemble role
+ preload-server                   configure a preloaded server for supervised execution as part of an ensemble
+ preload-workers                  configure preloaded workers for supervised execution as part of an ensemble
+ server                           partially configure a server for supervised execution as part of an ensemble
+ help                             display help; help <command> for command help
+```
+
+#### Configure the ensemble as a whole
+
+You can do this with the `gerbil ensemble config ensemble` command:
+```
+$ gerbil ensemble config help ensemble
+Usage: gxensemble config ensemble [command-option ...]
+       configure the ensemble as a whole
+
+Command Options:
+ --view                           inspect existing, don't generate
+ --pretty                         pretty print
+ -D --ensemble-domain <ensemble-domain>  specifies the ensemble domain [default: #f]
+ --root  <ensemble-root>          specifies the ensemble root directory [default: #f]
+ --public  <ensemble-public-address>  specifies the ensemble supervisor public address for TLS [default: #f]
+```
+
+The tool allows you to retrieve an existing configuration, or create and update it.
+The basic parameters you can specify are the ensemble domain, the root directory, and the public address for TLS.
+
+#### Configure an ensemble role
+
+You can do this with the `gerbil ensemble config role` command:
+```
+$ gerbil ensemble config help role
+Usage: gxensemble config role [command-option ...]
+       configure an ensemble role
+
+Command Options:
+ --role  <role>                   server role; a symbol [default: #f]
+ --exe  <exe>                     executable path [default: #f]
+ --prefix  <prefix>               executable arguments prefix; a list [default: #f]
+ --suffix  <suffix>               executable arguments suffix; a list [default: #f]
+ --policy  <policy>               supervisory policy [default: #f]
+ --secondary-roles  <log-level>   the server secondary roles; a list of symbols [default: #f]
+ --env  <env>                     server environment [default: #f]
+ --envvars  <envvars>             server environment variables [default: #f]
+ --log-level  <log-level>         the server log level [default: #f]
+ -a --addresses <addresses>       server public addresses [default: #f]
+ --known-servers  <known-servers>  server known servers for external communication [default: #f]
+ --auth  <auth-servers>           server pre-authorized servers [default: #f]
+ --application  <application>     role server application name [default: #f]
+ -C --config <config>             server application configuration file [default: #f]
+ ```
+
+Perhaps the most important part is configuring the applications in a
+role; you can configure multiple applications with multiple
+invocations of the command, one application at a time.
+
+#### Configure preloaded servers and workers
+
+Preloaded servers are servers that are spawned by the supervisor when
+the ensemble starts up; preloading workers allows you to run multiple
+servers with the same role.
+
+You can configure preloading with the following commands:
+```
+$ gerbil ensemble config help preload-server
+Usage: gxensemble config preload-server [command-option ...] <server-id>
+       configure a preloaded server for supervised execution as part of an ensemble
+
+Command Options:
+ -d --domain <domain>             specifies the server domain [default: #f]
+ --role  <role>                   server role; a symbol [default: #f]
+ -C --config <config>             server configuration file [default: #f]
+
+Arguments:
+ server-id                        the server id
+
+$ gerbil ensemble config help preload-workers
+Usage: gxensemble config preload-workers [command-option ...] <server-id>
+       configure preloaded workers for supervised execution as part of an ensemble
+
+Command Options:
+ -d --domain <domain>             specifies the server domain [default: #f]
+ --role  <role>                   server role; a symbol [default: #f]
+ -n --workers <count>             number of workers [default: #f]
+ -C --config <config>             server configuration file [default: #f]
+
+Arguments:
+ server-id                        the server id
+```
+
+Note that when configuring workers, the server id is the prefix of the
+worker server ids, which are incrementally assigned.
+
+#### Configure a server
+
+The `gerbil ensemble config server` command allows you to create a
+(partial) configuration for a server, that can be used by the other
+configuration commands.
+
+Here is the usage:
+```
+$ gerbil ensemble config help server
+Usage: gxensemble config server [command-option ...] <server-id>
+       partially configure a server for supervised execution as part of an ensemble
+
+Command Options:
+ --role  <role>                   server role; a symbol [default: #f]
+ --secondary-roles  <log-level>   the server secondary roles; a list of symbols [default: #f]
+ --env  <env>                     server environment [default: #f]
+ --envvars  <envvars>             server environment variables [default: #f]
+ --log-level  <log-level>         the server log level [default: #f]
+ -a --addresses <addresses>       server public addresses [default: #f]
+ --known-servers  <known-servers>  server known servers for external communication [default: #f]
+ --auth  <auth-servers>           server pre-authorized servers [default: #f]
+ --application  <application>     role server application name [default: #f]
+ -C --config <config>             server application configuration file [default: #f]
+
+Arguments:
+ server-id                        the server id
+```
+
+
+
+
+## More on Ensemble Control Tooling
+
+We have already seen the `gerbil ensemble control` command in action;
+it is the swiss army knife command that allows us to interact with the
+ensemble supervisor.
+
+Here is the summary:
+```
+$ gerbil ensemble control help
+Usage: gxensemble control  <command> command-arg ...
+
+Commands:
+ list-servers                     list supervised servers in the ensemble
+ start-server                     start a supervised ensemble server
+ start-workers                    start supervised ensemble workers
+ stop-server                      stop some supervised ensemble servers
+ restart-server                   restart some supervised ensemble servers
+ get-server-log                   retrieve a supervised server log
+ get-server-config                retrieve a server configuration
+ update-server-config             update a supervisor server configuration
+ get-ensemble-config              retrieve the supervised ensemble configuration
+ update-ensemble-config           update the supervised ensemble configuration
+ list-processes                   list processes running in the context of an ensemble supervisor
+ exec-process                     execute a process in the context of an ensemble supervisor
+ kill-process                     send a signal to a process
+ restart-process                  restart a process by pid
+ get-process-output               get a process's output
+ upload                           upload an executable, environment overlay image, or file system overlay image as a tarball
+ shell                            execute a shell command in the context of an ensemble supervisor
+ shutdown                         shutdown a supervised ensemble, including the supervisor
+ restart                          mass restart servers in a supervised ensemble
+ help                             display help; help <command> for command help
+ ```
