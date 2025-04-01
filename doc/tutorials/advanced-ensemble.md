@@ -113,14 +113,14 @@ And now let's start it and interact with it.
 
 ### Using an httpd ensemble
 
-A single server is just that: one process, with one thread of control
+A single server is just that: one process, with one OS thread of control
 serving requests.  If we want to take advantage of multicore machines
 with process isolation, we can spawn more and multiplex on the socket
 using `SO_REUSEPORT` (the server does it by default).
 
 We can do this very easily by constructing an ensemble, and by doing
 that we take advantage of supervision and the all the available
-tooling from `gxensemble`.
+tooling from `gerbil ensemble`.
 
 Here is how we can configure an httpd ensemble:
 - we configure the ensemble root directory
