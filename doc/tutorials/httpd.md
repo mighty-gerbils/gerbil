@@ -5,7 +5,7 @@ In this tutorial we discuss the basics of web server programming with the gerbil
 Gerbil provides two options for web server programming:
 - You can use the implementation of the web server as a library as
   an embedded httpd, within your applications. This option is good for
-  programming standalone binaries that provide a web ihnterface.
+  programming standalone binaries that provide a web ihterface.
 - You can use the standalone gerbil httpd, which you can run with
   `gerbil httpd`. The standalone server is quite capable and fast, it
   can utilize all cores in your system with an ensemble and provides
