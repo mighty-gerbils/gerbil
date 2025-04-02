@@ -76,6 +76,7 @@ module.exports = {
                       'interface',
                       'instance',
                       'contract',
+                      'config',
                       'stdio',
                       'actor',
                       'crypto',
