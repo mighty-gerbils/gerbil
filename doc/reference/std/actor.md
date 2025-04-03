@@ -634,6 +634,107 @@ Sets the actor server's address cache TTL (in seconds, a real number).
 
 
 ## Ensemble Servers
+### Server Identifiers
+A server identifier is a symbol, within some ensemble domain. A fully
+qualified server identifier is a pari with a the relative server id in
+the car and the ensemble domain in the cdr.
+
+#### server-identifier
+```
+(server-identifier id)
+```
+
+Validates and returns the fully qualified server identiier for id.
+
+#### ensemble-domain
+```
+(def ensemble-domain
+  (make-parameter '/))
+```
+
+Parameter containing the current ensemble domain, as a symbol.
+
+### Ensemble Server Configuration
+#### Schema
+This is the schema for ensemble server configuration:
+```
+config: ensemble-server-v0
+
+;;; ensemble
+domain: <symbol>
+identifier: <server-identifier>
+supervisor: <server-identifier>
+registry:   <server-identifier>
+cookie:     <path>
+admin:      <path>
+
+;;; execution
+role:    <symbol>
+secondary-roles: (<symbol> ...)
+exe:     <string>
+args:    (<string> ...)
+policy:  <symbol>
+env:     <string>
+envvars: (<string> ...)
+
+;;; logging
+log-level: <symbol>
+log-file:  <path>
+log-dir:   <path>
+
+;;; bindings
+addresses: (<address> ...)
+auth: ((<server-identifier> <capability>) ...)
+known-servers: ((<server-identifier> <address> ...) ...)
+
+;;; application specific configuration
+application: ((<symbol> config ...) ...)
+```
+
+#### ensemble-server-path
+```scheme
+(ensemble-server-path server-id (domain (ensemble-domain)) (base (gerbil-path)))
+```
+
+Returns the directory for server specific data.
+
+#### ensemble-server-config-path
+```
+(ensemble-server-config-path server-id (domain (ensemble-domain)) (base (gerbil-path)))
+```
+
+Returns the path for a server configuration.
+
+#### load-ensemble-server-config-file
+```
+(load-ensemble-server-config-file path)
+```
+
+Loads a ensemble server configuration from a file.
+
+#### load-ensemble-server-config
+```
+(load-ensemble-server-config server-id
+   (domain (ensemble-domain))
+   (base (gerbil-path)))
+```
+
+Loads an ensemble server configuration by server id.
+
+#### empty-ensemble-server-config
+```
+(empty-ensemble-server-config)
+```
+
+Returns a (fresh) empty ensemble server configuration
+
+### become-ensemble-server!
+```
+(become-ensemble-server! cfg thunk)
+```
+
+The current thread becomes an ensemble server; `cfg` is the ensemble server configuration,
+which is used to make the appropriate `call-with-ensemble-server`.
 
 ### call-with-ensemble-server
 ```scheme
@@ -679,22 +780,7 @@ Options:
 - `auth`: a hash table mapping server ids to capabilities; these are preauthorized
   server capabilities.
 
-### ensemble-base-path
-```scheme
-(ensemble-base-path)
-```
-
-Returns the base directory for the ensemble; this is `$GERBIL_PATH/ensemble`.
-
-### ensemble-server-path
-```scheme
-(ensemble-server-path server-id)
-```
-
-Returns the directory for server specific data; this is `$GERBIL_PATH/ensemble/server/<server-id>`.
-
-
-## Ensemble Control
+## Primitive Ensemble Control
 
 This is programmatic functionality for operations normally performed
 using the `gxensemble` tool; see the [ensemble tutorial](/tutorials/ensemble.md)
@@ -859,6 +945,506 @@ The default path for the ensemble admin public key; defaults to `$GERBIL_PATH/en
 ```
 
 The default path for the encrypted ensemble admin private key; defaults to `$GERBIL_PATH/ensemble/admin.priv`.
+
+
+## Ensemble Supervisory Operations
+
+This is the programmatic functionality for operations normally performed using the `gxensmeble` tool; see the [advanced ensemble tutorial](/tutorials/advanced-ensemble.md)
+for more information.
+
+### Ensemble Configuration
+#### Schema
+This is the schema for supervised (structured) ensemble configuration:
+```
+;;; config: config versioned type, current is ensemble-v0
+config: ensemble-v0
+;;; supervisory domain for the ensemble
+domain: <domain>
+;;; [optional] root path for ensemble executions
+root: <path>
+;;; [optional] supervisor public address (over TLS)
+public-address: <inet-address>
+
+;;; supervisory services
+services: (
+ ;;; supervisor config
+ supervisor: <ensemble-server-config>
+ ;;; registry config for the local ensemble
+ registry: <ensemble-server-config>
+ ;;; [optional] resolver config for distributed ensemble name resolution
+ resolver: <ensemble-server-config>
+ ;;; [optional] broadcast config
+ broadcast: <ensemble-server-config>
+)
+
+;;; roles -> execution mapping
+roles:
+ ((<role>  ; symbol
+   ;;; for each role define an execution rule:
+   ;;; the program is started as <exec> <prefix> ... <server-identifier>
+   ;;; the server configuration will be in the <ensemble-server-path>/config
+   ;;; <program>: the symbol 'self for single binary deployments
+   ;;; or an executable path (string)
+   exe: <program>
+   ;;; optional executable argument prefix
+   prefix: (<string> ...)
+   ;;; optional executable argument suffix
+   suffix: (<string> ...)
+   ;;; supervision policy
+   policy: <supervisory-policy>
+   ;;; optional role server configuration template
+   server-config: <ensemble-server-config>
+   )
+ ...)
+
+;;; [optional] preloaded server configuration; the supervisor on its own is capable
+;;; of receiving remote updates, executables, and server execution instructions.
+preload: (
+ ;;; static preloaded server configuration
+ servers:
+ ((domain
+   ;;; server identifier
+   server: <server-identifier>
+   ;;; primary role
+   role: <role>
+   ;;; [optional] server configuration, the role template is overlayed
+   server-config: <ensemble-server-config>
+  )
+  ... )
+
+;;; dynamic preloaded worker server configuration
+ workers:
+ ((domain
+   ;;; server id prefix; the actual server id will be <prefix>-<seqno>
+   prefix: <id>
+   ;;; number of servers
+   servers: <fixnum>
+   ;;; primary role
+   role: <role>
+   ;;; [optional] server configuration, the role template is overlayed
+   server-config: <ensemble-server-config>
+  )
+ ...)
+)
+```
+#### ensemble-config-path
+```
+(ensemble-config-path (base (gerbil-path)))
+```
+
+Returns the ensemble configuration path
+
+#### ensemble-base-path
+```scheme
+(ensemble-base-path (base (gerbil-path)))
+```
+
+Returns the base directory for the ensemble.
+
+#### load-ensemble-config-file
+```
+(load-ensemble-config-file path)
+```
+
+Loads an ensemble configuration from a file
+
+#### load-ensemble-config
+```
+(load-ensemble-config (base (gerbil-path)))
+```
+
+Loads the ensemble configuration.
+
+#### empty-ensemble-config
+```
+(empty-ensemble-config)
+```
+
+Returns a (fresh) empty ensemble configuration.
+
+### become-ensemble-supervisor!
+```
+(become-ensemble-supervisor! cfg (thunk void))
+```
+
+The current thread of control becomes an ensemble supervisor with
+config `cfg`, executing the thunk in the appropriate context.
+
+### ensemble-lookup-supervisors
+```
+(ensemble-lookup-supervisors (srv (current-actor-server)))
+```
+
+Lookup all known supervisors by role.
+Returns a list of supervisor server ids known to the (current) actor server
+
+### ensemble-list-domain-servers
+```
+(ensemble-list-domain-servers
+ domain: (domain (ensemble-domain))
+ role: (role #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+List all supervised servers in a domain (and it's subdomains).
+Returns alist, associating a servisor with a list of servers.
+
+### ensemble-supervisor-list-servers
+```
+(ensemble-supervisor-list-servers
+ supervisor: (super (ensemble-domain-supervisor))
+ domain: (domain #f)
+ role: (role #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+List all servers supervised by `super`, optionally under a specific
+domain and filtered by a role.
+
+### ensemble-supervisor-start-server!
+```
+(ensemble-supervisor-start-server!
+ supervisor: (super (ensemble-domain-supervisor))
+ role: role
+ server-id: server-id
+ domain: (domain (ensemble-domain))
+ config: (config #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Start a new supervised server for a (primary) role.
+Returns the server identifier.
+
+### ensemble-supervisor-start-workers!
+```
+(ensemble-supervisor-start-workers!
+ supervisor: (super (ensemble-domain-supervisor))
+ role: role
+ server-id-prefix: prefix
+ workers: count
+ domain: (domain (ensemble-domain))
+ config: (config #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Start a number of supervised worker servers.
+Returns a list of server identifiers.
+
+### ensemble-supervisor-stop-servers!
+```
+(ensemble-supervisor-stop-servers!
+ supervisor: (super (ensemble-domain-supervisor))
+ servers: (server-ids #f)
+ domain: (domain #f)
+ role: (role #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Stop some servers and remove them from the ensemble.
+- `servers`: is an optional list of server ids
+- `domain`: is an optional domain to stop
+- `roles`: is a list of roles for the servers to stop
+
+At least one of servers or roles should be specified to have any effect.
+when specifying a domain, the roles select servers in the domain to stop.
+if a domain but no roles or server-ids are specified, the entire domain
+is shutdown.
+
+### ensemble-supervisor-restart-servers!
+```
+(ensemble-supervisor-restart-servers!
+ supervisor: (super (ensemble-domain-supervisor))
+ servers: (server-ids #f)
+ domain: (domain #f)
+ role: (role #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Restart some servers; semantics as in `ensemble-supervisor-stop-servers!` above.
+
+### ensemble-supervisor-get-server-log
+```
+(ensemble-supervisor-get-server-log
+ supervisor: (super (ensemble-domain-supervisor))
+ server: server-id
+ file: (logf "server.log")
+ actor-server: (srv (current-actor-server)))
+```
+
+Get the log for some server.
+
+### ensemble-shutdown!
+```
+(ensemble-shutdown! actor-server: (srv (current-actor-server)))
+```
+
+Shutdown the entire ensemble, including the supervisor(s)
+
+### ensemble-supervisor-shutdown!
+```
+(ensemble-supervisor-shutdown!
+ supervisor: (super (ensemble-domain-supervisor))
+ actor-server: (srv (current-actor-server)))
+```
+
+Shutdown the (part of the) ensemble managed by a specific supervisor
+
+### ensemble-restart!
+```
+(ensemble-restart!
+ restart-services: (restart-services? #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Restart the entire ensemble
+
+### ensemble-supervisor-restart!
+```
+(ensemble-supervisor-restart!
+ supervisor: (super (ensemble-domain-supervisor))
+ restart-services: (restart-services? #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Restart a supervisor and the parts of the ensemble supervised by it.
+
+### ensemble-supervisor-update-server-config!
+```
+(ensemble-supervisor-update-server-config!
+ supervisor: (super (ensemble-domain-supervisor))
+ server: server-id
+ config: cfg
+ mode: (mode 'upsert)
+ restart: (restart? #t)
+ actor-server: (srv (current-actor-server)))
+```
+
+Update a server configuration for a supervisor
+
+### ensemble-supervisor-get-server-config
+```
+(ensemble-supervisor-get-server-config
+ supervisor: (super (ensemble-domain-supervisor))
+ server: server-id
+ actor-server: (srv (current-actor-server)))
+```
+
+Retrieve a server configuration from a supervisor.
+
+### ensemble-update-config!
+```
+(ensemble-update-config!
+ config: config
+ mode: (mode 'upsert)
+ actor-server: (srv (current-actor-server)))
+```
+
+Update the ensemble configuration for all known supervisors.
+
+### ensemble-supervisor-update-config!
+```
+(ensemble-supervisor-update-config!
+ supervisor: (super (ensemble-domain-supervisor))
+ config: config
+ mode: (mode 'upsert)
+ actor-server: (srv (current-actor-server)))
+```
+
+Update the ensemble configuration for a specific supervisor.
+
+### ensemble-get-config
+```
+(ensemble-get-config
+ actor-server: (srv (current-actor-server)))
+```
+
+Collect the ensemble configuration from all known supervisors.
+
+### ensemble-supervisor-get-config
+```
+(ensemble-supervisor-get-config
+ supervisor: (super (ensemble-domain-supervisor))
+ actor-server: (srv (current-actor-server)))
+```
+
+Retrieve the ensemble configuration from a specific supervisor.
+
+### ensemble-upload-executable!
+```
+(ensemble-upload-executable!
+ path: executable-gz-path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+
+Upload an executable to all ensemble supervisors.
+
+### ensemble-supervisor-upload-executable!
+```
+(ensemble-supervisor-upload-executable!
+ supervisor: (super (ensemble-domain-supervisor))
+ path: executable-gz-path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+Upload an executable to a specific superisor.
+
+### ensemble-upload-environment!
+```
+(ensemble-upload-environment!
+ path: env-targz-path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+Upload a gerbil environment to all known supervisor.
+
+### ensemble-supervisor-upload-environment!
+```
+(ensemble-supervisor-upload-environment!
+ supervisor: (super (ensemble-domain-supervisor))
+ path: env-targz-path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+
+Upload a gerbil environment to a specific supervisor.
+
+### ensemble-upload-filesystem-overlay!
+```
+(ensemble-upload-filesystem-overlay!
+ fs: fs-targz-path
+ path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+
+Upload a new server accessible filesystem overlay to all known supervisors.
+
+### ensemble-supervisor-upload-filesystem-overlay!
+```
+(ensemble-supervisor-upload-filesystem-overlay!
+ supervisor: (super (ensemble-domain-supervisor))
+ path: fs-targz-path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+
+Upload a new server accessible filesystem overlay to a specific supervisor.
+
+### ensemble-supervisor-filesystem-upload!
+```
+(ensemble-supervisor-filesystem-upload!
+ supervisor: (super (ensemble-domain-supervisor))
+ type: type
+ path: path
+ deployment-path: deployment-path
+ actor-server: (srv (current-actor-server)))
+```
+
+Generic upload functionality for a supervisor.
+
+### ensemble-shell-command
+```
+(ensemble-shell-command
+ command: cmd
+ actor-server: (srv (current-actor-server)))
+```
+
+Execute a shell command on all known supervisors.
+
+### ensemble-supervisor-shell-command
+```
+(ensemble-supervisor-shell-command
+ supervisor: (super (ensemble-domain-supervisor))
+ command: cmd
+ actor-server: (srv (current-actor-server)))
+```
+Execute a shell command on a specific supervisor.
+
+### ensemble-list-processes
+```
+(ensemble-list-processes actor-server: (srv (current-actor-server)))
+```
+
+List processes in all known supervisors.
+
+### ensemble-supervisor-list-processes
+```
+(ensemble-supervisor-list-processes
+ supervisor: (super (ensemble-domain-supervisor))
+ actor-server: (srv (current-actor-server)))
+```
+
+List processes in a specific supervisor.
+
+### ensemble-supervisor-kill-process!
+```
+(ensemble-supervisor-kill-process!
+ supervisor: (super (ensemble-domain-supervisor))
+ pid: pid
+ signo: signo
+ actor-server: (srv (current-actor-server)))
+```
+
+Kill a process in a specific supervisor.
+
+### ensemble-exec-process!
+```
+(ensemble-exec-process!
+ exe: exe
+ args: args
+ env: (env "default")
+ envvars: (envvars #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Execute a process in all known supervisors.
+
+### ensemble-supervisor-exec-process!
+```
+(ensemble-supervisor-exec-process!
+ supervisor: (super (ensemble-domain-supervisor))
+ exe: exe
+ args: args
+ env: (env "default")
+ envvars: (envvars #f)
+ actor-server: (srv (current-actor-server)))
+```
+
+Execute a process in a specific supervisor.
+
+### ensemble-supervisor-get-process-output
+```
+(ensemble-supervisor-get-process-output
+ supervisor: (super (ensemble-domain-supervisor))
+ pid: pid
+ actor-server: (srv (current-actor-server)))
+```
+
+Get process output from a supervisor.
+
+### ensemble-supervisor-restart-process!
+```
+(ensemble-supervisor-restart-process!
+ supervisor: (super (ensemble-domain-supervisor))
+ pid: pid
+ actor-server: (srv (current-actor-server)))
+```
+
+Restart a process in a supervisor.
+
+### ensemble-supervisor-invoke!
+```
+(ensemble-supervisor-invoke!
+ supervisor: (super (ensemble-domain-supervisor))
+ actor: actor
+ message: msg
+ actor-server: (srv (current-actor-server)))
+```
+
+Invoke an actor in the ensemble managed by a supervisor.
+
+Note: this is a privileged operation, as the message is sent within
+the context of the supervisor and thus has admin capabilities.
 
 
 ## Actor TLS related procedures
