@@ -39,6 +39,9 @@ This document is based on the publically available [[https://github.com/astine/s
   - [[#swankconnection-info][swank:connection-info]]
   - [[#swankswank-require][swank:swank-require]]
   - [[#swankinit-presentations][swank:init-presentations]]
+  - [[#swanklookup-presented-object][swank:lookup-presented-object]]
+  - [[#swankinspect-frame-var][swank:inspect-frame-var]]
+  - [[#swankinspect-presentation][swank:inspect-presentation]]
   - [[#swankinteractive-eval][swank:interactive-eval]]
   - [[#swanklistener-eval][swank:listener-eval]]
   - [[#swankinvoke-nth-restart-for-emacs][​swank:invoke-nth-restart-for-emacs]]
@@ -471,6 +474,9 @@ variable.
 Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presentation.ss][:std/ide/swank/presentation]].
 
 ** swank:lookup-presented-object
+:PROPERTIES:
+:CUSTOM_ID: swanklookup-presented-object
+:END:
 
 =(swank:lookup-presented-object 'id)=
 
@@ -482,6 +488,9 @@ Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presen
 Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presentation.ss][:std/ide/swank/presentation]].
 
 ** swank:inspect-frame-var
+:PROPERTIES:
+:CUSTOM_ID: swankinspect-frame-var
+:END:
 
 =(swank:inspect-frame-var 'frame-num 'var-num)=
 
@@ -490,6 +499,9 @@ Because this is an [[#emacs-rex][​:emacs-rex]] the =thread= is the debug id.
 
 
 ** swank:inspect-presentation
+:PROPERTIES:
+:CUSTOM_ID: swankinspect-presentation
+:END:
 
 =(swank:inspect-presentation id thread)=
 

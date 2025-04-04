@@ -11,8 +11,12 @@
   ./api
   ./context
   ./debug
-  ./eval)
+  ./eval
+  ./presentation)
 (export #t)
+
+(extern namespace: #f
+  swank:get-presented-object)
 
 (defstruct swank-inspector
   (%object values form)
@@ -174,4 +178,14 @@
   (gc-swank-inspector)
   (def inspector (swank-inspector-inspect-object si start end))
   (pget ':content inspector))
+
+(def-swank (swank:inspect-presentation id inspector-thread)
+  (when (and (list? id) (eq? (car id) 'quote))
+    (set! id (cadr id)))
+  (def object-plist (swank:get-presented-object id identity))
+  (def object (pget ':value object-plist))
+  (def si (swank-inspect-object object))
+  (swank-inspector-inspect-object si))
+
   
+   ;; (swank:inspect-presentation '(:frame-var 2 1 0) t)

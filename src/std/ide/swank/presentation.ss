@@ -1,5 +1,6 @@
 (import
   :gerbil/gambit
+  :std/format
   ./api
   ./message
   ./repl
@@ -69,13 +70,13 @@
   swank:get-presented-object)
 
 (set-swank!
- (swank:get-presented-object id)
+ (swank:get-presented-object id (print-value (cut format "~a" <>)))
  (if (number? id)
    (hash-ref presentation-id-to-object-table (exact id) nil-surrogate)
    (if (list? id)
      (let ((type (car id)))
        (cond ((equal? type ':frame-var)
-	      (apply find-swank-debug-frame-var (cdr id)))
+	      (apply find-swank-debug-frame-var [(cdr id) ... print-value]))
 	     (else (error "Unknown presentation id" id))))
      (error "Unknown presentation id" id))))
 
