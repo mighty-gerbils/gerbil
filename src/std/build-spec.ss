@@ -173,6 +173,7 @@
     "ide/swank/context"
     "ide/swank/autodoc"
     (gxc: "ide/swank/debug" ,@(include-gambit-sharp))
+    "ide/swank/inspect"
     "ide/swank/repl"
     "ide/swank/presentation"
     "ide/swank/top"

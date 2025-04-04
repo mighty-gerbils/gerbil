@@ -5,7 +5,8 @@
   :std/srfi/13
   ./message
   ./api
-  ./context)
+  ./context
+  ./debug)
 (export #t)
 
 ;;; client->thread mapping
@@ -78,8 +79,7 @@
 		     (swank-read-from-string-in-context
 		      str cxt #t #t))
 		    (res 
-		     (swank-eval-in-context
-		      `(eval ',form) cxt)))
+		     (swank-eval-in-context form cxt)))
 	       (force-output stdout)
 	       (close-port stdout)
 	       (thread-join! outt)
@@ -87,10 +87,11 @@
 	       (return 'nil)
 	       (thread-yield!))
 	     (catch (e)
-	       (return (call-with-output-string
-			""
-			(cut display-exception e <>))
-		       ':abort))
+	       (let (dbg (:debug e str
+				 activate: #t
+				 all-frames: #t
+				 add-to-table: #t))
+		 (for-each (cut write-message writer <>) dbg)))
 	     (finally
 	      (close-port stdout)
 	      ;; this is quite dangerous --vyzo

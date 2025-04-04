@@ -3,8 +3,11 @@
   ./api
   ./message
   ./repl
-  ./context)
-(export #t)
+  ./context
+  ./debug)
+(export
+  #t
+  swank:get-presented-object)
 
 ;; Recording and accessing results of computations
 

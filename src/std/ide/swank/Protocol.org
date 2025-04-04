@@ -472,8 +472,22 @@ Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presen
 
 ** swank:lookup-presented-object
 
+=(swank:lookup-presented-object 'id)=
+
+- reference ::  The id of the presented object. ie: 42 or '(:frame-var 1 2 1)
+
+  This returns muliple values. The first is the object itself, the
+  second ='t= or ='nil= for true or false.
 
 Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presentation.ss][:std/ide/swank/presentation]].
+
+** swank:inspect-frame-var
+
+=(swank:inspect-frame-var 'frame-num 'var-num)=
+
+Because this is an [[#emacs-rex][​:emacs-rex]] the =thread= is the debug id. 
+
+
 
 ** swank:inspect-presentation
 
@@ -487,24 +501,42 @@ Gerbil takes care of it in [[file:~/me/src/gerbil-19-rc/src/std/ide/swank/presen
   #+begin_src emacs-lisp
     (:emacs-rex
      (swank:inspect-presentation
+      '(:frame-var 1 1 0)
+      t)
+     "COMMON-LISP-USER" 1 137)
+    (:return
+     (:ok
+      (:title "#<CONS {70057703A7}>" :id 0 :content
+    	  (("A proper list:" "\n" "0" ": "
+    	    (:value "ERROR" 1)
+    	    "\n" "1" ": "
+    	    (:value "\"here\"" 2)
+    	    "\n")
+    	   10 0 500)))
+     137)
+
+    (:emacs-rex
+     (swank:inspect-presentation
       '(:frame-var 1 2 1)
       t)
      "COMMON-LISP-USER" 1 172)
     (:return
      (:ok
-      (:title "#<(SIMPLE-ARRAY CHARACTER (17)) {700890005F}>" :id 0 :content
-    	  (("Dimensions" ": "
-    	    (:value "(17)" 1)
-    	    "\n" "Element type" ": "
-    	    (:value "CHARACTER" 2)
-    	    "\n" "Total size" ": "
-    	    (:value "17" 3)
-    	    "\n" "Adjustable" ": "
-    	    (:value "NIL" 4)
-    	    "\n" "Fill pointer" ": "
-    	    (:value "NIL" 5)
-    	    "\n" ...)
-    	   90 0 500)))
+      (:title
+       "#<(SIMPLE-ARRAY CHARACTER (17)) {700890005F}>"
+       :id 0 :content
+       (("Dimensions" ": "
+         (:value "(17)" 1)
+         "\n" "Element type" ": "
+         (:value "CHARACTER" 2)
+         "\n" "Total size" ": "
+         (:value "17" 3)
+         "\n" "Adjustable" ": "
+         (:value "NIL" 4)
+         "\n" "Fill pointer" ": "
+         (:value "NIL" 5)
+         "\n" ...)
+        90 0 500)))
      172)
   #+end_src
 

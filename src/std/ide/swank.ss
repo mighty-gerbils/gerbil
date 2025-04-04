@@ -4,6 +4,8 @@
   ./swank/context
   ./swank/presentation
   ./swank/restart
+  ./swank/debug
+  ./swank/inspect
   ./swank/eval
   ./swank/top
   ./swank/completions
@@ -17,6 +19,8 @@
    ./swank/context
    ./swank/presentation
    ./swank/eval
+   ./swank/debug
+   ./swank/inspect
    ./swank/restart
    ./swank/top
    ./swank/completions

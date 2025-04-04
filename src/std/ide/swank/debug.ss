@@ -188,12 +188,32 @@
 	 (1+ i) j
 	 (##continuation-next-frame cont #t)))))
 
-(def (find-frame-var kont frame-number n)
+(def (current-swank-filter-frame-vars) (make-parameter #t))
+
+(def (frame-vars frame (print-value (cut format "~s" <>)))
+  (reverse
+   (filter (lambda (s)
+	     (def name (pget ':name s))
+	     (or (not (current-swank-filter-frame-vars))
+		 (not (string-prefix? "(std/ide/swank/api" name))))
+	   (map (lambda (binding)
+		  (with ([var . val] binding)
+		    `(:name
+		      ,(if (procedure? var)
+			 (format "(~a)"(##procedure-friendly-name var))
+			 (format "~a" var))
+		      :id 0 :value ,(print-value val))))
+		(##dynamic-env->list (continuation-denv frame))))))
+
+(def (find-frame-var kont frame-number n
+		     (print-value (cut format "~s" <>)))
   (def frame (find-frame kont frame-number))
-  (def vars (##dynamic-env->list (continuation-denv frame)))
+  (def vars (frame-vars frame print-value))
   (list-ref vars n))
 
-(def (find-swank-debug-frame-var sd-or-number frame-n var-n)
+(def (find-swank-debug-frame-var
+      sd-or-number frame-n var-n
+      (print-value (cut format "~a" <>)))
   (def sd #f)
   (if (number? sd-or-number)
   ;; the thread is the debug id. No idea about the level.
@@ -205,16 +225,8 @@
     (set! sd sd-or-number))
   (let (cont (StackTrace-continuation
 	      (swank-debug-exception sd)))
-    (find-frame-var cont frame-n var-n)))
+    (find-frame-var cont frame-n var-n print-value)))
 
-  
-  
-
-   
-
-
-
-(def (current-swank-filter-locals) (make-parameter #t))
 (def-swank (swank:frame-locals-and-catch-tags frame-number)
   (def writer (current-slime-writer))
   (def id (current-slime-id))
@@ -229,26 +241,9 @@
 
    (def frame (and sd (find-frame
 		       (StackTrace-continuation (swank-debug-exception sd)) frame-number)))
-    [
-     (reverse
-      (filter (lambda (s)
-		(def name (pget ':name s))
-		(or (not (current-swank-filter-locals))
-	       
-		    (not (string-prefix? "(std/ide/swank/api" name))))
-	      (map (lambda (binding)
-		     (with ([var . val] binding)
-		       `(:name
-			 ,(if (procedure? var)
-			    (format "(~a)"(##procedure-friendly-name var))
-			    (format "~a" var))
-			 :id 0 :value ,(format "~a" val))))
-		   (##dynamic-env->list (continuation-denv frame)))))
-     'nil
-     ])
+    [(frame-vars frame) 'nil])
      
   
-
 (def restart-table (make-hash-table))
 
 (def (restart-put! name fn)
@@ -318,9 +313,9 @@
 (def-swank (swank:throw-to-toplevel)
   (throw-to-toplevel))
 
-(def current-debug-n (make-parameter 0))
+#;(def current-debug-n (make-parameter 0))
 
-(def (debug-stack-test)
+#;(def (debug-stack-test)
   (def debug-n (random-integer 42))
   (def (one n)
     (parameterize ((current-debug-n debug-n))
@@ -331,4 +326,3 @@
     (when (odd? n) (error "Stack Test!" n)))
 
   (one (random-integer 42)))
-      
