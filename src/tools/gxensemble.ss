@@ -3,6 +3,7 @@
 ;;; actor ensemble management tool
 (import :std/cli/getopt
         :std/sugar
+        :std/actor-v18/path
         ./env
         ./gxensemble/opt
         ./gxensemble/cmd)
@@ -170,4 +171,7 @@
 
 (def (gxensemble-main cmd opt)
   (setup-local-env! opt)
+  (let (domain-file (ensemble-domain-file-path))
+    (when (file-exists? domain-file)
+      (ensemble-domain (call-with-input-file domain-file read))))
   (dispatch-command cmd opt main-commands))

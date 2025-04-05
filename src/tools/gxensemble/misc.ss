@@ -16,12 +16,12 @@
         (role? (hash-get opt 'role)))
     (if (hash-get opt 'supervised)
       (let ((supervisor (or (hash-get opt 'supervisor) (ensemble-domain-supervisor)))
-            (registry-ref (server-identifier 'registry)))
+            (registry   (reference (server-identifier 'registry) 'registry)))
         (call-with-console-server opt
           (lambda (srv)
             (let (result (ensemble-supervisor-invoke!
                           supervisor: supervisor
-                          actor: registry-ref
+                          actor: registry
                           message:
                           (if role?
                             (!ensemble-lookup-server #f what)

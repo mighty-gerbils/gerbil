@@ -515,7 +515,9 @@
         (let (next (reader.read-char-inline))
           (cond
            ((eof-object? next)
-            (finish chars drop))
+            (if (null? chars)
+              #!eof
+              (finish chars drop)))
            ((and sep (eq? (car separating) next))
             (lp (fx+ x 1) (cdr separating) (fx+ drop 1) (cons next chars)))
            (else

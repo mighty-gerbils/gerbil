@@ -41,7 +41,7 @@
   (def (authorized-for? actor server-id)
     (or (actor-authorized? actor)
         (and (handle? actor)
-             (eq? (reference-server (handle-ref actor)) server-id))))
+             (equal? (reference-server (handle-ref actor)) server-id))))
 
   (def (sort-server-list lst)
     (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
@@ -151,7 +151,7 @@
      ((hash-get self.servers id)
       => (lambda (entry)
            (for (role (car entry))
-             (hash-update! self.roles role (cut remq id <>) []))
+             (hash-update! self.roles role (cut remove1 id <>) []))
            (hash-remove! self.servers id)
            (set! self.dirty? #t))))))
 

@@ -9,8 +9,18 @@
 (def current-ensemble-server-config
   (make-parameter #f))
 
+(def (ensemble-base-path (base (gerbil-path)))
+  (path-expand "ensemble" base))
+
+(def (ensemble-domain-file-path (base (ensemble-base-path)))
+  (path-expand "domain" base))
+
 (def ensemble-domain
-  (make-parameter '/))
+  (let* ((domain-file (ensemble-domain-file-path))
+         (domain (if (file-exists? domain-file)
+                   (call-with-input-file domain-file read)
+                   '/)))
+    (make-parameter domain)))
 
 (def (ensemble-subdomain sub (domain (ensemble-domain)))
   (let (sub-str (symbol->string sub))
@@ -24,9 +34,6 @@
    (filter (? (not string-empty?))
            (string-split (symbol->string domain) #\/))
    #\/))
-
-(def (ensemble-base-path (base (gerbil-path)))
-  (path-expand "ensemble" base))
 
 (def (ensemble-domain-path (domain (ensemble-domain)) (base (gerbil-path)))
   (let (base (ensemble-base-path base))
@@ -98,8 +105,6 @@
              (infer))))
    (else (infer))))
 
-(def (ensemble-domain-file-path (base (ensemble-base-path)))
-  (path-expand "domain" base))
 
 (def (ensemble-server-log-directory server-id (root (ensemble-log-directory)))
   (with ([id . domain] server-id)

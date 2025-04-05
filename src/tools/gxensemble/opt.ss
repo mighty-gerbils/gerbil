@@ -311,7 +311,7 @@
     help: "supervisory policy"))
 
 (def server-secondary-roles-option
-  (option 'log-level "--secondary-roles"
+  (option 'secondary-roles "--secondary-roles"
     value: string->object
     help: "the server secondary roles; a list of symbols"))
 

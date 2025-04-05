@@ -18,7 +18,7 @@
                 (let (result (ensemble-supervisor-invoke!
                               supervisor: supervisor
                               actor: (reference server-id 0)
-                              message: (!list-connections server-id)
+                              message: (!list-connections (server-identifier server-id))
                               actor-server: srv))
                   (write-result opt result))))
             (lambda (srv)
@@ -39,7 +39,7 @@
                 (let (result (ensemble-supervisor-invoke!
                               supervisor: supervisor
                               actor: (reference server-id 0)
-                              message: (!list-actors server-id)
+                              message: (!list-actors (server-identifier server-id))
                               actor-server: srv))
                   (write-result opt result))))
             (lambda (srv)
