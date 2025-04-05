@@ -4,8 +4,7 @@
         :std/misc/process
         :std/misc/ports
         :std/os/signal
-        :std/net/request
-        :gerbil/gambit)
+        :std/net/request)
 (export gxhttpd-ensemble-test test-setup! test-cleanup!)
 
 (def supervisor-process #f)
