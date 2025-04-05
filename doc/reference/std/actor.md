@@ -636,7 +636,7 @@ Sets the actor server's address cache TTL (in seconds, a real number).
 ## Ensemble Servers
 ### Server Identifiers
 A server identifier is a symbol, within some ensemble domain. A fully
-qualified server identifier is a pari with a the relative server id in
+qualified server identifier is a pair with a the relative server id in
 the car and the ensemble domain in the cdr.
 
 #### server-identifier
@@ -644,7 +644,8 @@ the car and the ensemble domain in the cdr.
 (server-identifier id)
 ```
 
-Validates and returns the fully qualified server identiier for id.
+Validates and returns the fully qualified server identifier for id.
+The validation checks that it is either a symbol or a pair of symbols; if it is a plain symbol (naked server identifier) it returns a pair with the server id at the car and the domain at the cdr.
 
 #### ensemble-domain
 ```
@@ -710,7 +711,7 @@ Returns the path for a server configuration.
 (load-ensemble-server-config-file path)
 ```
 
-Loads a ensemble server configuration from a file.
+Loads an ensemble server configuration from a file.
 
 #### load-ensemble-server-config
 ```
@@ -719,15 +720,15 @@ Loads a ensemble server configuration from a file.
    (base (gerbil-path)))
 ```
 
-Loads an ensemble server configuration by server id.
+Loads an ensemble server configuration from the file system by server identifier.
+
 
 #### empty-ensemble-server-config
 ```
 (empty-ensemble-server-config)
 ```
 
-Returns a (fresh) empty ensemble server configuration
-
+Returns a (fresh) empty ensemble server configurati
 ### become-ensemble-server!
 ```
 (become-ensemble-server! cfg thunk)
@@ -949,7 +950,7 @@ The default path for the encrypted ensemble admin private key; defaults to `$GER
 
 ## Ensemble Supervisory Operations
 
-This is the programmatic functionality for operations normally performed using the `gxensmeble` tool; see the [advanced ensemble tutorial](/tutorials/advanced-ensemble.md)
+This is the programmatic functionality for operations normally performed using the `gxensemble` tool; see the [advanced ensemble tutorial](/tutorials/advanced-ensemble.md)
 for more information.
 
 ### Ensemble Configuration
@@ -981,7 +982,7 @@ services: (
 roles:
  ((<role>  ; symbol
    ;;; for each role define an execution rule:
-   ;;; the program is started as <exec> <prefix> ... <server-identifier>
+   ;;; the program is started as <exe> <prefix> ... <server-identifier> <suffix> ...
    ;;; the server configuration will be in the <ensemble-server-path>/config
    ;;; <program>: the symbol 'self for single binary deployments
    ;;; or an executable path (string)
@@ -1032,10 +1033,10 @@ preload: (
 (ensemble-config-path (base (gerbil-path)))
 ```
 
-Returns the ensemble configuration path
+Returns the ensemble configuration path.
 
 #### ensemble-base-path
-```scheme
+```
 (ensemble-base-path (base (gerbil-path)))
 ```
 
@@ -1046,14 +1047,14 @@ Returns the base directory for the ensemble.
 (load-ensemble-config-file path)
 ```
 
-Loads an ensemble configuration from a file
+Loads an ensemble configuration from a file.
 
 #### load-ensemble-config
 ```
 (load-ensemble-config (base (gerbil-path)))
 ```
 
-Loads the ensemble configuration.
+Loads the ensemble configuration from the file system.
 
 #### empty-ensemble-config
 ```
@@ -1076,7 +1077,7 @@ config `cfg`, executing the thunk in the appropriate context.
 ```
 
 Lookup all known supervisors by role.
-Returns a list of supervisor server ids known to the (current) actor server
+Returns a list of supervisor server ids known to the (current) actor server.
 
 ### ensemble-list-domain-servers
 ```
@@ -1086,8 +1087,8 @@ Returns a list of supervisor server ids known to the (current) actor server
  actor-server: (srv (current-actor-server)))
 ```
 
-List all supervised servers in a domain (and it's subdomains).
-Returns alist, associating a servisor with a list of servers.
+List all supervised servers in a domain (and its subdomains).
+Returns an alist, associating a supervisor with a list of servers.
 
 ### ensemble-supervisor-list-servers
 ```
@@ -1146,8 +1147,8 @@ Stop some servers and remove them from the ensemble.
 - `roles`: is a list of roles for the servers to stop
 
 At least one of servers or roles should be specified to have any effect.
-when specifying a domain, the roles select servers in the domain to stop.
-if a domain but no roles or server-ids are specified, the entire domain
+When specifying a domain, the roles select servers in the domain to stop.
+If a domain but no roles or server-ids are specified, the entire domain
 is shutdown.
 
 ### ensemble-supervisor-restart-servers!
@@ -1178,7 +1179,7 @@ Get the log for some server.
 (ensemble-shutdown! actor-server: (srv (current-actor-server)))
 ```
 
-Shutdown the entire ensemble, including the supervisor(s)
+Shutdown the entire ensemble, including the supervisor(s).
 
 ### ensemble-supervisor-shutdown!
 ```
@@ -1187,7 +1188,7 @@ Shutdown the entire ensemble, including the supervisor(s)
  actor-server: (srv (current-actor-server)))
 ```
 
-Shutdown the (part of the) ensemble managed by a specific supervisor
+Shutdown the (part of the) ensemble managed by a specific supervisor.
 
 ### ensemble-restart!
 ```
@@ -1196,7 +1197,8 @@ Shutdown the (part of the) ensemble managed by a specific supervisor
  actor-server: (srv (current-actor-server)))
 ```
 
-Restart the entire ensemble
+Restart the entire ensemble.
+If `restart-services?` is true, then the supervisory services are also restarted.
 
 ### ensemble-supervisor-restart!
 ```
@@ -1219,7 +1221,7 @@ Restart a supervisor and the parts of the ensemble supervised by it.
  actor-server: (srv (current-actor-server)))
 ```
 
-Update a server configuration for a supervisor
+Update a server configuration for a supervisor.
 
 ### ensemble-supervisor-get-server-config
 ```
@@ -1258,7 +1260,7 @@ Update the ensemble configuration for a specific supervisor.
  actor-server: (srv (current-actor-server)))
 ```
 
-Collect the ensemble configuration from all known supervisors.
+Collect the active ensemble configuration from all known supervisors.
 
 ### ensemble-supervisor-get-config
 ```
@@ -1267,7 +1269,7 @@ Collect the ensemble configuration from all known supervisors.
  actor-server: (srv (current-actor-server)))
 ```
 
-Retrieve the ensemble configuration from a specific supervisor.
+Retrieve the active ensemble configuration from a specific supervisor.
 
 ### ensemble-upload-executable!
 ```
@@ -1287,7 +1289,7 @@ Upload an executable to all ensemble supervisors.
  deployment-path: deployment-path
  actor-server: (srv (current-actor-server)))
 ```
-Upload an executable to a specific superisor.
+Upload an executable to a specific supervisor.
 
 ### ensemble-upload-environment!
 ```
@@ -1296,7 +1298,7 @@ Upload an executable to a specific superisor.
  deployment-path: deployment-path
  actor-server: (srv (current-actor-server)))
 ```
-Upload a gerbil environment to all known supervisor.
+Upload a gerbil environment to all known supervisors.
 
 ### ensemble-supervisor-upload-environment!
 ```
