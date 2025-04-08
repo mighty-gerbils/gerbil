@@ -729,6 +729,13 @@ Loads an ensemble server configuration from the file system by server identifier
 ```
 
 Returns a (fresh) empty ensemble server configurati
+#### current-ensemble-server-config
+```
+(current-ensemble-server-config)
+```
+Parameter containing the current ensemble server configuration; this is automatically set by `become-ensemble-server!`.
+
+
 ### become-ensemble-server!
 ```
 (become-ensemble-server! cfg thunk)
