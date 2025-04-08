@@ -3,7 +3,7 @@
 (import (only-in :std/test test-suite test-case check)
         (only-in :std/crypto/digest sha256)
         (only-in :std/text/hex hex-encode)
-        (only-in "./sigv4" aws4-canonical-request aws4-sign aws4-auth))
+        (only-in ./sigv4 aws4-canonical-request aws4-sign aws4-auth))
 
 (def host "storage.googleapis.com")
 (def uri "/")
