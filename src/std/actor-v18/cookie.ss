@@ -7,17 +7,17 @@
         ./path)
 (export #t)
 
-(def (default-cookie-path)
-  (path-expand "cookie" (ensemble-base-path)))
+(def (ensemble-cookie-path (base (ensemble-base-path)))
+  (path-expand "cookie" base))
 
-(def (get-actor-server-cookie (path (default-cookie-path)))
+(def (get-actor-server-cookie (path (ensemble-cookie-path)))
   (let (path (path-expand path))
     (if (file-exists? path)
       (read-file-u8vector path)
       (error "cookie file doesn't exist" path))))
 
-(def (generate-actor-server-cookie! (path (default-cookie-path))
-                                    force: (force? #f))
+(def (generate-ensemble-cookie! (path (ensemble-cookie-path))
+                                force: (force? #f))
   (let (path (path-expand path))
     (if (file-exists? path)
       (if force?

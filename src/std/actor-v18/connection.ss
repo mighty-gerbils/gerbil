@@ -10,13 +10,15 @@
         :std/crypto
         :std/os/error
         :std/os/hostname
+        :std/format
         (only-in :std/os/socket AF_UNIX SOL_SOCKET SO_KEEPALIVE)
         (only-in :std/srfi/1 partition)
         ./logger
         ./message
         ./proto
         ./io
-        ./tls)
+        ./tls
+        ./server-identifier)
 (export #t)
 
 (def version-magic 18)
@@ -58,7 +60,7 @@
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (sock.reader)))
             (writer (open-buffered-writer (sock.writer)))
-            (peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
+            (peer-id (actor-tls-certificate-server-id (TLS-peer-certificate sock))))
         (if peer-id
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in)
           (begin
@@ -77,7 +79,7 @@
                 (reader (open-buffered-reader reader))
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
-                (srv-id (thread-specific srv)))
+                (srv-id (actor-server-identifier srv)))
            (using ((reader :- BufferedReader)
                    (writer :- BufferedWriter))
                ;; set handshake timeouts
@@ -94,7 +96,9 @@
                   (cond
                    ((not peer-id)
                     (fail! "bad hello; no server id"))
-                   ((eq? srv-id peer-id)
+                   ((not (pair? peer-id))
+                    (fail! "bad hello; peer-id is not fully qualified"))
+                   ((equal? srv-id peer-id)
                     (fail! "bad hello; client claims to be our server"))
                    (else
                     (let (salt (random-bytes (u8vector-length cookie)))
@@ -146,21 +150,33 @@
   (using (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
-      (let ((reader (open-buffered-reader (sock.reader)))
-            (writer (open-buffered-writer (sock.writer)))
-            (cert-peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
-        (if (eq? peer-id cert-peer-id)
+      (let* ((reader (open-buffered-reader (sock.reader)))
+             (writer (open-buffered-writer (sock.writer)))
+             (cert   (TLS-peer-certificate sock))
+             (cert-peer-id (actor-tls-certificate-server-id cert)))
+        (if (and (equal? peer-id cert-peer-id)
+                 ;; Also check that it is in the same tls domain -- this is the
+                 ;; application security barrier.
+                 ;; Note: we want to relax this in the future,
+                 ;; but this measure is to stop bugs from leaking across domains
+                 ;; and we'd like to have a solid policy in place.
+                 (equal? (actor-tls-host peer-id)
+                         (actor-tls-certificate-host cert)))
           (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
           (begin
-            (warnf "peer id mismatch for TLS authenticated peer ~a" (peer-address sock))
+            (warnf "peer id mismatch for TLS authenticated peer ~a [~a ~a] [~s ~s]"
+                   (peer-address sock)
+                   peer-id cert-peer-id
+                   (actor-tls-host peer-id) (actor-tls-certificate-host cert))
             (with-catch void (cut sock.close))
             'error)))
       ;; no TLS; do cookie authentication handshake
       (let/cc exit
-        (def (fail! what)
+        (def (fail! what (detail #f))
           (warnf "handshake with ~a failed: ~a" peer-id what)
           (with-catch void (cut sock.close))
-          (thread-send/check srv (!connection-failed peer-id what))
+          (let (what (if detail (format "~a: ~a" what detail) what))
+            (thread-send/check srv (!connection-failed peer-id what)))
           (exit 'error))
 
         (try
@@ -168,7 +184,7 @@
                 (reader (open-buffered-reader reader))
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
-                (srv-id (thread-specific srv)))
+                (srv-id (actor-server-identifier srv)))
            (using ((reader :- BufferedReader)
                    (writer :- BufferedWriter))
                ;; set handshake timeouts
@@ -185,10 +201,12 @@
                   (cond
                    ((not remote-id)
                     (fail! "bad challenge; no server id"))
-                   ((eq? remote-id srv-id)
+                   ((not (pair? remote-id))
+                    (fail! "bad hello; remote-id is not fully qualified" remote-id))
+                   ((equal? remote-id srv-id)
                     (fail! "bad challenge; server claims to be our server"))
-                   ((not (eq? remote-id peer-id))
-                    (fail! "bad challenge; server id mismatch"))
+                   ((not (equal? remote-id peer-id))
+                    (fail! "bad challenge; server id mismatch" [peer-id remote-id]))
                    (else
                     (let (cli-salt (random-bytes (u8vector-length cookie)))
                       (write-delimited writer (!response (digest peer-id srv-id salt cookie) cli-salt))
@@ -323,9 +341,9 @@
 (def (digest srv-id cli-id salt cookie)
   (sha256 (u8vector-append salt
                            '#u8(#x3a)
-                           (string->utf8 (symbol->string srv-id))
+                           (string->utf8 (server-identifier->flat-string srv-id))
                            '#u8(#x3a)
-                           (string->utf8 (symbol->string cli-id))
+                           (string->utf8 (server-identifier->flat-string cli-id))
                            '#u8(#x3a)
                            cookie)))
 

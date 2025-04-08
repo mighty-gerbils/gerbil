@@ -16,7 +16,7 @@
   ;;   When `'start` is supplied, `position` must be positive.
   ;;   When `'end` `'current` is supplied, `position` may be positive or negative
   ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
-  (seek (position : :fixnum)
+  (seek (position : :integer)
         (from :~ whence? := 'start))
   => :void)
 

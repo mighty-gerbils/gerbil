@@ -11,6 +11,8 @@
         ./message
         ./proto
         ./server
+        ./server-identifier
+        ./ensemble-util
         ./path)
 (export #t)
 
@@ -39,52 +41,55 @@
   (def (authorized-for? actor server-id)
     (or (actor-authorized? actor)
         (and (handle? actor)
-             (eq? (reference-server (handle-ref actor)) server-id))))
+             (equal? (reference-server (handle-ref actor)) server-id))))
 
   (def (sort-server-list lst)
-    (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
+    (sort lst (lambda (a b) (symbol<? (caar a) (caar b)))))
   (def flush-ticker
-    (spawn/name 'ticker ticker (current-thread)))
+    (spawn/name 'ticker ticker (current-thread) 60))
 
   (using (registry :- Registry)
     (let/cc exit
       (while #t
         (<-
          ((!ensemble-add-server id addrs roles)
-          (if (authorized-for? @source id)
-            (begin
-              (infof "adding server ~a ~a at ~a" id roles addrs)
-              (registry.add-server id addrs roles)
-              (--> (!ok (void))))
-            (--> (!error "not authorized"))))
+          (--> (with-error-handler "add-server"
+                 (if (authorized-for? @source id)
+                   (begin
+                     (infof "adding server ~a ~a at ~a" id roles addrs)
+                     (registry.add-server id addrs roles)
+                     (!ok (void)))
+                   (!error "not authorized")))))
 
          ((!ensemble-remove-server id)
-          (if (authorized-for? @source id)
-            (begin
-              (infof "removing server ~a" id)
-              (registry.remove-server id)
-              (--> (!ok (void))))
-            (--> (!error "not authorized"))))
+          (--> (with-error-handler "remove-server"
+                 (if (authorized-for? @source id)
+                   (begin
+                     (infof "removing server ~a" id)
+                     (registry.remove-server id)
+                     (!ok (void)))
+                   (!error "not authorized")))))
 
          ((!ensemble-lookup-server id role)
-          (cond
-           (id
-            (debugf "looking up server ~a for ~a" id @source)
-            (cond
-             ((registry.lookup-server id)
-              => (lambda (value) (--> (!ok value))))
-             (else
-              (--> (!error "unknown server")))))
-           (role
-            (debugf "looking up servers by role ~a for ~a" role @source)
-            (let* ((result (registry.lookup-servers/role role))
-                   (result (sort-server-list result)))
-              (--> (!ok result))))
-           (else
-            (debugf "listing servers for ~a" @source)
-            (let* ((result (registry.list-servers))
-                   (result (sort-server-list result)))
-              (--> (!ok result))))))
+          (--> (with-error-handler "lookup-server"
+                 (cond
+                  (id
+                   (debugf "looking up server ~a for ~a" id @source)
+                   (cond
+                    ((registry.lookup-server id)
+                     => (lambda (value) (!ok value)))
+                    (else
+                     (!error "unknown server"))))
+                  (role
+                   (debugf "looking up servers by role ~a for ~a" role @source)
+                   (let* ((result (registry.lookup-servers/role role))
+                          (result (sort-server-list result)))
+                     (!ok result)))
+                  (else
+                   (debugf "listing servers for ~a" @source)
+                   (let* ((result (registry.list-servers))
+                          (result (sort-server-list result)))
+                     (!ok result)))))))
 
          ((!tick)
           (registry.flush))
@@ -110,8 +115,8 @@
     (let (path (path-expand path))
       (create-directory* (path-directory path))
       (set! self.path path)
-      (set! self.servers (make-hash-table-eq))
-      (set! self.roles (make-hash-table-eq))
+      (set! self.servers (make-hash-table))
+      (set! self.roles (make-hash-table))
       (when (file-exists? path)
         (call-with-input-file path
           (lambda (file)
@@ -128,7 +133,7 @@
   (lambda (self id addrs roles)
     ;; is it an update? if so remove first
     (when (hash-key? self.servers id)
-      (registry::__remove-server self id))
+      {self.__remove-server id})
     ;; and now add it
     (hash-put! self.servers id (cons roles addrs))
     (when roles
@@ -146,7 +151,7 @@
      ((hash-get self.servers id)
       => (lambda (entry)
            (for (role (car entry))
-             (hash-update! self.roles role (cut remq id <>) []))
+             (hash-update! self.roles role (cut remove1 id <>) []))
            (hash-remove! self.servers id)
            (set! self.dirty? #t))))))
 

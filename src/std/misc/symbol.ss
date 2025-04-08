@@ -25,43 +25,17 @@
   (lambda (x y)
     (cmp-e (cache-get x) (cache-get y))))
 
-;; comparison constructors
-(def (compare-symbol<? (mx? #f))
-  (compare-symbolic symbol->string string<? mx?))
-(def (compare-symbol<=? (mx? #f))
-  (compare-symbolic symbol->string string<=? mx?))
-(def (compare-symbol>=? (mx? #f))
-  (compare-symbolic symbol->string string>=? mx?))
-(def (compare-symbol>? (mx? #f))
-  (compare-symbolic symbol->string string>? mx?))
+(defrule (defsymbolic name T string-e string-cmp)
+  (def (name (x : T) (y : T))
+    => :boolean
+    (string-cmp (string-e x) (string-e y))))
 
-;; globally cached implementations
-(def symbol<?
-  (compare-symbol<? #t))
-(def symbol<=?
-  (compare-symbol<=? #t))
-(def symbol>?
-  (compare-symbol>? #t))
-(def symbol>=?
-  (compare-symbol>=? #t))
+(defsymbolic symbol<? :symbol symbol->string string<?)
+(defsymbolic symbol<=? :symbol symbol->string string=?)
+(defsymbolic symbol>? :symbol symbol->string string>?)
+(defsymbolic symbol>=? :symbol symbol->string string>=?)
 
-;;; keywords
-;; comparison constructors
-(def (compare-keyword<? (mx? #f))
-  (compare-symbolic keyword->string string<? mx?))
-(def (compare-keyword<=? (mx? #f))
-  (compare-symbolic keyword->string string<=? mx?))
-(def (compare-keyword>=? (mx? #f))
-  (compare-symbolic keyword->string string>=? mx?))
-(def (compare-keyword>? (mx? #f))
-  (compare-symbolic keyword->string string>? mx?))
-
-;; globally cached implementations
-(def keyword<?
-  (compare-keyword<? #t))
-(def keyword<=?
-  (compare-keyword<=? #t))
-(def keyword>?
-  (compare-keyword>? #t))
-(def keyword>=?
-  (compare-keyword>=? #t))
+(defsymbolic keyword<? :keyword keyword->string string<?)
+(defsymbolic keyword<=? :keyword keyword->string string=?)
+(defsymbolic keyword>? :keyword keyword->string string>?)
+(defsymbolic keyword>=? :keyword keyword->string string>=?)
