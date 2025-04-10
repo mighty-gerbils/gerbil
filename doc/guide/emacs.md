@@ -178,52 +178,12 @@ have`gxi`in your path and copy the code snippet below into your Emacs
 config.
 
 ``` elisp
-(progn
-  
+(use-package gerbil-mode
+  :when (file-directory-p *gerbil-path*)
+  :preface
   (defvar *gerbil-path*
     (shell-command-to-string "gxi -e '(display (path-expand \"~~\"))'\
       -e '(flush-output-port)'"))
-
-  (use-package gerbil-mode
-    :when (file-directory-p *gerbil-path*)
-    :ensure nil
-    :straight nil
-    :defer t
-    :mode (("\\.ss\\'"  . gerbil-mode)
-           ("\\.pkg\\'" . gerbil-mode))
-    :bind (:map comint-mode-map
-		(("C-S-n" . comint-next-input)
-		 ("C-S-p" . comint-previous-input)
-		 ("C-S-l" . clear-comint-buffer))
-		:map gerbil-mode-map
-		(("C-S-l" . clear-comint-buffer)))
-    :init
-    (autoload 'gerbil-mode
-      (expand-file-name "share/emacs/site-lisp/gerbil-mode.el" *gerbil-path*)
-      "Gerbil editing mode." t)
-    :hook
-    ((gerbil-mode-hook . linum-mode)
-     (inferior-scheme-mode-hook . gambit-inferior-mode))
-    :config
-    (require 'gambit
-             (expand-file-name "share/emacs/site-lisp/gambit.el" *gerbil-path*))
-    (setf scheme-program-name (expand-file-name "bin/gxi" *gerbil-path*))
-
-    (let ((tags (locate-dominating-file default-directory "TAGS")))
-      (when tags (visit-tags-table tags)))
-    (let ((tags (expand-file-name "src/TAGS" *gerbil-path*)))
-      (when (file-exists-p tags) (visit-tags-table tags)))
-
-    (when (package-installed-p 'smartparens)
-      (sp-pair "'" nil :actions :rem)
-      (sp-pair "`" nil :actions :rem))
-
-    (defun clear-comint-buffer ()
-      (interactive)
-      (with-current-buffer "*scheme*"
-	(let ((comint-buffer-maximum-size 0))
-          (comint-truncate-buffer)))))
-
   (defun gerbil-setup-buffers ()
     "Change current buffer mode to gerbil-mode and start a REPL"
     (interactive)
@@ -235,8 +195,34 @@ config.
       (run-scheme "gxi")
       (switch-to-buffer-other-window "*scheme*" nil)
       (switch-to-buffer buf)))
-
-  (global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers))
+  (defun clear-comint-buffer ()
+    (interactive)
+    (with-current-buffer "*scheme*"
+      (let ((comint-buffer-maximum-size 0))
+        (comint-truncate-buffer))))
+  :mode (("\\.ss\\'"  . gerbil-mode)
+         ("\\.pkg\\'" . gerbil-mode))
+  :bind (:map comint-mode-map
+              (("C-S-n" . comint-next-input)
+               ("C-S-p" . comint-previous-input)
+               ("C-S-l" . clear-comint-buffer))
+         :map gerbil-mode-map
+              (("C-S-l" . clear-comint-buffer)))
+  :init
+  (autoload 'gerbil-mode
+    (expand-file-name "share/emacs/site-lisp/gerbil-mode.el" *gerbil-path*)
+    "Gerbil editing mode." t)
+  (global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers)
+  :hook
+  (inferior-scheme-mode . gambit-inferior-mode)
+  :config
+  (require 'gambit
+           (expand-file-name "share/emacs/site-lisp/gambit.el" *gerbil-path*))
+  (setf scheme-program-name (expand-file-name "bin/gxi" *gerbil-path*))
+  (let ((tags (locate-dominating-file default-directory "TAGS")))
+    (when tags (visit-tags-table tags)))
+  (let ((tags (expand-file-name "src/TAGS" *gerbil-path*)))
+    (when (file-exists-p tags) (visit-tags-table tags))))
 ```
 
 To start open a Gerbil file or type `C-c C-g`. Alternatively run `M-x gerbil-mode` (to launch a REPL `run-scheme`).
@@ -258,3 +244,27 @@ C-S-n    next item in history      (comint-next-input)
 ```
 
 For more information read `C-h f gerbil-mode`.
+
+## Additional configuration
+
+If you don't have `prog-mode` or `scheme-mode` configured yet, consider adding the following modes:
+
+* [LineNumbers](https://www.emacswiki.org/emacs/LineNumbers) - Displays line numbers in a buffer.
+* [RainbowDelimiters](https://github.com/Fanael/rainbow-delimiters) - Highlights delimiters such as parentheses, brackets, or braces according to their depth.
+* [Paredit](http://paredit.org/) or [Smartparens](https://github.com/Fuco1/smartparens) - Modes for dealing with parenthesis pairs in a structured way.
+* [ShowParenMode](https://www.emacswiki.org/emacs/ShowParenMode) - Highlights matching parentheses.
+
+Note that `rainbow-delimiters`, `paredit`, and `smartparens` need to be installed first.
+Once installed, they can be activated for `gerbil-mode` or more broadly for any Scheme/Lisp mode with:
+
+```elisp
+(defun scheme-env ()
+  (display-line-numbers-mode 1)
+  (show-paren-local-mode 1)
+  ;; or if you are on Emacs < 28.1
+  ;; (show-paren-mode 1)
+  (paredit-mode 1)
+  (rainbow-delimiters-mode 1))
+
+(add-hook 'scheme-mode-hook #'scheme-env)
+```
