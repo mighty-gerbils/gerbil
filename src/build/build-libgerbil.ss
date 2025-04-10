@@ -21,10 +21,8 @@
 (def default-gerbil-ar "ar")
 
 (cond-expand
- (freebsd
-  (def default-ld-options "-lutil"))
- (netbsd
-  (def default-ld-options "-lm"))
+ ((or freebsd netbsd)
+  (def default-ld-options "-lutil -lm"))
  (else
   (def default-ld-options "-ldl -lm")))
 
