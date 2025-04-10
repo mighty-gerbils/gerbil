@@ -17,19 +17,18 @@ Internet.  It allows servers to find each other by using the server
 identifier, and implicit connect as needed without requiring the
 programmer or the operator to explicitly connect to each other.
 
-::: tip Note
-The registry is currently a centralized component, which obviously
-creates scalability and fault tolerance issues. We plan to implement a
-distributed registry for the next Gerbil release (v0.19); see
-the [Distributed Registry](https://github.com/mighty-gerbils/gerbil/issues/823)
-issue on github.
-:::
-
 By default, each server binds and listens to a UNIX domain socket
 `/tmp/ensemble/<server-identifier>`. Obviously you can specify
 additional addresses, including TLS addresses where the server
 should listen. If your ensemble spans multiple hosts, you should
 specify the TLS addresses where your servers listen explicitly.
+
+::: tip Note
+This tutorial covers low level, unstructured ensembles and is intended
+to ground your understanding of ensembles at the lowest level.  See the
+[Advanced Ensembles Tutorial](advanced-ensembe.md) for structured
+ensembles and advanced ensemble concepts.
+:::
 
 ## The gxensemble Management Tool
 
@@ -41,11 +40,18 @@ Here are the commands it supports:
 $ gerbil ensemble help
 gxensemble: the Gerbil Actor Ensemble Manager
 
-Usage: gxensemble  <command> command-arg ...
+Usage: gxensemble [option ...] <command> command-arg ...
+
+Options:
+ -g --global-env                  use the user global env even in local package context
+ -G --gerbil-path <gerbil-path>   specifies the GERBIL_PATH for ensemble operations [default: #f]
 
 Commands:
- run                              run a server in the ensemble
+ supervisor                       runs the ensemble supervisor
  registry                         runs the ensemble registry
+ run                              run a server in the ensemble
+ env                              ensemble environment operations
+ control                          ensemble supervisory control operations
  load                             loads code in a running server
  eval                             evals code in a running server
  repl                             provides a repl for a running server
@@ -56,8 +62,9 @@ Commands:
  list                             list server state
  ca                               ensemble CA operations
  package                          package ensemble state to ship an actor server environment
+ config                           configure the ensemble
  help                             display help; help <command> for command help
- ```
+```
 
 ### Generating an ensemble administrative cookie
 
@@ -113,11 +120,13 @@ Usage: gxensemble admin authorize [command-option ...] <server-id> <authorized-s
 Command Options:
  -c --console <console>           console server id [default: console]
  -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
 
 Arguments:
  server-id                        the server id
  authorized-server-id             the server to authorize capabilities for
- capabilities                     the server capabilities to authorize [default: (admin)]
+ capabilities                     the server capabilities to authorize [default: ()]
  ```
 
 ### Retracting capabilities
@@ -133,6 +142,8 @@ Usage: gxensemble admin retract [command-option ...] <server-id> <authorized-ser
 Command Options:
  -c --console <console>           console server id [default: console]
  -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
 
 Arguments:
  server-id                        the server id
@@ -141,18 +152,22 @@ Arguments:
 
 ### Starting the ensemble
 
-The first order of business when starting an actor ensemble, is to run a registry.
+The first order of business when starting an (unsupervised) actor ensemble, is to run a registry.
 We can do this with the `gxensemble registry` command:
 ```
 $ gerbil ensemble help registry
-Usage: gxensemble registry [command-option ...]
+Usage: gxensemble registry [command-option ...] [<server-id>]
        runs the ensemble registry
 
 Command Options:
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -D --ensemble-domain <ensemble-domain>  specifies the ensemble domain [default: #f]
  --log  <logging>                 specifies the log level to run with [default: INFO]
  --log-file  <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log [default: #f]
  -l --listen <listen>             additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id> [default: ()]
- -a --announce <announce>         public addresses to announce to the registry; by default these are the listen addresses [default: #f]
+
+Arguments:
+ server-id                        the server id [default: #f]
 ```
 
 ### Running an ensemble server
@@ -163,16 +178,19 @@ arguments passed in the command line.
 
 Here is the usage of the tool:
 ```
+$ gerbil ensemble help run
 Usage: gxensemble run [command-option ...] <server-id> <module-id> <main-args> ...
        run a server in the ensemble
 
 Command Options:
-  --log <logging>                 specifies the log level to run with [default: INFO]
-  --log-file <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server director log [default: #f]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -D --ensemble-domain <ensemble-domain>  specifies the ensemble domain [default: #f]
+ --log  <logging>                 specifies the log level to run with [default: INFO]
+ --log-file  <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log [default: #f]
  -l --listen <listen>             additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id> [default: ()]
  -a --announce <announce>         public addresses to announce to the registry; by default these are the listen addresses [default: #f]
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
-  --roles <roles>                 server role(s); a list of symbols [default: ()]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --roles  <roles>                 server roles; a list of symbols [default: ()]
 
 Arguments:
  server-id                        the server id
@@ -183,20 +201,24 @@ Arguments:
 ### Loading code
 
 You can dynamically load code in any ensemble server using the
-`gxensemble load` command.  This command will ship the object file
-(and it is dependencies, unless forced by the user) to the remote
-server and load them.
+`gxensemble load` command.  This command will ship the object file to
+the remote server and load them; note that it will also load the
+library dependencies unless the force flag is specified.
 
 Here is the usage:
 ```
+$ gerbil ensemble help load
 Usage: gxensemble load [command-option ...] <server-id> <module-id>
        loads code in a running server
 
 Command Options:
+ -c --console <console>           console server id [default: console]
+ --library                        loads the code as library module; the library must be in the servers load path
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --library-prefix  <library-prefix>  list of package prefixes to consider as library modules installed in the server [default: (gerbil scheme std)]
  -f --force                       force the action
-  --library                       loads the code as library module; the library must be in the servers load path
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
-  --library-prefix <library-prefix>  list of package prefixes to consider as library modules installed in the server [default: (gerbil scheme std)]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
 
 Arguments:
  server-id                        the server id
@@ -209,12 +231,15 @@ You can evaluate an expression in a server using the `gxensemble eval` command.
 Note that the evaluator is the raw gambit evaluator, with no gerbil expansion.
 
 ```
-$ gxensemble help eval
+$ gerbil ensemble help eval
 Usage: gxensemble eval [command-option ...] <server-id> <expr>
        evals code in a running server
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
 
 Arguments:
  server-id                        the server id
@@ -229,13 +254,16 @@ Note that the repl does _local expansion_ and _remote evaluation_; that means yo
 
 Here is the usage of the command:
 ```
-$ gxensemble help repl
+$ gerbil ensemble help repl
 Usage: gxensemble repl [command-option ...] <server-id>
        provides a repl for a running server
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
-  --library-prefix <library-prefix>  list of package prefixes to consider as library modules installed in the server [default: (gerbil scheme std)]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --library-prefix  <library-prefix>  list of package prefixes to consider as library modules installed in the server [default: (gerbil scheme std)]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
 
 Arguments:
  server-id                        the server id
@@ -278,47 +306,72 @@ Arguments:
 
 The following commands are useful for general management tasks:
 ```
-$ gxensemble help list-servers
-Usage: gxensemble list-servers [command-option ...]
+$ gerbil ensemble list help
+Usage: gxensemble list  <command> command-arg ...
+
+Commands:
+ servers                          lists known servers
+ actors                           list actors registered in a server
+ connections                      list a server's connections
+ help                             display help; help <command> for command help
+
+$ gerbil ensemble list help servers
+Usage: gxensemble list servers [command-option ...]
        lists known servers
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --pretty                         pretty print
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
 
-$ gxensemble help list-actors
-Usage: gxensemble list-actors [command-option ...] <server-id>
+$ gerbil ensemble list help actors
+Usage: gxensemble list actors [command-option ...] <server-id>
        list actors registered in a server
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --pretty                         pretty print
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
 
 Arguments:
  server-id                        the server id
 
-$ gxensemble help list-connections
-Usage: gxensemble list-connections [command-option ...] <server-id>
-       list a server's connection
+$ gerbil ensemble list help connections
+Usage: gxensemble list connections [command-option ...] <server-id>
+       list a server's connections
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ --pretty                         pretty print
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
 
 Arguments:
  server-id                        the server id
 
-$ gxensemble help lookup
+
+$ gerbil ensemble help lookup
 Usage: gxensemble lookup [command-option ...] <server-or-role>
        looks up a server by id or role
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
-  --role                          lookup by role
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -s --supervised                  the operation is supervised by the ensemble supervisor
+ -S --supervisor <supervisor>     specifies the ensemble supervisor [default: #f]
+ --role                           lookup by role
 
 Arguments:
  server-or-role                   the server or role to lookup
 
 $ gxensemble help shutdown
 Usage: gxensemble shutdown [command-option ...] [<server-id>] [<actor-id>]
-       shuts down an actor, server, or the entire ensemble including the registry
+       shuts down an actor, server, or the entire ensemble
 
 Command Options:
  -f --force                       force the action
@@ -329,7 +382,7 @@ Arguments:
  actor-id                         the actor's registered name [default: #f]
 ```
 
-## A Working example: httpd with dynamic handler registration
+## A Working example: embedded httpd with dynamic handler registration
 
 We can make all this concrete with a working example: an httpd server
 ensemble, that supports dynamic handler registration.

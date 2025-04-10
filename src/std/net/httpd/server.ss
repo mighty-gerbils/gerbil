@@ -38,6 +38,9 @@
   (match addr
     ([ssl: addr ssl-context]
      (ssl-listen addr context: ssl-context backlog: backlog sockopts: sockopts))
+    ([ssl: addr ssl-cert-path ssl-key-path]
+     (let (ssl-context (make-server-ssl-context ssl-cert-path ssl-key-path))
+       (ssl-listen addr context: ssl-context backlog: backlog sockopts: sockopts)))
     (else
      (tcp-listen addr backlog: backlog sockopts: sockopts))))
 

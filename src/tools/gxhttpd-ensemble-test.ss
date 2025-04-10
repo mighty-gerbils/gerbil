@@ -4,12 +4,10 @@
         :std/misc/process
         :std/misc/ports
         :std/os/signal
-        :std/net/request
-        :gerbil/gambit)
+        :std/net/request)
 (export gxhttpd-ensemble-test test-setup! test-cleanup!)
 
-(def httpd-process #f)
-(def registry-process #f)
+(def supervisor-process #f)
 (def current-gerbil-path #f)
 
 (def test-directory
@@ -17,34 +15,48 @@
     (path-expand "gxhttpd-test" this-directory)))
 
 (def (test-setup!)
-  (delete-file-or-directory "/tmp/ensemble" #t)
-  (set! current-gerbil-path (getenv "GERBIL_PATH"))
+  (when (file-exists? "/tmp/ensemble")
+    (delete-file-or-directory "/tmp/ensemble" #t))
+  (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (invoke "gerbil" ["build"] directory: test-directory)
+  (invoke "gerbil" ["httpd" "config"
+                    "--set"
+                    "--ensemble"
+                    "--ensemble-domain" "/test"
+                    "--ensemble-root" (path-expand "root" test-directory)
+                    "-n" "2"
+                    "--root" "content"
+                    "--listen" (object->string '("127.0.0.1:8080"))
+                    "--handlers" (object->string '(("/handler" . :test/site/handler)))
+                    "--enable-servlets"]
+          directory: test-directory)
+  (invoke "gerbil" ["ensemble" "env" "supervisor"
+                    (object->string '(supervisor . /test))]
+          directory: test-directory)
+  (invoke "gerbil" ["ensemble" "env" "known-servers"
+                    "--add" (object->string '(supervisor . /test))]
+          directory: test-directory)
   (ignore-errors
-   (invoke "gerbil" ["ensemble" "admin" "cookie"] directory: test-directory))
-  (set! registry-process
-    (open-process [path: "gerbil" arguments: ["ensemble" "registry"] directory: test-directory]))
-  (thread-sleep! 1)
-  (set! httpd-process
-    (open-process [path: "gerbil" arguments: ["httpd" "-e" "-c" "ensemble.config"] directory: test-directory]))
+   (invoke "gerbil" ["ensemble" "admin" "cookie"]
+           directory: test-directory))
+  (set! supervisor-process
+    (open-process [path: "gerbil" arguments: ["httpd" "ensemble"]
+                         directory: test-directory]))
   (thread-sleep! 2))
 
 (def (test-cleanup!)
-  (when httpd-process
+  (when supervisor-process
     (ignore-errors
-     (invoke "gerbil" ["ensemble" "shutdown" "httpd-ensemble" "ensemble-supervisor"] directory: test-directory))
-    (ignore-errors
-     (invoke "gerbil" ["ensemble" "shutdown" "-f"] directory: test-directory))
-    (thread-sleep! 1)
-    (ignore-errors (kill (process-pid httpd-process) SIGTERM))
-    (process-status httpd-process)
-    (ignore-errors (kill (process-pid registry-process) SIGTERM))
-    (process-status registry-process)
+     (invoke "gerbil" ["ensemble" "control" "shutdown"] directory: test-directory))
+    (ignore-errors (kill (process-pid supervisor-process) SIGTERM))
+    (process-status supervisor-process)
     (thread-sleep! 1))
   (let (test-directory-dot-gerbil (path-expand ".gerbil" test-directory))
     (delete-file-or-directory test-directory-dot-gerbil #t))
-  (setenv "GERBIL_PATH" current-gerbil-path))
+  (if current-gerbil-path
+    (setenv "GERBIL_PATH" current-gerbil-path)
+    (setenv "GERBIL_PATH")))
 
 (def gxhttpd-ensemble-test
   (test-suite "httpd ensemble"

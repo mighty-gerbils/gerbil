@@ -9,6 +9,7 @@
         :std/os/hostname
         :std/os/temporaries
         ./server
+        ./server-identifier
         ./ensemble
         ./cookie
         ./admin
@@ -60,14 +61,14 @@
 (def (start-test-server! server-id server-addr cookie)
   (open-process
    [path: (path-expand "bin/loader-test-server" gerbil-path)
-          arguments: [(symbol->string server-id)
+          arguments: [(symbol->string (car server-id))
                       (object->string [server-addr])
                       (object->string cookie)]]))
 
 (def (start-test-server/admin! server-id server-addr cookie pubk-path)
   (open-process
    [path: (path-expand "bin/loader-test-server" gerbil-path)
-          arguments: [(symbol->string server-id)
+          arguments: [(symbol->string (car server-id))
                       (object->string [server-addr])
                       (object->string cookie)
                       pubk-path]]))
