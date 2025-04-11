@@ -13,7 +13,12 @@ jobs:
       - name: Configure Gerbil
         shell: bash
         run: |
-          CC=gcc-13 ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+          export CC=gcc-13
+	  export GERBIL_GCC=gcc-13
+	  export CXX=g++-13
+	  export LDFLAGS='-Wl,-ld_classic'
+	  export GERBIL_BUILD_CORES=4
+	  ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
       - name: Install Gerbil
         run: ./install.sh
       - name: Run Gerbil tests
