@@ -10,7 +10,7 @@ jobs:
         shared-mode: ['', '--enable-shared']
     steps:
       - uses: actions/checkout@v3
-      - name: Configure Gerbil
+      - name: Configure and make Gerbil
         shell: bash
         run: |
           export CC=gcc-13
@@ -19,8 +19,9 @@ jobs:
           export LDFLAGS='-Wl,-ld_classic'
           export GERBIL_BUILD_CORES=4
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+          make -j$GERBIL_BUILD_CORES
       - name: Install Gerbil
-        run: ./install.sh
+        run: make install
       - name: Run Gerbil tests
         run: |
           export PATH=/opt/gerbil/bin:$PATH
