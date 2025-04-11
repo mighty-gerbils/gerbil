@@ -12,16 +12,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Configure Gerbil 
         run: |
+	  CC=gcc-13
 	  ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
-	  mp () {
-   	   echo "/opt/local/bin/$1"
-	  }
-	  export CC="$(mp gcc-mp-13)"
-	  export GERBIL_GCC="$(mp gcc-mp-13)"
-	  export CXX="$(mp g++-mp-13)"
-	  export LDFLAGS='-Wl,-ld_classic'
-	  export GERBIL_BUILD_CORES=4
-
       - name: Install Gerbil
         run: ./install.sh
       - name: Run Gerbil tests
