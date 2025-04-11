@@ -13,4 +13,9 @@
 ;; The indirection below allows the build-std to do its imports in a module context, transitively
 (gx#import-module "build-std.ss" #t #t)
 ((eval 'std/build-std#build)
- srcdir: srcdir libdir: libdir debug: #t)
+ srcdir: srcdir libdir: libdir
+ debug:
+ (cond-expand
+   ;; see https://github.com/gambit/gambit/issues/953
+   ((or freebsd netbsd) #f)
+   (else #t)))
