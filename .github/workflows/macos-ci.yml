@@ -21,7 +21,7 @@ jobs:
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
       - name: Install Gerbil
-        run: make install
+        run: sudo make install
       - name: Run Gerbil tests
         run: |
           export PATH=/opt/gerbil/bin:$PATH
