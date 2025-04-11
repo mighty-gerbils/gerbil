@@ -10,9 +10,8 @@ jobs:
         shared-mode: ['', '--enable-shared']
     steps:
       - uses: actions/checkout@v3
-      - name: Configure Gerbil AND Make
-        run: |
-	     ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+      - name: Configure Gerbil 
+        run: ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
       - name: Install Gerbil
         run: ./install.sh
       - name: Run Gerbil tests
