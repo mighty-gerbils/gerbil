@@ -1,0 +1,32 @@
+name: MACOSCI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: macos-14
+    strategy:
+      fail-fast: false  # if one fails, do not cancel the other
+      matrix:
+        gambit-version: ['', '--with-gambit=master']
+        shared-mode: ['', '--enable-shared']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure Gerbil AND Make
+        run: |
+	  ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+	  bp () {
+	    echo $(brew --prefix gcc@13)/bin/$1
+	  }
+	  export CC="$(bp gcc-13)"
+	  export GERBIL_GCC="$(bp gcc-13)"
+	  export CXX="$(bp g++-13)"
+	  export LDFLAGS='-Wl,-ld_classic'
+	  export GERBIL_BUILD_CORES=$(nproc)
+	  make -j$GERBIL_BUILD_CORES
+
+
+      - name: Install Gerbil
+        run: ./install.sh
+      - name: Run Gerbil tests
+        run: |
+          export PATH=/opt/gerbil/bin:$PATH
+          gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
