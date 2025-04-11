@@ -18,7 +18,7 @@ jobs:
           export CXX=g++-13
           export LDFLAGS='-Wl,-ld_classic'
           export GERBIL_BUILD_CORES=4
-	  ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+          ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
       - name: Install Gerbil
         run: ./install.sh
       - name: Run Gerbil tests
