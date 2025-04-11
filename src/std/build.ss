@@ -17,5 +17,5 @@
  debug:
  (cond-expand
    ;; see https://github.com/gambit/gambit/issues/953
-   ((or freebsd netbsd) #f)
+   ((or freebsd netbsd darwin) #f)
    (else #t)))
