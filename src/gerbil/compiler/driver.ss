@@ -113,7 +113,7 @@ namespace: gxc
          (debug       (pgetq debug: opts))
          (gen-ssxi    (pgetq generate-ssxi: opts))
          (parallel?   (pgetq parallel: opts)))
-    
+
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (when optimize
@@ -441,7 +441,7 @@ namespace: gxc
             (gerbil-rpath gerbil-libdir))
            (default-ld-options
              (cond-expand
-               (netbsd ["-lm"])
+               ((or freebsd netbsd) ["-lutil" "-lm"])
                (else ["-ldl" "-lm"]))))
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
