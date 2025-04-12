@@ -326,11 +326,11 @@
       (unless (file-exists? server.key)
         (displayln "... generate " server.key)
         (invoke "openssl"
-                ["genpkey"
-                 (cond-expand ((not darwin) "-quiet"))
+                (filter identity ["genpkey"
+                 (cond-expand ((not darwin) "-quiet") (else #f))
                  "-algorithm" "RSA"
                  "-pkeyopt" "rsa_keygen_bits:4096"
-                 "-out" server.key]))
+                 "-out" server.key])))
 
       ;; server.csr
       (when (file-exists? server.csr)

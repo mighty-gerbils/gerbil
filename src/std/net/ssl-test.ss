@@ -55,11 +55,11 @@ END
       (display test-csr-template outp)))
   ;; create self-signed certificate
   (invoke "openssl"
-          ["genpkey"
-           (cond-expand ((not darwin)) "-quiet")
+          (filter identity ["genpkey"
+           (cond-expand ((not darwin) "-quiet") (else #f))
            "-algorithm" "RSA"
            "-pkeyopt" "rsa_keygen_bits:2048"
-           "-out" test-private-key])
+           "-out" test-private-key]))
   (invoke "openssl"
           ["req" "-new" "-batch"
            "-key" test-private-key
