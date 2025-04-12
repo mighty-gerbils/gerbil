@@ -8,7 +8,7 @@ jobs:
       matrix:
         # gambit-version: ['', '--with-gambit=master']
         shared-mode: ['', '--enable-shared']
-        gcc-version: ['13', '14']
+        gcc-version: ['14']
     steps:
       - uses: actions/checkout@v3
       - name: Configure and make Gerbil
