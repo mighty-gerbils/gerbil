@@ -441,7 +441,7 @@ namespace: gxc
             (gerbil-rpath gerbil-libdir))
            (default-ld-options
              (cond-expand
-               ((or freebsd netbsd darwin) ["-lutil" "-lm"])
+               ((or freebsd netbsd) ["-lutil" "-lm"])
                (else ["-ldl" "-lm"]))))
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm

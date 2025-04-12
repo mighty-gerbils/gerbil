@@ -21,7 +21,7 @@
 (def default-gerbil-ar "ar")
 
 (cond-expand
- ((or freebsd netbsd darwin) 
+ ((or freebsd netbsd)
   (def default-ld-options "-lutil -lm"))
  (else
   (def default-ld-options "-ldl -lm")))
