@@ -28,7 +28,7 @@
 (def ensemble-cmd
   (command 'ensemble
     ensemble-config-option
-    help: "runs a supervied httpd server ensemble"))
+    help: "runs a supervised httpd server ensemble"))
 
 (def config-ensemble-flag
   (flag 'ensemble "--ensemble"
