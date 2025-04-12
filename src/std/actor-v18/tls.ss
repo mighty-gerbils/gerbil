@@ -327,7 +327,7 @@
         (displayln "... generate " server.key)
         (invoke "openssl"
                 ["genpkey"
-                 "-quiet"
+                 ;"-quiet"
                  "-algorithm" "RSA"
                  "-pkeyopt" "rsa_keygen_bits:4096"
                  "-out" server.key]))
