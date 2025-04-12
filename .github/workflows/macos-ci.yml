@@ -8,7 +8,7 @@ jobs:
       matrix:
         # gambit-version: ['', '--with-gambit=master']
         shared-mode: ['', '--enable-shared']
-        gcc-version: ['14']
+        gcc-version: ['13']
     steps:
       - uses: actions/checkout@v3
       - name: Configure and make Gerbil
@@ -17,7 +17,7 @@ jobs:
           export CC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
           export CXX=g++-${{ matrix.gcc-version }}
-          # export LDFLAGS='-Wl,-ld_classic'
+          export LDFLAGS='-Wl,-ld_classic'
           export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
