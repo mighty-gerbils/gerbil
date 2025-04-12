@@ -85,7 +85,7 @@ package: gerbil
     ("tags"        "gxtags" "-h")
     ("prof"        "gxprof" "-h")
     ("ensemble"    "gxensemble" "help")
-    ("httpd"       "gxhttpd" "-h")
+    ("httpd"       "gxhttpd" "help")
     ("interactive" "gxi" "-h")
     ("compile"     "gxc" "-h")))
 
