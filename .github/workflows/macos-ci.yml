@@ -8,16 +8,17 @@ jobs:
       matrix:
         gambit-version: ['', '--with-gambit=master']
         shared-mode: ['', '--enable-shared']
+	gcc-version: [13, 14]
     steps:
       - uses: actions/checkout@v3
       - name: Configure and make Gerbil
         shell: bash
         run: |
-          export CC=gcc-13
-          export GERBIL_GCC=gcc-13
-          export CXX=g++-13
+          export CC=gcc-${{ matrix.gcc-version }}
+          export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
+          export CXX=g++-${{ matrix.gcc-version }}
           export LDFLAGS='-Wl,-ld_classic'
-          export GERBIL_BUILD_CORES=4
+          export GERBIL_BUILD_CORES=$(nproc)
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
       - name: Install Gerbil
