@@ -64,23 +64,26 @@
       (let (bin (string-append (path-strip-extension program-source-file) ".bin"))
         (check (compile-exe program-source-file bin) => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
+    (cond-expand
+      ((not darwin)
+       (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
+	 (test-case "static executable"
+	   (let (bin (string-append (path-strip-extension program-source-file) ".static-bin"))
+	     (check (compile-exe program-source-file bin "-static") => 0)
+	     (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))))
 
-    (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
-      (test-case "static executable"
-        (let (bin (string-append (path-strip-extension program-source-file) ".static-bin"))
-          (check (compile-exe program-source-file bin "-static") => 0)
-          (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))
-
-    (test-case "optimized executable"
-      (let (bin (string-append (path-strip-extension program-source-file) ".opt-bin"))
-        (check (compile-exe program-source-file bin "-full-program-optimization") => 0)
-        (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
-
-    (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
-      (test-case "optimized static executable"
-        (let (bin (string-append (path-strip-extension program-source-file) ".opt-static-bin"))
-          (check (compile-exe program-source-file bin "-static" "-full-program-optimization") => 0)
-          (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))))
+		 (test-case "optimized executable"
+		   (let (bin (string-append (path-strip-extension program-source-file) ".opt-bin"))
+		     (check (compile-exe program-source-file bin "-full-program-optimization") => 0)
+		     (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
+		 
+		 (cond-expand
+		   ((not darwin)
+		 (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
+		   (test-case "optimized static executable"
+		     (let (bin (string-append (path-strip-extension program-source-file) ".opt-static-bin"))
+		       (check (compile-exe program-source-file bin "-static" "-full-program-optimization") => 0)
+		       (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))))))
 
 (def make-test
   (test-suite "executable compilation with make"
@@ -92,14 +95,16 @@
       (check (execute (path-expand "bin/test-program" gerbil-path))
              => (string-append "hello " (gerbil-system-version-string))))
 
-    (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
-      (test-case "build static executable"
-        (when (file-exists? gerbil-path)
-          (delete-file-or-directory gerbil-path #t))
-        (create-directory* gerbil-path)
-        (check (invoke (path-expand "test-build-static-exe.ss" this-directory) []) => 0)
-        (check (execute (path-expand "bin/test-program" gerbil-path))
-               => (string-append "hello " (gerbil-system-version-string)))))
+    (cond-expand
+      ((not darwin)
+       (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
+	 (test-case "build static executable"
+           (when (file-exists? gerbil-path)
+             (delete-file-or-directory gerbil-path #t))
+           (create-directory* gerbil-path)
+           (check (invoke (path-expand "test-build-static-exe.ss" this-directory) []) => 0)
+           (check (execute (path-expand "bin/test-program" gerbil-path))
+		  => (string-append "hello " (gerbil-system-version-string)))))))
 
     (test-case "build optimized executable"
       (when (file-exists? gerbil-path)
@@ -109,6 +114,8 @@
       (check (execute (path-expand "bin/test-program" gerbil-path))
              => (string-append "hello " (gerbil-system-version-string))))
 
+    (cond-expand
+      ((not darwin)
     (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
       (test-case "build optimized static executable"
         (when (file-exists? gerbil-path)
@@ -116,4 +123,4 @@
         (create-directory* gerbil-path)
         (check (invoke (path-expand "test-build-optimized-static-exe.ss" this-directory) []) => 0)
         (check (execute (path-expand "bin/test-program" gerbil-path))
-               => (string-append "hello " (gerbil-system-version-string)))))))
+               => (string-append "hello " (gerbil-system-version-string)))))))))
