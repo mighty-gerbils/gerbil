@@ -1,4 +1,4 @@
-ARG distro
+
 ARG with_db
 ARG repo
 ARG branch
