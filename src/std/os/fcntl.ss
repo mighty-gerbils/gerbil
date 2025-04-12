@@ -67,7 +67,28 @@
             )
   (c-declare "#include <unistd.h>")
   (c-declare "#include <sys/types.h>")
-  (c-declare "#include <sys/stat.h>")
+  (c-declare "
+#ifndef _WINDOWS
+#include <sys/stat.h>
+#else
+
+// workaround: define mandatory consts
+// TODO: check their actual values
+#define F_DUPFD 0
+#define F_GETFD 0
+#define F_SETFD 0
+#define F_GETFL 0
+#define F_SETFL 0
+
+#define FD_CLOEXEC 0
+
+#define O_NOCTTY 0
+#define O_NONBLOCK 0
+#define O_SYNC 0
+#define O_ACCMODE 0
+
+#endif
+")
   (c-declare "#include <fcntl.h>")
 
   (namespace ("std/os/fcntl#" __fcntl0 __fcntl1))
@@ -112,6 +133,13 @@
   (define-const* O_NOFOLLOW)
   (define-const* O_TMPFILE)
 
+  (c-declare "
+  #ifdef _WINDOWS
+  int fcntl (int __fd, int __cmd, ...) {
+    return -1;
+  }
+  #endif
+  ")
   (define-c-lambda __fcntl0 (int int) int "fcntl")
   (define-c-lambda __fcntl1 (int int int) int "fcntl")
 

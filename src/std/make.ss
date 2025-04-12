@@ -20,6 +20,7 @@
         env-cppflags
         env-ldflags
         include-gambit-sharp
+        non-posix-extra-gsc-options
         pkg-config
         pkg-config-libs
         pkg-config-cflags
@@ -448,18 +449,40 @@ TODO:
    (else
     identity)))
 
+; generates an `include` form for use in a source code, gsc's -e option etc.
+; It takes care of windows paths where we need to escape the path.
+; e.g. (displayln (include-source "d:\\gerbil\\mycode.scm")) should print
+; (include "d:\\gerbil\\mycode.scm")
+; instead of:
+; (include "d:\gerbil\mycode.scm")
+; which results in an error:
+; *** ERROR -- Invalid escaped character: #\g
+(def (include-source path)
+  (string-append "(include " (object->string path) ")"))
+
 (def (include-gambit-sharp)
   (let* ((gambit-sharp
           (path-expand "lib/_gambit#.scm"
                        (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
-         (include-gambit-sharp
-          (string-append "(include \"" gambit-sharp "\")")))
+         (include-gambit-sharp (include-source gambit-sharp)))
     (cond
      ((gerbil-runtime-smp?)
       `("-e" "(define-cond-expand-feature|enable-smp|)"
         "-e" ,include-gambit-sharp))
      (else
       `("-e" ,include-gambit-sharp)))))
+
+; For native windows support, we need win32ports's sys_time_h (https://github.com/win32ports/sys_time_h) and unistd_h (https://github.com/win32ports/unistd_h). 
+; That means we need to specify an external include path (in theory MSVC can have "default include path" but most of the time we want to avoid it). 
+; However, currently many codes are compiled even without using the default cc options from environment, so we need this function.
+; In theory, we don't need `cond-expand`, because in POSIX systems, respecting `env-cppflags` looks like the correct behavior, too.
+; However, let's keep the current behavior for POSIX systems and remove the `cond-expand` only when we really need to.
+(def (non-posix-extra-gsc-options)
+  (cond-expand
+    (visualc 
+       `("-cc-options" ,((env-cppflags) "")))
+    (else
+       `())))
 
 (def (build spec settings)
   (match spec

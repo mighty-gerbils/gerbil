@@ -79,8 +79,19 @@
 
   (c-declare "#include <unistd.h>")
   (c-declare "#include <sys/types.h>")
-  (c-declare "#include <sys/stat.h>")
+  (c-declare "
+#ifndef _WINDOWS
+#include <sys/stat.h>
+#endif
+")
   (c-declare "#include <fcntl.h>")
+  (c-declare "
+  #ifdef _WINDOWS
+  int fsync(int fd) {
+    return -1;
+  }
+  #endif
+  ")
 
   (define-const S_IRWXU)
   (define-const S_IRUSR)
