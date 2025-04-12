@@ -18,7 +18,7 @@ jobs:
           export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
           export CXX=g++-${{ matrix.gcc-version }}
           export LDFLAGS='-Wl,-ld_classic'
-          export GERBIL_BUILD_CORES=$(sysctl -n hw.logicalcpu)
+          export GERBIL_BUILD_CORES=4
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
       - name: Install Gerbil
