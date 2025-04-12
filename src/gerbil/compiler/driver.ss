@@ -845,7 +845,8 @@ namespace: gxc
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
         (["-ld-options" (and opt "-static") . rest]
-         (if static?
+         (if (and static?
+		  (cons-expand (darwin #f) (else #t)))
            (lp rest (cons* opt "-ld-options" opts))
            (lp rest opts)))
         (["-ld-options" opt . rest]
