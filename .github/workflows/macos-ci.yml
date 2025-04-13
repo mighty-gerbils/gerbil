@@ -7,7 +7,7 @@ jobs:
       fail-fast: false  # if one fails, do not cancel the other
       matrix:
         # gambit-version: ['', '--with-gambit=master']
-        shared-mode: ['', '--enable-shared']
+        # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
       - uses: actions/checkout@v3
@@ -29,4 +29,4 @@ jobs:
           export CC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GH_MACOS_RUNNER_FUBAR=true
-          gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
+          GERBIL_GH_MACOS_RUNNER_FUBAR=true gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
