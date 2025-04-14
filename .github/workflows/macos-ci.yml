@@ -29,5 +29,5 @@ jobs:
           export CC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GH_MACOS_RUNNER_FUBAR=true
-	  env
+          env
           GERBIL_GH_MACOS_RUNNER_FUBAR=true gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
