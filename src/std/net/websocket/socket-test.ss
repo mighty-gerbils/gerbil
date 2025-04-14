@@ -25,8 +25,10 @@
 
 (def basic-socket-test
   (test-suite "raw websocket"
-    (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
-		    "true")
+    (displayln "Env vars not passed?" (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f))
+    (unless (equal?
+	     (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
+	     "true")
       (test-case "socket round-trip binary"
       (test-simple-roundtrip (message '#u8(1 2 3) 'binary)))
     (test-case "socket round-trip text"
