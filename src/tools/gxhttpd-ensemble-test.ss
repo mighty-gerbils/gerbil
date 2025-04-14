@@ -4,6 +4,7 @@
         :std/misc/process
         :std/misc/ports
         :std/os/signal
+        :std/os/temporaries
         :std/net/request)
 (export gxhttpd-ensemble-test test-setup! test-cleanup!)
 
@@ -14,12 +15,17 @@
   (let (this-directory (this-source-directory))
     (path-expand "gxhttpd-test" this-directory)))
 
+(def test-ensemble-tempdir
+  (path-expand "test-gxhttpd-ensemble"
+	       (current-temporary-directory)))
+
 (def (test-setup!)
-  (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
-    (when (file-exists? "/tmp/ensemble")
-      (delete-file-or-directory "/tmp/ensemble" #t))
+  (unless #f #;(equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
+    (when (file-exists? test-ensemble-tempdir)
+      (delete-file-or-directory test-ensemble-tempdir #t))
     (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
     (setenv "GERBIL_PATH")
+    (setenv "GERBIL_ENSEMBLE_PATH" test-ensemble-tempdir)
     (invoke "gerbil" ["build"] directory: test-directory)
     (invoke "gerbil" ["httpd" "config"
                       "--set"
@@ -47,7 +53,7 @@
     (thread-sleep! 2)))
 
 (def (test-cleanup!)
-  (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
+  (unless #f #;(equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
     (when supervisor-process
       (ignore-errors
        (invoke "gerbil" ["ensemble" "control" "shutdown"] directory: test-directory))
@@ -62,7 +68,7 @@
 
 (def gxhttpd-ensemble-test
   (test-suite "httpd ensemble"
-    (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
+    (unless #f #;(equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
       (test-case "/"
 	(let (req (http-get "http://127.0.0.1:8080/"))
           (check (request-status req) => 200)

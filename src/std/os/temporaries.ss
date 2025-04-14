@@ -4,7 +4,7 @@
 
 (import :gerbil/gambit
         :std/sugar)
-(export current-tmpdir
+(export current-temporary-directory
 	make-temporary-file-name
         call-with-temporary-file-name)
 
@@ -23,14 +23,15 @@
       (make-temporary-file-name name)
       tmp)))
 
-(def current-tmpdir 
+(def current-temporary-directory 
   (make-parameter
-   (getenv "TMPDIR" 
-	   (cond-expand (darwin "/private/tmp/")
-			(else "/tmp/")))))
+   (getenv "GERBIL_TMPDIR"
+	   (getenv "TMPDIR" 
+		   (cond-expand (darwin "/private/tmp/")
+				(else "/tmp/"))))))
 
 (def (mktemp name)
-  (let (base (string-append (current-tmpdir) name "."))
+  (let (base (string-append (current-temporary-directory) name "."))
     (let lp ((i 0) (chars []))
       (if (fx< i 8)
         (let (char (string-ref +chars+ (random-integer (string-length +chars+))))
