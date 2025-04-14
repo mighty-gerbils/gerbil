@@ -31,6 +31,10 @@
   (thread-sleep! 1))
 
 (def (test-cleanup!)
+  
+  (unless (equal?
+	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
+	   "true")
   (when httpd-process
     (ignore-errors (kill (process-pid httpd-process) SIGTERM))
     (process-status httpd-process)
@@ -38,7 +42,7 @@
   (let (test-directory-dot-gerbil (path-expand ".gerbil" test-directory))
     (delete-file-or-directory test-directory-dot-gerbil #t))
   (when current-gerbil-path
-    (setenv "GERBIL_PATH" current-gerbil-path)))
+    (setenv "GERBIL_PATH" current-gerbil-path))))
 
 (def gxhttpd-server-test
   (test-suite "httpd"
