@@ -17,7 +17,6 @@
 
 (def (test-setup!)
   (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
-
     (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
     (setenv "GERBIL_PATH")
     (invoke "gerbil" ["build"] directory: test-directory)
@@ -45,6 +44,7 @@
 
 (def gxhttpd-server-test
   (test-suite "httpd"
+  (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
      (unless (equal?
 	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
 	   "true")
@@ -67,4 +67,4 @@
     (test-case "/does-not-exist"
       (let (req (http-get "http://127.0.0.1:8080/does-not-exist"))
         (check (request-status req) => 404)
-        (request-close req))))))
+        (request-close req)))))))
