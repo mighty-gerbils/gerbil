@@ -56,6 +56,7 @@
         (core-bind-feature! feature #f 0 root))))
 
   (set-test-verbose! verbose?)
+  (set-test-verbose! quiet?)
   (test-begin!)
 
   (let* ((files (collect-files args))
