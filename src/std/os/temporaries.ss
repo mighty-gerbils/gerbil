@@ -25,8 +25,9 @@
 
 (def current-tmpdir 
   (make-parameter
-   (cond-expand (darwin "/private/tmp/")
-		(else (getenv "TMPDIR" "/tmp/")))))
+   (getenv "TMPDIR" 
+	   (cond-expand (darwin "/private/tmp/")
+			(else "/tmp/")))))
 
 (def (mktemp name)
   (let (base (string-append (current-tmpdir) name "."))
