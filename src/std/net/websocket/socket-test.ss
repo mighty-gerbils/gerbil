@@ -13,7 +13,7 @@
 (def (test-setup!)
   ;; Test setup fails? Must be temp file right?
   (displayln "Temp works? "(make-temporary-file-name "___ws-test"))
-  (unless (equal?
+  (unless #f #;(equal?
 	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
 	   "true")
     (set! test-socket-path (make-temporary-file-name "ws-test"))
@@ -31,7 +31,7 @@
 (def basic-socket-test
   (test-suite "raw websocket"
     (displayln "Env vars not passed?" (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f))
-    (unless (equal?
+    (unless #f #;(equal?
 	     (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
 	     "true")
       (test-case "socket round-trip binary"
