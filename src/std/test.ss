@@ -18,6 +18,9 @@
   run-tests!
   run-test-suite!
   set-test-verbose!
+  test-verbose?
+  set-test-quiet!
+  test-quiet?
   test-begin!
   test-result
   test-report-summary!)
@@ -42,13 +45,18 @@
                check loc value expected))))
 
 (def *test-verbose* #t)
-
 (def (set-test-verbose! val)
   (set! *test-verbose* val))
+(def (test-verbose?) *test-verbose*)
 
 (def (verbose fmt . args)
   (when *test-verbose*
     (apply printf fmt args)))
+
+(def *test-quiet* #f)
+(def (set-test-quiet! val)
+  (set! *test-quiet* val))
+(def (test-quiet?) *test-quiet*)
 
 (defrules test-suite ()
   ((_ desc body body-rest ...)

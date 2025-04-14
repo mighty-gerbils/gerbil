@@ -33,8 +33,8 @@
                     arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 "-exe" "-o" (path-expand "bin/loader-test-server" gerbil-path)
                                 (path-expand "loader-test-server.ss" (this-source-directory))]
-                    stderr-redirection: #f
-                    stdout-redirection: #f]))
+                    stderr-redirection: (test-quiet?)
+                    stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test server")))
   ;; compile the test support module
@@ -42,8 +42,8 @@
              [path: "gxc"
                     arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 (path-expand "loader-test-support.ss" (this-source-directory))]
-                    stderr-redirection: #f
-                    stdout-redirection: #f]))
+                    stderr-redirection: (test-quiet?)
+                    stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test support module")))
 

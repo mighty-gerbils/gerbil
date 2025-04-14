@@ -56,6 +56,7 @@
         (core-bind-feature! feature #f 0 root))))
 
   (set-test-verbose! (and verbose? (not quiet?)))
+  (set-test-quiet! quiet?)
   (test-begin!)
 
   (let* ((files (collect-files args))
@@ -65,7 +66,7 @@
       (let (suites (if filter (apply-filter filter-rx suites) suites))
         (unless (null? suites)
           (try
-           (if quiet? (display (format "~a," file)) (displayln "=== " file))
+           (if quiet? (display (format "\n~a:" file)) (displayln "=== " file))
            (force-output)
            (when setup!
              (if quiet? (display ".") (displayln ">>> setup"))
