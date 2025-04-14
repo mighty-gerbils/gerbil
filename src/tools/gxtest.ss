@@ -65,7 +65,7 @@
       (let (suites (if filter (apply-filter filter-rx suites) suites))
         (unless (null? suites)
           (try
-           (if (and quiet? #f) (display ".") (displayln "=== " file))
+           (if quiet? (display (format "~a," file)) (displayln "=== " file))
            (force-output)
            (when setup!
              (if quiet? (display ".") (displayln ">>> setup"))
