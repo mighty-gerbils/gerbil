@@ -97,9 +97,11 @@
       ;; ping it
       (check (ping-server test-server-id)
              => 'OK)
+
+      (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
       ;; load the loader-test-support module
       (check (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support)
-             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support.o1"))
+             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support.o1")))
       ;; eval hello
       (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
