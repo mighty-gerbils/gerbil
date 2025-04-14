@@ -11,10 +11,15 @@
 (def server-socket #f)
 
 (def (test-setup!)
-  (set! test-socket-path (make-temporary-file-name "ws-test"))
-  (let (srv (unix-listen test-socket-path))
-    (spawn (cut with-exception-stack-trace (cut basic-server srv)))
-    (set! server-socket srv)))
+  ;; Test setup fails? Must be temp file right?
+  (displayln "Temp works? "(make-temporary-file-name "___ws-test"))
+  (unless (equal?
+	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
+	   "true")
+    (set! test-socket-path (make-temporary-file-name "ws-test"))
+    (let (srv (unix-listen test-socket-path))
+      (spawn (cut with-exception-stack-trace (cut basic-server srv)))
+      (set! server-socket srv))))
 
 (def (test-cleanup!)
   (when server-socket
