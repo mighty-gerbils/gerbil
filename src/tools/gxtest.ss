@@ -103,7 +103,7 @@
 
       (displayln result)
       (unless (eq? result 'OK)
-	 (displayln "file: " file)
+	(test-report-summary!)
         (exit 42)))))
 
 (def (collect-files args)
