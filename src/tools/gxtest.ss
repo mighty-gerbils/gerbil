@@ -65,14 +65,14 @@
       (let (suites (if filter (apply-filter filter-rx suites) suites))
         (unless (null? suites)
           (try
-           (displayln "=== " file)
+           (if quiet? (display ".") (displayln "=== " file))
            (force-output)
            (when setup!
-             (displayln ">>> setup")
+             (if quiet? (display ".") (displayln ">>> setup"))
              (force-output)
              (setup!))
            (for ([name . suite] suites)
-             (displayln ">>> run " name)
+            (if quiet? (display ".") (displayln ">>> run " name))
 	     (let (buf (and quiet? (open-string "")))
 	       (parameterize ((current-error-port
 			       (or buf (current-error-port)))
@@ -81,10 +81,11 @@
 		 (run-test-suite! suite))
 	       (when buf (close-port buf))
 	       (when (and quiet? (!test-suite-error suite))
+		   (displayln "=== " file)
 		 (copy-port buf (current-output-port)))))
            (finally
             (when cleanup!
-              (displayln ">>> cleanup")
+             (if quiet? (display ".") (displayln ">>> cleanup"))
               (force-output)
               (cleanup!)))))))
 
