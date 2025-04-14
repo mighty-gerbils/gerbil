@@ -103,6 +103,7 @@
 
       (displayln result)
       (unless (eq? result 'OK)
+	 (displayln "file: " file)
         (exit 42)))))
 
 (def (collect-files args)

@@ -45,9 +45,6 @@
 (def gxhttpd-server-test
   (test-suite "httpd"
   (unless (equal? (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f) "true")
-     (unless (equal?
-	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
-	   "true")
     (test-case "/"
       (let (req (http-get "http://127.0.0.1:8080/"))
         (check (request-status req) => 200)
@@ -67,4 +64,4 @@
     (test-case "/does-not-exist"
       (let (req (http-get "http://127.0.0.1:8080/does-not-exist"))
         (check (request-status req) => 404)
-        (request-close req)))))))
+        (request-close req))))))
