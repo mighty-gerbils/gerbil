@@ -34,14 +34,14 @@ jobs:
      #      path: ./gerbil-build.tar
      - name: Display structure of downloaded files
        run: ls -lR .
-  run:
-    needs: build
-    runs-on: macos-14
-    steps:
-     - uses: actions/download-artifact@v4
-       with:
-        #name: my-artifact
-        #path: your/destination/dir
-     - name: Display structure of downloaded files
-       run: ls -R your/destination/dir
+  # run:
+  #   needs: build
+  #   runs-on: macos-14
+  #   steps:
+  #    - uses: actions/download-artifact@v4
+  #      # with:
+  #       #name: my-artifact
+  #       #path: your/destination/dir
+  #    - name: Display structure of downloaded files
+  #      run: ls -R your/destination/dir
     
