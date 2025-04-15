@@ -13,7 +13,7 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v4
        with:
-        path: master
+        path: gerbil
      - name: Configure and make Gerbil
         shell: bash
         run: |
@@ -24,8 +24,7 @@ jobs:
           export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
           cd gerbil
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
-         make -j$GERBIL_BUILD_CORES
-         
+         make -j$GERBIL_BUILD_CORES 
       - name: Tar Build files
         run: tar -cvf gerbil-build.tar gerbil/
       - name: Archive Built Source
