@@ -26,7 +26,7 @@ jobs:
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
       - name: 'Tar Build files'
-         run: tar -cvf gerbil-build.tar gerbil/
+        run: tar -cvf gerbil-build.tar gerbil/
       - name: Archive Built Source
         uses: actions/upload-artifact@v4
         with:
