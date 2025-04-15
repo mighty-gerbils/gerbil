@@ -10,7 +10,10 @@ jobs:
         # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+         with:
+          path: gerbil
       - name: Configure and make Gerbil
         shell: bash
         run: |
@@ -19,11 +22,26 @@ jobs:
           export CXX=g++-${{ matrix.gcc-version }}
           export LDFLAGS='-Wl,-ld_classic'
           export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
+          cd gerbil
           ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
           make -j$GERBIL_BUILD_CORES
+      - name: 'Tar Build files'
+         run: tar -cvf gerbil-build.tar gerbil/
       - name: Archive Built Source
         uses: actions/upload-artifact@v4
         with:
           name: macos-built-source-archive
-          path: ./
-     
+          path: ./gerbil-build.tar
+       - name: Display structure of downloaded files
+         run: ls -lR .
+  run:
+    needs: build
+    runs-on: macos-14
+    steps:
+     - uses: actions/download-artifact@v4
+       with:
+        #name: my-artifact
+        #path: your/destination/dir
+     - name: Display structure of downloaded files
+       run: ls -R your/destination/dir
+    
