@@ -23,6 +23,11 @@ jobs:
           make -j$GERBIL_BUILD_CORES
       - name: Install Gerbil
         run: sudo make install
+      - name: Archive Built Source
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-built-source-archive
+          path: ./
       - name: Run Gerbil tests
         run: |
           export PATH=/opt/gerbil/bin:$PATH
