@@ -1,11 +1,12 @@
 name: macos-quick-test
 on: [push]
 jobs:
- runs-on: macos-14
- steps:
-     - uses: actions/download-artifact@v4
-       with:
-         name: macos-built-source-archive
-    - name: Display structure of downloaded files
-      run: ls -R .
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-built-source-archive
+      - name: Display structure of downloaded files
+        run: ls -R .
      
