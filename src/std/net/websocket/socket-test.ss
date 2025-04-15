@@ -45,6 +45,7 @@
 
 ; Echo server
 (def (basic-server srv)
+  (displayln "Echo Server?: " srv)
   (using (srv : ServerSocket)
     (let accept ()
       (using ((ss (srv.accept) : StreamSocket)
