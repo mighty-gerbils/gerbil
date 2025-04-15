@@ -14,26 +14,26 @@ jobs:
        uses: actions/checkout@v4
        with:
         path: gerbil
-     - name: Configure and make Gerbil
-       shell: bash
-       run: |
-          export CC=gcc-${{ matrix.gcc-version }}
-          export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
-          export CXX=g++-${{ matrix.gcc-version }}
-          export LDFLAGS='-Wl,-ld_classic'
-          export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
-          cd gerbil
-          ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
-         make -j$GERBIL_BUILD_CORES 
-      - name: Tar Build files
-        run: tar -cvf gerbil-build.tar gerbil/
-      - name: Archive Built Source
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-built-source-archive
-          path: ./gerbil-build.tar
-       - name: Display structure of downloaded files
-         run: ls -lR .
+     # - name: Configure and make Gerbil
+     #   shell: bash
+     #   run: |
+     #      export CC=gcc-${{ matrix.gcc-version }}
+     #      export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
+     #      export CXX=g++-${{ matrix.gcc-version }}
+     #      export LDFLAGS='-Wl,-ld_classic'
+     #      export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
+     #      cd gerbil
+     #      ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+     #     make -j$GERBIL_BUILD_CORES 
+     #  - name: Tar Build files
+     #    run: tar -cvf gerbil-build.tar gerbil/
+     #  - name: Archive Built Source
+     #    uses: actions/upload-artifact@v4
+     #    with:
+     #      name: macos-built-source-archive
+     #      path: ./gerbil-build.tar
+     - name: Display structure of downloaded files
+       run: ls -lR .
   run:
     needs: build
     runs-on: macos-14
