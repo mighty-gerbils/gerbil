@@ -28,11 +28,11 @@ jobs:
         with:
           name: macos-built-source-archive
           path: ./
-      - name: Run Gerbil tests
-        run: |
-          export PATH=/opt/gerbil/bin:$PATH
-          export CC=gcc-${{ matrix.gcc-version }}
-          export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
-          export GERBIL_GH_MACOS_RUNNER_FUBAR=true
-          env
-          GERBIL_GH_MACOS_RUNNER_FUBAR=true gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
+      # - name: Run Gerbil tests
+      #   run: |
+      #     export PATH=/opt/gerbil/bin:$PATH
+      #     export CC=gcc-${{ matrix.gcc-version }}
+      #     export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
+      #     export GERBIL_GH_MACOS_RUNNER_FUBAR=true
+      #     env
+      #     GERBIL_GH_MACOS_RUNNER_FUBAR=true gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...

@@ -3,11 +3,27 @@ on: [push]
 jobs:
   build:
     runs-on: macos-14
+    strategy:
+      fail-fast: false  # if one fails, do not cancel the other
+      matrix:
+        # gambit-version: ['', '--with-gambit=master']
+        # shared-mode: ['', '--enable-shared']
+        gcc-version: ['13']
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v3
+      - name: Configure and make Gerbil
+        shell: bash
+        run: |
+          export CC=gcc-${{ matrix.gcc-version }}
+          export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
+          export CXX=g++-${{ matrix.gcc-version }}
+          export LDFLAGS='-Wl,-ld_classic'
+          export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
+          ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+          make -j$GERBIL_BUILD_CORES
+      - name: Archive Built Source
+        uses: actions/upload-artifact@v4
         with:
-          # name: macos-built-source-archive
-          github-token: ${{ secrets.GH_PAT }}
-      - name: Display structure of downloaded files
-        run: ls -R .
+          name: macos-built-source-archive
+          path: ./
      
