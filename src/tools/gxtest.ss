@@ -74,7 +74,7 @@
 	     (let (buf (and quiet? (open-string "")))
 	       (parameterize (#;(current-error-port
 			       (or buf (current-error-port)))
-			      (current-output-port
+			      #;(current-output-port
 			       (or buf (current-output-port))))
 		 
 		 (setup!))))
