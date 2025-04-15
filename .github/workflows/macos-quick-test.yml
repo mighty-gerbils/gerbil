@@ -10,10 +10,11 @@ jobs:
         # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
-      - uses: actions/checkout@v4
-        with:
-         path: gerbil
-      - name: Configure and make Gerbil
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+        path: master
+     - name: Configure and make Gerbil
         shell: bash
         run: |
           export CC=gcc-${{ matrix.gcc-version }}
