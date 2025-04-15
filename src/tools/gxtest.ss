@@ -69,7 +69,7 @@
            (if quiet? (display (format "\n~a:" file)) (displayln "=== " file))
            (force-output)
            (when setup!
-             (if quiet? (display ".") (displayln ">>> setup"))
+             (if quiet? (display "s") (displayln ">>> setup"))
              (force-output)
 	     (let (buf (and quiet? (open-string "")))
 	       (parameterize (#;(current-error-port
@@ -79,7 +79,7 @@
 		 
 		 (setup!))))
            (for ([name . suite] suites)
-            (if quiet? (display ".") (displayln ">>> run " name))
+            (if quiet? (display "r") (displayln ">>> run " name))
 	     (let (buf (and quiet? (open-string "")))
 	       (parameterize ((current-error-port
 			       (or buf (current-error-port)))
@@ -92,7 +92,7 @@
 		 (copy-port buf (current-output-port)))))
            (finally
             (when cleanup!
-             (if quiet? (display ".") (displayln ">>> cleanup"))
+             (if quiet? (display "c") (displayln ">>> cleanup"))
               (force-output)
               (cleanup!)))))))
 
