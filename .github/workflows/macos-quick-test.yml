@@ -1,0 +1,16 @@
+name: macos-quick-test
+on: [push]
+jobs:
+  build:
+    runs-on: macos-14
+    strategy:
+      fail-fast: false  # if one fails, do not cancel the other
+      matrix:
+        gcc-version: ['13']
+    steps:
+     - uses: actions/download-artifact@v4
+       with:
+         name: macos-built-source-archive
+    - name: Display structure of downloaded files
+      run: ls -R .
+     
