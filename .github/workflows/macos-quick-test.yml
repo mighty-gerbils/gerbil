@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - with:
+        with:
          path: gerbil
       - name: Configure and make Gerbil
         shell: bash
