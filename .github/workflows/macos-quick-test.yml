@@ -15,8 +15,8 @@ jobs:
        with:
         path: gerbil
      - name: Configure and make Gerbil
-        shell: bash
-        run: |
+       shell: bash
+       run: |
           export CC=gcc-${{ matrix.gcc-version }}
           export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
           export CXX=g++-${{ matrix.gcc-version }}
