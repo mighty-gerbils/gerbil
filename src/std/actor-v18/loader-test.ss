@@ -33,7 +33,7 @@
                     arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 "-exe" "-o" (path-expand "bin/loader-test-server" gerbil-path)
                                 (path-expand "loader-test-server.ss" (this-source-directory))]
-                    stderr-redirection: (test-quiet?)
+                    stderr-redirection: #f
                     stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test server")))
@@ -42,18 +42,18 @@
              [path: "gxc"
                     arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 (path-expand "loader-test-support.ss" (this-source-directory))]
-                    stderr-redirection: (test-quiet?)
+                    stderr-redirection: #f
                     stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test support module")))
 
   ;; uncomment this if you are debugging test failures
-  ;; (current-logger-options 'VERBOSE)
+   (current-logger-options 'VERBOSE)
   )
 
 (def (test-cleanup!)
   ;; uncomment this if you uncommented above
-  ;; (current-logger-options 'WARN)
+  (current-logger-options 'WARN)
 
   (setenv "GERBIL_PATH")
   (delete-file-or-directory gerbil-path #t))

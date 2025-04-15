@@ -15,7 +15,7 @@
 
 (def current-ensemble-path
   (make-parameter (getenv "GERBIL_ENSEMBLE_PATH"
-	  (path-expand "gerbil-ensemble" (current-temporary-directory)))))
+	  (path-expand "ensemble" (current-temporary-directory)))))
   
 (def (ensemble-domain-file-path (base (ensemble-base-path)))
   (path-expand "domain" base))
