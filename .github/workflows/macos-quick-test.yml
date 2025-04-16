@@ -31,21 +31,7 @@ jobs:
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          git pull ../src "$GITHUB_REF"
          
-# actor loader: FAILED
-# remote library loading and evaluation: Check FAILED (check equal? (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support) (string-append gerbil-path /lib/test/actor-v18/loader-test-support.o1)) at "std/actor-v18/loader-test.ss"@103.14-103.94
-# loader administrative privileges: OK
-# actor messages: OK
-
-#simple ensemble commands: FAILED
-# repl: Check FAILED (check equal? (read repl) 'registry>) at "tools/gxensemble-test.ss"@145.16-145.27
-
-# httpd ensemble: FAILED
-# /does-not-exist: ERROR 
-# *** ERROR IN "io/socket/socket.ss"@35.33-35.40 [OSError]: Connection refused
-# --- irritants: connect (#u8(127 0 0 1) . 8080) #f 
-# --- continuation backtrace:
-# [3] #<procedure #990>                                                                  "tools/gxhttpd-ensemble-test.ss"@89:12-89:61 
-      - name: Run tests
+     - name: Run tests
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          make gxtest='-q std/actor-v18/loader-test.ss tools/gxensemble-test.ss tools/gxhttpd-ensemble-test.ss' check
