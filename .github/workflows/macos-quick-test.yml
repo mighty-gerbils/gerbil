@@ -30,8 +30,8 @@ jobs:
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          git pull ../src "$GITHUB_REF"
-      - name: build the needed fixes
-        run: |
+     - name: build the needed fixes
+       run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          make stdlib tools
      - name: Run tests
