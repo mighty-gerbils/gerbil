@@ -1,8 +1,8 @@
 name: build-source
-on: # [push]
-  push:
-    branches:
-      - 'master'
+on: [push]
+  # push:
+  #   branches:
+  #     - 'master'
 jobs:
   build:
     runs-on: macos-14
@@ -14,6 +14,8 @@ jobs:
         gcc-version: ['13']
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Configure and make Gerbil
         shell: bash
         run: |
