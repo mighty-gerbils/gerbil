@@ -13,7 +13,12 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v4
        with:
-        path: gerbil
+        path: gerbil-source
+     - name: Get Build 
+       uses: actions/download-artifact@v4
+       with:
+         path: gerbil-built
+         run-id: 14480802562
      # - name: Configure and make Gerbil
      #   shell: bash
      #   run: |
