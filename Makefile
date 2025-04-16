@@ -19,6 +19,9 @@ install:
 check:
 	./build.sh env gxtest ./...
 
+shhheck:
+	./build.sh env gxtest -q ./...
+
 clean:
 	rm -rf build
 	rm -rf bootstrap
