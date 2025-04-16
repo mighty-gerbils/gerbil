@@ -45,6 +45,7 @@ jobs:
          include-hidden-files: true
          path: |
            build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/src/tools/gxensemble-test
+           ${{ env.TMPDIR }}/ensemble
     
 # actor loader: FAILED
 # remote library loading and evaluation: Check FAILED (check equal? (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support) (string-append gerbil-path /lib/test/actor-v18/loader-test-support.o1)) at "std/actor-v18/loader-test.ss"@103.14-103.94
