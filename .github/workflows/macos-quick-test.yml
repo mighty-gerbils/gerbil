@@ -28,7 +28,7 @@ jobs:
      - name: git pull new source to build
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
-         git pull ../src
+         git pull ../src "$GITHUB_REF"
      # - name: Run tests
      #   run: |
      #     cd gerbil-built
