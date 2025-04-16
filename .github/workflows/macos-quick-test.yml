@@ -20,6 +20,11 @@ jobs:
        # uses: actions/download-artifact@v4
        with:
          run_id: 14487201513
+     - name: Untar & rm .tar
+       run: |
+         cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
+         tar xvf gerbil.tar
+         rm gerbil.tar
      # - name: Move to build
      #   run: mv macos-built-source-archive gerbil-built
 
