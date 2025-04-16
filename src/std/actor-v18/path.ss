@@ -15,7 +15,7 @@
 
 (def current-ensemble-socket-path
   (make-parameter
-   (getenv "GERBIL_ENSEMBLE_PATH"
+   (getenv "GERBIL_ENSEMBLE_SOCKET_PATH"
 	   (path-expand "ensemble" (path-normalize "/tmp")
 			#;(current-temporary-directory)))))
   
@@ -73,8 +73,8 @@
     (ensemble-server-unix-path (car server-id) (cdr server-id))
     (let* ((domain-path (ensemble-domain->relative-path domain))
            (base (if (string-empty? domain-path)
-                   (current-ensemble-path)
-                   (path-expand domain-path (current-ensemble-path)))))
+                   (urrent-ensemble-socket-path)
+                   (path-expand domain-path (current-ensemble-socket-path)))))
       (path-expand (string-append (symbol->string server-id) ".sock") base))))
 
 (def (ensemble-server-unix-addr server-id)
