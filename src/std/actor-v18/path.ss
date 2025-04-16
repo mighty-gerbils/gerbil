@@ -72,7 +72,7 @@
     (let* ((domain-path (ensemble-domain->relative-path domain))
            (base (if (string-empty? domain-path)
                    (current-ensemble-path)
-                   (path-expand domain-path "/tmp/ensemble"))))
+                   (path-expand domain-path (current-ensemble-path)))))
       (path-expand (string-append (symbol->string server-id) ".sock") base))))
 
 (def (ensemble-server-unix-addr server-id)
