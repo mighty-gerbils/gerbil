@@ -3,11 +3,14 @@
         :std/source
         :std/iter
         :std/io
+	:std/logger
         :std/misc/process
         :std/misc/ports
         :std/os/signal)
 
 (export gxensemble-simple-cmds-test gxensemble-echo-test test-setup! test-cleanup!)
+
+(current-logger-options 'DEBUG)
 
 (def supervisor-process #f)
 (def current-gerbil-path #f)
