@@ -10,44 +10,26 @@ jobs:
         # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
-     - name: Checkout
-       uses: actions/checkout@v4
-       with:
-        path: gerbil-source
+     # - name: Checkout
+     #   uses: actions/checkout@v4
+     #   with:
+     #    path: gerbil-source
     # https://github.com/dawidd6/action-download-artifact
      - name: Get Build
        uses: dawidd6/action-download-artifact@v9
        # uses: actions/download-artifact@v4
        with:
-         run_id: 14480802562
-     - name: Move to build
-       run: mv macos-built-source-archive gerbil-built
+         run_id: 14485707943
+     # - name: Move to build
+     #   run: mv macos-built-source-archive gerbil-built
 
-     - name: rsync new source to build
-       run: rsync -av gerbil-source/ gerbil-built/
+     # - name: rsync new source to build
+     #   run: rsync -av gerbil-source/ gerbil-built/
 
-     - name: Run tests
-       run: |
-         cd gerbil-built
-         ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
-     # - name: Configure and make Gerbil
-     #   shell: bash
+     # - name: Run tests
      #   run: |
-     #      export CC=gcc-${{ matrix.gcc-version }}
-     #      export GERBIL_GCC=gcc-${{ matrix.gcc-version }}
-     #      export CXX=g++-${{ matrix.gcc-version }}
-     #      export LDFLAGS='-Wl,-ld_classic'
-     #      export GERBIL_BUILD_CORES=$(sysctl -n hw.physicalcpu)
-     #      cd gerbil
-     #      ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
-     #     make -j$GERBIL_BUILD_CORES 
-     #  - name: Tar Build files
-     #    run: tar -cvf gerbil-build.tar gerbil/
-     #  - name: Archive Built Source
-     #    uses: actions/upload-artifact@v4
-     #    with:
-     #      name: macos-built-source-archive
-     #      path: ./gerbil-build.tar
+     #     cd gerbil-built
+     #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
      - name: Display structure of downloaded files
        run: ls -a gerbi*
   # run:
