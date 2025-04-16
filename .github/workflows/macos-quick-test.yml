@@ -22,6 +22,14 @@ jobs:
          run_id: 14480802562
      - name: Move to build
        run: mv macos-built-source-archive gerbil-built
+
+     - name: rsync new source to build
+       run: rsync -av gerbil-source/ gerbil-built/
+
+     - name: Run tests
+       run: |
+         cd gerbil-built
+         ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
      # - name: Configure and make Gerbil
      #   shell: bash
      #   run: |
