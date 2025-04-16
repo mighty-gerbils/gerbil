@@ -26,7 +26,7 @@ jobs:
          tar xvf gerbil.tar
          rm gerbil.tar
      - name: git pull new source to build
-        run: |
+       run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          git pull ../src
      # - name: Run tests
