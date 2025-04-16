@@ -30,6 +30,8 @@ jobs:
      #   run: |
      #     cd gerbil-built
      #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
+     - name: untar
+       run: tar xvf artifact/gerbil.tar
      - name: Display structure of downloaded files
        run: ls -a 
   # run:
