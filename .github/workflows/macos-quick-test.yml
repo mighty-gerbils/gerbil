@@ -25,18 +25,16 @@ jobs:
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          tar xvf gerbil.tar
          rm gerbil.tar
-     # - name: Move to build
-     #   run: mv macos-built-source-archive gerbil-built
-
-     # - name: rsync new source to build
-     #   run: rsync -av gerbil-source/ gerbil-built/
-
+     - name: git pull new source to build
+        run: |
+         cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
+         git pull ../src
      # - name: Run tests
      #   run: |
      #     cd gerbil-built
      #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
      - name: Display structure of downloaded files
-       run: ls -a 
+       run: ls -aR 
   # run:
   #   needs: build
   #   runs-on: macos-14
