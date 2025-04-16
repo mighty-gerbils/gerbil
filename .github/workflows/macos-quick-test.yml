@@ -33,7 +33,7 @@ jobs:
      - name: Run tests
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
-         make shhheck
+         make gxtest='-q ./...' check
   # run:
   #   needs: build
   #   runs-on: macos-14

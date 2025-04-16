@@ -1,6 +1,8 @@
 BUILDERS = prepare gambit boot-gxi stage0 stage1 stdlib libgerbil lang \
  r7rs-large srfi tools tags doc
 
+gxtest = ./...
+
 
 all: build
 
@@ -17,10 +19,7 @@ install:
 	DESTDIR="$(DESTDIR)" ./install.sh
 
 check:
-	./build.sh env gxtest ./...
-
-shhheck:
-	./build.sh env gxtest -q ./...
+	./build.sh env ../build/bin/gxtest $(gxtest)
 
 clean:
 	rm -rf build
