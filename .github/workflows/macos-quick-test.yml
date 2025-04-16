@@ -31,7 +31,7 @@ jobs:
      #     cd gerbil-built
      #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
      - name: Display structure of downloaded files
-       run: ls -a gerbi*
+       run: ls -a 
   # run:
   #   needs: build
   #   runs-on: macos-14
