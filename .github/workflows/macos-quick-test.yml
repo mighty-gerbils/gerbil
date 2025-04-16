@@ -40,7 +40,7 @@ jobs:
      #      name: macos-built-source-archive
      #      path: ./gerbil-build.tar
      - name: Display structure of downloaded files
-       run: ls -lR .
+       run: ls -a gerbi*
   # run:
   #   needs: build
   #   runs-on: macos-14
