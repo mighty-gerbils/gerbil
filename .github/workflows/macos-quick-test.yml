@@ -20,7 +20,7 @@ jobs:
        # uses: actions/download-artifact@v4
        with:
          path: gerbil-built
-         run-id: 14480802562
+         run_id: 14480802562
      # - name: Configure and make Gerbil
      #   shell: bash
      #   run: |
