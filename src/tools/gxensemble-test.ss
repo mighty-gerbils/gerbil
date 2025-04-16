@@ -38,6 +38,7 @@
   (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (delete-transient-dirs!)
+  (displayln "DotGerbil is WHERE? " dot-gerbil-directory)
 
   ;; build the necessary code
   (invoke "gerbil" ["build"] directory: project-directory)
