@@ -14,8 +14,10 @@ jobs:
        uses: actions/checkout@v4
        with:
         path: gerbil-source
-     - name: Get Build 
-       uses: actions/download-artifact@v4
+    # https://github.com/dawidd6/action-download-artifact
+     - name: Get Build
+       uses: dawidd6/action-download-artifact@v9
+       # uses: actions/download-artifact@v4
        with:
          path: gerbil-built
          run-id: 14480802562
