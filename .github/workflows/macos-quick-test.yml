@@ -48,7 +48,7 @@ jobs:
          name: 'ensemble-test-dirs'
          include-hidden-files: true
          path: |
-          #  build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/src/tools/gxensemble-test
+           ~/.gerbil/
            /private/tmp/ensemble
     
 # actor loader: FAILED
