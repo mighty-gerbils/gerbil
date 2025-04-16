@@ -1,5 +1,8 @@
 name: build-source
-on: [push]
+on: # [push]
+  push:
+    branches:
+      - 'master'
 jobs:
   build:
     runs-on: macos-14
