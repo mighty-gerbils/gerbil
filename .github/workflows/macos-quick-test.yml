@@ -10,10 +10,10 @@ jobs:
         # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-         path: 'src'
+     # - name: Checkout
+     #   uses: actions/checkout@v4
+     #   with:
+     #    path: gerbil-source
     # https://github.com/dawidd6/action-download-artifact
      - name: Get Build
        uses: dawidd6/action-download-artifact@v9
@@ -30,16 +30,8 @@ jobs:
      #   run: |
      #     cd gerbil-built
      #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
-     - name: Untar
-       run: |
-         cd build-macOS-gcc-13
-         tar xvf gerbil.tar
      - name: Display structure of downloaded files
-       run: ls -a
-     - name: Pull Lastest Changes
-       run: |
-        git pull ../src 
-         
+       run: ls -a 
   # run:
   #   needs: build
   #   runs-on: macos-14
