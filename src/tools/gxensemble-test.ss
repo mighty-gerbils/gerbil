@@ -73,7 +73,7 @@
           directory: test-directory))
 
 (def (test-cleanup!)
-  (when supervisor-process
+  (when #f #;supervisor-process
     (ignore-errors
      (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory "control" "shutdown"]))
     (thread-sleep! 1)
