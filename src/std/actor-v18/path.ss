@@ -73,7 +73,7 @@
     (ensemble-server-unix-path (car server-id) (cdr server-id))
     (let* ((domain-path (ensemble-domain->relative-path domain))
            (base (if (string-empty? domain-path)
-                   (urrent-ensemble-socket-path)
+                   (current-ensemble-socket-path)
                    (path-expand domain-path (current-ensemble-socket-path)))))
       (path-expand (string-append (symbol->string server-id) ".sock") base))))
 
