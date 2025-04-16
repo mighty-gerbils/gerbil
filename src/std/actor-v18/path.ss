@@ -13,9 +13,11 @@
 (def (ensemble-base-path (base (gerbil-path)))
   (path-expand "ensemble" base))
 
-(def current-ensemble-path
-  (make-parameter (getenv "GERBIL_ENSEMBLE_PATH"
-	  (path-expand "ensemble" (current-temporary-directory)))))
+(def current-ensemble-socket-path
+  (make-parameter
+   (getenv "GERBIL_ENSEMBLE_PATH"
+	   (path-expand "ensemble" (path-normalize "/tmp")
+			#;(current-temporary-directory)))))
   
 (def (ensemble-domain-file-path (base (ensemble-base-path)))
   (path-expand "domain" base))
