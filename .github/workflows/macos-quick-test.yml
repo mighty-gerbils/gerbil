@@ -19,8 +19,9 @@ jobs:
        uses: dawidd6/action-download-artifact@v9
        # uses: actions/download-artifact@v4
        with:
-         path: gerbil-built
          run_id: 14480802562
+     - name: Move to build
+       run: mv macos-built-source-archive gerbil-built
      # - name: Configure and make Gerbil
      #   shell: bash
      #   run: |
