@@ -30,12 +30,10 @@ jobs:
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          git pull ../src "$GITHUB_REF"
-     # - name: Run tests
-     #   run: |
-     #     cd gerbil-built
-     #     ./build.sh env ../build/bin/gxtest -q src/gerbil/test/... src/std/... src/lang/... src/tools/...
-     - name: Display structure of downloaded files
-       run: ls -aR 
+     - name: Run tests
+       run: |
+         cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
+         make check
   # run:
   #   needs: build
   #   runs-on: macos-14
