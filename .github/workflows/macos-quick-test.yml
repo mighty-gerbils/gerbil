@@ -35,7 +35,10 @@ jobs:
      - name: Display structure of downloaded files
        run: ls -a
      - name: Pull Lastest Changes
-       run: git pull
+       run: |
+        remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        git pull "$remote_repo"
+         
   # run:
   #   needs: build
   #   runs-on: macos-14
