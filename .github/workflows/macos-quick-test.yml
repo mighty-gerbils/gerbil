@@ -10,10 +10,10 @@ jobs:
         # shared-mode: ['', '--enable-shared']
         gcc-version: ['13']
     steps:
-     # - name: Checkout
-     #   uses: actions/checkout@v4
-     #   with:
-     #    path: gerbil-source
+     - name: Checkout
+       uses: actions/checkout@v4
+       with:
+         path: 'src'
     # https://github.com/dawidd6/action-download-artifact
      - name: Get Build
        uses: dawidd6/action-download-artifact@v9
