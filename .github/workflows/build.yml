@@ -27,3 +27,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: gerbil.tar
+          name: build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
