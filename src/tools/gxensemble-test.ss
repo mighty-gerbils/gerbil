@@ -171,6 +171,7 @@
 
 (def gxensemble-echo-test
   (test-suite "echo server"
+    (test-case "Nope!" (check #t => #t))
     #;(test-case "dynamic module"
       (invoke "tar" ["czf" "test.tar.gz" "lib"]
               directory: dot-gerbil-directory)
