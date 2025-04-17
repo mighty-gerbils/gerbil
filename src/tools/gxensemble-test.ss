@@ -45,7 +45,6 @@
   ;; build the necessary code
   (invoke "gerbil" ["build"] directory: project-directory)
 
-  (invoke "ls" ["-alR" dot-gerbil-directory])
 
   ;; configure and start the ensemble supervisor
   (invoke "gerbil" ["ensemble"
@@ -75,7 +74,9 @@
                     "--add" "(supervisor . /test)"])
   (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                     "config" "ensemble"]
-          directory: test-directory))
+          directory: test-directory)
+
+  (invoke "ls" ["-alR" dot-gerbil-directory]))
 
 (def (test-cleanup!)
   (when #f #;supervisor-process
