@@ -40,7 +40,7 @@ jobs:
          make gxtest='tools/gxensemble-test.ss' check || echo "NOPE?"
      - name: List test paths + tar them! 
        run: |
-         ls -aR /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
+         # ls -aR /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
          tar cvf test-dirs.tar build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/tools/
          
      - name: Upload ensemble test paths
@@ -49,6 +49,9 @@ jobs:
          name: 'ensemble-test-dirs'
          include-hidden-files: true
          path: test
+
+# /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil/bin/echod
+# /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
     
 # actor loader: FAILED
 # remote library loading and evaluation: Check FAILED (check equal? (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support) (string-append gerbil-path /lib/test/actor-v18/loader-test-support.o1)) at "std/actor-v18/loader-test.ss"@103.14-103.94
