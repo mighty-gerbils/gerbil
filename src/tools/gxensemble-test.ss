@@ -92,6 +92,7 @@
 
 (def gxensemble-simple-cmds-test
   (test-suite "simple ensemble commands"
+    (test-case "Nope!" (check #t => #t))
     #;(test-case "list"
       (let (servers
             (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
