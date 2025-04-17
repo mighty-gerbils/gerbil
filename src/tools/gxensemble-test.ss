@@ -40,6 +40,7 @@
   (delete-transient-dirs!)
   (displayln "DotGerbil is WHERE? " dot-gerbil-directory)
 
+  (create-directory* dot-gerbil-directory)
   ;; build the necessary code
   (invoke "gerbil" ["build"] directory: project-directory)
 
