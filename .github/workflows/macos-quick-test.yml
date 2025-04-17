@@ -48,8 +48,9 @@ jobs:
        with:
          name: 'ensemble-test-dirs'
          include-hidden-files: true
-         path: test
-
+         path: |
+           ~/.gerbil
+           build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/src/tools
 # /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil/bin/echod
 # /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
     
