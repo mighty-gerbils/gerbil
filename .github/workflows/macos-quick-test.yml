@@ -41,7 +41,7 @@ jobs:
      - name: List test paths + tar them! 
        run: |
          # ls -aR /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
-         tar cvf test-dirs.tar build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/src/tools/ ~/.gerbil
+         tar cvf test-dirs.tar build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}/src/tools/ ~/.gerbil /tmp/ensemble
          
      - name: Upload ensemble test paths
        uses: actions/upload-artifact@v4
