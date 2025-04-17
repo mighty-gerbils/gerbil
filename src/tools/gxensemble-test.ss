@@ -44,7 +44,7 @@
   ;; build the necessary code
   (invoke "gerbil" ["build"] directory: project-directory)
 
-  (invoke "ls" "-alR" [dot-gerbil-directory])
+  (invoke "ls" ["-alR" dot-gerbil-directory])
 
   ;; configure and start the ensemble supervisor
   (invoke "gerbil" ["ensemble"
