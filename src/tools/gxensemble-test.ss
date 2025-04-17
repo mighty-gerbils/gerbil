@@ -76,7 +76,8 @@
                     "config" "ensemble"]
           directory: test-directory)
 
-  (invoke "ls" ["-alR" dot-gerbil-directory]))
+  (invoke "ls" ["-alR" dot-gerbil-directory])
+  (invoke "ls" ["-alR" ensemble-ctl-directory]))
 
 (def (test-cleanup!)
   (when #f #;supervisor-process
