@@ -3,14 +3,11 @@
         :std/source
         :std/iter
         :std/io
-	:std/logger
         :std/misc/process
         :std/misc/ports
         :std/os/signal)
 
 (export gxensemble-simple-cmds-test gxensemble-echo-test test-setup! test-cleanup!)
-
-(current-logger-options 'DEBUG)
 
 (def supervisor-process #f)
 (def current-gerbil-path #f)
@@ -38,13 +35,9 @@
   (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (delete-transient-dirs!)
-  (displayln "DotGerbil is WHERE? " dot-gerbil-directory)
 
-  (create-directory* dot-gerbil-directory)
-  (create-directory* "~/.gerbil")
   ;; build the necessary code
   (invoke "gerbil" ["build"] directory: project-directory)
-
 
   ;; configure and start the ensemble supervisor
   (invoke "gerbil" ["ensemble"
@@ -62,7 +55,6 @@
   (create-directory* (path-expand "ensemble" ensemble-ctl-directory))
   (copy-file (path-expand "ensemble/cookie" ensemble-env-directory)
              (path-expand "ensemble/cookie" ensemble-ctl-directory))
-  
   (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                     "env" "domain" "/test"])
   (invoke "gerbil" ["ensemble"
@@ -75,13 +67,10 @@
                     "--add" "(supervisor . /test)"])
   (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                     "config" "ensemble"]
-          directory: test-directory)
-
-  (invoke "ls" ["-alR" dot-gerbil-directory])
-  (invoke "ls" ["-alR" test-directory]))
+          directory: test-directory))
 
 (def (test-cleanup!)
-  (when #f #;supervisor-process
+  (when supervisor-process
     (ignore-errors
      (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory "control" "shutdown"]))
     (thread-sleep! 1)
@@ -95,8 +84,7 @@
 
 (def gxensemble-simple-cmds-test
   (test-suite "simple ensemble commands"
-    (test-case "Nope!" (check #t => #t))
-    #;(test-case "list"
+    (test-case "list"
       (let (servers
             (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                               "list" "servers" "-s"]
@@ -118,7 +106,7 @@
         (check (length conns) => 1)
         (check (caar conns) => '(supervisor . /test))))
 
-    #;(test-case "ping"
+    (test-case "ping"
       (let (result
             (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                               "ping" "-s" "registry"]
@@ -132,7 +120,7 @@
                     stdout-redirection: #t))
         (check result => 'OK)))
 
-    #;(test-case "eval"
+    (test-case "eval"
       (let (result
             (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                               "eval" "-s" "registry" "(gerbil-version-string)"]
@@ -140,7 +128,7 @@
                     stdout-redirection: #t))
         (check result => (gerbil-version-string))))
 
-    #;(test-case "repl"
+    (test-case "repl"
       (let (repl
             (open-process
              [path: "gerbil"
@@ -175,8 +163,7 @@
 
 (def gxensemble-echo-test
   (test-suite "echo server"
-    (test-case "Nope!" (check #t => #t))
-    #;(test-case "dynamic module"
+    (test-case "dynamic module"
       (invoke "tar" ["czf" "test.tar.gz" "lib"]
               directory: dot-gerbil-directory)
       (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
@@ -226,7 +213,7 @@
         (check (length result) => 1)
         (check (caar result) => '(registry . /test))))
 
-    #;(test-case "binary executable"
+    (test-case "binary executable"
       (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                         "control" "upload" "--exe"
                         (path-expand "bin/echod" dot-gerbil-directory)
