@@ -3,6 +3,7 @@
 ;;; ensemble path utils
 (import :std/config
         :std/os/hostname
+        :std/os/temporaries
         (only-in :std/logger current-log-directory))
 (export #t)
 
@@ -12,6 +13,12 @@
 (def (ensemble-base-path (base (gerbil-path)))
   (path-expand "ensemble" base))
 
+(def current-ensemble-socket-path
+  (make-parameter
+   (getenv "GERBIL_ENSEMBLE_SOCKET_PATH"
+	   (path-expand "ensemble" (path-normalize "/tmp")
+			#;(current-temporary-directory)))))
+  
 (def (ensemble-domain-file-path (base (ensemble-base-path)))
   (path-expand "domain" base))
 
@@ -66,8 +73,8 @@
     (ensemble-server-unix-path (car server-id) (cdr server-id))
     (let* ((domain-path (ensemble-domain->relative-path domain))
            (base (if (string-empty? domain-path)
-                   "/tmp/ensemble"
-                   (path-expand domain-path "/tmp/ensemble"))))
+                   (current-ensemble-socket-path)
+                   (path-expand domain-path (current-ensemble-socket-path)))))
       (path-expand (string-append (symbol->string server-id) ".sock") base))))
 
 (def (ensemble-server-unix-addr server-id)
