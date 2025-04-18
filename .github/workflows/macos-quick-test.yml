@@ -33,11 +33,11 @@ jobs:
      - name: build the needed fixes
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
-         make stdlib tools
+         make stdlib tools install
      - name: Run tests
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
-         make gxtest='tools/gxensemble-test.ss' check || echo "NOPE?"
+         make gxtest='tools/gxensemble-test.ss' check"
      - name: List test paths + tar them! 
        run: |
          # ls -aR /Users/runner/work/gerbil/gerbil/build-macOS-gcc-13/src/tools/gxensemble-test/project/.gerbil
