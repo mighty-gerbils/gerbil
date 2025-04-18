@@ -62,6 +62,7 @@
   (create-directory* (path-expand "ensemble" ensemble-ctl-directory))
   (copy-file (path-expand "ensemble/cookie" ensemble-env-directory)
              (path-expand "ensemble/cookie" ensemble-ctl-directory))
+  
   (invoke "gerbil" ["ensemble" "-G" ensemble-ctl-directory
                     "env" "domain" "/test"])
   (invoke "gerbil" ["ensemble"
@@ -77,7 +78,7 @@
           directory: test-directory)
 
   (invoke "ls" ["-alR" dot-gerbil-directory])
-  (invoke "ls" ["-alR" ensemble-ctl-directory]))
+  (invoke "ls" ["-alR" test-directory]))
 
 (def (test-cleanup!)
   (when #f #;supervisor-process
