@@ -33,7 +33,8 @@ jobs:
      - name: build the needed fixes
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
-         make stdlib tools install
+         make stdlib tools
+         sudo make install
      - name: Run tests
        run: |
          cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
