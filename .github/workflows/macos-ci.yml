@@ -31,7 +31,6 @@ jobs:
           make -j$GERBIL_BUILD_CORES
       - name: Run tests
         run: |
-         cd build-${{ runner.os }}-gcc-${{ matrix.gcc-version }}
          make gxtest='tools/gxensemble-test.ss' check || echo "FAILED"
      # - name: Archive Built Source
      #    uses: actions/upload-artifact@v4
