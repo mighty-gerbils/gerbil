@@ -55,8 +55,8 @@ END
       (display test-csr-template outp)))
   ;; create self-signed certificate
   (invoke "openssl"
-          (filter identity ["genpkey"
-           (cond-expand ((not darwin) "-quiet") (else #f))
+          ["genpkey"
+           (cond-expand ((not darwin) ["-quiet"]) (else [])) ...
            "-algorithm" "RSA"
            "-pkeyopt" "rsa_keygen_bits:2048"
            "-out" test-private-key]))
@@ -70,7 +70,7 @@ END
            "-days" "30"
            "-in" (path-expand "test.csr" test-directory)
            "-signkey" test-private-key
-           "-out" test-certificate]))
+           "-out" test-certificate])
 
 (def (test-cleanup!)
   (when (file-exists? test-directory)
