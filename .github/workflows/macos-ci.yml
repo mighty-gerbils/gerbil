@@ -1,13 +1,13 @@
 name: MACOSCI
-on: 
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    branches:
-      'master'
-    types:
-      - ready_for_review
+on: [push]
+  # push:
+  #   branches:
+  #     - 'master'
+  # pull_request:
+  #   branches:
+  #     'master'
+  #   types:
+  #     - ready_for_review
 jobs:
   build:
     runs-on: macos-14
