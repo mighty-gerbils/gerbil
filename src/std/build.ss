@@ -15,8 +15,3 @@
 ((eval 'std/build-std#build)
  srcdir: srcdir libdir: libdir debug: #t)
 
-;; TODO: remove this if it passes
-#;(cond-expand
-   ;; see https://github.com/gambit/gambit/issues/953
-   ((or freebsd netbsd darwin) #f)
-   (else #t)))
