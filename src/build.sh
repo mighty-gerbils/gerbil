@@ -292,6 +292,13 @@ build_gerbil() {
   build_tools      || die
 }
 
+# Running the tests!
+
+check_gerbil () {
+    export GERBIL_HOME=$(cd ../build && pwd)
+    ../build/bin/gxtest $*
+}
+
 ## handling command line
 if [ "$#" -eq 0 ]; then
   build_gerbil
@@ -338,6 +345,10 @@ else
          ;;
        "env")
            $*
+         ;;
+       "check")
+	   shift;
+	   check_gerbil $* || die
          ;;
        *)
          feedback_err "Unknown command."

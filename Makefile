@@ -19,7 +19,7 @@ install:
 	DESTDIR="$(DESTDIR)" ./install.sh
 
 check:
-	./build.sh env ../build/bin/gxtest $(gxtest)
+	./build.sh check $(gxtest)
 
 clean:
 	rm -rf build
