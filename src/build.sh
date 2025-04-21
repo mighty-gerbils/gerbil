@@ -294,9 +294,14 @@ build_gerbil() {
 
 # Running the tests!
 
-check_gerbil () {
+test_gerbil () {
+    if [ "x${*:-}" = 'x' ] ; then
+	GXTEST="./..."
+    else
+	GXTEST="$*"
+    fi
     export GERBIL_HOME=$(cd ../build && pwd)
-    ../build/bin/gxtest $*
+    ../build/bin/gxtest $GXTEST
 }
 
 ## handling command line
@@ -346,9 +351,9 @@ else
        "env")
            $*
          ;;
-       "check")
+       "test")
 	   shift;
-	   check_gerbil $* || die
+	   test_gerbil $* || die
          ;;
        *)
          feedback_err "Unknown command."

@@ -1,3 +1,5 @@
+gxtest = ./...
+
 all: build
 
 build:
@@ -6,8 +8,8 @@ build:
 install:
 	DESTDIR="$(DESTDIR)" ./install.sh
 
-check:
-	./build.sh check $(gxtest)
+test:
+	./build.sh test $(gxtest)
 
 clean:
 	rm -rf build
