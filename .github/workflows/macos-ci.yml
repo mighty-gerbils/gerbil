@@ -31,7 +31,7 @@ jobs:
           make -j$GERBIL_BUILD_CORES
       - name: Run tests
         run: |
-         make gxtest='tools/gxensemble-test.ss' check || echo "FAILED"
+         make check || echo "FAILED"
      # - name: Archive Built Source
      #    uses: actions/upload-artifact@v4
      #    with:
