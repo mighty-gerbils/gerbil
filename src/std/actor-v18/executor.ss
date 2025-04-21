@@ -111,8 +111,7 @@
             (< (car a) (car b))))))
 
       (def (execute-process! exe args env envvars)
-	(set! envvars [(##os-environ) ... envvars ...])
-	(infof "executing process ~a" [exe args env envvars])
+        (infof "executing process ~a" [exe args env envvars])
         (with-error-handler "execute!"
           (let* ((process (open-process
                            [path: exe
@@ -148,7 +147,6 @@
                (_ (unless (file-exists? env-path)
                     (create-directory* env-path)))
                ($env-path (string-append "GERBIL_PATH=" env-path))
-               ($load-path (string-append "GERBIL_LOADPATH=" (path-expand "lib" env-path)))
                (path (or (find-envvar-prefix "PATH=" envvars)
                          (getenv "PATH")))
                ($path (string-append "PATH=" root/bin ":" path))
@@ -168,7 +166,6 @@
                           (getenv "SHELL" #f)))
                ($shell (and shell (string-append "SHELL=" shell)))
                (envvars (filter-out-envvar-prefix "GERBIL_PATH=" envvars))
-               (envvars (filter-out-envvar-prefix "GERBIL_LOADPATH=" envvars))
                (envvars (filter-out-envvar-prefix "PATH=" envvars))
                (envvars (filter-out-envvar-prefix "USER=" envvars))
                (envvars (filter-out-envvar-prefix "USERNAME=" envvars))
@@ -176,7 +173,6 @@
                (envvars (filter-out-envvar-prefix "SHELL=" envvars)))
           (append [$env-path
                    $path
-		   $load-path
                    (and $user [$user]) ...
                    (and $username [$username]) ...
                    (and $lang [$lang]) ...
