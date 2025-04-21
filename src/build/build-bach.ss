@@ -27,7 +27,6 @@
   (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
 (cond-expand
-
  ((or freebsd netbsd darwin)
   (def default-ld-options ["-lutil" "-lm"]))
  (visualc

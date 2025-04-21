@@ -1,13 +1,5 @@
 name: CI
-on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    branches:
-      'master'
-    types:
-      - ready_for_review
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest

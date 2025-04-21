@@ -48,12 +48,12 @@
       (error "error compiling test support module")))
 
   ;; uncomment this if you are debugging test failures
-   (current-logger-options 'VERBOSE)
+  ;; (current-logger-options 'VERBOSE)
   )
 
 (def (test-cleanup!)
   ;; uncomment this if you uncommented above
-  (current-logger-options 'WARN)
+  ;; (current-logger-options 'WARN)
 
   (setenv "GERBIL_PATH")
   (delete-file-or-directory gerbil-path #t))
