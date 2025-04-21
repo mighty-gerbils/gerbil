@@ -331,7 +331,7 @@
 			      (else [])) ...
                  "-algorithm" "RSA"
                  "-pkeyopt" "rsa_keygen_bits:4096"
-                 "-out" server.key])))
+                 "-out" server.key]))
 
       ;; server.csr
       (when (file-exists? server.csr)
