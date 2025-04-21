@@ -6,6 +6,7 @@
         ./socket
         ./api)
 (export test-setup! basic-socket-test test-cleanup!)
+;; Why does thios fail?
 
 (def test-socket-path #f)
 (def server-socket #f)
