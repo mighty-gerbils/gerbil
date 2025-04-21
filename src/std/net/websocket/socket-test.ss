@@ -11,15 +11,10 @@
 (def server-socket #f)
 
 (def (test-setup!)
-  ;; Test setup fails? Must be temp file right?
-  (displayln "Temp works? "(make-temporary-file-name "___ws-test"))
-  (unless #f #;(equal?
-	   (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
-	   "true")
-    (set! test-socket-path (make-temporary-file-name "ws-test"))
-    (let (srv (unix-listen test-socket-path))
-      (spawn (cut with-exception-stack-trace (cut basic-server srv)))
-      (set! server-socket srv))))
+  (set! test-socket-path (make-temporary-file-name "ws-test"))
+  (let (srv (unix-listen test-socket-path))
+    (spawn (cut with-exception-stack-trace (cut basic-server srv)))
+    (set! server-socket srv)))
 
 (def (test-cleanup!)
   (when server-socket
@@ -30,22 +25,17 @@
 
 (def basic-socket-test
   (test-suite "raw websocket"
-    (displayln "Env vars not passed?" (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f))
-    (unless #f #;(equal?
-	     (getenv "GERBIL_GH_MACOS_RUNNER_FUBAR" #f)
-	     "true")
-      (test-case "socket round-trip binary"
+    (test-case "socket round-trip binary"
       (test-simple-roundtrip (message '#u8(1 2 3) 'binary)))
     (test-case "socket round-trip text"
       (test-simple-roundtrip (message "abc" 'text)))
     (test-case "fragmentation and reassembly"
       (test-simple-roundtrip (message (random-bytes (expt 2 24)) 'binary)
                              WebSocket-send-all
-                             (cut WebSocket-recv-all <> (expt 2 25)))))))
+                             (cut WebSocket-recv-all <> (expt 2 25))))))
 
 ; Echo server
 (def (basic-server srv)
-  (displayln "Echo Server?: " srv)
   (using (srv : ServerSocket)
     (let accept ()
       (using ((ss (srv.accept) : StreamSocket)
