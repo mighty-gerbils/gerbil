@@ -1,3 +1,7 @@
+# Makefile for Gerbil Meta Scheme
+
+# Copyright (c) 2025 by Drew Crampsie, All Rights Reserved.
+
 BUILDERS = prepare gambit boot-gxi stage0 stage1 stdlib libgerbil lang \
  r7rs-large srfi tools tags doc
 
