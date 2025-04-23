@@ -59,7 +59,7 @@ END
            (cond-expand ((not darwin) ["-quiet"]) (else [])) ...
            "-algorithm" "RSA"
            "-pkeyopt" "rsa_keygen_bits:2048"
-           "-out" test-private-key]))
+           "-out" test-private-key])
   (invoke "openssl"
           ["req" "-new" "-batch"
            "-key" test-private-key
@@ -70,7 +70,7 @@ END
            "-days" "30"
            "-in" (path-expand "test.csr" test-directory)
            "-signkey" test-private-key
-           "-out" test-certificate])
+           "-out" test-certificate]))
 
 (def (test-cleanup!)
   (when (file-exists? test-directory)
