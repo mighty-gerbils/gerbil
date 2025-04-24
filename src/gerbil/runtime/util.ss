@@ -348,13 +348,13 @@ namespace: #f
         (begin (set-cdr! (##last-pair l) l2) l))
       l2)))
 
-;; Append the elements the list in the first argument to the front of the list
+;; Append the elements of the list in the first argument to the front of the list
 ;; in second argument until an element satisfies a predicate.
 ;; Return two values, the rest of the first list including the element
 ;; satisfying the predicate if any (or the empty list if none exists),
 ;; and the tail with the reverse of the rhead up till then appended in front.
 ;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
-(def (append-reverse-until (pred  : :procedure) rhead tail)
+(def (append-reverse-until (pred : :procedure) rhead tail)
   => :values
   (let loop ((rhead rhead) (tail tail))
     => :values

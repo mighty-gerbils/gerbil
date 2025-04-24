@@ -80,7 +80,7 @@ a programming language:
     capable of running all programs in your language
     including your current implementation.
 
-  - In particular, when making changes to implementation, you cannot make
+  - In particular, when making changes to the implementation, you cannot make
     incompatible changes to any feature used by the implementation itself:
     renaming a function, deleting anything, modifying some encoding, etc.
     Changes must be introduced in several steps, each generation maintaining
@@ -125,6 +125,8 @@ has several implications:
   - The bootstrap chain is anchored on the C compiler.
     Ultimately, If you trust your C compiler,
     then you can _verifiably_ trust the Gerbil bootstrap.
+    For further bootstrapping of the C compiler,
+    see projects like [GNU Mes](https://bootstrappable.org/projects/mes.html).
 
 For the Gerbil core team, where we all use GCC,
 this can be summarized in a quotable one liner:
