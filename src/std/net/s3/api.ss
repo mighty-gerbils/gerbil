@@ -130,6 +130,20 @@
              (request-close req)
              data))))
 
+(defmethod {exists? bucket}
+  (lambda (self key)
+    (using ((self :- bucket)
+            (client self.client :- s3-client))
+      (let* ((req {client.request verb: 'HEAD
+                                  bucket: (bucket-name self)
+                                  path: (string-append "/" key)})
+             (code (request-status req)))
+        (if (memq code [200 404])
+          (begin
+            (request-close req)
+            (= code 200))
+          (with-request-error req))))))
+
 (defmethod {put! bucket}
   (lambda (self key data content-type: (content-type "binary/octet-stream"))
     (using ((self :- bucket)
