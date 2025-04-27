@@ -55,7 +55,8 @@
       (for (feature features)
         (core-bind-feature! feature #f 0 root))))
 
-  (set-test-verbose! verbose?)
+  (set-test-verbose! (and verbose? (not quiet?)))
+  (set-test-quiet! quiet?)
   (test-begin!)
 
   (let* ((files (collect-files args))
@@ -65,14 +66,20 @@
       (let (suites (if filter (apply-filter filter-rx suites) suites))
         (unless (null? suites)
           (try
-           (displayln "=== " file)
+           (if quiet? (display (format "\n~a:" file)) (displayln "=== " file))
            (force-output)
            (when setup!
-             (displayln ">>> setup")
+             (if quiet? (display "s") (displayln ">>> setup"))
              (force-output)
-             (setup!))
+	     (let (buf (and quiet? (open-string "")))
+	       (parameterize (#;(current-error-port
+			       (or buf (current-error-port)))
+			      #;(current-output-port
+			       (or buf (current-output-port))))
+		 
+		 (setup!))))
            (for ([name . suite] suites)
-             (displayln ">>> run " name)
+            (if quiet? (display "r") (displayln ">>> run " name))
 	     (let (buf (and quiet? (open-string "")))
 	       (parameterize ((current-error-port
 			       (or buf (current-error-port)))
@@ -81,10 +88,11 @@
 		 (run-test-suite! suite))
 	       (when buf (close-port buf))
 	       (when (and quiet? (!test-suite-error suite))
+		 (displayln "=== " file)
 		 (copy-port buf (current-output-port)))))
            (finally
             (when cleanup!
-              (displayln ">>> cleanup")
+             (if quiet? (display "c") (displayln ">>> cleanup"))
               (force-output)
               (cleanup!)))))))
 
@@ -96,6 +104,7 @@
 
       (displayln result)
       (unless (eq? result 'OK)
+	(test-report-summary!)
         (exit 42)))))
 
 (def (collect-files args)
