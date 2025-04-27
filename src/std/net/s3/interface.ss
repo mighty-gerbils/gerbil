@@ -14,6 +14,7 @@
 ;; TODO return types
 (interface S3Bucket
   (get  (name : :string))
+  (exists? (name : :string))
   (put! (name : :string)
         (data : :u8vector))
   (delete! (name : :string))
