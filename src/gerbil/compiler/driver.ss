@@ -441,7 +441,7 @@ namespace: gxc
             (gerbil-rpath gerbil-libdir))
            (default-ld-options
              (cond-expand
-               ((or freebsd netbsd) ["-lutil" "-lm"])
+               ((or freebsd netbsd darwin) ["-lutil" "-lm"])
                (else ["-ldl" "-lm"]))))
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
@@ -845,7 +845,8 @@ namespace: gxc
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
         (["-ld-options" (and opt "-static") . rest]
-         (if static?
+         (if (and static?
+		  (cond-expand (darwin #f) (else #t)))
            (lp rest (cons* opt "-ld-options" opts))
            (lp rest opts)))
         (["-ld-options" opt . rest]

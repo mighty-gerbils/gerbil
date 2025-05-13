@@ -34,7 +34,7 @@
                                 "-exe" "-o" (path-expand "bin/loader-test-server" gerbil-path)
                                 (path-expand "loader-test-server.ss" (this-source-directory))]
                     stderr-redirection: #f
-                    stdout-redirection: #f]))
+                    stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test server")))
   ;; compile the test support module
@@ -43,7 +43,7 @@
                     arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 (path-expand "loader-test-support.ss" (this-source-directory))]
                     stderr-redirection: #f
-                    stdout-redirection: #f]))
+                    stdout-redirection: (test-quiet?)]))
     (unless (zero? (process-status gxc))
       (error "error compiling test support module")))
 
@@ -97,9 +97,10 @@
       ;; ping it
       (check (ping-server test-server-id)
              => 'OK)
+
       ;; load the loader-test-support module
       (check (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support)
-             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support.o1"))
+             => (path-normalize (string-append gerbil-path "/lib/test/actor-v18/loader-test-support.o1")))
       ;; eval hello
       (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
