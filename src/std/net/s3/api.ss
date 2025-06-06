@@ -130,6 +130,20 @@
              (request-close req)
              data))))
 
+(defmethod {exists? bucket}
+  (lambda (self key)
+    (using ((self :- bucket)
+            (client self.client :- s3-client))
+      (let* ((req {client.request verb: 'HEAD
+                                  bucket: (bucket-name self)
+                                  path: (string-append "/" key)})
+             (code (request-status req)))
+        (if (memq code [200 404])
+          (begin
+            (request-close req)
+            (= code 200))
+          (with-request-error req))))))
+
 (defmethod {put! bucket}
   (lambda (self key data content-type: (content-type "binary/octet-stream"))
     (using ((self :- bucket)
@@ -193,7 +207,7 @@
              (host (if bucket
                      (string-append bucket "." (s3-client-endpoint self))
                      (s3-client-endpoint self)))
-             (headers [["Host" :: (string-append host ":443")]
+             (headers [["Host" :: host]
                        ["x-amz-date" :: ts]
                        ["x-amz-content-sha256" :: (hex-encode hash)]
                        (if body [["Content-Type" :: content-type]] []) ...
@@ -226,7 +240,8 @@
 
 (def (s3-parse-xml req)
   (read-xml (request-content req)
-    namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3"))))
+    namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3")
+                  ("http://doc.s3.amazonaws.com/2006-03-01" . "s3"))))
 
 (defrule (s3-response-error? xml)
   (sxml-find xml (sxml-e? 'Error)))
@@ -239,5 +254,6 @@
       (begin
         (request-close req)
         (raise-s3-error
-          (request-status req)
-          (request-status-text req))))))
+          s3-client::request
+          (request-status-text req)
+          (request-status req))))))

@@ -23,6 +23,8 @@
            (if exists?
              (file-info-size (file-info path))
              0))
+          (_ (unless exists?
+               (create-directory* (path-directory path))))
           (output
            (open-file-writer path flags: (if exists? O_APPEND O_CREAT)))
           (writer

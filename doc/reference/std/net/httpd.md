@@ -39,6 +39,7 @@ requests using the specified multiplexer.
 
 The addresses in the address list can have one of these forms:
 - `[ssl: inet-address ssl-context]` is an SSL address, using the supplied server `ssl-context`; see [TLS/SSL Sockets](ssl.md) for details on how to create a server SSL context.
+- `[ssl: inet-address "path/to/ssl/certificate" "path/to/ssl/private-key"]` is an SSL address, using the supplied certifcate and private key to construct the appropriate `ssl-context`.
 - `inet-address` is a plaintext TCP address; suitable if you are behind a load balancer or proxy, eg `nginx`.
 
 ### stop-http-server!
@@ -341,4 +342,3 @@ Sets the request input buffer size; default is 4KB.
 ```
 
 Sets the response output buffer size; default is 4KB.
-

@@ -3,7 +3,8 @@
 ;;; actor protocol messages
 (import :std/error
         :std/sugar
-        ./message)
+        ./message
+        ./server-identifier)
 (export #t)
 
 (defmessage !ok (value))
@@ -24,6 +25,11 @@
        (lambda (what) (raise-actor-error proc error-msg error-irritant ... what)))))
   ((_ (proc arg ...) expr)
    (defcall-actor (proc arg ...) expr error: "actor error")))
+
+(defrule (with-authorization cap expr)
+  (if (actor-authorized? @source cap)
+    (--> expr)
+    (--> (!error "not authorized"))))
 
 (defmessage !shutdown ())
 (defmessage !actor-dead (thread))

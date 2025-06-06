@@ -1,12 +1,12 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
-;;;; Testing the c3 linearization algorithm
+;;;; Testing the c4 linearization algorithm (a.k.a. c3 plus proper handling of structs)
 ;;prelude: "../core"
 
 (export c3-test)
 
 (import
-  ;;  :gerbil/runtime/c3
+  ;; :gerbil/runtime/c3
   :gerbil/runtime/mop
   (only-in :gerbil/runtime/util append-reverse-until)
   (only-in :std/misc/hash hash-ensure-ref)
@@ -39,10 +39,11 @@
        #'(begin
            (def my-objects '(object ...))
            (def my-supers '((object supers ...) ...))
-           (defclass (object supers ...) (object)
-             struct: struct?
-             transparent: #t) ...
-           (def my-descriptors [descr ...]))))))
+           (begin
+             (defclass (object supers ...) (object)
+               struct: struct?
+               transparent: #t) ...
+               (def my-descriptors [descr ...])))))))
 
 (defhierarchy (my-objects my-supers my-descriptors)
   (O) (A O) (B O) (C O) (D O) (E O)
@@ -60,7 +61,8 @@
   (GL O) (HG GL) (VG GL) (HVG HG VG) (VHG VG HG) #; (CG HVG VHG)
   ;; https://stackoverflow.com/questions/40478154/does-pythons-mro-c3-linearization-work-depth-first-empirically-it-does-not
   (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF) (CC EE FF GG) (BB) (AA BB CC DD)
-  (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M))
+  (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M)
+  (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1))
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -73,7 +75,8 @@
     (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
-    (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)))
+    (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
+    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)))
 
 (defrule (def-alist-getter getter alist table)
   (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
@@ -86,7 +89,7 @@
   (hash-ensure-ref
    my-compute-precedence-list-cache x
    (cut first-value
-        (c4-linearize [x] (my-get-supers x)
+        (c4-linearize [x] (my-get-supers x) ;; rely on values being reified first-class objects
                       get-precedence-list: my-compute-precedence-list
                       struct: test-struct?
                       eq: eq?
@@ -164,14 +167,14 @@
       (hash-put! my-supers-table 'CG '(HVG VHG))
       (check-exception (my-compute-precedence-list 'CG) true)
 
-      ;; Slot computation order now follows the MRO!
-      ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
-      (check (class-type-slot-vector Z::t) => #(__class O E C B A D K3 K2 K1 Z))
-      ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => (map (lambda (lst) (append lst '(object t))) my-precedence-lists))
       ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
       (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O object t)) ;; FIXED!
-      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O object t))))) ;; same!
+      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O object t))
+      ;; Slot computation order now follows the MRO!
+      ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
+      (check (class-type-slot-vector Z::t) => #(__class O E C B A D K3 K2 K1 Z))
+      ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
+      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))))) ;; same!

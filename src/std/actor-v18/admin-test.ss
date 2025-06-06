@@ -18,10 +18,10 @@
       (def pubk (get-admin-pubkey pubk-path))
       (def privk (get-admin-privkey passphrase privk-path))
 
-      (def sig (admin-auth-challenge-sign privk 'a 'b '#u8(1 2 3 4)))
+      (def sig (admin-auth-challenge-sign privk '(a . /) '(b . /) '#u8(1 2 3 4)))
 
-      (check (admin-auth-challenge-verify pubk 'a 'b '#u8(1 2 3 4) sig) => #t)
-      (check (admin-auth-challenge-verify pubk 'a 'b '#u8(1 2 3 4) '#u8(1 2 3 4)) => #f)
+      (check (admin-auth-challenge-verify pubk '(a . /) '(b . /) '#u8(1 2 3 4) sig) => #t)
+      (check (admin-auth-challenge-verify pubk '(a . /) '(b . /) '#u8(1 2 3 4) '#u8(1 2 3 4)) => #f)
 
 
       (delete-file pubk-path)

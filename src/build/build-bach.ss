@@ -13,7 +13,7 @@
   (getenv "GERBIL_GSC" default-gerbil-gsc))
 
 (def (gerbil-gcc)
-  (getenv "GERBIL_GCC" 
+  (getenv "GERBIL_GCC"
     (cond-expand
       (visualc "cl")
       (else "gcc"))))
@@ -27,10 +27,8 @@
   (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
 (cond-expand
- (freebsd
+ ((or freebsd netbsd)
   (def default-ld-options ["-lutil" "-lm"]))
- (netbsd
-  (def default-ld-options ["-lm"]))
  (visualc
   (def default-ld-options ["Kernel32.Lib" "User32.Lib" "Gdi32.Lib" "WS2_32.Lib" "/subsystem:console" "/entry:WinMainCRTStartup"]))
  (else
@@ -55,7 +53,7 @@
 (def (link-output-options output-bin)
   (cond-expand
     (visualc [(string-append "/Fe" output-bin)])
-    (else ["-o" output-bin]))) 
+    (else ["-o" output-bin])))
 
 (def (link-with-libgambit-options)
   (cond-expand
