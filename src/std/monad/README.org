@@ -1,4 +1,6 @@
 #+TITLE: Monads in Gerbil
+#+EXPORT_FILE_NAME: ../../../doc/guide/monads.md
+#+OPTIONS: toc:nil
 
 Here's the thing. I like my Monadic Parser. It uses monads. Gerbil now
 has a very fast Interface that can make it quick and easy. This is my
@@ -7,7 +9,7 @@ attempt to Monadize Gerbil.
  https://wiki.haskell.org/All_About_Monad
  https://wiki.haskell.org/Monad
 
-* Table Of Contents
+* Table Of Contents                                                :noexport:
 :PROPERTIES:
 :TOC:      :include siblings :depth 5 :ignore (this)
 :END:

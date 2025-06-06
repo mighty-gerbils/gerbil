@@ -14,10 +14,10 @@ weave_subtree () {
 	echo "Cannot export from org $1 subtree $2 to markdown using emacs"
 }
 
+weave ../src/std/monad/README.org
 
-
-weave ../macos/README.org
-weave ../macos/homebrew/README.org
+weave ../dist/macos/README.org
+weave ../dist/macos/homebrew/README.org
 weave ../src/std/mime/README.org
 weave ../src/std/markup/README.org
 weave ../src/std/markup/sxml/README.org
