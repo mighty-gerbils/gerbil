@@ -16,7 +16,7 @@ module.exports = {
           '/guide/': [
               {
                   title: 'Guide',
-                  children: ['', 'intro', 'getting-started', 'eval', 'ffi', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'macos', 'nix', 'r7rs', 'hacking-on-the-stdlib']
+                  children: ['', 'intro', 'getting-started', 'eval', 'ffi', 'monads', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'macos', 'nix', 'r7rs', 'hacking-on-the-stdlib']
               }
           ],
           '/tutorials/': [
