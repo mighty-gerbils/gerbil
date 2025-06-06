@@ -10,7 +10,7 @@ attempt to Monadize Gerbil.
  https://wiki.haskell.org/All_About_Monad
  https://wiki.haskell.org/Monad
 
-* Table Of Contents                                                :noexport:
+** Table Of Contents                                               :noexport:
 :PROPERTIES:
 :TOC:      :include siblings :depth 5 :ignore (this)
 :END:
@@ -146,7 +146,7 @@ That minimal "do nothing" monad is known as the =Identity Monad= and
 is actually quite important.
 
 
-*** The =monad= struct type and =Identity= singleton.
+** The =monad= struct type and =Identity= singleton.
 :PROPERTIES:
 :CUSTOM_ID: the-monad-struct-type-and-identity-singleton
 :END:
@@ -173,7 +173,7 @@ Even though or perhaps because =:t= does "nothing" there is a simple
   42
 #+end_src
 
-*** Getting to the =List= monad
+** Getting to the =List= monad
 :PROPERTIES:
 :CUSTOM_ID: getting-to-the-list-monad
 :END:
@@ -203,7 +203,7 @@ result.
 In the second test we have to pass lists as that's what a =Monadic
 Value= is for a =List Monad=.
 
-*** =return= as constructor, =>>== as destructor.
+** =return= as constructor, =>>== as destructor.
 :PROPERTIES:
 :CUSTOM_ID: return-as-constructor--as-destructor
 :END:
@@ -621,7 +621,7 @@ A transformer is something with something else inside.
   (defstruct (transformer monad) (inner))
 #+end_src
 
-*** A =stateT= for wrapping state
+** A =stateT= for wrapping state
 :PROPERTIES:
 :CUSTOM_ID: a-statet-for-wrapping-state
 :END:
@@ -631,7 +631,7 @@ them.
 
 That's where transformers come in.
 
-**** The =Monad= for =stateT=
+*** The =Monad= for =stateT=
 :PROPERTIES:
 :CUSTOM_ID: the-monad-for-statet
 :END:
@@ -663,7 +663,7 @@ That's where transformers come in.
    (((42 #t) . state))
 #+end_src
 
-**** =Runnable= it
+*** =Runnable= it
 :PROPERTIES:
 :CUSTOM_ID: runnable-it
 :END:
@@ -674,7 +674,7 @@ That's where transformers come in.
     ((run mv (state (void))) (mv state)))
 #+end_src
 
-**** The =State= for =stateT=
+*** The =State= for =stateT=
 :PROPERTIES:
 :CUSTOM_ID: the-state-for-statet
 :END:
@@ -720,7 +720,7 @@ And the =state= procedure.
        ((second . 42))
 #+end_src
 
-**** The =ZeroOrPlus= and =Fail= transformations
+*** The =ZeroOrPlus= and =Fail= transformations
 :PROPERTIES:
 :CUSTOM_ID: the-zeroorplus-and-fail-transformations
 :END:
@@ -764,7 +764,7 @@ Choices can be a big part of programming.
      
 #+end_src
 
-**** How to =lift= from inner
+** How to =lift= from inner
 :PROPERTIES:
 :CUSTOM_ID: how-to-lift-from-inner
 :END:
@@ -960,7 +960,7 @@ Testing it makes it clear.
   fourtwo
 #+end_src
 
-*** Transform =State= to =errorT=
+** Transform =State= to =errorT=
 :PROPERTIES:
 :CUSTOM_ID: transform-state-to-errort
 :END:
