@@ -2,7 +2,7 @@
 ;;; -*- Gerbil -*-
 ;;; Given a module, list the exported symbols
 
-(import <expander-runtime>
+(import :gerbil/expander
         :std/iter)
 
 (def (main mod)

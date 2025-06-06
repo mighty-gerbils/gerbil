@@ -48,24 +48,7 @@ There are a few different ways to build a working `gerbil` on `MacOS`.
     ```
 
 
-## Option 1) Use the built in Clang.
-
-If you want to be as native as possible this is the easy way. Most of us have MacPorts and/or Homebrew and I can totally recommend using GCC, but once you have openssl this **should** work.
-
-This takes a long time as `clang` is a lot slower to build. But the binary may outperform modern `gcc` and building binaries with `clang` without setting `GERBIL_GCC` is something so it's a toss up.
-
-```sh
-git clone https://github.com/mighty-gerbils/gerbil.git
-
-# On Sonama, Silicon not Intel, we set the prefix as so.
-# You may want it elsewhere.
-cd gerbil;
-./configure --prefix=/opt/gerbil && make
-sudo make install
-```
-
-
-## Option 2) Using GCC@13
+## Using GCC@14
 
 If you want a faster compile time both for building `gerbil` and your own binaries `gcc` is the better idea. `GERBIL_GCC` should allow you to compile your own binaries with a different compiler if you ever need to use the weird MacOS headers that are not quite C.
 
@@ -75,13 +58,14 @@ You can install it using [MacPorts](https://www.macports.org/) or [Homebrew](htt
 ### MacPorts
 
 ```sh
-sudo port -v install gcc13
+sudo port -v install gcc14
 mp () {
     echo "/opt/local/bin/$1"
 }
-export CC="$(mp gcc-mp-13)"
-export GERBIL_GCC="$(mp gcc-mp-13)"
-export CXX="$(mp g++-mp-13)"
+
+export CC="$(mp gcc-mp-14)"
+export GERBIL_GCC="$CC"
+export CXX="$(mp g++-mp-14)"
 export LDFLAGS='-Wl,-ld_classic'
 export GERBIL_BUILD_CORES=4
 
@@ -99,13 +83,13 @@ sudo make install
 ### Homebrew
 
 ```sh
-brew install gcc@13
+brew install gcc@14
 bp () {
-  echo $(brew --prefix gcc@13)/bin/$1
+  echo $(brew --prefix gcc@14)/bin/$1
 }
-export CC="$(bp gcc-13)"
-export GERBIL_GCC="$(bp gcc-13)"
-export CXX="$(bp g++-13)"
+export CC="$(bp gcc-14)"
+export GERBIL_GCC="$(bp gcc-14)"
+export CXX="$(bp g++-14)"
 export LDFLAGS='-Wl,-ld_classic'
 export GERBIL_BUILD_CORES=4
 
@@ -117,6 +101,23 @@ cd gerbil;
 ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
 sudo make install
 
+```
+
+
+## Option 2) Use the built in Clang.
+
+If you want to be as native as possible this is the easy way. Most of us have MacPorts and/or Homebrew and I can totally recommend using GCC, but once you have openssl this **should** work.
+
+This takes a long time as `clang` is a lot slower to build. But the binary may outperform modern `gcc` and building binaries with `clang` without setting `GERBIL_GCC` is something so it's a toss up.
+
+```sh
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+# On Sonama, Silicon not Intel, we set the prefix as so.
+# You may want it elsewhere.
+cd gerbil;
+./configure --prefix=/opt/gerbil && make
+sudo make install
 ```
 
 
