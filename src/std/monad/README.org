@@ -2,6 +2,7 @@
 #+EXPORT_FILE_NAME: ../../../doc/guide/monads.md
 #+OPTIONS: toc:nil
 
+* Monads in Gerbil
 Here's the thing. I like my Monadic Parser. It uses monads. Gerbil now
 has a very fast Interface that can make it quick and easy. This is my
 attempt to Monadize Gerbil.
@@ -52,7 +53,7 @@ attempt to Monadize Gerbil.
   - [[#file-monadss][File ../monad.ss]]
 :END:
  
-* What is a Monad exactly?
+** What is a Monad exactly?
 :PROPERTIES:
 :CUSTOM_ID: what-is-a-monad-exactly
 :END:
@@ -76,7 +77,7 @@ It's a strategy for going about a wide range of problems. It starts
 with two abstractions, =return= and =>>==, that help to encompass
 a lot about a program.
 
-* The =Monad= interface AKA "typeclass"
+** The =Monad= interface AKA "typeclass"
 :PROPERTIES:
 :CUSTOM_ID: the-monad-interface-aka-typeclass
 :END:
@@ -117,7 +118,7 @@ definition.
 Essentially that's that! a monad is just an abstraction around those
 two procedures with those signatures.
 
-** Almost the =Identity= monad.
+*** Almost the =Identity= monad.
 :PROPERTIES:
 :CUSTOM_ID: almost-the-identity-monad
 :END:
@@ -145,7 +146,7 @@ That minimal "do nothing" monad is known as the =Identity Monad= and
 is actually quite important.
 
 
-** The =monad= struct type and =Identity= singleton.
+*** The =monad= struct type and =Identity= singleton.
 :PROPERTIES:
 :CUSTOM_ID: the-monad-struct-type-and-identity-singleton
 :END:
@@ -172,7 +173,7 @@ Even though or perhaps because =:t= does "nothing" there is a simple
   42
 #+end_src
 
-** Getting to the =List= monad
+*** Getting to the =List= monad
 :PROPERTIES:
 :CUSTOM_ID: getting-to-the-list-monad
 :END:
@@ -202,7 +203,7 @@ result.
 In the second test we have to pass lists as that's what a =Monadic
 Value= is for a =List Monad=.
 
-** =return= as constructor, =>>== as destructor.
+*** =return= as constructor, =>>== as destructor.
 :PROPERTIES:
 :CUSTOM_ID: return-as-constructor--as-destructor
 :END:
@@ -237,7 +238,7 @@ We can of course rid ourselves of the duplication. That's the whole point.
   (42)
 #+end_src
 
-* =Runnable= things
+** =Runnable= things
 :PROPERTIES:
 :CUSTOM_ID: runnable-things
 :END:
@@ -249,7 +250,7 @@ There are some things that need run. They sub the =Runnable= interface.
   (interface (MonadRunnable Monad Runnable))
 #+end_src
 
-* Keeping =State= with =state=.
+** Keeping =State= with =state=.
 :PROPERTIES:
 :CUSTOM_ID: keeping-state-with-state
 :END:
@@ -369,7 +370,7 @@ Those abstractions can be important.
   (!yeh . 42)
 #+end_src
 
-** The =state-monad= as a state carrier
+*** The =state-monad= as a state carrier
 :PROPERTIES:
 :CUSTOM_ID: the-state-monad-as-a-state-carrier
 :END:
@@ -396,7 +397,7 @@ abstraction with that type instance.
 #+end_src
 
 
-* The =du= syntax: sugar for =>>== and =>>=
+** The =du= syntax: sugar for =>>== and =>>=
 :PROPERTIES:
 :CUSTOM_ID: the-du-syntax-sugar-for--and-
 :END:
@@ -488,7 +489,7 @@ pretty short form syntax.
   (!yeh . error:)
 #+end_src
 
-* =Fail=-ure IS an option
+** =Fail=-ure IS an option
 :PROPERTIES:
 :CUSTOM_ID: fail-ure-is-an-option
 :END:
@@ -500,7 +501,7 @@ There are times when things fail.
   (interface (MonadFail Monad Fail))
 #+end_src
 
-** The =maybe= test type
+*** The =maybe= test type
 :PROPERTIES:
 :CUSTOM_ID: the-maybe-test-type
 :END:
@@ -533,7 +534,7 @@ concepts.
 #+end_src
 
 
-** =Fail= and =:list= are natural friends
+*** =Fail= and =:list= are natural friends
 :PROPERTIES:
 :CUSTOM_ID: fail-and-list-are-natural-friends
 :END:
@@ -554,7 +555,7 @@ concepts.
 #+end_src
 
 
-* =MonadZeroOrPlus=
+** =MonadZeroOrPlus=
 :PROPERTIES:
 :CUSTOM_ID: monadzeroorplus
 :END:
@@ -597,7 +598,7 @@ So a =:list= is of those three...
   (42)
 #+end_src
 
-* Transformers
+** Transformers
 :PROPERTIES:
 :CUSTOM_ID: transformers
 :END:
@@ -620,7 +621,7 @@ A transformer is something with something else inside.
   (defstruct (transformer monad) (inner))
 #+end_src
 
-** A =stateT= for wrapping state
+*** A =stateT= for wrapping state
 :PROPERTIES:
 :CUSTOM_ID: a-statet-for-wrapping-state
 :END:
@@ -630,7 +631,7 @@ them.
 
 That's where transformers come in.
 
-*** The =Monad= for =stateT=
+**** The =Monad= for =stateT=
 :PROPERTIES:
 :CUSTOM_ID: the-monad-for-statet
 :END:
@@ -662,7 +663,7 @@ That's where transformers come in.
    (((42 #t) . state))
 #+end_src
 
-*** =Runnable= it
+**** =Runnable= it
 :PROPERTIES:
 :CUSTOM_ID: runnable-it
 :END:
@@ -673,7 +674,7 @@ That's where transformers come in.
     ((run mv (state (void))) (mv state)))
 #+end_src
 
-*** The =State= for =stateT=
+**** The =State= for =stateT=
 :PROPERTIES:
 :CUSTOM_ID: the-state-for-statet
 :END:
@@ -719,7 +720,7 @@ And the =state= procedure.
        ((second . 42))
 #+end_src
 
-*** The =ZeroOrPlus= and =Fail= transformations
+**** The =ZeroOrPlus= and =Fail= transformations
 :PROPERTIES:
 :CUSTOM_ID: the-zeroorplus-and-fail-transformations
 :END:
@@ -763,7 +764,7 @@ Choices can be a big part of programming.
      
 #+end_src
 
-*** How to =lift= from inner
+**** How to =lift= from inner
 :PROPERTIES:
 :CUSTOM_ID: how-to-lift-from-inner
 :END:
@@ -797,7 +798,7 @@ got into Monads.
   ((42 . "state") (44 . "state"))
 #+end_src
 
-* Monadic Parser Combinators - Part 0.1
+** Monadic Parser Combinators - Part 0.1
 :PROPERTIES:
 :CUSTOM_ID: monadic-parser-combinators---part-01
 :END:
@@ -819,7 +820,7 @@ the reason I got into monads.
 The idea here should help with seeing how all the abstractions come
 together.
 
-** The =.item= method and many paths.
+*** The =.item= method and many paths.
 :PROPERTIES:
 :CUSTOM_ID: the-item-method-and-many-paths
 :END:
@@ -874,7 +875,7 @@ All we really need is a =char​=?= and we could have a parser.
 
 #+end_src
 
-* Catch/Throw equals =ErrorHandler= from =errorT=
+** Catch/Throw equals =ErrorHandler= from =errorT=
 :PROPERTIES:
 :CUSTOM_ID: catchthrow-equals-errorhandler-from-errort
 :END:
@@ -959,7 +960,7 @@ Testing it makes it clear.
   fourtwo
 #+end_src
 
-** Transform =State= to =errorT=
+*** Transform =State= to =errorT=
 :PROPERTIES:
 :CUSTOM_ID: transform-state-to-errort
 :END:
@@ -985,7 +986,7 @@ This is after state in the train of thought so is defined here.
   		      [(inner.catch exp handler) s ...]))))	  
 #+end_src
 
-** Test new Parsec
+*** Test new Parsec
 :PROPERTIES:
 :CUSTOM_ID: test-new-parsec
 :END:
@@ -1033,7 +1034,7 @@ This is after state in the train of thought so is defined here.
 
 
 
-* Emacs
+** Emacs
 :PROPERTIES:
 :CUSTOM_ID: emacs
 :END:
@@ -1044,7 +1045,7 @@ This is after state in the train of thought so is defined here.
   (gerbil-put-indent '(instance) 2)
 #+end_src
 
-* Source Files
+* Source Files                                                     :noexport:
 :PROPERTIES:
 :CUSTOM_ID: source-files
 :END:
