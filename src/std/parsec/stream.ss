@@ -21,6 +21,7 @@
 
 (interface Location 
    (location . _))
+
 (defmethod {location :port} port-location interface: Location)
 
 (def (migrate-location loc inc (lines []))
@@ -29,7 +30,7 @@
     (set! lines (filter (cut <= xoff <>) lines))
     (def line (length lines))
     (def col (if (null? lines) xoff
-                 (- xoff (car lines))))
+                 (- xoff 1 (car lines))))
     (make-location port line col 43 xoff)))
 
 (defstruct tracking-stream (port loc lines)
@@ -76,14 +77,15 @@
 		 (using (p ts.port : StringReader)
 		   (p.read-string str start end need))))
     (def newloc (Location-location ts.port))
-    (set! ts.loc newloc)
 	    
     (using ((oldloc :- location)
 	    (newloc :- location))
-      (unless (eqv? newloc.line oldloc.line)
-	(set! ts.lines (find-nls oldloc.xoff))))
 
-	readn))
+      (unless (and (port? ts.port) (eqv? newloc.line oldloc.line))
+	(set! ts.lines (find-nls oldloc.xoff))
+	(unless (port? ts.port) (set! newloc (migrate-location oldloc readn ts.lines))))
+      (set! ts.loc newloc)
+      readn)))
 
 (defmethod {read-string tracking-stream}
  tracking-stream-read-string)

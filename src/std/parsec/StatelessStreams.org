@@ -7,12 +7,22 @@
 :TOC:      :include siblings :depth 5 :ignore (this)
 :END:
 :CONTENTS:
-- [[#stateless-streams-lookahead--behind][Stateless Streams: Lookahead & Behind]]
+- [[#stateless-streams-look-ahead--behind][Stateless Streams: look-ahead & behind]]
+  - [[#the-look-ahead-overview][The look-ahead overview.]]
+    - [[#the-parsec-concept-and-memorize-stream][The Parsec concept and memorize-stream]]
+    - [[#nested-unstarted][Nested unstarted]]
+  - [[#locations--source-location-and-xoff][Locations : source location and xoff]]
+    - [[#the-location-interface][The Location interface]]
+  - [[#a-tracking-stream-with-state][A tracking-stream with state]]
+  - [[#interface-statelessstringreader][Interface: StatelessStringReader]]
+  - [[#a-memorize-stream-for-remembering-state][A memorize-stream for remembering state]]
+- [[#interfaces-stringreaders][Interfaces ...StringReader's]]
+  - [[#nesting][Nesting]]
 :END:
 
-* Stateless Streams: =look-ahead= & Behind
+* Stateless Streams: =look-ahead= & behind
 :PROPERTIES:
-:CUSTOM_ID: stateless-streams-lookahead--behind
+:CUSTOM_ID: stateless-streams-look-ahead--behind
 :END:
 
 The idea here is simple: for a parser that fails another branch is
@@ -20,6 +30,9 @@ run. The problem is that failure could be after a character has been
 read. It must be put back. The branch should start at the same point.
 
 ** The =look-ahead= overview.
+:PROPERTIES:
+:CUSTOM_ID: the-look-ahead-overview
+:END:
 
   #+begin_quote
    A Parser for Things is a function from S[treams] to Lists of Pairs of
@@ -38,6 +51,9 @@ read. It must be put back. The branch should start at the same point.
 
 
 *** The =Parsec= concept and =memorize-stream=
+:PROPERTIES:
+:CUSTOM_ID: the-parsec-concept-and-memorize-stream
+:END:
 
 For the most part =LL1= is great: nice and fast, finite memory usage,
 easy on context.
@@ -109,7 +125,7 @@ for information purposes.
 
 Now lets parse a tag.
 
-#+begin_src scheme :noweb-ref test-look-ahead
+#+begin_src scheme :noweb-ref test-look-ahead-1
   > (set! ret (look-ahead parse-start-tag "<asd>"))
   > (car ret)
   "<asd>"
@@ -117,14 +133,14 @@ Now lets parse a tag.
 
  We can see the stream is finished.
  
-#+begin_src scheme :noweb-ref test-look-ahead
+#+begin_src scheme :noweb-ref test-look-ahead-1
   > (PeekableStringReader-read-char (cdr ret))
   #!eof
 #+end_src
 
 What if it's not a start tag?
 
-#+begin_src scheme :noweb-ref test-look-ahead
+#+begin_src scheme :noweb-ref test-look-ahead-1
   > (set! ret (look-ahead parse-start-tag "<asd <start>"))
   > (car ret)
   > #f
@@ -132,14 +148,14 @@ What if it's not a start tag?
 
 The stream is not finished! 
 
-#+begin_src scheme :noweb-ref test-look-ahead
+#+begin_src scheme :noweb-ref test-look-ahead-1
   > (PeekableStringReader-read-char (cdr ret))
   #\<
 #+end_src
 
 Let's skip until the open and read a tag.
 
-#+begin_src scheme :noweb-ref test-look-ahead
+#+begin_src scheme :noweb-ref test-look-ahead-1
   > (using (s (cdr ret) : PeekableStringReader)
      (let lp ((c (s.peek-char)))
        (if (char=? c #\<) c
@@ -151,6 +167,9 @@ Let's skip until the open and read a tag.
 #+end_src
 
 *** Nested unstarted
+:PROPERTIES:
+:CUSTOM_ID: nested-unstarted
+:END:
 
 No matter where we are the lookahead needs to work,
 
@@ -239,12 +258,15 @@ Let's read a few random chars and skip to the potential open tag char.
 #+begin_src scheme :noweb-ref test-look-ahead-1
   > (set! ret (look-ahead parse-start-tag (cdr ret)))
   > (loc->list (Location-location (cdr ret)))
-  (line: 1 col: 8 xoff: 17)
+  (line: 1 col: 7 xoff: 17)
   > (car ret)
   "<end>"
 #+end_src
 
 ** Locations : source location and =xoff=
+:PROPERTIES:
+:CUSTOM_ID: locations--source-location-and-xoff
+:END:
 
 There's a number of reasons to know where one's at in a stream.
 
@@ -279,6 +301,9 @@ Now the port location tells us!
 #+end_src
 
 *** The =Location= interface
+:PROPERTIES:
+:CUSTOM_ID: the-location-interface
+:END:
 
 Not everything is a port. In fact that's kind of the entire point of
 these streams.
@@ -289,6 +314,9 @@ these streams.
 #+end_src
 
 ** A =tracking-stream= with state
+:PROPERTIES:
+:CUSTOM_ID: a-tracking-stream-with-state
+:END:
 
 The monadic parser combinator primitive =(.item)= is kind of just
 =read-char= in disguise. However, because we need to be stateless on
@@ -363,6 +391,9 @@ buffered reader.
 #+end_src
 
 ** Interface: =StatelessStringReader=
+:PROPERTIES:
+:CUSTOM_ID: interface-statelessstringreader
+:END:
 
 While [[https://cons.io/reference/std/stdio.html#bufferedstringreader][BufferedStringReader]] does most of what I want it seems to be
 backwards where oldest = last.
@@ -411,6 +442,9 @@ Now cache that and readback the whole string!
 Brilliant, that's what we needed.
 
 ** A =memorize-stream= for remembering state
+:PROPERTIES:
+:CUSTOM_ID: a-memorize-stream-for-remembering-state
+:END:
 
 #+begin_src scheme :noweb-ref memorize-stream
   (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
@@ -551,6 +585,9 @@ left in the buffer both streams move.
 #+end_src
 
 * Interfaces =...StringReader='s
+:PROPERTIES:
+:CUSTOM_ID: interfaces-stringreaders
+:END:
 
 The stream should be used like any other. Interfaces are really a godsend.
 
@@ -586,6 +623,9 @@ There's a =PeekableStringReader= because peeking is important for parsing.
 #+end_src
 
 *** Nesting
+:PROPERTIES:
+:CUSTOM_ID: nesting
+:END:
 
 What if we're memorizing a memorized stream?
 
@@ -610,6 +650,7 @@ The previous buffer should also have the space we read in the peeking.
 #+begin_src scheme :noweb-ref location
   (interface Location 
      (location . _))
+  
   (defmethod {location :port} port-location interface: Location)
 
   (def (migrate-location loc inc (lines []))
@@ -618,7 +659,7 @@ The previous buffer should also have the space we read in the peeking.
       (set! lines (filter (cut <= xoff <>) lines))
       (def line (length lines))
       (def col (if (null? lines) xoff
-                   (- xoff (car lines))))
+                   (- xoff 1 (car lines))))
       (make-location port line col 43 xoff)))
 #+end_src
 
@@ -811,14 +852,15 @@ The previous buffer should also have the space we read in the peeking.
   		 (using (p ts.port : StringReader)
   		   (p.read-string str start end need))))
       (def newloc (Location-location ts.port))
-      (set! ts.loc newloc)
   	    
       (using ((oldloc :- location)
   	    (newloc :- location))
-        (unless (eqv? newloc.line oldloc.line)
-  	(set! ts.lines (find-nls oldloc.xoff))))
 
-  	readn))
+        (unless (and (port? ts.port) (eqv? newloc.line oldloc.line))
+  	(set! ts.lines (find-nls oldloc.xoff))
+  	(unless (port? ts.port) (set! newloc (migrate-location oldloc readn ts.lines))))
+        (set! ts.loc newloc)
+        readn)))
 
   (defmethod {read-string tracking-stream}
    tracking-stream-read-string)

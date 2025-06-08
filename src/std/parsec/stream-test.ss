@@ -295,6 +295,24 @@
        (def tag (lst))
        #;(displayln "Parsed tag?" tag tag?)
        (if (not tag?) tag? (list->string tag)))
+   > (set! ret (look-ahead parse-start-tag "<asd>"))
+   > (car ret)
+   "<asd>"
+   > (PeekableStringReader-read-char (cdr ret))
+   #!eof
+   > (set! ret (look-ahead parse-start-tag "<asd <start>"))
+   > (car ret)
+   > #f
+   > (PeekableStringReader-read-char (cdr ret))
+   #\<
+   > (using (s (cdr ret) : PeekableStringReader)
+      (let lp ((c (s.peek-char)))
+        (if (char=? c #\<) c
+   	 (begin (s.read-char) (lp (s.peek-char))))))
+   #\<
+   > (set! ret (look-ahead parse-start-tag (cdr ret)))
+   > (car ret)
+   "<start>"
    > (set! ret (look-ahead parse-start-tag "<asd <sdf\n! <end>"))
    > (car ret)
    > #f
@@ -340,7 +358,7 @@
    (#\d #\f #\newline #\! #\space)
    > (set! ret (look-ahead parse-start-tag (cdr ret)))
    > (loc->list (Location-location (cdr ret)))
-   (line: 1 col: 8 xoff: 17)
+   (line: 1 col: 7 xoff: 17)
    > (car ret)
    "<end>")
 
