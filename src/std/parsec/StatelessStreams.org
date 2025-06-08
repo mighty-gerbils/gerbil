@@ -74,31 +74,31 @@ Imagine a function that takes a parser and a stream.
     
 
 #+begin_src scheme :noweb-ref test-look-ahead-1
-      > (def (look-ahead parser stream)
-          (when (string? stream)
-            (set! stream (make-memorize-stream (open-input-string stream))))
-          (unless (memorize-stream? stream)
-            (set! stream (make-memorize-stream stream)))
-          
-          (let ((startloc (Location-location stream))
-    	    (ret (parser stream)))
-            #;(displayln ret " as lookahead on " stream " from " (loc->list startloc)
-    		   " to " (loc->list (Location-location stream)))
-            [ret
-             (if ret (memorize-stream-reader-stream stream)
-      	   (make-tracking-stream
-             (memorize-stream-buffered-string-reader stream) startloc))
-      	   ...]))
+  > (def (look-ahead parser stream)
+      (when (string? stream)
+        (set! stream (make-memorize-stream (open-input-string stream))))
+      (unless (memorize-stream? stream)
+        (set! stream (make-memorize-stream stream)))
+      
+      (let ((startloc (Location-location stream))
+  	    (ret (parser stream)))
+        #;(displayln ret " as lookahead on " stream " from " (loc->list startloc)
+  		   " to " (loc->list (Location-location stream)))
+        [ret
+         (if ret (memorize-stream-reader-stream stream)
+  	   (make-tracking-stream
+  	    (memorize-stream-buffered-string-reader stream) startloc))
+  	   ...]))
 
-      > (def ret (look-ahead (lambda (s) (using (s : PeekableStringReader) (s.peek-char))) "asd"))
-      > (car ret)
-      #\a
+  > (def ret (look-ahead (lambda (s) (using (s : PeekableStringReader) (s.peek-char))) "asd"))
+  > (car ret)
+  #\a
 #+end_src
 
 Let's do markup. =<[:alpha:]>= is a start tag. =<anything= is
 not. =LL(*)= is the case.
 
-The parser is somewhat complex. Parsec hides that but this long for in
+The parser is somewhat complex. Parsec hides that but this long form is
 for information purposes.
 
 #+begin_src scheme :noweb-ref test-look-ahead-1
@@ -166,7 +166,7 @@ Let's skip until the open and read a tag.
   "<start>"
 #+end_src
 
-*** Nested unstarted
+*** Nested unstarted no tags
 :PROPERTIES:
 :CUSTOM_ID: nested-unstarted
 :END:
@@ -262,7 +262,6 @@ Let's read a few random chars and skip to the potential open tag char.
   > (car ret)
   "<end>"
 #+end_src
-
 
 ** Locations : source location and =xoff=
 :PROPERTIES:
@@ -651,8 +650,11 @@ The previous buffer should also have the space we read in the peeking.
 #+begin_src scheme :noweb-ref location
   (interface Location 
      (location . _))
-  
+
   (defmethod {location :port} port-location interface: Location)
+  (defmethod {location cooked-textual-input-port}
+    (lambda (self) (port-location self.port))
+    interface: Location)
 
   (def (migrate-location loc inc (lines []))
     (with ((location port _ _ off old-xoff) loc)
@@ -893,10 +895,11 @@ The previous buffer should also have the space we read in the peeking.
 
 #+begin_src scheme :tangle stream.ss :noweb yes
   (import
-    :srfi/13
+    :std/srfi/13
     :std/error
     :std/iter
     :std/io
+    :std/io/port
     :std/io/dummy
     :std/io/strio/types
     :std/parser/base
@@ -908,7 +911,8 @@ The previous buffer should also have the space we read in the peeking.
     make-string-buffer
     double
     default-string-buffer-size)
-
+  #;(extern 
+    namespace: "std/io/port[:0:]" cooked-textual-input-port)
   (set! default-string-buffer-size 16)
 
   (def test-stream #f)
@@ -935,7 +939,7 @@ The previous buffer should also have the space we read in the peeking.
             :std/error
             :std/iter
             :std/interactive
-            :srfi/13
+            :std/srfi/13
             :std/instance
             :std/parsec/stream
             :std/io

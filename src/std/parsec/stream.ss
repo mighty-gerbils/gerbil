@@ -1,8 +1,9 @@
 (import
-  :srfi/13
+  :std/srfi/13
   :std/error
   :std/iter
   :std/io
+  :std/io/port
   :std/io/dummy
   :std/io/strio/types
   :std/parser/base
@@ -14,7 +15,8 @@
   make-string-buffer
   double
   default-string-buffer-size)
-
+#;(extern 
+  namespace: "std/io/port[:0:]" cooked-textual-input-port)
 (set! default-string-buffer-size 16)
 
 (def test-stream #f)
@@ -23,6 +25,9 @@
    (location . _))
 
 (defmethod {location :port} port-location interface: Location)
+(defmethod {location cooked-textual-input-port}
+  (lambda (self) (port-location self.port))
+  interface: Location)
 
 (def (migrate-location loc inc (lines []))
   (with ((location port _ _ off old-xoff) loc)

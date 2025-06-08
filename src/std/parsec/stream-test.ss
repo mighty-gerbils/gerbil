@@ -8,7 +8,7 @@
         :std/error
         :std/iter
         :std/interactive
-        :srfi/13
+        :std/srfi/13
         :std/instance
         :std/parsec/stream
         :std/io
@@ -270,7 +270,7 @@
          [ret
           (if ret (memorize-stream-reader-stream stream)
    	   (make-tracking-stream
-          (memorize-stream-buffered-string-reader stream) startloc))
+   	    (memorize-stream-buffered-string-reader stream) startloc))
    	   ...]))
    
    > (def ret (look-ahead (lambda (s) (using (s : PeekableStringReader) (s.peek-char))) "asd"))
