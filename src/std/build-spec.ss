@@ -181,6 +181,8 @@
     "monad/state"
     "monad/error"
     "monad"
+    ;; :std/parsec
+    "parsec/stream"
     ;; :std/parser
     "parser/rlang"
     "parser/base"

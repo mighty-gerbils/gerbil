@@ -1,0 +1,769 @@
+#+TITLE: Stateless Streams: Lookahead & Behind
+#+EXPORT_FILE_NAME: ../../../doc/guide/stateless-streams.md
+#+OPTIONS: toc:nil
+
+* Table of Contents                                                :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 5 :ignore (this)
+:END:
+:CONTENTS:
+- [[#stateless-streams-lookahead--behind][Stateless Streams: Lookahead & Behind]]
+:END:
+
+* Stateless Streams: Lookahead & Behind
+:PROPERTIES:
+:CUSTOM_ID: stateless-streams-lookahead--behind
+:END:
+
+The idea here is simple: for a parser that fails another branch is
+run. The problem is that failure could be after a character has been
+read. It must be put back. The branch should start at the same point.
+
+** The =look-ahead= overview.
+
+  #+begin_quote
+   A Parser for Things is a function from S[treams] to Lists of Pairs of
+   Things and S[treams]!
+   
+   --Fritz Ruehr[drewc]
+  #+end_quote
+
+  For the most part [[https://en.wikipedia.org/wiki/LL_parser][LL parsers]] for computer languages are =LL1= and
+  =peek-char= is enough to get by. The world is not computer
+  languages.
+
+  For =LL(k)= grammars one must keep =k= tokens at all times, and
+  =LL(*)= means infinite storage. That's also something the world may
+  disagree with.
+
+
+*** The =Parsec= concept and =memorize-stream=
+
+For the most part =LL1= is great: nice and fast, finite memory usage,
+easy on context.
+
+But there are times when =LL(k+1)= is the easy solution. Often such
+things are kludged or shoehorned into otherwise simple contexts.
+
+With =Parsec= things are =LL1= by default but we can choose to look
+ahead free of context at any time.
+
+Imagine a function that takes a parser and a stream.
+
+  - If the parser returns a truthy value a pair of =[value . stream]=
+    is returned.
+  - Otherwise a pair of =[#f . old-stream]= is returned where the
+    =old-stream= is like the =stream= before the parser was
+    run... back in time!
+    
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (def (look-ahead parser stream)
+      (when (string? stream)
+        (set! stream (make-memorize-stream (open-input-string stream))))
+      (unless (memorize-stream? stream)
+        (set! stream (make-memorize-stream stream)))
+      (let (ret (parser stream))
+        [ret
+         (if ret (memorize-stream-reader-stream stream)
+  	   (memorize-stream-buffered-string-reader stream))
+  	   ...]))
+
+  > (def ret (look-ahead (lambda (s) (using (s : PeekableStringReader) (s.peek-char))) "asd"))
+  > (car ret)
+  #\a
+#+end_src
+
+Let's do markup. =<[:alpha:]>= is a start tag. =<anything= is
+not. =LL(*)= is the case.
+
+The parser is somewhat complex. Parsec hides that but this long for in
+for information purposes.
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (def (parse-start-tag stream)
+      (def tag? #f)
+      (def (lst)
+        (def found-char? #f)
+        (using (s stream : PeekableStringReader)
+  	(def o (s.read-char))
+  	(if (not (char=? o #\<)) #f
+  	      (cons
+  	       o
+  	       (let lp ((c (s.read-char)))
+  		 (cond ((and (char? c) (char-alphabetic? c))
+  			(set! found-char? #t)
+  			(cons c (lp (s.read-char))))
+  		       ((and (char? c) (char=? c #\>))
+  			(when found-char? (set! tag? #t))
+  			[c])))))))
+      (def tag (lst))
+      (if (not tag?) tag? (list->string tag)))
+#+end_src
+
+Now lets parse a tag.
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (set! ret (look-ahead parse-start-tag "<asd>"))
+  > (car ret)
+  "<asd>"
+#+end_src
+
+ We can see the stream is finished.
+ 
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (PeekableStringReader-read-char (cdr ret))
+  #!eof
+#+end_src
+
+What if it's not a start tag?
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (set! ret (look-ahead parse-start-tag "<asd <start>"))
+  > (car ret)
+  > #f
+#+end_src
+
+The stream is not finished! 
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (PeekableStringReader-read-char (cdr ret))
+  #\<
+#+end_src
+
+Let's skip until the open and read a tag.
+
+#+begin_src scheme :noweb-ref test-look-ahead
+  > (using (s (cdr ret) : PeekableStringReader)
+     (let lp ((c (s.peek-char)))
+       (if (char=? c #\<) c
+  	 (begin (s.read-char) (lp (s.peek-char))))))
+  #\<
+  > (set! ret (look-ahead parse-start-tag (cdr ret)))
+  "<start>"
+#+end_src
+
+** Locations : source location and =xoff=
+
+There's a number of reasons to know where one's at in a stream.
+
+#+begin_src scheme :noweb-ref test-basic-stream
+  > (def parseme "42\n is the answer to:\n\tLTUAE!")
+  > (def first-port (open-input-string parseme))
+  > (def (loc->list loc) 
+      (with ((location port line col _ xoff) loc)
+        [line: line col: col xoff: xoff]))
+  
+  > (def first-loc (port-location first-port))
+  > (loc->list first-loc)
+   (line: 0 col: 0 xoff: 0)
+#+end_src
+
+Now as luck would have it a port handles a lot automagically.
+
+Let's try our own readline. 
+
+#+begin_src scheme :noweb-ref test-basic-stream
+  > (let lp ((c (read-char first-port)))
+      (if (eqv? #\newline c) []
+  	(cons c (lp (read-char first-port)))))
+  (#\4 #\2)
+#+end_src
+
+Now the port location tells us!
+
+#+begin_src scheme :noweb-ref test-basic-stream
+  > (loc->list (port-location first-port))
+   (line: 1 col: 0 xoff: 3)
+#+end_src
+
+*** The =Location= interface
+
+Not everything is a port. In fact that's kind of the entire point of
+these streams.
+
+#+begin_src scheme :noweb-ref test-basic-stream
+  > (Location-location first-port)
+   (line: 1 col: 0 xoff: 3)
+#+end_src
+** A =tracking-stream= with state
+
+The monadic parser combinator primitive =(.item)= is kind of just
+=read-char= in disguise. However, because we need to be stateless on
+top of what has a finite state we need to keep track of where we are
+and where the lines are.
+
+
+Let us make a =tracking-stream=.
+
+#+begin_src scheme :noweb-ref test-tracking-stream
+  > (def parseme "42\n is the answer to:\n\tLTUAE!")
+  > (def port (open-input-string parseme))
+  > (def ts (make-tracking-stream port))
+  > (def (loc->list loc) 
+      (with ((location port line col _ xoff) loc)
+        [line: line col: col xoff: xoff]))
+#+end_src
+
+We can see the location is all 0 until we read 2 chars
+
+#+begin_src scheme :noweb-ref test-tracking-stream
+  > (loc->list (tracking-stream-loc ts))
+  (line: 0 col: 0 xoff: 0)
+
+  >(def fourtwo "  ")
+  > (tracking-stream-read-string ts fourtwo)
+  2
+  > fourtwo
+  "42"
+  > (loc->list (tracking-stream-loc ts))
+  (line: 0 col: 2 xoff: 2)
+#+end_src
+
+The lines are properly tracked with =read-string=.
+
+#+begin_src scheme :noweb-ref test-tracking-stream
+  > (def nl "  ")
+
+  > (tracking-stream-read-string ts nl)
+  2
+  > (loc->list (tracking-stream-loc ts))
+  (line: 1 col: 1 xoff: 4)
+  > (tracking-stream-lines ts)
+  (2)
+#+end_src
+
+And as well with =read=char=.
+
+#+begin_src scheme :noweb-ref test-tracking-stream
+  > (let lp ((c (tracking-stream-read-char ts)))
+      (if (eqv? #\newline c) []
+  	(cons c (lp (tracking-stream-read-char ts)))))
+  (#\i #\s #\space #\t #\h #\e #\space #\a #\n #\s #\w #\e #\r #\space #\t #\o #\:)
+  > (loc->list (tracking-stream-loc ts))
+  (line: 2 col: 0 xoff: 22)
+  
+#+end_src
+
+Now we simple need to make sure we can be a pre-reader for the
+buffered reader.
+
+#+begin_src scheme :noweb-ref test-tracking-stream
+  ;; Are we compatible with the buffered reader?
+  > (def ts-buff (open-buffered-string-reader ts))
+  > (def restr (make-string 8 #\?))
+  > (def n (using (ts-buff : BufferedStringReader)
+  	   (ts-buff.read-string restr)))
+  > n 
+  7
+  > restr
+  "\tLTUAE!?"
+#+end_src
+
+** Interface: =StatelessStringReader=
+
+While [[https://cons.io/reference/std/stdio.html#bufferedstringreader][BufferedStringReader]] does most of what I want it seems to be
+backwards where oldest = last.
+
+Read a char from our =tracking-stream=.
+
+#+begin_src scheme :noweb-ref test-stateless-stream
+  > (def parseme "42\n is the answer to:\n\tLTUAE!")
+  > (def ts (make-tracking-stream parseme))
+  > (def buff (open-buffered-string-reader ts))
+  > (def char (PeekableStringReader-read-char ts))
+  > char
+  #\4
+#+end_src
+
+ Add that char to our buffer and read it back. Then re-add it because
+ we want to cache everything and this is just a test.
+
+#+begin_src scheme :noweb-ref test-stateless-stream
+  > (using (buff : StatelessStringReader) (buff.put-back char))
+  > (using (buff : StatelessStringReader) (buff.read-char))
+  #\4
+  > (using (buff : StatelessStringReader) (buff.put-back char))
+#+end_src
+
+Read the rest of the line as a string.
+
+#+begin_src scheme :noweb-ref test-stateless-stream
+  > (def str "  ")
+  > (using (ts : PeekableStringReader) (ts.read-string str))
+  2
+  > str
+  "2\n"
+#+end_src
+
+Now cache that and readback the whole string!
+
+#+begin_src scheme :noweb-ref test-stateless-stream
+  > (using (buff : StatelessStringReader) (buff.put-back str))
+  > (def bstr (make-string 3))
+  > (using (buff : StatelessStringReader) (buff.read-string bstr))
+  > bstr
+  "42\n"
+#+end_src
+
+Brilliant, that's what we needed.
+
+** A =memorize-stream= for remembering state
+
+#+begin_src scheme :noweb-ref memorize-stream
+  (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
+   constructor: :init!)
+
+  (defmethod {:init! memorize-stream}
+    (lambda (self reader-stream (buf #f))
+      (unless (tracking-stream? reader-stream)
+        (set! reader-stream (make-tracking-stream reader-stream)))
+      (set! self.reader-stream reader-stream)
+      (set! self.startloc (memorize-stream-reader-location self))
+      (set! self.buffered-string-reader
+        (or buf (open-buffered-string-reader reader-stream)))))
+
+  (def (memorize-stream-read-char ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader)
+  	  (bs ms.buffered-string-reader : StatelessStringReader))
+      (def c (rs.read-char))
+      (unless (eof-object? c)
+        (bs.put-back c))
+      c))
+
+  (defmethod {read-char memorize-stream}
+    memorize-stream-read-char interface: PeekableStringReader)
+
+  (def (memorize-stream-peek-char ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader))
+      (rs.peek-char)))
+
+  (defmethod {peek-char memorize-stream}
+    memorize-stream-peek-char interface: PeekableStringReader)
+
+  (def (memorize-stream-close ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : StringReader))
+      (rs.close)))
+
+  (defmethod {close memorize-stream}
+    memorize-stream-close interface: Closer)
+
+  (def (memorize-stream-read-string
+        ms str (start 0) (end (string-length str)) (need 0))
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader)
+  	  (bs ms.buffered-string-reader : StatelessStringReader))
+      (def n (rs.read-string str start end need))
+      (unless (zero? n)
+        (bs.put-back  (substring str start (+ start n))))
+      n))
+
+
+  (defmethod {read-string memorize-stream}
+    memorize-stream-read-string interface: StringReader)
+
+
+  (def (memorize-stream-reader-location ms)
+    (using (ms :- memorize-stream)
+    (cond ((tracking-stream? ms.reader-stream)
+  	 (tracking-stream-loc ms.reader-stream))
+  	(else #f))))
+
+  (def (memorize-stream-buffer-location ms)
+    (using ((ms :- memorize-stream)
+            (loc ms.startloc :- location)
+  	    (strbuf ms.buffered-string-reader : StatelessStringReader))
+      (strbuf.location ms loc.xoff)))
+
+#+end_src
+
+
+A memorize stream is a lot like a tracking stream. 
+
+#+begin_src scheme :noweb-ref test-memorize-stream :noweb yes
+    > (begin
+    <<memorize-stream>>)
+    > (def parseme "42\n is the answer to:\n\tLTUAE!")
+    > (def port (open-input-string parseme))
+    > (def ts (make-tracking-stream port))
+    > (def ms (make-memorize-stream ts))
+    > (def (loc->list loc) 
+        (with ((location port line col _ xoff) loc)
+          [line: line col: col xoff: xoff]))
+    > (memorize-stream-read-char ms)
+    #\4
+#+end_src
+
+In fact there's a reader location that mimics the tracker location,
+and a buffer location as well.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  >  (loc->list (memorize-stream-reader-location ms))
+  (line: 0 col: 1 xoff: 1)
+  >  (loc->list (memorize-stream-buffer-location ms))
+  (line: 0 col: 0 xoff: 0)
+#+end_src
+
+It only memorizes the reader. Because we are trying for stateless
+parsing any state is shared so the caches and live match.
+
+When we read a char the buffer does not move but the reader does.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (memorize-stream-read-char ms)
+  #\2
+  >  (loc->list (memorize-stream-reader-location ms))
+  (line: 0 col: 2 xoff: 2)
+  >  (loc->list (memorize-stream-buffer-location ms))
+  (line: 0 col: 0 xoff: 0)
+#+end_src
+
+On the other hand if we read a char from the buffer when there's none
+left in the buffer both streams move.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (def bread-char strbuf-stateless-read-char)
+  > (def Buff (memorize-stream-buffered-string-reader ms))
+  > [ (bread-char Buff) (bread-char Buff) ]
+  (#\4 #\2)
+  >  (loc->list (memorize-stream-buffer-location ms))
+  (line: 0 col: 2 xoff: 2)
+
+  ;; Now read from the empty buffer
+  > [ (bread-char Buff) (bread-char Buff) ]
+  (#\newline #\space)
+  ;; The reader has moved the same as the buffer.
+  >  (loc->list (memorize-stream-reader-location ms))
+  (line: 1 col: 1 xoff: 4)
+  >  (loc->list (memorize-stream-buffer-location ms))
+  (line: 1 col: 1 xoff: 4)
+#+end_src
+
+* Interfaces =...StringReader='s
+
+The stream should be used like any other. Interfaces are really a godsend.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (def mstr (make-string 13))
+  > (using (ms : StringReader) (ms.read-string mstr))
+  13
+  > mstr
+  "is the answer"
+#+end_src
+
+Now that we've read the buffer should contain that string.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (def bstr (make-string 13))
+  > (using (b Buff : StatelessStringReader) (b.available))
+  13
+  > (using (b Buff : StringReader) (b.read-string bstr))
+  > bstr
+  "is the answer"
+  > (using (b Buff : StatelessStringReader) (b.available))
+  0
+#+end_src
+
+There's a =PeekableStringReader= because peeking is important for parsing.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (def pkchar (using (ms : PeekableStringReader) (ms.peek-char)))
+  > pkchar
+  #\space
+  > (char=? pkchar (using (ms : PeekableStringReader) (ms.read-char)))
+  #t
+#+end_src
+
+*** Nesting
+
+What if we're memorizing a memorized stream?
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > (def mms (make-memorize-stream ms))
+  > (def Bbuff (memorize-stream-buffered-string-reader mms))
+  > [ (bread-char Bbuff) (bread-char Bbuff) ]
+  (#\t #\o)
+#+end_src
+
+The previous buffer should also have the space we read in the peeking.
+
+#+begin_src scheme :noweb-ref test-memorize-stream
+  > [ (bread-char Buff)  (bread-char Buff) (bread-char Buff)]
+  (#\space #\t #\o)
+#+end_src
+
+* Source Files                                                     :noexport:
+
+** =Location=: We need to know a lot of thing's places.
+
+#+begin_src scheme :noweb-ref location
+  (interface Location 
+     (location . _))
+  (defmethod {location :port} port-location interface: Location)
+#+end_src
+
+** No state? Cache in =strbuf= with =StatelessStringReader=
+
+#+begin_src scheme :noweb-ref strbuf-stateless
+  (interface (StatelessStringReader BufferedStringReader)
+   (location . _)
+   (put-back (previous-input
+  	    :~ (lambda (o) (or (char? o)
+  			  (string? o)
+  			  ((list-of? char?) o)))))
+  					 
+   => :void)
+  (def (strbuf-location stream (port #f) (start-xoff 0) (rlo 0) (rhi 0))
+    (cond ((interface-instance? stream)
+  	 (strbuf-location (interface-instance-object stream)
+  			  port start-xoff rlo rhi))
+  	((string-input-buffer? stream)
+  	 (using ((stream :- string-input-buffer))
+  	   (strbuf-location stream.reader
+  			    stream start-xoff stream.rlo stream.rhi)))
+  	((tracking-stream? stream)
+  	 (if (eqv? rlo rhi)
+  	   (tracking-stream-loc stream)
+  	   (using ((stream :- tracking-stream))
+  	     (def xoff (+ start-xoff rlo))
+  	     (def lines (filter (cut <= xoff <>) stream.lines))
+  	     (def line (length lines))
+  	     (def col (if (null? lines) xoff
+  			  (- xoff (car lines))))
+  	     (make-location port line col 42 xoff))))))
+
+  (defmethod {location string-input-buffer}
+    strbuf-location interface: StatelessStringReader)
+
+  (def (strbuf-stateless-put-back stream char-or-bag)
+    (def (put-back-char! char)
+       (using (strbuf stream :- string-input-buffer)
+  	   (let ((rlo strbuf.rlo)
+  		 (rhi strbuf.rhi)
+  		 (buf strbuf.buf))
+  	     (cond
+  	      ((fx> rhi 0)
+                 (let ((rhi+1 (fx+ rhi 1))
+  		     (buflen (string-length buf)))
+  		 (if (fx> rhi+1 buflen)
+  		   ;; uh oh, we need to grow the buffer; do it by a page
+  		   (let (new-buf (make-string (fx+ buflen 1024)))
+  		     (substring-move! buf 0 rhi new-buf 0)
+  		     (string-set! new-buf rhi char)
+  		     (set! strbuf.buf new-buf)
+  		     (set! strbuf.rhi rhi+1)
+  		     (void))
+  		   (begin
+  		     (string-set! buf rhi char)
+  		     (set! strbuf.rhi rhi+1)
+  		     (void)))))
+  	      (else
+                 ;; empty buffer
+                 (string-set! buf 0 char)
+                 (set! strbuf.rlo 0)
+                 (set! strbuf.rhi 1)
+                 (void))))))
+    
+    (cond ((interface-instance? stream)
+  	 (strbuf-stateless-put-back
+  	  (interface-instance-object stream) char-or-bag))
+  	((string-input-buffer? stream)
+  	 (cond
+  	  ((char? char-or-bag) (put-back-char! char-or-bag))
+  	  (else
+  	   ;; Assume it's iterable
+  	   (for (char char-or-bag) (put-back-char! char)))))
+  	(else (error "Cannot put back to this type of stream" stream))))
+
+  (defmethod {put-back string-input-buffer}
+    strbuf-stateless-put-back interface: StatelessStringReader)
+
+  (def (strbuf-stateless-read-char strbuf)
+    (cond ((interface-instance? strbuf)
+           (strbuf-stateless-read-char (interface-instance-object strbuf)))
+          (else 
+  	 (using (strbuf :- string-input-buffer)
+  	   (let ((rlo strbuf.rlo)
+  		 (rhi strbuf.rhi)
+  		 (buf strbuf.buf))
+  	     (if (fx< rlo rhi)
+                 (let ((char (string-ref buf rlo))
+  		     (rlo+1 (fx+ rlo 1)))
+  		 (strbuf-input-advance! strbuf rlo+1 rhi)
+  		 char)
+                 ;; empty buffer
+  	       (let (read (&StringReader-read-string
+  			   strbuf.reader buf 0 1))
+  		 (set! strbuf.rlo 0)
+  		 (set! strbuf.rhi 0)
+  		 (if (fx> read 0)
+  		   (string-ref buf 0)
+  		   '#!eof))))))))
+
+  (defmethod {read-char string-input-buffer}
+    strbuf-stateless-read-char interface: StatelessStringReader)
+#+end_src
+
+** Stream
+
+
+#+begin_src scheme :noweb-ref tracking-stream
+  (defstruct tracking-stream (port loc lines)
+    constructor: :init!)
+
+  (defmethod {:init! tracking-stream}
+    (lambda (self port (loc #f) (lines []))
+      (when (string? port)
+        (set! port (open-input-string port)))
+      (when (not loc) (set! loc (Location-location port)))
+      (set! self.port port)
+      (set! self.loc loc)
+      (set! self.lines lines)))
+
+  (def (tracking-stream-close ts)
+    (using (ts :- tracking-stream)
+      (close-input-port ts.port)))
+  (defmethod {close tracking-stream} tracking-stream-close)
+  				  
+  (def (tracking-stream-read-string
+        ts str (start 0) (end (string-length str))
+        (need 0))
+    (using (ts :- tracking-stream)
+      (def (find-nls xoff)
+        (def nls ts.lines)
+        (let lp ((i start))
+  	(if (eqv? i end) nls
+  	    (let (c (string-ref str i))
+  	      (when (eqv? c #\newline)
+  		(set! nls [(+ i xoff) nls ...]))
+  	      (lp (1+ i))))))
+
+      (def oldloc ts.loc)
+      (def readn (read-substring str start end ts.port need))
+      (def newloc (port-location ts.port))
+      (set! ts.loc newloc)
+  	    
+      (using ((oldloc :- location)
+  	    (newloc :- location))
+        (unless (eqv? newloc.line oldloc.line)
+  	(set! ts.lines (find-nls oldloc.xoff))))
+
+  	readn))
+
+  (defmethod {read-string tracking-stream}
+   tracking-stream-read-string)
+
+  (def (tracking-stream-peek-char ts)
+    (with ((tracking-stream port _ _) ts)
+      (peek-char port)))
+
+  (defmethod {peek-char tracking-stream} tracking-stream-peek-char)
+
+  (def (tracking-stream-read-char ts)
+    (using ((ts :- tracking-stream)
+  	  (oldloc ts.loc :- location))
+      (def c (read-char ts.port))
+      (when (eqv? c #\newline)
+        (set! ts.lines [oldloc.xoff ts.lines ...]))
+      (set! ts.loc (port-location ts.port))
+      c))
+
+  (defmethod {read-char tracking-stream} tracking-stream-read-char)
+
+  ;;(def (tracking-stream-TokenPrim ts
+#+end_src
+
+
+#+begin_src scheme :tangle stream.ss :noweb yes
+  (import
+    :srfi/13
+    :std/iter
+    :std/io
+    :std/io/strio/types
+    :std/parser/base
+    :std/parser/stream
+    :std/io/strio/input)
+  (export #t)
+
+  (def test-stream #f)
+
+  <<location>>
+
+  <<tracking-stream>>
+
+  <<strbuf-stateless>>
+  <<memorize-stream>>
+#+end_src
+
+
+* The Test File                                                    :noexport:
+
+#+begin_src scheme :noweb yes :tangle stream-test.ss
+    ;;; -*- Gerbil -*-
+    ;;; (C) me at drewc.ca
+    ;;; :std/parsec/stream unit-tests
+
+    (import :std/io/strio/input)
+    (import :std/test
+            :std/error
+            :std/iter
+            :std/interactive
+            :srfi/13
+            :std/instance
+            :std/parsec/stream
+            :std/io
+            :std/io/strio/types
+            :std/parser/base :std/parser/stream
+            (only-in :std/sugar hash try)
+            (only-in :gerbil/core error-object? with-catch))
+    (export stream-test)
+
+    (defsyntax (test-inline stx)
+      (syntax-case stx (>)
+        ((_ test-case: name rest ...)
+         #'(test-case name (test-inline rest ...)))
+        ((_ > form > rest ...)
+         #'(begin (when std/test#*test-verbose*
+  		  (displayln "... "
+  			     (with-output-to-string (cut write 'form))))
+  		form (test-inline > rest ...)))
+        ((_ > test result rest ...)
+         #'(begin (check test => 'result) (test-inline rest ...)))
+        ((empty ...) #!void)))
+
+    (def (loc->list loc) 
+      (with ((location port line col _ xoff) loc)
+        [line: line col: col xoff: xoff]))
+
+    (def stream-test
+      (test-suite "Test :std/parsec/stream"
+      (test-inline
+       test-case: "Basic Stream Usage"
+       <<test-basic-stream>>)
+      (test-inline
+       test-case: "Test Tracking Stream Usage"
+       <<test-tracking-stream>>)
+      (test-inline
+       test-case: "Test Stateless String buffer Usage"
+       <<test-stateless-stream>>)
+     (test-inline
+       test-case: "Test Memorize Stream Usage"
+       <<test-memorize-stream>>)
+     (test-inline
+       test-case: "Test LookAhead concept"
+       <<test-look-ahead>>)
+
+
+
+      ))
+          
+    		 
+         
+
+
+
+
+#+end_src
