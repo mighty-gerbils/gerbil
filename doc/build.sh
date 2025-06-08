@@ -15,6 +15,7 @@ weave_subtree () {
 }
 
 weave ../src/std/monad/README.org
+weave ../src/std/parsec/StatelessStreams.org
 
 weave ../dist/macos/README.org
 weave ../dist/macos/homebrew/README.org
