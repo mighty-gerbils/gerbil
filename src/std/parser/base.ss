@@ -5,7 +5,7 @@
 (export #t)
 
 (defstruct token (t e loc) final: #t)
-(defstruct location (port line col off xoff) final: #t)
+(defstruct location (port line col off xoff) final: #t print: (line col off xoff))
 
 (def (wrap-identity e loc)
   e)

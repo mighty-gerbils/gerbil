@@ -4,6 +4,7 @@
 
 (import :std/io/strio/input)
 (import :std/test
+        :std/io/dummy
         :std/error
         :std/iter
         :std/interactive
@@ -12,6 +13,7 @@
         :std/parsec/stream
         :std/io
         :std/io/strio/types
+        (only-in :std/io/strio/api make-string-buffer)
         :std/parser/base :std/parser/stream
         (only-in :std/sugar hash try)
         (only-in :gerbil/core error-object? with-catch))
@@ -53,7 +55,7 @@
    (#\4 #\2)
    > (loc->list (port-location first-port))
     (line: 1 col: 0 xoff: 3)
-   > (Location-location first-port)
+   > (loc->list (Location-location first-port))
     (line: 1 col: 0 xoff: 3))
   (test-inline
    test-case: "Test Tracking Stream Usage"
@@ -123,16 +125,19 @@
    test-case: "Test Memorize Stream Usage"
    > (begin
    (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
-    constructor: :init!)
+    constructor: :init! print: #t)
    
    (defmethod {:init! memorize-stream}
      (lambda (self reader-stream (buf #f))
+       #;(displayln "Memorize: " reader-stream
+   	       "\n\t from: "(Location-location reader-stream))
        (unless (tracking-stream? reader-stream)
          (set! reader-stream (make-tracking-stream reader-stream)))
        (set! self.reader-stream reader-stream)
        (set! self.startloc (memorize-stream-reader-location self))
+         
        (set! self.buffered-string-reader
-         (or buf (open-buffered-string-reader reader-stream)))))
+         (or buf (open-stateless-buffered-string-reader reader-stream)))))
    
    (def (memorize-stream-read-char ms)
      (using ((ms :- memorize-stream)
@@ -182,6 +187,9 @@
      (cond ((tracking-stream? ms.reader-stream)
    	 (tracking-stream-loc ms.reader-stream))
    	(else #f))))
+   
+   (defmethod {location memorize-stream}
+     memorize-stream-reader-location interface: Location)
    
    (def (memorize-stream-buffer-location ms)
      (using ((ms :- memorize-stream)
@@ -254,10 +262,15 @@
          (set! stream (make-memorize-stream (open-input-string stream))))
        (unless (memorize-stream? stream)
          (set! stream (make-memorize-stream stream)))
-       (let (ret (parser stream))
+       
+       (let ((startloc (Location-location stream))
+   	    (ret (parser stream)))
+         #;(displayln ret " as lookahead on " stream " from " (loc->list startloc)
+   		   " to " (loc->list (Location-location stream)))
          [ret
           (if ret (memorize-stream-reader-stream stream)
-   	   (memorize-stream-buffered-string-reader stream))
+   	   (make-tracking-stream
+          (memorize-stream-buffered-string-reader stream) startloc))
    	   ...]))
    
    > (def ret (look-ahead (lambda (s) (using (s : PeekableStringReader) (s.peek-char))) "asd"))
@@ -280,24 +293,56 @@
    			(when found-char? (set! tag? #t))
    			[c])))))))
        (def tag (lst))
+       #;(displayln "Parsed tag?" tag tag?)
        (if (not tag?) tag? (list->string tag)))
-   > (set! ret (look-ahead parse-start-tag "<asd>"))
-   > (car ret)
-   "<asd>"
-   > (PeekableStringReader-read-char (cdr ret))
-   #!eof
-   > (set! ret (look-ahead parse-start-tag "<asd <start>"))
+   > (set! ret (look-ahead parse-start-tag "<asd <sdf\n! <end>"))
    > (car ret)
    > #f
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 0 xoff: 0)
+   > (def (ll1-< stream (read? #f))
+       #;(displayln "ll1 to <:" stream " read? " read?)
+       (using (s stream : PeekableStringReader)
+         (let lp ((c (s.peek-char)))
+           #;(displayln "ll1 loc:" (loc->list (Location-location (cdr ret))))
+   	(if (char=? c #\<) (if read? [(s.read-char)] [])
+   	    (cons (s.read-char) (lp (s.peek-char)))))))
+   > (tracking-stream? (cdr ret))
+   #t
+   > (BufferedStringReader? (tracking-stream-port (cdr ret)))
+   #t
+   > (ll1-< (cdr ret))
+   ()
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 0 xoff: 0)
+   > (set! ret (look-ahead parse-start-tag (cdr ret)))
+   > (car ret)
+   #f
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 0 xoff: 0)
+   > [(ll1-< (cdr ret) #t) (ll1-< (cdr ret))]
+   ((#\<) (#\a #\s #\d #\space))
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 5 xoff: 5)
+   > (set! ret (look-ahead parse-start-tag (cdr ret)))
+   > (car ret)
+   #f
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 5 xoff: 5)
    > (PeekableStringReader-read-char (cdr ret))
    #\<
-   > (using (s (cdr ret) : PeekableStringReader)
-      (let lp ((c (s.peek-char)))
-        (if (char=? c #\<) c
-   	 (begin (s.read-char) (lp (s.peek-char))))))
-   #\<
+   
+   > (PeekableStringReader-read-char (cdr ret))
+   #\s
+   > (loc->list (Location-location (cdr ret)))
+   (line: 0 col: 7 xoff: 7)
+   > (ll1-< (cdr ret))
+   (#\d #\f #\newline #\! #\space)
    > (set! ret (look-ahead parse-start-tag (cdr ret)))
-   "<start>")
+   > (loc->list (Location-location (cdr ret)))
+   (line: 1 col: 8 xoff: 17)
+   > (car ret)
+   "<end>")
 
 
 

@@ -1,12 +1,21 @@
 (import
   :srfi/13
+  :std/error
   :std/iter
   :std/io
+  :std/io/dummy
   :std/io/strio/types
   :std/parser/base
   :std/parser/stream
   :std/io/strio/input)
 (export #t)
+(extern 
+  namespace: std/io/strio/api
+  make-string-buffer
+  double
+  default-string-buffer-size)
+
+(set! default-string-buffer-size 16)
 
 (def test-stream #f)
 
@@ -14,8 +23,17 @@
    (location . _))
 (defmethod {location :port} port-location interface: Location)
 
+(def (migrate-location loc inc (lines []))
+  (with ((location port _ _ off old-xoff) loc)
+    (def xoff (+ old-xoff inc))
+    (set! lines (filter (cut <= xoff <>) lines))
+    (def line (length lines))
+    (def col (if (null? lines) xoff
+                 (- xoff (car lines))))
+    (make-location port line col 43 xoff)))
+
 (defstruct tracking-stream (port loc lines)
-  constructor: :init!)
+  constructor: :init! print: #t)
 
 (defmethod {:init! tracking-stream}
   (lambda (self port (loc #f) (lines []))
@@ -30,6 +48,14 @@
   (using (ts :- tracking-stream)
     (close-input-port ts.port)))
 (defmethod {close tracking-stream} tracking-stream-close)
+
+(defmethod {location tracking-stream}
+  (lambda (self)
+    #;(using (loc self.loc : location)
+      (displayln "asking trancking stream lok: "
+		 self " " self.loc " port loc: " (Location-location self.port)))
+     self.loc)
+  interface: Location)
 				  
 (def (tracking-stream-read-string
       ts str (start 0) (end (string-length str))
@@ -45,8 +71,11 @@
 	      (lp (1+ i))))))
 
     (def oldloc ts.loc)
-    (def readn (read-substring str start end ts.port need))
-    (def newloc (port-location ts.port))
+    (def readn (if (port? ts.port)
+		 (read-substring str start end ts.port need)
+		 (using (p ts.port : StringReader)
+		   (p.read-string str start end need))))
+    (def newloc (Location-location ts.port))
     (set! ts.loc newloc)
 	    
     (using ((oldloc :- location)
@@ -61,40 +90,53 @@
 
 (def (tracking-stream-peek-char ts)
   (with ((tracking-stream port _ _) ts)
-    (peek-char port)))
+    (if (port? port) (peek-char port)
+	(PeekableStringReader-peek-char port))))
 
 (defmethod {peek-char tracking-stream} tracking-stream-peek-char)
 
 (def (tracking-stream-read-char ts)
   (using ((ts :- tracking-stream)
 	  (oldloc ts.loc :- location))
-    (def c (read-char ts.port))
+    #;(displayln "tracking read char: " ts "\n\tfrom: " ts.port "\n\tat " oldloc)
+    (def c (if (port? ts.port)
+	     (read-char ts.port)
+	     (using (p ts.port : PeekableStringReader) (p.read-char))))
     (when (eqv? c #\newline)
       (set! ts.lines [oldloc.xoff ts.lines ...]))
-    (set! ts.loc (port-location ts.port))
+    (set! ts.loc (if (port? ts.port) (Location-location ts.port) (migrate-location oldloc 1 ts.lines)))
     c))
 
 (defmethod {read-char tracking-stream} tracking-stream-read-char)
 
 ;;(def (tracking-stream-TokenPrim ts
 
-(interface (StatelessStringReader BufferedStringReader)
- (location . _)
+(interface (StatelessStringReader Location BufferedStringReader)
  (put-back (previous-input
 	    :~ (lambda (o) (or (char? o)
 			  (string? o)
 			  ((list-of? char?) o)))))
 					 
  => :void)
+
 (def (strbuf-location stream (port #f) (start-xoff 0) (rlo 0) (rhi 0))
+ ;; (displayln "location for strbuf:" stream port start-xoff rlo rhi)
   (cond ((interface-instance? stream)
 	 (strbuf-location (interface-instance-object stream)
 			  port start-xoff rlo rhi))
 	((string-input-buffer? stream)
 	 (using ((stream :- string-input-buffer))
+          #;(displayln "string input buffer:" stream " " stream.rlo)
 	   (strbuf-location stream.reader
 			    stream start-xoff stream.rlo stream.rhi)))
 	((tracking-stream? stream)
+
+	 #;(displayln "location for tracking stream:"
+         
+	   (tracking-stream-loc stream) " "
+         (tracking-stream-port stream) " "
+        (port? (tracking-stream-port stream))" " rlo" " rhi" " port
+	  " " (and (string-input-buffer? port) (string-input-buffer-rlo port)))
 	 (if (eqv? rlo rhi)
 	   (tracking-stream-loc stream)
 	   (using ((stream :- tracking-stream))
@@ -103,10 +145,14 @@
 	     (def line (length lines))
 	     (def col (if (null? lines) xoff
 			  (- xoff (car lines))))
-	     (make-location port line col 42 xoff))))))
+             (if (or (port? stream.port) #t)
+	       (make-location port line col 42 xoff)
+	       (strbuf-location stream.port port rlo))
+	       )
+	     ))))
 
 (defmethod {location string-input-buffer}
-  strbuf-location interface: StatelessStringReader)
+  strbuf-location interface: Location)
 
 (def (strbuf-stateless-put-back stream char-or-bag)
   (def (put-back-char! char)
@@ -175,17 +221,46 @@
 
 (defmethod {read-char string-input-buffer}
   strbuf-stateless-read-char interface: StatelessStringReader)
+
+(def (open-stateless-buffered-string-reader pre-reader (buffer-or-size default-string-buffer-size)
+                                encoding: (codec 'UTF-8))
+=> BufferedStringReader
+(cond
+ ((string? pre-reader)
+  (BufferedStringReader
+   (make-string-input-buffer dummy-string-reader
+                             pre-reader 0 (string-length pre-reader)
+                             #f)))
+ 
+ ((is-StringReader? pre-reader)
+  (BufferedStringReader
+   (make-string-input-buffer (StringReader pre-reader)
+                             (make-string-buffer buffer-or-size) 0 0
+                             #f)))
+ ((is-Reader? pre-reader)
+  (BufferedStringReader
+   (make-string-input-buffer (open-string-reader pre-reader (double buffer-or-size)
+                                                 encoding: codec)
+                             (make-string-buffer buffer-or-size) 0 0
+                             #f)))
+ ((input-port? pre-reader)
+  (BufferedStringReader (make-cooked-textual-input-port pre-reader)))
+ (else
+  (raise-bad-argument open-stateless-buffered-string-reader "string or implementation of StringReader or Reader" pre-reader))))
 (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
- constructor: :init!)
+ constructor: :init! print: #t)
 
 (defmethod {:init! memorize-stream}
   (lambda (self reader-stream (buf #f))
+    #;(displayln "Memorize: " reader-stream
+	       "\n\t from: "(Location-location reader-stream))
     (unless (tracking-stream? reader-stream)
       (set! reader-stream (make-tracking-stream reader-stream)))
     (set! self.reader-stream reader-stream)
     (set! self.startloc (memorize-stream-reader-location self))
+      
     (set! self.buffered-string-reader
-      (or buf (open-buffered-string-reader reader-stream)))))
+      (or buf (open-stateless-buffered-string-reader reader-stream)))))
 
 (def (memorize-stream-read-char ms)
   (using ((ms :- memorize-stream)
@@ -235,6 +310,9 @@
   (cond ((tracking-stream? ms.reader-stream)
 	 (tracking-stream-loc ms.reader-stream))
 	(else #f))))
+
+(defmethod {location memorize-stream}
+  memorize-stream-reader-location interface: Location)
 
 (def (memorize-stream-buffer-location ms)
   (using ((ms :- memorize-stream)
