@@ -19,7 +19,11 @@
   namespace: "std/io/port[:0:]" cooked-textual-input-port)
 (set! default-string-buffer-size 16)
 
-(def test-stream #f)
+(defmethod {close :port} close-input-port interface: Closer)
+(defmethod {read-string :port} read-string interface: StringReader)
+(defmethod {peek-char :port} peek-char interface: PeekableStringReader)
+(defmethod {read-char :port} read-char interface: PeekableStringReader)
+ 
 
 (interface Location 
    (location . _))

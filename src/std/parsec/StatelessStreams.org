@@ -446,81 +446,6 @@ Brilliant, that's what we needed.
 :CUSTOM_ID: a-memorize-stream-for-remembering-state
 :END:
 
-#+begin_src scheme :noweb-ref memorize-stream
-  (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
-   constructor: :init! print: #t)
-
-  (defmethod {:init! memorize-stream}
-    (lambda (self reader-stream (buf #f))
-      #;(displayln "Memorize: " reader-stream
-  	       "\n\t from: "(Location-location reader-stream))
-      (unless (tracking-stream? reader-stream)
-        (set! reader-stream (make-tracking-stream reader-stream)))
-      (set! self.reader-stream reader-stream)
-      (set! self.startloc (memorize-stream-reader-location self))
-        
-      (set! self.buffered-string-reader
-        (or buf (open-stateless-buffered-string-reader reader-stream)))))
-
-  (def (memorize-stream-read-char ms)
-    (using ((ms :- memorize-stream)
-  	  (rs ms.reader-stream : PeekableStringReader)
-  	  (bs ms.buffered-string-reader : StatelessStringReader))
-      (def c (rs.read-char))
-      (unless (eof-object? c)
-        (bs.put-back c))
-      c))
-
-  (defmethod {read-char memorize-stream}
-    memorize-stream-read-char interface: PeekableStringReader)
-
-  (def (memorize-stream-peek-char ms)
-    (using ((ms :- memorize-stream)
-  	  (rs ms.reader-stream : PeekableStringReader))
-      (rs.peek-char)))
-
-  (defmethod {peek-char memorize-stream}
-    memorize-stream-peek-char interface: PeekableStringReader)
-
-  (def (memorize-stream-close ms)
-    (using ((ms :- memorize-stream)
-  	  (rs ms.reader-stream : StringReader))
-      (rs.close)))
-
-  (defmethod {close memorize-stream}
-    memorize-stream-close interface: Closer)
-
-  (def (memorize-stream-read-string
-        ms str (start 0) (end (string-length str)) (need 0))
-    (using ((ms :- memorize-stream)
-  	  (rs ms.reader-stream : PeekableStringReader)
-  	  (bs ms.buffered-string-reader : StatelessStringReader))
-      (def n (rs.read-string str start end need))
-      (unless (zero? n)
-        (bs.put-back  (substring str start (+ start n))))
-      n))
-
-
-  (defmethod {read-string memorize-stream}
-    memorize-stream-read-string interface: StringReader)
-
-
-  (def (memorize-stream-reader-location ms)
-    (using (ms :- memorize-stream)
-    (cond ((tracking-stream? ms.reader-stream)
-  	 (tracking-stream-loc ms.reader-stream))
-  	(else #f))))
-
-  (defmethod {location memorize-stream}
-    memorize-stream-reader-location interface: Location)
-
-  (def (memorize-stream-buffer-location ms)
-    (using ((ms :- memorize-stream)
-            (loc ms.startloc :- location)
-  	    (strbuf ms.buffered-string-reader : StatelessStringReader))
-      (strbuf.location ms loc.xoff)))
-
-#+end_src
 
 
 A memorize stream is a lot like a tracking stream. 
@@ -810,6 +735,81 @@ The previous buffer should also have the space we read in the peeking.
 ** Stream
 
 
+#+begin_src scheme :noweb-ref memorize-stream
+  (defstruct (memorize-stream) (startloc reader-stream buffered-string-reader)
+   constructor: :init! print: #t)
+
+  (defmethod {:init! memorize-stream}
+    (lambda (self reader-stream (buf #f))
+      #;(displayln "Memorize: " reader-stream
+  	       "\n\t from: "(Location-location reader-stream))
+      (unless (tracking-stream? reader-stream)
+        (set! reader-stream (make-tracking-stream reader-stream)))
+      (set! self.reader-stream reader-stream)
+      (set! self.startloc (memorize-stream-reader-location self))
+        
+      (set! self.buffered-string-reader
+        (or buf (open-stateless-buffered-string-reader reader-stream)))))
+
+  (def (memorize-stream-read-char ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader)
+  	  (bs ms.buffered-string-reader : StatelessStringReader))
+      (def c (rs.read-char))
+      (unless (eof-object? c)
+        (bs.put-back c))
+      c))
+
+  (defmethod {read-char memorize-stream}
+    memorize-stream-read-char interface: PeekableStringReader)
+
+  (def (memorize-stream-peek-char ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader))
+      (rs.peek-char)))
+
+  (defmethod {peek-char memorize-stream}
+    memorize-stream-peek-char interface: PeekableStringReader)
+
+  (def (memorize-stream-close ms)
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : StringReader))
+      (rs.close)))
+
+  (defmethod {close memorize-stream}
+    memorize-stream-close interface: Closer)
+
+  (def (memorize-stream-read-string
+        ms str (start 0) (end (string-length str)) (need 0))
+    (using ((ms :- memorize-stream)
+  	  (rs ms.reader-stream : PeekableStringReader)
+  	  (bs ms.buffered-string-reader : StatelessStringReader))
+      (def n (rs.read-string str start end need))
+      (unless (zero? n)
+        (bs.put-back  (substring str start (+ start n))))
+      n))
+
+
+  (defmethod {read-string memorize-stream}
+    memorize-stream-read-string interface: StringReader)
+
+
+  (def (memorize-stream-reader-location ms)
+    (using (ms :- memorize-stream)
+    (cond ((tracking-stream? ms.reader-stream)
+  	 (tracking-stream-loc ms.reader-stream))
+  	(else #f))))
+
+  (defmethod {location memorize-stream}
+    memorize-stream-reader-location interface: Location)
+
+  (def (memorize-stream-buffer-location ms)
+    (using ((ms :- memorize-stream)
+            (loc ms.startloc :- location)
+  	    (strbuf ms.buffered-string-reader : StatelessStringReader))
+      (strbuf.location ms loc.xoff)))
+
+#+end_src
 #+begin_src scheme :noweb-ref tracking-stream
   (defstruct tracking-stream (port loc lines)
     constructor: :init! print: #t)
@@ -915,7 +915,11 @@ The previous buffer should also have the space we read in the peeking.
     namespace: "std/io/port[:0:]" cooked-textual-input-port)
   (set! default-string-buffer-size 16)
 
-  (def test-stream #f)
+  (defmethod {close :port} close-input-port interface: Closer)
+  (defmethod {read-string :port} read-string interface: StringReader)
+  (defmethod {peek-char :port} peek-char interface: PeekableStringReader)
+  (defmethod {read-char :port} read-char interface: PeekableStringReader)
+   
 
   <<location>>
 
