@@ -424,6 +424,7 @@ package: gerbil/core
            (let (str (symbol->string (stx-e id)))
              (alet (index (string-index str #\.))
                (and (fx> index 0)
+		    (not (string=? str "<...>"))
                     (not (ormap string-empty? (string-split str #\.))))))))
 
     (def (split-dotted-identifier stx id)
@@ -679,7 +680,15 @@ package: gerbil/core
                           (else
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+		       (if (null? rest)
+			 (with-syntax ((method
+                                        (stx-identifier
+					 #'id
+					 (interface-info-name type)
+                                         "-" part))
+				       (object object))
+			   #'(lambda args (apply method object args)))
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots or nested methods" #'id)))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))
                     (else object)))))
