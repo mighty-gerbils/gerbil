@@ -424,7 +424,6 @@ package: gerbil/core
            (let (str (symbol->string (stx-e id)))
              (alet (index (string-index str #\.))
                (and (fx> index 0)
-		    (not (string=? str "<...>"))
                     (not (ormap string-empty? (string-split str #\.))))))))
 
     (def (split-dotted-identifier stx id)
@@ -636,6 +635,76 @@ package: gerbil/core
        #'(%%app arg ...))))
 
   (defsyntax (%%ref-dotted stx)
+    (def (get-method-sig info method)
+      (let (mdef (find (lambda (ms) (eq? (stx-e method) (car ms)))
+                         (interface-info-interface-methods info)))
+        (if mdef
+	  (with ([_ sig _] mdef) sig)
+          (raise-syntax-error #f "unknown interface method" info method))))
+
+    (def (make-method-lambda Interface-method object sig)
+      (def (lambda-list)
+	(def (carg->lambda-arg carg)
+	  (with ((cons name rest) carg)
+	    (let* ((Nothing (gensym))
+		   (val (if (= (length rest) 1) (car rest)
+		 	   (let (:= (memq ':= rest))
+		 	     (if := (cadr :=) Nothing)))))
+	      (if (eq? val Nothing) name [name val]))))
+	(let lp ((args sig))
+	  (if (null? args) args
+	      (match args
+		((cons arg rest)
+		 (cond ((or (symbol? arg) (keyword? arg))
+			(cons arg (lp rest)))
+		       ((pair? arg)
+			(cons (carg->lambda-arg arg) (lp rest)))
+		       (else
+			(raise-syntax-error #f "unknown lambda list arg" arg))))
+		((? symbol?) args)
+		(else
+		 (raise-syntax-error #f "unknown lambda list args" args))))))
+
+      (def (call-with sig)
+	(def variable? #f)
+	(def apply? #f)
+	(def call-sig
+	  (let lp ((s sig))
+	    (if (pair? s)
+	      (with ((cons arg resig) s)
+		(cond ((symbol? arg)
+		       (cons arg (lp resig)))
+		      ((pair? arg)
+		       (cons (car arg) (lp resig)))
+		      ((keyword? arg)
+		       (set! variable? #t))))
+	      (begin (cond ((null? s) s)
+			   (else (set! apply? #t) [s]))))))
+	  (cond (variable? variable:)
+		(apply? [apply: (if (list? call-sig) call-sig [call-sig]) ...])
+		(else call-sig)))
+
+      (def (call-lambda meth obj sig)
+	(def call-sig (call-with sig))
+	(with-syntax ((meth meth)
+		      (obj obj)
+		      (lambda-list (lambda-list))
+		      ((calling-sig ...)
+		       (if (and (pair? call-sig)
+				 (eq? (car call-sig)
+				      apply:))
+			 (cdr call-sig)
+			 (if (pair? call-sig)
+			   call-sig
+			   [call-sig]))))
+	  (cond ((null? sig) #'(lambda () (meth obj)))
+		((eq? call-sig variable:)
+		 #'(lambda args (apply meth obj args)))
+		((and (pair? call-sig) (eq? (car call-sig) apply:))
+		 #'(lambda lambda-list (apply meth obj calling-sig ...)))
+		(else #'(lambda lambda-list (meth obj calling-sig ...))))))
+      (with-syntax ((fn (call-lambda Interface-method object sig)))
+	 #'fn))
     (syntax-case stx ()
       ((_ id)
        (dotted-identifier? #'id)
@@ -681,14 +750,17 @@ package: gerbil/core
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
 		       (if (null? rest)
-			 (with-syntax ((method
-                                        (stx-identifier
-					 #'id
-					 (interface-info-name type)
-                                         "-" part))
-				       (object object))
-			   #'(lambda args (apply method object args)))
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots or nested methods" #'id)))
+			 (let (sig (get-method-sig type part))
+			   (with-syntax* ((method
+                                           (stx-identifier
+					    #'id
+					    (interface-info-name type)
+                                            "-" part))
+					  (object object)
+					  (fn (make-method-lambda #'method #'object sig))
+					  (call-sig sig))
+			     #'fn))
+                       (raise-syntax-error #f "illegal dotted reference; interface methods are not dot'able" #'id (interface-info-interface-methods type))))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))
                     (else object)))))
