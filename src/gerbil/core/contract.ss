@@ -75,7 +75,24 @@ package: gerbil/core
     (and (identifier? stx)
          (alet (e (syntax-local-value stx false))
            (and (interface-info? e)
-                (is? e))))))
+                (is? e)))))
+
+  (def (interface-info-method-input-signature info method)
+    (set! info (cond ((interface-info? info) info)
+		     ((syntax-local-interface-info? info)
+		      (syntax-local-value info false))
+		     (else
+		      (raise-syntax-error #f "Unknown interface" info))))
+
+    (set! method (cond ((symbol? method) method)
+		       ((identifier? method) (stx-e method))
+		       (else (raise-syntax-error #f "unknown interface method" info method))))
+
+    (let (mdef (find (lambda (ms) (eq? method (car ms)))
+                         (interface-info-interface-methods info)))
+        (if mdef
+	  (with ([_ sig _] mdef) sig)
+	  (raise-syntax-error #f "unknown interface method" info method)))))
 
 (module TypeReference
   (import (phi: +1 InterfaceInfo))
@@ -635,13 +652,6 @@ package: gerbil/core
        #'(%%app arg ...))))
 
   (defsyntax (%%ref-dotted stx)
-    (def (get-method-sig info method)
-      (let (mdef (find (lambda (ms) (eq? (stx-e method) (car ms)))
-                         (interface-info-interface-methods info)))
-        (if mdef
-	  (with ([_ sig _] mdef) sig)
-          (raise-syntax-error #f "unknown interface method" info method))))
-
     (def (make-method-lambda Interface-method object sig)
       (def (lambda-list)
 	(def (carg->lambda-arg carg)
@@ -750,7 +760,7 @@ package: gerbil/core
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
 		       (if (null? rest)
-			 (let (sig (get-method-sig type part))
+			 (let (sig (interface-info-method-input-signature type part))
 			   (with-syntax* ((method
                                            (stx-identifier
 					    #'id
