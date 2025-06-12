@@ -77,7 +77,7 @@ package: gerbil/core
            (and (interface-info? e)
                 (is? e)))))
 
-  (def (interface-info-method-input-signature info method)
+  (def (interface-info-method-signature info method)
     (set! info (cond ((interface-info? info) info)
 		     ((syntax-local-interface-info? info)
 		      (syntax-local-value info false))
@@ -760,7 +760,7 @@ package: gerbil/core
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
 		       (if (null? rest)
-			 (let (sig (interface-info-method-input-signature type part))
+			 (let (sig (interface-info-method-signature type part))
 			   (with-syntax* ((method
                                            (stx-identifier
 					    #'id
