@@ -574,11 +574,19 @@ The previous buffer should also have the space we read in the peeking.
 
 #+begin_src scheme :noweb-ref location
   (interface Location 
-     (location . _))
+     (location . _) (xoff))
 
   (defmethod {location :port} port-location interface: Location)
   (defmethod {location cooked-textual-input-port}
     (lambda (self) (port-location self.port))
+    interface: Location)
+
+  (defmethod {xoff :port}
+    (lambda (port) (##fx+ (macro-character-port-rchars port)
+  		(macro-character-port-rlo port)))
+    interface: Location)
+  (defmethod {xoff cooked-textual-input-port}
+    (lambda (self) (using (p self.port : Location) (p.xoff)))
     interface: Location)
 
   (def (migrate-location loc inc (lines []))
@@ -636,6 +644,10 @@ The previous buffer should also have the space we read in the peeking.
 
   (defmethod {location string-input-buffer}
     strbuf-location interface: Location)
+
+  (defmethod {xoff string-input-buffer}
+    (lambda (self) (using (l (strbuf-location self) : location)
+  	      (l.xoff))))
 
   (def (strbuf-stateless-put-back stream char-or-bag)
     (def (put-back-char! char)
@@ -803,6 +815,16 @@ The previous buffer should also have the space we read in the peeking.
   (defmethod {location memorize-stream}
     memorize-stream-reader-location interface: Location)
 
+  (def (memorize-stream-reader-xoff ms)
+    (using (ms :- memorize-stream)
+    (cond ((tracking-stream? ms.reader-stream)
+  	 (tracking-stream-xoff ms.reader-stream))
+  	(else #f))))
+
+  (defmethod {xoff memorize-stream}
+    memorize-stream-reader-xoff interface: Location)
+
+
   (def (memorize-stream-buffer-location ms)
     (using ((ms :- memorize-stream)
             (loc ms.startloc :- location)
@@ -835,6 +857,13 @@ The previous buffer should also have the space we read in the peeking.
   		 self " " self.loc " port loc: " (Location-location self.port)))
        self.loc)
     interface: Location)
+
+  (def (tracking-stream-xoff self)
+    (using ((self : tracking-stream)
+  	  (l self.loc :- location))
+      l.xoff))
+
+  (defmethod {xoff tracking-stream} tracking-stream-xoff)
   				  
   (def (tracking-stream-read-string
         ts str (start 0) (end (string-length str))
@@ -911,9 +940,16 @@ The previous buffer should also have the space we read in the peeking.
     make-string-buffer
     double
     default-string-buffer-size)
-  #;(extern 
-    namespace: "std/io/port[:0:]" cooked-textual-input-port)
-  (set! default-string-buffer-size 16)
+
+  ;; _gambit#.scm
+  (extern namespace: #f
+    macro-character-input-port?
+    macro-character-port-rlines
+    macro-character-port-rchars
+    macro-character-port-rcurline
+    macro-character-port-rlo)
+  
+  ;; (set! default-string-buffer-size 16)
 
   (defmethod {close :port} close-input-port interface: Closer)
   (defmethod {read-string :port} read-string interface: StringReader)

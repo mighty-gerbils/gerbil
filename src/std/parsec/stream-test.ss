@@ -191,6 +191,16 @@
    (defmethod {location memorize-stream}
      memorize-stream-reader-location interface: Location)
    
+   (def (memorize-stream-reader-xoff ms)
+     (using (ms :- memorize-stream)
+     (cond ((tracking-stream? ms.reader-stream)
+   	 (tracking-stream-xoff ms.reader-stream))
+   	(else #f))))
+   
+   (defmethod {xoff memorize-stream}
+     memorize-stream-reader-xoff interface: Location)
+   
+   
    (def (memorize-stream-buffer-location ms)
      (using ((ms :- memorize-stream)
              (loc ms.startloc :- location)
