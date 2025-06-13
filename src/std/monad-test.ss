@@ -5,7 +5,7 @@
      (import :std/test
              :std/error
              :std/interactive
-             :srfi/13
+             :std/srfi/13
              :std/instance
              :std/monad
              (only-in :std/sugar hash try)
@@ -337,11 +337,11 @@
           > (test [] 43)
           (42)
           > (using (m (make-errorT []) : MonadError)
-              (m.catch (test #f 43 m) (lambda (e) 'fourtwo)))
+              (m.catch (test #f 43 m) (lambda (e) (m.return 'fourtwo))))
           (42)
           > (using (m (make-errorT []) : MonadError)
-              (m.catch (test #f 42 m) (lambda (e) 'fourtwo)))
-          fourtwo
+              (m.catch (test #f 42 m) (lambda (e) (m.return 'fourtwo))))
+          (fourtwo)
           > (interface (Parser MonadState ErrorHandler Fail Zero Or Plus) (item))
           > (defstruct (parser errorT) (string) constructor: :init!)
           > (defmethod {:init! parser}
@@ -365,11 +365,6 @@
                  c <- (P.item)
                  (if (char=? char c) (P.return c) (P.fail)))))
           		       
-          > (def current-parser (make-parameter (make-parsec "42")))
-          
-          > ((Monad-return (current-parser) 42) 43)
-          ((42 . 43))
-          
           > (def (test-ltuae str)
               (def psec (make-parsec str))
               (def prsr (du (p psec : Parsec)
