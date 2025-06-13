@@ -84,6 +84,86 @@
    > (run-parsecT noparser "s" match: caadr)
    second-thing)
  (test-inline
+   test-case: "Test parser-bind"
+   > (def (p-or p a b)
+       (using ((p : ParsecT)
+               (cnd p : Or))
+         (def (xoff)
+   	(p.state (lambda (s) 
+     		   (using (l (Location-location s) :- location)
+     		     [l.xoff s ...]))))
+        (def Nope (gensym))
+        (def err #f)
+         (du p
+   	start <- (xoff)
+   	res <- (cnd.or
+   		(p.catch a (lambda (e) (set! err e) (p.return Nope)))
+   		(p.return Nope))
+   	end <- (if (eq? Nope res) (xoff) (p.return #f))
+   	(cond ((not end) (p.return res))
+   	      ((and end (= start end)) b)
+   	      (else (if err (p.return err) (p.fail)))))))
+   
+   > (using (p (current-parsec) : ParsecT)
+       (p.run (p-or p (p.fail) (p.return 42)) " "))
+   42
+   > (using (p (current-parsec) : ParsecT)
+       (p.run (p-or p (p.>> (p.token) (p.fail)) (p.return 42)) " "))
+   #f
+   
+   > (def P (ParsecT (current-parsec)))
+   > (using (P :- ParsecT) 
+       (P.run (p-or P (P.throw "Error Here") (P.return 42)) " "))
+   42
+   > (def e 
+       (using (P :- ParsecT) 
+         (P.run (p-or P (P.>> (P.token) (P.throw "Error Here")) (P.return 42)) " ")))
+   > (error-message e)
+   "Error Here"
+   > (du (p (current-parsec) : ParsecT)
+       (p.run (parser-bind p (p.token)
+              p.return (cut list 'consumed <>))
+        "qwerty"))
+   (consumed #\q)
+   > (du (p (make-parsecT) : ParsecT)
+       (p.run (parser-bind p (p.return 'not-consumed)
+              p.return identity
+              identity (cut list 'empty <>))
+        "qwerty"))
+   (empty not-consumed)
+   > (def e1 (du (p (make-parsecT) : ParsecT)
+       (p.run (parser-bind p (p.>> (p.token) (p.throw "Monad Error"))
+              p.return identity
+              (cut list 'error-consumed <>))
+        "qwerty")))
+   > (with ([name err] e1) [name (error-message err)])
+   (error-consumed "Monad Error")
+   > (def e2 (du (p (make-parsecT) : ParsecT)
+       (p.run (parser-bind p (p.throw "Monad Error")
+              p.return identity identity identity 
+              (cut list 'error-not-consumed <>))
+        "qwerty")))
+   > (with ([name err] e2) [name (error-message err)])
+   (error-not-consumed "Monad Error"))
+ (test-inline
+   test-case: "Test parser-bind"
+   > (using (p (current-parsec) : ParsecT)
+       (p.run (parsec-plus p (p.fail) (p.return 42)) " "))
+   42
+   > (error-message
+      (using (p (current-parsec) : ParsecT)
+       (p.run (parsec-plus p (p.throw "error") (p.return 42)) " ")))
+   "error"
+   > (def e
+      (using (p (current-parsec) : ParsecT)
+        (p.run (parsec-plus p (p.throw "error") (p.return 42))
+   	    " "
+   	    match: identity)))
+   > (with ([(cons err _) rest ...] e) (error-message err))
+   "error"
+   > (with ([_ (cons n _)] e) n)
+   42)
+ (test-inline
    test-case: "Test ParsecT"
    > (def stream (open-input-string "asdfjkl;"))
    > (def my-parsecT (make-parsecT))

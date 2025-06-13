@@ -5,7 +5,8 @@
 (import :std/monad
         :std/instance
         ./stream
-	:std/io )
+	:std/io
+	:std/parser/base)
 
 (export #t (struct-out parsecT) (interface-out ParsecT))
 
@@ -33,6 +34,8 @@
    (set! ps.input input)
    (set! ps.pos pos)
    (set! ps.user user))
+  ((xoff)
+   (using (t ps.input : Location) (t.xoff)))
   ((location . args)
    (using (t ps.input : Location) (apply t.location args)))
   ((token . args)
@@ -73,7 +76,7 @@
 
 (def Nothing (gensym))
 
-(interface (ParsecT TokenReader MonadState ErrorHandler Fail Zero Or Plus))
+(interface (ParsecT Location TokenReader MonadState ErrorHandler Fail Zero Or Plus))
 
 (defstruct (parsecT errorT) (stream) constructor: :init!)
 (def default-parsecT-inner (make-stateT (Monad [])))
@@ -83,7 +86,7 @@
    (set! p.inner (or inner default-parsecT-inner))))
 
 (instance (r Runnable) (p parsecT)
-  ((run parser thing) (run-parsecT parser thing)))
+  ((run parser thing . args) (apply run-parsecT parser thing args)))
 
 (instance (t TokenReader) (p parsecT)
   ((token (test identity) (Nothing Nothing) . args)
@@ -92,3 +95,57 @@
      stream <- (P.return (ParState-input state))
      tok <- (P.return (apply Stream-token stream test Nothing args))
      (if (eq? Nothing tok) (P.fail) (P.return tok)))))
+
+
+(instance (l Location) (p parsecT)
+  ((location . args)
+   (du (p : ParsecT)
+     (p.state (lambda (state)
+		(using (state : Location)
+		  (cons (apply state.location args) state))))))
+  ((xoff)
+   (du (p : ParsecT)
+     (p.state
+      (lambda (state) (using (state : Location)
+		   (cons (state.xoff) state)))))))
+
+(def current-parsec (make-parameter (make-parsecT)))
+
+(def (parsec-plus p a b)
+  (using ((p : ParsecT)
+          (cnd p : Plus))
+    (def (xoff)
+      (p.state (lambda (s)
+  		  (cons (Location-xoff s) s))))
+    (def (b-only-at start-xoff)
+      (du p end <- (xoff) (if (= end start-xoff) b (p.fail))))
+    (du p
+      start <- (xoff)
+      (cnd.plus a (b-only-at start)))))
+
+(def (parser-bind
+      parser m kont
+      (cok identity)
+      (cerr identity)
+      (eok identity)
+      (eerr identity))
+  (using (p parser : ParsecT)
+   (def (xoff)
+    (p.state (lambda (s)
+	       (using (l (Location-location s) :- location)
+		 [l.xoff s ...]))))
+     (du p
+       start-xoff <- (xoff) #;(using (l (Location-location start-state) :- location)
+			 (p.return l.xoff))
+       (p.catch
+	(du p 
+	  val <- m
+	  end-xoff <- (xoff)
+	 (kont (if (eqv? start-xoff end-xoff)
+		 (eok val)
+		 (cok val))))
+	(lambda (e) (du p 
+		 end-xoff <- (xoff)
+		 (kont (if (eqv? start-xoff end-xoff)
+		   (eerr e)
+		   (cerr e)))))))))

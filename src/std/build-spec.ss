@@ -183,6 +183,7 @@
     "monad"
     ;; :std/parsec
     "parsec/stream"
+    "parsec/prim"
     ;; :std/parser
     "parser/rlang"
     "parser/base"

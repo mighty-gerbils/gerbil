@@ -7,16 +7,33 @@
 :TOC:      :include siblings :depth 5 :ignore (this)
 :END:
 :CONTENTS:
-
+- [[#primitive-parser-combinators][Primitive Parser Combinators]]
+  - [[#the-tokenreader-interface-token-method-and-token-prim-function][The TokenReader interface, .token method and token-prim function.]]
+  - [[#test-with-ports-and-our-streams][Test with ports and our stream's.]]
+  - [[#the-stream-interface][The Stream interface]]
+  - [[#the-parstate-interfacestream-and-parstate][The ParState interface/stream and parstate]]
+  - [[#run-parsert-as-a-primitive-runner][run-parserT as a primitive runner.]]
+  - [[#the-parsect-interface-and-parsect-monad][The ParsecT interface and parsecT monad]]
+  - [[#current-parsec-a-parameter-for-a-parsect][current-parsec: A parameter for a parsecT]]
+  - [[#the-parsec-plus-combinator][The parsec-plus combinator]]
+  - [[#parsec-or][parsec-or]]
+  - [[#the-lookahead-combinator][The lookahead combinator]]
+  - [[#parser-bind-a-low-level-binding-form][parser-bind A low level binding form]]
 :END:
 
 * Primitive Parser Combinators
+:PROPERTIES:
+:CUSTOM_ID: primitive-parser-combinators
+:END:
 
 This is essentially the primitives needed for a parser testing in a
 train of thought layout while trying to outline what a =Parsec= parser
 is.
 
 ** The =TokenReader= interface, =.token= method and =token-prim= function.
+:PROPERTIES:
+:CUSTOM_ID: the-tokenreader-interface-token-method-and-token-prim-function
+:END:
 
 A parser needs to peek at a token and see it fits before reading it.
 
@@ -44,6 +61,9 @@ extensible).
 #+end_src
 
 ** Test with ports and our =stream='s.
+:PROPERTIES:
+:CUSTOM_ID: test-with-ports-and-our-streams
+:END:
 
 #+begin_src scheme :noweb-ref test-token
   > (def str "Test \n Tokenizer")
@@ -68,6 +88,9 @@ extensible).
 #+end_src
 
 ** The =Stream= interface
+:PROPERTIES:
+:CUSTOM_ID: the-stream-interface
+:END:
 
 #+begin_src scheme :noweb-ref Stream
   (interface (Stream TokenReader Location PeekableStringReader))
@@ -80,6 +103,9 @@ extensible).
 #+end_src
 
 ** The =ParState= interface/stream and =parstate=
+:PROPERTIES:
+:CUSTOM_ID: the-parstate-interfacestream-and-parstate
+:END:
 
 #+begin_src scheme :noweb-ref ParState
   (interface (ParState Stream)
@@ -93,6 +119,9 @@ extensible).
 
 
 ** =run-parserT= as a primitive runner.
+:PROPERTIES:
+:CUSTOM_ID: run-parsert-as-a-primitive-runner
+:END:
 
 #+begin_src scheme
   (def (run-parsecT parser stream
@@ -147,6 +176,9 @@ extensible).
  
 
 ** The =ParsecT= interface and =parsecT= monad
+:PROPERTIES:
+:CUSTOM_ID: the-parsect-interface-and-parsect-monad
+:END:
 
 #+begin_src scheme :noweb-ref test-ParsecT
   > (def stream (open-input-string "asdfjkl;"))
@@ -191,16 +223,218 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
   (#\l #\;)
 #+end_src
 
+** =current-parsec=: A parameter for a parsecT
+:PROPERTIES:
+:CUSTOM_ID: current-parsec-a-parameter-for-a-parsect
+:END:
 
+#+begin_src scheme :noweb-ref current-parsec
+  (def current-parsec (make-parameter (make-parsecT)))
+#+end_src
+
+This is mostly needed to pass around as Interface Passing Style is
+what we wrap.
+
+** The =parsec-plus= combinator
+:PROPERTIES:
+:CUSTOM_ID: the-parsec-plus-combinator
+:END:
+
+Since =ParsecT= inherits from =Plus=, and =parsecT= transforms a list,
+it's possible to keep multiple branches going at the same time.
+
+The only thing that =parsec= enforces is that the stream is at the
+same location or the second parser is not run.
+
+So it could be used a conditional only if the first does not consume before it fails.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-plus p (p.fail) (p.return 42)) " "))
+  42
+#+end_src
+
+Because an error is not a failure, /per se/, if it does not consume it
+is the first result.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (error-message
+     (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-plus p (p.throw "error") (p.return 42)) " ")))
+  "error"
+#+end_src
+
+Because we can look at things we can see that there are two results.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (def e
+     (using (p (current-parsec) : ParsecT)
+       (p.run (parsec-plus p (p.throw "error") (p.return 42))
+  	    " "
+  	    match: identity)))
+  > (with ([(cons err _) rest ...] e) (error-message err))
+  "error"
+  > (with ([_ (cons n _)] e) n)
+  42
+#+end_src
+
+It's actually not neccessarily a good idea to have different branches
+of the same stream as it can cause confusion if the first branch fails
+later on.
+
+But there's a way to [[#the-lookahead-combinator][lookahead]] without effecting the stream which
+we'll get to later on.
+
+** =parsec-or=
+:PROPERTIES:
+:CUSTOM_ID: parsec-or
+:END:
+
+#+begin_src scheme :noweb-ref test-parser-bind
+  > (def (p-or p a b)
+      (using ((p : ParsecT)
+              (cnd p : Or))
+        (def (xoff)
+  	(p.state (lambda (s) 
+    		   (using (l (Location-location s) :- location)
+    		     [l.xoff s ...]))))
+       (def Nope (gensym))
+       (def err #f)
+        (du p
+  	start <- (xoff)
+  	res <- (cnd.or
+  		(p.catch a (lambda (e) (set! err e) (p.return Nope)))
+  		(p.return Nope))
+  	end <- (if (eq? Nope res) (xoff) (p.return #f))
+  	(cond ((not end) (p.return res))
+  	      ((and end (= start end)) b)
+  	      (else (if err (p.return err) (p.fail)))))))
+
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (p-or p (p.fail) (p.return 42)) " "))
+  42
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (p-or p (p.>> (p.token) (p.fail)) (p.return 42)) " "))
+  #f
+
+  > (def P (ParsecT (current-parsec)))
+  > (using (P :- ParsecT) 
+      (P.run (p-or P (P.throw "Error Here") (P.return 42)) " "))
+  42
+  > (def e 
+      (using (P :- ParsecT) 
+        (P.run (p-or P (P.>> (P.token) (P.throw "Error Here")) (P.return 42)) " ")))
+  > (error-message e)
+  "Error Here"
+#+end_src
+
+
+** The =lookahead= combinator
+:PROPERTIES:
+:CUSTOM_ID: the-lookahead-combinator
+:END:
+
+** =parser-bind= A low level binding form
+:PROPERTIES:
+:CUSTOM_ID: parser-bind-a-low-level-binding-form
+:END:
+
+#+begin_src scheme :noweb-ref parser-bind
+  (def (parser-bind
+        parser m kont
+        (cok identity)
+        (cerr identity)
+        (eok identity)
+        (eerr identity))
+    (using (p parser : ParsecT)
+     (def (xoff)
+      (p.state (lambda (s)
+  	       (using (l (Location-location s) :- location)
+  		 [l.xoff s ...]))))
+       (du p
+         start-xoff <- (xoff) #;(using (l (Location-location start-state) :- location)
+  			 (p.return l.xoff))
+         (p.catch
+  	(du p 
+  	  val <- m
+  	  end-xoff <- (xoff)
+  	 (kont (if (eqv? start-xoff end-xoff)
+  		 (eok val)
+  		 (cok val))))
+  	(lambda (e) (du p 
+  		 end-xoff <- (xoff)
+  		 (kont (if (eqv? start-xoff end-xoff)
+  		   (eerr e)
+  		   (cerr e)))))))))
+      
+#+end_src
+
+#+begin_src scheme :noweb-ref test-parser-bind
+  > (du (p (current-parsec) : ParsecT)
+      (p.run (parser-bind p (p.token)
+             p.return (cut list 'consumed <>))
+       "qwerty"))
+  (consumed #\q)
+#+end_src
+
+
+#+begin_src scheme :noweb-ref test-parser-bind
+  > (du (p (make-parsecT) : ParsecT)
+      (p.run (parser-bind p (p.return 'not-consumed)
+             p.return identity
+             identity (cut list 'empty <>))
+       "qwerty"))
+  (empty not-consumed)
+#+end_src
+
+
+#+begin_src scheme :noweb-ref test-parser-bind
+  > (def e1 (du (p (make-parsecT) : ParsecT)
+      (p.run (parser-bind p (p.>> (p.token) (p.throw "Monad Error"))
+             p.return identity
+             (cut list 'error-consumed <>))
+       "qwerty")))
+  > (with ([name err] e1) [name (error-message err)])
+  (error-consumed "Monad Error")
+#+end_src
+
+
+#+begin_src scheme :noweb-ref test-parser-bind
+  > (def e2 (du (p (make-parsecT) : ParsecT)
+      (p.run (parser-bind p (p.throw "Monad Error")
+             p.return identity identity identity 
+             (cut list 'error-not-consumed <>))
+       "qwerty")))
+  > (with ([name err] e2) [name (error-message err)])
+  (error-not-consumed "Monad Error")
+#+end_src
+
+Finally if we make them all monadic functions we can operate another
+way.
 
 * Files                                                            :noexport:
 
 ** Source code
 
+
+#+begin_src scheme :noweb-ref parsec-plus
+  (def (parsec-plus p a b)
+    (using ((p : ParsecT)
+            (cnd p : Plus))
+      (def (xoff)
+        (p.state (lambda (s)
+    		  (cons (Location-xoff s) s))))
+      (def (b-only-at start-xoff)
+        (du p end <- (xoff) (if (= end start-xoff) b (p.fail))))
+      (du p
+        start <- (xoff)
+        (cnd.plus a (b-only-at start)))))
+#+end_src
+
 #+begin_src scheme :noweb-ref ParsecT
   (def Nothing (gensym))
 
-  (interface (ParsecT TokenReader MonadState ErrorHandler Fail Zero Or Plus))
+  (interface (ParsecT Location TokenReader MonadState ErrorHandler Fail Zero Or Plus))
 
   (defstruct (parsecT errorT) (stream) constructor: :init!)
   (def default-parsecT-inner (make-stateT (Monad [])))
@@ -210,7 +444,7 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
      (set! p.inner (or inner default-parsecT-inner))))
 
   (instance (r Runnable) (p parsecT)
-    ((run parser thing) (run-parsecT parser thing)))
+    ((run parser thing . args) (apply run-parsecT parser thing args)))
 
   (instance (t TokenReader) (p parsecT)
     ((token (test identity) (Nothing Nothing) . args)
@@ -219,6 +453,19 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
        stream <- (P.return (ParState-input state))
        tok <- (P.return (apply Stream-token stream test Nothing args))
        (if (eq? Nothing tok) (P.fail) (P.return tok)))))
+
+
+  (instance (l Location) (p parsecT)
+    ((location . args)
+     (du (p : ParsecT)
+       (p.state (lambda (state)
+  		(using (state : Location)
+  		  (cons (apply state.location args) state))))))
+    ((xoff)
+     (du (p : ParsecT)
+       (p.state
+        (lambda (state) (using (state : Location)
+  		   (cons (state.xoff) state)))))))
 #+end_src
 
 #+begin_src scheme :noweb-ref ParState
@@ -230,6 +477,8 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
      (set! ps.input input)
      (set! ps.pos pos)
      (set! ps.user user))
+    ((xoff)
+     (using (t ps.input : Location) (t.xoff)))
     ((location . args)
      (using (t ps.input : Location) (apply t.location args)))
     ((token . args)
@@ -270,30 +519,37 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
   	    (else Nothing)))))
 #+end_src
 #+begin_src scheme :noweb yes :tangle prim.ss
-    ;;; -*- Gerbil -*-
-    ;;; (C) me at drewc.ca
-    ;;; :std/parsec/prim Primitive Parser Combinators
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/parsec/prim Primitive Parser Combinators
 
-    (import :std/monad
-            :std/instance
-            ./stream
-    	:std/io )
+  (import :std/monad
+          :std/instance
+          ./stream
+  	:std/io
+  	:std/parser/base)
 
-    (export #t (struct-out parsecT) (interface-out ParsecT))
+  (export #t (struct-out parsecT) (interface-out ParsecT))
 
-    <<TokenReader>>
-    
-    <<Stream>>
+  <<TokenReader>>
 
-    <<ParState>>
+  <<Stream>>
 
-    <<run-parsecT>>
+  <<ParState>>
 
-    <<ParsecT>>
+  <<run-parsecT>>
 
-          
-    		 
-         
+  <<ParsecT>>
+
+  <<current-parsec>>
+
+  <<parsec-plus>>
+
+  <<parser-bind>>
+
+        
+  		 
+       
 
 
 
@@ -301,65 +557,71 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
 #+end_src
 
 #+begin_src scheme :noweb yes :tangle prim-test.ss
-    ;;; -*- Gerbil -*-
-    ;;; (C) me at drewc.ca
-    ;;; :std/parsec/prim unit-tests
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/parsec/prim unit-tests
 
-    (import :std/test
-            :std/io/dummy :std/io/strio/input
-            :std/monad
-            :std/error
-            :std/iter
-            :std/interactive
-            :std/srfi/13
-            :std/instance
-            :std/parsec/stream
-            :std/parsec/prim
-            :std/io
-            :std/io/strio/types
-            (only-in :std/io/strio/api make-string-buffer)
-            :std/parser/base :std/parser/stream
-            (only-in :std/sugar hash try)
-            (only-in :gerbil/core error-object? with-catch))
-    (export stream-test)
+  (import :std/test
+          :std/io/dummy :std/io/strio/input
+          :std/monad
+          :std/error
+          :std/iter
+          :std/interactive
+          :std/srfi/13
+          :std/instance
+          :std/parsec/stream
+          :std/parsec/prim
+          :std/io
+          :std/io/strio/types
+          (only-in :std/io/strio/api make-string-buffer)
+          :std/parser/base :std/parser/stream
+          (only-in :std/sugar hash try)
+          (only-in :gerbil/core error-object? with-catch))
+  (export stream-test)
 
-    (defsyntax (test-inline stx)
-      (syntax-case stx (>)
-        ((_ test-case: name rest ...)
-         #'(test-case name (test-inline rest ...)))
-        ((_ > form > rest ...)
-         #'(begin (when std/test#*test-verbose*
-    		  (displayln "... "
-    			     (with-output-to-string (cut write 'form))))
-    		form (test-inline > rest ...)))
-        ((_ > test result rest ...)
-         #'(begin (check test => 'result) (test-inline rest ...)))
-        ((empty ...) #!void)))
+  (defsyntax (test-inline stx)
+    (syntax-case stx (>)
+      ((_ test-case: name rest ...)
+       #'(test-case name (test-inline rest ...)))
+      ((_ > form > rest ...)
+       #'(begin (when std/test#*test-verbose*
+  		  (displayln "... "
+  			     (with-output-to-string (cut write 'form))))
+  		form (test-inline > rest ...)))
+      ((_ > test result rest ...)
+       #'(begin (check test => 'result) (test-inline rest ...)))
+      ((empty ...) #!void)))
 
-    (def (loc->list loc) 
-      (with ((location port line col _ xoff) loc)
-        [line: line col: col xoff: xoff]))
+  (def (loc->list loc) 
+    (with ((location port line col _ xoff) loc)
+      [line: line col: col xoff: xoff]))
 
-    (def stream-test
-      (test-suite "Test :std/parsec/prim"
-     (test-inline
-       test-case: "Test Token"
-       <<test-token>>)
-     (test-inline
-       test-case: "Test Stream"
-       <<test-stream>>)
-     (test-inline
-       test-case: "Test run-parsecT"
-       <<test-run-parsecT>>)
-     (test-inline
-       test-case: "Test ParsecT"
-       <<test-ParsecT>>)
+  (def stream-test
+    (test-suite "Test :std/parsec/prim"
+   (test-inline
+     test-case: "Test Token"
+     <<test-token>>)
+   (test-inline
+     test-case: "Test Stream"
+     <<test-stream>>)
+   (test-inline
+     test-case: "Test run-parsecT"
+     <<test-run-parsecT>>)
+   (test-inline
+     test-case: "Test parser-bind"
+     <<test-parser-bind>>)
+   (test-inline
+     test-case: "Test parser-bind"
+     <<test-parsec-plus>>)
+   (test-inline
+     test-case: "Test ParsecT"
+     <<test-ParsecT>>)
 
 
-      ))
-          
-    		 
-         
+    ))
+        
+  		 
+       
 
 
 
