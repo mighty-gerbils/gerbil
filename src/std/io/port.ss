@@ -11,7 +11,7 @@
         make-raw-binary-output-port raw-binary-output-port?
         make-raw-textual-output-port raw-textual-output-port?
         make-cooked-binary-input-port cooked-binary-input-port?
-        make-cooked-textual-input-port cooked-textual-input-port?)
+	(struct-out cooked-textual-input-port))
 
 (declare (not safe))
 

@@ -172,6 +172,18 @@
     ;; :std/mime
     "mime/struct"
     (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))
+    ;; :std/monad
+    "monad/interface"
+    "monad/syntax"
+    "monad/identity"
+    "monad/list"
+    "monad/transformer"
+    "monad/state"
+    "monad/error"
+    "monad"
+    ;; :std/parsec
+    "parsec/stream"
+    "parsec/prim"
     ;; :std/parser
     "parser/rlang"
     "parser/base"

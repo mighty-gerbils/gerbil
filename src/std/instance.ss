@@ -11,6 +11,7 @@
      #'(defmethod {method klass}
 	 (lambda (self . args)
   	   (using (interface-object self : Interface) body ...))
+	 interface: Interface
 	 rebind: rebind))
     ((_ no-interface (self klass) ((method . args) body ...) rebind: rebind)
      (stx-boolean? #'no-interface)
@@ -22,9 +23,9 @@
      #'(def-instance-method interface (self klass) method ... rebind: rebind))
     ((_ Interface klass method ... rebind: rebind)
      (and (identifier? #'Interface))
-     #'(def-instance-method #f klass method ... rebind: rebind))
+     #'(def-instance-method (interface-object Interface) klass method ... rebind: rebind))
     ((_ rest ...)
-       #'(def-instance-method rest... rebind: #f))))
+       #'(def-instance-method rest ... rebind: #f))))
 
 (defsyntax (instance stx)
   (syntax-case stx ()
