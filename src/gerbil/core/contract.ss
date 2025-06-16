@@ -654,26 +654,28 @@ package: gerbil/core
   (defsyntax (%%ref-dotted stx)
     (def (make-method-lambda Interface-method object sig)
       (def (lambda-list)
+	;; This turns a `(name args ... := default)` or `(name
+	;; default)` or `(name args ...)` contract interface argument
+	;; (AKA carg) specification into a lambda-list compatible `(name
+	;; default)` or just `name` argument.
 	(def (carg->lambda-arg carg)
 	  (with ((cons name rest) carg)
-	    (let* ((Nothing (gensym))
-		   (val (if (= (length rest) 1) (car rest)
-		 	   (let (:= (memq ':= rest))
-		 	     (if := (cadr :=) Nothing)))))
-	      (if (eq? val Nothing) name [name val]))))
+	    (let (val (if (= (length rest) 1) (car rest)
+			  (let (:= (memq ':= rest))
+			    (if := (cadr :=) absent-obj))))
+	      (if (eq? val absent-obj) name [name val]))))
 	(let lp ((args sig))
-	  (if (null? args) args
-	      (match args
-		((cons arg rest)
-		 (cond ((or (symbol? arg) (keyword? arg))
-			(cons arg (lp rest)))
-		       ((pair? arg)
-			(cons (carg->lambda-arg arg) (lp rest)))
-		       (else
-			(raise-syntax-error #f "unknown lambda list arg" arg))))
-		((? symbol?) args)
-		(else
-		 (raise-syntax-error #f "unknown lambda list args" args))))))
+	  (match args
+	    ((cons arg rest)
+	     (cond ((or (symbol? arg) (keyword? arg))
+		    (cons arg (lp rest)))
+		   ((pair? arg)
+		    (cons (carg->lambda-arg arg) (lp rest)))
+		   (else
+		    (raise-syntax-error #f "unknown lambda list arg" arg))))
+	    ((? (or null? symbol?)) args)
+	    (else
+	     (raise-syntax-error #f "unknown lambda list args" args)))))
 
       (def (call-with sig)
 	(def variable? #f)
