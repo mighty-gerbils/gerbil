@@ -235,6 +235,7 @@ The reason it's a monad has a lot to do with the =du= (AKA =do= in
 This is mostly needed to pass around as Interface Passing Style is
 what we wrap.
 
+
 ** The =parsec-plus= combinator
 :PROPERTIES:
 :CUSTOM_ID: the-parsec-plus-combinator
@@ -285,47 +286,101 @@ later on.
 But there's a way to [[#the-lookahead-combinator][lookahead]] without effecting the stream which
 we'll get to later on.
 
-** =parsec-or=
+** The much more predictive =parsec-or=
 :PROPERTIES:
 :CUSTOM_ID: parsec-or
 :END:
 
-#+begin_src scheme :noweb-ref test-parser-bind
-  > (def (p-or p a b)
-      (using ((p : ParsecT)
-              (cnd p : Or))
-        (def (xoff)
-  	(p.state (lambda (s) 
-    		   (using (l (Location-location s) :- location)
-    		     [l.xoff s ...]))))
-       (def Nope (gensym))
-       (def err #f)
-        (du p
-  	start <- (xoff)
-  	res <- (cnd.or
-  		(p.catch a (lambda (e) (set! err e) (p.return Nope)))
-  		(p.return Nope))
-  	end <- (if (eq? Nope res) (xoff) (p.return #f))
-  	(cond ((not end) (p.return res))
-  	      ((and end (= start end)) b)
-  	      (else (if err (p.return err) (p.fail)))))))
+Though making sure the second runs at the same xoff at one point does
+begin to solve the stream location issue making sure there is no
+second branch is even better. Choose what you want first, right?
+
+
+#+begin_src scheme :noweb-ref test-parsec-or
 
   > (using (p (current-parsec) : ParsecT)
-      (p.run (p-or p (p.fail) (p.return 42)) " "))
+      (p.run (parsec-or p (p.fail) (p.return 42)) " "))
   42
   > (using (p (current-parsec) : ParsecT)
-      (p.run (p-or p (p.>> (p.token) (p.fail)) (p.return 42)) " "))
+      (p.run (parsec-or p (p.>> (p.token) (p.fail)) (p.return 42)) " "))
   #f
 
-  > (def P (ParsecT (current-parsec)))
-  > (using (P :- ParsecT) 
-      (P.run (p-or P (P.throw "Error Here") (P.return 42)) " "))
-  42
-  > (def e 
-      (using (P :- ParsecT) 
-        (P.run (p-or P (P.>> (P.token) (P.throw "Error Here")) (P.return 42)) " ")))
-  > (error-message e)
+  > (def e (using (p (current-parsec) : ParsecT) 
+  	   (p.run (parsec-or p (p.throw "Error Here") (p.return 42))
+  		  " " match: identity)))
+  > (with ([(cons err s)] e) (error-message err))
   "Error Here"
+  > (length e)
+  1
+
+
+#+end_src
+
+
+** =parsec-bind= A low level binding form
+:PROPERTIES:
+:CUSTOM_ID: parsec-bind-a-low-level-binding-form
+:END:
+
+This is very much a combination of =parser-or= and =Monad-bind=. It's
+just bind + 4 extra optional functions.
+
+   - cok :: (AKA consumed? ok!) If the parser is successful and
+     consumes this function called with the parsec object and the
+     return value of the parser. It's then passed to the bind
+     continuation.
+
+     *DEFAULT:* =(cut ParsecT-return <> <>)=
+      
+   - cerr :: (AKA consumed? failed!) If the parser fails and consumes
+     input this function is called with the parsec object.
+
+     *DEFAULT:* =(cut ParsecT-fail <>)=
+
+   - eok :: (AKA empty? ok!) If the parser is successful but does not
+     consume any input this function called with the parsec object and
+     the return value of the parser. It's then passed to the bind
+     continuation.
+
+     *DEFAULT:* =(cut ParsecT-return <> <>)=
+
+   - eerr :: (AKA empty? failed!) If the parser fails and consumes
+     input this function is called with the parsec object.
+
+     *DEFAULT:* =(cut ParsecT-fail <>)=
+
+
+To demonstrate we'll make a function that keyword'izes those and a
+syntax to use it. This is very similar to what =:std/parsec= will provide.
+   
+#+begin_src scheme :noweb-ref test-parsec-bind
+   > (def (&pkey-bind 
+   	parser (kont #f) 
+   	cok: (cok (lambda (p v) (ParsecT-return p `(consumed ,v))))
+   	cerr: (cerr (lambda (p)  (ParsecT-return p 'consumed-but-failed)))
+   	eok: (eok (lambda (p v) (ParsecT-return p `(empty ,v))))
+   	eerr: (eerr (lambda (p)  (ParsecT-return p 'empty-but-failed))))
+       (def parsec (current-parsec))
+       (cut ParsecT-run
+   	 parsec (parsec-bind
+   		 parsec parser (or kont (cut ParsecT-return parsec <>))
+   		 cok cerr eok eerr)
+   	 <>))
+   > (defrule (pkey-bind p rest ...)
+       (using (p (current-parsec) : ParsecT)
+         (&pkey-bind rest ...)))
+
+#+end_src
+
+#+begin_src scheme :noweb-ref test-parsec-bind
+  > ((pkey-bind p (p.token)) "qwerty")
+   (consumed #\q)
+  > ((pkey-bind p (p.return "unconsumed")) "qwerty")
+  (empty "unconsumed")
+  > ((pkey-bind p (p.>> (p.token) (p.fail))) "qwerty")
+  consumed-but-failed
+  > ((pkey-bind p (p.>> (p.return "never see this") (p.fail))) "qwerty")
+  empty-but-failed
 #+end_src
 
 
@@ -334,101 +389,44 @@ we'll get to later on.
 :CUSTOM_ID: the-lookahead-combinator
 :END:
 
-** =parser-bind= A low level binding form
-:PROPERTIES:
-:CUSTOM_ID: parser-bind-a-low-level-binding-form
-:END:
-
-#+begin_src scheme :noweb-ref parser-bind
-  (def (parser-bind
-        parser m kont
-        (cok identity)
-        (cerr identity)
-        (eok identity)
-        (eerr identity))
-    (using (p parser : ParsecT)
-     (def (xoff)
-      (p.state (lambda (s)
-  	       (using (l (Location-location s) :- location)
-  		 [l.xoff s ...]))))
-       (du p
-         start-xoff <- (xoff) #;(using (l (Location-location start-state) :- location)
-  			 (p.return l.xoff))
-         (p.catch
-  	(du p 
-  	  val <- m
-  	  end-xoff <- (xoff)
-  	 (kont (if (eqv? start-xoff end-xoff)
-  		 (eok val)
-  		 (cok val))))
-  	(lambda (e) (du p 
-  		 end-xoff <- (xoff)
-  		 (kont (if (eqv? start-xoff end-xoff)
-  		   (eerr e)
-  		   (cerr e)))))))))
-      
-#+end_src
-
-#+begin_src scheme :noweb-ref test-parser-bind
-  > (du (p (current-parsec) : ParsecT)
-      (p.run (parser-bind p (p.token)
-             p.return (cut list 'consumed <>))
-       "qwerty"))
-  (consumed #\q)
-#+end_src
-
-
-#+begin_src scheme :noweb-ref test-parser-bind
-  > (du (p (make-parsecT) : ParsecT)
-      (p.run (parser-bind p (p.return 'not-consumed)
-             p.return identity
-             identity (cut list 'empty <>))
-       "qwerty"))
-  (empty not-consumed)
-#+end_src
-
-
-#+begin_src scheme :noweb-ref test-parser-bind
-  > (def e1 (du (p (make-parsecT) : ParsecT)
-      (p.run (parser-bind p (p.>> (p.token) (p.throw "Monad Error"))
-             p.return identity
-             (cut list 'error-consumed <>))
-       "qwerty")))
-  > (with ([name err] e1) [name (error-message err)])
-  (error-consumed "Monad Error")
-#+end_src
-
-
-#+begin_src scheme :noweb-ref test-parser-bind
-  > (def e2 (du (p (make-parsecT) : ParsecT)
-      (p.run (parser-bind p (p.throw "Monad Error")
-             p.return identity identity identity 
-             (cut list 'error-not-consumed <>))
-       "qwerty")))
-  > (with ([name err] e2) [name (error-message err)])
-  (error-not-consumed "Monad Error")
-#+end_src
-
-Finally if we make them all monadic functions we can operate another
-way.
-
 * Files                                                            :noexport:
 
 ** Source code
 
-
-#+begin_src scheme :noweb-ref parsec-plus
-  (def (parsec-plus p a b)
-    (using ((p : ParsecT)
-            (cnd p : Plus))
-      (def (xoff)
-        (p.state (lambda (s)
-    		  (cons (Location-xoff s) s))))
-      (def (b-only-at start-xoff)
-        (du p end <- (xoff) (if (= end start-xoff) b (p.fail))))
-      (du p
-        start <- (xoff)
-        (cnd.plus a (b-only-at start)))))
+#+begin_src scheme :noweb-ref parsec-bind
+  (def (parsec-bind
+        parsec parser kont
+        (cok (cut ParsecT-return <> <>))
+        (cerr (cut ParsecT-fail <>))
+        (eok (cut ParsecT-return <> <>))
+        (eerr (cut ParsecT-fail <>)))
+    (using (p parsec : ParsecT)
+       (du p
+         start <- (p.xoff)
+         (p.or
+  	  (du p
+  	      ret <- parser
+  	      end <- (p.xoff)
+  	      v <- (let (return (if (eqv? start end) eok cok))
+  		     (return parsec ret))
+  	      (kont v))
+  	  (du p
+  	      end <- (p.xoff)
+  	      (let (fail (if (eqv? start end) eerr cerr))
+  		(fail parsec)))))))
+#+end_src
+#+begin_src scheme :noweb-ref parsec-plus-or
+  (defrule (def-parsec-cond name iface cnd cnd.pred)
+     (def (name p a b) (using ((p : ParsecT)
+              (cnd p : iface))
+        (def (b-only-at start-xoff)
+          (du p end <- (p.xoff) (if (= end start-xoff) b (p.fail))))
+        (du p
+          start <- (p.xoff)
+          (cnd.pred a (b-only-at start))))))
+  
+  (def-parsec-cond parsec-plus Plus cnd cnd.plus)
+  (def-parsec-cond parsec-or Or cnd cnd.or)
 #+end_src
 
 #+begin_src scheme :noweb-ref ParsecT
@@ -543,9 +541,9 @@ way.
 
   <<current-parsec>>
 
-  <<parsec-plus>>
+  <<parsec-plus-or>>
 
-  <<parser-bind>>
+  <<parsec-bind>>
 
         
   		 
@@ -608,15 +606,17 @@ way.
      test-case: "Test run-parsecT"
      <<test-run-parsecT>>)
    (test-inline
-     test-case: "Test parser-bind"
-     <<test-parser-bind>>)
-   (test-inline
-     test-case: "Test parser-bind"
+     test-case: "Test parsec-plus"
      <<test-parsec-plus>>)
+   (test-inline
+     test-case: "Test parsec-or"
+     <<test-parsec-or>>)
    (test-inline
      test-case: "Test ParsecT"
      <<test-ParsecT>>)
-
+   (test-inline
+     test-case: "Test parsec-bind"
+     <<test-parsec-bind>>)
 
     ))
         

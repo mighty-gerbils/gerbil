@@ -111,41 +111,35 @@
 
 (def current-parsec (make-parameter (make-parsecT)))
 
-(def (parsec-plus p a b)
-  (using ((p : ParsecT)
-          (cnd p : Plus))
-    (def (xoff)
-      (p.state (lambda (s)
-  		  (cons (Location-xoff s) s))))
-    (def (b-only-at start-xoff)
-      (du p end <- (xoff) (if (= end start-xoff) b (p.fail))))
-    (du p
-      start <- (xoff)
-      (cnd.plus a (b-only-at start)))))
+(defrule (def-parsec-cond name iface cnd cnd.pred)
+   (def (name p a b) (using ((p : ParsecT)
+            (cnd p : iface))
+      (def (b-only-at start-xoff)
+        (du p end <- (p.xoff) (if (= end start-xoff) b (p.fail))))
+      (du p
+        start <- (p.xoff)
+        (cnd.pred a (b-only-at start))))))
 
-(def (parser-bind
-      parser m kont
-      (cok identity)
-      (cerr identity)
-      (eok identity)
-      (eerr identity))
-  (using (p parser : ParsecT)
-   (def (xoff)
-    (p.state (lambda (s)
-	       (using (l (Location-location s) :- location)
-		 [l.xoff s ...]))))
+(def-parsec-cond parsec-plus Plus cnd cnd.plus)
+(def-parsec-cond parsec-or Or cnd cnd.or)
+
+(def (parsec-bind
+      parsec parser kont
+      (cok (cut ParsecT-return <> <>))
+      (cerr (cut ParsecT-fail <>))
+      (eok (cut ParsecT-return <> <>))
+      (eerr (cut ParsecT-fail <>)))
+  (using (p parsec : ParsecT)
      (du p
-       start-xoff <- (xoff) #;(using (l (Location-location start-state) :- location)
-			 (p.return l.xoff))
-       (p.catch
-	(du p 
-	  val <- m
-	  end-xoff <- (xoff)
-	 (kont (if (eqv? start-xoff end-xoff)
-		 (eok val)
-		 (cok val))))
-	(lambda (e) (du p 
-		 end-xoff <- (xoff)
-		 (kont (if (eqv? start-xoff end-xoff)
-		   (eerr e)
-		   (cerr e)))))))))
+       start <- (p.xoff)
+       (p.or
+	  (du p
+	      ret <- parser
+	      end <- (p.xoff)
+	      v <- (let (return (if (eqv? start end) eok cok))
+		     (return parsec ret))
+	      (kont v))
+	  (du p
+	      end <- (p.xoff)
+	      (let (fail (if (eqv? start end) eerr cerr))
+		(fail parsec)))))))
