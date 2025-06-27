@@ -1,5 +1,5 @@
 #+TITLE: MacOS: Gerbil has an Apple
-#+EXPORT_FILE_NAME: ../doc/guide/macos.md
+#+EXPORT_FILE_NAME: ../../doc/guide/macos.md
 #+OPTIONS: toc:nil
 
 * Table of Contents :noexport:
