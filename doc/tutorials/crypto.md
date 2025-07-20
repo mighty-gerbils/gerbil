@@ -1,13 +1,10 @@
-- [JWT: JSON Web Token](#org23921cb)
-    - [`RS256` signature](#org0ae03de)
-      - [Private key](#org7ba532e)
-      - [Signing with our Private Key](#org91964e3)
-      - [Verify with a Public Key](#orgecf80fc)
-  - [Reference Documents](#org66e4081)
+# JWT: JSON Web Token
+
+> JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JSON object &#x2026; --[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
 
 I need RSA in order to perform the `RS256` algorithm, an asymmetric algorithm that uses a private key to sign a `JSON Web Token` (JWT) and a public key to verify that signature.
 
-Alternatively a JWT can be an `HS256` .We'll get into that as well. along with those an **ECDSA** algo is outlined in the [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519) specification.
+Alternatively a JWT can be `HS256` .We'll get into that as well. along with those an **ECDSA** algo is outlined in the [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519) specification.
 
 To start let's import the right things.
 
@@ -15,15 +12,6 @@ To start let's import the right things.
 > (import :std/crypto :std/text/base64 :std/format)
 ```
 
-
-<a id="org23921cb"></a>
-
-# JWT: JSON Web Token
-
-> JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JSON object &#x2026; --[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
-
-
-<a id="org0ae03de"></a>
 
 ## `RS256` signature
 
@@ -50,8 +38,6 @@ According to the RFC all of those are `BASE64URL` encoded. Let us make a `STRING
 
 The `alg` is `RS256` according to the **JSON** string in `header`. That means the `signature` is a `sha256` signed digest of `header.payload` with an `RSA` private key.
 
-
-<a id="org7ba532e"></a>
 
 ### Private key
 
@@ -83,8 +69,6 @@ Because it's a `PEM` with `PrivateKeyInfo` as the format we can recreate that
 ```
 
 
-<a id="org91964e3"></a>
-
 ### Signing with our Private Key
 
 As mentioned previously the `signing-input` for the signature is `header.payload`.
@@ -107,12 +91,8 @@ So a `BASE64URL` encoding of that should match our initial test signature and th
 ```
 
 
-<a id="orgecf80fc"></a>
-
 ### Verify with a Public Key
 
-
-<a id="org66e4081"></a>
 
 # Reference Documents
 

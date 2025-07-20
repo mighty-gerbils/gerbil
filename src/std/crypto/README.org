@@ -15,8 +15,8 @@
 :PROPERTIES:
 :EXPORT_FILE_NAME: ../../../doc/tutorials/crypto.md
 :END:
-
-** JWT: JSON Web Token
+** RSA or HMAC Encryption and Signature
+*** JWT: The reasoning or overview
 
 #+begin_quote
 JSON Web Token (JWT) is a compact, URL-safe means of representing
