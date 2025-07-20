@@ -1,5 +1,5 @@
 #+TITLE: Crypto with libcrypto
-
+#+OPTIONS: toc:nil
 
 * Table of Contents
 :PROPERTIES:
@@ -16,19 +16,6 @@
 :EXPORT_FILE_NAME: ../../../doc/tutorials/crypto.md
 :END:
 
-I need RSA in order to perform the =RS256= algorithm, an asymmetric
-algorithm that uses a private key to sign a =JSON Web Token= (JWT) and
-a public key to verify that signature.
-
-Alternatively a JWT can be an =HS256= .We'll get into that as well.
-along with those an *ECDSA* algo is outlined in the [[https://datatracker.ietf.org/doc/html/rfc7519][RFC7519]]
-specification.
-
-To start let's import the right things.
-#+begin_src scheme
-  > (import :std/crypto :std/text/base64 :std/format)
-#+end_src
-
 ** JWT: JSON Web Token
 
 #+begin_quote
@@ -37,6 +24,20 @@ claims to be transferred between two parties.  The claims in a JWT are
 encoded as a JSON object ...
 --[[https://datatracker.ietf.org/doc/html/rfc7519][RFC7519]]
 #+end_quote
+
+I need RSA in order to perform the =RS256= algorithm, an asymmetric
+algorithm that uses a private key to sign a =JSON Web Token= (JWT) and
+a public key to verify that signature.
+
+Alternatively a JWT can be =HS256= .We'll get into that as well.
+along with those an *ECDSA* algo is outlined in the [[https://datatracker.ietf.org/doc/html/rfc7519][RFC7519]]
+specification.
+
+To start let's import the right things.
+
+#+begin_src scheme
+  > (import :std/crypto :std/text/base64 :std/format)
+#+end_src
 
 
 *** =RS256= signature
