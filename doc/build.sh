@@ -20,7 +20,8 @@ weave_subtree () {
 }
 weave_subtree ../src/std/crypto/README.org '* Tutorial'
 
-
+# weave ../src/std/monad/README.org
+# weave ../src/std/parsec/StatelessStreams.org
 
 weave ../macos/README.org
 weave ../macos/homebrew/README.org

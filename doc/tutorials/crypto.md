@@ -1,4 +1,10 @@
-# JWT: JSON Web Token
+# Crypto: Signing and Verifying
+
+[This is a comment that will be hidden.]: #
+[The point is to say that it's weaved from the org file so don't edit it here as build.sh will overwrite it]: # 
+
+
+## JWT: The reasoning or overview
 
 > JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JSON object &#x2026; --[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
 
@@ -57,9 +63,27 @@ Using that it's time to create a `pkey` using `:std/crypto`'s `(bytes->pkey type
 
 ```scheme
 > (def pkey (bytes->private-key #f pkey-bytes))
+> (pkey? pkey)
+#t
 ```
 
-Because it's a `PEM` with `PrivateKeyInfo` as the format we can recreate that
+How do we know it's an `RSA` key? Easy!
+
+The first way is to check the `pkey-type`.
+
+```scheme
+> (pkey-type pkey)
+"RSA"
+```
+
+The other easier way is to ask if the `pkey-is-a?`. Some types inherit other types so that can make a difference as to what is what.
+
+```scheme
+> (pkey-is-a? pkey "RSA")
+#t
+```
+
+Because it's a `PEM` with `PrivateKeyInfo` as the format we can recreate that string and, yup, it's the same.
 
 ```scheme
 > (def pkey-out-bytes
@@ -93,15 +117,71 @@ So a `BASE64URL` encoding of that should match our initial test signature and th
 
 ### Verify with a Public Key
 
+Signatures are verified using [digest-verify](https://cons.io/reference/std/crypto.html#digest-verify). Using the same key we encrypted with shows it.
+
+```scheme
+> (digest-verify pkey signing-output signing-input model: 'sha256)
+#t
+```
+
+One of the reasons behind the whole Private/Public key architecture is to give a public key that can verify this was signed using the private key thereof.
+
+Making a Public from a Private is easy. We use [public-key->bytes](https://cons.io/reference/std/crypto.html#public-key-to-bytes) with our `pkey`. We'll use the `SubjectPublicKeyInfo` from [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280)
+
+```scheme
+> (def pubkey-bytes
+    (public-key->bytes
+     pkey format: "PEM" structure: "SubjectPublicKeyInfo"))
+> (def pubkey-string (utf8->string pubkey-bytes))
+```
+
+That gives us a short `-----BEGIN PUBLIC KEY-----` "file" that matches our private key.
+
+```scheme
+> (call-with-input-string pubkey-string read-line)
+"-----BEGIN PUBLIC KEY-----"
+```
+
+Making a `pkey?` with it is then simple.
+
+```scheme
+> (def pubkey (bytes->public-key #f pubkey-bytes))
+> (pkey? pubkey)
+#t
+```
+
+We can see there is no private key.
+
+```scheme
+> (private-key->bytes pubkey)
+#u8()
+```
+
+But the public key is the same as our one generated from the private side.
+
+```scheme
+> (equal? pubkey-bytes
+   (public-key->bytes pubkey format: "PEM" structure: "SubjectPublicKeyInfo"))
+#t
+```
+
+And that means we can use it to verify.
+
+```scheme
+> (digest-verify pubkey signing-output signing-input model: 'sha256)
+#t
+```
+
 
 # Reference Documents
 
 A number of pointers to get me there:
 
+-   <https://wiki.openssl.org/index.php/EVP_Signing_and_Verifying>
 -   <https://ephemeral.cx/2012/06/openssl-rsa-aes-and-c/>
 -   <https://gist.github.com/jusonqiu/6fcfe386f209d46c5f1d>
 
-<https://www.rfc-editor.org/rfc/rfc7518#section-3.3>
+-   <https://www.rfc-editor.org/rfc/rfc7518#section-3.3>
 
 And the big one with examples:
 

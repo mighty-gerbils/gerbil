@@ -84,7 +84,8 @@
      EVP_PKEY_to_bio
      EVP_PKEY_get0_type_name
      EVP_PKEY_is_a
-     EVP_PKEY_get_base_id)
+     EVP_PKEY_get_base_id
+     EVP_PKEY?)
 
 (declare (not safe))
 
@@ -854,9 +855,10 @@ END-C
 
 (define-c-lambda/const-pointer EVP_PKEY_get0_type_name(EVP_PKEY*) char-string)
 
-(define-c-lambda EVP_PKEY_is_a (EVP_PKEY* char-string) int)
+(define-c-lambda EVP_PKEY_is_a (EVP_PKEY* char-string) bool)
 
 (define-c-lambda EVP_PKEY_get_base_id(EVP_PKEY*) int)
 
+(define-c-type-predicate EVP_PKEY? EVP_PKEY*)
 
 );ffi

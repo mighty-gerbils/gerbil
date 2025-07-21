@@ -15,7 +15,13 @@
 :PROPERTIES:
 :EXPORT_FILE_NAME: ../../../doc/tutorials/crypto.md
 :END:
-** RSA or HMAC Encryption and Signature
+** Crypto: Signing and Verifying
+
+#+BEGIN_EXPORT markdown
+[This is a comment that will be hidden.]: #
+[The point is to say that it's weaved from the org file so don't edit it here as build.sh will overwrite it]: # 
+#+END_EXPORT
+
 *** JWT: The reasoning or overview
 
 #+begin_quote
@@ -90,9 +96,29 @@ options.
 
 #+begin_src scheme :noweb-ref test-tutorial
   > (def pkey (bytes->private-key #f pkey-bytes))
+  > (pkey? pkey)
+  #t
 #+end_src
 
-Because it's a =PEM= with =PrivateKeyInfo= as the format we can recreate that 
+How do we know it's an =RSA= key? Easy!
+
+The first way is to check the =pkey-type=.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (pkey-type pkey)
+  "RSA"
+#+end_src
+
+The other easier way is to ask if the =pkey-is-a?=. Some types inherit
+other types so that can make a difference as to what is what.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (pkey-is-a? pkey "RSA")
+  #t
+#+end_src
+
+Because it's a =PEM= with =PrivateKeyInfo= as the format we can
+recreate that string and, yup, it's the same.
 
 #+begin_src scheme :noweb-ref test-tutorial
   > (def pkey-out-bytes
@@ -128,16 +154,78 @@ signature and that means we've come full circle and can sign out own
 
 **** Verify with a Public Key
 
+Signatures are verified using [[https://cons.io/reference/std/crypto.html#digest-verify][digest-verify]]. Using the same key we
+encrypted with shows it.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (digest-verify pkey signing-output signing-input model: 'sha256)
+  #t
+#+end_src
+
+One of the reasons behind the whole Private/Public key architecture is
+to give a public key that can verify this was signed using the private
+key thereof.
+
+Making a Public from a Private is easy. We use [[https://cons.io/reference/std/crypto.html#public-key-to-bytes][public-key->bytes]] with
+our =pkey=. We'll use the =SubjectPublicKeyInfo= from [[https://datatracker.ietf.org/doc/html/rfc5280][RFC5280]]
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def pubkey-bytes
+      (public-key->bytes
+       pkey format: "PEM" structure: "SubjectPublicKeyInfo"))
+  > (def pubkey-string (utf8->string pubkey-bytes))
+#+end_src
+
+That gives us a short =-----BEGIN PUBLIC KEY-----= "file" that matches
+our private key.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (call-with-input-string pubkey-string read-line)
+  "-----BEGIN PUBLIC KEY-----"
+#+end_src
+
+Making a =pkey?= with it is then simple.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def pubkey (bytes->public-key #f pubkey-bytes))
+  > (pkey? pubkey)
+  #t
+#+end_src
+
+We can see there is no private key.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (private-key->bytes pubkey)
+  #u8()
+#+end_src
+
+But the public key is the same as our one generated from the private
+side.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (equal? pubkey-bytes
+     (public-key->bytes pubkey format: "PEM" structure: "SubjectPublicKeyInfo"))
+  #t
+#+end_src
+
+And that means we can use it to verify.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (digest-verify pubkey signing-output signing-input model: 'sha256)
+  #t
+#+end_src
+
 
 
 ** Reference Documents
 
 A number of pointers to get me there:
 
+  - https://wiki.openssl.org/index.php/EVP_Signing_and_Verifying
   - https://ephemeral.cx/2012/06/openssl-rsa-aes-and-c/
   - https://gist.github.com/jusonqiu/6fcfe386f209d46c5f1d
 
-  https://www.rfc-editor.org/rfc/rfc7518#section-3.3
+  - https://www.rfc-editor.org/rfc/rfc7518#section-3.3
 
   And the big one with examples:
 
@@ -170,7 +258,6 @@ This is for the reference!!
           :std/misc/process
           :std/text/hex
           :std/crypto
-          :std/crypto/libcrypto
           :std/make
           :gerbil/compiler)
   (export crypto-test)
@@ -195,9 +282,6 @@ This is for the reference!!
 
   (def crypto-test
     (test-suite "test :std/crypto"
-      (test-inline
-       test-case: "Test RSA JWT Signature"
-       <<test-rsa-jwt>>)
       (test-inline
        test-case: "Test Tutorial"
        <<test-tutorial>>)
