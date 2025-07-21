@@ -10,6 +10,7 @@
         ./etc)
 
 (export
+  pkey-type pkey-type-id pkey-is-a? pkey?
   bytes->pkey pkey->bytes
   keygen/ed25519 EVP_PKEY_ED25519
   bytes->private-key bytes->public-key
@@ -25,6 +26,12 @@
     (EVP_PKEY_keygen ctx)
     (foreign-release! ctx)))
 
+;;; * Meta: pkey-[type|type-id|is-a?|?]
+
+(def pkey-type EVP_PKEY_get0_type_name)
+(def pkey-type-id EVP_PKEY_get_base_id)
+(def pkey-is-a? EVP_PKEY_is_a)
+(def (pkey? k) (and (EVP_PKEY? k) #t))
 
 ;;; * EVP_PKEY_* Aliases: 'FOO = EVP_PKEY_FOO
 
@@ -153,7 +160,8 @@
       (BIO-read-all bio (make-u8vector bend) (cons buff parents))
       (let ((len (apply + readn (map u8vector-length parents)))
 	    (cats (reverse (cons buff parents))))
-	(bytes-result (u8vector-concatenate cats) len)))))
+	(if (< len 0) (make-u8vector 0)
+	    (bytes-result (u8vector-concatenate cats) len))))))
 
 (def (pkey->bytes pkey
 		  bytes: (bytes #f)
@@ -220,12 +228,14 @@
       (foreign-release! mctx))))
 
 ;; NB: for other key types, there may be parameters to set before DigestVerify
-(def (digest-verify pkey sig bytes engine: (engine #f))
-  (let (mctx (EVP_MD_CTX_create))
+
+(def (digest-verify pkey sig bytes engine: (engine #f) model: (md #f))
+  (let ((mctx (EVP_MD_CTX_create))
+	(md (evp-md md)))
     (unless mctx
       (error "Cannot create signing context"))
     (unwind-protect
       (begin
-        (with-libcrypto-error (EVP_DigestVerifyInit mctx #f engine pkey))
+        (with-libcrypto-error (EVP_DigestVerifyInit mctx md engine pkey))
         (= 1 (EVP_DigestVerify mctx sig bytes)))
       (foreign-release! mctx))))
