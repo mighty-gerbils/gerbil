@@ -1,7 +1,8 @@
 # Crypto: Signing and Verifying
 
-[This is a comment that will be hidden.]: #
-[The point is to say that it's weaved from the org file so don't edit it here as build.sh will overwrite it]: # 
+[This file is weaved from src/std/crypto/README.org]: #
+[Editing it here will be overwritten by doc/build.sh]: # 
+[In other words, edit the org file, not the .md]: # 
 
 
 ## JWT: The reasoning or overview
@@ -31,8 +32,8 @@ What that means is that there a string `header.payload.signature` that when deco
 According to the RFC all of those are `BASE64URL` encoded. Let us make a `STRING` from it.
 
 ```scheme
-> (def (STRING b64)
-    (utf8->string (base64-string->u8vector b64 urlsafe?: #t)))
+> (def (BYTES b64) (base64-string->u8vector b64 urlsafe?: #t))
+> (def (STRING b64) (utf8->string (BYTES b64)))
 > (STRING header)
 "{\"alg\":\"RS256\",\"typ\":\"JWT\"}"
 > (def (BASE64URL thing)
@@ -171,6 +172,48 @@ And that means we can use it to verify.
 > (digest-verify pubkey signing-output signing-input model: 'sha256)
 #t
 ```
+
+
+## `HS256` signature
+
+Another way to encode a JWT signature is with `HMAC`. Here's an example from [RFC7515](https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.1.1).
+
+```scheme
+> (def hmac-token "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
+> (defvalues (hmac-header hmac-payload hmac-signature)
+    (apply values (string-split hmac-token #\.)))
+```
+
+When the header says `HS256` that means `hmac-sha256`.
+
+```scheme
+> (STRING hmac-header)
+"{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}"
+```
+
+The RFC gives us a key.
+
+```scheme
+> (def hmac-key "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow")
+> (def hmac-key-bytes (BYTES hmac-key))
+```
+
+Now something to sign.
+
+```scheme
+> (def hmac-signing-input
+    (string->utf8 (format "~a.~a" hmac-header hmac-payload)))
+```
+
+The way to sign it is, strangely enough, the [hmac-sha256](https://cons.io/reference/std/crypto.html#hmac-sha256) function.
+
+```scheme
+> (def hmac-signing-output (hmac-sha256 hmac-key-bytes hmac-signing-input))
+> (string=? (BASE64URL hmac-signing-output) hmac-signature)
+#t
+```
+
+That's also the validation. There is no public key so getting the same signature from the same key is exactly what we want.
 
 
 # Reference Documents

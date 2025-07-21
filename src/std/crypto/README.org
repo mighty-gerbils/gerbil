@@ -3,26 +3,44 @@
 
 * Table of Contents
 :PROPERTIES:
-:TOC:      :include siblings :depth 4
+:TOC:      :include siblings :depth 4 :ignore (this)
 :CUSTOM_ID: table-of-contents
 :END:
 :CONTENTS:
-- [[#the-stdcrypto-and-openssls-libcrypto][The :std/crypto and OpenSSL's libcrypto]]
-  - [[#the-nodejs-and-command-line-versions][The Node.js and command line versions]]
+- [[#tutorial-rsa-or-hmac-signature][Tutorial: RSA or HMAC Signature]]
+  - [[#crypto-signing-and-verifying][Crypto: Signing and Verifying]]
+    - [[#jwt-the-reasoning-or-overview][JWT: The reasoning or overview]]
+    - [[#rs256-signature][RS256 signature]]
+      - [[#private-key][Private key]]
+      - [[#signing-with-our-private-key][Signing with our Private Key]]
+      - [[#verify-with-a-public-key][Verify with a Public Key]]
+    - [[#hs256-signature][HS256 signature]]
+      - [[#validation][Validation]]
+  - [[#reference-documents][Reference Documents]]
+- [[#reference][Reference]]
+- [[#thest-fole][Thest Fole]]
 :END:
 
-* Tutorial: RSA or HMAC Encryption and Signature
+* Tutorial: RSA or HMAC Signature
 :PROPERTIES:
 :EXPORT_FILE_NAME: ../../../doc/tutorials/crypto.md
+:CUSTOM_ID: tutorial-rsa-or-hmac-signature
 :END:
 ** Crypto: Signing and Verifying
+:PROPERTIES:
+:CUSTOM_ID: crypto-signing-and-verifying
+:END:
 
 #+BEGIN_EXPORT markdown
-[This is a comment that will be hidden.]: #
-[The point is to say that it's weaved from the org file so don't edit it here as build.sh will overwrite it]: # 
+[This file is weaved from src/std/crypto/README.org]: #
+[Editing it here will be overwritten by doc/build.sh]: # 
+[In other words, edit the org file, not the .md]: # 
 #+END_EXPORT
 
 *** JWT: The reasoning or overview
+:PROPERTIES:
+:CUSTOM_ID: jwt-the-reasoning-or-overview
+:END:
 
 #+begin_quote
 JSON Web Token (JWT) is a compact, URL-safe means of representing
@@ -47,6 +65,9 @@ To start let's import the right things.
 
 
 *** =RS256= signature
+:PROPERTIES:
+:CUSTOM_ID: rs256-signature
+:END:
 
 What that means is that there a string =header.payload.signature= that
 when decoded gives us a verifed object of somekind.
@@ -60,8 +81,8 @@ According to the RFC all of those are =BASE64URL= encoded. Let us make
 a =STRING= from it.
 
 #+begin_src scheme :noweb-ref test-tutorial
-  > (def (STRING b64)
-      (utf8->string (base64-string->u8vector b64 urlsafe?: #t)))
+  > (def (BYTES b64) (base64-string->u8vector b64 urlsafe?: #t))
+  > (def (STRING b64) (utf8->string (BYTES b64)))
   > (STRING header)
   "{\"alg\":\"RS256\",\"typ\":\"JWT\"}"
   > (def (BASE64URL thing)
@@ -76,6 +97,9 @@ means the =signature= is a =sha256= signed digest of =header.payload= with an
 =RSA= private key.
 
 **** Private key
+:PROPERTIES:
+:CUSTOM_ID: private-key
+:END:
 
 In this case the imported =pkey-text= is a =PEM= with ="PrivateKeyInfo"= style
 like outlined in [[https://datatracker.ietf.org/doc/html/rfc5208][RFC5208]].
@@ -128,6 +152,9 @@ recreate that string and, yup, it's the same.
 #+end_src
 
 **** Signing with our Private Key
+:PROPERTIES:
+:CUSTOM_ID: signing-with-our-private-key
+:END:
 
 As mentioned previously the =signing-input= for the signature is
 =header.payload=.
@@ -153,6 +180,9 @@ signature and that means we've come full circle and can sign out own
 #+end_src
 
 **** Verify with a Public Key
+:PROPERTIES:
+:CUSTOM_ID: verify-with-a-public-key
+:END:
 
 Signatures are verified using [[https://cons.io/reference/std/crypto.html#digest-verify][digest-verify]]. Using the same key we
 encrypted with shows it.
@@ -217,7 +247,58 @@ And that means we can use it to verify.
 
 
 
+*** =HS256= signature
+:PROPERTIES:
+:CUSTOM_ID: hs256-signature
+:END:
+
+Another way to encode a JWT signature is with =HMAC=. Here's an
+example from [[https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.1.1][RFC7515]].
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def hmac-token "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
+  > (defvalues (hmac-header hmac-payload hmac-signature)
+      (apply values (string-split hmac-token #\.)))
+#+end_src
+
+When the header says =HS256= that means =hmac-sha256=.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (STRING hmac-header)
+  "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}"
+#+end_src
+
+The RFC gives us a key.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def hmac-key "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow")
+  > (def hmac-key-bytes (BYTES hmac-key))
+#+end_src
+
+Now something to sign.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def hmac-signing-input
+      (string->utf8 (format "~a.~a" hmac-header hmac-payload)))
+#+end_src
+
+The way to sign it is, strangely enough, the [[https://cons.io/reference/std/crypto.html#hmac-sha256][hmac-sha256]]
+function.
+
+#+begin_src scheme :noweb-ref test-tutorial
+  > (def hmac-signing-output (hmac-sha256 hmac-key-bytes hmac-signing-input))
+  > (string=? (BASE64URL hmac-signing-output) hmac-signature)
+  #t
+#+end_src
+
+That's also the validation. There is no public key so getting the same
+signature from the same key is exactly what we want.
+
+
 ** Reference Documents
+:PROPERTIES:
+:CUSTOM_ID: reference-documents
+:END:
 
 A number of pointers to get me there:
 
@@ -233,14 +314,15 @@ A number of pointers to get me there:
 
 
 * Reference
+
+The main docs are in [[file:~/src/gerbil-monad/doc/reference/std/crypto.md::Cryptography][the doc tree.]]
+
+* Test File
 :PROPERTIES:
-:EXPORT_FILE_NAME: reference.md
+:CUSTOM_ID: test-file
 :END:
 
-This is for the reference!!
-
-
-* TODO Thest Fole
+This 
 
 
 #+begin_src scheme :noweb yes :tangle ../crypto-test.ss
