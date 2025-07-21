@@ -12,7 +12,6 @@
         :std/misc/process
         :std/text/hex
         :std/crypto
-        ;; :std/crypto/libcrypto
         :std/make
         :gerbil/compiler)
 (export crypto-test)
@@ -23,9 +22,9 @@
      #'(test-case name (test-inline rest ...)))
     ((_ > form > rest ...)
      #'(begin (when std/test#*test-verbose*
-		  (displayln "... "
-			     (with-output-to-string (cut write 'form))))
-		form (test-inline > rest ...)))
+  		(displayln "... "
+  			   (with-output-to-string (cut write 'form))))
+  	      form (test-inline > rest ...)))
     ((_ > test result rest ...)
      #'(begin (check test => 'result) (test-inline rest ...)))
     ((empty ...) #'(begin empty ... #!void))
@@ -41,8 +40,8 @@
      test-case: "Test Tutorial"
      > (def token "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTc1MjAxNzc2NSwiZXhwIjoxNzUyMDIxMzY1LCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BlbGVjdHJvbmljLWNsYWltcy1tYW5hZ2VyLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwic3ViIjoiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAZWxlY3Ryb25pYy1jbGFpbXMtbWFuYWdlci5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInVpZCI6IjEifQ.XEBUFxgXvN0etkU1Fd4q7B-uqAVtlkJQOwG_dvj1osxvk6nnnByTO3BTgQgILXNhkPzePh9-LCZc_70VYGbodnzK7VxwjHas5Kg9LXueSdkdXDXwzdB2b1hPoXg95BVBe5iOou5j6g9PlRfrjkL05MIKE9dKuZl8n3Am11LUTijRyc20nWSwS86OmElkiU_XUD_O_r_CyygAUdNxIYkpWZVcbKsFaZpc9rA9Lj8DDLH-l7EeBkywv1Oi7dKd-9HxIYB8vVnp3txNhM6egP293YY9OqKDvOB6lvJ7mKaPTWbpY3PDh6XU4I5HUHKmU8bRReO0ZkPyy8t6oi3HVx_KoQ")
      > (defvalues (header payload signature) (apply values (string-split token #\.)))
-     > (def (STRING b64)
-         (utf8->string (base64-string->u8vector b64 urlsafe?: #t)))
+     > (def (BYTES b64) (base64-string->u8vector b64 urlsafe?: #t))
+     > (def (STRING b64) (utf8->string (BYTES b64)))
      > (STRING header)
      "{\"alg\":\"RS256\",\"typ\":\"JWT\"}"
      > (def (BASE64URL thing)
@@ -84,6 +83,18 @@
         (public-key->bytes pubkey format: "PEM" structure: "SubjectPublicKeyInfo"))
      #t
      > (digest-verify pubkey signing-output signing-input model: 'sha256)
+     #t
+     > (def hmac-token "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")
+     > (defvalues (hmac-header hmac-payload hmac-signature)
+         (apply values (string-split hmac-token #\.)))
+     > (STRING hmac-header)
+     "{\"typ\":\"JWT\",\r\n \"alg\":\"HS256\"}"
+     > (def hmac-key "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow")
+     > (def hmac-key-bytes (BYTES hmac-key))
+     > (def hmac-signing-input
+         (string->utf8 (format "~a.~a" hmac-header hmac-payload)))
+     > (def hmac-signing-output (hmac-sha256 hmac-key-bytes hmac-signing-input))
+     > (string=? (BASE64URL hmac-signing-output) hmac-signature)
      #t)
 
     #;(test-case "static compilation with libcrypto"
