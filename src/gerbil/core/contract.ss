@@ -715,7 +715,7 @@ package: gerbil/core
 		   #'(lambda lambda-list (apply meth obj calling-sig ...)))
 		  (else #'(lambda lambda-list (meth obj calling-sig ...))))))
 	(with-syntax ((fn (call-lambda Interface-method object sig)))
-	  #'fn)))
+	  #'fn))
     (syntax-case stx ()
       ((_ id)
        (dotted-identifier? #'id)
@@ -779,7 +779,7 @@ package: gerbil/core
            ;; no type info for base of dots, dispatch to %%ref
            #'(%%ref id)))))
       ((_ id)
-       #'(%%ref id))))
+       #'(%%ref id)))))
 
   (defsyntax (%%set-dotted! stx)
     (syntax-case stx ()
