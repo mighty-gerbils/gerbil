@@ -88,10 +88,10 @@ package: gerbil/core
 			 (else (raise-syntax-error #f "unknown interface method" info method))))
 
 	   (mdef (find (lambda (ms) (eq? method (car ms)))
-                       (interface-info-interface-methods info)))
+                       (interface-info-interface-methods info))))
            (if mdef
 	     (with ([_ sig _] mdef) sig)
-	     (raise-syntax-error #f "unknown interface method" info method))))))
+	     (raise-syntax-error #f "unknown interface method" info method)))))
 
 (module TypeReference
   (import (phi: +1 InterfaceInfo))
