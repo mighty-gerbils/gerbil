@@ -713,7 +713,7 @@ package: gerbil/core
 		   #'(lambda args (apply meth obj args)))
 		  ((and (pair? call-sig) (eq? (car call-sig) apply:))
 		   #'(lambda lambda-list (apply meth obj calling-sig ...)))
-		  (else #'(lambda lambda-list (meth obj calling-sig ...))))))
+		  (else #'(lambda lambda-list (meth obj calling-sig ...)))))))
 	(with-syntax ((fn (call-lambda Interface-method object sig)))
 	  #'fn))
     (syntax-case stx ()
