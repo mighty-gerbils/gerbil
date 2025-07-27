@@ -78,21 +78,20 @@ package: gerbil/core
                 (is? e)))))
 
   (def (interface-info-method-signature info method)
-    (set! info (cond ((interface-info? info) info)
-		     ((syntax-local-interface-info? info)
-		      (syntax-local-value info false))
-		     (else
-		      (raise-syntax-error #f "Unknown interface" info))))
+    (let* ((info (cond ((interface-info? info) info)
+		       ((syntax-local-interface-info? info)
+			(syntax-local-value info false))
+		       (else
+			(raise-syntax-error #f "Unknown interface" info))))
+	   (method (cond ((symbol? method) method)
+			 ((identifier? method) (stx-e method))
+			 (else (raise-syntax-error #f "unknown interface method" info method))))
 
-    (set! method (cond ((symbol? method) method)
-		       ((identifier? method) (stx-e method))
-		       (else (raise-syntax-error #f "unknown interface method" info method))))
-
-    (let (mdef (find (lambda (ms) (eq? method (car ms)))
-                         (interface-info-interface-methods info)))
-        (if mdef
-	  (with ([_ sig _] mdef) sig)
-	  (raise-syntax-error #f "unknown interface method" info method)))))
+	   (mdef (find (lambda (ms) (eq? method (car ms)))
+                       (interface-info-interface-methods info)))
+           (if mdef
+	     (with ([_ sig _] mdef) sig)
+	     (raise-syntax-error #f "unknown interface method" info method))))))
 
 (module TypeReference
   (import (phi: +1 InterfaceInfo))
