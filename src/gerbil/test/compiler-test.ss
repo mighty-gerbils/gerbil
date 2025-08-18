@@ -11,7 +11,8 @@
 (export compiler-specializer-test
         compiler-safety-test
         compiler-typed-test
-        compiler-syntax-test)
+        compiler-syntax-test
+        compiler-builtins-test)
 
 (def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -87,3 +88,10 @@
       (must-compile-and-execute "compiler-test-support/deep-dots.ss"))
     (test-case "interface mixins"
       (must-compile-and-execute "compiler-test-support/interface-mixin.ss"))))
+
+(def compiler-builtins-test
+  (test-suite "compiler builtins support"
+    (test-case "with-output"
+      (must-compile-and-execute "compiler-test-support/with-output.ss"))
+    (test-case "with-output (bad)"
+      (must-not-compile "compiler-test-support/with-output-bad.ss"))))
