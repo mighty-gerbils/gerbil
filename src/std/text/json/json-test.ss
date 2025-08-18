@@ -28,9 +28,6 @@
 (def (json-rpc-error<-json json)
   (trivial-json-object->struct json-rpc-error::t json (hash (data (void)))))
 
-(def (equal-struct? e1 e2)
-  (equal? (struct->list e1) (struct->list e2)))
-
 (def (check-encode-decode obj str)
   (let (eqf (if (hash-table? obj) equal-hash? equal?))
     (parameterize ((write-json-sort-keys? #f))
@@ -166,13 +163,13 @@ END
     (test-case "trivial-json->struct, trivial-struct->json"
       (defrule (t struct alist)
         (begin
-          (checkf equal-struct? (json-rpc-error<-json (list->hash-table alist)) struct)
+          (check-equal? (json-rpc-error<-json (list->hash-table alist)) struct)
           (check-equal? (json-object->string struct) (json-object->string (walist alist)))))
       (parameterize ((json-symbolic-keys #t))
-        (check equal-struct? (json-rpc-error -1 "foo" [42]) (json-rpc-error -1 "foo" [42]))
+        (check-equal? (json-rpc-error -1 "foo" [42]) (json-rpc-error -1 "foo" [42]))
         (t (json-rpc-error -1 "foo" [42]) '((code . -1) (message . "foo") (data . (42))))
         (t (json-rpc-error -100 "bar" (void)) '((code . -100) (message . "bar") (data . #!void)))
-        (check equal-struct?
+        (check-equal?
                (json-rpc-error<-json (hash (code -2) (message "x")))
                (json-rpc-error -2 "x" (void)))))))
 
