@@ -118,7 +118,7 @@
     (let (p (get-pos k))
       (when (vector-ref bound? p) (error "field multiply defined" k strukt json))
       (vector-set! bound? p #t)
-      (##structure-set! object p v)))
+      (##structure-set! object v p strukt 'trivial-json-object->struct)))
   (def unbounds
     (with-list-builder (c)
      (for ((p (in-range 1 n)))
@@ -126,7 +126,7 @@
              (slot (vector-ref slots p)))
          (cond
           (b? (void))
-          ((hash-key? defaults slot) (##structure-set! object p (hash-ref defaults slot)))
+          ((hash-key? defaults slot) (##structure-set! object (hash-ref defaults slot) p strukt 'trivial-json-object->struct))
           (else (c slot)))))))
   (unless (null? unbounds)
     (error "unbound fields" unbounds strukt json))
