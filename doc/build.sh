@@ -7,17 +7,24 @@ weave () {
 	   --eval '(print (org-gfm-export-to-markdown nil nil nil))' --kill ||
 	echo "Cannot export from org $1 to markdown using emacs"
 }
+
 weave_subtree () {
+    code="$2"
     emacs  $1 --batch -l `pwd`/ox-gfm.el \
-	   --eval "(progn (goto-char (+ 1 (org-open-link-from-string \"[[#$2]]\")))
-                          (print (org-gfm-export-to-markdown nil t nil)))" --kill ||
-	echo "Cannot export from org $1 subtree $2 to markdown using emacs"
+	   --eval "
+ (progn (re-search-forward \"^\\$2\")
+ (re-search-forward \"^:END:\")
+ (print (org-gfm-export-to-markdown nil t nil)))" --kill \
+	   || echo "Cannot export subree $2 from $1"
+	   
 }
+weave_subtree ../src/std/crypto/README.org '* Tutorial'
 
+# weave ../src/std/monad/README.org
+# weave ../src/std/parsec/StatelessStreams.org
 
-
-weave ../macos/README.org
-weave ../macos/homebrew/README.org
+weave ../dist/macos/README.org
+weave ../dist/macos/homebrew/README.org
 weave ../src/std/mime/README.org
 weave ../src/std/markup/README.org
 weave ../src/std/markup/sxml/README.org

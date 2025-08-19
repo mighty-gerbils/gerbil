@@ -1,0 +1,629 @@
+#+TITLE: The primitive parser combinators
+#+EXPORT_FILE_NAME: ../../../doc/guide/parsec-prim.md
+#+OPTIONS: toc:nil
+
+* Table of Contents                                                :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 5 :ignore (this)
+:END:
+:CONTENTS:
+- [[#primitive-parser-combinators][Primitive Parser Combinators]]
+  - [[#the-tokenreader-interface-token-method-and-token-prim-function][The TokenReader interface, .token method and token-prim function.]]
+  - [[#test-with-ports-and-our-streams][Test with ports and our stream's.]]
+  - [[#the-stream-interface][The Stream interface]]
+  - [[#the-parstate-interfacestream-and-parstate][The ParState interface/stream and parstate]]
+  - [[#run-parsert-as-a-primitive-runner][run-parserT as a primitive runner.]]
+  - [[#the-parsect-interface-and-parsect-monad][The ParsecT interface and parsecT monad]]
+  - [[#current-parsec-a-parameter-for-a-parsect][current-parsec: A parameter for a parsecT]]
+  - [[#the-parsec-plus-combinator][The parsec-plus combinator]]
+  - [[#parsec-or][parsec-or]]
+  - [[#the-lookahead-combinator][The lookahead combinator]]
+  - [[#parser-bind-a-low-level-binding-form][parser-bind A low level binding form]]
+:END:
+
+* Primitive Parser Combinators
+:PROPERTIES:
+:CUSTOM_ID: primitive-parser-combinators
+:END:
+
+This is essentially the primitives needed for a parser testing in a
+train of thought layout while trying to outline what a =Parsec= parser
+is.
+
+** The =TokenReader= interface, =.token= method and =token-prim= function.
+:PROPERTIES:
+:CUSTOM_ID: the-tokenreader-interface-token-method-and-token-prim-function
+:END:
+
+A parser needs to peek at a token and see it fits before reading it.
+
+That's a lookahead of 1. Infinite [[https://en.wikipedia.org/wiki/Parsing#Lookahead][lookahead]] is one of the reasons
+behind =Parsec= but a limit of 1 by default makes things fast and
+small.
+
+#+begin_src scheme :noweb-ref TokenReader
+  (interface TokenReader (token (test identity) . args))
+#+end_src
+
+The =token-prim= takes a test and a failure value (called =Nothing=)
+along with any other args (incase next method and to make it
+extensible).
+
+- If the peek passes the =test= the char is read.
+- Otherwise =Nothing= is returned.
+  
+#+begin_src scheme :noweb-ref TokenReader
+  (def (token-prim stream (test identity) (Nothing #f) . args)
+    (using (s stream : PeekableStringReader)
+      (if (test (s.peek-char)) (s.read-char) Nothing)))
+
+  (defmethod {token :t} token-prim interface: TokenReader)
+#+end_src
+
+** Test with ports and our =stream='s.
+:PROPERTIES:
+:CUSTOM_ID: test-with-ports-and-our-streams
+:END:
+
+#+begin_src scheme :noweb-ref test-token
+  > (def str "Test \n Tokenizer")
+  > (def prt (open-input-string str))
+  > (def strm (make-tracking-stream str))
+
+  > (TokenReader-token prt)
+  #\T
+  > (map (lambda _
+  	 (using (t strm : TokenReader)
+  	   (t.token char-alphabetic?)))
+         (make-list 5))
+  (#\T #\e #\s #\t #f)
+  > (map (lambda _ (TokenReader-token strm (? (not char-alphabetic?))))
+         (make-list 4))
+  (#\space #\newline #\space #f)
+  > (equal? (tracking-stream-lines strm)
+  	  [(string-contains str "\n")])
+  #t
+  > (location-line (Location-location strm))
+  1
+#+end_src
+
+** The =Stream= interface
+:PROPERTIES:
+:CUSTOM_ID: the-stream-interface
+:END:
+
+#+begin_src scheme :noweb-ref Stream
+  (interface (Stream TokenReader Location PeekableStringReader))
+#+end_src
+
+#+begin_src scheme :noweb-ref test-token
+  > (def port (open-input-string "asd"))
+  > (using (s port : Stream) (s.token))
+  #\a
+#+end_src
+
+** The =ParState= interface/stream and =parstate=
+:PROPERTIES:
+:CUSTOM_ID: the-parstate-interfacestream-and-parstate
+:END:
+
+#+begin_src scheme :noweb-ref ParState
+  (interface (ParState Stream)
+    ;; The input, a PeekableStringReader for the most part.
+    (input) (input-set! input)
+    ;; The current SourcePos
+    (pos) (pos-set! pos)
+    ;; The user defined state of whatever
+    (user) (user-set! pos))
+#+end_src
+
+
+** =run-parserT= as a primitive runner.
+:PROPERTIES:
+:CUSTOM_ID: run-parsert-as-a-primitive-runner
+:END:
+
+#+begin_src scheme
+  (def (run-parsecT parser stream
+  		  user: (user #f)
+  		  Nothing: (Nothing #f)
+  		  match: (match-return? #t))
+   ...)
+#+end_src
+
+#+begin_quote
+ A Parser for Things is a function from Strings to Lists of Pairs of
+ Things and Strings!
+   
+ --Fritz Ruehr
+#+end_quote
+
+ Given that a parser takes a "string" and returns a list of pairs and
+ for the most part we don't care about the list of pairs, a
+ run-parsecT function is the start of a narrowed down view.
+
+ #+begin_src scheme :noweb-ref test-run-parsecT
+   > (def (noparser string)
+       [['thing string ...]
+        ['second-thing string ...]])
+
+   > (run-parsecT noparser "string")
+   thing
+ #+end_src
+
+ A =null?= usually returns =#f=, but you can change the =Nothing=, aka
+ no results.
+
+ This matters if a valid parser returns false. Rare? Possibly. Meta?
+ Yup!
+ 
+ #+begin_src scheme :noweb-ref test-run-parsecT
+   > (def (failparser _) [])
+   > (run-parsecT failparser "string")
+   #f
+   > (run-parsecT failparser "string" Nothing: (void))
+   #!void
+ #+end_src
+
+ Sometimes we could want all the results or, say, the second thing.
+
+ #+begin_src scheme :noweb-ref test-run-parsecT
+   > (map car (run-parsecT noparser "s" match: #f))
+   (thing second-thing)
+   > (run-parsecT noparser "s" match: caadr)
+   second-thing
+ #+end_src
+ 
+
+** The =ParsecT= interface and =parsecT= monad
+:PROPERTIES:
+:CUSTOM_ID: the-parsect-interface-and-parsect-monad
+:END:
+
+#+begin_src scheme :noweb-ref test-ParsecT
+  > (def stream (open-input-string "asdfjkl;"))
+  > (def my-parsecT (make-parsecT))
+  > (run-parsecT (ParsecT-get my-parsecT) stream)
+  > (run-parsecT (ParsecT-token my-parsecT char-alphabetic?) stream)
+  #\a
+  > (using (p my-parsecT : ParsecT)
+     (p.run (p.token char-numeric?) stream))
+  #f
+  > (using (p my-parsecT : ParsecT)
+     (p.run (p.token) stream))
+  #\s
+#+end_src
+
+Because a parser must be run, and returns a list of pairs of which
+only the car of the first pair is relevant for the rest of the parser,
+a monad offers =.>>=, =.>>= and =.return=.
+
+#+begin_src scheme :noweb-ref test-ParsecT
+  > (using (p my-parsecT : ParsecT)
+      (p.run
+       (p.>>=
+        (p.>> (p.token) (p.token))
+        (lambda (f) (p.>>= (p.token) (lambda (j) (p.return [f j])))))
+       stream))
+  (#\f #\j)
+  	   
+#+end_src
+
+The reason it's a monad has a lot to do with the =du= (AKA =do= in
+=Haskell=) syntax which, IMNSHO, makes it much more readable.
+
+#+begin_src scheme :noweb-ref test-ParsecT
+  > (using (p my-parsecT : ParsecT)
+      (p.run (du p
+               (p.token)
+  	     l <- (p.token)
+  	     semi <- (p.token)
+  	     (p.return [l semi]))
+  	   stream))
+  (#\l #\;)
+#+end_src
+
+** =current-parsec=: A parameter for a parsecT
+:PROPERTIES:
+:CUSTOM_ID: current-parsec-a-parameter-for-a-parsect
+:END:
+
+#+begin_src scheme :noweb-ref current-parsec
+  (def current-parsec (make-parameter (make-parsecT)))
+#+end_src
+
+This is mostly needed to pass around as Interface Passing Style is
+what we wrap.
+
+
+** The =parsec-plus= combinator
+:PROPERTIES:
+:CUSTOM_ID: the-parsec-plus-combinator
+:END:
+
+Since =ParsecT= inherits from =Plus=, and =parsecT= transforms a list,
+it's possible to keep multiple branches going at the same time.
+
+The only thing that =parsec= enforces is that the stream is at the
+same location or the second parser is not run.
+
+So it could be used a conditional only if the first does not consume before it fails.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-plus p (p.fail) (p.return 42)) " "))
+  42
+#+end_src
+
+Because an error is not a failure, /per se/, if it does not consume it
+is the first result.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (error-message
+     (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-plus p (p.throw "error") (p.return 42)) " ")))
+  "error"
+#+end_src
+
+Because we can look at things we can see that there are two results.
+
+#+begin_src scheme :noweb-ref test-parsec-plus
+  > (def e
+     (using (p (current-parsec) : ParsecT)
+       (p.run (parsec-plus p (p.throw "error") (p.return 42))
+  	    " "
+  	    match: identity)))
+  > (with ([(cons err _) rest ...] e) (error-message err))
+  "error"
+  > (with ([_ (cons n _)] e) n)
+  42
+#+end_src
+
+It's actually not neccessarily a good idea to have different branches
+of the same stream as it can cause confusion if the first branch fails
+later on.
+
+But there's a way to [[#the-lookahead-combinator][lookahead]] without effecting the stream which
+we'll get to later on.
+
+** The much more predictive =parsec-or=
+:PROPERTIES:
+:CUSTOM_ID: parsec-or
+:END:
+
+Though making sure the second runs at the same xoff at one point does
+begin to solve the stream location issue making sure there is no
+second branch is even better. Choose what you want first, right?
+
+
+#+begin_src scheme :noweb-ref test-parsec-or
+
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-or p (p.fail) (p.return 42)) " "))
+  42
+  > (using (p (current-parsec) : ParsecT)
+      (p.run (parsec-or p (p.>> (p.token) (p.fail)) (p.return 42)) " "))
+  #f
+
+  > (def e (using (p (current-parsec) : ParsecT) 
+  	   (p.run (parsec-or p (p.throw "Error Here") (p.return 42))
+  		  " " match: identity)))
+  > (with ([(cons err s)] e) (error-message err))
+  "Error Here"
+  > (length e)
+  1
+
+
+#+end_src
+
+
+** =parsec-bind= A low level binding form
+:PROPERTIES:
+:CUSTOM_ID: parsec-bind-a-low-level-binding-form
+:END:
+
+This is very much a combination of =parser-or= and =Monad-bind=. It's
+just bind + 4 extra optional functions.
+
+   - cok :: (AKA consumed? ok!) If the parser is successful and
+     consumes this function called with the parsec object and the
+     return value of the parser. It's then passed to the bind
+     continuation.
+
+     *DEFAULT:* =(cut ParsecT-return <> <>)=
+      
+   - cerr :: (AKA consumed? failed!) If the parser fails and consumes
+     input this function is called with the parsec object.
+
+     *DEFAULT:* =(cut ParsecT-fail <>)=
+
+   - eok :: (AKA empty? ok!) If the parser is successful but does not
+     consume any input this function called with the parsec object and
+     the return value of the parser. It's then passed to the bind
+     continuation.
+
+     *DEFAULT:* =(cut ParsecT-return <> <>)=
+
+   - eerr :: (AKA empty? failed!) If the parser fails and consumes
+     input this function is called with the parsec object.
+
+     *DEFAULT:* =(cut ParsecT-fail <>)=
+
+
+To demonstrate we'll make a function that keyword'izes those and a
+syntax to use it. This is very similar to what =:std/parsec= will provide.
+   
+#+begin_src scheme :noweb-ref test-parsec-bind
+   > (def (&pkey-bind 
+   	parser (kont #f) 
+   	cok: (cok (lambda (p v) (ParsecT-return p `(consumed ,v))))
+   	cerr: (cerr (lambda (p)  (ParsecT-return p 'consumed-but-failed)))
+   	eok: (eok (lambda (p v) (ParsecT-return p `(empty ,v))))
+   	eerr: (eerr (lambda (p)  (ParsecT-return p 'empty-but-failed))))
+       (def parsec (current-parsec))
+       (cut ParsecT-run
+   	 parsec (parsec-bind
+   		 parsec parser (or kont (cut ParsecT-return parsec <>))
+   		 cok cerr eok eerr)
+   	 <>))
+   > (defrule (pkey-bind p rest ...)
+       (using (p (current-parsec) : ParsecT)
+         (&pkey-bind rest ...)))
+
+#+end_src
+
+#+begin_src scheme :noweb-ref test-parsec-bind
+  > ((pkey-bind p (p.token)) "qwerty")
+   (consumed #\q)
+  > ((pkey-bind p (p.return "unconsumed")) "qwerty")
+  (empty "unconsumed")
+  > ((pkey-bind p (p.>> (p.token) (p.fail))) "qwerty")
+  consumed-but-failed
+  > ((pkey-bind p (p.>> (p.return "never see this") (p.fail))) "qwerty")
+  empty-but-failed
+#+end_src
+
+
+** The =lookahead= combinator
+:PROPERTIES:
+:CUSTOM_ID: the-lookahead-combinator
+:END:
+
+* Files                                                            :noexport:
+
+** Source code
+
+#+begin_src scheme :noweb-ref parsec-bind
+  (def (parsec-bind
+        parsec parser kont
+        (cok (cut ParsecT-return <> <>))
+        (cerr (cut ParsecT-fail <>))
+        (eok (cut ParsecT-return <> <>))
+        (eerr (cut ParsecT-fail <>)))
+    (using (p parsec : ParsecT)
+       (du p
+         start <- (p.xoff)
+         (p.or
+  	  (du p
+  	      ret <- parser
+  	      end <- (p.xoff)
+  	      v <- (let (return (if (eqv? start end) eok cok))
+  		     (return parsec ret))
+  	      (kont v))
+  	  (du p
+  	      end <- (p.xoff)
+  	      (let (fail (if (eqv? start end) eerr cerr))
+  		(fail parsec)))))))
+#+end_src
+#+begin_src scheme :noweb-ref parsec-plus-or
+  (defrule (def-parsec-cond name iface cnd cnd.pred)
+     (def (name p a b) (using ((p : ParsecT)
+              (cnd p : iface))
+        (def (b-only-at start-xoff)
+          (du p end <- (p.xoff) (if (= end start-xoff) b (p.fail))))
+        (du p
+          start <- (p.xoff)
+          (cnd.pred a (b-only-at start))))))
+  
+  (def-parsec-cond parsec-plus Plus cnd cnd.plus)
+  (def-parsec-cond parsec-or Or cnd cnd.or)
+#+end_src
+
+#+begin_src scheme :noweb-ref ParsecT
+  (def Nothing (gensym))
+
+  (interface (ParsecT Location TokenReader MonadState ErrorHandler Fail Zero Or Plus))
+
+  (defstruct (parsecT errorT) (stream) constructor: :init!)
+  (def default-parsecT-inner (make-stateT (Monad [])))
+
+  (instance #t (p parsecT)
+    ((:init! inner: (inner #f))
+     (set! p.inner (or inner default-parsecT-inner))))
+
+  (instance (r Runnable) (p parsecT)
+    ((run parser thing . args) (apply run-parsecT parser thing args)))
+
+  (instance (t TokenReader) (p parsecT)
+    ((token (test identity) (Nothing Nothing) . args)
+     (du (P p : ParsecT)
+       state <- (P.get)
+       stream <- (P.return (ParState-input state))
+       tok <- (P.return (apply Stream-token stream test Nothing args))
+       (if (eq? Nothing tok) (P.fail) (P.return tok)))))
+
+
+  (instance (l Location) (p parsecT)
+    ((location . args)
+     (du (p : ParsecT)
+       (p.state (lambda (state)
+  		(using (state : Location)
+  		  (cons (apply state.location args) state))))))
+    ((xoff)
+     (du (p : ParsecT)
+       (p.state
+        (lambda (state) (using (state : Location)
+  		   (cons (state.xoff) state)))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref ParState
+  (defstruct parstate (input pos user)
+    constructor: :init!)
+
+  (instance #t (ps parstate)
+    ((:init! input pos: (pos #f) user: (user #f))
+     (set! ps.input input)
+     (set! ps.pos pos)
+     (set! ps.user user))
+    ((xoff)
+     (using (t ps.input : Location) (t.xoff)))
+    ((location . args)
+     (using (t ps.input : Location) (apply t.location args)))
+    ((token . args)
+     (using (t ps.input : TokenReader) (apply t.token args)))
+    ((read-string . args) 
+     (using (t ps.input : StringReader) (apply t.read-string args)))
+    ((read-char . args) 
+     (using (t ps.input : PeekableStringReader) (apply t.read-char args)))
+    ((peek-char . args) 
+     (using (t ps.input : PeekableStringReader) (apply t.peek-char args)))
+    ((close . args) 
+     (using (t ps.input : Closer) (apply t.close args)))
+    ((input) ps.input)
+    ((input-set! input) (set! ps.input input))
+    ((pos) (def pspos ps.pos) (or pspos (Location-location ps.input)))
+    ((pos-set! pos) (set! ps.pos pos))
+    ((user) ps.user)
+    ((user-set! u) (set! ps.user u)))
+#+end_src
+#+begin_src scheme :noweb-ref run-parsecT
+  (def (run-parsecT parser stream-or-parstate
+    		  user: (user #f)
+    		  Nothing: (Nothing #f)
+    		  match: (match-return? #t))
+    (def (make-stream (s stream-or-parstate))
+      (if (tracking-stream? s) s (make-tracking-stream s)))
+    (def (make-state (s stream-or-parstate))
+      (make-parstate s user: user))
+    (def state
+      (if (is-ParState? stream-or-parstate)
+        stream-or-parstate
+        (make-state (make-stream stream-or-parstate))))
+    (def ret (parser state))
+    (if (not match-return?) ret 
+        (if (procedure? match-return?) (match-return? ret)
+  	  (match ret
+  	    ((cons (cons ret state) _) ret)
+  	    (else Nothing)))))
+#+end_src
+#+begin_src scheme :noweb yes :tangle prim.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/parsec/prim Primitive Parser Combinators
+
+  (import :std/monad
+          :std/instance
+          ./stream
+  	:std/io
+  	:std/parser/base)
+
+  (export #t (struct-out parsecT) (interface-out ParsecT))
+
+  <<TokenReader>>
+
+  <<Stream>>
+
+  <<ParState>>
+
+  <<run-parsecT>>
+
+  <<ParsecT>>
+
+  <<current-parsec>>
+
+  <<parsec-plus-or>>
+
+  <<parsec-bind>>
+
+        
+  		 
+       
+
+
+
+
+#+end_src
+
+#+begin_src scheme :noweb yes :tangle prim-test.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) me at drewc.ca
+  ;;; :std/parsec/prim unit-tests
+
+  (import :std/test
+          :std/io/dummy :std/io/strio/input
+          :std/monad
+          :std/error
+          :std/iter
+          :std/interactive
+          :std/srfi/13
+          :std/instance
+          :std/parsec/stream
+          :std/parsec/prim
+          :std/io
+          :std/io/strio/types
+          (only-in :std/io/strio/api make-string-buffer)
+          :std/parser/base :std/parser/stream
+          (only-in :std/sugar hash try)
+          (only-in :gerbil/core error-object? with-catch))
+  (export stream-test)
+
+  (defsyntax (test-inline stx)
+    (syntax-case stx (>)
+      ((_ test-case: name rest ...)
+       #'(test-case name (test-inline rest ...)))
+      ((_ > form > rest ...)
+       #'(begin (when std/test#*test-verbose*
+  		  (displayln "... "
+  			     (with-output-to-string (cut write 'form))))
+  		form (test-inline > rest ...)))
+      ((_ > test result rest ...)
+       #'(begin (check test => 'result) (test-inline rest ...)))
+      ((empty ...) #!void)))
+
+  (def (loc->list loc) 
+    (with ((location port line col _ xoff) loc)
+      [line: line col: col xoff: xoff]))
+
+  (def stream-test
+    (test-suite "Test :std/parsec/prim"
+   (test-inline
+     test-case: "Test Token"
+     <<test-token>>)
+   (test-inline
+     test-case: "Test Stream"
+     <<test-stream>>)
+   (test-inline
+     test-case: "Test run-parsecT"
+     <<test-run-parsecT>>)
+   (test-inline
+     test-case: "Test parsec-plus"
+     <<test-parsec-plus>>)
+   (test-inline
+     test-case: "Test parsec-or"
+     <<test-parsec-or>>)
+   (test-inline
+     test-case: "Test ParsecT"
+     <<test-ParsecT>>)
+   (test-inline
+     test-case: "Test parsec-bind"
+     <<test-parsec-bind>>)
+
+    ))
+        
+  		 
+       
+
+
+
+
+#+end_src
