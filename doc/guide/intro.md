@@ -715,9 +715,6 @@ t
 The complete system class hierarchy is out of scope for this introduction,
 but you can find it in the [MOP reference](/reference/gerbil/runtime/MOP.md#predefined-classes) and the meta types in the [MOP System Classes](/reference/gerbil/prelude/macros.md#system-classes)
 
-
-
-
 ### Interfaces
 
 As we have mentioned, interfaces provide a mechanism to pack objects
@@ -738,7 +735,7 @@ defining facades to objects without caring about the underlying
 implementation details.
 
 Interfaces are defined using the `interface` macro from the
-`:std/interface` standard library module.
+core prelude.
 
 Here is an example for our colorful point hierarchy:
 ```scheme
@@ -755,7 +752,7 @@ Here is an example for our colorful point hierarchy:
 #<ColoredPoint3D #10>
 ```
 
-For more details, please refer to the [Interfaces Reference](/reference/std/interface.md) section of the hyperspec.
+For more details, please refer to the [Gerbil Object System](/reference/gerbil/object.md#interfaces) and [More About Interfaces](/reference/gerbil/interface.md) reference sections of the hyperspec.
 
 ### Contracts
 
@@ -795,19 +792,20 @@ We briefly touched on contracts above, but there is an important
 detail that is worth elaborating upon. Contracts can also be enacted
 in arbitrary context with the ubiquitous `using` macro.  Furthermore,
 within the body of a `using` incantation, bound variables acquire
-dotted access for interface methods and slots.
+dotted access for interface methods and slots. To make things
+significantly more pleasant, when using the `defmethod` macro to
+define a method, an automatic type assertion and `using` macro is
+injected to make dotted notation implicit.
 
 Here is an example:
 ```scheme
-(import :std/contract)
 (defstruct A (x y))
 (defclass (B A) (z) constructor: :init!)
 (defmethod {:init! B}
   (lambda (self x y z)
-    (using (self :- B)
-      (set! self.x x)
-      (set! self.y y)
-      (set! self.z z))))
+    (set! self.x x)
+    (set! self.y y)
+    (set! self.z z)))
 
 > (def b (B 1 2 3))
 > (using (b : B) (* (+ b.x b.y) b.z))
@@ -821,32 +819,28 @@ the `Sequence` interface from above:
 
 (defmethod {ref ExtensibleVector}
   (lambda (self index)
-    (using (self :- ExtensibleVector)
-      (and (< index (vector-length self.vector))
-           (vector-ref self.vector index)))))
+    (and (< index (vector-length self.vector))
+         (vector-ref self.vector index))))
 
 (defmethod {set! ExtensibleVector}
   (lambda (self index value)
-    (using (self :- ExtensibleVector)
-      (if (< index (vector-length self.vector))
-        (vector-set! self.vector index value)
-        ;; extend the vector
-        (let (new-vector (make-vector (1+ index) #f))
-          (subvector-move! self.vector 0 (vector-length self.vector)
-                           new-vector 0)
-          (vector-set! new-vector index value)
-          (set! self.vector new-vector))))))
+    (if (< index (vector-length self.vector))
+      (vector-set! self.vector index value)
+      ;; extend the vector
+      (let (new-vector (make-vector (1+ index) #f))
+        (subvector-move! self.vector 0 (vector-length self.vector)
+                         new-vector 0)
+        (vector-set! new-vector index value)
+        (set! self.vector new-vector)))))
 
 (defmethod {length ExtensibleVector}
   (lambda (self)
-    (using (self :- ExtensibleVector)
-      (vector-length self.vector))))
+    (vector-length self.vector)))
 ```
 
-Notice the use of type assertions for self above; this is an unchecked type
-declaration -- unchecked because there is no reason to check if the object
-is behind the interface! Furthermore there is no need to check for a negative
-index, as this is checked at the interface barrier.
+Notice the use of dotted notation for self above; method definitions
+automatically inject a type assertion for the `self` receiver when
+using the `defmethod` macro.
 
 And here is some example usage of ExtensibleVectors as Sequences:
 ```scheme
@@ -871,9 +865,7 @@ In this manner, `{a.some-method arg ...}`
 is equivalent to `{some-method a arg ...}`. This provides symmetry between
 dotted slot access and method invocation.
 
-See the [Contracts Reference](/reference/std/contract.md) section of
-the hyperspace for more details.
-
+See the [More about Contracts](/reference/gerbil/contract.md) and [Contracts Reference](/reference/gerbil/core/contract.md) sections of the hyperspace for more details.
 
 ### Runtime Specialization
 
@@ -922,7 +914,7 @@ specialization, let's examine a simple case. Here, we define the
 following code in a module `specialization-example` in the `example`
 package:
 ```scheme
-(import :std/interface :std/contract :std/iter)
+(import :std/iter)
 (export #t)
 
 (defclass A (a))
@@ -1002,8 +994,6 @@ we can observe the following:
 
 So as you can see, the performance effects of runtime specialization
 can be quite spectacular!
-
-
 
 ### Generics
 

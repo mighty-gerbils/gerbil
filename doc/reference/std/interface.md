@@ -1,5 +1,7 @@
 # Interfaces
 
+:REMOVE:
+
 The `:std/interface` module provides the implementation of interfaces.
 
 ::: tip To use the bindings from this module:
@@ -232,6 +234,33 @@ hierarchies.
 
 ## Tips for Effective Use of Interfaces
 
+### Specify the interface in method definitions
+
+Use the `interface: ...` directive in your method definitions, for the appropriate interface:
+```
+(defmethod {read MyReaderImplementation}
+  (lambda (self u8v start end need)
+    ;; Implicit declarations injected by the defmethod macro:
+    ;; self ::- MyReaderImplementations
+    ;; u8v :- :u8vector
+    ;; start, end, need :- :fixnum
+    ...)
+  interface: Reader)
+```
+
+This allows for separation of call context, ensuring safety and
+injecting the contract in the `lambda` form. The separation of call
+context is important, as calls using the method name (e.g. with the
+dotted notation) will call the exact interface method guaranteeing the
+input argument constraints. This also allows a class to implement
+disparate interfaces which may use the same method names with
+disparate semantics or contracts. Finally, it discourages the
+programmer from dynamically callin an interface method, which could
+violate contract assumptions. Note that in the spirit of Gerbil, it is
+not impossible to dynamically call an interface method using the fully
+qualified synthetic name of the method; it is merely actively
+discouraged, let there be dragons.
+
 ### Cast your objects and reuse them across many interface calls
 
 Let's say an object `obj` implements an interface `A` and you have a
@@ -274,7 +303,7 @@ avoid unnecessary casts.
 (B-f b ...)
 ```
 
-### Use unchecked methods when you know the exact type and satisfy the contract
+### You may use unchecked methods when you know the exact type and satisfy the contract
 
 If you know the exact type of an instance and you satisfy the contract,
 you can elide the cast and contract checks by calling the unchecked method
