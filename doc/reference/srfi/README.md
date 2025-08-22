@@ -7,20 +7,20 @@ The following SRFIs are supported by gerbil:
 | [SRFI  0](https://srfi.schemers.org/srfi-0/srfi-0.html)  | Feature-based conditional expansion construct          | core prelude |                           |
 | [SRFI  1](https://srfi.schemers.org/srfi-1/srfi-1.html)  | List Library                                           | stdlib       | `:std/srfi/1`             |
 | [SRFI  2](https://srfi.schemers.org/srfi-2/srfi-2.html)  | AND-LET*                                               | core prelude |                           |
-| [SRFI  4](https://srfi.schemers.org/srfi-4/srfi-4.html)  | Homogeneous numeric vector datatypes                   | runtime      | `:gerbil/gambit/hvectors` |
-| [SRFI  6](https://srfi.schemers.org/srfi-6/srfi-6.html)  | Basic String Ports                                     | runtime      | `:gerbil/gambit/ports`    |
+| [SRFI  4](https://srfi.schemers.org/srfi-4/srfi-4.html)  | Homogeneous numeric vector datatypes                   | runtime      |  |
+| [SRFI  6](https://srfi.schemers.org/srfi-6/srfi-6.html)  | Basic String Ports                                     | runtime      |     |
 | [SRFI  8](https://srfi.schemers.org/srfi-8/srfi-8.html)  | receive                                                | stdlib       | `:std/srfi/8`             |
 | [SRFI  9](https://srfi.schemers.org/srfi-9/srfi-9.html)  | Defining Record Types                                  | stdlib       | `:std/srfi/9`             |
 | [SRFI 13](https://srfi.schemers.org/srfi-13/srfi-13.html)  | String Library                                         | stdlib       | `:std/srfi/13`            |
 | [SRFI 14](https://srfi.schemers.org/srfi-14/srfi-14.html)  | Character-Set Library                                  | stdlib       | `:std/srfi/14`            |
 | [SRFI 16](https://srfi.schemers.org/srfi-16/srfi-16.html)  | Syntax for procedures of variable arity                | core prelude |                           |
-| [SRFI 18](https://srfi.schemers.org/srfi-18/srfi-18.html)  | Multithreading support                                 | runtime      | `:gerbil/gambit/threads`  |
+| [SRFI 18](https://srfi.schemers.org/srfi-18/srfi-18.html)  | Multithreading support                                 | runtime      |   |
 | [SRFI 19](https://srfi.schemers.org/srfi-19/srfi-19.html)  | Time Data Types and Procedures                         | stdlib       | `:std/srfi/19`            |
-| [SRFI 21](https://srfi.schemers.org/srfi-21/srfi-21.html)  | Real-time multithreading support                       | runtime      | `:gerbil/gambit/threads`  |
+| [SRFI 21](https://srfi.schemers.org/srfi-21/srfi-21.html)  | Real-time multithreading support                       | runtime      |   |
 | [SRFI 22](https://srfi.schemers.org/srfi-22/srfi-22.html)  | Running Scheme Scripts on Unix                         | runtime      |                           |
 | [SRFI 23](https://srfi.schemers.org/srfi-23/srfi-23.html)  | Error reporting mechanism                              | runtime      |                           |
 | [SRFI 26](https://srfi.schemers.org/srfi-26/srfi-26.html)  | Notation for Specializing Parameters without Currying  | core prelude |                           |
-| [SRFI 27](https://srfi.schemers.org/srfi-27/srfi-27.html)  | Sources of Random Bits                                 | runtime      | `:gerbil/gambit/random`   |
+| [SRFI 27](https://srfi.schemers.org/srfi-27/srfi-27.html)  | Sources of Random Bits                                 | runtime      |   |
 | [SRFI 28](https://srfi.schemers.org/srfi-28/srfi-28.html)  | Basic Format Strings                                   | stdlib       | `:std/format`             |
 | [SRFI 30](https://srfi.schemers.org/srfi-30/srfi-30.html)  | Nested Multi-line Comments                             | reader       |                           |
 | [SRFI 31](https://srfi.schemers.org/srfi-31/srfi-31.html)  | A special form for recursive evaluation                | core prelude |                           |
@@ -32,7 +32,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 43](https://srfi.schemers.org/srfi-43/srfi-43.html)  | Vector Library                                         | stdlib       | `:std/srfi/43`            |
 | [SRFI 45](https://srfi.schemers.org/srfi-45/srfi-45.html)  | Primitives for Expressing Iterative Lazy Algorithms    | stdlib       | `:std/lazy`               |
 | [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html)  | Intermediate Format Strings                            | stdlib       | `:std/format`             |
-| [SRFI 60](https://srfi.schemers.org/srfi-60/srfi-60.html)  | Integers as Bits                                       | runtime      | `:gerbil/gambit/bits`     |
+| [SRFI 60](https://srfi.schemers.org/srfi-60/srfi-60.html)  | Integers as Bits                                       | runtime      |      |
 | [SRFI 62](https://srfi.schemers.org/srfi-62/srfi-62.html)  | S-expression comments                                  | reader       |                           |
 | [SRFI 78](https://srfi.schemers.org/srfi-78/srfi-78.html)  | Lightweight testing                                    | stdlib       | `:std/srfi/78`            |
 | [SRFI 87](https://srfi.schemers.org/srfi-87/srfi-87.html)  | => in case clauses                                     | core prelude |                           |
