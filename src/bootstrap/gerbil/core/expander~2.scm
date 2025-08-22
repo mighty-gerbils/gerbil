@@ -310,8 +310,8 @@
                  (lambda (_%L902%_ _%L904%_ _%L905%_)
                    (cons (gx#datum->syntax '#f 'syntax-case)
                          (cons (cons (gx#datum->syntax '#f 'list)
-                                     (foldr (lambda (_%g931934%_ _%g932937%_)
-                                              (cons _%g931934%_ _%g932937%_))
+                                     (foldr (lambda (_%g927934%_ _%g928937%_)
+                                              (cons _%g927934%_ _%g928937%_))
                                             '()
                                             _%L904%_))
                                (cons '()
@@ -327,8 +327,8 @@
                                                               'let-values)
                                                              (cons '()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (foldr (lambda (_%g927946%_ _%g928949%_)
-                                    (cons _%g927946%_ _%g928949%_))
+                           (foldr (lambda (_%g931946%_ _%g932949%_)
+                                    (cons _%g931946%_ _%g932949%_))
                                   '()
                                   _%L902%_)))
                '()))
@@ -360,34 +360,34 @@
                                                  (declare (not safe))
                                                  (##car _%e764836%_))))
                                           (if (gx#stx-pair? _%lp-hd765840%_)
-                                              (let ((_%e780846%_
+                                              (let ((_%e771846%_
                                                      (gx#syntax-e
                                                       _%lp-hd765840%_)))
-                                                (let ((_%tl782853%_
+                                                (let ((_%tl773853%_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _%e780846%_)))
-                                                      (_%hd781850%_
+                                                         (##cdr _%e771846%_)))
+                                                      (_%hd772850%_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _%e780846%_))))
+                                                         (##car _%e771846%_))))
                                                   (if (gx#stx-pair?
-                                                       _%tl782853%_)
-                                                      (let ((_%e783856%_
+                                                       _%tl773853%_)
+                                                      (let ((_%e774856%_
                                                              (gx#syntax-e
-                                                              _%tl782853%_)))
-                                                        (let ((_%tl785863%_
+                                                              _%tl773853%_)))
+                                                        (let ((_%tl776863%_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##cdr _%e783856%_)))
-                      (_%hd784860%_
-                       (let () (declare (not safe)) (##car _%e783856%_))))
-                  (if (gx#stx-null? _%tl785863%_)
+                         (##cdr _%e774856%_)))
+                      (_%hd775860%_
+                       (let () (declare (not safe)) (##car _%e774856%_))))
+                  (if (gx#stx-null? _%tl776863%_)
                       (_%loop763824%_
                        _%lp-tl766843%_
-                       (cons _%hd784860%_ _%e767831%_)
-                       (cons _%hd781850%_ _%pat768833%_))
+                       (cons _%hd775860%_ _%e767831%_)
+                       (cons _%hd772850%_ _%pat768833%_))
                       (let () (declare (not safe)) (_%g706791%_)))))
               (let () (declare (not safe)) (_%g706791%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -403,42 +403,42 @@
                                                    (gx#syntax-split-splice->vector
                                                     _%tl759815%_
                                                     '0)))
-                                              (let ((_%tl773875%_
+                                              (let ((_%tl779875%_
                                                      (let ()
                                                        (declare (not safe))
                                                        (##vector-ref
                                                         _%__splice17131714%_
                                                         '1)))
-                                                    (_%target771872%_
+                                                    (_%target777872%_
                                                      (let ()
                                                        (declare (not safe))
                                                        (##vector-ref
                                                         _%__splice17131714%_
                                                         '0))))
-                                                (if (gx#stx-null? _%tl773875%_)
-                                                    (letrec ((_%loop774878%_
-                                                              (lambda (_%hd772882%_
+                                                (if (gx#stx-null? _%tl779875%_)
+                                                    (letrec ((_%loop780878%_
+                                                              (lambda (_%hd778882%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _%body778885%_)
-                        (if (gx#stx-pair? _%hd772882%_)
-                            (let ((_%e775888%_ (gx#syntax-e _%hd772882%_)))
-                              (let ((_%lp-tl777895%_
+                               _%body784885%_)
+                        (if (gx#stx-pair? _%hd778882%_)
+                            (let ((_%e781888%_ (gx#syntax-e _%hd778882%_)))
+                              (let ((_%lp-tl783895%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e775888%_)))
-                                    (_%lp-hd776892%_
+                                       (##cdr _%e781888%_)))
+                                    (_%lp-hd782892%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e775888%_))))
-                                (_%loop774878%_
-                                 _%lp-tl777895%_
-                                 (cons _%lp-hd776892%_ _%body778885%_))))
-                            (let ((_%body779898%_ (reverse _%body778885%_)))
+                                       (##car _%e781888%_))))
+                                (_%loop780878%_
+                                 _%lp-tl783895%_
+                                 (cons _%lp-hd782892%_ _%body784885%_))))
+                            (let ((_%body785898%_ (reverse _%body784885%_)))
                               (_%__kont17091710%_
-                               _%body779898%_
+                               _%body785898%_
                                _%e769866%_
                                _%pat770869%_))))))
-              (_%loop774878%_ _%target771872%_ '()))
+              (_%loop780878%_ _%target777872%_ '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (let ()
                                                       (declare (not safe))
