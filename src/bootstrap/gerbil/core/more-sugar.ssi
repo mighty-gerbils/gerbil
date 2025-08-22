@@ -86,6 +86,19 @@ namespace: gerbil/core/more-sugar
          (%#define-syntax
           unwind-protect
           |gerbil/core/more-sugar[:0:]#unwind-protect|)
+         (%#define-syntax do |gerbil/core/more-sugar[:0:]#do|)
+         (%#define-syntax do-while |gerbil/core/more-sugar[:0:]#do-while|)
+         (%#define-syntax while |gerbil/core/more-sugar[:0:]#while|)
+         (%#define-syntax until |gerbil/core/more-sugar[:0:]#until|)
+         (%#define-syntax catch |gerbil/core/more-sugar[:0:]#catch|)
+         (%#define-syntax finally |gerbil/core/more-sugar[:0:]#finally|)
+         (%#define-syntax try |gerbil/core/more-sugar[:0:]#try|)
+         (%#define-syntax hash |gerbil/core/more-sugar[:0:]#hash|)
+         (%#define-syntax hash-eq |gerbil/core/more-sugar[:0:]#hash-eq|)
+         (%#define-syntax hash-eqv |gerbil/core/more-sugar[:0:]#hash-eqv|)
+         (%#define-syntax
+          ~hash-table
+          |gerbil/core/more-sugar[:0:]#~hash-table|)
          (%#define-syntax @bytes |gerbil/core/more-sugar[:0:]#@bytes|)
          (%#define-syntax
           eval-when-compile

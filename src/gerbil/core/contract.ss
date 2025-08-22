@@ -2861,9 +2861,19 @@ package: gerbil/core
     ((_ var expr rest ...)
      (begin expr rest ...)))
 
-  (defrules do-while/c ()
-    ((_ hd (test . fini) . body)
-     (do/c hd ((not test) . fini) . body)))
+  (defsyntax (do-while/c stx)
+    (syntax-case stx ()
+      ((_ ((var/c init step ...) ...)
+          (test fini ...)
+          body ...)
+       (with-syntax (((var ...)
+                      (map (lambda (b) (if (identifier? b) b (stx-car b)))
+                           #'(var/c ...))))
+         #'(let/c $loop ((var/c init) ...)
+                  body ...
+                  (if test
+                    ($loop (do-loop-step var step ...) ...)
+                    (do-loop-result fini ...)))))))
 
   (defsyntax (defmutable* stx)
     (syntax-case stx ()
