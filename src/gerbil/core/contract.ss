@@ -2861,7 +2861,7 @@ package: gerbil/core
     ((_ var expr rest ...)
      (begin expr rest ...)))
 
-  (defrules do-while/c ()
+  (defsyntax (do-while/c stx)
     (syntax-case stx ()
       ((_ ((var/c init step ...) ...)
           (test fini ...)
