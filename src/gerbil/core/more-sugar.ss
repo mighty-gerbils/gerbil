@@ -48,19 +48,15 @@ package: gerbil/core
        #'(let-values ((($e ...) expr))
            (set! tgt $e) ...)))))
 
-(defsyntax (parameterize stx)
-    (syntax-case stx ()
-      ((_ () body ...)
-       #'(let () body ...))
-      ((_ ((param expr) ...) body ...)
-       (with-syntax* ((thunk
-                       (syntax/loc stx
-                         (lambda () body ...)))
-                      ((arg ...)
-                       (foldr cons* []
-                              (syntax->list #'(param ...))
-                              (syntax->list #'(expr ...)))))
-         #'(call-with-parameters thunk arg ...)))))
+(defrules parameterize ()
+  ((_ () body ...)
+   (let () body ...))
+  ((_ ((param value)) body ...)
+   (call-with-parameters (lambda () body ...) param value))
+  ((recur ((param value) rest ...) body ...)
+   (call-with-parameters
+    (lambda () (recur (rest ...) body ...))
+    param value)))
 
 (defrules let/cc ()
   ((_ id body ...)
