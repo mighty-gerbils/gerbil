@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/hash::timestamp 1742237311)
+  (define gerbil/runtime/hash::timestamp 1755903075)
   (begin
     (define UnboundKeyError::t
-      (let ((__tmp111139 (list Error::t)))
+      (let ((__tmp114512 (list Error::t)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/hash#UnboundKeyError::t
          'UnboundKeyError
-         __tmp111139
+         __tmp114512
          '()
          '()
          ':init!)))
@@ -17,8 +17,8 @@
         (declare (not safe))
         (__make-class-predicate UnboundKeyError::t)))
     (define make-UnboundKeyError
-      (lambda _%$args111119%_
-        (apply make-instance UnboundKeyError::t _%$args111119%_)))
+      (lambda _%$args114492%_
+        (apply make-instance UnboundKeyError::t _%$args114492%_)))
     (define UnboundKeyError-message
       (let ()
         (declare (not safe))
@@ -96,32 +96,32 @@
        UnboundKeyError:::init!
        '#f))
     (define raise-unbound-key-error
-      (lambda (_%where110993%_ _%message110994%_ . _%irritants110995%_)
-        (let ((__tmp111140
-               (let ((__obj111133
+      (lambda (_%where114366%_ _%message114367%_ . _%irritants114368%_)
+        (let ((__tmp114513
+               (let ((__obj114506
                       (let ()
                         (declare (not safe))
                         (##structure UnboundKeyError::t '#f '#f '#f '#f))))
                  (let ()
                    (declare (not safe))
                    (UnboundKeyError:::init!
-                    __obj111133
-                    _%message110994%_
+                    __obj114506
+                    _%message114367%_
                     'where:
-                    _%where110993%_
+                    _%where114366%_
                     'irritants:
-                    _%irritants110995%_))
-                 __obj111133)))
+                    _%irritants114368%_))
+                 __obj114506)))
           (declare (not safe))
-          (raise __tmp111140))))
+          (raise __tmp114513))))
     (define unbound-key-error? UnboundKeyError?)
     (define HashTable::t
-      (let ((__tmp111141 (cons interface-instance::t '())))
+      (let ((__tmp114514 (cons interface-instance::t '())))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/hash#HashTable::t
          'HashTable
-         __tmp111141
+         __tmp114514
          '(clear! copy delete! for-each length ref set! update!)
          '((final: . #t) (struct: . #t))
          '#f)))
@@ -140,143 +140,143 @@
            (HashTable::set! set!)
            (HashTable::update! update!)))))
     (define make-HashTable
-      (lambda (_%obj110991%_)
+      (lambda (_%obj114364%_)
         (let ()
           (declare (not safe))
-          (cast HashTable::interface _%obj110991%_))))
+          (cast HashTable::interface _%obj114364%_))))
     (define try-HashTable
-      (lambda (_%obj110989%_)
+      (lambda (_%obj114362%_)
         (let ()
           (declare (not safe))
-          (try-cast HashTable::interface _%obj110989%_))))
+          (try-cast HashTable::interface _%obj114362%_))))
     (define HashTable?
-      (lambda (_%obj110987%_)
-        (let ((__tmp111142
+      (lambda (_%obj114360%_)
+        (let ((__tmp114515
                (let () (declare (not safe)) (##type-id HashTable::t))))
           (declare (not safe))
-          (##structure-direct-instance-of? _%obj110987%_ __tmp111142))))
+          (##structure-direct-instance-of? _%obj114360%_ __tmp114515))))
     (define is-HashTable?
-      (lambda (_%obj110985%_)
+      (lambda (_%obj114358%_)
         (if (let ()
               (declare (not safe))
-              (satisfies? HashTable::interface _%obj110985%_))
+              (satisfies? HashTable::interface _%obj114358%_))
             '#t
             '#f)))
     (define HashTable-clear!
-      (lambda (_%self110969%_)
-        (let* ((_%self110974%_
-                (let ((_%$obj110971%_ _%self110969%_))
+      (lambda (_%self114342%_)
+        (let* ((_%self114347%_
+                (let ((_%$obj114344%_ _%self114342%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110971%_))
+                             (##structure? _%$obj114344%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110971%_)))
+                                  (##structure-type _%$obj114344%_)))
                            '#t)
-                      _%$obj110971%_
+                      _%$obj114344%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110971%_)))))
-               (_%self110976%_ _%self110974%_))
-          (&HashTable-clear! _%self110976%_))))
+                        (cast HashTable::interface _%$obj114344%_)))))
+               (_%self114349%_ _%self114347%_))
+          (&HashTable-clear! _%self114349%_))))
     (define &HashTable-clear!
-      (lambda (_%self110954%_)
-        (let ((_%self110956%_ _%self110954%_))
+      (lambda (_%self114327%_)
+        (let ((_%self114329%_ _%self114327%_))
           (declare (not safe))
-          (let ((_%obj110966%_
-                 (##unchecked-structure-ref _%self110956%_ '1 '#f 'clear!))
-                (_%f110967%_
-                 (##unchecked-structure-ref _%self110956%_ '2 '#f 'clear!)))
-            (_%f110967%_ _%obj110966%_)))))
+          (let ((_%obj114339%_
+                 (##unchecked-structure-ref _%self114329%_ '1 '#f 'clear!))
+                (_%f114340%_
+                 (##unchecked-structure-ref _%self114329%_ '2 '#f 'clear!)))
+            (_%f114340%_ _%obj114339%_)))))
     (define HashTable-copy
-      (lambda (_%self110938%_)
-        (let* ((_%self110943%_
-                (let ((_%$obj110940%_ _%self110938%_))
+      (lambda (_%self114311%_)
+        (let* ((_%self114316%_
+                (let ((_%$obj114313%_ _%self114311%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110940%_))
+                             (##structure? _%$obj114313%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110940%_)))
+                                  (##structure-type _%$obj114313%_)))
                            '#t)
-                      _%$obj110940%_
+                      _%$obj114313%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110940%_)))))
-               (_%self110945%_ _%self110943%_))
-          (__HashTable-copy _%self110945%_))))
+                        (cast HashTable::interface _%$obj114313%_)))))
+               (_%self114318%_ _%self114316%_))
+          (__HashTable-copy _%self114318%_))))
     (define __HashTable-copy
-      (lambda (_%self110925%_)
-        (let* ((_%self110927%_ _%self110925%_)
-               (_%$obj110935%_ (&HashTable-copy _%self110927%_)))
-          (if (and (let () (declare (not safe)) (##structure? _%$obj110935%_))
+      (lambda (_%self114298%_)
+        (let* ((_%self114300%_ _%self114298%_)
+               (_%$obj114308%_ (&HashTable-copy _%self114300%_)))
+          (if (and (let () (declare (not safe)) (##structure? _%$obj114308%_))
                    (eq? HashTable::t
                         (let ()
                           (declare (not safe))
-                          (##structure-type _%$obj110935%_)))
+                          (##structure-type _%$obj114308%_)))
                    '#t)
-              _%$obj110935%_
+              _%$obj114308%_
               (let ()
                 (declare (not safe))
-                (cast HashTable::interface _%$obj110935%_))))))
+                (cast HashTable::interface _%$obj114308%_))))))
     (define &HashTable-copy
-      (lambda (_%self110910%_)
-        (let ((_%self110912%_ _%self110910%_))
+      (lambda (_%self114283%_)
+        (let ((_%self114285%_ _%self114283%_))
           (declare (not safe))
-          (let ((_%obj110922%_
-                 (##unchecked-structure-ref _%self110912%_ '1 '#f 'copy))
-                (_%f110923%_
-                 (##unchecked-structure-ref _%self110912%_ '3 '#f 'copy)))
-            (_%f110923%_ _%obj110922%_)))))
+          (let ((_%obj114295%_
+                 (##unchecked-structure-ref _%self114285%_ '1 '#f 'copy))
+                (_%f114296%_
+                 (##unchecked-structure-ref _%self114285%_ '3 '#f 'copy)))
+            (_%f114296%_ _%obj114295%_)))))
     (define HashTable-delete!
-      (lambda (_%self110893%_ _%key110894%_)
-        (let* ((_%self110899%_
-                (let ((_%$obj110896%_ _%self110893%_))
+      (lambda (_%self114266%_ _%key114267%_)
+        (let* ((_%self114272%_
+                (let ((_%$obj114269%_ _%self114266%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110896%_))
+                             (##structure? _%$obj114269%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110896%_)))
+                                  (##structure-type _%$obj114269%_)))
                            '#t)
-                      _%$obj110896%_
+                      _%$obj114269%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110896%_)))))
-               (_%self110901%_ _%self110899%_))
-          (&HashTable-delete! _%self110901%_ _%key110894%_))))
+                        (cast HashTable::interface _%$obj114269%_)))))
+               (_%self114274%_ _%self114272%_))
+          (&HashTable-delete! _%self114274%_ _%key114267%_))))
     (define &HashTable-delete!
-      (lambda (_%self110877%_ _%key110878%_)
-        (let ((_%self110880%_ _%self110877%_))
+      (lambda (_%self114250%_ _%key114251%_)
+        (let ((_%self114253%_ _%self114250%_))
           (declare (not safe))
-          (let ((_%obj110890%_
-                 (##unchecked-structure-ref _%self110880%_ '1 '#f 'delete!))
-                (_%f110891%_
-                 (##unchecked-structure-ref _%self110880%_ '4 '#f 'delete!)))
-            (_%f110891%_ _%obj110890%_ _%key110878%_)))))
+          (let ((_%obj114263%_
+                 (##unchecked-structure-ref _%self114253%_ '1 '#f 'delete!))
+                (_%f114264%_
+                 (##unchecked-structure-ref _%self114253%_ '4 '#f 'delete!)))
+            (_%f114264%_ _%obj114263%_ _%key114251%_)))))
     (define HashTable-for-each
-      (lambda (_%self110850%_ _%proc110851%_)
-        (let* ((_%self110856%_
-                (let ((_%$obj110853%_ _%self110850%_))
+      (lambda (_%self114223%_ _%proc114224%_)
+        (let* ((_%self114229%_
+                (let ((_%$obj114226%_ _%self114223%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110853%_))
+                             (##structure? _%$obj114226%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110853%_)))
+                                  (##structure-type _%$obj114226%_)))
                            '#t)
-                      _%$obj110853%_
+                      _%$obj114226%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110853%_)))))
-               (_%self110858%_ _%self110856%_))
-          (if (procedure? _%proc110851%_)
-              (let ((_%proc110867%_ _%proc110851%_))
-                (&HashTable-for-each _%self110858%_ _%proc110867%_))
+                        (cast HashTable::interface _%$obj114226%_)))))
+               (_%self114231%_ _%self114229%_))
+          (if (procedure? _%proc114224%_)
+              (let ((_%proc114240%_ _%proc114224%_))
+                (&HashTable-for-each _%self114231%_ _%proc114240%_))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -285,127 +285,127 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%proc110851%_)
+                 _%proc114224%_)
                 '#!void)))))
     (define &HashTable-for-each
-      (lambda (_%self110826%_ _%proc110827%_)
-        (let* ((_%self110829%_ _%self110826%_) (_%proc110836%_ _%proc110827%_))
+      (lambda (_%self114199%_ _%proc114200%_)
+        (let* ((_%self114202%_ _%self114199%_) (_%proc114209%_ _%proc114200%_))
           (declare (not safe))
-          (let ((_%obj110847%_
-                 (##unchecked-structure-ref _%self110829%_ '1 '#f 'for-each))
-                (_%f110848%_
-                 (##unchecked-structure-ref _%self110829%_ '5 '#f 'for-each)))
-            (_%f110848%_ _%obj110847%_ _%proc110836%_)))))
+          (let ((_%obj114220%_
+                 (##unchecked-structure-ref _%self114202%_ '1 '#f 'for-each))
+                (_%f114221%_
+                 (##unchecked-structure-ref _%self114202%_ '5 '#f 'for-each)))
+            (_%f114221%_ _%obj114220%_ _%proc114209%_)))))
     (define HashTable-length
-      (lambda (_%self110810%_)
-        (let* ((_%self110815%_
-                (let ((_%$obj110812%_ _%self110810%_))
+      (lambda (_%self114183%_)
+        (let* ((_%self114188%_
+                (let ((_%$obj114185%_ _%self114183%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110812%_))
+                             (##structure? _%$obj114185%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110812%_)))
+                                  (##structure-type _%$obj114185%_)))
                            '#t)
-                      _%$obj110812%_
+                      _%$obj114185%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110812%_)))))
-               (_%self110817%_ _%self110815%_))
-          (__HashTable-length _%self110817%_))))
+                        (cast HashTable::interface _%$obj114185%_)))))
+               (_%self114190%_ _%self114188%_))
+          (__HashTable-length _%self114190%_))))
     (define __HashTable-length
-      (lambda (_%self110797%_)
-        (let* ((_%self110799%_ _%self110797%_)
-               (_%val110807%_ (&HashTable-length _%self110799%_)))
-          _%val110807%_)))
+      (lambda (_%self114170%_)
+        (let* ((_%self114172%_ _%self114170%_)
+               (_%val114180%_ (&HashTable-length _%self114172%_)))
+          _%val114180%_)))
     (define &HashTable-length
-      (lambda (_%self110782%_)
-        (let ((_%self110784%_ _%self110782%_))
+      (lambda (_%self114155%_)
+        (let ((_%self114157%_ _%self114155%_))
           (declare (not safe))
-          (let ((_%obj110794%_
-                 (##unchecked-structure-ref _%self110784%_ '1 '#f 'length))
-                (_%f110795%_
-                 (##unchecked-structure-ref _%self110784%_ '6 '#f 'length)))
-            (_%f110795%_ _%obj110794%_)))))
+          (let ((_%obj114167%_
+                 (##unchecked-structure-ref _%self114157%_ '1 '#f 'length))
+                (_%f114168%_
+                 (##unchecked-structure-ref _%self114157%_ '6 '#f 'length)))
+            (_%f114168%_ _%obj114167%_)))))
     (define HashTable-ref
-      (lambda (_%self110764%_ _%key110765%_ _%default110766%_)
-        (let* ((_%self110771%_
-                (let ((_%$obj110768%_ _%self110764%_))
+      (lambda (_%self114137%_ _%key114138%_ _%default114139%_)
+        (let* ((_%self114144%_
+                (let ((_%$obj114141%_ _%self114137%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110768%_))
+                             (##structure? _%$obj114141%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110768%_)))
+                                  (##structure-type _%$obj114141%_)))
                            '#t)
-                      _%$obj110768%_
+                      _%$obj114141%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110768%_)))))
-               (_%self110773%_ _%self110771%_))
-          (&HashTable-ref _%self110773%_ _%key110765%_ _%default110766%_))))
+                        (cast HashTable::interface _%$obj114141%_)))))
+               (_%self114146%_ _%self114144%_))
+          (&HashTable-ref _%self114146%_ _%key114138%_ _%default114139%_))))
     (define &HashTable-ref
-      (lambda (_%self110747%_ _%key110748%_ _%default110749%_)
-        (let ((_%self110751%_ _%self110747%_))
+      (lambda (_%self114120%_ _%key114121%_ _%default114122%_)
+        (let ((_%self114124%_ _%self114120%_))
           (declare (not safe))
-          (let ((_%obj110761%_
-                 (##unchecked-structure-ref _%self110751%_ '1 '#f 'ref))
-                (_%f110762%_
-                 (##unchecked-structure-ref _%self110751%_ '7 '#f 'ref)))
-            (_%f110762%_ _%obj110761%_ _%key110748%_ _%default110749%_)))))
+          (let ((_%obj114134%_
+                 (##unchecked-structure-ref _%self114124%_ '1 '#f 'ref))
+                (_%f114135%_
+                 (##unchecked-structure-ref _%self114124%_ '7 '#f 'ref)))
+            (_%f114135%_ _%obj114134%_ _%key114121%_ _%default114122%_)))))
     (define HashTable-set!
-      (lambda (_%self110729%_ _%key110730%_ _%value110731%_)
-        (let* ((_%self110736%_
-                (let ((_%$obj110733%_ _%self110729%_))
+      (lambda (_%self114102%_ _%key114103%_ _%value114104%_)
+        (let* ((_%self114109%_
+                (let ((_%$obj114106%_ _%self114102%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110733%_))
+                             (##structure? _%$obj114106%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110733%_)))
+                                  (##structure-type _%$obj114106%_)))
                            '#t)
-                      _%$obj110733%_
+                      _%$obj114106%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110733%_)))))
-               (_%self110738%_ _%self110736%_))
-          (&HashTable-set! _%self110738%_ _%key110730%_ _%value110731%_))))
+                        (cast HashTable::interface _%$obj114106%_)))))
+               (_%self114111%_ _%self114109%_))
+          (&HashTable-set! _%self114111%_ _%key114103%_ _%value114104%_))))
     (define &HashTable-set!
-      (lambda (_%self110712%_ _%key110713%_ _%value110714%_)
-        (let ((_%self110716%_ _%self110712%_))
+      (lambda (_%self114085%_ _%key114086%_ _%value114087%_)
+        (let ((_%self114089%_ _%self114085%_))
           (declare (not safe))
-          (let ((_%obj110726%_
-                 (##unchecked-structure-ref _%self110716%_ '1 '#f 'set!))
-                (_%f110727%_
-                 (##unchecked-structure-ref _%self110716%_ '8 '#f 'set!)))
-            (_%f110727%_ _%obj110726%_ _%key110713%_ _%value110714%_)))))
+          (let ((_%obj114099%_
+                 (##unchecked-structure-ref _%self114089%_ '1 '#f 'set!))
+                (_%f114100%_
+                 (##unchecked-structure-ref _%self114089%_ '8 '#f 'set!)))
+            (_%f114100%_ _%obj114099%_ _%key114086%_ _%value114087%_)))))
     (define HashTable-update!
-      (lambda (_%self110683%_ _%key110684%_ _%proc110685%_ _%default110686%_)
-        (let* ((_%self110691%_
-                (let ((_%$obj110688%_ _%self110683%_))
+      (lambda (_%self114056%_ _%key114057%_ _%proc114058%_ _%default114059%_)
+        (let* ((_%self114064%_
+                (let ((_%$obj114061%_ _%self114056%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110688%_))
+                             (##structure? _%$obj114061%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110688%_)))
+                                  (##structure-type _%$obj114061%_)))
                            '#t)
-                      _%$obj110688%_
+                      _%$obj114061%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj110688%_)))))
-               (_%self110693%_ _%self110691%_))
-          (if (procedure? _%proc110685%_)
-              (let ((_%proc110702%_ _%proc110685%_))
+                        (cast HashTable::interface _%$obj114061%_)))))
+               (_%self114066%_ _%self114064%_))
+          (if (procedure? _%proc114058%_)
+              (let ((_%proc114075%_ _%proc114058%_))
                 (&HashTable-update!
-                 _%self110693%_
-                 _%key110684%_
-                 _%proc110702%_
-                 _%default110686%_))
+                 _%self114066%_
+                 _%key114057%_
+                 _%proc114075%_
+                 _%default114059%_))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -414,28 +414,28 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%proc110685%_)
+                 _%proc114058%_)
                 '#!void)))))
     (define &HashTable-update!
-      (lambda (_%self110655%_ _%key110656%_ _%proc110657%_ _%default110658%_)
-        (let* ((_%self110660%_ _%self110655%_) (_%proc110667%_ _%proc110657%_))
+      (lambda (_%self114028%_ _%key114029%_ _%proc114030%_ _%default114031%_)
+        (let* ((_%self114033%_ _%self114028%_) (_%proc114040%_ _%proc114030%_))
           (declare (not safe))
-          (let ((_%obj110678%_
-                 (##unchecked-structure-ref _%self110660%_ '1 '#f 'update!))
-                (_%f110680%_
-                 (##unchecked-structure-ref _%self110660%_ '9 '#f 'update!)))
-            (_%f110680%_
-             _%obj110678%_
-             _%key110656%_
-             _%proc110667%_
-             _%default110658%_)))))
+          (let ((_%obj114051%_
+                 (##unchecked-structure-ref _%self114033%_ '1 '#f 'update!))
+                (_%f114053%_
+                 (##unchecked-structure-ref _%self114033%_ '9 '#f 'update!)))
+            (_%f114053%_
+             _%obj114051%_
+             _%key114029%_
+             _%proc114040%_
+             _%default114031%_)))))
     (define Locker::t
-      (let ((__tmp111143 (cons interface-instance::t '())))
+      (let ((__tmp114516 (cons interface-instance::t '())))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/hash#Locker::t
          'Locker
-         __tmp111143
+         __tmp114516
          '(read-lock! read-unlock! write-lock! write-unlock!)
          '((final: . #t) (struct: . #t))
          '#f)))
@@ -450,162 +450,162 @@
            (Locker::write-lock! write-lock!)
            (Locker::write-unlock! write-unlock!)))))
     (define make-Locker
-      (lambda (_%obj110653%_)
-        (let () (declare (not safe)) (cast Locker::interface _%obj110653%_))))
+      (lambda (_%obj114026%_)
+        (let () (declare (not safe)) (cast Locker::interface _%obj114026%_))))
     (define try-Locker
-      (lambda (_%obj110651%_)
+      (lambda (_%obj114024%_)
         (let ()
           (declare (not safe))
-          (try-cast Locker::interface _%obj110651%_))))
+          (try-cast Locker::interface _%obj114024%_))))
     (define Locker?
-      (lambda (_%obj110649%_)
-        (let ((__tmp111144
+      (lambda (_%obj114022%_)
+        (let ((__tmp114517
                (let () (declare (not safe)) (##type-id Locker::t))))
           (declare (not safe))
-          (##structure-direct-instance-of? _%obj110649%_ __tmp111144))))
+          (##structure-direct-instance-of? _%obj114022%_ __tmp114517))))
     (define is-Locker?
-      (lambda (_%obj110647%_)
+      (lambda (_%obj114020%_)
         (if (let ()
               (declare (not safe))
-              (satisfies? Locker::interface _%obj110647%_))
+              (satisfies? Locker::interface _%obj114020%_))
             '#t
             '#f)))
     (define Locker-read-lock!
-      (lambda (_%self110631%_)
-        (let* ((_%self110636%_
-                (let ((_%$obj110633%_ _%self110631%_))
+      (lambda (_%self114004%_)
+        (let* ((_%self114009%_
+                (let ((_%$obj114006%_ _%self114004%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110633%_))
+                             (##structure? _%$obj114006%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110633%_)))
+                                  (##structure-type _%$obj114006%_)))
                            '#t)
-                      _%$obj110633%_
+                      _%$obj114006%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj110633%_)))))
-               (_%self110638%_ _%self110636%_))
-          (&Locker-read-lock! _%self110638%_))))
+                        (cast Locker::interface _%$obj114006%_)))))
+               (_%self114011%_ _%self114009%_))
+          (&Locker-read-lock! _%self114011%_))))
     (define &Locker-read-lock!
-      (lambda (_%self110616%_)
-        (let ((_%self110618%_ _%self110616%_))
+      (lambda (_%self113989%_)
+        (let ((_%self113991%_ _%self113989%_))
           (declare (not safe))
-          (let ((_%obj110628%_
-                 (##unchecked-structure-ref _%self110618%_ '1 '#f 'read-lock!))
-                (_%f110629%_
+          (let ((_%obj114001%_
+                 (##unchecked-structure-ref _%self113991%_ '1 '#f 'read-lock!))
+                (_%f114002%_
                  (##unchecked-structure-ref
-                  _%self110618%_
+                  _%self113991%_
                   '2
                   '#f
                   'read-lock!)))
-            (_%f110629%_ _%obj110628%_)))))
+            (_%f114002%_ _%obj114001%_)))))
     (define Locker-read-unlock!
-      (lambda (_%self110600%_)
-        (let* ((_%self110605%_
-                (let ((_%$obj110602%_ _%self110600%_))
+      (lambda (_%self113973%_)
+        (let* ((_%self113978%_
+                (let ((_%$obj113975%_ _%self113973%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110602%_))
+                             (##structure? _%$obj113975%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110602%_)))
+                                  (##structure-type _%$obj113975%_)))
                            '#t)
-                      _%$obj110602%_
+                      _%$obj113975%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj110602%_)))))
-               (_%self110607%_ _%self110605%_))
-          (&Locker-read-unlock! _%self110607%_))))
+                        (cast Locker::interface _%$obj113975%_)))))
+               (_%self113980%_ _%self113978%_))
+          (&Locker-read-unlock! _%self113980%_))))
     (define &Locker-read-unlock!
-      (lambda (_%self110585%_)
-        (let ((_%self110587%_ _%self110585%_))
+      (lambda (_%self113958%_)
+        (let ((_%self113960%_ _%self113958%_))
           (declare (not safe))
-          (let ((_%obj110597%_
+          (let ((_%obj113970%_
                  (##unchecked-structure-ref
-                  _%self110587%_
+                  _%self113960%_
                   '1
                   '#f
                   'read-unlock!))
-                (_%f110598%_
+                (_%f113971%_
                  (##unchecked-structure-ref
-                  _%self110587%_
+                  _%self113960%_
                   '3
                   '#f
                   'read-unlock!)))
-            (_%f110598%_ _%obj110597%_)))))
+            (_%f113971%_ _%obj113970%_)))))
     (define Locker-write-lock!
-      (lambda (_%self110569%_)
-        (let* ((_%self110574%_
-                (let ((_%$obj110571%_ _%self110569%_))
+      (lambda (_%self113942%_)
+        (let* ((_%self113947%_
+                (let ((_%$obj113944%_ _%self113942%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110571%_))
+                             (##structure? _%$obj113944%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110571%_)))
+                                  (##structure-type _%$obj113944%_)))
                            '#t)
-                      _%$obj110571%_
+                      _%$obj113944%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj110571%_)))))
-               (_%self110576%_ _%self110574%_))
-          (&Locker-write-lock! _%self110576%_))))
+                        (cast Locker::interface _%$obj113944%_)))))
+               (_%self113949%_ _%self113947%_))
+          (&Locker-write-lock! _%self113949%_))))
     (define &Locker-write-lock!
-      (lambda (_%self110554%_)
-        (let ((_%self110556%_ _%self110554%_))
+      (lambda (_%self113927%_)
+        (let ((_%self113929%_ _%self113927%_))
           (declare (not safe))
-          (let ((_%obj110566%_
+          (let ((_%obj113939%_
                  (##unchecked-structure-ref
-                  _%self110556%_
+                  _%self113929%_
                   '1
                   '#f
                   'write-lock!))
-                (_%f110567%_
+                (_%f113940%_
                  (##unchecked-structure-ref
-                  _%self110556%_
+                  _%self113929%_
                   '4
                   '#f
                   'write-lock!)))
-            (_%f110567%_ _%obj110566%_)))))
+            (_%f113940%_ _%obj113939%_)))))
     (define Locker-write-unlock!
-      (lambda (_%self110538%_)
-        (let* ((_%self110543%_
-                (let ((_%$obj110540%_ _%self110538%_))
+      (lambda (_%self113911%_)
+        (let* ((_%self113916%_
+                (let ((_%$obj113913%_ _%self113911%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj110540%_))
+                             (##structure? _%$obj113913%_))
                            (eq? Locker::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj110540%_)))
+                                  (##structure-type _%$obj113913%_)))
                            '#t)
-                      _%$obj110540%_
+                      _%$obj113913%_
                       (let ()
                         (declare (not safe))
-                        (cast Locker::interface _%$obj110540%_)))))
-               (_%self110545%_ _%self110543%_))
-          (&Locker-write-unlock! _%self110545%_))))
+                        (cast Locker::interface _%$obj113913%_)))))
+               (_%self113918%_ _%self113916%_))
+          (&Locker-write-unlock! _%self113918%_))))
     (define &Locker-write-unlock!
-      (lambda (_%self110521%_)
-        (let ((_%self110523%_ _%self110521%_))
+      (lambda (_%self113894%_)
+        (let ((_%self113896%_ _%self113894%_))
           (declare (not safe))
-          (let ((_%obj110533%_
+          (let ((_%obj113906%_
                  (##unchecked-structure-ref
-                  _%self110523%_
+                  _%self113896%_
                   '1
                   '#f
                   'write-unlock!))
-                (_%f110535%_
+                (_%f113908%_
                  (##unchecked-structure-ref
-                  _%self110523%_
+                  _%self113896%_
                   '5
                   '#f
                   'write-unlock!)))
-            (_%f110535%_ _%obj110533%_)))))
+            (_%f113908%_ _%obj113906%_)))))
     (let ()
       (declare (not safe))
       (bind-method!__0 __table::t 'HashTable::ref raw-table-ref))
@@ -655,195 +655,195 @@
       (declare (not safe))
       (bind-method!__0 __gc-table::t 'HashTable::clear! gc-table-clear!))
     (define gambit-table-update!
-      (lambda (_%table110514%_
-               _%key110515%_
-               _%update110516%_
-               _%default110517%_)
-        (let ((_%result110519%_
-               (table-ref _%table110514%_ _%key110515%_ _%default110517%_)))
+      (lambda (_%table113887%_
+               _%key113888%_
+               _%update113889%_
+               _%default113890%_)
+        (let ((_%result113892%_
+               (table-ref _%table113887%_ _%key113888%_ _%default113890%_)))
           (table-set!
-           _%table110514%_
-           _%key110515%_
-           (_%update110516%_ _%default110517%_)))))
+           _%table113887%_
+           _%key113888%_
+           (_%update113889%_ _%default113890%_)))))
     (define gambit-table-for-each
-      (lambda (_%table110511%_ _%proc110512%_)
-        (table-for-each _%proc110512%_ _%table110511%_)))
+      (lambda (_%table113884%_ _%proc113885%_)
+        (table-for-each _%proc113885%_ _%table113884%_)))
     (define gambit-table-clear!
-      (lambda (_%table110509%_)
+      (lambda (_%table113882%_)
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! _%table110509%_ '0 '5 '#f '#f))))
-    (let ((__tmp111145 (macro-type-table)))
+          (##unchecked-structure-set! _%table113882%_ '0 '5 '#f '#f))))
+    (let ((__tmp114518 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111145 'HashTable::ref table-ref))
-    (let ((__tmp111146 (macro-type-table)))
+      (bind-method!__0 __tmp114518 'HashTable::ref table-ref))
+    (let ((__tmp114519 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111146 'HashTable::set! table-set!))
-    (let ((__tmp111147 (macro-type-table)))
+      (bind-method!__0 __tmp114519 'HashTable::set! table-set!))
+    (let ((__tmp114520 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111147 'HashTable::update! gambit-table-update!))
-    (let ((__tmp111148 (macro-type-table)))
+      (bind-method!__0 __tmp114520 'HashTable::update! gambit-table-update!))
+    (let ((__tmp114521 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111148 'HashTable::delete! table-set!))
-    (let ((__tmp111149 (macro-type-table)))
+      (bind-method!__0 __tmp114521 'HashTable::delete! table-set!))
+    (let ((__tmp114522 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111149 'HashTable::for-each gambit-table-for-each))
-    (let ((__tmp111150 (macro-type-table)))
+      (bind-method!__0 __tmp114522 'HashTable::for-each gambit-table-for-each))
+    (let ((__tmp114523 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111150 'HashTable::length table-length))
-    (let ((__tmp111151 (macro-type-table)))
+      (bind-method!__0 __tmp114523 'HashTable::length table-length))
+    (let ((__tmp114524 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111151 'HashTable::copy table-copy))
-    (let ((__tmp111152 (macro-type-table)))
+      (bind-method!__0 __tmp114524 'HashTable::copy table-copy))
+    (let ((__tmp114525 (macro-type-table)))
       (declare (not safe))
-      (bind-method!__0 __tmp111152 'HashTable::clear! gambit-table-clear!))
+      (bind-method!__0 __tmp114525 'HashTable::clear! gambit-table-clear!))
     (define hash-table::t
-      (let* ((_%slots110491%_ '(table count free hash test seed))
-             (_%slot-vector110493%_ (list->vector (cons '#f _%slots110491%_)))
-             (_%slot-table110500%_
-              (let ((_%slot-table110495%_
+      (let* ((_%slots113864%_ '(table count free hash test seed))
+             (_%slot-vector113866%_ (list->vector (cons '#f _%slots113864%_)))
+             (_%slot-table113873%_
+              (let ((_%slot-table113868%_
                      (let ()
                        (declare (not safe))
                        (make-symbolic-table__% '#f '0))))
-                (let ((__tmp111155
-                       (lambda (_%slot110497%_ _%field110498%_)
+                (let ((__tmp114528
+                       (lambda (_%slot113870%_ _%field113871%_)
                          (let ()
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table110495%_
-                            _%slot110497%_
-                            _%field110498%_))
-                         (let ((__tmp111156
+                            _%slot-table113868%_
+                            _%slot113870%_
+                            _%field113871%_))
+                         (let ((__tmp114529
                                 (let ()
                                   (declare (not safe))
-                                  (symbol->keyword _%slot110497%_))))
+                                  (symbol->keyword _%slot113870%_))))
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table110495%_
-                            __tmp111156
-                            _%field110498%_))))
-                      (__tmp111153
-                       (let ((__tmp111154
+                            _%slot-table113868%_
+                            __tmp114529
+                            _%field113871%_))))
+                      (__tmp114526
+                       (let ((__tmp114527
                               (let ()
                                 (declare (not safe))
-                                (##length _%slots110491%_))))
+                                (##length _%slots113864%_))))
                          (declare (not safe))
-                         (##iota __tmp111154 '1))))
+                         (##iota __tmp114527 '1))))
                   (declare (not safe))
-                  (##for-each __tmp111155 _%slots110491%_ __tmp111153))
-                _%slot-table110495%_))
-             (_%flags110502%_
+                  (##for-each __tmp114528 _%slots113864%_ __tmp114526))
+                _%slot-table113868%_))
+             (_%flags113875%_
               (let ()
                 (declare (not safe))
                 (##fxior type-flag-extensible
                          type-flag-concrete
                          type-flag-id
                          class-type-flag-struct)))
-             (_%fields110504%_ '#())
-             (_%properties110506%_
+             (_%fields113877%_ '#())
+             (_%properties113879%_
               (cons (cons 'direct-slots:
                           (let ()
                             (declare (not safe))
-                            (__foldr1 cons '() _%slots110491%_)))
+                            (__foldr1 cons '() _%slots113864%_)))
                     (cons (cons 'struct: '#t) '())))
-             (__tmp111157 (cons object::t (cons t::t '()))))
+             (__tmp114530 (cons object::t (cons t::t '()))))
         (declare (not safe))
         (##structure
          class::t
          'gerbil#hash-table::t
          'hash-table
-         _%flags110502%_
+         _%flags113875%_
          __table::t
-         _%fields110504%_
-         __tmp111157
-         _%slot-vector110493%_
-         _%slot-table110500%_
-         _%properties110506%_
+         _%fields113877%_
+         __tmp114530
+         _%slot-vector113866%_
+         _%slot-table113873%_
+         _%properties113879%_
          '#f
          '#f)))
     (define gc-hash-table::t
-      (let* ((_%slots110473%_ '(gcht immediate))
-             (_%slot-vector110475%_ (list->vector (cons '#f _%slots110473%_)))
-             (_%slot-table110482%_
-              (let ((_%slot-table110477%_
+      (let* ((_%slots113846%_ '(gcht immediate))
+             (_%slot-vector113848%_ (list->vector (cons '#f _%slots113846%_)))
+             (_%slot-table113855%_
+              (let ((_%slot-table113850%_
                      (let ()
                        (declare (not safe))
                        (make-symbolic-table__% '#f '0))))
-                (let ((__tmp111160
-                       (lambda (_%slot110479%_ _%field110480%_)
+                (let ((__tmp114533
+                       (lambda (_%slot113852%_ _%field113853%_)
                          (let ()
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table110477%_
-                            _%slot110479%_
-                            _%field110480%_))
-                         (let ((__tmp111161
+                            _%slot-table113850%_
+                            _%slot113852%_
+                            _%field113853%_))
+                         (let ((__tmp114534
                                 (let ()
                                   (declare (not safe))
-                                  (symbol->keyword _%slot110479%_))))
+                                  (symbol->keyword _%slot113852%_))))
                            (declare (not safe))
                            (symbolic-table-set!
-                            _%slot-table110477%_
-                            __tmp111161
-                            _%field110480%_))))
-                      (__tmp111158
-                       (let ((__tmp111159
+                            _%slot-table113850%_
+                            __tmp114534
+                            _%field113853%_))))
+                      (__tmp114531
+                       (let ((__tmp114532
                               (let ()
                                 (declare (not safe))
-                                (##length _%slots110473%_))))
+                                (##length _%slots113846%_))))
                          (declare (not safe))
-                         (##iota __tmp111159 '1))))
+                         (##iota __tmp114532 '1))))
                   (declare (not safe))
-                  (##for-each __tmp111160 _%slots110473%_ __tmp111158))
-                _%slot-table110477%_))
-             (_%flags110484%_
+                  (##for-each __tmp114533 _%slots113846%_ __tmp114531))
+                _%slot-table113850%_))
+             (_%flags113857%_
               (let ()
                 (declare (not safe))
                 (##fxior type-flag-extensible
                          type-flag-concrete
                          type-flag-id
                          class-type-flag-struct)))
-             (_%fields110486%_ '#())
-             (_%properties110488%_
+             (_%fields113859%_ '#())
+             (_%properties113861%_
               (cons (cons 'direct-slots:
                           (let ()
                             (declare (not safe))
-                            (__foldr1 cons '() _%slots110473%_)))
+                            (__foldr1 cons '() _%slots113846%_)))
                     (cons (cons 'struct: '#t) '())))
-             (__tmp111162 (cons object::t (cons t::t '()))))
+             (__tmp114535 (cons object::t (cons t::t '()))))
         (declare (not safe))
         (##structure
          class::t
          'gerbil#gc-hash-table::t
          'hash-table
-         _%flags110484%_
+         _%flags113857%_
          __gc-table::t
-         _%fields110486%_
-         __tmp111162
-         _%slot-vector110475%_
-         _%slot-table110482%_
-         _%properties110488%_
+         _%fields113859%_
+         __tmp114535
+         _%slot-vector113848%_
+         _%slot-table113855%_
+         _%properties113861%_
          '#f
          '#f)))
     (define locked-hash-table::t
-      (let ((__tmp111164 (list))
-            (__tmp111163
+      (let ((__tmp114537 (list))
+            (__tmp114536
              (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/hash#locked-hash-table::t
          'locked-hash-table
-         __tmp111164
+         __tmp114537
          '(table lock)
-         __tmp111163
+         __tmp114536
          '#f)))
     (define locked-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate locked-hash-table::t)))
     (define make-locked-hash-table
-      (lambda _%$args110470%_
-        (apply make-instance locked-hash-table::t _%$args110470%_)))
+      (lambda _%$args113843%_
+        (apply make-instance locked-hash-table::t _%$args113843%_)))
     (define locked-hash-table-table
       (let ()
         (declare (not safe))
@@ -877,24 +877,24 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator locked-hash-table::t 'lock)))
     (define checked-hash-table::t
-      (let ((__tmp111166 (list))
-            (__tmp111165
+      (let ((__tmp114539 (list))
+            (__tmp114538
              (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/hash#checked-hash-table::t
          'checked-hash-table
-         __tmp111166
+         __tmp114539
          '(table key-check)
-         __tmp111165
+         __tmp114538
          '#f)))
     (define checked-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate checked-hash-table::t)))
     (define make-checked-hash-table
-      (lambda _%$args110467%_
-        (apply make-instance checked-hash-table::t _%$args110467%_)))
+      (lambda _%$args113840%_
+        (apply make-instance checked-hash-table::t _%$args113840%_)))
     (define checked-hash-table-table
       (let ()
         (declare (not safe))
@@ -932,91 +932,91 @@
          checked-hash-table::t
          'key-check)))
     (define eq-hash-table::t
-      (let ((__tmp111168 (list hash-table::t))
-            (__tmp111167 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp114541 (list hash-table::t))
+            (__tmp114540 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#eq-hash-table
          'hash-table
-         __tmp111168
+         __tmp114541
          '()
-         __tmp111167
+         __tmp114540
          '#f)))
     (define eq-hash-table?
       (let () (declare (not safe)) (__make-class-predicate eq-hash-table::t)))
     (define make-eq-hash-table
-      (lambda _%$args110464%_
-        (apply make-instance eq-hash-table::t _%$args110464%_)))
+      (lambda _%$args113837%_
+        (apply make-instance eq-hash-table::t _%$args113837%_)))
     (define eqv-hash-table::t
-      (let ((__tmp111170 (list hash-table::t))
-            (__tmp111169 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp114543 (list hash-table::t))
+            (__tmp114542 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#eqv-hash-table
          'hash-table
-         __tmp111170
+         __tmp114543
          '()
-         __tmp111169
+         __tmp114542
          '#f)))
     (define eqv-hash-table?
       (let () (declare (not safe)) (__make-class-predicate eqv-hash-table::t)))
     (define make-eqv-hash-table
-      (lambda _%$args110461%_
-        (apply make-instance eqv-hash-table::t _%$args110461%_)))
+      (lambda _%$args113834%_
+        (apply make-instance eqv-hash-table::t _%$args113834%_)))
     (define symbol-hash-table::t
-      (let ((__tmp111172 (list hash-table::t))
-            (__tmp111171 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp114545 (list hash-table::t))
+            (__tmp114544 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#symbol-hash-table
          'hash-table
-         __tmp111172
+         __tmp114545
          '()
-         __tmp111171
+         __tmp114544
          '#f)))
     (define symbol-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate symbol-hash-table::t)))
     (define make-symbol-hash-table
-      (lambda _%$args110458%_
-        (apply make-instance symbol-hash-table::t _%$args110458%_)))
+      (lambda _%$args113831%_
+        (apply make-instance symbol-hash-table::t _%$args113831%_)))
     (define string-hash-table::t
-      (let ((__tmp111174 (list hash-table::t))
-            (__tmp111173 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp114547 (list hash-table::t))
+            (__tmp114546 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#string-hash-table
          'hash-table
-         __tmp111174
+         __tmp114547
          '()
-         __tmp111173
+         __tmp114546
          '#f)))
     (define string-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate string-hash-table::t)))
     (define make-string-hash-table
-      (lambda _%$args110455%_
-        (apply make-instance string-hash-table::t _%$args110455%_)))
+      (lambda _%$args113828%_
+        (apply make-instance string-hash-table::t _%$args113828%_)))
     (define immediate-hash-table::t
-      (let ((__tmp111176 (list hash-table::t))
-            (__tmp111175 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp114549 (list hash-table::t))
+            (__tmp114548 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#immediate-hash-table::t
          'hash-table
-         __tmp111176
+         __tmp114549
          '()
-         __tmp111175
+         __tmp114548
          '#f)))
     (define immediate-hash-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate immediate-hash-table::t)))
     (define make-immediate-hash-table
-      (lambda _%$args110452%_
-        (apply make-instance immediate-hash-table::t _%$args110452%_)))
+      (lambda _%$args113825%_
+        (apply make-instance immediate-hash-table::t _%$args113825%_)))
     (let ()
       (declare (not safe))
       (bind-method!__0 hash-table::t 'HashTable::ref raw-table-ref))
@@ -1169,406 +1169,406 @@
       (bind-method!__0 gc-hash-table::t 'HashTable::clear! gc-table-clear!))
     (define hash-table? HashTable?)
     (define is-hash-table? is-HashTable?)
-    (define _%locked-hash-table::HashTable::ref106452%_
-      (lambda (_%self106451110426%_ _%key110428%_ _%default110429%_)
-        (let* ((_%self110431%_ _%self106451110426%_)
-               (_%self110434%_ _%self110431%_))
-          (let ((_%h110444%_
+    (define _%locked-hash-table::HashTable::ref109825%_
+      (lambda (_%self109824113799%_ _%key113801%_ _%default113802%_)
+        (let* ((_%self113804%_ _%self109824113799%_)
+               (_%self113807%_ _%self113804%_))
+          (let ((_%h113817%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110434%_ '1 '#f '#f)))
-                (_%l110446%_
+                   (##unchecked-structure-ref _%self113807%_ '1 '#f '#f)))
+                (_%l113819%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110434%_ '2 '#f '#f))))
-            (let ((__tmp111179 (lambda () (&Locker-read-lock! _%l110446%_)))
-                  (__tmp111178
+                   (##unchecked-structure-ref _%self113807%_ '2 '#f '#f))))
+            (let ((__tmp114552 (lambda () (&Locker-read-lock! _%l113819%_)))
+                  (__tmp114551
                    (lambda ()
                      (&HashTable-ref
-                      _%h110444%_
-                      _%key110428%_
-                      _%default110429%_)))
-                  (__tmp111177 (lambda () (&Locker-read-unlock! _%l110446%_))))
+                      _%h113817%_
+                      _%key113801%_
+                      _%default113802%_)))
+                  (__tmp114550 (lambda () (&Locker-read-unlock! _%l113819%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111179 __tmp111178 __tmp111177))))))
+              (##dynamic-wind __tmp114552 __tmp114551 __tmp114550))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::ref
-       _%locked-hash-table::HashTable::ref106452%_
+       _%locked-hash-table::HashTable::ref109825%_
        '#f))
-    (define _%locked-hash-table::HashTable::set!106455%_
-      (lambda (_%self106454110277%_ _%key110279%_ _%value110280%_)
-        (let* ((_%self110282%_ _%self106454110277%_)
-               (_%self110285%_ _%self110282%_))
-          (let ((_%h110295%_
+    (define _%locked-hash-table::HashTable::set!109828%_
+      (lambda (_%self109827113650%_ _%key113652%_ _%value113653%_)
+        (let* ((_%self113655%_ _%self109827113650%_)
+               (_%self113658%_ _%self113655%_))
+          (let ((_%h113668%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110285%_ '1 '#f '#f)))
-                (_%l110297%_
+                   (##unchecked-structure-ref _%self113658%_ '1 '#f '#f)))
+                (_%l113670%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110285%_ '2 '#f '#f))))
-            (let ((__tmp111182 (lambda () (&Locker-write-lock! _%l110297%_)))
-                  (__tmp111181
+                   (##unchecked-structure-ref _%self113658%_ '2 '#f '#f))))
+            (let ((__tmp114555 (lambda () (&Locker-write-lock! _%l113670%_)))
+                  (__tmp114554
                    (lambda ()
                      (&HashTable-set!
-                      _%h110295%_
-                      _%key110279%_
-                      _%value110280%_)))
-                  (__tmp111180
-                   (lambda () (&Locker-write-unlock! _%l110297%_))))
+                      _%h113668%_
+                      _%key113652%_
+                      _%value113653%_)))
+                  (__tmp114553
+                   (lambda () (&Locker-write-unlock! _%l113670%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111182 __tmp111181 __tmp111180))))))
+              (##dynamic-wind __tmp114555 __tmp114554 __tmp114553))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::set!
-       _%locked-hash-table::HashTable::set!106455%_
+       _%locked-hash-table::HashTable::set!109828%_
        '#f))
-    (define _%locked-hash-table::HashTable::update!106458%_
-      (lambda (_%self106457110127%_
-               _%key110129%_
-               _%update110130%_
-               _%default110131%_)
-        (let* ((_%self110133%_ _%self106457110127%_)
-               (_%self110136%_ _%self110133%_))
-          (let ((_%h110146%_
+    (define _%locked-hash-table::HashTable::update!109831%_
+      (lambda (_%self109830113500%_
+               _%key113502%_
+               _%update113503%_
+               _%default113504%_)
+        (let* ((_%self113506%_ _%self109830113500%_)
+               (_%self113509%_ _%self113506%_))
+          (let ((_%h113519%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110136%_ '1 '#f '#f)))
-                (_%l110148%_
+                   (##unchecked-structure-ref _%self113509%_ '1 '#f '#f)))
+                (_%l113521%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self110136%_ '2 '#f '#f))))
-            (let ((__tmp111185 (lambda () (&Locker-write-lock! _%l110148%_)))
-                  (__tmp111184
+                   (##unchecked-structure-ref _%self113509%_ '2 '#f '#f))))
+            (let ((__tmp114558 (lambda () (&Locker-write-lock! _%l113521%_)))
+                  (__tmp114557
                    (lambda ()
                      (&HashTable-update!
-                      _%h110146%_
-                      _%key110129%_
-                      _%update110130%_
-                      _%default110131%_)))
-                  (__tmp111183
-                   (lambda () (&Locker-write-unlock! _%l110148%_))))
+                      _%h113519%_
+                      _%key113502%_
+                      _%update113503%_
+                      _%default113504%_)))
+                  (__tmp114556
+                   (lambda () (&Locker-write-unlock! _%l113521%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111185 __tmp111184 __tmp111183))))))
+              (##dynamic-wind __tmp114558 __tmp114557 __tmp114556))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::update!
-       _%locked-hash-table::HashTable::update!106458%_
+       _%locked-hash-table::HashTable::update!109831%_
        '#f))
-    (define _%locked-hash-table::HashTable::delete!106461%_
-      (lambda (_%self106460109979%_ _%key109981%_)
-        (let* ((_%self109983%_ _%self106460109979%_)
-               (_%self109986%_ _%self109983%_))
-          (let ((_%h109996%_
+    (define _%locked-hash-table::HashTable::delete!109834%_
+      (lambda (_%self109833113352%_ _%key113354%_)
+        (let* ((_%self113356%_ _%self109833113352%_)
+               (_%self113359%_ _%self113356%_))
+          (let ((_%h113369%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109986%_ '1 '#f '#f)))
-                (_%l109998%_
+                   (##unchecked-structure-ref _%self113359%_ '1 '#f '#f)))
+                (_%l113371%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109986%_ '2 '#f '#f))))
-            (let ((__tmp111188 (lambda () (&Locker-write-lock! _%l109998%_)))
-                  (__tmp111187
-                   (lambda () (&HashTable-delete! _%h109996%_ _%key109981%_)))
-                  (__tmp111186
-                   (lambda () (&Locker-write-unlock! _%l109998%_))))
+                   (##unchecked-structure-ref _%self113359%_ '2 '#f '#f))))
+            (let ((__tmp114561 (lambda () (&Locker-write-lock! _%l113371%_)))
+                  (__tmp114560
+                   (lambda () (&HashTable-delete! _%h113369%_ _%key113354%_)))
+                  (__tmp114559
+                   (lambda () (&Locker-write-unlock! _%l113371%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111188 __tmp111187 __tmp111186))))))
+              (##dynamic-wind __tmp114561 __tmp114560 __tmp114559))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::delete!
-       _%locked-hash-table::HashTable::delete!106461%_
+       _%locked-hash-table::HashTable::delete!109834%_
        '#f))
-    (define _%locked-hash-table::HashTable::for-each106464%_
-      (lambda (_%self106463109831%_ _%proc109833%_)
-        (let* ((_%self109835%_ _%self106463109831%_)
-               (_%self109838%_ _%self109835%_))
-          (let ((_%h109848%_
+    (define _%locked-hash-table::HashTable::for-each109837%_
+      (lambda (_%self109836113204%_ _%proc113206%_)
+        (let* ((_%self113208%_ _%self109836113204%_)
+               (_%self113211%_ _%self113208%_))
+          (let ((_%h113221%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109838%_ '1 '#f '#f)))
-                (_%l109850%_
+                   (##unchecked-structure-ref _%self113211%_ '1 '#f '#f)))
+                (_%l113223%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109838%_ '2 '#f '#f))))
-            (let ((__tmp111191 (lambda () (&Locker-read-lock! _%l109850%_)))
-                  (__tmp111190
+                   (##unchecked-structure-ref _%self113211%_ '2 '#f '#f))))
+            (let ((__tmp114564 (lambda () (&Locker-read-lock! _%l113223%_)))
+                  (__tmp114563
                    (lambda ()
-                     (&HashTable-for-each _%h109848%_ _%proc109833%_)))
-                  (__tmp111189 (lambda () (&Locker-read-unlock! _%l109850%_))))
+                     (&HashTable-for-each _%h113221%_ _%proc113206%_)))
+                  (__tmp114562 (lambda () (&Locker-read-unlock! _%l113223%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111191 __tmp111190 __tmp111189))))))
+              (##dynamic-wind __tmp114564 __tmp114563 __tmp114562))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::for-each
-       _%locked-hash-table::HashTable::for-each106464%_
+       _%locked-hash-table::HashTable::for-each109837%_
        '#f))
-    (define _%locked-hash-table::HashTable::length106467%_
-      (lambda (_%self106466109684%_)
-        (let* ((_%self109687%_ _%self106466109684%_)
-               (_%self109690%_ _%self109687%_))
-          (let ((_%h109700%_
+    (define _%locked-hash-table::HashTable::length109840%_
+      (lambda (_%self109839113057%_)
+        (let* ((_%self113060%_ _%self109839113057%_)
+               (_%self113063%_ _%self113060%_))
+          (let ((_%h113073%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109690%_ '1 '#f '#f)))
-                (_%l109702%_
+                   (##unchecked-structure-ref _%self113063%_ '1 '#f '#f)))
+                (_%l113075%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109690%_ '2 '#f '#f))))
-            (let ((__tmp111194 (lambda () (&Locker-read-lock! _%l109702%_)))
-                  (__tmp111193 (lambda () (&HashTable-length _%h109700%_)))
-                  (__tmp111192 (lambda () (&Locker-read-unlock! _%l109702%_))))
+                   (##unchecked-structure-ref _%self113063%_ '2 '#f '#f))))
+            (let ((__tmp114567 (lambda () (&Locker-read-lock! _%l113075%_)))
+                  (__tmp114566 (lambda () (&HashTable-length _%h113073%_)))
+                  (__tmp114565 (lambda () (&Locker-read-unlock! _%l113075%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111194 __tmp111193 __tmp111192))))))
+              (##dynamic-wind __tmp114567 __tmp114566 __tmp114565))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::length
-       _%locked-hash-table::HashTable::length106467%_
+       _%locked-hash-table::HashTable::length109840%_
        '#f))
-    (define _%locked-hash-table::HashTable::copy106470%_
-      (lambda (_%self106469109537%_)
-        (let* ((_%self109540%_ _%self106469109537%_)
-               (_%self109543%_ _%self109540%_))
-          (let ((_%h109553%_
+    (define _%locked-hash-table::HashTable::copy109843%_
+      (lambda (_%self109842112910%_)
+        (let* ((_%self112913%_ _%self109842112910%_)
+               (_%self112916%_ _%self112913%_))
+          (let ((_%h112926%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109543%_ '1 '#f '#f)))
-                (_%l109555%_
+                   (##unchecked-structure-ref _%self112916%_ '1 '#f '#f)))
+                (_%l112928%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109543%_ '2 '#f '#f))))
-            (let ((__tmp111197 (lambda () (&Locker-read-lock! _%l109555%_)))
-                  (__tmp111196 (lambda () (&HashTable-copy _%h109553%_)))
-                  (__tmp111195 (lambda () (&Locker-read-unlock! _%l109555%_))))
+                   (##unchecked-structure-ref _%self112916%_ '2 '#f '#f))))
+            (let ((__tmp114570 (lambda () (&Locker-read-lock! _%l112928%_)))
+                  (__tmp114569 (lambda () (&HashTable-copy _%h112926%_)))
+                  (__tmp114568 (lambda () (&Locker-read-unlock! _%l112928%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111197 __tmp111196 __tmp111195))))))
+              (##dynamic-wind __tmp114570 __tmp114569 __tmp114568))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::copy
-       _%locked-hash-table::HashTable::copy106470%_
+       _%locked-hash-table::HashTable::copy109843%_
        '#f))
-    (define _%locked-hash-table::HashTable::clear!106473%_
-      (lambda (_%self106472109390%_)
-        (let* ((_%self109393%_ _%self106472109390%_)
-               (_%self109396%_ _%self109393%_))
-          (let ((_%h109406%_
+    (define _%locked-hash-table::HashTable::clear!109846%_
+      (lambda (_%self109845112763%_)
+        (let* ((_%self112766%_ _%self109845112763%_)
+               (_%self112769%_ _%self112766%_))
+          (let ((_%h112779%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109396%_ '1 '#f '#f)))
-                (_%l109408%_
+                   (##unchecked-structure-ref _%self112769%_ '1 '#f '#f)))
+                (_%l112781%_
                  (let ()
                    (declare (not safe))
-                   (##unchecked-structure-ref _%self109396%_ '2 '#f '#f))))
-            (let ((__tmp111200 (lambda () (&Locker-write-lock! _%l109408%_)))
-                  (__tmp111199 (lambda () (&HashTable-clear! _%h109406%_)))
-                  (__tmp111198
-                   (lambda () (&Locker-write-unlock! _%l109408%_))))
+                   (##unchecked-structure-ref _%self112769%_ '2 '#f '#f))))
+            (let ((__tmp114573 (lambda () (&Locker-write-lock! _%l112781%_)))
+                  (__tmp114572 (lambda () (&HashTable-clear! _%h112779%_)))
+                  (__tmp114571
+                   (lambda () (&Locker-write-unlock! _%l112781%_))))
               (declare (not safe))
-              (##dynamic-wind __tmp111200 __tmp111199 __tmp111198))))))
+              (##dynamic-wind __tmp114573 __tmp114572 __tmp114571))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        locked-hash-table::t
        'HashTable::clear!
-       _%locked-hash-table::HashTable::clear!106473%_
+       _%locked-hash-table::HashTable::clear!109846%_
        '#f))
-    (let ((__tmp111201 (macro-type-mutex)))
+    (let ((__tmp114574 (macro-type-mutex)))
       (declare (not safe))
-      (bind-method!__0 __tmp111201 'Locker::read-lock! mutex-lock!))
-    (let ((__tmp111202 (macro-type-mutex)))
+      (bind-method!__0 __tmp114574 'Locker::read-lock! mutex-lock!))
+    (let ((__tmp114575 (macro-type-mutex)))
       (declare (not safe))
-      (bind-method!__0 __tmp111202 'Locker::read-unlock! mutex-unlock!))
-    (let ((__tmp111203 (macro-type-mutex)))
+      (bind-method!__0 __tmp114575 'Locker::read-unlock! mutex-unlock!))
+    (let ((__tmp114576 (macro-type-mutex)))
       (declare (not safe))
-      (bind-method!__0 __tmp111203 'Locker::write-lock! mutex-lock!))
-    (let ((__tmp111204 (macro-type-mutex)))
+      (bind-method!__0 __tmp114576 'Locker::write-lock! mutex-lock!))
+    (let ((__tmp114577 (macro-type-mutex)))
       (declare (not safe))
-      (bind-method!__0 __tmp111204 'Locker::write-unlock! mutex-unlock!))
-    (define _%checked-hash-table::HashTable::ref106687%_
-      (lambda (_%self106686109240%_ _%key109242%_ _%default109243%_)
-        (let* ((_%self109245%_ _%self106686109240%_)
-               (_%self109247%_ _%self109245%_))
+      (bind-method!__0 __tmp114577 'Locker::write-unlock! mutex-unlock!))
+    (define _%checked-hash-table::HashTable::ref110060%_
+      (lambda (_%self110059112613%_ _%key112615%_ _%default112616%_)
+        (let* ((_%self112618%_ _%self110059112613%_)
+               (_%self112620%_ _%self112618%_))
           (declare (not safe))
-          (let ((_%h109258%_
-                 (##unchecked-structure-ref _%self109247%_ '1 '#f '#f))
-                (_%key?109260%_
-                 (##unchecked-structure-ref _%self109247%_ '2 '#f '#f)))
-            (if ((lambda (_%key?109263%_ _%key109264%_ _%default109265%_)
-                   (_%key?109263%_ _%key109264%_))
-                 _%key?109260%_
-                 _%key109242%_
-                 _%default109243%_)
-                (&HashTable-ref _%h109258%_ _%key109242%_ _%default109243%_)
+          (let ((_%h112631%_
+                 (##unchecked-structure-ref _%self112620%_ '1 '#f '#f))
+                (_%key?112633%_
+                 (##unchecked-structure-ref _%self112620%_ '2 '#f '#f)))
+            (if ((lambda (_%key?112636%_ _%key112637%_ _%default112638%_)
+                   (_%key?112636%_ _%key112637%_))
+                 _%key?112633%_
+                 _%key112615%_
+                 _%default112616%_)
+                (&HashTable-ref _%h112631%_ _%key112615%_ _%default112616%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-ref
                    'value:
-                   (cons _%key109242%_ (cons _%default109243%_ '())))
+                   (cons _%key112615%_ (cons _%default112616%_ '())))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::ref
-       _%checked-hash-table::HashTable::ref106687%_
+       _%checked-hash-table::HashTable::ref110060%_
        '#f))
-    (define _%checked-hash-table::HashTable::set!106690%_
-      (lambda (_%self106689109090%_ _%key109092%_ _%value109093%_)
-        (let* ((_%self109095%_ _%self106689109090%_)
-               (_%self109097%_ _%self109095%_))
+    (define _%checked-hash-table::HashTable::set!110063%_
+      (lambda (_%self110062112463%_ _%key112465%_ _%value112466%_)
+        (let* ((_%self112468%_ _%self110062112463%_)
+               (_%self112470%_ _%self112468%_))
           (declare (not safe))
-          (let ((_%h109108%_
-                 (##unchecked-structure-ref _%self109097%_ '1 '#f '#f))
-                (_%key?109110%_
-                 (##unchecked-structure-ref _%self109097%_ '2 '#f '#f)))
-            (if ((lambda (_%key?109113%_ _%key109114%_ _%value109115%_)
-                   (_%key?109113%_ _%key109114%_))
-                 _%key?109110%_
-                 _%key109092%_
-                 _%value109093%_)
-                (&HashTable-set! _%h109108%_ _%key109092%_ _%value109093%_)
+          (let ((_%h112481%_
+                 (##unchecked-structure-ref _%self112470%_ '1 '#f '#f))
+                (_%key?112483%_
+                 (##unchecked-structure-ref _%self112470%_ '2 '#f '#f)))
+            (if ((lambda (_%key?112486%_ _%key112487%_ _%value112488%_)
+                   (_%key?112486%_ _%key112487%_))
+                 _%key?112483%_
+                 _%key112465%_
+                 _%value112466%_)
+                (&HashTable-set! _%h112481%_ _%key112465%_ _%value112466%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-set!
                    'value:
-                   (cons _%key109092%_ (cons _%value109093%_ '())))
+                   (cons _%key112465%_ (cons _%value112466%_ '())))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::set!
-       _%checked-hash-table::HashTable::set!106690%_
+       _%checked-hash-table::HashTable::set!110063%_
        '#f))
-    (define _%checked-hash-table::HashTable::update!106693%_
-      (lambda (_%self106692108938%_
-               _%key108940%_
-               _%update108941%_
-               _%default108942%_)
-        (let* ((_%self108944%_ _%self106692108938%_)
-               (_%self108946%_ _%self108944%_))
+    (define _%checked-hash-table::HashTable::update!110066%_
+      (lambda (_%self110065112311%_
+               _%key112313%_
+               _%update112314%_
+               _%default112315%_)
+        (let* ((_%self112317%_ _%self110065112311%_)
+               (_%self112319%_ _%self112317%_))
           (declare (not safe))
-          (let ((_%h108957%_
-                 (##unchecked-structure-ref _%self108946%_ '1 '#f '#f))
-                (_%key?108959%_
-                 (##unchecked-structure-ref _%self108946%_ '2 '#f '#f)))
-            (if ((lambda (_%key?108962%_
-                          _%key108963%_
-                          _%update108964%_
-                          _%default108965%_)
-                   (_%key?108962%_ _%key108963%_))
-                 _%key?108959%_
-                 _%key108940%_
-                 _%update108941%_
-                 _%default108942%_)
+          (let ((_%h112330%_
+                 (##unchecked-structure-ref _%self112319%_ '1 '#f '#f))
+                (_%key?112332%_
+                 (##unchecked-structure-ref _%self112319%_ '2 '#f '#f)))
+            (if ((lambda (_%key?112335%_
+                          _%key112336%_
+                          _%update112337%_
+                          _%default112338%_)
+                   (_%key?112335%_ _%key112336%_))
+                 _%key?112332%_
+                 _%key112313%_
+                 _%update112314%_
+                 _%default112315%_)
                 (&HashTable-update!
-                 _%h108957%_
-                 _%key108940%_
-                 _%update108941%_
-                 _%default108942%_)
+                 _%h112330%_
+                 _%key112313%_
+                 _%update112314%_
+                 _%default112315%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-update!
                    'value:
-                   (cons _%key108940%_
-                         (cons _%update108941%_ (cons _%default108942%_ '()))))
+                   (cons _%key112313%_
+                         (cons _%update112314%_ (cons _%default112315%_ '()))))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::update!
-       _%checked-hash-table::HashTable::update!106693%_
+       _%checked-hash-table::HashTable::update!110066%_
        '#f))
-    (define _%checked-hash-table::HashTable::delete!106696%_
-      (lambda (_%self106695108790%_ _%key108792%_)
-        (let* ((_%self108794%_ _%self106695108790%_)
-               (_%self108796%_ _%self108794%_))
+    (define _%checked-hash-table::HashTable::delete!110069%_
+      (lambda (_%self110068112163%_ _%key112165%_)
+        (let* ((_%self112167%_ _%self110068112163%_)
+               (_%self112169%_ _%self112167%_))
           (declare (not safe))
-          (let ((_%h108807%_
-                 (##unchecked-structure-ref _%self108796%_ '1 '#f '#f))
-                (_%key?108809%_
-                 (##unchecked-structure-ref _%self108796%_ '2 '#f '#f)))
-            (if ((lambda (_%key?108812%_ _%key108813%_)
-                   (_%key?108812%_ _%key108813%_))
-                 _%key?108809%_
-                 _%key108792%_)
-                (&HashTable-delete! _%h108807%_ _%key108792%_)
+          (let ((_%h112180%_
+                 (##unchecked-structure-ref _%self112169%_ '1 '#f '#f))
+                (_%key?112182%_
+                 (##unchecked-structure-ref _%self112169%_ '2 '#f '#f)))
+            (if ((lambda (_%key?112185%_ _%key112186%_)
+                   (_%key?112185%_ _%key112186%_))
+                 _%key?112182%_
+                 _%key112165%_)
+                (&HashTable-delete! _%h112180%_ _%key112165%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-delete!
                    'value:
-                   (cons _%key108792%_ '()))
+                   (cons _%key112165%_ '()))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::delete!
-       _%checked-hash-table::HashTable::delete!106696%_
+       _%checked-hash-table::HashTable::delete!110069%_
        '#f))
-    (define _%checked-hash-table::HashTable::for-each106699%_
-      (lambda (_%self106698108642%_ _%proc108644%_)
-        (let* ((_%self108646%_ _%self106698108642%_)
-               (_%self108648%_ _%self108646%_))
+    (define _%checked-hash-table::HashTable::for-each110072%_
+      (lambda (_%self110071112015%_ _%proc112017%_)
+        (let* ((_%self112019%_ _%self110071112015%_)
+               (_%self112021%_ _%self112019%_))
           (declare (not safe))
-          (let ((_%h108659%_
-                 (##unchecked-structure-ref _%self108648%_ '1 '#f '#f))
-                (_%key?108661%_
-                 (##unchecked-structure-ref _%self108648%_ '2 '#f '#f)))
-            (if ((lambda (_%key?108664%_ _%proc108665%_) '#t)
-                 _%key?108661%_
-                 _%proc108644%_)
-                (&HashTable-for-each _%h108659%_ _%proc108644%_)
+          (let ((_%h112032%_
+                 (##unchecked-structure-ref _%self112021%_ '1 '#f '#f))
+                (_%key?112034%_
+                 (##unchecked-structure-ref _%self112021%_ '2 '#f '#f)))
+            (if ((lambda (_%key?112037%_ _%proc112038%_) '#t)
+                 _%key?112034%_
+                 _%proc112017%_)
+                (&HashTable-for-each _%h112032%_ _%proc112017%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
                    'context:
                    '&HashTable-for-each
                    'value:
-                   (cons _%proc108644%_ '()))
+                   (cons _%proc112017%_ '()))
                   '#!void))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::for-each
-       _%checked-hash-table::HashTable::for-each106699%_
+       _%checked-hash-table::HashTable::for-each110072%_
        '#f))
-    (define _%checked-hash-table::HashTable::length106702%_
-      (lambda (_%self106701108498%_)
-        (let* ((_%self108501%_ _%self106701108498%_)
-               (_%self108503%_ _%self108501%_))
+    (define _%checked-hash-table::HashTable::length110075%_
+      (lambda (_%self110074111871%_)
+        (let* ((_%self111874%_ _%self110074111871%_)
+               (_%self111876%_ _%self111874%_))
           (declare (not safe))
-          (let ((_%h108514%_
-                 (##unchecked-structure-ref _%self108503%_ '1 '#f '#f))
-                (_%key?108516%_
-                 (##unchecked-structure-ref _%self108503%_ '2 '#f '#f)))
+          (let ((_%h111887%_
+                 (##unchecked-structure-ref _%self111876%_ '1 '#f '#f))
+                (_%key?111889%_
+                 (##unchecked-structure-ref _%self111876%_ '2 '#f '#f)))
             (if '#!void
-                (&HashTable-length _%h108514%_)
+                (&HashTable-length _%h111887%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -1582,19 +1582,19 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::length
-       _%checked-hash-table::HashTable::length106702%_
+       _%checked-hash-table::HashTable::length110075%_
        '#f))
-    (define _%checked-hash-table::HashTable::copy106705%_
-      (lambda (_%self106704108354%_)
-        (let* ((_%self108357%_ _%self106704108354%_)
-               (_%self108359%_ _%self108357%_))
+    (define _%checked-hash-table::HashTable::copy110078%_
+      (lambda (_%self110077111727%_)
+        (let* ((_%self111730%_ _%self110077111727%_)
+               (_%self111732%_ _%self111730%_))
           (declare (not safe))
-          (let ((_%h108370%_
-                 (##unchecked-structure-ref _%self108359%_ '1 '#f '#f))
-                (_%key?108372%_
-                 (##unchecked-structure-ref _%self108359%_ '2 '#f '#f)))
+          (let ((_%h111743%_
+                 (##unchecked-structure-ref _%self111732%_ '1 '#f '#f))
+                (_%key?111745%_
+                 (##unchecked-structure-ref _%self111732%_ '2 '#f '#f)))
             (if '#!void
-                (&HashTable-copy _%h108370%_)
+                (&HashTable-copy _%h111743%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -1608,19 +1608,19 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::copy
-       _%checked-hash-table::HashTable::copy106705%_
+       _%checked-hash-table::HashTable::copy110078%_
        '#f))
-    (define _%checked-hash-table::HashTable::clear!106708%_
-      (lambda (_%self106707108210%_)
-        (let* ((_%self108213%_ _%self106707108210%_)
-               (_%self108215%_ _%self108213%_))
+    (define _%checked-hash-table::HashTable::clear!110081%_
+      (lambda (_%self110080111583%_)
+        (let* ((_%self111586%_ _%self110080111583%_)
+               (_%self111588%_ _%self111586%_))
           (declare (not safe))
-          (let ((_%h108226%_
-                 (##unchecked-structure-ref _%self108215%_ '1 '#f '#f))
-                (_%key?108228%_
-                 (##unchecked-structure-ref _%self108215%_ '2 '#f '#f)))
+          (let ((_%h111599%_
+                 (##unchecked-structure-ref _%self111588%_ '1 '#f '#f))
+                (_%key?111601%_
+                 (##unchecked-structure-ref _%self111588%_ '2 '#f '#f)))
             (if '#!void
-                (&HashTable-clear! _%h108226%_)
+                (&HashTable-clear! _%h111599%_)
                 (begin
                   (raise-contract-violation-error
                    '"invalid key"
@@ -1634,394 +1634,394 @@
       (__bind-method!__%
        checked-hash-table::t
        'HashTable::clear!
-       _%checked-hash-table::HashTable::clear!106708%_
+       _%checked-hash-table::HashTable::clear!110081%_
        '#f))
     (define make-generic-hash-table
-      (lambda (_%table108080%_
-               _%count108081%_
-               _%free108082%_
-               _%hash108083%_
-               _%test108084%_
-               _%seed108085%_)
+      (lambda (_%table111453%_
+               _%count111454%_
+               _%free111455%_
+               _%hash111456%_
+               _%test111457%_
+               _%seed111458%_)
         (let ()
           (declare (not safe))
           (##structure
            hash-table::t
-           _%table108080%_
-           _%count108081%_
-           _%free108082%_
-           _%hash108083%_
-           _%test108084%_
-           _%seed108085%_))))
+           _%table111453%_
+           _%count111454%_
+           _%free111455%_
+           _%hash111456%_
+           _%test111457%_
+           _%seed111458%_))))
     (define make-hash-table__%
-      (lambda (_%@@keywords107841%_
-               _%size-hint107831107842%_
-               _%seed107832107844%_
-               _%test107833107846%_
-               _%hash107834107848%_
-               _%lock107835107850%_
-               _%check107836107852%_
-               _%weak-keys107837107854%_
-               _%weak-values107838107856%_)
-        (let* ((_%size-hint107859%_
-                (if (eq? _%size-hint107831107842%_ absent-value)
+      (lambda (_%@@keywords111214%_
+               _%size-hint111204111215%_
+               _%seed111205111217%_
+               _%test111206111219%_
+               _%hash111207111221%_
+               _%lock111208111223%_
+               _%check111209111225%_
+               _%weak-keys111210111227%_
+               _%weak-values111211111229%_)
+        (let* ((_%size-hint111232%_
+                (if (eq? _%size-hint111204111215%_ absent-value)
                     '#f
-                    _%size-hint107831107842%_))
-               (_%seed107861%_
-                (if (eq? _%seed107832107844%_ absent-value)
+                    _%size-hint111204111215%_))
+               (_%seed111234%_
+                (if (eq? _%seed111205111217%_ absent-value)
                     '#f
-                    _%seed107832107844%_))
-               (_%test107863%_
-                (if (eq? _%test107833107846%_ absent-value)
+                    _%seed111205111217%_))
+               (_%test111236%_
+                (if (eq? _%test111206111219%_ absent-value)
                     equal?
-                    _%test107833107846%_))
-               (_%hash107865%_
-                (if (eq? _%hash107834107848%_ absent-value)
+                    _%test111206111219%_))
+               (_%hash111238%_
+                (if (eq? _%hash111207111221%_ absent-value)
                     '#f
-                    _%hash107834107848%_))
-               (_%lock107867%_
-                (if (eq? _%lock107835107850%_ absent-value)
+                    _%hash111207111221%_))
+               (_%lock111240%_
+                (if (eq? _%lock111208111223%_ absent-value)
                     '#f
-                    _%lock107835107850%_))
-               (_%check107869%_
-                (if (eq? _%check107836107852%_ absent-value)
+                    _%lock111208111223%_))
+               (_%check111242%_
+                (if (eq? _%check111209111225%_ absent-value)
                     '#f
-                    _%check107836107852%_))
-               (_%weak-keys107871%_
-                (if (eq? _%weak-keys107837107854%_ absent-value)
+                    _%check111209111225%_))
+               (_%weak-keys111244%_
+                (if (eq? _%weak-keys111210111227%_ absent-value)
                     '#f
-                    _%weak-keys107837107854%_))
-               (_%weak-values107873%_
-                (if (eq? _%weak-values107838107856%_ absent-value)
+                    _%weak-keys111210111227%_))
+               (_%weak-values111246%_
+                (if (eq? _%weak-values111211111229%_ absent-value)
                     '#f
-                    _%weak-values107838107856%_)))
-          (letrec ((_%table-seed107876%_
+                    _%weak-values111211111229%_)))
+          (letrec ((_%table-seed111249%_
                     (lambda ()
-                      (if (fixnum? _%seed107861%_)
-                          _%seed107861%_
+                      (if (fixnum? _%seed111234%_)
+                          _%seed111234%_
                           (random-integer (macro-max-fixnum32)))))
-                   (_%wrap-lock107877%_
-                    (lambda (_%ht108054%_)
-                      (let ((_%ht108057%_ _%ht108054%_))
-                        (_%__wrap-lock107878%_ _%ht108057%_))))
-                   (_%__wrap-lock107878%_
-                    (lambda (_%ht108036%_)
-                      (let ((_%ht108039%_ _%ht108036%_))
-                        (if _%lock107867%_
-                            (let ((_%$obj108051%_
-                                   (let ((__tmp111205
-                                          (let ((_%$obj108048%_
-                                                 _%lock107867%_))
+                   (_%wrap-lock111250%_
+                    (lambda (_%ht111427%_)
+                      (let ((_%ht111430%_ _%ht111427%_))
+                        (_%__wrap-lock111251%_ _%ht111430%_))))
+                   (_%__wrap-lock111251%_
+                    (lambda (_%ht111409%_)
+                      (let ((_%ht111412%_ _%ht111409%_))
+                        (if _%lock111240%_
+                            (let ((_%$obj111424%_
+                                   (let ((__tmp114578
+                                          (let ((_%$obj111421%_
+                                                 _%lock111240%_))
                                             (if (and (let ()
                                                        (declare (not safe))
                                                        (##structure?
-                                                        _%$obj108048%_))
+                                                        _%$obj111421%_))
                                                      (eq? Locker::t
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (##structure-type
-                                                             _%$obj108048%_)))
+                                                             _%$obj111421%_)))
                                                      '#t)
-                                                _%$obj108048%_
+                                                _%$obj111421%_
                                                 (let ()
                                                   (declare (not safe))
                                                   (cast Locker::interface
-                                                        _%$obj108048%_))))))
+                                                        _%$obj111421%_))))))
                                      (declare (not safe))
                                      (##structure
                                       locked-hash-table::t
-                                      _%ht108039%_
-                                      __tmp111205))))
+                                      _%ht111412%_
+                                      __tmp114578))))
                               (if (and (let ()
                                          (declare (not safe))
-                                         (##structure? _%$obj108051%_))
+                                         (##structure? _%$obj111424%_))
                                        (eq? HashTable::t
                                             (let ()
                                               (declare (not safe))
                                               (##structure-type
-                                               _%$obj108051%_)))
+                                               _%$obj111424%_)))
                                        '#t)
-                                  _%$obj108051%_
+                                  _%$obj111424%_
                                   (let ()
                                     (declare (not safe))
                                     (cast HashTable::interface
-                                          _%$obj108051%_))))
-                            _%ht108039%_))))
-                   (_%wrap-checked107879%_
-                    (lambda (_%ht108023%_ _%implicit108024%_)
-                      (let ((_%ht108027%_ _%ht108023%_))
-                        (_%__wrap-checked107880%_
-                         _%ht108027%_
-                         _%implicit108024%_))))
-                   (_%__wrap-checked107880%_
-                    (lambda (_%ht107996%_ _%implicit107997%_)
-                      (let ((_%ht108000%_ _%ht107996%_))
-                        (if _%check107869%_
-                            (let ((_%$obj108020%_
-                                   (let ((__tmp111206
-                                          (if (procedure? _%check107869%_)
-                                              _%check107869%_
-                                              _%implicit107997%_)))
+                                          _%$obj111424%_))))
+                            _%ht111412%_))))
+                   (_%wrap-checked111252%_
+                    (lambda (_%ht111396%_ _%implicit111397%_)
+                      (let ((_%ht111400%_ _%ht111396%_))
+                        (_%__wrap-checked111253%_
+                         _%ht111400%_
+                         _%implicit111397%_))))
+                   (_%__wrap-checked111253%_
+                    (lambda (_%ht111369%_ _%implicit111370%_)
+                      (let ((_%ht111373%_ _%ht111369%_))
+                        (if _%check111242%_
+                            (let ((_%$obj111393%_
+                                   (let ((__tmp114579
+                                          (if (procedure? _%check111242%_)
+                                              _%check111242%_
+                                              _%implicit111370%_)))
                                      (declare (not safe))
                                      (##structure
                                       checked-hash-table::t
-                                      _%ht108000%_
-                                      __tmp111206))))
+                                      _%ht111373%_
+                                      __tmp114579))))
                               (if (and (let ()
                                          (declare (not safe))
-                                         (##structure? _%$obj108020%_))
+                                         (##structure? _%$obj111393%_))
                                        (eq? HashTable::t
                                             (let ()
                                               (declare (not safe))
                                               (##structure-type
-                                               _%$obj108020%_)))
+                                               _%$obj111393%_)))
                                        '#t)
-                                  _%$obj108020%_
+                                  _%$obj111393%_
                                   (let ()
                                     (declare (not safe))
                                     (cast HashTable::interface
-                                          _%$obj108020%_))))
-                            _%ht108000%_))))
-                   (_%make107881%_
-                    (lambda (_%kons107980%_
-                             _%key?107981%_
-                             _%hash107982%_
-                             _%test107983%_)
-                      (let* ((_%size107986%_
+                                          _%$obj111393%_))))
+                            _%ht111373%_))))
+                   (_%make111254%_
+                    (lambda (_%kons111353%_
+                             _%key?111354%_
+                             _%hash111355%_
+                             _%test111356%_)
+                      (let* ((_%size111359%_
                               (let ()
                                 (declare (not safe))
                                 (raw-table-size-hint->size
-                                 _%size-hint107859%_)))
-                             (_%table107988%_
-                              (let ((__tmp111207 (macro-unused-obj)))
+                                 _%size-hint111232%_)))
+                             (_%table111361%_
+                              (let ((__tmp114580 (macro-unused-obj)))
                                 (declare (not safe))
-                                (##make-vector _%size107986%_ __tmp111207)))
-                             (_%ht107993%_
-                              (let ((_%$obj107990%_
-                                     (_%kons107980%_
-                                      _%table107988%_
+                                (##make-vector _%size111359%_ __tmp114580)))
+                             (_%ht111366%_
+                              (let ((_%$obj111363%_
+                                     (_%kons111353%_
+                                      _%table111361%_
                                       '0
                                       (let ()
                                         (declare (not safe))
-                                        (##fxquotient _%size107986%_ '2))
-                                      _%hash107982%_
-                                      _%test107983%_
-                                      (_%table-seed107876%_))))
+                                        (##fxquotient _%size111359%_ '2))
+                                      _%hash111355%_
+                                      _%test111356%_
+                                      (_%table-seed111249%_))))
                                 (if (and (let ()
                                            (declare (not safe))
-                                           (##structure? _%$obj107990%_))
+                                           (##structure? _%$obj111363%_))
                                          (eq? HashTable::t
                                               (let ()
                                                 (declare (not safe))
                                                 (##structure-type
-                                                 _%$obj107990%_)))
+                                                 _%$obj111363%_)))
                                          '#t)
-                                    _%$obj107990%_
+                                    _%$obj111363%_
                                     (let ()
                                       (declare (not safe))
                                       (cast HashTable::interface
-                                            _%$obj107990%_))))))
-                        (_%__wrap-checked107880%_
-                         (_%__wrap-lock107878%_ _%ht107993%_)
-                         _%key?107981%_))))
-                   (_%make-gc-hash-table107882%_
+                                            _%$obj111363%_))))))
+                        (_%__wrap-checked111253%_
+                         (_%__wrap-lock111251%_ _%ht111366%_)
+                         _%key?111354%_))))
+                   (_%make-gc-hash-table111255%_
                     (lambda ()
-                      (let ((_%ht107978%_
-                             (let ((_%$obj107975%_
+                      (let ((_%ht111351%_
+                             (let ((_%$obj111348%_
                                     (let ()
                                       (declare (not safe))
                                       (make-gc-table__1
-                                       _%size-hint107859%_
+                                       _%size-hint111232%_
                                        gc-hash-table::t))))
                                (if (and (let ()
                                           (declare (not safe))
-                                          (##structure? _%$obj107975%_))
+                                          (##structure? _%$obj111348%_))
                                         (eq? HashTable::t
                                              (let ()
                                                (declare (not safe))
                                                (##structure-type
-                                                _%$obj107975%_)))
+                                                _%$obj111348%_)))
                                         '#t)
-                                   _%$obj107975%_
+                                   _%$obj111348%_
                                    (let ()
                                      (declare (not safe))
                                      (cast HashTable::interface
-                                           _%$obj107975%_))))))
-                        (_%__wrap-checked107880%_
-                         (_%__wrap-lock107878%_ _%ht107978%_)
+                                           _%$obj111348%_))))))
+                        (_%__wrap-checked111253%_
+                         (_%__wrap-lock111251%_ _%ht111351%_)
                          true))))
-                   (_%make-gambit-table107883%_
+                   (_%make-gambit-table111256%_
                     (lambda ()
-                      (let* ((_%size107952%_
-                              (let ((_%$e107949%_ _%size-hint107859%_))
-                                (if _%$e107949%_
-                                    _%$e107949%_
+                      (let* ((_%size111325%_
+                              (let ((_%$e111322%_ _%size-hint111232%_))
+                                (if _%$e111322%_
+                                    _%$e111322%_
                                     (macro-absent-obj))))
-                             (_%test107957%_
-                              (let ((_%$e107954%_ _%test107863%_))
-                                (if _%$e107954%_ _%$e107954%_ equal?)))
-                             (_%hash107965%_
-                              (let ((_%$e107959%_ _%hash107865%_))
-                                (if _%$e107959%_
-                                    _%$e107959%_
-                                    (if (eq? _%test107957%_ eq?)
+                             (_%test111330%_
+                              (let ((_%$e111327%_ _%test111236%_))
+                                (if _%$e111327%_ _%$e111327%_ equal?)))
+                             (_%hash111338%_
+                              (let ((_%$e111332%_ _%hash111238%_))
+                                (if _%$e111332%_
+                                    _%$e111332%_
+                                    (if (eq? _%test111330%_ eq?)
                                         eq?-hash
-                                        (if (eq? _%test107957%_ eqv?)
+                                        (if (eq? _%test111330%_ eqv?)
                                             eqv?-hash
                                             equal?-hash)))))
-                             (_%ht107970%_
-                              (let ((_%$obj107967%_
+                             (_%ht111343%_
+                              (let ((_%$obj111340%_
                                      (make-table
                                       'size:
-                                      _%size107952%_
+                                      _%size111325%_
                                       'test:
-                                      _%test107957%_
+                                      _%test111330%_
                                       'hash:
-                                      _%hash107965%_
+                                      _%hash111338%_
                                       'weak-keys:
-                                      _%weak-keys107871%_
+                                      _%weak-keys111244%_
                                       'weak-values:
-                                      _%weak-values107873%_)))
+                                      _%weak-values111246%_)))
                                 (if (and (let ()
                                            (declare (not safe))
-                                           (##structure? _%$obj107967%_))
+                                           (##structure? _%$obj111340%_))
                                          (eq? HashTable::t
                                               (let ()
                                                 (declare (not safe))
                                                 (##structure-type
-                                                 _%$obj107967%_)))
+                                                 _%$obj111340%_)))
                                          '#t)
-                                    _%$obj107967%_
+                                    _%$obj111340%_
                                     (let ()
                                       (declare (not safe))
                                       (cast HashTable::interface
-                                            _%$obj107967%_))))))
-                        (_%__wrap-checked107880%_
-                         (_%__wrap-lock107878%_ _%ht107970%_)
+                                            _%$obj111340%_))))))
+                        (_%__wrap-checked111253%_
+                         (_%__wrap-lock111251%_ _%ht111343%_)
                          true)))))
-            (if (or _%weak-keys107871%_ _%weak-values107873%_)
-                (_%make-gambit-table107883%_)
-                (if (and (or (eq? _%test107863%_ eq?)
-                             (eq? _%test107863%_ ##eq?))
-                         (or (not _%hash107865%_)
-                             (eq? _%hash107865%_ eq?-hash)
-                             (eq? _%hash107865%_ eq-hash))
-                         (not _%seed107861%_))
-                    (_%make-gc-hash-table107882%_)
-                    (if (and (or (eq? _%test107863%_ eq?)
-                                 (eq? _%test107863%_ ##eq?))
-                             (or (not _%hash107865%_)
-                                 (eq? _%hash107865%_ eq?-hash)
-                                 (eq? _%hash107865%_ eq-hash)))
-                        (_%make107881%_ make-eq-hash-table true eq-hash eq?)
-                        (if (and (or (eq? _%test107863%_ eqv?)
-                                     (eq? _%test107863%_ ##eqv?))
-                                 (or (not _%hash107865%_)
-                                     (eq? _%hash107865%_ eqv?-hash)
-                                     (eq? _%hash107865%_ eqv-hash)))
-                            (_%make107881%_
+            (if (or _%weak-keys111244%_ _%weak-values111246%_)
+                (_%make-gambit-table111256%_)
+                (if (and (or (eq? _%test111236%_ eq?)
+                             (eq? _%test111236%_ ##eq?))
+                         (or (not _%hash111238%_)
+                             (eq? _%hash111238%_ eq?-hash)
+                             (eq? _%hash111238%_ eq-hash))
+                         (not _%seed111234%_))
+                    (_%make-gc-hash-table111255%_)
+                    (if (and (or (eq? _%test111236%_ eq?)
+                                 (eq? _%test111236%_ ##eq?))
+                             (or (not _%hash111238%_)
+                                 (eq? _%hash111238%_ eq?-hash)
+                                 (eq? _%hash111238%_ eq-hash)))
+                        (_%make111254%_ make-eq-hash-table true eq-hash eq?)
+                        (if (and (or (eq? _%test111236%_ eqv?)
+                                     (eq? _%test111236%_ ##eqv?))
+                                 (or (not _%hash111238%_)
+                                     (eq? _%hash111238%_ eqv?-hash)
+                                     (eq? _%hash111238%_ eqv-hash)))
+                            (_%make111254%_
                              make-eqv-hash-table
                              true
                              eqv-hash
                              eqv?)
-                            (if (and (or (eq? _%test107863%_ eq?)
-                                         (eq? _%test107863%_ ##eq?))
-                                     (or (eq? _%hash107865%_ symbolic-hash)
-                                         (eq? _%hash107865%_ ##symbol-hash)))
-                                (_%make107881%_
+                            (if (and (or (eq? _%test111236%_ eq?)
+                                         (eq? _%test111236%_ ##eq?))
+                                     (or (eq? _%hash111238%_ symbolic-hash)
+                                         (eq? _%hash111238%_ ##symbol-hash)))
+                                (_%make111254%_
                                  make-symbol-hash-table
                                  symbolic?
                                  symbolic-hash
                                  eq?)
-                                (if (and (or (eq? _%test107863%_ eq?)
-                                             (eq? _%test107863%_ ##eq?))
-                                         (eq? _%hash107865%_ immediate-hash))
-                                    (_%make107881%_
+                                (if (and (or (eq? _%test111236%_ eq?)
+                                             (eq? _%test111236%_ ##eq?))
+                                         (eq? _%hash111238%_ immediate-hash))
+                                    (_%make111254%_
                                      make-immediate-hash-table
                                      immediate?
                                      immediate-hash
                                      eq?)
-                                    (if (and (or (eq? _%test107863%_ equal?)
-                                                 (eq? _%test107863%_ ##equal?)
-                                                 (eq? _%test107863%_ string=?)
-                                                 (eq? _%test107863%_
+                                    (if (and (or (eq? _%test111236%_ equal?)
+                                                 (eq? _%test111236%_ ##equal?)
+                                                 (eq? _%test111236%_ string=?)
+                                                 (eq? _%test111236%_
                                                       ##string=?))
-                                             (or (eq? _%hash107865%_
+                                             (or (eq? _%hash111238%_
                                                       string-hash)
-                                                 (eq? _%hash107865%_
+                                                 (eq? _%hash111238%_
                                                       ##string=?-hash)))
-                                        (_%make107881%_
+                                        (_%make111254%_
                                          make-string-hash-table
                                          string?
                                          string-hash
                                          ##string=?)
-                                        (if (and (eq? _%test107863%_ equal?)
-                                                 (not _%hash107865%_))
-                                            (_%make107881%_
+                                        (if (and (eq? _%test111236%_ equal?)
+                                                 (not _%hash111238%_))
+                                            (_%make111254%_
                                              make-generic-hash-table
                                              true
                                              equal?-hash
                                              equal?)
-                                            (if (procedure? _%test107863%_)
-                                                (if (procedure? _%hash107865%_)
-                                                    (_%make107881%_
+                                            (if (procedure? _%test111236%_)
+                                                (if (procedure? _%hash111238%_)
+                                                    (_%make111254%_
                                                      make-generic-hash-table
                                                      true
-                                                     _%hash107865%_
-                                                     _%test107863%_)
+                                                     _%hash111238%_
+                                                     _%test111236%_)
                                                     (let ()
                                                       (let ()
                                                         (declare (not safe))
                                                         (error '"bad hash table hash function; expected procedure"
-                                                               _%hash107865%_))
+                                                               _%hash111238%_))
                                                       '#!void))
                                                 (let ()
                                                   (let ()
                                                     (declare (not safe))
                                                     (error '"bad hash table test function; expected procedure"
-                                                           _%test107863%_))
+                                                           _%test111236%_))
                                                   '#!void))))))))))))))
     (define make-hash-table__@
-      (lambda (_%@@keywords108070%_ . _%args108071%_)
+      (lambda (_%@@keywords111443%_ . _%args111444%_)
         (apply make-hash-table__%
-               _%@@keywords108070%_
+               _%@@keywords111443%_
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords108070%_ 'size: absent-value))
+                 (symbolic-table-ref _%@@keywords111443%_ 'size: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords108070%_ 'seed: absent-value))
+                 (symbolic-table-ref _%@@keywords111443%_ 'seed: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords108070%_ 'test: absent-value))
+                 (symbolic-table-ref _%@@keywords111443%_ 'test: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords108070%_ 'hash: absent-value))
+                 (symbolic-table-ref _%@@keywords111443%_ 'hash: absent-value))
                (let ()
                  (declare (not safe))
-                 (symbolic-table-ref _%@@keywords108070%_ 'lock: absent-value))
+                 (symbolic-table-ref _%@@keywords111443%_ 'lock: absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords108070%_
+                  _%@@keywords111443%_
                   'check:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords108070%_
+                  _%@@keywords111443%_
                   'weak-keys:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords108070%_
+                  _%@@keywords111443%_
                   'weak-values:
                   absent-value))
-               _%args108071%_)))
+               _%args111444%_)))
     (define make-hash-table
-      (lambda _%args107839108077%_
+      (lambda _%args111212111450%_
         (apply keyword-dispatch
                '#(#f
                   #f
@@ -2064,525 +2064,525 @@
                   #f
                   #f)
                make-hash-table__@
-               _%args107839108077%_)))
+               _%args111212111450%_)))
     (define make-hash-table-eq
-      (lambda _%args107828%_
-        (apply make-hash-table 'test: eq? _%args107828%_)))
+      (lambda _%args111201%_
+        (apply make-hash-table 'test: eq? _%args111201%_)))
     (define make-hash-table-eqv
-      (lambda _%args107826%_
-        (apply make-hash-table 'test: eqv? _%args107826%_)))
+      (lambda _%args111199%_
+        (apply make-hash-table 'test: eqv? _%args111199%_)))
     (define make-hash-table-symbolic
-      (lambda _%args107824%_
+      (lambda _%args111197%_
         (apply make-hash-table
                'test:
                eq?
                'hash:
                symbolic-hash
-               _%args107824%_)))
+               _%args111197%_)))
     (define make-hash-table-string
-      (lambda _%args107822%_
+      (lambda _%args111195%_
         (apply make-hash-table
                'test:
                string=?
                'hash:
                string-hash
-               _%args107822%_)))
+               _%args111195%_)))
     (define make-hash-table-immediate
-      (lambda _%args107820%_
+      (lambda _%args111193%_
         (apply make-hash-table
                'test:
                eq?
                'hash:
                immediate-hash
-               _%args107820%_)))
+               _%args111193%_)))
     (define list->hash-table
-      (lambda (_%lst107817%_ . _%args107818%_)
+      (lambda (_%lst111190%_ . _%args111191%_)
         (list->hash-table!
-         _%lst107817%_
+         _%lst111190%_
          (apply make-hash-table
                 'size:
-                (length _%lst107817%_)
-                _%args107818%_))))
+                (length _%lst111190%_)
+                _%args111191%_))))
     (define list->hash-table-eq
-      (lambda (_%lst107814%_ . _%args107815%_)
+      (lambda (_%lst111187%_ . _%args111188%_)
         (list->hash-table!
-         _%lst107814%_
+         _%lst111187%_
          (apply make-hash-table-eq
                 'size:
-                (length _%lst107814%_)
-                _%args107815%_))))
+                (length _%lst111187%_)
+                _%args111188%_))))
     (define list->hash-table-eqv
-      (lambda (_%lst107811%_ . _%args107812%_)
+      (lambda (_%lst111184%_ . _%args111185%_)
         (list->hash-table!
-         _%lst107811%_
+         _%lst111184%_
          (apply make-hash-table-eqv
                 'size:
-                (length _%lst107811%_)
-                _%args107812%_))))
+                (length _%lst111184%_)
+                _%args111185%_))))
     (define list->hash-table-symbolic
-      (lambda (_%lst107808%_ . _%args107809%_)
+      (lambda (_%lst111181%_ . _%args111182%_)
         (list->hash-table!
-         _%lst107808%_
+         _%lst111181%_
          (apply make-hash-table-symbolic
                 'size:
-                (length _%lst107808%_)
-                _%args107809%_))))
+                (length _%lst111181%_)
+                _%args111182%_))))
     (define list->hash-table-string
-      (lambda (_%lst107805%_ . _%args107806%_)
+      (lambda (_%lst111178%_ . _%args111179%_)
         (list->hash-table!
-         _%lst107805%_
+         _%lst111178%_
          (apply make-hash-table-string
                 'size:
-                (length _%lst107805%_)
-                _%args107806%_))))
+                (length _%lst111178%_)
+                _%args111179%_))))
     (define list->hash-table-immediate
-      (lambda (_%lst107802%_ . _%args107803%_)
+      (lambda (_%lst111175%_ . _%args111176%_)
         (list->hash-table!
-         _%lst107802%_
+         _%lst111175%_
          (apply make-hash-table-immediate
                 'size:
-                (length _%lst107802%_)
-                _%args107803%_))))
+                (length _%lst111175%_)
+                _%args111176%_))))
     (define list->hash-table!
-      (lambda (_%lst107769%_ _%h107770%_)
+      (lambda (_%lst111142%_ _%h111143%_)
         (for-each
-         (lambda (_%el107772%_)
-           (let* ((_%el107773107780%_ _%el107772%_)
-                  (_%E107775107784%_
+         (lambda (_%el111145%_)
+           (let* ((_%el111146111153%_ _%el111145%_)
+                  (_%E111148111157%_
                    (lambda ()
                      (let ()
                        (declare (not safe))
                        (error '"No clause matching"
-                              _%el107773107780%_
+                              _%el111146111153%_
                               '([k . v])))
                      '#!void))
-                  (_%K107776107790%_
-                   (lambda (_%v107787%_ _%k107788%_)
-                     (&HashTable-set! _%h107770%_ _%k107788%_ _%v107787%_))))
-             (if (pair? _%el107773107780%_)
-                 (let ((_%hd107777107793%_
+                  (_%K111149111163%_
+                   (lambda (_%v111160%_ _%k111161%_)
+                     (&HashTable-set! _%h111143%_ _%k111161%_ _%v111160%_))))
+             (if (pair? _%el111146111153%_)
+                 (let ((_%hd111150111166%_
                         (let ()
                           (declare (not safe))
-                          (##car _%el107773107780%_)))
-                       (_%tl107778107795%_
+                          (##car _%el111146111153%_)))
+                       (_%tl111151111168%_
                         (let ()
                           (declare (not safe))
-                          (##cdr _%el107773107780%_))))
-                   (let* ((_%k107798%_ _%hd107777107793%_)
-                          (_%v107800%_ _%tl107778107795%_))
-                     (_%K107776107790%_ _%v107800%_ _%k107798%_)))
-                 (_%E107775107784%_))))
-         _%lst107769%_)
-        _%h107770%_))
+                          (##cdr _%el111146111153%_))))
+                   (let* ((_%k111171%_ _%hd111150111166%_)
+                          (_%v111173%_ _%tl111151111168%_))
+                     (_%K111149111163%_ _%v111173%_ _%k111171%_)))
+                 (_%E111148111157%_))))
+         _%lst111142%_)
+        _%h111143%_))
     (define plist->hash-table
-      (lambda (_%lst107766%_ . _%args107767%_)
+      (lambda (_%lst111139%_ . _%args111140%_)
         (plist->hash-table!
-         _%lst107766%_
+         _%lst111139%_
          (apply make-hash-table
                 'size:
-                (length _%lst107766%_)
-                _%args107767%_))))
+                (length _%lst111139%_)
+                _%args111140%_))))
     (define plist->hash-table-eq
-      (lambda (_%lst107763%_ . _%args107764%_)
+      (lambda (_%lst111136%_ . _%args111137%_)
         (plist->hash-table!
-         _%lst107763%_
+         _%lst111136%_
          (apply make-hash-table-eq
                 'size:
-                (length _%lst107763%_)
-                _%args107764%_))))
+                (length _%lst111136%_)
+                _%args111137%_))))
     (define plist->hash-table-eqv
-      (lambda (_%lst107760%_ . _%args107761%_)
+      (lambda (_%lst111133%_ . _%args111134%_)
         (plist->hash-table!
-         _%lst107760%_
+         _%lst111133%_
          (apply make-hash-table-eqv
                 'size:
-                (length _%lst107760%_)
-                _%args107761%_))))
+                (length _%lst111133%_)
+                _%args111134%_))))
     (define plist->hash-table-symbolic
-      (lambda (_%lst107757%_ . _%args107758%_)
+      (lambda (_%lst111130%_ . _%args111131%_)
         (plist->hash-table!
-         _%lst107757%_
+         _%lst111130%_
          (apply make-hash-table-symbolic
                 'size:
-                (length _%lst107757%_)
-                _%args107758%_))))
+                (length _%lst111130%_)
+                _%args111131%_))))
     (define plist->hash-table-string
-      (lambda (_%lst107754%_ . _%args107755%_)
+      (lambda (_%lst111127%_ . _%args111128%_)
         (plist->hash-table!
-         _%lst107754%_
+         _%lst111127%_
          (apply make-hash-table-string
                 'size:
-                (length _%lst107754%_)
-                _%args107755%_))))
+                (length _%lst111127%_)
+                _%args111128%_))))
     (define plist->hash-table-immediate
-      (lambda (_%lst107751%_ . _%args107752%_)
+      (lambda (_%lst111124%_ . _%args111125%_)
         (plist->hash-table!
-         _%lst107751%_
+         _%lst111124%_
          (apply make-hash-table-immediate
                 'size:
-                (length _%lst107751%_)
-                _%args107752%_))))
+                (length _%lst111124%_)
+                _%args111125%_))))
     (define plist->hash-table!
-      (lambda (_%lst107691%_ _%h107692%_)
-        (let _%loop107694%_ ((_%rest107696%_ _%lst107691%_))
-          (let* ((_%rest107697107709%_ _%rest107696%_)
-                 (_%else107700107717%_
+      (lambda (_%lst111064%_ _%h111065%_)
+        (let _%loop111067%_ ((_%rest111069%_ _%lst111064%_))
+          (let* ((_%rest111070111082%_ _%rest111069%_)
+                 (_%else111073111090%_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (error '"bad property list -- uneven list"
-                             _%lst107691%_)))))
-            (let ((_%K107703107732%_
-                   (lambda (_%rest107728%_ _%val107729%_ _%key107730%_)
-                     (&HashTable-set! _%h107692%_ _%key107730%_ _%val107729%_)
-                     (_%loop107694%_ _%rest107728%_)))
-                  (_%K107702107722%_ (lambda () _%h107692%_)))
-              (let ((_%try-match107699107725%_
+                             _%lst111064%_)))))
+            (let ((_%K111076111105%_
+                   (lambda (_%rest111101%_ _%val111102%_ _%key111103%_)
+                     (&HashTable-set! _%h111065%_ _%key111103%_ _%val111102%_)
+                     (_%loop111067%_ _%rest111101%_)))
+                  (_%K111075111095%_ (lambda () _%h111065%_)))
+              (let ((_%try-match111072111098%_
                      (lambda ()
-                       (if (null? _%rest107697107709%_)
-                           (_%K107702107722%_)
-                           (_%else107700107717%_)))))
-                (if (pair? _%rest107697107709%_)
-                    (let ((_%tl107705107737%_
+                       (if (null? _%rest111070111082%_)
+                           (_%K111075111095%_)
+                           (_%else111073111090%_)))))
+                (if (pair? _%rest111070111082%_)
+                    (let ((_%tl111078111110%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%rest107697107709%_)))
-                          (_%hd107704107735%_
+                             (##cdr _%rest111070111082%_)))
+                          (_%hd111077111108%_
                            (let ()
                              (declare (not safe))
-                             (##car _%rest107697107709%_))))
-                      (if (pair? _%tl107705107737%_)
-                          (let ((_%tl107707107744%_
+                             (##car _%rest111070111082%_))))
+                      (if (pair? _%tl111078111110%_)
+                          (let ((_%tl111080111117%_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _%tl107705107737%_)))
-                                (_%hd107706107742%_
+                                   (##cdr _%tl111078111110%_)))
+                                (_%hd111079111115%_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _%tl107705107737%_))))
-                            (let ((_%key107740%_ _%hd107704107735%_)
-                                  (_%val107747%_ _%hd107706107742%_)
-                                  (_%rest107749%_ _%tl107707107744%_))
-                              (_%K107703107732%_
-                               _%rest107749%_
-                               _%val107747%_
-                               _%key107740%_)))
-                          (_%else107700107717%_)))
-                    (_%try-match107699107725%_))))))))
+                                   (##car _%tl111078111110%_))))
+                            (let ((_%key111113%_ _%hd111077111108%_)
+                                  (_%val111120%_ _%hd111079111115%_)
+                                  (_%rest111122%_ _%tl111080111117%_))
+                              (_%K111076111105%_
+                               _%rest111122%_
+                               _%val111120%_
+                               _%key111113%_)))
+                          (_%else111073111090%_)))
+                    (_%try-match111072111098%_))))))))
     (define hash-length
-      (lambda (_%h107673%_)
-        (let* ((_%h107679%_
-                (let ((_%$obj107676%_ _%h107673%_))
+      (lambda (_%h111046%_)
+        (let* ((_%h111052%_
+                (let ((_%$obj111049%_ _%h111046%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107676%_))
+                             (##structure? _%$obj111049%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107676%_)))
+                                  (##structure-type _%$obj111049%_)))
                            '#t)
-                      _%$obj107676%_
+                      _%$obj111049%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107676%_)))))
-               (_%h107681%_ _%h107679%_))
-          (__hash-length _%h107681%_))))
+                        (cast HashTable::interface _%$obj111049%_)))))
+               (_%h111054%_ _%h111052%_))
+          (__hash-length _%h111054%_))))
     (define __hash-length
-      (lambda (_%h107661%_)
-        (let ((_%h107664%_ _%h107661%_)) (__HashTable-length _%h107664%_))))
+      (lambda (_%h111034%_)
+        (let ((_%h111037%_ _%h111034%_)) (__HashTable-length _%h111037%_))))
     (define hash-ref__%
-      (lambda (_%h107629%_ _%key107630%_ _%default107631%_)
-        (let* ((_%h107637%_
-                (let ((_%$obj107634%_ _%h107629%_))
+      (lambda (_%h111002%_ _%key111003%_ _%default111004%_)
+        (let* ((_%h111010%_
+                (let ((_%$obj111007%_ _%h111002%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107634%_))
+                             (##structure? _%$obj111007%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107634%_)))
+                                  (##structure-type _%$obj111007%_)))
                            '#t)
-                      _%$obj107634%_
+                      _%$obj111007%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107634%_)))))
-               (_%h107639%_ _%h107637%_))
-          (__hash-ref__% _%h107639%_ _%key107630%_ _%default107631%_))))
+                        (cast HashTable::interface _%$obj111007%_)))))
+               (_%h111012%_ _%h111010%_))
+          (__hash-ref__% _%h111012%_ _%key111003%_ _%default111004%_))))
     (define hash-ref__0
-      (lambda (_%h107652%_ _%key107653%_)
-        (let ((_%default107655%_ (macro-absent-obj)))
-          (hash-ref__% _%h107652%_ _%key107653%_ _%default107655%_))))
+      (lambda (_%h111025%_ _%key111026%_)
+        (let ((_%default111028%_ (macro-absent-obj)))
+          (hash-ref__% _%h111025%_ _%key111026%_ _%default111028%_))))
     (define hash-ref
-      (lambda _g111209_
-        (let ((_g111208_ (let () (declare (not safe)) (##length _g111209_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111208_ 2))
-                 (apply hash-ref__0 _g111209_))
-                ((let () (declare (not safe)) (##fx= _g111208_ 3))
-                 (apply hash-ref__% _g111209_))
+      (lambda _g114581_
+        (let ((_g114582_ (let () (declare (not safe)) (##length _g114581_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114582_ 2))
+                 (apply hash-ref__0 _g114581_))
+                ((let () (declare (not safe)) (##fx= _g114582_ 3))
+                 (apply hash-ref__% _g114581_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-ref
-                  _g111209_))))))
+                  _g114581_))))))
     (define __hash-ref__%
-      (lambda (_%h107600%_ _%key107601%_ _%default107602%_)
-        (let* ((_%h107605%_ _%h107600%_)
-               (_%result107614%_
-                (&HashTable-ref _%h107605%_ _%key107601%_ _%default107602%_)))
-          (if (eq? _%result107614%_ (macro-absent-obj))
+      (lambda (_%h110973%_ _%key110974%_ _%default110975%_)
+        (let* ((_%h110978%_ _%h110973%_)
+               (_%result110987%_
+                (&HashTable-ref _%h110978%_ _%key110974%_ _%default110975%_)))
+          (if (eq? _%result110987%_ (macro-absent-obj))
               (raise-unbound-key-error
                'hash-ref
                '"unknown hash key"
                'hash:
-               _%h107605%_
+               _%h110978%_
                'key:
-               _%key107601%_)
-              _%result107614%_))))
+               _%key110974%_)
+              _%result110987%_))))
     (define __hash-ref__0
-      (lambda (_%h107619%_ _%key107620%_)
-        (let ((_%default107622%_ (macro-absent-obj)))
-          (__hash-ref__% _%h107619%_ _%key107620%_ _%default107622%_))))
+      (lambda (_%h110992%_ _%key110993%_)
+        (let ((_%default110995%_ (macro-absent-obj)))
+          (__hash-ref__% _%h110992%_ _%key110993%_ _%default110995%_))))
     (define __hash-ref
-      (lambda _g111211_
-        (let ((_g111210_ (let () (declare (not safe)) (##length _g111211_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111210_ 2))
-                 (apply __hash-ref__0 _g111211_))
-                ((let () (declare (not safe)) (##fx= _g111210_ 3))
-                 (apply __hash-ref__% _g111211_))
+      (lambda _g114583_
+        (let ((_g114584_ (let () (declare (not safe)) (##length _g114583_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114584_ 2))
+                 (apply __hash-ref__0 _g114583_))
+                ((let () (declare (not safe)) (##fx= _g114584_ 3))
+                 (apply __hash-ref__% _g114583_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-ref
-                  _g111211_))))))
+                  _g114583_))))))
     (define hash-get
-      (lambda (_%h107580%_ _%key107581%_)
-        (let* ((_%h107587%_
-                (let ((_%$obj107584%_ _%h107580%_))
+      (lambda (_%h110953%_ _%key110954%_)
+        (let* ((_%h110960%_
+                (let ((_%$obj110957%_ _%h110953%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107584%_))
+                             (##structure? _%$obj110957%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107584%_)))
+                                  (##structure-type _%$obj110957%_)))
                            '#t)
-                      _%$obj107584%_
+                      _%$obj110957%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107584%_)))))
-               (_%h107589%_ _%h107587%_))
-          (__hash-get _%h107589%_ _%key107581%_))))
+                        (cast HashTable::interface _%$obj110957%_)))))
+               (_%h110962%_ _%h110960%_))
+          (__hash-get _%h110962%_ _%key110954%_))))
     (define __hash-get
-      (lambda (_%h107567%_ _%key107568%_)
-        (let ((_%h107571%_ _%h107567%_))
-          (&HashTable-ref _%h107571%_ _%key107568%_ '#f))))
+      (lambda (_%h110940%_ _%key110941%_)
+        (let ((_%h110944%_ _%h110940%_))
+          (&HashTable-ref _%h110944%_ _%key110941%_ '#f))))
     (define hash-put!
-      (lambda (_%h107547%_ _%key107548%_ _%value107549%_)
-        (let* ((_%h107555%_
-                (let ((_%$obj107552%_ _%h107547%_))
+      (lambda (_%h110920%_ _%key110921%_ _%value110922%_)
+        (let* ((_%h110928%_
+                (let ((_%$obj110925%_ _%h110920%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107552%_))
+                             (##structure? _%$obj110925%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107552%_)))
+                                  (##structure-type _%$obj110925%_)))
                            '#t)
-                      _%$obj107552%_
+                      _%$obj110925%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107552%_)))))
-               (_%h107557%_ _%h107555%_))
-          (__hash-put! _%h107557%_ _%key107548%_ _%value107549%_))))
+                        (cast HashTable::interface _%$obj110925%_)))))
+               (_%h110930%_ _%h110928%_))
+          (__hash-put! _%h110930%_ _%key110921%_ _%value110922%_))))
     (define __hash-put!
-      (lambda (_%h107533%_ _%key107534%_ _%value107535%_)
-        (let ((_%h107538%_ _%h107533%_))
-          (&HashTable-set! _%h107538%_ _%key107534%_ _%value107535%_))))
+      (lambda (_%h110906%_ _%key110907%_ _%value110908%_)
+        (let ((_%h110911%_ _%h110906%_))
+          (&HashTable-set! _%h110911%_ _%key110907%_ _%value110908%_))))
     (define hash-update!__%
-      (lambda (_%h107498%_ _%key107499%_ _%update107500%_ _%default107501%_)
-        (let* ((_%h107507%_
-                (let ((_%$obj107504%_ _%h107498%_))
+      (lambda (_%h110871%_ _%key110872%_ _%update110873%_ _%default110874%_)
+        (let* ((_%h110880%_
+                (let ((_%$obj110877%_ _%h110871%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107504%_))
+                             (##structure? _%$obj110877%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107504%_)))
+                                  (##structure-type _%$obj110877%_)))
                            '#t)
-                      _%$obj107504%_
+                      _%$obj110877%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107504%_)))))
-               (_%h107509%_ _%h107507%_))
+                        (cast HashTable::interface _%$obj110877%_)))))
+               (_%h110882%_ _%h110880%_))
           (__hash-update!__%
-           _%h107509%_
-           _%key107499%_
-           _%update107500%_
-           _%default107501%_))))
+           _%h110882%_
+           _%key110872%_
+           _%update110873%_
+           _%default110874%_))))
     (define hash-update!__0
-      (lambda (_%h107522%_ _%key107523%_ _%update107524%_)
-        (let ((_%default107526%_ '#!void))
+      (lambda (_%h110895%_ _%key110896%_ _%update110897%_)
+        (let ((_%default110899%_ '#!void))
           (hash-update!__%
-           _%h107522%_
-           _%key107523%_
-           _%update107524%_
-           _%default107526%_))))
+           _%h110895%_
+           _%key110896%_
+           _%update110897%_
+           _%default110899%_))))
     (define hash-update!
-      (lambda _g111213_
-        (let ((_g111212_ (let () (declare (not safe)) (##length _g111213_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111212_ 3))
-                 (apply hash-update!__0 _g111213_))
-                ((let () (declare (not safe)) (##fx= _g111212_ 4))
-                 (apply hash-update!__% _g111213_))
+      (lambda _g114585_
+        (let ((_g114586_ (let () (declare (not safe)) (##length _g114585_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114586_ 3))
+                 (apply hash-update!__0 _g114585_))
+                ((let () (declare (not safe)) (##fx= _g114586_ 4))
+                 (apply hash-update!__% _g114585_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-update!
-                  _g111213_))))))
+                  _g114585_))))))
     (define __hash-update!__%
-      (lambda (_%h107468%_ _%key107469%_ _%update107470%_ _%default107471%_)
-        (let ((_%h107474%_ _%h107468%_))
+      (lambda (_%h110841%_ _%key110842%_ _%update110843%_ _%default110844%_)
+        (let ((_%h110847%_ _%h110841%_))
           (HashTable-update!
-           _%h107474%_
-           _%key107469%_
-           _%update107470%_
-           _%default107471%_))))
+           _%h110847%_
+           _%key110842%_
+           _%update110843%_
+           _%default110844%_))))
     (define __hash-update!__0
-      (lambda (_%h107486%_ _%key107487%_ _%update107488%_)
-        (let ((_%default107490%_ '#!void))
+      (lambda (_%h110859%_ _%key110860%_ _%update110861%_)
+        (let ((_%default110863%_ '#!void))
           (__hash-update!__%
-           _%h107486%_
-           _%key107487%_
-           _%update107488%_
-           _%default107490%_))))
+           _%h110859%_
+           _%key110860%_
+           _%update110861%_
+           _%default110863%_))))
     (define __hash-update!
-      (lambda _g111215_
-        (let ((_g111214_ (let () (declare (not safe)) (##length _g111215_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111214_ 3))
-                 (apply __hash-update!__0 _g111215_))
-                ((let () (declare (not safe)) (##fx= _g111214_ 4))
-                 (apply __hash-update!__% _g111215_))
+      (lambda _g114587_
+        (let ((_g114588_ (let () (declare (not safe)) (##length _g114587_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114588_ 3))
+                 (apply __hash-update!__0 _g114587_))
+                ((let () (declare (not safe)) (##fx= _g114588_ 4))
+                 (apply __hash-update!__% _g114587_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-update!
-                  _g111215_))))))
+                  _g114587_))))))
     (define hash-remove!
-      (lambda (_%h107448%_ _%key107449%_)
-        (let* ((_%h107455%_
-                (let ((_%$obj107452%_ _%h107448%_))
+      (lambda (_%h110821%_ _%key110822%_)
+        (let* ((_%h110828%_
+                (let ((_%$obj110825%_ _%h110821%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107452%_))
+                             (##structure? _%$obj110825%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107452%_)))
+                                  (##structure-type _%$obj110825%_)))
                            '#t)
-                      _%$obj107452%_
+                      _%$obj110825%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107452%_)))))
-               (_%h107457%_ _%h107455%_))
-          (__hash-remove! _%h107457%_ _%key107449%_))))
+                        (cast HashTable::interface _%$obj110825%_)))))
+               (_%h110830%_ _%h110828%_))
+          (__hash-remove! _%h110830%_ _%key110822%_))))
     (define __hash-remove!
-      (lambda (_%h107435%_ _%key107436%_)
-        (let ((_%h107439%_ _%h107435%_))
-          (&HashTable-delete! _%h107439%_ _%key107436%_))))
+      (lambda (_%h110808%_ _%key110809%_)
+        (let ((_%h110812%_ _%h110808%_))
+          (&HashTable-delete! _%h110812%_ _%key110809%_))))
     (define hash-key?
-      (lambda (_%h107416%_ _%k107417%_)
-        (let* ((_%h107423%_
-                (let ((_%$obj107420%_ _%h107416%_))
+      (lambda (_%h110789%_ _%k110790%_)
+        (let* ((_%h110796%_
+                (let ((_%$obj110793%_ _%h110789%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107420%_))
+                             (##structure? _%$obj110793%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107420%_)))
+                                  (##structure-type _%$obj110793%_)))
                            '#t)
-                      _%$obj107420%_
+                      _%$obj110793%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107420%_)))))
-               (_%h107425%_ _%h107423%_))
-          (__hash-key? _%h107425%_ _%k107417%_))))
+                        (cast HashTable::interface _%$obj110793%_)))))
+               (_%h110798%_ _%h110796%_))
+          (__hash-key? _%h110798%_ _%k110790%_))))
     (define __hash-key?
-      (lambda (_%h107403%_ _%k107404%_)
-        (let ((_%h107407%_ _%h107403%_))
-          (not (eq? (&HashTable-ref _%h107407%_ _%k107404%_ absent-value)
+      (lambda (_%h110776%_ _%k110777%_)
+        (let ((_%h110780%_ _%h110776%_))
+          (not (eq? (&HashTable-ref _%h110780%_ _%k110777%_ absent-value)
                     absent-value)))))
     (define hash->list
-      (lambda (_%h107385%_)
-        (let* ((_%h107391%_
-                (let ((_%$obj107388%_ _%h107385%_))
+      (lambda (_%h110758%_)
+        (let* ((_%h110764%_
+                (let ((_%$obj110761%_ _%h110758%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107388%_))
+                             (##structure? _%$obj110761%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107388%_)))
+                                  (##structure-type _%$obj110761%_)))
                            '#t)
-                      _%$obj107388%_
+                      _%$obj110761%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107388%_)))))
-               (_%h107393%_ _%h107391%_))
-          (__hash->list _%h107393%_))))
+                        (cast HashTable::interface _%$obj110761%_)))))
+               (_%h110766%_ _%h110764%_))
+          (__hash->list _%h110766%_))))
     (define __hash->list
-      (lambda (_%h107368%_)
-        (let* ((_%h107371%_ _%h107368%_) (_%lst107380%_ '()))
+      (lambda (_%h110741%_)
+        (let* ((_%h110744%_ _%h110741%_) (_%lst110753%_ '()))
           (&HashTable-for-each
-           _%h107371%_
-           (lambda (_%k107382%_ _%v107383%_)
-             (set! _%lst107380%_
-                   (cons (cons _%k107382%_ _%v107383%_) _%lst107380%_))))
-          _%lst107380%_)))
+           _%h110744%_
+           (lambda (_%k110755%_ _%v110756%_)
+             (set! _%lst110753%_
+                   (cons (cons _%k110755%_ _%v110756%_) _%lst110753%_))))
+          _%lst110753%_)))
     (define hash->plist
-      (lambda (_%h107350%_)
-        (let* ((_%h107356%_
-                (let ((_%$obj107353%_ _%h107350%_))
+      (lambda (_%h110723%_)
+        (let* ((_%h110729%_
+                (let ((_%$obj110726%_ _%h110723%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107353%_))
+                             (##structure? _%$obj110726%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107353%_)))
+                                  (##structure-type _%$obj110726%_)))
                            '#t)
-                      _%$obj107353%_
+                      _%$obj110726%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107353%_)))))
-               (_%h107358%_ _%h107356%_))
-          (__hash->plist _%h107358%_))))
+                        (cast HashTable::interface _%$obj110726%_)))))
+               (_%h110731%_ _%h110729%_))
+          (__hash->plist _%h110731%_))))
     (define __hash->plist
-      (lambda (_%h107333%_)
-        (let* ((_%h107336%_ _%h107333%_) (_%lst107345%_ '()))
+      (lambda (_%h110706%_)
+        (let* ((_%h110709%_ _%h110706%_) (_%lst110718%_ '()))
           (&HashTable-for-each
-           _%h107336%_
-           (lambda (_%k107347%_ _%v107348%_)
-             (set! _%lst107345%_
-                   (cons _%k107347%_ (cons _%v107348%_ _%lst107345%_)))))
-          _%lst107345%_)))
+           _%h110709%_
+           (lambda (_%k110720%_ _%v110721%_)
+             (set! _%lst110718%_
+                   (cons _%k110720%_ (cons _%v110721%_ _%lst110718%_)))))
+          _%lst110718%_)))
     (define hash-for-each
-      (lambda (_%proc107304%_ _%h107305%_)
-        (if (procedure? _%proc107304%_)
-            (let* ((_%proc107309%_ _%proc107304%_)
-                   (_%h107321%_
-                    (let ((_%$obj107318%_ _%h107305%_))
+      (lambda (_%proc110677%_ _%h110678%_)
+        (if (procedure? _%proc110677%_)
+            (let* ((_%proc110682%_ _%proc110677%_)
+                   (_%h110694%_
+                    (let ((_%$obj110691%_ _%h110678%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj107318%_))
+                                 (##structure? _%$obj110691%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj107318%_)))
+                                      (##structure-type _%$obj110691%_)))
                                '#t)
-                          _%$obj107318%_
+                          _%$obj110691%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj107318%_)))))
-                   (_%h107323%_ _%h107321%_))
-              (__hash-for-each _%proc107309%_ _%h107323%_))
+                            (cast HashTable::interface _%$obj110691%_)))))
+                   (_%h110696%_ _%h110694%_))
+              (__hash-for-each _%proc110682%_ _%h110696%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2591,32 +2591,32 @@
                'contract:
                'procedure?
                'value:
-               _%proc107304%_)
+               _%proc110677%_)
               '#!void))))
     (define __hash-for-each
-      (lambda (_%proc107283%_ _%h107284%_)
-        (let* ((_%proc107287%_ _%proc107283%_) (_%h107295%_ _%h107284%_))
-          (&HashTable-for-each _%h107295%_ _%proc107287%_))))
+      (lambda (_%proc110656%_ _%h110657%_)
+        (let* ((_%proc110660%_ _%proc110656%_) (_%h110668%_ _%h110657%_))
+          (&HashTable-for-each _%h110668%_ _%proc110660%_))))
     (define hash-map
-      (lambda (_%proc107254%_ _%h107255%_)
-        (if (procedure? _%proc107254%_)
-            (let* ((_%proc107259%_ _%proc107254%_)
-                   (_%h107271%_
-                    (let ((_%$obj107268%_ _%h107255%_))
+      (lambda (_%proc110627%_ _%h110628%_)
+        (if (procedure? _%proc110627%_)
+            (let* ((_%proc110632%_ _%proc110627%_)
+                   (_%h110644%_
+                    (let ((_%$obj110641%_ _%h110628%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj107268%_))
+                                 (##structure? _%$obj110641%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj107268%_)))
+                                      (##structure-type _%$obj110641%_)))
                                '#t)
-                          _%$obj107268%_
+                          _%$obj110641%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj107268%_)))))
-                   (_%h107273%_ _%h107271%_))
-              (__hash-map _%proc107259%_ _%h107273%_))
+                            (cast HashTable::interface _%$obj110641%_)))))
+                   (_%h110646%_ _%h110644%_))
+              (__hash-map _%proc110632%_ _%h110646%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2625,42 +2625,42 @@
                'contract:
                'procedure?
                'value:
-               _%proc107254%_)
+               _%proc110627%_)
               '#!void))))
     (define __hash-map
-      (lambda (_%proc107228%_ _%h107229%_)
-        (let* ((_%proc107232%_ _%proc107228%_)
-               (_%h107240%_ _%h107229%_)
-               (_%result107249%_ '()))
+      (lambda (_%proc110601%_ _%h110602%_)
+        (let* ((_%proc110605%_ _%proc110601%_)
+               (_%h110613%_ _%h110602%_)
+               (_%result110622%_ '()))
           (&HashTable-for-each
-           _%h107240%_
-           (lambda (_%k107251%_ _%v107252%_)
-             (set! _%result107249%_
+           _%h110613%_
+           (lambda (_%k110624%_ _%v110625%_)
+             (set! _%result110622%_
                    (cons (let ()
                            (declare (not safe))
-                           (_%proc107232%_ _%k107251%_ _%v107252%_))
-                         _%result107249%_))))
-          _%result107249%_)))
+                           (_%proc110605%_ _%k110624%_ _%v110625%_))
+                         _%result110622%_))))
+          _%result110622%_)))
     (define hash-fold
-      (lambda (_%proc107198%_ _%iv107199%_ _%h107200%_)
-        (if (procedure? _%proc107198%_)
-            (let* ((_%proc107204%_ _%proc107198%_)
-                   (_%h107216%_
-                    (let ((_%$obj107213%_ _%h107200%_))
+      (lambda (_%proc110571%_ _%iv110572%_ _%h110573%_)
+        (if (procedure? _%proc110571%_)
+            (let* ((_%proc110577%_ _%proc110571%_)
+                   (_%h110589%_
+                    (let ((_%$obj110586%_ _%h110573%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj107213%_))
+                                 (##structure? _%$obj110586%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj107213%_)))
+                                      (##structure-type _%$obj110586%_)))
                                '#t)
-                          _%$obj107213%_
+                          _%$obj110586%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj107213%_)))))
-                   (_%h107218%_ _%h107216%_))
-              (__hash-fold _%proc107204%_ _%iv107199%_ _%h107218%_))
+                            (cast HashTable::interface _%$obj110586%_)))))
+                   (_%h110591%_ _%h110589%_))
+              (__hash-fold _%proc110577%_ _%iv110572%_ _%h110591%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2669,47 +2669,47 @@
                'contract:
                'procedure?
                'value:
-               _%proc107198%_)
+               _%proc110571%_)
               '#!void))))
     (define __hash-fold
-      (lambda (_%proc107171%_ _%iv107172%_ _%h107173%_)
-        (let* ((_%proc107176%_ _%proc107171%_)
-               (_%h107184%_ _%h107173%_)
-               (_%result107193%_ _%iv107172%_))
+      (lambda (_%proc110544%_ _%iv110545%_ _%h110546%_)
+        (let* ((_%proc110549%_ _%proc110544%_)
+               (_%h110557%_ _%h110546%_)
+               (_%result110566%_ _%iv110545%_))
           (&HashTable-for-each
-           _%h107184%_
-           (lambda (_%k107195%_ _%v107196%_)
-             (set! _%result107193%_
+           _%h110557%_
+           (lambda (_%k110568%_ _%v110569%_)
+             (set! _%result110566%_
                    (let ()
                      (declare (not safe))
-                     (_%proc107176%_
-                      _%k107195%_
-                      _%v107196%_
-                      _%result107193%_)))))
-          _%result107193%_)))
+                     (_%proc110549%_
+                      _%k110568%_
+                      _%v110569%_
+                      _%result110566%_)))))
+          _%result110566%_)))
     (define hash-find__%
-      (lambda (_%proc107129%_ _%h107130%_ _%default-value107131%_)
-        (if (procedure? _%proc107129%_)
-            (let* ((_%proc107135%_ _%proc107129%_)
-                   (_%h107147%_
-                    (let ((_%$obj107144%_ _%h107130%_))
+      (lambda (_%proc110502%_ _%h110503%_ _%default-value110504%_)
+        (if (procedure? _%proc110502%_)
+            (let* ((_%proc110508%_ _%proc110502%_)
+                   (_%h110520%_
+                    (let ((_%$obj110517%_ _%h110503%_))
                       (if (and (let ()
                                  (declare (not safe))
-                                 (##structure? _%$obj107144%_))
+                                 (##structure? _%$obj110517%_))
                                (eq? HashTable::t
                                     (let ()
                                       (declare (not safe))
-                                      (##structure-type _%$obj107144%_)))
+                                      (##structure-type _%$obj110517%_)))
                                '#t)
-                          _%$obj107144%_
+                          _%$obj110517%_
                           (let ()
                             (declare (not safe))
-                            (cast HashTable::interface _%$obj107144%_)))))
-                   (_%h107149%_ _%h107147%_))
+                            (cast HashTable::interface _%$obj110517%_)))))
+                   (_%h110522%_ _%h110520%_))
               (__hash-find__%
-               _%proc107135%_
-               _%h107149%_
-               _%default-value107131%_))
+               _%proc110508%_
+               _%h110522%_
+               _%default-value110504%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2718,229 +2718,229 @@
                'contract:
                'procedure?
                'value:
-               _%proc107129%_)
+               _%proc110502%_)
               '#!void))))
     (define hash-find__0
-      (lambda (_%proc107162%_ _%h107163%_)
-        (let ((_%default-value107165%_ '#f))
-          (hash-find__% _%proc107162%_ _%h107163%_ _%default-value107165%_))))
+      (lambda (_%proc110535%_ _%h110536%_)
+        (let ((_%default-value110538%_ '#f))
+          (hash-find__% _%proc110535%_ _%h110536%_ _%default-value110538%_))))
     (define hash-find
-      (lambda _g111217_
-        (let ((_g111216_ (let () (declare (not safe)) (##length _g111217_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111216_ 2))
-                 (apply hash-find__0 _g111217_))
-                ((let () (declare (not safe)) (##fx= _g111216_ 3))
-                 (apply hash-find__% _g111217_))
+      (lambda _g114589_
+        (let ((_g114590_ (let () (declare (not safe)) (##length _g114589_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114590_ 2))
+                 (apply hash-find__0 _g114589_))
+                ((let () (declare (not safe)) (##fx= _g114590_ 3))
+                 (apply hash-find__% _g114589_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   hash-find
-                  _g111217_))))))
+                  _g114589_))))))
     (define __hash-find__%
-      (lambda (_%proc107086%_ _%h107087%_ _%default-value107088%_)
-        (let* ((_%proc107091%_ _%proc107086%_)
-               (_%h107099%_ _%h107087%_)
-               (__tmp111218
-                (lambda (_%return107108%_)
+      (lambda (_%proc110459%_ _%h110460%_ _%default-value110461%_)
+        (let* ((_%proc110464%_ _%proc110459%_)
+               (_%h110472%_ _%h110460%_)
+               (__tmp114591
+                (lambda (_%return110481%_)
                   (&HashTable-for-each
-                   _%h107099%_
-                   (lambda (_%k107110%_ _%v107111%_)
-                     (let ((_%$e107113%_
+                   _%h110472%_
+                   (lambda (_%k110483%_ _%v110484%_)
+                     (let ((_%$e110486%_
                             (let ()
                               (declare (not safe))
-                              (_%proc107091%_ _%k107110%_ _%v107111%_))))
-                       (if _%$e107113%_
-                           (_%return107108%_ _%$e107113%_)
+                              (_%proc110464%_ _%k110483%_ _%v110484%_))))
+                       (if _%$e110486%_
+                           (_%return110481%_ _%$e110486%_)
                            '#!void))))
-                  _%default-value107088%_)))
+                  _%default-value110461%_)))
           (declare (not safe))
-          (##call-with-current-continuation __tmp111218))))
+          (##call-with-current-continuation __tmp114591))))
     (define __hash-find__0
-      (lambda (_%proc107119%_ _%h107120%_)
-        (let ((_%default-value107122%_ '#f))
+      (lambda (_%proc110492%_ _%h110493%_)
+        (let ((_%default-value110495%_ '#f))
           (__hash-find__%
-           _%proc107119%_
-           _%h107120%_
-           _%default-value107122%_))))
+           _%proc110492%_
+           _%h110493%_
+           _%default-value110495%_))))
     (define __hash-find
-      (lambda _g111220_
-        (let ((_g111219_ (let () (declare (not safe)) (##length _g111220_))))
-          (cond ((let () (declare (not safe)) (##fx= _g111219_ 2))
-                 (apply __hash-find__0 _g111220_))
-                ((let () (declare (not safe)) (##fx= _g111219_ 3))
-                 (apply __hash-find__% _g111220_))
+      (lambda _g114592_
+        (let ((_g114593_ (let () (declare (not safe)) (##length _g114592_))))
+          (cond ((let () (declare (not safe)) (##fx= _g114593_ 2))
+                 (apply __hash-find__0 _g114592_))
+                ((let () (declare (not safe)) (##fx= _g114593_ 3))
+                 (apply __hash-find__% _g114592_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __hash-find
-                  _g111220_))))))
+                  _g114592_))))))
     (define hash-keys
-      (lambda (_%h107067%_)
-        (let* ((_%h107073%_
-                (let ((_%$obj107070%_ _%h107067%_))
+      (lambda (_%h110440%_)
+        (let* ((_%h110446%_
+                (let ((_%$obj110443%_ _%h110440%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107070%_))
+                             (##structure? _%$obj110443%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107070%_)))
+                                  (##structure-type _%$obj110443%_)))
                            '#t)
-                      _%$obj107070%_
+                      _%$obj110443%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107070%_)))))
-               (_%h107075%_ _%h107073%_))
-          (__hash-keys _%h107075%_))))
+                        (cast HashTable::interface _%$obj110443%_)))))
+               (_%h110448%_ _%h110446%_))
+          (__hash-keys _%h110448%_))))
     (define __hash-keys
-      (lambda (_%h107050%_)
-        (let* ((_%h107053%_ _%h107050%_) (_%result107062%_ '()))
+      (lambda (_%h110423%_)
+        (let* ((_%h110426%_ _%h110423%_) (_%result110435%_ '()))
           (&HashTable-for-each
-           _%h107053%_
-           (lambda (_%k107064%_ _%v107065%_)
-             (set! _%result107062%_ (cons _%k107064%_ _%result107062%_))))
-          _%result107062%_)))
+           _%h110426%_
+           (lambda (_%k110437%_ _%v110438%_)
+             (set! _%result110435%_ (cons _%k110437%_ _%result110435%_))))
+          _%result110435%_)))
     (define hash-values
-      (lambda (_%h107032%_)
-        (let* ((_%h107038%_
-                (let ((_%$obj107035%_ _%h107032%_))
+      (lambda (_%h110405%_)
+        (let* ((_%h110411%_
+                (let ((_%$obj110408%_ _%h110405%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107035%_))
+                             (##structure? _%$obj110408%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107035%_)))
+                                  (##structure-type _%$obj110408%_)))
                            '#t)
-                      _%$obj107035%_
+                      _%$obj110408%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107035%_)))))
-               (_%h107040%_ _%h107038%_))
-          (__hash-values _%h107040%_))))
+                        (cast HashTable::interface _%$obj110408%_)))))
+               (_%h110413%_ _%h110411%_))
+          (__hash-values _%h110413%_))))
     (define __hash-values
-      (lambda (_%h107015%_)
-        (let* ((_%h107018%_ _%h107015%_) (_%result107027%_ '()))
+      (lambda (_%h110388%_)
+        (let* ((_%h110391%_ _%h110388%_) (_%result110400%_ '()))
           (&HashTable-for-each
-           _%h107018%_
-           (lambda (_%k107029%_ _%v107030%_)
-             (set! _%result107027%_ (cons _%v107030%_ _%result107027%_))))
-          _%result107027%_)))
+           _%h110391%_
+           (lambda (_%k110402%_ _%v110403%_)
+             (set! _%result110400%_ (cons _%v110403%_ _%result110400%_))))
+          _%result110400%_)))
     (define hash-copy
-      (lambda (_%h106997%_)
-        (let* ((_%h107003%_
-                (let ((_%$obj107000%_ _%h106997%_))
+      (lambda (_%h110370%_)
+        (let* ((_%h110376%_
+                (let ((_%$obj110373%_ _%h110370%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj107000%_))
+                             (##structure? _%$obj110373%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj107000%_)))
+                                  (##structure-type _%$obj110373%_)))
                            '#t)
-                      _%$obj107000%_
+                      _%$obj110373%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj107000%_)))))
-               (_%h107005%_ _%h107003%_))
-          (__hash-copy _%h107005%_))))
+                        (cast HashTable::interface _%$obj110373%_)))))
+               (_%h110378%_ _%h110376%_))
+          (__hash-copy _%h110378%_))))
     (define __hash-copy
-      (lambda (_%h106985%_)
-        (let ((_%h106988%_ _%h106985%_)) (__HashTable-copy _%h106988%_))))
+      (lambda (_%h110358%_)
+        (let ((_%h110361%_ _%h110358%_)) (__HashTable-copy _%h110361%_))))
     (define hash-clear!
-      (lambda (_%h106967%_)
-        (let* ((_%h106973%_
-                (let ((_%$obj106970%_ _%h106967%_))
+      (lambda (_%h110340%_)
+        (let* ((_%h110346%_
+                (let ((_%$obj110343%_ _%h110340%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj106970%_))
+                             (##structure? _%$obj110343%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj106970%_)))
+                                  (##structure-type _%$obj110343%_)))
                            '#t)
-                      _%$obj106970%_
+                      _%$obj110343%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj106970%_)))))
-               (_%h106975%_ _%h106973%_))
-          (__hash-clear! _%h106975%_))))
+                        (cast HashTable::interface _%$obj110343%_)))))
+               (_%h110348%_ _%h110346%_))
+          (__hash-clear! _%h110348%_))))
     (define __hash-clear!
-      (lambda (_%h106955%_)
-        (let ((_%h106958%_ _%h106955%_)) (&HashTable-clear! _%h106958%_))))
+      (lambda (_%h110328%_)
+        (let ((_%h110331%_ _%h110328%_)) (&HashTable-clear! _%h110331%_))))
     (define hash-merge
-      (lambda (_%h106936%_ . _%rest106937%_)
-        (let* ((_%h106943%_
-                (let ((_%$obj106940%_ _%h106936%_))
+      (lambda (_%h110309%_ . _%rest110310%_)
+        (let* ((_%h110316%_
+                (let ((_%$obj110313%_ _%h110309%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj106940%_))
+                             (##structure? _%$obj110313%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj106940%_)))
+                                  (##structure-type _%$obj110313%_)))
                            '#t)
-                      _%$obj106940%_
+                      _%$obj110313%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj106940%_)))))
-               (_%h106945%_ _%h106943%_))
+                        (cast HashTable::interface _%$obj110313%_)))))
+               (_%h110318%_ _%h110316%_))
           (declare (not safe))
-          (##apply __hash-merge _%h106945%_ _%rest106937%_))))
+          (##apply __hash-merge _%h110318%_ _%rest110310%_))))
     (define __hash-merge
-      (lambda (_%h106921%_ . _%rest106922%_)
-        (let* ((_%h106925%_ _%h106921%_)
-               (_%copy106934%_ (__HashTable-copy _%h106925%_)))
-          (apply hash-merge! _%copy106934%_ _%rest106922%_)
-          _%copy106934%_)))
+      (lambda (_%h110294%_ . _%rest110295%_)
+        (let* ((_%h110298%_ _%h110294%_)
+               (_%copy110307%_ (__HashTable-copy _%h110298%_)))
+          (apply hash-merge! _%copy110307%_ _%rest110295%_)
+          _%copy110307%_)))
     (define hash-merge!
-      (lambda (_%h106902%_ . _%rest106903%_)
-        (let* ((_%h106909%_
-                (let ((_%$obj106906%_ _%h106902%_))
+      (lambda (_%h110275%_ . _%rest110276%_)
+        (let* ((_%h110282%_
+                (let ((_%$obj110279%_ _%h110275%_))
                   (if (and (let ()
                              (declare (not safe))
-                             (##structure? _%$obj106906%_))
+                             (##structure? _%$obj110279%_))
                            (eq? HashTable::t
                                 (let ()
                                   (declare (not safe))
-                                  (##structure-type _%$obj106906%_)))
+                                  (##structure-type _%$obj110279%_)))
                            '#t)
-                      _%$obj106906%_
+                      _%$obj110279%_
                       (let ()
                         (declare (not safe))
-                        (cast HashTable::interface _%$obj106906%_)))))
-               (_%h106911%_ _%h106909%_))
+                        (cast HashTable::interface _%$obj110279%_)))))
+               (_%h110284%_ _%h110282%_))
           (declare (not safe))
-          (##apply __hash-merge! _%h106911%_ _%rest106903%_))))
+          (##apply __hash-merge! _%h110284%_ _%rest110276%_))))
     (define __hash-merge!
-      (lambda (_%h106865%_ . _%rest106866%_)
-        (let ((_%h106869%_ _%h106865%_))
-          (let ((__tmp111221
-                 (lambda (_%hr106878%_)
-                   (let* ((_%hr106884%_
-                           (let ((_%$obj106881%_ _%hr106878%_))
+      (lambda (_%h110238%_ . _%rest110239%_)
+        (let ((_%h110242%_ _%h110238%_))
+          (let ((__tmp114594
+                 (lambda (_%hr110251%_)
+                   (let* ((_%hr110257%_
+                           (let ((_%$obj110254%_ _%hr110251%_))
                              (if (and (let ()
                                         (declare (not safe))
-                                        (##structure? _%$obj106881%_))
+                                        (##structure? _%$obj110254%_))
                                       (eq? HashTable::t
                                            (let ()
                                              (declare (not safe))
                                              (##structure-type
-                                              _%$obj106881%_)))
+                                              _%$obj110254%_)))
                                       '#t)
-                                 _%$obj106881%_
+                                 _%$obj110254%_
                                  (let ()
                                    (declare (not safe))
                                    (cast HashTable::interface
-                                         _%$obj106881%_)))))
-                          (_%hr106886%_ _%hr106884%_))
+                                         _%$obj110254%_)))))
+                          (_%hr110259%_ _%hr110257%_))
                      (&HashTable-for-each
-                      _%hr106886%_
-                      (lambda (_%k106899%_ _%v106900%_)
-                        (if (__hash-key? _%h106869%_ _%k106899%_)
+                      _%hr110259%_
+                      (lambda (_%k110272%_ _%v110273%_)
+                        (if (__hash-key? _%h110242%_ _%k110272%_)
                             '#!void
                             (&HashTable-set!
-                             _%h106869%_
-                             _%k106899%_
-                             _%v106900%_))))))))
+                             _%h110242%_
+                             _%k110272%_
+                             _%v110273%_))))))))
             (declare (not safe))
-            (##for-each __tmp111221 _%rest106866%_))
-          _%h106869%_)))))
+            (##for-each __tmp114594 _%rest110239%_))
+          _%h110242%_)))))

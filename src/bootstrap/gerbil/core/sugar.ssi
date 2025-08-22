@@ -86,10 +86,6 @@ namespace: gerbil/core/sugar
                    (%#define-syntax
                     ~case-dispatch-bsearch
                     |gerbil/core/sugar~Sugar-2[:0:]#~case-dispatch-bsearch|)
-                   (%#define-syntax do |gerbil/core/sugar~Sugar-2[:0:]#do|)
-                   (%#define-syntax
-                    do-while
-                    |gerbil/core/sugar~Sugar-2[:0:]#do-while|)
                    (%#define-syntax
                     begin0
                     |gerbil/core/sugar~Sugar-2[:0:]#begin0|)
