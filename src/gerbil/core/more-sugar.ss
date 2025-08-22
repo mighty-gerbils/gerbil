@@ -64,10 +64,31 @@ package: gerbil/core
    (call/cc (lambda (id) body ...))))
 
 (defrules unwind-protect ()
-    ((_ body postlude rest ...)
-     (with-unwind-protect
-      (lambda () body)
-      (lambda () postlude rest ...))))
+  ((_ body postlude rest ...)
+   (with-unwind-protect
+    (lambda () body)
+    (lambda () postlude rest ...))))
+
+(defrules do ()
+  ((_ ((var init step ...) ...)
+      (test fini ...)
+      body ...)
+   (stx-andmap identifier? #'(var ...))
+   (let $loop ((var init) ...)
+     (if test
+       (begin #!void fini ...)
+       (let () body ... ($loop (begin var step ...) ...))))))
+
+(defrules do-while ()
+  ((_ ((var init step ...) ...)
+      (test fini ...)
+      body ...)
+   (stx-andmap identifier? #'(var ...))
+   (let $loop ((var init) ...)
+     body ...
+     (if test
+       ($loop (begin var step ...) ...)
+       (begin #!void fini ...)))))
 
 (defsyntax (@bytes stx)
   (syntax-case stx ()
