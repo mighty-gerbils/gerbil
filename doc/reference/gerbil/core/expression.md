@@ -178,8 +178,6 @@ TODO
 ## do-while
 TODO
 
-## do-until
-TODO
 
 ## while
 ```
