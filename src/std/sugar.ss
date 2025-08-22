@@ -5,9 +5,6 @@
 (import :std/error
         :std/hash-table)
 (export
-  catch
-  finally
-  try
   ignore-errors
   with-destroy
   defmethod/alias
@@ -15,8 +12,6 @@
   with-methods
   with-class-methods
   with-class-method
-  while
-  until
   hash
   hash-eq
   hash-eqv
@@ -45,73 +40,6 @@
 
 (import (for-syntax :std/misc/func
                     :std/stxutil))
-
-(defrules catch ())
-(defrules finally ())
-
-(defsyntax (try stx)
-  (def (generate-thunk body)
-    (if (null? body)
-      (raise-syntax-error #f "Bad syntax; missing body" stx)
-      (with-syntax (((e ...) (reverse body)))
-        #'(lambda () e ...))))
-
-  (def (generate-fini thunk fini)
-    (with-syntax ((thunk thunk)
-                  ((e ...) fini))
-      #'(with-unwind-protect thunk (lambda () e ...))))
-
-  (def (generate-catch handlers thunk)
-    (with-syntax (($e (genident)))
-      (let lp ((rest handlers) (clauses []))
-        (match rest
-          ([hd . rest]
-           (syntax-case hd (=>)
-             ((pred => K)
-              (lp rest (cons #'(((? pred) $e) => K)
-                             clauses)))
-             (((pred var) body ...)
-              (identifier? #'var)
-              (lp rest (cons #'(((? pred) $e) (let ((var $e)) body ...))
-                             clauses)))
-             (((var) body ...)
-              (identifier? #'var)
-              (lp rest (cons #'(#t (let ((var $e)) body ...))
-                             clauses)))
-             ((us body ...)
-              (underscore? #'us)
-              (lp rest (cons #'(#t (begin body ...))
-                             clauses)))))
-          (else
-           (with-syntax (((clause ...) clauses)
-                         (thunk thunk))
-             #'(with-catch
-                (lambda ($e) (cond clause ... (else (raise $e))))
-                thunk)))))))
-
-  (syntax-case stx ()
-    ((_ e ...)
-     (let lp ((rest #'(e ...)) (body []))
-       (syntax-case rest ()
-         ((hd . rest)
-          (syntax-case #'hd (catch finally)
-            ((finally fini ...)
-             (if (stx-null? #'rest)
-               (generate-fini (generate-thunk body) #'(fini ...))
-               (raise-syntax-error #f "Misplaced finally clause" stx)))
-            ((catch handler ...)
-             (let lp ((rest #'rest) (handlers [#'(handler ...)]))
-               (syntax-case rest (catch finally)
-                 (((catch handler ...) . rest)
-                  (lp #'rest [#'(handler ...) . handlers]))
-                 (((finally fini ...))
-                  (with-syntax ((body (generate-catch handlers (generate-thunk body))))
-                    (generate-fini #'(lambda () body) #'(fini ...))))
-                 (()
-                  (generate-catch handlers (generate-thunk body))))))
-            (_ (lp #'rest (cons #'hd body)))))
-         (() ; no clauses, just a begin
-          (cons 'begin (reverse body))))))))
 
 (defrule (ignore-errors form ...) (with-catch false (lambda () form ...)))
 
@@ -159,18 +87,6 @@
   ((recur klass method)
    (identifier? #'method)
    (recur klass (method method))))
-
-(defrule (while test body ...)
-  (let lp ()
-    (when test
-      body ...
-      (lp))))
-
-(defrule (until test body ...)
-  (let lp ()
-    (unless test
-      body ...
-      (lp))))
 
 (defrule (hash (key val) ...)
   (~hash-table make-hash-table (key val) ...))
