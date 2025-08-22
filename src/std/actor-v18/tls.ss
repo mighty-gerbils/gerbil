@@ -327,7 +327,8 @@
         (displayln "... generate " server.key)
         (invoke "openssl"
                 ["genpkey"
-                 "-quiet"
+                 (cond-expand ((not darwin) ["-quiet"])
+			      (else [])) ...
                  "-algorithm" "RSA"
                  "-pkeyopt" "rsa_keygen_bits:4096"
                  "-out" server.key]))
