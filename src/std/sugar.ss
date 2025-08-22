@@ -12,9 +12,6 @@
   with-methods
   with-class-methods
   with-class-method
-  hash
-  hash-eq
-  hash-eqv
   let-hash
   awhen
   chain
@@ -87,24 +84,6 @@
   ((recur klass method)
    (identifier? #'method)
    (recur klass (method method))))
-
-(defrule (hash (key val) ...)
-  (~hash-table make-hash-table (key val) ...))
-
-(defrule (hash-eq (key val) ...)
-  (~hash-table make-hash-table-eq (key val) ...))
-
-(defrule (hash-eqv (key val) ...)
-  (~hash-table make-hash-table-eqv (key val) ...))
-
-(defsyntax (~hash-table stx)
-  (syntax-case stx ()
-    ((_ make-ht clause ...)
-     (with-syntax* ((size (stx-length #'(clause ...)))
-                    (((key val) ...) #'(clause ...)))
-       #'(let (ht (make-ht size: size))
-           (hash-put! ht `key val) ...
-           ht)))))
 
 ;; the hash deconstructor macro
 ;; usage: (let-hash a-hash body ...)

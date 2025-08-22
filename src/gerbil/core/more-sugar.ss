@@ -169,6 +169,24 @@ package: gerbil/core
          (() ; no clauses, just a begin
           (cons 'begin (reverse body))))))))
 
+(defrule (hash (key val) ...)
+  (~hash-table make-hash-table (key val) ...))
+
+(defrule (hash-eq (key val) ...)
+  (~hash-table make-hash-table-eq (key val) ...))
+
+(defrule (hash-eqv (key val) ...)
+  (~hash-table make-hash-table-eqv (key val) ...))
+
+(defsyntax (~hash-table stx)
+  (syntax-case stx ()
+    ((_ make-ht entry ...)
+     (with-syntax* ((size (stx-length #'(entry ...)))
+                    (((key val) ...) #'(entry ...)))
+       #'(let (ht (make-ht size: size))
+           (hash-put! ht `key val) ...
+           ht)))))
+
 (defsyntax (@bytes stx)
   (syntax-case stx ()
     ((_ str)
