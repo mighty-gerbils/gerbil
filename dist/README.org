@@ -1,8 +1,18 @@
 #+TITLE: Distributing Gerbil
 
 Gerbil is a simple language and runtime that can be distributed many
-ways. This is where any extra items exist in the source tree so anyone
-can see how things work in other streams.
+ways. Because we're still < 1.0 when it comes to release and also used
+by many in production there does need to be a fairly easy way to use
+and/or package gerbil.
+
+This is where such things exist as well as come to meet. 
+
+* Supported distributions and architectures
+
+While most people will use a pre-packaged Gerbil, especially after we
+hit 1.0, some may want to build the HEAD in master either to
+contribute or because we have yet to point release a feature.
+
 
 * MacOS
 
@@ -18,3 +28,21 @@ There's some docker things that I don't understand (lol) [[file:docker][here]].
 
 At one point I(drewc) was using Guix. My work on it is [[file:guix/README.org][here]].
 
+* The TODO tree
+
+** TODO Look at nfpm?
+https://nfpm.goreleaser.com/
+
+#+begin_quote
+nFPM is Not FPM - a zero dependencies, simple deb, rpm, apk, ipk, and arch linux packager written in Go.
+
+Why?
+
+While fpm is great, for me, it is a bummer that it depends on ruby,
+tar and other software.
+
+I wanted something that could be used as a binary and/or as a library and that was really simple.
+
+So I decided to create nFPM: a simpler, 0-dependency,
+as-little-assumptions-as-possible alternative to fpm.
+#+end_quote
