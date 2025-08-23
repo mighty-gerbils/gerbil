@@ -51,23 +51,3 @@ mkfile_dir := $(dir $(mkfile_path))
 
 hack:
 	$(info $(shell which foo) $(vm))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -29,4 +29,3 @@ docker: ubuntu
 
 clean:
 	rm -v bin/*-gerbil
-# How about now?
