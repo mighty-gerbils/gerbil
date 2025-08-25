@@ -5,16 +5,16 @@
 prelude: :<root>
 package: gerbil/core
 
+(import "module-sugar" (phi: +1 "module-sugar"))
 (import "runtime"
         "sugar"
-        "mop"
+        (except-in "mop" @method)
         "match"
         "more-sugar"
-        "module-sugar"
         (phi: +1
               "runtime"
               "sugar"
-              "mop"
+              (except-in "mop" @method)
               "match"
               "more-sugar"
               "expander"
@@ -28,7 +28,8 @@ package: gerbil/core
          (phi: +1 (import: InterfaceInfo TypeEnv ClassMeta)))
 
 (module InterfaceInfo
-  (import "expander")
+  (import "expander"
+          (only-in "mop" @method))
   (export #t)
   (defclass interface-info (name
                             namespace
@@ -2038,6 +2039,7 @@ package: gerbil/core
                                   (substring str (fx1+ ix) (string-length str)))))
            #'(call-method (%%ref-dotted receiver) 'method arg ...))))
       ((_ method receiver arg ...)
+       (identifier? #'method)
        #'(call-method receiver 'method arg ...))))
 
   (defsyntax (defmethod/c stx)
@@ -2177,7 +2179,42 @@ package: gerbil/core
            ((:?)    [':?  (syntax-local-introduce detail)])
            ((:~ :=) (extract-type rest))
            (else
-            (raise-syntax-error #f "BUG: unexpected contract sigil in signature" stx sigil))))))
+            (raise-syntax-error #f "BUG: unexpected contract sigil in signature" stx sigil))))
+        ([] '(:- :t))))
+
+    (def (lambda-argument? arg)
+      (or (identifier? arg)
+          (syntax-case arg ()
+            ((id contract ...)
+             (identifier? #'id))
+            (_ #f))))
+
+    (def (lambda-argument-contract arg sig-contract)
+      (def (verify-type type sig-type)
+        (unless (eq? (resolve-type stx type)
+                     (resolve-type stx sig-type))
+          (raise-syntax-error #f "invalid interface method implementation; unexpected argument type" stx arg type sig-type)))
+
+      (if (identifier? arg)
+        (cons arg sig-contract)
+        (syntax-case arg ()
+          ((id contract ...)
+           (let loop ((rest #'(contract ...)))
+             (syntax-case rest (:-)
+               ((:- Type . _)
+                (begin
+                  (verify-type #'Type (cadr sig-contract))
+                  #'(id :- Type)))
+               ((~ Type . _)
+                (or (free-identifier=? #'~ #':)
+                    (free-identifier=? #'~ #'::-)
+                    (free-identifier=? #'~ #':?))
+                (begin
+                  (verify-type #'Type (cadr sig-contract))
+                  (cons #'id sig-contract)))
+               ((sigil what . rest)
+                (loop #'rest))
+               (_ (raise-syntax-error #f stx "invalid interface method implementation; unexpected argument contract" stx arg))))))))
 
     (def (lambda-head self args positionals keywords tail type-id)
       (def (syntax-error! what detail)
@@ -2200,23 +2237,26 @@ package: gerbil/core
 
       (let loop ((rest-args args) (rest-pos positionals) (pos []) (kws []))
         (syntax-case rest-args ()
-          ((id . rest-args)
-           (identifier? #'id)
+          ((arg . rest-args)
+           (lambda-argument? #'arg)
            (match rest-pos
              ([contract . rest-pos]
-              (loop #'rest-args rest-pos (cons (cons #'id contract) pos) kws))
+              (loop #'rest-args rest-pos
+                    (cons (lambda-argument-contract #'arg contract) pos)
+                    kws))
              (else
-              (syntax-error! "unexpected positional argument" #'id))))
-          ((key id . rest-args)
+              (syntax-error! "unexpected positional argument" #'arg))))
+          ((key arg . rest-args)
            (and (stx-keyword? #'key)
-                (identifier? #'id))
+                (lambda-argument? #'arg))
            (let (key (stx-e #'key))
              (cond
               ((memq key kws)
                (syntax-error! "duplicate keyword argument" key))
               ((pgetq key keywords)
                => (lambda (contract)
-                    (loop #'rest-args rest-pos args (cons* (cons #'id contract) key kws))))
+                    (loop #'rest-args rest-pos args
+                          (cons* (lambda-argument-contract #'arg contract) key kws))))
               (else
                (syntax-error! "unexpected keyword argument" key)))))
           (last
@@ -2271,11 +2311,10 @@ package: gerbil/core
         (_
          (with-syntax ((method method-id)
                        (Type type-id)
-                       (impl impl)
+                       (procedure impl)
                        ((rest ...) rest))
            #'(defmethod (@method~ method Type)
-               impl
-               rest ...)))))
+               procedure rest ...)))))
 
     (syntax-case stx (@method)
       ((_ {method Type} impl rest ...)
@@ -2285,7 +2324,16 @@ package: gerbil/core
          (if (interface-declaration? #'(rest ...))
            (generate-interface-method #'method #'Type #'impl #'(rest ...))
            (generate-class-method #'method #'Type #'impl #'(rest ...)))
-         (raise-syntax-error #f "not defined as class" stx #'Type)))))
+         (raise-syntax-error #f "not defined as class" stx #'Type)))
+
+      ((_ (wtf method Type) . _)
+       (cond
+        ((resolve-identifier #'wtf)
+         => (lambda (b)
+              (raise-syntax-error #f "booooo!" stx (binding-id b))))
+        (else
+         (raise-syntax-error #f "booooo!" stx))))
+        ))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
