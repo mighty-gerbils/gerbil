@@ -619,6 +619,8 @@ namespace: gxc
 
    ((eq? (!type-id type) 't))           ; happy!
 
+   ((eq? (!type-id type) 'void))        ; uspecified!
+
    (else
     (let (expr-type (apply-basic-expression-type expr))
       (cond

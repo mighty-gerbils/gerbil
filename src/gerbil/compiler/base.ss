@@ -76,7 +76,7 @@ namespace: gxc
     (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq))))
 
 (def (raise-compile-error message stx . details)
-  (let (ctx (or (current-compile-context) 'compile))
+  (let (ctx (or (current-compile-context) '(compile)))
     (apply raise-syntax-error ctx message stx details)))
 
 (def (verbose . args)
