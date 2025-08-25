@@ -147,7 +147,8 @@
 (defmethod {read ssl-socket-reader}
   (lambda (self output output-start output-end input-need)
     (let (sock self.sock)
-      (let lp ((output-start output-start) (input-need input-need) (result 0))
+      (let lp ((output-start output-start) (input-need input-need) ((result :- :fixnum) 0))
+        => :fixnum
         (if (fx< output-start output-end)
           (let (read (ssl-socket::__recv sock output output-start output-end 0))
             (cond
@@ -170,7 +171,8 @@
 (defmethod {write ssl-socket-writer}
   (lambda (self input input-start input-end)
     (let (sock self.sock)
-      (let lp ((input-start input-start) (result 0))
+      (let lp ((input-start input-start) ((result :- :fixnum) 0))
+        => :fixnum
         (if (fx< input-start input-end)
           (let (wrote (ssl-socket::__send sock input input-start input-end 0))
             (lp (fx+ input-start wrote) (fx+ result wrote)))

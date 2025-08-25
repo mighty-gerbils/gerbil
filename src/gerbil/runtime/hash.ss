@@ -543,6 +543,7 @@ namespace: #f
   (def (proc (h : HashTable) . rest) body ...))
 
 (defhash-method (hash-length h)
+  => :fixnum
   (h.length))
 
 (defhash-method (hash-ref h key (default (macro-absent-obj)))
@@ -564,14 +565,17 @@ namespace: #f
   (h.delete! key))
 
 (defhash-method (hash-key? h k)
+  => :boolean
   (not (eq? (h.ref k absent-value) absent-value)))
 
 (defhash-method (hash->list h)
+  => :list
   (let (lst [])
     (h.for-each (lambda (k v) (set! lst (cons (cons k v) lst))))
     lst))
 
 (defhash-method (hash->plist h)
+  => :list
   (let (lst [])
     (h.for-each (lambda (k v) (set! lst (cons* k v lst))))
     lst))
@@ -580,6 +584,7 @@ namespace: #f
   (h.for-each proc))
 
 (def (hash-map (proc : :procedure) (h : HashTable))
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons (proc k v) result))))
     result))
@@ -595,32 +600,52 @@ namespace: #f
     default-value))
 
 (defhash-method (hash-keys h)
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons k result))))
     result))
 
 (defhash-method (hash-values h)
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons v result))))
     result))
 
 (defhash-method (hash-copy h)
+  => HashTable
   (h.copy))
 
 (defhash-method (hash-clear! h)
   (h.clear!))
 
 (def (hash-merge (h : HashTable) . rest)
+  => HashTable
   (let (copy (h.copy))
     (apply hash-merge! copy rest)
     copy))
 
+(def (hash-merge-right (h : HashTable) . rest)
+  => HashTable
+  (let (copy (h.copy))
+    (apply hash-merge-right! copy rest)
+    copy))
+
 (def (hash-merge! (h : HashTable) . rest)
+  => HashTable
   (for-each
     (lambda ((hr : HashTable))
       (hr.for-each
        (lambda (k v)
          (unless (hash-key? h k)
            (h.set! k v)))))
+    rest)
+  h)
+
+(def (hash-merge-right! (h : HashTable) . rest)
+  => HashTable
+  (for-each
+    (lambda ((hr : HashTable))
+      (hr.for-each
+       (lambda (k v) (h.set! k v))))
     rest)
   h)

@@ -25,7 +25,8 @@
 (defmethod {read input-file-io}
   (lambda (self output output-start output-end input-need)
     (let (fd self.fd)
-      (let lp ((output-start output-start) (input-need input-need) (result 0))
+      (let lp ((output-start output-start) (input-need input-need) ((result :- :fixnum) 0))
+        => :fixnum
         (when self.closed?
           (raise-io-closed file-io-read "file is closed"))
         (if (fx< output-start output-end)
@@ -48,7 +49,8 @@
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
     (let (fd self.fd)
-      (let lp ((input-start input-start) (result 0))
+      (let lp ((input-start input-start) ((result :- :fixnum) 0))
+        => :fixnum
         (when self.closed?
           (raise-io-closed output-file-io "file is closed"))
         (if (fx< input-start input-end)

@@ -1791,7 +1791,9 @@ package: gerbil/core
     hash-values
     hash-copy
     hash-merge
+    hash-merge-right
     hash-merge!
+    hash-merge-right!
     hash-clear!
 
     ;; :gerbil/runtime/thread
