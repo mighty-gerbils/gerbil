@@ -214,6 +214,9 @@ namespace: gerbil/core/contract
                    (%#define-runtime
                     interface-mixin->precedence-list
                     gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list)
+                   (%#define-runtime
+                    interface-info-method-signature
+                    gerbil/core/contract~InterfaceInfo#interface-info-method-signature)
                    (%#begin (%#define-runtime
                              syntax-local-interface-info?__%
                              gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%)
