@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1756142005)
+  (define gerbil/core/mop~MOP-2::timestamp 1756142908)
   (begin
     (define gerbil/core/mop~MOP-2#class-type-info::t
       (make-class-type
