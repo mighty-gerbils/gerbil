@@ -71,6 +71,11 @@ package: gerbil/core
                         eq: free-identifier=?))
       linearized))
 
+  (def (interface-info-method-signature info method)
+    (alet (sig (find (lambda (sig) (eq? method (car sig)))
+                     (interface-info-interface-methods info)))
+      (cdr sig)))
+
   (def (syntax-local-interface-info? stx (is? true))
     (and (identifier? stx)
          (alet (e (syntax-local-value stx false))
@@ -2036,71 +2041,259 @@ package: gerbil/core
        #'(call-method receiver 'method arg ...))))
 
   (defsyntax (defmethod/c stx)
-    ;; TODO check signatures and inject type decls when implementing an interface method
-    (def (make-method-name method rest)
-      (let loop ((rest rest))
-        (syntax-case rest ()
-          ((interface: Interface . _)
-           (let (info (resolve-type stx #'Interface))
-             (if (interface-info? info)
-               (if (find (lambda (ms) (eq? (stx-e method) (car ms)))
-                         (interface-info-interface-methods info))
-                 (stx-identifier method (interface-info-namespace info) "::" method)
-                 (raise-syntax-error #f "unknown interface method" stx #'Interface method))
-               (raise-syntax-error #f "not an interface type" stx #'Interface))))
-          ((kw _ . rest)
-           (stx-keyword? #'kw)
-           (loop #'rest))
-          (() method))))
+    (def (interface-declaration? body)
+      (syntax-case body ()
+        ((interface: _ . rest) #t)
+        ((key _ . rest)
+         (stx-keyword? #'key)
+         (interface-declaration? #'rest))
+        (() #f)
+        (_ (raise-syntax-error #f "illegal method definition attributes" stx body))))
 
-    (def (defmethod-rest rest)
-      (let recur ((rest rest))
+    (def (interface-declaration body)
+      (let loop ((rest body) (pre []))
         (syntax-case rest ()
-          ((interface: _ . rest)
-           (recur #'rest))
-          ((kw val . rest)
-           (stx-keyword? #'kw)
-           (cons* #'kw #'val (recur #'rest)))
-          (() []))))
+          ((interface: Interface . rest)
+           (if (identifier? #'Interface)
+             (if (syntax-local-interface-info? #'Interface)
+               (if (interface-declaration? #'rest)
+                 (raise-syntax-error #f "duplicate interface declaration" stx)
+                 [#'Interface (reverse! pre) ... (syntax->list #'rest) ...])
+               (raise-syntax-error #f "not defined as an interface" stx #'Interface))
+             (raise-syntax-error #f "bad interface specification" stx #'Interface)))
+          ((key detail . rest)
+           (stx-keyword? #'key)
+           (loop #'rest (cons* #'detail #'key pre))))))
 
-    (syntax-case stx (lambda/c case-lambda/c @method-dotted)
-      ((_ {method Type} (lambda/c (self . args) body ...) . rest)
-       (and (identifier? #'self)
-            (identifier? #'method))
-       (with-syntax* ((receiver (genident #'self))
-                      (proc
-                       (syntax/loc stx
-                         (lambda/c (receiver . args)
-                              (using (self receiver ::- Type)
-                                (with-receiver self (let () body ...))))))
-                      (method-name (make-method-name #'method #'rest))
-                      (rest (defmethod-rest #'rest)))
-         #'(defmethod (@method~ method-name Type) proc . rest)))
-      ((_ {method Type} (case-lambda/c ((self . args) body ...) ...) . rest)
-       (and (identifier-list? #'(self ...))
-            (identifier? #'method))
-       (with-syntax* (((receiver ...)
-                       (map genident #'(self ...)))
-                      (proc
-                       (syntax/loc stx
-                         (case-lambda/c
-                          ((receiver . args)
-                           (using (self receiver ::- Type)
-                             (with-receiver self (let () body ...))))
-                          ...)))
-                      (method-name (make-method-name #'method #'rest))
-                      (rest (defmethod-rest #'rest)))
-         #'(defmethod (@method~ method-name Type) proc . rest)))
-      ((_ {method Type} impl . rest)
-       (with-syntax ((method-name (make-method-name #'method #'rest))
-                     (rest (defmethod-rest #'rest)))
-         #'(defmethod (@method~ method-name Type) impl . rest)))))
+    (def (generate-interface-method method-id type-id impl rest)
+      (with-syntax (((Interface rest ...) (interface-declaration rest))
+                    (Type type-id))
+        (let* ((info        (syntax-local-value #'Interface))
+               (method-name (stx-e method-id))
+               (method-sig  (interface-info-method-signature info method-name)))
+          (unless method-sig
+            (raise-syntax-error #f "uknown interface method" stx #'Interface method-id))
+          (with-syntax ((interface-method-name
+                         (generate-interface-method-name info method-id))
+                        (method-implementation
+                         (generate-interface-method-implementation type-id method-id impl method-sig)))
+            #'(defmethod (@method~ interface-method-name Type)
+                method-implementation
+                rest ...)))))
+
+    (def (generate-interface-method-name info method-id)
+      (stx-identifier method-id (interface-info-namespace info) "::" method-id))
+
+    (def (generate-interface-method-implementation type-id method-id impl method-sig)
+      (syntax-case impl ()
+        ((form (self . args) body ...)
+         (and (identifier? #'form)
+              (or (free-identifier=? #'form #'lambda/c)
+                  (free-identifier=? #'form #'lambda))
+              (method-receiver? #'self))
+	     (with-syntax* (((receiver . head)
+                         (generate-interface-lambda-head #'self #'args type-id method-id (car method-sig)))
+                        (return-type
+                         (syntax-local-introduce (cadr method-sig)))
+                        ((body ...)
+                         (method-body #'receiver #'(body ...) #t)))
+           #' (lambda/c head => return-type body ...)))
+        (_ impl)))
+
+    (def (generate-interface-lambda-head self args type-id method-id sig)
+      (let* ((receiver (lambda-receiver self))
+             ((values positionals keywords tail)
+              (lambda-signature-explode sig))
+             (head (lambda-head self args positionals keywords tail type-id)))
+        [receiver . head]))
+
+    (def (method-receiver? self)
+      (syntax-case self ()
+        ((id ~ type)
+         (and (identifier? #'id)
+              (identifier? #'~)
+              (or (free-identifier=? #'~ #':)
+                  (free-identifier=? #'~ #':-)
+                  (free-identifier=? #'~ #'::-))))
+        (_ (identifier? self))))
+
+    (def (method-receiver self type-id)
+      (if (identifier? self)
+        [self '::- type-id]
+        (syntax-case self ()
+          ((id ~ type)
+           (if (eq? (resolve-type stx #'type)
+                    (resolve-type stx type-id))
+             (if (or (free-identifier=? #'~ #':)
+                     (free-identifier=? #'~ #'::-))
+               [#'id '::- type-id]
+               [#'id ':-  type-id])
+             (raise-syntax-error #f "unexpected self type" stx self type-id))))))
+
+    (def (method-body receiver body interface?)
+      (with-syntax ((receiver receiver))
+        (syntax-case body (=>)
+          ((=> return-type body ...)
+           (if interface?
+             (raise-syntax-error #f "unexpected return type" stx #'return-type)
+             [#'=> #'return-type (syntax/loc stx (with-receiver receiver body ...))]))
+          ((body ...)
+           [(syntax/loc stx (with-receiver receiver body ...))]))))
+
+    (def (lambda-receiver self)
+      (if (identifier? self)
+        self
+        (stx-car self)))
+
+    (def (lambda-signature-explode sig)
+      (let loop ((rest sig) (args []) (kws []))
+        (match rest
+          ([(? keyword? key) hd . rest]
+           (loop rest args (cons* (argument-type hd) key kws)))
+          ([hd . rest]
+           (loop rest (cons (argument-type hd) args) kws))
+          (tail
+           (values (reverse! args)
+                   (reverse! kws)
+                   tail)))))
+
+    (def (argument-type arg)
+      (match arg
+        ((? symbol? id)
+         '(:- :t))
+        ([id default]
+         '(:- :t))
+        ([id . contract]
+         (extract-type contract))
+        (else
+         (raise-syntax-error #f "BUG: unexpected argument in signature" stx arg))))
+
+    (def (extract-type contract)
+      (match contract
+        ([sigil detail . rest]
+         (case sigil
+           ((: ::-) ['::- (syntax-local-introduce detail)])
+           ((:-)    [':-  (syntax-local-introduce detail)])
+           ((:?)    [':?  (syntax-local-introduce detail)])
+           ((:~ :=) (extract-type rest))
+           (else
+            (raise-syntax-error #f "BUG: unexpected contract sigil in signature" stx sigil))))))
+
+    (def (lambda-head self args positionals keywords tail type-id)
+      (def (syntax-error! what detail)
+        (raise-syntax-error #f
+          (string-append "invalid interface method implementation; " what)
+          stx args detail))
+
+      (def (finish pos kws tail)
+        (let loop ((rest keywords))
+          (match rest
+            ([key _ . rest]
+             (if (memq key kws)
+               (loop rest)
+               (syntax-error! "missing keyword argument" key)))
+            (else
+             [(method-receiver self type-id)
+              (reverse! pos) ...
+              (reverse! kws) ...
+              . tail]))))
+
+      (let loop ((rest-args args) (rest-pos positionals) (pos []) (kws []))
+        (syntax-case rest-args ()
+          ((id . rest-args)
+           (identifier? #'id)
+           (match rest-pos
+             ([contract . rest-pos]
+              (loop #'rest-args rest-pos (cons (cons #'id contract) pos) kws))
+             (else
+              (syntax-error! "unexpected positional argument" #'id))))
+          ((key id . rest-args)
+           (and (stx-keyword? #'key)
+                (identifier? #'id))
+           (let (key (stx-e #'key))
+             (cond
+              ((memq key kws)
+               (syntax-error! "duplicate keyword argument" key))
+              ((pgetq key keywords)
+               => (lambda (contract)
+                    (loop #'rest-args rest-pos args (cons* (cons #'id contract) key kws))))
+              (else
+               (syntax-error! "unexpected keyword argument" key)))))
+          (last
+           (identifier? #'last)
+           (if (symbol? tail)
+             (finish pos kws #'last)
+             (syntax-error! "unpexted tail argument" #'last)))
+          (()
+           (if (null? tail)
+             (finish pos kws [])
+             (syntax-error! "missing tail argument" tail)))
+          (_ (syntax-error! "unexpected formal in lambda" rest-args)))))
+
+    (def (generate-class-method method-id type-id impl rest)
+      (syntax-case impl ()
+        ((form (self . args) body ...)
+         (and (identifier? #'form)
+              (or (free-identifier=? #'form #'lambda/c)
+                  (free-identifier=? #'form #'lambda))
+              (method-receiver? #'self))
+         (with-syntax* ((receiver (lambda-receiver #'self))
+                        (self     (method-receiver #'self type-id))
+                        ((body ...)
+                         (method-body #'receiver #'(body ...) #f))
+                        (procedure
+                         (syntax/loc stx
+                           (lambda/c (self . args) body ...)))
+                        ((rest ...) rest)
+                        (method method-id)
+                        (Type type-id))
+           #'(defmethod (@method~ method Type)
+               procedure rest ...)))
+        ((form ((self . args) body ...) ...)
+         (and (identifier? #'form)
+              (or (free-identifier=? #'form #'case-lambda/c)
+                  (free-identifier=? #'form #'case-lambda))
+              (stx-map method-receiver? #'(self ...)))
+         (with-syntax* (((receiver ...) (stx-map lambda-receiver #'(self ...)))
+                        (((body ...) ...) (stx-map (cut method-body <> <> #f)
+                                                   #'(receiver ...)
+                                                   #'((body ...) ...)))
+                        ((self ...) (stx-map (cut method-receiver <> type-id)
+                                             #'(self ...)))
+                        (procedure
+                         (syntax/loc stx
+                           (case-lambda/c ((self . args) body ...) ...)))
+                        ((rest ...) rest)
+                        (method method-id)
+                        (Type type-id))
+           #'(defmethod (@method~ method Type)
+               procedure rest ...)))
+        (_
+         (with-syntax ((method method-id)
+                       (Type type-id)
+                       (impl impl)
+                       ((rest ...) rest))
+           #'(defmethod (@method~ method Type)
+               impl
+               rest ...)))))
+
+    (syntax-case stx (@method)
+      ((_ {method Type} impl rest ...)
+       (and (identifier? #'method)
+            (identifier? #'Type))
+       (if (syntax-local-class-type-info? #'Type)
+         (if (interface-declaration? #'(rest ...))
+           (generate-interface-method #'method #'Type #'impl #'(rest ...))
+           (generate-class-method #'method #'Type #'impl #'(rest ...)))
+         (raise-syntax-error #f "not defined as class" stx #'Type)))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
       ((_ receiver expr)
        (with-syntax ((receiver (core-quote-syntax #'receiver)))
-         #'(begin-annotation (@receiver receiver) expr)))))
+         #'(begin-annotation (@receiver receiver) expr)))
+      ((recur receiver expr rest ...)
+       #'(recur receiver (let () expr rest ...)))))
 
   (defsyntax (let/c stx)
     (syntax-case stx (=>)
