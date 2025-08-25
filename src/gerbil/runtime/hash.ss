@@ -244,16 +244,19 @@ namespace: #f
 
 ;; locked hash table methods
 (defrules deflocked-hash-method ()
-  ((_ (method arg ...) begin-lock hash-method end-lock)
+  ((_ (method arg ...) begin-lock hash-method end-lock continue)
    (defmethod {method locked-hash-table}
      (lambda (self arg ...)
        (let ((h (&locked-hash-table-table self))
              (l (&locked-hash-table-lock self)))
-         (dynamic-wind
-             (cut begin-lock l)
-             (cut hash-method h arg ...)
-             (cut end-lock l))))
-     interface: HashTable)))
+         (continue
+          (dynamic-wind
+              (cut begin-lock l)
+              (cut hash-method h arg ...)
+              (cut end-lock l)))))
+     interface: HashTable))
+  ((recur (method arg ...) begin-lock hash-method end-lock)
+   (recur (method arg ...) begin-lock hash-method end-lock identity)))
 
 (deflocked-hash-method (ref key default)
   &Locker-read-lock!
@@ -263,37 +266,44 @@ namespace: #f
 (deflocked-hash-method (set! key value)
   &Locker-write-lock!
   &HashTable-set!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (update! key update default)
   &Locker-write-lock!
   &HashTable-update!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (delete! key)
   &Locker-write-lock!
   &HashTable-delete!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (for-each proc)
   &Locker-read-lock!
   &HashTable-for-each
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  void)
 
 (deflocked-hash-method (length)
   &Locker-read-lock!
   &HashTable-length
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  (cut : <> :fixnum))
 
 (deflocked-hash-method (copy)
   &Locker-read-lock!
   &HashTable-copy
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  HashTable)
 
 (deflocked-hash-method (clear!)
   &Locker-write-lock!
   &HashTable-clear!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 ;; checked hash table methods
 ;; make mutexes implement the hash table lock interface
