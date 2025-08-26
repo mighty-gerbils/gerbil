@@ -710,20 +710,20 @@ package: gerbil/runtime
              .
              _%locked-hash-table::HashTable::for-each113077%_)
             (HashTable::copy . _%locked-hash-table::HashTable::copy113081%_)
-            (HashTable::update!
-             .
-             _%locked-hash-table::HashTable::update!113073%_)
             (HashTable::set! . _%locked-hash-table::HashTable::set!113071%_)
             (HashTable::length
              .
              _%locked-hash-table::HashTable::length113079%_)
+            (HashTable::ref . _%locked-hash-table::HashTable::ref113069%_)
             (HashTable::delete!
              .
              _%locked-hash-table::HashTable::delete!113075%_)
+            (HashTable::update!
+             .
+             _%locked-hash-table::HashTable::update!113073%_)
             (HashTable::clear!
              .
-             _%locked-hash-table::HashTable::clear!113083%_)
-            (HashTable::ref . _%locked-hash-table::HashTable::ref113069%_))))
+             _%locked-hash-table::HashTable::clear!113083%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -769,20 +769,20 @@ package: gerbil/runtime
              .
              _%checked-hash-table::HashTable::for-each113304%_)
             (HashTable::copy . _%checked-hash-table::HashTable::copy113308%_)
-            (HashTable::update!
-             .
-             _%checked-hash-table::HashTable::update!113300%_)
             (HashTable::set! . _%checked-hash-table::HashTable::set!113298%_)
             (HashTable::length
              .
              _%checked-hash-table::HashTable::length113306%_)
+            (HashTable::ref . _%checked-hash-table::HashTable::ref113296%_)
             (HashTable::delete!
              .
              _%checked-hash-table::HashTable::delete!113302%_)
+            (HashTable::update!
+             .
+             _%checked-hash-table::HashTable::update!113300%_)
             (HashTable::clear!
              .
-             _%checked-hash-table::HashTable::clear!113310%_)
-            (HashTable::ref . _%checked-hash-table::HashTable::ref113296%_))))
+             _%checked-hash-table::HashTable::clear!113310%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
