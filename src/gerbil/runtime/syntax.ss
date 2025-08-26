@@ -88,7 +88,9 @@ namespace: #f
           (match rest
             ([hd . rest]
              (match hd
-               (['@ loc] loc)
+               (['@ loc]
+                (or (__AST-source loc)
+                    (lp rest)))
                (else (lp rest))))
             (else #f))))
 
