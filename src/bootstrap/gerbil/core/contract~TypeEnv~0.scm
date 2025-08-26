@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1755903071)
+  (define gerbil/core/contract~TypeEnv::timestamp 1756224510)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type
@@ -13,10 +13,10 @@
     (define gerbil/core/contract~TypeEnv#type-env?
       (make-class-predicate gerbil/core/contract~TypeEnv#type-env::t))
     (define gerbil/core/contract~TypeEnv#make-type-env
-      (lambda _%$args49462%_
+      (lambda _%$args49473%_
         (apply make-instance
                gerbil/core/contract~TypeEnv#type-env::t
-               _%$args49462%_)))
+               _%$args49473%_)))
     (define gerbil/core/contract~TypeEnv#type-env-var
       (make-class-slot-accessor gerbil/core/contract~TypeEnv#type-env::t 'var))
     (define gerbil/core/contract~TypeEnv#type-env-type
@@ -79,22 +79,22 @@
       (lambda ()
         (gx#syntax-local-value (gx#syntax-local-introduce '@@type) false)))
     (define gerbil/core/contract~TypeEnv#type-env-lookup
-      (lambda (_%var49452%_)
-        (let _%loop49454%_ ((_%te49456%_
+      (lambda (_%var49463%_)
+        (let _%loop49465%_ ((_%te49467%_
                              (gerbil/core/contract~TypeEnv#current-type-env)))
-          (if (not _%te49456%_)
+          (if (not _%te49467%_)
               '#f
               (if (gx#free-identifier=?
-                   _%var49452%_
+                   _%var49463%_
                    (##direct-structure-ref
-                    _%te49456%_
+                    _%te49467%_
                     '1
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f))
-                  _%te49456%_
-                  (_%loop49454%_
+                  _%te49467%_
+                  (_%loop49465%_
                    (##direct-structure-ref
-                    _%te49456%_
+                    _%te49467%_
                     '4
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f)))))))))

@@ -19,7 +19,7 @@
 (interface Registry
   (add-server id addrs roles) => :void
   (remove-server id) => :void
-  (lookup-server id) => :list
+  (lookup-server id) => :t
   (lookup-servers/role role) => :list
   (list-servers) => :list
   (flush) => :void
