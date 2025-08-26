@@ -392,6 +392,21 @@ package: gerbil/core
              origin:
              gerbil/core/contract~InterfaceInfo)))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-method-signature
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
    (@lambda 2
             #f

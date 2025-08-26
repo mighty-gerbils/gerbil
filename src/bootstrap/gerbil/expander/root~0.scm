@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1755903076)
+  (define gerbil/expander/root::timestamp 1756224516)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -262,603 +262,597 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     (define gx#root-context:::init!__%
-      (lambda (_%self134831135911%_ _%bind?135913%_)
-        (let* ((_%self135915%_ _%self134831135911%_)
-               (_%self135917%_ _%self135915%_))
-          (if (##fx< '2 (##structure-length _%self135917%_))
+      (lambda (_%self139544%_ _%bind?139545%_)
+        (let ((_%self139548%_ _%self139544%_))
+          (if (##fx< '2 (##structure-length _%self139548%_))
               (begin
-                (##unchecked-structure-set! _%self135917%_ 'root '1 '#f '#f)
+                (##unchecked-structure-set! _%self139548%_ 'root '1 '#f '#f)
                 (##unchecked-structure-set!
-                 _%self135917%_
+                 _%self139548%_
                  (make-hash-table-eq)
                  '2
                  '#f
                  '#f)
                 '#!void)
               (error '"struct-instance-init!: too many arguments for struct"
-                     _%self135917%_
+                     _%self139548%_
                      '2
-                     (##structure-length _%self135917%_)))
-          (if _%bind?135913%_
+                     (##structure-length _%self139548%_)))
+          (if _%bind?139545%_
               (begin
-                (let ((__method135980
+                (let ((__method139612
                        (__method-ref
-                        _%self135917%_
+                        _%self139548%_
                         'bind-core-syntax-expanders!)))
-                  (if __method135980
-                      (__method135980 _%self135917%_)
+                  (if __method139612
+                      (__method139612 _%self139548%_)
                       (begin
                         (error '"Missing method"
-                               _%self135917%_
+                               _%self139548%_
                                'bind-core-syntax-expanders!)
                         '#!void)))
-                (let ((__method135981
+                (let ((__method139613
                        (__method-ref
-                        _%self135917%_
+                        _%self139548%_
                         'bind-core-macro-expanders!)))
-                  (if __method135981
-                      (__method135981 _%self135917%_)
+                  (if __method139613
+                      (__method139613 _%self139548%_)
                       (begin
                         (error '"Missing method"
-                               _%self135917%_
+                               _%self139548%_
                                'bind-core-macro-expanders!)
                         '#!void)))
-                (let ((__method135982
-                       (__method-ref _%self135917%_ 'bind-core-features!)))
-                  (if __method135982
-                      (__method135982 _%self135917%_)
+                (let ((__method139614
+                       (__method-ref _%self139548%_ 'bind-core-features!)))
+                  (if __method139614
+                      (__method139614 _%self139548%_)
                       (begin
                         (error '"Missing method"
-                               _%self135917%_
+                               _%self139548%_
                                'bind-core-features!)
                         '#!void))))
               '#!void))))
     (define gx#root-context:::init!__0
-      (lambda (_%self134831135930%_)
-        (let ((_%bind?135932%_ '#t))
-          (gx#root-context:::init!__% _%self134831135930%_ _%bind?135932%_))))
+      (lambda (_%self139562%_)
+        (let ((_%bind?139564%_ '#t))
+          (gx#root-context:::init!__% _%self139562%_ _%bind?139564%_))))
     (define gx#root-context:::init!
-      (lambda _g135984_
-        (let ((_g135985_ (##length _g135984_)))
-          (cond ((##fx= _g135985_ 1)
-                 (apply gx#root-context:::init!__0 _g135984_))
-                ((##fx= _g135985_ 2)
-                 (apply gx#root-context:::init!__% _g135984_))
+      (lambda _g139616_
+        (let ((_g139617_ (##length _g139616_)))
+          (cond ((##fx= _g139617_ 1)
+                 (apply gx#root-context:::init!__0 _g139616_))
+                ((##fx= _g139617_ 2)
+                 (apply gx#root-context:::init!__% _g139616_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#root-context:::init!
-                  _g135984_))))))
+                  _g139616_))))))
     (define gx#root-context:::init!::specialize
-      (lambda (__klass135936 __method-table135937)
-        (let ((__bind-core-features!135938
+      (lambda (__klass139568 __method-table139569)
+        (let ((__bind-core-syntax-expanders!139570
                (__make-promise
                 (lambda ()
-                  (let ((__method135941
+                  (let ((__method139573
                          (symbolic-table-ref
-                          __method-table135937
-                          'bind-core-features!
-                          '#f)))
-                    (if __method135941
-                        __method135941
-                        (error '"Missing method" 'bind-core-features!))))))
-              (__bind-core-syntax-expanders!135939
-               (__make-promise
-                (lambda ()
-                  (let ((__method135942
-                         (symbolic-table-ref
-                          __method-table135937
+                          __method-table139569
                           'bind-core-syntax-expanders!
                           '#f)))
-                    (if __method135942
-                        __method135942
+                    (if __method139573
+                        __method139573
                         (error '"Missing method"
                                'bind-core-syntax-expanders!))))))
-              (__bind-core-macro-expanders!135940
+              (__bind-core-features!139571
                (__make-promise
                 (lambda ()
-                  (let ((__method135943
+                  (let ((__method139574
                          (symbolic-table-ref
-                          __method-table135937
+                          __method-table139569
+                          'bind-core-features!
+                          '#f)))
+                    (if __method139574
+                        __method139574
+                        (error '"Missing method" 'bind-core-features!))))))
+              (__bind-core-macro-expanders!139572
+               (__make-promise
+                (lambda ()
+                  (let ((__method139575
+                         (symbolic-table-ref
+                          __method-table139569
                           'bind-core-macro-expanders!
                           '#f)))
-                    (if __method135943
-                        __method135943
+                    (if __method139575
+                        __method139575
                         (error '"Missing method"
                                'bind-core-macro-expanders!)))))))
-          (let ((_%opt-lambda135909135927%_
-                 (lambda (_%self134831135911%_ _%bind?135913%_)
-                   (let* ((_%self135915%_ _%self134831135911%_)
-                          (_%self135917%_ _%self135915%_))
-                     (if (##fx< '2 (##structure-length _%self135917%_))
+          (let ((_%opt-lambda139542139559%_
+                 (lambda (_%self139544%_ _%bind?139545%_)
+                   (let ((_%self139548%_ _%self139544%_))
+                     (if (##fx< '2 (##structure-length _%self139548%_))
                          (begin
                            (##unchecked-structure-set!
-                            _%self135917%_
+                            _%self139548%_
                             'root
                             '1
                             '#f
                             '#f)
                            (##unchecked-structure-set!
-                            _%self135917%_
+                            _%self139548%_
                             (make-hash-table-eq)
                             '2
                             '#f
                             '#f)
                            '#!void)
                          (error '"struct-instance-init!: too many arguments for struct"
-                                _%self135917%_
+                                _%self139548%_
                                 '2
-                                (##structure-length _%self135917%_)))
-                     (if _%bind?135913%_
+                                (##structure-length _%self139548%_)))
+                     (if _%bind?139545%_
                          (begin
-                           ((force __bind-core-syntax-expanders!135939)
-                            _%self135917%_)
-                           ((force __bind-core-macro-expanders!135940)
-                            _%self135917%_)
-                           ((force __bind-core-features!135938)
-                            _%self135917%_))
+                           ((force __bind-core-syntax-expanders!139570)
+                            _%self139548%_)
+                           ((force __bind-core-macro-expanders!139572)
+                            _%self139548%_)
+                           ((force __bind-core-features!139571)
+                            _%self139548%_))
                          '#!void)))))
-            (lambda _g135986_
-              (let ((_g135987_ (##length _g135986_)))
-                (cond ((##fx= _g135987_ 1)
-                       (apply (lambda (_%self134831135930%_)
-                                (let ((_%bind?135932%_ '#t))
-                                  (_%opt-lambda135909135927%_
-                                   _%self134831135930%_
-                                   _%bind?135932%_)))
-                              _g135986_))
-                      ((##fx= _g135987_ 2)
-                       (apply _%opt-lambda135909135927%_ _g135986_))
+            (lambda _g139618_
+              (let ((_g139619_ (##length _g139618_)))
+                (cond ((##fx= _g139619_ 1)
+                       (apply (lambda (_%self139562%_)
+                                (let ((_%bind?139564%_ '#t))
+                                  (_%opt-lambda139542139559%_
+                                   _%self139562%_
+                                   _%bind?139564%_)))
+                              _g139618_))
+                      ((##fx= _g139619_ 2)
+                       (apply _%opt-lambda139542139559%_ _g139618_))
                       (else
                        (##raise-wrong-number-of-arguments-exception
                         'case-lambda-dispatch
-                        _g135986_)))))))))
+                        _g139618_)))))))))
     (bind-specializer!
      gx#root-context:::init!
      gx#root-context:::init!::specialize)
     (__bind-method!__% gx#root-context::t ':init! gx#root-context:::init! '#f)
     (define gx#top-context:::init!__%
-      (lambda (_%self134832135754%_ _%super135756%_)
-        (let* ((_%self135758%_ _%self134832135754%_)
-               (_%self135760%_ _%self135758%_)
-               (_%super135776%_
-                (let ((_%$e135770%_ _%super135756%_))
-                  (if _%$e135770%_
-                      _%$e135770%_
-                      (let ((_%$e135773%_ (gx#core-context-root__0)))
-                        (if _%$e135773%_
-                            _%$e135773%_
-                            (let ((__obj135983
+      (lambda (_%self139389%_ _%super139390%_)
+        (let* ((_%self139393%_ _%self139389%_)
+               (_%super139409%_
+                (let ((_%$e139403%_ _%super139390%_))
+                  (if _%$e139403%_
+                      _%$e139403%_
+                      (let ((_%$e139406%_ (gx#core-context-root__0)))
+                        (if _%$e139406%_
+                            _%$e139406%_
+                            (let ((__obj139615
                                    (##structure gx#root-context::t '#f '#f)))
-                              (gx#root-context:::init!__0 __obj135983)
-                              __obj135983)))))))
-          (if (##fx< '5 (##structure-length _%self135760%_))
+                              (gx#root-context:::init!__0 __obj139615)
+                              __obj139615)))))))
+          (if (##fx< '5 (##structure-length _%self139393%_))
               (begin
-                (##unchecked-structure-set! _%self135760%_ 'top '1 '#f '#f)
+                (##unchecked-structure-set! _%self139393%_ 'top '1 '#f '#f)
                 (##unchecked-structure-set!
-                 _%self135760%_
+                 _%self139393%_
                  (make-hash-table-eq)
                  '2
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self135760%_
-                 _%super135776%_
+                 _%self139393%_
+                 _%super139409%_
                  '3
                  '#f
                  '#f)
-                (##unchecked-structure-set! _%self135760%_ '#f '4 '#f '#f)
-                (##unchecked-structure-set! _%self135760%_ '#f '5 '#f '#f)
+                (##unchecked-structure-set! _%self139393%_ '#f '4 '#f '#f)
+                (##unchecked-structure-set! _%self139393%_ '#f '5 '#f '#f)
                 '#!void)
               (error '"struct-instance-init!: too many arguments for struct"
-                     _%self135760%_
+                     _%self139393%_
                      '5
-                     (##structure-length _%self135760%_))))))
+                     (##structure-length _%self139393%_))))))
     (define gx#top-context:::init!__0
-      (lambda (_%self134832135781%_)
-        (let ((_%super135783%_ '#f))
-          (gx#top-context:::init!__% _%self134832135781%_ _%super135783%_))))
+      (lambda (_%self139414%_)
+        (let ((_%super139416%_ '#f))
+          (gx#top-context:::init!__% _%self139414%_ _%super139416%_))))
     (define gx#top-context:::init!
-      (lambda _g135988_
-        (let ((_g135989_ (##length _g135988_)))
-          (cond ((##fx= _g135989_ 1)
-                 (apply gx#top-context:::init!__0 _g135988_))
-                ((##fx= _g135989_ 2)
-                 (apply gx#top-context:::init!__% _g135988_))
+      (lambda _g139620_
+        (let ((_g139621_ (##length _g139620_)))
+          (cond ((##fx= _g139621_ 1)
+                 (apply gx#top-context:::init!__0 _g139620_))
+                ((##fx= _g139621_ 2)
+                 (apply gx#top-context:::init!__% _g139620_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#top-context:::init!
-                  _g135988_))))))
+                  _g139620_))))))
     (__bind-method!__% gx#top-context::t ':init! gx#top-context:::init! '#f)
     (define gx#expander-context::bind-core-syntax-expanders!__%
-      (lambda (_%self134833135472%_ _%bindings135474%_)
-        (let* ((_%self135476%_ _%self134833135472%_)
-               (_%self135478%_ _%self135476%_))
+      (lambda (_%self139109%_ _%bindings139110%_)
+        (let ((_%self139113%_ _%self139109%_))
           (for-each
-           (lambda (_%bind135488%_)
-             (let* ((_%bind135489135496%_ _%bind135488%_)
-                    (_%E135491135500%_
+           (lambda (_%bind139123%_)
+             (let* ((_%bind139124139131%_ _%bind139123%_)
+                    (_%E139126139135%_
                      (lambda ()
                        (error '"No clause matching"
-                              _%bind135489135496%_
+                              _%bind139124139131%_
                               '([id . rest]))
                        '#!void))
-                    (_%K135492135609%_
-                     (lambda (_%rest135503%_ _%id135504%_)
+                    (_%K139127139244%_
+                     (lambda (_%rest139138%_ _%id139139%_)
                        (gx#core-context-put!
-                        _%self135478%_
-                        _%id135504%_
+                        _%self139113%_
+                        _%id139139%_
                         (##structure
                          gx#syntax-binding::t
-                         _%id135504%_
-                         _%id135504%_
+                         _%id139139%_
+                         _%id139139%_
                          '#f
-                         (let* ((_%rest135505135516%_ _%rest135503%_)
-                                (_%E135507135520%_
+                         (let* ((_%rest139140139151%_ _%rest139138%_)
+                                (_%E139142139155%_
                                  (lambda ()
                                    (error '"No clause matching"
-                                          _%rest135505135516%_
+                                          _%rest139140139151%_
                                           '([key expander compiler]))
                                    '#!void))
-                                (_%K135508135585%_
-                                 (lambda (_%compiler135523%_
-                                          _%expander135524%_
-                                          _%key135525%_)
-                                   ((let* ((_%key135526135539%_ _%key135525%_)
-                                           (_%E135532135543%_
+                                (_%K139143139220%_
+                                 (lambda (_%compiler139158%_
+                                          _%expander139159%_
+                                          _%key139160%_)
+                                   ((let* ((_%key139161139174%_ _%key139160%_)
+                                           (_%E139167139178%_
                                             (lambda ()
                                               (error '"No clause matching"
-                                                     _%key135526135539%_
+                                                     _%key139161139174%_
                                                      '(top:)
                                                      '(module:)
                                                      '(define:)
                                                      '(special:)
                                                      '(expr:))
                                               '#!void)))
-                                      (let ((_%K135537135579%_
+                                      (let ((_%K139172139214%_
                                              (lambda ()
                                                gx#make-top-special-form))
-                                            (_%K135536135572%_
+                                            (_%K139171139207%_
                                              (lambda ()
                                                gx#make-module-special-form))
-                                            (_%K135535135564%_
+                                            (_%K139170139199%_
                                              (lambda ()
                                                gx#make-definition-form))
-                                            (_%K135534135556%_
+                                            (_%K139169139191%_
                                              (lambda () gx#make-special-form))
-                                            (_%K135533135548%_
+                                            (_%K139168139183%_
                                              (lambda ()
                                                gx#make-expression-form)))
-                                        (let* ((_%try-match135531135551%_
+                                        (let* ((_%try-match139166139186%_
                                                 (lambda ()
-                                                  (if (##eq? _%key135526135539%_
+                                                  (if (##eq? _%key139161139174%_
                                                              'expr:)
-                                                      (_%K135533135548%_)
-                                                      (_%E135532135543%_))))
-                                               (_%try-match135530135559%_
+                                                      (_%K139168139183%_)
+                                                      (_%E139167139178%_))))
+                                               (_%try-match139165139194%_
                                                 (lambda ()
-                                                  (if (##eq? _%key135526135539%_
+                                                  (if (##eq? _%key139161139174%_
                                                              'special:)
-                                                      (_%K135534135556%_)
-                                                      (_%try-match135531135551%_))))
-                                               (_%try-match135529135567%_
+                                                      (_%K139169139191%_)
+                                                      (_%try-match139166139186%_))))
+                                               (_%try-match139164139202%_
                                                 (lambda ()
-                                                  (if (##eq? _%key135526135539%_
+                                                  (if (##eq? _%key139161139174%_
                                                              'define:)
-                                                      (_%K135535135564%_)
-                                                      (_%try-match135530135559%_))))
-                                               (_%try-match135528135575%_
+                                                      (_%K139170139199%_)
+                                                      (_%try-match139165139194%_))))
+                                               (_%try-match139163139210%_
                                                 (lambda ()
-                                                  (if (##eq? _%key135526135539%_
+                                                  (if (##eq? _%key139161139174%_
                                                              'module:)
-                                                      (_%K135536135572%_)
-                                                      (_%try-match135529135567%_)))))
-                                          (if (##eq? _%key135526135539%_ 'top:)
-                                              (_%K135537135579%_)
-                                              (_%try-match135528135575%_)))))
-                                    _%expander135524%_
-                                    _%id135504%_
-                                    (let ((_%$e135582%_ _%compiler135523%_))
-                                      (if _%$e135582%_
-                                          _%$e135582%_
+                                                      (_%K139171139207%_)
+                                                      (_%try-match139164139202%_)))))
+                                          (if (##eq? _%key139161139174%_ 'top:)
+                                              (_%K139172139214%_)
+                                              (_%try-match139163139210%_)))))
+                                    _%expander139159%_
+                                    _%id139139%_
+                                    (let ((_%$e139217%_ _%compiler139158%_))
+                                      (if _%$e139217%_
+                                          _%$e139217%_
                                           gx#core-compile-top-error))))))
-                           (if (pair? _%rest135505135516%_)
-                               (let ((_%hd135509135588%_
-                                      (##car _%rest135505135516%_))
-                                     (_%tl135510135590%_
-                                      (##cdr _%rest135505135516%_)))
-                                 (let ((_%key135593%_ _%hd135509135588%_))
-                                   (if (pair? _%tl135510135590%_)
-                                       (let ((_%hd135511135595%_
-                                              (##car _%tl135510135590%_))
-                                             (_%tl135512135597%_
-                                              (##cdr _%tl135510135590%_)))
-                                         (let ((_%expander135600%_
-                                                _%hd135511135595%_))
-                                           (if (pair? _%tl135512135597%_)
-                                               (let ((_%hd135513135602%_
-                                                      (##car _%tl135512135597%_))
-                                                     (_%tl135514135604%_
-                                                      (##cdr _%tl135512135597%_)))
-                                                 (let ((_%compiler135607%_
-                                                        _%hd135513135602%_))
-                                                   (if (null? _%tl135514135604%_)
-                                                       (_%K135508135585%_
-                                                        _%compiler135607%_
-                                                        _%expander135600%_
-                                                        _%key135593%_)
-                                                       (_%E135507135520%_))))
-                                               (_%E135507135520%_))))
-                                       (_%E135507135520%_))))
-                               (_%E135507135520%_))))))))
-               (if (pair? _%bind135489135496%_)
-                   (let ((_%hd135493135612%_ (##car _%bind135489135496%_))
-                         (_%tl135494135614%_ (##cdr _%bind135489135496%_)))
-                     (let* ((_%id135617%_ _%hd135493135612%_)
-                            (_%rest135619%_ _%tl135494135614%_))
-                       (_%K135492135609%_ _%rest135619%_ _%id135617%_)))
-                   (_%E135491135500%_))))
-           _%bindings135474%_))))
+                           (if (pair? _%rest139140139151%_)
+                               (let ((_%hd139144139223%_
+                                      (##car _%rest139140139151%_))
+                                     (_%tl139145139225%_
+                                      (##cdr _%rest139140139151%_)))
+                                 (let ((_%key139228%_ _%hd139144139223%_))
+                                   (if (pair? _%tl139145139225%_)
+                                       (let ((_%hd139146139230%_
+                                              (##car _%tl139145139225%_))
+                                             (_%tl139147139232%_
+                                              (##cdr _%tl139145139225%_)))
+                                         (let ((_%expander139235%_
+                                                _%hd139146139230%_))
+                                           (if (pair? _%tl139147139232%_)
+                                               (let ((_%hd139148139237%_
+                                                      (##car _%tl139147139232%_))
+                                                     (_%tl139149139239%_
+                                                      (##cdr _%tl139147139232%_)))
+                                                 (let ((_%compiler139242%_
+                                                        _%hd139148139237%_))
+                                                   (if (null? _%tl139149139239%_)
+                                                       (_%K139143139220%_
+                                                        _%compiler139242%_
+                                                        _%expander139235%_
+                                                        _%key139228%_)
+                                                       (_%E139142139155%_))))
+                                               (_%E139142139155%_))))
+                                       (_%E139142139155%_))))
+                               (_%E139142139155%_))))))))
+               (if (pair? _%bind139124139131%_)
+                   (let ((_%hd139128139247%_ (##car _%bind139124139131%_))
+                         (_%tl139129139249%_ (##cdr _%bind139124139131%_)))
+                     (let* ((_%id139252%_ _%hd139128139247%_)
+                            (_%rest139254%_ _%tl139129139249%_))
+                       (_%K139127139244%_ _%rest139254%_ _%id139252%_)))
+                   (_%E139126139135%_))))
+           _%bindings139110%_))))
     (define gx#expander-context::bind-core-syntax-expanders!__0
-      (lambda (_%self134833135624%_)
-        (let ((_%bindings135626%_ gx#*core-syntax-expanders*))
+      (lambda (_%self139259%_)
+        (let ((_%bindings139261%_ gx#*core-syntax-expanders*))
           (gx#expander-context::bind-core-syntax-expanders!__%
-           _%self134833135624%_
-           _%bindings135626%_))))
+           _%self139259%_
+           _%bindings139261%_))))
     (define gx#expander-context::bind-core-syntax-expanders!
-      (lambda _g135990_
-        (let ((_g135991_ (##length _g135990_)))
-          (cond ((##fx= _g135991_ 1)
+      (lambda _g139622_
+        (let ((_g139623_ (##length _g139622_)))
+          (cond ((##fx= _g139623_ 1)
                  (apply gx#expander-context::bind-core-syntax-expanders!__0
-                        _g135990_))
-                ((##fx= _g135991_ 2)
+                        _g139622_))
+                ((##fx= _g139623_ 2)
                  (apply gx#expander-context::bind-core-syntax-expanders!__%
-                        _g135990_))
+                        _g139622_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#expander-context::bind-core-syntax-expanders!
-                  _g135990_))))))
+                  _g139622_))))))
     (__bind-method!__%
      gx#expander-context::t
      'bind-core-syntax-expanders!
      gx#expander-context::bind-core-syntax-expanders!
      '#f)
     (define gx#expander-context::bind-core-macro-expanders!__%
-      (lambda (_%self134834135231%_ _%bindings135233%_)
-        (let* ((_%self135235%_ _%self134834135231%_)
-               (_%self135237%_ _%self135235%_))
+      (lambda (_%self138870%_ _%bindings138871%_)
+        (let ((_%self138874%_ _%self138870%_))
           (for-each
-           (lambda (_%bind135247%_)
-             (let* ((_%bind135248135255%_ _%bind135247%_)
-                    (_%E135250135259%_
+           (lambda (_%bind138884%_)
+             (let* ((_%bind138885138892%_ _%bind138884%_)
+                    (_%E138887138896%_
                      (lambda ()
                        (error '"No clause matching"
-                              _%bind135248135255%_
+                              _%bind138885138892%_
                               '([id . rest]))
                        '#!void))
-                    (_%K135251135327%_
-                     (lambda (_%rest135262%_ _%id135263%_)
+                    (_%K138888138964%_
+                     (lambda (_%rest138899%_ _%id138900%_)
                        (gx#core-context-put!
-                        _%self135237%_
-                        _%id135263%_
+                        _%self138874%_
+                        _%id138900%_
                         (##structure
                          gx#syntax-binding::t
-                         _%id135263%_
-                         _%id135263%_
+                         _%id138900%_
+                         _%id138900%_
                          '#f
-                         (let* ((_%rest135264135279%_ _%rest135262%_)
-                                (_%E135268135283%_
+                         (let* ((_%rest138901138916%_ _%rest138899%_)
+                                (_%E138905138920%_
                                  (lambda ()
                                    (error '"No clause matching"
-                                          _%rest135264135279%_
+                                          _%rest138901138916%_
                                           '(['=> core-id])
                                           '([proc])
                                           '([]))
                                    '#!void)))
-                           (let ((_%K135273135312%_
-                                  (lambda (_%core-id135310%_)
+                           (let ((_%K138910138949%_
+                                  (lambda (_%core-id138947%_)
                                     (##structure
                                      gx#rename-macro-expander::t
-                                     _%core-id135310%_)))
-                                 (_%K135270135297%_
-                                  (lambda (_%proc135295%_)
+                                     _%core-id138947%_)))
+                                 (_%K138907138934%_
+                                  (lambda (_%proc138932%_)
                                     (##structure
                                      gx#macro-expander::t
-                                     _%proc135295%_)))
-                                 (_%K135269135288%_
+                                     _%proc138932%_)))
+                                 (_%K138906138925%_
                                   (lambda ()
                                     (##structure
                                      gx#reserved-expander::t
-                                     _%id135263%_))))
-                             (let ((_%try-match135267135291%_
+                                     _%id138900%_))))
+                             (let ((_%try-match138904138928%_
                                     (lambda ()
-                                      (if (null? _%rest135264135279%_)
-                                          (_%K135269135288%_)
-                                          (_%E135268135283%_)))))
-                               (if (pair? _%rest135264135279%_)
-                                   (let ((_%tl135275135317%_
-                                          (##cdr _%rest135264135279%_))
-                                         (_%hd135274135315%_
-                                          (##car _%rest135264135279%_)))
-                                     (if (##eq? _%hd135274135315%_ '=>)
-                                         (if (pair? _%tl135275135317%_)
-                                             (let ((_%tl135277135322%_
-                                                    (##cdr _%tl135275135317%_))
-                                                   (_%hd135276135320%_
-                                                    (##car _%tl135275135317%_)))
-                                               (if (null? _%tl135277135322%_)
-                                                   (let ((_%core-id135325%_
-                                                          _%hd135276135320%_))
+                                      (if (null? _%rest138901138916%_)
+                                          (_%K138906138925%_)
+                                          (_%E138905138920%_)))))
+                               (if (pair? _%rest138901138916%_)
+                                   (let ((_%tl138912138954%_
+                                          (##cdr _%rest138901138916%_))
+                                         (_%hd138911138952%_
+                                          (##car _%rest138901138916%_)))
+                                     (if (##eq? _%hd138911138952%_ '=>)
+                                         (if (pair? _%tl138912138954%_)
+                                             (let ((_%tl138914138959%_
+                                                    (##cdr _%tl138912138954%_))
+                                                   (_%hd138913138957%_
+                                                    (##car _%tl138912138954%_)))
+                                               (if (null? _%tl138914138959%_)
+                                                   (let ((_%core-id138962%_
+                                                          _%hd138913138957%_))
                                                      (##structure
                                                       gx#rename-macro-expander::t
-                                                      _%core-id135325%_))
-                                                   (_%E135268135283%_)))
-                                             (if (null? _%tl135275135317%_)
-                                                 (let ((_%proc135305%_
-                                                        _%hd135274135315%_))
+                                                      _%core-id138962%_))
+                                                   (_%E138905138920%_)))
+                                             (if (null? _%tl138912138954%_)
+                                                 (let ((_%proc138942%_
+                                                        _%hd138911138952%_))
                                                    (##structure
                                                     gx#macro-expander::t
-                                                    _%proc135305%_))
-                                                 (_%E135268135283%_)))
-                                         (if (null? _%tl135275135317%_)
-                                             (let ((_%proc135305%_
-                                                    _%hd135274135315%_))
+                                                    _%proc138942%_))
+                                                 (_%E138905138920%_)))
+                                         (if (null? _%tl138912138954%_)
+                                             (let ((_%proc138942%_
+                                                    _%hd138911138952%_))
                                                (##structure
                                                 gx#macro-expander::t
-                                                _%proc135305%_))
-                                             (_%E135268135283%_))))
-                                   (_%try-match135267135291%_))))))))))
-               (if (pair? _%bind135248135255%_)
-                   (let ((_%hd135252135330%_ (##car _%bind135248135255%_))
-                         (_%tl135253135332%_ (##cdr _%bind135248135255%_)))
-                     (let* ((_%id135335%_ _%hd135252135330%_)
-                            (_%rest135337%_ _%tl135253135332%_))
-                       (_%K135251135327%_ _%rest135337%_ _%id135335%_)))
-                   (_%E135250135259%_))))
-           _%bindings135233%_))))
+                                                _%proc138942%_))
+                                             (_%E138905138920%_))))
+                                   (_%try-match138904138928%_))))))))))
+               (if (pair? _%bind138885138892%_)
+                   (let ((_%hd138889138967%_ (##car _%bind138885138892%_))
+                         (_%tl138890138969%_ (##cdr _%bind138885138892%_)))
+                     (let* ((_%id138972%_ _%hd138889138967%_)
+                            (_%rest138974%_ _%tl138890138969%_))
+                       (_%K138888138964%_ _%rest138974%_ _%id138972%_)))
+                   (_%E138887138896%_))))
+           _%bindings138871%_))))
     (define gx#expander-context::bind-core-macro-expanders!__0
-      (lambda (_%self134834135342%_)
-        (let ((_%bindings135344%_ gx#*core-macro-expanders*))
+      (lambda (_%self138979%_)
+        (let ((_%bindings138981%_ gx#*core-macro-expanders*))
           (gx#expander-context::bind-core-macro-expanders!__%
-           _%self134834135342%_
-           _%bindings135344%_))))
+           _%self138979%_
+           _%bindings138981%_))))
     (define gx#expander-context::bind-core-macro-expanders!
-      (lambda _g135992_
-        (let ((_g135993_ (##length _g135992_)))
-          (cond ((##fx= _g135993_ 1)
+      (lambda _g139624_
+        (let ((_g139625_ (##length _g139624_)))
+          (cond ((##fx= _g139625_ 1)
                  (apply gx#expander-context::bind-core-macro-expanders!__0
-                        _g135992_))
-                ((##fx= _g135993_ 2)
+                        _g139624_))
+                ((##fx= _g139625_ 2)
                  (apply gx#expander-context::bind-core-macro-expanders!__%
-                        _g135992_))
+                        _g139624_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#expander-context::bind-core-macro-expanders!
-                  _g135992_))))))
+                  _g139624_))))))
     (__bind-method!__%
      gx#expander-context::t
      'bind-core-macro-expanders!
      gx#expander-context::bind-core-macro-expanders!
      '#f)
     (define gx#expander-context::bind-core-features!
-      (lambda (_%self134835134961%_)
-        (let* ((_%self134964%_ _%self134835134961%_)
-               (_%self134966%_ _%self134964%_))
-          (letrec ((_%linux-variant?134976%_
-                    (lambda (_%sys-type135076%_)
-                      (let* ((_%g135077135085%_
+      (lambda (_%self138601%_)
+        (let ((_%self138604%_ _%self138601%_))
+          (letrec ((_%linux-variant?138615%_
+                    (lambda (_%sys-type138715%_)
+                      (let* ((_%g138716138724%_
                               (__string-split
-                               (symbol->string _%sys-type135076%_)
+                               (symbol->string _%sys-type138715%_)
                                '#\-))
-                             (_%else135079135093%_ (lambda () '#f))
-                             (_%K135081135098%_
-                              (lambda (_%rest135096%_)
-                                (not (null? _%rest135096%_)))))
-                        (if (pair? _%g135077135085%_)
-                            (let ((_%hd135082135101%_
-                                   (##car _%g135077135085%_))
-                                  (_%tl135083135103%_
-                                   (##cdr _%g135077135085%_)))
-                              (if (equal? _%hd135082135101%_ '"linux")
-                                  (let ((_%rest135106%_ _%tl135083135103%_))
-                                    (_%K135081135098%_ _%rest135106%_))
-                                  (_%else135079135093%_)))
-                            (_%else135079135093%_)))))
-                   (_%bsd-variant134977%_
-                    (lambda (_%sys-type135035%_)
-                      (let ((_%sys-type-str135037%_
-                             (symbol->string _%sys-type135035%_)))
-                        (let _%lp135039%_ ((_%rest135041%_
+                             (_%else138718138732%_ (lambda () '#f))
+                             (_%K138720138737%_
+                              (lambda (_%rest138735%_)
+                                (not (null? _%rest138735%_)))))
+                        (if (pair? _%g138716138724%_)
+                            (let ((_%hd138721138740%_
+                                   (##car _%g138716138724%_))
+                                  (_%tl138722138742%_
+                                   (##cdr _%g138716138724%_)))
+                              (if (equal? _%hd138721138740%_ '"linux")
+                                  (let ((_%rest138745%_ _%tl138722138742%_))
+                                    (_%K138720138737%_ _%rest138745%_))
+                                  (_%else138718138732%_)))
+                            (_%else138718138732%_)))))
+                   (_%bsd-variant138616%_
+                    (lambda (_%sys-type138674%_)
+                      (let ((_%sys-type-str138676%_
+                             (symbol->string _%sys-type138674%_)))
+                        (let _%lp138678%_ ((_%rest138680%_
                                             '("openbsd"
                                               "netbsd"
                                               "freebsd"
                                               "darwin")))
-                          (let* ((_%rest135042135050%_ _%rest135041%_)
-                                 (_%else135044135058%_ (lambda () '#f))
-                                 (_%K135046135064%_
-                                  (lambda (_%rest135061%_ _%sys135062%_)
+                          (let* ((_%rest138681138689%_ _%rest138680%_)
+                                 (_%else138683138697%_ (lambda () '#f))
+                                 (_%K138685138703%_
+                                  (lambda (_%rest138700%_ _%sys138701%_)
                                     (if (string-prefix?
-                                         _%sys135062%_
-                                         _%sys-type-str135037%_)
-                                        _%sys135062%_
-                                        (_%lp135039%_ _%rest135061%_)))))
-                            (if (pair? _%rest135042135050%_)
-                                (let ((_%hd135047135067%_
-                                       (##car _%rest135042135050%_))
-                                      (_%tl135048135069%_
-                                       (##cdr _%rest135042135050%_)))
-                                  (let* ((_%sys135072%_ _%hd135047135067%_)
-                                         (_%rest135074%_ _%tl135048135069%_))
-                                    (_%K135046135064%_
-                                     _%rest135074%_
-                                     _%sys135072%_)))
-                                (_%else135044135058%_))))))))
-            (gx#core-bind-feature!__% 'gerbil '#f '0 _%self134966%_)
-            (gx#core-bind-feature!__% (gerbil-system) '#f '0 _%self134966%_)
-            (let* ((_%g134978134990%_ (system-type))
-                   (_%else134980134998%_ (lambda () '#!void))
-                   (_%K134982135011%_
-                    (lambda (_%sys-type135001%_
-                             _%sys-vendor135002%_
-                             _%sys-cpu135003%_)
+                                         _%sys138701%_
+                                         _%sys-type-str138676%_)
+                                        _%sys138701%_
+                                        (_%lp138678%_ _%rest138700%_)))))
+                            (if (pair? _%rest138681138689%_)
+                                (let ((_%hd138686138706%_
+                                       (##car _%rest138681138689%_))
+                                      (_%tl138687138708%_
+                                       (##cdr _%rest138681138689%_)))
+                                  (let* ((_%sys138711%_ _%hd138686138706%_)
+                                         (_%rest138713%_ _%tl138687138708%_))
+                                    (_%K138685138703%_
+                                     _%rest138713%_
+                                     _%sys138711%_)))
+                                (_%else138683138697%_))))))))
+            (gx#core-bind-feature!__% 'gerbil '#f '0 _%self138604%_)
+            (gx#core-bind-feature!__% (gerbil-system) '#f '0 _%self138604%_)
+            (let* ((_%g138617138629%_ (system-type))
+                   (_%else138619138637%_ (lambda () '#!void))
+                   (_%K138621138650%_
+                    (lambda (_%sys-type138640%_
+                             _%sys-vendor138641%_
+                             _%sys-cpu138642%_)
                       (gx#core-bind-feature!__%
-                       _%sys-cpu135003%_
+                       _%sys-cpu138642%_
                        '#f
                        '0
-                       _%self134966%_)
+                       _%self138604%_)
                       (gx#core-bind-feature!__%
-                       _%sys-type135001%_
+                       _%sys-type138640%_
                        '#f
                        '0
-                       _%self134966%_)
-                      (if (_%linux-variant?134976%_ _%sys-type135001%_)
+                       _%self138604%_)
+                      (if (_%linux-variant?138615%_ _%sys-type138640%_)
                           (gx#core-bind-feature!__%
                            (##string->symbol '"linux")
                            '#f
                            '0
-                           _%self134966%_)
-                          (let ((_%$e135006%_
-                                 (_%bsd-variant134977%_ _%sys-type135001%_)))
-                            (if _%$e135006%_
-                                ((lambda (_%sys-prefix135009%_)
+                           _%self138604%_)
+                          (let ((_%$e138645%_
+                                 (_%bsd-variant138616%_ _%sys-type138640%_)))
+                            (if _%$e138645%_
+                                ((lambda (_%sys-prefix138648%_)
                                    (gx#core-bind-feature!__%
                                     (##string->symbol '"bsd")
                                     '#f
                                     '0
-                                    _%self134966%_)
+                                    _%self138604%_)
                                    (gx#core-bind-feature!__%
-                                    (string->symbol _%sys-prefix135009%_)
+                                    (string->symbol _%sys-prefix138648%_)
                                     '#f
                                     '0
-                                    _%self134966%_))
-                                 _%$e135006%_)
+                                    _%self138604%_))
+                                 _%$e138645%_)
                                 '#!void))))))
-              (if (pair? _%g134978134990%_)
-                  (let ((_%hd134983135014%_ (##car _%g134978134990%_))
-                        (_%tl134984135016%_ (##cdr _%g134978134990%_)))
-                    (let ((_%sys-cpu135019%_ _%hd134983135014%_))
-                      (if (pair? _%tl134984135016%_)
-                          (let ((_%hd134985135021%_ (##car _%tl134984135016%_))
-                                (_%tl134986135023%_
-                                 (##cdr _%tl134984135016%_)))
-                            (let ((_%sys-vendor135026%_ _%hd134985135021%_))
-                              (if (pair? _%tl134986135023%_)
-                                  (let ((_%hd134987135028%_
-                                         (##car _%tl134986135023%_))
-                                        (_%tl134988135030%_
-                                         (##cdr _%tl134986135023%_)))
-                                    (let ((_%sys-type135033%_
-                                           _%hd134987135028%_))
-                                      (if (null? _%tl134988135030%_)
-                                          (_%K134982135011%_
-                                           _%sys-type135033%_
-                                           _%sys-vendor135026%_
-                                           _%sys-cpu135019%_)
+              (if (pair? _%g138617138629%_)
+                  (let ((_%hd138622138653%_ (##car _%g138617138629%_))
+                        (_%tl138623138655%_ (##cdr _%g138617138629%_)))
+                    (let ((_%sys-cpu138658%_ _%hd138622138653%_))
+                      (if (pair? _%tl138623138655%_)
+                          (let ((_%hd138624138660%_ (##car _%tl138623138655%_))
+                                (_%tl138625138662%_
+                                 (##cdr _%tl138623138655%_)))
+                            (let ((_%sys-vendor138665%_ _%hd138624138660%_))
+                              (if (pair? _%tl138625138662%_)
+                                  (let ((_%hd138626138667%_
+                                         (##car _%tl138625138662%_))
+                                        (_%tl138627138669%_
+                                         (##cdr _%tl138625138662%_)))
+                                    (let ((_%sys-type138672%_
+                                           _%hd138626138667%_))
+                                      (if (null? _%tl138627138669%_)
+                                          (_%K138621138650%_
+                                           _%sys-type138672%_
+                                           _%sys-vendor138665%_
+                                           _%sys-cpu138658%_)
                                           '#!void)))
                                   '#!void)))
                           '#!void)))
                   '#!void))
             (if (gerbil-runtime-smp?)
-                (gx#core-bind-feature!__% 'gerbil-smp '#f '0 _%self134966%_)
+                (gx#core-bind-feature!__% 'gerbil-smp '#f '0 _%self138604%_)
                 '#!void)))))
     (__bind-method!__%
      gx#expander-context::t

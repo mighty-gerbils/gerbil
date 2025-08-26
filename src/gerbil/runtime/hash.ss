@@ -244,16 +244,19 @@ namespace: #f
 
 ;; locked hash table methods
 (defrules deflocked-hash-method ()
-  ((_ (method arg ...) begin-lock hash-method end-lock)
+  ((_ (method arg ...) begin-lock hash-method end-lock continue)
    (defmethod {method locked-hash-table}
      (lambda (self arg ...)
        (let ((h (&locked-hash-table-table self))
              (l (&locked-hash-table-lock self)))
-         (dynamic-wind
-             (cut begin-lock l)
-             (cut hash-method h arg ...)
-             (cut end-lock l))))
-     interface: HashTable)))
+         (continue
+          (dynamic-wind
+              (cut begin-lock l)
+              (cut hash-method h arg ...)
+              (cut end-lock l)))))
+     interface: HashTable))
+  ((recur (method arg ...) begin-lock hash-method end-lock)
+   (recur (method arg ...) begin-lock hash-method end-lock identity)))
 
 (deflocked-hash-method (ref key default)
   &Locker-read-lock!
@@ -263,37 +266,44 @@ namespace: #f
 (deflocked-hash-method (set! key value)
   &Locker-write-lock!
   &HashTable-set!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (update! key update default)
   &Locker-write-lock!
   &HashTable-update!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (delete! key)
   &Locker-write-lock!
   &HashTable-delete!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 (deflocked-hash-method (for-each proc)
   &Locker-read-lock!
   &HashTable-for-each
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  void)
 
 (deflocked-hash-method (length)
   &Locker-read-lock!
   &HashTable-length
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  (cut : <> :fixnum))
 
 (deflocked-hash-method (copy)
   &Locker-read-lock!
   &HashTable-copy
-  &Locker-read-unlock!)
+  &Locker-read-unlock!
+  HashTable)
 
 (deflocked-hash-method (clear!)
   &Locker-write-lock!
   &HashTable-clear!
-  &Locker-write-unlock!)
+  &Locker-write-unlock!
+  void)
 
 ;; checked hash table methods
 ;; make mutexes implement the hash table lock interface
@@ -533,6 +543,7 @@ namespace: #f
   (def (proc (h : HashTable) . rest) body ...))
 
 (defhash-method (hash-length h)
+  => :fixnum
   (h.length))
 
 (defhash-method (hash-ref h key (default (macro-absent-obj)))
@@ -554,14 +565,17 @@ namespace: #f
   (h.delete! key))
 
 (defhash-method (hash-key? h k)
+  => :boolean
   (not (eq? (h.ref k absent-value) absent-value)))
 
 (defhash-method (hash->list h)
+  => :list
   (let (lst [])
     (h.for-each (lambda (k v) (set! lst (cons (cons k v) lst))))
     lst))
 
 (defhash-method (hash->plist h)
+  => :list
   (let (lst [])
     (h.for-each (lambda (k v) (set! lst (cons* k v lst))))
     lst))
@@ -570,6 +584,7 @@ namespace: #f
   (h.for-each proc))
 
 (def (hash-map (proc : :procedure) (h : HashTable))
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons (proc k v) result))))
     result))
@@ -585,32 +600,52 @@ namespace: #f
     default-value))
 
 (defhash-method (hash-keys h)
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons k result))))
     result))
 
 (defhash-method (hash-values h)
+  => :list
   (let (result [])
     (h.for-each (lambda (k v) (set! result (cons v result))))
     result))
 
 (defhash-method (hash-copy h)
+  => HashTable
   (h.copy))
 
 (defhash-method (hash-clear! h)
   (h.clear!))
 
 (def (hash-merge (h : HashTable) . rest)
+  => HashTable
   (let (copy (h.copy))
     (apply hash-merge! copy rest)
     copy))
 
+(def (hash-merge-right (h : HashTable) . rest)
+  => HashTable
+  (let (copy (h.copy))
+    (apply hash-merge-right! copy rest)
+    copy))
+
 (def (hash-merge! (h : HashTable) . rest)
+  => HashTable
   (for-each
     (lambda ((hr : HashTable))
       (hr.for-each
        (lambda (k v)
          (unless (hash-key? h k)
            (h.set! k v)))))
+    rest)
+  h)
+
+(def (hash-merge-right! (h : HashTable) . rest)
+  => HashTable
+  (for-each
+    (lambda ((hr : HashTable))
+      (hr.for-each
+       (lambda (k v) (h.set! k v))))
     rest)
   h)

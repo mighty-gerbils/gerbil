@@ -46,11 +46,13 @@
   (lambda (self)
     (using ((self :- ssl-server-socket)
             (clisock (server-socket-accept self) :- StreamSocket))
-      (try
-       (ssl-server-upgrade clisock self.ctx)
-       (catch (e)
-         (clisock.close)
-         (raise e)))))
+      (:-
+       (try
+        (ssl-server-upgrade clisock self.ctx)
+        (catch (e)
+          (clisock.close)
+          (raise e)))
+       StreamSocket)))
   interface: ServerSocket)
 
 (def (ssl-server-upgrade clisock ctx)

@@ -8,16 +8,15 @@ namespace: gxc
           :gerbil/compiler/base)
          (%#export #t)
          (%#define-runtime current-compile-method gxc#current-compile-method)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/method~1")))
+                  (%#define-syntax with-context |gxc[:0:]#with-context|))
          (%#begin (%#define-runtime compile-e__0 gxc#compile-e__0)
                   (%#define-runtime compile-e__1 gxc#compile-e__1)
                   (%#define-runtime compile-e gxc#compile-e))
          (%#define-runtime stx-car-e gxc#stx-car-e)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/method~1")))
-                  (%#define-syntax
-                   defcompile-method
-                   |gxc[:0:]#defcompile-method|))
+         (%#define-syntax defcompile-method |gxc[:0:]#defcompile-method|)
          (%#define-runtime void-method gxc#void-method)
          (%#define-runtime false-method gxc#false-method)
          (%#define-runtime true-method gxc#true-method)
