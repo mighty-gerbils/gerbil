@@ -24,16 +24,20 @@
   (let* ((sockopts [SO_REUSEADDR SO_REUSEPORT])
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
-		 (init? (config-get cfg init: #f))
          (addresses (config-get! cfg listen:))
          (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum)))
-	(let (init!
-		  (if (not init?) init?
-			  (let* ((ctx (import-module init? #f #t))
-					 (init! (find-runtime-symbol ctx 'server-init!)))
-				(if (not init!) init!
-					(: (eval init!) :procedure)))))
-					  
+
+	(def (maybe-init-server srv args)
+	  (let* ((init? (config-get cfg init: #f))
+			 (init!
+			  (if (not init?) init?
+				  (let* ((ctx (import-module init? #f #t))
+						 (init! (find-runtime-symbol ctx 'server-init!)))
+					(if (not init!) init!
+						(: (eval init!) :procedure))))))
+		(when (and init! (procedure? init!))
+		  (init! cfg srv args))))
+
       (set-httpd-max-token-length! max-token-length)
       (parameterize ((current-http-server-config cfg))
         (let* ((args [mux: mux
@@ -41,9 +45,8 @@
 					  request-logger: request-logger
 					  addresses ...])
 			   (srv (apply start-http-server! args)))
-		  (when (and init! (procedure? init!))
-			(init! cfg srv args))
-          (thread-join! srv))))))
+		  (maybe-init-server srv args)
+          (thread-join! srv)))))
 
 (def (get-request-logger cfg)
   (alet (path
