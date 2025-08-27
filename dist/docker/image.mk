@@ -20,7 +20,7 @@ endif
 
 # ** The repo to clone
 ifeq ($(REPO),)
-REPO := $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d:)
+REPO := $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d: | sed 's|//[^/]*/||')
 endif
 # ** TAG : For building packages
 TAG := $(shell git describe --tags | sed 's/^v//')
