@@ -31,7 +31,7 @@ $(distros) :
 
 .PHONY: $(distros)
 
-bin/%-gerbil: tag = gerbil/$(*):$(arch)-$(BRANCH)
+bin/%-gerbil: tag ?= gerbil/$(*):$(arch)-$(BRANCH)
 bin/%-gerbil: 
 	 $(docker) build --target $(target) \
 	--rm=true --no-cache \
