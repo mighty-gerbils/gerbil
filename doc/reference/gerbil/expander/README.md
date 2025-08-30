@@ -237,7 +237,7 @@ We import the `:std/format` module context. That does not place `format` in our 
   * `reload? #f` : We don't load it again if already imported.
   * `eval? #t` : If not imported, evaluate the module source.
   
-Because there may be other reasons to import a module but not have it `eval`'d, like for example finding dependecies and other prerequisits for compilation, there must be that argument. 
+Because there may be other reasons to import a module but not have it `eval`'d, like for example finding dependencies and other prerequisites for compilation, there must be that argument. 
 
 ``` scheme
 > (import :gerbil/expander :std/sugar)
