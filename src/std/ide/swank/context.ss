@@ -1,0 +1,87 @@
+(import
+  :std/srfi/1
+  :gerbil/expander
+  ./api
+  ./message)
+(export #t)
+
+(def (swank-context (:mod (current-slime-package)))
+  (def cxt
+    (identity ;; make-top-context
+     (cond
+      ((string? :mod)
+       (if (string=? "TOP" :mod)
+	 (current-expander-context)
+	 (swank-context
+	  (string->symbol (string-append ":" :mod)))))
+      ((not :mod) (current-expander-context))
+      ((symbol? :mod) (import-module :mod #f #t))
+      (else (error "Unknown Module" :mod)))))
+  (parameterize ((current-expander-context cxt))
+    ;; TODO: This should be a shadow context or something.
+    (eval-syntax '(extern namespace: #f
+		       swank:lookup-presented-object
+		       swank:lookup-presented-object-or-lose
+		       swank:get-presented-object
+		       repl-result-history-ref))) 
+  cxt)
+
+(def (swank-eval-in-context form (cxt-name (current-slime-package)))
+  (parameterize ((current-expander-context (swank-context cxt-name)))
+    (eval form)))
+
+(def (list-all-context-names)
+  (list-sort
+   string<?
+   ["TOP"
+    (map
+      (lambda (cxt)
+	(symbol->string (expander-context-id cxt)))
+      (filter module-context?
+	      (map cdr
+		   (hash->list
+		   __module-registry))))
+    ...]))
+
+(def (swank-read-from-string-form
+      str (read-eval? #t))
+  `(call-with-input-string
+    ,str
+    (lambda (p)
+      ;; For "SWANK-PRESENTATIONS" the emacs REPL allows a copy of a
+      ;; past result to actually be that past result.
+
+      ;; So, ```
+      ;; (swank-repl:listener-eval "(eq?
+      ;;  #.(swank:lookup-presented-object-or-lose 2.)
+      ;;  #.(swank:lookup-presented-object-or-lose 2.))\n")
+      ;; ```
+
+      ;; That read time evaluation means we have to allow it.
+      (input-port-readtable-set!
+       p
+       (readtable-eval-allowed?-set
+	(input-port-readtable p) ,read-eval?))
+      (read-all p))))
+  
+(def (swank-read-from-string-in-context
+      str (cxt-name (current-slime-package))
+      (add-begin? #f) (read-eval? #t))
+  (let (form
+	(swank-eval-in-context
+	 (swank-read-from-string-form str read-eval?)
+	 cxt-name))
+	(case (length form)
+	  ((0) (eof-object))
+	  ((1) (if add-begin?
+		 (cons 'begin form)
+		 (car form)))
+	  (else (cons 'begin form)))))
+
+(def-swank (swank:list-all-package-names . _)
+  (list-all-context-names))
+
+(def-swank (swank:set-package name)
+  [name (if (equal? name "TOP") "TOP"
+	    (string-append ":" name))])
+

@@ -1,5 +1,5 @@
 #+TITLE: MacOS: Gerbil has an Apple
-#+EXPORT_FILE_NAME: ../doc/guide/macos.md
+#+EXPORT_FILE_NAME: ../../doc/guide/macos.md
 #+OPTIONS: toc:nil
 
 * Table of Contents :noexport:
@@ -63,7 +63,64 @@ There are a few different ways to build a working =gerbil= on =MacOS=.
      sudo make install
    #+end_src
 
-** Option 1) Use the built in Clang.
+   
+** Using GCC@14
+
+If you want a faster compile time both for building =gerbil= and your
+own binaries =gcc= is the better idea. =GERBIL_GCC= should allow you
+to compile your own binaries with a different compiler if you ever
+need to use the weird MacOS headers that are not quite C.
+
+You can install it using [[https://www.macports.org/][MacPorts]] or [[https://brew.sh/][Homebrew]].
+
+*** MacPorts
+
+#+begin_src sh
+  sudo port -v install gcc14
+  mp () {
+      echo "/opt/local/bin/$1"
+  }
+
+  export CC="$(mp gcc-mp-14)"
+  export GERBIL_GCC="$CC"
+  export CXX="$(mp g++-mp-14)"
+  export LDFLAGS='-Wl,-ld_classic'
+  export GERBIL_BUILD_CORES=4
+
+  cd $(mktemp -d);
+
+  git clone https://github.com/mighty-gerbils/gerbil.git
+
+  cd gerbil;
+  ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+  sudo make install
+
+#+end_src
+
+*** Homebrew
+
+#+begin_src sh
+  brew install gcc@14
+  bp () {
+    echo $(brew --prefix gcc@14)/bin/$1
+  }
+  export CC="$(bp gcc-14)"
+  export GERBIL_GCC="$(bp gcc-14)"
+  export CXX="$(bp g++-14)"
+  export LDFLAGS='-Wl,-ld_classic'
+  export GERBIL_BUILD_CORES=4
+
+  cd $(mktemp -d);
+
+  git clone https://github.com/mighty-gerbils/gerbil.git
+
+  cd gerbil;
+  ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+  sudo make install
+
+#+end_src
+
+** Option 2) Use the built in Clang.
 
 If you want to be as native as possible this is the easy way. Most of
 us have MacPorts and/or Homebrew and I can totally recommend using
@@ -82,61 +139,6 @@ without setting =GERBIL_GCC= is something so it's a toss up.
      ./configure --prefix=/opt/gerbil && make
      sudo make install
    #+end_src
-
-** Option 2) Using GCC@13
-
-If you want a faster compile time both for building =gerbil= and your
-own binaries =gcc= is the better idea. =GERBIL_GCC= should allow you
-to compile your own binaries with a different compiler if you ever
-need to use the weird MacOS headers that are not quite C.
-
-You can install it using [[https://www.macports.org/][MacPorts]] or [[https://brew.sh/][Homebrew]].
-
-*** MacPorts
-
-#+begin_src sh
-  sudo port -v install gcc13
-  mp () {
-      echo "/opt/local/bin/$1"
-  }
-  export CC="$(mp gcc-mp-13)"
-  export GERBIL_GCC="$(mp gcc-mp-13)"
-  export CXX="$(mp g++-mp-13)"
-  export LDFLAGS='-Wl,-ld_classic'
-  export GERBIL_BUILD_CORES=4
-
-  cd $(mktemp -d);
-
-  git clone https://github.com/mighty-gerbils/gerbil.git
-
-  cd gerbil;
-  ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
-  sudo make install
-
-#+end_src
-
-*** Homebrew
-
-#+begin_src sh
-  brew install gcc@13
-  bp () {
-    echo $(brew --prefix gcc@13)/bin/$1
-  }
-  export CC="$(bp gcc-13)"
-  export GERBIL_GCC="$(bp gcc-13)"
-  export CXX="$(bp g++-13)"
-  export LDFLAGS='-Wl,-ld_classic'
-  export GERBIL_BUILD_CORES=4
-
-  cd $(mktemp -d);
-
-  git clone https://github.com/mighty-gerbils/gerbil.git
-
-  cd gerbil;
-  ./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
-  sudo make install
-
-#+end_src
 
 
 ** Option 3) Using a more recent Clang

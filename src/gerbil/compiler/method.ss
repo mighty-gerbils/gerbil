@@ -31,19 +31,29 @@ namespace: gxc
 (def current-compile-method
   (make-parameter #f))
 
+;; context propagation
+(defrule (with-context stx expr)
+  (cond
+   ((stx-source stx)
+    => (lambda (source)
+         (parameterize ((current-compile-context
+                         (cons `(@ ,source) (or (current-compile-context) []))))
+           expr)))
+   (else expr)))
+
 ;;; compilation method application
 (def* compile-e
   ((stx)
    (let (self (current-compile-method))
      (cond
       ((method-ref self (stx-car-e stx))
-       => (lambda (method) (declare (not safe)) (method self stx)))
+       => (lambda (method) (declare (not safe)) (with-context stx (method self stx))))
       (else
        (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
   ((self stx)
    (cond
     ((method-ref self (stx-car-e stx))
-     => (lambda (method) (declare (not safe)) (method self stx)))
+     => (lambda (method) (declare (not safe)) (with-context stx (method self stx))))
     (else
      (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
 

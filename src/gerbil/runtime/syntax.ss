@@ -75,27 +75,62 @@ namespace: #f
 (defmethod {display-exception SyntaxError}
   (lambda (self port)
     (def (location)
-      (let lp ((rest self.irritants))
-        (match rest
-          ([hd . rest]
-           (or (__AST-source hd)
-               (lp rest)))
-          (else #f))))
+      (def (from-irritants)
+        (let lp ((rest self.irritants))
+          (match rest
+            ([hd . rest]
+             (or (__AST-source hd)
+                 (lp rest)))
+            (else #f))))
+
+      (def (from-context)
+        (let lp ((rest self.where))
+          (match rest
+            ([hd . rest]
+             (match hd
+               (['@ loc]
+                (or (__AST-source loc)
+                    (lp rest)))
+               (else (lp rest))))
+            (else #f))))
+
+      (or (from-irritants) (from-context)))
 
     (parameterize ((current-output-port port))
       (newline)
       (display        "*** ERROR IN ")
       (cond
        ((location)
-        => (lambda (where)
-             (##display-locat where #t port)))
+        => (lambda (loc)
+             (##display-locat loc #t port)))
        (else (display "?")))
       (newline)
-      (display        "--- Syntax Error")
+      (displayln        "--- Syntax Error: " self.message)
       (cond
        (self.where
-        => (lambda (where) (displayln " at " where ": " self.message)))
-       (else (displayln ": " self.message)))
+        => (lambda (where)
+             (displayln "--- Context: ")
+             (let lp ((rest where))
+               (match rest
+                 ([hd . rest]
+                  (match hd
+                    (['@ ctx]
+                     (cond
+                      ((__AST-source ctx)
+                       => (lambda (loc)
+                            (display " at ")
+                            (##display-locat loc #t port)
+                            (newline)
+                            (lp rest)))
+                      ((AST? ctx)
+                       (display " at ")
+                       (__pp-syntax ctx)
+                       (lp rest))
+                      (else (lp rest))))
+                    (else
+                     (displayln " at " hd)
+                     (lp rest))))
+                 (else (void)))))))
       (match self.irritants
         ([stx . rest]
          (display     "... form:   ")

@@ -50,11 +50,11 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t . t::t)
              unchecked:
              #f
              origin:

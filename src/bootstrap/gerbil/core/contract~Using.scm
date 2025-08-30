@@ -2,5 +2,6 @@
 (begin
   (begin
     (load-module "gerbil/core/contract~TypeCast")
-    (load-module "gerbil/core/contract~TypeReference"))
+    (load-module "gerbil/core/contract~TypeReference")
+    (load-module "gerbil/core/mop"))
   (begin))
