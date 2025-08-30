@@ -147,16 +147,18 @@
 (defrule (defconnect-method proxy-type connect-e)
   (defmethod {connect proxy-type}
     (lambda (self address)
-      (try
-       (let (address (inet-address address))
-         (let (bind-address (connect-e self.sock address))
-           (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-             (set! bsock.laddr bind-address)
-             (set! bsock.raddr address))))
-       self.sock
-       (catch (e)
-         (self.sock.close)
-         (raise e))))
+      (:-
+       (try
+        (let (address (inet-address address))
+          (let (bind-address (connect-e self.sock address))
+            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+              (set! bsock.laddr bind-address)
+              (set! bsock.raddr address))))
+        self.sock
+        (catch (e)
+          (self.sock.close)
+          (raise e)))
+       StreamSocket))
     interface: SOCKS))
 
 (defconnect-method socks4-proxy socks4-connect)
@@ -166,15 +168,17 @@
 (defrule (defbind-method proxy-type bind-e make-server-socket)
   (defmethod {bind proxy-type}
     (lambda (self maybe-address)
-      (try
-       (let (address (and maybe-address (inet-address maybe-address)))
-         (let (bind-address (bind-e self.sock address))
-           (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-             (set! bsock.laddr bind-address))))
-       (ServerSocket (make-server-socket self.sock))
-       (catch (e)
-         (self.sock.close)
-         (raise e))))
+      (:-
+       (try
+        (let (address (and maybe-address (inet-address maybe-address)))
+          (let (bind-address (bind-e self.sock address))
+            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+              (set! bsock.laddr bind-address))))
+        (ServerSocket (make-server-socket self.sock))
+        (catch (e)
+          (self.sock.close)
+          (raise e)))
+       ServerSocket))
     interface: SOCKS))
 
 (defbind-method socks4-proxy socks4-bind make-socks4-server-socket)

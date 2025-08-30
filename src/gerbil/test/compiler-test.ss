@@ -11,7 +11,8 @@
 (export compiler-specializer-test
         compiler-safety-test
         compiler-typed-test
-        compiler-syntax-test)
+        compiler-syntax-test
+        compiler-builtins-test)
 
 (def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
@@ -87,3 +88,12 @@
       (must-compile-and-execute "compiler-test-support/deep-dots.ss"))
     (test-case "interface mixins"
       (must-compile-and-execute "compiler-test-support/interface-mixin.ss"))))
+
+(def compiler-builtins-test
+  (test-suite "compiler builtins support"
+    (test-case "builtins"
+      (must-compile-and-execute "compiler-test-support/builtins.ss"))
+    (test-case "builtins (bad)"
+      ;; TODO: add plenty of bad cases at for lots of builtins --
+      ;; at least for each general shape of builtin type, an example of bad use.
+      (must-not-compile "compiler-test-support/with-output-bad.ss"))))
