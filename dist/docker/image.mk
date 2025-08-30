@@ -14,15 +14,12 @@ ROOT_DIR ::= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # * Git things: BRANCH REPO
 
 # ** We decide what branch of gerbil to build.
-ifeq ($(BRANCH),)
-BRANCH := $(shell git branch --show-current)
-endif
+BRANCH ?= $(shell git branch --show-current)
 
 # ** The repo to clone
-ifeq ($(REPO),)
-REPO := $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d:)
-endif
-# ** TAG : For building packages
+REPO ?= $(shell git remote get-url $(shell git rev-parse --abbrev-ref --symbolic-full-name @{u}|cut -f1 -d/)|cut -f2 -d: | sed 's|//[^/]*/||')
+
+# ** The git TAG : For building packages
 TAG := $(shell git describe --tags | sed 's/^v//')
 
 cores := $(shell nproc)
@@ -34,7 +31,7 @@ $(distros) :
 
 .PHONY: $(distros)
 
-bin/%-gerbil: image = gerbil/$(*):$(arch)-$(BRANCH)
+bin/%-gerbil: tag ?= gerbil/$(*):$(arch)-$(BRANCH)
 bin/%-gerbil: 
 	 $(docker) build --target $(target) \
 	--rm=true --no-cache \
@@ -46,7 +43,7 @@ bin/%-gerbil:
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="no" \
 	--build-arg with_db="YES" \
-	-t $(image) $(ROOT_DIR) && \
+	-t $(tag) $(ROOT_DIR) && \
 	if [ '$(target)' = 'final' ] || true ; \
 	then \
 	  echo '#!/bin/sh' > bin/$*-gerbil && \
