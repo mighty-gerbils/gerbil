@@ -26,6 +26,11 @@
 ;;; ;;; servlets: a boolean indicating whether servlets are enabled
 ;;; enable-servlets: #t | #f
 ;;;
+;;; ;;; init: An init module that exports a `server-init!` procedure,
+;;; ;;; it will be invoked with the current config before running the
+;;; ;;; server.
+;;; init: "/path/to/module/"
+;;;
 ;;; ;;; request-log: [optional] the file path for logging requests
 ;;; request-log: "path/to/request-log-file" | #f
 ;;;
