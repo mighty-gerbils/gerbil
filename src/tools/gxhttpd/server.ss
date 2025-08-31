@@ -16,36 +16,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Server Implementation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (def current-http-server-config
   (make-parameter #f))
+
+(def (import-module-procedure path name)
+  (let* ((ctx (import-module path #f #t))
+		 (sym (find-runtime-symbol ctx name)))
+	(if (not sym) #f
+		(: (eval sym) :procedure))))
 
 (def (run-server! cfg)
   (let* ((sockopts [SO_REUSEADDR SO_REUSEPORT])
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
          (addresses (config-get! cfg listen:))
-         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum)))
-
-	(def (maybe-init-server srv args)
-	  (let* ((init? (config-get cfg init: #f))
-			 (init!
-			  (if (not init?) init?
-				  (let* ((ctx (import-module init? #f #t))
-						 (init! (find-runtime-symbol ctx 'server-init!)))
-					(if (not init!) init!
-						(: (eval init!) :procedure))))))
-		(when (and init! (procedure? init!))
-		  (init! cfg srv args))))
-
+         (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum))
+		 (init! (let ((mod (config-get cfg init: #f)))
+				   (if (not mod) #f
+					   (or (import-module-procedure mod 'server-init!)
+						   (error "Init module does not export `server-init!`"
+							 module: mod))))))
       (set-httpd-max-token-length! max-token-length)
       (parameterize ((current-http-server-config cfg))
-        (let* ((args [mux: mux
+		(when init! (init! cfg))
+        (let ((srv (apply start-http-server!
+					  mux: mux
 					  sockopts: sockopts
 					  request-logger: request-logger
-					  addresses ...])
-			   (srv (apply start-http-server! args)))
-		  (maybe-init-server srv args)
+					  addresses)))
           (thread-join! srv)))))
 
 (def (get-request-logger cfg)
@@ -89,15 +88,13 @@
         (set! self.servlets (make-hash-table-string))
         (set! self.mx (make-mutex 'mux-loader)))
       (for ([path . handler-module] handlers)
-        (let* ((ctx (import-module handler-module #f #t))
-               (init! (find-runtime-symbol ctx 'handler-init!))
-               (handle-request (find-runtime-symbol ctx 'handle-request)))
+        (let ((init! (import-module-procedure handler-module 'handler-init!))
+              (handle-request (import-module-procedure handler-module 'handle-request)))
           (unless handle-request
             (error "handler module does not export handle-request procedure"
               module: handler-module))
-          (when init!
-            ((: (eval init!) :procedure) cfg))
-          (hash-put! self.handlers path (: (eval handle-request) :procedure)))))))
+          (when init! (init! cfg))
+          (hash-put! self.handlers path handle-request))))))
 
 (defmethod {get-handler dynamic-mux}
   (lambda (self host (path :- :string))
