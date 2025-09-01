@@ -18,22 +18,15 @@ namespace: #f
         (inner (make-promise thunk)))
     (make-promise
      (lambda ()
-       (declare (not interrupts-enabled))
-       (let* ((state (##promise-state inner))
-              (value (##vector-ref state 0)))
-         (if (eq? state value)
-           ;; not determined
-           (let (once (vector 0))
-             (dynamic-wind
-                 (lambda ()
-                   (declare (not interrupts-enabled))
-                   (unless (##fx= (##vector-cas! once 0 1 0) 0)
-                     (error "Cannot reenter atomic block"))
-                   (mutex-lock! mx))
-                 (cut ##force-out-of-line inner)
-                 (cut mutex-unlock! mx)))
-           ;; determined
-           value))))))
+       (let (once (vector 0))
+         (dynamic-wind
+             (lambda ()
+               (declare (not interrupts-enabled))
+               (unless (##fx= (##vector-cas! once 0 1 0) 0)
+                 (error "Cannot reenter atomic block"))
+               (mutex-lock! mx))
+             (cut ##force-out-of-line inner)
+             (cut mutex-unlock! mx)))))))
 
 (def* call-with-parameters
   (((thunk : :procedure)) (thunk))

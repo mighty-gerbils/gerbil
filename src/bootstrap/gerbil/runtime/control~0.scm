@@ -1,12 +1,12 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/control::timestamp 1756715351)
+  (define gerbil/runtime/control::timestamp 1756721294)
   (begin
     (define make-promise
-      (lambda (_%thunk102056%_)
-        (if (procedure? _%thunk102056%_)
-            (let ((_%thunk102060%_ _%thunk102056%_))
-              (__make-promise _%thunk102060%_))
+      (lambda (_%thunk102053%_)
+        (if (procedure? _%thunk102053%_)
+            (let ((_%thunk102057%_ _%thunk102053%_))
+              (__make-promise _%thunk102057%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -15,18 +15,18 @@
                'contract:
                'procedure?
                'value:
-               _%thunk102056%_)
+               _%thunk102053%_)
               '#!void))))
     (define __make-promise
-      (lambda (_%thunk102044%_)
-        (let ((_%thunk102047%_ _%thunk102044%_))
+      (lambda (_%thunk102041%_)
+        (let ((_%thunk102044%_ _%thunk102041%_))
           (declare (not safe))
-          (##make-delay-promise _%thunk102047%_))))
+          (##make-delay-promise _%thunk102044%_))))
     (define make-atomic-promise
-      (lambda (_%thunk102030%_)
-        (if (procedure? _%thunk102030%_)
-            (let ((_%thunk102034%_ _%thunk102030%_))
-              (__make-atomic-promise _%thunk102034%_))
+      (lambda (_%thunk102027%_)
+        (if (procedure? _%thunk102027%_)
+            (let ((_%thunk102031%_ _%thunk102027%_))
+              (__make-atomic-promise _%thunk102031%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -35,7 +35,7 @@
                'contract:
                'procedure?
                'value:
-               _%thunk102030%_)
+               _%thunk102027%_)
               '#!void))))
     (define __make-atomic-promise
       (lambda (_%thunk102005%_)
@@ -44,27 +44,32 @@
                 (_%inner102018%_ (__make-promise _%thunk102008%_)))
             (__make-promise
              (lambda ()
-               (declare (not interrupts-enabled))
-               (let* ((_%state102022%_
-                       (let ()
-                         (declare (not safe))
-                         (##promise-state _%inner102018%_)))
-                      (_%value102024%_
-                       (let ()
-                         (declare (not safe))
-                         (##vector-ref _%state102022%_ '0))))
-                 (if (eq? _%state102022%_ _%value102024%_)
-                     (let ((__tmp102071 (lambda () (mutex-lock! _%mx102017%_)))
-                           (__tmp102070
-                            (lambda ()
-                              (let ()
-                                (declare (not safe))
-                                (##force-out-of-line _%inner102018%_))))
-                           (__tmp102069
-                            (lambda () (mutex-unlock! _%mx102017%_))))
-                       (declare (not safe))
-                       (##dynamic-wind __tmp102071 __tmp102070 __tmp102069))
-                     _%value102024%_))))))))
+               (let ((_%once102021%_ (vector '0)))
+                 (let ((__tmp102068
+                        (lambda ()
+                          (declare (not interrupts-enabled))
+                          (begin
+                            (if (let ((__tmp102069
+                                       (let ()
+                                         (declare (not safe))
+                                         (##vector-cas!
+                                          _%once102021%_
+                                          '0
+                                          '1
+                                          '0))))
+                                  (declare (not safe))
+                                  (##fx= __tmp102069 '0))
+                                '#!void
+                                (error '"Cannot reenter atomic block"))
+                            (mutex-lock! _%mx102017%_))))
+                       (__tmp102067
+                        (lambda ()
+                          (let ()
+                            (declare (not safe))
+                            (##force-out-of-line _%inner102018%_))))
+                       (__tmp102066 (lambda () (mutex-unlock! _%mx102017%_))))
+                   (declare (not safe))
+                   (##dynamic-wind __tmp102068 __tmp102067 __tmp102066)))))))))
     (define call-with-parameters__0
       (lambda (_%thunk101957%_)
         (if (procedure? _%thunk101957%_)
@@ -75,7 +80,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/control.ss\"@34.6-34.11"
+               '"\"gerbil/runtime/control.ss\"@32.6-32.11"
                'contract:
                'procedure?
                'value:
@@ -91,7 +96,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/control.ss\"@35.6-35.11"
+               '"\"gerbil/runtime/control.ss\"@33.6-33.11"
                'contract:
                'procedure?
                'value:
@@ -110,25 +115,25 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/control.ss\"@37.6-37.11"
+               '"\"gerbil/runtime/control.ss\"@35.6-35.11"
                'contract:
                'procedure?
                'value:
                _%thunk101987%_)
               '#!void))))
     (define call-with-parameters
-      (lambda _g102072_
-        (let ((_g102073_ (let () (declare (not safe)) (##length _g102072_))))
-          (cond ((let () (declare (not safe)) (##fx= _g102073_ 1))
-                 (apply call-with-parameters__0 _g102072_))
-                ((let () (declare (not safe)) (##fx= _g102073_ 3))
-                 (apply call-with-parameters__1 _g102072_))
-                ((let () (declare (not safe)) (##fx>= _g102073_ 3))
-                 (apply call-with-parameters__2 _g102072_))
+      (lambda _g102070_
+        (let ((_g102071_ (let () (declare (not safe)) (##length _g102070_))))
+          (cond ((let () (declare (not safe)) (##fx= _g102071_ 1))
+                 (apply call-with-parameters__0 _g102070_))
+                ((let () (declare (not safe)) (##fx= _g102071_ 3))
+                 (apply call-with-parameters__1 _g102070_))
+                ((let () (declare (not safe)) (##fx>= _g102071_ 3))
+                 (apply call-with-parameters__2 _g102070_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   call-with-parameters
-                  _g102072_))))))
+                  _g102070_))))))
     (define with-unwind-protect
       (lambda (_%K101932%_ _%fini101933%_)
         (if (procedure? _%K101932%_)
@@ -140,7 +145,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/control.ss\"@42.45-42.49"
+                     '"\"gerbil/runtime/control.ss\"@40.45-40.49"
                      'contract:
                      'procedure?
                      'value:
@@ -150,7 +155,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/control.ss\"@42.28-42.29"
+               '"\"gerbil/runtime/control.ss\"@40.28-40.29"
                'contract:
                'procedure?
                'value:
@@ -161,19 +166,19 @@
         (let* ((_%K101910%_ _%K101906%_)
                (_%fini101919%_ _%fini101907%_)
                (_%once101928%_ (vector '0))
-               (__tmp102074
+               (__tmp102072
                 (lambda ()
                   (declare (not interrupts-enabled))
-                  (if (let ((__tmp102075
+                  (if (let ((__tmp102073
                              (let ()
                                (declare (not safe))
                                (##vector-cas! _%once101928%_ '0 '1 '0))))
                         (declare (not safe))
-                        (##fx= __tmp102075 '0))
+                        (##fx= __tmp102073 '0))
                       '#!void
                       (error '"Cannot re-enter unwind protected block")))))
           (declare (not safe))
-          (##dynamic-wind __tmp102074 _%K101910%_ _%fini101919%_))))
+          (##dynamic-wind __tmp102072 _%K101910%_ _%fini101919%_))))
     (define keyword-dispatch
       (lambda (_%kwt101799%_ _%K101800%_ . _%all-args101801%_)
         (if _%kwt101799%_
@@ -197,10 +202,10 @@
                             (let ()
                               (declare (not safe))
                               (##set-cdr! _%tail101809%_ '()))
-                            (let ((__tmp102076
+                            (let ((__tmp102074
                                    (cons _%keys101803%_ _%args101808%_)))
                               (declare (not safe))
-                              (##apply _%K101800%_ __tmp102076)))
+                              (##apply _%K101800%_ __tmp102074)))
                           (_%K101800%_ _%keys101803%_))))
                    (_%K101814101894%_
                     (lambda (_%hd-rest101829%_ _%hd101830%_)
@@ -216,20 +221,20 @@
                                   (lambda (_%rest101846%_ _%val101847%_)
                                     (if _%kwt101799%_
                                         (let ((_%pos101849%_
-                                               (let ((__tmp102078
+                                               (let ((__tmp102076
                                                       (let ()
                                                         (declare (not safe))
                                                         (##keyword-hash
                                                          _%hd101830%_)))
-                                                     (__tmp102077
+                                                     (__tmp102075
                                                       (let ()
                                                         (declare (not safe))
                                                         (##vector-length
                                                          _%kwt101799%_))))
                                                  (declare (not safe))
                                                  (##fxmodulo
-                                                  __tmp102078
-                                                  __tmp102077))))
+                                                  __tmp102076
+                                                  __tmp102075))))
                                           (if (eq? _%hd101830%_
                                                    (let ()
                                                      (declare (not safe))
@@ -327,16 +332,16 @@
                                           (##set-cdr!
                                            _%tail101809%_
                                            _%hd-rest101829%_))
-                                        (let ((__tmp102079
+                                        (let ((__tmp102077
                                                (cons _%keys101803%_
                                                      _%args101808%_)))
                                           (declare (not safe))
-                                          (##apply _%K101800%_ __tmp102079)))
-                                      (let ((__tmp102080
+                                          (##apply _%K101800%_ __tmp102077)))
+                                      (let ((__tmp102078
                                              (cons _%keys101803%_
                                                    _%hd-rest101829%_)))
                                         (declare (not safe))
-                                        (##apply _%K101800%_ __tmp102080)))
+                                        (##apply _%K101800%_ __tmp102078)))
                                   (if _%args101808%_
                                       (begin
                                         (let ()
@@ -368,7 +373,7 @@
     (define keyword-rest
       (lambda (_%kwt101791%_ . _%drop101792%_)
         (let ((_%rest101794%_ '()))
-          (let ((__tmp102081
+          (let ((__tmp102079
                  (lambda (_%k101796%_ _%v101797%_)
                    (if (let ()
                          (declare (not safe))
@@ -378,5 +383,5 @@
                              (cons _%k101796%_
                                    (cons _%v101797%_ _%rest101794%_)))))))
             (declare (not safe))
-            (raw-table-for-each _%kwt101791%_ __tmp102081))
+            (raw-table-for-each _%kwt101791%_ __tmp102079))
           _%rest101794%_)))))
