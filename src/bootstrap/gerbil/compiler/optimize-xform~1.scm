@@ -1,300 +1,300 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gxc[1]#_g162224_|
+  (define |gxc[1]#_g162641_|
     (##structure
      gx#syntax-quote::t
      '::void
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162226_|
+  (define |gxc[1]#_g162643_|
     (##structure
      gx#syntax-quote::t
      '::collect-mutators::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162228_|
+  (define |gxc[1]#_g162645_|
     (##structure
      gx#syntax-quote::t
      'make-::collect-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162230_|
+  (define |gxc[1]#_g162647_|
     (##structure
      gx#syntax-quote::t
      '::collect-mutators?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162232_|
+  (define |gxc[1]#_g162649_|
     (##structure
      gx#syntax-quote::t
      '::basic-xform-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162234_|
+  (define |gxc[1]#_g162651_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162236_|
+  (define |gxc[1]#_g162653_|
     (##structure
      gx#syntax-quote::t
      'make-::expression-subst
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162238_|
+  (define |gxc[1]#_g162655_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162240_|
+  (define |gxc[1]#_g162657_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162241_|
+  (define |gxc[1]#_g162658_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst-new-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162243_|
+  (define |gxc[1]#_g162660_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162244_|
+  (define |gxc[1]#_g162661_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst-new-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162246_|
+  (define |gxc[1]#_g162663_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162247_|
+  (define |gxc[1]#_g162664_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst-new-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162249_|
+  (define |gxc[1]#_g162666_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162250_|
+  (define |gxc[1]#_g162667_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst-new-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162253_|
+  (define |gxc[1]#_g162670_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst*::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162255_|
+  (define |gxc[1]#_g162672_|
     (##structure
      gx#syntax-quote::t
      'make-::expression-subst*
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162257_|
+  (define |gxc[1]#_g162674_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst*?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162259_|
+  (define |gxc[1]#_g162676_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst*-subst
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162261_|
+  (define |gxc[1]#_g162678_|
     (##structure
      gx#syntax-quote::t
      '::expression-subst*-subst-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162263_|
+  (define |gxc[1]#_g162680_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst*-subst
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162265_|
+  (define |gxc[1]#_g162682_|
     (##structure
      gx#syntax-quote::t
      '&::expression-subst*-subst-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162267_|
+  (define |gxc[1]#_g162684_|
     (##structure
      gx#syntax-quote::t
      '::false-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162269_|
+  (define |gxc[1]#_g162686_|
     (##structure
      gx#syntax-quote::t
      '::find-expression::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162271_|
+  (define |gxc[1]#_g162688_|
     (##structure
      gx#syntax-quote::t
      'make-::find-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162273_|
+  (define |gxc[1]#_g162690_|
     (##structure
      gx#syntax-quote::t
      '::find-expression?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162275_|
+  (define |gxc[1]#_g162692_|
     (##structure
      gx#syntax-quote::t
      '::find-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162277_|
+  (define |gxc[1]#_g162694_|
     (##structure
      gx#syntax-quote::t
      '::find-var-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162279_|
+  (define |gxc[1]#_g162696_|
     (##structure
      gx#syntax-quote::t
      'make-::find-var-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162281_|
+  (define |gxc[1]#_g162698_|
     (##structure
      gx#syntax-quote::t
      '::find-var-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162283_|
+  (define |gxc[1]#_g162700_|
     (##structure
      gx#syntax-quote::t
      '::find-var-refs-ids
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162285_|
+  (define |gxc[1]#_g162702_|
     (##structure
      gx#syntax-quote::t
      '::find-var-refs-ids-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162287_|
+  (define |gxc[1]#_g162704_|
     (##structure
      gx#syntax-quote::t
      '&::find-var-refs-ids
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162289_|
+  (define |gxc[1]#_g162706_|
     (##structure
      gx#syntax-quote::t
      '&::find-var-refs-ids-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162291_|
+  (define |gxc[1]#_g162708_|
     (##structure
      gx#syntax-quote::t
      '::collect-expression-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162293_|
+  (define |gxc[1]#_g162710_|
     (##structure
      gx#syntax-quote::t
      '::collect-runtime-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162295_|
+  (define |gxc[1]#_g162712_|
     (##structure
      gx#syntax-quote::t
      'make-::collect-runtime-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162297_|
+  (define |gxc[1]#_g162714_|
     (##structure
      gx#syntax-quote::t
      '::collect-runtime-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162299_|
+  (define |gxc[1]#_g162716_|
     (##structure
      gx#syntax-quote::t
      '::collect-runtime-refs-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162301_|
+  (define |gxc[1]#_g162718_|
     (##structure
      gx#syntax-quote::t
      '::collect-runtime-refs-table-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162303_|
+  (define |gxc[1]#_g162720_|
     (##structure
      gx#syntax-quote::t
      '&::collect-runtime-refs-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g162305_|
+  (define |gxc[1]#_g162722_|
     (##structure
      gx#syntax-quote::t
      '&::collect-runtime-refs-table-set!
@@ -303,7 +303,7 @@
      '()))
   (begin
     (define |gxc[:0:]#::collect-mutators|
-      (let ((__obj162161
+      (let ((__obj162578
              (let ()
                (declare (not safe))
                (##structure
@@ -332,7 +332,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162161
+           __obj162578
            'gxc#::collect-mutators::t
            '1
            '#f
@@ -340,65 +340,65 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162161
+           __obj162578
            '::collect-mutators
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '4 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '6 '#f '#f))
-        (let ((__tmp162223 (cons |gxc[1]#_g162224_| '())))
+          (##unchecked-structure-set! __obj162578 '() '6 '#f '#f))
+        (let ((__tmp162640 (cons |gxc[1]#_g162641_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 __tmp162223 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162578 __tmp162640 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '#t '8 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '#t '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '#f '11 '#f '#f))
-        (let ((__tmp162225 |gxc[1]#_g162226_|))
+          (##unchecked-structure-set! __obj162578 '#f '11 '#f '#f))
+        (let ((__tmp162642 |gxc[1]#_g162643_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 __tmp162225 '12 '#f '#f))
-        (let ((__tmp162227 |gxc[1]#_g162228_|))
+          (##unchecked-structure-set! __obj162578 __tmp162642 '12 '#f '#f))
+        (let ((__tmp162644 |gxc[1]#_g162645_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 __tmp162227 '13 '#f '#f))
-        (let ((__tmp162229 |gxc[1]#_g162230_|))
+          (##unchecked-structure-set! __obj162578 __tmp162644 '13 '#f '#f))
+        (let ((__tmp162646 |gxc[1]#_g162647_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 __tmp162229 '14 '#f '#f))
+          (##unchecked-structure-set! __obj162578 __tmp162646 '14 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '15 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '15 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '16 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '16 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '17 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '17 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '18 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162578 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162161 '() '20 '#f '#f))
-        __obj162161))
+          (##unchecked-structure-set! __obj162578 '() '20 '#f '#f))
+        __obj162578))
     (define |gxc[:0:]#::expression-subst|
-      (let ((__obj162163
+      (let ((__obj162580
              (let ()
                (declare (not safe))
                (##structure
@@ -427,7 +427,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162163
+           __obj162580
            'gxc#::expression-subst::t
            '1
            '#f
@@ -435,73 +435,73 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162163
+           __obj162580
            '::expression-subst
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '(id new-id) '4 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '(id new-id) '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '(id new-id) '6 '#f '#f))
-        (let ((__tmp162231 (cons |gxc[1]#_g162232_| '())))
+          (##unchecked-structure-set! __obj162580 '(id new-id) '6 '#f '#f))
+        (let ((__tmp162648 (cons |gxc[1]#_g162649_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162231 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162580 __tmp162648 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '#t '8 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '#t '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '#f '11 '#f '#f))
-        (let ((__tmp162233 |gxc[1]#_g162234_|))
+          (##unchecked-structure-set! __obj162580 '#f '11 '#f '#f))
+        (let ((__tmp162650 |gxc[1]#_g162651_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162233 '12 '#f '#f))
-        (let ((__tmp162235 |gxc[1]#_g162236_|))
+          (##unchecked-structure-set! __obj162580 __tmp162650 '12 '#f '#f))
+        (let ((__tmp162652 |gxc[1]#_g162653_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162235 '13 '#f '#f))
-        (let ((__tmp162237 |gxc[1]#_g162238_|))
+          (##unchecked-structure-set! __obj162580 __tmp162652 '13 '#f '#f))
+        (let ((__tmp162654 |gxc[1]#_g162655_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162237 '14 '#f '#f))
-        (let ((__tmp162239
-               (cons (cons 'id |gxc[1]#_g162240_|)
-                     (cons (cons 'new-id |gxc[1]#_g162241_|) '()))))
+          (##unchecked-structure-set! __obj162580 __tmp162654 '14 '#f '#f))
+        (let ((__tmp162656
+               (cons (cons 'id |gxc[1]#_g162657_|)
+                     (cons (cons 'new-id |gxc[1]#_g162658_|) '()))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162239 '15 '#f '#f))
-        (let ((__tmp162242
-               (cons (cons 'id |gxc[1]#_g162243_|)
-                     (cons (cons 'new-id |gxc[1]#_g162244_|) '()))))
+          (##unchecked-structure-set! __obj162580 __tmp162656 '15 '#f '#f))
+        (let ((__tmp162659
+               (cons (cons 'id |gxc[1]#_g162660_|)
+                     (cons (cons 'new-id |gxc[1]#_g162661_|) '()))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162242 '16 '#f '#f))
-        (let ((__tmp162245
-               (cons (cons 'id |gxc[1]#_g162246_|)
-                     (cons (cons 'new-id |gxc[1]#_g162247_|) '()))))
+          (##unchecked-structure-set! __obj162580 __tmp162659 '16 '#f '#f))
+        (let ((__tmp162662
+               (cons (cons 'id |gxc[1]#_g162663_|)
+                     (cons (cons 'new-id |gxc[1]#_g162664_|) '()))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162245 '17 '#f '#f))
-        (let ((__tmp162248
-               (cons (cons 'id |gxc[1]#_g162249_|)
-                     (cons (cons 'new-id |gxc[1]#_g162250_|) '()))))
+          (##unchecked-structure-set! __obj162580 __tmp162662 '17 '#f '#f))
+        (let ((__tmp162665
+               (cons (cons 'id |gxc[1]#_g162666_|)
+                     (cons (cons 'new-id |gxc[1]#_g162667_|) '()))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 __tmp162248 '18 '#f '#f))
+          (##unchecked-structure-set! __obj162580 __tmp162665 '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162580 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162163 '() '20 '#f '#f))
-        __obj162163))
+          (##unchecked-structure-set! __obj162580 '() '20 '#f '#f))
+        __obj162580))
     (define |gxc[:0:]#::expression-subst*|
-      (let ((__obj162165
+      (let ((__obj162582
              (let ()
                (declare (not safe))
                (##structure
@@ -530,7 +530,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162165
+           __obj162582
            'gxc#::expression-subst*::t
            '1
            '#f
@@ -538,65 +538,65 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162165
+           __obj162582
            '::expression-subst*
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '(subst) '4 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '(subst) '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '(subst) '6 '#f '#f))
-        (let ((__tmp162251 (cons |gxc[1]#_g162232_| '())))
+          (##unchecked-structure-set! __obj162582 '(subst) '6 '#f '#f))
+        (let ((__tmp162668 (cons |gxc[1]#_g162649_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162251 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162582 __tmp162668 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '#t '8 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '#t '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '#f '11 '#f '#f))
-        (let ((__tmp162252 |gxc[1]#_g162253_|))
+          (##unchecked-structure-set! __obj162582 '#f '11 '#f '#f))
+        (let ((__tmp162669 |gxc[1]#_g162670_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162252 '12 '#f '#f))
-        (let ((__tmp162254 |gxc[1]#_g162255_|))
+          (##unchecked-structure-set! __obj162582 __tmp162669 '12 '#f '#f))
+        (let ((__tmp162671 |gxc[1]#_g162672_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162254 '13 '#f '#f))
-        (let ((__tmp162256 |gxc[1]#_g162257_|))
+          (##unchecked-structure-set! __obj162582 __tmp162671 '13 '#f '#f))
+        (let ((__tmp162673 |gxc[1]#_g162674_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162256 '14 '#f '#f))
-        (let ((__tmp162258 (cons (cons 'subst |gxc[1]#_g162259_|) '())))
+          (##unchecked-structure-set! __obj162582 __tmp162673 '14 '#f '#f))
+        (let ((__tmp162675 (cons (cons 'subst |gxc[1]#_g162676_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162258 '15 '#f '#f))
-        (let ((__tmp162260 (cons (cons 'subst |gxc[1]#_g162261_|) '())))
+          (##unchecked-structure-set! __obj162582 __tmp162675 '15 '#f '#f))
+        (let ((__tmp162677 (cons (cons 'subst |gxc[1]#_g162678_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162260 '16 '#f '#f))
-        (let ((__tmp162262 (cons (cons 'subst |gxc[1]#_g162263_|) '())))
+          (##unchecked-structure-set! __obj162582 __tmp162677 '16 '#f '#f))
+        (let ((__tmp162679 (cons (cons 'subst |gxc[1]#_g162680_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162262 '17 '#f '#f))
-        (let ((__tmp162264 (cons (cons 'subst |gxc[1]#_g162265_|) '())))
+          (##unchecked-structure-set! __obj162582 __tmp162679 '17 '#f '#f))
+        (let ((__tmp162681 (cons (cons 'subst |gxc[1]#_g162682_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 __tmp162264 '18 '#f '#f))
+          (##unchecked-structure-set! __obj162582 __tmp162681 '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162582 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162165 '() '20 '#f '#f))
-        __obj162165))
+          (##unchecked-structure-set! __obj162582 '() '20 '#f '#f))
+        __obj162582))
     (define |gxc[:0:]#::find-expression|
-      (let ((__obj162167
+      (let ((__obj162584
              (let ()
                (declare (not safe))
                (##structure
@@ -625,7 +625,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162167
+           __obj162584
            'gxc#::find-expression::t
            '1
            '#f
@@ -633,65 +633,65 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162167
+           __obj162584
            '::find-expression
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '4 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '6 '#f '#f))
-        (let ((__tmp162266 (cons |gxc[1]#_g162267_| '())))
+          (##unchecked-structure-set! __obj162584 '() '6 '#f '#f))
+        (let ((__tmp162683 (cons |gxc[1]#_g162684_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 __tmp162266 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162584 __tmp162683 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '#f '8 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '#f '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '#f '11 '#f '#f))
-        (let ((__tmp162268 |gxc[1]#_g162269_|))
+          (##unchecked-structure-set! __obj162584 '#f '11 '#f '#f))
+        (let ((__tmp162685 |gxc[1]#_g162686_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 __tmp162268 '12 '#f '#f))
-        (let ((__tmp162270 |gxc[1]#_g162271_|))
+          (##unchecked-structure-set! __obj162584 __tmp162685 '12 '#f '#f))
+        (let ((__tmp162687 |gxc[1]#_g162688_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 __tmp162270 '13 '#f '#f))
-        (let ((__tmp162272 |gxc[1]#_g162273_|))
+          (##unchecked-structure-set! __obj162584 __tmp162687 '13 '#f '#f))
+        (let ((__tmp162689 |gxc[1]#_g162690_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 __tmp162272 '14 '#f '#f))
+          (##unchecked-structure-set! __obj162584 __tmp162689 '14 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '15 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '15 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '16 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '16 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '17 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '17 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '18 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162584 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162167 '() '20 '#f '#f))
-        __obj162167))
+          (##unchecked-structure-set! __obj162584 '() '20 '#f '#f))
+        __obj162584))
     (define |gxc[:0:]#::find-var-refs|
-      (let ((__obj162168
+      (let ((__obj162585
              (let ()
                (declare (not safe))
                (##structure
@@ -720,68 +720,68 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162168
+           __obj162585
            'gxc#::find-var-refs::t
            '1
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '::find-var-refs '2 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '::find-var-refs '2 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '(ids) '4 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '(ids) '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '(ids) '6 '#f '#f))
-        (let ((__tmp162274 (cons |gxc[1]#_g162275_| '())))
+          (##unchecked-structure-set! __obj162585 '(ids) '6 '#f '#f))
+        (let ((__tmp162691 (cons |gxc[1]#_g162692_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162274 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162585 __tmp162691 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '#t '8 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '#t '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '#f '11 '#f '#f))
-        (let ((__tmp162276 |gxc[1]#_g162277_|))
+          (##unchecked-structure-set! __obj162585 '#f '11 '#f '#f))
+        (let ((__tmp162693 |gxc[1]#_g162694_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162276 '12 '#f '#f))
-        (let ((__tmp162278 |gxc[1]#_g162279_|))
+          (##unchecked-structure-set! __obj162585 __tmp162693 '12 '#f '#f))
+        (let ((__tmp162695 |gxc[1]#_g162696_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162278 '13 '#f '#f))
-        (let ((__tmp162280 |gxc[1]#_g162281_|))
+          (##unchecked-structure-set! __obj162585 __tmp162695 '13 '#f '#f))
+        (let ((__tmp162697 |gxc[1]#_g162698_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162280 '14 '#f '#f))
-        (let ((__tmp162282 (cons (cons 'ids |gxc[1]#_g162283_|) '())))
+          (##unchecked-structure-set! __obj162585 __tmp162697 '14 '#f '#f))
+        (let ((__tmp162699 (cons (cons 'ids |gxc[1]#_g162700_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162282 '15 '#f '#f))
-        (let ((__tmp162284 (cons (cons 'ids |gxc[1]#_g162285_|) '())))
+          (##unchecked-structure-set! __obj162585 __tmp162699 '15 '#f '#f))
+        (let ((__tmp162701 (cons (cons 'ids |gxc[1]#_g162702_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162284 '16 '#f '#f))
-        (let ((__tmp162286 (cons (cons 'ids |gxc[1]#_g162287_|) '())))
+          (##unchecked-structure-set! __obj162585 __tmp162701 '16 '#f '#f))
+        (let ((__tmp162703 (cons (cons 'ids |gxc[1]#_g162704_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162286 '17 '#f '#f))
-        (let ((__tmp162288 (cons (cons 'ids |gxc[1]#_g162289_|) '())))
+          (##unchecked-structure-set! __obj162585 __tmp162703 '17 '#f '#f))
+        (let ((__tmp162705 (cons (cons 'ids |gxc[1]#_g162706_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 __tmp162288 '18 '#f '#f))
+          (##unchecked-structure-set! __obj162585 __tmp162705 '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162585 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162168 '() '20 '#f '#f))
-        __obj162168))
+          (##unchecked-structure-set! __obj162585 '() '20 '#f '#f))
+        __obj162585))
     (define |gxc[:0:]#::collect-runtime-refs|
-      (let ((__obj162170
+      (let ((__obj162587
              (let ()
                (declare (not safe))
                (##structure
@@ -810,7 +810,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162170
+           __obj162587
            'gxc#::collect-runtime-refs::t
            '1
            '#f
@@ -818,60 +818,60 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj162170
+           __obj162587
            '::collect-runtime-refs
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '() '4 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '() '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '(table) '6 '#f '#f))
-        (let ((__tmp162290 (cons |gxc[1]#_g162291_| '())))
+          (##unchecked-structure-set! __obj162587 '(table) '6 '#f '#f))
+        (let ((__tmp162707 (cons |gxc[1]#_g162708_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162290 '3 '#f '#f))
+          (##unchecked-structure-set! __obj162587 __tmp162707 '3 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '#f '7 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '#f '7 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '#t '8 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '#t '8 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '#f '10 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '#f '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '#f '11 '#f '#f))
-        (let ((__tmp162292 |gxc[1]#_g162293_|))
+          (##unchecked-structure-set! __obj162587 '#f '11 '#f '#f))
+        (let ((__tmp162709 |gxc[1]#_g162710_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162292 '12 '#f '#f))
-        (let ((__tmp162294 |gxc[1]#_g162295_|))
+          (##unchecked-structure-set! __obj162587 __tmp162709 '12 '#f '#f))
+        (let ((__tmp162711 |gxc[1]#_g162712_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162294 '13 '#f '#f))
-        (let ((__tmp162296 |gxc[1]#_g162297_|))
+          (##unchecked-structure-set! __obj162587 __tmp162711 '13 '#f '#f))
+        (let ((__tmp162713 |gxc[1]#_g162714_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162296 '14 '#f '#f))
-        (let ((__tmp162298 (cons (cons 'table |gxc[1]#_g162299_|) '())))
+          (##unchecked-structure-set! __obj162587 __tmp162713 '14 '#f '#f))
+        (let ((__tmp162715 (cons (cons 'table |gxc[1]#_g162716_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162298 '15 '#f '#f))
-        (let ((__tmp162300 (cons (cons 'table |gxc[1]#_g162301_|) '())))
+          (##unchecked-structure-set! __obj162587 __tmp162715 '15 '#f '#f))
+        (let ((__tmp162717 (cons (cons 'table |gxc[1]#_g162718_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162300 '16 '#f '#f))
-        (let ((__tmp162302 (cons (cons 'table |gxc[1]#_g162303_|) '())))
+          (##unchecked-structure-set! __obj162587 __tmp162717 '16 '#f '#f))
+        (let ((__tmp162719 (cons (cons 'table |gxc[1]#_g162720_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162302 '17 '#f '#f))
-        (let ((__tmp162304 (cons (cons 'table |gxc[1]#_g162305_|) '())))
+          (##unchecked-structure-set! __obj162587 __tmp162719 '17 '#f '#f))
+        (let ((__tmp162721 (cons (cons 'table |gxc[1]#_g162722_|) '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 __tmp162304 '18 '#f '#f))
+          (##unchecked-structure-set! __obj162587 __tmp162721 '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj162587 '() '21 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj162170 '() '20 '#f '#f))
-        __obj162170))))
+          (##unchecked-structure-set! __obj162587 '() '20 '#f '#f))
+        __obj162587))))

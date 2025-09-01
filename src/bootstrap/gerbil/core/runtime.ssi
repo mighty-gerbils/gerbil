@@ -1607,6 +1607,7 @@ namespace: gerbil/core/runtime
                     (symbolic-table-set! symbolic-table-set!)
                     (symbolic-table-delete! symbolic-table-delete!)
                     (make-promise make-promise)
+                    (make-atomic-promise make-atomic-promise)
                     (call-with-parameters call-with-parameters)
                     (with-unwind-protect with-unwind-protect)
                     (keyword-dispatch keyword-dispatch)

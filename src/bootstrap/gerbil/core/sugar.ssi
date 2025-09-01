@@ -104,6 +104,9 @@ namespace: gerbil/core/sugar
                    (%#define-syntax
                     delay
                     |gerbil/core/sugar~Sugar-2[:0:]#delay|)
+                   (%#define-syntax
+                    delay-atomic
+                    |gerbil/core/sugar~Sugar-2[:0:]#delay-atomic|)
                    (%#define-syntax cut |gerbil/core/sugar~Sugar-2[:0:]#cut|)
                    (%#define-syntax <> |gerbil/core/sugar~Sugar-2[:0:]#<>|)
                    (%#define-syntax

@@ -33,6 +33,36 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/control)))
   (declare-type
+   make-atomic-promise
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             promise::t
+             effect:
+             #f
+             arguments:
+             (procedure::t)
+             unchecked:
+             __make-atomic-promise
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
+   __make-atomic-promise
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             promise::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
    call-with-parameters__0
    (@lambda 1
             #f
