@@ -76,7 +76,7 @@ namespace: gxc
        #'(begin
            (defclass (klass super ...) slots)
            (def klass-bind-methods!
-             (delay
+             (delay-atomic
                (begin
                  (force super-bind-methods!) ...
                  (bind-method! klass::t 'method implementation) ...))))))
@@ -90,7 +90,7 @@ namespace: gxc
        #'(begin
            (defclass (klass super ...) slots)
            (def klass-bind-methods!
-             (delay
+             (delay-atomic
                (begin
                  (force super-bind-methods!) ...
                  (bind-method! klass::t 'method implementation) ...)))
@@ -109,7 +109,7 @@ namespace: gxc
        #'(begin
            (defclass (klass super ...) slots final: #t)
            (def klass-bind-methods!
-             (delay
+             (delay-atomic
                (begin
                  (force super-bind-methods!) ...
                  (bind-method! klass::t 'method implementation) ...
