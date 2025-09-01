@@ -180,27 +180,6 @@ package: gerbil
     ((r7rs)
      (load-init! "r7rs-init.ss"))))
 
-(def (find-runtime-symbol ctx id)
-  (cond
-   ((find-export-binding ctx id)
-    => (lambda (bind)
-         (unless (runtime-binding? bind)
-           (error "export is not a runtime binding" id))
-         (binding-id bind)))
-   (else
-    (error "module does not export symbol" (expander-context-id ctx) id))))
-
-(def (find-export-binding ctx id)
-  (cond
-   ((find (match <>
-            ((? module-export? xport)
-            (and (eqv? (module-export-phi xport) 0)
-                 (eq? (module-export-name xport) id)))
-            (else #f))
-          (module-context-export ctx))
-    => core-resolve-module-export)
-   (else #f)))
-
 (def (tool-main program-name args)
   (cond
    ((equal? program-name "gxi")

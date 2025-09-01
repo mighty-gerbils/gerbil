@@ -96,6 +96,33 @@ namespace: gx
       (eval-module ctx))
     ctx))
 
+(def (find-export-binding ctx id)
+  (cond
+   ((find (match <>
+            ((? module-export? xport)
+            (and (eqv? (module-export-phi xport) 0)
+                 (eq? (module-export-name xport) id)))
+            (else #f))
+          (module-context-export ctx))
+    => core-resolve-module-export)
+   (else #f)))
+
+(def (find-runtime-symbol ctx id)
+  (cond
+   ((find-export-binding ctx id)
+    => (lambda (bind)
+         (unless (runtime-binding? bind)
+           (error "export is not a runtime binding" id))
+         (binding-id bind)))
+   (else
+    (error "module does not export symbol" (expander-context-id ctx) id))))
+
+(def (import-module-procedure path name (reload? #f))
+  (let* ((ctx (import-module path reload? #t))
+		 (sym (find-runtime-symbol ctx name)))
+	(if (not sym) #f
+		(: (eval sym) :procedure))))
+
 (def (eval-module mod)
   ((current-expander-module-eval) mod))
 
