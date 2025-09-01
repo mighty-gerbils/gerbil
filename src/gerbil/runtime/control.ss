@@ -12,6 +12,24 @@ namespace: #f
   => :promise
   (:- (##make-delay-promise thunk) :promise))
 
+(def (make-atomic-promise (thunk : :procedure))
+  => :promise
+  (let ((mx (make-mutex 'promise))
+        (inner (make-promise thunk)))
+    (make-promise
+     (lambda ()
+       (declare (not interrupts-enabled))
+       (let* ((state (##promise-state inner))
+              (value (##vector-ref state 0)))
+         (if (eq? state value)
+           ;; not determined
+           (dynamic-wind
+               (cut mutex-lock! mx)
+               (cut ##force-out-of-line inner)
+               (cut mutex-unlock! mx))
+           ;; determined
+           value))))))
+
 (def* call-with-parameters
   (((thunk : :procedure)) (thunk))
   (((thunk : :procedure) param val)
