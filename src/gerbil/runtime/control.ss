@@ -23,10 +23,15 @@ namespace: #f
               (value (##vector-ref state 0)))
          (if (eq? state value)
            ;; not determined
-           (dynamic-wind
-               (cut mutex-lock! mx)
-               (cut ##force-out-of-line inner)
-               (cut mutex-unlock! mx))
+           (let (once (vector 0))
+             (dynamic-wind
+                 (lambda ()
+                   (declare (not interrupts-enabled))
+                   (unless (##fx= (##vector-cas! once 0 1 0) 0)
+                     (error "Cannot reenter atomic block"))
+                   (mutex-lock! mx))
+                 (cut ##force-out-of-line inner)
+                 (cut mutex-unlock! mx)))
            ;; determined
            value))))))
 
