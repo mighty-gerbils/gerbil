@@ -12,22 +12,38 @@ namespace: #f
   => :promise
   (:- (##make-delay-promise thunk) :promise))
 
-(def (call-with-parameters (thunk : :procedure) . rest)
-  (match rest
-    ([param val . rest]
-     (##parameterize1 param val
-       (if (null? rest) thunk
-           (lambda () (apply call-with-parameters thunk rest)))))
-    ([] (thunk))))
+(def (make-atomic-promise (thunk : :procedure))
+  => :promise
+  (let ((mx (make-mutex 'promise))
+        (inner (make-promise thunk)))
+    (make-promise
+     (lambda ()
+       (let (once (vector 0))
+         (dynamic-wind
+             (lambda ()
+               (declare (not interrupts-enabled))
+               (unless (##fx= (##vector-cas! once 0 1 0) 0)
+                 (error "Cannot reenter atomic block"))
+               (mutex-lock! mx))
+             (cut ##force-out-of-line inner)
+             (cut mutex-unlock! mx)))))))
+
+(def* call-with-parameters
+  (((thunk : :procedure)) (thunk))
+  (((thunk : :procedure) param val)
+   (##parameterize1 param val thunk))
+  (((thunk : :procedure) param val . rest)
+   (call-with-parameters
+    (cut apply call-with-parameters thunk rest)
+    param val)))
 
 (def (with-unwind-protect (K : :procedure) (fini : :procedure))
-  (let ((once #f))
+  (let (once (vector 0))
     (dynamic-wind
         (lambda ()
           (declare (not interrupts-enabled))
-          (if once
-            (error "Cannot re-enter unwind protected block")
-            (set! once #t)))
+          (unless (##fx= (##vector-cas! once 0 1 0) 0)
+            (error "Cannot re-enter unwind protected block")))
         K fini)))
 
 ;; kwt: #f or a vector as a perfect hash-table for expected keywords

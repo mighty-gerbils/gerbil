@@ -9,8 +9,18 @@ namespace: #f
          (%#export #t)
          (%#define-runtime make-promise make-promise)
          (%#define-runtime __make-promise __make-promise)
-         (%#define-runtime call-with-parameters call-with-parameters)
-         (%#define-runtime __call-with-parameters __call-with-parameters)
+         (%#define-runtime make-atomic-promise make-atomic-promise)
+         (%#define-runtime __make-atomic-promise __make-atomic-promise)
+         (%#begin (%#define-runtime
+                   call-with-parameters__0
+                   call-with-parameters__0)
+                  (%#define-runtime
+                   call-with-parameters__1
+                   call-with-parameters__1)
+                  (%#define-runtime
+                   call-with-parameters__2
+                   call-with-parameters__2)
+                  (%#define-runtime call-with-parameters call-with-parameters))
          (%#define-runtime with-unwind-protect with-unwind-protect)
          (%#define-runtime __with-unwind-protect __with-unwind-protect)
          (%#define-runtime keyword-dispatch keyword-dispatch)

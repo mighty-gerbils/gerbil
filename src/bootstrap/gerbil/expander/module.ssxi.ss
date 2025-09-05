@@ -224,8 +224,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type
    gx#import-expander::t
    (optimizer-resolve-class '(typedecl gx#import-expander::t) 'class::t))
@@ -279,8 +281,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))
@@ -428,11 +432,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -443,11 +447,11 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -458,7 +462,7 @@ package: gerbil/expander
             #f
             signature:
             (return:
-             void::t
+             t::t
              effect:
              #f
              arguments:
@@ -474,7 +478,7 @@ package: gerbil/expander
      gx#prelude-context:::init!__0
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:
@@ -487,7 +491,7 @@ package: gerbil/expander
      gx#prelude-context:::init!__%
      signature:
      (return:
-      void::t
+      t::t
       effect:
       #f
       arguments:

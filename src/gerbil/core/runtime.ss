@@ -1517,6 +1517,7 @@ package: gerbil/core
 
     ;; :gerbil/runtime/control
     make-promise
+    make-atomic-promise
     call-with-parameters
     with-unwind-protect
     keyword-dispatch
@@ -1791,7 +1792,9 @@ package: gerbil/core
     hash-values
     hash-copy
     hash-merge
+    hash-merge-right
     hash-merge!
+    hash-merge-right!
     hash-clear!
 
     ;; :gerbil/runtime/thread

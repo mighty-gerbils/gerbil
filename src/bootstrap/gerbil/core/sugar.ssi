@@ -86,10 +86,6 @@ namespace: gerbil/core/sugar
                    (%#define-syntax
                     ~case-dispatch-bsearch
                     |gerbil/core/sugar~Sugar-2[:0:]#~case-dispatch-bsearch|)
-                   (%#define-syntax do |gerbil/core/sugar~Sugar-2[:0:]#do|)
-                   (%#define-syntax
-                    do-while
-                    |gerbil/core/sugar~Sugar-2[:0:]#do-while|)
                    (%#define-syntax
                     begin0
                     |gerbil/core/sugar~Sugar-2[:0:]#begin0|)
@@ -108,6 +104,9 @@ namespace: gerbil/core/sugar
                    (%#define-syntax
                     delay
                     |gerbil/core/sugar~Sugar-2[:0:]#delay|)
+                   (%#define-syntax
+                    delay-atomic
+                    |gerbil/core/sugar~Sugar-2[:0:]#delay-atomic|)
                    (%#define-syntax cut |gerbil/core/sugar~Sugar-2[:0:]#cut|)
                    (%#define-syntax <> |gerbil/core/sugar~Sugar-2[:0:]#<>|)
                    (%#define-syntax

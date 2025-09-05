@@ -1108,7 +1108,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1123,7 +1123,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1138,7 +1138,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1153,7 +1153,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1168,7 +1168,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1183,7 +1183,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1198,7 +1198,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:
@@ -1213,7 +1213,7 @@ package: gerbil/compiler
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t t::t)
              unchecked:
              #f
              origin:

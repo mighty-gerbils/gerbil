@@ -33,27 +33,27 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/control)))
   (declare-type
-   call-with-parameters
-   (@lambda (1)
+   make-atomic-promise
+   (@lambda 1
             #f
             signature:
             (return:
-             t::t
+             promise::t
              effect:
              #f
              arguments:
-             (procedure::t . t::t)
+             (procedure::t)
              unchecked:
-             __call-with-parameters
+             __make-atomic-promise
              origin:
              gerbil/runtime/control)))
   (declare-type
-   __call-with-parameters
-   (@lambda (1)
+   __make-atomic-promise
+   (@lambda 1
             #f
             signature:
             (return:
-             t::t
+             promise::t
              effect:
              #f
              arguments:
@@ -62,6 +62,93 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/control)))
+  (declare-type
+   call-with-parameters__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
+   call-with-parameters__1
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
+   call-with-parameters__2
+   (@lambda (3)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (procedure::t t::t t::t . t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/control)))
+  (declare-type
+   call-with-parameters
+   (@case-lambda
+    (1
+     call-with-parameters__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/control))
+    (3
+     call-with-parameters__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/control))
+    ((3)
+     call-with-parameters__2
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/control))))
   (declare-type
    with-unwind-protect
    (@lambda 2

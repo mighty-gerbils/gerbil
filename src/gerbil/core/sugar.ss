@@ -897,20 +897,6 @@ package: gerbil/core
                (~case-dispatch* d x K-left ...)
                (~case-dispatch* d* x K-right ...)))))))
 
-  (defrules do ()
-    ((_ ((var init step ...) ...)
-        (test fini ...)
-        body ...)
-     (stx-andmap identifier? #'(var ...))
-     (let $loop ((var init) ...)
-       (if test
-         (begin #!void fini ...)
-         (begin body ... ($loop (begin var step ...) ...))))))
-
-  (defrules do-while ()
-    ((_ hd (test . fini) . body)
-     (do hd ((not test) . fini) . body)))
-
   (defrules begin0 ()
     ((_ expr) expr)
     ((_ expr rest ...)
@@ -1052,12 +1038,23 @@ package: gerbil/core
          #'(quote e)
          (generate #'e 0)))))
 
-  (defrules delay ()
+  (defrules delay (quote)
     ((_ datum)
      (stx-datum? #'datum)
      (quote datum))
+    ((_ (quote datum))
+     (quote datum))
     ((_ expr)
      (make-promise (lambda% () expr))))
+
+  (defrules delay-atomic (quote)
+    ((_ datum)
+     (stx-datum? #'datum)
+     (quote datum))
+    ((_ (quote datum))
+     (quote datum))
+    ((_ expr)
+     (make-atomic-promise (lambda% () expr))))
 
   ;; and end with partial lambda
   (defsyntax% (cut stx)

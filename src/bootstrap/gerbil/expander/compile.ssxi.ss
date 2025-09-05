@@ -27,7 +27,7 @@ package: gerbil/expander
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t)
              unchecked:
              #f
              origin:

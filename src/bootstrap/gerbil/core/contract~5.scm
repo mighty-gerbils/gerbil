@@ -1,132 +1,132 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/contract~TypeEnv[1]#_g84997_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91812_|
     (##structure
      gx#syntax-quote::t
      'type-env::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g84999_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91814_|
     (##structure
      gx#syntax-quote::t
      'make-type-env
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85001_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91816_|
     (##structure
      gx#syntax-quote::t
      'type-env?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85003_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91818_|
     (##structure
      gx#syntax-quote::t
      'type-env-var
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85004_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91819_|
     (##structure
      gx#syntax-quote::t
      'type-env-type
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85005_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91820_|
     (##structure
      gx#syntax-quote::t
      'type-env-checked?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85006_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91821_|
     (##structure
      gx#syntax-quote::t
      'type-env-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85008_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91823_|
     (##structure
      gx#syntax-quote::t
      'type-env-var-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85009_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91824_|
     (##structure
      gx#syntax-quote::t
      'type-env-type-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85010_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91825_|
     (##structure
      gx#syntax-quote::t
      'type-env-checked?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85011_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91826_|
     (##structure
      gx#syntax-quote::t
      'type-env-super-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85013_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91828_|
     (##structure
      gx#syntax-quote::t
      '&type-env-var
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85014_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91829_|
     (##structure
      gx#syntax-quote::t
      '&type-env-type
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85015_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91830_|
     (##structure
      gx#syntax-quote::t
      '&type-env-checked?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85016_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91831_|
     (##structure
      gx#syntax-quote::t
      '&type-env-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85018_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91833_|
     (##structure
      gx#syntax-quote::t
      '&type-env-var-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85019_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91834_|
     (##structure
      gx#syntax-quote::t
      '&type-env-type-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85020_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91835_|
     (##structure
      gx#syntax-quote::t
      '&type-env-checked?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/contract~TypeEnv[1]#_g85021_|
+  (define |gerbil/core/contract~TypeEnv[1]#_g91836_|
     (##structure
      gx#syntax-quote::t
      '&type-env-super-set!
@@ -134,7 +134,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/contract~TypeEnv[:0:]#type-env|
-    (let ((__obj84844
+    (let ((__obj91660
            (let ()
              (declare (not safe))
              (##structure
@@ -163,88 +163,88 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj84844
+         __obj91660
          'gerbil/core/contract~TypeEnv#type-env::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 'type-env '2 '#f '#f))
+        (##unchecked-structure-set! __obj91660 'type-env '2 '#f '#f))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj84844
+         __obj91660
          '(var type checked? super)
          '4
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 '() '3 '#f '#f))
+        (##unchecked-structure-set! __obj91660 '() '3 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 '#t '7 '#f '#f))
+        (##unchecked-structure-set! __obj91660 '#t '7 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 '#t '8 '#f '#f))
+        (##unchecked-structure-set! __obj91660 '#t '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 '#f '10 '#f '#f))
+        (##unchecked-structure-set! __obj91660 '#f '10 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 '#f '11 '#f '#f))
-      (let ((__tmp84996 |gerbil/core/contract~TypeEnv[1]#_g84997_|))
+        (##unchecked-structure-set! __obj91660 '#f '11 '#f '#f))
+      (let ((__tmp91811 |gerbil/core/contract~TypeEnv[1]#_g91812_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp84996 '12 '#f '#f))
-      (let ((__tmp84998 |gerbil/core/contract~TypeEnv[1]#_g84999_|))
+        (##unchecked-structure-set! __obj91660 __tmp91811 '12 '#f '#f))
+      (let ((__tmp91813 |gerbil/core/contract~TypeEnv[1]#_g91814_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp84998 '13 '#f '#f))
-      (let ((__tmp85000 |gerbil/core/contract~TypeEnv[1]#_g85001_|))
+        (##unchecked-structure-set! __obj91660 __tmp91813 '13 '#f '#f))
+      (let ((__tmp91815 |gerbil/core/contract~TypeEnv[1]#_g91816_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp85000 '14 '#f '#f))
-      (let ((__tmp85002
-             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g85003_|)
+        (##unchecked-structure-set! __obj91660 __tmp91815 '14 '#f '#f))
+      (let ((__tmp91817
+             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g91818_|)
                    (cons (cons 'type
-                               |gerbil/core/contract~TypeEnv[1]#_g85004_|)
+                               |gerbil/core/contract~TypeEnv[1]#_g91819_|)
                          (cons (cons 'checked?
-                                     |gerbil/core/contract~TypeEnv[1]#_g85005_|)
+                                     |gerbil/core/contract~TypeEnv[1]#_g91820_|)
                                (cons (cons 'super
-                                           |gerbil/core/contract~TypeEnv[1]#_g85006_|)
+                                           |gerbil/core/contract~TypeEnv[1]#_g91821_|)
                                      '()))))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp85002 '15 '#f '#f))
-      (let ((__tmp85007
-             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g85008_|)
+        (##unchecked-structure-set! __obj91660 __tmp91817 '15 '#f '#f))
+      (let ((__tmp91822
+             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g91823_|)
                    (cons (cons 'type
-                               |gerbil/core/contract~TypeEnv[1]#_g85009_|)
+                               |gerbil/core/contract~TypeEnv[1]#_g91824_|)
                          (cons (cons 'checked?
-                                     |gerbil/core/contract~TypeEnv[1]#_g85010_|)
+                                     |gerbil/core/contract~TypeEnv[1]#_g91825_|)
                                (cons (cons 'super
-                                           |gerbil/core/contract~TypeEnv[1]#_g85011_|)
+                                           |gerbil/core/contract~TypeEnv[1]#_g91826_|)
                                      '()))))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp85007 '16 '#f '#f))
-      (let ((__tmp85012
-             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g85013_|)
+        (##unchecked-structure-set! __obj91660 __tmp91822 '16 '#f '#f))
+      (let ((__tmp91827
+             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g91828_|)
                    (cons (cons 'type
-                               |gerbil/core/contract~TypeEnv[1]#_g85014_|)
+                               |gerbil/core/contract~TypeEnv[1]#_g91829_|)
                          (cons (cons 'checked?
-                                     |gerbil/core/contract~TypeEnv[1]#_g85015_|)
+                                     |gerbil/core/contract~TypeEnv[1]#_g91830_|)
                                (cons (cons 'super
-                                           |gerbil/core/contract~TypeEnv[1]#_g85016_|)
+                                           |gerbil/core/contract~TypeEnv[1]#_g91831_|)
                                      '()))))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp85012 '17 '#f '#f))
-      (let ((__tmp85017
-             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g85018_|)
+        (##unchecked-structure-set! __obj91660 __tmp91827 '17 '#f '#f))
+      (let ((__tmp91832
+             (cons (cons 'var |gerbil/core/contract~TypeEnv[1]#_g91833_|)
                    (cons (cons 'type
-                               |gerbil/core/contract~TypeEnv[1]#_g85019_|)
+                               |gerbil/core/contract~TypeEnv[1]#_g91834_|)
                          (cons (cons 'checked?
-                                     |gerbil/core/contract~TypeEnv[1]#_g85020_|)
+                                     |gerbil/core/contract~TypeEnv[1]#_g91835_|)
                                (cons (cons 'super
-                                           |gerbil/core/contract~TypeEnv[1]#_g85021_|)
+                                           |gerbil/core/contract~TypeEnv[1]#_g91836_|)
                                      '()))))))
         (declare (not safe))
-        (##unchecked-structure-set! __obj84844 __tmp85017 '18 '#f '#f))
-      __obj84844)))
+        (##unchecked-structure-set! __obj91660 __tmp91832 '18 '#f '#f))
+      __obj91660)))
