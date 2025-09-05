@@ -1517,6 +1517,7 @@ package: gerbil/core
 
     ;; :gerbil/runtime/control
     make-promise
+    make-atomic-promise
     call-with-parameters
     with-unwind-protect
     keyword-dispatch

@@ -56,7 +56,7 @@ namespace: gx
               (path (module-context-path ctx))
               (in   (map core-module-export->import
                          (module-context-export ctx)))
-              (e    (delay (eval-module ctx))))
+              (e    (delay-atomic (eval-module ctx))))
           (struct-instance-init! self id (make-hash-table-eq size: (length in))
                                  super #f #f
                                  path in e)
@@ -170,7 +170,7 @@ namespace: gx
                  (core-cons '%#begin body)
                  path ctx [])))
           (set! (&module-context-e ctx)
-            (delay (eval-syntax* body)))
+            (delay-atomic (eval-syntax* body)))
           (set! (&module-context-code ctx)
             body)
           (hash-put! __module-registry path ctx)
@@ -612,7 +612,7 @@ namespace: gx
                 (core-cons '%#begin body)
                 (stx-source stx))))
          (set! (&module-context-e ctx)
-           (delay (eval-syntax* body)))
+           (delay-atomic (eval-syntax* body)))
          (set! (&module-context-code ctx)
            body)
          (core-bind-syntax! id ctx)

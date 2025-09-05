@@ -1038,12 +1038,23 @@ package: gerbil/core
          #'(quote e)
          (generate #'e 0)))))
 
-  (defrules delay ()
+  (defrules delay (quote)
     ((_ datum)
      (stx-datum? #'datum)
      (quote datum))
+    ((_ (quote datum))
+     (quote datum))
     ((_ expr)
      (make-promise (lambda% () expr))))
+
+  (defrules delay-atomic (quote)
+    ((_ datum)
+     (stx-datum? #'datum)
+     (quote datum))
+    ((_ (quote datum))
+     (quote datum))
+    ((_ expr)
+     (make-atomic-promise (lambda% () expr))))
 
   ;; and end with partial lambda
   (defsyntax% (cut stx)
