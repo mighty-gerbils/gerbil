@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "ci-fixes"]
 
 jobs:
 
@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        docker-image: ['gerbil', 'gerbilxx']
+        docker-image: ['alpine']
     steps:
     - uses: actions/checkout@v3
     - name: print out github context
