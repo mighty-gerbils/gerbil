@@ -56,7 +56,7 @@ END
   ;; create self-signed certificate
   (invoke "openssl"
           ["genpkey"
-           "-quiet"
+           (cond-expand ((not darwin) ["-quiet"]) (else [])) ...
            "-algorithm" "RSA"
            "-pkeyopt" "rsa_keygen_bits:2048"
            "-out" test-private-key])
