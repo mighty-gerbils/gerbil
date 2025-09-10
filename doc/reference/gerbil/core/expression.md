@@ -169,8 +169,27 @@ macro.
 (delay expr)
 ```
 
-Creates a promise to evaluate `expr` when needed with the `force`
-primitive.  The value of the expression is memoized.
+Creates a promise to evaluate `expr` when needed with the `force` primitive.
+The value of the expression is memoized so it will only be evaluated once.
+
+Delay internally calls `make-promise` with a thunk that evaluates `expr`.
+Delay is efficient, but only safe in the simple case of evaluation in a single thread
+of expressions that succeed (i.e. no escaping continuations that later restart).
+Using it in the more complex case may cause incorrect or inconsistent behavior.
+To support more such complex cases (at a slight extra cost), see `delay-atomic`.
+
+## delay-atomic
+```
+(delay-atomic expr)
+```
+
+Creates a promise to evaluate `expr` when needed with the `force` primitive.
+The value of the expression is memoized so it will only be evaluated once.
+
+Delay-atomic internally calls `make-atomic-promise` with a thunk that evaluates `expr`.
+Delay-atomic is only slightly less efficient than `delay`, and is safe even in the case of
+concurrent evaluation in a multiple threads; it will also support failures and escapes from
+the thunk, and will issue an error if someone attempts to reenter such escaped thunks.
 
 ## do
 TODO
