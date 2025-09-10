@@ -15,22 +15,36 @@
 ;;; config: httpd-v0
 ;;; ;;; root: the root for serving files
 ;;; root: "path/to/server/root"
+
 ;;; ;;; handlers: alist mapping server paths to handler modules
 ;;; ;;; a handler module is a module that exports a `handle-request` procedure,
 ;;; ;;; with the signature of a request handler.
 ;;; ;;; if the module also exports a handler-init! procedure, it will be invoked
 ;;; ;;; with the current config after loading the module.
 ;;; handlers: (("/path/to/handler" . module) ...)
+;;;
 ;;; ;;; servlets: a boolean indicating whether servlets are enabled
 ;;; enable-servlets: #t | #f
+;;;
+;;; ;;; init: An init module that exports a `server-init!` procedure,
+;;; ;;; it will be invoked with the current config before running the
+;;; ;;; server.
+;;; init: "/path/to/module/"
+;;;
 ;;; ;;; request-log: [optional] the file path for logging requests
 ;;; request-log: "path/to/request-log-file" | #f
+;;;
 ;;; ;;; listen: a list of addresses where the server should listen
 ;;; ;;; use (ssl: path-to-cert inet-address) for https
 ;;; listen: (server-address ...)
+;;;
 ;;; ;;; max-token-length: The request handler parser buffer size
 ;;; max-token-length: integer
-;;;----------------------------------------------------------------
+;;
+;;; ;;; cache-ttl: A time in seconds for the cache to uncache/refresh
+;;; ;;; a changed item
+;;; cache-ttl: real
+;;; ----------------------------------------------------------------
 
 (def (do-config opt)
   (let-hash opt
