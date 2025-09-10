@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        docker-image: ['gerbil', 'gerbilxx']
+        docker-image: ['alpine']
     steps:
     - uses: actions/checkout@v3
     - name: print out github context
@@ -25,7 +25,7 @@ jobs:
     - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
-        docker push gerbil/${{ matrix.docker-image }}:$(uname -m)-master
-        docker manifest create gerbil/${{ matrix.docker-image }}:master --amend gerbil/gerbil:aarch64-master --amend gerbil/gerbil:x86_64-master
-        docker manifest push gerbil/${{ matrix.docker-image }}:master
+        docker push gerbil/gerbil:$(uname -m)-master
+        docker manifest create gerbil/gerbil:master --amend gerbil/gerbil:aarch64-master --amend gerbil/gerbil:x86_64-master
+        docker manifest push gerbil/gerbil:master
       if: github.event_name == 'push'
