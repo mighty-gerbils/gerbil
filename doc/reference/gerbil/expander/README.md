@@ -3,7 +3,7 @@
 The expander procedures are part of the expander API and accessible at
 phi=+1 (syntax definition time) in the core prelude.
 
-These symbols are part of the `<expander-runtime>` module, defined at
+These symbols are part of the `:gerbil/expander` module, defined at
 the core prelude, which you can import directly if you need to work
 with the expander at phi=0, for instance in source processing tools.
 
@@ -78,6 +78,7 @@ Please document me!
 ## Core Expander
 
 ### current-expander-context
+
 ```
 (current-expander-context ...)
 ```
@@ -218,11 +219,58 @@ Please document me!
 Please document me!
 
 ### import-module
+
 ```
-(import-module ...)
+(import-module path (reload? #f) (eval? #f))
 ```
 
-Please document me!
+This is the runtime functional way to import a module. 
+
+Unlike the `import` syntax this does not modify the
+[current-expander-context](###current-expander-context).
+
+*example*:
+
+We import the `:std/format` module context. That does not place `format` in our expander context's namespace. 
+
+ 
+  * `reload? #f` : We don't load it again if already imported.
+  * `eval? #t` : If not imported, evaluate the module source.
+  
+Because there may be other reasons to import a module but not have it `eval`'d, like for example finding dependencies and other prerequisites for compilation, there must be that argument. 
+
+``` scheme
+> (import :gerbil/expander :std/sugar)
+> (def ctx (import-module ':std/format #f #t))
+> (ignore-errors (format "~a" ctx))
+#f
+```
+
+Because that context was evaluated we now have runtime access to all the symbols in it.
+
+``` scheme
+> (def sym (gxc#find-runtime-symbol ctx 'format))
+> sym
+std/format#format
+```
+
+As we can see that symbol is there in the correct namespace as it
+exist in the symbol table.
+
+If we `eval` that symbol we should get the `format` procedure.
+
+``` scheme
+> ((eval sym) "Context: ~a" ctx)
+"Context: #<module-context #8 id: std/format>"
+```
+
+That's the exact same procedure the `import` syntax gives us.
+
+``` scheme
+> (import :std/format)
+> (eq? format (eval sym))
+#t
+```
 
 ### eval-module
 ```
