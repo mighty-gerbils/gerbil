@@ -164,13 +164,6 @@
               walk-interned-keywords!
               walk-from-object!))
 
-  ;; lifted from sys.scm
-  (define-macro (macro-symbol-next s)
-    `(macro-slot 2 ,s))
-
-  (define-macro (macro-keyword-next k)
-    `(macro-slot 2 ,k))
-
   ;; walker macros
 
   (define-macro (macro-walk-seq expr1 expr2)
@@ -237,8 +230,8 @@
 
                       (macro-handle-type-simple
                        macro-make-will
-                       (macro-will-testator ignore)
-                       (macro-will-action ignore))
+                       (##will-testator ignore)
+                       (##will-action ignore))
 
                       ;;TODO: walking a gc-hash-table may be unreliable
                       (macro-handle-type-object-vector gc-hash-table)))
@@ -321,29 +314,15 @@
 
        (walk-object #t 0 obj)))
 
-  (define (walk-interned-symbols! proc)
-    (let ((tbl (##symbol-table)))
-      (let loop1 ((i (##fx- (##vector-length tbl) 1)))
-        (if (##fx> i 0)
-          (let loop2 ((obj (##vector-ref tbl i)))
-            (if (##null? obj)
-              (loop1 (##fx- i 1))
-              (macro-walk-seq
-               (proc obj)
-               (loop2 (macro-symbol-next obj)))))
-          (macro-walk-continue)))))
+  (define (walk-interned-symkeys! table proc)
+    (let/cc return
+      (##symkey-table-foldl (lambda (_ x) (alet (found (proc x)) (return found))) #f table)))
 
-  (define (walk-interned-keywords! proc)
-    (let ((tbl (##keyword-table)))
-      (let loop1 ((i (##fx- (##vector-length tbl) 1)))
-        (if (##fx> i 0)
-          (let loop2 ((obj (##vector-ref tbl i)))
-            (if (##null? obj)
-              (loop1 (##fx- i 1))
-              (macro-walk-seq
-               (proc obj)
-               (loop2 (macro-keyword-next obj)))))
-          (macro-walk-continue)))))
+  (define (walk-interned-symbols! proc)
+    (walk-interned-symkeys (##symbol-table)))
+
+  (define (walk-interned-symbols! proc)
+    (walk-interned-symkeys (##keyword-table)))
 
   (define (walk-from-object! obj visit)
     (define-macro (macro-walk-visit recursive-scan)
