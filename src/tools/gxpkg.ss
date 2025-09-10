@@ -40,7 +40,7 @@
         pkg-root-dir
         pkg-install pkg-uninstall pkg-update
         pkg-link pkg-unlink
-        pkg-build pkg-clean
+        with-pkg-build-env pkg-build pkg-clean
         pkg-list
         pkg-retag
         pkg-plist pkg-dependents pkg-dependents*)
@@ -73,6 +73,9 @@
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
       global-env-flag
+      (flag 'build-dependencies "-d" "--dependencies" help: "build package dependencies")
+      (flag 'build-dependents "-r" "--dependents" ;; "--reverse-dependencies" "--rebuild-dependents"
+            help: "rebuild installed package dependents")
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
       (flag 'build-debug "-g" "--debug" help: "build with debug symbols")
@@ -157,7 +160,8 @@
       ((new)
        (pkg-new .package .name .link))
       ((build)
-       (build-pkgs .pkg .?build-release .?build-optimized .?build-debug .?global))
+       (build-pkgs .pkg .?build-dependencies .?build-dependents .?build-release
+                   .?build-optimized .?build-debug .?global))
       ((clean)
        (clean-pkgs .pkg .?global))
       ((deps)
@@ -219,78 +223,106 @@
     (setup-local-pkg-env! #t))
   (fold-pkgs-retag pkgs pkg-uninstall force?))
 
+;; parameter for hash-table from pkg to status:
+;; #f (untouched), 'installing-dependencies, 'dependencies-installed, 'building, 'built
+;; TODO: add some lock to the pkg-build-env to allow for parallel building.
+;; TODO: add timestamp or hash-based status for build caching (see ASDF3.3?)
+;; TODO: for hash-based status, let users explicitly declare their dependencies;
+;; TODO: in absence of explicit declaration, intercept all relevant system calls (open, fstat, etc.),
+;; and make sure they return the same (like vestasys)? or in presence of explicit declaration, enforce them (like bazel)?
+;; TODO: add completions for each stage for the build???
+(def pkg-build-env (make-parameter #f))
+(def (pkg-build-env-status pkg)
+  (hash-get (pkg-build-env) pkg))
+(def (pkg-build-env-status-set! pkg val) ;; TODO: with-lock
+  (hash-put! (pkg-build-env) pkg val))
+(def (call-with-pkg-build-env thunk)
+  (if (pkg-build-env)
+    (thunk)
+    (parameterize ((pkg-build-env (make-hash-table))) (thunk))))
+(defrule (with-pkg-build-env body ...) (call-with-pkg-build-env (lambda () body ...)))
+
 (def (update-pkgs pkgs global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (when (fold-pkgs pkgs pkg-update)
-    ;; the package dependencies might have changed, so install them
-    (for-each
-      (lambda (pkg)
-        (if (equal? pkg "all")
-          (for-each pkg-install-deps (pkg-list))
-          (pkg-install-deps pkg)))
-      pkgs)
-    ;; rebuild packages
-    (for-each pkg-build pkgs)
-    (pkg-retag)))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (when (fold-pkgs pkgs pkg-update)
+     ;; the package dependencies might have changed, so install them
+     (for-each
+       (lambda (pkg)
+         (if (equal? pkg "all")
+           (for-each pkg-install-deps (pkg-list))
+           (pkg-install-deps pkg)))
+       pkgs)
+     ;; rebuild packages
+     (for-each pkg-build pkgs)
+     (pkg-retag))))
 
 (def (link-pkg pkg src global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (pkg-link pkg src))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (pkg-link pkg src)))
 
 (def (unlink-pkgs pkgs force? global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (for-each (cut pkg-unlink <> force?) pkgs))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (for-each (cut pkg-unlink <> force?) pkgs)))
 
-(def (build-pkgs pkgs release? optimized? debug? global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (when release?
-    (setenv "GERBIL_BUILD_RELEASE" "t"))
-  (when optimized?
-    (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
-  (when debug?
-    (setenv "GERBIL_BUILD_DEBUG" "t"))
-  (if (null? pkgs)
-    ;; do local build
-    (pkg-build "." #f)
-    (for-each pkg-build pkgs)))
+(def (build-pkgs pkgs dependencies? dependents? release? optimized? debug? global?)
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (when release?
+     (setenv "GERBIL_BUILD_RELEASE" "t"))
+   (when optimized?
+     (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
+   (when debug?
+     (setenv "GERBIL_BUILD_DEBUG" "t"))
+   (if (null? pkgs)
+     ;; do local build
+     (pkg-build "." dependencies? dependents?)
+     (for-each pkg-build pkgs))))
 
 (def (clean-pkgs pkgs global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (if (null? pkgs)
-    ;; do local clean
-    (pkg-clean ".")
-    (for-each pkg-clean pkgs)))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (if (null? pkgs)
+     ;; do local clean
+     (pkg-clean ".")
+     (for-each pkg-clean pkgs))))
 
 (def (list-pkgs global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (for (pkg (pkg-list))
-    (let (tag (pkg-tag-get pkg))
-      (display pkg)
-      (when tag
-        (display* "@" tag))
-      (newline))))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (for (pkg (pkg-list))
+     (let (tag (pkg-tag-get pkg))
+       (display pkg)
+       (when tag
+         (display* "@" tag))
+       (newline)))))
 
 (def (retag-pkgs global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (pkg-retag))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (pkg-retag)))
 
 (def (search-pkgs keywords dir as-list?)
   (pkg-search keywords dir as-list?))
 
 (def (manage-dirs dirs add? remove? global?)
-  (pkg-directory-manage dirs add? remove? global?))
+  (with-pkg-build-env
+   (pkg-directory-manage dirs add? remove? global?)))
 
 (def (manage-deps deps add? install? update? remove? global?)
-  (unless global?
-    (setup-local-pkg-env! #t))
-  (pkg-deps-manage deps add? install? update? remove?))
+  (with-pkg-build-env
+   (unless global?
+     (setup-local-pkg-env! #t))
+   (pkg-deps-manage deps add? install? update? remove?)))
 
 (def (setup-local-path!)
   (let* (($GERBIL_PATH (gerbil-path))
@@ -324,30 +356,34 @@
       (force +pkg-root-dir+))))
 
 (def (pkg-new package-prefix package-name maybe-link)
-  (def prefix (or package-prefix
-                  (getenv "USER" #f)
-                  (error "Package prefix not specified with -p or --package, and USER not defined")))
-  (def name (or package-name
-                (path-strip-directory (path-normalize* (current-directory)))))
-  (def (create-template file template . args)
-    (call-with-output-file file
-      (lambda (output)
-        (apply write-template template output args))))
+  (with-pkg-build-env
+   (def prefix (or package-prefix
+                   (getenv "USER" #f)
+                   (error "Package prefix not specified with -p or --package, and USER not defined")))
+   (def name (or package-name
+                 (path-strip-directory (path-normalize* (current-directory)))))
+   (def (create-template file template . args)
+     (call-with-output-file file
+       (lambda (output)
+         (apply write-template template output args))))
 
-  (create-template "gerbil.pkg" gerbil.pkg-template
-                   package: prefix)
-  (create-directory name)
-  (create-template (path-expand "main.ss" name) main.ss-template
-                   name: name)
-  (create-template (path-expand "lib.ss" name) lib.ss-template)
-  (create-template [path: "build.ss" permissions: #o755] build.ss-template
-                   name: name)
-  (create-template ".gitignore" gitignore-template)
+   (create-template "gerbil.pkg" gerbil.pkg-template
+                    package: prefix)
+   (create-directory name)
+   (create-template (path-expand "main.ss" name) main.ss-template
+                    name: name)
+   (create-template (path-expand "lib.ss" name) lib.ss-template)
+   (create-template [path: "build.ss" permissions: #o755] build.ss-template
+                    name: name)
+   (create-template ".gitignore" gitignore-template)
 
-  (create-template "Makefile" Makefile-template name: name)
+   (create-template "Makefile" Makefile-template name: name)
 
-  (when maybe-link
-    (pkg-link maybe-link (current-directory))))
+   ;; TODO: mark the pkg unbuilt... except that we don't know the name for it yet,
+   ;; just the package name(!)
+
+   (when maybe-link
+     (pkg-link maybe-link (current-directory)))))
 
 (def (pkg+tag pkg)
   (let* ((pt (string-split pkg #\@))
@@ -358,46 +394,49 @@
     (values pkg tag)))
 
 (def (pkg-install pkg)
-  (let* (((values pkg tag) (pkg+tag pkg))
-         (current-tag (pkg-tag-get pkg)))
-    (def (install-it tag)
-      (pkg-fetch pkg tag)
-      (pkg-install-deps pkg)
-      (pkg-build pkg #f))
+  (with-pkg-build-env
+   (let* (((values pkg tag) (pkg+tag pkg))
+          (current-tag (pkg-tag-get pkg)))
+     (def (install-it tag)
+        (pkg-fetch pkg tag)
+        (pkg-install-deps pkg)
+        (pkg-build pkg #f #f))
 
-    (if current-tag
-      (cond
-       ((pkg-tag-incompatible?  current-tag tag)
-        (error "Package already installed with an incompatible tag" pkg tag current-tag))
-       ((pkg-tag-choose current-tag tag)
-        =>  install-it)
-       (else
-        (install-it tag)))
-      (install-it tag))))
+     (if current-tag
+       (cond
+        ((pkg-tag-incompatible?  current-tag tag)
+         (error "Package already installed with an incompatible tag" pkg tag current-tag))
+        ((pkg-tag-choose current-tag tag)
+         =>  install-it)
+        (else
+         (install-it tag)))
+       (install-it tag)))))
 
 (def (pkg-install-deps pkg)
-  (let* ((plist (pkg-plist pkg))
-         (deps  (pgetq depend: plist [])))
-    (for-each pkg-install deps)))
+  (with-pkg-build-env
+   (let* ((plist (pkg-plist pkg))
+          (deps  (pgetq depend: plist [])))
+     (for-each pkg-install deps))))
 
 (def (pkg-uninstall pkg (force? #f))
-  (let* ((root (pkg-root-dir))
-         (dest (path-expand pkg root)))
-    (and (file-exists? dest)
-         (not (file-symbolic-link? dest))
-         (begin
-           (unless force?
-             (let (deps (pkg-dependents pkg))
-               (unless (null? deps)
-                 (error "Refuse to uninstall package; orphaned dependencies" deps))))
-           (pkg-clean pkg)
-           (displayln "... uninstall " pkg)
-           (run-process ["rm" "-rf" (path-normalize* dest)]
-                        coprocess: void)
-           (let (tagf (pkg-tag-file pkg))
-             (when (file-exists? tagf)
-               (delete-file tagf)))
-           #t))))
+  (with-pkg-build-env
+   (let* ((root (pkg-root-dir))
+          (dest (path-expand pkg root)))
+     (and (file-exists? dest)
+          (not (file-symbolic-link? dest))
+          (begin
+            (unless force?
+              (let (deps (pkg-dependents pkg))
+                (unless (null? deps)
+                  (error "Refuse to uninstall package; orphaned dependencies" deps))))
+            (pkg-clean pkg)
+            (displayln "... uninstall " pkg)
+            (run-process ["rm" "-rf" (path-normalize* dest)]
+                         coprocess: void)
+            (let (tagf (pkg-tag-file pkg))
+              (when (file-exists? tagf)
+                (delete-file tagf)))
+            #t)))))
 
 (def (pkg-update pkg)
   (cond
@@ -559,7 +598,7 @@
       (pkg-clean pkg)
       (delete-file dest))))
 
-(def (pkg-build pkg (dependents? #t))
+(def (pkg-build pkg (dependencies? #f) (dependents? #f))
   (def build-options
     (let* ((options [])
            (options (if (getenv "GERBIL_BUILD_RELEASE" #f)
@@ -572,34 +611,44 @@
                       (cons "--debug" options)
                       options)))
       options))
-
-  (cond
-   ((equal? pkg "all")
-    (let* ((pkgs (pkg-list))
-           (deps (map (cut pkg-dependents* <> pkgs) pkgs))
-           (pkgs+deps (map cons pkgs deps))
-           (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
-      (for-each (cut pkg-build <> #f) (map car sorted))))
-   ((equal? pkg ".")
-    (displayln "... build in current directory")
-    (pkg-manifest! pkg)
-    (let (build.ss (path-expand "build.ss" (current-directory)))
-      (run-process [build.ss "compile" build-options ...]
-                   stdout-redirection: #f)))
-   (else
-     (let* ((root (pkg-root-dir))
-            (path (path-expand pkg root))
-            (_ (unless (file-exists? path)
-                 (error "Cannot build unknown package" pkg)))
-            (build.ss (pkg-build-script pkg)))
-       (displayln "... build " pkg)
-       (pkg-manifest! pkg)
+  (with-pkg-build-env
+   (cond
+    ((equal? pkg "all")
+     (let* ((pkgs (pkg-list))
+            (deps (map (cut pkg-dependents* <> pkgs) pkgs))
+            (pkgs+deps (map cons pkgs deps))
+            (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
+       (for-each (cut pkg-build <> #f) (map car sorted))))
+    ((equal? pkg ".")
+     (displayln "... build in current directory")
+     (pkg-manifest! pkg)
+     (let (build.ss (path-expand "build.ss" (current-directory)))
        (run-process [build.ss "compile" build-options ...]
-                    directory: path
-                    coprocess: void
-                    stdout-redirection: #f)
-       (when dependents?
-         (for-each pkg-build (pkg-dependents pkg)))))))
+                    stdout-redirection: #f)))
+    (else
+     (case (pkg-build-env-status pkg)
+       ((built) (void)) ;; already built, do not rebuild.
+       ((installing-dependencies building) (error "Circular dependency building" pkg))
+       ((#f dependencies-installed)
+        (pkg-build-env-status-set! pkg 'building)
+        (let* ((root (pkg-root-dir))
+               (path (path-expand pkg root))
+               (_ (unless (file-exists? path)
+                    (error "Cannot build unknown package" pkg)))
+               (build.ss (pkg-build-script pkg)))
+          (displayln "... build " pkg)
+          (pkg-manifest! pkg)
+          (run-process [build.ss "compile" build-options ...]
+                       directory: path
+                       coprocess: void
+                       stdout-redirection: #f)
+          (pkg-build-env-status-set! pkg 'built)
+          (when dependents?
+            (for-each
+              (lambda (p)
+                (unless (pkg-build-env-status p)
+                  (pkg-build p #t #t)))
+              (pkg-dependents pkg))))))))))
 
 (def (pkg-manifest! pkg)
   (let* (((values pkg _) (pkg+tag pkg))
@@ -924,8 +973,8 @@
             ([hd . rest]
              (let ((values dpkg _) (pkg+tag hd))
                (if (equal? xpkg dpkg)
-                 (set! (car rest) dep)
-                 (lp rest))))
+                  (set! (car rest) dep)
+                  (lp rest))))
             (else
              (set! current-deps (append current-deps [dep])))))))
 
@@ -945,37 +994,38 @@
       (call-with-output-file (path-expand "gerbil.pkg" (current-directory))
         (cut pretty-print plist <>)))
 
-    (if (null? deps)
-      (cond
-       (add? (error "nothing to add"))
-       (remove? (error "nothing to remove"))
-       (install?
-        (install-pkgs current-deps #t))
-       (update?
-        (update-pkgs current-deps #t))
-       (else
-        (for-each displayln current-deps)))
-      (cond
-       ((and add? remove?)
-        (error "cannot both add and remove"))
-       ((and remove? install?)
-        (error "cannot both remove and install"))
-       ((and add? update?)
-        (error "cannot both add and update"))
-       (add?
-        (for (dep deps)
-          (add-dep! dep))
-        (write-deps!)
-        (when install?
-          (install-pkgs deps #t)))
-       (update?
-        (update-pkgs deps #t))
-       (remove?
-        (for (dep deps)
-          (remove-dep! dep))
-        (write-deps!))
-       (else
-        (error "unspecified action; use --add, --update or --remove"))))))
+    (with-pkg-build-env
+     (if (null? deps)
+       (cond
+        (add? (error "nothing to add"))
+        (remove? (error "nothing to remove"))
+        (install?
+         (install-pkgs current-deps #t))
+        (update?
+         (update-pkgs current-deps #t))
+        (else
+         (for-each displayln current-deps)))
+       (cond
+        ((and add? remove?)
+         (error "cannot both add and remove"))
+        ((and remove? install?)
+         (error "cannot both remove and install"))
+        ((and add? update?)
+         (error "cannot both add and update"))
+        (add?
+         (for (dep deps)
+           (add-dep! dep))
+         (write-deps!)
+         (when install?
+           (install-pkgs deps #t)))
+        (update?
+         (update-pkgs deps #t))
+        (remove?
+         (for (dep deps)
+           (remove-dep! dep))
+         (write-deps!))
+        (else
+         (error "unspecified action; use --add, --update or --remove")))))))
 
 ;;; internal
 (def +pkg-plist+
