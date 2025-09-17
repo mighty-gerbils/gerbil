@@ -192,7 +192,63 @@ concurrent evaluation in a multiple threads; it will also support failures and e
 the thunk, and will issue an error if someone attempts to reenter such escaped thunks.
 
 ## do
-TODO
+```scheme
+(do ((var init step ...) ...)
+    (test-expr expr ...)
+  command ...)
+```
+
+The `do` macro is Gerbil's most general and powerful imperative looping construct. It allows for the creation of loops with multiple, interdependent state variables.
+
+The loop works as follows:
+1.  First, each `var` is bound to its respective `init` value.
+2.  At the beginning of each iteration, the `test-expr` is evaluated.
+3.  If `test-expr` is true, the `result` expressions are evaluated, and the value of the last `result` expression is returned. If no `result` expressions are provided, a void value is returned.
+4.  If `test-expr` is false, the `command` expressions in the loop body are evaluated in order.
+5.  Finally, the `step` expressions for each variable are evaluated. All `step` expressions are computed using the variable values from the *previous* iteration. After all steps are computed, the variables are simultaneously updated with their new values, and the loop proceeds to the next iteration (starting again at step 2).
+
+### Examples:
+
+**- Initializing a vector**
+This example uses a counter `i` to fill a pre-allocated vector. The loop body is used for the side effect of setting the vector's elements.
+
+```scheme
+;; Create a 5-element vector and fill it with values 0 through 4.
+(do ((vec (make-vector 5))
+     (i 0 (+ i 1)))
+    ((= i 5) vec)
+  (vector-set! vec i i))
+
+;; => #(0 1 2 3 4)
+```
+
+**- Reversing a list**
+This example shows how `do` can build a result without a loop body. The logic is entirely contained in the variable updates and the termination clause.
+
+```scheme
+;; Reverse the list '(a b c d).
+(do ((source '(a b c d) (cdr source))
+     (result '() (cons (car source) result)))
+    ((null? source) result))
+
+;; => '(d c b a)
+```
+
+### Context and Usage
+
+`do` is the appropriate tool for complex, stateful iteration.
+
+* Compared to **`while`** and **`until`**, which are ideal for simple loops based on a single condition, `do` excels when you need to manage multiple state variables that update in parallel on each iteration.
+* Compared to functional iteration constructs like **`foldl`** or **`map`**, `do` should be used when you specifically need imperative control, side effects in the loop body, or when the state updates are too complex to fit elegantly into a fold operation.
+
+
+### See Also
+
+- [`while`](#while)
+- [`until`](#until)
+- `let` (for named `let` loops)
+- `foldl`
+- [`do-while`](#do-while)
 
 ## do-while
 TODO
