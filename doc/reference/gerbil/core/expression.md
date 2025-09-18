@@ -194,7 +194,7 @@ the thunk, and will issue an error if someone attempts to reenter such escaped t
 ## do
 ```scheme
 (do ((var init step ...) ...)
-    (test-expr expr ...)
+    (test expr ...)
   command ...)
 ```
 
@@ -202,9 +202,9 @@ The `do` macro is Gerbil's most general and powerful imperative looping construc
 
 The loop works as follows:
 1.  First, each `var` is bound to its respective `init` value.
-2.  At the beginning of each iteration, the `test-expr` is evaluated.
-3.  If `test-expr` is true, the `result` expressions are evaluated, and the value of the last `result` expression is returned. If no `result` expressions are provided, a void value is returned.
-4.  If `test-expr` is false, the `command` expressions in the loop body are evaluated in order.
+2.  At the beginning of each iteration, the `test` is evaluated.
+3.  If `test` is true, the `result` expressions are evaluated, and the value of the last `result` expression is returned. If no `result` expressions are provided, a void value is returned.
+4.  If `test` is false, the `command` expressions in the loop body are evaluated in order.
 5.  Finally, the `step` expressions for each variable are evaluated. All `step` expressions are computed using the variable values from the *previous* iteration. After all steps are computed, the variables are simultaneously updated with their new values, and the loop proceeds to the next iteration (starting again at step 2).
 
 ### Examples:
