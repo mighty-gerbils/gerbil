@@ -247,12 +247,56 @@ This example shows how `do` can build a result without a loop body. The logic is
 
 - [`while`](#while)
 - [`until`](#until)
-- `let` (for named `let` loops)
 - `foldl`
 - [`do-while`](#do-while)
 
 ## do-while
-TODO
+```scheme
+(do-while ((var init step ...) ...)
+  (test result ...)
+  command ...)
+=>
+(do ((var init step ...) ...)
+  ((not test) result ...)
+  command ...)
+
+```
+Inverted form of [`do`](#do) macro that executes its body *at least once*, and continues to iterate as long as the `test` evaluates to a truthy value.
+
+The `do-while` macro provides a loop that checks its continuation condition *after* each execution of its body. This guarantees that the loop body is always executed at least once.
+
+The evaluation order is as follows:
+1.  The `var` bindings are established with their `init` values.
+2.  The `command` expressions in the body are evaluated in order.
+3.  The `test` is evaluated.
+4.  If `test` is truthy, the `step` expressions are evaluated to compute the new values for the variables, and the loop continues from step 2.
+5.  If `test` is false, the loop terminates. The `result` expressions are then evaluated, and the value of the last one is returned.
+
+::: tip Example:
+
+**Processing a message queue**
+Each iteration must first fetch a message from the queue before checking whether to continue.
+
+```scheme
+;; read a message, process it, stop when dequeue! returns the sentinel 'no-msg
+(do-while ((msg (dequeue! q 'no-msg') (dequeue! q 'no-msg')))
+  (not (eq? msg 'no-msg'))
+  (process-message msg))
+```
+:::
+
+### Context and Usage
+
+Use `do-while` for situations where an action must be performed before the condition to continue can be evaluated.
+
+* Compared to `while` and `do`, which test the condition before the first iteration, `do-while` is useful when the loop body itself is what produces the value needed for the test (e.g., reading from a file, getting user input, fetching an item from a queue).
+* Like `do`, it is an imperative construct. For functional transformations of lists, prefer higher-order functions like `foldl` or `map`.
+
+### See Also
+
+- [`do`](#do)
+- [`while`](#while)
+- [`until`](#until)
 
 
 ## while
