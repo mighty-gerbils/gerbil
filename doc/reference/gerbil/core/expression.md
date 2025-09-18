@@ -205,12 +205,12 @@ The loop works as follows:
 2.  At the beginning of each iteration, the `test` is evaluated.
 3.  If `test` is truthy, the `result` expressions are evaluated, and the value of the last `result` expression is returned. If no `result` expressions are provided, a void value is returned.
 4.  If `test` is false, the `command` expressions in the loop body are evaluated in order.
-5.  Finally, the `step` expressions for each variable are evaluated. All `step` expressions are computed using the variable values from the *previous* iteration. After all steps are computed, the variables are simultaneously updated with their new values, and the loop proceeds to the next iteration (starting again at step 2).
+5.  Finally, the `step` expressions for each variable are evaluated. All `step` expressions are computed using the variable values from the previous iteration. After all steps are computed, the variables are simultaneously updated with their new values, and the loop proceeds to the next iteration (starting again at step 2).
 
 ::: tip Examples:
 
-**- Initializing a vector**
-This example uses a counter `i` to fill a pre-allocated vector. The loop body is used for the side effect of setting the vector's elements.
+**- Initializing a vector:**
+this example uses a counter `i` to fill a pre-allocated vector. The loop body is used for the side effect of setting the vector's elements.
 
 ```scheme
 ;; Create a 5-element vector and fill it with values 0 through 4.
@@ -222,8 +222,8 @@ This example uses a counter `i` to fill a pre-allocated vector. The loop body is
 ;; => #(0 1 2 3 4)
 ```
 
-**- Reversing a list**
-This example shows how `do` can build a result without a loop body. The logic is entirely contained in the variable updates and the termination clause.
+**- Reversing a list:**
+this example shows how `do` can build a result without a loop body. The logic is entirely contained in the variable updates and the termination clause.
 
 ```scheme
 ;; Reverse the list '(a b c d).
@@ -239,9 +239,8 @@ This example shows how `do` can build a result without a loop body. The logic is
 
 `do` is the appropriate tool for complex, stateful iteration.
 
-* Compared to **`while`** and **`until`**, which are ideal for simple loops based on a single condition, `do` excels when you need to manage multiple state variables that update in parallel on each iteration.
-* Compared to functional iteration constructs like **`foldl`** or **`map`**, `do` should be used when you specifically need imperative control, side effects in the loop body, or when the state updates are too complex to fit elegantly into a fold operation.
-
+* Compared to `while` and `until`, which are ideal for simple loops based on a single condition, `do` excels when you need to manage multiple state variables that update in parallel on each iteration.
+* Compared to functional iteration constructs like `foldl` or `map`, `do` should be used when you specifically need imperative control, side effects in the loop body, or when the state updates are too complex to fit elegantly into a fold operation.
 
 ### See Also
 
@@ -259,11 +258,11 @@ This example shows how `do` can build a result without a loop body. The logic is
 (do ((var init step ...) ...)
   ((not test) result ...)
   command ...)
-
 ```
-Inverted form of [`do`](#do) macro that executes its body *at least once*, and continues to iterate as long as the `test` evaluates to a truthy value.
 
-The `do-while` macro provides a loop that checks its continuation condition *after* each execution of its body. This guarantees that the loop body is always executed at least once.
+Inverted form of [`do`](#do) macro that executes its body **at least once**, and continues to iterate as long as the `test` evaluates to a truthy value.
+
+The `do-while` macro provides a loop that checks its continuation condition **after** each execution of its body. This guarantees that the loop body is always executed at least once.
 
 The evaluation order is as follows:
 1.  The `var` bindings are established with their `init` values.
@@ -274,8 +273,7 @@ The evaluation order is as follows:
 
 ::: tip Example:
 
-**Processing a message queue**
-Each iteration must first fetch a message from the queue before checking whether to continue.
+Processing a message queue, each iteration must first fetch a message from the queue before checking whether to continue.
 
 ```scheme
 ;; read a message, process it, stop when dequeue! returns the sentinel 'no-msg
@@ -300,15 +298,78 @@ Use `do-while` for situations where an action must be performed before the condi
 
 
 ## while
-```
+```scheme
 (while test body ...)
 ```
 
-Imperative loop; the body is evaluated while the `test` expression is truthy.
+An imperative loop that executes its `body` repeatedly as long as the `test` expression evaluates to a truthy value.
+
+At the beginning of each iteration, the `test` expression is evaluated. If the result is a truthy value (any value other than `#f`), the `body` expressions are executed in order, and the loop repeats. If the `test` expression evaluates to `#f`, the loop terminates immediately.
+
+This behavior means the loop body may be executed **zero or more times**. If the initial `test` is false, the body will never be executed. The `while` macro always returns a void value.
+
+::: tip Example:
+
+A simple counter from 0 to 4.
+
+```scheme
+(let ((i 0))
+  (while (< i 5)
+    (print i " ")
+    (set! i (+ i 1))))
+
+;; => 0 1 2 3 4
+```
+:::
+
+### Context and Usage
+
+`while` is the ideal construct for simple imperative loops where the condition must be checked before the loop body is executed for the first time.
+
+* Compared to [`do-while`](#do-while), which executes its body at least once, `while` may not execute its body at all if the condition is initially false.
+* Compared to [`do`](#do), which is designed to handle multiple, complex loop variables with dedicated update steps, `while` is simpler and better suited for loops controlled by a single condition where state is managed manually within the body (e.g., with `set!`).
+
+### See Also
+
+- [`do`](#do)
+- [`do-while`](#do-while)
+- [`until`](#until)
+
 
 ## until
-```
-(util test body ...)
+```scheme
+(until test body ...)
+=>
+(while (not test) body ...)
 ```
 
-Imperative loop; the body is evaluated until the `test` expression is truthy.
+An imperative loop that is the semantic inverse of [`while`](#while). It executes its `body` repeatedly until the `test` expression evaluates to a truthy value.
+
+At the beginning of each iteration, the `test` expression is evaluated. If the result is `#f`, the `body` expressions are executed in order, and the loop continues. If the `test` expression evaluates to a truthy value (any value other than `#f`), the loop terminates immediately.
+
+Like [`while`](#while), the loop body may be executed **zero or more times**. The `until` macro always returns a void value.
+
+::: tip Example:
+A simple countdown from 5 to 1.
+
+```scheme
+(let ((i 5))
+  (until (zero? i)
+    (print i " ")
+    (set! i (- i 1))))
+
+;; => 5 4 3 2 1
+```
+:::
+
+### Context and Usage
+
+`until` is a stylistic alternative to [`while`](#while) that improves code readability when the loop's logic is defined by its termination condition rather than its continuation condition.
+
+Use `until` when you want to emphasize the condition that stops the loop, as it can make the code's intent more self-evident.
+
+### See Also
+
+- [`do`](#do)
+- [`do-while`](#do-while)
+- [`while`](#while)
