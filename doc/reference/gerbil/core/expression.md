@@ -207,7 +207,7 @@ The loop works as follows:
 4.  If `test` is false, the `command` expressions in the loop body are evaluated in order.
 5.  Finally, the `step` expressions for each variable are evaluated. All `step` expressions are computed using the variable values from the previous iteration. After all steps are computed, the variables are simultaneously updated with their new values, and the loop proceeds to the next iteration (starting again at step 2).
 
-::: tip Examples:
+::: tip Examples
 
 **- Initializing a vector:**
 this example uses a counter `i` to fill a pre-allocated vector. The loop body is used for the side effect of setting the vector's elements.
@@ -271,7 +271,7 @@ The evaluation order is as follows:
 4.  If `test` is truthy, the `step` expressions are evaluated to compute the new values for the variables, and the loop continues from step 2.
 5.  If `test` is false, the loop terminates. The `result` expressions are then evaluated, and the value of the last one is returned.
 
-::: tip Example:
+::: tip Example
 
 Processing a message queue, each iteration must first fetch a message from the queue before checking whether to continue.
 
@@ -308,7 +308,7 @@ At the beginning of each iteration, the `test` expression is evaluated. If the r
 
 This behavior means the loop body may be executed **zero or more times**. If the initial `test` is false, the body will never be executed. The `while` macro always returns a void value.
 
-::: tip Example:
+::: tip Example
 
 A simple counter from 0 to 4.
 
@@ -349,7 +349,7 @@ At the beginning of each iteration, the `test` expression is evaluated. If the r
 
 Like [`while`](#while), the loop body may be executed **zero or more times**. The `until` macro always returns a void value.
 
-::: tip Example:
+::: tip Example
 A simple countdown from 5 to 1.
 
 ```scheme
