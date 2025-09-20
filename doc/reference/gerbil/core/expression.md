@@ -3,7 +3,7 @@
 These are common macros used for expressions.
 
 ## cond
-```
+```scheme
 (cond
  <cond-clause> ...
  [(else body ...)])
@@ -13,109 +13,63 @@ cond-clause:
  (test body ...)
 ```
 
-The clauses are processed top down, util a `test` evaluates truthy, in
-which case the the expression reduces to the value of the associated
-clause body.  If a `test` dispatches to a `receiver` with `=>`, then
-the receiver must be a single argument procedure, that receives the
-value of the test and conditional expression reduces to the value of
-the application of the `receiver` to the value of the `test`. If no
-`test` produces a truthy value, then the expression reduces to the
-body of the `else` clause. If no `else` clause is present, then the
-expression produces a void value.
+Gerbil's most general multi-branch conditional. It evaluates a series of clauses and executes the body of the first one whose test is true.
 
-## and
-```
-(and expr ...)
-```
+The `cond` macro evaluates each `<cond-clause>` from top to bottom until a `test` expression evaluates to a truthy value (any value other than `#f`).
 
-The boolean conjunction macro.
+There are three forms of clauses:
+* `(test body ...)`: If `test` is truthy, the `body` expressions are evaluated, and the result of the last expression is returned.
+* `(test => receiver)`: If `test` is truthy, the `receiver` procedure (which must accept one argument) is called with the resulting truthy value. The value returned by the `receiver` is the final result.
+* `(test)`: A clause with only a single `test` expression will return the value of the `test` itself if it is truthy.
 
-Evalutes the expressions in order while they reduce to a truthy value;
-once a `#f` value is produced, then the value of the `and` expression
-is `#f`. If all expressions are truthy, the value of `and` expression
-is the value of the last expression. The empty `(and`) reduces to
-`#f`.
+The optional `else` clause, which must be the last clause, is executed if no preceding test is true. If no test is true and there is no `else` clause, an unspecified (void) value is returned.
 
-## or
-```
-(or expr ...)
-```
-The boolean disjunction macro.
+::: tip Examples
 
-Conditionally evaluates the expressions in order until one of them
-reduces to a truthy value, which becomes the values of the `or`
-expression. If no expression produces a truthy value, then the value
-of the `or` expression is `#f`. The empty `(and)` reduces to `#t`.
+- **Basic usage**:
+this procedure uses standard clauses and an `else` clause to determine a letter grade from a score.
 
-## ?
-```
-(? <predicate-expr> expr)
-(? <predicate-expr>)
-(? <predicate-expr> => receiver)
-(? <predicate-expr> :: continue)
-(? <predicate-expr> :: continue => receiver)
+```scheme
+> (def (get-letter-grade score)
+    (cond
+      ((>= score 90) "A")
+      ((>= score 80) "B")
+      ((>= score 70) "C")
+      (else "D")))
 
-predicate-expr:
- (and <predicate-expr> ...)
- (or  <predicate-expr> ...)
- (not <predicate-expr>)
- <expression>
+> (get-letter-grade 85)
+"B"
 ```
 
-The predicate composition macro:
-- `(? <predicate-expr> expr)`, composes a predicate and applies it to `expr`.
-- `(? <predicate-expr>)`, creates a new predicate (a procedure of one argument that produces a truthy value) composing the predicate expression.
-- `(? <predicate-expr> => receiver) ` creates a new predicate that composes the predicate expression. If the predicate expression on the argument reduces to a truthy value, it the resulting value is applied to the `receiver`.
-- `(? <predicate-expr> :: continue)` creates a new predicate that composes the predicate expression; if the predicate argument satisfies the predicate composition, the `continue` procedure is applied to the it.
-- `(? <predicate-expr> :: continue => receiver)` creates a new predicate that composes the predicate expression. If the predicate argument satisfies the predicate composition, the result is the application of `receiver` to the result of application of the original o0bject to `continue`.
+- **Using the receiver**:
+the `=>` clause is useful when you need to use the specific truthy value returned by the test. This example finds the first user in a list who is an admin.
 
-It is probably easier to understand all this from the actual definition of the macro:
+```scheme
+;; (is-admin? (car users)) returns the user object if they are an admin, or #f.
+(def (find-admin-in-list users)
+  (cond
+   ((null? users) #f)
+   ((is-admin? (car users)) => (lambda (admin-user) admin-user))
+   (else (find-admin-in-list (cdr users)))))
 ```
-(defrules ? (and or not =>)
-  ((recur (and pred ...) obj)
-   (and (recur pred obj) ...))
-  ((recur (or pred ...) obj)
-   (or (recur pred obj) ...))
-  ((recur (not pred) obj)
-   (not (recur pred obj)))
-  ((_ pred obj)
-   (pred obj))
-  ((recur pred)
-   (lambda ($obj) (recur pred $obj)))
-  ((recur pred => K)
-   (lambda ($obj)
-     (alet ($val (recur pred $obj))
-       (K $val))))
-  ((recur pred :: K)
-   (lambda ($obj)
-     (and (recur pred $obj)
-          (K $obj))))
-  ((recur pred :: proc => K)
-   (lambda ($obj)
-     (and (recur pred $obj)
-          (K (proc $obj))))))
-```
+:::
 
-## when
-```
-(when test expr ...)
-=>
-(if test (begin expr ...) (void))
-```
+### Context and Usage
 
-One arm conditional expression.
+`cond` is the most powerful and flexible conditional form in Gerbil.
 
-## unless
-```
-(unless test expr ...)
-=>
-(if test (void) (begin expr ...))
-```
+* Use `cond` when you have multiple, arbitrary conditions to check.
+* Compared to `case`, `cond` is more general. Use `case` only when you are comparing a single value against lists of constant datums (like symbols or numbers), as `case` can be more efficient and clearer for that specific task.
 
-Negated one arm conditional expression.
+### See Also
+
+- [`case`](#case)
+- `if`
+- [`when`](#when)
+- [`unless`](#unless)
 
 ## case
-```
+```scheme
 (case expr
  <case-clause> ...
  [<else-clause>])
@@ -129,13 +83,354 @@ else-clause:
  (else expr ...)
 ```
 
-Evaluates the expression `expr` and dispatches the matching clause
-based on the value being in the list of datums of the clause.
+A multi-branch conditional that dispatches based on the value of an expression matching a set of constant datums.
 
-Datums can be symbols, characters, numbers, strings, or atoms.
+The `expr` is evaluated **once**, and its result is compared using `eqv?` against the `<datum>` lists of each `<case-clause>` in order. When a match is found in a clause's datum list, the corresponding body is executed, and the value of the last expression in the body is returned.
 
+If a matching clause uses the `=> receiver` syntax, the `receiver`, which must be a procedure of one argument, is called with the result of `expr` as that argument. The value returned by the `receiver` is the final result.
 
-## begin0
+If no clause matches, the `else-clause` is executed. If there is no `else-clause`, an unspecified (void) value is returned. Each `<datum>` **must be a constant literal**, such as a symbol, character, number, string, boolean, or the empty list.
+
+::: tip Example
+`case` is ideal for dispatching actions based on a specific value, such as handling a command in a simple application.
+
+```scheme
+;; This function takes a command symbol and performs an action.
+> (def (handle-command cmd)
+    (case cmd
+      ((up north u)
+       (print "Moving north..."))
+
+      ((down south d)
+       (print "Moving south..."))
+
+      ((quit exit)
+       (print "Goodbye!"))
+
+      (else
+       (print (string-append "Unknown command: " (symbol->string cmd))))))
+
+> (handle-command 'u)
+Moving north...
+```
+:::
+
+### Context and Usage
+
+Use `case` when you need to compare a single value against several lists of constant data (`datum`).
+
+* Compared to `cond`, `case` is more efficient and often more readable for this specific purpose. `cond` is more general and should be used when your conditions are arbitrary expressions (e.g., `(> x 10)`) rather than equality checks against constants.
+
+### See Also
+
+- [`cond`](#cond)
+- `if`
+
+## and
+```scheme
+(and expr ...)
+```
+
+A boolean conjunction macro that evaluates expressions from left to right, short-circuiting on the first false value.
+
+The `expr ...` expressions are evaluated in order. If any expression evaluates to `#f`, `and` immediately stops and returns `#f` without evaluating the remaining expressions. If all expressions evaluate to a truthy value, the value of the *last expression* is returned.
+
+An empty `(and)` expression evaluates to `#t`.
+
+::: tip Example
+`and` is commonly used to "guard" subsequent computations. In this example, `(andmap symbol? l)` is only evaluated if the first test, `(list? l)`, is true, thus preventing a type error if `l` is not a list.
+
+```scheme
+> (let ((l '(a b c)))
+    (and (list? l) (andmap symbol? l)))
+#t
+```
+:::
+
+### Context and Usage
+
+Use `and` for two main purposes:
+
+* To check if **all** of several conditions are true.
+* To create a **"guard"** for an operation. Because `and` stops at the first `#f`, you can use it to safely check a condition before running code that depends on it.
+
+### See Also
+
+[`or`](#or)
+
+## or
+```scheme
+(or expr ...)
+```
+A boolean disjunction macro that evaluates expressions from left to right, short-circuiting on and returning the first truthy value.
+
+The `expr ...` expressions are evaluated in order. If an expression evaluates to a truthy value (any value other than `#f`), `or` immediately stops and returns that value without evaluating the remaining expressions.
+
+If all expressions evaluate to `#f`, or if there are no expressions, the value of the `or` expression is `#f`.
+
+::: tip Example
+`or` is idiomatically used to provide a default or fallback value. This function returns the user's name if it exists, otherwise it returns "Guest".
+
+```scheme
+> (def (get-display-name (user-name :? :string := #f))
+    (or user-name "Guest"))
+
+;; When the optional argument is provided:
+> (get-display-name "Vyzo")
+Vyzo
+
+;; When the optional argument is omitted, it defaults to #f:
+> (get-display-name)
+Guest
+```
+:::
+
+### Context and Usage
+
+Use `or` for two main purposes:
+
+* To check if **at least one** of several conditions is true.
+* To provide a **fallback value**. Since or returns the first truthy value it finds, it is perfect for selecting a default when a preferred value might not exist.
+
+### See Also
+
+[`and`](#and)
+
+## when
+```scheme
+(when test expr ...)
+=>
+(if test (begin expr ...) (void))
+```
+
+A one-armed conditional that executes its body only if the `test` expression evaluates to a truthy value.
+
+The `test` expression is evaluated first. If the result is a truthy value (any value other than `#f`), the `expr ...` body expressions are evaluated in order. The value of the entire `when` expression is the value of the *last expression* in the body.
+
+If the `test` evaluates to `#f`, the body is not executed, and an unspecified (void) value is returned.
+
+::: tip Example
+Delete a file if it exists.
+
+```scheme
+(when (file-exists? file)
+  (delete-file file))
+```
+:::
+
+### Context and Usage
+
+`when` is a stylistic choice for clarity when you only care about the "then" case of a conditional and have no "else" branch.
+
+* Functionally, `(when test expr ...)` is equivalent to `(if test (begin expr ...) (void))`
+* Use `when` to make your code more readable by clearly signaling that there is no "else" case to consider. It is often preferred over a more verbose `if` for simple, guarded execution.
+
+### See Also
+
+- [`unless`](#unless)
+- [`cond`](#cond)
+- `if`
+
+## unless
+```scheme
+(unless test expr ...)
+=>
+(if test (void) (begin expr ...))
+```
+
+A one-armed conditional that is the semantic inverse of [`when`](#when). It executes its body only if the `test` expression evaluates to false (`#f`).
+
+The `test` expression is evaluated first. If the result is `#f`, the `expr ...` body expressions are evaluated in order, and the value of the entire `unless` expression is the value of the *last expression* in the body.
+
+If the `test` evaluates to a truthy value, the body is not executed, and an unspecified (void) value is returned.
+
+::: tip Example
+Create a directory only if it doesn't already exist.
+
+```scheme
+(unless (file-exists? dir)
+  (create-directory* dir))
+```
+:::
+
+### Context and Usage
+
+`unless` is a stylistic choice for clarity when you only care about the "false" case of a conditional.
+
+* Functionally, `(unless test expr ...)` is equivalent to `(if (not test) (begin expr ...) (void))`.
+* The choice between them is a matter of code readability. Use `unless` when the condition is a negative check, as it often reads more like natural language (e.g., "unless this file exists, create it").
+
+### See Also
+
+- [`when`](#when)
+- [`cond`](#cond)
+- `if`
+
+## ?
+```scheme
+(? <predicate-expr> expr)
+(? <predicate-expr>)
+(? <predicate-expr> => receiver)
+(? <predicate-expr> :: continue)
+(? <predicate-expr> :: continue => receiver)
+
+predicate-expr:
+ (and <predicate-expr> ...)
+ (or  <predicate-expr> ...)
+ (not <predicate-expr>)
+ <predicate>
+```
+
+A powerful macro for composing, creating, and applying predicates (functions that return a boolean value).
+
+The `<predicate>` is an expression that evaluates to a procedure of one argument that returns a truthy or falsey value (e.g., `string?`, `(lambda (x) (> x 10))`). It can be composed with `and`, `or`, and `not`.
+
+```scheme
+(? (and <predicate> ...) obj)
+=> (and (? <predicate> obj) ...)
+
+(? (or <predicate> ...) obj)
+=> (or (? <predicate> obj) ...)
+
+(? (not <predicate>) obj)
+=> (not (? <predicate> obj))
+```
+
+The `?` macro has two main modes of operation:
+
+#### Direct Application
+In this mode, `?` immediately applies a predicate to an expression.
+
+```scheme
+(? <predicate-expr> expr)
+=> (<predicate-expr> expr)
+```
+- `<predicate-expr>`: the predicate logic to apply
+- `expr`: the expression whose value will be tested.
+
+::: tip Example
+```scheme
+;; Simple test
+> (? string? "hello")
+#t
+
+;; Composed test
+> (? (and number? fixnum?) 1000)
+#t
+```
+:::
+
+#### Predicate Construction
+In this mode, `?` does not test a value immediately. Instead, it returns a new predicate (a lambda function) that can be stored and used later.
+  - **Simple Predicate**
+    ```scheme
+    (? <predicate-expr>)
+    => (lambda (expr) (? <predicate-expr> expr))
+    ```
+
+    This creates a new function that takes one argument and applies the `<predicate-expr>` to it.
+
+    ::: tip Example
+    Create a predicate that checks if a value is a non-empty string.
+
+    ```scheme
+    > (def non-empty-string?
+        (? (and string? (not string-empty?))))
+
+    > (non-empty-string? "hello")
+    #t
+    > (non-empty-string? "")
+    #f
+    ```
+    :::
+  - **Predicate with a Chained Action**
+    ```scheme
+    (? <predicate-expr> :: continue)
+    => (lambda (expr)
+         (and (? <predicate-expr> expr)
+              (continue expr)))
+    ```
+    * `continue` must be a procedure of one argument.
+
+    This creates a new predicate that, when called, applies `<predicate-expr>` to its argument. If the result is truthy, it then calls the `continue` procedure with the original argument.
+
+    Use `(? ... :: continue)` to **perform an action** on the **original object.** Think of it as: *"If this object passes the test, then do something with the object itself."* This is the most common pattern for chaining operations.
+
+    ::: tip Example
+    Create a predicate that prints a message if the value is a string.
+
+    ```scheme
+    > (def print-string (? string? :: print))
+
+    > (print-string "Gerbil")
+    Gerbil
+
+    > (print-string 'hello)
+    #f
+    ```
+    :::
+
+  - **Predicate with a Result Transformer**
+    ```scheme
+    (? <predicate-expr> => receiver)
+    => (lambda (expr)
+         (alet (val (? <predicate-expr> expr))
+           (receiver val)))
+    ```
+    * `receiver` must be a procedure of one argument.
+
+    This creates a new predicate. If the `<predicate-expr>` test on an argument is truthy, the `receiver` procedure is called with that truthy value, and the result of the `receiver` is returned.
+
+    Use `(? ... => receiver)` **to Transform** the **Predicate's Result**. Think of it as: *"Run this test, and if the result is interesting, transform that result into something else."* This is useful when the predicate itself is a search or extraction function.
+
+    ::: tip Example
+    Create a predicate that filters a list and extracts vowels from it.
+
+    ```scheme
+    > (def vowel (? (cut member <> '(a e o u y i)) => car))
+
+    > (filter vowel '(g e r b i l))
+    '(e i)
+
+    > (filter vowel '(h l l))
+    '()
+    ```
+    :::
+
+  - **Full Pipeline**
+    ```scheme
+    (? <predicate-expr> :: continue => receiver)
+    => (lambda (expr)
+         (and (? <predicate-expr> expr)
+              (receiver (continue expr))))
+    ```
+    This combines both forms. When the created predicate is called, it tests its argument. If the test is truthy, the `continue` procedure is called with the original argument. The result of that call is then passed to the `receiver` procedure, whose result is the final return value.
+
+    ::: tip Example
+
+    ```scheme
+    > (def process-string-pipeline
+        (? string? :: string-upcase => (lambda (u) (string-append "PROCESSED: " u))))
+
+    > (process-string-pipeline "hello")
+    "PROCESSED: HELLO!"
+    ```
+    :::
+
+### Context and Usage
+
+Use `?` when you need to build complex validation logic or create reusable predicate functions in a declarative style. It provides a concise syntax for compositions that would otherwise require multiple nested `if`, `and`, `or`, or `lambda` forms.
+
+For simple, one-off conditional execution, `if`, `when`, or `cond` are often more direct and readable.
+
+### See Also
+
+- [`and`](#and)
+- [`or`](#or)
+- `not`
+- [`cond`](#cond)
+
+## Begin0
 ```
 (begin0 expr rest ...)
 =>
@@ -214,12 +509,11 @@ this example uses a counter `i` to fill a pre-allocated vector. The loop body is
 
 ```scheme
 ;; Create a 5-element vector and fill it with values 0 through 4.
-(do ((vec (make-vector 5))
-     (i 0 (+ i 1)))
-    ((= i 5) vec)
-  (vector-set! vec i i))
-
-;; => #(0 1 2 3 4)
+> (do ((vec (make-vector 5))
+       (i 0 (+ i 1)))
+      ((= i 5) vec)
+    (vector-set! vec i i))
+#(0 1 2 3 4)
 ```
 
 **- Reversing a list:**
@@ -227,11 +521,10 @@ this example shows how `do` can build a result without a loop body. The logic is
 
 ```scheme
 ;; Reverse the list '(a b c d).
-(do ((source '(a b c d) (cdr source))
-     (result '() (cons (car source) result)))
-    ((null? source) result))
-
-;; => '(d c b a)
+> (do ((source '(a b c d) (cdr source))
+       (result '() (cons (car source) result)))
+      ((null? source) result))
+'(d c b a)
 ```
 :::
 
@@ -313,12 +606,11 @@ This behavior means the loop body may be executed **zero or more times**. If the
 A simple counter from 0 to 4.
 
 ```scheme
-(let ((i 0))
-  (while (< i 5)
-    (print i " ")
-    (set! i (+ i 1))))
-
-;; => 0 1 2 3 4
+> (let ((i 0))
+    (while (< i 5)
+      (print i " ")
+      (set! i (+ i 1))))
+0 1 2 3 4
 ```
 :::
 
@@ -353,12 +645,11 @@ Like [`while`](#while), the loop body may be executed **zero or more times**. Th
 A simple countdown from 5 to 1.
 
 ```scheme
-(let ((i 5))
-  (until (zero? i)
-    (print i " ")
-    (set! i (- i 1))))
-
-;; => 5 4 3 2 1
+> (let ((i 5))
+    (until (zero? i)
+      (print i " ")
+      (set! i (- i 1))))
+5 4 3 2 1
 ```
 :::
 
