@@ -501,6 +501,8 @@ Unlike the standard `list` procedure, the `[...]` constructor gives special mean
 
 There is also a special unwrapping rule: if a list construction with a splicing `...` results in a single-element list, the result is the element itself (e.g., `[42 ...] => 42`).
 
+**Note**: The current behavior of the ... operator with non-list values is under review and may change in a future version. See issue **[`#1368`](https://github.com/mighty-gerbils/gerbil/pull/1368)**.
+
 
 ::: tip Examples
 
@@ -558,7 +560,7 @@ The value of the expression is **memoized**: it is computed only once, and subse
 
 Internally, `delay` typically calls `make-promise` with a thunk (a zero-argument procedure) that evaluates `expr`. As an optimization, if `expr` is a literal constant, `delay` may return the value directly.
 
-`delay` is efficient, but it is **not thread-safe**. If a promise might be forced by multiple threads concurrently, you must use `delay-atomic` to ensure correctness.
+`delay` is efficient, but it is **not thread-safe**. If a promise might be forced by multiple threads concurrently, you must use [`delay-atomic`](#delay-atomic) to ensure correctness.
 
 ::: tip Example
 This example demonstrates both lazy evaluation and memoization. The `print` statement inside the `delay` acts as a probe to show us exactly when the computation runs.
@@ -600,7 +602,7 @@ Result: 30
 
 * Use `delay` to defer expensive computations until their results are actually needed.
 * This pattern is the foundation for implementing lazy data structures like streams (infinite lists).
-* **Important:** For code that runs in a multi-threaded environment, always prefer `delay-atomic` to prevent race conditions.
+**Important:** If a promise might be **shared and forced by multiple threads**, prefer [`delay-atomic`](#delay-atomic) to prevent race conditions.
 
 ### See Also
 
@@ -617,7 +619,7 @@ Creates a thread-safe promise to evaluate `expr` when needed with the `force` pr
 
 Internally, `delay-atomic` calls `make-atomic-promise`, which wraps the computation in a mutex (a lock) to ensure that even if multiple threads try to `force` the promise simultaneously, the underlying expression is evaluated exactly once.
 
-`delay-atomic` is only slightly less efficient than `delay` and is safe for concurrent evaluation in multiple threads. It also supports failures and escapes (via continuations) from the thunk, and will issue an error if a thread attempts to re-enter an escaped computation.
+`delay-atomic` is only slightly less efficient than [`delay`](#delay) and is safe for concurrent evaluation in multiple threads. It also supports failures and escapes (via continuations) from the thunk, and will issue an error if a thread attempts to re-enter an escaped computation.
 
 ::: tip Example
 This example simulates multiple threads trying to initialize a shared resource concurrently. Because `delay-atomic` is used, the initialization logic runs exactly once, regardless of which thread gets to it first.
@@ -635,9 +637,8 @@ This example simulates multiple threads trying to initialize a shared resource c
 
 ;; Procedure executed by each thread
 > (def (get-shared-resource id)
-    (begin
-      (displayln "Thread " id " is trying to access the shared resource...")
-      (force shared-resource)))
+    (displayln "Thread " id " is trying to access the shared resource...")
+    (force shared-resource))
 
 ;; Spawn several threads that all run the task.
 > (def (spawn-threads)
@@ -663,7 +664,7 @@ Thread 4 is trying to access the shared resource...
 
 If a promise might be shared between threads, or if its computation involves complex control flow (like continuations that might be re-invoked), you must use `delay-atomic`.
 
-Use the simpler `delay` only for lazy values in a single-threaded context with straightforward computations. The slight performance cost of `delay-atomic` is a small price to pay for correctness in concurrent programs.
+Use the simpler [`delay`](#delay) only for lazy values in a single-threaded context with straightforward computations. The slight performance cost of `delay-atomic` is a small price to pay for correctness in concurrent programs.
 
 ### See Also
 
