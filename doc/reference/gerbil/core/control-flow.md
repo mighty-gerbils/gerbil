@@ -1,8 +1,8 @@
-# Common Expression Forms
+# Control Flow, Logic, and Iteration
 
-These are common macros used for expressions.
+This page covers the core macros that control the flow of evaluation in a Gerbil program. It provides the fundamental tools to direct a program's logic through **conditionals and logical operators** (`cond`, `and`, `?`), **iterative loops** (`do`, `while`), and primitives for **evaluation control** (`delay`). Together, these forms organize how and when things happen in a program.
 
-## cond
+## cond <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (cond
  <cond-clause> ...
@@ -68,7 +68,7 @@ the `=>` clause is useful when you need to use the specific truthy value returne
 - [`when`](#when)
 - [`unless`](#unless)
 
-## case
+## case <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (case expr
  <case-clause> ...
@@ -126,7 +126,7 @@ Use `case` when you need to compare a single value against several lists of cons
 - [`cond`](#cond)
 - `if`
 
-## and
+## and <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (and expr ...)
 ```
@@ -158,7 +158,7 @@ Use `and` for two main purposes:
 
 [`or`](#or)
 
-## or
+## or <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (or expr ...)
 ```
@@ -196,7 +196,7 @@ Use `or` for two main purposes:
 
 [`and`](#and)
 
-## when
+## when <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (when test expr ...)
 =>
@@ -231,7 +231,7 @@ Delete a file if it exists.
 - [`cond`](#cond)
 - `if`
 
-## unless
+## unless <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (unless test expr ...)
 =>
@@ -266,7 +266,7 @@ Create a directory only if it doesn't already exist.
 - [`cond`](#cond)
 - `if`
 
-## ?
+## ? <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
 (? <predicate-expr> expr)
 (? <predicate-expr>)
@@ -430,8 +430,8 @@ For simple, one-off conditional execution, `if`, `when`, or `cond` are often mor
 - `not`
 - [`cond`](#cond)
 
-## Begin0
-```
+## Begin0 <Badge type="tip" text="Gerbil" vertical="middle" />
+```scheme
 (begin0 expr rest ...)
 =>
 (let (val expr)
@@ -439,54 +439,240 @@ For simple, one-off conditional execution, `if`, `when`, or `cond` are often mor
   val)
 ```
 
-Evaluates a sequence of expressions and reduces to the value of the
-expression.
+Evaluates a sequence of expressions in order, but returns the value of the **first** expression.
 
-## @list
+The `begin0` macro first evaluates `expr` and saves its value. It then evaluates all subsequent `rest ...` expressions in order for their side effects, **ignoring their return values**. Finally, it returns the saved value of the initial `expr`.
+
+This is in contrast to the standard `begin` form, which returns the value of the *last* expression.
+
+
+::: tip Example
+Retrieve a user's data and then evicts it from cache.
+
+```scheme
+> (def (get-and-evict! cache key)
+    (begin0
+      (hash-ref cache key)
+      (hash-remove! cache key)))
+
+> (def user-cache (hash ("user:1" "Alice") ("user:2" "Bob")))
+
+> (get-and-evict! user-cache "user:1")
+"Alice"
+
+;; After the call, the cache no longer contains Alice's entry.
+> (hash-key? user-cache "user:1")
+#f
 ```
-\[<list-expression-body> ...\]
-(@list <list-expression-body> ...)
+:::
 
-list-expression-body ...:
- . '<s-expression>
- . `<s-expression>
- . tail
- :: <s-expr>
- <s-expr> \... <list-expression-body> ...
- <s-expr> <list-expression-body> ...
+### Context and Usage
+
+Use `begin0` when you need to evaluate a series of expressions for their side effects but require the result of the very first expression. It elegantly combines retrieving a value and then performing cleanup or mutation operations related to that value.
+
+### See Also
+
+`begin`
+
+## @list <Badge type="tip" text="Gerbil" vertical="middle" />
+
+```scheme
+[<list-item> ...]
+(@list <list-item> ...)
+
+list-item:
+  <list-expression> "..."
+  . <tail-expression>
+  :: <tail-expression>
+  <expression>
 ```
 
-The list constructor expression, normally implied with the `[]` reader
-macro.
+The primary list constructor, used with the `[...]` reader macro, which supports in-place list splicing and dotted-tail notation.
 
-## delay
+`@list` (and its reader macro `[...]`) provides a flexible way to construct lists. It evaluates its arguments and combines them into a new list. In almost all cases, you will use the convenient `[...]` syntax.
+
+Unlike the standard `list` procedure, the `[...]` constructor gives special meaning to certain symbols:
+
+* The ellipsis `...` has a conditional behavior based on the expression that precedes it:
+    * If the preceding expression evaluates to a list, it acts as a **splicing operator**, unpacking the elements of that list into the new list.
+    * If the preceding expression is *not* a list, it **discards** the value of that expression from the final result.
+
+* Both the dot `.` and colon-colon `::` act as **dotted-tail constructors**. They are functionally equivalent and make the *following expression* the final `cdr` (tail) of the list. They must be the penultimate item in the expression.
+
+There is also a special unwrapping rule: if a list construction with a splicing `...` results in a single-element list, the result is the element itself (e.g., `[42 ...] => 42`).
+
+**Note**: The current behavior of the ... operator with non-list values is under review and may change in a future version. See issue **[`#1368`](https://github.com/mighty-gerbils/gerbil/pull/1368)**.
+
+
+::: tip Examples
+
+- **Basic list construction**
+```scheme
+> [1 (+ 2 3) "hello"]
+'(1 5 "hello")
 ```
+
+- **Splicing with `...`**
+```scheme
+> (let ((middle-items '(b c)))
+    ['a middle-items ... 'd])
+'(a b c d)
+```
+
+- **Dotted-Tail construction with `.` and `::`**
+```scheme
+;; Creating an improper list
+> [1 2 . 3]
+'(1 2 . 3)
+
+> [1 2 :: 3]
+'(1 2 . 3)
+
+;; Creating a proper list by setting the tail to another list
+> [1 2 . '(3 4)]
+'(1 2 3 4)
+
+> [1 2 :: '(3 4)]
+'(1 2 3 4)
+```
+:::
+
+### Context and Usage
+
+The `[...]` syntax is the modern and idiomatic way to construct lists in Gerbil, especially when combining computed values with existing lists.
+* Compared to the standard list procedure, `[...]` is more versatile due to the built-in `...` splicing operator.
+* Compared to quasiquote (\`) , `[...]` can be more readable for list construction. The `...` operator is analogous tounquote-splicing (`,@`), but acts on the preceding element.
+
+### See Also
+
+- `list`
+- `cons`
+- `quasiquote`
+
+## delay <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
 (delay expr)
 ```
 
-Creates a promise to evaluate `expr` when needed with the `force` primitive.
-The value of the expression is memoized so it will only be evaluated once.
+Creates a promise, an object that encapsulates a delayed computation. The promise will evaluate `expr` only when its value is requested for the first time with the `force` procedure.
 
-Delay internally calls `make-promise` with a thunk that evaluates `expr`.
-Delay is efficient, but only safe in the simple case of evaluation in a single thread
-of expressions that succeed (i.e. no escaping continuations that later restart).
-Using it in the more complex case may cause incorrect or inconsistent behavior.
-To support more such complex cases (at a slight extra cost), see `delay-atomic`.
+The value of the expression is **memoized**: it is computed only once, and subsequent calls to `force` on the same promise will return the cached value without re-evaluating the expression.
 
-## delay-atomic
+Internally, `delay` typically calls `make-promise` with a thunk (a zero-argument procedure) that evaluates `expr`. As an optimization, if `expr` is a literal constant, `delay` may return the value directly.
+
+`delay` is efficient, but it is **not thread-safe**. If a promise might be forced by multiple threads concurrently, you must use [`delay-atomic`](#delay-atomic) to ensure correctness.
+
+::: tip Example
+This example demonstrates both lazy evaluation and memoization. The `print` statement inside the `delay` acts as a probe to show us exactly when the computation runs.
+
+```scheme
+;; Define a promise. The code inside is not executed yet.
+> (def p
+    (delay
+      (begin (print "=> Heavy computation running...")
+             (+ 10 20))))
+
+> (println "Promise has been created.")
+Promise has been created.
+
+;; Force the promise for the first time.
+> (println "Forcing the promise...")
+Forcing the promise...
+
+> (def result1 (force p))
+=> Heavy computation running...
+
+> (println "Result: " result1)
+Result: 30
+
+;; Force the promise again. The computation does not run a second time.
+> (println "Forcing the promise again...")
+Forcing the promise again...
+
+> (def result2 (force p))
+
+> (println "Result: " result2)
+Result: 30
 ```
+:::
+
+### Context and Usage
+
+`delay` and `force` are the fundamental building blocks for lazy evaluation in Scheme.
+
+* Use `delay` to defer expensive computations until their results are actually needed.
+* This pattern is the foundation for implementing lazy data structures like streams (infinite lists).
+**Important:** If a promise might be **shared and forced by multiple threads**, prefer [`delay-atomic`](#delay-atomic) to prevent race conditions.
+
+### See Also
+
+- `force`
+- [`delay-atomic`](#delay-atomic)
+- `make-promise`
+
+## delay-atomic <Badge type="tip" text="Gerbil" vertical="middle" />
+```scheme
 (delay-atomic expr)
 ```
 
-Creates a promise to evaluate `expr` when needed with the `force` primitive.
-The value of the expression is memoized so it will only be evaluated once.
+Creates a thread-safe promise to evaluate `expr` when needed with the `force` primitive. The value of the expression is memoized so it will only be evaluated once.
 
-Delay-atomic internally calls `make-atomic-promise` with a thunk that evaluates `expr`.
-Delay-atomic is only slightly less efficient than `delay`, and is safe even in the case of
-concurrent evaluation in a multiple threads; it will also support failures and escapes from
-the thunk, and will issue an error if someone attempts to reenter such escaped thunks.
+Internally, `delay-atomic` calls `make-atomic-promise`, which wraps the computation in a mutex (a lock) to ensure that even if multiple threads try to `force` the promise simultaneously, the underlying expression is evaluated exactly once.
 
-## do
+`delay-atomic` is only slightly less efficient than [`delay`](#delay) and is safe for concurrent evaluation in multiple threads. It also supports failures and escapes (via continuations) from the thunk, and will issue an error if a thread attempts to re-enter an escaped computation.
+
+::: tip Example
+This example simulates multiple threads trying to initialize a shared resource concurrently. Because `delay-atomic` is used, the initialization logic runs exactly once, regardless of which thread gets to it first.
+
+```scheme
+> (import :std/iter)
+
+;; An atomic promise with a side effect to visualize its evaluation.
+> (def shared-resource
+    (delay-atomic
+     (begin
+       (displayln "=> Shared resource is being initialized...")
+       (thread-sleep! 1) ; Simulate an expensive initialization
+       "Resource Ready")))
+
+;; Procedure executed by each thread
+> (def (get-shared-resource id)
+    (displayln "Thread " id " is trying to access the shared resource...")
+    (force shared-resource))
+
+;; Spawn several threads that all run the task.
+> (def (spawn-threads)
+    (map thread-join!
+         (for/collect (i (in-range 5))
+           (spawn (cut get-shared-resource i)))))
+
+> (spawn-threads)
+;; possible output:
+;; "=> Shared resource is being initialized..." is printed only once.
+Thread 0 is trying to access the shared resource...
+=> Shared resource is being initialized...
+Thread 1 is trying to access the shared resource...
+Thread 2 is trying to access the shared resource...
+Thread 3 is trying to access the shared resource...
+Thread 4 is trying to access the shared resource...
+...
+
+```
+:::
+
+### Context and Usage
+
+If a promise might be shared between threads, or if its computation involves complex control flow (like continuations that might be re-invoked), you must use `delay-atomic`.
+
+Use the simpler [`delay`](#delay) only for lazy values in a single-threaded context with straightforward computations. The slight performance cost of `delay-atomic` is a small price to pay for correctness in concurrent programs.
+
+### See Also
+
+- [`delay`](#delay)
+- `force`
+- `make-atomic-promise`
+
+## do <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
 (do ((var init step ...) ...)
     (test result ...)
@@ -542,7 +728,7 @@ this example shows how `do` can build a result without a loop body. The logic is
 - `foldl`
 - [`do-while`](#do-while)
 
-## do-while
+## do-while <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
 (do-while ((var init step ...) ...)
   (test result ...)
@@ -590,7 +776,7 @@ Use `do-while` for situations where an action must be performed before the condi
 - [`until`](#until)
 
 
-## while
+## while <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
 (while test body ...)
 ```
@@ -628,7 +814,7 @@ A simple counter from 0 to 4.
 - [`until`](#until)
 
 
-## until
+## until <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
 (until test body ...)
 =>
