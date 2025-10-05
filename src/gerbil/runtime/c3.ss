@@ -14,15 +14,15 @@ namespace: #f
 (export c4-linearize)
 (import "util")
 
-;; C5 linearization algorithm: given a top object x from which to compute the precedence list,
+;; C4 linearization algorithm: given a top object x from which to compute the precedence list,
 ;; - rhead is the reverse of a prefix for the precedence list, typically [x] or []
 ;;   depending on whether to include x as head of the result.
 ;; - supers the list of direct supers of x, typically (get-supers x)
 ;; - get-precedence-list gets the precedence list for a super s, including s itself in front
 ;; - struct is a predicate that tells if a class follows single inheritance, and
 ;;   must have its precedence list be a suffix of any subclass' precedence list.
-;; - eq is an equality predicate between list elements
-;; - get-name gets the name of a object/class, for debugging only.
+;; - eq is an equality predicate between list elements (defaults to eq?).
+;; - get-name gets the name of a object/class, for debugging only (defaults to identity).
 ;; Returns the linearized precedence list, and the most specific struct superclass if any
 ;; : (List X) (List X) \
 ;;  get-precedence-list: (X -> (NonEmptyList X)) \
@@ -38,23 +38,24 @@ namespace: #f
   => :values
 
   (cond
-   ((null? supers) ;; 0 direct superclass: base class
+   ((null? supers) ;; 0 direct superclass: it's a base class
     (values (reverse rhead) #f))
-   ((null? (cdr supers)) ;; 1 direct superclass: effective single inheritance
+   ((null? (cdr supers)) ;; 1 direct superclass: it's effectively single inheritance
     (let (pl (get-precedence-list (car supers)))
       (values (append-reverse rhead pl)
               (find struct? pl))))
-   (else ;; 2 direct superclasses or more: effective multiple inheritance
+   (else ;; 2 direct superclasses or more: it's effectively multiple inheritance
     (let ((pls (map get-precedence-list supers)) ;; (List (List X)) ;; precedence lists to merge
           (sis [])) ;; (List X) ;; single-inheritance suffix
 
       ;; Split every precedence list at the first struct, consider whatever
       ;; follows as a suffix of the precedence-list. Merge all the suffixes,
       ;; where two suffixes are compatible if one is a suffix of the other.
-      ;; Then in each remaining precedence list, (a) remove from the end the
+      ;; Then in each remaining precedence list, remove from the end the
       ;; classes that are in the correct order in the suffix, until you reach one
-      ;; that isn't in the suffix, then check that no more class there is in the
-      ;; suffix (or else there's an incompatibility).
+      ;; that isn't in the suffix, then check that no more class remains in the list
+      ;; that is in the suffix (or else there's an incompatibility, as in
+      ;; this example bug: direct supers (A) (S A) (B A S)).
       ;; Use that as suffix of the precedence list,
       ;; and for the (reverse) head, proceed as usual with C3.
 
@@ -162,7 +163,7 @@ namespace: #f
                (set-car! t tail))
              (loop more)))))
 
-      ;; Now for the regular C3 loop
+      ;; The regular C3 loop
       ;; NB: if we cached the lengths of the precedence lists,
       ;; we could walk the precedence list to check which longest tail has the same length
       ;; as that of the precedence list of its top element, thereby being that very same list,
