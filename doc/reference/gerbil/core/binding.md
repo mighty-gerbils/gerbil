@@ -704,7 +704,7 @@ This example defines a `factorial` procedure that uses a local helper procedure 
 These forms are the fundamental primitives for creating procedures (anonymous functions). They are the essential building blocks upon which named function definitions like `def` are built, allowing computation to be encapsulated and passed as a value.
 
 ### lambda <Badge type="tip" text="R7RS" vertical="middle" />
-```
+```scheme
 (lambda <lambda-head> <lambda-body> ...)
 
 lambda-head:
@@ -735,25 +735,190 @@ optional-keyword-lambda-arg:
  <keyword> (<identifier> <expression>)
  <keyword> (<identifier> <contract-annotation> <contract-default>)
 
+contract-annotation:
+ :~ <predicate>
+ : <Type>
+ :- <Type>
+ :? <Type> [:= <expression>]
+
 lambda-body ...:
  [=> <type>] local-body ...
 
 ```
 
-Defines a procedure; see [Contract Notation and Macrology](contract.md) for details
-about contract syntax.
+The fundamental primitive for creating procedures (anonymous functions). Gerbil extends the R7RS `lambda` with a powerful syntax for handling optional arguments, keyword arguments, and contract annotations for gradual typing.
 
-### case-lambda
+A `lambda` expression evaluates to a procedure. When this procedure is called, the formal parameters defined in the `<lambda-head>` are bound to the actual arguments, and the expressions in the `<lambda-body>` are evaluated in sequence. The value of the last expression in the body is returned.
+
+Gerbil's `lambda` supports a rich syntax for its head:
+
+* **Required Positional Arguments:** Simple identifiers that appear before any other form.
+* **Variadic Arguments:** A dot (`.`) preceding the **last parameter**, which will collect all remaining arguments into a list. This can be used alone or after required arguments.
+* **Optional Positional Arguments:** `(<identifier> <default-value>)` forms after the required arguments.
+* **Keyword Arguments:** `keyword: (<identifier> <default-value>)` forms.
+* **Contract Annotations:** Type and predicate constraints can be applied to arguments and the return value. See [Contract Notation and Macrology](contract.md** for details about contract syntax.
+
+::: tip Examples
+
+- **Basic and Variadic Arguments (R7RS)**
+This creates a procedure that takes at least one required argument (`initial-value`) and any number of additional arguments which are collected into the list `numbers-to-add`.
+
+```scheme
+> (def adder
+    (lambda (initial-value . numbers-to-add)
+      (foldl + initial-value numbers-to-add)))
+
+> (adder 10 1 2 3)
+16
 ```
-(case-lambda <case-lambda-clause) ...)
+
+- **Optional Arguments (Gerbil extension)**
+Optional arguments are specified in lists with a default
+
+```scheme
+> (def greet
+    (lambda (name (greeting "Hello"))
+      (format "~a, ~a" greeting name)))
+
+> (greet "Alice")
+"Hello, Alice"
+
+> (greet "Bob" "Hi")
+"Hi, Bob"
+```
+
+- **Keyword Arguments (Gerbil Extension)**
+Keyword arguments are specified with a `keyword:` prefix.
+
+```scheme
+> (def create-user
+    (lambda (name role: (role "guest") active?: (active? #t))
+      (list name role active?)))
+
+> (create-user "Alice")
+("Alice" "guest" #t)
+
+> (create-user "Bob" active?: #f role: "admin")
+("Bob" "admin" #f)
+```
+
+- **Contract and Type Annotations (Gerbil Extension)**
+Gerbil supports gradual typing via contract annotations directly in the lambda head, and a return type annotation in the body.
+
+```scheme
+;; This procedure takes two integers and returns an integer.
+> (def sum
+    (lambda ((x :~ integer?) (y : :integer)) => :integer
+      (+ x y)))
+
+> (sum 2 3)
+5
+```
+
+```scheme
+;; This procedure defines an optional argument with a type and default value.
+> (def greeting
+    (lambda ((name :? :string := "World!"))
+      (println "Hello " name)))
+
+> (greeting "Gerbil!")
+Hello Gerbil!
+
+> (greeting)
+Hello World!
+```
+:::
+
+#### Context and Usage
+
+`lambda` is the essential building block for all procedures in Gerbil.
+
+* While you can use `lambda` directly to create anonymous functions, it is most often used with the [`def`](#def) macro to define named functions.
+* The Gerbil `lambda` macro is a high-level form that expands to the lower-level `lambda%` and [`case-lambda`](#case-lambda) primitives, providing a rich and convenient syntax for defining complex function signatures.
+
+#### See Also
+
+- [`def`](#def)
+- [`case-lambda`](#case-lambda)
+
+
+### case-lambda <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(case-lambda <case-lambda-clause> ...)
 
 case-lambda-clause:
- <identifier>
- (required-lambda-arg ... [. identifier>])
-
+ (<formals> <body> ...)
 ```
 
-Define a multiple dispatch by arity procedure.
+Creates a single procedure that dispatches to different implementations based on the number of arguments (arity) it is called with.
+
+A `case-lambda` expression evaluates to a single procedure. When this procedure is called, it counts the number of arguments it received and executes the body of the **first clause** whose formal argument list (`<formals>`) matches that number.
+
+The value of the `case-lambda` expression is the value of the **last expression** in the body of the matching clause. An error is signaled if the procedure is called with a number of arguments that does not match any of the clauses.
+
+While `case-lambda` does not support optional, keyword, or variadic arguments like the full `lambda` macro, it **does support contract annotations** for gradual typing on its arguments and return values.
+
+::: tip Examples
+
+- **Basic Arity Dispatch**
+`case-lambda` is ideal for creating functions that have fundamentally different behaviors for different numbers of arguments. This example creates a `describe` function that can describe one or two things.
+
+```scheme
+> (def describe
+    (case-lambda
+      ((thing1)
+       (format "This is one thing: ~a" thing1))
+
+      ((thing1 thing2)
+       (format "These are two things: ~a and ~a" thing1 thing2))))
+
+> (describe "Gerbil")
+"This is one thing: Gerbil"
+
+> (describe "Gerbil" "Scheme")
+"These are two things: Gerbil and Scheme"
+
+;; Calling with a non-matching number of arguments would be an error.
+> (describe)
+*** ERROR IN ? [Error]: No clause matching arguments
+```
+
+- **Arity Dispatch with Type Annotations**
+This `add` procedure has two different implementations: one for adding two integers and another for adding three floating-point numbers.
+
+```scheme
+> (def add
+    (case-lambda
+      (((x : :integer) (y : :integer)) => :integer
+       (+ x y))
+
+      (((a : :number) (b : :number) (c : :number)) => :number
+       (+ a b c))))
+
+> (add 2 3)
+5
+> (add 1.0 2.5 3.5)
+7.
+
+;; This would raise a contract violation error:
+> (add 2 3.5)
+...
+[ContractViolation]: contract violation
+...
+```
+:::
+
+#### Context and Usage
+
+Use `case-lambda` when you need a single procedure to dispatch based on its arity.
+
+* It is the fundamental primitive in Gerbil for creating multi-arity procedures.
+* For defining a named procedure with this behavior, the [`def*`](#def*) macro is a more convenient and idiomatic shortcut for `(def name (case-lambda ...))`.
+
+#### See Also
+
+- [`def*`](#def*)
+- [`lambda`](#lambda)
 
 ## Derived and Auxiliary Forms
 
