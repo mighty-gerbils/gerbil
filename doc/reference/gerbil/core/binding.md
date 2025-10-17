@@ -485,51 +485,225 @@ Use `defalias` to create simple, direct aliases for existing names within a modu
 These `let` forms create new lexical scopes and bind variables within the body of a procedure. They are the primary tool for structuring local computations.
 
 ### let <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(let (<binding> ...) <body> ...)
+(let <name> (<binding> ...) <body> ...)
+
+<binding>:
+(<variable> <expression>)
+((values <variable> ...) <expression>)
 ```
-(let <let-binding> <local-body> ...)
-(let (<let-binding> ...) <local-body>)
-(let <identifier> ((<lambda-required-argument> expr) ...) <lambda-body> ...)
 
-let-binding:
- ((values <identifier> ...) <expression>)
- (<identifier> <expression>)
+The fundamental macro for creating local lexical bindings. `let` establishes a new scope where variables are bound to the results of expressions.
+
+The entire `let` expression evaluates to the value of the **last expression** in its `<body>`.
+
+`let` has two major forms:
+
+* **` (let (<binding> ...) <body> ...)`**: This is the most common form. All binding expressions are evaluated in the **outer scope** (before any of the new variables are bound), and the new variables are then bound to these results in parallel for the evaluation of the `<body>`.
+
+* **Named `let`**: `(let <name> (<binding> ...) <body> ...)`: This form creates a local recursive procedure. It is syntactic sugar for defining a local procedure named `<name>` and then immediately calling it. This is a common and idiomatic way to create loops in Scheme.
+
+As an extension to the R7RS standard, Gerbil's `let` also supports binding multiple values from a single expression directly in its binding clauses.
+
+::: tip Examples
+
+- **Basic local bindings**
+```scheme
+> (let ((x (+ 1 2))
+        (y (* 3 4)))
+    (+ x y))
+ 15
 ```
 
-Create a new lexical scope, where the bindings are evaluated in an
-unspecified order in the parent scope.
+- **Multiple value binding**
+While the R7RS standard requires `let-values` for this task, Gerbil's `let` can handle it directly for convenience.
 
-The named let constuct creates a recursive procedure that is applied
-to the given arguments.
-
-### let*
+```scheme
+;; 'floor/' returns two values.
+> (let (((values quotient remainder) (floor/ 10 3)))
+    (list quotient remainder))
+(3 1)
 ```
-(let* (head . rest) body ...)
+
+- **Named `let` for looping**
+```scheme
+> (let countdown ((i 5))
+    (if (> i 0)
+      (begin
+        (print " " i)
+        (countdown (- i 1)))
+      (println " Done!")))
+5 4 3 2 1 Done!
+```
+:::
+
+#### Context and Usage
+
+Use `let` for creating local bindings. The choice between `let`, [`let*`](#let*), and [`letrec`](#letrec) depends on the visibility you need between your variables.
+
+* `let`: Use for simple, parallel bindings where the variables don't depend on each other.
+* [`let*`](#let*): Use when you need sequential bindings, where each variable is visible to the expressions of the subsequent variables.
+* [`letrec`](#letrec) or [`letrec*`](#letrec*): Use when you need to create mutually recursive bindings.
+
+#### See Also
+
+- [`let*`](#let*)
+- [`letrec`](#letrec)
+- `let-values`
+
+### let* <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(let* (<binding1> <binding2> ...) <body> ...)
 =>
-(let head (let* rest body ...))
+(let (<binding1>)
+  (let* (<binding2> ...)
+    <body> ...))
+
+<binding>:
+(<variable> <expression>)
+((values <variable> ...) <expression>)
 ```
 
-Sequential bindings where each binding is visible to subsequent
-bindings.
+Creates local lexical bindings sequentially, where each binding is visible to the expressions of subsequent bindings within the same `let*` form.
 
-### letrec
-```
-(letrec (<let-binding> ...) <local-body> ...)
+The entire `let*` expression evaluates to the value of the **last expression** in its `<body>`.
+
+Unlike [`let`](#let) where bindings are evaluated in parallel, `let*` evaluates each binding sequentially. As the syntax shows, `let*` is syntactic sugar for a series of nested let blocks. This nested structure is what allows each binding expression to see the variables defined before it in the same `let*`.
+
+Like [`let`](#let), Gerbil extends the R7RS `let*` by allowing multiple-value bindings directly within its binding clauses.
+
+::: tip Example
+
+- **Sequential bindings**
+This example works with `let*` because the binding for `y` can see the `x` that was defined just before it. This would be an error with a standard `let`.
+
+```scheme
+> (let* ((x 10)
+         (y (+ x 5))) ; 'y' can see 'x'
+   y)
+15
 ```
 
-Mutually recursive bindings.
+- **Multiple value binding**
+Gerbil's let* also supports sequential multiple-value bindings.
 
-### letrec*
+```scheme
+> (let* (((values q r) (floor/ 10 3))
+       (result (format "q=~a, r=~a" q r)))
+  result)
+"q=3, r=1"
 ```
-(letrec* (<let-binding> ...) <local-body> ...)
+:::
+
+#### Context and Usage
+
+Use `let*` when you need to define local variables that depend on each other in sequence.
+
+* [`let`](#let): Use for parallel bindings where variables are independent.
+* `let*`: Use for sequential bindings where order matters.
+* [`letrec`](#letrec) or [`letrec*`](#letrec*): Use when you need to create mutually recursive bindings, such as local procedures that call each other.
+
+#### See Also
+
+- [`let`](#let)
+- [`letrec`](#letrec)
+- `let-values`
+
+
+### letrec <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(letrec (<binding> ...) <body> ...)
+
+binding:
+(<variable> <expression>)
+((values <variable> ...) <expression>)
 ```
 
-Similar to `letrec`, but binding expressions are evaluated in order.
+Creates local, **mutually recursive** lexical bindings.
+
+With `letrec`, all `<variable>`s are in scope within all `<expression>`s, allowing for the definition of procedures that can call each other. However, it is an error to reference the *value* of a variable before it has been computed; for this reason, `letrec` is almost exclusively used to define mutually recursive procedures.
+
+The `letrec` expression evaluates to the value of the **last expression** in its `<body>`. Gerbil extends the R7RS `letrec` to support multiple-value bindings.
+
+::: tip Example
+The classic use case for `letrec` is to define two or more procedures that call each other.
+
+```scheme
+;; Here, 'is-even?' can call 'is-odd?' before it is fully defined, and vice-versa.
+> (letrec ((is-even? (lambda (n)
+                       (if (zero? n)
+                           #t
+                           (is-odd? (- n 1)))))
+           (is-odd? (lambda (n)
+                      (if (zero? n)
+                          #f
+                          (is-even? (- n 1))))))
+    (is-odd? 11))
+#t
+```
+:::
+
+#### Context and Usage
+
+Use `letrec` when you need to define two or more local procedures that are mutually recursive.
+
+* For the simpler case of creating a single self-referential expression (like a recursive lambda), the [`rec`](#rec) macro can be a more concise shortcut.
+* For most other situations, [`letrec*`](#letrec*) is now generally preferred over `letrec` as it is more robust and has more predictable evaluation semantics.
+
+#### See Also
+
+- [`let`](#let)
+- [`let*`](#let*)
+- [`letrec*`](#letrec*)
+- [`rec`](#rec)
+
+### letrec* <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(letrec* (<binding> ...) <body> ...)
+
+binding:
+(<variable> <expression>)
+((values <variable> ...) <expression>)
+```
+
+Creates local, **mutually recursive** lexical bindings, evaluating the binding expressions sequentially.
+
+Like `letrec`, `letrec*` makes all `<variable>`s available within all binding expressions. However, it evaluates the `<expression>`s from **left to right**, meaning a binding can use the value of a preceding binding. This makes `letrec*` more flexible and powerful than `letrec`.
+
+The `letrec*` expression evaluates to the value of the **last expression** in its `<body>`. Gerbil extends the R7-RS `letrec*` to support multiple-value bindings.
+
+::: tip Example
+This example defines a `factorial` procedure that uses a local helper procedure `lp`. `letrec*` allows `lp` to be defined in terms of `factorial` if needed, and also allows non-procedure bindings to be used by subsequent bindings.
+
+```scheme
+> (letrec* ((fact (lambda (n)
+                    (if (zero? n) 1 (* n (fact (- n 1))))))
+            (result (fact 5)))
+  result)
+120
+```
+:::
+
+#### Context and Usage
+
+`letrec*` is the most powerful and flexible `let` form, combining the sequential evaluation of [`let*`](#let) with the mutual recursion of [`letrec`](#letrec).
+
+* It is generally recommended to use `letrec*` over [`letrec`](#letrec) in most situations due to its more predictable, left-to-right evaluation order. It can do everything [`letrec`](#letrec) can do, and more.
+* While `letrec*` can define any recursive binding, the [`rec`](#rec) macro offers a more concise syntax for the specific case of a single self-referential expression.
+
+#### See Also
+
+- [`let`](#let)
+- [`let*`](#let*)
+- [`letrec`](#letrec)
+- [`rec`](#rec)
 
 ## Procedure Abstractions
 
 These forms are the fundamental primitives for creating procedures (anonymous functions). They are the essential building blocks upon which named function definitions like `def` are built, allowing computation to be encapsulated and passed as a value.
 
-### lambda
+### lambda <Badge type="tip" text="R7RS" vertical="middle" />
 ```
 (lambda <lambda-head> <lambda-body> ...)
 
