@@ -756,7 +756,7 @@ Gerbil's `lambda` supports a rich syntax for its head:
 * **Variadic Arguments:** A dot (`.`) preceding the **last parameter**, which will collect all remaining arguments into a list. This can be used alone or after required arguments.
 * **Optional Positional Arguments:** `(<identifier> <default-value>)` forms after the required arguments.
 * **Keyword Arguments:** `keyword: (<identifier> <default-value>)` forms.
-* **Contract Annotations:** Type and predicate constraints can be applied to arguments and the return value. See [Contract Notation and Macrology](contract.md** for details about contract syntax.
+* **Contract Annotations:** Type and predicate constraints can be applied to arguments and the return value. See [Contract Notation and Macrology](contract.md) for details about contract syntax.
 
 ::: tip Examples
 
@@ -924,72 +924,308 @@ Use `case-lambda` when you need a single procedure to dispatch based on its arit
 
 This section covers auxiliary binding macros that serve as convenient shortcuts for common or advanced patterns. These forms are not fundamental binding constructs, but they help make code more concise and expressive by reducing boilerplate for tasks like self-reference, conditional binding, or continuation capture.
 
-### cut <Badge type="tip" text="Gerbil" vertical="middle" />
-```
+### cut <Badge type="tip" text="SRFI 26" vertical="middle" />
+```scheme
 (cut <cut-argument> ... [<cut-tail>])
 
 cut-argument:
- \<>
+ <>
  <s-expression>
 
 cut-tail:
- \<...>
+ <...>
 ```
 
-Application parameter specialization, which produces a lambda; see [SRFI 26](https://srfi.schemers.org/srfi-26/srfi-26.html)
+Creates a procedure (a `lambda`) for partial application, where some arguments are pre-filled and others are left as open "slots". This is an implementation of [SRFI 26](https://srfi.schemers.org/srfi-26/srfi-26.html).
 
-### let/cc
+The `cut` macro is a concise way to create a new procedure by "cutting out" some arguments from an expression. It uses special placeholders:
+
+* **`<>`** (pronounced "slot"): Represents a single required argument for the new procedure. The number of `<>`s determines the number of arguments the new procedure will accept.
+* **`<...>`** (pronounced "rest-slot"): Represents all remaining arguments, which will be collected into a list. It must be the last slot in the expression.
+
+::: tip Examples
+
+- **Basic partial application:**
+`cut` is often used to create specialized versions of existing procedures.
+
+```scheme
+;; Create a new procedure 'add-to-10' that adds its argument to 10.
+> (def add-to-10 (cut + 10 <>))
+> (add-to-10 5)
+15
 ```
-(let/cc name body ...)
+
+- **Using `cut` with Higher-Order Functions:**
+`cut` shines when creating simple predicates or transformations for functions like `map` or `filter`, especially when you need to fix some arguments of a multi-argument procedure.
+
+Without `cut`, you would write a full `lambda` to keep numbers greater than 10:
+```scheme
+> (filter (lambda (n)
+            (> n 10))
+          '(5 2 15 10 25))
+(15 25)
+```
+
+With `cut`, the code becomes more concise:
+```scheme
+;; Keep only the even numbers from a list.
+> (filter (cut > <> 10)
+          '(5 2 15 10 25))
+(15 25)
+```
+
+- **Using the Rest Slot:**
+The `<...>` placeholder collects a variable number of arguments and passes them to the underlying procedure.
+
+```scheme
+;; Create a procedure that prepends a prefix to any number of arguments using format.
+> (def prefixer (cut string-append "PREFIX: " <...>))
+
+> (prefixer "hello" " " "world")
+"PREFIX: hello world"
+```
+:::
+
+#### Context and Usage
+
+Use `cut` as a concise and readable alternative to writing a full `lambda` expression, especially for creating simple wrappers for partial application or when passing procedures to higher-order functions.
+
+* Evaluation Semantics: It is important to note that any expression in a `cut` form that is not a slot (e.g., the `(random 100)` in `(cut + (random 100) <>)`) is re-evaluated every time the resulting procedure is called. Gerbil implements the `cut` variant of [SRFI26](https://srfi.schemers.org/srfi-26/srfi-26.html), not the `cute` variant which would evaluate such expressions only once.
+* `cut` is a specialized tool for partial application. For defining complex procedures with multiple expressions in their body, a full lambda is necessary.
+
+#### See Also
+
+[`lambda`](#lambda)
+
+### let/cc <Badge type="tip" text="R7RS" vertical="middle" />
+```scheme
+(let/cc <name> <body> ...)
 =>
-(call/cc (lambda (name) body ...))
+(call/cc (lambda (<name>) <body> ...))
 ```
 
-Shortcut for local continuation capture.
+A convenient macro for capturing the current continuation and binding it to a local variable `<name>`. This is syntactic sugar for the R7RS `call/cc` primitive.
 
-A common use is to capture a continuation for abortive returns from a
-dynamic scope; for instance:
+A continuation represents the "rest of the computation" from the point where it is captured. Invoking the captured continuation (which is a procedure) immediately abandons the current computation and returns a value to the point where `let/cc` was called.
+
+The entire `let/cc` expression evaluates to the value returned by the `<body>`, unless the captured continuation is invoked, in which case the value passed to the continuation becomes the value of the `let/cc` expression.
+
+::: tip Example
+
+`let/cc` is primarily used to implement non-local exits, allowing you to immediately exit from deeply nested computations or loops. This example searches for the first even number in a list and returns it immediately using the captured continuation `return`.
+
+```scheme
+> (def (find-first-even lst)
+    (let/cc return
+      (for-each (lambda (x)
+                  (when (even? x)
+                    (return x))) ; Immediately exit 'let/cc' with the value 'x'
+                lst)
+      #f)) ; Return #f if no even number is found
+
+> (find-first-even '(1 3 5 6 7 8))
+6
+> (find-first-even '(1 3 5 7))
+#f
 ```
-(let/cc break
-  (for (...)
-    (unless something (break))
-    ...))
+:::
+
+#### Context and Usage
+
+Use `let/cc` for advanced control flow mechanisms like non-local exits, implementing simple exception handling, or coroutines.
+
+* `let/cc` provides a more readable alternative to directly using `call/cc` by giving the continuation a clear local name.
+* While powerful, continuations can make code harder to understand. Use them judiciously when simpler control flow structures (`if`, loops, simple recursion) are insufficient.
+
+#### See Also
+
+`call/cc`
+
+### rec <Badge type="tip" text="SRFI 31" vertical="middle" />
+```scheme
+(rec <name> <expression>)
+(rec (values <name> ...) <expression>)
+(rec (<name> . <head>) <body> ...)
 ```
 
-### rec <Badge type="tip" text="Gerbil" vertical="middle" />
+Offers a simple syntax [SRFI 31](https://srfi.schemers.org/srfi-31/srfi-31.html) for creating self-referential expressions, most commonly used to define anonymous recursive functions directly within another expression.
+
+`rec` allows the definition of recursive values and procedures directly within an expression, without needing external bindings like `define` or the verbosity of [`letrec`](#letrec_). It expands into a [`letrec`](#letrec_) or `letrec-values` form.
+
+It has three forms:
+* **`(rec <name> <expression>)`**: Defines a single variable `<name>` whose `<expression>` can refer to `<name>`. It expands to `(letrec ((<name> <expression>)) <name>)` and returns the value of the expression.
+
+* **`(rec (values <name> ...) <expression>)` (Gerbil Extension)**: Defines multiple mutually recursive variables `<name> ...` simultaneously. The `<expression>` must return as many values as there are names. Expands to `(letrec-values (((<name> ...) <expression>)) (values <name> ...))` and returns the values produced by the expression.
+
+* **`(rec (<name> . <head>) <body> ...)`**: Defines a recursive procedure `<name>` using lambda syntax and returns the procedure. Expands to `(letrec ((<name> (lambda <head> <body> ...))) <name>)`. This is the primary [SRFI 31](https://srfi.schemers.org/srfi-31/srfi-31.html) use case.
+
+::: tip Examples
+
+- **Defining a recursive procedure (Primary use case)**
+This form provides a simple and intuitive syntax for defining recursive functions inline.
+
+```scheme
+;; Using 'rec' to define the factorial function inline, passed to 'map'.
+> (map (rec (fact n) ; Defines 'fact' locally for the lambda body
+         (if (zero? n) 1 (* n (fact (- n 1)))))
+       '(1 2 3 4 5))
+(1 2 6 24 120)
 ```
-(rec name expr)
-=>
-(letrec ((name expr)) expr)
 
-;-------------------------
-(rec (values name ...) expr)
-=>
-(letrec (((values name ...) expr)) (values name ...))
+- **Defining a recursive value (Stream)**
+This creates a self-referential binding, often used for structures like infinite streams.
 
-;--------------------------
-(rec (name . head) body ...)
-=>
-(letrec ((name (lambda head body ...))) name
+```scheme
+;; An infinite stream of ones.
+> (def ones (rec S (cons 1 (delay S))))
+
+;; Helper function to take elements from a stream.
+> (def (stream-take stream n)
+    (do ((i n (1- i))
+         (ones '() (cons (car stream) ones)))
+        ((zero? i) (reverse ones))
+      (force (cdr stream))))
+
+;; Take the first 5 elements using the helper.
+> (stream-take ones 5)
+(1 1 1 1 1)
 ```
 
-Shortcut for self referential expressions.
+- **Multiple recursive values (Gerbil Extension)**
+This Gerbil-specific form allows defining multiple mutually recursive values inline.
+
+```scheme
+;; Define mutually recursive 'is-even?' and 'odd?' checkers inline
+> (let ((values is-even? is-odd?)
+        (rec (values is-even? is-odd?)
+          (values
+           (lambda (n) (if (zero? n) #t (is-odd? (- n 1))))
+           (lambda (n) (if (zero? n) #f (is-even? (- n 1)))))))
+    (is-even? 4))
+#t
+```
+:::
+
+#### Context and Usage
+
+Use `rec` as a concise alternative to [`letrec`](#letrec_) or [`letrec*`](#letrec*_) specifically when you need to define a single self-referential expression (especially a recursive procedure) or a set of mutually recursive values directly within another expression. It avoids introducing external bindings and is often more readable for anonymous recursion.
+
+* For defining multiple, potentially complex, mutually recursive bindings (especially named procedures at the top level or within a function body), [`letrec`](#letrec_) or [`letrec*`](#letrec*_) remain the standard tools.
+
+#### See Also
+
+- [`letrec`](#letrec)
+- [`letrec*`](#letrec*)
+- [`lambda`](#lambda)
 
 ### alet <Badge type="tip" text="Gerbil" vertical="middle" />
-```
-(alet <let-bind> <local-body> ...)
-(alet (alet-bind> ...) <local-body> ...)
+```scheme
+(alet (<binding> ...) <body> ...)
+
+binding:
+ (<var> <expr>)
+ ((values <var> ...) <expr>)
+ (<expr>)
+
 ```
 
-Conditional binding form. If all the bound identifiers in the bindings
-are truthy, then the body is evaluated in a scope with the bindings
-visible. Otherwise, the expression's value is `#f`.
+A conditional binding form. It binds variables like [`let`](#let_), but only executes the `<body>` if all the bound values are truthy (any value other than `#f`).
+
+The `alet` macro first evaluates all binding expressions in parallel, similar to [`let`](#let_). It then checks if every value bound to a variable is truthy.
+
+* If all values are truthy, the `<body>` is evaluated in a new scope containing the bindings, and the result of the last expression in the `<body>` is returned.
+* If at least one value is `#f`, the `<body>` is not evaluated, and the `alet` expression immediately returns `#f`.
+
+Like [`let`](#let_), gerbil's `alet` supports both single and multiple-value bindings.
+
+::: tip Example
+
+**Safe lookup and computation**
+`alet` is useful for guarding computations that depend on potentially missing values.
+
+```scheme
+(define data (hash (a 10) (b 20)))
+
+> (alet ((x (hash-get data 'a))
+         (y (hash-get data 'b)))
+    (+ x y))
+30
+
+> (alet ((x (hash-get data 'a))
+         (y (hash-get data 'c))) ; missing key
+    (+ x y))
+#f ;; body skipped because y is #f
+
+```
+:::
+
+#### Context and Usage
+
+Use `alet` when you need to bind variables and proceed only if all of them received a valid (truthy) value. It's a common pattern for safely handling results from functions that might return `#f` on failure (like lookups in hash tables or lists).
+
+* Compared to [`let`](#let_), `alet` adds the conditional check before executing the body.
+* For sequential conditional bindings (where each binding depends on the success of the previous one), use [`alet*`](#alet*).
+
+#### See Also
+
+- [`alet*`](#alet*_)
+- [`let`](#let_)
+- [`and`](control-flow#and_)
 
 ### alet* <Badge type="tip" text="Gerbil" vertical="middle" />
-```
+```scheme
+(alet* (<binding> ...) <body> ...)
+
+binding:
+  (<variable> <expr>)
+  ((values <variable> ...) <expression>)
+  (<expression>)
+
 (alet* (hd . rest) body ...)
 =>
 (alet hd (alet* rest body ...))
 ```
 
-Sequential conditional bindings.
+A sequential conditional binding form. It binds variables like `let*`, but only proceeds to the next binding or the body if the current binding's value is truthy.
+
+The `alet*` macro (also aliased as `and-let*`) evaluates its bindings sequentially. For each `<binding>`:
+1. The `<expression>` is evaluated.
+2. If the result is truthy, the `<variable>`(s) are bound to that value(s), and the evaluation proceeds to the next binding (or the body if it's the last binding). The newly bound variable(s) are visible to subsequent bindings.
+3. If the result is `#f`, the entire `alet*` expression stops immediately and returns `#f`.
+
+If all bindings succeed (evaluate to a truthy value), the `<body>` is executed, and the `alet*` expression evaluates to the value of the last expression in the `<body>`.
+
+Like `alet`, Gerbil's `alet*` supports both single and multiple-value bindings.
+
+::: tip Example
+
+**Sequential conditional binding**
+Each expression is evaluated in sequence, and later bindings can depend on earlier ones.
+
+```scheme
+> (alet* ((x 10)
+          (y (> x 5))
+          (z (+ x 1)))
+    z)
+11
+
+> (alet* ((x 10)
+          (y (< x 5))
+          (z (+ x 1)))
+  z)
+#f ;; evaluation stops at y
+```
+:::
+
+#### Context and Usage
+
+Use `alet*` (or its alias `and-let*`) when you need to perform a sequence of dependent bindings, where each step must succeed (return a truthy value) for the next step to proceed. It's a very common pattern for safely navigating data structures or chaining operations that might fail.
+
+* Compared to [`alet`](#alet_), which evaluates all bindings in parallel and checks them all at once, `alet*` evaluates and checks sequentially, short-circuiting on the first failure.
+* Compared to [`let*`](#let_), `alet*` adds the conditional check at each step.
+
+#### See Also
+
+- [`alet`](#alet_)
+- [`let*`](#let*_)
+- [`and`](control-flow#and_)
