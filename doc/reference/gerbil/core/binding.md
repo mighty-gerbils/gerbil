@@ -5,7 +5,7 @@ It is organized by the scope of the binding, from top-level definitions that sha
 
 ## Top-Level Definitions
 
-These forms create bindings at the module or REPL top level. They are used to define the public and private functions, variables, and syntax of a module.
+These forms create bindings at the module or REPL top level. They are used to define the public and private procedures, variables, and syntax of a module.
 
 ### def <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -16,14 +16,14 @@ These forms create bindings at the module or REPL top level. They are used to de
 => (define-values (<name>)
      (lambda <lambda-head> <lambda-body> ...))
 ```
-The foundational macro for creating top-level and local runtime bindings. `def` is a powerful and flexible alternative to the standard Scheme `define`.
+The foundational macro for creating top-level and local runtime bindings. `def` is a powerful and flexible alternative to the standard Scheme [`define`](primitive.md#define_).
 
 `def` has two main forms:
 
 * **Variable Definition:** `(def <variable> <expression>)` evaluates the `<expression>` and binds its result to the `<variable>`.
 * **Function Definition:** The general form `(def (<name> . <lambda-head>) ...)` is a powerful syntax that can be used to create several kinds of functions:
     * For a **simple function**, `<lambda-head>` is a list of arguments (e.g., `(add x y)`).
-    * For a **curried function ([`SRFI 219`](https://srfi.schemers.org/srfi-219/srfi-219.html))**, `<lambda-head>` contains nested lists (e.g., `((greet prefix) suffix)`).
+    * For a **curried function ([`SRFI-219`](https://srfi.schemers.org/srfi-219/srfi-219.html))**, `<lambda-head>` contains nested lists (e.g., `((greet prefix) suffix)`).
     * For a **variadic function** that accepts any number of arguments, `<lambda-head>` is a single symbol (e.g., `(log . messages)`).
 
 ::: tip Examples
@@ -43,7 +43,7 @@ The foundational macro for creating top-level and local runtime bindings. `def` 
 3
 ```
 
-- **Currying and Partial application ([`SRFI 219`](https://srfi.schemers.org/srfi-219/srfi-219.html))**
+- **Currying and Partial application ([`SRFI-219`](https://srfi.schemers.org/srfi-219/srfi-219.html))**
 The nested head syntax allows you to define a function that, when partially applied, returns a new function.
 
 ```scheme
@@ -87,30 +87,30 @@ The nested head syntax allows you to define a function that, when partially appl
 
 `def` is the idiomatic way to create most runtime definitions in Gerbil.
 
-Compared to the R7RS `define`, `def` offers a more powerful and extensible syntax. The two main differences are:
+Compared to the R7RS [`define`](primitive.md#define_), `def` offers a more powerful and extensible syntax. The two main differences are:
 
-* **Currying Syntax**: `def` supports the [`SRFI 219`](https://srfi.schemers.org/srfi-219/srfi-219.html) curried function definition syntax.
-* **Underlying Lambda**: `def` expands using the high-level `lambda` macro, which supports Gerbil's full feature set for arguments (optional, keyword, contracts). In contrast, `define` uses the lower-level `lambda%` primitive.
+* **Currying Syntax**: `def` supports the [`SRFI-219`](https://srfi.schemers.org/srfi-219/srfi-219.html) curried function definition syntax.
+* **Underlying Lambda**: `def` expands using the high-level [`lambda`](#lambda_) macro, which supports Gerbil's full feature set for arguments (optional, keyword, contracts). In contrast, [`define`](primitive.md#define_) uses the lower-level [`lambda%`](primitive.md#lambda_) primitive.
 
-**Rule of thumb**: Always prefer `def` over `define` in Gerbil code for its extended features and idiomatic style.
+**Rule of thumb**: Always prefer `def` over [`define`](primitive.md#define_) in Gerbil code for its extended features and idiomatic style.
 
 #### See Also
 
-- [`def*`](#def*)
-- `define` (the R7RS primitive)
-- [`let`](#let)
-- [`lambda`](#lambda)
+- [`def*`](#def-star-_)
+- [`define`](primitive.md#define_)
+- [`let`](#let_)
+- [`lambda`](#lambda_)
 
 ### def* <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
-(def* name
-  clause ...)
+(def* <name>
+  <clause> ...)
 =>
-(def name
-  (case-lambda clause ...))
+(def <name>
+  (case-lambda <clause> ...))
 ```
 
-A convenient macro for defining a procedure that handles multiple arities (different numbers of arguments) using `case-lambda`.
+A convenient macro for defining a procedure that handles multiple arities (different numbers of arguments) using [`case-lambda`](#case-lambda_).
 
 This form is syntactic sugar. An expression like `(def* name clause1 clause2 ...)` is exactly equivalent to `(def name (case-lambda clause1 clause2 ...))`. Each `<clause>` is a `(<formals> <body> ...)` list that defines the behavior for a specific number of arguments.
 
@@ -139,23 +139,23 @@ Defines a 'sum' procedure with four different arity clauses.
 
 Use `def*` as a concise alternative to `(def name (case-lambda ...))` whenever you need a single function name to have different behaviors based on the number of arguments it is called with.
 
-* Compared to `def`, which is used for defining a function with a single signature (that can include optional/keyword arguments), `def*` is used for defining a function that has **multiple, distinct signatures based on arity**.
+* Compared to [`def`](#def_), which is used for defining a function with a single signature (that can include optional/keyword arguments), `def*` is used for defining a function that has **multiple, distinct signatures based on arity**.
 
 #### See Also
 
-- [`def`](#def)
-- [`case-lambda`](#case-lambda)
+- [`def`](#def_)
+- [`case-lambda`](#case-lambda_)
 
 ### defvalues <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
-(defvalues (name ...) expr)
+(defvalues (<name> ...) <expression>)
 =>
-(define-values (name ...) expr)
+(define-values (<name> ...) <expression>)
 ```
 
 A macro for creating multiple top-level or local bindings from an expression that produces multiple values.
 
-This form is a convenient Gerbil-specific alias for the R7RS `define-values` macro. The `<expression>` is evaluated, and it must produce as many values as there are `<name>`s in the list. Each name is then bound to the corresponding value.
+This form is a convenient Gerbil-specific alias for the R7RS [`define-values`](primitive.md#define-values_) macro. The `<expression>` is evaluated, and it must produce as many values as there are `<name>`s in the list. Each name is then bound to the corresponding value.
 
 ::: tip Example
 `defvalues` is the idiomatic way to capture multiple return values from a procedure. The standard procedure `floor/` is a perfect example, as it returns two values: the quotient and the remainder of a division.
@@ -174,14 +174,14 @@ This form is a convenient Gerbil-specific alias for the R7RS `define-values` mac
 
 Use `defvalues` whenever you need to bind multiple values returned by a single expression at the top level or in a local definition context.
 
-* `defvalues` is a Gerbil alias for the R7RS `define-values`. It is provided for consistency with other Gerbil binding forms like `def`.
-* For creating local bindings from multiple values, `let-values` is often preferred.
+* `defvalues` is a Gerbil alias for the R7RS [`define-values`](primitive.md#define-values_). It is provided for consistency with other Gerbil binding forms like [`def`](#def_).
+* For creating local bindings from multiple values, [`let-values`](primitive.md#let-values_) is often preferred.
 
 #### See Also
 
-- `define-values`
+- [`define-values`](primitive.md#define-values_)
 - `values`
-- `let-values`
+- [`let-values`](primitive.md#let-values_)
 
 ### extern <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -195,7 +195,7 @@ extern-body:
 
 Declares a name that is defined externally, for instance in a C library or another Gerbil namespace.
 
-`extern` is a versatile macro that acts as a **declaration** or a "promise" to the compiler that a symbol's definition will be provided at runtime. Its applications range from interfacing with foreign libraries (FFI) to managing namespaces in dynamic contexts like `eval`.
+`extern` is a versatile macro that acts as a **declaration** or a *promise* to the compiler that a symbol's definition will be provided at runtime. Its applications range from interfacing with foreign libraries (FFI) to managing namespaces in dynamic contexts like `eval`.
 
 > **Note:** `extern` can only appear at the top level of a module or script. When used inside `eval` in a compiled binary, the Gerbil expander must be loaded first.
 
@@ -255,11 +255,11 @@ When compiled with `gxc -exe eval-example.ss` and run, this program will correct
 
 #### Context and Usage
 
-`extern` is a foundational tool for Gerbil's **Foreign Function Interface (FFI)**, which is delegated to the underlying Gambit C-interface. For a complete understanding of the FFI mechanism, it is highly recommended to also read the "C-interface" section of the Gambit manual.
+`extern` is a foundational tool for Gerbil's **Foreign Function Interface (FFI)**, which is delegated to the underlying Gambit C-interface. For a complete understanding of the FFI mechanism, it is highly recommended to also read the *C-interface* section of the Gambit manual.
 
 * For **FFI**: `extern` serves as a high-level declaration for external symbols that will be available at link time.
 * For `eval`: `extern` is the idiomatic tool to bridge the gap between module namespaces and the dynamic scope of `eval`.
-* The `begin-foreign` macro is the primary mechanism for defining the actual C bindings by delegating directly to Gambit's FFI. It is often used to provide the definition for a symbol declared with `extern**.
+* The `begin-foreign` macro is the primary mechanism for defining the actual C bindings by delegating directly to Gambit's FFI. It is often used to provide the definition for a symbol declared with `extern`.
 
 #### See Also
 
@@ -272,7 +272,7 @@ When compiled with `gxc -exe eval-example.ss` and run, this program will correct
 (defsyntax (<name> <stx-arg>) <body> ...)
 ```
 
-The foundational macro for creating syntactic bindings, typically used to define procedural macros. It is a Gerbil-specific, convenient alias for the R7RS `define-syntax` macro.
+The foundational macro for creating syntactic bindings, typically used to define procedural macros. It is a Gerbil-specific, convenient alias for the R7RS [`define-syntax`](primitive.md#define-syntax_) macro.
 
 A macro defined with `defsyntax` is a procedure that receives a single argument: a syntax object representing the entire macro invocation. This procedure, called the *expander*, must then deconstruct this syntax object and return the new code to be substituted.
 
@@ -283,7 +283,7 @@ A macro defined with `defsyntax` is a procedure that receives a single argument:
 
 
 ::: tip Example
-The most common use of `defsyntax` is to define a procedural macro using `syntax-case`. This example defines a `swap!` macro that swaps the values of two variables.
+The most common use of `defsyntax` is to define a procedural macro using [`syntax-case`](syntax.md#syntax-case_). This example defines a `swap!` macro that swaps the values of two variables.
 
 ```scheme
 ;; The expander takes one argument, 'stx', representing the whole expression.
@@ -314,15 +314,15 @@ The most common use of `defsyntax` is to define a procedural macro using `syntax
 
 `defsyntax` is the idiomatic Gerbil macro for defining procedural macros from scratch, especially when using syntax-case.
 
-* Compared to the R7RS `define-syntax`, `defsyntax` provides a more convenient, def-like syntax for defining the expander procedure, but the underlying mechanism is identical. It is the preferred form in Gerbil code.
-* For simpler, purely pattern-matching macros, [`defrules`](#defrules) and [`defrule`](#defrule) are often more concise alternatives to writing a full procedural macro with `defsyntax`.
+* Compared to the R7RS [`define-syntax`](primitive.md#define-syntax_), `defsyntax` provides a more convenient, def-like syntax for defining the expander procedure, but the underlying mechanism is identical. It is the preferred form in Gerbil code.
+* For simpler, purely pattern-matching macros, [`defrules`](#defrules_) and [`defrule`](#defrule_) are often more concise alternatives to writing a full procedural macro with `defsyntax`.
 
 #### See Also
 
-- `define-syntax`
-- [`defrules`](#defrules)
-- [`defrule`](#defrules)
-- `syntax-case`
+- [`define-syntax`](primitive.md#define-syntax_)
+- [`defrules`](#defrules_)
+- [`defrule`](#defrules_)
+- [`syntax-case`](syntax.md#syntax-case_)
 
 ### defrules <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -333,7 +333,7 @@ The most common use of `defsyntax` is to define a procedural macro using `syntax
     <clause> ...))
 ```
 
-A macro for defining simple, pattern-matching macros, providing a convenient syntax on top of the standard R7RS `syntax-rules`.
+A macro for defining simple, pattern-matching macros, providing a convenient syntax on top of the standard R7RS [`syntax-rules`](syntax.md#syntax-rules_).
 
 `defrules` allows you to define a macro by specifying a series of patterns and corresponding templates. When the macro is called, the expander finds the first matching pattern (`<clause>`) and replaces the macro call with the instantiated template.
 
@@ -366,15 +366,15 @@ done
 
 Use `defrules` to define macros that are based on simple structural transformation (pattern matching). It is the idiomatic way to create most helper macros in Gerbil.
 
-* The underlying mechanism for `defrules` is the R7RS `syntax-rules` system. `defrules` is a Gerbil-specific macro that makes its usage more convenient.
-* For macros that require more complex logic than simple pattern matching (e.g., inspecting syntax objects, raising custom errors), use the more powerful [`defsyntax`](#defsyntax) to create a procedural macro.
-* For macros that only have a single rule, [`defrule`](#defrule) is an even more concise alternative.
+* The underlying mechanism for `defrules` is the R7RS [`syntax-rules`](syntax.md#syntax-rules_) system. `defrules` is a Gerbil-specific macro that makes its usage more convenient.
+* For macros that require more complex logic than simple pattern matching (e.g., inspecting syntax objects, raising custom errors), use the more powerful [`defsyntax`](#defsyntax_) to create a procedural macro.
+* For macros that only have a single rule, [`defrule`](#defrule_) is an even more concise alternative.
 
 #### See Also
 
-- [`defrule`](#defrule)
-- [`defsyntax`](#defsyntax)
-- `syntax-rules`
+- [`defrule`](#defrule_)
+- [`defsyntax`](#defsyntax_)
+- [`syntax-rules`](syntax.md#syntax-rules)
 
 ### defrule <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -387,7 +387,7 @@ Use `defrules` to define macros that are based on simple structural transformati
 
 A convenient macro for defining a simple, single-rule, pattern-matching macro.
 
-`defrule` is a specialized version of `defrules` for the common case where a macro only needs one pattern-matching clause. It supports an optional `fender` expression, which acts as a guard: the macro will only expand if the fender evaluates to a truthy value.
+`defrule` is a specialized version of [`defrules`](#defrules_) for the common case where a macro only needs one pattern-matching clause. It supports an optional `fender` expression, which acts as a guard: the macro will only expand if the fender evaluates to a truthy value.
 
 ::: tip Examples
 
@@ -425,17 +425,16 @@ It's even!
 Use defrule as a shortcut for defrules when your macro only has a single transformation rule. The optional fender makes it powerful enough for many common use cases without needing the full complexity of a procedural macro.
 
 * `defrule` is ideal for simple, single-purpose syntactic sugar.
-* For macros with multiple patterns, use the more general [`defrules`](#defrules).
-* For macros requiring complex procedural logic, use [`defsyntax`](#defsyntax).
+* For macros with multiple patterns, use the more general [`defrules`](#defrules_).
+* For macros requiring complex procedural logic, use [`defsyntax`](#defsyntax_).
 
 #### See Also
 
-- [`defrules`](#defrules)
-- [`defsyntax`](#defsyntax)
+- [`defrules`](#defrules_)
+- [`defsyntax`](#defsyntax_)
 
 ### defalias <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
-(defalias name alias-name)
 (defalias <new-name> <existing-name>)
 ```
 Defines a syntactic alias from `<new-name>` to `<existing-name>`.
@@ -458,7 +457,7 @@ Hello, Gerbil!
 ```
 
 - **Aliasing a macro**
-This demonstrates the syntactic nature of `defalias`. The new name `let-seq` behaves exactly like the [`let*`](#let*) macro.
+This demonstrates the syntactic nature of `defalias`. The new name `let-seq` behaves exactly like the [`let*`](#let-star-_) macro.
 
 ```scheme
 ;; Create an alias for the 'let*' macro
@@ -489,7 +488,7 @@ These `let` forms create new lexical scopes and bind variables within the body o
 (let (<binding> ...) <body> ...)
 (let <name> (<binding> ...) <body> ...)
 
-<binding>:
+binding:
 (<variable> <expression>)
 ((values <variable> ...) <expression>)
 ```
@@ -517,7 +516,7 @@ As an extension to the R7RS standard, Gerbil's `let` also supports binding multi
 ```
 
 - **Multiple value binding**
-While the R7RS standard requires `let-values` for this task, Gerbil's `let` can handle it directly for convenience.
+While the R7RS standard requires [`let-values`](primitive.md#let-values_) for this task, Gerbil's `let` can handle it directly for convenience.
 
 ```scheme
 ;; 'floor/' returns two values.
@@ -540,17 +539,18 @@ While the R7RS standard requires `let-values` for this task, Gerbil's `let` can 
 
 #### Context and Usage
 
-Use `let` for creating local bindings. The choice between `let`, [`let*`](#let*), and [`letrec`](#letrec) depends on the visibility you need between your variables.
+Use `let` for creating local bindings. The choice between `let`, [`let*`](#let-star-_), and [`letrec`](#letrec_) depends on the visibility you need between your variables.
 
 * `let`: Use for simple, parallel bindings where the variables don't depend on each other.
-* [`let*`](#let*): Use when you need sequential bindings, where each variable is visible to the expressions of the subsequent variables.
-* [`letrec`](#letrec) or [`letrec*`](#letrec*): Use when you need to create mutually recursive bindings.
+* [`let*`](#let-star-_): Use when you need sequential bindings, where each variable is visible to the expressions of the subsequent variables.
+* [`letrec`](#letrec_) or [`letrec*`](#letrec-star-_): Use when you need to create mutually recursive bindings.
 
 #### See Also
 
-- [`let*`](#let*)
-- [`letrec`](#letrec)
-- `let-values`
+- [`let*`](#let-star-_)
+- [`letrec`](#letrec_)
+- [`letrec*`](#letrec-star-_)
+- [`let-values`](primitive.md#let-values_)
 
 ### let* <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
@@ -569,19 +569,19 @@ Creates local lexical bindings sequentially, where each binding is visible to th
 
 The entire `let*` expression evaluates to the value of the **last expression** in its `<body>`.
 
-Unlike [`let`](#let) where bindings are evaluated in parallel, `let*` evaluates each binding sequentially. As the syntax shows, `let*` is syntactic sugar for a series of nested let blocks. This nested structure is what allows each binding expression to see the variables defined before it in the same `let*`.
+Unlike [`let`](#let_) where bindings are evaluated in parallel, `let*` evaluates each binding sequentially. As the syntax shows, `let*` is syntactic sugar for a series of nested let blocks. This nested structure is what allows each binding expression to see the variables defined before it in the same `let*`.
 
-Like [`let`](#let), Gerbil extends the R7RS `let*` by allowing multiple-value bindings directly within its binding clauses.
+Like [`let`](#let_), Gerbil extends the R7RS `let*` by allowing multiple-value bindings directly within its binding clauses.
 
 ::: tip Example
 
 - **Sequential bindings**
-This example works with `let*` because the binding for `y` can see the `x` that was defined just before it. This would be an error with a standard `let`.
+This example works with `let*` because the binding for `y` can see the `x` that was defined just before it. This would be an error with a standard [`let`](#let_).
 
 ```scheme
 > (let* ((x 10)
          (y (+ x 5))) ; 'y' can see 'x'
-   y)
+    y)
 15
 ```
 
@@ -590,8 +590,8 @@ Gerbil's let* also supports sequential multiple-value bindings.
 
 ```scheme
 > (let* (((values q r) (floor/ 10 3))
-       (result (format "q=~a, r=~a" q r)))
-  result)
+         (result (format "q=~a, r=~a" q r)))
+    result)
 "q=3, r=1"
 ```
 :::
@@ -606,9 +606,11 @@ Use `let*` when you need to define local variables that depend on each other in 
 
 #### See Also
 
-- [`let`](#let)
-- [`letrec`](#letrec)
-- `let-values`
+- [`let`](#let_)
+- [`letrec`](#letrec_)
+- [`letrec*`](#letrec-star-_)
+- [`let-values`](primitive.md#let-values_)
+
 
 
 ### letrec <Badge type="tip" text="R7RS" vertical="middle" />
@@ -648,15 +650,15 @@ The classic use case for `letrec` is to define two or more procedures that call 
 
 Use `letrec` when you need to define two or more local procedures that are mutually recursive.
 
-* For the simpler case of creating a single self-referential expression (like a recursive lambda), the [`rec`](#rec) macro can be a more concise shortcut.
-* For most other situations, [`letrec*`](#letrec*) is now generally preferred over `letrec` as it is more robust and has more predictable evaluation semantics.
+* For the simpler case of creating a single self-referential expression (like a recursive lambda), the [`rec`](#rec_) macro can be a more concise shortcut.
+* For most other situations, [`letrec*`](#letrec-star-_) is now generally preferred over `letrec` as it is more robust and has more predictable evaluation semantics.
 
 #### See Also
 
-- [`let`](#let)
-- [`let*`](#let*)
-- [`letrec*`](#letrec*)
-- [`rec`](#rec)
+- [`let`](#let_)
+- [`let*`](#let-star-_)
+- [`letrec*`](#letrec-star-_)
+- [`rec`](#rec_)
 
 ### letrec* <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
@@ -669,35 +671,45 @@ binding:
 
 Creates local, **mutually recursive** lexical bindings, evaluating the binding expressions sequentially.
 
-Like `letrec`, `letrec*` makes all `<variable>`s available within all binding expressions. However, it evaluates the `<expression>`s from **left to right**, meaning a binding can use the value of a preceding binding. This makes `letrec*` more flexible and powerful than `letrec`.
+Like [`letrec`](#letrec_), `letrec*` makes all `<variable>`s available within all binding expressions. However, it evaluates the `<expression>`s from **left to right**, meaning a binding can use the value of a preceding binding. This makes `letrec*` more flexible and powerful than `letrec`.
 
 The `letrec*` expression evaluates to the value of the **last expression** in its `<body>`. Gerbil extends the R7-RS `letrec*` to support multiple-value bindings.
 
 ::: tip Example
-This example defines a `factorial` procedure that uses a local helper procedure `lp`. `letrec*` allows `lp` to be defined in terms of `factorial` if needed, and also allows non-procedure bindings to be used by subsequent bindings.
+This example defines a recursive factorial procedure and then uses it immediately.
+Because bindings are evaluated sequentially, `result` can refer to `fact`, which is defined just before it.
 
 ```scheme
 > (letrec* ((fact (lambda (n)
                     (if (zero? n) 1 (* n (fact (- n 1))))))
             (result (fact 5)))
-  result)
+    result)
 120
+```
+
+For mutually recursive definitions, each binding can refer to the others as well:
+
+```scheme
+> (letrec* ((even? (lambda (n) (if (zero? n) #t (odd? (- n 1)))))
+            (odd?  (lambda (n) (if (zero? n) #f (even? (- n 1))))))
+    (list (even? 10) (odd? 5)))
+(#t #t)
 ```
 :::
 
 #### Context and Usage
 
-`letrec*` is the most powerful and flexible `let` form, combining the sequential evaluation of [`let*`](#let) with the mutual recursion of [`letrec`](#letrec).
+`letrec*` is the most powerful and flexible `let` form, combining the sequential evaluation of [`let*`](#let_) with the mutual recursion of [`letrec`](#letrec_).
 
-* It is generally recommended to use `letrec*` over [`letrec`](#letrec) in most situations due to its more predictable, left-to-right evaluation order. It can do everything [`letrec`](#letrec) can do, and more.
-* While `letrec*` can define any recursive binding, the [`rec`](#rec) macro offers a more concise syntax for the specific case of a single self-referential expression.
+* It is generally recommended to use `letrec*` over [`letrec`](#letrec_) in most situations due to its more predictable, left-to-right evaluation order. It can do everything [`letrec`](#letrec_) can do, and more.
+* While `letrec*` can define any recursive binding, the [`rec`](#rec_) macro offers a more concise syntax for the specific case of a single self-referential expression.
 
 #### See Also
 
-- [`let`](#let)
-- [`let*`](#let*)
-- [`letrec`](#letrec)
-- [`rec`](#rec)
+- [`let`](#let_)
+- [`let*`](#let-star-_)
+- [`letrec`](#letrec_)
+- [`rec`](#rec_)
 
 ## Procedure Abstractions
 
@@ -720,7 +732,7 @@ optional-and-keyword-lambda-arg:
  <keyword-lambda-arg>
 
 optional-lambda-arg:
- (<identifier> <expression>)
+ (<identifier> <default-value-expression>)
  (<identifier> <contract-annotation> <contract-default>)
 
 keyword-lambda-arg:
@@ -732,7 +744,7 @@ required-keyword-lambda-arg:
  <keyword> (<identifier> <contract-annotation>)
 
 optional-keyword-lambda-arg:
- <keyword> (<identifier> <expression>)
+ <keyword> (<identifier> <default-value-expression>)
  <keyword> (<identifier> <contract-annotation> <contract-default>)
 
 contract-annotation:
@@ -754,8 +766,8 @@ Gerbil's `lambda` supports a rich syntax for its head:
 
 * **Required Positional Arguments:** Simple identifiers that appear before any other form.
 * **Variadic Arguments:** A dot (`.`) preceding the **last parameter**, which will collect all remaining arguments into a list. This can be used alone or after required arguments.
-* **Optional Positional Arguments:** `(<identifier> <default-value>)` forms after the required arguments.
-* **Keyword Arguments:** `keyword: (<identifier> <default-value>)` forms.
+* **Optional Positional Arguments:** `(<identifier> <default-value-expression>)` forms after the required arguments.
+* **Keyword Arguments:** `keyword: (<identifier> <default-value-expression>)` forms.
 * **Contract Annotations:** Type and predicate constraints can be applied to arguments and the return value. See [Contract Notation and Macrology](contract.md) for details about contract syntax.
 
 ::: tip Examples
@@ -833,13 +845,13 @@ Hello World!
 
 `lambda` is the essential building block for all procedures in Gerbil.
 
-* While you can use `lambda` directly to create anonymous functions, it is most often used with the [`def`](#def) macro to define named functions.
-* The Gerbil `lambda` macro is a high-level form that expands to the lower-level `lambda%` and [`case-lambda`](#case-lambda) primitives, providing a rich and convenient syntax for defining complex function signatures.
+* While you can use `lambda` directly to create anonymous functions, it is most often used with the [`def`](#def_) macro to define named functions.
+* The Gerbil `lambda` macro is a high-level form that expands to the lower-level [`lambda%`](#primitive.md#lambda_) and [`case-lambda`](#case-lambda) primitives, providing a rich and convenient syntax for defining complex function signatures.
 
 #### See Also
 
-- [`def`](#def)
-- [`case-lambda`](#case-lambda)
+- [`def`](#def_)
+- [`case-lambda`](#case-lambda_)
 
 
 ### case-lambda <Badge type="tip" text="R7RS" vertical="middle" />
@@ -856,7 +868,7 @@ A `case-lambda` expression evaluates to a single procedure. When this procedure 
 
 The value of the `case-lambda` expression is the value of the **last expression** in the body of the matching clause. An error is signaled if the procedure is called with a number of arguments that does not match any of the clauses.
 
-While `case-lambda` does not support optional, keyword, or variadic arguments like the full `lambda` macro, it **does support contract annotations** for gradual typing on its arguments and return values.
+While `case-lambda` does not support optional, keyword, or variadic arguments like the full [`lambda`](#lambda_) macro, it **does support contract annotations** for gradual typing on its arguments and return values.
 
 ::: tip Examples
 
@@ -913,18 +925,18 @@ This `add` procedure has two different implementations: one for adding two integ
 Use `case-lambda` when you need a single procedure to dispatch based on its arity.
 
 * It is the fundamental primitive in Gerbil for creating multi-arity procedures.
-* For defining a named procedure with this behavior, the [`def*`](#def*) macro is a more convenient and idiomatic shortcut for `(def name (case-lambda ...))`.
+* For defining a named procedure with this behavior, the [`def*`](#def-star-_) macro is a more convenient and idiomatic shortcut for `(def name (case-lambda ...))`.
 
 #### See Also
 
-- [`def*`](#def*)
-- [`lambda`](#lambda)
+- [`def*`](#def-star-_)
+- [`lambda`](#lambda_)
 
 ## Derived and Auxiliary Forms
 
 This section covers auxiliary binding macros that serve as convenient shortcuts for common or advanced patterns. These forms are not fundamental binding constructs, but they help make code more concise and expressive by reducing boilerplate for tasks like self-reference, conditional binding, or continuation capture.
 
-### cut <Badge type="tip" text="SRFI 26" vertical="middle" />
+### cut <Badge type="tip" text="SRFI-26" vertical="middle" />
 ```scheme
 (cut <cut-argument> ... [<cut-tail>])
 
@@ -936,7 +948,7 @@ cut-tail:
  <...>
 ```
 
-Creates a procedure (a `lambda`) for partial application, where some arguments are pre-filled and others are left as open "slots". This is an implementation of [SRFI 26](https://srfi.schemers.org/srfi-26/srfi-26.html).
+Creates a procedure (a `lambda`) for partial application, where some arguments are pre-filled and others are left as open "slots". This is an implementation of [SRFI-26](https://srfi.schemers.org/srfi-26/srfi-26.html).
 
 The `cut` macro is a concise way to create a new procedure by "cutting out" some arguments from an expression. It uses special placeholders:
 
@@ -958,7 +970,7 @@ The `cut` macro is a concise way to create a new procedure by "cutting out" some
 - **Using `cut` with Higher-Order Functions:**
 `cut` shines when creating simple predicates or transformations for functions like `map` or `filter`, especially when you need to fix some arguments of a multi-argument procedure.
 
-Without `cut`, you would write a full `lambda` to keep numbers greater than 10:
+Without `cut`, you would write a full [`lambda`](#lambda_) to keep numbers greater than 10:
 ```scheme
 > (filter (lambda (n)
             (> n 10))
@@ -988,14 +1000,14 @@ The `<...>` placeholder collects a variable number of arguments and passes them 
 
 #### Context and Usage
 
-Use `cut` as a concise and readable alternative to writing a full `lambda` expression, especially for creating simple wrappers for partial application or when passing procedures to higher-order functions.
+Use `cut` as a concise and readable alternative to writing a full [`lambda`](#lambda_) expression, especially for creating simple wrappers for partial application or when passing procedures to higher-order functions.
 
-* Evaluation Semantics: It is important to note that any expression in a `cut` form that is not a slot (e.g., the `(random 100)` in `(cut + (random 100) <>)`) is re-evaluated every time the resulting procedure is called. Gerbil implements the `cut` variant of [SRFI26](https://srfi.schemers.org/srfi-26/srfi-26.html), not the `cute` variant which would evaluate such expressions only once.
+* Evaluation Semantics: It is important to note that any expression in a `cut` form that is not a slot (e.g., the `(random 100)` in `(cut + (random 100) <>)`) is re-evaluated every time the resulting procedure is called. Gerbil implements the `cut` variant of [SRFI-26](https://srfi.schemers.org/srfi-26/srfi-26.html), not the `cute` variant which would evaluate such expressions only once.
 * `cut` is a specialized tool for partial application. For defining complex procedures with multiple expressions in their body, a full lambda is necessary.
 
 #### See Also
 
-[`lambda`](#lambda)
+[`lambda`](#lambda_)
 
 ### let/cc <Badge type="tip" text="R7RS" vertical="middle" />
 ```scheme
@@ -1035,29 +1047,29 @@ The entire `let/cc` expression evaluates to the value returned by the `<body>`, 
 Use `let/cc` for advanced control flow mechanisms like non-local exits, implementing simple exception handling, or coroutines.
 
 * `let/cc` provides a more readable alternative to directly using `call/cc` by giving the continuation a clear local name.
-* While powerful, continuations can make code harder to understand. Use them judiciously when simpler control flow structures (`if`, loops, simple recursion) are insufficient.
+* While powerful, continuations can make code harder to reason about. Use them judiciously when simpler control flow structures (`if`, loops, simple recursion) are insufficient.
 
 #### See Also
 
 `call/cc`
 
-### rec <Badge type="tip" text="SRFI 31" vertical="middle" />
+### rec <Badge type="tip" text="SRFI-31" vertical="middle" />
 ```scheme
 (rec <name> <expression>)
 (rec (values <name> ...) <expression>)
 (rec (<name> . <head>) <body> ...)
 ```
 
-Offers a simple syntax [SRFI 31](https://srfi.schemers.org/srfi-31/srfi-31.html) for creating self-referential expressions, most commonly used to define anonymous recursive functions directly within another expression.
+Offers a simple syntax [SRFI-31](https://srfi.schemers.org/srfi-31/srfi-31.html) for creating self-referential expressions, most commonly used to define anonymous recursive functions directly within another expression.
 
-`rec` allows the definition of recursive values and procedures directly within an expression, without needing external bindings like `define` or the verbosity of [`letrec`](#letrec_). It expands into a [`letrec`](#letrec_) or `letrec-values` form.
+`rec` allows the definition of recursive values and procedures directly within an expression, without needing external bindings like `define` or the verbosity of [`letrec`](#letrec_). It expands into a [`letrec`](#letrec_) or [`letrec-values`](primitive.md#letrec-values_) form.
 
 It has three forms:
 * **`(rec <name> <expression>)`**: Defines a single variable `<name>` whose `<expression>` can refer to `<name>`. It expands to `(letrec ((<name> <expression>)) <name>)` and returns the value of the expression.
 
 * **`(rec (values <name> ...) <expression>)` (Gerbil Extension)**: Defines multiple mutually recursive variables `<name> ...` simultaneously. The `<expression>` must return as many values as there are names. Expands to `(letrec-values (((<name> ...) <expression>)) (values <name> ...))` and returns the values produced by the expression.
 
-* **`(rec (<name> . <head>) <body> ...)`**: Defines a recursive procedure `<name>` using lambda syntax and returns the procedure. Expands to `(letrec ((<name> (lambda <head> <body> ...))) <name>)`. This is the primary [SRFI 31](https://srfi.schemers.org/srfi-31/srfi-31.html) use case.
+* **`(rec (<name> . <head>) <body> ...)`**: Defines a recursive procedure `<name>` using lambda syntax and returns the procedure. Expands to `(letrec ((<name> (lambda <head> <body> ...))) <name>)`. This is the primary [SRFI-31](https://srfi.schemers.org/srfi-31/srfi-31.html) use case.
 
 ::: tip Examples
 
@@ -1108,15 +1120,16 @@ This Gerbil-specific form allows defining multiple mutually recursive values inl
 
 #### Context and Usage
 
-Use `rec` as a concise alternative to [`letrec`](#letrec_) or [`letrec*`](#letrec*_) specifically when you need to define a single self-referential expression (especially a recursive procedure) or a set of mutually recursive values directly within another expression. It avoids introducing external bindings and is often more readable for anonymous recursion.
+Use `rec` as a concise alternative to [`letrec`](#letrec_) or [`letrec*`](#letrec-star-_) specifically when you need to define a single self-referential expression (especially a recursive procedure) or a set of mutually recursive values directly within another expression. It avoids introducing external bindings and is often more readable for anonymous recursion.
 
-* For defining multiple, potentially complex, mutually recursive bindings (especially named procedures at the top level or within a function body), [`letrec`](#letrec_) or [`letrec*`](#letrec*_) remain the standard tools.
+* For defining multiple, potentially complex, mutually recursive bindings (especially named procedures at the top level or within a function body), [`letrec`](#letrec_) or [`letrec*`](#letrec-star-_) remain the standard tools.
 
 #### See Also
 
-- [`letrec`](#letrec)
-- [`letrec*`](#letrec*)
-- [`lambda`](#lambda)
+- [`letrec`](#letrec_)
+- [`letrec*`](#letrec-star-_)
+- [`lambda`](#lambda_)
+- [`letrec-values`](#primitive.md#letrec-values_)
 
 ### alet <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -1164,13 +1177,13 @@ Like [`let`](#let_), gerbil's `alet` supports both single and multiple-value bin
 Use `alet` when you need to bind variables and proceed only if all of them received a valid (truthy) value. It's a common pattern for safely handling results from functions that might return `#f` on failure (like lookups in hash tables or lists).
 
 * Compared to [`let`](#let_), `alet` adds the conditional check before executing the body.
-* For sequential conditional bindings (where each binding depends on the success of the previous one), use [`alet*`](#alet*).
+* For sequential conditional bindings (where each binding depends on the success of the previous one), use [`alet*`](#alet-star-_).
 
 #### See Also
 
-- [`alet*`](#alet*_)
+- [`alet*`](#alet-star-_)
 - [`let`](#let_)
-- [`and`](control-flow#and_)
+- [`and`](control-flow.md#and_)
 
 ### alet* <Badge type="tip" text="Gerbil" vertical="middle" />
 ```scheme
@@ -1222,10 +1235,10 @@ Each expression is evaluated in sequence, and later bindings can depend on earli
 Use `alet*` (or its alias `and-let*`) when you need to perform a sequence of dependent bindings, where each step must succeed (return a truthy value) for the next step to proceed. It's a very common pattern for safely navigating data structures or chaining operations that might fail.
 
 * Compared to [`alet`](#alet_), which evaluates all bindings in parallel and checks them all at once, `alet*` evaluates and checks sequentially, short-circuiting on the first failure.
-* Compared to [`let*`](#let_), `alet*` adds the conditional check at each step.
+* Compared to [`let*`](#let-star-_), `alet*` adds the conditional check at each step.
 
 #### See Also
 
 - [`alet`](#alet_)
-- [`let*`](#let*_)
-- [`and`](control-flow#and_)
+- [`let*`](#let-star-_)
+- [`and`](control-flow.md#and_)
