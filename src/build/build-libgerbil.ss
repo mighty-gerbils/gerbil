@@ -22,7 +22,7 @@
 
 (cond-expand
  ((or freebsd netbsd)
-  (def default-ld-options "-lutil -lm"))
+  (def default-ld-options "-lutil -lm -lpthread"))
  (else
   (def default-ld-options "-ldl -lm")))
 

@@ -28,7 +28,7 @@
 
 (cond-expand
  ((or freebsd netbsd)
-  (def default-ld-options ["-lutil" "-lm"]))
+  (def default-ld-options ["-lutil" "-lm" "-lpthread"]))
  (visualc
   (def default-ld-options ["Kernel32.Lib" "User32.Lib" "Gdi32.Lib" "WS2_32.Lib" "/subsystem:console" "/entry:WinMainCRTStartup"]))
  (else
