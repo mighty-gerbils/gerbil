@@ -3,7 +3,7 @@
 SQL Databases:
 - [:std/db/dbi](dbi.md)
 - [:std/db/sqlite](sqlite.md)
-- [:std/db/postgres](postgres.md)
+- [:std/db/postgresql](postgresql.md)
 - [:std/db/conpool](conpool.md)
 
 Additional (external) drivers:
