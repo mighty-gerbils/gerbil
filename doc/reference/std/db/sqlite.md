@@ -9,9 +9,11 @@ The `:std/db/sqlite` library provides a driver for a SQLite database.
 :::
 
 ## sqlite-open
-```
-(sql-connect sqlite-open ...)
-(sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
+
+```scheme
+(sqlite-open (file : :string)
+             (flags : :fixnum := (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
+;; => #<sqlite-connection #42>
 ```
 
 Please document me!
