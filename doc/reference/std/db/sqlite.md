@@ -1,7 +1,11 @@
 # SQLite driver
 
-::: tip usage
+The `:std/db/sqlite` library provides a driver for a SQLite database.
+
+::: tip To use the bindings from this module:
+```scheme
 (import :std/db/sqlite)
+```
 :::
 
 ## sqlite-open
