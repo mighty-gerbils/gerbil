@@ -116,8 +116,84 @@ at <http://localhost:8080>.
 
 ### Style Guide
 
-We don't quite yet have a fixed style for Gerbil docs, but please try to remain
-consistent with other docs in a similar category.
+We don't quite yet have a fixed style for Gerbil docs (other than for
+procedures; shown below), but please try to remain consistent with other docs in
+a similar category.
+
+#### Procedures
+
+Procedure reference declarations in documentation should adhere to the grammar
+below. Note that it has some key differences from standard procedure syntax,
+either for:
+
+- consistency
+- declaring information that can't yet be captured by procedure syntax
+
+```scheme
+<procedure-signature> [<procedure-signature> ...]
+
+procedure-signature:
+  (procedure-name [<argument> ...] [. <rest-argument>]) [=> <return-type>]
+
+argument:
+  <positional-argument>
+  <keyword-argument>
+
+positional-argument:
+  <identifier>
+  (<identifier> : <type>)
+  (<identifier> := <default>)
+  (<identifier> : <type> := <default>)
+
+keyword-argument:
+  <external-identifier>: <internal-identifier>
+  <external-identifier>: (<internal-identifier> : <type>)
+  <external-identifier>: (<internal-identifier> := <default>)
+  <external-identifier>: (<internal-identifier> : <type> := <default>)
+
+rest-argument:
+  <identifier>
+  (<identifier> <list-type>)
+
+return-type:
+  <type>
+  (values <type> ...)
+
+type:
+  Type
+  (or Type ...) ; May be any of these types
+```
+
+> Note: `<list-type>` has the same expansion as `<type>`, except that it is
+> implied to be the type of each item within the list, rather than the list as a
+> whole.
+
+Here are some examples:
+
+```scheme
+; cons
+(cons obj (l : :list)) => :list
+(cons obj1 obj2) => :pair
+
+
+; proc-a
+(def (proc-a x: (x 10))
+  (cond
+   ((number? x) "A number")
+   ((string? x) "A string")
+   (else (error "Unexpected argument type!"))
+
+(proc-a x: (x : (or :number :string) := 10)) => :string
+
+
+; proc-b
+(def (proc-b x)
+  (values "blue"
+          42
+          (if (positive? x) #t '())
+
+(proc-b (x : :number)) => (values :string :integer (or :boolean :list))
+```
 
 ## Contributing to the Standard Library
 
