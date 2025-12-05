@@ -65,6 +65,11 @@ Returns a new string as defined by `template` with the following differences:
                 key: value ...)
 ```
 
+::: tip
+Any number of `key: value` argument pairs may be provided, but they **must** be
+in pairs
+:::
+
 Applies the same templating process as [`apply-template`](#apply-template), but
 writes to `output` rather than returning a new string
 
