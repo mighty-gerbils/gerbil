@@ -65,3 +65,24 @@ official SQLite documentation](https://sqlite.org/c3ref/open.html).
 ;; => ("Hello, World!")
 ```
 :::
+
+::: tip Example:
+```scheme
+(import (only-in :std/db/sqlite
+                 sqlite-open)
+        (only-in :std/db/_sqlite
+                 SQLITE_OPEN_READONLY
+                 SQLITE_OPEN_MEMORY)
+        (only-in :std/db/dbi
+                 sql-connect
+                 sql-eval-query))
+
+(define db (sql-connect sqlite-open
+                        "example"
+                        (fxior SQLITE_OPEN_READONLY
+                               SQLITE_OPEN_MEMORY)))
+
+(sql-eval-query db "SELECT MAX(3 * 3, 3 + 3)")
+;; => (9)
+```
+:::
