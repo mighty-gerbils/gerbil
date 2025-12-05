@@ -64,3 +64,6 @@ Returns a new string as defined by `template` with the following differences:
                 (output : (or :port StringWriter BufferedWriter))
                 key: value ...)
 ```
+
+Applies the same templating process as [`apply-template`](#apply-template), but
+writes to `output` rather than returning a new string
