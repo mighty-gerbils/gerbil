@@ -34,7 +34,8 @@ Returns a new string as defined by `template` with the following differences:
 
 ::: tip Example:
 ```scheme
-(import :std/misc/template)
+(import (only-in :std/misc/template
+                 apply-template))
 (define message
   "${greeting}! My name is '${name} ${name}'. I love hearing it twice!")
 
@@ -48,7 +49,8 @@ Returns a new string as defined by `template` with the following differences:
 
 ::: tip Example:
 ```scheme
-(import :std/misc/template)
+(import (only-in :std/misc/template
+                 apply-template))
 (apply-template "\"2 + 2 = \\${sum}\" will be become \"2 + 2 = ${sum}\""
                 sum: 4)
 ;; => "\"2 + 2 = ${sum}\" will become \"2 + 2 = 4\""
