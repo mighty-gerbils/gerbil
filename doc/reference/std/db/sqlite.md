@@ -41,3 +41,27 @@ At least one of `SQLITE_OPEN_READONLY` or `SQLITE_OPEN_READWRITE` must be specif
 
 To learn more about the above flags, along with general SQLite connection information, [see the
 official SQLite documentation](https://sqlite.org/c3ref/open.html).
+
+::: tip Example:
+```scheme
+(import (only-in :std/db/sqlite
+                 sqlite-open)
+        (only-in :std/db/dbi
+                 sql-connect
+                 sql-eval
+                 sql-eval-query))
+
+(define filename "example.sqlite")
+(file-exists? filename)
+;; => #f
+
+(define db (sql-connect sqlite-open filename))
+(file-exists? filename)
+;; => #t
+
+(sql-eval db "CREATE TABLE example (a TEXT);")
+(sql-eval db "INSERT INTO example VALUES ($1);" "Hello, World!")
+(sql-eval-query db "SELECT a FROM example;") 
+;; => ("Hello, World!")
+```
+:::
