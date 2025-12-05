@@ -56,3 +56,11 @@ Returns a new string as defined by `template` with the following differences:
 ;; => "\"2 + 2 = ${sum}\" will become \"2 + 2 = 4\""
 ```
 :::
+
+## write-template
+
+```scheme
+(write-template (template : :string)
+                (output : (or :port StringWriter BufferedWriter))
+                key: value ...)
+```
