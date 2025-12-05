@@ -31,3 +31,17 @@ Returns a new string as defined by `template` with the following differences:
 - Each instance of the text `\\c` (where `c` is any character) is replaced with
   `c`. This allows escaping parts of the aforementioned marker text to prevent
   replacement
+
+::: tip Example:
+```scheme
+(import :std/misc/template)
+(define message
+  "${greeting}! My name is '${name} ${name}'. I love hearing it twice!")
+
+(apply-template message greeting: "Hello" name: "Gerbil")
+;; => "Hello! My name is 'Gerbil Gerbil'. I love hearing it twice!"
+
+(apply-template message greeting: "こんにちは" name: "スナネズミ")
+;; => "こんにちは! My name is 'スナネズミ スナネズミ'. I love hearing it twice!"
+```
+:::
