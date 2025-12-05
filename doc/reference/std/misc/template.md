@@ -67,3 +67,20 @@ Returns a new string as defined by `template` with the following differences:
 
 Applies the same templating process as [`apply-template`](#apply-template), but
 writes to `output` rather than returning a new string
+
+::: tip Example:
+```scheme
+(import (only-in :std/misc/template
+                 write-template)
+        (only-in :std/misc/ports
+                 read-file-string))
+(define output-file "/tmp/out.txt")
+(call-with-output-file
+ output-file
+ (lambda (port)
+   (write-template "Hello, ${planet}!" port planet: "Earth")))
+
+(read-file-string output-file)
+;; => "Hello, Earth!"
+```
+:::
