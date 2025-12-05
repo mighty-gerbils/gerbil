@@ -45,3 +45,12 @@ Returns a new string as defined by `template` with the following differences:
 ;; => "こんにちは! My name is 'スナネズミ スナネズミ'. I love hearing it twice!"
 ```
 :::
+
+::: tip Example:
+```scheme
+(import :std/misc/template)
+(apply-template "\"2 + 2 = \\${sum}\" will be become \"2 + 2 = ${sum}\""
+                sum: 4)
+;; => "\"2 + 2 = ${sum}\" will become \"2 + 2 = 4\""
+```
+:::
