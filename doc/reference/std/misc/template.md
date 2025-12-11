@@ -14,14 +14,12 @@ procedure from the `:std/format` module](/reference/std/format.md#format).
 
 ```scheme
 (apply-template (template : :string)
-                key: value ...)
+                . args)
 => :string
 ```
 
-::: tip
-Any number of `key: value` argument pairs may be provided, but they **must** be
-in pairs
-:::
+- `args`: A plist of `key: value ...` pairs to be used for template variable
+  substitution
 
 Returns a new string as defined by `template` with the following differences:
 
@@ -62,13 +60,11 @@ Returns a new string as defined by `template` with the following differences:
 ```scheme
 (write-template (template : :string)
                 (output : (or :port StringWriter BufferedWriter))
-                key: value ...)
+                . args)
 ```
 
-::: tip
-Any number of `key: value` argument pairs may be provided, but they **must** be
-in pairs
-:::
+- `args`: A plist of `key: value ...` pairs to be used for template variable
+  substitution
 
 Applies the same templating process as [`apply-template`](#apply-template), but
 writes to `output` rather than returning a new string
