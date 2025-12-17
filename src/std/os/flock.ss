@@ -44,7 +44,7 @@
   (let lp ()
     (unless (flock raw-or-fd op)
       (when deadline
-        (unless (< deadline (##current-time-point))
+        (when (< deadline (##current-time-point))
           (raise-timeout flock "Deadline for flock operation exceeded" raw-or-fd op)))
       (thread-sleep! (random-real))
       (lp))))
