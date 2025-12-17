@@ -66,7 +66,26 @@
      EVP_PKEY_CTX_set_scrypt_p
      EVP_PKEY_derive
 
-     RAND_bytes)
+     RAND_bytes
+
+     BIO BIO*
+     BIOMETHOD BIOMETHOD*
+     BIO_new BIO_s_mem
+     BIO_new_mem_buf BIO_read
+
+     OSSL_DECODER_CTX OSSL_DECODER_CTX*
+
+     OSSL_KEYMGMT_SELECT_PRIVATE_KEY
+     OSSL_ENCODER_CTX_new_for_pkey
+     EVP_PKEY_new_from_bio
+     EVP_PKEY_KEY_PARAMETERS
+     EVP_PKEY_PUBLIC_KEY
+     EVP_PKEY_KEYPAIR
+     EVP_PKEY_to_bio
+     EVP_PKEY_get0_type_name
+     EVP_PKEY_is_a
+     EVP_PKEY_get_base_id
+     EVP_PKEY?)
 
 (declare (not safe))
 
@@ -78,6 +97,9 @@
 #include <openssl/bn.h>
 #include <openssl/hmac.h>
 #include <openssl/rand.h>
+#include <openssl/bio.h>
+#include <openssl/decoder.h>
+#include <openssl/encoder.h>
 END-C
 )
 
@@ -582,14 +604,14 @@ static int ffi_EVP_DigestVerify(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
   return EVP_DigestVerify(ctx, U8_DATA(sig), U8_LEN(sig), U8_DATA(tbs), U8_LEN(tbs));
 }
 
-static int ffi_EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
+static int ffi_EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_MD *type, EVP_PKEY *pkey)
 {
- return EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey);
+ return EVP_DigestSignInit(ctx, NULL, type, NULL, pkey);
 }
 
-static int ffi_EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
+static int ffi_EVP_DigestVerifyInit(EVP_MD_CTX *ctx,const EVP_MD *model, ENGINE *e, EVP_PKEY *pkey)
 {
- return EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey);
+ return EVP_DigestVerifyInit(ctx, NULL, model, e, pkey);
 }
 
 static int ffi_EVP_PKEY_CTX_set1_pbe_pass(EVP_PKEY_CTX *ctx, ___SCMOBJ pass)
@@ -625,7 +647,7 @@ END-C
 (c-define-type EVP_PKEY_CTX* (pointer EVP_PKEY_CTX (EVP_PKEY_CTX*) "ffi_release_EVP_PKEY_CTX"))
 
 (define-macro (define-consts . cs) `(begin ,@(map (lambda (c) `(define-const ,c)) cs)))
-(define-consts EVP_PKEY_NONE EVP_PKEY_RSA EVP_PKEY_RSA2 EVP_PKEY_DSA EVP_PKEY_DSA1 EVP_PKEY_DSA2 EVP_PKEY_DSA3 EVP_PKEY_DSA4 EVP_PKEY_DH EVP_PKEY_EC EVP_PKEY_HMAC EVP_PKEY_DHX EVP_PKEY_CMAC EVP_PKEY_TLS1_PRF EVP_PKEY_HKDF EVP_PKEY_RSA_PSS EVP_PKEY_SM2 EVP_PKEY_SCRYPT EVP_PKEY_SIPHASH EVP_PKEY_POLY1305 EVP_PKEY_X25519 EVP_PKEY_ED25519 EVP_PKEY_X448 EVP_PKEY_ED448)
+(define-consts EVP_PKEY_NONE EVP_PKEY_RSA EVP_PKEY_RSA2 EVP_PKEY_DSA EVP_PKEY_DSA1 EVP_PKEY_DSA2 EVP_PKEY_DSA3 EVP_PKEY_DSA4 EVP_PKEY_DH EVP_PKEY_EC EVP_PKEY_HMAC EVP_PKEY_DHX EVP_PKEY_CMAC EVP_PKEY_TLS1_PRF EVP_PKEY_HKDF EVP_PKEY_RSA_PSS EVP_PKEY_SM2 EVP_PKEY_SCRYPT EVP_PKEY_SIPHASH EVP_PKEY_POLY1305 EVP_PKEY_X25519 EVP_PKEY_ED25519 EVP_PKEY_X448 EVP_PKEY_ED448 EVP_PKEY_KEY_PARAMETERS EVP_PKEY_PUBLIC_KEY EVP_PKEY_KEYPAIR)
 
 (define-c-lambda EVP_PKEY_CTX_new (EVP_PKEY* ENGINE*) EVP_PKEY_CTX*)
 (define-c-lambda EVP_PKEY_CTX_new_id (int ENGINE*) EVP_PKEY_CTX*)
@@ -637,9 +659,9 @@ END-C
 (define-c-lambda EVP_PKEY_get_raw_private_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_private_key")
 (define-c-lambda EVP_PKEY_get_raw_public_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_public_key")
 
-(define-c-lambda EVP_DigestSignInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestSignInit")
+(define-c-lambda EVP_DigestSignInit (EVP_MD_CTX* EVP_MD* EVP_PKEY*) int "ffi_EVP_DigestSignInit")
 (define-c-lambda EVP_DigestSign (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestSign")
-(define-c-lambda EVP_DigestVerifyInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestVerifyInit")
+(define-c-lambda EVP_DigestVerifyInit (EVP_MD_CTX* EVP_MD* ENGINE* EVP_PKEY*) int "ffi_EVP_DigestVerifyInit")
 (define-c-lambda EVP_DigestVerify (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestVerify")
 
 (define-c-lambda EVP_PKEY_derive_init (EVP_PKEY_CTX*) int)
@@ -653,4 +675,190 @@ END-C
 (define-c-lambda EVP_MD_CTX_set_pkey_ctx (EVP_MD_CTX* EVP_PKEY_CTX*) void)
 
 (define-c-lambda RAND_bytes (scheme-object int int) int "ffi_RAND_bytes")
+
+;; BIO
+
+
+
+
+
+
+(c-declare #<<END-C
+/* BIO FFI, comment for indentation */
+static BIO *ffi_BIO_new_mem_buf(___SCMOBJ o)
+{
+ return BIO_new_mem_buf(U8_DATA(o), U8_LEN(o));
+}
+
+
+static ___SCMOBJ ffi_release_BIO (void *ptr)
+{
+ BIO_free((BIO*)ptr);
+ return ___FIX (___NO_ERR);
+}
+
+
+static int ffi_BIO_read(BIO *b, ___SCMOBJ o, int dlen)
+{
+ int len;
+ if (dlen < 0) {
+  len = U8_LEN(o);
+ } else {
+  len = dlen;
+ }
+ return BIO_read(b, U8_DATA(o), len);
+ }
+
+END-C
+)
+
+
+(c-define-type BIO "BIO")
+(c-define-type BIO* (pointer BIO (BIO*) "ffi_release_BIO"))
+
+(c-define-type BIO_METHOD "BIO_METHOD")
+(c-define-type BIO_METHOD* (pointer BIO_METHOD (BIO_METHOD*)))
+
+
+(define-c-lambda BIO_new (BIO_METHOD*) BIO*)
+(define-c-lambda/const-pointer BIO_s_mem () BIO_METHOD*)
+
+(define-c-lambda BIO_new_mem_buf(scheme-object) BIO*
+  "ffi_BIO_new_mem_buf")
+
+(define-c-lambda BIO_read(BIO* scheme-object int) int
+  "ffi_BIO_read")
+
+;; OSSL Decoder
+
+(c-declare #<<END-C
+static ___SCMOBJ ffi_release_OSSL_DECODER_CTX (void *ptr)
+{
+ OSSL_DECODER_CTX_free((OSSL_DECODER_CTX*)ptr);
+ return ___FIX (___NO_ERR);
+ }
+
+static ___SCMOBJ ffi_release_OSSL_ENCODER_CTX (void *ptr)
+{
+ OSSL_ENCODER_CTX_free((OSSL_ENCODER_CTX*)ptr);
+ return ___FIX (___NO_ERR);
+}
+
+
+static EVP_PKEY* 
+ ffi_EVP_PKEY_new_from_bio(BIO *in,
+						 const char *input_type,
+						 const char *keytype, int selection)
+{
+EVP_PKEY *pkey = NULL;
+OSSL_DECODER_CTX *dctx;
+// const char *input_type = "PEM";   /* NULL for any format */
+//const char *structure = NULL; /* any structure */
+//const char *keytype = "RSA";  /* NULL for any key */
+// int selection = 0;
+
+/* OSSL_DECODER_CTX_new_for_pkey(EVP_PKEY **pkey,
+                              const char *input_type,
+                              const char *input_struct,
+                              const char *keytype, int selection,
+                              OSSL_LIB_CTX *libctx, const char *propquery);
+*/
+
+dctx = OSSL_DECODER_CTX_new_for_pkey(&pkey, input_type, NULL,
+                                     keytype,
+                                     selection,
+                                     NULL, NULL);
+if (dctx == NULL) {
+  perror("ffi_EVP_PKEY_new_from_bio: no suitable potential decoders found");
+	}
+if (OSSL_DECODER_from_bio(dctx, in)) {
+	       			      // success!
+
+  EVP_PKEY_up_ref(pkey);
+  OSSL_DECODER_CTX_free(dctx);
+  return pkey;			      
+} else {
+  
+  perror("ffi_EVP_PKEY_new_from_bio: Cannot decode bio");
+	}
+  OSSL_DECODER_CTX_free(dctx);
+  return pkey;
+}
+
+static int ffi_EVP_PKEY_print_private(BIO *out, const EVP_PKEY *pkey)
+{
+ return EVP_PKEY_print_private(out, pkey, 1, NULL);
+}
+
+
+
+static int ffi_EVP_PKEY_to_bio(EVP_PKEY *pkey,
+			       BIO *out,
+			       const char *format,
+			       const char *structure,                                     int selection)
+{
+ 
+ OSSL_ENCODER_CTX *ectx;
+
+ ectx = OSSL_ENCODER_CTX_new_for_pkey(pkey,
+                                     selection,
+                                     format, structure,
+                                     NULL);
+
+ if (ectx == NULL) {
+    /* error: no suitable potential encoders found */
+  perror("ffi_EVP_PKEY_to_bio: no suitable potential encoders found");
+ }
+
+ if (OSSL_ENCODER_to_bio(ectx, out)) {
+  /* pkey was successfully encoded into the bio */
+   OSSL_ENCODER_CTX_free(ectx);
+   return 1;
+ } else {
+    /* encoding failure */
+  perror("ffi_EVP_PKEY_to_bio: encoding failure");
+   OSSL_ENCODER_CTX_free(ectx);
+   return 0;
+ }
+}
+END-C
+)
+
+(c-define-type OSSL_DECODER_CTX "OSSL_DECODER_CTX")
+(c-define-type OSSL_DECODER_CTX* (pointer OSSL_DECODER_CTX (OSSL_DECODER_CTX*) "ffi_release_OSSL_DECODER_CTX"))
+
+
+(c-define-type OSSL_ENCODER_CTX "OSSL_ENCODER_CTX")
+(c-define-type OSSL_ENCODER_CTX* (pointer OSSL_ENCODER_CTX (OSSL_DECODER_CTX*) "ffi_release_OSSL_DECODER_CTX"))
+
+(define-consts
+  OSSL_KEYMGMT_SELECT_PRIVATE_KEY
+  OSSL_KEYMGMT_SELECT_PUBLIC_KEY
+  OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS
+  OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS
+  OSSL_KEYMGMT_SELECT_ALL_PARAMETERS
+  OSSL_KEYMGMT_SELECT_KEYPAIR
+  OSSL_KEYMGMT_SELECT_ALL)
+
+(define-c-lambda EVP_PKEY_new_from_bio
+  (BIO* char-string char-string int) EVP_PKEY*
+   "ffi_EVP_PKEY_new_from_bio")
+  
+(define-c-lambda EVP_PKEY_to_bio
+  (EVP_PKEY* BIO* char-string char-string int) int
+   "ffi_EVP_PKEY_to_bio")
+  
+(define-c-lambda EVP_PKEY_print_private (BIO* EVP_PKEY*) int
+  "ffi_EVP_PKEY_print_private")
+
+(define-c-lambda OSSL_ENCODER_CTX_new_for_pkey (EVP_PKEY* int char-string char-string char-string) OSSL_ENCODER_CTX*)
+
+(define-c-lambda/const-pointer EVP_PKEY_get0_type_name(EVP_PKEY*) char-string)
+
+(define-c-lambda EVP_PKEY_is_a (EVP_PKEY* char-string) bool)
+
+(define-c-lambda EVP_PKEY_get_base_id(EVP_PKEY*) int)
+
+(define-c-type-predicate EVP_PKEY? EVP_PKEY*)
+
 );ffi
