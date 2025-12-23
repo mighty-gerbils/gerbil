@@ -81,7 +81,24 @@ package: gerbil/core
     (and (identifier? stx)
          (alet (e (syntax-local-value stx false))
            (and (interface-info? e)
-                (is? e))))))
+                (is? e)))))
+
+  (def (interface-info-method-signature info method)
+    (set! info (cond ((interface-info? info) info)
+		     ((syntax-local-interface-info? info)
+		      (syntax-local-value info false))
+		     (else
+		      (raise-syntax-error #f "Unknown interface" info))))
+
+    (set! method (cond ((symbol? method) method)
+		       ((identifier? method) (stx-e method))
+		       (else (raise-syntax-error #f "unknown interface method" info method))))
+
+    (let (mdef (find (lambda (ms) (eq? method (car ms)))
+                         (interface-info-interface-methods info)))
+        (if mdef
+	  (with ([_ sig _] mdef) sig)
+	  (raise-syntax-error #f "unknown interface method" info method)))))
 
 (module TypeReference
   (import (phi: +1 InterfaceInfo))
@@ -641,6 +658,71 @@ package: gerbil/core
        #'(%%app arg ...))))
 
   (defsyntax (%%ref-dotted stx)
+    (def (make-method-lambda Interface-method object sig)
+      (def (lambda-list)
+	;; This turns a `(name args ... := default)` or `(name
+	;; default)` or `(name args ...)` contract interface argument
+	;; (AKA carg) specification into a lambda-list compatible `(name
+	;; default)` or just `name` argument.
+	(def (carg->lambda-arg carg)
+	  (with ((cons name rest) carg)
+	    (let (val (if (= (length rest) 1) (car rest)
+			  (let (:= (memq ':= rest))
+			    (if := (cadr :=) absent-obj))))
+	      (if (eq? val absent-obj) name [name val]))))
+	(let lp ((args sig))
+	  (match args
+	    ((cons arg rest)
+	     (cond ((or (symbol? arg) (keyword? arg))
+		    (cons arg (lp rest)))
+		   ((pair? arg)
+		    (cons (carg->lambda-arg arg) (lp rest)))
+		   (else
+		    (raise-syntax-error #f "unknown lambda list arg" arg))))
+	    ((? (or null? symbol?)) args)
+	    (else
+	     (raise-syntax-error #f "unknown lambda list args" args)))))
+
+      (def (call-with sig)
+	(def variable? #f)
+	(def apply? #f)
+	(def call-sig
+	  (let lp ((s sig))
+	    (if (pair? s)
+	      (with ((cons arg resig) s)
+		(cond ((symbol? arg)
+		       (cons arg (lp resig)))
+		      ((pair? arg)
+		       (cons (car arg) (lp resig)))
+		      ((keyword? arg)
+		       (set! variable? #t))))
+	      (begin (cond ((null? s) s)
+			   (else (set! apply? #t) [s]))))))
+	  (cond (variable? variable:)
+		(apply? [apply: (if (list? call-sig) call-sig [call-sig]) ...])
+		(else call-sig)))
+
+      (def (call-lambda meth obj sig)
+	(def call-sig (call-with sig))
+	(with-syntax ((meth meth)
+		      (obj obj)
+		      (lambda-list (lambda-list))
+		      ((calling-sig ...)
+		       (if (and (pair? call-sig)
+				 (eq? (car call-sig)
+				      apply:))
+			 (cdr call-sig)
+			 (if (pair? call-sig)
+			   call-sig
+			   [call-sig]))))
+	  (cond ((null? sig) #'(lambda () (meth obj)))
+		((eq? call-sig variable:)
+		 #'(lambda args (apply meth obj args)))
+		((and (pair? call-sig) (eq? (car call-sig) apply:))
+		 #'(lambda lambda-list (apply meth obj calling-sig ...)))
+		(else #'(lambda lambda-list (meth obj calling-sig ...))))))
+      (with-syntax ((fn (call-lambda Interface-method object sig)))
+	 #'fn))
     (syntax-case stx ()
       ((_ id)
        (dotted-identifier? #'id)
@@ -685,7 +767,18 @@ package: gerbil/core
                           (else
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+		       (if (null? rest)
+			 (let (sig (interface-info-method-signature type part))
+			   (with-syntax* ((method
+                                           (stx-identifier
+					    #'id
+					    (interface-info-name type)
+                                            "-" part))
+					  (object object)
+					  (fn (make-method-lambda #'method #'object sig))
+					  (call-sig sig))
+			     #'fn))
+                       (raise-syntax-error #f "illegal dotted reference; interface methods are not dot'able" #'id (interface-info-interface-methods type))))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))
                     (else object)))))
