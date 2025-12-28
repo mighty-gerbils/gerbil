@@ -509,6 +509,20 @@
   (interactive)
   (gerbil-init-keywords)
   (gerbil-init-fontlock)
+  (setq-local imenu-generic-expression
+              `(("Var" ,(rx "(def"
+                            (1+ space)
+                            (group (1+ (or word (syntax symbol)))))
+                 1)
+                ("Func" ,(rx "(def"
+                             (1+ space)
+                             (literal "(")
+                             (group (1+ (or word (syntax symbol)))))
+                 1)
+                ("Structs" ,(rx "(defstruct"
+                                (1+ space)
+                                (group (1+ (or word (syntax symbol)))))
+                 1)))
   (when window-system
     (gerbil-pretty-lambdas)))
 
