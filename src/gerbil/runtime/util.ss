@@ -326,18 +326,16 @@ namespace: #f
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
-(def (remove-nulls! l)
-  (match l
-    ([[] . r]
-     (remove-nulls! r))
-    ([_ . r]
-     (let loop ((l l) (r r))
-       (match r
-         ([[] . rr] (set-cdr! (:- l :pair) (remove-nulls! rr)))
-         ([_ . rr] (loop r rr))
-         (_ (void))))
-     l)
-    (_ l))) ;; []
+(def (remove-nulls! lists)
+  (def (process-tails! previous-cell rest)
+    (match rest
+      ([[] . r] (set-cdr! (:- previous-cell :pair) (remove-nulls! r)))
+      ([_ . r] (process-tails! rest r))
+      (_ (void))))
+  (match lists
+    ([[] . r] (remove-nulls! r))
+    ([_ . r] (process-tails! lists r) lists)
+    (_ lists))) ;; []
 
 ;; : (List X) X -> (NonEmptyList X)
 (def (append1! l x)

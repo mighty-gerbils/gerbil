@@ -62,7 +62,11 @@
   ;; https://stackoverflow.com/questions/40478154/does-pythons-mro-c3-linearization-work-depth-first-empirically-it-does-not
   (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF) (CC EE FF GG) (BB) (AA BB CC DD)
   (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M)
-  (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1))
+  ;; Regression test for (bug #1328): merge-sis! must properly handle non-simultaneous null? cases
+  (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1)
+  ;; Check that suffix support filters out cases that break the suffix
+  (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBB) ;; works, but (SBc sBs SBB) fails
+  )
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -76,7 +80,10 @@
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
     (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
-    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)))
+    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
+    ;; Check that suffix support filters out cases that break the suffix
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB) ;; works, but (SBc sBs SBB) fails
+    ))
 
 (defrule (def-alist-getter getter alist table)
   (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
@@ -149,7 +156,9 @@
   (test-suite "test :gerbil/runtime/c3"
     (test-case "utils"
       (check (values->list (append-reverse-until odd? [2 4 6 9 12 14 15] '(a b c d e)))
-             => '((9 12 14 15) (6 4 2 a b c d e))))
+             => '((9 12 14 15) (6 4 2 a b c d e)))
+      (check (remove-nulls! [[] [] [] [1] [2] [] [] [3] [] []]) => [[1][2][3]])
+      (check (remove-nulls! [[1] [2] [] [] [3]]) => [[1][2][3]]))
     (test-case "c3 linearization"
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
       ;; check discrepancy with old MRO resolution algorithm
@@ -167,6 +176,10 @@
       (hash-put! my-supers-table 'CG '(HVG VHG))
       (check-exception (my-compute-precedence-list 'CG) true)
 
+      ;; Try and fail to compute a precedence-list for a case that fails to preserve suffix property
+      (hash-put! my-supers-table 'SBc '(sBs SBB))
+      (check-exception (my-compute-precedence-list 'SBc) true))
+
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => (map (lambda (lst) (append lst '(object t))) my-precedence-lists))
@@ -177,4 +190,4 @@
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
       (check (class-type-slot-vector Z::t) => #(__class O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))))) ;; same!
+      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y))))) ;; same!
