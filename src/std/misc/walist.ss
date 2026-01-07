@@ -22,6 +22,12 @@
   wanullq!
   wanullv!
   wanull?
+  wacollect
+  wacollectq
+  wacollectv
+  wacollect!
+  wacollectq!
+  wacollectv!
   wacons
   wacons!
   wassoc
@@ -122,6 +128,22 @@
 (def (___watest t)
   (declare (not safe))
   (vector-ref ___test t))
+
+(defrule (defcollect macro wrap)
+  (defrule (macro arg (... ...))
+    (wrap (collect-alist arg (... ...)))))
+
+(defrules collect-alist ()
+  ((_) [])
+  ((_ k v . rest)
+   (cons (cons k v) (collect-alist . rest))))
+
+(defcollect wacollect   __walist)
+(defcollect wacollectq  __walistq)
+(defcollect wacollectv  __walistv)
+(defcollect wacollect!  __walist)
+(defcollect wacollectq! __walistq)
+(defcollect wacollectv! __walistv)
 
 ;; list extraction
 (def walist->list ConcreteAList-alist)
