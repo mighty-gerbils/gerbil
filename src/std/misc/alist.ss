@@ -15,12 +15,12 @@
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
-(def (alist? alist)
-  (match alist
+(def (alist? obj)
+  (match obj
     ([] #t)
-    ([[sym . val] . rest]
+    ([[key . val] . rest]
      (alist? rest))
-    (v #f)))
+    (else #f)))
 
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
