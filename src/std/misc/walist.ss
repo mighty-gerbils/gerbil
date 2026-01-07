@@ -1,110 +1,291 @@
-(import
-  :std/misc/alist
-  :std/sugar
-  :std/error)
+;;; -*- Gerbil -*-
+;;; © vyzo, fare
+;;; wrapped associative lists
 
+(import :std/error
+        ./alist)
 (export
-  walist walistq walistv walist! walistq! walistv!
-  walist? walistq? walistv? walist!? walistq!? walistv!?
-  make-walist make-walistq make-walistv make-walist! make-walistq! make-walistv!
-  walist-alist walist-alist-set! walist->alist
-  walist-acons walistq-acons walistv-acons walist-acons!
-  walist-key? walistq-key? walistv-key?
-  walist-get walistq-get walistv-get
-  walist-assoc walistq-assoc walistv-assoc
-  walist-put walistv-put walistq-put walist!-put! walistv!-put! walistq!-put!
-  walist-remove walistv-remove walistq-remove walist!-remove! walistv!-remove! walistq!-remove!)
+  AList AList?
+  PureAList PureAList?
+  MutAList MutAList?
+  walist
+  walistq
+  walistv
+  walist!
+  walistq!
+  walistv!
+  walist->list
+  wanull
+  wanullq
+  wanullv
+  wanull!
+  wanullq!
+  wanullv!
+  wanull?
+  wacons
+  wacons!
+  wassoc
+  wakey?
+  waref
+  waget
+  waput
+  waput!
+  waremove
+  waremove!)
 
-(defstruct walist (alist) transparent: #t) ;; equal?, pure
-(defstruct (walistq walist) () transparent: #t) ;; eq?, pure
-(defstruct (walistv walist) () transparent: #t) ;; eqv?, pure
-(defstruct (walist! walist) () transparent: #t final: #t) ;; equal?, stateful
-(defstruct (walistq! walistq) () transparent: #t final: #t) ;; eq?, stateful
-(defstruct (walistv! walistv) () transparent: #t final: #t) ;; eqv?, stateful
+(defclass AList ()
+  transparent: #t)
 
-(def walist->alist walist-alist)
+(defstruct ConcreteAList ((alist :- :list) (t :- :fixnum))
+  print: (alist)
+  equal: #t)
 
-(def (walist-acons w k v) (with ((walist a) w) (make-walist (acons k v a))))
-(def (walistq-acons w k v) (with ((walistq a) w) (make-walistq (acons k v a))))
-(def (walistv-acons w k v) (with ((walistv a) w) (make-walistv (acons k v a))))
-(def (walist-acons! w k v) (set! (walist-alist w) (acons k v (walist-alist w))))
-(defmethod {acons walist} walist-acons)
-(defmethod {acons walistq} walistq-acons)
-(defmethod {acons walistv} walistv-acons)
-(defmethod {acons! walist!} walist-acons!)
-(defmethod {acons! walistq!} walist-acons!)
-(defmethod {acons! walistv!} walist-acons!)
+(defstruct (PureAList AList ConcreteAList) ()
+  transparent: #t)
+(defstruct (MutAList AList ConcreteAList) ()
+  transparent: #t)
 
-(def (walist-key? w k) (with ((walist a) w) (pair? (assoc k a))))
-(def (walistq-key? w k) (with ((walistq a) w) (pair? (assq k a))))
-(def (walistv-key? w k) (with ((walistv a) w) (pair? (assv k a))))
-(defmethod {key? walist} walist-key?)
-(defmethod {key? walistq} walistq-key?)
-(defmethod {key? walistv} walistv-key?)
+(defstruct (WAList PureAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
+(defstruct (WAListq PureAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
+(defstruct (WAListv PureAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
 
-(def (walist-get w k) (with ((walist a) w) (cdr (assoc k a))))
-(def (walistq-get w k) (with ((walistq a) w) (cdr (assq k a))))
-(def (walistv-get w k) (with ((walistv a) w) (cdr (assv k a))))
-(defmethod {get walist} walist-get)
-(defmethod {get walistq} walistq-get)
-(defmethod {get walistv} walistv-get)
+(defstruct (MutWAList MutAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
+(defstruct (MutWAListq MutAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
+(defstruct (MutWAListv MutAList) ()
+  name: AList
+  final: #t
+  transparent: #t)
 
-(def (walist-assoc w k) (with ((walist a) w) (assoc k a)))
-(def (walistq-assoc w k) (with ((walistq a) w) (assq k a)))
-(def (walistv-assoc w k) (with ((walistv a) w) (assv k a)))
-(defmethod {assoc walist} walist-assoc)
-(defmethod {assoc walistq} walistq-assoc)
-(defmethod {assoc walistv} walistv-assoc)
+;; low level constructor
+(defrule (deflist proc klass t)
+  (def (proc (lst :- :list)) => klass
+    (klass lst t)))
 
-(def (walist-put w k v) (with ((walist a) w) (make-walist (aset a k v))))
-(def (walistq-put w k v) (with ((walistq a) w) (make-walistq (asetq a k v))))
-(def (walistv-put w k v) (with ((walistv a) w) (make-walistv (asetv a k v))))
-(defmethod {put walist} walist-put)
-(defmethod {put walistq} walistq-put)
-(defmethod {put walistv} walistv-put)
+(deflist ___walist   WAList     0)
+(deflist ___walistq  WAListq    1)
+(deflist ___walistv  WAListv    2)
+(deflist ___walist!  MutWAList  3)
+(deflist ___walistq! MutWAListq 4)
+(deflist ___walistv! MutWAListv 5)
 
-(def (walist-remove w k) (with ((walist a) w) (make-walist (arem k a))))
-(def (walistq-remove w k) (with ((walistq a) w) (make-walistq (aremq k a))))
-(def (walistv-remove w k) (with ((walistv a) w) (make-walistv (aremv k a))))
-(defmethod {remove walist} walist-remove)
-(defmethod {remove walistq} walistq-remove)
-(defmethod {remove walistv} walistv-remove)
+;; safe constructor
+(defrule (deflist/check proc klass kons)
+  (def (proc (lst : :list)) => klass
+    (if (alist? lst)
+      (kons lst)
+      (raise-bad-argument proc "associative list" lst))))
 
-(defrule (define-put! struct! fun cmp)
+(deflist/check walist   WAList     ___walist)
+(deflist/check walistq  WAListq    ___walistq)
+(deflist/check walistv  WAListv    ___walistv)
+(deflist/check walist!  MutWAList  ___walist!)
+(deflist/check walistq! MutWAListq ___walistq!)
+(deflist/check walistv! MutWAListv ___walistv!)
+
+(def ___wrap
+  (vector
+   ___walist
+   ___walistq
+   ___walistv
+   ___walist!
+   ___walistq!
+   ___walistv!))
+
+(def (___wawrap t)
+  (declare (not safe))
+  (vector-ref ___wrap t))
+
+(def ___test
+  (vector
+   equal?
+   eq?
+   eqv?
+   equal?
+   eq?
+   eqv?))
+
+(def (___watest t)
+  (declare (not safe))
+  (vector-ref ___test t))
+
+;; list extraction
+(def walist->list ConcreteAList-alist)
+
+;; null constructors
+(def ___wanull  (___walist  []))
+(def ___wanullq (___walistq []))
+(def ___wanullv (___walistv []))
+
+(def (wanull)  => WAList  ___wanull)
+(def (wanullq) => WAListq ___wanullq)
+(def (wanullv) => WAListv ___wanullv)
+
+(def (wanull!)  => MutWAList  (___walist!  []))
+(def (wanullq!) => MutWAListq (___walistq! []))
+(def (wanullv!) => MutWAListv (___walistv! []))
+
+;; predicates
+(def (wanull? obj)
+  (and (ConcreteAList? obj)
+       (using (w obj :- ConcreteAList)
+         (null? w.alist))))
+
+;; extension constructors
+(defrule (undefined-method where)
+  (lambda args
+    (raise-unsupported-method where)))
+
+(defrule (defalist-method (proc arg ...)
+           return
+           table
+           (walist-method
+            walistq-method
+            walistv-method
+            walist!-method
+            walistq!-method
+            walistv!-method))
   (begin
-    (def (fun w key val)
-      (with ((struct! alist!) w)
-        (let lp ((l alist!))
-          (match l
-            ([kv . r] (if (cmp key (car kv))
-                        (set-cdr! kv val)
-                        (lp r)))
-            ([] (match alist!
-                  ([k1v1 . r]
-                   (set-car! alist! [key . val])
-                   (set-cdr! alist! [k1v1 . r]))
-                  ([] (set! (walist-alist w) [[key . val]]))))))))
-    (defmethod {put! struct!} fun)))
+    (def table
+      (vector
+       (alist-method walist-method   proc walist)
+       (alist-method walistq-method  proc walistq)
+       (alist-method walistv-method  proc walistv)
+       (alist-method walist!-method  proc walist!)
+       (alist-method walistq!-method proc walistq!)
+       (alist-method walistv!-method proc walistv!)))
+    (def (proc (w : ConcreteAList) arg ...) => return
+      (declare (not safe))
+      (:- ((vector-ref ___acons w.t) w arg ...) return))))
 
-(define-put! walist! walist!-put! equal?)
-(define-put! walistq! walistq!-put! eq?)
-(define-put! walistv! walistv!-put! eqv?)
+(defrules alist-method ()
+  ((_ undefined where method)
+   (underscore? #'undefined)
+   (undefined-method where))
+  ((_ proc where method)
+   proc))
 
-(defrule (define-remove! struct! fun cmp)
-  (begin
-    (def (fun w key)
-      (with ((struct! alist!) w)
-        (let lp ((p alist!) (prev #f))
-          (match p
-            ([[k . _] . r]
-             (cond
-              ((not (cmp key k)) (lp r p))
-              (prev (set-cdr! prev r))
-              (else (set! (walist-alist w) r))))
-            ([] (void)) ; key not found: NOP
-            (_ (raise-bad-argument walist-remove "valid walist" w 'struct! key))))))
-    (defmethod {remove! struct!} fun)))
+(defrule (defacons proc klass)
+  (def (proc (w :- klass) k v) => klass
+    (klass (cons (cons k v) w.alist) w.t)))
 
-(define-remove! walist! walist!-remove! equal?)
-(define-remove! walistq! walistq!-remove! eq?)
-(define-remove! walistv! walistv!-remove! eqv?)
+(defacons ___walist-acons  WAList)
+(defacons ___walistq-acons WAListq)
+(defacons ___walistv-acons WAListv)
+
+(defalist-method (wacons k v)
+  PureAList
+   ___acons
+  (___walist-acons
+   ___walistq-acons
+   ___walistv-acons
+   _ _ _))
+
+(defrule (defacons! proc klass)
+  (def (proc (w :- klass) k v)
+    (declare (not safe))
+    (set! w.alist (cons (cons k v) w.alist))
+    w))
+
+(defacons! ___walist-acons!  MutWAList)
+(defacons! ___walistq-acons! MutWAListq)
+(defacons! ___walistv-acons! MutWAListv)
+
+(defalist-method (wacons! k v)
+  MutAList
+  ___acons!
+  (_ _ _
+     ___walist-acons!
+     ___walistq-acons!
+     ___walistv-acons!))
+
+(defrule (defassoc proc klass assf)
+  (def (proc (w :- klass) k)
+    (assf w.alist k)))
+
+(defassoc ___walist-assoc   WAList     assoc)
+(defassoc ___walistq-assoc  WAListq    assq)
+(defassoc ___walistv-assoc  WAListv    assv)
+(defassoc ___walist!-assoc  MutWAList  assoc)
+(defassoc ___walistq!-assoc MutWAListq assq)
+(defassoc ___walistv!-assoc MutWAListv assv)
+
+(defalist-method (wassoc k)
+  :t
+  ___assoc
+  (___walist-assoc
+   ___walistq-assoc
+   ___walistv-assoc
+   ___walist!-assoc
+   ___walistq!-assoc
+   ___walistv!-assoc))
+
+(def (wakey? (w : ConcreteAList) k) => :boolean
+  (if (wassoc w k) #t #f))
+
+(def (waref (w : ConcreteAList) k default)
+  (cond
+   ((wassoc w k) => ##cdr)
+   (else default)))
+
+(def (waget (w : ConcreteAList) k)
+  (waref w k #f))
+
+(def (waput (w : PureAList) k v) => PureAList
+  (wacons (waremove w k) k v))
+
+(def (waput! (w : MutAList) k v) => MutAList
+  (cond
+   ((wassoc w k)
+    => (lambda ((p :- :pair)) => MutAList
+         (set! (cdr p) v)
+         w))
+   (else
+    (wacons! w k v))))
+
+(def (waremove (w : PureAList) k) => PureAList
+  (let (testf
+        (using (testf (___watest w.t) :- :procedure)
+          (lambda ((p :- :pair) k)
+            (testf (car p) k))))
+    (let loop ((rest w.alist) (pre []))
+      => PureAList
+      (match rest
+        ([hd . tl]
+         (if (testf hd k)
+           (using (wrap (___wawrap w.t) :- :procedure)
+             (:- (wrap (foldl cons tl pre)) PureAList))
+           (loop tl (cons hd pre))))
+        (else w)))))
+
+(def (waremove! (w : MutAList) k) => MutAList
+  (let (testf
+        (using (testf (___watest w.t) :- :procedure)
+          (lambda ((p :- :pair) k)
+            (testf (car p) k))))
+    (using (front w.alist :- :list)
+      (when (pair? front)
+        (if (testf (car front) k)
+          (set! w.alist (:- (cdr front) :list))
+          (let loop ((rest (cdr front)) (prev front))
+            (match rest
+              ([hd . tl]
+               (if (testf hd k)
+                 (set! (cdr prev) tl)
+                 (loop tl rest)))
+              (else (void))))))
+      w)))
