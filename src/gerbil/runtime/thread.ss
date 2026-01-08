@@ -52,7 +52,7 @@ namespace: #f
 
 (def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
   (thread-start!
-   (make-thread thunk name tgroup)))
+   (make-thread (cut thread-main thunk) name tgroup)))
 
 (def (thread-main thunk)
     ;; install an abortive handler to force stack unwinding
