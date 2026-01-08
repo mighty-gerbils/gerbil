@@ -36,4 +36,4 @@
     (write-string (self.format record) self.port)
     (newline self.port)
     (force-output self.port))
-  interface: LogSink)
+  interface: Log)

@@ -8,12 +8,12 @@
         ./interface
         ./level
         ./macros
-        ./console)
+        ./console
+        ./proto)
 (export #t)
 
-(defstruct SystemLogger
+(defclass SystemLogger
   ((mx      :- :mutex)
-   (running :- :boolean)
    (thread  :- :thread)
    (level   :- :fixnum)
    (sources :- HashTable)
@@ -22,14 +22,12 @@
 
 (def __system
   (delay-atomic
-   (rec sys
-     (SystemLogger
-      (make-mutex 'logger)
-      #f
-      (make-system-thread (cut system-logger-thread sys) 'logger)
-      0
-      (make-hash-table-eq)
-      (make-hash-table-eq)))))
+   (SystemLogger
+    mx:      (make-mutex 'logger)
+    thread:  #f
+    level:   (default-log-level)
+    sources: (make-hash-table-eq)
+    sinks:   (make-hash-table-eq))))
 
 (def (system-logger) => SystemLogger
   (:- (force __system) SystemLogger))
@@ -38,44 +36,41 @@
                       (new  : :procedure))
   => Logger
   (using (sys (system-logger) :- SystemLogger)
-    (:-
-     (with-lock sys.mx
-      (lambda ()
-        (cond
-         ((hash-get sys.sources name))
-        (else
-         (let (logger (Logger (new sys.thread)))
-           (hash-put! sys.sources name logger)
-           logger)))))
-     Logger)))
+    (do-with-lock sys.mx :- Logger
+      (cond
+       ((hash-get sys.sources name))
+       (else
+        (let (logger (Logger (new sys.thread)))
+          (hash-put! sys.sources name logger)
+          logger))))))
 
 (def (start-system-logger!
       sinks: (sinks [console-log-sink] : :list)
       level: (level (default-log-level) : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda ()
+    (do-with-lock sys.mx
+      (unless sys.thread
         (for-each
           (lambda (make-sink)
             (__add-system-sink/lock! (make-sink)))
           sinks)
         (set! sys.level level)
-        (unless sys.running
-          (thread-start! sys.thread)
-          (set! sys.running #t))))))
+        (set! sys.thread
+          (spawn-thread (cut system-logger-thread sys)
+                        'system-logger))))))
 
 (def (stop-system-logger!)
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda ()
-        (when sys.running
-          (set! sys.running #f)
-          (thread-send sys.thread !STOP!)
-          (thread-join! sys.thread))))))
+    (do-with-lock sys.mx
+      (when sys.thread
+        (thread-send sys.thread !STOP!)
+        (unwind-protect
+          (thread-join! sys.thread)
+          (set! sys.thread #f))))))
 
 (def (add-system-sink! (sink : LogSink))
-  (with-lock sys.mx
-    (cut __add-system-sink/lock! sink)))
+  (do-with-lock sys.mx
+    (__add-system-sink/lock! sink)))
 
 (def (__add-system-sink/lock! (sink : LogSink))
   (using (sys (system-logger) :- SystemLogger)
@@ -83,74 +78,56 @@
       (when (hash-key? sys.sinks name)
         (raise-context-error add-system-sink! "duplicate sink" sink))
       (hash-put! sys.sinks name sink)
-      (when sys.running
+      (when sys.thread
         (thread-send sys.thread (!UPDATE:add-sink sink))))))
 
 ;; dynamic log options
 (def (set-system-log-level! (level : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda ()
-        (let (current sys.level)
-          (unless (fx= current level)
-            (set! sys.level level)
-            (when sys.running
-              (thread-send sys.thread (!UPDATE:set-system-level level)))))))))
+    (do-with-lock sys.mx
+      (let (current sys.level)
+        (unless (fx= current level)
+          (set! sys.level level)
+          (when sys.thread
+            (thread-send sys.thread (!UPDATE:set-system-level level))))))))
 
 (def (system-log-lovel) => :fixnum
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda () sys.level))))
+    (do-with-lock sys.mx sys.level)))
 
 (def (set-subsystem-log-level! (name  : :symbol)
                                (level : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda ()
-        (cond
-         ((hash-get sys.sources name)
-          => (lambda ((log :- Logger))
-               (log.set-level! level)))
-         (else
-          (raise-context-error set-subsystem-log-level! "unknown subsystem" name)))))))
+    (do-with-lock sys.mx
+      (cond
+       ((hash-get sys.sources name)
+        => (lambda ((log :- Logger))
+             (log.set-level! level)))
+       (else
+        (raise-context-error set-subsystem-log-level! "unknown subsystem" name))))))
 
 (def (set-sink-log-level! (sink  : :symbol)
                           (level : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
-    (with-lock sys.mx
-      (lambda ()
-        (cond
-         ((hash-get sys.sinks sink)
-          => (lambda ((log :- LogSink))
-               (log.set-level! level)))
-         (else
-          (raise-context-error set-sink-log-level! "unknown sink" sink)))))))
+    (do-with-lock sys.mx
+      (cond
+       ((hash-get sys.sinks sink)
+        => (lambda ((log :- LogSink))
+             (log.set-level! level)))
+       (else
+        (raise-context-error set-sink-log-level! "unknown sink" sink))))))
 
 (def (current-log-subsystems) => :list
   (using (sys (system-logger) :- SystemLogger)
-    (:-
-     (with-lock sys.mx
-       (lambda ()
-         (hash-keys sys.sources)))
-     :list)))
+    (do-with-lock sys.mx :- :list
+      (hash-keys sys.sources))))
 
 (def (current-log-sinks) => :list
   (using (sys (system-logger) :- SystemLogger)
-    (:-
-     (with-lock sys.mx
-       (lambda ()
-         (hash-keys sys.sinks)))
-     :list)))
+    (do-with-lock sys.mx :- :list
+      (hash-keys sys.sinks))))
 
 ;; the system logger thread
-(defstruct !SystemLoggerMessage ())
-(defstruct (!STOP !SystemLoggerMessage) () final: #t)
-(defstruct (!UPDATE !SystemLoggerMessage) ())
-(defstruct (!UPDATE:add-sink !UPDATE) ((sink :- LogSink)) final: #t)
-(defstruct (!UPDATE:set-system-level !UPDATE) ((level :- :fixnum)) final: #t)
-
-(def !STOP! (!STOP))
-
 (def (system-logger-thread (sys :- SystemLogger))
   (mutex-lock! sys.mx)
   (let ((level    sys.level)

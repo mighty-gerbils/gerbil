@@ -197,7 +197,6 @@ package: gerbil/core
           (else
            (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
 
-
   ;; type assertion (unchecked cast)
   (defsyntax (:- stx)
     (syntax-case stx ()
@@ -206,7 +205,17 @@ package: gerbil/core
        (with-syntax ((klass (resolve-type->type-descriptor stx #'type)))
          #'(begin-annotation (@type klass) expr)))))
 
-  ;; predicate contract check
+  (defrules do-with-lock (:- :)
+    ((_ lock :- type body rest ...)
+     (:- (do-with-lock lock body rest ...)
+         type))
+    ((_ lock : type body rest ...)
+     (: (do-with-lock lock body rest ...)
+         type))
+    ((_ lock body rest ...)
+     (with-lock lock (lambda () body rest ...))))
+
+    ;; predicate contract check
   (defrules :~ (:-)
     ((_ expr predicate)
      (let (val expr)
