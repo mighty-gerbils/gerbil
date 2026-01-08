@@ -3,6 +3,7 @@
 ;;; wrapped associative lists
 
 (import :std/error
+        :std/string
         ./alist)
 (export
   AList AList?
@@ -14,6 +15,12 @@
   walist!
   walistq!
   walistv!
+  __walist
+  __walistq
+  __walistv
+  __walist!
+  __walistq!
+  __walistv!
   walist->list
   wanull
   wanullq
@@ -311,3 +318,9 @@
                  (loop tl rest)))
               (else (void))))))
       w)))
+
+;; walist string conversion
+(defmethod {:to-string ConcreteAList}
+  (lambda (self)
+    XXX
+    ))

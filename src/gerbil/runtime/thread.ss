@@ -8,6 +8,22 @@ namespace: #f
 (import "gambit" "util" "error" "hash")
 (export #t)
 
+;; the system thread group
+(def __system_thread-group
+   (make-thread-group 'system))
+
+(def (system-thread-group) => :thread-group
+  __system-thread-group)
+
+(def (make-system-thread (thunk : :procedure) (name : :symbol)) => :thread
+  (make-thread (cut thread-main thunk) name (system-thread-group)))
+
+(def (system-thread! (thunk : :procedure) (name : :symbol)) => :thread
+  (thread-start! (make-system-thread thunk name)))
+
+(def (system-actor! (thunk : :procedure) (name : :symbol)) => :thread
+  (spawn-actor thunk [] name (system-thread-group)))
+
 ;; spawn an actor thread apply f to args
 (def (spawn (f : :procedure) . args)
   => :thread
@@ -26,7 +42,19 @@ namespace: #f
 
 (def (spawn-actor f args name tgroup)
   => :thread
-  (def (thread-main thunk)
+  (let* ((thunk (if (null? args) f (cut apply f args)))
+         (thunk (cut with-exception-stack-trace thunk))
+         (tgroup (or tgroup (current-thread-group))))
+    (thread-start!
+     (thread-init!
+      (construct-actor-thread #f 0)
+      (thread-main thunk) name tgroup))))
+
+(def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
+  (thread-start!
+   (make-thread thunk name tgroup)))
+
+(def (thread-main thunk)
     ;; install an abortive handler to force stack unwinding
     ;; this ensures that unwind-protect finalizers are invoked if
     ;; the actor exits with an unhandled exception.
@@ -49,18 +77,6 @@ namespace: #f
              ##primordial-exception-handler
              exn))))
        thunk)))
-
-  (let* ((thunk (if (null? args) f (cut apply f args)))
-         (thunk (cut with-exception-stack-trace thunk))
-         (tgroup (or tgroup (current-thread-group))))
-    (thread-start!
-     (thread-init!
-      (construct-actor-thread #f 0)
-      (thread-main thunk) name tgroup))))
-
-(def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
-  (thread-start!
-   (make-thread thunk name tgroup)))
 
 ;;; thread locals
 (def (thread-local-ref key (default absent-obj))

@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; json api
-(import ./env ./input ./output ./util)
+(import ./env ./input ./output ./util ./object)
 (export read-json write-json
         string->json-object json-object->string
         bytes->json-object json-object->bytes port->json-object

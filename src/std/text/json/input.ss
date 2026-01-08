@@ -81,7 +81,7 @@
                              ((#\}) (void))
                              (else
                               (raise-invalid-token read-json-hash input char)))))))))
-               (walistq (reverse! lst))))
+               (__walistq (reverse! lst))))
 
            (def (read-json-hash/walist input env)
              (let* ((obj (make-hash-table size: 8))
@@ -104,7 +104,7 @@
                              ((#\}) (void))
                              (else
                               (raise-invalid-token read-json-hash input char)))))))))
-               (walist (reverse! lst))))
+               (__walist (reverse! lst))))
 
            (def (read-json-hash/symbol input env)
              (let* ((obj (make-gc-table 7 gc-hash-table::t))

@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; syntax utilities; import for-syntax
-(import :gerbil/expander
+(import :gerbil/core/expander
         :std/format)
 (export #t)
 
@@ -36,3 +36,23 @@
                    (let (s (as-string x))
                      (or (##find-interned-keyword s) s))))
           (x (maybe-make-keyword (as-string x)))))
+
+
+;; parse a syntactic keyword-value option plist
+(def (parse-options stx lst allowed)
+  (let loop ((rest lst) (result []))
+    (match rest
+      ([key val . rest]
+       (if (stx-keyword? key)
+         (let (key (stx-e key))
+           (cond
+            ((not (memq key allowed))
+             (raise-syntax-error #f "unexpected option" stx lst key))
+            ((memq key result)
+             (raise-syntax-error #f "duplicate option" stx lst key))
+            (else
+             (loop rest (cons* val key result)))))
+         (raise-syntax-error #f "expected keyword option" stx lst key)))
+      ([] (reverse! result))
+      (else
+       (raise-syntax-error #f "malformed syntactic options" stx lst)))))

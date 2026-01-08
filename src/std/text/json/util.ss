@@ -39,17 +39,17 @@
    (else
     (raise-bad-argument read-json "input port, BufferedStringReader or BufferedReader instance" input))))
 
-(def (string->json-object str)
+(def (string->json-object (str : :string))
   (let (reader (open-buffered-string-reader str))
     (begin0 (read-json-object/reader reader (make-env))
       (ll1-skip-space-to-eof (PeekableStringReader reader)))))
 
-(def (bytes->json-object bytes)
+(def (bytes->json-object (bytes : :u8vector))
   (let (buffer (open-buffered-reader bytes))
     (begin0 (read-json-object/buffer buffer (make-env))
       (ll1-skip-space-to-eof (PeekableStringReader (open-buffered-string-reader buffer))))))
 
-(def (port->json-object port)
+(def (port->json-object (port :~ input-port? :- :port))
   (begin0 (read-json-object/port port (make-env))
     (ll1-skip-space-to-eof (PeekableStringReader (open-buffered-string-reader port)))))
 
@@ -69,15 +69,18 @@
    (else
     (raise-bad-argument write-json "output port, Writer, StringWriter or BufferedStringWriter" output))))
 
-(def (json-object->string obj)
+(def (json-object->string obj) => :string
   (let (buffer (open-buffered-string-writer #f))
     (write-json-object/writer obj buffer (make-env))
     (get-buffer-output-string buffer)))
 
-(def (json-object->bytes obj)
+(def (json-object->bytes obj) => :u8vector
   (let (buffer (open-buffered-writer #f))
     (write-json-object/buffer obj buffer (make-env))
     (get-buffer-output-u8vector buffer)))
+
+
+;;;; XXXX
 
 (def (trivial-class->json-object object)
   (match (class->list object)
