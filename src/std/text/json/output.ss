@@ -8,6 +8,7 @@
         :std/misc/walist
         :std/sort
         :std/text/hex
+        :std/string
         ./env)
 (export write-json-object/port write-json-object/writer write-json-object/buffer
         json-key-string json-sort-alist)
@@ -74,8 +75,13 @@
                (write-string "null" output))
               ((method-ref obj ':write-json)
                => (cut <> obj output))
+              ((method-ref obj ':json)
+               => (lambda (method)
+                    (write-json-object (method obj) output env)))
               (else
-               (write-json-object {:json obj} output env))))
+               ;; DO NOT FAIL; breaking a logger is the last thing
+               ;; you want to do
+               (write-string (to-string obj) output))))
 
            (def (write-json-inexact obj output env)
              (let* ((mag (abs obj))
