@@ -69,6 +69,9 @@
 
 (defmethod {__start LogRotateSink}
   (lambda (self)
+    ;; prepare the log dir
+    (unless (file-exists? self.opt.dir)
+      (create-directory* self.opt.dir))
     ;; prepare the backlog
     (let* ((prefix (string-append self.opt.file "~"))
            (files  (directory-files self.opt.dir))
