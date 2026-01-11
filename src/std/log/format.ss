@@ -2,9 +2,13 @@
 ;;; © vyzo
 ;;; log record formatting
 (import :std/text/json
-        :std/misc/walist
+        :std/misc/alist
         :std/time
-        :std/string
+        :std/io
+        :std/io/bio
+        :std/format/string
+        :std/format/io
+        :std/text/json
         ./interface
         ./level)
 (export #t)
@@ -24,13 +28,46 @@
     (str (to-string record.data))
     (get-output-string output)))
 
-(def (format-record->json (record : Record)) => :string
+(defmethod {:to-string Record}
+  __format-record)
+
+(def (record->json-string (record : Record)) => :string
   (json-object->string
    (record->json record)))
 
-(def (record->json (record : Record)) => PureAList
+(defmethod {:write-json Record}
+  (lambda (self output)
+    (cond
+     ((try-BufferedWriter output)
+      => (lambda ((writer : - BufferedWriter))
+           (writer.write-record self)))
+     (else
+      (using (writer (open-buffered-writer output) :- BufferedWriter)
+        (unwind-protect
+          (writer.write-record self)
+          (writer.flush)))))))
+
+(def (record->json-object (record : Record)) => PureAList
    (wacollectq ts:   (time->string record.ts)
                lvl:  (log-level->string record.level)
                src:  record.source
                msg:  record.msg
                data: record.data))
+
+(defwriter-method (write-record (writer : BufferedWriter)(record : Record))
+  (defrule (write-space)
+    (writer.write-u8 #x20))
+  (defrule (write-newline)
+    (writer.write-u8 #x0A))
+  (let* ((wr (write-time buffer record.ts))
+         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-string (log-level->string record.level))))
+         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-string record.message)))
+         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-walist record.data)))
+         (wr (fx+ wr (Write-newline))))
+    wr))
+
+(def (write-record-json (buffer : BufferedWriter) (record : Record)) => :fixnum
+  (buffer.write-json (record->json record)))

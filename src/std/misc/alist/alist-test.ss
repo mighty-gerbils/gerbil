@@ -1,7 +1,7 @@
 (export alist-test)
 
 (import
-  :std/error :std/misc/alist :std/test)
+  :std/error :std/test ./raw)
 
 (def (copy-list lst) (foldr cons '() lst))
 

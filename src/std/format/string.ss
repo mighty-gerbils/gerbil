@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; string conversions
+;;; string output
 (import :gerbil/runtime/hash
         :std/error)
 (export to-string)
@@ -12,12 +12,22 @@
    (else
     (object->string obj))))
 
+(defmethod {:to-string :object}
+  (lambda (self)
+    XXX
+    ))
+
 (defmethod {:to-string Error}
   (lambda (self)
     XXX
     ))
 
 (defmethod {:to-string :continuation}
+  (lambda (self)
+    XXX
+    ))
+
+(defmethod {:to-string :thread}
   (lambda (self)
     XXX
     ))

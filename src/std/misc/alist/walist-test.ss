@@ -1,8 +1,7 @@
 (export walist-test)
 
-(import
-  :std/misc/walist
-  :std/test)
+(import :std/test
+        ./wrapped)
 
 (def walist-test
   (test-suite "test :std/misc/walist"
