@@ -318,9 +318,3 @@
                  (loop tl rest)))
               (else (void))))))
       w)))
-
-;; walist string conversion
-(defmethod {:to-string ConcreteAList}
-  (lambda (self)
-    XXX
-    ))

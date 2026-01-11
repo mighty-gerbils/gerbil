@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; logging abstractions
 (import :std/time
-        :std/misc/walist)
+        :std/misc/alist)
 (export #t)
 
 ;; log records
