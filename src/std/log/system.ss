@@ -50,6 +50,7 @@
   (using (sys (system-logger) :- SystemLogger)
     (do-with-lock sys.mx
       (unless sys.thread
+        (force __default-log-levels!)
         (for-each
           (lambda (make-sink)
             (__add-system-sink/lock! (make-sink)))
