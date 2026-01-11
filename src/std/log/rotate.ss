@@ -14,7 +14,7 @@
    (file     : :string)    ; log file name
    (size     : :integer)   ; log file size rotation trigger
    (backlog  : :integer)   ; aggregate backlog size
-   (flush    : :flonum)    ;
+   (flush    : :flonum)    ; log flush interval
    (compress : :procedure) ; file compressor function lambda (path) => path
    (write    : :procedure) ; record write procedure: lambda (BufferedWriter Record) => :fixnum
    )

@@ -18,7 +18,7 @@
     (defrule (str o)
       (write-string o output))
     (defrule (char c)
-      (write-char c output))
+      (writne-char c output))
     (defrule (space)
       (char #\space))
     (str (time->string record.ts))
