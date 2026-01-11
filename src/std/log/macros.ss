@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; logging macros
 (import :std/time
-        :std/misc/walist
+        :std/misc/alist
         :std/format
         ./level
         ./interface

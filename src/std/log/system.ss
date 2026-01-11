@@ -154,25 +154,26 @@
                            sinks))))
                  (else
                   (console.warn "unknown record source" source: msg.source)))))
-             ((!STOP? msg)
+             ((!STOP how)
               (console.debug "stopping system logger")
               (hash-for-each
                   (lambda (name (sink :- LogSink))
-                    (with-error-to-console (sink.stop!)))
+                    (try (sink.stop!)
+                         (catch (e)
+                           (console.error "failed to stop log sink"
+                                          sink: (sink.name) error: e))))
                 sinks)
-              (exit 'STOP))
+              (exit how))
              ((!Update? msg)
               (match msg
-               ((!Update:add-sink sink)
-                (mutex-lock! sys.mx)
-                (using (sink :- LogSink)
-                  (hash-put! sinks (sink.name) sink))
-                (mutex-unlock! sys.mx))
-               ((!UPDATE:set-system-level system-level)
-                (mutex-lock! sys.mx)
-                (set! level system-level)
-                (mutex-unlock! sys.mx))
-               (else
-                (console.warn "unexpected system update message" message: msg))))
+                ((!Update:add-sink sink)
+                 (with-lock sys.mx
+                   (using (sink :- LogSink)
+                     (hash-put! sinks (sink.name) sink))))
+                ((!UPDATE:set-system-level system-level)
+                 (with-lock sys.mx
+                   (set! level system-level)))
+                (else
+                 (console.warn "unexpected system update message" message: msg))))
              (else
               (console.warn "unexpected message" message: msg)))))))))

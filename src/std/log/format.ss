@@ -5,7 +5,7 @@
         :std/misc/alist
         :std/time
         :std/io
-        :std/io/bio
+        :std/io/bio/api
         :std/format/string
         :std/format/io
         :std/text/json
@@ -17,8 +17,10 @@
   (let (output (open-output-string))
     (defrule (str o)
       (write-string o output))
+    (defrule (char c)
+      (write-char c output))
     (defrule (space)
-      (write-char #\space output))
+      (char #\space))
     (str (time->string record.ts))
     (space)
     (str (log-level->string record.level))
@@ -35,18 +37,6 @@
   (json-object->string
    (record->json record)))
 
-(defmethod {:write-json Record}
-  (lambda (self output)
-    (cond
-     ((try-BufferedWriter output)
-      => (lambda ((writer : - BufferedWriter))
-           (writer.write-record self)))
-     (else
-      (using (writer (open-buffered-writer output) :- BufferedWriter)
-        (unwind-protect
-          (writer.write-record self)
-          (writer.flush)))))))
-
 (def (record->json-object (record : Record)) => PureAList
    (wacollectq ts:   (time->string record.ts)
                lvl:  (log-level->string record.level)
@@ -54,20 +44,28 @@
                msg:  record.msg
                data: record.data))
 
-(defwriter-method (write-record (writer : BufferedWriter)(record : Record))
-  (defrule (write-space)
-    (writer.write-u8 #x20))
-  (defrule (write-newline)
-    (writer.write-u8 #x0A))
+(defwriter-ext (write-record (writer : BufferedWriter)(record : Record))
   (let* ((wr (write-time buffer record.ts))
-         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string (log-level->string record.level))))
-         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-space)))
+         (wr (fx+ wr (writer.write-symbol record.source)))
+         (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string record.message)))
-         (wr (fx+ wr (write-space)))
+         (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-walist record.data)))
-         (wr (fx+ wr (Write-newline))))
+         (wr (fx+ wr (writer.write-newline))))
     wr))
+
+(defmethod {:write Record}
+  (lambda (self output)
+    (using (writer output : BufferedWriter)
+      (writer.write-record self))))
 
 (def (write-record-json (buffer : BufferedWriter) (record : Record)) => :fixnum
   (buffer.write-json (record->json record)))
+
+(defmethod {:write-json Record}
+  (lambda (self output)
+    (using (writer output : BufferedWriter)
+      (writer.write-record-json self))))

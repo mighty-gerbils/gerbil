@@ -10,7 +10,7 @@
   (delay-atomic
    (LogSink
     (PortLogSink
-     'system/console
+     'console
      (default-log-level)
      ##console-port
      format-record))))
@@ -36,4 +36,4 @@
     (write-string (self.format record) self.port)
     (newline self.port)
     (force-output self.port))
-  interface: Log)
+  interface: Logger)
