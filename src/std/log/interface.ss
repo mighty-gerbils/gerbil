@@ -16,10 +16,10 @@
 
 ;; logger interface
 (interface Logger
-  (name) => :symbol
-  (level) => :fixnum
+  (name)                       => :symbol
+  (level)                      => :fixnum
   (set-level! (level :fixnum)) => :void
-  (log (obj : Record)) => :void)
+  (log (obj : Record))         => :void)
 
 ;; log sink interface
 (interface (LogSink Logger)

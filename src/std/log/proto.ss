@@ -4,10 +4,10 @@
 (import ./interface)
 (export #t)
 
-(defstruct !SystemLoggerMessage ())
-(defstruct (!STOP !SystemLoggerMessage) () final: #t)
-(defstruct (!UPDATE !SystemLoggerMessage) ())
+(defstruct !SysLogMsg ())
+(defstruct (!STOP !SysLogMsg) (how) final: #t)
+(defstruct (!UPDATE !SysLogMsg) ())
 (defstruct (!UPDATE:add-sink !UPDATE) ((sink :- LogSink)) final: #t)
 (defstruct (!UPDATE:set-system-level !UPDATE) ((level :- :fixnum)) final: #t)
 
-(def !STOP! (!STOP))
+(def !STOP! (!STOP 'shutdown))

@@ -13,8 +13,8 @@
     ((_ id options ...)
      (identifier? #'id)
      (let (opts (parse-options stx #'(options ...) '(name: level: time: decorate:)))
-       (with-syntax* ((name (pgetq name:  opts #'id))
-                      (level     (pgetq level: opts '(system-log-level)))
+       (with-syntax* ((name      (pgetq name:  opts #'id))
+                      (level     (pgetq level: opts #'(user-log-level 'name)))
                       (get-time  (pgetq time:  opts 'current-time-coarse))
                       (make-logger
                        (cond
