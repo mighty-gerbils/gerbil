@@ -40,9 +40,13 @@
    "VERBOSE"))
 
 (def (log-level->string (level : :fixnum)) => :string
-  (if (and (fx>= level CRITICAL) (fx<= level VERBOSE))
-    (:- (##vector-ref __level-vector (fx1+ level)) :string)
-    "VERBOSE"))
+  (cond
+   ((fx< CRITICAL) "CRITICAL")
+   ((fx> VERBOSE) "VERBOSE")
+   (else
+    (let ()
+      (declare (not safe))
+      (:- (vector-ref __level-vector (fx1+ level)) :string)))))
 
 (def __default-level   0)
 (def __user-sources    (hash-eq))
