@@ -58,7 +58,7 @@
         (set! sys.level level)
         (set! sys.thread
           (spawn-thread (cut system-logger-thread sys)
-                        'system-logger))))))
+                        'system/log))))))
 
 (def (stop-system-logger!)
   (using (sys (system-logger) :- SystemLogger)
@@ -137,7 +137,7 @@
     (mutex-unlock! sys.mx)
     (let/cc exit
       (using (console (console-log-sink) :- LogSink)
-        (deflogger-macros console system/logger current-time-coarse)
+        (deflogger-macros console system/log current-time-coarse)
         (console.debug "starting system logger")
         (while #t
           (let (msg (thread-receive))

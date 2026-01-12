@@ -86,7 +86,7 @@
                                   (start (fx1+ sep)))
                              (set-user! source level)
                              (cond
-                              ((string-index lvl :\: start)
+                              ((string-index lvl #\: start)
                                => (lambda (sep) (loop (fx+ sep 1))))))))))))))))
    (else
     (set-default! lvl)))

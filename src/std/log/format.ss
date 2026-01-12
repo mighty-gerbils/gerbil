@@ -2,50 +2,31 @@
 ;;; © vyzo
 ;;; log record formatting
 (import :std/text/json
+        :std/tex/utf8
         :std/misc/alist
         :std/time
         :std/io
         :std/io/bio/api
-        :std/format/string
         :std/format/io
         :std/text/json
         ./interface
         ./level)
 (export #t)
 
-(def (format-record (record : Record)) => :string
-  (let (output (open-output-string))
-    (defrule (str o)
-      (write-string o output))
-    (defrule (char c)
-      (writne-char c output))
-    (defrule (space)
-      (char #\space))
-    (str (time->string record.ts))
-    (space)
-    (str (log-level->string record.level))
-    (space)
-    (str record.message)
-    (space)
-    (str (to-string record.data))
-    (get-output-string output)))
-
-(defmethod {:to-string Record}
-  __format-record)
-
-(def (record->json-string (record : Record)) => :string
-  (json-object->string
-   (record->json record)))
+(def (record->string (record : Record)) => :string
+  (using (writer (open-buffered-writer #f very-small-buffer-size) :- BufferedWriter)
+    (writer.write-record writer)
+    (get-buffer-output-string writer)))
 
 (def (record->json-object (record : Record)) => PureAList
-   (wacollectq ts:   (time->string record.ts)
+   (wacollectq ts:   record.ts
                lvl:  (log-level->string record.level)
                src:  record.source
                msg:  record.msg
                data: record.data))
 
-(defwriter-ext (write-record (writer : BufferedWriter)(record : Record))
-  (let* ((wr (write-time buffer record.ts))
+(defwriter-ext (write-record writer (record : Record))
+  (let* ((wr (writer.write-time record.ts))
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string (log-level->string record.level))))
          (wr (fx+ wr (writer.write-space)))
@@ -57,15 +38,18 @@
          (wr (fx+ wr (writer.write-newline))))
     wr))
 
+(defwriter-ext (write-record-json writer (record : Record))
+  (writer.write-json (record->json-object record)))
+
 (defmethod {:write Record}
   (lambda (self output)
     (using (writer output : BufferedWriter)
       (writer.write-record self))))
 
-(def (write-record-json (buffer : BufferedWriter) (record : Record)) => :fixnum
-  (buffer.write-json (record->json record)))
-
 (defmethod {:write-json Record}
   (lambda (self output)
     (using (writer output : BufferedWriter)
       (writer.write-record-json self))))
+
+(defmethod {:to-string Record}
+  __record->string)
