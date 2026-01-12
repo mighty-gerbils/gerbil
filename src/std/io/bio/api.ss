@@ -19,8 +19,9 @@
         (import: ./inline)
         (import: ./util))
 
-(def default-buffer-size (expt 2 15)) ; 32K
-(def default-small-buffer-size 4096)
+(def default-buffer-size    32768)
+(def small-buffer-size      4096)
+(def very-small-buffer-size 256)
 
 (def (make-u8vector-buffer buffer-or-size)
   (cond
@@ -90,6 +91,11 @@
     (match chunks
       ([chunk] (:- chunk :u8vector))
       (else (u8vector-concatenate chunks)))))
+
+(def (get-buffer-output-string wr)
+  => :string
+  XXX
+  )
 
 (defreader-ext (read-delimited reader read-value)
   (let* ((len (reader.read-varuint))

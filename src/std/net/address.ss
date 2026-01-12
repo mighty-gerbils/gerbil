@@ -19,19 +19,6 @@
         inaddr-any4 inaddr-any6
         localhost4 localhost6)
 
-(defstruct (Address Address)
-  ((ip     : :u8vector)
-   (string :? :string))
-  transparent: #t)
-
-(defstruct (IPAddress Address) ()
-  transparent: #t)
-
-(defstruct (IP4Address IPAddress) ()
-  transparent: #t final: #t)
-(defstruct (IP6Address IPAddress) ()
-  transparent: #t final: #t)
-
 XXX
 
 (def inaddr-any4
