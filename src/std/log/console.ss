@@ -10,10 +10,11 @@
   (delay-atomic
    (LogSink
     (PortLogSink
-     'console
+     'system/console
      (default-log-level)
      ##console-port
-     format-record))))
+     record->string
+     (lambda (record) #t)))))
 
 (def (console-log-sink) => LogSink
   (:- (force __console)
@@ -21,7 +22,8 @@
 
 (defstruct (PortLogSink BasicLogger)
   ((port   :- :port)
-   (format :- :procedure)))
+   (format :- :procedure)
+   (accept :- :procedure)))
 
 (defmethod {start! PortLogSink}
   void
@@ -33,7 +35,8 @@
 
 (defmethod {log PortLogSink}
   (lambda (self record)
-    (write-string (self.format record) self.port)
-    (newline self.port)
-    (force-output self.port))
+    (when (self.accept record)
+      (write-string (self.format record) self.port)
+      (newline self.port)
+      (force-output self.port)))
   interface: Logger)

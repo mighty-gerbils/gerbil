@@ -17,6 +17,7 @@
    (flush    : :flonum)    ; log flush interval
    (compress : :procedure) ; file compressor function lambda (path) => path
    (write    : :procedure) ; record write procedure: lambda (BufferedWriter Record) => :fixnum
+   (accept   : :procedure) ; record filter procedure: lambda (Record) => :boolean
    )
   final: #t transparent: #t)
 
@@ -43,7 +44,9 @@
     (do-with-lock self.mx
       (unless self.thread
         {self.__start}
-        (set! self.thread (spawn-thread (lambda () {self.__background}) 'log-rotate)))))
+        (set! self.thread
+          (spawn-thread (lambda () {self.__background})
+                        'system/log/rotate)))))
   interface: LogSink)
 
 (defmethod {stop! LogRotateSink}
@@ -61,11 +64,12 @@
   (lambda (self record)
     (do-with-lock self.mx
       (when self.thread
-        (let (wr (self.write self.buffer record))
-          (set! self.size (+ self.size wr))
-          (when (> self.size self.opts.size)
-            {self.__rotate})))))
-  interface: Log)
+        (when (self.accept record)
+          (let (wr (self.write self.buffer record))
+            (set! self.size (+ self.size wr))
+            (when (> self.size self.opts.size)
+              {self.__rotate}))))))
+  interface: Logger)
 
 (defmethod {__start LogRotateSink}
   (lambda (self)
