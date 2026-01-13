@@ -1745,7 +1745,6 @@ package: gerbil/core
     cast try-cast satisfies?
     interface-cast-error?
 
-
     ;; :gerbil/runtime/hash
     raise-unbound-key-error
     unbound-key-error?
