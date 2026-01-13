@@ -162,3 +162,9 @@ namespace: #f
   try-create-prototype
   (lambda (prototype obj)
     (and prototype #t)))
+
+;; extract an interface proptotype
+(defcast get-prototype
+  create-prototype
+  (lambda (prototype obj)
+    prototype))

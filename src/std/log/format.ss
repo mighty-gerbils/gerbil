@@ -1,14 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; log record formatting
-(import :std/text/json
-        :std/tex/utf8
-        :std/misc/alist
-        :std/time
-        :std/io
+(import :std/io
         :std/io/bio/api
         :std/format/io
-        :std/text/json
+        :std/text/json/io
+        :std/time/io
+        :std/misc/alist
+        :std/misc/alist/io
         ./interface
         ./level)
 (export #t)
@@ -25,8 +24,8 @@
                msg:  record.msg
                data: record.data))
 
-(defwriter-ext (write-record writer (record : Record))
-  (let* ((wr (writer.write-time record.ts))
+(defwriter-ext (write-record writer (record : Record) (wenv : WriteEnv))
+  (let* ((wr (writer.write-time record.ts wenv))
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string (log-level->string record.level))))
          (wr (fx+ wr (writer.write-space)))
@@ -34,22 +33,19 @@
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string record.message)))
          (wr (fx+ wr (writer.write-space)))
-         (wr (fx+ wr (writer.write-walist record.data)))
+         (wr (fx+ wr (writer.write-walist record.data wenv)))
          (wr (fx+ wr (writer.write-newline))))
     wr))
 
-(defwriter-ext (write-record-json writer (record : Record))
-  (writer.write-json (record->json-object record)))
+(defwriter-ext (write-record-json writer (record : Record) (env : JSONEnv))
+  (writer.write-json (record->json-object record) env))
 
-(defmethod {:write Record}
-  (lambda (self output)
-    (using (writer output : BufferedWriter)
-      (writer.write-record self))))
+(defmethod {write Record}
+  (lambda (self writer wenv)
+    (writer.write-record self wenv))
+  interface: ObjectWriter)
 
-(defmethod {:write-json Record}
-  (lambda (self output)
-    (using (writer output : BufferedWriter)
-      (writer.write-record-json self))))
-
-(defmethod {:to-string Record}
-  __record->string)
+(defmethod {write-json Record}
+  (lambda (self writer env)
+    (writer.write-record-json self env))
+  interface: JSONWriter)

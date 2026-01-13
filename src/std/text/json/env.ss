@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; json io environment
-(import :std/error
-        :std/sugar)
+(import :std/format/io)
 (export #t)
 
 ;; Should decoded JSON "objects" have symbols as keys rather than strings?
@@ -22,26 +21,22 @@
 (def write-json-sort-keys?
   (make-parameter #f))
 
-;; Old names, to be removed in v0.19.
-(def json-symbolic-keys read-json-key-as-symbol?)
-(def json-sort-keys write-json-sort-keys?)
-(def json-list-wrapper (make-parameter identity)) ;; not used anymore, only there for soft migration
+(defstruct (JSONEnv WriteEnv)
+  (read-json-key-as-symbol?
+   read-json-object-as-walist?
+   read-json-array-as-vector?
+   write-json-sort-keys?)
+  constructor: :init!)
 
-(defstruct env (read-json-key-as-symbol?
-                read-json-object-as-walist?
-                read-json-array-as-vector?
-                write-json-sort-keys?)
-  constructor: :init!
-  transparent: #t final: #t)
-
-(defmethod {:init! env}
-  (lambda (self)
+(defmethod {:init! JSONEnv}
+  (lambda (self (wenv : WriteEnv := (default-write-environment)))
+    (let (len (##vector-length (&class-type-slot-vector WriteEnv::t)))
+      (let loop ((i 1))
+        (when (fx< i len)
+          (##unchecked-structure-set! self
+            (##unchecked-structure-ref wenv i #f 'JSONEnv:::init!)
+            i #f 'JSONEnv:::init!))))
     (set! self.read-json-key-as-symbol? (read-json-key-as-symbol?))
     (set! self.read-json-object-as-walist? (read-json-object-as-walist?))
     (set! self.read-json-array-as-vector? (read-json-array-as-vector?))
     (set! self.write-json-sort-keys? (write-json-sort-keys?))))
-
-(defrule (raise-invalid-token where input char)
-  (if (eof-object? char)
-    (raise-io-error where "Incomplete JSON object; EOF reached" input)
-    (raise-io-error where "Invalid JSON token" input char)))

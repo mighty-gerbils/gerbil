@@ -696,7 +696,7 @@ namespace: #f
   (if (class-type-system? klass)
     (abort! (error "cannot instantiate system class" class: klass))
     (let (obj (##make-structure klass k))
-      (object-fill! obj #f))))
+      (__object-fill! obj #f))))
 
 (declare-inline make-object
   (lambda (ast)
