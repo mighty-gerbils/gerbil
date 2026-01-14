@@ -15,24 +15,24 @@
    (allow-cycles? :- :boolean))
   final: #t)
 
-(defstruct WriteEnv
+(defstruct FormatEnv
   ((scan      :? ScanEnv)
    (display?  :  :boolean))
   XXX)
 
-(interface ObjectWriter
-  (write (writer : BufferedWriter) (env : WriteEnv)) => :fixnum)
+(interface ObjectFormatter
+  (format (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
 
 (interface ObjectScanner
   (scan! (env : ScanEnv) (path : :list)) => :void)
 
-(defwriter-ext (write-object-raw writer obj (env : WriteEnv)) => :fixnum
-  (let (method (get-object-writer obj))
+(defwriter-ext (format-object-raw writer obj (env : FormatEnv)) => :fixnum
+  (let (method (get-object-formatter obj))
     (:- (method (@object obj) writer env) :fixnum)))
 
-(defwriter-ext (write-object writer obj (env : WriteEnv)) => :fixnum
+(defwriter-ext (format-object writer obj (env : FormatEnv)) => :fixnum
   (defrule (write-it)
-    (writer.write-object-raw obj env))
+    (writer.format-object-raw obj env))
 
   (def (write-it/cycles (senv :- ScanEnv)) => :fixnum
     (cond
@@ -44,7 +44,7 @@
         (cond
          ((hash-get senv.cycles obj)
           => (lambda ((ref :- :fixnum)) => :fixnum
-                (writer.write-anchor obj ref env)))
+                (writer.format-anchor obj ref env)))
          (else
           (write-it)))))))
 
@@ -52,7 +52,7 @@
     (cond
      ((hash-get senv.cycles)
       => (lambda ((ref :- :fixnum)) => :fixnum
-            (writer.write-reference ref env)))
+            (writer.format-reference ref env)))
      (else
       (write-it))))
 
@@ -78,13 +78,13 @@
         (method (@object obj) env (cons obj path)))
       id))))
 
-(defwriter-ext (write-anchor writer obj (ref : :fixnum) (env : WriteEnv))
+(defwriter-ext (format-anchor writer obj (ref : :fixnum) (env : FormatEnv))
   XXX)
 
-(defwriter-ext (write-reference write (ref : :fixnum) (env : WriteEnv))
+(defwriter-ext (format-reference write (ref : :fixnum) (env : FormatEnv))
   XXX)
 
-(def (get-object-writer obj) => :procedure
+(def (get-object-formatter obj) => :procedure
   (get-interface-method-by-index ObjectWriter::interface
                                  obj
                                  (@interface-method-index ObjectWriter write)))
@@ -94,6 +94,6 @@
                                  obj
                                  (@interface-method-index ObjectScanner scan)))
 
-(def (default-write-environment) => WriteEnv
+(def (default-format-environment) => FormatEnv
   XXX
   )

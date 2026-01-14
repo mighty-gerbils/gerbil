@@ -21,22 +21,19 @@
 (def write-json-sort-keys?
   (make-parameter #f))
 
-(defstruct (JSONEnv WriteEnv)
-  (read-json-key-as-symbol?
-   read-json-object-as-walist?
-   read-json-array-as-vector?
-   write-json-sort-keys?)
+(defclass JSONEnv
+  ((scan                        :? ScanEnv)
+   (read-json-key-as-symbol?    :  :boolean)
+   (read-json-object-as-walist? :  :boolean)
+   (read-json-array-as-vector?  :  :boolean)
+   (write-json-sort-keys?       :  :boolean))
+  final: #t
   constructor: :init!)
 
 (defmethod {:init! JSONEnv}
-  (lambda (self (wenv : WriteEnv := (default-write-environment)))
-    (let (len (##vector-length (&class-type-slot-vector WriteEnv::t)))
-      (let loop ((i 1))
-        (when (fx< i len)
-          (##unchecked-structure-set! self
-            (##unchecked-structure-ref wenv i #f 'JSONEnv:::init!)
-            i #f 'JSONEnv:::init!))))
-    (set! self.read-json-key-as-symbol? (read-json-key-as-symbol?))
+  (lambda (self (senv :? ScanEnv := #f))
+    (set! self.scan senv)
+    (set! self.read-json-key-as-symbol?    (read-json-key-as-symbol?))
     (set! self.read-json-object-as-walist? (read-json-object-as-walist?))
-    (set! self.read-json-array-as-vector? (read-json-array-as-vector?))
-    (set! self.write-json-sort-keys? (write-json-sort-keys?))))
+    (set! self.read-json-array-as-vector?  (read-json-array-as-vector?))
+    (set! self.write-json-sort-keys?       (write-json-sort-keys?))))

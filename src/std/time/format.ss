@@ -8,60 +8,56 @@
         ./time)
 (export #t)
 
-(defwriter-ext (write-time writer (tm : Time) (wenv : WriteEnv))
-  (let (write (get-object-writer tm))
-    (write tm writer wenv)))
-
-(defwriter-ext (write-time-coarse writer (tm : CoarseTime) (wenv : WriteEnv))
+(defwriter-ext (format-time-coarse writer (tm : CoarseTime) (env : FormatEnv))
   XXX
   )
 
-(defwriter-ext (write-time-precise writer (tm : PreciseTime) (wenv : WriteEnv))
+(defwriter-ext (format-time-precise writer (tm : PreciseTime) (env : FormatEnv))
   XXX
   )
 
-(defwriter-ext (write-time-inexact writer (tm : InexactTime) (wenv : WriteEnv))
+(defwriter-ext (format-time-inexact writer (tm : InexactTime) (env : FormatEnv))
   XXX
   )
 
-(defmethod {write CoarseTime}
-  (lambda (self writer wenv)
-    (writer.write-time-coarse self wenv))
-  interface: ObjectWriter)
+(defmethod {format CoarseTime}
+  (lambda (self writer env)
+    (writer.format-time-coarse self env))
+  interface: ObjectFormatter)
 
-(defmethod {write PreciseTime}
-  (lambda (self writer wenv)
-    (writer.write-time-precise self wenv))
-  interface: ObjectWriter)
+(defmethod {format PreciseTime}
+  (lambda (self writer env)
+    (writer.format-time-precise self env))
+  interface: ObjectFormatter)
 
-(defmethod {write InexactTime}
-  (lambda (self writer wenv)
-    (writer.write-time-inexact self wenv))
-  interface: ObjectWriter)
+(defmethod {format InexactTime}
+  (lambda (self writer env)
+    (writer.format-time-inexact self env))
+  interface: ObjectFormatter)
 
-(defwriter-ext (write-time-coarse-json writer (tm : CoarseTime) (wenv : JSONEnv))
+(defwriter-ext (write-time-coarse-json writer (tm : CoarseTime) (env : JSONEnv))
   XXX
   )
 
-(defwriter-ext (write-time-precise-json writer (tm : PreciseTime) (wenv : JSONEnv))
+(defwriter-ext (write-time-precise-json writer (tm : PreciseTime) (env : JSONEnv))
   XXX
   )
 
-(defwriter-ext (write-time-inexact-json writer (tm : InexactTime) (wenv : JSONEnv))
+(defwriter-ext (write-time-inexact-json writer (tm : InexactTime) (env : JSONEnv))
   XXX
   )
 
 (defmethod {write-json CoarseTime}
-  (lambda (self writer wenv)
-    (writer.write-time-coarse-json self wenv))
+  (lambda (self writer env)
+    (writer.write-time-coarse-json self env))
   interface: JSONWriter)
 
 (defmethod {write-json PreciseTime}
-  (lambda (self writer wenv)
-    (writer.write-time-precise-json self wenv))
+  (lambda (self writer env)
+    (writer.write-time-precise-json self env))
   interface: JSONWriter)
 
 (defmethod {write-json InexactTime}
-  (lambda (self writer wenv)
-    (writer.write-time-inexact-json self wenv))
+  (lambda (self writer env)
+    (writer.write-time-inexact-json self env))
   interface: JSONWriter)

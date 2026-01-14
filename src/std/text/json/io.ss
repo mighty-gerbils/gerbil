@@ -16,9 +16,13 @@
 (interface JSONWriter
   (write-json (writer : BufferedWriter) (env : JSONEnv)) => :fixnum)
 
-(defwriter-ext (write-object-json writer obj env) => :fixnum
+(defwriter-ext (write-object-json-raw writer obj (env : JSONEnv))
   (let (method (get-object-writer obj))
-    (method obj writer env)))
+    (method (@object obj) writer env)))
+
+(defwriter-ext (write-object-json writer obj (env : JSONEnv))
+  XXX
+  )
 
 (def (get-object-json-writer obj) => :procedure
   (get-interface-method-by-index JSONWriter::interface
