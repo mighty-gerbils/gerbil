@@ -8,6 +8,11 @@
   XXX
   )
 
+(defrule (@object obj)
+  (if (interface-instance? obj)
+    (interface-instance-object obj)
+    obj))
+
 (def (get-interface-method-by-name (descriptor : interface-descriptor)
                                    (method     : :symbol)
                                    object)
