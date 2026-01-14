@@ -4,6 +4,7 @@
 (import :std/io
         :std/io/bio/api
         :std/format/io
+        :std/format/string
         :std/text/json/io
         :std/time/io
         :std/misc/alist
@@ -13,9 +14,7 @@
 (export #t)
 
 (def (record->string (record : Record)) => :string
-  (using (writer (open-buffered-writer #f very-small-buffer-size) :- BufferedWriter)
-    (writer.write-record writer)
-    (get-buffer-output-string writer)))
+  (to-string record))
 
 (def (record->json-object (record : Record)) => PureAList
    (wacollectq ts:   record.ts
@@ -24,8 +23,8 @@
                msg:  record.msg
                data: record.data))
 
-(defwriter-ext (write-record writer (record : Record) (wenv : WriteEnv))
-  (let* ((wr (writer.write-time record.ts wenv))
+(defwriter-ext (format-record writer (record : Record) (wenv : WriteEnv))
+  (let* ((wr (writer.format-object record.ts wenv))
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string (log-level->string record.level))))
          (wr (fx+ wr (writer.write-space)))
@@ -33,17 +32,17 @@
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string record.message)))
          (wr (fx+ wr (writer.write-space)))
-         (wr (fx+ wr (writer.write-walist record.data wenv)))
+         (wr (fx+ wr (writer.format-walist record.data wenv)))
          (wr (fx+ wr (writer.write-newline))))
     wr))
 
 (defwriter-ext (write-record-json writer (record : Record) (env : JSONEnv))
-  (writer.write-json (record->json-object record) env))
+  XXX)
 
-(defmethod {write Record}
+(defmethod {format Record}
   (lambda (self writer wenv)
-    (writer.write-record self wenv))
-  interface: ObjectWriter)
+    (writer.format-record self wenv))
+  interface: ObjectFormatter)
 
 (defmethod {write-json Record}
   (lambda (self writer env)

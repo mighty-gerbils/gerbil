@@ -8,7 +8,7 @@
          ./wrapped)
 (export #t)
 
-(defwriter-ext (write-alist writer (wa : :list) (wenv : WriteEnv))
+(defwriter-ext (format-alist writer (wa : :list) (wenv : WriteEnv))
   XXX
   )
 
@@ -16,16 +16,16 @@
   XXX
   )
 
-(defwriter-ext (write-walist writer (wa : ConcreteAList) (wenv : WriteEnv))
-  (writer.write-alist wa.alist wenv))
+(defwriter-ext (format-walist writer (wa : ConcreteAList) (wenv : WriteEnv))
+  (writer.format-alist wa.alist wenv))
 
 (defwriter-ext (write-walist-json writer (wa : ConcreteAList) (env : JSONEnv))
   (writer.write-alist-json wa.alist env))
 
-(defmethod {write ConcreteAList}
+(defmethod {format ConcreteAList}
   (lambda (self writer wenv)
-    (writer.write-walist self wenv))
-  interface: ObjectWriter)
+    (writer.format-walist self wenv))
+  interface: ObjectFormatter)
 
 (defmethod {write-json ConcreteAList}
   (lambda (self writer env)

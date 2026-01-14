@@ -6,11 +6,11 @@
 (export #t)
 
 ;; standard object representation
-(defmethod {write :object}
+(defmethod {format :object}
   (lambda (self writer env)
     XXX
     )
-  interface: ObjectWriter)
+  interface: ObjectFormatter)
 
 (defmethod {scan! :object}
   (lambda (self env path)
