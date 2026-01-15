@@ -77,7 +77,7 @@
             (write-anchor id))
            (env.scan.compress?
             (using ((e     (hash-get env.scan.scanned obj) :- :pair)
-                    (count (cdr e)                         : :fixnum))
+                    (count (cdr e)                         :- :fixnum))
               (if (fx> count 0)
                 (write-anchor id)
                 (write-obj))))
