@@ -4,9 +4,8 @@
 (import :std/error
         :std/interface
         :std/io
-        :std/io/bio
+        :std/io/bio/api
         :std/format/io
-        :std/format/object
         ./env)
 (export #t)
 
@@ -17,6 +16,20 @@
 
 (interface JSONWriter
   (write-json (writer : BufferedWriter) (env : JSONEnv)) => :fixnum)
+
+(defsyntax (defjson-writer stx)
+  (syntax-case stx ()
+    ((_ klass (write-it writer obj env)
+        body ...)
+     (with-syntax ((writer.write-it
+                    (stx-identifier #'write-it #'writer "." #'write-it)))
+       #'(begin
+           (defwriter-ext (write-it writer (obj : klass) (env : JSONEnv))
+             body ...)
+           (defmethod {write-json klass}
+             (lambda (self writer env)
+               (writer.format-it self env))
+             interface: JSONWriter))))))
 
 (defwriter-ext (write-object-json writer obj (env : JSONEnv))
   ;; JSON does not support cyclic data structure encoding so the scanner

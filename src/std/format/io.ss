@@ -8,28 +8,25 @@
         :std/io/bio)
 (export #t)
 
-(defclass ScanEnv
-  ((written       :- HashTable)
-   (scanned       :- HashTable)
-   (cycles        :- HashTable)
-   (next          :- :fixnum)
-   (allow-cycles? :- :boolean))
-  final: #t)
-
-(defclass FormatEnv
-  ((scan      :? ScanEnv)
-   (display?  :  :boolean))
-  final: #t)
-
-(def (default-format-environment) => FormatEnv
-  XXX
-  )
-
 (interface ObjectFormatter
   (format (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
 
 (interface ObjectScanner
   (scan! (env : ScanEnv) (path : :list)) => :void)
+
+(defsyntax (defformatter stx)
+  (syntax-case stx ()
+    ((_ klass (format-it writer obj env)
+        body ...)
+     (with-syntax ((writer.format-it
+                    (stx-identifier #'format-it #'writer "." #'format-it)))
+       #'(begin
+           (defwriter-ext (format-it writer (obj : klass) (env : WriteEnv))
+             body ...)
+           (defmethod {format klass}
+             (lambda (self writer env)
+               (writer.format-it self env))
+             interface: ObjectFormatter))))))
 
 (defwriter-ext (format-object-raw writer obj (env : FormatEnv)) => :fixnum
   (let (method (get-object-formatter obj))
