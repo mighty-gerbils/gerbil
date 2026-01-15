@@ -6,7 +6,7 @@
         ./ioutil)
 (export #t)
 
-;; standard object representation
+;; standard objects
 (defmethod {format :object}
   (lambda (self writer env)
     XXX
@@ -18,16 +18,3 @@
     XXX
     )
   interface: ObjectScanner)
-
-
-(defmethod {format :string}
-  (lambda (self writer env)
-    (writer.format-string self env)))
-
-(defmethod {format :symbol}
-  (lambda (self writer env)
-    (writer.format-symbol self env)))
-
-(defmethod {format :keyword}
-  (lambda (self writer env)
-    (writer.format-keyword self env)))

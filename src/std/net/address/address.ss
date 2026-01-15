@@ -4,15 +4,32 @@
 (import XXX)
 (export #t)
 
-(defstruct Address
+(defstruct NetAddress
   ((bytes  :- :u8vector)
    (string :- :string))
-  transparent: #t)
+  transparent: #t
+  acyclic: #t)
 
-(defstruct (IPAddress Address) ()
-  transparent: #t)
+(defstruct (IPAddress NetAddress) ()
+  transparent: #t
+  acyclic: #t)
 
 (defstruct (IP4Address IPAddress) ()
-  transparent: #t final: #t)
+  transparent: #t
+  final: #t
+  acyclic: #t)
 (defstruct (IP6Address IPAddress) ()
-  transparent: #t final: #t)
+  final: #t
+  transparent: #t
+  acyclic: #t)
+
+(defstruct (DNSAddress NetAddress) ()
+  final: #t
+  transparent: #t
+  acyclic: #t)
+
+(defstruct Address
+  ((net  : NetAddress)
+   (port : :fixnum))
+  transparent: #t
+  acyclic:: #t)

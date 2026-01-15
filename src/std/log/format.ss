@@ -3,13 +3,12 @@
 ;;; log record formatting
 (import :std/io
         :std/io/bio/api
+        :std/format/env
         :std/format/io
         :std/format/ioutil
         :std/format/string
         :std/text/json/io
-        :std/time/format
         :std/misc/alist
-        :std/misc/alist/io
         ./interface
         ./level)
 (export #t)
@@ -36,7 +35,7 @@
          (wr (fx+ wr (writer.write-newline))))
     wr))
 
-(defwriter-ext (format-record writer (record : Record) (env : WriteEnv))
+(defformatter Record (format-record writer record env)
   (let* ((wr (writer.format-object record.ts env))
          (wr (fx+ wr (writer.write-space)))
          (wr (fx+ wr (writer.write-string (log-level->string record.level))))
@@ -49,20 +48,5 @@
          (wr (fx+ wr (writer.write-newline))))
     wr))
 
-(defwriter-ext (write-record-json writer (record : Record) (env : JSONEnv))
+(defjson-writer (write-record-json writer record env)
   XXX)
-
-(defmethod {scan! Record}
-  (lambda (self env)
-    (scan-object self.data))
-  interface: ObjectScanner)
-
-(defmethod {format Record}
-  (lambda (self writer env)
-    (writer.format-record self env))
-  interface: ObjectFormatter)
-
-(defmethod {write-json Record}
-  (lambda (self writer env)
-    (writer.write-record-json self env))
-  interface: JSONWriter)
