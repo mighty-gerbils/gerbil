@@ -12,7 +12,8 @@
    (source : :symbol)
    (msg    : :string)
    (data   : PureAList))
-  final: #t)
+  final: #t
+  acyclic: #t)
 
 ;; logger interface
 (interface Logger

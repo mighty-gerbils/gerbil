@@ -393,7 +393,7 @@ package: gerbil/core
     (def (typedef-body? stx)
       (def (body-opt? key)
         (memq (stx-e key)
-              '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
+              '(id: struct: name: constructor: transparent: final: print: equal: metaclass: acyclic:)))
       (stx-plist? stx body-opt?))
 
     (def (generate-defclass stx id super-ref slots body)
@@ -500,7 +500,11 @@ package: gerbil/core
                                 => (lambda (equal)
                                      (let (equal (if (eq? equal #t) slots equal))
                                        (cons [equal: . equal] properties))))
-                               (else properties))))
+                               (else properties)))
+                             (properties
+                              (if (stx-e (stx-getq acyclic: body))
+                                [[acyclic: . #t]]
+                                [])))
                         properties))
                      ((values type-properties)
                       (if (null? properties)

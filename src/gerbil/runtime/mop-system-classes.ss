@@ -59,54 +59,54 @@ namespace: #f
               return::t))
 
 ;; usual immediates
-(defsystem-class immediate::t immediate ())
-(defsystem-class char::t char (immediate::t))
-(defsystem-class boolean::t boolean (immediate::t))
+(defsystem-class immediate::t immediate () ((acyclic: . #t)))
+(defsystem-class char::t char (immediate::t) ((acyclic: . #t)))
+(defsystem-class boolean::t boolean (immediate::t) ((acyclic: . #t)))
 
-(defsystem-class atom::t atom (immediate::t))
-(defsystem-class void::t void (atom::t))
-(defsystem-class eof::t eof (atom::t))
-(defsystem-class true::t true (boolean::t atom::t))
-(defsystem-class false::t false (boolean::t atom::t))
+(defsystem-class atom::t atom (immediate::t) ((acyclic: . #t)))
+(defsystem-class void::t void (atom::t) ((acyclic: . #t)))
+(defsystem-class eof::t eof (atom::t) ((acyclic: . #t)))
+(defsystem-class true::t true (boolean::t atom::t) ((acyclic: . #t)))
+(defsystem-class false::t false (boolean::t atom::t) ((acyclic: . #t)))
 
 ;; special values
-(defsystem-class special::t special (atom::t))
+(defsystem-class special::t special (atom::t) ((acyclic: . #t)))
 
 ;; numbers
-(defsystem-class number::t number ())
-(defsystem-class real::t real (number::t))
-(defsystem-class integer::t integer (real::t))
-(defsystem-class fixnum::t fixnum (integer::t immediate::t))
-(defsystem-class bignum::t bignum (integer::t))
-(defsystem-class ratnum::t ratnum (real::t))
-(defsystem-class flonum::t flonum (real::t))
-(defsystem-class cpxnum::t cpxnum (number::t))
+(defsystem-class number::t number () ((acyclic: . #t)))
+(defsystem-class real::t real (number::t) ((acyclic: . #t)))
+(defsystem-class integer::t integer (real::t) ((acyclic: . #t)))
+(defsystem-class fixnum::t fixnum (integer::t immediate::t) ((acyclic: . #t)))
+(defsystem-class bignum::t bignum (integer::t) ((acyclic: . #t)))
+(defsystem-class ratnum::t ratnum (real::t) ((acyclic: . #t)))
+(defsystem-class flonum::t flonum (real::t) ((acyclic: . #t)))
+(defsystem-class cpxnum::t cpxnum (number::t) ((acyclic: . #t)))
 
 ;; symbolic
-(defsystem-class symbolic::t symbolic ())
-(defsystem-class symbol::t symbol (symbolic::t))
-(defsystem-class keyword::t keyword (symbolic::t))
+(defsystem-class symbolic::t symbolic () ((acyclic: . #t)))
+(defsystem-class symbol::t symbol (symbolic::t) ((acyclic: . #t)))
+(defsystem-class keyword::t keyword (symbolic::t) ((acyclic: . #t)))
 
 ;; lists
 (defsystem-class list::t list ())
 (defsystem-class pair::t pair (list::t))
-(defsystem-class null::t null (list::t atom::t))
+(defsystem-class null::t null (list::t atom::t) ((acyclic: . #t)))
 
 ;; sequences
 (defsystem-class sequence::t sequence ())
 (defsystem-class vector::t vector (sequence::t))
-(defsystem-class string::t string (sequence::t))
-(defsystem-class hvector::t hvector (sequence::t))
-(defsystem-class u8vector::t u8vector (hvector::t))
-(defsystem-class s8vector::t s8vector (hvector::t))
-(defsystem-class u16vector::t u16vector (hvector::t))
-(defsystem-class s16vector::t s16vector (hvector::t))
-(defsystem-class u32vector::t u32vector (hvector::t))
-(defsystem-class s32vector::t s32vector (hvector::t))
-(defsystem-class u64vector::t u64vector (hvector::t))
-(defsystem-class s64vector::t s64vector (hvector::t))
-(defsystem-class f32vector::t f32vector (hvector::t))
-(defsystem-class f64vector::t f64vector (hvector::t))
+(defsystem-class string::t string (sequence::t) ((acyclic: . #t)))
+(defsystem-class hvector::t hvector (sequence::t) ((acyclic: . #t)))
+(defsystem-class u8vector::t u8vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class s8vector::t s8vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class u16vector::t u16vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class s16vector::t s16vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class u32vector::t u32vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class s32vector::t s32vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class u64vector::t u64vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class s64vector::t s64vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class f32vector::t f32vector (hvector::t) ((acyclic: . #t)))
+(defsystem-class f64vector::t f64vector (hvector::t) ((acyclic: . #t)))
 
 ;; special
 (defsystem-class values::t values ())
@@ -115,7 +115,7 @@ namespace: #f
 (defsystem-class continuation::t continuation ())
 (defsystem-class promise::t promise ())
 (defsystem-class weak::t weak ())
-(defsystem-class foreign::t foreign ())
+(defsystem-class foreign::t foreign () ((acyclic: . #t)))
 
 ;; procedures
 (defsystem-class procedure::t procedure ())
@@ -123,7 +123,7 @@ namespace: #f
 
 ;; some predefined shadow classes
 ;; time objects
-(defshadow-class time::t () (macro-type-time))
+(defshadow-class time::t () (macro-type-time) ((acyclic: . #t)))
 ;; thread related objects
 (defshadow-class thread::t () (macro-type-thread))
 (defshadow-class thread-group::t () (macro-type-tgroup))
@@ -150,9 +150,9 @@ namespace: #f
 (defshadow-class readtable::t () (macro-type-readtable))
 (defshadow-class processor::t () (macro-type-processor))
 (defshadow-class vm::t () (macro-type-vm))
-(defshadow-class file-info::t () (macro-type-file-info))
-(defshadow-class socket-info::t () (macro-type-socket-info))
-(defshadow-class address-info::t () (macro-type-address-info))
+(defshadow-class file-info::t () (macro-type-file-info) ((acyclic: . #t)))
+(defshadow-class socket-info::t () (macro-type-socket-info) ((acyclic: . #t)))
+(defshadow-class address-info::t () (macro-type-address-info) ((acyclic: . #t)))
 
 (defsyntax (defpred stx)
   (syntax-case stx (:-)

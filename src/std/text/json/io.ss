@@ -5,6 +5,8 @@
         :std/interface
         :std/io
         :std/io/bio
+        :std/format/io
+        :std/format/object
         ./env)
 (export #t)
 
@@ -16,13 +18,13 @@
 (interface JSONWriter
   (write-json (writer : BufferedWriter) (env : JSONEnv)) => :fixnum)
 
-(defwriter-ext (write-object-json-raw writer obj (env : JSONEnv))
+(defwriter-ext (write-object-json writer obj (env : JSONEnv))
+  ;; JSON does not support cyclic data structure encoding so the scanner
+  ;; (if present) will simply verify that the object is acyclic
+  (when env.scan
+    (scan-object! obj senv))
   (let (method (get-object-writer obj))
     (method (@object obj) writer env)))
-
-(defwriter-ext (write-object-json writer obj (env : JSONEnv))
-  XXX
-  )
 
 (def (get-object-json-writer obj) => :procedure
   (get-interface-method-by-index JSONWriter::interface

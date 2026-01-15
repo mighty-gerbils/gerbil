@@ -2381,7 +2381,7 @@ package: gerbil/core
     (def (check-typedef-body! body)
       (def (body-opt? key)
         (memq (stx-e key)
-              '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
+              '(id: struct: name: constructor: transparent: final: print: equal: metaclass: acyclic:)))
       (unless (stx-plist? body body-opt?)
         (raise-syntax-error #f "invalid defclass body" stx body)))
 
@@ -2868,7 +2868,11 @@ package: gerbil/core
                                   => (lambda (equal)
                                        (let (equal (if (eq? equal #t) #'(slot ...) equal))
                                          (cons [equal: . equal] properties))))
-                                 (else properties))))
+                                 (else properties)))
+                               (properties
+                                (if (stx-e (stx-getq acyclic: body))
+                                  [[acyclic: . #t]]
+                                  [])))
                           properties))
                        ((values type-properties)
                         (if (null? properties)

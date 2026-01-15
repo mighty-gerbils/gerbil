@@ -61,15 +61,18 @@
 (defstruct (WAList PureAList) ()
   name: AList
   final: #t
-  transparent: #t)
+  transparent: #t
+  acyclic: #t)
 (defstruct (WAListq PureAList) ()
   name: AList
   final: #t
-  transparent: #t)
+  transparent: #t
+  acyclic: #t)
 (defstruct (WAListv PureAList) ()
   name: AList
   final: #t
-  transparent: #t)
+  transparent: #t
+  acyclic: #t)
 
 (defstruct (MutWAList MutAList) ()
   name: AList

@@ -52,6 +52,7 @@ namespace: #f
 (def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
 (def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
 (def class-type-flag-system 8192) ;; it is a system class, non instantiable
+(def class-type-flag-acyclic 16384) ;; instances are guaranteed to be acyclic
 
 ;; the root class
 (def t::t
@@ -182,6 +183,8 @@ namespace: #f
   (fxflag-set? (##type-flags klass) class-type-flag-metaclass))
 (def (class-type-system? (klass : :class)) => :boolean
   (fxflag-set? (##type-flags klass) class-type-flag-system))
+(def (class-type-acyclic? (klass : :class)) => :boolean
+  (fxflag-set? (##type-flags klass) class-type-flag-acyclic))
 
 ;; Compute the flags and field-info and create a class type
 (def (make-class-type-descriptor type-id type-name type-super
@@ -228,13 +231,15 @@ namespace: #f
          (opaque?
           (and (not (or transparent? (agetq equal: properties)))
                (or (not type-super) (type-opaque? type-super))))
+         (acyclic? (agetq acyclic: properties))
          (type-flags
           (##fxior type-flag-id type-flag-concrete
                    (if final? 0 type-flag-extensible)
                    (if opaque? type-flag-opaque 0)
                    (if struct? class-type-flag-struct 0)
                    (if metaclass class-type-flag-metaclass 0)
-                   (if system? class-type-flag-system 0)))
+                   (if system? class-type-flag-system 0)
+                   (if acyclic? class-type-flag-acyclic 0)))
          (precedence-list
           (cond
            ((memq t::t precedence-list)
@@ -1142,7 +1147,7 @@ namespace: #f
 (def __shadow-classes-mx
   (__make-inline-lock))
 
-(def (__shadow-class type)
+(def (__shadow-class type (properties []))
   (def (shadow-type-id type)
     (make-symbol (##type-name type) "::t"))
   (def (shadow-type-name type)
@@ -1163,7 +1168,8 @@ namespace: #f
               (if (type-extensible? type)
                 []
                 [[final: . #t]])
-              ...]                      ; properties
+              ...
+              properties ...]           ; properties
              #f)))                      ; constructor
       (symbolic-table-set! __shadow-classes (##type-id type) klass)
       klass))
@@ -1351,19 +1357,23 @@ END-C
     (error "unknown system class" id))))
 
 (defrules defsystem-class ()
-  ((_ type id (super ...))
+  ((_ type id (super ...) properties)
    (def type
      (begin-annotation (@mop.system id (super ...))
-       (__make-system-class 'id [super ...])))))
+       (__make-system-class 'id [super ...] 'properties))))
+  ((_ type id (super ...))
+   (defsystem-class type-id (super ...) ())))
 
-(def (__make-system-class id super)
-  (let (klass (make-class-type id id super [] '((system: . #t)) #f))
+(def (__make-system-class id super properties)
+  (let (klass (make-class-type id id super [] `((system: . #t) ,@properties) #f))
     (symbolic-table-set! __system-classes id klass)
     klass))
 
 ;; and shadow class predefinitions
 (defrules defshadow-class ()
-  ((_ type (super ...) type-expr)
+  ((_ type (super ...) type-expr properties)
    (def type
      (begin-annotation (@mop.system type (super ...))
-       (__shadow-class type-expr)))))
+       (__shadow-class type-expr 'properties))))
+  ((_ type (super ...) type-expr)
+   (defshadow-class type (super ...) type-expr ())))

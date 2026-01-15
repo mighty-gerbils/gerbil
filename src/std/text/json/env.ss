@@ -17,23 +17,35 @@
   (make-parameter #f))
 
 ;; Should object keys be sorted when writing json?
-;; Checking for duplicate keys only reliably works when this is true.
 (def write-json-sort-keys?
   (make-parameter #f))
 
-(defclass JSONEnv
-  ((scan                        :? ScanEnv)
-   (read-json-key-as-symbol?    :  :boolean)
-   (read-json-object-as-walist? :  :boolean)
-   (read-json-array-as-vector?  :  :boolean)
-   (write-json-sort-keys?       :  :boolean))
+(defclass JSONReadEnv
+  ((key-as-symbol    :-  :boolean := #t)
+   (object-as-walist :-  :boolean := #t)
+   (array-as-vector  :-  :boolean := #f))
   final: #t
-  constructor: :init!)
+  transparent: #t
+  acyclic: #t)
 
-(defmethod {:init! JSONEnv}
-  (lambda (self (senv :? ScanEnv := #f))
-    (set! self.scan senv)
-    (set! self.read-json-key-as-symbol?    (read-json-key-as-symbol?))
-    (set! self.read-json-object-as-walist? (read-json-object-as-walist?))
-    (set! self.read-json-array-as-vector?  (read-json-array-as-vector?))
-    (set! self.write-json-sort-keys?       (write-json-sort-keys?))))
+(defclass JSONWriteEnv
+  ((sort-keys       :-  :boolean := #f))
+  final: #t
+  transparent: #t
+  acyclic: #t)
+
+(defclass JSONEnv
+  ((scan  :- ScanEnv)
+   (read  :- JSONInputParams)
+   (write :- JSONOuputParams))
+  final: #t
+  print: (input output)
+  acyclic: #t)
+
+(def (JSON-read-env) => JSONEnv
+  XXX
+  )
+
+(def (JSON-output-env (scan? #f)) => JSONEnv
+  XXX
+  )
