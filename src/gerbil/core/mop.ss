@@ -809,8 +809,8 @@ package: gerbil/core
   (defsystem-class-info :bignum bignum::t (:integer :subtyped) ##bignum?)
   (defsystem-class-info :ratnum ratnum::t (:real :subgtyped) ##ratnum?)
   (defsystem-class-info :flonum flonum::t (:real) flonum?)
-  (defsystem-class-info :immediate-flonum immediate-flonum::t (:flonum :immediate) immediate-flonum?)
-  (defsystem-class-info :subtyped-flonum immediate-flonum::t (:flonum :subtyped) subtyped-flonum?)
+  (defsystem-class-info :stflonum stflonum::t (:flonum :immediate) stflonum?)
+  (defsystem-class-info :haflonum immediate-flonum::t (:flonum :subtyped) haflonum?)
   (defsystem-class-info :cpxnum cpxnum::t (:number :subtyped) ##cpxnum?)
 
   (defsystem-class-info :symbolic symbolic::t (:subtyped) symbolic?)

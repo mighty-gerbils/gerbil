@@ -1225,18 +1225,18 @@ END-C
             (case flonum-self-tagging-tags
               ((0)
                (if (##fx= fixnum-tag-bits 2)
-                 '#(fixnum subtyped special vector fixnum pair undefined flonum)
-                 '#(fixnum subtyped undefined vector special pair undefined flonum)))
+                 '#(fixnum subtyped special vector fixnum pair undefined haflonum)
+                 '#(fixnum subtyped undefined vector special pair undefined haflonum)))
               ((1)
                (if (##fx= fixnum-tag-bits 2)
-                 '#(fixnum subtyped special vector fixnum pair flonum flonum)
-                 '#(fixnum subtyped undefined vector special pair flonum flonum)))
+                 '#(fixnum subtyped special vector fixnum pair stflonum haflonum)
+                 '#(fixnum subtyped undefined vector special pair stflonum haflonum)))
               ((2)
-               '#(fixnum subtyped flonum flonum special pair flonum undefined))
+              '#(fixnum subtyped stflonum haflonum special pair stflonum undefined))
               ((3)
-               '#(fixnum subtyped flonum flonum special pair flonum flonum))
+               '#(fixnum subtyped haflonum immedate-flonum special pair stflonum stflonum))
               ((4)
-               '#(fixnum subtyped flonum flonum special pair flonum flonum))
+               '#(fixnum subtyped stflonum stflonum special pair stflonum stflonum))
               (else
                (error "unexpected flonum self tagging tags" flonum-self-tagging-tags)))))
          (else
@@ -1340,7 +1340,7 @@ END-C
      ((macro-subtype-s64vector)    s64vector)
      ((macro-subtype-u64vector)    u64vector)
      ((macro-subtype-f64vector)    f64vector)
-     ((macro-subtype-flonum)       flonum)
+     ((macro-subtype-flonum)       haflonum)
      ((macro-subtype-bignum)       bignum)))
   (else
    ;; TODO js and other target support

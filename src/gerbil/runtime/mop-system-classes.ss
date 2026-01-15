@@ -85,8 +85,8 @@ namespace: #f
 (defsystem-class bignum::t bignum (integer::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class ratnum::t ratnum (real::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class flonum::t flonum (real::t) ((acyclic: . #t)))
-(defsystem-class immediate-flonum::t (flonum::t immediate::t) ((acyclic: . #t)))
-(defsystem-class subtyped-flonum::t (flonum::t subtyped::t) ((acyclic: . #t)))
+(defsystem-class stflonum::t (flonum::t immediate::t) ((acyclic: . #t)))
+(defsystem-class haflonum::t (flonum::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class cpxnum::t cpxnum (number::t subtyped::t) ((acyclic: . #t)))
 
 ;; symbolic
@@ -193,6 +193,12 @@ namespace: #f
        (not (boolean? obj))
        (not (void? obj))
        (not (eof-object? obj))))
+
+(defpred (stflonum? obj) :- :stflonum
+  (and (flonum? obj) (not (##mem-allocated? obj))))
+
+(defpred (haflonum? obj) :- :haflonum
+  (and (flonum? obj) (##mem-allocated? obj)))
 
 (defpred (sequence? obj) :- :sequence
   (or (vector? obj)
