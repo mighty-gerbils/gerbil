@@ -202,8 +202,7 @@ namespace: #f
 
 (def (immediate? obj)
   => :boolean
-  (let (t (:- (##type obj) :fixnum))
-    (fxzero? (fxand t #b1))))
+  (not (##mem-allocated? obj)))
 
 (def (nonnegative-fixnum? obj)
   => :boolean
