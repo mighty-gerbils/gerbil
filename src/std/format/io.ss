@@ -61,7 +61,7 @@
                     (id    (car e) :- :fixnum)
                     (count (cdr e) :- :fixnum))
               (hash-put! env.scan.written obj id)
-              (if (fx> count 0)
+              (if (fx> count 1)
                 (write-anchor id)
                 (write-obj)))
             (using (id :- :fixnum)
@@ -78,7 +78,7 @@
            (env.scan.compress?
             (using ((e     (hash-get env.scan.scanned obj) :- :pair)
                     (count (cdr e)                         :- :fixnum))
-              (if (fx> count 0)
+              (if (fx> count 1)
                 (write-anchor id)
                 (write-obj))))
            (else
