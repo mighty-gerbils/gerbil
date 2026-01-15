@@ -4,15 +4,14 @@
 (import :gerbil/runtime/mop
         :std/error
         :std/interface
-        :std/io
-        :std/io/bio)
+        :std/io/interface
+        :std/io/bio/api
+        :std/serde/scan
+        ./ioutil)
 (export #t)
 
 (interface ObjectFormatter
   (format (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
-
-(interface ObjectScanner
-  (scan! (env : ScanEnv) (path : :list)) => :void)
 
 (defsyntax (defformatter stx)
   (syntax-case stx ()
@@ -28,78 +27,78 @@
                (writer.format-it self env))
              interface: ObjectFormatter))))))
 
-(defwriter-ext (format-object-raw writer obj (env : FormatEnv)) => :fixnum
+(defwriter-ext (format-object-raw writer obj (env : FormatEnv))
   (let (method (get-object-formatter obj))
     (:- (method (@object obj) writer env) :fixnum)))
 
-(defwriter-ext (format-object writer obj (env : FormatEnv)) => :fixnum
-  (defrule (write-it)
+(defwriter-ext (format-object writer obj (env : FormatEnv))
+  (defrule (write-obj)
     (writer.format-object-raw obj env))
+  (defrule (write-anchor id)
+    (writer.format-anchor obj id env))
+  (defrule (write-ref id)
+    (writer.format-reference id env))
+  (defrule (write-cycle?)
+    (and env.scan.allow-cycles?
+         (hash-get env.scan.cycles obj)))
 
-  (def (write-it/cycles (senv :- ScanEnv)) => :fixnum
-    (cond
-     ((hash-get senv.written obj)
-      (write-it-again/cycles senv))
-     (else
-      (let (id (scan-object! obj senv))
-        (hash-put! env.written obj id)
-        (cond
-         ((hash-get senv.cycles obj)
-          => (lambda ((ref :- :fixnum)) => :fixnum
-                (writer.format-anchor obj ref env)))
-         (else
-          (write-it)))))))
+  (cond
+   ((not env.scan)
+    (write-obj))
+   ((hash-get env.scan.written obj)
+    => (lambda ((id :- :fixnum)) => :fixnum
+          (if (or env.scan.compress? (write-cycle?))
+            (write-ref id)
+            (write-obj))))
+   ((write-cycle?)
+    => (lambda ((id :- :fixunum)) => :fixnum
+          (hash-put! env.scan.written obj id)
+          (write-anchor id)))
+   ((hash-get env.scan.scanned obj)
+    => (lambda (e) => :fixnum
+          (if env.scan.compress?
+            (using ((e             :- :pair)
+                    (id    (car e) :- :fixnum)
+                    (count (cdr e) :- :fixnum))
+              (hash-put! env.scan.written obj id)
+              (if (fx> count 0)
+                (write-anchor id)
+                (write-obj)))
+            (using (id :- :fixnum)
+              (hash-put! env.scan.written obj id)
+              (write-obj)))))
+   (else
+    (let (id (scan-object! obj senv))
+      (if (fx> id 0)
+        (begin
+          (hash-put! env.scan.written obj id)
+          (cond
+           ((write-cycle?)
+            (write-anchor id))
+           (env.scan.compress?
+            (using ((e     (hash-get env.scan.scanned obj) :- :pair)
+                    (count (cdr e)                         : :fixnum))
+              (if (fx> count 0)
+                (write-anchor id)
+                (write-obj))))
+           (else
+            (write-obj))))
+        (write-obj))))))
 
-  (def (write-it-again/cycles (senv :- ScanEnv)) => :fixnum
-    (cond
-     ((hash-get senv.cycles)
-      => (lambda ((ref :- :fixnum)) => :fixnum
-            (writer.format-reference ref env)))
-     (else
-      (write-it))))
+(defwriter-ext (format-anchor writer obj (id : :fixnum) (env : FormatEnv))
+  (let* ((wr (writer.write-sharp))
+         (wr (fx+ wr (writer.write-fixnum-decimal id)))
+         (wr (fx+ wr (writer.write-equal)))
+         (wr (fx+ wr (writer.format-object-wraw obj env))))
+    wr))
 
-  (if env.scan
-    (if (acyclic-object? obj)
-      (write-it)
-      (write-it/cycles env.scan))
-    (write-it)))
-
-(def (scan-object! obj (env : ScanEnv) (path : :list := [])) => :fixnum
-  (if (acyclic-object? obj)
-    -1
-    (cond
-     ((hash-get env.seen)
-      => (lambda ((id :- :fixnum)) => :fixnum
-            (when (memq obj path)
-              ;; it's a cycle
-              (unless env.allow-cycles?
-                (raise-contract-violation-error scan-object! "acyclic object" object: obj))
-              (hash-put! env.cycles obj id))
-            id))
-     (else
-      (let (id env.next)
-        (set! env.next (fx1+ id))
-        (hash-put! env.seen obj id)
-        (let (method (get-object-scanner obj))
-          (method (@object obj) env (cons obj path)))
-        id)))))
-
-(def (acyclic-object? obj)
-  (let (klass (class-of obj))
-    (class-type-acyclic? klass)))
-
-(defwriter-ext (format-anchor writer obj (ref : :fixnum) (env : FormatEnv))
-  XXX)
-
-(defwriter-ext (format-reference write (ref : :fixnum) (env : FormatEnv))
-  XXX)
+(defwriter-ext (format-reference write (id : :fixnum) (env : FormatEnv))
+  (let* ((wr (writer.write-sharp))
+         (wr (fx+ wr (writer.write-fixnum-decimal id)))
+         (wr (fx+ wr (writer.write-sharp))))
+    wr))
 
 (def (get-object-formatter obj) => :procedure
   (get-interface-method-by-index ObjectWriter::interface
                                  obj
                                  (@interface-method-index ObjectWriter write)))
-
-(def (get-object-scanner obj) => :procedure
-  (get-interface-method-by-index ObjectScanner::interface
-                                 obj
-                                 (@interface-method-index ObjectScanner scan)))

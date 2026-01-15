@@ -92,7 +92,7 @@
       ([chunk] (:- chunk :u8vector))
       (else (u8vector-concatenate chunks)))))
 
-(def (get-buffer-output-string wr)
+(def (get-buffer-output-string-utf8 wr)
   => :string
   XXX
   )
