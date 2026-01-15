@@ -58,8 +58,13 @@ namespace: #f
               procedure::t
               return::t))
 
+;; root distinction from standard objects
+(defsystem-class builtin::t builtin ())
+(defsystem-class subtyped::t subtyped (builtin::t))
+(defsystem-class structure::t structure (subtyped::t))
+
 ;; usual immediates
-(defsystem-class immediate::t immediate () ((acyclic: . #t)))
+(defsystem-class immediate::t immediate (builtin::t) ((acyclic: . #t)))
 (defsystem-class char::t char (immediate::t) ((acyclic: . #t)))
 (defsystem-class boolean::t boolean (immediate::t) ((acyclic: . #t)))
 
@@ -73,27 +78,29 @@ namespace: #f
 (defsystem-class special::t special (atom::t) ((acyclic: . #t)))
 
 ;; numbers
-(defsystem-class number::t number () ((acyclic: . #t)))
+(defsystem-class number::t number (builtin::t) ((acyclic: . #t)))
 (defsystem-class real::t real (number::t) ((acyclic: . #t)))
 (defsystem-class integer::t integer (real::t) ((acyclic: . #t)))
 (defsystem-class fixnum::t fixnum (integer::t immediate::t) ((acyclic: . #t)))
-(defsystem-class bignum::t bignum (integer::t) ((acyclic: . #t)))
-(defsystem-class ratnum::t ratnum (real::t) ((acyclic: . #t)))
+(defsystem-class bignum::t bignum (integer::t subtyped::t) ((acyclic: . #t)))
+(defsystem-class ratnum::t ratnum (real::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class flonum::t flonum (real::t) ((acyclic: . #t)))
-(defsystem-class cpxnum::t cpxnum (number::t) ((acyclic: . #t)))
+(defsystem-class immediate-flonum::t (flonum::t immediate::t) ((acyclic: . #t)))
+(defsystem-class subtyped-flonum::t (flonum::t subtyped::t) ((acyclic: . #t)))
+(defsystem-class cpxnum::t cpxnum (number::t subtyped::t) ((acyclic: . #t)))
 
 ;; symbolic
-(defsystem-class symbolic::t symbolic () ((acyclic: . #t)))
+(defsystem-class symbolic::t symbolic (subtyped::t) ((acyclic: . #t)))
 (defsystem-class symbol::t symbol (symbolic::t) ((acyclic: . #t)))
 (defsystem-class keyword::t keyword (symbolic::t) ((acyclic: . #t)))
 
 ;; lists
-(defsystem-class list::t list ())
-(defsystem-class pair::t pair (list::t))
+(defsystem-class list::t list (builtin::t))
+(defsystem-class pair::t pair (list::t) subtyped::t)
 (defsystem-class null::t null (list::t atom::t) ((acyclic: . #t)))
 
 ;; sequences
-(defsystem-class sequence::t sequence ())
+(defsystem-class sequence::t sequence (subtyped::t))
 (defsystem-class vector::t vector (sequence::t))
 (defsystem-class string::t string (sequence::t) ((acyclic: . #t)))
 (defsystem-class hvector::t hvector (sequence::t) ((acyclic: . #t)))
@@ -109,28 +116,28 @@ namespace: #f
 (defsystem-class f64vector::t f64vector (hvector::t) ((acyclic: . #t)))
 
 ;; special
-(defsystem-class values::t values ())
-(defsystem-class box::t box ())
-(defsystem-class frame::t frame ())
-(defsystem-class continuation::t continuation ())
-(defsystem-class promise::t promise ())
-(defsystem-class weak::t weak ())
-(defsystem-class foreign::t foreign () ((acyclic: . #t)))
+(defsystem-class values::t values (subtyped::t))
+(defsystem-class box::t box (subtyped::t))
+(defsystem-class frame::t frame (subtyped::t))
+(defsystem-class continuation::t continuation (subtyped::t))
+(defsystem-class promise::t promise (subtyped::t))
+(defsystem-class weak::t weak (subtyped::t))
+(defsystem-class foreign::t foreign (subtyped::t) ((acyclic: . #t)))
 
 ;; procedures
-(defsystem-class procedure::t procedure ())
-(defsystem-class return::t return ())
+(defsystem-class procedure::t procedure (subtyped::t))
+(defsystem-class return::t return (subtyped::t))
 
 ;; some predefined shadow classes
 ;; time objects
-(defshadow-class time::t () (macro-type-time) ((acyclic: . #t)))
+(defshadow-class time::t (structure::t) (macro-type-time) ((acyclic: . #t)))
 ;; thread related objects
-(defshadow-class thread::t () (macro-type-thread))
-(defshadow-class thread-group::t () (macro-type-tgroup))
-(defshadow-class mutex::t () (macro-type-mutex))
-(defshadow-class condvar::t () (macro-type-condvar))
+(defshadow-class thread::t (structure::t) (macro-type-thread))
+(defshadow-class thread-group::t (structure::t) (macro-type-tgroup))
+(defshadow-class mutex::t (structure::t) (macro-type-mutex))
+(defshadow-class condvar::t (structure::t) (macro-type-condvar))
 ;; port hierarchy
-(defshadow-class port::t () (macro-type-port))
+(defshadow-class port::t (structure::t) (macro-type-port))
 (defshadow-class object-port::t (port::t) (macro-type-object-port))
 (defshadow-class character-port::t (object-port::t) (macro-type-character-port))
 (defshadow-class byte-port::t (character-port::t) (macro-type-byte-port))
@@ -144,15 +151,15 @@ namespace: #f
 (defshadow-class directory-port::t (object-port::t) (macro-type-directory-port))
 (defshadow-class event-queue-port::t (object-port::t) (macro-type-event-queue-port))
 ;; etc
-(defshadow-class table::t () (macro-type-table))
-(defshadow-class readenv::t () (macro-type-readenv))
-(defshadow-class writeenv::t () (macro-type-writeenv))
-(defshadow-class readtable::t () (macro-type-readtable))
-(defshadow-class processor::t () (macro-type-processor))
-(defshadow-class vm::t () (macro-type-vm))
-(defshadow-class file-info::t () (macro-type-file-info) ((acyclic: . #t)))
-(defshadow-class socket-info::t () (macro-type-socket-info) ((acyclic: . #t)))
-(defshadow-class address-info::t () (macro-type-address-info) ((acyclic: . #t)))
+(defshadow-class table::t (structure::t) (macro-type-table))
+(defshadow-class readenv::t (structure::t) (macro-type-readenv))
+(defshadow-class writeenv::t (structure::t) (macro-type-writeenv))
+(defshadow-class readtable::t (structure::t) (macro-type-readtable))
+(defshadow-class processor::t (structure::t) (macro-type-processor))
+(defshadow-class vm::t (structure::t) (macro-type-vm))
+(defshadow-class file-info::t (structure::t) (macro-type-file-info) ((acyclic: . #t)))
+(defshadow-class socket-info::t (structure::t) (macro-type-socket-info) ((acyclic: . #t)))
+(defshadow-class address-info::t (structure::t) (macro-type-address-info) ((acyclic: . #t)))
 
 (defsyntax (defpred stx)
   (syntax-case stx (:-)
@@ -163,6 +170,17 @@ namespace: #f
              (lambda (obj) body ...)))))))
 
 ;; some utilities for the prelude part (meta-type definitions)
+(defpred (builtin? obj) :- :builtin
+  (not (object? obj)))
+
+(defpred (subtyped? obj) :- :subtyped
+  (and (##subtyped? obj)
+       (not (object? obj))))
+
+(defpred (structure? obj) :- :structure
+  (and (##structure? obj)
+       (not (class-type? (##structure-type obj)))))
+
 (defpred (atom? obj) :- :atom
   (and (immediate? obj)
        (not (char? obj))
@@ -181,7 +199,7 @@ namespace: #f
       (string? obj)
       (hvector? obj)))
 
-(defpred (hvector? obj) :- :sequence
+(defpred (hvector? obj) :- :hvector
   (or (u8vector? obj)
       (s8vector? obj)
       (u16vector? obj)
