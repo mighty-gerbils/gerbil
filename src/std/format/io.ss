@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; stdio writing
-(import :std/error
+(import :gerbil/runtime/mop
+        :std/error
         :std/interface
         :std/io
         :std/io/bio)
@@ -15,10 +16,14 @@
    (allow-cycles? :- :boolean))
   final: #t)
 
-(defstruct FormatEnv
+(defclass FormatEnv
   ((scan      :? ScanEnv)
    (display?  :  :boolean))
-  XXX)
+  final: #t)
+
+(def (default-format-environment) => FormatEnv
+  XXX
+  )
 
 (interface ObjectFormatter
   (format (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
@@ -57,26 +62,34 @@
       (write-it))))
 
   (if env.scan
-    (write-it/cycles env.scan)
+    (if (acyclic-object? obj)
+      (write-it)
+      (write-it/cycles env.scan))
     (write-it)))
 
 (def (scan-object! obj (env : ScanEnv) (path : :list := [])) => :fixnum
-  (cond
-   ((hash-get env.seen)
-    => (lambda ((id :- :fixnum)) => :fixnum
-         (when (memq obj path)
-           ;; it's a cycle
-           (unless env.allow-cycles?
-             (raise-contract-violation-error scan-object! "acyclic object" object: obj))
-           (hash-put! env.cycles obj id))
-         id))
-   (else
-    (let (id env.next)
-      (set! env.next (fx1+ id))
-      (hash-put! env.seen obj id)
-      (let (method (get-object-scanner obj))
-        (method (@object obj) env (cons obj path)))
-      id))))
+  (if (acyclic-object? obj)
+    -1
+    (cond
+     ((hash-get env.seen)
+      => (lambda ((id :- :fixnum)) => :fixnum
+            (when (memq obj path)
+              ;; it's a cycle
+              (unless env.allow-cycles?
+                (raise-contract-violation-error scan-object! "acyclic object" object: obj))
+              (hash-put! env.cycles obj id))
+            id))
+     (else
+      (let (id env.next)
+        (set! env.next (fx1+ id))
+        (hash-put! env.seen obj id)
+        (let (method (get-object-scanner obj))
+          (method (@object obj) env (cons obj path)))
+        id)))))
+
+(def (acyclic-object? obj)
+  (let (klass (class-of obj))
+    (class-type-acyclic? klass)))
 
 (defwriter-ext (format-anchor writer obj (ref : :fixnum) (env : FormatEnv))
   XXX)
@@ -93,7 +106,3 @@
   (get-interface-method-by-index ObjectScanner::interface
                                  obj
                                  (@interface-method-index ObjectScanner scan)))
-
-(def (default-format-environment) => FormatEnv
-  XXX
-  )

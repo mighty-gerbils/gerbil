@@ -6,20 +6,22 @@
         :std/time
         :std/misc/queue
         ./interface
-        ./proto)
+        ./proto
+        ./format
+        ./compress)
 (export #t)
 
 (defclass LogRotateOpt
-  ((dir      : :string)    ; log directory
-   (file     : :string)    ; log file name
-   (size     : :integer)   ; log file size rotation trigger
-   (backlog  : :integer)   ; aggregate backlog size
-   (flush    : :flonum)    ; log flush interval
-   (compress : :procedure) ; file compressor function lambda (path) => path
-   (write    : :procedure) ; record write procedure: lambda (BufferedWriter Record) => :fixnum
-   (accept   : :procedure) ; record filter procedure: lambda (Record) => :boolean
+  ((dir      : :string    := (log-directory)) ; log directory
+   (file     : :string    := "gerbil.log")    ; log base file name
+   (size     : :integer   := (expt 2 22))     ; log file size rotation trigger
+   (backlog  : :integer   := (expt 2 24))     ; aggregate backlog size
+   (flush    : :flonum    := 0.01)            ; log flush interval, seconds
+   (compress : :procedure := compress-gz)     ; file compressor procedure lambda (path) => path
+   (write    : :procedure := log-record)      ; record write procedure: lambda (BufferedWriter Record) => :fixnum
+   (accept   : :procedure := accept-all)      ; record filter procedure: lambda (Record) => :boolean
    )
-  final: #t transparent: #t)
+  final: #t)
 
 (defclass (LogRotateSink BasicLogger)
   ((opt      :- LogRotateOpts)
@@ -33,11 +35,14 @@
    (buffer   :- BufferedWriter))
   final: #t)
 
-(def (make-log-rotate-sink (opt : LogRotateOpt)) => LogSink
+(def (make-log-rotate-sink (opt : LogRotateOpt := (LogRotateOpt)))
+  => LogSink
   (LogSink
    (LogRotateSink
-    opt:  opt
-    mx:   (make-mutex 'log-rotate))))
+    opt: opt
+    mx: (make-mutex 'log-rotate))))
+
+(def (accept-all _) #t)
 
 (defmethod {start! LogRotateSink}
   (lambda (self)
