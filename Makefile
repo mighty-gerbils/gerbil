@@ -9,9 +9,11 @@ install:
 check:
 	./build.sh env gxtest ./...
 
-clean:
+mostly-clean:
 	rm -rf build
 	rm -rf bootstrap
+
+clean: mostly-clean
 	cd src/gambit && make clean
 
-.PHONY: all build install check clean
+.PHONY: all build install check clean mostly-clean
