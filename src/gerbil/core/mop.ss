@@ -786,9 +786,9 @@ package: gerbil/core
   (defsystem-class-info :object object::t (:t) object?)
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes
-  (defsystem-class-info :builtin builtin::t (:t) builtin?)
-  (defsystem-class-info :subtyped subtyped::t (:builtin) subtyped?)
-  (defsystem-class-info :structure structure::t (:subtyped) structure?)
+  (defsystem-class-info :builtin builtin::t (:t) builtin-object?)
+  (defsystem-class-info :subtyped subtyped::t (:builtin) builtin-subtyped?)
+  (defsystem-class-info :structure structure::t (:subtyped) builtin-structure?)
 
   (defsystem-class-info :immediate immediate::t (:builtin) immediate?)
   (defsystem-class-info :char char::t (:immediate) char?)
@@ -810,7 +810,7 @@ package: gerbil/core
   (defsystem-class-info :ratnum ratnum::t (:real :subgtyped) ##ratnum?)
   (defsystem-class-info :flonum flonum::t (:real) flonum?)
   (defsystem-class-info :stflonum stflonum::t (:flonum :immediate) stflonum?)
-  (defsystem-class-info :haflonum immediate-flonum::t (:flonum :subtyped) haflonum?)
+  (defsystem-class-info :haflonum haflonum::t (:flonum :subtyped) haflonum?)
   (defsystem-class-info :cpxnum cpxnum::t (:number :subtyped) ##cpxnum?)
 
   (defsystem-class-info :symbolic symbolic::t (:subtyped) symbolic?)

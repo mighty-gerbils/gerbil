@@ -170,16 +170,17 @@ namespace: #f
              (lambda (obj) body ...)))))))
 
 ;; some utilities for the prelude part (meta-type definitions)
-(defpred (builtin? obj) :- :builtin
-  (not (object? obj)))
+(defpred (builtin-object? obj) :- :builtin
+  (or (not (##structure? obj))
+      (not (class-type? (##structure-type obj)))))
 
-(defpred (subtyped? obj) :- :subtyped
+(defpred (builtin-subtyped? obj) :- :subtyped
   (and (##subtyped? obj)
-       (not (object? obj))))
+       (builtin-object? obj)))
 
-(defpred (structure? obj) :- :structure
+(defpred (builtin-structure? obj) :- :structure
   (and (##structure? obj)
-       (not (class-type? (##structure-type obj)))))
+       (builtin? obj)))
 
 (defpred (atom? obj) :- :atom
   (and (immediate? obj)
