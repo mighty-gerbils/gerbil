@@ -585,6 +585,8 @@ namespace: #f
   fxarithmetic-shift)
 (def fx/
   fxquotient)
+(def fx%
+  fxremainder)
 (def (fx>=0? x) => :boolean
   (and (fixnum? x) (##fx>= x 0)))
 (def (fx>0? x) => :boolean

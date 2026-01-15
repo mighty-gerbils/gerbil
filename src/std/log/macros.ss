@@ -54,5 +54,5 @@
       (log-it
        (Record (get-time)
                level 'source
-               (format fmt arg (... ...))
+               (@format fmt arg (... ...))
                (wanull))))))

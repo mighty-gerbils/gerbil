@@ -1477,6 +1477,7 @@ package: gerbil/core
     fx1-
     fxshift
     fx/
+    fx%
     fx>=0?
     fx>0?
     fx=0?

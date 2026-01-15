@@ -1,17 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; format env
-(import :std/interface
-        :std/io)
+(import :std/serde/scan)
 (export #t)
 
-(defclass ScanEnv
-  ((written       :- HashTable)
-   (scanned       :- HashTable)
-   (cycles        :- HashTable)
-   (next          :- :fixnum)
-   (allow-cycles? :- :boolean))
-  final: #t)
+
 
 (defclass FormatEnv
   ((scan      :? ScanEnv)  ; cycle handling policy (optional)

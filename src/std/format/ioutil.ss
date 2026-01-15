@@ -1,18 +1,23 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; format object utilities
-(import :std/io
-        :std/io/bio/api
-        ./io)
+(import :std/io/interface
+        :std/io/bio/api)
 (export #t)
 
-(defrule (defchar-writers (writef char) ....)
+(defsyntax (@char->int stx)
+  ((_ char)
+   (if (stx-char? #'char)
+     ['quote (char->integer (stx-e char))]
+     #'(char->integer char))))
+
+(defrule (defascii-writers (writef char) ....)
   (begin
     (defwriter-ext (writef writer)
-      (writer.write-char-inline char))
+      (writer.write-u8-inline (@char->int char)))
     ...))
 
-(defchar-writers
+(defascii-writers
   (write-space     #\space)
   (write-newline   #\newline)
   (write-lparen    #\()
@@ -25,7 +30,10 @@
   (write-colon     #\:)
   (write-quote     #\')
   (write-squote    #\")
-  (write-dot       #\.))
+  (write-dot       #\.)
+  (write-sharp     #\#)
+  (write-equal     #\=)
+  (write-minus     #\-))
 
 (defwriter-ext (write-symbol (sym : :symbol))
   (writer.write-string (symbol->string sym)))
@@ -33,20 +41,25 @@
 (defwriter-ext (write-keyword (key : :keyword))
   (writer.write-string (keyword->string key)))
 
-(defformatter :string (format-string writer str env)
-  (if env.display?
-    (writer.write-string str)
-    (let* ((wr (writer.write-squote))
-           (wr (fx+ wr (writer.write-string str)))
-           (wr (fx+ wr (writer.write-squote))))
-      wr)))
+(defwriter-ext (write-nonnegative-fixnum-decimal (x : :fixnum))
+  (if (fx> x 10)
+    (let loop ((x x) (wr 0 :- :fixnum))
+      => :fixnum
+      (cond
+       ((fx> x 10)
+        (let (wr (loop (fx/ x 10) wr))
+          (fx+ wr (writer.write-digit-decimal (fx% x 10)))))
+       ((fx> x 0)
+        (fx+ wr (writer.write-digit-decimal x)))
+       (else wr)))
+    (fx+ wr (writer.write-digit-decimal x))))
 
-(defformatter :symbol (format-symbol writer sym env)
-  (writer.write-symbol sym))
+(defwriter-ext (write-fixnum-decimal (x : :fixnum))
+  (if (fx< x 0)
+    (let (wr (writer.write-minus))
+      (fx+ wr (writer.write-nonnegative-fixnum-decimal (fx- x))))
+    (writer.write-nonnegative-fixnum-decimal x)))
 
-(defformatter :keyword (format-keyword writer key env)
-  (if env.display?
-    (writer.write-keyword key)
-    (let* ((wr (writer.write-keyword key))
-           (wr (fx+ wr (writer.write-colon))))
-      wr)))
+(defwriter-ext (write-fixnum-digit-decimal (x : :fixnum))
+  (let (byte (fx+ x #x30))
+    (writer-.write-u8-inline byte)))
