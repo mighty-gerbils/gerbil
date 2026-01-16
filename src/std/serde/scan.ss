@@ -4,14 +4,32 @@
 (import :std/interface)
 (export #t)
 
-(defclass ScanEnv
+(defstruct ScanEnv
   ((written       :- HashTable)
    (scanned       :- HashTable)
    (cycles        :- HashTable)
    (next          :- :fixnum)
    (allow-cycles? :- :boolean)
    (compress?     :- :boolean))
+  constructor: :init!
   final: #t)
+
+(defmethod {:init! ScanEnv}
+  (lambda (self allow-cycles? compress?)
+    (set! self.written (make-hash-table-eq))
+    (set! self.scanned (make-hash-table-eq))
+    (when allow-cycles?
+      (set! self.cycles  (make-hash-table-eq)))
+    (set! self.next 0)
+    (set! self.allow-cycles? allow-cycles?)
+    (set! self.compress? compress?)))
+
+(def (reset-scan-env! (env : ScanEnv))
+  (env.written.clear!)
+  (env.scanned.clear!)
+  (when env.allow-cycles?
+    (env.cycles.clear!))
+  (set! env.next 1))
 
 (interface ObjectScanner
   (scan! (env : ScanEnv) (path : :list)) => :void)

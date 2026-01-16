@@ -1,14 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; format object writers and scanners
-(import :std/io/interface
+(import :gerbil/runtime/mop
+        :std/io/interface
         :std/io/bio/api
         ./io
         ./ioutil)
 (export #t)
 
 ;; standard objects
-(defformatter :object (format-object-generic writer obj env)
+(defformatter :object (format-object writer obj env)
   XXX
   )
 
