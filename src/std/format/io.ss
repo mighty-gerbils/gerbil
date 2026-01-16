@@ -27,13 +27,13 @@
                (writer.format-it self env))
              interface: ObjectFormatter))))))
 
-(defwriter-ext (format-object-raw writer obj (env : FormatEnv))
+(defwriter-ext (format-raw writer obj (env : FormatEnv))
   (let (method (get-object-formatter obj))
     (:- (method (@object obj) writer env) :fixnum)))
 
-(defwriter-ext (format-object writer obj (env : FormatEnv))
+(defwriter-ext (format writer obj (env : FormatEnv))
   (defrule (write-obj)
-    (writer.format-object-raw obj env))
+    (writer.format-raw obj env))
   (defrule (write-anchor id)
     (writer.format-anchor obj id env))
   (defrule (write-ref id)
@@ -89,7 +89,7 @@
   (let* ((wr (writer.write-sharp))
          (wr (fx+ wr (writer.write-fixnum-decimal id)))
          (wr (fx+ wr (writer.write-equal)))
-         (wr (fx+ wr (writer.format-object-wraw obj env))))
+         (wr (fx+ wr (writer.format-wraw obj env))))
     wr))
 
 (defwriter-ext (format-reference write (id : :fixnum) (env : FormatEnv))
