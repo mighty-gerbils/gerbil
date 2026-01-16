@@ -43,7 +43,7 @@
          (hash-get env.scan.cycles obj)))
 
   (cond
-   ((not env.scan)
+   ((or (not env.scan) (immediate? obj))
     (write-obj))
    ((hash-get env.scan.written obj)
     => (lambda ((id :- :fixnum)) => :fixnum

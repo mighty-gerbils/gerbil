@@ -51,8 +51,9 @@
     -1))
 
 (def (acyclic-object? obj)
-  (let (klass (class-of obj))
-    (class-type-acyclic? klass)))
+  (or (immediate? obj)
+      (let (klass (class-of obj))
+        (class-type-acyclic? klass))))
 
 (def (get-object-scanner obj) => :procedure
   (get-interface-method-by-index ObjectScanner::interface
