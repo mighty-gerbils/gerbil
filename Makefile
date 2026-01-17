@@ -12,6 +12,10 @@ check:
 clean:
 	rm -rf build
 	rm -rf bootstrap
-	cd src/gambit && make clean
+	cd src/gambit && make realclean
 
-.PHONY: all build install check clean
+realclean:
+	rm -rf build bootstrap
+	cd src/gambit && make realclean
+
+.PHONY: all build install check clean realclean
