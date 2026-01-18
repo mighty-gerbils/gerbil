@@ -26,8 +26,7 @@
              interface: ObjectFormatter))))))
 
 (defwriter-ext (format-raw writer obj (env : FormatEnv))
-  (let (method (get-object-formatter obj))
-    (:- (method (@object obj) writer env) :fixnum)))
+  (apply-object-formatter obj env))
 
 (defwriter-ext (format writer obj (env : FormatEnv))
   (defrule (write-obj)
@@ -96,7 +95,6 @@
          (wr (fx+ wr (writer.write-sharp))))
     wr))
 
-(def (get-object-formatter obj) => :procedure
-  (get-interface-method-by-index ObjectWriter::interface
-                                 obj
-                                 (@interface-method-index ObjectWriter write)))
+(def (apply-object-formatter obj (env : FormatEnv)) => :fixnum
+  (:- (@call-interface-method ObjectWriter write obj env)
+      :fixnum))

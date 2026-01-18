@@ -36,10 +36,8 @@
   ;; (if present) will simply verify that the object is acyclic
   (when env.scan
     (scan-object! obj senv))
-  (let (method (get-object-writer obj))
-    (method (@object obj) writer env)))
+  (apply-object-json-writer obj env))
 
-(def (get-object-json-writer obj) => :procedure
-  (get-interface-method-by-index JSONWriter::interface
-                                 obj
-                                 (@interface-method-index JSONWriter write-json)))
+(def (apply-object-json-writer obj (env : JSONEnv)) => :fixnum
+  (:- (@call-interface-method JSONWriter write-json obj env)
+      :fixnum))
