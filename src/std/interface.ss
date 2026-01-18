@@ -15,15 +15,31 @@
      XXX
      )))
 
-(defrule (@call-interface-method Interface method-name obj arg ...)
-  (let ()
+(defrule (@apply-prototype-method method-index arg ...)
+  (lambda (prototype receiver)
     (declare (not safe))
-    (let (result (get-prototype (@interface-descriptor Interface) obj))
-      (using (result :- :pair)
-        (let* ((prototype (car result))
-               (receiver  (cdr result))
-               (method  (##unchecked-structure-ref
-                         prototype
-                         (@interface-method-index Interface method)
-                         #f 'method-name)))
-          (method receiver arg ...))))))
+    (let (method
+          (##unchecked-structure-ref
+           prototype
+           method-index
+           #f 'method-name))
+      (method receiver arg ...))))
+
+(defrule (@call-interface-method Interface method-name obj arg ...)
+  (let (call-it (@apply-prototype-method (@interface-method-index Interface method)
+                                         arg ...))
+    (with-prototype (@interface-descriptor Interface)
+      obj
+      call-it
+      (lambda (obj) (call-it obj (&interface-instance-object obj))))))
+
+(defrule (defcall-interface-method Interface method (proc obj arg ...))
+  (def (proc obj arg ...)
+    (@cast (@interface-descriptor Interface)
+           obj create-prototype
+           (@apply-prototype-method (@interface-method-index Interface method)
+                                    arg ...)
+           (lambda (instance)
+             ((@apply-prototype-method (@interface-method-index Interface method)
+                                       arg ...)
+              instance (&interface-instance-object instance))))))
