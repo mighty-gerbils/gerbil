@@ -22,7 +22,8 @@
     check-cycles?: #f
     compress?: #f
     display?: #t
-    precision: 3)))
+    precision: 3
+    base: 10)))
 
 (def __log-line-format-settings
   (FormatSettings
@@ -30,7 +31,8 @@
    check-cycles?: #t
    compress?: #f
    display?: #f
-   precision: 3))
+   precision: 3
+   base: 10))
 
 (def (make-log-line-format-env) => FormatEnv
   (format-environment __log-line-format-settings))
@@ -55,10 +57,9 @@
   reset-log-json-env!)
 
 (def (record->string (record : Record)) => :string
-  (let* (env (__format-env.get))
-    (using (writer (open-buffered-writer #f very-small-buffer-size) :- BufferedWriter)
-      (log-record writer record)
-      (get-buffer-output-string-utf8 writer))))
+  (using (writer (open-buffered-writer #f very-small-buffer-size) :- BufferedWriter)
+    (log-record writer record)
+    (get-buffer-output-string-utf8 writer)))
 
 (def (log-record (writer :- BufferedWriter) (record :- Record)) => :fixnum
   (let* ((env (__format-env.get))

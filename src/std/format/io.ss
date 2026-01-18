@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; stdio writing
-(import :gerbil/runtime/mop
-        :std/error
-        :std/interface
+(import :std/interface
         :std/io/interface
         :std/io/bio/api
         :std/serde/scan
@@ -89,7 +87,7 @@
   (let* ((wr (writer.write-sharp))
          (wr (fx+ wr (writer.write-fixnum-decimal id)))
          (wr (fx+ wr (writer.write-equal)))
-         (wr (fx+ wr (writer.format-wraw obj env))))
+         (wr (fx+ wr (writer.format-raw obj env))))
     wr))
 
 (defwriter-ext (format-reference write (id : :fixnum) (env : FormatEnv))
