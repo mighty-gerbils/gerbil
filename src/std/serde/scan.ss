@@ -63,20 +63,17 @@
       (let (id env.next)
         (set! env.next (fx1+ id))
         (hash-put! env.scanned obj (if env.compress? (cons id 1) id))
-        (let (method (get-object-scanner obj))
-          (method (@object obj) env (cons obj path)))
+        (apply-object-scanner obj env (cons obj path))
         id)))
     -1))
+
+(def (apply-object-scanner obj (env : ScanEnv) (path : :list)) => :void
+  (@call-interface-method ObjectScanner scan obj env path))
 
 (def (acyclic-object? obj)
   (or (immediate? obj)
       (let (klass (class-of obj))
         (class-type-acyclic? klass))))
-
-(def (get-object-scanner obj) => :procedure
-  (get-interface-method-by-index ObjectScanner::interface
-                                 obj
-                                 (@interface-method-index ObjectScanner scan)))
 
 (defmethod {scan! :object}
   (lambda (self env path)

@@ -298,21 +298,47 @@ package: gerbil/core
   (export #t)
 
   ;; meta-circular
+  (defsyntax runtime-type-info
+    (make-class-type-info
+     id: gerbil.core#runtime-type-info::t
+     name: 'runtime-type-info
+     super: []
+     slots: '(id name type-descriptor)
+     type-descriptor: (quote-syntax runtime-type-info::t)
+     constructor: (quote-syntax make-runtime-type-info)
+     predicate: (quote-syntax runtime-type-info?)
+          accessors:
+     [['id :: (quote-syntax !runtime-type-id)]
+      ['name :: (quote-syntax !runtime-type-name)]
+      ['type-descriptor :: (quote-syntax !runtime-type-descriptor)]]
+     mutators:
+     [['id :: (quote-syntax !runtime-type-id-set!)]
+      ['name :: (quote-syntax !runtime-type-name-set!)]
+      ['type-descriptor :: (quote-syntax !runtime-type-descriptor-set!)]]
+     unchecked-accessors:
+     [['id :: (quote-syntax &!runtime-type-id)]
+      ['name :: (quote-syntax &!runtime-type-name)]
+      ['type-descriptor :: (quote-syntax &!runtime-type-descriptor)]]
+     unchecked-mutators:
+     [['id :: (quote-syntax &!runtime-type-id-set!)]
+      ['name :: (quote-syntax &!runtime-type-name-set!)]
+      ['type-descriptor :: (quote-syntax &!runtime-type-descriptor-set!)]]))
+
   (defsyntax class-type-info
     (make-class-type-info
      id: 'gerbil.core#class-type-info::t
      name: 'class-type-info
-     super: []
-     slots: '(id name super slots
-                 precedence-list
-                 ordered-slots
-                 struct? final? system?
-                 metaclass
-                 constructor-method
-                 type-descriptor constructor predicate
-                 accessors mutators
-                 unchecked-accessors unchecked-mutators
-                 slot-types slot-defaults slot-contracts)
+     super: [(quote-syntax runtime-type-info)]
+     slots: '(super slots
+                    precedence-list
+                    ordered-slots
+                    struct? final? system?
+                    metaclass
+                    constructor-method
+                    constructor predicate
+                    accessors mutators
+                    unchecked-accessors unchecked-mutators
+                    slot-types slot-defaults slot-contracts)
      struct?: #f
      final?: #f
      system?: #f

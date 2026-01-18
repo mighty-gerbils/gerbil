@@ -109,23 +109,41 @@ namespace: #f
          ;; already an instance of the right interface
          obj)
         ((interface-subclass? obj-klass)
-         ;; another interface instance, recast
-         (cast-it descriptor (&interface-instance-object obj)))
+         ;; another interface instance
+         ;; first try to cast the interface shell itself so that
+         ;; we can allow niceties like interfaces on interfaces.
+         ;; we don't want to try the cast everytime as this would be
+         ;; prohibitively slow; instead we mark the failure in the interface's
+         ;; prototype table
+         (let (tab (class-type-interface-table obj-klass))
+           (cond
+            ((symbolic-table-ref/lock tab klass-id #f)
+             => (lambda (prototype)
+                  (if (void? prototype)
+                    (cast-it descriptor (&interface-instance-object obj))
+                    (do-instance prototype obj))))
+            ((try-create-prototype descriptor klass obj-klass)
+             => (lambda (prototype)
+                  (symbolic-table-set!/lock tab klass-id prototype)
+                  (do-instance prototype obj)))
+            (else
+             (symbolic-table-set!/lock tab klass-id #!void)
+             (cast-it descriptor (&interface-instance-object obj))))))
         (else
-         ;; vanilla object, convert to an interface instance
-         (__lock-inline! __interface-prototypes-mx)
-         (##set-car! __interface-prototypes-key klass-id)
-         (##set-cdr! __interface-prototypes-key obj-klass-id)
-         (let (prototype
-               (cond
-                ((prototype-table-ref __interface-prototypes __interface-prototypes-key #f)
-                 => (lambda (prototype)
-                      (__unlock-inline! __interface-prototypes-mx)
-                      prototype))
-                (else
-                 (__unlock-inline! __interface-prototypes-mx)
-                 (do-prototype descriptor klass obj-klass))))
-           (do-instance prototype obj))))))))
+         (let (tab (class-type-interface-table obj-klass))
+           (cond
+            ((symbolic-table-ref/lock tab klass-id #f)
+             => (lambda (prototype)
+                  (if (void? prototype)
+                    (do-instance #f obj)
+                    (do-instance prototype obj))))
+            ((do-prototype descriptor klass obj-klass)
+             => (lambda (prototype)
+                  (symbolic-table-set!/lock tab klass-id prototype)
+                  (do-instance prototype obj)))
+            (else
+             (symbolic-table-set!/lock tab klass-id #!void)
+             (do-instance #f obj))))))))))
 
 ;; cast an object to an interface, creating an instance from the prototype
 (defcast cast
@@ -153,5 +171,4 @@ namespace: #f
 ;; extract an interface proptotype
 (defcast get-prototype
   create-prototype
-  (lambda (prototype obj)
-    prototype))
+  cons)

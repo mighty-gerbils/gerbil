@@ -31,17 +31,16 @@ package: gerbil/core
   (import "expander"
           (only-in "mop" @method))
   (export #t)
-  (defclass interface-info (name
-                            namespace
-                            interface-mixin
-                            interface-methods
-                            interface-precedence-list
-                            interface-descriptor
-                            instance-type
-                            instance-constructor instance-try-constructor
-                            instance-predicate instance-satisfies-predicate
-                            implementation-methods
-                            unchecked-implementation-methods))
+  (defclass (interface-info runtime-type-info)
+    (namespace
+     interface-mixin
+     interface-methods
+     interface-precedence-list
+     interface-descriptor
+     instance-constructor instance-try-constructor
+     instance-predicate instance-satisfies-predicate
+     implementation-methods
+     unchecked-implementation-methods))
 
   (defmethod {apply-macro-expander interface-info}
     (with-syntax ((cast (quote-syntax cast))
@@ -49,11 +48,10 @@ package: gerbil/core
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
-           (with-syntax ((klass (interface-info-instance-type self))
-                         (descriptor (interface-info-interface-descriptor self))
-                         (instance-type (interface-info-instance-type self)))
+           (with-syntax ((klass (!runtime-type-descriptor self))
+                         (descriptor (interface-info-interface-descriptor self)))
              #'(let ($obj obj)
-                 (begin-annotation (@type instance-type)
+                 (begin-annotation (@type klass)
                    (if (immediate-instance-of? klass $obj)
                      $obj
                      (cast descriptor $obj))))))
@@ -162,7 +160,7 @@ package: gerbil/core
                      val
                      (error "bad cast" klass val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (cast-it expr))))
@@ -189,7 +187,7 @@ package: gerbil/core
                        val
                        (contract-violation! "bad cast" expr predicate val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (let (val expr)
@@ -525,7 +523,7 @@ package: gerbil/core
       (let (type (resolve-type stx Interface))
         (with-syntax ((@@type (syntax-local-introduce '@@type))
                       (type type)
-                      (Instance::t (interface-info-instance-type type))
+                      (Instance::t (!runtime-type-descriptor type))
                       (var var)
                       (checked? checked?)
                       (cte (current-type-env))
@@ -1674,11 +1672,12 @@ package: gerbil/core
                         #'(defsyntax name
                             (make-interface-info
                              name: 'name
+                             type-descriptor: (quote-syntax klass)
+                             id: 'klass-type-id
                              namespace: 'namespace
                              interface-mixin: [(quote-syntax mixin) ...]
                              interface-precedence-list: [(quote-syntax mixin-precedence-list) ...]
                              interface-methods: '(method ...)
-                             instance-type: (quote-syntax klass)
                              interface-descriptor: (quote-syntax descriptor)
                              instance-constructor: (quote-syntax make)
                              instance-try-constructor: (quote-syntax try-make)
@@ -2330,12 +2329,11 @@ package: gerbil/core
        (and (identifier? #'method)
             (identifier? #'Type))
        (let (klass (syntax-local-value #'Type))
-         (if (or (class-type-info? klass)
-                 (interface-info? klass))
+         (if (runtime-type-info? klass)
            (if (interface-declaration? #'(rest ...))
              (generate-interface-method #'method #'Type #'impl #'(rest ...))
-             (generate-class-method #'method #'Type #'impl #'(rest ...)))))
-          (raise-syntax-error #f "not a valid class type" stx #'Type klass)))))
+             (generate-class-method #'method #'Type #'impl #'(rest ...)))
+          (raise-syntax-error #f "not a valid class type" stx #'Type klass))))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
