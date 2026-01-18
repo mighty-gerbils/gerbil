@@ -39,5 +39,8 @@
   (apply-object-json-writer obj env))
 
 (def (apply-object-json-writer obj (env : JSONEnv)) => :fixnum
-  (:- (@call-interface-method JSONWriter write-json obj env)
+  (:- (__object-write-json obj env)
       :fixnum))
+
+(defcall-interface-method JSONWriter write-json
+  (__object-write-json obj env))

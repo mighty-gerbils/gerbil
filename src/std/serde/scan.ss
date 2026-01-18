@@ -68,7 +68,10 @@
     -1))
 
 (def (apply-object-scanner obj (env : ScanEnv) (path : :list)) => :void
-  (@call-interface-method ObjectScanner scan obj env path))
+  (__object-scan! obj env path))
+
+(defcall-interface-method ObjectScanner scan!
+  (__object-scan! obj env path))
 
 (def (acyclic-object? obj)
   (or (immediate? obj)
