@@ -166,6 +166,7 @@ namespace: #f
   macro-character-port-output-width-set!
   macro-mutex-lock!
   macro-mutex-unlock!
-  macro-current-thread)
+  macro-current-thread
+  macro-thread-end-condvar)
 
 (##void) ;; so that the __0 file exists

@@ -21,15 +21,17 @@ namespace: #f
 ;;  1  ##type-id                   : Symbol ; sometimes uninterned
 ;;  2  ##type-name                 : Symbol
 ;;  3  ##type-flags                : Fixnum
-;;  4  ##type-super                : (OrFalse StructTypeDescriptor)
+;;  4  ##type-super                : Maybe StructTypeDescriptor
 ;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...)
 ;;  6  class-type-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
 ;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always __class
 ;;  8  class-type-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
 ;;  9  class-type-properties       : AList ; NB: not PList, despite the name "properties"
-;; 10  class-type-constructor      : (OrFalse Symbol)
-;; 11  class-type-methods          : (Table Symbol -> Function)
-;;
+;; 10  class-type-constructor      : Maybe Symbol
+;; 11  class-type-methods          : Maybe (Table Symbol => procedure)
+;; 12  class-type-specializer      ; Maybe (Table Symbol -> procedure) specialized class procedure
+;; 13  class-type-interface        ; Maybe (Table Symbol -> object) interface prototoypes
+
 ;; The ##type-fields contains 3 entries by Gambit structure field, field name, flags and default value
 ;;
 ;; Standard "properties" keys:
@@ -40,6 +42,7 @@ namespace: #f
 ;; equal:          (Or Bool (List Symbol))  all new slots will be compared during objects equal?
 ;; print:          (Or Bool (List Symbol))  all new slots will be printed when printing an object
 ;; transparent:    Bool                     is this class transparent? i.e. equal and print all slots
+;; acyclic:        Bool                     is this class acyclic? i.e. can a serializer treat it as containing no cycles?
 
 ;; These type flags are defined by Gambit itself
 (def type-flag-opaque 1) ;; if opaque, instances are only equal? if eq?
@@ -72,7 +75,10 @@ namespace: #f
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
-       #f))))
+       #f                               ; class-type-methods
+       #f                               ; class-type-specializer
+       #f                               ; class-type-interface
+       ))))
 
 ;; the class metaclass
 (def class::t
@@ -122,7 +128,10 @@ namespace: #f
                  slot-table          ; class-type-slot-table
                  properties          ; class-type-properties
                  #f                  ; class-type-constructor
-                 #f)))               ; class-type-methods
+                 #f                  ; class-type-methods
+                 #f                  ; class-type-specializer
+                 #f                  ; class-type-interface
+                 )))
         (##structure-type-set! t t)  ; self reference
         t)))
 
@@ -148,7 +157,10 @@ namespace: #f
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
-       #f))))
+       #f                               ; class-type-methods
+       #f                               ; class-type-specializer
+       #f                               ; class-type-interface
+       ))))
 
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
@@ -272,7 +284,9 @@ namespace: #f
                        ;; gambit type fields
                        type-id type-name type-flags type-super field-info
                        ;; gerbil class fields
-                       precedence-list slot-vector slot-table properties constructor methods)
+                       precedence-list slot-vector slot-table properties constructor methods
+                       ;; specializer/interface tables
+                       #f #f)
           :class))))
 
 ;;; class type utilities
@@ -307,17 +321,19 @@ namespace: #f
    (begin (defrefset (slot field)) ...)))
 
 (defrefset*
-  (id 1)
-  (name 2)
-  (flags 3)
-  (super 4)
-  (fields 5)
+  (id              1)
+  (name            2)
+  (flags           3)
+  (super           4)
+  (fields          5)
   (precedence-list 6)
-  (slot-vector 7)
-  (slot-table 8)
-  (properties 9)
-  (constructor 10)
-  (methods 11))
+  (slot-vector     7)
+  (slot-table      8)
+  (properties      9)
+  (constructor    10)
+  (methods        11)
+  (specializer    12)
+  (interface      13))
 
 (def (class-type-slot-list (klass : :class)) => :list
   (:- (cdr (vector->list (class-type-slot-vector klass)))
@@ -668,7 +684,6 @@ namespace: #f
              obj
              (%#call (%#ref ##type-id) klass)))))
 
-
 (def (immediate-instance-of? klass obj)
   => :boolean
   (and (##structure? obj) (eq? klass (##structure-type obj))))
@@ -910,9 +925,10 @@ namespace: #f
 
 (def (find-method (klass : :class) obj (id : :symbol))
   (cond
-   ((direct-method-ref klass obj id))
    ((class-type-sealed? klass)
-    #f)
+    (let (tab (specialize-class klass))
+      (symbolic-table-ref tab id #f)))
+   ((direct-method-ref klass obj id))
    (else
     (mixin-method-ref klass obj id))))
 
@@ -986,65 +1002,30 @@ namespace: #f
 ;;;;
 ;; procedure method => lambda (klass method-table) => procedure method
 ;; compiler populated
-(defspecialized-table make-method-specializer-table
-  method-specializer-table-ref
-  method-specializer-table-set! __method-specializer-table-set!
-  method-specializer-table-update! __method-specializer-table-update!
-  method-specializer-table-delete!
+(deftable method-specializer-table
   procedure-hash eq?)
 
 (def __method-specializers
-  (make-method-specializer-table #f 0))
-(def __method-specializers-mx
-  (__make-inline-lock))
+  (make-method-specializer-table/lock #f 0))
 
 ;;; binds a specializer procedure for a method procedure
 (def (bind-specializer! method-proc specializer)
-  (__lock-inline! __method-specializers-mx)
-  (method-specializer-table-set! __method-specializers method-proc specializer)
-  (__unlock-inline! __method-specializers-mx))
+  (method-specializer-table-set!/lock __method-specializers method-proc specializer))
 
 (def (__lookup-method-specializer proc)
-  (__lock-inline! __method-specializers-mx)
-  (let (specializer (method-specializer-table-ref __method-specializers proc #f))
-    (__unlock-inline! __method-specializers-mx)
-    specializer))
-
-(def (__class-specializer-hash-key klass)
-  (symbolic-hash (##type-id klass)))
-
-(defspecialized-table make-class-specializer-table
-  class-specializer-table-ref
-  class-specializer-table-set! __class-specializer-table-set!
-  class-specializer-table-update! __class-specializer-table-update!
-  class-specializer-table-delete!
-  __class-specializer-hash-key eq?)
-
-(def __class-specializers-mx (__make-inline-lock))
-(def __class-specializers (make-class-specializer-table #f 0))
-(def __class-specializers-key (cons #f #f)) ; pre-allocated key for lookups
+  (method-specializer-table-ref/lock __method-specializers proc #f))
 
 ;; Specializes all current class methods in the hierarchy
 ;; returns symbolic table mapping method => specialized procedure
-;; the result is cached in the __class-specializers table
+;; the result is cached in the class-type specializer slot
 (def (specialize-class (klass : :class))
   (cond
-   ((__lookup-class-specializer klass))
+   ((&class-type-specializer klass))
    (else
-    (let (method-table (___specialize-class klass))
-      (__bind-class-specializer! klass method-table)
-      method-table))))
-
-(def (__lookup-class-specializer klass)
-  (__lock-inline! __class-specializers-mx)
-  (let (method-table (class-specializer-table-ref __class-specializers klass #f))
-    (__unlock-inline! __class-specializers-mx)
-    method-table))
-
-(def (__bind-class-specializer! klass method-table)
-  (__lock-inline! __class-specializers-mx)
-  (class-specializer-table-set! __class-specializers klass method-table)
-  (__unlock-inline! __class-specializers-mx))
+    (else
+     (let (method-table (___specialize-class klass))
+       (set! (&class-type-specializer klass) method-table)
+       method-table)))))
 
 (def (__specialize-method klass method-table method proc)
   (cond
@@ -1086,16 +1067,14 @@ namespace: #f
 ;;; class sealing
 (def (seal-class! (klass : :class))
   (unless (class-type-sealed? klass)
-    (unless (class-type-final? klass)
-      (error "cannot seal non-final class" klass))
     (cond
      ((class-type-metaclass? klass)
-      (call-method klass 'seal-class!))
+      (call-method klass 'seal-class!)
+      (specialize-class klass))
      ((find class-type-metaclass? (&class-type-precedence-list klass))
       (error "cannot seal class that extends metaclass without a metaclass" klass))
      (else
-      (let (method-table (specialize-class klass))
-        (&class-type-methods-set! klass method-table))))
+      (specialize-class klass)))
     (class-type-seal! klass)))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but
@@ -1170,7 +1149,8 @@ namespace: #f
                 [[final: . #t]])
               ...
               properties ...]           ; properties
-             #f)))                      ; constructor
+             #f                         ; constructor
+             )))
       (symbolic-table-set! __shadow-classes (##type-id type) klass)
       klass))
 
