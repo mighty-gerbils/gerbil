@@ -18,36 +18,69 @@ namespace: #f
    (begin-annotation (@inline proc) 'inline-rules)))
 
 ;;; low level locks
+(defrules __make-inline-lock ()
+  ((_) (vector 0 #f)))
+
 (cond-expand
   (gerbil-smp
    (defrules __lock-inline! ()
-     ((_ mx)
+     ((_ mx max-spin)
       (let ()
         (declare (not interrupts-enabled))
         (let again ((spin 0))
           (cond
-           ((##fx= (##vector-cas! mx 0 1 0) 0))
-           ((##fx< spin 100)
+           ((##fx= (##vector-cas! mx 0 1 0) 0)
+            (##vector-set! mx 1 (current-thread)))
+           ((##fx< spin max-spin)
             (again (##fx+ spin 1)))
            (else
-            (##thread-yield!)
-            (again 0))))))))
+            (let (owner (##vector-ref mx 1))
+              (cond
+               ((eq? owner (current-thread))
+                (##thread-deadlock-action!))
+               ((not (macro-thread-end-condvar owner))
+                (##thread-deadlock-action!))
+               (else
+                (##thread-yield!)
+                (again 0)))))))))
+     ((_ mx)
+      (__lock-inline! mx 10))))
   (else
    (defrules __lock-inline! ()
-     ((_ mx)
+     ((_ mx max-spin)
       (let ()
         (declare (not interrupts-enabled))
-        (let again ()
-          (unless (##fx= (##vector-cas! mx 0 1 0) 0)
+        (let again ((spin 0))
+          (cond
+           ((##fx= (##vector-cas! mx 0 1 0) 0)
+            (##vector-set! mx 1 (current-thread)))
+           ((##fx< spin max-spin)
             (##thread-yield!)
-            (again))))))))
+            (again (##fx+ spin 1)))
+           (else
+            (let (owner (##vector-ref mx 1))
+              (cond
+               ((eq? owner (macro-current-thread))
+                (##thread-deadlock-action!))
+               ((not (macro-thread-end-condvar owner))
+                (##thread-deadlock-action!))
+               (else
+                (##thread-yield!)
+                (again 0)))))))))
+     ((_ mx)
+      (__lock-inline! mx 10)))))
 
 (defrules __unlock-inline! ()
   ((_ mx)
-   (##vector-cas! mx 0 0 1)))
+   (begin
+     (##vector-set! mx 1 #f)
+     (##vector-cas! mx 0 0 1))))
 
-(defrules __make-inline-lock ()
-  ((_) (vector 0)))
+(defrule (__do-inline-lock! lock expr)
+  (begin
+    (__lock-inline! lock)
+    (begin0 expr
+      (__unlock-inline! lock))))
 
 ;;;
 

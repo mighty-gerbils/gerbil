@@ -22,37 +22,25 @@ namespace: #f
 (def interface-cast-error? CastError?)
 
 ;; base type for all interface instances
-(defstruct-type interface-instance::t ()
-  #f interface-instance?
-  id: gerbil#interface-instance::t
-  name: interface-instance
-  slots:
-  ((__object interface-instance-object interface-instance-object-set!)))
+(defstruct interface-instance (object)
+  id: gerbil#interface-instance::t)
 
 ;; interface meta descriptor
-(defstruct interface-descriptor (type methods) final: #t)
-
-;; prototype table
-(def (__interface-hash-key key)
-  (##fxxor (##symbol-hash (##car key)) (##symbol-hash (##cdr key))))
-(def (__interface-test-key a b)
-  (and (##eq? (##car a) (##car b))
-       (##eq? (##cdr a) (##cdr b))))
-
-(defspecialized-table make-prototype-table
-  prototype-table-ref
-  prototype-table-set! __prototype-table-set!
-  prototype-table-update! __prototype-table-update!
-  prototype-table-delete!
-  __interface-hash-key __interface-test-key)
-
-(def __interface-prototypes-mx (__make-inline-lock))
-(def __interface-prototypes (make-prototype-table #f 0))
-(def __interface-prototypes-key (cons #f #f)) ; pre-allocated key for lookups
+(defstruct interface-descriptor (type methods)
+  id: gerbil#interface-descriptor::t
+  final: #t)
 
 (def (interface-subclass? klass)
   (alet (super (##type-super klass))
     (eq? (##type-id super) (##type-id interface-instance::t))))
+
+(def (class-type-interface-table klass)
+  (cond
+   ((&class-type-interface klass))
+   (else
+    (let (tab (make-symbolic-table/lock #f 0))
+      (set! (&class-type-interface klass) tab)
+      tab))))
 
 (defrules do-create-prototype ()
   ((_ descriptor klass obj-klass continue fail!)
@@ -86,10 +74,9 @@ namespace: #f
                  (##unchecked-structure-set! prototype method off klass #f)
                  (loop rest (##fx- off 1)))
                 (else
-                 (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
-                   (__lock-inline! __interface-prototypes-mx)
-                   (prototype-table-set! __interface-prototypes prototype-key prototype)
-                   (__unlock-inline! __interface-prototypes-mx)
+                 (let ((tab (class-type-interface-table klass))
+                       (key (##type-id obj-klass)))
+                   (symbolic-table-set!/lock tab key prototype)
                    (continue prototype))))))))))))
 
 (def (create-prototype descriptor klass obj-klass)

@@ -2329,20 +2329,13 @@ package: gerbil/core
       ((_ {method Type} impl rest ...)
        (and (identifier? #'method)
             (identifier? #'Type))
-       (if (syntax-local-class-type-info? #'Type)
-         (if (interface-declaration? #'(rest ...))
-           (generate-interface-method #'method #'Type #'impl #'(rest ...))
-           (generate-class-method #'method #'Type #'impl #'(rest ...)))
-         (raise-syntax-error #f "not defined as class" stx #'Type)))
-
-      ((_ (wtf method Type) . _)
-       (cond
-        ((resolve-identifier #'wtf)
-         => (lambda (b)
-              (raise-syntax-error #f "booooo!" stx (binding-id b))))
-        (else
-         (raise-syntax-error #f "booooo!" stx))))
-        ))
+       (let (klass (syntax-local-value #'Type))
+         (if (or (class-type-info? klass)
+                 (interface-info? klass))
+           (if (interface-declaration? #'(rest ...))
+             (generate-interface-method #'method #'Type #'impl #'(rest ...))
+             (generate-class-method #'method #'Type #'impl #'(rest ...)))))
+          (raise-syntax-error #f "not a valid class type" stx #'Type klass)))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()

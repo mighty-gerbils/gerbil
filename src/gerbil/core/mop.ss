@@ -180,21 +180,42 @@ package: gerbil/core
 (module MOP-2
   (import "expander" MOP-1)
   (export #t)
+  (defclass-type runtime-type-info::t ()
+    make-runtime-type-info
+    runtime-type-info?
+    id: gerbil.core#runtime-type-info::t
+    name: runtime-type-info
+    properties: '((print: name))
+    slots:
+    ((id ;; Symbol
+      ;; the types's type id
+      !runtime-type-id !class-type-id-set!)
+     (name ;; Symbol
+      ;; the types's name
+      !runtime-type-name !runtime-type-name-set!)
+     (type-descriptor ;; Identifier
+      ;; the runtime identifier of the class's type descriptor
+      !runtime-type-descriptor !runtime-type-descriptor-set!)))
+
   ;; class meta type; expansion time class reflection.
-  (defclass-type class-type-info::t ()
+  (defclass-type class-type-info::t (runtime-type-info::t)
     make-class-type-info
     class-type-info?
     id: gerbil.core#class-type-info::t
     name: class-type-info
     properties: '((print: name))
-    slots:
+    mixin:
     ((id ;; Symbol
       ;; the class's type id
       !class-type-id !class-type-id-set!)
      (name ;; Symbol
       ;; the class's name
       !class-type-name !class-type-name-set!)
-     (super ;; ListOf Identifier
+     (type-descriptor ;; Identifier
+      ;; the runtime identifier of the class's type descriptor
+      !class-type-descriptor !class-type-descriptor-set!))
+    slots:
+    ((super ;; ListOf Identifier
       ;; the class's super list; identifiers point to class-type-infos
       !class-type-super !class-type-super-set!)
      (slots ;; ListOf Symbol
@@ -221,9 +242,7 @@ package: gerbil/core
      (constructor-method ;; OrFalse Symbol
       ;; the class's constructor method name, if any
       !class-type-constructor-method !class-type-constructor-method-set!)
-     (type-descriptor ;; Identifier
-      ;; the runtime identifier of the class's type descriptor
-      !class-type-descriptor !class-type-descriptor-set!)
+
      (constructor ;; OrFalse Identifier
       ;; the class's constructor procudure identifier, if any
       !class-type-constructor !class-type-constructor-set!)
@@ -261,6 +280,12 @@ package: gerbil/core
 
   (bind-method! class-type-info::t 'apply-macro-expander
                 class-type-info::apply-macro-expander)
+
+(def (syntax-local-runtime-type-info? stx (is? true))
+    (and (identifier? stx)
+         (alet (e (syntax-local-value stx false))
+           (and (runtime-type-info? e)
+                (is? e)))))
 
   (def (syntax-local-class-type-info? stx (is? true))
     (and (identifier? stx)
@@ -636,14 +661,14 @@ package: gerbil/core
       ((_ (@method id type) impl . rest)
        (cond
         ((and (identifier? #'id)
-              (syntax-local-class-type-info? #'type)
+              (syntax-local-runtime-type-info? #'type)
               (stx-plist? #'rest method-opt?))
          (with-syntax* (((values klass)
                          (syntax-local-value #'type))
                         ((values rebind?)
                          (stx-e (stx-getq rebind: #'rest)))
                         (type::t
-                         (!class-type-descriptor klass))
+                         (!runtime-type-descriptor klass))
                         (name
                          (stx-identifier #'type #'type "::" #'id))
                         (@next-method
@@ -663,8 +688,8 @@ package: gerbil/core
            (wrap #'(begin defimpl bind))))
         ((not (identifier? #'id))
          (raise-syntax-error #f "bad syntax; expected method identifier" stx #'id))
-        ((not (syntax-local-class-type-info? #'type))
-         (raise-syntax-error #f "bad syntax; expected type identifier" stx #'type))
+        ((not (syntax-local-runtime-type-info? #'type))
+         (raise-syntax-error #f "bad syntax; invalid class type" stx #'type))
         (else
          (raise-syntax-error #f "bad syntax; illegal method options" stx))))))
 
@@ -749,7 +774,8 @@ package: gerbil/core
      name: 'class
      super: [(quote-syntax :t)]
      slots: '(id name super flags fields
-              precedence-list slot-vector slot-table properties constructor methods)
+                 precedence-list slot-vector slot-table properties constructor methods
+                 specializer interface)
      struct?: #t
      type-descriptor: (quote-syntax class::t)
      constructor: (quote-syntax make-class-type)
@@ -765,7 +791,9 @@ package: gerbil/core
       ['slot-table :: (quote-syntax class-type-slot-table)]
       ['properties :: (quote-syntax class-type-properties)]
       ['constructor :: (quote-syntax class-type-constructor)]
-      ['methods :: (quote-syntax class-type-methods)]]
+      ['methods :: (quote-syntax class-type-methods)]
+      ['specializer :: (quote-syntax class-type-specializer)]
+      ['interface :: (quote-syntax class-type-interface)]]
      mutators: []                       ; read only
      unchecked-accessors:
      [['id :: (quote-syntax &class-type-id)]
@@ -778,7 +806,9 @@ package: gerbil/core
       ['slot-table :: (quote-syntax &class-type-slot-table)]
       ['properties :: (quote-syntax &class-type-properties)]
       ['constructor :: (quote-syntax &class-type-constructor)]
-      ['methods :: (quote-syntax &class-type-methods)]]
+      ['methods :: (quote-syntax &class-type-methods)]
+      ['specializer :: (quote-syntax &class-type-specializer)]
+      ['interface :: (quote-syntax &class-type-interface)]]
      unchecked-mutators: []             ; read only
      ))
 
