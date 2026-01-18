@@ -11,6 +11,9 @@ namespace: #f
 ;; this is necessary or system classes will not be present in fpo executables
 ;; which breaks the write hook for primitives and results in disaster.
 (declare (not optimize-dead-definitions
+              builtin::t
+              subtyped::t
+              record::t
               immediate::t
               char::t
               boolean::t
@@ -27,6 +30,8 @@ namespace: #f
               bignum::t
               ratnum::t
               flonum::t
+              haflonum::t
+              stflonuam::t
               cpxnum::t
               symbolic::t
               symbol::t
@@ -59,7 +64,7 @@ namespace: #f
               return::t))
 
 ;; root distinction from standard objects
-(defsystem-class builtin::t builtin ())
+(defsystem-class builtin::t builtin (:t))
 (defsystem-class subtyped::t subtyped (builtin::t))
 (defsystem-class structure::t structure (subtyped::t))
 
@@ -188,12 +193,7 @@ namespace: #f
        (not (fixnum? obj))))
 
 (defpred (special? obj) :- :special
-  (and (fx= (:- (##type obj) :fixnum) 2)
-       (not (char? obj))
-       (not (null? obj))
-       (not (boolean? obj))
-       (not (void? obj))
-       (not (eof-object? obj))))
+  (##special? obj))
 
 (defpred (stflonum? obj) :- :stflonum
   (and (flonum? obj) (not (##mem-allocated? obj))))

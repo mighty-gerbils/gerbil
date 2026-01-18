@@ -7,7 +7,9 @@
 (defstruct FormatEnv
   ((scan      :- ScanEnv)  ; cycle handling policy (optional)
    (display?  :- :boolean) ; displayllike format?
-   (precision :- :fixnum)) ; precision for inexact numbers
+   (precision :- :fixnum)  ; precision for inexact number format
+   (base      :- :fixnum)  ; base for integer format
+   )
   constructor: :init!
   final: #t)
 
@@ -16,7 +18,8 @@
    (check-cycles? : :boolean)
    (compress?     : :boolean)
    (display?      : :boolean)
-   (precision     : :fixnum))
+   (precision     :~ nonnegative-fixnum? :- :fixnum)
+   (base          :~ nonnegative-fixnum? :- :fixnum))
   final: #t)
 
 (def current-format-settiongs
@@ -28,21 +31,40 @@
     allow-cycles?: #f
     check-cycles?: #t
     compress?: #f
-    precision: 3)))
+    precision: 3
+    base: 10)))
 
 (def (format-environment (settings (current-format-settings))) => FormatEnv
   (FormatEnv (or settings (force __default-format-settings))))
 
-(def (format-enviroment-with-display? (env : FormatEnv) (display? : :boolean))
+(def (derive-format-environment (env : FormatEnv)
+                                display?:  (display?  : :boolean := env.display?)
+                                precision: (precision : :fixnum  := env.precision)
+                                base:      (base      : :fixnum  := env.base))
   => FormatEnv
-  XXX
-  )
+  (using (xenv (struct-copy env) :- FormatEnv)
+    (set! xenv.display? display?)
+    (set! xenv.precision precision)
+    (set! xenv.base base)
+    xenv))
 
-(def (format-envirnoment-with-precision (env : FormatEnv) (precision : :fixnum))
-  => FormatEnv
-  XXX
-  )
+(defsyntax (defderive-format-env stx)
+  (syntax-case stx ()
+    ((_ proc slot contract ...)
+     (with-syntax* ((env       (stx-identifier #'proc "$env"))
+                    (env.slot  (stx-identifier #'env "." #'slot))
+                    (xenv      (stx-identifier #'proc "$xenv"))
+                    (xenv.slot (stx-identifier #'xenv "." #'slot)))
+       #'(def (proc (env : FormatEnv) (slot contract ...))
+           (if (eq? env.slot slot)
+             env
+             (using (xenv (struct-copy env) :- FormatEnv)
+               (set! xenv.slot arg)
+               xenv)))))))
 
+(defderive-format-env derive-format-env-with-display?  display?  : :boolean)
+(defderive-format-env derive-format-env-with-precision precision : :fixnum)
+(defderive-format-env derive-format-env-with-base      base      : :fixnum)
 
 (defmethod {:init! FormatEnv}
   (lambda (self (settings : FormatSettings))

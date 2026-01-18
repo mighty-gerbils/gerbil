@@ -13,8 +13,7 @@
    (msg    : :string)
    (data   : PureAList))
   final: #t
-  transparent: #t
-  acyclic: #t)
+  transparent: #t)
 
 ;; logger interface
 (interface Logger
