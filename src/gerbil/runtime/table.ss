@@ -73,7 +73,8 @@ namespace: #f
   (make-raw-table size-hint hash test seed (__make-inline-lock)))
 
 (defrule (do-raw-table-lock tab expr)
-  (__do-inline-lock! (&raw-table-lock tab) expr))
+  (let (lock (&raw-table-lock tab))
+    (__do-inline-lock! lock expr)))
 
 (def (raw-table-length tab)
   (&raw-table-count tab))
@@ -308,7 +309,7 @@ namespace: #f
                    (seed (&raw-table-seed tab)))
                (__table-ref table seed hash eq key default)))
            (def (ref/lock tab key default)
-             (do-tab-lock tab
+             (do-raw-table-lock tab
                 (ref tab key default)))
            (def (__set tab key value)
              (let ((table (&raw-table-table tab))
@@ -344,15 +345,15 @@ namespace: #f
            (def (update/lock tab key update default)
              (do-raw-table-lock tab
                (update tab key update default)))
-           (def (del tab key)
+           (def (delete tab key)
              (let ((table (&raw-table-table tab))
                    (seed (&raw-table-seed tab)))
                (__table-del! table seed hash eq key
                              (lambda ()
                                (set! (&raw-table-count tab) (fx- (&raw-table-count tab) 1))))))
-           (def (del/lock tab key)
+           (def (delete/lock tab key)
              (do-raw-table-lock tab
-               (del tab key))))))))
+               (delete tab key))))))))
 
 ;; eq-table
 (deftable eq-table
@@ -660,7 +661,7 @@ namespace: #f
 
 (def (__object->eq-hash obj)
   (declare (not interrupts-enabled))
-  (__do-inline-lock! __object-eq-hash-next-lock
+  (__do-inline-lock! __object-eq-hash-lock
     (let (val (gc-table-ref __object-eq-hash obj #f))
       (if val
         val

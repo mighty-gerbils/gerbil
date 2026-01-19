@@ -393,7 +393,7 @@ namespace: gx
 
 (defmethod {apply-macro-expander expander}
   (lambda (self stx)
-    (raise-syntax-error #f "Bad syntax; bottom method for apply-macro-expander" stx)))
+    (raise-syntax-error #f "Bad syntax; no applicable expander" stx)))
 
 (defmethod {apply-macro-expander macro-expander}
   (lambda (self stx)

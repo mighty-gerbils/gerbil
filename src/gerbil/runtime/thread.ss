@@ -13,7 +13,7 @@ namespace: #f
    (make-thread-group 'system))
 
 (def (system-thread-group) => :thread-group
-  __system-thread-group)
+  __system_thread-group)
 
 (def (make-system-thread (thunk : :procedure) (name : :symbol)) => :thread
   (make-thread (cut thread-main thunk) name (system-thread-group)))
@@ -67,7 +67,7 @@ namespace: #f
    (lambda (exn)
      (##continuation-capture
       (lambda (cont)
-        (when unhandled-actor-exception-hook
+        (when (procedure? __unhandled-actor-exception-hook)
           (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
         ;; unwind stack and continue with the primordial exception handler
         ;; see discussion in gambit#295 about ##continuation-last

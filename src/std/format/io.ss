@@ -86,6 +86,7 @@
   (let* ((wr (writer.write-sharp))
          (wr (fx+ wr (writer.write-fixnum-decimal id)))
          (wr (fx+ wr (writer.write-equal)))
+         (wr (fx+ wr (writer.write-sharp)))
          (wr (fx+ wr (writer.format-raw obj env))))
     wr))
 

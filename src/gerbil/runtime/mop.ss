@@ -87,14 +87,16 @@ namespace: #f
                     (t::t)              ; super
                     (id name super flags fields
                         precedence-list slot-vector slot-table
-                        properties constructor methods) ; slots
+                        properties constructor methods
+                        specializer interface) ; slots
                     #f                  ; constructor method
                     #t                  ; struct?
                     #f                  ; final?
                     #f)                 ; metaclass
       (let* ((slots
               '(id name super flags fields
-                   precedence-list slot-vector slot-table properties constructor methods))
+                   precedence-list slot-vector slot-table properties constructor methods
+                   specializer interface))
              (slot-vector
               (list->vector (cons #f slots)))
              (slot-table
@@ -134,7 +136,6 @@ namespace: #f
                  )))
         (##structure-type-set! t t)  ; self reference
         t)))
-
 
 ;; class::t mixes in t::t as all classes except itself
 (##structure-type-set! t::t class::t)
@@ -1022,10 +1023,9 @@ namespace: #f
   (cond
    ((&class-type-specializer klass))
    (else
-    (else
-     (let (method-table (___specialize-class klass))
-       (set! (&class-type-specializer klass) method-table)
-       method-table)))))
+    (let (method-table (___specialize-class klass))
+      (set! (&class-type-specializer klass) method-table)
+      method-table))))
 
 (def (__specialize-method klass method-table method proc)
   (cond
@@ -1212,7 +1212,7 @@ END-C
                  '#(fixnum subtyped special vector fixnum pair stflonum haflonum)
                  '#(fixnum subtyped undefined vector special pair stflonum haflonum)))
               ((2)
-              '#(fixnum subtyped stflonum haflonum special pair stflonum undefined))
+               '#(fixnum subtyped stflonum haflonum special pair stflonum undefined))
               ((3)
                '#(fixnum subtyped haflonum immedate-flonum special pair stflonum stflonum))
               ((4)
@@ -1232,7 +1232,7 @@ END-C
                    (cond
                     ((eq? t 'undefined)
                      (lambda (obj) (error "object type is undefined" obj)))
-                    ((memq t '(fixnum flonum pair vector))
+                    ((memq t '(fixnum flonum stflonum haflonum pair vector))
                      (lambda (obj)
                        (declare (not interrupts-enabled) (not safe))
                        (__system-class t)))
@@ -1342,7 +1342,7 @@ END-C
      (begin-annotation (@mop.system id (super ...))
        (__make-system-class 'id [super ...] 'properties))))
   ((_ type id (super ...))
-   (defsystem-class type-id (super ...) ())))
+   (defsystem-class type id (super ...) ())))
 
 (def (__make-system-class id super properties)
   (let (klass (make-class-type id id super [] `((system: . #t) ,@properties) #f))

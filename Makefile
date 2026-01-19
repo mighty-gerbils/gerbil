@@ -10,10 +10,16 @@ check:
 	./build.sh env gxtest ./...
 
 mostly-clean:
+	rm -rf build/lib/gerbil
+	rm -rf build/lib/std
+	rm -rf build/lib/static
+
+boot-clean: mostly-clean
+	rm -rf bootstrap/lib/gerbil
+
+clean:
 	rm -rf build
 	rm -rf bootstrap
-
-clean: mostly-clean
 	cd src/gambit && make clean
 
 .PHONY: all build install check clean mostly-clean

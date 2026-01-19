@@ -117,7 +117,10 @@ namespace: #f
        slot-table                    ; class-type-slot-table
        properties                    ; class-type-properties
        #f                            ; class-type-constructor
-       #f))))
+       #f                            ; class-type-methods
+       #f                            ; class-type-specializer
+       #f                            ; class-type-interface
+       ))))
 
 ;; immediate gc-hash-table class; reifies the gc-table type
 (def gc-hash-table::t
@@ -160,7 +163,10 @@ namespace: #f
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
-       #f))))
+       #f                              ; class-type-methods
+       #f                              ; class-type-specializer
+       #f                              ; class-type-interface
+       ))))
 
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
 (defstruct locked-hash-table (table lock)
