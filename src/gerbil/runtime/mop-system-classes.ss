@@ -175,17 +175,17 @@ namespace: #f
              (lambda (obj) body ...)))))))
 
 ;; some utilities for the prelude part (meta-type definitions)
-;; (defpred (builtin-object? obj) :- :builtin
-;;   (or (not (##structure? obj))
-;;       (not (class-type? (##structure-type obj)))))
+(defpred (builtin-object? obj) :- :builtin
+  (or (not (##structure? obj))
+      (not (class-type? (##structure-type obj)))))
 
-;; (defpred (builtin-subtyped? obj) :- :subtyped
-;;   (and (##subtyped? obj)
-;;        (builtin-object? obj)))
+(defpred (builtin-subtyped? obj) :- :subtyped
+  (and (##subtyped? obj)
+       (builtin-object? obj)))
 
-;; (defpred (builtin-structure? obj) :- :structure
-;;   (and (##structure? obj)
-;;        (builtin? obj)))
+(defpred (builtin-structure? obj) :- :structure
+  (and (##structure? obj)
+       (not (class-type? (##structure-type obj)))))
 
 (defpred (atom? obj) :- :atom
   (and (immediate? obj)
@@ -196,11 +196,11 @@ namespace: #f
 (defpred (special? obj) :- :special
   (##special? obj))
 
-;; (defpred (stflonum? obj) :- :stflonum
-;;   (and (flonum? obj) (not (##mem-allocated? obj))))
+(defpred (stflonum? obj) :- :stflonum
+  (and (flonum? obj) (not (##mem-allocated? obj))))
 
-;; (defpred (haflonum? obj) :- :haflonum
-;;   (and (flonum? obj) (##mem-allocated? obj)))
+(defpred (haflonum? obj) :- :haflonum
+  (and (flonum? obj) (##mem-allocated? obj)))
 
 (defpred (sequence? obj) :- :sequence
   (or (vector? obj)
