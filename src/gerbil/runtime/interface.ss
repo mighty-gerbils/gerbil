@@ -26,9 +26,71 @@ namespace: #f
   id: gerbil#interface-instance::t)
 
 ;; interface meta descriptor
-(defstruct interface-descriptor (type methods)
+(defstruct interface-descriptor (type methods index)
   id: gerbil#interface-descriptor::t
-  final: #t)
+  final: #t
+  constructor: :init!)
+
+(def __next-interface-index 0)
+(def __next-interface-index-lock (__make-inline-lock))
+(def (__get-next-interface-index)
+  (do-inline-lock! __next-interface-index-lock
+    (let (index __next-interface-index)
+      (set! __next-interface-index (fx1+ index 1))
+      index)))
+
+(defmethod {:init! interface-descriptor}
+  (lambda (self type methods)
+    (set! self.type type)
+    (set! self.methods methods)
+    (set! self.index (__get-next-interface-index))))
+
+(defstruct prototype-table (lock table)
+  id: gerbil#prototype-table::t
+  final: #t
+  constructor: :init!)
+
+(defmethod {:init! prototype-table}
+  (lambda (self)
+    (set! self.lock (__make-inline-lock))
+    (set! self.tab  (make-vector __next-interface-index #f))))
+
+(def (__prototype-table-get (prototable :- prototype-table)
+                            (descriptor :- interface-descriptor))
+  (declare (not safe))
+  (let ((lock  prototable.lock)
+        (index descriptor.index))
+    (do-inline-lock! lock
+      (cond
+       (prototable.table
+        => (lambda (tab)
+             (if (fx< index (vector-length tab))
+               (vector-ref tab index)
+               #f)))
+       (else #f)))))
+
+(def (__prototype-table-set! (prototable :- prototype-table)
+                             (descriptor :- interface-descriptor)
+                             prototype)
+  (declare (not safe))
+  (let ((lock  prototable.lock)
+        (index descriptor.index))
+    (do-inline-lock! lock
+      (cond
+       (prototable.table
+        => (lambda (tab)
+             (if (fx< index (vector-length tab))
+               (vector-set! tab index prototype)
+               (let* ((new-size __next-interface-index)
+                      (new-tab (make-vector new-size #f)))
+                 (subvector-move! tab 0 (vector-length tab) new-tab 0)
+                 (vector-set! new-tab index prototype)
+                 (set! prototable.table new-tab)))))
+       (else
+        (let* ((size __next-interface-index)
+               (tab (make-vector size #f)))
+          (vector-set! tab index prototype)
+          (set! prototable.table tab)))))))
 
 (def (interface-subclass? klass)
   (alet (super (##type-super klass))
@@ -38,7 +100,7 @@ namespace: #f
   (cond
    ((&class-type-interface klass))
    (else
-    (let (tab (make-symbolic-table/lock #f 0))
+    (let (tab (make-prototype-table))
       (set! (&class-type-interface klass) tab)
       tab))))
 
@@ -76,7 +138,7 @@ namespace: #f
                 (else
                  (let ((tab (class-type-interface-table klass))
                        (key (##type-id obj-klass)))
-                   (symbolic-table-set!/lock tab key prototype)
+                   (__prototype-table-set! tab descriptor prototype)
                    (continue prototype))))))))))))
 
 (def (create-prototype descriptor klass obj-klass)
@@ -115,32 +177,30 @@ namespace: #f
       ;; prototype table
       (let (tab (class-type-interface-table obj-klass))
         (cond
-         ((symbolic-table-ref/lock tab klass-id #f)
+         ((__prototype-table-get tab descriptor)
           => (lambda (prototype)
                (if (void? prototype)
                  (cast-it descriptor (&interface-instance-object obj))
                  (do-instance prototype obj))))
          ((try-create-prototype descriptor klass obj-klass)
           => (lambda (prototype)
-               (symbolic-table-set!/lock tab klass-id prototype)
                (do-instance prototype obj)))
          (else
-          (symbolic-table-set!/lock tab klass-id #!void)
+          (__prototype-table-set! tab descriptor #!void)
           (cast-it descriptor (&interface-instance-object obj))))))
      (else
       (let (tab (class-type-interface-table obj-klass))
         (cond
-         ((symbolic-table-ref/lock tab klass-id #f)
+         ((__prototype-table-get tab descriptor)
           => (lambda (prototype)
                (if (void? prototype)
                  (do-instance #f obj)
                  (do-instance prototype obj))))
          ((do-prototype descriptor klass obj-klass)
           => (lambda (prototype)
-               (symbolic-table-set!/lock tab klass-id prototype)
                (do-instance prototype obj)))
          (else
-          (symbolic-table-set!/lock tab klass-id #!void)
+          (__prototype-table-set! tab descriptor #!void)
           (do-instance #f obj))))))))
 
 (defrule (defcast cast-it do-prototype do-instance do-object)
