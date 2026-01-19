@@ -1692,10 +1692,8 @@ package: gerbil/core
   (defsyntax (definterface-method stx)
     (def (emit-raw-method? return)
       (let (return-type (syntax-local-value return))
-        (if (and (class-type-info? return-type)
-                 (memq (!class-type-id return-type) '(t void)))
-          ;; no need for the raw method stub if we don't have to check the return type
-          #f
+        (if (class-type-info? return-type)
+          (not (memq (!class-type-id return-type) '(t void)))
           #t)))
 
     (def (make-checked-method-def Interface method-name raw-method-name unchecked-method-name signature return)
@@ -1734,11 +1732,15 @@ package: gerbil/core
             (syntax/loc stx
               (def (raw-method self . in)
                 (with-interface-unchecked-method self (Interface signature return)
-                  (: (unchecked-method self out ...) return))))
+                  (if __DEBUG
+                    (: (unchecked-method self out ...) return)
+                    (:- (unchecked-method self out ...) return)))))
             (syntax/loc stx
               (def (raw-method self . in)
                 (with-interface-unchecked-method self (Interface signature return)
-                  (: (##apply unchecked-method self out ...) return))))))
+                  (if __DEBUG
+                    (: (##apply unchecked-method self out ...) return)
+                    (:- (##apply unchecked-method self out ...) return)))))))
         '(begin)))
 
     (def (make-unchecked-method-def Interface unchecked-method-name signature return body)
