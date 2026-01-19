@@ -4,6 +4,9 @@ namespace: #f
 
 (%#begin (%#export #t)
          (%#import :gerbil/runtime/gambit :gerbil/runtime/mop)
+         (%#define-runtime builtin::t builtin::t)
+         (%#define-runtime subtyped::t subtyped::t)
+         (%#define-runtime structure::t structure::t)
          (%#define-runtime immediate::t immediate::t)
          (%#define-runtime char::t char::t)
          (%#define-runtime boolean::t boolean::t)
@@ -20,6 +23,8 @@ namespace: #f
          (%#define-runtime bignum::t bignum::t)
          (%#define-runtime ratnum::t ratnum::t)
          (%#define-runtime flonum::t flonum::t)
+         (%#define-runtime stflonum::t stflonum::t)
+         (%#define-runtime haflonum::t haflonum::t)
          (%#define-runtime cpxnum::t cpxnum::t)
          (%#define-runtime symbolic::t symbolic::t)
          (%#define-runtime symbol::t symbol::t)

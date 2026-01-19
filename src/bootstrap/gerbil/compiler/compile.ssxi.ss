@@ -1694,7 +1694,7 @@ package: gerbil/compiler
             #f
             signature:
             (return:
-             t::t
+             builtin::t
              effect:
              #f
              arguments:
