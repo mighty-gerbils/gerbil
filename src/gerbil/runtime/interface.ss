@@ -29,6 +29,7 @@ namespace: #f
 (defstruct interface-descriptor (type methods index)
   id: gerbil#interface-descriptor::t
   final: #t
+  print: (type)
   constructor: :init!)
 
 (def __next-interface-index 0)
@@ -123,11 +124,14 @@ namespace: #f
                   (else
                    (loop-inner methods-rest))))
                 (else
-                 (fail! klass obj-klass method-spec)))))
+                 (__prototype-table-set! tab descriptor #!void)
+                 (fail! method-spec)))))
            ((symbolic-table-ref method-table method-spec #f)
             => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
            (else
-            (fail! klass obj-klass method-spec))))
+            (let (tab (class-type-interface-table obj-klass))
+              (__prototype-table-set! tab descriptor #!void)
+              (fail! method-spec)))))
          (else
           (let (prototype (make-object klass (##fx+ count 2)))
             (let loop ((rest methods) (off (##fx+ count 1)))
@@ -136,8 +140,7 @@ namespace: #f
                  (##unchecked-structure-set! prototype method off klass #f)
                  (loop rest (##fx- off 1)))
                 (else
-                 (let ((tab (class-type-interface-table klass))
-                       (key (##type-id obj-klass)))
+                 (let (tab (class-type-interface-table obj-klass))
                    (__prototype-table-set! tab descriptor prototype)
                    (continue prototype))))))))))))
 
@@ -145,63 +148,62 @@ namespace: #f
   (do-create-prototype
    descriptor klass obj-klass
    (lambda (prototype) prototype)
-   (lambda (klass obj-klass method-name)
+   (lambda (method)
      (abort!
-      (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
-                        interface: klass interface-id: (##type-id klass)
-                        class: obj-klass class-id: (##type-id obj-klass)
-                        method: method-name)))))
+      (raise-cast-error 'create-prototype "cannot create interface prototype; missing method"
+                        interface: descriptor
+                        object: obj
+                        method: method)))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype
    descriptor klass obj-klass
    (lambda (prototype) prototype)
-   (lambda (klass obj-klass method-name) #f)))
+   (lambda (method) #f)))
 
 (defrule (@cast descriptor obj do-prototype do-instance do-object)
-  (declare (not interrupts-enabled))
   (let* ((klass (&interface-descriptor-type descriptor))
-         (klass-id (##type-id klass))
-         (obj-klass (class-of obj))
-         (obj-klass-id (##type-id obj-klass)))
-    (cond
-     ((##eq? klass-id obj-klass-id)
-      ;; already an instance of the right interface
-      (do-object obj))
-     ((interface-subclass? obj-klass)
-      ;; another interface instance
-      ;; first try to cast the interface shell itself so that
-      ;; we can allow niceties like interfaces on interfaces.
-      ;; we don't want to try the cast everytime as this would be
-      ;; prohibitively slow; instead we mark the failure in the interface's
-      ;; prototype table
-      (let (tab (class-type-interface-table obj-klass))
+         (klass-id (##type-id klass)))
+    (let loop ((obj obj))
+      (declare (not interrupts-enabled))
+      (let* ((obj-klass (class-of obj))
+             (obj-klass-id (##type-id obj-klass)))
         (cond
-         ((__prototype-table-get tab descriptor)
-          => (lambda (prototype)
-               (if (void? prototype)
-                 (cast-it descriptor (&interface-instance-object obj))
-                 (do-instance prototype obj))))
-         ((try-create-prototype descriptor klass obj-klass)
-          => (lambda (prototype)
-               (do-instance prototype obj)))
+         ((##eq? klass-id obj-klass-id)
+          ;; already an instance of the right interface
+          (do-object obj))
+         ((interface-subclass? obj-klass)
+          ;; another interface instance
+          ;; first try to cast the interface shell itself so that
+          ;; we can allow niceties like interfaces on interfaces.
+          ;; we don't want to try the cast everytime as this would be
+          ;; prohibitively slow; instead we mark the failure in the interface's
+          ;; prototype table
+          (let (tab (class-type-interface-table obj-klass))
+            (cond
+             ((__prototype-table-get tab descriptor)
+              => (lambda (prototype)
+                   (if (void? prototype)
+                     (loop (&interface-instance-object obj))
+                     (do-instance descriptor prototype obj))))
+             ((try-create-prototype descriptor klass obj-klass)
+              => (lambda (prototype)
+                   (do-instance descriptor prototype obj)))
+             (else
+              (loop (&interface-instance-object obj))))))
          (else
-          (__prototype-table-set! tab descriptor #!void)
-          (cast-it descriptor (&interface-instance-object obj))))))
-     (else
-      (let (tab (class-type-interface-table obj-klass))
-        (cond
-         ((__prototype-table-get tab descriptor)
-          => (lambda (prototype)
-               (if (void? prototype)
-                 (do-instance #f obj)
-                 (do-instance prototype obj))))
-         ((do-prototype descriptor klass obj-klass)
-          => (lambda (prototype)
-               (do-instance prototype obj)))
-         (else
-          (__prototype-table-set! tab descriptor #!void)
-          (do-instance #f obj))))))))
+          (let (tab (class-type-interface-table obj-klass))
+            (cond
+             ((__prototype-table-get tab descriptor)
+              => (lambda (prototype)
+                   (if (void? prototype)
+                     (do-instance descriptor #f obj)
+                     (do-instance descriptor prototype obj))))
+             ((do-prototype descriptor klass obj-klass)
+              => (lambda (prototype)
+                   (do-instance descriptor prototype obj)))
+             (else
+              (do-instance descriptor #f obj))))))))))
 
 (defrule (defcast cast-it do-prototype do-instance do-object)
   (def (cast-it descriptor obj)
@@ -210,16 +212,20 @@ namespace: #f
 ;; cast an object to an interface, creating an instance from the prototype
 (defcast cast
   create-prototype
-  (lambda (prototype obj)
-    (let (instance (##structure-copy prototype))
-      (##unchecked-structure-set! instance obj 1 #f 'cast)
-      instance))
+  (lambda (descriptor prototype obj)
+    (if prototype
+      (let (instance (##structure-copy prototype))
+        (##unchecked-structure-set! instance obj 1 #f 'cast)
+        instance)
+      (abort!
+       (raise-cast-error 'cast "cannot create interface prototype"
+                         interface: descriptor object: obj))))
   (lambda (obj) obj))
 
 ;; try to cast an object to an interface
 (defcast try-cast
   try-create-prototype
-  (lambda (prototype obj)
+  (lambda (descriptor prototype obj)
     (and prototype
          (let (instance (##structure-copy prototype))
            (##unchecked-structure-set! instance obj 1 #f 'cast)
@@ -229,7 +235,7 @@ namespace: #f
 ;; check if an object satisfies an interface, optimistically creating a prototype
 (defcast satisfies?
   try-create-prototype
-  (lambda (prototype obj)
+  (lambda (descriptor prototype obj)
     (and prototype #t))
   (lambda (obj) #t))
 
