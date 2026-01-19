@@ -80,8 +80,8 @@ package: gerbil/runtime
    (@class gerbil#interface-instance::t
            ()
            (object::t t::t)
-           (__object)
-           (__object)
+           (object)
+           (object)
            #f
            #t
            #f
@@ -92,31 +92,32 @@ package: gerbil/runtime
    interface-instance::t
    (optimizer-resolve-class '(typedecl interface-instance::t) 'class::t))
   (declare-type interface-instance? (@predicate interface-instance::t))
+  (declare-type make-interface-instance (@constructor interface-instance::t))
   (declare-type
    interface-instance-object
-   (@accessor interface-instance::t __object #t))
+   (@accessor interface-instance::t object #t))
   (declare-type
    interface-instance-object-set!
-   (@mutator interface-instance::t __object #t))
+   (@mutator interface-instance::t object #t))
   (declare-type
    &interface-instance-object
-   (@accessor interface-instance::t __object #f))
+   (@accessor interface-instance::t object #f))
   (declare-type
    &interface-instance-object-set!
-   (@mutator interface-instance::t __object #f))
+   (@mutator interface-instance::t object #f))
   (declare-class
    interface-descriptor::t
-   (@class gerbil/runtime/interface#interface-descriptor::t
+   (@class gerbil#interface-descriptor::t
            ()
            (object::t t::t)
-           (type methods)
-           (type methods)
-           #f
+           (type methods index)
+           (type methods index)
+           :init!
            #t
            #t
            #f
            #f
-           #f))
+           ((:init! . interface-descriptor:::init!))))
   (declare-type
    interface-descriptor::t
    (optimizer-resolve-class '(typedecl interface-descriptor::t) 'class::t))
@@ -131,11 +132,17 @@ package: gerbil/runtime
    interface-descriptor-methods
    (@accessor interface-descriptor::t methods #t))
   (declare-type
+   interface-descriptor-index
+   (@accessor interface-descriptor::t index #t))
+  (declare-type
    interface-descriptor-type-set!
    (@mutator interface-descriptor::t type #t))
   (declare-type
    interface-descriptor-methods-set!
    (@mutator interface-descriptor::t methods #t))
+  (declare-type
+   interface-descriptor-index-set!
+   (@mutator interface-descriptor::t index #t))
   (declare-type
    &interface-descriptor-type
    (@accessor interface-descriptor::t type #f))
@@ -143,14 +150,28 @@ package: gerbil/runtime
    &interface-descriptor-methods
    (@accessor interface-descriptor::t methods #f))
   (declare-type
+   &interface-descriptor-index
+   (@accessor interface-descriptor::t index #f))
+  (declare-type
    &interface-descriptor-type-set!
    (@mutator interface-descriptor::t type #f))
   (declare-type
    &interface-descriptor-methods-set!
    (@mutator interface-descriptor::t methods #f))
   (declare-type
-   __interface-hash-key
-   (@lambda 1
+   &interface-descriptor-index-set!
+   (@mutator interface-descriptor::t index #f))
+  (declare-type
+   __next-interface-index
+   (optimizer-resolve-class '(typedecl __next-interface-index) 'fixnum::t))
+  (declare-type
+   __next-interface-index-lock
+   (optimizer-resolve-class
+    '(typedecl __next-interface-index-lock)
+    'vector::t))
+  (declare-type
+   __get-next-interface-index
+   (@lambda 0
             #f
             signature:
             (return:
@@ -164,8 +185,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   __interface-test-key
-   (@lambda 2
+   interface-descriptor:::init!
+   (@lambda 3
             #f
             signature:
             (return:
@@ -173,43 +194,47 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t)
              unchecked:
              #f
              origin:
              gerbil/runtime/interface)))
+  (declare-class
+   prototype-table::t
+   (@class gerbil#prototype-table::t
+           ()
+           (object::t t::t)
+           (lock table)
+           (lock table)
+           :init!
+           #t
+           #t
+           #f
+           #f
+           ((:init! . prototype-table:::init!))))
   (declare-type
-   make-prototype-table__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/interface)))
+   prototype-table::t
+   (optimizer-resolve-class '(typedecl prototype-table::t) 'class::t))
+  (declare-type prototype-table? (@predicate prototype-table::t))
+  (declare-type make-prototype-table (@constructor prototype-table::t))
+  (declare-type prototype-table-lock (@accessor prototype-table::t lock #t))
+  (declare-type prototype-table-table (@accessor prototype-table::t table #t))
   (declare-type
-   make-prototype-table__0
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/interface)))
+   prototype-table-lock-set!
+   (@mutator prototype-table::t lock #t))
   (declare-type
-   make-prototype-table__1
+   prototype-table-table-set!
+   (@mutator prototype-table::t table #t))
+  (declare-type &prototype-table-lock (@accessor prototype-table::t lock #f))
+  (declare-type &prototype-table-table (@accessor prototype-table::t table #f))
+  (declare-type
+   &prototype-table-lock-set!
+   (@mutator prototype-table::t lock #f))
+  (declare-type
+   &prototype-table-table-set!
+   (@mutator prototype-table::t table #f))
+  (declare-type
+   prototype-table:::init!
    (@lambda 1
             #f
             signature:
@@ -218,56 +243,14 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             #f
+             (t::t)
              unchecked:
              #f
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   make-prototype-table
-   (@case-lambda
-    (0
-     make-prototype-table__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/interface))
-    (1
-     make-prototype-table__1
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/interface))
-    (2
-     make-prototype-table__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/interface))))
-  (declare-type
-   prototype-table-ref
-   (@lambda 3
+   __prototype-table-get
+   (@lambda 2
             #f
             signature:
             (return:
@@ -275,14 +258,14 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t)
              unchecked:
-             #f
+             ____prototype-table-get
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   prototype-table-set!
-   (@lambda 3
+   ____prototype-table-get
+   (@lambda 2
             #f
             signature:
             (return:
@@ -305,14 +288,14 @@ package: gerbil/runtime
              effect:
              #f
              arguments:
-             #f
+             (t::t t::t t::t)
              unchecked:
-             #f
+             ____prototype-table-set!
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   prototype-table-update!
-   (@lambda 4
+   ____prototype-table-set!
+   (@lambda 3
             #f
             signature:
             (return:
@@ -325,45 +308,6 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/interface)))
-  (declare-type
-   __prototype-table-update!
-   (@lambda 4
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/interface)))
-  (declare-type
-   prototype-table-delete!
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/interface)))
-  (declare-type
-   __interface-prototypes-mx
-   (optimizer-resolve-class '(typedecl __interface-prototypes-mx) 'vector::t))
-  (declare-type
-   __interface-prototypes
-   (optimizer-resolve-class '(typedecl __interface-prototypes) 't::t))
-  (declare-type
-   __interface-prototypes-key
-   (optimizer-resolve-class '(typedecl __interface-prototypes-key) 'pair::t))
   (declare-type
    interface-subclass?
    (@lambda 1
@@ -371,6 +315,21 @@ package: gerbil/runtime
             signature:
             (return:
              boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/interface)))
+  (declare-type
+   class-type-interface-table
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
              effect:
              #f
              arguments:
@@ -442,6 +401,36 @@ package: gerbil/runtime
   (declare-type
    satisfies?
    (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/interface)))
+  (declare-type
+   with-prototype
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (interface-descriptor::t t::t procedure::t procedure::t)
+             unchecked:
+             __with-prototype
+             origin:
+             gerbil/runtime/interface)))
+  (declare-type
+   __with-prototype
+   (@lambda 4
             #f
             signature:
             (return:

@@ -158,5 +158,6 @@ namespace: #f
            macro-character-port-output-width-set!)
           (macro-mutex-lock! macro-mutex-lock!)
           (macro-mutex-unlock! macro-mutex-unlock!)
-          (macro-current-thread macro-current-thread)))
+          (macro-current-thread macro-current-thread)
+          (macro-thread-end-condvar macro-thread-end-condvar)))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/gambit~0"))

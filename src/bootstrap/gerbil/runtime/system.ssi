@@ -68,5 +68,6 @@ namespace: #f
          (%#define-runtime gerbil-home gerbil-home)
          (%#define-runtime gerbil-path gerbil-path)
          (%#define-runtime __smp? __smp?)
-         (%#define-runtime gerbil-runtime-smp? gerbil-runtime-smp?))
+         (%#define-runtime gerbil-runtime-smp? gerbil-runtime-smp?)
+         (%#define-runtime __DEBUG __DEBUG))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/system~0"))

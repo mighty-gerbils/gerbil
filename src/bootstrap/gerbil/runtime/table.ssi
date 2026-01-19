@@ -12,25 +12,54 @@ namespace: #f
          (%#define-runtime &raw-table-hash &raw-table-hash)
          (%#define-runtime &raw-table-test &raw-table-test)
          (%#define-runtime &raw-table-seed &raw-table-seed)
+         (%#define-runtime &raw-table-lock &raw-table-lock)
          (%#define-runtime &raw-table-table-set! &raw-table-table-set!)
          (%#define-runtime &raw-table-count-set! &raw-table-count-set!)
          (%#define-runtime &raw-table-free-set! &raw-table-free-set!)
          (%#define-runtime &raw-table-hash-set! &raw-table-hash-set!)
          (%#define-runtime &raw-table-test-set! &raw-table-test-set!)
          (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
+         (%#define-runtime &raw-table-lock-set! &raw-table-lock-set!)
          (%#define-runtime raw-table-size-hint->size raw-table-size-hint->size)
          (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
                   (%#begin (%#define-runtime
                             make-raw-table__0
                             make-raw-table__0)
+                           (%#define-runtime
+                            make-raw-table__1
+                            make-raw-table__1)
                            (%#define-runtime make-raw-table make-raw-table)))
+         (%#begin (%#define-runtime
+                   make-raw-table/lock__%
+                   make-raw-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-raw-table/lock__0
+                            make-raw-table/lock__0)
+                           (%#define-runtime
+                            make-raw-table/lock
+                            make-raw-table/lock)))
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/table~1")))
+                  (%#define-syntax
+                   do-raw-table-lock
+                   |[:0:]#do-raw-table-lock|))
+         (%#define-runtime raw-table-length raw-table-length)
+         (%#define-runtime raw-table-length/lock raw-table-length/lock)
          (%#define-runtime raw-table-ref raw-table-ref)
+         (%#define-runtime raw-table-ref/lock raw-table-ref/lock)
          (%#define-runtime raw-table-set! raw-table-set!)
+         (%#define-runtime raw-table-set!/lock raw-table-set!/lock)
          (%#define-runtime raw-table-update! raw-table-update!)
+         (%#define-runtime raw-table-update!/lock raw-table-update!/lock)
          (%#define-runtime raw-table-delete! raw-table-delete!)
+         (%#define-runtime raw-table-delete!/lock raw-table-delete!/lock)
          (%#define-runtime raw-table-for-each raw-table-for-each)
+         (%#define-runtime raw-table-for-each/lock raw-table-for-each/lock)
          (%#define-runtime raw-table-copy raw-table-copy)
+         (%#define-runtime raw-table-copy/lock raw-table-copy/lock)
          (%#define-runtime raw-table-clear! raw-table-clear!)
+         (%#define-runtime raw-table-clear!/lock raw-table-clear!/lock)
          (%#define-runtime __raw-table-set! __raw-table-set!)
          (%#define-runtime __raw-table-update! __raw-table-update!)
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
@@ -42,22 +71,33 @@ namespace: #f
          (%#define-runtime symbolic-hash symbolic-hash)
          (%#define-runtime string-hash string-hash)
          (%#define-runtime immediate-hash immediate-hash)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/table~1")))
-                  (%#define-syntax
-                   defspecialized-table
-                   |[:0:]#defspecialized-table|))
+         (%#define-syntax deftable |[:0:]#deftable|)
          (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
                   (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
                            (%#define-runtime make-eq-table__1 make-eq-table__1)
                            (%#define-runtime make-eq-table make-eq-table)))
+         (%#begin (%#define-runtime
+                   make-eq-table/lock__%
+                   make-eq-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-eq-table/lock__0
+                            make-eq-table/lock__0)
+                           (%#define-runtime
+                            make-eq-table/lock__1
+                            make-eq-table/lock__1)
+                           (%#define-runtime
+                            make-eq-table/lock
+                            make-eq-table/lock)))
          (%#define-runtime eq-table-ref eq-table-ref)
-         (%#define-runtime eq-table-set! eq-table-set!)
+         (%#define-runtime eq-table-ref/lock eq-table-ref/lock)
          (%#define-runtime __eq-table-set! __eq-table-set!)
-         (%#define-runtime eq-table-update! eq-table-update!)
+         (%#define-runtime eq-table-set! eq-table-set!)
+         (%#define-runtime eq-table-set!/lock eq-table-set!/lock)
          (%#define-runtime __eq-table-update! __eq-table-update!)
+         (%#define-runtime eq-table-update! eq-table-update!)
+         (%#define-runtime eq-table-update!/lock eq-table-update!/lock)
          (%#define-runtime eq-table-delete! eq-table-delete!)
+         (%#define-runtime eq-table-delete!/lock eq-table-delete!/lock)
          (%#begin (%#define-runtime make-eqv-table__% make-eqv-table__%)
                   (%#begin (%#define-runtime
                             make-eqv-table__0
@@ -66,12 +106,28 @@ namespace: #f
                             make-eqv-table__1
                             make-eqv-table__1)
                            (%#define-runtime make-eqv-table make-eqv-table)))
+         (%#begin (%#define-runtime
+                   make-eqv-table/lock__%
+                   make-eqv-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-eqv-table/lock__0
+                            make-eqv-table/lock__0)
+                           (%#define-runtime
+                            make-eqv-table/lock__1
+                            make-eqv-table/lock__1)
+                           (%#define-runtime
+                            make-eqv-table/lock
+                            make-eqv-table/lock)))
          (%#define-runtime eqv-table-ref eqv-table-ref)
-         (%#define-runtime eqv-table-set! eqv-table-set!)
+         (%#define-runtime eqv-table-ref/lock eqv-table-ref/lock)
          (%#define-runtime __eqv-table-set! __eqv-table-set!)
-         (%#define-runtime eqv-table-update! eqv-table-update!)
+         (%#define-runtime eqv-table-set! eqv-table-set!)
+         (%#define-runtime eqv-table-set!/lock eqv-table-set!/lock)
          (%#define-runtime __eqv-table-update! __eqv-table-update!)
+         (%#define-runtime eqv-table-update! eqv-table-update!)
+         (%#define-runtime eqv-table-update!/lock eqv-table-update!/lock)
          (%#define-runtime eqv-table-delete! eqv-table-delete!)
+         (%#define-runtime eqv-table-delete!/lock eqv-table-delete!/lock)
          (%#begin (%#define-runtime
                    make-symbolic-table__%
                    make-symbolic-table__%)
@@ -84,12 +140,32 @@ namespace: #f
                            (%#define-runtime
                             make-symbolic-table
                             make-symbolic-table)))
+         (%#begin (%#define-runtime
+                   make-symbolic-table/lock__%
+                   make-symbolic-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-symbolic-table/lock__0
+                            make-symbolic-table/lock__0)
+                           (%#define-runtime
+                            make-symbolic-table/lock__1
+                            make-symbolic-table/lock__1)
+                           (%#define-runtime
+                            make-symbolic-table/lock
+                            make-symbolic-table/lock)))
          (%#define-runtime symbolic-table-ref symbolic-table-ref)
-         (%#define-runtime symbolic-table-set! symbolic-table-set!)
+         (%#define-runtime symbolic-table-ref/lock symbolic-table-ref/lock)
          (%#define-runtime __symbolic-table-set! __symbolic-table-set!)
-         (%#define-runtime symbolic-table-update! symbolic-table-update!)
+         (%#define-runtime symbolic-table-set! symbolic-table-set!)
+         (%#define-runtime symbolic-table-set!/lock symbolic-table-set!/lock)
          (%#define-runtime __symbolic-table-update! __symbolic-table-update!)
+         (%#define-runtime symbolic-table-update! symbolic-table-update!)
+         (%#define-runtime
+          symbolic-table-update!/lock
+          symbolic-table-update!/lock)
          (%#define-runtime symbolic-table-delete! symbolic-table-delete!)
+         (%#define-runtime
+          symbolic-table-delete!/lock
+          symbolic-table-delete!/lock)
          (%#begin (%#define-runtime make-string-table__% make-string-table__%)
                   (%#begin (%#define-runtime
                             make-string-table__0
@@ -100,12 +176,28 @@ namespace: #f
                            (%#define-runtime
                             make-string-table
                             make-string-table)))
+         (%#begin (%#define-runtime
+                   make-string-table/lock__%
+                   make-string-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-string-table/lock__0
+                            make-string-table/lock__0)
+                           (%#define-runtime
+                            make-string-table/lock__1
+                            make-string-table/lock__1)
+                           (%#define-runtime
+                            make-string-table/lock
+                            make-string-table/lock)))
          (%#define-runtime string-table-ref string-table-ref)
-         (%#define-runtime string-table-set! string-table-set!)
+         (%#define-runtime string-table-ref/lock string-table-ref/lock)
          (%#define-runtime __string-table-set! __string-table-set!)
-         (%#define-runtime string-table-update! string-table-update!)
+         (%#define-runtime string-table-set! string-table-set!)
+         (%#define-runtime string-table-set!/lock string-table-set!/lock)
          (%#define-runtime __string-table-update! __string-table-update!)
+         (%#define-runtime string-table-update! string-table-update!)
+         (%#define-runtime string-table-update!/lock string-table-update!/lock)
          (%#define-runtime string-table-delete! string-table-delete!)
+         (%#define-runtime string-table-delete!/lock string-table-delete!/lock)
          (%#begin (%#define-runtime
                    make-immediate-table__%
                    make-immediate-table__%)
@@ -118,12 +210,32 @@ namespace: #f
                            (%#define-runtime
                             make-immediate-table
                             make-immediate-table)))
+         (%#begin (%#define-runtime
+                   make-immediate-table/lock__%
+                   make-immediate-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-immediate-table/lock__0
+                            make-immediate-table/lock__0)
+                           (%#define-runtime
+                            make-immediate-table/lock__1
+                            make-immediate-table/lock__1)
+                           (%#define-runtime
+                            make-immediate-table/lock
+                            make-immediate-table/lock)))
          (%#define-runtime immediate-table-ref immediate-table-ref)
-         (%#define-runtime immediate-table-set! immediate-table-set!)
+         (%#define-runtime immediate-table-ref/lock immediate-table-ref/lock)
          (%#define-runtime __immediate-table-set! __immediate-table-set!)
-         (%#define-runtime immediate-table-update! immediate-table-update!)
+         (%#define-runtime immediate-table-set! immediate-table-set!)
+         (%#define-runtime immediate-table-set!/lock immediate-table-set!/lock)
          (%#define-runtime __immediate-table-update! __immediate-table-update!)
+         (%#define-runtime immediate-table-update! immediate-table-update!)
+         (%#define-runtime
+          immediate-table-update!/lock
+          immediate-table-update!/lock)
          (%#define-runtime immediate-table-delete! immediate-table-delete!)
+         (%#define-runtime
+          immediate-table-delete!/lock
+          immediate-table-delete!/lock)
          (%#define-syntax probe-step |[:0:]#probe-step|)
          (%#define-syntax __table-ref |[:0:]#__table-ref|)
          (%#define-syntax __table-set! |[:0:]#__table-set!|)
@@ -134,24 +246,49 @@ namespace: #f
          (%#define-runtime __gc-table-loads __gc-table-loads)
          (%#define-runtime &gc-table-gcht &gc-table-gcht)
          (%#define-runtime &gc-table-immediate &gc-table-immediate)
+         (%#define-runtime &gc-table-lock &gc-table-lock)
          (%#define-runtime &gc-table-gcht-set! &gc-table-gcht-set!)
          (%#define-runtime &gc-table-immediate-set! &gc-table-immediate-set!)
+         (%#define-runtime &gc-table-lock-set! &gc-table-lock-set!)
          (%#begin (%#define-runtime make-gc-table__% make-gc-table__%)
                   (%#begin (%#define-runtime make-gc-table__0 make-gc-table__0)
                            (%#define-runtime make-gc-table__1 make-gc-table__1)
+                           (%#define-runtime make-gc-table__2 make-gc-table__2)
                            (%#define-runtime make-gc-table make-gc-table)))
+         (%#begin (%#define-runtime
+                   make-gc-table/lock__%
+                   make-gc-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-gc-table/lock__0
+                            make-gc-table/lock__0)
+                           (%#define-runtime
+                            make-gc-table/lock__1
+                            make-gc-table/lock__1)
+                           (%#define-runtime
+                            make-gc-table/lock
+                            make-gc-table/lock)))
+         (%#define-syntax do-gc-table-lock |[:0:]#do-gc-table-lock|)
          (%#define-runtime __gc-table-immediate __gc-table-immediate)
          (%#define-runtime __gc-table-new __gc-table-new)
          (%#define-runtime __gc-table-e __gc-table-e)
          (%#define-runtime __gc-table-rehash! __gc-table-rehash!)
          (%#define-runtime gc-table-ref gc-table-ref)
+         (%#define-runtime gc-table-ref/lock gc-table-ref/lock)
          (%#define-runtime gc-table-set! gc-table-set!)
+         (%#define-runtime gc-table-set/lock! gc-table-set/lock!)
          (%#define-runtime gc-table-update! gc-table-update!)
+         (%#define-runtime gc-table-update!/lock gc-table-update!/lock)
          (%#define-runtime gc-table-delete! gc-table-delete!)
+         (%#define-runtime gc-table-delete!/lock gc-table-delete!/lock)
          (%#define-runtime gc-table-for-each gc-table-for-each)
+         (%#define-runtime gc-table-for-each/lock gc-table-for-each/lock)
          (%#define-runtime gc-table-copy gc-table-copy)
+         (%#define-runtime gc-table-copy/lock gc-table-copy/lock)
          (%#define-runtime gc-table-clear! gc-table-clear!)
+         (%#define-runtime gc-table-clear!/lock gc-table-clear!/lock)
          (%#define-runtime gc-table-length gc-table-length)
+         (%#define-runtime gc-table-length/lock gc-table-length/lock)
+         (%#define-runtime __object-eq-hash-lock __object-eq-hash-lock)
          (%#define-runtime __object-eq-hash-next __object-eq-hash-next)
          (%#define-runtime __object-eq-hash __object-eq-hash)
          (%#define-runtime __object->eq-hash __object->eq-hash))

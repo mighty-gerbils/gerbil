@@ -1,5 +1,0 @@
-prelude: :<root>
-package: gerbil
-namespace: gerbil/gambit
-
-(%#begin)

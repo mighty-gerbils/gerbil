@@ -500,14 +500,14 @@ package: gerbil/runtime
              gerbil/runtime/system)))
   (declare-type
    __smp?
-   (optimizer-resolve-class '(typedecl __smp?) 'immediate::t))
+   (optimizer-resolve-class '(typedecl __smp?) 'promise::t))
   (declare-type
    gerbil-runtime-smp?
    (@lambda 0
             #f
             signature:
             (return:
-             immediate::t
+             t::t
              effect:
              #f
              arguments:
@@ -515,4 +515,5 @@ package: gerbil/runtime
              unchecked:
              #f
              origin:
-             gerbil/runtime/system))))
+             gerbil/runtime/system)))
+  (declare-type __DEBUG (optimizer-resolve-class '(typedecl __DEBUG) 't::t)))

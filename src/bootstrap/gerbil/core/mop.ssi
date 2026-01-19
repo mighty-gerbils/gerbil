@@ -46,6 +46,51 @@ namespace: gerbil/core/mop
           (%#begin (%#import :gerbil/core/expander (in: #f MOP-1))
                    (%#export #t)
                    (%#define-runtime
+                    runtime-type-info::t
+                    gerbil/core/mop~MOP-2#runtime-type-info::t)
+                   (%#define-runtime
+                    runtime-type-info?
+                    gerbil/core/mop~MOP-2#runtime-type-info?)
+                   (%#define-runtime
+                    make-runtime-type-info
+                    gerbil/core/mop~MOP-2#make-runtime-type-info)
+                   (%#define-runtime
+                    !runtime-type-id
+                    gerbil/core/mop~MOP-2#!runtime-type-id)
+                   (%#define-runtime
+                    !runtime-type-name
+                    gerbil/core/mop~MOP-2#!runtime-type-name)
+                   (%#define-runtime
+                    !runtime-type-descriptor
+                    gerbil/core/mop~MOP-2#!runtime-type-descriptor)
+                   (%#define-runtime
+                    !runtime-type-id-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-id-set!)
+                   (%#define-runtime
+                    !runtime-type-name-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-name-set!)
+                   (%#define-runtime
+                    !runtime-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#!runtime-type-descriptor-set!)
+                   (%#define-runtime
+                    &!runtime-type-id
+                    gerbil/core/mop~MOP-2#&!runtime-type-id)
+                   (%#define-runtime
+                    &!runtime-type-name
+                    gerbil/core/mop~MOP-2#&!runtime-type-name)
+                   (%#define-runtime
+                    &!runtime-type-descriptor
+                    gerbil/core/mop~MOP-2#&!runtime-type-descriptor)
+                   (%#define-runtime
+                    &!runtime-type-id-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-id-set!)
+                   (%#define-runtime
+                    &!runtime-type-name-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-name-set!)
+                   (%#define-runtime
+                    &!runtime-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#&!runtime-type-descriptor-set!)
+                   (%#define-runtime
                     class-type-info::t
                     gerbil/core/mop~MOP-2#class-type-info::t)
                    (%#define-runtime
@@ -54,12 +99,6 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     make-class-type-info
                     gerbil/core/mop~MOP-2#make-class-type-info)
-                   (%#define-runtime
-                    !class-type-id
-                    gerbil/core/mop~MOP-2#!class-type-id)
-                   (%#define-runtime
-                    !class-type-name
-                    gerbil/core/mop~MOP-2#!class-type-name)
                    (%#define-runtime
                     !class-type-super
                     gerbil/core/mop~MOP-2#!class-type-super)
@@ -88,9 +127,6 @@ namespace: gerbil/core/mop
                     !class-type-constructor-method
                     gerbil/core/mop~MOP-2#!class-type-constructor-method)
                    (%#define-runtime
-                    !class-type-descriptor
-                    gerbil/core/mop~MOP-2#!class-type-descriptor)
-                   (%#define-runtime
                     !class-type-constructor
                     gerbil/core/mop~MOP-2#!class-type-constructor)
                    (%#define-runtime
@@ -118,11 +154,14 @@ namespace: gerbil/core/mop
                     !class-type-slot-contracts
                     gerbil/core/mop~MOP-2#!class-type-slot-contracts)
                    (%#define-runtime
-                    !class-type-id-set!
-                    gerbil/core/mop~MOP-2#!class-type-id-set!)
+                    !class-type-id
+                    gerbil/core/mop~MOP-2#!class-type-id)
                    (%#define-runtime
-                    !class-type-name-set!
-                    gerbil/core/mop~MOP-2#!class-type-name-set!)
+                    !class-type-name
+                    gerbil/core/mop~MOP-2#!class-type-name)
+                   (%#define-runtime
+                    !class-type-descriptor
+                    gerbil/core/mop~MOP-2#!class-type-descriptor)
                    (%#define-runtime
                     !class-type-super-set!
                     gerbil/core/mop~MOP-2#!class-type-super-set!)
@@ -151,9 +190,6 @@ namespace: gerbil/core/mop
                     !class-type-constructor-method-set!
                     gerbil/core/mop~MOP-2#!class-type-constructor-method-set!)
                    (%#define-runtime
-                    !class-type-descriptor-set!
-                    gerbil/core/mop~MOP-2#!class-type-descriptor-set!)
-                   (%#define-runtime
                     !class-type-constructor-set!
                     gerbil/core/mop~MOP-2#!class-type-constructor-set!)
                    (%#define-runtime
@@ -181,11 +217,14 @@ namespace: gerbil/core/mop
                     !class-type-slot-contracts-set!
                     gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!)
                    (%#define-runtime
-                    &!class-type-id
-                    gerbil/core/mop~MOP-2#&!class-type-id)
+                    !class-type-id-set!
+                    gerbil/core/mop~MOP-2#!class-type-id-set!)
                    (%#define-runtime
-                    &!class-type-name
-                    gerbil/core/mop~MOP-2#&!class-type-name)
+                    !class-type-name-set!
+                    gerbil/core/mop~MOP-2#!class-type-name-set!)
+                   (%#define-runtime
+                    !class-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#!class-type-descriptor-set!)
                    (%#define-runtime
                     &!class-type-super
                     gerbil/core/mop~MOP-2#&!class-type-super)
@@ -214,9 +253,6 @@ namespace: gerbil/core/mop
                     &!class-type-constructor-method
                     gerbil/core/mop~MOP-2#&!class-type-constructor-method)
                    (%#define-runtime
-                    &!class-type-descriptor
-                    gerbil/core/mop~MOP-2#&!class-type-descriptor)
-                   (%#define-runtime
                     &!class-type-constructor
                     gerbil/core/mop~MOP-2#&!class-type-constructor)
                    (%#define-runtime
@@ -244,11 +280,14 @@ namespace: gerbil/core/mop
                     &!class-type-slot-contracts
                     gerbil/core/mop~MOP-2#&!class-type-slot-contracts)
                    (%#define-runtime
-                    &!class-type-id-set!
-                    gerbil/core/mop~MOP-2#&!class-type-id-set!)
+                    &!class-type-id
+                    gerbil/core/mop~MOP-2#&!class-type-id)
                    (%#define-runtime
-                    &!class-type-name-set!
-                    gerbil/core/mop~MOP-2#&!class-type-name-set!)
+                    &!class-type-name
+                    gerbil/core/mop~MOP-2#&!class-type-name)
+                   (%#define-runtime
+                    &!class-type-descriptor
+                    gerbil/core/mop~MOP-2#&!class-type-descriptor)
                    (%#define-runtime
                     &!class-type-super-set!
                     gerbil/core/mop~MOP-2#&!class-type-super-set!)
@@ -277,9 +316,6 @@ namespace: gerbil/core/mop
                     &!class-type-constructor-method-set!
                     gerbil/core/mop~MOP-2#&!class-type-constructor-method-set!)
                    (%#define-runtime
-                    &!class-type-descriptor-set!
-                    gerbil/core/mop~MOP-2#&!class-type-descriptor-set!)
-                   (%#define-runtime
                     &!class-type-constructor-set!
                     gerbil/core/mop~MOP-2#&!class-type-constructor-set!)
                    (%#define-runtime
@@ -307,8 +343,26 @@ namespace: gerbil/core/mop
                     &!class-type-slot-contracts-set!
                     gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!)
                    (%#define-runtime
+                    &!class-type-id-set!
+                    gerbil/core/mop~MOP-2#&!class-type-id-set!)
+                   (%#define-runtime
+                    &!class-type-name-set!
+                    gerbil/core/mop~MOP-2#&!class-type-name-set!)
+                   (%#define-runtime
+                    &!class-type-descriptor-set!
+                    gerbil/core/mop~MOP-2#&!class-type-descriptor-set!)
+                   (%#define-runtime
                     class-type-info::apply-macro-expander
                     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
+                   (%#begin (%#define-runtime
+                             syntax-local-runtime-type-info?__%
+                             gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%)
+                            (%#begin (%#define-runtime
+                                      syntax-local-runtime-type-info?__0
+                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0)
+                                     (%#define-runtime
+                                      syntax-local-runtime-type-info?
+                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?)))
                    (%#begin (%#define-runtime
                              syntax-local-class-type-info?__%
                              gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)
@@ -327,8 +381,11 @@ namespace: gerbil/core/mop
                              (%#call (%#ref load-module)
                                      (%#quote "gerbil/core/mop~2")))
                             (%#define-syntax
-                             class-type-info
-                             |gerbil/core/mop~MOP-3[:0:]#class-type-info|))))
+                             runtime-type-info
+                             |gerbil/core/mop~MOP-3[:0:]#runtime-type-info|))
+                   (%#define-syntax
+                    class-type-info
+                    |gerbil/core/mop~MOP-3[:0:]#class-type-info|)))
          (%#module
           MOP-4
           (%#begin (%#import
@@ -488,6 +545,9 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :procedure
                     |gerbil/core/mop~MOP-5[:0:]#:procedure|)
+                   (%#define-syntax
+                    :return
+                    |gerbil/core/mop~MOP-5[:0:]#:return|)
                    (%#define-syntax :time |gerbil/core/mop~MOP-5[:0:]#:time|)
                    (%#define-syntax
                     :thread
