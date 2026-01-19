@@ -190,7 +190,8 @@ namespace: #f
 (defpred (atom? obj) :- :atom
   (and (immediate? obj)
        (not (char? obj))
-       (not (fixnum? obj))))
+       (not (fixnum? obj))
+       (not (flonum? obj))))
 
 (defpred (special? obj) :- :special
   (##special? obj))
