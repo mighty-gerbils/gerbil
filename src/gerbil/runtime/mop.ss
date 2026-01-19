@@ -1123,7 +1123,7 @@ namespace: #f
 ;; to track their methods
 (def __shadow-classes
   (make-symbolic-table #f 0))
-(def __shadow-classes-mx
+(def __shadow-classes-lock
   (__make-inline-lock))
 
 (def (__shadow-class type (properties []))
@@ -1154,11 +1154,11 @@ namespace: #f
       (symbolic-table-set! __shadow-classes (##type-id type) klass)
       klass))
 
-  (__lock-inline! __shadow-classes-mx)
+  (__lock-inline! __shadow-classes-lock)
   (cond
    ((symbolic-table-ref __shadow-classes (##type-id type) #f)
     => (lambda (klass)
-         (__unlock-inline! __shadow-classes-mx)
+         (__unlock-inline! __shadow-classes-lock)
          klass))
    (else
     (let loop ((super (##type-super type)) (hierarchy []))
@@ -1176,7 +1176,7 @@ namespace: #f
                  (loop rest (cons klass precedence-list))))))
             (else
              (let (klass (make-shadow-class type precedence-list))
-               (__unlock-inline! __shadow-classes-mx)
+               (__unlock-inline! __shadow-classes-lock)
                klass)))))
        (else
         (loop (##type-super super) (cons super hierarchy))))))))
