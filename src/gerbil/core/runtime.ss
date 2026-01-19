@@ -1622,6 +1622,11 @@ package: gerbil/core
     t::t
     class::t
     object::t
+    builtin::t
+    subtyped::t
+    structure::t
+    stflonum::t
+    haflonum::t
 
     ;; :gerbil/runtime/mop-system-classes
     immediate::t
