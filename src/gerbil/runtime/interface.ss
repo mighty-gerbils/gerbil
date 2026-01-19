@@ -29,15 +29,15 @@ namespace: #f
 (defstruct interface-descriptor (type methods index)
   id: gerbil#interface-descriptor::t
   final: #t
-  print: (type)
+  print: (type index)
   constructor: :init!)
 
 (def __next-interface-index 0)
 (def __next-interface-index-lock (__make-inline-lock))
 (def (__get-next-interface-index)
-  (do-inline-lock! __next-interface-index-lock
+  (__do-inline-lock! __next-interface-index-lock
     (let (index __next-interface-index)
-      (set! __next-interface-index (fx1+ index 1))
+      (set! __next-interface-index (fx+ index 1))
       index)))
 
 (defmethod {:init! interface-descriptor}
@@ -53,22 +53,19 @@ namespace: #f
 
 (defmethod {:init! prototype-table}
   (lambda (self)
-    (set! self.lock (__make-inline-lock))
-    (set! self.tab  (make-vector __next-interface-index #f))))
+    (set! self.lock  (__make-inline-lock))
+    (set! self.table (make-vector __next-interface-index #f))))
 
 (def (__prototype-table-get (prototable :- prototype-table)
                             (descriptor :- interface-descriptor))
   (declare (not safe))
   (let ((lock  prototable.lock)
         (index descriptor.index))
-    (do-inline-lock! lock
-      (cond
-       (prototable.table
-        => (lambda (tab)
-             (if (fx< index (vector-length tab))
-               (vector-ref tab index)
-               #f)))
-       (else #f)))))
+    (__do-inline-lock! lock
+      (let (tab prototable.table)
+        (if (fx< index (vector-length tab))
+          (vector-ref tab index)
+          #f)))))
 
 (def (__prototype-table-set! (prototable :- prototype-table)
                              (descriptor :- interface-descriptor)
@@ -76,22 +73,15 @@ namespace: #f
   (declare (not safe))
   (let ((lock  prototable.lock)
         (index descriptor.index))
-    (do-inline-lock! lock
-      (cond
-       (prototable.table
-        => (lambda (tab)
-             (if (fx< index (vector-length tab))
-               (vector-set! tab index prototype)
-               (let* ((new-size __next-interface-index)
-                      (new-tab (make-vector new-size #f)))
-                 (subvector-move! tab 0 (vector-length tab) new-tab 0)
-                 (vector-set! new-tab index prototype)
-                 (set! prototable.table new-tab)))))
-       (else
-        (let* ((size __next-interface-index)
-               (tab (make-vector size #f)))
+    (__do-inline-lock! lock
+      (let (tab prototable.table)
+        (if (fx< index (vector-length tab))
           (vector-set! tab index prototype)
-          (set! prototable.table tab)))))))
+          (let* ((new-size __next-interface-index)
+                 (new-tab (make-vector new-size #f)))
+            (subvector-move! tab 0 (vector-length tab) new-tab 0)
+            (vector-set! new-tab index prototype)
+            (set! prototable.table new-tab)))))))
 
 (def (interface-subclass? klass)
   (alet (super (##type-super klass))
@@ -124,8 +114,9 @@ namespace: #f
                   (else
                    (loop-inner methods-rest))))
                 (else
-                 (__prototype-table-set! tab descriptor #!void)
-                 (fail! method-spec)))))
+                 (let (tab (class-type-interface-table obj-klass))
+                   (__prototype-table-set! tab descriptor #!void)
+                   (fail! method-spec))))))
            ((symbolic-table-ref method-table method-spec #f)
             => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
            (else
@@ -152,7 +143,7 @@ namespace: #f
      (abort!
       (raise-cast-error 'create-prototype "cannot create interface prototype; missing method"
                         interface: descriptor
-                        object: obj
+                        class: obj-klass
                         method: method)))))
 
 (def (try-create-prototype descriptor klass obj-klass)
@@ -207,7 +198,7 @@ namespace: #f
 
 (defrule (defcast cast-it do-prototype do-instance do-object)
   (def (cast-it descriptor obj)
-    (@cast descriptor obj do-protytpe-do-instance do-object)))
+    (@cast descriptor obj do-prototype do-instance do-object)))
 
 ;; cast an object to an interface, creating an instance from the prototype
 (defcast cast
@@ -219,7 +210,7 @@ namespace: #f
         instance)
       (abort!
        (raise-cast-error 'cast "cannot create interface prototype"
-                         interface: descriptor object: obj))))
+                         interface: descriptor class: (class-of obj)))))
   (lambda (obj) obj))
 
 ;; try to cast an object to an interface
@@ -239,7 +230,7 @@ namespace: #f
     (and prototype #t))
   (lambda (obj) #t))
 
-(def (with-prototype (descriptor : interface-idescriptor) obj
+(def (with-prototype (descriptor : interface-descriptor) obj
        (with-prototype+receiver : :procedure)
        (with-receiver           : :procedure))
   (@cast descriptor obj create-prototype with-prototype+receiver with-receiver))

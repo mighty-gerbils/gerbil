@@ -4,7 +4,6 @@
 ;;; libgerbil build script
 
 (import :gerbil/expander
-        :gerbil/gambit
         :std/build-config
         :std/make
         :std/iter
@@ -50,9 +49,6 @@
     "gerbil/runtime/loader"
     "gerbil/runtime/init"
     "gerbil/runtime"))
-
-(def gerbil-prelude-gambit
-  '("gerbil/gambit"))
 
 (def gerbil-expander
   '("gerbil/expander/common"
@@ -312,7 +308,6 @@
          (ordered-modules (order-modules stdlib-modules))
          (ordered-modules (remove-duplicates
                            (append gerbil-runtime
-                                   gerbil-prelude-gambit
                                    gerbil-expander
                                    gerbil-compiler
                                    ordered-modules)))

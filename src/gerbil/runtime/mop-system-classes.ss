@@ -64,7 +64,7 @@ namespace: #f
               return::t))
 
 ;; root distinction from standard objects
-(defsystem-class builtin::t builtin (:t))
+(defsystem-class builtin::t builtin (t::t))
 (defsystem-class subtyped::t subtyped (builtin::t))
 (defsystem-class structure::t structure (subtyped::t))
 
@@ -90,8 +90,8 @@ namespace: #f
 (defsystem-class bignum::t bignum (integer::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class ratnum::t ratnum (real::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class flonum::t flonum (real::t) ((acyclic: . #t)))
-(defsystem-class stflonum::t (flonum::t immediate::t) ((acyclic: . #t)))
-(defsystem-class haflonum::t (flonum::t subtyped::t) ((acyclic: . #t)))
+(defsystem-class stflonum::t stflonum (flonum::t immediate::t) ((acyclic: . #t)))
+(defsystem-class haflonum::t haflonum (flonum::t subtyped::t) ((acyclic: . #t)))
 (defsystem-class cpxnum::t cpxnum (number::t subtyped::t) ((acyclic: . #t)))
 
 ;; symbolic
@@ -175,17 +175,17 @@ namespace: #f
              (lambda (obj) body ...)))))))
 
 ;; some utilities for the prelude part (meta-type definitions)
-(defpred (builtin-object? obj) :- :builtin
-  (or (not (##structure? obj))
-      (not (class-type? (##structure-type obj)))))
+;; (defpred (builtin-object? obj) :- :builtin
+;;   (or (not (##structure? obj))
+;;       (not (class-type? (##structure-type obj)))))
 
-(defpred (builtin-subtyped? obj) :- :subtyped
-  (and (##subtyped? obj)
-       (builtin-object? obj)))
+;; (defpred (builtin-subtyped? obj) :- :subtyped
+;;   (and (##subtyped? obj)
+;;        (builtin-object? obj)))
 
-(defpred (builtin-structure? obj) :- :structure
-  (and (##structure? obj)
-       (builtin? obj)))
+;; (defpred (builtin-structure? obj) :- :structure
+;;   (and (##structure? obj)
+;;        (builtin? obj)))
 
 (defpred (atom? obj) :- :atom
   (and (immediate? obj)
@@ -195,11 +195,11 @@ namespace: #f
 (defpred (special? obj) :- :special
   (##special? obj))
 
-(defpred (stflonum? obj) :- :stflonum
-  (and (flonum? obj) (not (##mem-allocated? obj))))
+;; (defpred (stflonum? obj) :- :stflonum
+;;   (and (flonum? obj) (not (##mem-allocated? obj))))
 
-(defpred (haflonum? obj) :- :haflonum
-  (and (flonum? obj) (##mem-allocated? obj)))
+;; (defpred (haflonum? obj) :- :haflonum
+;;   (and (flonum? obj) (##mem-allocated? obj)))
 
 (defpred (sequence? obj) :- :sequence
   (or (vector? obj)

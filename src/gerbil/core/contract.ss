@@ -29,7 +29,8 @@ package: gerbil/core
 
 (module InterfaceInfo
   (import "expander"
-          (only-in "mop" @method))
+          "mop"
+          MOP-2 MOP-3)
   (export #t)
   (defclass (interface-info runtime-type-info)
     (namespace
@@ -126,7 +127,7 @@ package: gerbil/core
          ((class-type-info? t)
           (!class-type-descriptor t))
          ((interface-info? t)
-          (interface-info-instance-type t))
+          (!runtime-type-descriptor t))
          (else
           (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
 
@@ -1825,7 +1826,7 @@ package: gerbil/core
               (let (info (syntax-local-value #'id false))
                 (unless (interface-info? info)
                   (raise-syntax-error #f "not an interface type" stx #'id))
-                (with ((interface-info instance-type: type
+                (with ((interface-info type-descriptor: type
                                        interface-descriptor: descriptor
                                        instance-constructor: constructor
                                        instance-try-constructor: try-constructor
