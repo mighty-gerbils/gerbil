@@ -1540,6 +1540,7 @@ package: gerbil/core
     gerbil-home
     gerbil-path
     gerbil-runtime-smp?
+    __DEBUG
 
     ;; :gerbil/runtime/c3
     c4-linearize

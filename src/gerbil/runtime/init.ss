@@ -191,7 +191,7 @@ namespace: #f
   (gx#core-eval-module obj))
 
 (def (__interrupt-handler)
-  (when (getenv "GERBIL_DEBUG" #f)
+  (when __DEBUG
     (newline (current-error-port))
     (display "--- continuation backtrace:" (current-error-port))
     (newline (current-error-port))
