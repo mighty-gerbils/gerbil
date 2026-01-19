@@ -437,6 +437,15 @@ namespace: gerbil/core/mop
                     :object
                     |gerbil/core/mop~MOP-5[:0:]#:object|)
                    (%#define-syntax
+                    :builtin
+                    |gerbil/core/mop~MOP-5[:0:]#:builtin|)
+                   (%#define-syntax
+                    :subtyped
+                    |gerbil/core/mop~MOP-5[:0:]#:subtyped|)
+                   (%#define-syntax
+                    :structure
+                    |gerbil/core/mop~MOP-5[:0:]#:structure|)
+                   (%#define-syntax
                     :immediate
                     |gerbil/core/mop~MOP-5[:0:]#:immediate|)
                    (%#define-syntax :char |gerbil/core/mop~MOP-5[:0:]#:char|)
@@ -470,6 +479,12 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :flonum
                     |gerbil/core/mop~MOP-5[:0:]#:flonum|)
+                   (%#define-syntax
+                    :stflonum
+                    |gerbil/core/mop~MOP-5[:0:]#:stflonum|)
+                   (%#define-syntax
+                    :haflonum
+                    |gerbil/core/mop~MOP-5[:0:]#:haflonum|)
                    (%#define-syntax
                     :cpxnum
                     |gerbil/core/mop~MOP-5[:0:]#:cpxnum|)
@@ -548,7 +563,6 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :return
                     |gerbil/core/mop~MOP-5[:0:]#:return|)
-                   (%#define-syntax :time |gerbil/core/mop~MOP-5[:0:]#:time|)
                    (%#define-syntax
                     :thread
                     |gerbil/core/mop~MOP-5[:0:]#:thread|)
