@@ -1210,8 +1210,13 @@ package: gerbil/runtime
   (declare-type
    address-info::t
    (optimizer-resolve-class '(typedecl address-info::t) 'class::t))
+  (declare-type builtin-object? (@primitive-predicate builtin::t))
+  (declare-type builtin-subtyped? (@primitive-predicate subtyped::t))
+  (declare-type builtin-structure? (@primitive-predicate structure::t))
   (declare-type atom? (@primitive-predicate atom::t))
   (declare-type special? (@primitive-predicate special::t))
+  (declare-type stflonum? (@primitive-predicate stflonum::t))
+  (declare-type haflonum? (@primitive-predicate haflonum::t))
   (declare-type sequence? (@primitive-predicate sequence::t))
   (declare-type hvector? (@primitive-predicate hvector::t))
   (declare-type weak? (@primitive-predicate weak::t))
