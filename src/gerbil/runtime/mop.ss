@@ -30,7 +30,7 @@ namespace: #f
 ;; 10  class-type-constructor      : Maybe Symbol
 ;; 11  class-type-methods          : Maybe (Table Symbol => procedure)
 ;; 12  class-type-specializer      ; Maybe (Table Symbol -> procedure) specialized class procedure
-;; 13  class-type-interface        ; Maybe (Table Symbol -> object) interface prototoypes
+;; 13  class-type-interface        ; Maybe PrototypeTable interface prototoypes
 
 ;; The ##type-fields contains 3 entries by Gambit structure field, field name, flags and default value
 ;;
