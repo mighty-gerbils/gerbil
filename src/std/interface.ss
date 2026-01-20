@@ -41,6 +41,7 @@
                #f 'method-name)))
       (method receiver arg ...))))
 
+;; TODO extract interface method signature and check/set argument contracts
 (defrule (@call-interface-method Interface method-name obj arg ...)
   (with-prototype (@interface-descriptor Interface)
     obj
@@ -50,11 +51,22 @@
      (@interface-method-index Interface method)
      arg ...)))
 
-(defrule (defcall-interface-method Interface method (proc obj arg ...))
-  (def (proc obj arg ...)
-    (@cast (@interface-descriptor Interface)
-           obj create-prototype
-           (@apply-prototype-method (@interface-method-index Interface method)
-                                    arg ...)
-           (@apply-prototype-method/object (@interface-method-index Interface method)
-                                           arg ...))))
+;; TODO extract interface method signature and check/set argument contracts
+(defrules defcall-interface-method ()
+  ((_ Interface method (proc obj arg ...))
+   (def (proc obj arg ...)
+     (@cast (@interface-descriptor Interface)
+            obj create-prototype
+            (@apply-prototype-method (@interface-method-index Interface method)
+                                     arg ...)
+            (@apply-prototype-method/object (@interface-method-index Interface method)
+                                            arg ...))))
+  ((_ Interface method (proc obj arg ...)) ~ Type)
+  (def (proc obj arg ...) => Type
+    (~ (@cast (@interface-descriptor Interface)
+              obj create-prototype
+              (@apply-prototype-method (@interface-method-index Interface method)
+                                       arg ...)
+              (@apply-prototype-method/object (@interface-method-index Interface method)
+                                              arg ...))
+       Type)))

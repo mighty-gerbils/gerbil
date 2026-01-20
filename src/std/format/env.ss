@@ -1,76 +1,127 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; format env
-(import :std/serde/scan)
+(import :std/error
+        :std/serde/scan)
 (export #t)
 
-(defstruct FormatEnv
-  ((scan      :- ScanEnv)  ; cycle handling policy (optional)
-   (display?  :- :boolean) ; displayllike format?
-   (precision :- :fixnum)  ; precision for inexact number format
-   (base      :- :fixnum)  ; base for integer format
+;; format styles
+(def FORMAT-WRITE   0)
+(def FORMAT-DISPLAY 1)
+(def FORMAT-DEBUG   1)
+
+(defrule (format-style?)
+  (one-of ,FORMAT-WRITE ,FORMAT-DISPLAY ,FORMAT-DEBUG))
+
+;; format environment
+(defclass FormatOpt
+  (;; whether to allow (and write) object cycles
+   (allow-cycles? : :boolean)
+   ;; whether to check for object cycles
+   (check-cycles? : :boolean)
+   ;; do write compression? if this is enabled, non trivial objects will be writtene exactly once
+   (compress?     : :boolean)
+   ;; format style: FORMAT-WRITE (default), FORMAT-DISPLAY, or FORMAT-REPR
+   (style         :~ (format-style?) :- :fixnum)
+   ;; inextact number precision
+   (precision     :~ nonnegative-fixnum? :- :fixnum)
+   ;; exact number display base
+   (base          :~ nonnegative-fixnum? :- :fixnum)
+   ;; max elements to display in a seuqnnce; #f for no limit
+   (max-elements  :? :fixnum)
    )
+  final: #t)
+
+(defstruct FormatEnv
+  ((scan         :- ScanEnv)  ; cycle handling policy (optional)
+   (opt          :- FormatOpt))
   constructor: :init!
   final: #t)
 
-(defclass FormatSettings
-  ((allow-cycles? : :boolean)
-   (check-cycles? : :boolean)
-   (compress?     : :boolean)
-   (display?      : :boolean)
-   (precision     :~ nonnegative-fixnum? :- :fixnum)
-   (base          :~ nonnegative-fixnum? :- :fixnum))
-  final: #t)
+(defrules do-format-style ()
+  ((_ where opt do-format-write do-format-display do-format-debug)
+   (let (style (Format-opt-style opt))
+     (cond
+      ((fx= style FORMAT-WRITE)
+       do-format-write)
+      ((fx= style FORMAT-DISPLAY)
+       do-format-display)
+      ((fx= style FORMAT-DEBUG)
+       do-format-debug)
+      (else
+       (raise-contract-violation-error where "format style" style: style)))))
+  ((_ where opt do-format-write do-format-display)
+   (do-format-style where opt do-format-write do-format-display do-format-write)))
 
-(def current-format-settiongs
+(def current-format-opt
   (make-parameter #f))
 
-(def __default-format-settings
+(def __default-format-opt
   (delay-atomic
-   (FormatSettings
+   (FormatOpt
     allow-cycles?: #f
     check-cycles?: #t
-    compress?: #f
-    precision: 3
-    base: 10)))
+    compress?:     #f
+    style:         FORMAT-WRITE
+    precision:      3
+    base:          10
+    max-elements:  16)))
 
-(def (format-environment (settings (current-format-settings))) => FormatEnv
-  (FormatEnv (or settings (force __default-format-settings))))
+(def (format-environment (opt (current-format-opt))) => FormatEnv
+  (FormatEnv (or opt (force __default-format-opt))))
 
-(def (derive-format-environment (env : FormatEnv)
-                                display?:  (display?  : :boolean := env.display?)
-                                precision: (precision : :fixnum  := env.precision)
-                                base:      (base      : :fixnum  := env.base))
+(def (format-environment-with (env : FormatEnv)
+                              style:        (style         :~ (format-style?)
+                                                           :- :fixnum
+                                                           := env.opt.style)
+                              precision:    (precision     :  :fixnum
+                                                           := env.opt.precision)
+                              base:         (base          :  :fixnum
+                                                           := env.opt.base)
+                              max-elements: (max-elements  :? :fixnum
+                                                           := env.opt.max-elements))
   => FormatEnv
-  (using (xenv (struct-copy env) :- FormatEnv)
-    (set! xenv.display? display?)
-    (set! xenv.precision precision)
-    (set! xenv.base base)
-    xenv))
+  (if (and (eq? style        env.opt.style)
+           (eq? precision    env.opt.precision)
+           (eq? base         env.opt.base)
+           (eq? max-elements env.opt.max-elements))
+    env
+    (FormatEnv env.scan
+               (FormatOpt allow-cycles?: env.opt.allow-cycles?
+                          check-cycles?: env.opt.check-cycles?
+                          compress?:     env.opt.compress?
+                          style:         style
+                          precision:     precision
+                          base:          base
+                          max-elements:  max-elements))))
 
 (defsyntax (defderive-format-env stx)
   (syntax-case stx ()
     ((_ proc slot contract ...)
-     (with-syntax* ((env       (stx-identifier #'proc "$env"))
-                    (env.slot  (stx-identifier #'env "." #'slot))
-                    (xenv      (stx-identifier #'proc "$xenv"))
-                    (xenv.slot (stx-identifier #'xenv "." #'slot)))
+     (with-syntax* ((env           (genident '$env #'proc))
+                    (env.scan      (stx-identifier #'env #'env ".scan"))
+                    (env.opt       (stx-identifier #'env #'env ".opt"))
+                    (env.opt.slot  (stx-identifier #'env #'opt "." #'slot))
+                    (opt           (genident '$opt #'proc))
+                    (opt.slot      (stx-identifier #'opt #'opt "." #'slot)))
        #'(def (proc (env : FormatEnv) (slot contract ...))
-           (if (eq? env.slot slot)
+           (if (eq? env.opt.slot slot)
              env
-             (using (xenv (struct-copy env) :- FormatEnv)
-               (set! xenv.slot arg)
-               xenv)))))))
+             (FormatEnv
+              env.scan
+              (using (opt (struct-copy env.opt) :- FormatOpt)
+                (set! opt.slot slot)
+                opt))))))))
 
-(defderive-format-env derive-format-env-with-display?  display?  : :boolean)
-(defderive-format-env derive-format-env-with-precision precision : :fixnum)
-(defderive-format-env derive-format-env-with-base      base      : :fixnum)
+(defderive-format-env format-env-with-style        style        :~ (format-style?) :- :fixnum)
+(defderive-format-env format-env-with-precision    precision    :  :fixnum)
+(defderive-format-env format-env-with-base         base         :  :fixnum)
+(defderive-format-env format-env-with-max-elements max-elements :? :fixnum)
 
 (defmethod {:init! FormatEnv}
-  (lambda (self (settings : FormatSettings))
-    (when (or settings.allow-cycles?
-              settings.check-cycles?
-              settings.compress?)
+  (lambda (self (opt : FormatOpt))
+    (when (or opt.allow-cycles?
+              opt.check-cycles?
+              opt.compress?)
       (set! self.scan (ScanEnv allow-cycles? compress?)))
-    (set! self.display?  settings.display?)
-    (set! self.precision settings.precision)))
+    (set! self.opt opt)))
