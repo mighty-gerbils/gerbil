@@ -29,6 +29,9 @@
 (defwriter-ext (display writer obj (env : FormatEnv))
   (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
 
+(defwriter-ext (debug writer obj (env : FormatEnv))
+  (writer.format obj (format-env-with-style env FORMAT-DEBUG)))
+
 (defwriter-ext (format-raw writer obj (env : FormatEnv))
   (apply-object-formatter obj env))
 
@@ -103,6 +106,6 @@
 (def (apply-object-formatter obj (env : FormatEnv)) => :fixnum
   (__object-write obj env))
 
-(defcall-interface-method ObjectWriter write
+(defcall-interface-method ObjectWriter format
   (__object-write obj env)
   :- :fixnum)

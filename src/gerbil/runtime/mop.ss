@@ -343,8 +343,7 @@ namespace: #f
   (interface      13))
 
 (def (class-type-slot-list (klass : :class)) => :list
-  (:- (cdr (vector->list (class-type-slot-vector klass)))
-      :list ))
+  (vector->list (class-type-slot-vector klass) 1))
 (def (class-type-field-count (klass : :class)) => :fixnum
   (:- (##fx- (##vector-length (class-type-slot-vector klass)) 1)
       :fixnum))
