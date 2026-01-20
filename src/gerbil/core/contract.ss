@@ -784,7 +784,11 @@ package: gerbil/core
   (defrule (list-of? pred)
     (lambda (o)
       (and (list? o)
-           (andmap pred o)))))
+           (andmap pred o))))
+
+  (defrule (one-of val ...)
+    (lambda (o)
+      (or (eq? o `val) ...))))
 
 (module ClassMeta
   (export #t)

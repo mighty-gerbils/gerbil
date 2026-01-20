@@ -7,7 +7,9 @@
         ./io)
 (export #t)
 
-(def (to-string obj (buffer-size : :fixnum := very-small-buffer-size))
+(def (to-string obj
+                buffer: (buffer-size : :fixnum := very-small-buffer-size)
+                env:    (env : FormatEnv := (format-env)))
   (let (env (format-environment))
     (using (writer (open-buffered-writer #f buffer-size) :- BufferedWriter)
       (writer.format obj env)

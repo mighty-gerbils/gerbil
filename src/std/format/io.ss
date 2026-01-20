@@ -5,6 +5,7 @@
         :std/io/interface
         :std/io/bio/api
         :std/serde/scan
+        ./env
         ./ioutil)
 (export #t)
 
@@ -24,6 +25,9 @@
              (lambda (self writer env)
                (writer.format-it self env))
              interface: ObjectFormatter))))))
+
+(defwriter-ext (display writer obj (env : FormatEnv))
+  (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
 
 (defwriter-ext (format-raw writer obj (env : FormatEnv))
   (apply-object-formatter obj env))
@@ -97,8 +101,8 @@
     wr))
 
 (def (apply-object-formatter obj (env : FormatEnv)) => :fixnum
-  (:- (__object-write obj env)
-      :fixnum))
+  (__object-write obj env))
 
 (defcall-interface-method ObjectWriter write
-  (__object-write obj env))
+  (__object-write obj env)
+  :- :fixnum)

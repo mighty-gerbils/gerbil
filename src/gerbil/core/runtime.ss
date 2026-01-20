@@ -1546,6 +1546,7 @@ package: gerbil/core
     c4-linearize
 
     ;; :gerbil/runtime/mop
+    class-type
     class-type?
     class-type=?
     class-type-final?
@@ -1591,7 +1592,7 @@ package: gerbil/core
     class-instance?
     make-object
     object?
-    object-type
+    object-class
     object-fill!
     new-instance
     make-instance

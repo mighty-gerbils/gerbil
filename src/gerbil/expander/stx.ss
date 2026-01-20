@@ -289,12 +289,14 @@ namespace: gx
     (else #f)))
 
 (def (genident (e 'g) (src #f))
-  (stx-wrap-source
-   (gensym (let (e (stx-e e)) (if (interned-symbol? e) e 'g)))
-   (or (stx-source e) src)))
+  (syntax->datum
+   (string->interned-symbol
+    (symbol->string
+     (gensym (let (e (stx-e e)) (if (symbol? e) e 'g)))))
+   src))
 
 (def (gentemps stx-lst)
-  (stx-map genident stx-lst))
+  (stx-map (lambda (x) (genident x x)) stx-lst))
 
 ;; foldings
 (def (syntax->list stx)

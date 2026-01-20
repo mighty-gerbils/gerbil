@@ -163,6 +163,10 @@ namespace: #f
        #f                               ; class-type-interface
        ))))
 
+(def (class-type (klass : :class)) => :class
+  (:- (##structure-type klass)
+      :class))
+
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
     (lambda (obj)
@@ -184,6 +188,8 @@ namespace: #f
 
 (def (type-opaque? (type :~ ##type? :- :t)) => :boolean
   (fxflag-set? (##type-flags type) type-flag-opaque))
+(def (class-type-opaque? (klass : :class)) => :boolean
+  (fxflag-set? (##type-flags klass) type-flag-opaque))
 (def (type-extensible? (type :~ ##type? :- :t)) => :boolean
   (fxflag-set? (##type-flags type) type-flag-extensible))
 (def (class-type-final? (type : :class)) => :boolean
@@ -346,6 +352,10 @@ namespace: #f
   (##unchecked-structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
                               3 class::t class-type-seal!)
   (void))
+
+(def (class-type-printable-slots (klass : :class)) => :list
+  XXX
+  )
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
@@ -664,15 +674,6 @@ namespace: #f
   (and (##structure? o)
        (class-type? (##structure-type o))))
 
-(def (object-type o)
-  => :class
-  (if (##structure? o)
-    (let (klass (##structure-type o))
-      (if (class-type? klass)
-        (:- klass :class)
-        (abort! (error "not an object" o klass))))
-    (abort! (error "not an object" o))))
-
 (def (direct-instance? (klass : :class) obj)
   => :boolean
   (:- (##structure-direct-instance-of? obj (##type-id klass))
@@ -731,6 +732,11 @@ namespace: #f
                          (%#begin
                           (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
                           (%#ref $obj))))))))
+
+(def (object-class (obj : :object))
+  => :class
+  (:- (##structure-type obj)
+      :class))
 
 (def (object-fill! (obj : :object) fill)
   => :object
