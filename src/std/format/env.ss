@@ -30,6 +30,7 @@
    ;; max elements to display in a seuqnnce; #f for no limit
    (max-elements  :? :fixnum)
    )
+  transparent: #t
   final: #t)
 
 (defstruct FormatEnv
