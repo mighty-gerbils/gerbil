@@ -104,8 +104,8 @@
     wr))
 
 (def (apply-object-formatter obj (env : FormatEnv)) => :fixnum
-  (__object-write obj env))
+  (__object-format obj env))
 
 (defcall-interface-method ObjectWriter format
-  (__object-write obj env)
+  (__object-format obj env)
   :- :fixnum)
