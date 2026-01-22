@@ -72,14 +72,14 @@
   :- :fixnum)
 
 ;;; base
-(defwriter-ext (format-begin-object writer (klass : :class) (env : FormatEnv))
+(defwriter-ext (format-object-begin writer (klass : :class) (env : FormatEnv))
   (do-write (wr 0)
     (writer.write-sharp)
     (writer.write-lbrace)
     (writer.format-class-type klass env)
     wr))
 
-(defwriter-ext (format-end-object writer (env : FormatEnv))
+(defwriter-ext (format-object-end writer (env : FormatEnv))
   (writer.write-rbrace))
 
 (defwriter-ext (format-class-type writer (klass : :class) (env : FormatEnv))
@@ -97,10 +97,10 @@
 ;; standard classes
 (defformater :class (format-class writer klass env)
   (do-write (wr 0)
-    (writer.format-begin-object (class-type klass) env)
+    (writer.format-object-begin (class-type klass) env)
     (writer.write-space)
     (writer.format-class-type klass env)
-    (writer.format-end-object env)
+    (writer.format-object-end env)
     wr))
 
 ;; standard objects
@@ -108,7 +108,7 @@
   (do-write (wr 0)
     (writer.format-bebin-object (object-class obj) env)
     (writer.format-object-slots obj env)
-    (writer.format-end-object env)
+    (writer.format-object-end env)
     wr))
 
 (defwriter-ext (format-object-slots writer (obj : :object) (env : FormatEnv))
@@ -158,8 +158,8 @@
 (defobject-writer :t (format-t writer writer obj env)
   (using (klass (class-of obj) :- :class)
     (do-write (wr 0)
-      (writer.format-begin-object klass env)
-      (writer.format-end-object env)
+      (writer.format-object-begin klass env)
+      (writer.format-object-end env)
       wr)))
 
 (defobject-writer :char (format-char writer char env)
