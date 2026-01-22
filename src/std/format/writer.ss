@@ -2,6 +2,8 @@
 ;;; © vyzo
 ;;; object writer
 (import :gerbil/runtime/mop
+        :gerbil/runtime/interface
+        :gerbil/runtime/hash
         :std/interface
         :std/io/interface
         :std/io/bio/api
@@ -154,6 +156,14 @@
 (defwriter-ext (format-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : FormatEnv))
   (writer.format-field slot (unchecked-field-ref obj offset) env))
 
+(defobject-writer interface-instance (format-interface-instance writer inst env)
+  XXX
+  )
+
+(defobject-writer HashTable (format-hash-table writer ht env)
+  XXX
+  )
+
 ;; builtin objects
 (defobject-writer :t (format-t writer writer obj env)
   (using (klass (class-of obj) :- :class)
@@ -202,7 +212,7 @@
   XXX
   )
 
-(defobject-writer :cpxnum (format-flonum writer obj env)
+(defobject-writer :cpxnum (format-cpxnum writer obj env)
   XXX
   )
 
@@ -225,7 +235,7 @@
   XXX
   )
 
-(defobject-writer :string (format-vector writer v env)
+(defobject-writer :vector (format-vector writer v env)
   XXX
   )
 
