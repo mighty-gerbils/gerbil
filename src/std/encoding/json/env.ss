@@ -15,7 +15,7 @@
    (key-as-symbol          : :boolean)
    ;; whether to read arrays as vectors; default is list
    (array-as-vector        : :boolean)
-   ;; whether to sort field keys for alists, hashes, and untyped objects
+   ;; whether to sort field keys for alists, hashes, and objects
    (sort-keys              : :boolean))
   transparent: #t
   final: #t)

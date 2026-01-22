@@ -58,7 +58,11 @@
   :- :fixnum)
 
 ;;; util
-(def (sort-slot-alist lst)
+(def (sort-symbol-alist lst)
+  XXX
+  )
+
+(def (slot-list->spec lst)
   XXX
   )
 
@@ -106,38 +110,39 @@
     (if (fx> len 1)
       (let* ((klass (object-class obj))
              (coma? (not env.untyped)))
-        (cond
-         ((fx= env.opt.style FORMAT-DEBUG)
-          (let* ((slots (vector->list (class-type-slot-vector klass) 1))
-                 (slots (if (and env.untyped env.sort-keys)
-                          (sort-slot-alist slots)
-                          slots)))
-            (let loop ((rest slots) (offset 1) (wr wr) (coma? coma?))
+        (def (write-slot-spec slots) => :fixnum
+          (let (slots
+                (if env.sort-keys
+                  (sort-symbol-alist slots)
+                  slots))
+            (let loop ((rest slots) (wr 0) (coma? coma?))
               (match rest
-                ([slot . rest]
-                 (using (slot :- :symbol)
+                ([print-spec . rest]
+                 (using ((spec   print-spec :- :pair)
+                         (slot   (car spec) :- :symbol)
+                         (offset (cdr spec) :- :fixnum))
                    (do-write (wr wr)
                      (if coma? (writer.write-coma) 0)
-                     (writer.write-json-slot obj slot offset env)
-                     (loop rest (fx+ offset 1) wr #t))))
+                     (wrier.write-json-slot obj slot offset env)
+                     (loop rest wr #t))))
                 (else wr)))))
+        (cond
+         ((fx= env.format.opt.style FORMAT-DEBUG)
+          (let (slots (vector->list (class-type-slot-vector klass) 1))
+            (if env.sort-keys
+              (write-slot-spec (slot-list->spec slots))
+              (let loop ((rest slots) (offset 1) (wr 0) (coma? coma?))
+                (match rest
+                  ([slot . rest]
+                   (using (slot :- :symbol)
+                     (do-write (wr wr)
+                       (if coma? (writer.write-coma) 0)
+                       (writer.write-json-slot obj slot offset env)
+                       (loop rest (fx+ offset 1) wr #t))))
+                  (else wr))))))
          ((class-type-printable-slots klass)
           ;; print spec: [[slot . offset] ...]
-          => (lambda (slots)
-               (let (slots (if (and env.untyped env.sort-keys)
-                             (sort-slot-alist slots)
-                             slots))
-                 (let loop ((rest slots) (wr wr) (coma? coma?))
-                   (match rest
-                     ([print-spec . rest]
-                      (using ((spec   print-spec :- :pair)
-                              (slot   (car spec) :- :symbol)
-                              (offset (cdr spec) :- :fixnum))
-                        (do-write (wr wr)
-                          (if coma? (writer.write-coma) 0)
-                          (wrier.write-json-slot obj slot offset env)
-                          (loop rest wr #t))))
-                     (else wr))))))
+          => write-slot-spec)
          (else 0)))
       0)))
 
