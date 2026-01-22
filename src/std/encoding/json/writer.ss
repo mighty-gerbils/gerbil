@@ -96,7 +96,12 @@
 
 ;; standard classes
 (defjson-writer :class (write-json-class klass env)
-  XXX)
+  (do-write (wr 0)
+    (writer.write-json-object-begin (class-type klass) env)
+    (writer.write-space)
+    (writer.write-json-object-type klass env)
+    (writer.write-json-object-end env)
+    wr))
 
 (defjson-writer :object (write-json-object obj env)
   (do-write (wr 0)
@@ -158,6 +163,10 @@
                            (unchecked-field-ref obj offset env)
                            env))
 
+
+(defjson-writer HashTable (write-json-hash-table writer ht env)
+  XXX
+  )
 
 ;; builtin objects
 (defjson-writer :t (write-json-t writer obj env)
