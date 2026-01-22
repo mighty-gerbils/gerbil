@@ -67,13 +67,13 @@
   )
 
 ;;; base
-(defwriter-ext (write-json-begin-object writer (klass : :class) (env : JSONEnv))
+(defwriter-ext (write-json-object-begin writer (klass : :class) (env : JSONEnv))
   (do-write (wr 0)
     (writer.write-lbrace)
     (writer.write-json-class-type klass env)
     wr))
 
-(defwriter-ext (write-json-end-object writer (env : JSONEnv))
+(defwriter-ext (write-json-object-end writer (env : JSONEnv))
   (writer.write-rbrace))
 
 (defwriter-ext (write-json-class-type writer (klass : :class) (env : JSONEnv))
@@ -100,9 +100,9 @@
 
 (defjson-writer :object (write-json-object obj env)
   (do-write (wr 0)
-    (writer.write-json-begin-object (object-class obj) env)
+    (writer.write-json-object-begin (object-class obj) env)
     (writer.write-json-object-slots obj env)
-    (writer.write-json-end-object)
+    (writer.write-json-object-end)
     wr))
 
 (defwriter-ext (write-json-object-slots writer (obj : :object) (env : JSONEnv))
@@ -163,6 +163,6 @@
 (defjson-writer :t (write-json-t writer obj env)
   (using (klass (class-of obj) :- :class)
     (do-write (wr 0)
-      (writer.write-json-begin-object klass env)
-      (writer.write-json-end-object env)
+      (writer.write-json-object-begin klass env)
+      (writer.write-json-object-end env)
       wr)))
