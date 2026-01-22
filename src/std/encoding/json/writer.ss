@@ -13,52 +13,9 @@
         :std/format/ioutil
         :std/format/writer
         :std/format/string
-        ./env)
+        ./env
+        ./io)
 (export #t)
-
-(interface JSONWriter
-  (write-json (writer : BufferedWriter) (env : JSONEnv)) => :fixnum)
-
-(defsyntax (defjson-writer stx)
-  (syntax-case stx ()
-    ((_ klass (write-it writer obj env)
-        body ...)
-     (with-syntax ((write-json (syntax-local-introduce 'write-json))
-                   (writer.write-it
-                    (stx-identifier #'write-it #'writer "." #'write-it)))
-       #'(begin
-           (defwriter-ext (write-it writer (obj : klass) (env : JSONEnv))
-             body ...)
-           (defmethod {write-json klass}
-             (lambda (self writer env)
-               (writer.write-it self env))
-             interface: JSONWriter))))))
-
-(defwriter-ext (write-json writer obj (env : JSONEnv))
-  (defrule (do-object obj)
-    (writer.write-json-raw obj env))
-  (defrule (do-anchor obj id)
-    (writer.write-jso-anchor obj id env))
-  (defrule (do-reference id)
-    (writer.write-json-reference id env))
-
-  (@serialize obj env.format.scan do-object do-anchor do-reference))
-
-(defwriter-ext (write-json-raw writer obj (env : JSONEnv))
-  (apply-object-json-writer obj writer env))
-
-(defwriter-ext (write-json-anchor writer obj (id : :fixnum) (env : JSONENV))
-  XXX)
-
-(defwriter-ext (write-json-reference write (id : :fixnum) (env : JSONEnv))
-  XXX)
-
-(def (apply-object-json-writer obj (env : JSONEnv)) => :fixnum
-  (__object-write-json obj env))
-
-(defcall-interface-method JSONWriter write-json
-  (__object-write-json obj env)
-  :- :fixnum)
 
 ;;; util
 (def (sort-symbol-alist lst)
@@ -162,7 +119,7 @@
 
 (defwriter-ext (write-json-key-value writer k v (env : JSOEnv))
   (do-write (wr 0)
-    (writer.format-object-to-string/quote k)
+    (writer.format-to-string/quote k)
     (writer.write-colon)
     (writer.write-json v env)
     wr))

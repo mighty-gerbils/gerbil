@@ -10,68 +10,10 @@
         :std/serde/scan
         :std/serde/serialize
         ./env
-        ./ioutil)
+        ./ioutil
+        ./io
+        ./string)
 (export #t)
-
-(interface ObjectWriter
-  (write (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
-
-(defsyntax (defobject-writer stx)
-  (syntax-case stx ()
-    ((_ klass (write-it writer obj env)
-        body ...)
-     (with-syntax ((write (syntax-local-introduce 'write))
-                   (writer.write-it
-                    (stx-identifier #'writer #'writer "." #'write-it)))
-       #'(begin
-           (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
-             body ...)
-           (defmethod {write klass}
-             (lambda (self writer env)
-               (writer.write-it self env))
-             interface: ObjectWriter))))))
-
-(defwriter-ext (display writer obj (env : FormatEnv))
-  (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
-
-(defwriter-ext (debug writer obj (env : FormatEnv))
-  (writer.format obj (format-env-with-style env FORMAT-DEBUG)))
-
-(defwriter-ext (format writer obj (env : FormatEnv))
-  (defrule (do-object obj)
-    (writer.format-raw obj env))
-  (defrule (do-anchor obj id)
-    (writer.format-anchor obj id env))
-  (defrule (do-reference id)
-    (writer.format-reference id env))
-
-  (@serialize obj env.scan do-object do-anchor do-reference))
-
-(defwriter-ext (format-raw writer obj (env : FormatEnv))
-  (apply-object-writer obj writer env))
-
-(defwriter-ext (format-anchor writer obj (id : :fixnum) (env : FormatEnv))
-  (do-write (wr 0)
-    (writer.write-sharp)
-    (writer.write-fixnum-decimal id)
-    (writer.write-equal)
-    (writer.write-sharp)
-    (writer.format-raw obj env)
-    wr))
-
-(defwriter-ext (format-reference write (id : :fixnum) (env : FormatEnv))
-  (do-write (wr 0)
-    (writer.write-sharp)
-    (writer.write-fixnum-decimal id)
-    (writer.write-sharp)
-    wr))
-
-(def (apply-object-writer obj writer (env : FormatEnv)) => :fixnum
-  (__object-write obj writer env))
-
-(defcall-interface-method ObjectWriter writer
-  (__object-write obj writer env)
-  :- :fixnum)
 
 ;;; base
 (defwriter-ext (format-object-begin writer (klass : :class) (env : FormatEnv))

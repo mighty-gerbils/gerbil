@@ -4,6 +4,7 @@
 (import :std/io/interface
         :std/io/bio/api
         ./env
+        ./ioutil
         ./io)
 (export #t)
 
@@ -21,13 +22,8 @@
       (writer.format obj env)
       (get-buffer-output-string-utf8 writer))))
 
-(defwriter-ext (format-object-to-string writer obj (env : FormatEnv))
-  XXX
-  )
-
-(defwriter-ext (format-object-to-string/quote writer obj (env : FormatEnv))
-  XXX
-  )
+(defwriter-ext (format-to-string/quote writer obj (env : FormatEnv))
+  (writer.write-string/quote (to-string obj) env))
 
 (defcall-interface-method/fallback Stringer to-string
   (__object-to-string obj)
