@@ -1,56 +1,115 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; format object writers and scanners
+;;; object writer
 (import :gerbil/runtime/mop
-        :gerbil/runtime/error
+        :std/interface
         :std/io/interface
         :std/io/bio/api
+        :std/serde/scan
+        :std/serde/serialize
         ./env
-        ./ioutil
-        ./io)
+        ./ioutil)
 (export #t)
 
-;; base
-(defwriter-ext (format-class-type writer (klass : :class) (env : FormatEnv))
-  (do-format-style format-class-type
-    (writer.write-symbol/quote klass.id)
-    (writer.write-symbol/quote klass.name)
-    (let* ((wr (writer.write-symbol/quote klass.name))
-           (wr (fx+ wr (writer.write-colon)))
-           (wr (fx+ wr (writer.write-space)))
-           (wr (fx+ wr (writer.write-symbol/quote klass.id))))
-      wr)))
+(interface ObjectWriter
+  (write (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
 
+(defsyntax (defobject-writer stx)
+  (syntax-case stx ()
+    ((_ klass (write-it writer obj env)
+        body ...)
+     (with-syntax ((write (syntax-local-introduce 'write))
+                   (writer.write-it
+                    (stx-identifier #'writer #'writer "." #'write-it)))
+       #'(begin
+           (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
+             body ...)
+           (defmethod {write klass}
+             (lambda (self writer env)
+               (writer.write-it self env))
+             interface: ObjectWriter))))))
+
+(defwriter-ext (display writer obj (env : FormatEnv))
+  (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
+
+(defwriter-ext (debug writer obj (env : FormatEnv))
+  (writer.format obj (format-env-with-style env FORMAT-DEBUG)))
+
+(defwriter-ext (format writer obj (env : FormatEnv))
+  (defrule (do-object obj)
+    (writer.format-raw obj env))
+  (defrule (do-anchor obj id)
+    (writer.format-anchor obj id env))
+  (defrule (do-reference id)
+    (writer.format-reference id env))
+
+  (@serialize obj env.scan do-object do-anchor do-reference))
+
+(defwriter-ext (format-raw writer obj (env : FormatEnv))
+  (apply-object-writer obj writer env))
+
+(defwriter-ext (format-anchor writer obj (id : :fixnum) (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-sharp)
+    (writer.write-fixnum-decimal id)
+    (writer.write-equal)
+    (writer.write-sharp)
+    (writer.format-raw obj env)
+    wr))
+
+(defwriter-ext (format-reference write (id : :fixnum) (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-sharp)
+    (writer.write-fixnum-decimal id)
+    (writer.write-sharp)
+    wr))
+
+(def (apply-object-writer obj writer (env : FormatEnv)) => :fixnum
+  (__object-write obj writer env))
+
+(defcall-interface-method ObjectWriter writer
+  (__object-write obj writer env)
+  :- :fixnum)
+
+;;; base
 (defwriter-ext (format-begin-object writer (klass : :class) (env : FormatEnv))
-  (let* ((wr (writer.write-sharp))
-         (wr (fx+ wr (writer.write-lbrace)))
-         (wr (fx+ wr (writer.format-class-type klass))))
+  (do-write (wr 0)
+    (writer.write-sharp)
+    (writer.write-lbrace)
+    (writer.format-class-type klass env)
     wr))
 
 (defwriter-ext (format-end-object writer (env : FormatEnv))
   (writer.write-rbrace))
 
-;; base - opaque class
-(defformatter :t (format-t writer writer obj env)
-  (using (klass (class-of obj) :- :class)
-    (let* ((wr (writer.format-begin-object klass env))
-           (wr (fx+ wr (writer.format-end-object env))))
+(defwriter-ext (format-class-type writer (klass : :class) (env : FormatEnv))
+  (do-format-style format-class-type env.opt
+    (writer.write-symbol/quote klass.id)
+    (writer.write-symbol/quote klass.name)
+    (do-write (wr 0)
+      (writer.write-symbol/quote klass.name)
+      (writer.write-colon)
+      (writer.write-sharp)
+      (writer.write-colon)
+      (writer.write-symbol/quote klass.id)
       wr)))
 
 ;; standard classes
 (defformater :class (format-class writer klass env)
-  (let* ((wr (writer.format-begin-object (class-type klass) env))
-         (wr (fx+ wr (writer.write-space)))
-         (wr (fx+ wr (writer.format-class-type klass)))
-         (wr (fx+ wr (writer.format-end-object env))))
-      wr))
+  (do-write (wr 0)
+    (writer.format-begin-object (class-type klass) env)
+    (writer.write-space)
+    (writer.format-class-type klass env)
+    (writer.format-end-object env)
+    wr))
 
 ;; standard objects
-(defformatter :object (format-object writer obj env)
-  (let* ((wr (writer.format-bebin-object (object-class obj) env))
-         (wr (fx+ wr (writer.format-object-slots obj env)))
-         (wr (fx+ wr (writer.format-end-object env))))
-    env))
+(defobject-writer :object (format-object writer obj env)
+  (do-write (wr 0)
+    (writer.format-bebin-object (object-class obj) env)
+    (writer.format-object-slots obj env)
+    (writer.format-end-object env)
+    wr))
 
 (defwriter-ext (format-object-slots writer (obj : :object) (env : FormatEnv))
   (let (len (##structue-length obj))
@@ -58,152 +117,164 @@
       (let (klass (object-class obj))
         (cond
          ((fx= env.opt.style FORMAT-DEBUG)
-          (let (slots (vector->list (class-type-slot-vector klass)))
+          (let (slots (vector->list (class-type-slot-vector klass) 1))
             (let loop ((rest slots) (offset 1) (wr 0))
               (match rest
                 ([slot . rest]
                  (using (slot :- :symbol)
-                   (let (wr (fx+ wr (writer.format-slot obj slot offset env)))
+                   (do-write (wr wr)
+                     (writer.format-slot obj slot offset env)
                      (loop rest (fx+ offset 1) wr))))
                 (else wr)))))
          ((class-type-printable-slots klass)
           ;; print spec: [[slot . offset] ...]
           => (lambda (lst)
-               (let lp ((rest lst) (wr 0))
+               (let loop ((rest lst) (wr 0))
                  (match rest
                    ([print-spec . rest]
                     (using ((spec   print-spec :- :pair)
                             (slot   (car spec) :- :symbol)
                             (offset (cdr spec) :- :fixnum))
-                      (let (wr (fx+ wr (wrier.format-slot obj slot offset env)))
+                      (do-write (wr wr)
+                        (wrier.format-slot obj slot offset env)
                         (loop rest wr))))
                    (else wr)))))
          (else 0)))
       0)))
 
-(defwriter-ext (format-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : FormatEnv))
-  (let* ((wr (fx+ wr (writer.write-space)))
-         (wr (fx+ wr (writer.write-symbol/quote slot)))
-         (wr (fx+ wr (writer.write-colon)))
-         (wr (fx+ wr (writer.write-space)))
-         (wr (fx+ wr (writer.format (unchecked-field-ref obj offset)
-                                    env))))
+(defwriter-ext (format-field writer (slot : :symbol) obj (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-space)
+    (writer.write-symbol/quote slot)
+    (writer.write-colon)
+    (writer.write-space)
+    (writer.format obj env)
     wr))
 
+(defwriter-ext (format-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : FormatEnv))
+  (writer.format-field slot (unchecked-field-ref obj offset) env))
+
 ;; builtin objects
-(defformatter :char (format-char writer char env)
+(defobject-writer :t (format-t writer writer obj env)
+  (using (klass (class-of obj) :- :class)
+    (do-write (wr 0)
+      (writer.format-begin-object klass env)
+      (writer.format-end-object env)
+      wr)))
+
+(defobject-writer :char (format-char writer char env)
   XXX
   )
 
-(defformatter :void (format-void writer atom env)
+(defobject-writer :void (format-void writer atom env)
   XXX
   )
 
-(defformatter :eof (format-eof atom env)
+(defobject-writer :eof (format-eof atom env)
   XXX
   )
 
-(defformatter :true (format-true atom env)
+(defobject-writer :true (format-true atom env)
   XXX
   )
 
-(defformatter :false (format-false atom env)
+(defobject-writer :false (format-false atom env)
   XXX
   )
 
-(defformatter :special (format-special atom env)
+(defobject-writer :special (format-special atom env)
   XXX
   )
 
-(defformatter :bignum (format-bignum writer obj env)
+(defobject-writer :bignum (format-bignum writer obj env)
   XXX
   )
 
-(deformatter :fixnum (format-fixnum writer obj env)
+(defobject-writer :fixnum (format-fixnum writer obj env)
   XXX
   )
 
-(defformatter :ratnum (format-ratnum writer obj env)
+(defobject-writer :ratnum (format-ratnum writer obj env)
   XXX
   )
 
-(defformatter :flonum (format-flonum writer obj env)
+(defobject-writer :flonum (format-flonum writer obj env)
   XXX
   )
 
-(defformatter :cpxnum (format-flonum writer obj env)
+(defobject-writer :cpxnum (format-flonum writer obj env)
   XXX
   )
 
-(defformatter :symbol (format-symbol writer sym env)
+(defobject-writer :symbol (format-symbol writer sym env)
   (do-format-style format-symbol env.opt
     (writer.write-symbol/quote sym)
     (writer.write-symbol sym)))
 
-(defformatter :keyword (format-keyword writer key env)
+(defobject-writer :keyword (format-keyword writer key env)
   (do-format-style format-keyword env.opt
     (writer.write-keyword/quote sym)
     (writer.write-keyword sym)))
 
 
-(defformatter :null (format-null writer key env)
+(defobject-writer :null (format-null writer key env)
   XXX
   )
 
-(defformatter :pair (format-pair writer p env)
+(defobject-writer :pair (format-pair writer p env)
   XXX
   )
 
-(defformatter :string (format-vector writer v env)
+(defobject-writer :string (format-vector writer v env)
   XXX
   )
 
-(defformatter :string (format-string writer str env)
+(defobject-writer :string (format-string writer str env)
   (do-format-style format-string env.opt
     (writer.write-string/quote str)
     (writer.write-string str)))
 
-(defformatter :u8vector (format-u8vector writer v env)
+(defobject-writer :u8vector (format-u8vector writer v env)
   XXX
   )
 
-(defformatter :u16vector (format-u16vector writer v env)
+(defobject-writer :u16vector (format-u16vector writer v env)
   XXX
   )
 
-(defformatter :u32vector (format-u32vector writer v env)
+(defobject-writer :u32vector (format-u32vector writer v env)
   XXX
   )
 
-(defformatter :u64vector (format-u63vector writer v env)
+(defobject-writer :u64vector (format-u63vector writer v env)
   XXX
   )
 
-(defformatter :s8vector (format-s8vector writer v env)
+(defobject-writer :s8vector (format-s8vector writer v env)
   XXX
   )
 
-(defformatter :s16vector (format-s16vector writer v env)
+(defobject-writer :s16vector (format-s16vector writer v env)
   XXX
   )
 
-(defformatter :s32vector (format-s32vector writer v env)
+(defobject-writer :s32vector (format-s32vector writer v env)
   XXX
   )
 
-(defformatter :s64vector (format-s64vector writer v env)
+(defobject-writer :s64vector (format-s64vector writer v env)
   XXX
   )
 
-(defformatter :f32vector (format-f32vector writer v env)
+(defobject-writer :f32vector (format-f32vector writer v env)
   XXX
   )
 
-(defformatter :f64vector (format-f64vector writer v env)
+(defobject-writer :f64vector (format-f64vector writer v env)
   XXX
   )
 
-(defformatter :values (format-values writer v env)
+(defobject-writer :values (format-values writer v env)
   XXX
   )
 

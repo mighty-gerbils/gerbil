@@ -6,17 +6,17 @@
 (export #t)
 
 (defclass JSONOpt
-  ((format                      : FormatOpt)
-   ;; read/write objects without considering the class
-   (untyped-object              : :boolean)
-   ;; read untyped objects as hashes; default is wraped alist
-   (read-untyped-object-as-hash : :boolean)
-   ;; read object keys as symbols; default is string
-   (read-key-as-symbol          : :boolean)
-   ;; read arrays as vectors; default is list
-   (read-array-as-vector        : :boolean)
-   ;; whether to sort output keys for alists and untyped objects
-   (write-sort-keys              : :boolean))
+  ((format                 : FormatOpt)
+   ;; whether to read/write objects without serializing the class
+   (untyped                : :boolean)
+   ;; whether to read untyped objects as hashes; default is wraped alist
+   (untyped-object-as-hash : :boolean)
+   ;; whether to read object keys as symbols; default is string
+   (key-as-symbol          : :boolean)
+   ;; whether to read arrays as vectors; default is list
+   (array-as-vector        : :boolean)
+   ;; whether to sort field keys for alists, hashes, and untyped objects
+   (sort-keys              : :boolean))
   transparent: #t
   final: #t)
 

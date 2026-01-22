@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; serialization cyclic scanner
-(import :std/interface)
+;;; serialization scanner
+(import :gerbil/runtime/mop
+        :std/interface)
 (export #t)
 
 (defstruct ScanEnv
@@ -19,7 +20,7 @@
     (set! self.written (make-hash-table-eq))
     (set! self.scanned (make-hash-table-eq))
     (when allow-cycles?
-      (set! self.cycles  (make-hash-table-eq)))
+      (set! self.cycles (make-hash-table-eq)))
     (set! self.next 0)
     (set! self.allow-cycles? allow-cycles?)
     (set! self.compress? compress?)))
@@ -34,8 +35,11 @@
 (interface ObjectScanner
   (scan! (env : ScanEnv) (path : :list)) => :void)
 
-(defstruct opaque ((obj))
-  final: #t acyclic: #t)
+(defrule (defscanner klass (self env path) body ...)
+  (defmethod {scan! klass}
+    (lambda (self env path)
+      body ...)
+    interface: ObjectScanner))
 
 (def (scan-object! obj (env : ScanEnv) (path : :list := [])) => :fixnum
   (if (or env.compress? (not (acyclic-object? obj)))
@@ -77,9 +81,3 @@
   (or (immediate? obj)
       (let (klass (class-of obj))
         (class-type-acyclic? klass))))
-
-(defmethod {scan! :object}
-  (lambda (self env path)
-    XXX
-    )
-  interface: ObjectScanner)

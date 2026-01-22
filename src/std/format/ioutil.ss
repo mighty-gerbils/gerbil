@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; format object utilities
 (import :std/io/interface
-        :std/io/bio/api)
+        :std/io/bio/api
+        :std/serde/serialize)
 (export #t)
 
 (defsyntax (@char->int stx)
@@ -79,18 +80,21 @@
           (cond
            ((hash-get esc next)
             => (lambda ((next :- :char))
-                 (let* ((wr (fx+ wr (writer.write-backslash)))
-                        (wr (fx+ wr (writer.write-char next))))
+                 (do-write (wr wr)
+                   (writer.write-backslash)
+                   (writer.write-char next)
                    (loop (fx+ i 1) wr))))
            (else
-            (let (wr (fx+ wr (writer.write-char next)))
+            (do-write (wr wr)
+              (writer.write-char next)
               (loop (fx+ i 1) wr)))))
         wr))))
 
 (defwriter-ext (write-string/quote (str : :string))
-  (let* ((wr (writer.write-squote))
-         (wr (writer.write-string/escape str __string-escape))
-         (wr (writer.write-squote)))
+  (do-write (wr 0)
+    (writer.write-squote)
+    (writer.write-string/escape str __string-escape)
+    (writer.write-squote)
     wr))
 
 (defwriter-ext (write-symbol (sym : :symbol))
@@ -100,9 +104,10 @@
   (let (str (symbol->string sym))
     (if (or (contains-restricted-chars? str __symbol-escape)
             (string-ends-with? str #\:))
-      (let* ((wr (writer.write-pipe))
-             (wr (fx+ wr (writer.write-string/escape str __symbol-escape)))
-             (wr (fx+ wr (writer.write-pipe))))
+      (do-write (wr 0)
+        (writer.write-pipe)
+        (writer.write-string/escape str __symbol-escape)
+        (writer.write-pipe)
         wr)
       (writer.write-string str))))
 
@@ -112,13 +117,15 @@
 (defwriter-ext (write-keyword/quote (key : :keyword))
   (let (str (keyword->string sym))
     (if (contains-restricted-chars? str __symbol-escape)
-      (let* ((wr (writer.write-pipe))
-             (wr (fx+ wr (writer.write-string/escape str __symbol-escape)))
-             (wr (fx+ wr (writer.write-pipe)))
-             (wr (fx+ wr (writer.write-colon))))
+      (do-write (wr 0)
+        (writer.write-pipe)
+        (writer.write-string/escape str __symbol-escape)
+        (writer.write-pipe)
+        (writer.write-colon)
         wr)
-      (let* ((wr (writer.write-string str))
-             (wr (fx+ wr (writer.write-colon))))
+      (do-write (wr 0)
+        (writer.write-string str)
+        (writer.write-colon)
         wr))))
 
 (defwriter-ext (write-nonnegative-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
@@ -128,8 +135,9 @@
 (defwriter-ext (write-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
   (if (fx>= x 0)
     (writer.write-nonnegative-fixnum-with-base writer x tr width)
-    (let* ((wr (writer.write-minus))
-           (wr (fx+ wr (writer.write-nonnegative-fixnum-with-base writer (fx- x) tr width))))
+    (do-write (wr 0)
+      (writer.write-minus)
+      (writer.write-nonnegative-fixnum-with-base writer (fx- x) tr width)
       wr)))
 
 (def __decimal-base
