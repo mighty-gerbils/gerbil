@@ -111,6 +111,7 @@
   (do-write (wr 0)
     (writer.format-object-begin (object-class ht) env)
     (let (wr-body 0)
+      (writer.write-lparen)
       (ht.for-each
        (lambda (k v)
          (do-write (wr 0)
@@ -124,6 +125,7 @@
            (writer.write-rparen)
            (set! wr-body (fx+ wr-body wr)))))
       wr-body)
+    (writer.write-rparen)
     (writer.format-object-end env)
     wr))
 
