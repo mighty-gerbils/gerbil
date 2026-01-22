@@ -84,17 +84,19 @@
 (defwriter-ext (format-object-end writer (env : FormatEnv))
   (writer.write-rbrace))
 
+(defwriteer-ext (format-object-type-full (klass : :class) (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-symbol/quote klass.name)
+    (writer.write-colon)
+    (writer.write-sharp)
+    (writer.write-colon)
+    (writer.write-symbol/quote klass.id)
+    wr))
+
 (defwriter-ext (format-object-type writer (klass : :class) (env : FormatEnv))
   (do-format-style format-object-type env.opt
     (writer.write-symbol/quote klass.id)
-    (writer.write-symbol/quote klass.name)
-    (do-write (wr 0)
-      (writer.write-symbol/quote klass.name)
-      (writer.write-colon)
-      (writer.write-sharp)
-      (writer.write-colon)
-      (writer.write-symbol/quote klass.id)
-      wr)))
+    (writer.format-object-type-full klass env)))
 
 ;; standard classes
 (defformater :class (format-class writer klass env)
@@ -157,12 +159,31 @@
   (writer.format-field slot (unchecked-field-ref obj offset) env))
 
 (defobject-writer interface-instance (format-interface-instance writer inst env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.format-object-begin (object-class inst) env)
+    (writer.write-space)
+    (writer.format inst.object env)
+    (writer.format-object-end env)))
 
 (defobject-writer HashTable (format-hash-table writer ht env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.format-object-begin (object-class ht) env)
+    (let (wr-body 0)
+      (ht.for-each
+       (lambda (k v)
+         (do-write (wr 0)
+           (writer.write-space)
+           (writer.write-lparen)
+           (writer.format k env)
+           (writer.write-space)
+           (writer.write-dot)
+           (writer.write-space)
+           (writer.format v env)
+           (writer.write-rparen)
+           (set! wr-body (fx+ wr-body wr)))))
+      wr-body)
+    (writer.format-object-end env)
+    wr))
 
 ;; builtin objects
 (defobject-writer :t (format-t writer writer obj env)
@@ -227,15 +248,7 @@
     (writer.write-keyword sym)))
 
 
-(defobject-writer :null (format-null writer key env)
-  XXX
-  )
-
-(defobject-writer :pair (format-pair writer p env)
-  XXX
-  )
-
-(defobject-writer :vector (format-vector writer v env)
+(defobject-writer :list (format-pair writer lst env)
   XXX
   )
 
@@ -292,15 +305,15 @@
   XXX
   )
 
+(defformatter :procedue (format-procedure writer proc env)
+  XXX
+  )
+
 (defformatter :continuation (format-continuation writer v env)
   XXX
   )
 
 (defformatter :foreign (format-foreign writer v env)
-  XXX
-  )
-
-(defformatter :procedue (format-procedure writer proc env)
   XXX
   )
 
@@ -329,9 +342,5 @@
   )
 
 (defformatter :port (format-builtin-time writer v env)
-  XXX
-  )
-
-(defformatter :table (format-builtin-time writer v env)
   XXX
   )
