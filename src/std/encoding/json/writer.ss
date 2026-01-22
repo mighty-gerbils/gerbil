@@ -70,20 +70,20 @@
 (defwriter-ext (write-json-object-begin writer (klass : :class) (env : JSONEnv))
   (do-write (wr 0)
     (writer.write-lbrace)
-    (writer.write-json-class-type klass env)
+    (writer.write-json-object-type klass env)
     wr))
 
 (defwriter-ext (write-json-object-end writer (env : JSONEnv))
   (writer.write-rbrace))
 
-(defwriter-ext (write-json-class-type writer (klass : :class) (env : JSONEnv))
+(defwriter-ext (write-json-object-type writer (klass : :class) (env : JSONEnv))
   (if env.untyped
     0
     (do-write (wr 0)
       (writer.write-lbrace)
       (writer.write-string/quote "@class")
       (writer.write-colon)
-      (do-format-style write-json-class-type env.format.opt
+      (do-format-style write-json-object-type env.format.opt
         (writer.write-json-field "id" klass.id env)
         (writer.write-json-field "name" klass.name env)
         (do-write (wr wr)

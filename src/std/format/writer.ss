@@ -76,14 +76,14 @@
   (do-write (wr 0)
     (writer.write-sharp)
     (writer.write-lbrace)
-    (writer.format-class-type klass env)
+    (writer.format-object-type klass env)
     wr))
 
 (defwriter-ext (format-object-end writer (env : FormatEnv))
   (writer.write-rbrace))
 
-(defwriter-ext (format-class-type writer (klass : :class) (env : FormatEnv))
-  (do-format-style format-class-type env.opt
+(defwriter-ext (format-object-type writer (klass : :class) (env : FormatEnv))
+  (do-format-style format-object-type env.opt
     (writer.write-symbol/quote klass.id)
     (writer.write-symbol/quote klass.name)
     (do-write (wr 0)
@@ -99,7 +99,7 @@
   (do-write (wr 0)
     (writer.format-object-begin (class-type klass) env)
     (writer.write-space)
-    (writer.format-class-type klass env)
+    (writer.format-object-type klass env)
     (writer.format-object-end env)
     wr))
 
