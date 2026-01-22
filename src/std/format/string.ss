@@ -21,6 +21,14 @@
       (writer.format obj env)
       (get-buffer-output-string-utf8 writer))))
 
+(defwriter-ext (format-object-to-string writer obj (env : FormatEnv))
+  XXX
+  )
+
+(defwriter-ext (format-object-to-string/quote writer obj (env : FormatEnv))
+  XXX
+  )
+
 (defcall-interface-method/fallback Stringer to-string
   (__object-to-string obj)
   (lambda (obj)

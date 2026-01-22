@@ -2,14 +2,17 @@
 ;;; © vyzo
 ;;; json writer
 (import :gerbil/runtime/mop
+        :gerbil/runtime/interface
+        :gerbil/runtime/hash
         :std/interface
-        :std/io
+        :std/io/interface
         :std/io/bio/api
         :std/serde/scan
         :std/serde/serialize
         :std/format/env
         :std/format/ioutil
         :std/format/writer
+        :std/format/string
         ./env)
 (export #t)
 
@@ -84,13 +87,12 @@
       (writer.write-string/quote "@class")
       (writer.write-colon)
       (do-format-style write-json-object-type env.format.opt
-        (writer.write-json-field "id" klass.id env)
-        (writer.write-json-field "name" klass.name env)
         (do-write (wr wr)
-          (writer.write-json-field "id" klass.id env)
-          (writer.write-coma)
           (writer.write-json-field "name" klass.name env)
-          wr))
+          (writer.write-coma)
+          (writer.write-json-field "id" klass.id env)
+          wr)
+        (writer.write-json-field "name" klass.name env))
       (writer.write-rbrance)
       wr)))
 
@@ -98,7 +100,7 @@
 (defjson-writer :class (write-json-class klass env)
   (do-write (wr 0)
     (writer.write-json-object-begin (class-type klass) env)
-    (writer.write-space)
+    (writer.write-coma)
     (writer.write-json-object-type klass env)
     (writer.write-json-object-end env)
     wr))
@@ -158,15 +160,37 @@
     (writer.write-json obj env)
     wr))
 
+(defwriter-ext (write-json-key-value writer k v (env : JSOEnv))
+  (do-write (wr 0)
+    (writer.format-object-to-string/quote k)
+    (writer.write-colon)
+    (writer.write-json v env)
+    wr))
+
 (defwriter-ext (write-json-slot writer obj (slot : :symbol) (offset : :fixnum) (env : JSONEnv))
   (writer.write-json-field (symbol->string slot)
-                           (unchecked-field-ref obj offset env)
+                           (unchecked-field-ref obj offset)
                            env))
 
+(defjson-writer interface-instance (write-json-interface-instance writer inst env)
+  (do-write (wr 0)
+    (writer.write-json-object-begin (object-class inst) env)
+    (writer.write-json-field "instance" inst.object env)
+    (writer.write-json-object-end env)))
 
 (defjson-writer HashTable (write-json-hash-table writer ht env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.write-json-object-begin (object-class ht) env)
+    (let (wr-body 0)
+      (ht.for-each
+       (lambda (k v)
+         (do-write (wr 0)
+           (writer.write-coma)
+           (writer.write-json-key-value k v env)
+           (set! wr-body (fx+ wr-body wr)))))
+      wr-body)
+    (writer.write-json-object-end env)
+    wr))
 
 ;; builtin objects
 (defjson-writer :t (write-json-t writer obj env)
