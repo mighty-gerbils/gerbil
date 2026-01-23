@@ -186,25 +186,27 @@
             (write-char-utf8))))
         wr))))
 
-(def (__char-escape (writer    :- BufferedWriter)
-                    (aint      :- :fixnum)
-                    (asci      :- ascii-special-char-info)
-                    (esc-char? :- :procedure)
-                    (esc-char  :- :procedure))
-  (and (esc-char? asci)
-       (cond
-        ((esc-char asci)
-         => (lambda ((u8 :- :fixnum))
-              (do-write (wr 0)
-                (writer.write-backslash)
-                (writer.write-u8 u8)
-                wr)))
-        (else
-         (do-write (wr 0)
-           (writer.write-backslash)
-           (writer.write-u8 (@char->int #\x))
-           (writer.write-nonnegative-fixnum-hex aint #f)
-           wr)))))
+(defrule (__char-escape writer
+                        aint
+                        asci
+                        esc-char?
+                        esc-char)
+  (using ((writer    :- BufferedWriter)
+          (aint      :- :fixnum))
+    (and (esc-char? asci)
+         (cond
+          ((esc-char asci)
+           => (lambda ((u8 :- :fixnum))
+                (do-write (wr 0)
+                  (writer.write-backslash)
+                  (writer.write-u8 u8)
+                  wr)))
+          (else
+           (do-write (wr 0)
+             (writer.write-backslash)
+             (writer.write-u8 (@char->int #\x))
+             (writer.write-nonnegative-fixnum-hex aint #f)
+             wr))))))
 
 (def (__string-escape (writer :- BufferedWriter) (aint :- :fixnum)) => :fixnum
   (try-ascii-special-char aint
@@ -226,17 +228,17 @@
   (try-ascii-special-char aint
     &ascii-special-char-info-symbol-quote?))
 
-(defwriter-ext (write-string/quote (str : :string))
+(defwriter-ext (write-string/quote writer (str : :string))
   (do-write (wr 0)
     (writer.write-squote)
     (writer.write-string/escape str __string-escape)
     (writer.write-squote)
     wr))
 
-(defwriter-ext (write-symbol (sym : :symbol))
+(defwriter-ext (write-symbol writer (sym : :symbol))
   (writer.write-string (symbol->string sym)))
 
-(defwriter-ext (write-symbol/quote (sym : :symbol))
+(defwriter-ext (write-symbol/quote writer (sym : :symbol))
   (let (str (symbol->string sym))
     (if (or (contains-special-chars? str __symbol-quote?)
             (string-ends-with? str #\:))
@@ -247,10 +249,10 @@
         wr)
       (writer.write-string str))))
 
-(defwriter-ext (write-keyword (key : :keyword))
+(defwriter-ext (write-keyword writer (key : :keyword))
   (writer.write-string (keyword->string key)))
 
-(defwriter-ext (write-keyword/quote (key : :keyword))
+(defwriter-ext (write-keyword/quote writer (key : :keyword))
   (let (str (keyword->string sym))
     (if (contains-special-chars? str __symbol-quote?)
       (do-write (wr 0)
