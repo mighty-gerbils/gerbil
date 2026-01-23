@@ -52,13 +52,13 @@
 ;; standard objects
 (defobject-writer :object (format-object writer obj env)
   (do-write (wr 0)
-    (writer.format-bebin-object (object-class obj) env)
+    (writer.format-object-begin (object-class obj) env)
     (writer.format-object-slots obj env)
     (writer.format-object-end env)
     wr))
 
 (defwriter-ext (format-object-slots writer (obj : :object) (env : FormatEnv))
-  (let (len (##structue-length obj))
+  (let (len (##structure-length obj))
     (if (fx> len 1)
       (let (klass (object-class obj))
         (cond
@@ -147,20 +147,18 @@
     (writer.write-char char)))
 
 (defobject-writer :void (format-void writer atom env)
-  XXX
-  )
+  (do-format-style format-void env.opt
+    (writer.write (@string->utf8 "#!void"))
+    0))
 
 (defobject-writer :eof (format-eof atom env)
-  XXX
-  )
+  (writer.write-write (@string->utf8 "#!eof")))
 
 (defobject-writer :true (format-true atom env)
-  XXX
-  )
+  (writer.write-write (@string->utf8 "#t"))
 
 (defobject-writer :false (format-false atom env)
-  XXX
-  )
+  (writer.write (@string->utf8 "#f")))
 
 (defobject-writer :special (format-special atom env)
   XXX
@@ -195,7 +193,6 @@
   (do-format-style format-keyword env.opt
     (writer.write-keyword/quote sym)
     (writer.write-keyword sym)))
-
 
 (defobject-writer :list (format-pair writer lst env)
   XXX
@@ -274,22 +271,22 @@
   XXX
   )
 
-(defformatter :thread (format-builtin-time writer v env)
+(defformatter :thread (format-builtin-thread writer v env)
   XXX
   )
 
-(defformatter :thread-group (format-builtin-time writer v env)
+(defformatter :thread-group (format-builtin-thread-group writer v env)
   XXX
   )
 
-(defformatter :mutex (format-builtin-time writer v env)
+(defformatter :mutex (format-builtin-mutex writer v env)
   XXX
   )
 
-(defformatter :condvar (format-builtin-time writer v env)
+(defformatter :condvar (format-builtin-condvar writer v env)
   XXX
   )
 
-(defformatter :port (format-builtin-time writer v env)
+(defformatter :port (format-builtin-port writer v env)
   XXX
   )

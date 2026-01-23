@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; format object utilities
-(import :std/io/interface
+(import :gerbil/runtime/table
+        :std/io/interface
         :std/io/bio/api
         :std/serde/serialize)
 (export #t)
@@ -30,6 +31,12 @@
   ((_ #f) #f)
   ((_ sym)
    (@symbol->string sym)))
+
+(defsyntax (@string->utf8 stx)
+  (syntax-case stx ()
+    ((_ str)
+     (stx-string? #'str)
+     ['quote (string->utf8 (stx-e #'str))])))
 
 (def __ascii-special-chars
   (make-vector #f 128))
@@ -152,6 +159,37 @@
   (write-backslash  #\\)
   (wripe-pipe       #\|))
 
+(def __interned-symbolic-repr
+  (make-symbolic-table/lock #f 0))
+
+(defclass interned-symbolic-repr
+  ((bin        :- :u8vector)
+   (bin/quote  :- :u8vector)
+   (bin/string :- :u8vector))
+  final: #t)
+
+(defsyntax (do-write-interned-symbolic stx)
+  (syntax-case stx ()
+    ((writer obj write-method slot)
+     (with-syntax* ((writer.write (stx-identifier #'writer #'writer ".write"))
+                    (repr         (genident '$repr))
+                    (repr.slot    (stx-identifier #'repr #'repr "." #'slot))
+                    (buffer       (genident '$buffer))
+                    (buffer.write-method
+                                  (stx-identifier #'buffer #'buffer "." #'write-method)))
+       (cond
+        ((symbolic-table-ref/lock __interned-symbolic-repr obj #f)
+         => (lambda ((repr :- interned-symbolic-repr)) => :fixnum
+               (writer.write repr.slot)))
+        (else
+         (using (buffer (open-buffered-writer #f very-small-buffer-size)
+                        :- BufferedWriter)
+           (let* ((_     (buffer.write-method obj))
+                  (bytes (get-buffer-output-u8vector buffer))
+                  (repr  (interned-symbolic-repr 'slot bytes)))
+             (symbolic-table-set!/lock __interned-symbolic-repr obj repr)
+             (writer.write bytes)))))))))
+
 (def (contains-special-chars? (str : :string) (special-char? : :procedure))
   (let (len (string-length str))
     (let loop ((i 0 :- :fixnum))
@@ -235,10 +273,10 @@
     (writer.write-squote)
     wr))
 
-(defwriter-ext (write-symbol writer (sym : :symbol))
+(defwriter-ext (write-raw-symbol writer (sym : :symbol))
   (writer.write-string (symbol->string sym)))
 
-(defwriter-ext (write-symbol/quote writer (sym : :symbol))
+(defwriter-ext (write-raw-symbol/quote writer (sym : :symbol))
   (let (str (symbol->string sym))
     (if (or (contains-special-chars? str __symbol-quote?)
             (string-ends-with? str #\:))
@@ -249,10 +287,37 @@
         wr)
       (writer.write-string str))))
 
-(defwriter-ext (write-keyword writer (key : :keyword))
+(defwriter-ext (write-raw-symbol/string writer (sym : :symbol))
+  (writer.write-string/quote (symbol->string sym)))
+
+(defwriter-ext (write-symbol writer (sym : :symbol))
+  (if (interned-symbol? sym)
+    (writer.write-interned-symbol sym)
+    (writer.write-raw-symbol sym)))
+
+(defwriter-ext (write-symbol/quote writer (sym : :symbol))
+  (if (interned-symbol? sym)
+    (writer.write-interned-symbol/quote writer sym)
+    (writer.write-raw-symbol/quote writer sym)))
+
+(defwriter-ext (write-symbol/string writer (sym : :symbol))
+  (if (interned-symbol? sym)
+    (writer.write-interned-symbol/string writer sym)
+    (writer.write-raw-symbol/string writer sym)))
+
+(defwriter-ext (write-interned-symbol writer (sym : :symbol))
+  (do-write-interned-symbolic writer sym write-raw-symbol bin))
+
+(defwriter-ext (write-interned-symbol/quote writer (sym : :symbol))
+  (do-write-interned-symbolic writer sym write-raw-symbol/quote bin/quote))
+
+(defwriter-ext (write-interned-symbol/string writer (sym : :symbol))
+  (do-write-interned-symbolic writer sym write-raw-symbol/string bin/string))
+
+(defwriter-ext (write-raw-keyword writer (key : :keyword))
   (writer.write-string (keyword->string key)))
 
-(defwriter-ext (write-keyword/quote writer (key : :keyword))
+(defwriter-ext (write-raw-keyword/quote writer (key : :keyword))
   (let (str (keyword->string sym))
     (if (contains-special-chars? str __symbol-quote?)
       (do-write (wr 0)
@@ -265,6 +330,22 @@
         (writer.write-string str)
         (writer.write-colon)
         wr))))
+
+(defwriter-ext (write-keyword writer (key : :keyword))
+  (if (interned-keyword? key)
+    (writer.write-interned-keyword key)
+    (writer.write-raw-keyword key)))
+
+(defwriter-ext (write-keyword/quote writer (key : :keyword))
+  (if (interned-keyword? key)
+    (writer.write-interned-keyword/quote key)
+    (writer.write-raw-keyword/quote key)))
+
+(defwriter-ext (write-interned-keyword writer (key : :keyword))
+  (do-write-interned-symbolic writer key write-raw-keyword bin))
+
+(defwriter-ext (write-interned-keyword/quote writer (key : :keyword))
+  (do-write-interned-symbolic writer key write-raw-keyword/quote bin/quote))
 
 (defwriter-ext (write-nonnegative-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
   XXX

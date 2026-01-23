@@ -22,7 +22,7 @@
       (writer.format obj env)
       (get-buffer-output-string-utf8 writer))))
 
-(defwriter-ext (format-to-string/quote writer obj (env : FormatEnv))
+(defwriter-ext (format-to-string writer obj (env : FormatEnv))
   (writer.write-string/quote (to-string obj) env))
 
 (defcall-interface-method/fallback Stringer to-string

@@ -41,15 +41,15 @@
     0
     (do-write (wr 0)
       (writer.write-lbrace)
-      (writer.write-string/quote "@class")
+      (writer.write-symbol/string '@class)
       (writer.write-colon)
       (do-format-style write-json-object-type env.format.opt
         (do-write (wr wr)
-          (writer.write-json-field "name" klass.name env)
+          (writer.write-json-field 'name klass.name env)
           (writer.write-coma)
-          (writer.write-json-field "id" klass.id env)
+          (writer.write-json-field 'id klass.id env)
           wr)
-        (writer.write-json-field "name" klass.name env))
+        (writer.write-json-field 'name klass.name env))
       (writer.write-rbrance)
       wr)))
 
@@ -70,7 +70,7 @@
     wr))
 
 (defwriter-ext (write-json-object-slots writer (obj : :object) (env : JSONEnv))
-  (let (len (##structue-length obj))
+  (let (len (##structure-length obj))
     (if (fx> len 1)
       (let* ((klass (object-class obj))
              (coma? (not env.untyped)))
@@ -110,29 +110,29 @@
          (else 0)))
       0)))
 
-(defwriter-ext (write-json-field writer (field : :string) obj (env : JSONEnv))
+(defwriter-ext (write-json-field writer (field : :symbol) obj (env : JSONEnv))
   (do-write (wr 0)
-    (writer.write-string/quote field)
+    (writer.write-symbol/string field)
     (writer.write-colon)
     (writer.write-json obj env)
     wr))
 
 (defwriter-ext (write-json-key-value writer k v (env : JSOEnv))
   (do-write (wr 0)
-    (writer.format-to-string/quote k)
+    (writer.format-to-string k)
     (writer.write-colon)
     (writer.write-json v env)
     wr))
 
 (defwriter-ext (write-json-slot writer obj (slot : :symbol) (offset : :fixnum) (env : JSONEnv))
-  (writer.write-json-field (symbol->string slot)
+  (writer.write-json-field slot
                            (unchecked-field-ref obj offset)
                            env))
 
 (defjson-writer interface-instance (write-json-interface-instance writer inst env)
   (do-write (wr 0)
     (writer.write-json-object-begin (object-class inst) env)
-    (writer.write-json-field "instance" inst.object env)
+    (writer.write-json-field 'instance inst.object env)
     (writer.write-json-object-end env)))
 
 (defjson-writer HashTable (write-json-hash-table writer ht env)
