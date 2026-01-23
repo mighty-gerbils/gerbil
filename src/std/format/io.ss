@@ -3,6 +3,7 @@
 ;;; base io facilities
 (import :std/io/interface
         :std/io/bio/api
+        :std/serde/serialize
         ./env
         ./ioutil)
 (export #t)
@@ -13,18 +14,26 @@
 
 (defsyntax (defobject-writer stx)
   (syntax-case stx ()
-    ((_ klass (write-it writer obj env)
+    ((_ klass (write-method writer obj env)
         body ...)
-     (with-syntax ((write (syntax-local-introduce 'write))
-                   (writer.write-it
-                    (stx-identifier #'writer #'writer "." #'write-it)))
+     (with-syntax* ((write (syntax-local-introduce 'write))
+                    (writer.write-method
+                     (stx-identifier #'writer #'writer "." #'write-method)))
        #'(begin
            (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
              body ...)
            (defmethod {write klass}
              (lambda (self writer env)
-               (writer.write-it self env))
+               (writer.write-method self env))
              interface: ObjectWriter))))))
+
+(defwriter-ext (print writer obj (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.format obj env)
+    (writer.write-newline)
+    (begin
+      (writer.flush)
+      wr)))
 
 (defwriter-ext (display writer obj (env : FormatEnv))
   (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
