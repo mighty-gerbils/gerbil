@@ -50,8 +50,8 @@
    (symbol-esc?     :- :boolean)
    (symbol-esc-char :- :fixnum)
    (char-esc?       :- :boolean)
-   (char-scm-name   :- :string)
-   (char-std-name   :- :string))
+   (char-scm-name   :- :symbol)
+   (char-std-name   :- :symbol))
   final: #t)
 
 (defrule (defascii-special-chars spec ...)
@@ -76,18 +76,21 @@
                 symbol-esc?
                 (@maybe-char->int symbol-esc-char)
                 char-esc?
-                (@maybe-symbol->string char-scheme-name)
-                (@maybe-symbol->string char-std-name))))
+                char-scheme-name
+                char-std-name)))
 
-(defrule (try-ascii-special-char aint K)
-  (cond
-   ((##vector-ref __ascii-special-chars aint)
-    => K)
-   (else #f)))
+(defrules try-ascii-special-char ()
+  ((_ aint K E)
+   (cond
+    ((##vector-ref __ascii-special-chars aint)
+     => K)
+    (else E)))
+  ((_ aint K)
+   (try-ascii-special-char aint K #f)))
 
 (defascii-special-chars
   ;; char   str-esc? esc-char sym-quote? sym-esc? esc-char char-esc? scm-name std-name
-  (#x00    #t      #f        #t         #t       #f       #t        nul      NUL)
+  (#x00    #t      #f        #t         #t       #f       #t        null     NUL)
   (#x01    #t      #f        #t         #t       #f       #t        #f       SOH)
   (#x02    #t      #f        #t         #t       #f       #t        #f       STX)
   (#x03    #t      #f        #t         #t       #f       #t        #f       ETX)
@@ -317,39 +320,57 @@
 (defwriter-ext (write-interned-keyword/quote writer (key : :keyword))
   (do-write-interned-symbolic writer key write-raw-keyword/quote format/quote))
 
-(defwriter-ext (write-nonnegative-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
+(defwriter-ext (write-nonnegative-fixnum-with-base writer (x : :fixnum) (alphabet : :u8vector) (width : :fixnum))
   XXX
   )
 
-(defwriter-ext (write-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
+(defwriter-ext (write-nonnegative-integer-with-base writer (x : :integer) (alphabet : :u8vector) (width : :fixnum))
+  XXX
+  )
+
+(defwriter-ext (write-fixnum-with-base writer (x : :fixnum) (alphabet : :u8vector) (width : :fixnum))
   (if (fx>= x 0)
-    (writer.write-nonnegative-fixnum-with-base writer x tr width)
+    (writer.write-nonnegative-fixnum-with-base writer x alphabet width)
     (do-write (wr 0)
       (writer.write-minus)
-      (writer.write-nonnegative-fixnum-with-base writer (fx- x) tr width)
+      (cond
+       ((##fx-? x)
+        => (lambda ((x :- :fixnum)) => :fixnum
+              (writer.write-nonnegative-fixnum-with-base writer x alphabet width)))
+       (else
+        (writer.write-nonnegative-integer-with-base writer (- x) alphabet width)))
       wr)))
 
-(def __decimal-base
+(defwriter-ext (write-integer-with-base writer (x : :integer) (alphabet : :u8vector) (width : :fixnum))
+  (if (>= x 0)
+    (writer.write-nonnegative-integer-with-base writer x alphabet width)
+    (do-write (wr 0)
+      (writer.write-minus)
+      (writer.write-nonnegative-integer-with-base writer (- x) alphabet width)
+      wr)))
+
+(def __binary-alphabet
+  '#u8(#x30 #x31))
+(def __octal-alphabet
+  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37))
+(def __decimal-alphabet
   '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39))
-
-(def __hex-base
+(def __hex-alphabet
   '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x61 #x62 #x63 #x64 #x65 #x66))
-
-(def __hex-caps-base
+(def __HEX-alphabet
   '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x41 #x42 #x43 #x44 #x45 #x46))
 
 (defwriter-ext (write-fixnum-decimal (x : :fixnum))
-  (if (fx>= x 0)
-    (writer.write-nonnegative-fixnum-decimal x)
-    (writer.write-nonnegative-fixnum-decimal (fx- x))))
+  (writer.write-fixnum-with-base x __decimal-alphabet 1))
 
-(defwriter-ext (write-nonnegative-fixnum-decimal (x : :fixnum))
-  (writer.write-nonnegative-fixnum-with-base x __decimal-base 1))
+(defwriter-ext (write-fixnum-hex (x : :fixnum))
+  (writer.write-fixnum-with-base x __hex-alphabet 2))
 
-(defwriter-ext (write-nonnegative-fixnum-hex (x : :fixnum) (caps? : :boolean := #t))
-  (if caps?
-    (writer.write-nonnegative-fixnum-with-base x __hex-caps-base 2)
-    (writer.write-nonnegative-fixnum-with-base x __hex-base 2)))
+(defwriter-ext (write-fixnum-HEX (x : :fixnum))
+  (writer.write-fixnum-with-base x __HEX-alphabet 2))
 
-(defwriter-ext (write-nonnegative-fixnum-octal (x : :fixnum))
-  (writer.write-nonnegative-fixnum-with-base x __octal-base 3))
+(defwriter-ext (write-fixnum-octal (x : :fixnum))
+  (writer.write-fixnum-with-base x __octal-alphabet 3))
+
+(defwriter-ext (write-fixnum-binary (x : :fixnum))
+  (writer.write-fixnum-with-base x __binary-alphabet 1))

@@ -1261,6 +1261,7 @@ END-C
                            (error "unknown class" subtype: st object: obj))))))
                     ((eq? t 'special)
                      (lambda (obj)
+                       ;; TODO optimize this
                        (declare (not interrupts-enabled) (not safe))
                        (cond
                         ((char? obj)      (__system-class 'char))

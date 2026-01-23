@@ -142,7 +142,22 @@
     (do-write (wr 0)
       (writer.write-sharp)
       (writer.write-backslash)
-      XXX
+      (let (aint (char->integer char))
+        (try-ascii-special-char aint
+          (lambda ((asci :- ascii-special-char-info)) => :fixnum
+             (if asci.char-esc?
+               (cond
+                ((and env.opt.ascii-char-std asci.char-std-name)
+                 (writer.write-symbol asci.char-std-name))
+                (asci.char-scm-name
+                 (writer.write-symbol asci.char-scm-name))
+                (else
+                 (do-write (wr wr)
+                   (writer.write-u8 (@char->int #\x))
+                   (writer.write-nonnegative-fixnum-hex aint #f)
+                   wr)))
+               (writer.write-char char)))
+          (writer.write-char char)))
       wr)
     (writer.write-char char)))
 
@@ -152,10 +167,10 @@
     0))
 
 (defobject-writer :eof (format-eof atom env)
-  (writer.write-write (@string->utf8 "#!eof")))
+  (writer.write (@string->utf8 "#!eof")))
 
 (defobject-writer :true (format-true atom env)
-  (writer.write-write (@string->utf8 "#t"))
+  (writer.write (@string->utf8 "#t")))
 
 (defobject-writer :false (format-false atom env)
   (writer.write (@string->utf8 "#f")))
@@ -164,25 +179,50 @@
   XXX
   )
 
-(defobject-writer :bignum (format-bignum writer obj env)
+(defsyntax (do-write-integer stx)
+  (syntax-case stx ()
+    ((_ writer int env write-method)
+     (with-syntax (XXX)
+       #'(do-format-style format-bignum env.opt
+           (if env.opt.integer-prefix
+             (do-write (wr 0)
+               (writer.write-sharp)
+               (writer.write-u8 env.integer-prefix)
+               (write.write-method int env.opt.integer-alphabet env.opt.integer-width)
+               wr)
+             (writer.write-method int env.opt.integer-alphabet env.opt.integer-width))
+           (writer.write-method int env.opt.integer-alphabet env.opt.integer-width))))))
+
+(defobject-writer :bignum (format-bignum writer int env)
+  (do-write-integer writer int env write-integer-with-base))
+
+(defobject-writer :fixnum (format-fixnum writer int env)
+  (do-write-integer writer int env write-fixnum-with-base))
+
+(defobject-writer :ratnum (format-ratnum writer num env)
+  (do-write (wr 0)
+    (writer.format (ratnum-numerator num) env)
+    (writer.write-slash)
+    (writer.format (ratnum-denominator num) env)
+    wr))
+
+(defobject-writer :flonum (format-flonum writer num env)
   XXX
   )
 
-(defobject-writer :fixnum (format-fixnum writer obj env)
-  XXX
-  )
-
-(defobject-writer :ratnum (format-ratnum writer obj env)
-  XXX
-  )
-
-(defobject-writer :flonum (format-flonum writer obj env)
-  XXX
-  )
-
-(defobject-writer :cpxnum (format-cpxnum writer obj env)
-  XXX
-  )
+(defobject-writer :cpxnum (format-cpxnum writer num env)
+  (let ((real (cpxnum-real num))
+        (imag (cpxnum-imag num)))
+    (do-write (wr 0)
+      (if (zero? real)
+        0
+        (do-write (wr wr)
+          (writer.format real env)
+          (writer.write-plus)
+          wr))
+      (writer.write-u8 (@char->int #\i))
+      (writer.format imag env)
+      wr)))
 
 (defobject-writer :symbol (format-symbol writer sym env)
   (do-format-style format-symbol env.opt
@@ -194,7 +234,7 @@
     (writer.write-keyword/quote sym)
     (writer.write-keyword sym)))
 
-(defobject-writer :list (format-pair writer lst env)
+(defobject-writer :list (format-list writer lst env)
   XXX
   )
 
@@ -203,45 +243,114 @@
     (writer.write-string/quote str)
     (writer.write-string str)))
 
+(defsyntax (do-write-vector stx)
+  (syntax-case stx ()
+    ((_ writer v env prefix v-length v-ref format-method)
+     (with-syntax* ((writer.write        (stx-identifier #'writer #'writer ".write"))
+                    (writer.write-sharp  (stx-identifier #'writer #'writer ".write-sharp"))
+                    (writer.write-lparen (stx-identifier #'writer #'writer ".write-lparen"))
+                    (writer.write-rparen (stx-identifier #'writer #'writer ".write-rparen"))
+                    (write-prefix (if (stx-e #'prefix)
+                                    #'(writer.write prefix)
+                                    0))
+                    (writer.format-method (stx-identifier #'writer #'writer "." #'format-method)))
+       #'(do-write (wr 0)
+           (writer.write-sharp)
+           write-prefix
+           (writer.write-lparen)
+           (let* ((len   (v-length v))
+                  (len-1 (fx- len 1)))
+             (let loop ((i 0) (wr wr)) => :fixnum
+               (cond
+                ((fx< i len-1)
+                 (do-write (wr wr)
+                   (writer.format-method (v-ref v i) env)
+                   (writer.write-space)
+                   (loop (fx+ i 1) wr)))
+                ((fx< i len)
+                 (do-write (wr wr)
+                   (writer.format-method (v-ref v i) env)
+                   wr))
+                (else 0))))
+           (writer.write-rparen)
+           wr)))))
+
+(defobject-writer :vector (format-vector writer v env)
+  (do-write-vector writer v env
+                   #f
+                   ##vector-length
+                   ##vector-ref
+                   format))
+
 (defobject-writer :u8vector (format-u8vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "u8")
+                   ##u8vector-length
+                   ##u8vector-ref
+                   format-fixnum))
 
 (defobject-writer :u16vector (format-u16vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "u16")
+                   ##u16vector-length
+                   ##u16vector-ref
+                   format-fixnum))
 
 (defobject-writer :u32vector (format-u32vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "u32")
+                   ##u32vector-length
+                   ##u32vector-ref
+                   format-integer))
 
-(defobject-writer :u64vector (format-u63vector writer v env)
-  XXX
-  )
+(defobject-writer :u64vector (format-u64vector writer v env)
+  (do-write-vector writer v env
+                   (@string->utf8 "u64")
+                   ##u64vector-length
+                   ##u64vector-ref
+                   format-integer))
 
 (defobject-writer :s8vector (format-s8vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "s8")
+                   ##s8vector-length
+                   ##s8vector-ref
+                   format-fixnum))
 
 (defobject-writer :s16vector (format-s16vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "s16")
+                   ##s16vector-length
+                   ##s16vector-ref
+                   format-fixnum))
 
 (defobject-writer :s32vector (format-s32vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "s32")
+                   ##s32vector-length
+                   ##s32vector-ref
+                   format-integer))
 
 (defobject-writer :s64vector (format-s64vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "s64")
+                   ##s64vector-length
+                   ##s64vector-ref
+                   format-integer))
 
 (defobject-writer :f32vector (format-f32vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "f32")
+                   ##f32vector-length
+                   ##f32vector-ref
+                   format-flonum))
 
 (defobject-writer :f64vector (format-f64vector writer v env)
-  XXX
-  )
+  (do-write-vector writer v env
+                   (@string->utf8 "f64")
+                   ##f64vector-length
+                   ##f64vector-ref
+                   format-flonum))
 
 (defobject-writer :values (format-values writer v env)
   XXX
@@ -251,11 +360,15 @@
   XXX
   )
 
-(defformatter :procedue (format-procedure writer proc env)
+(defformatter :continuation (format-continuation writer v env)
   XXX
   )
 
-(defformatter :continuation (format-continuation writer v env)
+(defformatter :promise (format-promise writer v env)
+  XXX
+  )
+
+(defformatter :procedure (format-procedure writer proc env)
   XXX
   )
 
@@ -271,22 +384,22 @@
   XXX
   )
 
-(defformatter :thread (format-builtin-thread writer v env)
+(defformatter :thread (format-thread writer v env)
   XXX
   )
 
-(defformatter :thread-group (format-builtin-thread-group writer v env)
+(defformatter :thread-group (format-thread-group writer v env)
   XXX
   )
 
-(defformatter :mutex (format-builtin-mutex writer v env)
+(defformatter :mutex (format-mutex writer v env)
   XXX
   )
 
-(defformatter :condvar (format-builtin-condvar writer v env)
+(defformatter :condvar (format-condvar writer v env)
   XXX
   )
 
-(defformatter :port (format-builtin-port writer v env)
+(defformatter :port (format-port writer v env)
   XXX
   )

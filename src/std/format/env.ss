@@ -16,22 +16,31 @@
 ;; format environment
 (defclass FormatOpt
   (;; whether to allow (and write) object cycles
-   (allow-cycles? : :boolean)
+   (allow-cycles?    :- :boolean)
    ;; whether to check for object cycles
-   (check-cycles? : :boolean)
-   ;; do write compression? if this is enabled, non trivial objects will be writtene exactly once
-   (compress?     : :boolean)
+   (check-cycles?    :- :boolean)
+   ;; do write compression?
+   ;; if this is enabled, non trivial objects will be writtene exactly once
+   (compress?        :- :boolean)
    ;; format style: FORMAT-WRITE (default), FORMAT-DISPLAY, or FORMAT-REPR
-   (style         :~ (format-style?) :- :fixnum)
+   (style            :- :fixnum)
    ;; inextact number precision
-   (precision     :~ nonnegative-fixnum? :- :fixnum)
-   ;; exact number display base
-   (base          :~ nonnegative-fixnum? :- :fixnum)
-   ;; max elements to display in a seuqnnce; #f for no limit
-   (max-elements  :? :fixnum)
-   )
+   (precision        :- :fixnum)
+   ;; integer display base
+   (integer-prefix   :- :fixnum)
+   (integer-alphabet :- :u8vector)
+   (integer-width    :- :fixnum)
+   ;; squence elements to display; #f for no limit
+   (seq-elements     :- :fixnum)
+   ;; whether to use std ascii char special names; scheme names are used otherwise
+   (char-ascii-std   :- :boolean))
   transparent: #t
+  construct: :init!
   final: #t)
+
+(defmethod {:init! FormatEnv}
+  XXX
+  )
 
 (defstruct FormatEnv
   ((scan         :- ScanEnv)  ; cycle handling policy (optional)

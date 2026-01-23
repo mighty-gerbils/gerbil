@@ -6,11 +6,6 @@
 (export #t)
 
 (defrules do-write ()
-  ((_ (wr 0) write-op rest ... end)
-   (identifier? #'wr)
-   (let* ((wr write-op)
-          (wr (fx+ wr rest)) ...)
-     end))
   ((_ (wr init) write-op rest ... end)
    (identifier? #'wr)
    (let* ((wr init)
