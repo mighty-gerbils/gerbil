@@ -138,8 +138,13 @@
       wr)))
 
 (defobject-writer :char (format-char writer char env)
-  XXX
-  )
+  (do-format-style format-char env.opt
+    (do-write (wr 0)
+      (writer.write-sharp)
+      (writer.write-backslash)
+      XXX
+      wr)
+    (writer.write-char char)))
 
 (defobject-writer :void (format-void writer atom env)
   XXX
