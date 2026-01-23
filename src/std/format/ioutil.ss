@@ -276,13 +276,13 @@
     (writer.write-raw-symbol/string writer sym)))
 
 (defwriter-ext (write-interned-symbol writer (sym : :symbol))
-  (do-write-interned-symbolic writer sym write-raw-symbol bin))
+  (do-write-interned-symbolic writer sym write-raw-symbol format))
 
 (defwriter-ext (write-interned-symbol/quote writer (sym : :symbol))
-  (do-write-interned-symbolic writer sym write-raw-symbol/quote bin/quote))
+  (do-write-interned-symbolic writer sym write-raw-symbol/quote format/quote))
 
 (defwriter-ext (write-interned-symbol/string writer (sym : :symbol))
-  (do-write-interned-symbolic writer sym write-raw-symbol/string bin/string))
+  (do-write-interned-symbolic writer sym write-raw-symbol/string format/string))
 
 (defwriter-ext (write-raw-keyword writer (key : :keyword))
   (writer.write-string (keyword->string key)))
@@ -312,10 +312,10 @@
     (writer.write-raw-keyword/quote key)))
 
 (defwriter-ext (write-interned-keyword writer (key : :keyword))
-  (do-write-interned-symbolic writer key write-raw-keyword bin))
+  (do-write-interned-symbolic writer key write-raw-keyword format))
 
 (defwriter-ext (write-interned-keyword/quote writer (key : :keyword))
-  (do-write-interned-symbolic writer key write-raw-keyword/quote bin/quote))
+  (do-write-interned-symbolic writer key write-raw-keyword/quote format/quote))
 
 (defwriter-ext (write-nonnegative-fixnum-with-base writer (x : :fixnum) (tr : :u8vector) (width : :fixnum))
   XXX
