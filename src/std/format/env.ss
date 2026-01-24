@@ -105,24 +105,23 @@
                           base:          base
                           max-elements:  max-elements))))
 
-(defsyntax (defderive-format-env stx)
-  (syntax-case stx ()
-    ((_ proc slot contract ...)
-     (with-identifiers
-         ((env           '$env)
-          (opt           '$opt)
-          (env.scan      #'env #'env ".scan")
-          (env.opt       #'env #'env ".opt")
-          (env.opt.slot  #'env #'opt "." #'slot)
-          (opt.slot      #'opt #'opt "." #'slot))
-       #'(def (proc (env : FormatEnv) (slot contract ...))
-           (if (eq? env.opt.slot slot)
-             env
-             (FormatEnv
-              env.scan
-              (using (opt (struct-copy env.opt) :- FormatOpt)
-                (set! opt.slot slot)
-                opt))))))))
+(defsyntax-case defderive-format-env ()
+  ((_ proc slot contract ...)
+   (with-identifiers
+       ((env           '$env)
+        (opt           '$opt)
+        (env.scan      #'env #'env ".scan")
+        (env.opt       #'env #'env ".opt")
+        (env.opt.slot  #'env #'opt "." #'slot)
+        (opt.slot      #'opt #'opt "." #'slot))
+     #'(def (proc (env : FormatEnv) (slot contract ...))
+         (if (eq? env.opt.slot slot)
+           env
+           (FormatEnv
+            env.scan
+            (using (opt (struct-copy env.opt) :- FormatOpt)
+              (set! opt.slot slot)
+              opt)))))))
 
 (defderive-format-env format-env-with-style        style        :~ (format-style?) :- :fixnum)
 (defderive-format-env format-env-with-precision    precision    :  :fixnum)

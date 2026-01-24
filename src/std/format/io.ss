@@ -12,20 +12,19 @@
 (interface ObjectWriter
   (write (writer : BufferedWriter) (env : FormatEnv)) => :fixnum)
 
-(defsyntax (defobject-writer stx)
-  (syntax-case stx ()
-    ((_ klass (write-method writer obj env)
-        body ...)
-     (with-identifiers
-         ((write '$writer)
-          (writer.write-method #'writer #'writer "." #'write-method))
-       #'(begin
-           (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
-             body ...)
-           (defmethod {write klass}
-             (lambda (self writer env)
-               (writer.write-method self env))
-             interface: ObjectWriter))))))
+(defsyntax-case defobject-writer ()
+  ((_ klass (write-method writer obj env)
+      body ...)
+   (with-identifiers
+       ((write '$writer)
+        (writer.write-method #'writer #'writer "." #'write-method))
+     #'(begin
+         (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
+           body ...)
+         (defmethod {write klass}
+           (lambda (self writer env)
+             (writer.write-method self env))
+           interface: ObjectWriter)))))
 
 (defwriter-ext (print writer obj (env : FormatEnv))
   (do-write (wr 0)
@@ -81,15 +80,14 @@
 (interface ObjectReader
   (read! (reader : BufferedReader) (env : FormatEnv)) => :void)
 
-(defsyntax (defobject-reader stx)
-  (syntax-case stx ()
-    ((_ klass (read-it writer obj env)
-        body ...)
-     (with-identifier (reader.reader-it #'reader #'reader "." #'read-it)
-       #'(begin
-           (defwriter-ext (read-it reader (obj : klass) (env : FormatEnv))
-             body ...)
-           (defmethod {read! klass}
-             (lambda (self reader env)
-               (reader.read-it self env))
-             interface: ObjectReader))))))
+(defsyntax-case defobject-reader ()
+  ((_ klass (read-it writer obj env)
+      body ...)
+   (with-identifier (reader.reader-it #'reader #'reader "." #'read-it)
+     #'(begin
+         (defwriter-ext (read-it reader (obj : klass) (env : FormatEnv))
+           body ...)
+         (defmethod {read! klass}
+           (lambda (self reader env)
+             (reader.read-it self env))
+           interface: ObjectReader)))))
