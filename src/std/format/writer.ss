@@ -11,8 +11,7 @@
         :std/serde/serialize
         ./env
         ./ioutil
-        ./io
-        ./string)
+        ./io)
 (export #t)
 
 ;;; base
@@ -41,7 +40,7 @@
     (writer.format-object-type-full klass env)))
 
 ;; standard classes
-(defformater :class (format-class writer klass env)
+(defobject-writer :class (format-class writer klass env)
   (do-write (wr 0)
     (writer.format-object-begin (class-type klass) env)
     (writer.write-space)
