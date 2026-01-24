@@ -159,7 +159,9 @@
   (write-bang       #\!)
   (write-equal      #\=)
   (write-minus      #\-)
+  (write-plus       #\+)
   (write-backslash  #\\)
+  (write-slash      #\/)
   (wripe-pipe       #\|))
 
 (def (contains-special-chars? (str : :string) (special-char? : :procedure))

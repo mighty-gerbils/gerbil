@@ -14,5 +14,30 @@ package: gerbil/core
    (make-setq-macro
     macro: (syntax-rules . body))))
 
+(defsyntax (with-identifiers stx)
+  (syntax-case stx ()
+    ((_ (clase ...) body ...)
+     (with-syntax (((clause ...)
+                    (map
+                     (lambda (clause)
+                       (syntax-case clause (quote)
+                         ((fresh-id (quote local-id))
+                          (and (identifier? #'fresh-id)
+                               (identifier? #'local-id))
+                          #'(fresh-id (syntax-local-temp 'local-id)))
+                         ((fresh-id ctx-id components ...)
+                          (and (identifier? #'fresh-id)
+                               (identifier? #'ctx-id))
+                          (fresh-id (stx-identifier ctx-id components ...)))))
+                     #'(clause ...))))
+       #'(with-syntax* (clause ...)
+           body ...)))))
+
+(defrule (with-identifier (fresh-id components ...) body ...)
+  (identifier? #'fresh-id)
+  (with-identifiers ((fresh-id components ...))
+    body ...))
+
+
 ;; TODO Not Implemented Yet -- barf
 (defrules quasisyntax ())

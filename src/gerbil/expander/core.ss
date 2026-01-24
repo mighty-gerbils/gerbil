@@ -783,6 +783,10 @@ namespace: gx
     ([hd . _]
      (stx-apply-mark stx hd))
     (else stx)))
+(def (syntax-local-temp sym)
+  (syntax-local-introduce
+   (make-symbol
+    (gensym sym))))
 
 (def (syntax-local-e stx (E raise-syntax-ref-error))
   (let (bind (resolve-identifier stx))

@@ -16,9 +16,9 @@
   (syntax-case stx ()
     ((_ klass (write-method writer obj env)
         body ...)
-     (with-syntax* ((write (syntax-local-introduce 'write))
-                    (writer.write-method
-                     (stx-identifier #'writer #'writer "." #'write-method)))
+     (with-identifiers
+         ((write '$writer)
+          (writer.write-method #'writer #'writer "." #'write-method))
        #'(begin
            (defwriter-ext (write-it writer (obj : klass) (env : WriteEnv))
              body ...)
@@ -85,8 +85,7 @@
   (syntax-case stx ()
     ((_ klass (read-it writer obj env)
         body ...)
-     (with-syntax ((reader.reader-it
-                    (stx-identifier #'reader #'reader "." #'read-it)))
+     (with-identifier (reader.reader-it #'reader #'reader "." #'read-it)
        #'(begin
            (defwriter-ext (read-it reader (obj : klass) (env : FormatEnv))
              body ...)

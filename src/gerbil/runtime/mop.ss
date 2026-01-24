@@ -1135,6 +1135,7 @@ namespace: #f
              []                         ; slots
              [[struct: . #t]
               [system: . #t]
+              [system-type: . type]
               (if (type-extensible? type)
                 []
                 [[final: . #t]])

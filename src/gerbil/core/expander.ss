@@ -56,7 +56,7 @@ package: gerbil/core
     core-quote-syntax
     core-identifier=? core-identifier-key
     core-apply-expander
-    syntax-local-introduce syntax-local-rewrap syntax-local-unwrap
+    syntax-local-introduce syntax-local-temp syntax-local-rewrap syntax-local-unwrap
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
     binding? binding-id

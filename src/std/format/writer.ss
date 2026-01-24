@@ -51,41 +51,41 @@
 
 ;; standard objects
 (defobject-writer :object (format-object writer obj env)
-  (do-write (wr 0)
-    (writer.format-object-begin (object-class obj) env)
-    (writer.format-object-slots obj env)
-    (writer.format-object-end env)
-    wr))
+  (let (klass (object-class obj))
+    (do-write (wr 0)
+      (writer.format-object-begin klass env)
+      (writer.format-object-slots obj klass env)
+      (writer.format-object-end env)
+      wr)))
 
-(defwriter-ext (format-object-slots writer (obj : :object) (env : FormatEnv))
+(defwriter-ext (format-object-slots writer obj (klass : :class) (env : FormatEnv))
   (let (len (##structure-length obj))
     (if (fx> len 1)
-      (let (klass (object-class obj))
-        (cond
-         ((fx= env.opt.style FORMAT-DEBUG)
-          (let (slots (vector->list (class-type-slot-vector klass) 1))
-            (let loop ((rest slots) (offset 1) (wr 0))
-              (match rest
-                ([slot . rest]
-                 (using (slot :- :symbol)
-                   (do-write (wr wr)
-                     (writer.format-slot obj slot offset env)
-                     (loop rest (fx+ offset 1) wr))))
-                (else wr)))))
-         ((class-type-printable-slots klass)
-          ;; print spec: [[slot . offset] ...]
-          => (lambda (lst)
-               (let loop ((rest lst) (wr 0))
-                 (match rest
-                   ([print-spec . rest]
-                    (using ((spec   print-spec :- :pair)
-                            (slot   (car spec) :- :symbol)
-                            (offset (cdr spec) :- :fixnum))
-                      (do-write (wr wr)
-                        (wrier.format-slot obj slot offset env)
-                        (loop rest wr))))
-                   (else wr)))))
-         (else 0)))
+      (cond
+       ((fx= env.opt.style FORMAT-DEBUG)
+        (let (slots (vector->list (class-type-slot-vector klass) 1))
+          (let loop ((rest slots) (offset 1) (wr 0))
+            (match rest
+              ([slot . rest]
+               (using (slot :- :symbol)
+                 (do-write (wr wr)
+                   (writer.format-slot obj slot offset env)
+                   (loop rest (fx+ offset 1) wr))))
+              (else wr)))))
+       ((class-type-printable-slots klass)
+        ;; print spec: [[slot . offset] ...]
+        => (lambda (lst)
+             (let loop ((rest lst) (wr 0))
+               (match rest
+                 ([print-spec . rest]
+                  (using ((spec   print-spec :- :pair)
+                          (slot   (car spec) :- :symbol)
+                          (offset (cdr spec) :- :fixnum))
+                    (do-write (wr wr)
+                      (wrier.format-slot obj slot offset env)
+                      (loop rest wr))))
+                 (else wr)))))
+       (else 0))
       0)))
 
 (defwriter-ext (format-field writer (slot : :symbol) obj (env : FormatEnv))
@@ -176,7 +176,7 @@
 (defsyntax (do-write-special stx)
   (syntax-case stx ()
     ((_ writer sym)
-     (with-syntax (writer.write-sharp (stx-identifier #'writer #'writer ".write-sharp"))
+     (with-identifier (writer.write-sharp #'writer #'writer ".write-sharp")
        #'(do-write (wr 0)
            (writer.write-sharp)
            (writer.write-bang)
@@ -186,9 +186,9 @@
 (defsyntax (defspecial-object-writer stx)
   (syntax-case stx ()
     ((_ klass name)
-     (with-syntax ((writer    (syntax-local-introduce '$writer))
-                   (:klass    (stx-identifier #'klass ":" #'klass))
-                   (format-it (stx-identifier #'klass "format-special-" #'name)))
+     (with-identifiers ((writer '$writer)
+                        (:klass    #'klass ":" #'klass)
+                        (format-it #'klass "format-special-" #'name))
        #'(defobject-writer :klass (format-it writer atom env)
            (do-write-special writer name))))
     ((_ klass)
@@ -206,12 +206,18 @@
 (defsyntax (do-write-integer stx)
   (syntax-case stx ()
     ((_ writer int env write-method)
-     (with-syntax (XXX)
-       #'(do-format-style format-bignum env.opt
+     (with-identifiers ((env.opt                  #'env #'env ".opt")
+                        (env.opt.integer-prefix   #'env #'env ".opt.integer-prefix")
+                        (env.opt.integer-alphabet #'env #'env ".opt.integer-alphabet")
+                        (env.opt.integer-width    #'env #'env ".opt.integer-width")
+                        (writer.write-sharp       #'writer #'writer ".write-sharp")
+                        (writer.write-u8          #'writer #'writer ".write-u8")
+                        (writer.write-method      #'writer #'writer "." #'write-method))
+       #'(do-format-style write-method env.opt
            (if env.opt.integer-prefix
              (do-write (wr 0)
                (writer.write-sharp)
-               (writer.write-u8 env.integer-prefix)
+               (writer.write-u8 env.opt.integer-prefix)
                (write.write-method int env.opt.integer-alphabet env.opt.integer-width)
                wr)
              (writer.write-method int env.opt.integer-alphabet env.opt.integer-width))
@@ -259,8 +265,37 @@
     (writer.write-keyword sym)))
 
 (defobject-writer :list (format-list writer lst env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.write-lparen)
+    (let loop ((rest lst) (space? #f) (wr wr))
+      (match rest
+        ([hd . tl]
+         (cond
+          ((pair? tl)
+           (do-write (wr wr)
+             (if space?
+               (writer.write-space)
+               0)
+             (writer.format hd env)
+             (loop tl #t wr)))
+          ((null? tl)
+           (do-write (wr wr)
+             (writer.format hd env)
+             wr))
+          (else
+           (do-write (wr wr)
+             (if space?
+               (writer.write-space)
+               0)
+             (writer.format hd env)
+             (writer.write-space)
+             (writer.write-dot)
+             (writer.write-space)
+             (writer.format rest env)
+             wr))))
+        (else wr)))
+    (writer.write-rparen)
+    wr))
 
 (defobject-writer :string (format-string writer str env)
   (do-format-style format-string env.opt
@@ -269,35 +304,35 @@
 
 (defsyntax (do-write-vector stx)
   (syntax-case stx ()
-    ((_ writer v env prefix left right v-length v-ref format-method)
-     (with-syntax* ((writer.write         (stx-identifier #'writer #'writer ".write"))
-                    (writer.write-sharp   (stx-identifier #'writer #'writer ".write-sharp"))
-                    (writer.write-left    (stx-identifier #'writer #'writer ".write-" #'left))
-                    (writer.write-right   (stx-identifier #'writer #'writer ".write-" #'right))
-                    (write-prefix         (if (stx-e #'prefix)
-                                            #'(writer.write prefix)
-                                            0))
-                    (writer.format-method (stx-identifier #'writer #'writer "." #'format-method)))
-       #'(do-write (wr 0)
-           (writer.write-sharp)
-           write-prefix
-           (writer.write-left)
-           (let* ((len   (v-length v))
-                  (len-1 (fx- len 1)))
-             (let loop ((i 0) (wr wr)) => :fixnum
-               (cond
-                ((fx< i len-1)
-                 (do-write (wr wr)
-                   (writer.format-method (v-ref v i) env)
-                   (writer.write-space)
-                   (loop (fx+ i 1) wr)))
-                ((fx< i len)
-                 (do-write (wr wr)
-                   (writer.format-method (v-ref v i) env)
-                   wr))
-                (else 0))))
-           (writer.write-right)
-           wr)))))
+    ((_ writer v env prefix left right v-length v-ref type format-method)
+     (with-identifiers ((writer.write         #'writer #'writer ".write")
+                        (writer.write-sharp   #'writer #'writer ".write-sharp")
+                        (writer.write-left    #'writer #'writer ".write-" #'left)
+                        (writer.write-right   #'writer #'writer ".write-" #'right)
+                        (writer.format-method #'writer #'writer "." #'format-method))
+       (with-syntax ((write-prefix (if (stx-e #'prefix)
+                                     #'(writer.write prefix)
+                                     0)))
+         #'(do-write (wr 0)
+             (writer.write-sharp)
+             write-prefix
+             (writer.write-left)
+             (let* ((len   (:- (v-length v) :fixnum))
+                    (len-1 (fx- len 1)))
+               (let loop ((i 0) (wr wr)) => :fixnum
+                    (cond
+                     ((fx< i len-1)
+                      (do-write (wr wr)
+                        (writer.format-method (:- (v-ref v i) type) env)
+                        (writer.write-space)
+                        (loop (fx+ i 1) wr)))
+                     ((fx< i len)
+                      (do-write (wr wr)
+                        (writer.format-method (:- (v-ref v i) type) env)
+                        wr))
+                     (else 0))))
+             (writer.write-right)
+             wr))))))
 
 (defobject-writer :vector (format-vector writer v env)
   (do-write-vector writer v env
@@ -306,6 +341,7 @@
                    rparen
                    ##vector-length
                    ##vector-ref
+                   :t
                    format))
 
 (defobject-writer :u8vector (format-u8vector writer v env)
@@ -315,6 +351,7 @@
                    rparen
                    ##u8vector-length
                    ##u8vector-ref
+                   :fixnum
                    format-fixnum))
 
 (defobject-writer :u16vector (format-u16vector writer v env)
@@ -324,6 +361,7 @@
                    rparen
                    ##u16vector-length
                    ##u16vector-ref
+                   :fixnum
                    format-fixnum))
 
 (defobject-writer :u32vector (format-u32vector writer v env)
@@ -333,6 +371,7 @@
                    rparen
                    ##u32vector-length
                    ##u32vector-ref
+                   :integer
                    format-integer))
 
 (defobject-writer :u64vector (format-u64vector writer v env)
@@ -342,6 +381,7 @@
                    rparen
                    ##u64vector-length
                    ##u64vector-ref
+                   :integer
                    format-integer))
 
 (defobject-writer :s8vector (format-s8vector writer v env)
@@ -351,6 +391,7 @@
                    rparen
                    ##s8vector-length
                    ##s8vector-ref
+                   :fixnum
                    format-fixnum))
 
 (defobject-writer :s16vector (format-s16vector writer v env)
@@ -360,6 +401,7 @@
                    rparen
                    ##s16vector-length
                    ##s16vector-ref
+                   :fixnum
                    format-fixnum))
 
 (defobject-writer :s32vector (format-s32vector writer v env)
@@ -369,6 +411,7 @@
                    rparen
                    ##s32vector-length
                    ##s32vector-ref
+                   :integer
                    format-integer))
 
 (defobject-writer :s64vector (format-s64vector writer v env)
@@ -378,6 +421,7 @@
                    rparen
                    ##s64vector-length
                    ##s64vector-ref
+                   :integer
                    format-integer))
 
 (defobject-writer :f32vector (format-f32vector writer v env)
@@ -387,6 +431,7 @@
                    rparen
                    ##f32vector-length
                    ##f32vector-ref
+                   :flonum
                    format-flonum))
 
 (defobject-writer :f64vector (format-f64vector writer v env)
@@ -396,6 +441,7 @@
                    rparen
                    ##f64vector-length
                    ##f64vector-ref
+                   :flonum
                    format-flonum))
 
 (defobject-writer :values (format-values writer v env)
@@ -405,52 +451,52 @@
                    rbracket
                    ##values-length
                    ##values-ref
-                   format-flonum))
+                   :t
+                   format))
 
 (defobject-writer :box (format-box writer v env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.write-sharp)
+    (writer.write-ampersand)
+    (writer.format (unbox v) env)
+    wr))
 
 (defobject-writer :continuation (format-continuation writer v env)
   XXX
   )
 
-(defobject-writer :promise (format-promise writer v env)
-  XXX
-  )
+(defobject-writer :promise (format-promise writer p env)
+  (writer.format (force p) env))
 
 (defobject-writer :procedure (format-procedure writer proc env)
-  XXX
-  )
+  (do-write (wr 0)
+    (writer.write-object-begin procedure::t env)
+    (writer.write-space)
+    (writer.format (##procedure-name proc) env)
+    (writer.write-object-end env)
+    wr))
 
-(defobject-writer :foreign (format-foreign writer v env)
-  XXX
-  )
+(defobject-writer :foreign (format-foreign writer obj env)
+  (do-write (wr 0)
+    (writer.write-object-begin foreign::t env)
+    (writer.write-space)
+    (writer.format (##foreign-tags obj) env)
+    (writer.write-object-end env)
+    wr))
 
-(defobject-writer :structure (format-builtin-structure writer v env)
-  XXX
-  )
+(defobject-writer :structure (format-builtin-structure writer obj env)
+  (let (klass (class-of obj))
+    (do-write (wr 0)
+      (writer.format-object-begin klass env)
+      (writer.write-space)
+      (writer.format-object-slots obj klass env)
+      (writer.format-object-end env)
+      wr)))
 
-(defobject-writer :time (format-builtin-time writer v env)
-  XXX
-  )
-
-(defobject-writer :thread (format-thread writer v env)
-  XXX
-  )
-
-(defobject-writer :thread-group (format-thread-group writer v env)
-  XXX
-  )
-
-(defobject-writer :mutex (format-mutex writer v env)
-  XXX
-  )
-
-(defobject-writer :condvar (format-condvar writer v env)
-  XXX
-  )
-
-(defobject-writer :port (format-port writer v env)
-  XXX
-  )
+(defobject-writer :time (format-builtin-time writer t env)
+  (do-write (wr 0)
+    (writer.write-object-begin time::t env)
+    (writer.write-space)
+    (writer.format (##time->seconds t) env)
+    (writer.write-object-end env)
+    wr))
