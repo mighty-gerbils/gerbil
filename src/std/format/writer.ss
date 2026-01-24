@@ -36,8 +36,8 @@
 
 (defwriter-ext (format-object-type writer (klass : :class) (env : FormatEnv))
   (do-format-style format-object-type env.opt
-    (writer.write-symbol/quote klass.id)
-    (writer.format-object-type-full klass env)))
+    (writer.format-object-type-full klass env)
+    (writer.write-symbol/quote klass.name)))
 
 ;; standard classes
 (defobject-writer :class (format-class writer klass env)
