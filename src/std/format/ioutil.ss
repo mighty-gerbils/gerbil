@@ -40,13 +40,12 @@
      ['quote (string->utf8 (stx-e #'str))])))
 
 (def __ascii-special-chars
-  (make-vector #f 128))
+  (make-vector 128 #f))
 
 (defstruct ascii-special-char-info
   ((char            :- :fixnum)
    (string-esc?     :- :boolean)
    (string-esc-char :- :fixnum)
-   (symbol-quote?   :- :boolean)
    (symbol-esc?     :- :boolean)
    (symbol-esc-char :- :fixnum)
    (char-esc?       :- :boolean)
@@ -60,13 +59,13 @@
 
 (defrule (defascii-special-char
            (char
-            str-escape? str-esc-char
-            symbol-quote?
+            str-esc?
+            str-esc-char
             symbol-esc?
             symbol-esc-char
             char-esc?
-            char-scheme-name
-            char- std-name))
+            char-esc-scheme-name
+            char-esc-std-name))
   (vector-set! __ascii-special-chars char
                (asci-special-char
                 (@char->int char)
@@ -89,52 +88,51 @@
    (try-ascii-special-char aint K #f)))
 
 (defascii-special-chars
-  ;; char   str-esc? esc-char sym-quote? sym-esc? esc-char char-esc? scm-name std-name
-  (#x00    #t      #f        #t         #t       #f       #t        null     NUL)
-  (#x01    #t      #f        #t         #t       #f       #t        #f       SOH)
-  (#x02    #t      #f        #t         #t       #f       #t        #f       STX)
-  (#x03    #t      #f        #t         #t       #f       #t        #f       ETX)
-  (#x04    #t      #f        #t         #t       #f       #t        #f       EOT)
-  (#x05    #t      #f        #t         #t       #f       #t        #f       ENQ)
-  (#x06    #t      #f        #t         #t       #f       #t        #f       ACK)
-  (#x07    #t      #\a       #t         #t       #\a      #t        #f       BEL)
-  (#x08    #t      #\b       #t         #t       #\b      #t        #f       BS)
-  (#x09    #t      #\t       #t         #t       #\t      #t        tab      HT)
-  (#x0A    #t      #\n       #t         #t       #\n      #t        newline  LF)
-  (#x0B    #t      #\v       #t         #t       #\v      #t        #f       VT)
-  (#x0C    #t      #\f       #t         #t       #\f      #t        #f       FF)
-  (#x0D    #t      #\r       #t         #t       #\r      #t        return   CR)
-  (#x0E    #t      #f        #t         #t       #f       #t        #f       SO)
-  (#x0F    #t      #f        #t         #t       #f       #t        #f       SI)
-  (#x10    #t      #f        #t         #t       #f       #t        #f       DLE)
-  (#x11    #t      #f        #t         #t       #f       #t        #f       DC1)
-  (#x12    #t      #f        #t         #t       #f       #t        #f       DC2)
-  (#x13    #t      #f        #t         #t       #f       #t        #f       DC3)
-  (#x14    #t      #f        #t         #t       #f       #t        #f       DC4)
-  (#x15    #t      #f        #t         #t       #f       #t        #f       NAK)
-  (#x16    #t      #f        #t         #t       #f       #t        #f       SYN)
-  (#x17    #t      #f        #t         #t       #f       #t        #f       ETB)
-  (#x18    #t      #f        #t         #t       #f       #t        #f       CAN)
-  (#x19    #t      #f        #t         #t       #f       #t        #f       EM)
-  (#x1A    #t      #f        #t         #t       #f       #t        #f       SUB)
-  (#x1B    #t      #f        #t         #t       #f       #t        #f       ESC)
-  (#x1C    #t      #f        #t         #t       #f       #t        #f       FS)
-  (#x1D    #t      #f        #t         #t       #f       #t        #f       GS)
-  (#x1E    #t      #f        #t         #t       #f       #t        #f       RS)
-  (#x1F    #t      #f        #t         #t       #f       #t        #f       US)
-  (#x20    #f      #f        #t         #f       #f       #t        space    SPACE)
+  ;; char   str-esc? esc-char sym-esc? esc-char char-esc? scm-name std-name
+  (#x00    #t      #f         #t       #f       #t        null     NUL)
+  (#x01    #t      #f         #t       #f       #t        #f       SOH)
+  (#x02    #t      #f         #t       #f       #t        #f       STX)
+  (#x03    #t      #f         #t       #f       #t        #f       ETX)
+  (#x04    #t      #f         #t       #f       #t        #f       EOT)
+  (#x05    #t      #f         #t       #f       #t        #f       ENQ)
+  (#x06    #t      #f         #t       #f       #t        #f       ACK)
+  (#x07    #t      #\a        #t       #\a      #t        alarm    BEL)
+  (#x08    #t      #\b        #t       #\b      #t        backspace BS)
+  (#x09    #t      #\t        #t       #\t      #t        tab      HT)
+  (#x0A    #t      #\n        #t       #\n      #t        newline  LF)
+  (#x0B    #t      #\v        #t       #\v      #t        vtab     VT)
+  (#x0C    #t      #\f        #t       #\f      #t        page     FF)
+  (#x0D    #t      #\r        #t       #\r      #t        return   CR)
+  (#x0E    #t      #f         #t       #f       #t        #f       SO)
+  (#x0F    #t      #f         #t       #f       #t        #f       SI)
+  (#x10    #t      #f         #t       #f       #t        #f       DLE)
+  (#x11    #t      #f         #t       #f       #t        #f       DC1)
+  (#x12    #t      #f         #t       #f       #t        #f       DC2)
+  (#x13    #t      #f         #t       #f       #t        #f       DC3)
+  (#x14    #t      #f         #t       #f       #t        #f       DC4)
+  (#x15    #t      #f         #t       #f       #t        #f       NAK)
+  (#x16    #t      #f         #t       #f       #t        #f       SYN)
+  (#x17    #t      #f         #t       #f       #t        #f       ETB)
+  (#x18    #t      #f         #t       #f       #t        #f       CAN)
+  (#x19    #t      #f         #t       #f       #t        #f       EM)
+  (#x1A    #t      #f         #t       #f       #t        #f       SUB)
+  (#x1B    #t      #f         #t       #f       #t        escape   ESC)
+  (#x1C    #t      #f         #t       #f       #t        #f       FS)
+  (#x1D    #t      #f         #t       #f       #t        #f       GS)
+  (#x1E    #t      #f         #t       #f       #t        #f       RS)
+  (#x1F    #t      #f         #t       #f       #t        #f       US)
+  (#x20    #f      #f         #t       #f       #t        space    SPACE)
+  (#x7F    #t      #f         #t       #f       #t        delete    DEL)
 
-  (#\"     #t      #\"        #t         #t      #\"       #f        #f       #f)
-  (#\(     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\)     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\[     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\\     #t      #\\        #t         #t      #\\       #f        #f       #f)
-  (#\]     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\{     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\|     #f      #f         #t         #f      #f        #f        #f       #f)
-  (#\}     #f      #f         #t         #f      #f        #f        #f       #f)
-
-  (#x7F    #t      #f        #t         #t       #f       #t        #f       DEL)
+  (#\"     #t      #\"        #t       #\"      #f        #f       #f)
+  (#\(     #f      #f         #t       #\(      #f        #f       #f)
+  (#\)     #f      #f         #t       #\)      #f        #f       #f)
+  (#\[     #f      #f         #t       #\[      #f        #f       #f)
+  (#\\     #t      #\\        #t       #\\      #f        #f       #f)
+  (#\]     #f      #f         #t       #\]      #f        #f       #f)
+  (#\{     #f      #f         #t       #\{      #f        #f       #f)
+  (#\|     #f      #f         #t       #\|      #f        #f       #f)
+  (#\}     #f      #f         #t       #\}      #f        #f       #f)
   )
 
 (defrule (defascii-writers (writef char) ....)
@@ -158,6 +156,7 @@
   (write-squote     #\")
   (write-dot        #\.)
   (write-sharp      #\#)
+  (write-bang       #\!)
   (write-equal      #\=)
   (write-minus      #\-)
   (write-backslash  #\\)

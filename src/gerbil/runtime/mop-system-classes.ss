@@ -67,20 +67,24 @@ namespace: #f
 (defsystem-class builtin::t builtin (t::t))
 (defsystem-class subtyped::t subtyped (builtin::t))
 (defsystem-class structure::t structure (subtyped::t))
-
-;; usual immediates
 (defsystem-class immediate::t immediate (builtin::t) ((acyclic: . #t)))
-(defsystem-class char::t char (immediate::t) ((acyclic: . #t)))
-(defsystem-class boolean::t boolean (immediate::t) ((acyclic: . #t)))
 
-(defsystem-class atom::t atom (immediate::t) ((acyclic: . #t)))
-(defsystem-class void::t void (atom::t) ((acyclic: . #t)))
-(defsystem-class eof::t eof (atom::t) ((acyclic: . #t)))
+;; special immediate4s
+(defsystem-class special::t special (immediate::t) ((acyclic: . #t)))
+(defsystem-class atom::t atom (special::t) ((acyclic: . #t)))
+
+(defsystem-class char::t char (special::t) ((acyclic: . #t)))
+(defsystem-class boolean::t boolean (special::t) ((acyclic: . #t)))
 (defsystem-class true::t true (boolean::t atom::t) ((acyclic: . #t)))
 (defsystem-class false::t false (boolean::t atom::t) ((acyclic: . #t)))
-
-;; special values
-(defsystem-class special::t special (atom::t) ((acyclic: . #t)))
+(defsystem-class eof::t eof (atom::t) ((acyclic: . #t)))
+(defsystem-class void::t void (atom::t) ((acyclic: . #t)))
+(defsystem-class unbound::t unbound (atom::t) ((acyclic: . #t)))
+(defsystem-class unbound2::t unbound2 (atom::t) ((acyclic: . #t)))
+(defsystem-class dssl-token::t dssl-token (atom::t) ((acyclic: . #t)))
+(defsystem-class optional::t optional (dssl-token::t) ((acyclic: . #t)))
+(defsystem-class rest::t rest (dssl-token::t) ((acyclic: . #t)))
+(defsystem-class key::t key (dssl-token::t) ((acyclic: . #t)))
 
 ;; numbers
 (defsystem-class number::t number (builtin::t) ((acyclic: . #t)))

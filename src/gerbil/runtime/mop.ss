@@ -1110,20 +1110,6 @@ namespace: #f
    (else
     (error "cannot find next method" object: obj method: id))))
 
-;;; custom writers
-(def (write-style we)
-  (values (macro-writeenv-style we)))
-
-(def (write-object we obj)
-  (cond
-   ((method-ref obj ':wr)
-    => (lambda (method) (method obj we)))
-   (else
-    (##default-wr we obj))))
-
-;; TODO uncomment
-;; (##wr-set! write-object)
-
 ;; shadow classes: these are system class automagically created for builtin types
 ;; to track their methods
 (def __shadow-classes
@@ -1239,6 +1225,7 @@ END-C
                      (lambda (obj) (error "object type is undefined" obj)))
                     ((memq t '(fixnum flonum stflonum haflonum pair vector))
                      (lambda (obj)
+                       ;; TODO cache to avoid hash table lookup
                        (declare (not interrupts-enabled) (not safe))
                        (__system-class t)))
                     ((eq? t 'subtyped)
@@ -1253,23 +1240,30 @@ END-C
                                (__shadow-class klass))))
                           ((##fx= st (macro-subtype-boxvalues)) ; box or values?
                            (if (fx= (##values-length obj) 1)
+                             ;; TODO cache to avoid hash table lookup
                              (__system-class 'box)
                              (__system-class 'values)))
                           ((##vector-ref __subtype-id st)
+                           ;; TODO cache to avoid hash table lookup
                            => __system-class)
                           (else
                            (error "unknown class" subtype: st object: obj))))))
                     ((eq? t 'special)
                      (lambda (obj)
-                       ;; TODO optimize this
+                       ;; TODO optimize this to void the cond
                        (declare (not interrupts-enabled) (not safe))
                        (cond
-                        ((char? obj)      (__system-class 'char))
-                        ((eq? obj '())    (__system-class 'null))
-                        ((eq? obj #f)     (__system-class 'boolean))
-                        ((eq? obj #t)     (__system-class 'boolean))
-                        ((eq? obj #!void) (__system-class 'void))
-                        ((eq? obj #!eof)  (__system-class 'eof))
+                        ((char? obj)          (__system-class 'char))
+                        ((eq? obj '())        (__system-class 'null))
+                        ((eq? obj #f)         (__system-class 'boolean))
+                        ((eq? obj #t)         (__system-class 'boolean))
+                        ((eq? obj #!void)     (__system-class 'void))
+                        ((eq? obj #!eof)      (__system-class 'eof))
+                        ((eq? obj #!unbound)  (__system-class 'unbound))
+                        ((eq? obj #!unbound2) (__system-class 'unbound2))
+                        ((eq? obj #!optional) (__system-class 'optional))
+                        ((eq? obj #!rest)     (__system-class 'rest))
+                        ((eq? obj #!key)      (__system-class 'key))
                         (else
                          (__system-class 'special)))))
                     (else

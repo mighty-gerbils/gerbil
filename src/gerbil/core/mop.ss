@@ -846,6 +846,8 @@ package: gerbil/core
   (defsystem-class-info :subtyped subtyped::t (:builtin) builtin-subtyped?)
   (defsystem-class-info :structure structure::t (:subtyped) builtin-structure?)
 
+  ;; XXX update special hierarchy
+
   (defsystem-class-info :immediate immediate::t (:builtin) immediate?)
   (defsystem-class-info :char char::t (:immediate) char?)
   (defsystem-class-info :boolean boolean::t (:immediate) boolean?)
