@@ -13,7 +13,8 @@ namespace: #f
 (defclass Exception ())
 
 ;; Mixin for getting stack traces
-(defclass StackTrace (continuation))
+(defclass StackTrace (continuation)
+  transparent: #t)
 
 ;; Error base class
 (defclass (Error StackTrace Exception) (message irritants where)

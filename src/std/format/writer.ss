@@ -227,9 +227,9 @@
 
 (defobject-writer :ratnum (format-ratnum writer num env)
   (do-write (wr 0)
-    (writer.format (ratnum-numerator num) env)
+    (writer.format (##ratnum-numerator num) env)
     (writer.write-slash)
-    (writer.format (ratnum-denominator num) env)
+    (writer.format (##ratnum-denominator num) env)
     wr))
 
 (defobject-writer :flonum (format-flonum writer num env)
@@ -456,9 +456,38 @@
     (writer.format (unbox v) env)
     wr))
 
-(defobject-writer :continuation (format-continuation writer v env)
-  XXX
-  )
+(defobject-writer :continuation (format-continuation writer cont env)
+  (let ((all-frames?
+         (do-format-style format-contination env.opt
+           #f #f #t))
+        (max-frames (or env.opt.max-elements ##max-fixnum)))
+    (do-write (wr 0)
+      (writer.write-object-begin continuation::t env)
+      (writer.write-space)
+      (writer.write-lparen)
+      (let loop ((cont (##continuation-first-frame cont all-frames?))
+                 (depth 0)
+                 (space? #f)
+                 (wr   wr))
+        (if (and cont (##fx< depth max-frames))
+          (do-write (wr wr)
+            (if space?
+              (writer.write-space)
+              0)
+            (let (creator (##continuation-creator cont))
+              (cond
+               ((and creator (##procedure-name creator))
+                => (lambda (name)
+                     (writer.format name env)))
+               (else
+                (writer.write-interned-symbol '???))))
+            (loop (##continuation-next-frame cont all-frames?)
+                  (fx+ depth 1)
+                  #t
+                  wr))
+          wr))
+      (writer.write-rparen)
+      wr)))
 
 (defobject-writer :promise (format-promise writer p env)
   (writer.format (force p) env))

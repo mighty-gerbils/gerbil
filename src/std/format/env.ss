@@ -30,8 +30,8 @@
    (integer-prefix   :- :fixnum)
    (integer-alphabet :- :u8vector)
    (integer-width    :- :fixnum)
-   ;; squence elements to display; #f for no limit
-   (seq-elements     :- :fixnum)
+   ;; max quence elements to display; #f for no limit
+   (max-elements     :- :fixnum)
    ;; whether to use std ascii char special names; scheme names are used otherwise
    (char-ascii-std   :- :boolean))
   transparent: #t
@@ -82,6 +82,16 @@
 
 (def (format-environment-with (env : FormatEnv)
                               style:        (style         :~ (format-style?)
+
+
+
+
+
+
+
+
+
+
                                                            :- :fixnum
                                                            := env.opt.style)
                               precision:    (precision     :  :fixnum
