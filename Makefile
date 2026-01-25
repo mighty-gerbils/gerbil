@@ -6,6 +6,20 @@ build:
 install:
 	DESTDIR="$(DESTDIR)" ./install.sh
 
+boot:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh prepare
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh gambit
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh boot-gxi
+
+stage0:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stage0
+
+stage1:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stage1
+
+stdlib:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
+
 check:
 	./build.sh env gxtest ./...
 
