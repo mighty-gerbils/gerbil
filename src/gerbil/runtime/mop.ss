@@ -355,26 +355,47 @@ namespace: #f
 ;; extract an alist of (symbol . index) for the printable slots of a class descriptor,
 ;; sorted by increasing index.
 (def (class-type-printable-slots (klass : :class)) => :list
-  (let-values (((slots _index)
-    (let loop ((klass klass))
-      (let*-values
-        (((acc2 start)
-          (cond
-           ((##type-super klass) => (lambda (super) (loop super)))
-           (else (values [] 0))))
-         ((field-info) (##type-fields klass))
-         ((field-count) (##vector-length field-info)))
-        (let loop2 ((i 0) (index start) (result acc2))
-          (if (##fx< i field-count)
-            (let ((slot-name (##vector-ref field-info i))
-                  (slot-flags (##vector-ref field-info (##fx+ i 1))))
-              (loop2 (##fx+ i 3)
-                     (##fx+ index 1)
-                     (if (##fx= (##fxand slot-flags 1) 0) ;; printable flag
-                       (cons (cons slot-name index) result)
-                       result)))
-            (values result index)))))))
-    (reverse! slots)))
+  (def (get-field-vector type)
+    (let loop ((type type))
+      (let (fields (##type-fields type))
+        (cond
+         ((##type-super type)
+          => (lambda (super)
+               (let (super-fields (loop super))
+                 (vector-append super-fields fields))))
+         (else fields)))))
+
+  (def (get-printable-slot-alist type)
+    (let* ((fields (get-field-vector type))
+           (count  (vector-length fields)))
+      (let loop ((i 3) (offset 1) (r []))
+        (if (fx< i count)
+          (let ((slot-name  (vector-ref fields i))
+                (slot-flags (vector-ref fields (fx+ i 1)))
+                (next-i      (fx+ i 2)))
+            (if (fx= (fxand slot-flags 1) 0) ;; printable flag
+              (loop next-i
+                    (fx+ offset 1)
+                    r)
+              (loop next-i
+                    (fx+ offset 1)
+                    (cons (cons slot-name offset) r))))
+          (reverse! r)))))
+
+  (def (get-printable-slots! klass type)
+    (let (printable (get-printable-slot-alist type))
+      (set! (class-type-properties klass)
+        (cons (cons printable-slots: printable)
+              (class-type-properties klass)))
+      printable))
+
+  (let (props (class-type-properties klass))
+    (cond
+     ((agetq printable-slots: props))
+     ((agetq system-type: props)
+      => (cut get-printable-slots! klass <>))
+     (else
+      (get-printable-slots! klass klass)))))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
