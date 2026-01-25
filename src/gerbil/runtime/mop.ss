@@ -390,12 +390,13 @@ namespace: #f
       printable))
 
   (let (props (class-type-properties klass))
-    (cond
-     ((agetq printable-slots: props))
-     ((agetq system-type: props)
-      => (cut get-printable-slots! klass <>))
-     (else
-      (get-printable-slots! klass klass)))))
+    (:- (cond
+         ((agetq printable-slots: props))
+         ((agetq system-type: props)
+          => (cut get-printable-slots! klass <>))
+         (else
+          (get-printable-slots! klass klass)))
+        :list)))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool

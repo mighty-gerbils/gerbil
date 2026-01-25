@@ -155,7 +155,7 @@ namespace: #f
         (cond
          (self.where => display)
          (else (display "?")))
-        (display* " [" (##type-name (object-type self)) "]: ")
+        (display* " [" (##type-name (object-class self)) "]: ")
         (displayln self.message)
         (let (irritants self.irritants)
           (unless (null? irritants)

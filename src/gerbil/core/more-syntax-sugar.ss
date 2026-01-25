@@ -5,8 +5,8 @@
 prelude: :<root>
 package: gerbil/core
 
-(import "expander" "sugar" "more-sugar"
-        (phi: +1 "runtime"))
+(import "runtime" "expander" "sugar"
+        (phi: +1 "runtime" "expander" "sugar"))
 (export #t)
 
 (defrules identifier-rules ()
@@ -26,9 +26,8 @@ package: gerbil/core
                                (identifier? #'local-id))
                           #'(fresh-id (syntax-local-temp 'local-id)))
                          ((fresh-id ctx-id components ...)
-                          (and (identifier? #'fresh-id)
-                               (identifier? #'ctx-id))
-                          (fresh-id (stx-identifier ctx-id components ...)))))
+                          (identifier? #'fresh-id)
+                          #'(fresh-id (stx-identifier ctx-id components ...)))))
                      #'(clause ...))))
        #'(with-syntax* (clause ...)
            body ...)))))

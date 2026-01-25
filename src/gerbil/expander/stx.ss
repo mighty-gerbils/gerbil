@@ -289,11 +289,11 @@ namespace: gx
     (else #f)))
 
 (def (genident (e 'g) (src #f))
-  (syntax->datum
-   (string->interned-symbol
-    (symbol->string
-     (gensym (let (e (stx-e e)) (if (symbol? e) e 'g)))))
-   src))
+  (datum->syntax (and (identifier? src) src)
+    (string->symbol
+     (symbol->string
+      (gensym (let (e (stx-e e)) (if (symbol? e) e 'g)))))
+    src))
 
 (def (gentemps stx-lst)
   (stx-map (lambda (x) (genident x x)) stx-lst))
