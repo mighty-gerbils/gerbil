@@ -1623,22 +1623,26 @@ package: gerbil/core
     t::t
     class::t
     object::t
+
+    ;; :gerbil/runtime/mop-system-classes
     builtin::t
     subtyped::t
     structure::t
-    stflonum::t
-    haflonum::t
-
-    ;; :gerbil/runtime/mop-system-classes
     immediate::t
+    special::t
     atom::t
     char::t
     boolean::t
     true::t
     false::t
-    void::t
     eof::t
-    special::t
+    void::t
+    unbound::t
+    unbound2::t
+    dssl-token::t
+    optional::t
+    key::t
+    rest::t
     number::t
     real::t
     integer::t
@@ -1646,6 +1650,8 @@ package: gerbil/core
     bignum::t
     ratnum::t
     flonum::t
+    stflonum::t
+    haflonum::t
     cpxnum::t
     symbolic::t
     symbol::t
@@ -1705,6 +1711,10 @@ package: gerbil/core
     address-info::t
 
     special?
+    dssl-token?
+    dssl-optional?
+    dssl-rest?
+    dssl-key?
     sequence?
     hvector?
     weak?

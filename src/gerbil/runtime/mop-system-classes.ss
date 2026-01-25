@@ -13,16 +13,22 @@ namespace: #f
 (declare (not optimize-dead-definitions
               builtin::t
               subtyped::t
-              record::t
+              structure::t
               immediate::t
+              special::t
+              atom::t
               char::t
               boolean::t
-              atom::t
-              void::t
-              eof::t
               true::t
               false::t
-              special::t
+              eof::t
+              void::t
+              unbound::t
+              unbound2::t
+              dssl-token::t
+              optional::t
+              rest::t
+              key::t
               number::t
               real::t
               integer::t
@@ -30,8 +36,8 @@ namespace: #f
               bignum::t
               ratnum::t
               flonum::t
-              haflonum::t
               stflonum::t
+              haflonum::t
               cpxnum::t
               symbolic::t
               symbol::t
@@ -125,7 +131,7 @@ namespace: #f
 (defsystem-class f64vector::t f64vector (hvector::t) ((acyclic: . #t)))
 
 ;; special
-(defsystem-class values::t values (subtyped::t))
+(defsystem-class values::t values (sequence::t))
 (defsystem-class box::t box (subtyped::t))
 (defsystem-class frame::t frame (subtyped::t))
 (defsystem-class continuation::t continuation (subtyped::t))
@@ -200,6 +206,26 @@ namespace: #f
 (defpred (special? obj) :- :special
   (##special? obj))
 
+(defpred (unbound? obj) :- :unbound
+  (eq? obj #!unbound))
+
+(defpred (unbound2? obj) :- :unbound2
+  (eq? obj #!unbound2))
+
+(defpred (ddsl-token? obj) :- :dssl-token
+  (or (eq? obj #!key)
+      (eq? obj #!optional)
+      (eq? obj #!rest)))
+
+(defpred (ddsl-key? obj) :- :dssl-key
+  (eq? obj #!key))
+
+(defpred (ddsl-optional? obj) :- :dssl-optional
+  (eq? obj #!optional))
+
+(defpred (ddsl-rest? obj) :- :dssl-key
+  (eq? obj #!rest))
+
 (defpred (stflonum? obj) :- :stflonum
   (and (flonum? obj) (not (##mem-allocated? obj))))
 
@@ -212,6 +238,7 @@ namespace: #f
       (hvector? obj)))
 
 (defpred (hvector? obj) :- :hvector
+  ;; TODO optimize this
   (or (u8vector? obj)
       (s8vector? obj)
       (u16vector? obj)
