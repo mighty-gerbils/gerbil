@@ -519,25 +519,35 @@
       (writer.write-space)
       (writer.write-lparen)
       (let loop ((cont (##continuation-first-frame cont all-frames?))
+                 (last #f)
                  (depth 0)
                  (space? #f)
                  (wr   wr))
+        => :fixnum
         (if (and cont (##fx< depth max-frames))
-          (do-write (wr wr)
-            (if space?
-              (writer.write-space)
-              0)
-            (let (creator (##continuation-creator cont))
-              (cond
-               ((and creator (##procedure-name creator))
-                => (lambda (name)
-                     (writer.format name env)))
-               (else
-                (writer.write-interned-symbol '???))))
-            (loop (##continuation-next-frame cont all-frames?)
-                  (fx+ depth 1)
-                  #t
-                  wr))
+          (let (creator (##continuation-creator cont))
+            (if (and creator (eq? last creator))
+              (loop (##continuation-next-frame cont all-frames?)
+                    last
+                    (fx+ depth 1)
+                    space?
+                    wr)
+              (do-write (wr wr)
+                (if space?
+                  (writer.write-space)
+                  0)
+                (cond
+                 ((and creator (##procedure-name creator))
+                  => (lambda (name)
+                       => :fixnum
+                       (writer.format name env)))
+                 (else
+                  (writer.write-interned-symbol '???))))
+              (loop (##continuation-next-frame cont all-frames?)
+                    creator
+                    (fx+ depth 1)
+                    #t
+                    wr)))
           wr))
       (writer.write-rparen)
       wr)))
