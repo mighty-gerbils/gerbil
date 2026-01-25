@@ -22,7 +22,7 @@ namespace: #f
 ;;  2  ##type-name                 : Symbol
 ;;  3  ##type-flags                : Fixnum
 ;;  4  ##type-super                : Maybe StructTypeDescriptor
-;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...)
+;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...) name flags default
 ;;  6  class-type-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
 ;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always __class
 ;;  8  class-type-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
@@ -352,9 +352,29 @@ namespace: #f
                               3 class::t class-type-seal!)
   (void))
 
+;; extract an alist of (symbol . index) for the printable slots of a class descriptor,
+;; sorted by increasing index.
 (def (class-type-printable-slots (klass : :class)) => :list
-  XXX
-  )
+  (let-values (((slots _index)
+    (let loop ((klass klass))
+      (let*-values
+        (((acc2 start)
+          (cond
+           ((##type-super klass) => (lambda (super) (loop super)))
+           (else (values [] 0))))
+         ((field-info) (##type-fields klass))
+         ((field-count) (##vector-length field-info)))
+        (let loop2 ((i 0) (index start) (result acc2))
+          (if (##fx< i field-count)
+            (let ((slot-name (##vector-ref field-info i))
+                  (slot-flags (##vector-ref field-info (##fx+ i 1))))
+              (loop2 (##fx+ i 3)
+                     (##fx+ index 1)
+                     (if (##fx= (##fxand slot-flags 1) 0) ;; printable flag
+                       (cons (cons slot-name index) result)
+                       result)))
+            (values result index)))))))
+    (reverse! slots)))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool

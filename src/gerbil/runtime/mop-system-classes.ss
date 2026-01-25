@@ -31,7 +31,7 @@ namespace: #f
               ratnum::t
               flonum::t
               haflonum::t
-              stflonuam::t
+              stflonum::t
               cpxnum::t
               symbolic::t
               symbol::t
@@ -105,7 +105,7 @@ namespace: #f
 
 ;; lists
 (defsystem-class list::t list (builtin::t))
-(defsystem-class pair::t pair (list::t) subtyped::t)
+(defsystem-class pair::t pair (list::t subtyped::t))
 (defsystem-class null::t null (list::t atom::t) ((acyclic: . #t)))
 
 ;; sequences
