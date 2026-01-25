@@ -24,9 +24,10 @@
    (compress?        :- :boolean)
    ;; format style: FORMAT-WRITE (default), FORMAT-DISPLAY, or FORMAT-REPR
    (style            :- :fixnum)
-   ;; inextact number precision
-   (precision        :- :fixnum)
-   ;; integer display base
+   ;; flonums
+   (flonum-precision :- :fixnum)
+   (flonum-coversion :- :fixnum)
+   ;; integers
    (integer-prefix   :- :fixnum)
    (integer-alphabet :- :u8vector)
    (integer-width    :- :fixnum)

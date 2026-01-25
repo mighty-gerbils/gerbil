@@ -4,7 +4,9 @@
 (import :gerbil/runtime/mop
         :gerbil/runtime/interface
         :gerbil/runtime/hash
+        :std/error
         :std/interface
+        :std/object
         :std/io/interface
         :std/io/bio/api
         :std/serde/scan
@@ -13,6 +15,11 @@
         ./ioutil
         ./io)
 (export #t)
+
+(cond-expand
+  (,(compilation-target? C)
+   (import :std/ffi)
+   (C-include "<stdio.h>")))
 
 ;;; base
 (defwriter-ext (format-object-begin writer (klass : :class) (env : FormatEnv))
@@ -233,8 +240,54 @@
     wr))
 
 (defobject-writer :flonum (format-flonum writer num env)
-  XXX
-  )
+  (cond
+   ((##flfinite? num)
+    ;; not nan or infinity
+    (writer.format-finite-flonum num env))
+   ((##flinfinite? num)
+    (if (##flnegative? num)
+      (writer.write (@string->utf8 "-inf.0"))
+      (writer.write (@string->utf8 "+inf.0"))))
+   (else ; nan, has no sign (always positive)
+    (writer.write (@string->utf8 "+nan.0")))))
+
+(cond-expand
+  (,(compilation-target? C)
+   (defobject-cache __flonum-buffer :u8vector (cut make-u8vector 256) void)
+
+   (def (__flonum-buffer.get-fmt precision conversion) => :u8vector
+     (let (buf (__flonum-buffer.get))
+       (if precision
+         (__buffer-format! buf "%." decimal: precision u8: conversion)
+         (__buffer-format! buf #\% u8: conversion))
+       buf))
+
+   (def-C (__print-flonum (output-buf  :- :u8vector)
+                          (output-size :- :fixnum)
+                          (nfmt-buf    :- :u8vector)
+                          (num         :  :flonum))
+     => :fixnum
+     "___FIX(snprintf(___CAST (char*, ___BODY_AS (___ARG1, ___tSUBTYPED)), ___INT(___ARG2), ___CAST (char*, ___BODY_AS (___ARG3, ___tSUBTYPED)), ___F64UNBOX(___ARG4)))"))
+
+(defwriter-ext (format-finite-flonum writer num (env : FormatEnv))
+  (cond-expand
+    (,(compilation-target? C)
+     (let* ((fmt-buf (__flonum-buffer.get-fmt env.opt.flonum-precision env.opt.flonum-conversion))
+            (str-buf (__flonum-buffer.get))
+            (nwr     (__print-flonum str-buf (##u8vector-length str-buf) fmt-buf num)))
+       (if (fx> nwr 0)
+         (begin0
+             (writer.write str-buf 0 nwr)
+           (__flonum-buffer.put! str-buf)
+           (__flonum-buffer.put! fmt-buf))
+         (raise-io-error format-finite-flonum "failed to format flonum" error-code: nwr))))
+    (else
+     ;; TODO we should write an efficient implementation of this, following
+     ;;      feeley's in gambit implementation to avoid the intermediate string
+     ;;      allocation and follow natively the precision.
+     ;;      it is ok for now, we can revisit if it becomes a problem
+     ;;      in production
+     (syntax-error "unsupported compilation target"))))
 
 (defobject-writer :cpxnum (format-cpxnum writer num env)
   (let ((real (cpxnum-real num))
