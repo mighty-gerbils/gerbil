@@ -719,8 +719,8 @@ package: gerbil/runtime
   (declare-class
    values::t
    (@class values
-           (subtyped::t)
-           (subtyped::t builtin::t t::t)
+           (sequence::t)
+           (sequence::t subtyped::t builtin::t t::t)
            ()
            ()
            #f
@@ -1319,6 +1319,12 @@ package: gerbil/runtime
   (declare-type builtin-structure? (@primitive-predicate structure::t))
   (declare-type atom? (@primitive-predicate atom::t))
   (declare-type special? (@primitive-predicate special::t))
+  (declare-type unbound? (@primitive-predicate unbound::t))
+  (declare-type unbound2? (@primitive-predicate unbound2::t))
+  (declare-type ddsl-token? (@primitive-predicate dssl-token::t))
+  (declare-type ddsl-key? (@primitive-predicate key::t))
+  (declare-type ddsl-optional? (@primitive-predicate optional::t))
+  (declare-type ddsl-rest? (@primitive-predicate key::t))
   (declare-type stflonum? (@primitive-predicate stflonum::t))
   (declare-type haflonum? (@primitive-predicate haflonum::t))
   (declare-type sequence? (@primitive-predicate sequence::t))

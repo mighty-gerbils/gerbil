@@ -448,18 +448,36 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :immediate
                     |gerbil/core/mop~MOP-5[:0:]#:immediate|)
+                   (%#define-syntax
+                    :special
+                    |gerbil/core/mop~MOP-5[:0:]#:special|)
+                   (%#define-syntax :atom |gerbil/core/mop~MOP-5[:0:]#:atom|)
                    (%#define-syntax :char |gerbil/core/mop~MOP-5[:0:]#:char|)
                    (%#define-syntax
                     :boolean
                     |gerbil/core/mop~MOP-5[:0:]#:boolean|)
-                   (%#define-syntax :atom |gerbil/core/mop~MOP-5[:0:]#:atom|)
-                   (%#define-syntax :void |gerbil/core/mop~MOP-5[:0:]#:void|)
-                   (%#define-syntax :eof |gerbil/core/mop~MOP-5[:0:]#:eof|)
                    (%#define-syntax :true |gerbil/core/mop~MOP-5[:0:]#:true|)
                    (%#define-syntax :false |gerbil/core/mop~MOP-5[:0:]#:false|)
+                   (%#define-syntax :eof |gerbil/core/mop~MOP-5[:0:]#:eof|)
+                   (%#define-syntax :void |gerbil/core/mop~MOP-5[:0:]#:void|)
                    (%#define-syntax
-                    :special
-                    |gerbil/core/mop~MOP-5[:0:]#:special|)
+                    :unbound
+                    |gerbil/core/mop~MOP-5[:0:]#:unbound|)
+                   (%#define-syntax
+                    :unbound2
+                    |gerbil/core/mop~MOP-5[:0:]#:unbound2|)
+                   (%#define-syntax
+                    :dssl-token
+                    |gerbil/core/mop~MOP-5[:0:]#:dssl-token|)
+                   (%#define-syntax
+                    :dssl-optional
+                    |gerbil/core/mop~MOP-5[:0:]#:dssl-optional|)
+                   (%#define-syntax
+                    :dssl-rest
+                    |gerbil/core/mop~MOP-5[:0:]#:dssl-rest|)
+                   (%#define-syntax
+                    :dssl-key
+                    |gerbil/core/mop~MOP-5[:0:]#:dssl-key|)
                    (%#define-syntax
                     :number
                     |gerbil/core/mop~MOP-5[:0:]#:number|)
