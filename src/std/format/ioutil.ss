@@ -388,17 +388,6 @@
       (writer.write-nonnegative-integer-with-base writer (- x) alphabet width)
       wr)))
 
-(def __binary-alphabet
-  '#u8(#x30 #x31))
-(def __octal-alphabet
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37))
-(def __decimal-alphabet
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39))
-(def __hex-alphabet
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x61 #x62 #x63 #x64 #x65 #x66))
-(def __HEX-alphabet
-  '#u8(#x30 #x31 #x32 #x33 #x34 #x35 #x36 #x37 #x38 #x39 #x41 #x42 #x43 #x44 #x45 #x46))
-
 (defwriter-ext (write-fixnum-decimal (x : :fixnum))
   (writer.write-fixnum-with-base x __decimal-alphabet 1))
 

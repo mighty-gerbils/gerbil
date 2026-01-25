@@ -518,13 +518,14 @@
       (writer.write-object-begin continuation::t env)
       (writer.write-space)
       (writer.write-lparen)
-      (let loop ((cont (##continuation-first-frame cont all-frames?))
-                 (last #f)
-                 (depth 0)
+      (let loop ((cont  (##continuation-first-frame cont all-frames?))
+                 (last   #f)
+                 (depth  0)
                  (space? #f)
-                 (wr   wr))
+                 (wr     wr))
         => :fixnum
-        (if (and cont (##fx< depth max-frames))
+        (cond
+         ((and cont (##fx< depth max-frames))
           (let (creator (##continuation-creator cont))
             (if (and creator (eq? last creator))
               (loop (##continuation-next-frame cont all-frames?)
@@ -547,8 +548,15 @@
                     creator
                     (fx+ depth 1)
                     #t
-                    wr)))
-          wr))
+                    wr))))
+         (cont
+          (do-write (wr wr)
+            (if space?
+              (writer.write-space)
+              0)
+            (writer.write-interned-symbol '...)
+            wr))
+         (else wr)))
       (writer.write-rparen)
       wr)))
 
