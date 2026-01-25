@@ -1061,6 +1061,7 @@ namespace: gx
          (%#define-runtime syntax-local-rewrap gx#syntax-local-rewrap)
          (%#define-runtime syntax-local-unwrap gx#syntax-local-unwrap)
          (%#define-runtime syntax-local-introduce gx#syntax-local-introduce)
+         (%#define-runtime syntax-local-temp gx#syntax-local-temp)
          (%#begin (%#define-runtime syntax-local-e__% gx#syntax-local-e__%)
                   (%#begin (%#define-runtime
                             syntax-local-e__0

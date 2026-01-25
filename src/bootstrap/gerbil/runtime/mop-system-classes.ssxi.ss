@@ -37,10 +37,42 @@ package: gerbil/runtime
    immediate::t
    (optimizer-resolve-class '(typedecl immediate::t) 'class::t))
   (declare-class
-   char::t
-   (@class char
+   special::t
+   (@class special
            (immediate::t)
            (immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   special::t
+   (optimizer-resolve-class '(typedecl special::t) 'class::t))
+  (declare-class
+   atom::t
+   (@class atom
+           (special::t)
+           (special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   atom::t
+   (optimizer-resolve-class '(typedecl atom::t) 'class::t))
+  (declare-class
+   char::t
+   (@class char
+           (special::t)
+           (special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
@@ -55,8 +87,8 @@ package: gerbil/runtime
   (declare-class
    boolean::t
    (@class boolean
-           (immediate::t)
-           (immediate::t builtin::t t::t)
+           (special::t)
+           (special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
@@ -69,56 +101,10 @@ package: gerbil/runtime
    boolean::t
    (optimizer-resolve-class '(typedecl boolean::t) 'class::t))
   (declare-class
-   atom::t
-   (@class atom
-           (immediate::t)
-           (immediate::t builtin::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
-  (declare-type
-   atom::t
-   (optimizer-resolve-class '(typedecl atom::t) 'class::t))
-  (declare-class
-   void::t
-   (@class void
-           (atom::t)
-           (atom::t immediate::t builtin::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
-  (declare-type
-   void::t
-   (optimizer-resolve-class '(typedecl void::t) 'class::t))
-  (declare-class
-   eof::t
-   (@class eof
-           (atom::t)
-           (atom::t immediate::t builtin::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
-  (declare-type eof::t (optimizer-resolve-class '(typedecl eof::t) 'class::t))
-  (declare-class
    true::t
    (@class true
            (boolean::t atom::t)
-           (boolean::t atom::t immediate::t builtin::t t::t)
+           (boolean::t atom::t special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
@@ -134,7 +120,7 @@ package: gerbil/runtime
    false::t
    (@class false
            (boolean::t atom::t)
-           (boolean::t atom::t immediate::t builtin::t t::t)
+           (boolean::t atom::t special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
@@ -147,10 +133,24 @@ package: gerbil/runtime
    false::t
    (optimizer-resolve-class '(typedecl false::t) 'class::t))
   (declare-class
-   special::t
-   (@class special
+   eof::t
+   (@class eof
            (atom::t)
-           (atom::t immediate::t builtin::t t::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type eof::t (optimizer-resolve-class '(typedecl eof::t) 'class::t))
+  (declare-class
+   void::t
+   (@class void
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
@@ -160,8 +160,102 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type
-   special::t
-   (optimizer-resolve-class '(typedecl special::t) 'class::t))
+   void::t
+   (optimizer-resolve-class '(typedecl void::t) 'class::t))
+  (declare-class
+   unbound::t
+   (@class unbound
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unbound::t
+   (optimizer-resolve-class '(typedecl unbound::t) 'class::t))
+  (declare-class
+   unbound2::t
+   (@class unbound2
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unbound2::t
+   (optimizer-resolve-class '(typedecl unbound2::t) 'class::t))
+  (declare-class
+   dssl-token::t
+   (@class dssl-token
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   dssl-token::t
+   (optimizer-resolve-class '(typedecl dssl-token::t) 'class::t))
+  (declare-class
+   optional::t
+   (@class optional
+           (dssl-token::t)
+           (dssl-token::t atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   optional::t
+   (optimizer-resolve-class '(typedecl optional::t) 'class::t))
+  (declare-class
+   rest::t
+   (@class rest
+           (dssl-token::t)
+           (dssl-token::t atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   rest::t
+   (optimizer-resolve-class '(typedecl rest::t) 'class::t))
+  (declare-class
+   key::t
+   (@class key
+           (dssl-token::t)
+           (dssl-token::t atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type key::t (optimizer-resolve-class '(typedecl key::t) 'class::t))
   (declare-class
    number::t
    (@class number (builtin::t) (builtin::t t::t) () () #f #f #f #f #f #f))
@@ -368,7 +462,17 @@ package: gerbil/runtime
    (optimizer-resolve-class '(typedecl list::t) 'class::t))
   (declare-class
    pair::t
-   (@class pair (list::t) (list::t builtin::t t::t) () () #f #f #f #f #f #f))
+   (@class pair
+           (list::t subtyped::t)
+           (list::t subtyped::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
   (declare-type
    pair::t
    (optimizer-resolve-class '(typedecl pair::t) 'class::t))
@@ -376,7 +480,7 @@ package: gerbil/runtime
    null::t
    (@class null
            (list::t atom::t)
-           (list::t atom::t immediate::t builtin::t t::t)
+           (list::t atom::t special::t immediate::t builtin::t t::t)
            ()
            ()
            #f
