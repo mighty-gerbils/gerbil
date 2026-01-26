@@ -325,8 +325,6 @@ build_gerbil() {
   build_stdlib     || die
   build_libgerbil  || die
   build_lang       || die
-  build_r7rs_large || die
-  build_srfi       || die
   build_tools      || die
 }
 
@@ -370,12 +368,6 @@ else
          ;;
        "lang")
          build_lang || die
-         ;;
-       "r7rs-large")
-         build_r7rs_large || die
-         ;;
-       "srfi")
-         build_srfi || die
          ;;
        "tools")
          build_tools || die
