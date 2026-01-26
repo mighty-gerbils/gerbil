@@ -1,12 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Unit testing support
+(import ./error
+        ./format
 
-(import :gerbil/gambit
-        :std/error
-        :std/misc/list
-        :std/sugar
-        :std/format)
+        ;; TODO
+        :std/misc/list)
 (export
   test-suite test-case
   check checkf
@@ -31,14 +30,14 @@
 (defmethod {display-exception !check-error}
   (lambda (self port)
     (with ((!check-error exn check loc) self)
-      (fprintf port "~a at ~a: " check loc)
+      (printf port "~a at ~a: " check loc)
       (display-exception exn port))))
 
 ;; this is only necessary for stray checks outside a test-case
 (defmethod {display-exception !check-fail}
   (lambda (self port)
     (with ((!check-fail check value expected loc) self)
-      (fprintf port "check ~a at ~a FAILED: ~s [expected: ~s]~n"
+      (printf port "check ~a at ~a FAILED: ~s [expected: ~s]~n"
                check loc value expected))))
 
 (def *test-verbose* #t)

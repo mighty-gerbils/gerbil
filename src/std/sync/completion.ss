@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; asynchronous completion tokens
-
-(import :std/error
-        :std/sugar)
+;;; asynchronous completions
+(import :std/error)
 (export make-completion
         completion?
         completion

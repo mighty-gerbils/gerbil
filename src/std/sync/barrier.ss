@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; thread barriers
-
-(import :std/error
-        :std/sugar)
+(import :std/error)
 (export make-barrier barrier? barrier
         barrier-wait!
         barrier-post!

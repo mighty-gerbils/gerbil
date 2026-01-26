@@ -1,12 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; buffered channels
-
-(import :std/misc/queue
-        :std/misc/timeout
-        :std/generic
-        :std/iter
-        :std/error)
+(import :std/error
+        :std/time/timeout
+        :std/struct/queue
+        :std/iter)
 (export channel make-channel channel?
         channel-put channel-try-put channel-sync
         channel-get channel-try-get
@@ -117,16 +115,11 @@
     (mutex-unlock! ch.mx)
     (void)))
 
-(defmethod {destroy channel}
-  channel-close)
-
 (def (channel-closed? ch)
   (channel-eof ch))
 
-(defmethod (:iter (ch channel))
-  (iter-channel ch))
-
-(def (iter-channel (ch : channel))
+;; TODO
+#;(def (iter-channel (ch : channel))
   (def (next it)
     (with ((iterator ch) it)
       (using (ch :- channel)

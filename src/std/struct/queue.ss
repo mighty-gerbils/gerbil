@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; imperative queues
-
 (import :std/error)
 (export queue make-queue queue?
         queue-length
@@ -32,6 +31,7 @@
   (pair? q.front))
 
 (def (enqueue! (q : queue) v)
+  => :void
   (if (null? q.front)
     (let (front [v])
       (set! q.front front)
@@ -43,6 +43,7 @@
       (set! q.length (fx1+ q.length)))))
 
 (def (enqueue-front! (q : queue) v)
+  => :void
   (if (queue-empty? q)
     (enqueue! q v)
     (let (new-front (cons v q.front))
@@ -50,6 +51,7 @@
       (set! q.length (fx1+ q.length)))))
 
 (def (dequeue! (q : queue) (default absent-value))
+  => :t
   (cond
    ((eq? q.front q.back)
     (let (v (car q.front))
@@ -68,6 +70,7 @@
    (else default)))
 
 (def (queue-peek (q : queue) (default absent-obj))
+  => :t
   (cond
    ((pair? q.front)
     (car (:- q.front :pair)))

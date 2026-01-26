@@ -5,14 +5,15 @@
 
 (import :gerbil/compiler
         :gerbil/expander
-        ./misc/completion
-        ./misc/channel
-        ./misc/barrier
+        ./sync/completion
+        ./sync/channel
+        ./sync/barrier
+        ./list
+
+        ;; TODO
         ./misc/path
-        ./misc/list
-        ./srfi/1
         ./iter
-        ./sugar)
+        )
 
 (export make
         make-clean

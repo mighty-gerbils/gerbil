@@ -1,55 +1,30 @@
 ;; -*- Gerbil -*-
-
+;; gerbil stdlib build spec
 (def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
 
 (def (build-spec . _)
-  `(;; v0.19 ported ...
-    ))
-
-#;(def (build-spec . _)
-  `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
-    "metaclass"
-    "hash-table"
-    "interactive"
-    "ssi"
-    "foreign"
-    ;; tests for :std/foreign
-    "foreign-test-support"
-    "deprecation"
-    "format"
-    "pregexp"
-    "sort"
-    "sugar"
-    "values"
-    "assert"
+  `(;; v0.19 stdlib
+    (gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "make"
-    "build-script"
-    (gxc: "error" ,@(include-gambit-sharp))
-    "getopt"
-    "logger"
-    "config"
-    "generic/dispatch"
-    "generic/macros"
-    "generic"
-    "ref"
-    (gxc: "event" ,@(include-gambit-sharp))
-    "coroutine"
-    "iter"
     "test"
-    "stxparam"
-    "stxutil"
-    "source"
-    "lazy"
-    "amb"
-    "contract"
-    (gxc: "interface" ,@(include-gambit-sharp))
-    "instance"
-    ;; cli
-    "cli/getopt"
-    "cli/shell"
-    "cli/print-exit"
-    "cli/multicall"
-    ;; stdio
+    "ffi"
+    "object"
+    "interface"
+    "ssi"
+    "interactive"
+
+    "list/list-builder"
+    "list/list"
+    "list/plist"
+    "list/alist"
+    "list/walist"
+
+    "struct/queue"
+
+    "sync/completion"
+    "sync/barrier"
+    "sync/channel"
+
     "io"
     "io/interface"
     "io/api"
@@ -85,6 +60,81 @@
     "io/socket/datagram"
     "io/socket/socket"
     "io/socket/api"
+
+    "serde/scan"
+    "serde/scanner"
+    "serde/serialize"
+    "serde/opaque"
+
+    "format/env"
+    "format/ioutil"
+    "format/io"
+    "format/writer"
+    "format/reader"
+    "format/string"
+
+    "encoding/json/env"
+    "encoding/json/io"
+    "encoding/json/writer"
+    "encoding/json/reader"
+
+    "log/interface"
+    "log/level"
+    "log/proto"
+    "log/system"
+    "log/macros"
+    "log/user"
+    "log/default"
+    "log/format"
+    "log/console"
+    "log/rotate"
+    "log/compress"
+
+    ))
+
+#;(def (build-spec . _)
+  `(
+    "metaclass"
+    "hash-table"
+    "interactive"
+    "ssi"
+    "foreign"
+    ;; tests for :std/foreign
+    "foreign-test-support"
+    "deprecation"
+    "format"
+    "pregexp"
+    "sort"
+    "sugar"
+    "values"
+    "assert"
+
+    "build-script"
+    (gxc: "error" ,@(include-gambit-sharp))
+    "getopt"
+    "logger"
+    "config"
+    "generic/dispatch"
+    "generic/macros"
+    "generic"
+    "ref"
+    (gxc: "event" ,@(include-gambit-sharp))
+    "coroutine"
+    "iter"
+
+    "stxparam"
+    "stxutil"
+    "source"
+    "lazy"
+    "amb"
+    "contract"
+    (gxc: "interface" ,@(include-gambit-sharp))
+    "instance"
+    ;; cli
+    "cli/getopt"
+    "cli/shell"
+    "cli/print-exit"
+    "cli/multicall"
     ;; debugging
     "debug/DBG"
     (gxc: "debug/heap" ,@(include-gambit-sharp))
