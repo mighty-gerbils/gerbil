@@ -24,14 +24,13 @@
   (syntax-case stx ()
     ((_ (method reader . args) body ...)
      (with-syntax ((reader-method (stx-identifier #'method "BufferedStringReader-" #'method))
-                   (unchecked-method (stx-identifier #'method "&BufferedStringReader-" #'method)))
+                   (unchecked-method (stx-identifier #'method "&BufferedStringReader-" #'method))
+                   (raw-method (stx-identifier #'method "__BufferedStringReader-" #'method)))
        #'(begin
-           (def (reader-method reader . args)
-             (using (reader : BufferedStringReader)
-               body ...))
-           (def (unchecked-method reader . args)
-             (using (reader :- BufferedStringReader)
-               body ...)))))))
+           (def (reader-method (reader : BufferedStringReader) . args)
+             body ...)
+           (def unchecked-method
+             __raw-method))))))
 
 (defsyntax (defstring-writer-ext stx)
   (syntax-case stx ()
@@ -47,14 +46,13 @@
   (syntax-case stx ()
     ((_ (method writer . args) body ...)
      (with-syntax ((writer-method (stx-identifier #'method "BufferedStringWriter-" #'method))
-                   (unchecked-method (stx-identifier #'method "&BufferedStringWriter-" #'method)))
+                   (unchecked-method (stx-identifier #'method "&BufferedStringWriter-" #'method))
+                   (raw-method (stx-identifier #'method "__BufferedStringWriter-" #'method)))
        #'(begin
-           (def (writer-method writer . args)
-             (using (writer : BufferedStringWriter)
-               body ...))
-           (def (unchecked-method writer . args)
-             (using (writer :- BufferedStringWriter)
-               body ...)))))))
+           (def (writer-method (writer : BufferedStringWriter) . args) => :fixnum
+             body ...)
+           (def unchecked-method
+             raw-method))))))
 
 (defstring-reader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
   (let* ((separators

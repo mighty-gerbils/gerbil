@@ -2,7 +2,16 @@
 ;; -*- Gerbil -*-
 (import :std/build-script)
 
+;; v0.19 staging
 (defbuild-script
+  '("gxtest"
+    )
+  libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+  bindir: (path-expand "bin" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+  debug: #f)
+
+
+#;(defbuild-script
   '("env"
     "gxprof"
     "gxtags"

@@ -4,5 +4,6 @@
     (load-module "gerbil/runtime/gambit")
     (load-module "gerbil/runtime/util")
     (load-module "gerbil/runtime/mop")
-    (load-module "gerbil/runtime/error"))
+    (load-module "gerbil/runtime/error")
+    (load-module "gerbil/runtime/system"))
   (load-module "gerbil/runtime/syntax~0"))

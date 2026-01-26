@@ -3722,6 +3722,21 @@ package: gerbil/expander
              origin:
              gerbil/expander/core)))
   (declare-type
+   gx#syntax-local-temp
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
    gx#syntax-local-e__%
    (@lambda 2
             #f

@@ -3,6 +3,116 @@ package: gerbil/runtime
 
 (begin
   (declare-type
+   __system_thread-group
+   (optimizer-resolve-class
+    '(typedecl __system_thread-group)
+    'thread-group::t))
+  (declare-type
+   system-thread-group
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             thread-group::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   make-system-thread
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __make-system-thread
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __make-system-thread
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   system-thread!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __system-thread!
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __system-thread!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   system-actor!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             (procedure::t symbol::t)
+             unchecked:
+             __system-actor!
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   __system-actor!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             thread::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
    spawn
    (@lambda (1)
             #f
@@ -195,6 +305,21 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/thread))))
   (declare-type
+   thread-main
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
    thread-local-ref__%
    (@lambda 2
             #f
@@ -328,14 +453,14 @@ package: gerbil/runtime
    __unhandled-actor-exception-hook
    (optimizer-resolve-class
     '(typedecl __unhandled-actor-exception-hook)
-    't::t))
+    'builtin::t))
   (declare-type
    unhandled-actor-exception-hook
    (@lambda 0
             #f
             signature:
             (return:
-             t::t
+             builtin::t
              effect:
              #f
              arguments:

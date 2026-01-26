@@ -29,6 +29,9 @@ package: gerbil/runtime
   (declare-type
    class-type-flag-system
    (optimizer-resolve-class '(typedecl class-type-flag-system) 'fixnum::t))
+  (declare-type
+   class-type-flag-acyclic
+   (optimizer-resolve-class '(typedecl class-type-flag-acyclic) 'fixnum::t))
   (declare-class t::t (@class t () () () () #f #f #f #f #f #f))
   (declare-type t::t (optimizer-resolve-class '(typedecl t::t) 'class::t))
   (declare-class
@@ -45,7 +48,9 @@ package: gerbil/runtime
                slot-table
                properties
                constructor
-               methods)
+               methods
+               specializer
+               interface)
            (id name
                super
                flags
@@ -55,7 +60,9 @@ package: gerbil/runtime
                slot-table
                properties
                constructor
-               methods)
+               methods
+               specializer
+               interface)
            #f
            #t
            #f
@@ -71,6 +78,36 @@ package: gerbil/runtime
   (declare-type
    object::t
    (optimizer-resolve-class '(typedecl object::t) 'class::t))
+  (declare-type
+   class-type
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             class::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __class-type
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __class-type
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             class::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
   (declare-type class-type? (@predicate class::t))
   (declare-type
    class-type=?
@@ -119,6 +156,36 @@ package: gerbil/runtime
              gerbil/runtime/mop)))
   (declare-type
    __type-opaque?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   class-type-opaque?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __class-type-opaque?
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __class-type-opaque?
    (@lambda 1
             #f
             signature:
@@ -313,6 +380,36 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
+   class-type-acyclic?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __class-type-acyclic?
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __class-type-acyclic?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    make-class-type-descriptor
    (@lambda 9
             #f
@@ -383,6 +480,16 @@ package: gerbil/runtime
   (declare-type &class-type-methods (@accessor class::t methods #f))
   (declare-type class-type-methods-set! (@mutator class::t methods #t))
   (declare-type &class-type-methods-set! (@mutator class::t methods #f))
+  (declare-type class-type-specializer (@accessor class::t specializer #t))
+  (declare-type &class-type-specializer (@accessor class::t specializer #f))
+  (declare-type class-type-specializer-set! (@mutator class::t specializer #t))
+  (declare-type
+   &class-type-specializer-set!
+   (@mutator class::t specializer #f))
+  (declare-type class-type-interface (@accessor class::t interface #t))
+  (declare-type &class-type-interface (@accessor class::t interface #f))
+  (declare-type class-type-interface-set! (@mutator class::t interface #t))
+  (declare-type &class-type-interface-set! (@mutator class::t interface #f))
   (declare-type
    class-type-slot-list
    (@lambda 1
@@ -465,6 +572,36 @@ package: gerbil/runtime
             signature:
             (return:
              void::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   class-type-printable-slots
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             (class::t)
+             unchecked:
+             __class-type-printable-slots
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __class-type-printable-slots
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             list::t
              effect:
              #f
              arguments:
@@ -1504,21 +1641,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   object-type
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             class::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
    direct-instance?
    (@lambda 2
             #f
@@ -1696,6 +1818,36 @@ package: gerbil/runtime
            ((($obj) (%#call (%#ref ##make-structure) klass len)))
            (%#begin (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
                     (%#ref $obj))))))))
+  (declare-type
+   object-class
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             class::t
+             effect:
+             #f
+             arguments:
+             (object::t)
+             unchecked:
+             __object-class
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __object-class
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             class::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
   (declare-type
    object-fill!
    (@lambda 2
@@ -2560,6 +2712,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/mop))))
   (declare-type
+   make-method-specializer-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   make-method-specializer-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   make-method-specializer-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   make-method-specializer-table/lock
+   (@case-lambda
+    (0
+     make-method-specializer-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/mop))
+    (1
+     make-method-specializer-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/mop))
+    (2
+     make-method-specializer-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/mop))))
+  (declare-type
    method-specializer-table-ref
    (@lambda 3
             #f
@@ -2575,7 +2814,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   method-specializer-table-set!
+   method-specializer-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -2605,6 +2844,51 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
+   method-specializer-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   method-specializer-table-set!/lock
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   __method-specializer-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    method-specializer-table-update!
    (@lambda 4
             #f
@@ -2620,7 +2904,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   __method-specializer-table-update!
+   method-specializer-table-update!/lock
    (@lambda 4
             #f
             signature:
@@ -2650,11 +2934,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
+   method-specializer-table-delete!/lock
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    __method-specializers
    (optimizer-resolve-class '(typedecl __method-specializers) 't::t))
-  (declare-type
-   __method-specializers-mx
-   (optimizer-resolve-class '(typedecl __method-specializers-mx) 'vector::t))
   (declare-type
    bind-specializer!
    (@lambda 2
@@ -2686,207 +2982,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   __class-specializer-hash-key
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             fixnum::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   make-class-specializer-table__%
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   make-class-specializer-table__0
-   (@lambda 0
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   make-class-specializer-table__1
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   make-class-specializer-table
-   (@case-lambda
-    (0
-     make-class-specializer-table__0
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/mop))
-    (1
-     make-class-specializer-table__1
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/mop))
-    (2
-     make-class-specializer-table__%
-     signature:
-     (return:
-      t::t
-      effect:
-      #f
-      arguments:
-      #f
-      unchecked:
-      #f
-      origin:
-      gerbil/runtime/mop))))
-  (declare-type
-   class-specializer-table-ref
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   class-specializer-table-set!
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   __class-specializer-table-set!
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   class-specializer-table-update!
-   (@lambda 4
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   __class-specializer-table-update!
-   (@lambda 4
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   class-specializer-table-delete!
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   __class-specializers-mx
-   (optimizer-resolve-class '(typedecl __class-specializers-mx) 'vector::t))
-  (declare-type
-   __class-specializers
-   (optimizer-resolve-class '(typedecl __class-specializers) 't::t))
-  (declare-type
-   __class-specializers-key
-   (optimizer-resolve-class '(typedecl __class-specializers-key) 'pair::t))
-  (declare-type
    specialize-class
    (@lambda 1
             #f
@@ -2904,36 +2999,6 @@ package: gerbil/runtime
   (declare-type
    __specialize-class
    (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   __lookup-class-specializer
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
-  (declare-type
-   __bind-class-specializer!
-   (@lambda 2
             #f
             signature:
             (return:
@@ -3067,22 +3132,13 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   write-style
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
+   __shadow-classes
+   (optimizer-resolve-class '(typedecl __shadow-classes) 't::t))
   (declare-type
-   write-object
+   __shadow-classes-lock
+   (optimizer-resolve-class '(typedecl __shadow-classes-lock) 'vector::t))
+  (declare-type
+   __shadow-class__%
    (@lambda 2
             #f
             signature:
@@ -3097,13 +3153,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
-   __shadow-classes
-   (optimizer-resolve-class '(typedecl __shadow-classes) 't::t))
-  (declare-type
-   __shadow-classes-mx
-   (optimizer-resolve-class '(typedecl __shadow-classes-mx) 'vector::t))
-  (declare-type
-   __shadow-class
+   __shadow-class__0
    (@lambda 1
             #f
             signature:
@@ -3117,6 +3167,35 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/mop)))
+  (declare-type
+   __shadow-class
+   (@case-lambda
+    (1
+     __shadow-class__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/mop))
+    (2
+     __shadow-class__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/mop))))
   (declare-type __type (optimizer-resolve-class '(typedecl __type) 't::t))
   (declare-type __class (optimizer-resolve-class '(typedecl __class) 't::t))
   (declare-type
@@ -3172,7 +3251,7 @@ package: gerbil/runtime
              gerbil/runtime/mop)))
   (declare-type
    __make-system-class
-   (@lambda 2
+   (@lambda 3
             #f
             signature:
             (return:

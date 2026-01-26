@@ -195,7 +195,6 @@ build_stage1 () {
   local target_lib_gerbil="${GERBIL_BUILD_PREFIX}/lib/gerbil"
   local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
 
-
   ## feedback
   feedback_low "Building Gerbil core"
 
@@ -223,6 +222,45 @@ build_stage1 () {
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
   finalize_stage1 "${target_lib}" "${target_bin}"
+}
+
+build_stage1_bach () {
+  ## constants
+  local target_bin="${GERBIL_BUILD_PREFIX}/bin"
+  local target_lib="${GERBIL_BUILD_PREFIX}/lib"
+  local target_lib_gerbil="${GERBIL_BUILD_PREFIX}/lib/gerbil"
+  local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
+
+  GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
+  export GERBIL_HOME
+
+  feedback_mid "compiling gerbil bach"
+  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
+
+  ## unset GERBIL_HOME from its bootstrap value to avoid confusing the rest of the build
+  unset GERBIL_HOME
+
+  ## finalize build
+  feedback_mid "finalizing build ${final:+${final_string}}"
+  finalize_stage1 "${target_lib}" "${target_bin}"
+}
+
+debug_stage1() {
+    GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
+    export GERBIL_HOME
+
+    gdb "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss
+
+    unset GERBIL_HOME
+}
+
+debug_stage1_bach() {
+    GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
+    export GERBIL_HOME
+
+    gdb "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss
+
+    unset GERBIL_HOME
 }
 
 ## commands
@@ -287,8 +325,6 @@ build_gerbil() {
   build_stdlib     || die
   build_libgerbil  || die
   build_lang       || die
-  build_r7rs_large || die
-  build_srfi       || die
   build_tools      || die
 }
 
@@ -312,6 +348,18 @@ else
        "stage1")
          build_stage1 || die
          ;;
+       "stage1-bach")
+         build_stage1_bach || die
+         ;;
+       "stage1-noopt")
+         GERBIL_NOOPT=t build_stage1 || die
+         ;;
+       "stage1-debug")
+         debug_stage1
+         ;;
+       "stage1-debug-bach")
+         debug_stage1_bach
+         ;;
        "stdlib")
          build_stdlib || die
          ;;
@@ -320,12 +368,6 @@ else
          ;;
        "lang")
          build_lang || die
-         ;;
-       "r7rs-large")
-         build_r7rs_large || die
-         ;;
-       "srfi")
-         build_srfi || die
          ;;
        "tools")
          build_tools || die

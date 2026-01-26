@@ -1,22 +1,22 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/interface::timestamp 1756721294)
+  (define gerbil/runtime/interface::timestamp 1769384627)
   (begin
     (define CastError::t
-      (let ((__tmp113001 (list Error::t)))
+      (let ((__tmp116649 (list Error::t)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/interface#CastError::t
          'CastError
-         __tmp113001
+         __tmp116649
          '()
          '()
          ':init!)))
     (define CastError?
       (let () (declare (not safe)) (__make-class-predicate CastError::t)))
     (define make-CastError
-      (lambda _%$args112994%_
-        (apply make-instance CastError::t _%$args112994%_)))
+      (lambda _%$args116639%_
+        (apply make-instance CastError::t _%$args116639%_)))
     (define CastError-message
       (let ()
         (declare (not safe))
@@ -86,76 +86,77 @@
       (declare (not safe))
       (__bind-method!__% CastError::t ':init! CastError:::init! '#f))
     (define raise-cast-error
-      (lambda (_%where112868%_ _%message112869%_ . _%irritants112870%_)
-        (let ((__tmp113002
-               (let ((__obj112997
+      (lambda (_%where116513%_ _%message116514%_ . _%irritants116515%_)
+        (let ((__tmp116650
+               (let ((__obj116642
                       (let ()
                         (declare (not safe))
                         (##structure CastError::t '#f '#f '#f '#f))))
                  (let ()
                    (declare (not safe))
                    (CastError:::init!
-                    __obj112997
-                    _%message112869%_
+                    __obj116642
+                    _%message116514%_
                     'where:
-                    _%where112868%_
+                    _%where116513%_
                     'irritants:
-                    _%irritants112870%_))
-                 __obj112997)))
+                    _%irritants116515%_))
+                 __obj116642)))
           (declare (not safe))
-          (raise __tmp113002))))
+          (raise __tmp116650))))
     (define interface-cast-error? CastError?)
     (define interface-instance::t
-      (let ((__tmp113004 (list)) (__tmp113003 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp116652 (list)) (__tmp116651 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gerbil#interface-instance::t
          'interface-instance
-         __tmp113004
-         '(__object)
-         __tmp113003
+         __tmp116652
+         '(object)
+         __tmp116651
          '#f)))
     (define interface-instance?
       (let ()
         (declare (not safe))
         (__make-class-predicate interface-instance::t)))
+    (define make-interface-instance
+      (lambda _%$args116510%_
+        (apply make-instance interface-instance::t _%$args116510%_)))
     (define interface-instance-object
       (let ()
         (declare (not safe))
-        (__make-class-slot-accessor interface-instance::t '__object)))
+        (__make-class-slot-accessor interface-instance::t 'object)))
     (define interface-instance-object-set!
       (let ()
         (declare (not safe))
-        (__make-class-slot-mutator interface-instance::t '__object)))
+        (__make-class-slot-mutator interface-instance::t 'object)))
     (define &interface-instance-object
       (let ()
         (declare (not safe))
-        (__make-class-slot-unchecked-accessor
-         interface-instance::t
-         '__object)))
+        (__make-class-slot-unchecked-accessor interface-instance::t 'object)))
     (define &interface-instance-object-set!
       (let ()
         (declare (not safe))
-        (__make-class-slot-unchecked-mutator interface-instance::t '__object)))
+        (__make-class-slot-unchecked-mutator interface-instance::t 'object)))
     (define interface-descriptor::t
-      (let ((__tmp113006 (list))
-            (__tmp113005
+      (let ((__tmp116654 (list))
+            (__tmp116653
              (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
         (declare (not safe))
         (__make-class-type
-         'gerbil/runtime/interface#interface-descriptor::t
+         'gerbil#interface-descriptor::t
          'interface-descriptor
-         __tmp113006
-         '(type methods)
-         __tmp113005
-         '#f)))
+         __tmp116654
+         '(type methods index)
+         __tmp116653
+         ':init!)))
     (define interface-descriptor?
       (let ()
         (declare (not safe))
         (__make-class-predicate interface-descriptor::t)))
     (define make-interface-descriptor
-      (lambda _%$args112865%_
-        (apply make-instance interface-descriptor::t _%$args112865%_)))
+      (lambda _%$args116507%_
+        (apply make-instance interface-descriptor::t _%$args116507%_)))
     (define interface-descriptor-type
       (let ()
         (declare (not safe))
@@ -164,6 +165,10 @@
       (let ()
         (declare (not safe))
         (__make-class-slot-accessor interface-descriptor::t 'methods)))
+    (define interface-descriptor-index
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-accessor interface-descriptor::t 'index)))
     (define interface-descriptor-type-set!
       (let ()
         (declare (not safe))
@@ -172,6 +177,10 @@
       (let ()
         (declare (not safe))
         (__make-class-slot-mutator interface-descriptor::t 'methods)))
+    (define interface-descriptor-index-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-mutator interface-descriptor::t 'index)))
     (define &interface-descriptor-type
       (let ()
         (declare (not safe))
@@ -182,6 +191,10 @@
         (__make-class-slot-unchecked-accessor
          interface-descriptor::t
          'methods)))
+    (define &interface-descriptor-index
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-accessor interface-descriptor::t 'index)))
     (define &interface-descriptor-type-set!
       (let ()
         (declare (not safe))
@@ -192,1225 +205,1454 @@
         (__make-class-slot-unchecked-mutator
          interface-descriptor::t
          'methods)))
-    (define __interface-hash-key
-      (lambda (_%key112863%_)
-        (let ((__tmp113009
-               (let ((__tmp113010
-                      (let () (declare (not safe)) (##car _%key112863%_))))
-                 (declare (not safe))
-                 (##symbol-hash __tmp113010)))
-              (__tmp113007
-               (let ((__tmp113008
-                      (let () (declare (not safe)) (##cdr _%key112863%_))))
-                 (declare (not safe))
-                 (##symbol-hash __tmp113008))))
-          (declare (not safe))
-          (##fxxor __tmp113009 __tmp113007))))
-    (define __interface-test-key
-      (lambda (_%a112860%_ _%b112861%_)
-        (if (let ((__tmp113012
-                   (let () (declare (not safe)) (##car _%a112860%_)))
-                  (__tmp113011
-                   (let () (declare (not safe)) (##car _%b112861%_))))
-              (declare (not safe))
-              (##eq? __tmp113012 __tmp113011))
-            (let ((__tmp113014
-                   (let () (declare (not safe)) (##cdr _%a112860%_)))
-                  (__tmp113013
-                   (let () (declare (not safe)) (##cdr _%b112861%_))))
-              (declare (not safe))
-              (##eq? __tmp113014 __tmp113013))
-            '#f)))
-    (define make-prototype-table__%
-      (lambda (_%size-hint112841%_ _%seed112843%_)
-        (let ()
-          (declare (not safe))
-          (make-raw-table__%
-           _%size-hint112841%_
-           __interface-hash-key
-           __interface-test-key
-           _%seed112843%_))))
-    (define make-prototype-table__0
+    (define &interface-descriptor-index-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-mutator interface-descriptor::t 'index)))
+    (define __next-interface-index '0)
+    (define __next-interface-index-lock (vector '0 '#f))
+    (define __get-next-interface-index
       (lambda ()
-        (let* ((_%size-hint112849%_ '#f) (_%seed112851%_ '0))
-          (make-prototype-table__% _%size-hint112849%_ _%seed112851%_))))
-    (define make-prototype-table__1
-      (lambda (_%size-hint112853%_)
-        (let ((_%seed112855%_ '0))
-          (make-prototype-table__% _%size-hint112853%_ _%seed112855%_))))
+        (let ()
+          (declare (not interrupts-enabled))
+          (let _%again116487%_ ((_%spin116490%_ '0))
+            (if (let ((__tmp116655
+                       (let ()
+                         (declare (not safe))
+                         (##vector-cas!
+                          __next-interface-index-lock
+                          '0
+                          '1
+                          '0))))
+                  (declare (not safe))
+                  (##fx= __tmp116655 '0))
+                (let ((__tmp116656 (current-thread)))
+                  (declare (not safe))
+                  (##vector-set! __next-interface-index-lock '1 __tmp116656))
+                (if (let () (declare (not safe)) (##fx< _%spin116490%_ '10))
+                    (let ()
+                      (let () (declare (not safe)) (##thread-yield!))
+                      (_%again116487%_
+                       (let ()
+                         (declare (not safe))
+                         (##fx+ _%spin116490%_ '1))))
+                    (let ((_%owner116496%_
+                           (let ()
+                             (declare (not safe))
+                             (##vector-ref __next-interface-index-lock '1))))
+                      (if (eq? _%owner116496%_ (macro-current-thread))
+                          (let ()
+                            (declare (not safe))
+                            (##thread-deadlock-action!))
+                          (if (macro-thread-end-condvar _%owner116496%_)
+                              (let ()
+                                (let () (declare (not safe)) (##thread-yield!))
+                                (_%again116487%_ '0))
+                              (let ()
+                                (declare (not safe))
+                                (##thread-deadlock-action!)))))))))
+        (let ((_%$r116504%_
+               (let ((_%index116502%_ __next-interface-index))
+                 (set! __next-interface-index
+                       (let ()
+                         (declare (not safe))
+                         (##fx+ _%index116502%_ '1)))
+                 _%index116502%_)))
+          (let ()
+            (declare (not safe))
+            (##vector-set! __next-interface-index-lock '1 '#f))
+          (let ()
+            (declare (not safe))
+            (##vector-cas! __next-interface-index-lock '0 '0 '1))
+          _%$r116504%_)))
+    (define interface-descriptor:::init!
+      (lambda (_%self116468%_ _%type116469%_ _%methods116470%_)
+        (let ((_%self116473%_ _%self116468%_))
+          (let ()
+            (declare (not safe))
+            (##unchecked-structure-set!
+             _%self116473%_
+             _%type116469%_
+             '1
+             '#f
+             '#f))
+          (let ()
+            (declare (not safe))
+            (##unchecked-structure-set!
+             _%self116473%_
+             _%methods116470%_
+             '2
+             '#f
+             '#f))
+          (let ((__tmp116657 (__get-next-interface-index)))
+            (declare (not safe))
+            (##unchecked-structure-set!
+             _%self116473%_
+             __tmp116657
+             '3
+             '#f
+             '#f)))))
+    (let ()
+      (declare (not safe))
+      (__bind-method!__%
+       interface-descriptor::t
+       ':init!
+       interface-descriptor:::init!
+       '#f))
+    (define prototype-table::t
+      (let ((__tmp116659 (list))
+            (__tmp116658
+             (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
+        (declare (not safe))
+        (__make-class-type
+         'gerbil#prototype-table::t
+         'prototype-table
+         __tmp116659
+         '(lock table)
+         __tmp116658
+         ':init!)))
+    (define prototype-table?
+      (let ()
+        (declare (not safe))
+        (__make-class-predicate prototype-table::t)))
     (define make-prototype-table
-      (lambda _g113015_
-        (let ((_g113016_ (let () (declare (not safe)) (##length _g113015_))))
-          (cond ((let () (declare (not safe)) (##fx= _g113016_ 0))
-                 (apply make-prototype-table__0 _g113015_))
-                ((let () (declare (not safe)) (##fx= _g113016_ 1))
-                 (apply make-prototype-table__1 _g113015_))
-                ((let () (declare (not safe)) (##fx= _g113016_ 2))
-                 (apply make-prototype-table__% _g113015_))
-                (else
-                 (##raise-wrong-number-of-arguments-exception
-                  make-prototype-table
-                  _g113015_))))))
-    (define prototype-table-ref
-      (lambda (_%tab112794%_ _%key112795%_ _%default112796%_)
-        (let ((_%table112798%_
-               (let () (declare (not safe)) (&raw-table-table _%tab112794%_)))
-              (_%seed112799%_
-               (let () (declare (not safe)) (&raw-table-seed _%tab112794%_))))
-          (let* ((_%h112801%_
-                  (fxxor (__interface-hash-key _%key112795%_) _%seed112799%_))
-                 (_%size112804%_ (vector-length _%table112798%_))
-                 (_%entries112807%_
-                  (let ()
-                    (declare (not safe))
-                    (##fxquotient _%size112804%_ '2)))
-                 (_%start112810%_
-                  (let ((__tmp113017
-                         (let ()
-                           (declare (not safe))
-                           (##fxmodulo _%h112801%_ _%entries112807%_))))
-                    (declare (not safe))
-                    (##fxarithmetic-shift-left __tmp113017 '1))))
-            (let _%loop112814%_ ((_%probe112817%_ _%start112810%_)
-                                 (_%i112819%_ '1)
-                                 (_%deleted112821%_ '#f))
-              (let ((_%k112824%_ (vector-ref _%table112798%_ _%probe112817%_)))
-                (if (eq? _%k112824%_ (macro-unused-obj))
-                    _%default112796%_
-                    (if (eq? _%k112824%_ (macro-deleted-obj))
-                        (_%loop112814%_
-                         (let ((_%next-probe112829%_
-                                (fx+ _%start112810%_
-                                     _%i112819%_
-                                     (fx* _%i112819%_ _%i112819%_))))
-                           (declare (not safe))
-                           (##fxmodulo _%next-probe112829%_ _%size112804%_))
-                         (let () (declare (not safe)) (##fx+ _%i112819%_ '1))
-                         (let ((_%$e112832%_ _%deleted112821%_))
-                           (if _%$e112832%_ _%$e112832%_ _%probe112817%_)))
-                        (if (__interface-test-key _%key112795%_ _%k112824%_)
-                            (vector-ref
-                             _%table112798%_
-                             (let ()
-                               (declare (not safe))
-                               (##fx+ _%probe112817%_ '1)))
-                            (_%loop112814%_
-                             (let ((_%next-probe112837%_
-                                    (fx+ _%start112810%_
-                                         _%i112819%_
-                                         (fx* _%i112819%_ _%i112819%_))))
-                               (declare (not safe))
-                               (##fxmodulo
-                                _%next-probe112837%_
-                                _%size112804%_))
-                             (let ()
-                               (declare (not safe))
-                               (##fx+ _%i112819%_ '1))
-                             _%deleted112821%_))))))))))
-    (define prototype-table-set!
-      (lambda (_%tab112790%_ _%key112791%_ _%value112792%_)
-        (if (let ((__tmp113020
-                   (let ()
-                     (declare (not safe))
-                     (&raw-table-free _%tab112790%_)))
-                  (__tmp113018
-                   (let ((__tmp113019
-                          (vector-length
-                           (let ()
-                             (declare (not safe))
-                             (&raw-table-table _%tab112790%_)))))
-                     (declare (not safe))
-                     (##fxquotient __tmp113019 '4))))
-              (declare (not safe))
-              (##fx< __tmp113020 __tmp113018))
-            (let () (declare (not safe)) (__raw-table-rehash! _%tab112790%_))
-            '#!void)
-        (__prototype-table-set! _%tab112790%_ _%key112791%_ _%value112792%_)))
+      (lambda _%$args116343%_
+        (apply make-instance prototype-table::t _%$args116343%_)))
+    (define prototype-table-lock
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-accessor prototype-table::t 'lock)))
+    (define prototype-table-table
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-accessor prototype-table::t 'table)))
+    (define prototype-table-lock-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-mutator prototype-table::t 'lock)))
+    (define prototype-table-table-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-mutator prototype-table::t 'table)))
+    (define &prototype-table-lock
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-accessor prototype-table::t 'lock)))
+    (define &prototype-table-table
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-accessor prototype-table::t 'table)))
+    (define &prototype-table-lock-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-mutator prototype-table::t 'lock)))
+    (define &prototype-table-table-set!
+      (let ()
+        (declare (not safe))
+        (__make-class-slot-unchecked-mutator prototype-table::t 'table)))
+    (define prototype-table:::init!
+      (lambda (_%self116329%_)
+        (let ((_%self116332%_ _%self116329%_))
+          (let ((__tmp116660 (vector '0 '#f)))
+            (declare (not safe))
+            (##unchecked-structure-set! _%self116332%_ __tmp116660 '1 '#f '#f))
+          (let ((__tmp116661
+                 (let ()
+                   (declare (not safe))
+                   (##make-vector __next-interface-index '#f))))
+            (declare (not safe))
+            (##unchecked-structure-set!
+             _%self116332%_
+             __tmp116661
+             '2
+             '#f
+             '#f)))))
+    (let ()
+      (declare (not safe))
+      (__bind-method!__%
+       prototype-table::t
+       ':init!
+       prototype-table:::init!
+       '#f))
+    (define __prototype-table-get
+      (lambda (_%prototable116186%_ _%descriptor116187%_)
+        (let* ((_%prototable116190%_ _%prototable116186%_)
+               (_%descriptor116198%_ _%descriptor116187%_))
+          (____prototype-table-get
+           _%prototable116190%_
+           _%descriptor116198%_))))
+    (define ____prototype-table-get
+      (lambda (_%prototable116139%_ _%descriptor116140%_)
+        (let* ((_%prototable116143%_ _%prototable116139%_)
+               (_%descriptor116151%_ _%descriptor116140%_))
+          (declare (not safe))
+          (let ((_%lock116161%_
+                 (##unchecked-structure-ref _%prototable116143%_ '1 '#f '#f))
+                (_%index116162%_
+                 (##unchecked-structure-ref _%descriptor116151%_ '3 '#f '#f)))
+            (let ()
+              (declare (not interrupts-enabled))
+              (let _%again116166%_ ((_%spin116169%_ '0))
+                (if (##fx= (##vector-cas! _%lock116161%_ '0 '1 '0) '0)
+                    (##vector-set! _%lock116161%_ '1 (current-thread))
+                    (if (##fx< _%spin116169%_ '10)
+                        (let ()
+                          (##thread-yield!)
+                          (_%again116166%_ (##fx+ _%spin116169%_ '1)))
+                        (let ((_%owner116175%_
+                               (##vector-ref _%lock116161%_ '1)))
+                          (if (eq? _%owner116175%_ (macro-current-thread))
+                              (##thread-deadlock-action!)
+                              (if (macro-thread-end-condvar _%owner116175%_)
+                                  (let ()
+                                    (##thread-yield!)
+                                    (_%again116166%_ '0))
+                                  (##thread-deadlock-action!))))))))
+            (let ((_%$r116183%_
+                   (let ((_%tab116181%_
+                          (##unchecked-structure-ref
+                           _%prototable116143%_
+                           '2
+                           '#f
+                           '#f)))
+                     (if (##fx< _%index116162%_ (vector-length _%tab116181%_))
+                         (vector-ref _%tab116181%_ _%index116162%_)
+                         '#f))))
+              (##vector-set! _%lock116161%_ '1 '#f)
+              (##vector-cas! _%lock116161%_ '0 '0 '1)
+              _%$r116183%_)))))
     (define __prototype-table-set!
-      (lambda (_%tab112741%_ _%key112742%_ _%value112743%_)
-        (let ((_%table112746%_
-               (let () (declare (not safe)) (&raw-table-table _%tab112741%_)))
-              (_%seed112747%_
-               (let () (declare (not safe)) (&raw-table-seed _%tab112741%_))))
-          (let* ((_%h112749%_
-                  (fxxor (__interface-hash-key _%key112742%_) _%seed112747%_))
-                 (_%size112752%_ (vector-length _%table112746%_))
-                 (_%entries112755%_
-                  (let ()
-                    (declare (not safe))
-                    (##fxquotient _%size112752%_ '2)))
-                 (_%start112758%_
-                  (let ((__tmp113021
-                         (let ()
-                           (declare (not safe))
-                           (##fxmodulo _%h112749%_ _%entries112755%_))))
-                    (declare (not safe))
-                    (##fxarithmetic-shift-left __tmp113021 '1))))
-            (let _%loop112762%_ ((_%probe112765%_ _%start112758%_)
-                                 (_%i112767%_ '1)
-                                 (_%deleted112769%_ '#f))
-              (let ((_%k112772%_ (vector-ref _%table112746%_ _%probe112765%_)))
-                (if (eq? _%k112772%_ (macro-unused-obj))
-                    (if _%deleted112769%_
-                        (begin
-                          (vector-set!
-                           _%table112746%_
-                           _%deleted112769%_
-                           _%key112742%_)
-                          (vector-set!
-                           _%table112746%_
-                           (let ()
-                             (declare (not safe))
-                             (##fx+ _%deleted112769%_ '1))
-                           _%value112743%_)
-                          ((lambda ()
-                             (let ((__tmp113022
-                                    (let ((__tmp113023
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-count
-                                              _%tab112741%_))))
-                                      (declare (not safe))
-                                      (##fx+ __tmp113023 '1))))
-                               (declare (not safe))
-                               (&raw-table-count-set!
-                                _%tab112741%_
-                                __tmp113022)))))
-                        (begin
-                          (vector-set!
-                           _%table112746%_
-                           _%probe112765%_
-                           _%key112742%_)
-                          (vector-set!
-                           _%table112746%_
-                           (let ()
-                             (declare (not safe))
-                             (##fx+ _%probe112765%_ '1))
-                           _%value112743%_)
-                          ((lambda ()
-                             (let ((__tmp113024
-                                    (let ((__tmp113025
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-free _%tab112741%_))))
-                                      (declare (not safe))
-                                      (##fx- __tmp113025 '1))))
-                               (declare (not safe))
-                               (&raw-table-free-set!
-                                _%tab112741%_
-                                __tmp113024))
-                             (let ((__tmp113026
-                                    (let ((__tmp113027
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-count
-                                              _%tab112741%_))))
-                                      (declare (not safe))
-                                      (##fx+ __tmp113027 '1))))
-                               (declare (not safe))
-                               (&raw-table-count-set!
-                                _%tab112741%_
-                                __tmp113026))))))
-                    (if (eq? _%k112772%_ (macro-deleted-obj))
-                        (_%loop112762%_
-                         (let ((_%next-probe112779%_
-                                (fx+ _%start112758%_
-                                     _%i112767%_
-                                     (fx* _%i112767%_ _%i112767%_))))
-                           (declare (not safe))
-                           (##fxmodulo _%next-probe112779%_ _%size112752%_))
-                         (let () (declare (not safe)) (##fx+ _%i112767%_ '1))
-                         (let ((_%$e112782%_ _%deleted112769%_))
-                           (if _%$e112782%_ _%$e112782%_ _%probe112765%_)))
-                        (if (__interface-test-key _%key112742%_ _%k112772%_)
-                            (let ()
-                              (vector-set!
-                               _%table112746%_
-                               _%probe112765%_
-                               _%key112742%_)
-                              (vector-set!
-                               _%table112746%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##fx+ _%probe112765%_ '1))
-                               _%value112743%_))
-                            (_%loop112762%_
-                             (let ((_%next-probe112787%_
-                                    (fx+ _%start112758%_
-                                         _%i112767%_
-                                         (fx* _%i112767%_ _%i112767%_))))
-                               (declare (not safe))
-                               (##fxmodulo
-                                _%next-probe112787%_
-                                _%size112752%_))
-                             (let ()
-                               (declare (not safe))
-                               (##fx+ _%i112767%_ '1))
-                             _%deleted112769%_))))))))))
-    (define prototype-table-update!
-      (lambda (_%tab112736%_
-               _%key112737%_
-               _%prototype-table-update!112738%_
-               _%default112739%_)
-        (if (let ((__tmp113030
-                   (let ()
-                     (declare (not safe))
-                     (&raw-table-free _%tab112736%_)))
-                  (__tmp113028
-                   (let ((__tmp113029
-                          (vector-length
-                           (let ()
-                             (declare (not safe))
-                             (&raw-table-table _%tab112736%_)))))
-                     (declare (not safe))
-                     (##fxquotient __tmp113029 '4))))
-              (declare (not safe))
-              (##fx< __tmp113030 __tmp113028))
-            (let () (declare (not safe)) (__raw-table-rehash! _%tab112736%_))
-            '#!void)
-        (__prototype-table-update!
-         _%tab112736%_
-         _%key112737%_
-         _%prototype-table-update!112738%_
-         _%default112739%_)))
-    (define __prototype-table-update!
-      (lambda (_%tab112686%_
-               _%key112687%_
-               _%prototype-table-update!112688%_
-               _%default112689%_)
-        (let ((_%table112692%_
-               (let () (declare (not safe)) (&raw-table-table _%tab112686%_)))
-              (_%seed112693%_
-               (let () (declare (not safe)) (&raw-table-seed _%tab112686%_))))
-          (let* ((_%h112695%_
-                  (fxxor (__interface-hash-key _%key112687%_) _%seed112693%_))
-                 (_%size112698%_ (vector-length _%table112692%_))
-                 (_%entries112701%_
-                  (let ()
-                    (declare (not safe))
-                    (##fxquotient _%size112698%_ '2)))
-                 (_%start112704%_
-                  (let ((__tmp113031
-                         (let ()
-                           (declare (not safe))
-                           (##fxmodulo _%h112695%_ _%entries112701%_))))
-                    (declare (not safe))
-                    (##fxarithmetic-shift-left __tmp113031 '1))))
-            (let _%loop112708%_ ((_%probe112711%_ _%start112704%_)
-                                 (_%i112713%_ '1)
-                                 (_%deleted112715%_ '#f))
-              (let ((_%k112718%_ (vector-ref _%table112692%_ _%probe112711%_)))
-                (if (eq? _%k112718%_ (macro-unused-obj))
-                    (if _%deleted112715%_
-                        (begin
-                          (vector-set!
-                           _%table112692%_
-                           _%deleted112715%_
-                           _%key112687%_)
-                          (vector-set!
-                           _%table112692%_
-                           (let ()
-                             (declare (not safe))
-                             (##fx+ _%deleted112715%_ '1))
-                           (_%prototype-table-update!112688%_
-                            _%default112689%_))
-                          ((lambda ()
-                             (let ((__tmp113032
-                                    (let ((__tmp113033
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-count
-                                              _%tab112686%_))))
-                                      (declare (not safe))
-                                      (##fx+ __tmp113033 '1))))
-                               (declare (not safe))
-                               (&raw-table-count-set!
-                                _%tab112686%_
-                                __tmp113032)))))
-                        (begin
-                          (vector-set!
-                           _%table112692%_
-                           _%probe112711%_
-                           _%key112687%_)
-                          (vector-set!
-                           _%table112692%_
-                           (let ()
-                             (declare (not safe))
-                             (##fx+ _%probe112711%_ '1))
-                           (_%prototype-table-update!112688%_
-                            _%default112689%_))
-                          ((lambda ()
-                             (let ((__tmp113034
-                                    (let ((__tmp113035
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-free _%tab112686%_))))
-                                      (declare (not safe))
-                                      (##fx- __tmp113035 '1))))
-                               (declare (not safe))
-                               (&raw-table-free-set!
-                                _%tab112686%_
-                                __tmp113034))
-                             (let ((__tmp113036
-                                    (let ((__tmp113037
-                                           (let ()
-                                             (declare (not safe))
-                                             (&raw-table-count
-                                              _%tab112686%_))))
-                                      (declare (not safe))
-                                      (##fx+ __tmp113037 '1))))
-                               (declare (not safe))
-                               (&raw-table-count-set!
-                                _%tab112686%_
-                                __tmp113036))))))
-                    (if (eq? _%k112718%_ (macro-deleted-obj))
-                        (_%loop112708%_
-                         (let ((_%next-probe112725%_
-                                (fx+ _%start112704%_
-                                     _%i112713%_
-                                     (fx* _%i112713%_ _%i112713%_))))
-                           (declare (not safe))
-                           (##fxmodulo _%next-probe112725%_ _%size112698%_))
-                         (let () (declare (not safe)) (##fx+ _%i112713%_ '1))
-                         (let ((_%$e112728%_ _%deleted112715%_))
-                           (if _%$e112728%_ _%$e112728%_ _%probe112711%_)))
-                        (if (__interface-test-key _%key112687%_ _%k112718%_)
-                            (let ()
-                              (vector-set!
-                               _%table112692%_
-                               _%probe112711%_
-                               _%key112687%_)
-                              (vector-set!
-                               _%table112692%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##fx+ _%probe112711%_ '1))
-                               (_%prototype-table-update!112688%_
-                                (vector-ref
-                                 _%table112692%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (##fx+ _%probe112711%_ '1))))))
-                            (_%loop112708%_
-                             (let ((_%next-probe112733%_
-                                    (fx+ _%start112704%_
-                                         _%i112713%_
-                                         (fx* _%i112713%_ _%i112713%_))))
-                               (declare (not safe))
-                               (##fxmodulo
-                                _%next-probe112733%_
-                                _%size112698%_))
-                             (let ()
-                               (declare (not safe))
-                               (##fx+ _%i112713%_ '1))
-                             _%deleted112715%_))))))))))
-    (define prototype-table-delete!
-      (lambda (_%tab112641%_ _%key112643%_)
-        (let ((_%table112646%_
-               (let () (declare (not safe)) (&raw-table-table _%tab112641%_)))
-              (_%seed112648%_
-               (let () (declare (not safe)) (&raw-table-seed _%tab112641%_))))
-          (let* ((_%h112651%_
-                  (fxxor (__interface-hash-key _%key112643%_) _%seed112648%_))
-                 (_%size112654%_ (vector-length _%table112646%_))
-                 (_%entries112657%_
-                  (let ()
-                    (declare (not safe))
-                    (##fxquotient _%size112654%_ '2)))
-                 (_%start112660%_
-                  (let ((__tmp113038
-                         (let ()
-                           (declare (not safe))
-                           (##fxmodulo _%h112651%_ _%entries112657%_))))
-                    (declare (not safe))
-                    (##fxarithmetic-shift-left __tmp113038 '1))))
-            (let _%loop112664%_ ((_%probe112667%_ _%start112660%_)
-                                 (_%i112669%_ '1))
-              (let ((_%k112672%_ (vector-ref _%table112646%_ _%probe112667%_)))
-                (if (eq? _%k112672%_ (macro-unused-obj))
-                    '#!void
-                    (if (eq? _%k112672%_ (macro-deleted-obj))
-                        (_%loop112664%_
-                         (let ((_%next-probe112677%_
-                                (fx+ _%start112660%_
-                                     _%i112669%_
-                                     (fx* _%i112669%_ _%i112669%_))))
-                           (declare (not safe))
-                           (##fxmodulo _%next-probe112677%_ _%size112654%_))
-                         (let () (declare (not safe)) (##fx+ _%i112669%_ '1)))
-                        (if (__interface-test-key _%key112643%_ _%k112672%_)
-                            (let ()
-                              (vector-set!
-                               _%table112646%_
-                               _%probe112667%_
-                               (macro-deleted-obj))
-                              (vector-set!
-                               _%table112646%_
-                               (let ()
-                                 (declare (not safe))
-                                 (##fx+ _%probe112667%_ '1))
-                               (macro-absent-obj))
-                              ((lambda ()
-                                 (let ((__tmp113039
-                                        (let ((__tmp113040
-                                               (let ()
-                                                 (declare (not safe))
-                                                 (&raw-table-count
-                                                  _%tab112641%_))))
-                                          (declare (not safe))
-                                          (##fx- __tmp113040 '1))))
-                                   (declare (not safe))
-                                   (&raw-table-count-set!
-                                    _%tab112641%_
-                                    __tmp113039)))))
-                            (_%loop112664%_
-                             (let ((_%next-probe112683%_
-                                    (fx+ _%start112660%_
-                                         _%i112669%_
-                                         (fx* _%i112669%_ _%i112669%_))))
-                               (declare (not safe))
-                               (##fxmodulo
-                                _%next-probe112683%_
-                                _%size112654%_))
-                             (let ()
-                               (declare (not safe))
-                               (##fx+ _%i112669%_ '1))))))))))))
-    (define __interface-prototypes-mx (vector '0))
-    (define __interface-prototypes (make-prototype-table__% '#f '0))
-    (define __interface-prototypes-key (cons '#f '#f))
+      (lambda (_%prototable116117%_ _%descriptor116118%_ _%prototype116119%_)
+        (let* ((_%prototable116122%_ _%prototable116117%_)
+               (_%descriptor116130%_ _%descriptor116118%_))
+          (____prototype-table-set!
+           _%prototable116122%_
+           _%descriptor116130%_
+           _%prototype116119%_))))
+    (define ____prototype-table-set!
+      (lambda (_%prototable116064%_ _%descriptor116065%_ _%prototype116066%_)
+        (let* ((_%prototable116069%_ _%prototable116064%_)
+               (_%descriptor116077%_ _%descriptor116065%_))
+          (declare (not safe))
+          (let ((_%lock116087%_
+                 (##unchecked-structure-ref _%prototable116069%_ '1 '#f '#f))
+                (_%index116088%_
+                 (##unchecked-structure-ref _%descriptor116077%_ '3 '#f '#f)))
+            (let ()
+              (declare (not interrupts-enabled))
+              (let _%again116092%_ ((_%spin116095%_ '0))
+                (if (##fx= (##vector-cas! _%lock116087%_ '0 '1 '0) '0)
+                    (##vector-set! _%lock116087%_ '1 (current-thread))
+                    (if (##fx< _%spin116095%_ '10)
+                        (let ()
+                          (##thread-yield!)
+                          (_%again116092%_ (##fx+ _%spin116095%_ '1)))
+                        (let ((_%owner116101%_
+                               (##vector-ref _%lock116087%_ '1)))
+                          (if (eq? _%owner116101%_ (macro-current-thread))
+                              (##thread-deadlock-action!)
+                              (if (macro-thread-end-condvar _%owner116101%_)
+                                  (let ()
+                                    (##thread-yield!)
+                                    (_%again116092%_ '0))
+                                  (##thread-deadlock-action!))))))))
+            (let ((_%$r116114%_
+                   (let ((_%tab116107%_
+                          (##unchecked-structure-ref
+                           _%prototable116069%_
+                           '2
+                           '#f
+                           '#f)))
+                     (if (##fx< _%index116088%_ (vector-length _%tab116107%_))
+                         (vector-set!
+                          _%tab116107%_
+                          _%index116088%_
+                          _%prototype116066%_)
+                         (let* ((_%new-size116109%_ __next-interface-index)
+                                (_%new-tab116111%_
+                                 (##make-vector _%new-size116109%_ '#f)))
+                           (subvector-move!
+                            _%tab116107%_
+                            '0
+                            (vector-length _%tab116107%_)
+                            _%new-tab116111%_
+                            '0)
+                           (vector-set!
+                            _%new-tab116111%_
+                            _%index116088%_
+                            _%prototype116066%_)
+                           (##unchecked-structure-set!
+                            _%prototable116069%_
+                            _%new-tab116111%_
+                            '2
+                            '#f
+                            '#f))))))
+              (##vector-set! _%lock116087%_ '1 '#f)
+              (##vector-cas! _%lock116087%_ '0 '0 '1)
+              _%$r116114%_)))))
     (define interface-subclass?
-      (lambda (_%klass112633%_)
-        (let ((_%super112634112636%_
-               (let () (declare (not safe)) (##type-super _%klass112633%_))))
-          (if _%super112634112636%_
-              (let ((_%super112639%_ _%super112634112636%_))
-                (eq? (let () (declare (not safe)) (##type-id _%super112639%_))
+      (lambda (_%klass116057%_)
+        (let ((_%super116058116060%_
+               (let () (declare (not safe)) (##type-super _%klass116057%_))))
+          (if _%super116058116060%_
+              (let ((_%super116062%_ _%super116058116060%_))
+                (eq? (let () (declare (not safe)) (##type-id _%super116062%_))
                      (let ()
                        (declare (not safe))
                        (##type-id interface-instance::t))))
               '#f))))
+    (define class-type-interface-table
+      (lambda (_%klass116049%_)
+        (let ((_%$e116051%_
+               (let ()
+                 (declare (not safe))
+                 (##unchecked-structure-ref _%klass116049%_ '13 '#f '#f))))
+          (if _%$e116051%_
+              _%$e116051%_
+              (let ((_%tab116055%_
+                     (let ((__obj116646
+                            (let ()
+                              (declare (not safe))
+                              (##structure prototype-table::t '#f '#f))))
+                       (prototype-table:::init! __obj116646)
+                       __obj116646)))
+                (let ()
+                  (declare (not safe))
+                  (##unchecked-structure-set!
+                   _%klass116049%_
+                   _%tab116055%_
+                   '13
+                   '#f
+                   '#f))
+                _%tab116055%_)))))
     (define create-prototype
-      (lambda (_%descriptor112467%_ _%klass112468%_ _%obj-klass112469%_)
-        (let ((_%method-table112471%_
+      (lambda (_%descriptor115889%_ _%klass115890%_ _%obj-klass115891%_)
+        (let ((_%method-table115893%_
                (let ()
                  (declare (not safe))
-                 (specialize-class _%obj-klass112469%_))))
-          (let _%loop112474%_ ((_%rest112477%_
+                 (specialize-class _%obj-klass115891%_))))
+          (let _%loop115896%_ ((_%rest115899%_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _%descriptor112467%_
+                                   _%descriptor115889%_
                                    '2
                                    '#f
                                    '#f)))
-                               (_%count112479%_ '0)
-                               (_%methods112481%_ '()))
-            (let* ((_%rest112483112491%_ _%rest112477%_)
-                   (_%else112485112553%_
+                               (_%count115901%_ '0)
+                               (_%methods115903%_ '()))
+            (let* ((_%rest115905115913%_ _%rest115899%_)
+                   (_%else115907115969%_
                     (lambda ()
-                      (let ((_%prototype112499%_
-                             (let ((__obj112999
-                                    (let ((__tmp113041
+                      (let ((_%prototype115921%_
+                             (let ((__obj116647
+                                    (let ((__tmp116662
                                            (let ()
                                              (declare (not safe))
-                                             (##fx+ _%count112479%_ '2))))
+                                             (##fx+ _%count115901%_ '2))))
                                       (declare (not safe))
                                       (##make-structure
-                                       _%klass112468%_
-                                       __tmp113041))))
+                                       _%klass115890%_
+                                       __tmp116662))))
                                (let ()
                                  (declare (not safe))
-                                 (object-fill! __obj112999 '#f))
-                               __obj112999)))
-                        (let _%loop112502%_ ((_%rest112504%_ _%methods112481%_)
-                                             (_%off112505%_
+                                 (object-fill! __obj116647 '#f))
+                               __obj116647)))
+                        (let _%loop115924%_ ((_%rest115926%_ _%methods115903%_)
+                                             (_%off115927%_
                                               (let ()
                                                 (declare (not safe))
-                                                (##fx+ _%count112479%_ '1))))
-                          (let* ((_%rest112507112515%_ _%rest112504%_)
-                                 (_%else112509112534%_
+                                                (##fx+ _%count115901%_ '1))))
+                          (let* ((_%rest115929115937%_ _%rest115926%_)
+                                 (_%else115931115950%_
                                   (lambda ()
-                                    (let ((_%prototype-key112523%_
-                                           (cons (let ()
-                                                   (declare (not safe))
-                                                   (##type-id _%klass112468%_))
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##type-id
-                                                    _%obj-klass112469%_)))))
-                                      (let ()
-                                        (declare (not interrupts-enabled))
-                                        (let _%again112528%_ ()
-                                          (if (let ((__tmp113042
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##vector-cas!
-                                                        __interface-prototypes-mx
-                                                        '0
-                                                        '1
-                                                        '0))))
-                                                (declare (not safe))
-                                                (##fx= __tmp113042 '0))
-                                              '#!void
-                                              (begin
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##thread-yield!))
-                                                (_%again112528%_)))))
-                                      (prototype-table-set!
-                                       __interface-prototypes
-                                       _%prototype-key112523%_
-                                       _%prototype112499%_)
-                                      (let ()
-                                        (declare (not safe))
-                                        (##vector-cas!
-                                         __interface-prototypes-mx
-                                         '0
-                                         '0
-                                         '1))
-                                      ((lambda (_%prototype112532%_)
-                                         _%prototype112532%_)
-                                       _%prototype112499%_))))
-                                 (_%K112511112541%_
-                                  (lambda (_%rest112537%_ _%method112538%_)
+                                    (let ((_%tab115945%_
+                                           (class-type-interface-table
+                                            _%obj-klass115891%_)))
+                                      (____prototype-table-set!
+                                       _%tab115945%_
+                                       _%descriptor115889%_
+                                       _%prototype115921%_)
+                                      ((lambda (_%prototype115948%_)
+                                         _%prototype115948%_)
+                                       _%prototype115921%_))))
+                                 (_%K115933115957%_
+                                  (lambda (_%rest115953%_ _%method115954%_)
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-set!
-                                       _%prototype112499%_
-                                       _%method112538%_
-                                       _%off112505%_
-                                       _%klass112468%_
+                                       _%prototype115921%_
+                                       _%method115954%_
+                                       _%off115927%_
+                                       _%klass115890%_
                                        '#f))
-                                    (_%loop112502%_
-                                     _%rest112537%_
+                                    (_%loop115924%_
+                                     _%rest115953%_
                                      (let ()
                                        (declare (not safe))
-                                       (##fx- _%off112505%_ '1))))))
-                            (if (pair? _%rest112507112515%_)
-                                (let ((_%hd112512112544%_
+                                       (##fx- _%off115927%_ '1))))))
+                            (if (pair? _%rest115929115937%_)
+                                (let ((_%hd115934115960%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%rest112507112515%_)))
-                                      (_%tl112513112546%_
+                                         (##car _%rest115929115937%_)))
+                                      (_%tl115935115962%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%rest112507112515%_))))
-                                  (let* ((_%method112549%_ _%hd112512112544%_)
-                                         (_%rest112551%_ _%tl112513112546%_))
-                                    (_%K112511112541%_
-                                     _%rest112551%_
-                                     _%method112549%_)))
-                                (_%else112509112534%_)))))))
-                   (_%K112487112621%_
-                    (lambda (_%rest112556%_ _%method-spec112557%_)
-                      (if (pair? _%method-spec112557%_)
-                          (let _%loop-inner112561%_ ((_%methods-rest112564%_
-                                                      _%method-spec112557%_))
-                            (let* ((_%methods-rest112566112574%_
-                                    _%methods-rest112564%_)
-                                   (_%else112568112586%_
+                                         (##cdr _%rest115929115937%_))))
+                                  (let* ((_%method115965%_ _%hd115934115960%_)
+                                         (_%rest115967%_ _%tl115935115962%_))
+                                    (_%K115933115957%_
+                                     _%rest115967%_
+                                     _%method115965%_)))
+                                (_%else115931115950%_)))))))
+                   (_%K115909116037%_
+                    (lambda (_%rest115972%_ _%method-spec115973%_)
+                      (if (pair? _%method-spec115973%_)
+                          (let _%loop-inner115977%_ ((_%methods-rest115980%_
+                                                      _%method-spec115973%_))
+                            (let* ((_%methods-rest115982115990%_
+                                    _%methods-rest115980%_)
+                                   (_%else115984116002%_
                                     (lambda ()
-                                      ((lambda (_%klass112582%_
-                                                _%obj-klass112583%_
-                                                _%method-name112584%_)
-                                         (raise-cast-error
-                                          'create-prototype
-                                          '"cannot create interface instance; missing method"
-                                          'interface:
-                                          _%klass112582%_
-                                          'interface-id:
-                                          (let ()
-                                            (declare (not safe))
-                                            (##type-id _%klass112582%_))
-                                          'class:
-                                          _%obj-klass112583%_
-                                          'class-id:
-                                          (let ()
-                                            (declare (not safe))
-                                            (##type-id _%obj-klass112583%_))
-                                          'method:
-                                          _%method-name112584%_)
+                                      (let ((_%tab115998%_
+                                             (class-type-interface-table
+                                              _%obj-klass115891%_)))
+                                        (____prototype-table-set!
+                                         _%tab115998%_
+                                         _%descriptor115889%_
                                          '#!void)
-                                       _%klass112468%_
-                                       _%obj-klass112469%_
-                                       _%method-spec112557%_)))
-                                   (_%K112570112599%_
-                                    (lambda (_%methods-rest112589%_
-                                             _%method-name112590%_)
-                                      (let ((_%$e112593%_
+                                        ((lambda (_%method116000%_)
+                                           (raise-cast-error
+                                            'create-prototype
+                                            '"cannot create interface prototype; missing method"
+                                            'interface:
+                                            _%descriptor115889%_
+                                            'class:
+                                            _%obj-klass115891%_
+                                            'method:
+                                            _%method116000%_)
+                                           '#!void)
+                                         _%method-spec115973%_))))
+                                   (_%K115986116015%_
+                                    (lambda (_%methods-rest116005%_
+                                             _%method-name116006%_)
+                                      (let ((_%$e116009%_
                                              (let ()
                                                (declare (not safe))
                                                (symbolic-table-ref
-                                                _%method-table112471%_
-                                                _%method-name112590%_
+                                                _%method-table115893%_
+                                                _%method-name116006%_
                                                 '#f))))
-                                        (if _%$e112593%_
-                                            ((lambda (_%method112596%_)
-                                               (_%loop112474%_
-                                                _%rest112556%_
+                                        (if _%$e116009%_
+                                            ((lambda (_%method116012%_)
+                                               (_%loop115896%_
+                                                _%rest115972%_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##fx+ _%count112479%_ '1))
-                                                (cons _%method112596%_
-                                                      _%methods112481%_)))
-                                             _%$e112593%_)
-                                            (_%loop-inner112561%_
-                                             _%methods-rest112589%_))))))
-                              (if (pair? _%methods-rest112566112574%_)
-                                  (let ((_%hd112571112602%_
+                                                  (##fx+ _%count115901%_ '1))
+                                                (cons _%method116012%_
+                                                      _%methods115903%_)))
+                                             _%$e116009%_)
+                                            (_%loop-inner115977%_
+                                             _%methods-rest116005%_))))))
+                              (if (pair? _%methods-rest115982115990%_)
+                                  (let ((_%hd115987116018%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%methods-rest112566112574%_)))
-                                        (_%tl112572112604%_
+                                           (##car _%methods-rest115982115990%_)))
+                                        (_%tl115988116020%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%methods-rest112566112574%_))))
-                                    (let* ((_%method-name112607%_
-                                            _%hd112571112602%_)
-                                           (_%methods-rest112609%_
-                                            _%tl112572112604%_))
-                                      (_%K112570112599%_
-                                       _%methods-rest112609%_
-                                       _%method-name112607%_)))
-                                  (_%else112568112586%_))))
-                          (let ((_%$e112611%_
+                                           (##cdr _%methods-rest115982115990%_))))
+                                    (let* ((_%method-name116023%_
+                                            _%hd115987116018%_)
+                                           (_%methods-rest116025%_
+                                            _%tl115988116020%_))
+                                      (_%K115986116015%_
+                                       _%methods-rest116025%_
+                                       _%method-name116023%_)))
+                                  (_%else115984116002%_))))
+                          (let ((_%$e116027%_
                                  (let ()
                                    (declare (not safe))
                                    (symbolic-table-ref
-                                    _%method-table112471%_
-                                    _%method-spec112557%_
+                                    _%method-table115893%_
+                                    _%method-spec115973%_
                                     '#f))))
-                            (if _%$e112611%_
-                                ((lambda (_%method112614%_)
-                                   (_%loop112474%_
-                                    _%rest112556%_
+                            (if _%$e116027%_
+                                ((lambda (_%method116030%_)
+                                   (_%loop115896%_
+                                    _%rest115972%_
                                     (let ()
                                       (declare (not safe))
-                                      (##fx+ _%count112479%_ '1))
-                                    (cons _%method112614%_ _%methods112481%_)))
-                                 _%$e112611%_)
-                                ((lambda (_%klass112617%_
-                                          _%obj-klass112618%_
-                                          _%method-name112619%_)
-                                   (raise-cast-error
-                                    'create-prototype
-                                    '"cannot create interface instance; missing method"
-                                    'interface:
-                                    _%klass112617%_
-                                    'interface-id:
-                                    (let ()
-                                      (declare (not safe))
-                                      (##type-id _%klass112617%_))
-                                    'class:
-                                    _%obj-klass112618%_
-                                    'class-id:
-                                    (let ()
-                                      (declare (not safe))
-                                      (##type-id _%obj-klass112618%_))
-                                    'method:
-                                    _%method-name112619%_)
+                                      (##fx+ _%count115901%_ '1))
+                                    (cons _%method116030%_ _%methods115903%_)))
+                                 _%$e116027%_)
+                                (let ((_%tab116033%_
+                                       (class-type-interface-table
+                                        _%obj-klass115891%_)))
+                                  (____prototype-table-set!
+                                   _%tab116033%_
+                                   _%descriptor115889%_
                                    '#!void)
-                                 _%klass112468%_
-                                 _%obj-klass112469%_
-                                 _%method-spec112557%_)))))))
-              (if (pair? _%rest112483112491%_)
-                  (let ((_%hd112488112624%_
+                                  ((lambda (_%method116035%_)
+                                     (raise-cast-error
+                                      'create-prototype
+                                      '"cannot create interface prototype; missing method"
+                                      'interface:
+                                      _%descriptor115889%_
+                                      'class:
+                                      _%obj-klass115891%_
+                                      'method:
+                                      _%method116035%_)
+                                     '#!void)
+                                   _%method-spec115973%_))))))))
+              (if (pair? _%rest115905115913%_)
+                  (let ((_%hd115910116040%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest112483112491%_)))
-                        (_%tl112489112626%_
+                           (##car _%rest115905115913%_)))
+                        (_%tl115911116042%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest112483112491%_))))
-                    (let* ((_%method-spec112629%_ _%hd112488112624%_)
-                           (_%rest112631%_ _%tl112489112626%_))
-                      (_%K112487112621%_
-                       _%rest112631%_
-                       _%method-spec112629%_)))
-                  (_%else112485112553%_)))))))
+                           (##cdr _%rest115905115913%_))))
+                    (let* ((_%method-spec116045%_ _%hd115910116040%_)
+                           (_%rest116047%_ _%tl115911116042%_))
+                      (_%K115909116037%_
+                       _%rest116047%_
+                       _%method-spec116045%_)))
+                  (_%else115907115969%_)))))))
     (define try-create-prototype
-      (lambda (_%descriptor112301%_ _%klass112302%_ _%obj-klass112303%_)
-        (let ((_%method-table112305%_
+      (lambda (_%descriptor115729%_ _%klass115730%_ _%obj-klass115731%_)
+        (let ((_%method-table115733%_
                (let ()
                  (declare (not safe))
-                 (specialize-class _%obj-klass112303%_))))
-          (let _%loop112308%_ ((_%rest112311%_
+                 (specialize-class _%obj-klass115731%_))))
+          (let _%loop115736%_ ((_%rest115739%_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _%descriptor112301%_
+                                   _%descriptor115729%_
                                    '2
                                    '#f
                                    '#f)))
-                               (_%count112313%_ '0)
-                               (_%methods112315%_ '()))
-            (let* ((_%rest112317112325%_ _%rest112311%_)
-                   (_%else112319112387%_
+                               (_%count115741%_ '0)
+                               (_%methods115743%_ '()))
+            (let* ((_%rest115745115753%_ _%rest115739%_)
+                   (_%else115747115809%_
                     (lambda ()
-                      (let ((_%prototype112333%_
-                             (let ((__obj113000
-                                    (let ((__tmp113043
+                      (let ((_%prototype115761%_
+                             (let ((__obj116648
+                                    (let ((__tmp116663
                                            (let ()
                                              (declare (not safe))
-                                             (##fx+ _%count112313%_ '2))))
+                                             (##fx+ _%count115741%_ '2))))
                                       (declare (not safe))
                                       (##make-structure
-                                       _%klass112302%_
-                                       __tmp113043))))
+                                       _%klass115730%_
+                                       __tmp116663))))
                                (let ()
                                  (declare (not safe))
-                                 (object-fill! __obj113000 '#f))
-                               __obj113000)))
-                        (let _%loop112336%_ ((_%rest112338%_ _%methods112315%_)
-                                             (_%off112339%_
+                                 (object-fill! __obj116648 '#f))
+                               __obj116648)))
+                        (let _%loop115764%_ ((_%rest115766%_ _%methods115743%_)
+                                             (_%off115767%_
                                               (let ()
                                                 (declare (not safe))
-                                                (##fx+ _%count112313%_ '1))))
-                          (let* ((_%rest112341112349%_ _%rest112338%_)
-                                 (_%else112343112368%_
+                                                (##fx+ _%count115741%_ '1))))
+                          (let* ((_%rest115769115777%_ _%rest115766%_)
+                                 (_%else115771115790%_
                                   (lambda ()
-                                    (let ((_%prototype-key112357%_
-                                           (cons (let ()
-                                                   (declare (not safe))
-                                                   (##type-id _%klass112302%_))
-                                                 (let ()
-                                                   (declare (not safe))
-                                                   (##type-id
-                                                    _%obj-klass112303%_)))))
-                                      (let ()
-                                        (declare (not interrupts-enabled))
-                                        (let _%again112362%_ ()
-                                          (if (let ((__tmp113044
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##vector-cas!
-                                                        __interface-prototypes-mx
-                                                        '0
-                                                        '1
-                                                        '0))))
-                                                (declare (not safe))
-                                                (##fx= __tmp113044 '0))
-                                              '#!void
-                                              (begin
-                                                (let ()
-                                                  (declare (not safe))
-                                                  (##thread-yield!))
-                                                (_%again112362%_)))))
-                                      (prototype-table-set!
-                                       __interface-prototypes
-                                       _%prototype-key112357%_
-                                       _%prototype112333%_)
-                                      (let ()
-                                        (declare (not safe))
-                                        (##vector-cas!
-                                         __interface-prototypes-mx
-                                         '0
-                                         '0
-                                         '1))
-                                      ((lambda (_%prototype112366%_)
-                                         _%prototype112366%_)
-                                       _%prototype112333%_))))
-                                 (_%K112345112375%_
-                                  (lambda (_%rest112371%_ _%method112372%_)
+                                    (let ((_%tab115785%_
+                                           (class-type-interface-table
+                                            _%obj-klass115731%_)))
+                                      (____prototype-table-set!
+                                       _%tab115785%_
+                                       _%descriptor115729%_
+                                       _%prototype115761%_)
+                                      ((lambda (_%prototype115788%_)
+                                         _%prototype115788%_)
+                                       _%prototype115761%_))))
+                                 (_%K115773115797%_
+                                  (lambda (_%rest115793%_ _%method115794%_)
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-set!
-                                       _%prototype112333%_
-                                       _%method112372%_
-                                       _%off112339%_
-                                       _%klass112302%_
+                                       _%prototype115761%_
+                                       _%method115794%_
+                                       _%off115767%_
+                                       _%klass115730%_
                                        '#f))
-                                    (_%loop112336%_
-                                     _%rest112371%_
+                                    (_%loop115764%_
+                                     _%rest115793%_
                                      (let ()
                                        (declare (not safe))
-                                       (##fx- _%off112339%_ '1))))))
-                            (if (pair? _%rest112341112349%_)
-                                (let ((_%hd112346112378%_
+                                       (##fx- _%off115767%_ '1))))))
+                            (if (pair? _%rest115769115777%_)
+                                (let ((_%hd115774115800%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%rest112341112349%_)))
-                                      (_%tl112347112380%_
+                                         (##car _%rest115769115777%_)))
+                                      (_%tl115775115802%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%rest112341112349%_))))
-                                  (let* ((_%method112383%_ _%hd112346112378%_)
-                                         (_%rest112385%_ _%tl112347112380%_))
-                                    (_%K112345112375%_
-                                     _%rest112385%_
-                                     _%method112383%_)))
-                                (_%else112343112368%_)))))))
-                   (_%K112321112455%_
-                    (lambda (_%rest112390%_ _%method-spec112391%_)
-                      (if (pair? _%method-spec112391%_)
-                          (let _%loop-inner112395%_ ((_%methods-rest112398%_
-                                                      _%method-spec112391%_))
-                            (let* ((_%methods-rest112400112408%_
-                                    _%methods-rest112398%_)
-                                   (_%else112402112420%_
+                                         (##cdr _%rest115769115777%_))))
+                                  (let* ((_%method115805%_ _%hd115774115800%_)
+                                         (_%rest115807%_ _%tl115775115802%_))
+                                    (_%K115773115797%_
+                                     _%rest115807%_
+                                     _%method115805%_)))
+                                (_%else115771115790%_)))))))
+                   (_%K115749115877%_
+                    (lambda (_%rest115812%_ _%method-spec115813%_)
+                      (if (pair? _%method-spec115813%_)
+                          (let _%loop-inner115817%_ ((_%methods-rest115820%_
+                                                      _%method-spec115813%_))
+                            (let* ((_%methods-rest115822115830%_
+                                    _%methods-rest115820%_)
+                                   (_%else115824115842%_
                                     (lambda ()
-                                      ((lambda (_%klass112416%_
-                                                _%obj-klass112417%_
-                                                _%method-name112418%_)
-                                         '#f)
-                                       _%klass112302%_
-                                       _%obj-klass112303%_
-                                       _%method-spec112391%_)))
-                                   (_%K112404112433%_
-                                    (lambda (_%methods-rest112423%_
-                                             _%method-name112424%_)
-                                      (let ((_%$e112427%_
+                                      (let ((_%tab115838%_
+                                             (class-type-interface-table
+                                              _%obj-klass115731%_)))
+                                        (____prototype-table-set!
+                                         _%tab115838%_
+                                         _%descriptor115729%_
+                                         '#!void)
+                                        ((lambda (_%method115840%_) '#f)
+                                         _%method-spec115813%_))))
+                                   (_%K115826115855%_
+                                    (lambda (_%methods-rest115845%_
+                                             _%method-name115846%_)
+                                      (let ((_%$e115849%_
                                              (let ()
                                                (declare (not safe))
                                                (symbolic-table-ref
-                                                _%method-table112305%_
-                                                _%method-name112424%_
+                                                _%method-table115733%_
+                                                _%method-name115846%_
                                                 '#f))))
-                                        (if _%$e112427%_
-                                            ((lambda (_%method112430%_)
-                                               (_%loop112308%_
-                                                _%rest112390%_
+                                        (if _%$e115849%_
+                                            ((lambda (_%method115852%_)
+                                               (_%loop115736%_
+                                                _%rest115812%_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##fx+ _%count112313%_ '1))
-                                                (cons _%method112430%_
-                                                      _%methods112315%_)))
-                                             _%$e112427%_)
-                                            (_%loop-inner112395%_
-                                             _%methods-rest112423%_))))))
-                              (if (pair? _%methods-rest112400112408%_)
-                                  (let ((_%hd112405112436%_
+                                                  (##fx+ _%count115741%_ '1))
+                                                (cons _%method115852%_
+                                                      _%methods115743%_)))
+                                             _%$e115849%_)
+                                            (_%loop-inner115817%_
+                                             _%methods-rest115845%_))))))
+                              (if (pair? _%methods-rest115822115830%_)
+                                  (let ((_%hd115827115858%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%methods-rest112400112408%_)))
-                                        (_%tl112406112438%_
+                                           (##car _%methods-rest115822115830%_)))
+                                        (_%tl115828115860%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%methods-rest112400112408%_))))
-                                    (let* ((_%method-name112441%_
-                                            _%hd112405112436%_)
-                                           (_%methods-rest112443%_
-                                            _%tl112406112438%_))
-                                      (_%K112404112433%_
-                                       _%methods-rest112443%_
-                                       _%method-name112441%_)))
-                                  (_%else112402112420%_))))
-                          (let ((_%$e112445%_
+                                           (##cdr _%methods-rest115822115830%_))))
+                                    (let* ((_%method-name115863%_
+                                            _%hd115827115858%_)
+                                           (_%methods-rest115865%_
+                                            _%tl115828115860%_))
+                                      (_%K115826115855%_
+                                       _%methods-rest115865%_
+                                       _%method-name115863%_)))
+                                  (_%else115824115842%_))))
+                          (let ((_%$e115867%_
                                  (let ()
                                    (declare (not safe))
                                    (symbolic-table-ref
-                                    _%method-table112305%_
-                                    _%method-spec112391%_
+                                    _%method-table115733%_
+                                    _%method-spec115813%_
                                     '#f))))
-                            (if _%$e112445%_
-                                ((lambda (_%method112448%_)
-                                   (_%loop112308%_
-                                    _%rest112390%_
+                            (if _%$e115867%_
+                                ((lambda (_%method115870%_)
+                                   (_%loop115736%_
+                                    _%rest115812%_
                                     (let ()
                                       (declare (not safe))
-                                      (##fx+ _%count112313%_ '1))
-                                    (cons _%method112448%_ _%methods112315%_)))
-                                 _%$e112445%_)
-                                ((lambda (_%klass112451%_
-                                          _%obj-klass112452%_
-                                          _%method-name112453%_)
-                                   '#f)
-                                 _%klass112302%_
-                                 _%obj-klass112303%_
-                                 _%method-spec112391%_)))))))
-              (if (pair? _%rest112317112325%_)
-                  (let ((_%hd112322112458%_
+                                      (##fx+ _%count115741%_ '1))
+                                    (cons _%method115870%_ _%methods115743%_)))
+                                 _%$e115867%_)
+                                (let ((_%tab115873%_
+                                       (class-type-interface-table
+                                        _%obj-klass115731%_)))
+                                  (____prototype-table-set!
+                                   _%tab115873%_
+                                   _%descriptor115729%_
+                                   '#!void)
+                                  ((lambda (_%method115875%_) '#f)
+                                   _%method-spec115813%_))))))))
+              (if (pair? _%rest115745115753%_)
+                  (let ((_%hd115750115880%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest112317112325%_)))
-                        (_%tl112323112460%_
+                           (##car _%rest115745115753%_)))
+                        (_%tl115751115882%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest112317112325%_))))
-                    (let* ((_%method-spec112463%_ _%hd112322112458%_)
-                           (_%rest112465%_ _%tl112323112460%_))
-                      (_%K112321112455%_
-                       _%rest112465%_
-                       _%method-spec112463%_)))
-                  (_%else112319112387%_)))))))
+                           (##cdr _%rest115745115753%_))))
+                    (let* ((_%method-spec115885%_ _%hd115750115880%_)
+                           (_%rest115887%_ _%tl115751115882%_))
+                      (_%K115749115877%_
+                       _%rest115887%_
+                       _%method-spec115885%_)))
+                  (_%else115747115809%_)))))))
     (define cast
-      (lambda (_%descriptor112259%_ _%obj112261%_)
-        (declare (not interrupts-enabled))
-        (let* ((_%klass112265%_
+      (lambda (_%descriptor115635%_ _%obj115637%_)
+        (let* ((_%klass115640%_
                 (let ()
                   (declare (not safe))
-                  (##unchecked-structure-ref _%descriptor112259%_ '1 '#f '#f)))
-               (_%klass-id112268%_
-                (let () (declare (not safe)) (##type-id _%klass112265%_)))
-               (_%obj-klass112271%_
-                (let () (declare (not safe)) (class-of _%obj112261%_)))
-               (_%obj-klass-id112274%_
-                (let () (declare (not safe)) (##type-id _%obj-klass112271%_))))
-          (if (let ()
-                (declare (not safe))
-                (##eq? _%klass-id112268%_ _%obj-klass-id112274%_))
-              _%obj112261%_
-              (if (interface-subclass? _%obj-klass112271%_)
-                  (cast _%descriptor112259%_
-                        (let ()
-                          (declare (not safe))
-                          (##unchecked-structure-ref
-                           _%obj112261%_
-                           '1
-                           '#f
-                           '#f)))
-                  (let ()
-                    (let ()
-                      (declare (not interrupts-enabled))
-                      (let _%again112283%_ ()
-                        (if (let ((__tmp113045
-                                   (let ()
-                                     (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '1
-                                      '0))))
-                              (declare (not safe))
-                              (##fx= __tmp113045 '0))
-                            '#!void
-                            (begin
-                              (let () (declare (not safe)) (##thread-yield!))
-                              (_%again112283%_)))))
+                  (##unchecked-structure-ref _%descriptor115635%_ '1 '#f '#f)))
+               (_%klass-id115643%_
+                (let () (declare (not safe)) (##type-id _%klass115640%_))))
+          (let _%loop115647%_ ((_%obj115650%_ _%obj115637%_))
+            (declare (not interrupts-enabled))
+            (let* ((_%obj-klass115653%_
+                    (let () (declare (not safe)) (class-of _%obj115650%_)))
+                   (_%obj-klass-id115656%_
                     (let ()
                       (declare (not safe))
-                      (##set-car!
-                       __interface-prototypes-key
-                       _%klass-id112268%_))
-                    (let ()
-                      (declare (not safe))
-                      (##set-cdr!
-                       __interface-prototypes-key
-                       _%obj-klass-id112274%_))
-                    (let ((_%prototype112294%_
-                           (let ((_%$e112287%_
-                                  (prototype-table-ref
-                                   __interface-prototypes
-                                   __interface-prototypes-key
-                                   '#f)))
-                             (if _%$e112287%_
-                                 ((lambda (_%prototype112290%_)
+                      (##type-id _%obj-klass115653%_))))
+              (if (let ()
+                    (declare (not safe))
+                    (##eq? _%klass-id115643%_ _%obj-klass-id115656%_))
+                  ((lambda (_%obj115661%_) _%obj115661%_) _%obj115650%_)
+                  (if (interface-subclass? _%obj-klass115653%_)
+                      (let* ((_%tab115664%_
+                              (class-type-interface-table _%obj-klass115653%_))
+                             (_%$e115667%_
+                              (____prototype-table-get
+                               _%tab115664%_
+                               _%descriptor115635%_)))
+                        (if _%$e115667%_
+                            ((lambda (_%prototype115670%_)
+                               (if (eq? _%prototype115670%_ '#!void)
+                                   (_%loop115647%_
                                     (let ()
                                       (declare (not safe))
-                                      (##vector-cas!
-                                       __interface-prototypes-mx
-                                       '0
-                                       '0
-                                       '1))
-                                    _%prototype112290%_)
-                                  _%$e112287%_)
-                                 (let ()
+                                      (##unchecked-structure-ref
+                                       _%obj115650%_
+                                       '1
+                                       '#f
+                                       '#f)))
+                                   ((lambda (_%descriptor115673%_
+                                             _%prototype115674%_
+                                             _%obj115675%_)
+                                      (if _%prototype115674%_
+                                          (let ((_%instance115677%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115674%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115677%_
+                                               _%obj115675%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115677%_)
+                                          (begin
+                                            (raise-cast-error
+                                             'cast
+                                             '"cannot create interface prototype"
+                                             'interface:
+                                             _%descriptor115673%_
+                                             'class:
+                                             (let ()
+                                               (declare (not safe))
+                                               (class-of _%obj115675%_)))
+                                            '#!void)))
+                                    _%descriptor115635%_
+                                    _%prototype115670%_
+                                    _%obj115650%_)))
+                             _%$e115667%_)
+                            (let ((_%$e115679%_
+                                   (try-create-prototype
+                                    _%descriptor115635%_
+                                    _%klass115640%_
+                                    _%obj-klass115653%_)))
+                              (if _%$e115679%_
+                                  ((lambda (_%prototype115682%_)
+                                     ((lambda (_%descriptor115684%_
+                                               _%prototype115685%_
+                                               _%obj115686%_)
+                                        (if _%prototype115685%_
+                                            (let ((_%instance115688%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##structure-copy
+                                                      _%prototype115685%_))))
+                                              (let ()
+                                                (declare (not safe))
+                                                (##unchecked-structure-set!
+                                                 _%instance115688%_
+                                                 _%obj115686%_
+                                                 '1
+                                                 '#f
+                                                 'cast))
+                                              _%instance115688%_)
+                                            (begin
+                                              (raise-cast-error
+                                               'cast
+                                               '"cannot create interface prototype"
+                                               'interface:
+                                               _%descriptor115684%_
+                                               'class:
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (class-of _%obj115686%_)))
+                                              '#!void)))
+                                      _%descriptor115635%_
+                                      _%prototype115682%_
+                                      _%obj115650%_))
+                                   _%$e115679%_)
+                                  (_%loop115647%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '0
-                                      '1))
+                                     (##unchecked-structure-ref
+                                      _%obj115650%_
+                                      '1
+                                      '#f
+                                      '#f)))))))
+                      (let* ((_%tab115692%_
+                              (class-type-interface-table _%obj-klass115653%_))
+                             (_%$e115694%_
+                              (____prototype-table-get
+                               _%tab115692%_
+                               _%descriptor115635%_)))
+                        (if _%$e115694%_
+                            ((lambda (_%prototype115697%_)
+                               (if (eq? _%prototype115697%_ '#!void)
+                                   ((lambda (_%descriptor115699%_
+                                             _%prototype115700%_
+                                             _%obj115701%_)
+                                      (if _%prototype115700%_
+                                          (let ((_%instance115703%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115700%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115703%_
+                                               _%obj115701%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115703%_)
+                                          (begin
+                                            (raise-cast-error
+                                             'cast
+                                             '"cannot create interface prototype"
+                                             'interface:
+                                             _%descriptor115699%_
+                                             'class:
+                                             (let ()
+                                               (declare (not safe))
+                                               (class-of _%obj115701%_)))
+                                            '#!void)))
+                                    _%descriptor115635%_
+                                    '#f
+                                    _%obj115650%_)
+                                   ((lambda (_%descriptor115705%_
+                                             _%prototype115706%_
+                                             _%obj115707%_)
+                                      (if _%prototype115706%_
+                                          (let ((_%instance115709%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115706%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115709%_
+                                               _%obj115707%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115709%_)
+                                          (begin
+                                            (raise-cast-error
+                                             'cast
+                                             '"cannot create interface prototype"
+                                             'interface:
+                                             _%descriptor115705%_
+                                             'class:
+                                             (let ()
+                                               (declare (not safe))
+                                               (class-of _%obj115707%_)))
+                                            '#!void)))
+                                    _%descriptor115635%_
+                                    _%prototype115697%_
+                                    _%obj115650%_)))
+                             _%$e115694%_)
+                            (let ((_%$e115711%_
                                    (create-prototype
-                                    _%descriptor112259%_
-                                    _%klass112265%_
-                                    _%obj-klass112271%_))))))
-                      ((lambda (_%prototype112296%_ _%obj112297%_)
-                         (let ((_%instance112299%_
-                                (let ()
-                                  (declare (not safe))
-                                  (##structure-copy _%prototype112296%_))))
-                           (let ()
-                             (declare (not safe))
-                             (##unchecked-structure-set!
-                              _%instance112299%_
-                              _%obj112297%_
-                              '1
-                              '#f
-                              'cast))
-                           _%instance112299%_))
-                       _%prototype112294%_
-                       _%obj112261%_))))))))
+                                    _%descriptor115635%_
+                                    _%klass115640%_
+                                    _%obj-klass115653%_)))
+                              (if _%$e115711%_
+                                  ((lambda (_%prototype115714%_)
+                                     ((lambda (_%descriptor115716%_
+                                               _%prototype115717%_
+                                               _%obj115718%_)
+                                        (if _%prototype115717%_
+                                            (let ((_%instance115720%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##structure-copy
+                                                      _%prototype115717%_))))
+                                              (let ()
+                                                (declare (not safe))
+                                                (##unchecked-structure-set!
+                                                 _%instance115720%_
+                                                 _%obj115718%_
+                                                 '1
+                                                 '#f
+                                                 'cast))
+                                              _%instance115720%_)
+                                            (begin
+                                              (raise-cast-error
+                                               'cast
+                                               '"cannot create interface prototype"
+                                               'interface:
+                                               _%descriptor115716%_
+                                               'class:
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (class-of _%obj115718%_)))
+                                              '#!void)))
+                                      _%descriptor115635%_
+                                      _%prototype115714%_
+                                      _%obj115650%_))
+                                   _%$e115711%_)
+                                  ((lambda (_%descriptor115723%_
+                                            _%prototype115724%_
+                                            _%obj115725%_)
+                                     (if _%prototype115724%_
+                                         (let ((_%instance115727%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##structure-copy
+                                                   _%prototype115724%_))))
+                                           (let ()
+                                             (declare (not safe))
+                                             (##unchecked-structure-set!
+                                              _%instance115727%_
+                                              _%obj115725%_
+                                              '1
+                                              '#f
+                                              'cast))
+                                           _%instance115727%_)
+                                         (begin
+                                           (raise-cast-error
+                                            'cast
+                                            '"cannot create interface prototype"
+                                            'interface:
+                                            _%descriptor115723%_
+                                            'class:
+                                            (let ()
+                                              (declare (not safe))
+                                              (class-of _%obj115725%_)))
+                                           '#!void)))
+                                   _%descriptor115635%_
+                                   '#f
+                                   _%obj115650%_))))))))))))
     (define try-cast
-      (lambda (_%descriptor112217%_ _%obj112219%_)
-        (declare (not interrupts-enabled))
-        (let* ((_%klass112223%_
+      (lambda (_%descriptor115541%_ _%obj115543%_)
+        (let* ((_%klass115546%_
                 (let ()
                   (declare (not safe))
-                  (##unchecked-structure-ref _%descriptor112217%_ '1 '#f '#f)))
-               (_%klass-id112226%_
-                (let () (declare (not safe)) (##type-id _%klass112223%_)))
-               (_%obj-klass112229%_
-                (let () (declare (not safe)) (class-of _%obj112219%_)))
-               (_%obj-klass-id112232%_
-                (let () (declare (not safe)) (##type-id _%obj-klass112229%_))))
-          (if (let ()
-                (declare (not safe))
-                (##eq? _%klass-id112226%_ _%obj-klass-id112232%_))
-              _%obj112219%_
-              (if (interface-subclass? _%obj-klass112229%_)
-                  (try-cast
-                   _%descriptor112217%_
-                   (let ()
-                     (declare (not safe))
-                     (##unchecked-structure-ref _%obj112219%_ '1 '#f '#f)))
-                  (let ()
-                    (let ()
-                      (declare (not interrupts-enabled))
-                      (let _%again112241%_ ()
-                        (if (let ((__tmp113046
-                                   (let ()
-                                     (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '1
-                                      '0))))
-                              (declare (not safe))
-                              (##fx= __tmp113046 '0))
-                            '#!void
-                            (begin
-                              (let () (declare (not safe)) (##thread-yield!))
-                              (_%again112241%_)))))
+                  (##unchecked-structure-ref _%descriptor115541%_ '1 '#f '#f)))
+               (_%klass-id115549%_
+                (let () (declare (not safe)) (##type-id _%klass115546%_))))
+          (let _%loop115553%_ ((_%obj115556%_ _%obj115543%_))
+            (declare (not interrupts-enabled))
+            (let* ((_%obj-klass115559%_
+                    (let () (declare (not safe)) (class-of _%obj115556%_)))
+                   (_%obj-klass-id115562%_
                     (let ()
                       (declare (not safe))
-                      (##set-car!
-                       __interface-prototypes-key
-                       _%klass-id112226%_))
-                    (let ()
-                      (declare (not safe))
-                      (##set-cdr!
-                       __interface-prototypes-key
-                       _%obj-klass-id112232%_))
-                    (let ((_%prototype112252%_
-                           (let ((_%$e112245%_
-                                  (prototype-table-ref
-                                   __interface-prototypes
-                                   __interface-prototypes-key
-                                   '#f)))
-                             (if _%$e112245%_
-                                 ((lambda (_%prototype112248%_)
+                      (##type-id _%obj-klass115559%_))))
+              (if (let ()
+                    (declare (not safe))
+                    (##eq? _%klass-id115549%_ _%obj-klass-id115562%_))
+                  ((lambda (_%obj115567%_) _%obj115567%_) _%obj115556%_)
+                  (if (interface-subclass? _%obj-klass115559%_)
+                      (let* ((_%tab115570%_
+                              (class-type-interface-table _%obj-klass115559%_))
+                             (_%$e115573%_
+                              (____prototype-table-get
+                               _%tab115570%_
+                               _%descriptor115541%_)))
+                        (if _%$e115573%_
+                            ((lambda (_%prototype115576%_)
+                               (if (eq? _%prototype115576%_ '#!void)
+                                   (_%loop115553%_
                                     (let ()
                                       (declare (not safe))
-                                      (##vector-cas!
-                                       __interface-prototypes-mx
-                                       '0
-                                       '0
-                                       '1))
-                                    _%prototype112248%_)
-                                  _%$e112245%_)
-                                 (let ()
-                                   (let ()
-                                     (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '0
-                                      '1))
+                                      (##unchecked-structure-ref
+                                       _%obj115556%_
+                                       '1
+                                       '#f
+                                       '#f)))
+                                   ((lambda (_%descriptor115579%_
+                                             _%prototype115580%_
+                                             _%obj115581%_)
+                                      (if _%prototype115580%_
+                                          (let ((_%instance115583%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115580%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115583%_
+                                               _%obj115581%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115583%_)
+                                          '#f))
+                                    _%descriptor115541%_
+                                    _%prototype115576%_
+                                    _%obj115556%_)))
+                             _%$e115573%_)
+                            (let ((_%$e115585%_
                                    (try-create-prototype
-                                    _%descriptor112217%_
-                                    _%klass112223%_
-                                    _%obj-klass112229%_))))))
-                      ((lambda (_%prototype112254%_ _%obj112255%_)
-                         (if _%prototype112254%_
-                             (let ((_%instance112257%_
-                                    (let ()
-                                      (declare (not safe))
-                                      (##structure-copy _%prototype112254%_))))
-                               (let ()
-                                 (declare (not safe))
-                                 (##unchecked-structure-set!
-                                  _%instance112257%_
-                                  _%obj112255%_
-                                  '1
-                                  '#f
-                                  'cast))
-                               _%instance112257%_)
-                             '#f))
-                       _%prototype112252%_
-                       _%obj112219%_))))))))
+                                    _%descriptor115541%_
+                                    _%klass115546%_
+                                    _%obj-klass115559%_)))
+                              (if _%$e115585%_
+                                  ((lambda (_%prototype115588%_)
+                                     ((lambda (_%descriptor115590%_
+                                               _%prototype115591%_
+                                               _%obj115592%_)
+                                        (if _%prototype115591%_
+                                            (let ((_%instance115594%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##structure-copy
+                                                      _%prototype115591%_))))
+                                              (let ()
+                                                (declare (not safe))
+                                                (##unchecked-structure-set!
+                                                 _%instance115594%_
+                                                 _%obj115592%_
+                                                 '1
+                                                 '#f
+                                                 'cast))
+                                              _%instance115594%_)
+                                            '#f))
+                                      _%descriptor115541%_
+                                      _%prototype115588%_
+                                      _%obj115556%_))
+                                   _%$e115585%_)
+                                  (_%loop115553%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (##unchecked-structure-ref
+                                      _%obj115556%_
+                                      '1
+                                      '#f
+                                      '#f)))))))
+                      (let* ((_%tab115598%_
+                              (class-type-interface-table _%obj-klass115559%_))
+                             (_%$e115600%_
+                              (____prototype-table-get
+                               _%tab115598%_
+                               _%descriptor115541%_)))
+                        (if _%$e115600%_
+                            ((lambda (_%prototype115603%_)
+                               (if (eq? _%prototype115603%_ '#!void)
+                                   ((lambda (_%descriptor115605%_
+                                             _%prototype115606%_
+                                             _%obj115607%_)
+                                      (if _%prototype115606%_
+                                          (let ((_%instance115609%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115606%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115609%_
+                                               _%obj115607%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115609%_)
+                                          '#f))
+                                    _%descriptor115541%_
+                                    '#f
+                                    _%obj115556%_)
+                                   ((lambda (_%descriptor115611%_
+                                             _%prototype115612%_
+                                             _%obj115613%_)
+                                      (if _%prototype115612%_
+                                          (let ((_%instance115615%_
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##structure-copy
+                                                    _%prototype115612%_))))
+                                            (let ()
+                                              (declare (not safe))
+                                              (##unchecked-structure-set!
+                                               _%instance115615%_
+                                               _%obj115613%_
+                                               '1
+                                               '#f
+                                               'cast))
+                                            _%instance115615%_)
+                                          '#f))
+                                    _%descriptor115541%_
+                                    _%prototype115603%_
+                                    _%obj115556%_)))
+                             _%$e115600%_)
+                            (let ((_%$e115617%_
+                                   (try-create-prototype
+                                    _%descriptor115541%_
+                                    _%klass115546%_
+                                    _%obj-klass115559%_)))
+                              (if _%$e115617%_
+                                  ((lambda (_%prototype115620%_)
+                                     ((lambda (_%descriptor115622%_
+                                               _%prototype115623%_
+                                               _%obj115624%_)
+                                        (if _%prototype115623%_
+                                            (let ((_%instance115626%_
+                                                   (let ()
+                                                     (declare (not safe))
+                                                     (##structure-copy
+                                                      _%prototype115623%_))))
+                                              (let ()
+                                                (declare (not safe))
+                                                (##unchecked-structure-set!
+                                                 _%instance115626%_
+                                                 _%obj115624%_
+                                                 '1
+                                                 '#f
+                                                 'cast))
+                                              _%instance115626%_)
+                                            '#f))
+                                      _%descriptor115541%_
+                                      _%prototype115620%_
+                                      _%obj115556%_))
+                                   _%$e115617%_)
+                                  ((lambda (_%descriptor115629%_
+                                            _%prototype115630%_
+                                            _%obj115631%_)
+                                     (if _%prototype115630%_
+                                         (let ((_%instance115633%_
+                                                (let ()
+                                                  (declare (not safe))
+                                                  (##structure-copy
+                                                   _%prototype115630%_))))
+                                           (let ()
+                                             (declare (not safe))
+                                             (##unchecked-structure-set!
+                                              _%instance115633%_
+                                              _%obj115631%_
+                                              '1
+                                              '#f
+                                              'cast))
+                                           _%instance115633%_)
+                                         '#f))
+                                   _%descriptor115541%_
+                                   '#f
+                                   _%obj115556%_))))))))))))
     (define satisfies?
-      (lambda (_%descriptor112177%_ _%obj112179%_)
-        (declare (not interrupts-enabled))
-        (let* ((_%klass112183%_
+      (lambda (_%descriptor115459%_ _%obj115461%_)
+        (let* ((_%klass115464%_
                 (let ()
                   (declare (not safe))
-                  (##unchecked-structure-ref _%descriptor112177%_ '1 '#f '#f)))
-               (_%klass-id112186%_
-                (let () (declare (not safe)) (##type-id _%klass112183%_)))
-               (_%obj-klass112189%_
-                (let () (declare (not safe)) (class-of _%obj112179%_)))
-               (_%obj-klass-id112192%_
-                (let () (declare (not safe)) (##type-id _%obj-klass112189%_))))
-          (if (let ()
-                (declare (not safe))
-                (##eq? _%klass-id112186%_ _%obj-klass-id112192%_))
-              _%obj112179%_
-              (if (interface-subclass? _%obj-klass112189%_)
-                  (satisfies?
-                   _%descriptor112177%_
-                   (let ()
-                     (declare (not safe))
-                     (##unchecked-structure-ref _%obj112179%_ '1 '#f '#f)))
-                  (let ()
-                    (let ()
-                      (declare (not interrupts-enabled))
-                      (let _%again112201%_ ()
-                        (if (let ((__tmp113047
-                                   (let ()
-                                     (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '1
-                                      '0))))
-                              (declare (not safe))
-                              (##fx= __tmp113047 '0))
-                            '#!void
-                            (begin
-                              (let () (declare (not safe)) (##thread-yield!))
-                              (_%again112201%_)))))
+                  (##unchecked-structure-ref _%descriptor115459%_ '1 '#f '#f)))
+               (_%klass-id115467%_
+                (let () (declare (not safe)) (##type-id _%klass115464%_))))
+          (let _%loop115471%_ ((_%obj115474%_ _%obj115461%_))
+            (declare (not interrupts-enabled))
+            (let* ((_%obj-klass115477%_
+                    (let () (declare (not safe)) (class-of _%obj115474%_)))
+                   (_%obj-klass-id115480%_
                     (let ()
                       (declare (not safe))
-                      (##set-car!
-                       __interface-prototypes-key
-                       _%klass-id112186%_))
-                    (let ()
-                      (declare (not safe))
-                      (##set-cdr!
-                       __interface-prototypes-key
-                       _%obj-klass-id112192%_))
-                    (let ((_%prototype112212%_
-                           (let ((_%$e112205%_
-                                  (prototype-table-ref
-                                   __interface-prototypes
-                                   __interface-prototypes-key
-                                   '#f)))
-                             (if _%$e112205%_
-                                 ((lambda (_%prototype112208%_)
+                      (##type-id _%obj-klass115477%_))))
+              (if (let ()
+                    (declare (not safe))
+                    (##eq? _%klass-id115467%_ _%obj-klass-id115480%_))
+                  ((lambda (_%obj115485%_) '#t) _%obj115474%_)
+                  (if (interface-subclass? _%obj-klass115477%_)
+                      (let* ((_%tab115488%_
+                              (class-type-interface-table _%obj-klass115477%_))
+                             (_%$e115491%_
+                              (____prototype-table-get
+                               _%tab115488%_
+                               _%descriptor115459%_)))
+                        (if _%$e115491%_
+                            ((lambda (_%prototype115494%_)
+                               (if (eq? _%prototype115494%_ '#!void)
+                                   (_%loop115471%_
                                     (let ()
                                       (declare (not safe))
-                                      (##vector-cas!
-                                       __interface-prototypes-mx
-                                       '0
-                                       '0
-                                       '1))
-                                    _%prototype112208%_)
-                                  _%$e112205%_)
-                                 (let ()
+                                      (##unchecked-structure-ref
+                                       _%obj115474%_
+                                       '1
+                                       '#f
+                                       '#f)))
+                                   ((lambda (_%descriptor115497%_
+                                             _%prototype115498%_
+                                             _%obj115499%_)
+                                      (if _%prototype115498%_ '#t '#f))
+                                    _%descriptor115459%_
+                                    _%prototype115494%_
+                                    _%obj115474%_)))
+                             _%$e115491%_)
+                            (let ((_%$e115501%_
+                                   (try-create-prototype
+                                    _%descriptor115459%_
+                                    _%klass115464%_
+                                    _%obj-klass115477%_)))
+                              (if _%$e115501%_
+                                  ((lambda (_%prototype115504%_)
+                                     ((lambda (_%descriptor115506%_
+                                               _%prototype115507%_
+                                               _%obj115508%_)
+                                        (if _%prototype115507%_ '#t '#f))
+                                      _%descriptor115459%_
+                                      _%prototype115504%_
+                                      _%obj115474%_))
+                                   _%$e115501%_)
+                                  (_%loop115471%_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-cas!
-                                      __interface-prototypes-mx
-                                      '0
-                                      '0
-                                      '1))
+                                     (##unchecked-structure-ref
+                                      _%obj115474%_
+                                      '1
+                                      '#f
+                                      '#f)))))))
+                      (let* ((_%tab115512%_
+                              (class-type-interface-table _%obj-klass115477%_))
+                             (_%$e115514%_
+                              (____prototype-table-get
+                               _%tab115512%_
+                               _%descriptor115459%_)))
+                        (if _%$e115514%_
+                            ((lambda (_%prototype115517%_)
+                               (if (eq? _%prototype115517%_ '#!void)
+                                   ((lambda (_%descriptor115519%_
+                                             _%prototype115520%_
+                                             _%obj115521%_)
+                                      (if _%prototype115520%_ '#t '#f))
+                                    _%descriptor115459%_
+                                    '#f
+                                    _%obj115474%_)
+                                   ((lambda (_%descriptor115523%_
+                                             _%prototype115524%_
+                                             _%obj115525%_)
+                                      (if _%prototype115524%_ '#t '#f))
+                                    _%descriptor115459%_
+                                    _%prototype115517%_
+                                    _%obj115474%_)))
+                             _%$e115514%_)
+                            (let ((_%$e115527%_
                                    (try-create-prototype
-                                    _%descriptor112177%_
-                                    _%klass112183%_
-                                    _%obj-klass112189%_))))))
-                      ((lambda (_%prototype112214%_ _%obj112215%_)
-                         (if _%prototype112214%_ '#t '#f))
-                       _%prototype112212%_
-                       _%obj112179%_))))))))))
+                                    _%descriptor115459%_
+                                    _%klass115464%_
+                                    _%obj-klass115477%_)))
+                              (if _%$e115527%_
+                                  ((lambda (_%prototype115530%_)
+                                     ((lambda (_%descriptor115532%_
+                                               _%prototype115533%_
+                                               _%obj115534%_)
+                                        (if _%prototype115533%_ '#t '#f))
+                                      _%descriptor115459%_
+                                      _%prototype115530%_
+                                      _%obj115474%_))
+                                   _%$e115527%_)
+                                  ((lambda (_%descriptor115537%_
+                                            _%prototype115538%_
+                                            _%obj115539%_)
+                                     (if _%prototype115538%_ '#t '#f))
+                                   _%descriptor115459%_
+                                   '#f
+                                   _%obj115474%_))))))))))))
+    (define with-prototype
+      (lambda (_%descriptor115422%_
+               _%obj115423%_
+               _%with-prototype+receiver115424%_
+               _%with-receiver115425%_)
+        (if (let ()
+              (declare (not safe))
+              (##structure-direct-instance-of?
+               _%descriptor115422%_
+               'gerbil#interface-descriptor::t))
+            (let ((_%descriptor115429%_ _%descriptor115422%_))
+              (if (procedure? _%with-prototype+receiver115424%_)
+                  (let ((_%with-prototype+receiver115439%_
+                         _%with-prototype+receiver115424%_))
+                    (if (procedure? _%with-receiver115425%_)
+                        (let ((_%with-receiver115449%_
+                               _%with-receiver115425%_))
+                          (__with-prototype
+                           _%descriptor115429%_
+                           _%obj115423%_
+                           _%with-prototype+receiver115439%_
+                           _%with-receiver115449%_))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/interface.ss\"@235.9-235.22"
+                           'contract:
+                           'procedure?
+                           'value:
+                           _%with-receiver115425%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/interface.ss\"@234.9-234.32"
+                     'contract:
+                     'procedure?
+                     'value:
+                     _%with-prototype+receiver115424%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/interface.ss\"@233.23-233.33"
+               'contract:
+               'interface-descriptor?
+               'value:
+               _%descriptor115422%_)
+              '#!void))))
+    (define __with-prototype
+      (lambda (_%descriptor115340%_
+               _%obj115341%_
+               _%with-prototype+receiver115342%_
+               _%with-receiver115343%_)
+        (let* ((_%descriptor115346%_ _%descriptor115340%_)
+               (_%with-prototype+receiver115354%_
+                _%with-prototype+receiver115342%_)
+               (_%with-receiver115362%_ _%with-receiver115343%_)
+               (_%klass115371%_
+                (let ()
+                  (declare (not safe))
+                  (##unchecked-structure-ref _%descriptor115346%_ '1 '#f '#f)))
+               (_%klass-id115374%_
+                (let () (declare (not safe)) (##type-id _%klass115371%_))))
+          (let _%loop115378%_ ((_%obj115381%_ _%obj115341%_))
+            (declare (not interrupts-enabled))
+            (let* ((_%obj-klass115384%_
+                    (let () (declare (not safe)) (class-of _%obj115381%_)))
+                   (_%obj-klass-id115387%_
+                    (let ()
+                      (declare (not safe))
+                      (##type-id _%obj-klass115384%_))))
+              (if (let ()
+                    (declare (not safe))
+                    (##eq? _%klass-id115374%_ _%obj-klass-id115387%_))
+                  (let ()
+                    (declare (not safe))
+                    (_%with-receiver115362%_ _%obj115381%_))
+                  (if (interface-subclass? _%obj-klass115384%_)
+                      (let* ((_%tab115393%_
+                              (class-type-interface-table _%obj-klass115384%_))
+                             (_%$e115396%_
+                              (____prototype-table-get
+                               _%tab115393%_
+                               _%descriptor115346%_)))
+                        (if _%$e115396%_
+                            ((lambda (_%prototype115399%_)
+                               (if (eq? _%prototype115399%_ '#!void)
+                                   (_%loop115378%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##unchecked-structure-ref
+                                       _%obj115381%_
+                                       '1
+                                       '#f
+                                       '#f)))
+                                   (let ()
+                                     (declare (not safe))
+                                     (_%with-prototype+receiver115354%_
+                                      _%descriptor115346%_
+                                      _%prototype115399%_
+                                      _%obj115381%_))))
+                             _%$e115396%_)
+                            (let ((_%$e115402%_
+                                   (try-create-prototype
+                                    _%descriptor115346%_
+                                    _%klass115371%_
+                                    _%obj-klass115384%_)))
+                              (if _%$e115402%_
+                                  ((lambda (_%prototype115405%_)
+                                     (let ()
+                                       (declare (not safe))
+                                       (_%with-prototype+receiver115354%_
+                                        _%descriptor115346%_
+                                        _%prototype115405%_
+                                        _%obj115381%_)))
+                                   _%$e115402%_)
+                                  (_%loop115378%_
+                                   (let ()
+                                     (declare (not safe))
+                                     (##unchecked-structure-ref
+                                      _%obj115381%_
+                                      '1
+                                      '#f
+                                      '#f)))))))
+                      (let* ((_%tab115409%_
+                              (class-type-interface-table _%obj-klass115384%_))
+                             (_%$e115411%_
+                              (____prototype-table-get
+                               _%tab115409%_
+                               _%descriptor115346%_)))
+                        (if _%$e115411%_
+                            ((lambda (_%prototype115414%_)
+                               (if (eq? _%prototype115414%_ '#!void)
+                                   (let ()
+                                     (declare (not safe))
+                                     (_%with-prototype+receiver115354%_
+                                      _%descriptor115346%_
+                                      '#f
+                                      _%obj115381%_))
+                                   (let ()
+                                     (declare (not safe))
+                                     (_%with-prototype+receiver115354%_
+                                      _%descriptor115346%_
+                                      _%prototype115414%_
+                                      _%obj115381%_))))
+                             _%$e115411%_)
+                            (let ((_%$e115416%_
+                                   (create-prototype
+                                    _%descriptor115346%_
+                                    _%klass115371%_
+                                    _%obj-klass115384%_)))
+                              (if _%$e115416%_
+                                  ((lambda (_%prototype115419%_)
+                                     (let ()
+                                       (declare (not safe))
+                                       (_%with-prototype+receiver115354%_
+                                        _%descriptor115346%_
+                                        _%prototype115419%_
+                                        _%obj115381%_)))
+                                   _%$e115416%_)
+                                  (let ()
+                                    (declare (not safe))
+                                    (_%with-prototype+receiver115354%_
+                                     _%descriptor115346%_
+                                     '#f
+                                     _%obj115381%_)))))))))))))))

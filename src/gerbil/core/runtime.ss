@@ -1477,6 +1477,7 @@ package: gerbil/core
     fx1-
     fxshift
     fx/
+    fx%
     fx>=0?
     fx>0?
     fx=0?
@@ -1539,11 +1540,13 @@ package: gerbil/core
     gerbil-home
     gerbil-path
     gerbil-runtime-smp?
+    __DEBUG
 
     ;; :gerbil/runtime/c3
     c4-linearize
 
     ;; :gerbil/runtime/mop
+    class-type
     class-type?
     class-type=?
     class-type-final?
@@ -1589,7 +1592,7 @@ package: gerbil/core
     class-instance?
     make-object
     object?
-    object-type
+    object-class
     object-fill!
     new-instance
     make-instance
@@ -1622,15 +1625,24 @@ package: gerbil/core
     object::t
 
     ;; :gerbil/runtime/mop-system-classes
+    builtin::t
+    subtyped::t
+    structure::t
     immediate::t
+    special::t
     atom::t
     char::t
     boolean::t
     true::t
     false::t
-    void::t
     eof::t
-    special::t
+    void::t
+    unbound::t
+    unbound2::t
+    dssl-token::t
+    optional::t
+    key::t
+    rest::t
     number::t
     real::t
     integer::t
@@ -1638,6 +1650,8 @@ package: gerbil/core
     bignum::t
     ratnum::t
     flonum::t
+    stflonum::t
+    haflonum::t
     cpxnum::t
     symbolic::t
     symbol::t
@@ -1697,6 +1711,10 @@ package: gerbil/core
     address-info::t
 
     special?
+    dssl-token?
+    dssl-optional?
+    dssl-rest?
+    dssl-key?
     sequence?
     hvector?
     weak?
@@ -1744,7 +1762,6 @@ package: gerbil/core
     interface-descriptor-methods
     cast try-cast satisfies?
     interface-cast-error?
-
 
     ;; :gerbil/runtime/hash
     raise-unbound-key-error

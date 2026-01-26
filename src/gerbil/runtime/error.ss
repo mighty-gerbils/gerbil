@@ -13,7 +13,8 @@ namespace: #f
 (defclass Exception ())
 
 ;; Mixin for getting stack traces
-(defclass StackTrace (continuation))
+(defclass StackTrace (continuation)
+  transparent: #t)
 
 ;; Error base class
 (defclass (Error StackTrace Exception) (message irritants where)
@@ -154,7 +155,7 @@ namespace: #f
         (cond
          (self.where => display)
          (else (display "?")))
-        (display* " [" (##type-name (object-type self)) "]: ")
+        (display* " [" (##type-name (object-class self)) "]: ")
         (displayln self.message)
         (let (irritants self.irritants)
           (unless (null? irritants)

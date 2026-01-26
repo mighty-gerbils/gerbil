@@ -1059,20 +1059,16 @@ namespace: gxc
      stx))
 
   (def (opt-lambda-dispatch-name id)
-    (if (uninterned-symbol? id)
-      (let (str (symbol->string id))
-        (if (string-prefix? "opt-lambda" str)
-          "%"
-          id))
-      id))
+    (let (str (symbol->string id))
+      (if (string-prefix? "opt-lambda" str)
+        "%"
+        id)))
 
   (def (kw-lambda-dispatch-name id name)
-    (if (uninterned-symbol? id)
-      (let (str (symbol->string id))
-        (if (string-prefix? "kw-lambda" str)
-          name
-          id))
-      id))
+    (let (str (symbol->string id))
+      (if (string-prefix? "kw-lambda" str)
+        name
+        id)))
 
   (ast-case stx ()
     ((_ (id) expr)

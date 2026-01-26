@@ -5,32 +5,32 @@ package: gerbil/core
   (declare-class
    gerbil/core/contract~InterfaceInfo#interface-info::t
    (@class gerbil/core/contract~InterfaceInfo#interface-info::t
-           ()
-           (object::t t::t)
-           (name namespace
-                 interface-mixin
-                 interface-methods
-                 interface-precedence-list
-                 interface-descriptor
-                 instance-type
-                 instance-constructor
-                 instance-try-constructor
-                 instance-predicate
-                 instance-satisfies-predicate
-                 implementation-methods
-                 unchecked-implementation-methods)
-           (name namespace
-                 interface-mixin
-                 interface-methods
-                 interface-precedence-list
-                 interface-descriptor
-                 instance-type
-                 instance-constructor
-                 instance-try-constructor
-                 instance-predicate
-                 instance-satisfies-predicate
-                 implementation-methods
-                 unchecked-implementation-methods)
+           (gerbil/core/mop~MOP-2#runtime-type-info::t)
+           (gerbil/core/mop~MOP-2#runtime-type-info::t object::t t::t)
+           (namespace
+            interface-mixin
+            interface-methods
+            interface-precedence-list
+            interface-descriptor
+            instance-constructor
+            instance-try-constructor
+            instance-predicate
+            instance-satisfies-predicate
+            implementation-methods
+            unchecked-implementation-methods)
+           (id name
+               type-descriptor
+               namespace
+               interface-mixin
+               interface-methods
+               interface-precedence-list
+               interface-descriptor
+               instance-constructor
+               instance-try-constructor
+               instance-predicate
+               instance-satisfies-predicate
+               implementation-methods
+               unchecked-implementation-methods)
            #f
            #f
            #f
@@ -50,9 +50,6 @@ package: gerbil/core
   (declare-type
    gerbil/core/contract~InterfaceInfo#make-interface-info
    (@constructor gerbil/core/contract~InterfaceInfo#interface-info::t))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-name
-   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-namespace
    (@accessor
@@ -82,12 +79,6 @@ package: gerbil/core
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
-    #t))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-instance-type
-   (@accessor
-    gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor
@@ -126,8 +117,17 @@ package: gerbil/core
     unchecked-implementation-methods
     #t))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-name-set!
-   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
+   gerbil/core/contract~InterfaceInfo#interface-info-id
+   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t id #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-name
+   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-type-descriptor
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    type-descriptor
+    #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-namespace-set!
    (@mutator
@@ -157,12 +157,6 @@ package: gerbil/core
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
-    #t))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#interface-info-instance-type-set!
-   (@mutator
-    gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-instance-constructor-set!
@@ -201,8 +195,17 @@ package: gerbil/core
     unchecked-implementation-methods
     #t))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-name
-   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
+   gerbil/core/contract~InterfaceInfo#interface-info-id-set!
+   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t id #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-name-set!
+   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-type-descriptor-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    type-descriptor
+    #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-namespace
    (@accessor
@@ -232,12 +235,6 @@ package: gerbil/core
    (@accessor
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
-    #f))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type
-   (@accessor
-    gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor
@@ -276,8 +273,17 @@ package: gerbil/core
     unchecked-implementation-methods
     #f))
   (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-name-set!
-   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
+   gerbil/core/contract~InterfaceInfo#&interface-info-id
+   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t id #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-name
+   (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-type-descriptor
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    type-descriptor
+    #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-namespace-set!
    (@mutator
@@ -307,12 +313,6 @@ package: gerbil/core
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     interface-descriptor
-    #f))
-  (declare-type
-   gerbil/core/contract~InterfaceInfo#&interface-info-instance-type-set!
-   (@mutator
-    gerbil/core/contract~InterfaceInfo#interface-info::t
-    instance-type
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-instance-constructor-set!
@@ -349,6 +349,18 @@ package: gerbil/core
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     unchecked-implementation-methods
+    #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-id-set!
+   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t id #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-name-set!
+   (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t name #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-type-descriptor-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    type-descriptor
     #f))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info::apply-macro-expander

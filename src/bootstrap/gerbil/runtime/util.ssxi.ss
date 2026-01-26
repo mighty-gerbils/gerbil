@@ -2057,6 +2057,21 @@ package: gerbil/runtime
              origin:
              builtin)))
   (declare-type
+   fx%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             fixnum::t
+             effect:
+             (pure)
+             arguments:
+             (fixnum::t fixnum::t)
+             unchecked:
+             ##fxremainder
+             origin:
+             builtin)))
+  (declare-type
    fx>=0?
    (@lambda 1
             #f
