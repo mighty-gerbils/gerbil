@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; tool to run tests without the need of glue code
 (import :gerbil/expander
-        :gerbil/gambit
         :std/cli/getopt
         :std/format
         :std/misc/ports

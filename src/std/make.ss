@@ -5,16 +5,13 @@
 
 (import :gerbil/compiler
         :gerbil/expander
-        ./sync/completion
-        ./sync/channel
-        ./sync/barrier
-        ./list
-
-        ;; TODO
-        ./misc/path
-        ./iter
+        :std/sync/completion
+        :std/sync/channel
+        :std/sync/barrier
+        :std/list/list
+        :std/string/path
+        :std/iter
         )
-
 (export make
         make-clean
         shell-config
@@ -56,10 +53,9 @@ TODO:
 (def __output-mx (make-mutex))
 
 (def (message . lst)
-  (with-lock __output-mx
-    (lambda ()
-      (apply displayln lst)
-      (force-outputs))))
+  (do-with-lock __output-mx
+    (apply displayln lst)
+    (force-outputs)))
 
 (def (prefix/ prefix path)
   (if prefix

@@ -19,6 +19,8 @@
     "list/alist"
     "list/walist"
 
+    "string/path"
+
     "struct/queue"
 
     "sync/completion"
@@ -90,6 +92,7 @@
     "log/rotate"
     "log/compress"
 
+    "cli/getop"
     ))
 
 #;(def (build-spec . _)
