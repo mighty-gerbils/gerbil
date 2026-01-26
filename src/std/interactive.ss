@@ -6,8 +6,7 @@
 
 (module Util
   (import :gerbil/core/expander
-          :gerbil/runtime/loader
-          :std/sort)
+          :gerbil/runtime/loader)
   (export #t)
   ;; Module reloading
   (def (do-reload-module! mod)
@@ -43,8 +42,9 @@
              (map (lambda (modpath) (cons modpath (module-load-order modpath)))
                   to-reload)))
            (to-reload
-            (sort to-reload
-                  (lambda (x y) (< (hash-ref load-order x) (hash-ref load-order y))))))
+            (list-sort
+             (lambda (x y) (< (hash-ref load-order x) (hash-ref load-order y)))
+             to-reload)))
       (for-each reload-module! to-reload))))
 (import (for-syntax Util))
 
