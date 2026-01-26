@@ -85,8 +85,6 @@
     "gerbil/runtime/loader"
     "gerbil/runtime/init"
     "gerbil/runtime"
-    ;; :gerbil/gambit
-    "gerbil/gambit"
     ;; :gerbil/expander
     "gerbil/expander/common"
     "gerbil/expander/stx"

@@ -8,6 +8,14 @@ namespace: #f
           :gerbil/runtime/error
           :gerbil/runtime/hash)
          (%#export #t)
+         (%#define-runtime __system_thread-group __system_thread-group)
+         (%#define-runtime system-thread-group system-thread-group)
+         (%#define-runtime make-system-thread make-system-thread)
+         (%#define-runtime __make-system-thread __make-system-thread)
+         (%#define-runtime system-thread! system-thread!)
+         (%#define-runtime __system-thread! __system-thread!)
+         (%#define-runtime system-actor! system-actor!)
+         (%#define-runtime __system-actor! __system-actor!)
          (%#define-runtime spawn spawn)
          (%#define-runtime __spawn __spawn)
          (%#define-runtime spawn/name spawn/name)
@@ -19,6 +27,7 @@ namespace: #f
                   (%#begin (%#define-runtime spawn-thread__0 spawn-thread__0)
                            (%#define-runtime spawn-thread__1 spawn-thread__1)
                            (%#define-runtime spawn-thread spawn-thread)))
+         (%#define-runtime thread-main thread-main)
          (%#begin (%#define-runtime thread-local-ref__% thread-local-ref__%)
                   (%#begin (%#define-runtime
                             thread-local-ref__0
@@ -80,6 +89,8 @@ namespace: #f
          (%#extern
           (actor-thread? actor-thread?)
           (construct-actor-thread construct-actor-thread)
+          (actor-thread-state actor-thread-state)
+          (actor-thread-state-set! actor-thread-state-set!)
           (actor-thread-locals actor-thread-locals)
           (actor-thread-locals-set! actor-thread-locals-set!)
           (actor-thread-nonce actor-thread-nonce)

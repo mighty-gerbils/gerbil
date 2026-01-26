@@ -8,6 +8,22 @@ namespace: #f
 (import "gambit" "util" "error" "hash")
 (export #t)
 
+;; the system thread group
+(def __system_thread-group
+   (make-thread-group 'system))
+
+(def (system-thread-group) => :thread-group
+  __system_thread-group)
+
+(def (make-system-thread (thunk : :procedure) (name : :symbol)) => :thread
+  (make-thread (cut thread-main thunk) name (system-thread-group)))
+
+(def (system-thread! (thunk : :procedure) (name : :symbol)) => :thread
+  (thread-start! (make-system-thread thunk name)))
+
+(def (system-actor! (thunk : :procedure) (name : :symbol)) => :thread
+  (spawn-actor thunk [] name (system-thread-group)))
+
 ;; spawn an actor thread apply f to args
 (def (spawn (f : :procedure) . args)
   => :thread
@@ -26,41 +42,40 @@ namespace: #f
 
 (def (spawn-actor f args name tgroup)
   => :thread
-  (def (thread-main thunk)
-    ;; install an abortive handler to force stack unwinding
-    ;; this ensures that unwind-protect finalizers are invoked if
-    ;; the actor exits with an unhandled exception.
-    ;; debugging: when the unhandled-actor-exception-hook is set, then
-    ;; it is invoked with the continuation and exception before unwinding
-    ;; the stack.
-    ;; in particular, set the hook to dump-stack-trace! to dump the
-    ;; continuation backtrace together with the exception to ##stderr-port
-    (lambda ()
-      (with-exception-handler
-       (lambda (exn)
-         (##continuation-capture
-          (lambda (cont)
-            (when unhandled-actor-exception-hook
-              (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
-            ;; unwind stack and continue with the primordial exception handler
-            ;; see discussion in gambit#295 about ##continuation-last
-            (##continuation-graft
-             (##continuation-last cont)
-             ##primordial-exception-handler
-             exn))))
-       thunk)))
-
   (let* ((thunk (if (null? args) f (cut apply f args)))
          (thunk (cut with-exception-stack-trace thunk))
          (tgroup (or tgroup (current-thread-group))))
     (thread-start!
      (thread-init!
-      (construct-actor-thread #f 0)
-      (thread-main thunk) name tgroup))))
+      (construct-actor-thread #f #f 0)
+      (cut thread-main thunk) name tgroup))))
 
 (def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
   (thread-start!
-   (make-thread thunk name tgroup)))
+   (make-thread (cut thread-main thunk) name tgroup)))
+
+(def (thread-main thunk)
+  ;; install an abortive handler to force stack unwinding
+  ;; this ensures that unwind-protect finalizers are invoked if
+  ;; the actor exits with an unhandled exception.
+  ;; debugging: when the unhandled-actor-exception-hook is set, then
+  ;; it is invoked with the continuation and exception before unwinding
+  ;; the stack.
+  ;; in particular, set the hook to dump-stack-trace! to dump the
+  ;; continuation backtrace together with the exception to ##stderr-port
+  (with-exception-handler
+   (lambda (exn)
+     (##continuation-capture
+      (lambda (cont)
+        (when (procedure? __unhandled-actor-exception-hook)
+          (with-catch void (cut __unhandled-actor-exception-hook cont exn)))
+        ;; unwind stack and continue with the primordial exception handler
+        ;; see discussion in gambit#295 about ##continuation-last
+        (##continuation-graft
+         (##continuation-last cont)
+         ##primordial-exception-handler
+         exn))))
+   thunk))
 
 ;;; thread locals
 (def (thread-local-ref key (default absent-obj))
@@ -170,11 +185,13 @@ namespace: #f
 ;; actor thread type
 (extern
   actor-thread? construct-actor-thread
+  actor-thread-state actor-thread-state-set!
   actor-thread-locals actor-thread-locals-set!
   actor-thread-nonce actor-thread-nonce-set!)
 (begin-foreign
   (define-type-of-thread actor-thread
     constructor: construct-actor-thread
     id: gerbil#actor::t
+    state
     locals
     nonce))

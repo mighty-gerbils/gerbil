@@ -110,6 +110,7 @@ namespace: gerbil/core/expander
                     (core-identifier-key gx#core-identifier-key)
                     (core-apply-expander gx#core-apply-expander)
                     (syntax-local-introduce gx#syntax-local-introduce)
+                    (syntax-local-temp gx#syntax-local-temp)
                     (syntax-local-rewrap gx#syntax-local-rewrap)
                     (syntax-local-unwrap gx#syntax-local-unwrap)
                     (syntax-local-e gx#syntax-local-e)

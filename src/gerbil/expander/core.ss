@@ -393,7 +393,7 @@ namespace: gx
 
 (defmethod {apply-macro-expander expander}
   (lambda (self stx)
-    (raise-syntax-error #f "Bad syntax; bottom method for apply-macro-expander" stx)))
+    (raise-syntax-error #f "Bad syntax; no applicable expander" stx)))
 
 (defmethod {apply-macro-expander macro-expander}
   (lambda (self stx)
@@ -783,6 +783,10 @@ namespace: gx
     ([hd . _]
      (stx-apply-mark stx hd))
     (else stx)))
+(def (syntax-local-temp sym)
+  (syntax-local-introduce
+   (make-symbol
+    (gensym sym))))
 
 (def (syntax-local-e stx (E raise-syntax-ref-error))
   (let (bind (resolve-identifier stx))

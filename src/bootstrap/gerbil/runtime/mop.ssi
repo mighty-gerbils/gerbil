@@ -17,9 +17,12 @@ namespace: #f
          (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
          (%#define-runtime class-type-flag-metaclass class-type-flag-metaclass)
          (%#define-runtime class-type-flag-system class-type-flag-system)
+         (%#define-runtime class-type-flag-acyclic class-type-flag-acyclic)
          (%#define-runtime t::t t::t)
          (%#define-runtime class::t class::t)
          (%#define-runtime object::t object::t)
+         (%#define-runtime class-type class-type)
+         (%#define-runtime __class-type __class-type)
          (%#define-runtime class-type? class-type?)
          (%#define-runtime class-type=? class-type=?)
          (%#define-runtime __class-type=? __class-type=?)
@@ -30,6 +33,8 @@ namespace: #f
          (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
          (%#define-runtime type-opaque? type-opaque?)
          (%#define-runtime __type-opaque? __type-opaque?)
+         (%#define-runtime class-type-opaque? class-type-opaque?)
+         (%#define-runtime __class-type-opaque? __class-type-opaque?)
          (%#define-runtime type-extensible? type-extensible?)
          (%#define-runtime __type-extensible? __type-extensible?)
          (%#define-runtime class-type-final? class-type-final?)
@@ -42,6 +47,8 @@ namespace: #f
          (%#define-runtime __class-type-metaclass? __class-type-metaclass?)
          (%#define-runtime class-type-system? class-type-system?)
          (%#define-runtime __class-type-system? __class-type-system?)
+         (%#define-runtime class-type-acyclic? class-type-acyclic?)
+         (%#define-runtime __class-type-acyclic? __class-type-acyclic?)
          (%#define-runtime
           make-class-type-descriptor
           make-class-type-descriptor)
@@ -115,12 +122,32 @@ namespace: #f
          (%#define-runtime &class-type-methods &class-type-methods)
          (%#define-runtime class-type-methods-set! class-type-methods-set!)
          (%#define-runtime &class-type-methods-set! &class-type-methods-set!)
+         (%#define-runtime class-type-specializer class-type-specializer)
+         (%#define-runtime &class-type-specializer &class-type-specializer)
+         (%#define-runtime
+          class-type-specializer-set!
+          class-type-specializer-set!)
+         (%#define-runtime
+          &class-type-specializer-set!
+          &class-type-specializer-set!)
+         (%#define-runtime class-type-interface class-type-interface)
+         (%#define-runtime &class-type-interface &class-type-interface)
+         (%#define-runtime class-type-interface-set! class-type-interface-set!)
+         (%#define-runtime
+          &class-type-interface-set!
+          &class-type-interface-set!)
          (%#define-runtime class-type-slot-list class-type-slot-list)
          (%#define-runtime __class-type-slot-list __class-type-slot-list)
          (%#define-runtime class-type-field-count class-type-field-count)
          (%#define-runtime __class-type-field-count __class-type-field-count)
          (%#define-runtime class-type-seal! class-type-seal!)
          (%#define-runtime __class-type-seal! __class-type-seal!)
+         (%#define-runtime
+          class-type-printable-slots
+          class-type-printable-slots)
+         (%#define-runtime
+          __class-type-printable-slots
+          __class-type-printable-slots)
          (%#define-runtime substruct? substruct?)
          (%#define-runtime __substruct? __substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
@@ -215,7 +242,6 @@ namespace: #f
          (%#define-runtime subclass? subclass?)
          (%#define-runtime __subclass? __subclass?)
          (%#define-runtime object? object?)
-         (%#define-runtime object-type object-type)
          (%#define-runtime direct-instance? direct-instance?)
          (%#define-runtime __direct-instance? __direct-instance?)
          (%#define-runtime immediate-instance-of? immediate-instance-of?)
@@ -225,6 +251,8 @@ namespace: #f
          (%#define-runtime __class-instance? __class-instance?)
          (%#define-runtime make-object make-object)
          (%#define-runtime __make-object __make-object)
+         (%#define-runtime object-class object-class)
+         (%#define-runtime __object-class __object-class)
          (%#define-runtime object-fill! object-fill!)
          (%#define-runtime __object-fill! __object-fill!)
          (%#define-runtime new-instance new-instance)
@@ -289,72 +317,55 @@ namespace: #f
                            (%#define-runtime
                             make-method-specializer-table
                             make-method-specializer-table)))
+         (%#begin (%#define-runtime
+                   make-method-specializer-table/lock__%
+                   make-method-specializer-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-method-specializer-table/lock__0
+                            make-method-specializer-table/lock__0)
+                           (%#define-runtime
+                            make-method-specializer-table/lock__1
+                            make-method-specializer-table/lock__1)
+                           (%#define-runtime
+                            make-method-specializer-table/lock
+                            make-method-specializer-table/lock)))
          (%#define-runtime
           method-specializer-table-ref
           method-specializer-table-ref)
          (%#define-runtime
-          method-specializer-table-set!
-          method-specializer-table-set!)
+          method-specializer-table-ref/lock
+          method-specializer-table-ref/lock)
          (%#define-runtime
           __method-specializer-table-set!
           __method-specializer-table-set!)
          (%#define-runtime
-          method-specializer-table-update!
-          method-specializer-table-update!)
+          method-specializer-table-set!
+          method-specializer-table-set!)
+         (%#define-runtime
+          method-specializer-table-set!/lock
+          method-specializer-table-set!/lock)
          (%#define-runtime
           __method-specializer-table-update!
           __method-specializer-table-update!)
          (%#define-runtime
+          method-specializer-table-update!
+          method-specializer-table-update!)
+         (%#define-runtime
+          method-specializer-table-update!/lock
+          method-specializer-table-update!/lock)
+         (%#define-runtime
           method-specializer-table-delete!
           method-specializer-table-delete!)
+         (%#define-runtime
+          method-specializer-table-delete!/lock
+          method-specializer-table-delete!/lock)
          (%#define-runtime __method-specializers __method-specializers)
-         (%#define-runtime __method-specializers-mx __method-specializers-mx)
          (%#define-runtime bind-specializer! bind-specializer!)
          (%#define-runtime
           __lookup-method-specializer
           __lookup-method-specializer)
-         (%#define-runtime
-          __class-specializer-hash-key
-          __class-specializer-hash-key)
-         (%#begin (%#define-runtime
-                   make-class-specializer-table__%
-                   make-class-specializer-table__%)
-                  (%#begin (%#define-runtime
-                            make-class-specializer-table__0
-                            make-class-specializer-table__0)
-                           (%#define-runtime
-                            make-class-specializer-table__1
-                            make-class-specializer-table__1)
-                           (%#define-runtime
-                            make-class-specializer-table
-                            make-class-specializer-table)))
-         (%#define-runtime
-          class-specializer-table-ref
-          class-specializer-table-ref)
-         (%#define-runtime
-          class-specializer-table-set!
-          class-specializer-table-set!)
-         (%#define-runtime
-          __class-specializer-table-set!
-          __class-specializer-table-set!)
-         (%#define-runtime
-          class-specializer-table-update!
-          class-specializer-table-update!)
-         (%#define-runtime
-          __class-specializer-table-update!
-          __class-specializer-table-update!)
-         (%#define-runtime
-          class-specializer-table-delete!
-          class-specializer-table-delete!)
-         (%#define-runtime __class-specializers-mx __class-specializers-mx)
-         (%#define-runtime __class-specializers __class-specializers)
-         (%#define-runtime __class-specializers-key __class-specializers-key)
          (%#define-runtime specialize-class specialize-class)
          (%#define-runtime __specialize-class __specialize-class)
-         (%#define-runtime
-          __lookup-class-specializer
-          __lookup-class-specializer)
-         (%#define-runtime __bind-class-specializer! __bind-class-specializer!)
          (%#define-runtime __specialize-method __specialize-method)
          (%#define-runtime ___specialize-class ___specialize-class)
          (%#define-runtime seal-class! seal-class!)
@@ -363,11 +374,13 @@ namespace: #f
          (%#define-runtime __next-method __next-method)
          (%#define-runtime call-next-method call-next-method)
          (%#define-runtime __call-next-method __call-next-method)
-         (%#define-runtime write-style write-style)
-         (%#define-runtime write-object write-object)
          (%#define-runtime __shadow-classes __shadow-classes)
-         (%#define-runtime __shadow-classes-mx __shadow-classes-mx)
-         (%#define-runtime __shadow-class __shadow-class)
+         (%#define-runtime __shadow-classes-lock __shadow-classes-lock)
+         (%#begin (%#define-runtime __shadow-class__% __shadow-class__%)
+                  (%#begin (%#define-runtime
+                            __shadow-class__0
+                            __shadow-class__0)
+                           (%#define-runtime __shadow-class __shadow-class)))
          (%#define-runtime __type __type)
          (%#define-runtime __class __class)
          (%#define-runtime type-of type-of)

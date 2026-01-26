@@ -96,6 +96,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   &raw-table-lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    &raw-table-table-set!
    (@lambda 2
             #f
@@ -186,6 +201,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   &raw-table-lock-set!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    raw-table-size-hint->size
    (@lambda 1
             #f
@@ -202,7 +232,7 @@ package: gerbil/runtime
              gerbil/runtime/table)))
   (declare-type
    make-raw-table__%
-   (@lambda 4
+   (@lambda 5
             #f
             signature:
             (return:
@@ -218,6 +248,21 @@ package: gerbil/runtime
   (declare-type
    make-raw-table__0
    (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-raw-table__1
+   (@lambda 4
             #f
             signature:
             (return:
@@ -247,6 +292,19 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))
     (4
+     make-raw-table__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (5
      make-raw-table__%
      signature:
      (return:
@@ -260,7 +318,97 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-raw-table/lock__%
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-raw-table/lock__0
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-raw-table/lock
+   (@case-lambda
+    (3
+     make-raw-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (4
+     make-raw-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type raw-table-length (@lambda 1 &raw-table-count))
+  (declare-type
+   raw-table-length/lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    raw-table-ref
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   raw-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -290,7 +438,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   raw-table-set!/lock
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    raw-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   raw-table-update!/lock
    (@lambda 4
             #f
             signature:
@@ -320,7 +498,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   raw-table-delete!/lock
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    raw-table-for-each
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   raw-table-for-each/lock
    (@lambda 2
             #f
             signature:
@@ -350,7 +558,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   raw-table-copy/lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    raw-table-clear!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   raw-table-clear!/lock
    (@lambda 1
             #f
             signature:
@@ -589,6 +827,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-eq-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eq-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eq-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eq-table/lock
+   (@case-lambda
+    (0
+     make-eq-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (1
+     make-eq-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-eq-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
    eq-table-ref
    (@lambda 3
             #f
@@ -604,7 +929,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   eq-table-set!
+   eq-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -634,8 +959,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   eq-table-update!
-   (@lambda 4
+   eq-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eq-table-set!/lock
+   (@lambda 3
             #f
             signature:
             (return:
@@ -664,7 +1004,52 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   eq-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eq-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    eq-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eq-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -766,6 +1151,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-eqv-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eqv-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eqv-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-eqv-table/lock
+   (@case-lambda
+    (0
+     make-eqv-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (1
+     make-eqv-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-eqv-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
    eqv-table-ref
    (@lambda 3
             #f
@@ -781,7 +1253,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   eqv-table-set!
+   eqv-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -811,8 +1283,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   eqv-table-update!
-   (@lambda 4
+   eqv-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eqv-table-set!/lock
+   (@lambda 3
             #f
             signature:
             (return:
@@ -841,7 +1328,52 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   eqv-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eqv-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    eqv-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   eqv-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -943,6 +1475,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-symbolic-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-symbolic-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-symbolic-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-symbolic-table/lock
+   (@case-lambda
+    (0
+     make-symbolic-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (1
+     make-symbolic-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-symbolic-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
    symbolic-table-ref
    (@lambda 3
             #f
@@ -958,7 +1577,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   symbolic-table-set!
+   symbolic-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -988,8 +1607,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   symbolic-table-update!
-   (@lambda 4
+   symbolic-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   symbolic-table-set!/lock
+   (@lambda 3
             #f
             signature:
             (return:
@@ -1018,7 +1652,52 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   symbolic-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   symbolic-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    symbolic-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   symbolic-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -1120,6 +1799,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-string-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-string-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-string-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-string-table/lock
+   (@case-lambda
+    (0
+     make-string-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (1
+     make-string-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-string-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
    string-table-ref
    (@lambda 3
             #f
@@ -1135,7 +1901,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   string-table-set!
+   string-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -1165,8 +1931,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   string-table-update!
-   (@lambda 4
+   string-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   string-table-set!/lock
+   (@lambda 3
             #f
             signature:
             (return:
@@ -1195,7 +1976,52 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   string-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   string-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    string-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   string-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -1297,6 +2123,93 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))))
   (declare-type
+   make-immediate-table/lock__%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-immediate-table/lock__0
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-immediate-table/lock__1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-immediate-table/lock
+   (@case-lambda
+    (0
+     make-immediate-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (1
+     make-immediate-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-immediate-table/lock__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
    immediate-table-ref
    (@lambda 3
             #f
@@ -1312,7 +2225,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   immediate-table-set!
+   immediate-table-ref/lock
    (@lambda 3
             #f
             signature:
@@ -1342,8 +2255,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
-   immediate-table-update!
-   (@lambda 4
+   immediate-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   immediate-table-set!/lock
+   (@lambda 3
             #f
             signature:
             (return:
@@ -1372,7 +2300,52 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   immediate-table-update!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   immediate-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    immediate-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   immediate-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -1423,6 +2396,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   &gc-table-lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    &gc-table-gcht-set!
    (@lambda 2
             #f
@@ -1453,8 +2441,23 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   &gc-table-lock-set!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    make-gc-table__%
-   (@lambda 3
+   (@lambda 4
             #f
             signature:
             (return:
@@ -1498,6 +2501,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   make-gc-table__2
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    make-gc-table
    (@case-lambda
     (1
@@ -1527,7 +2545,107 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/table))
     (3
+     make-gc-table__2
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (4
      make-gc-table__%
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))))
+  (declare-type
+   make-gc-table/lock__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-gc-table/lock__0
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-gc-table/lock__1
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   make-gc-table/lock
+   (@case-lambda
+    (1
+     make-gc-table/lock__0
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (2
+     make-gc-table/lock__1
+     signature:
+     (return:
+      t::t
+      effect:
+      #f
+      arguments:
+      #f
+      unchecked:
+      #f
+      origin:
+      gerbil/runtime/table))
+    (3
+     make-gc-table/lock__%
      signature:
      (return:
       t::t
@@ -1615,7 +2733,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   gc-table-ref/lock
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    gc-table-set!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   gc-table-set/lock!
    (@lambda 3
             #f
             signature:
@@ -1645,7 +2793,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   gc-table-update!/lock
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    gc-table-delete!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   gc-table-delete!/lock
    (@lambda 2
             #f
             signature:
@@ -1675,7 +2853,37 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   gc-table-for-each/lock
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    gc-table-copy
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   gc-table-copy/lock
    (@lambda 1
             #f
             signature:
@@ -1705,6 +2913,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/table)))
   (declare-type
+   gc-table-clear!/lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    gc-table-length
    (@lambda 1
             #f
@@ -1719,6 +2942,24 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/table)))
+  (declare-type
+   gc-table-length/lock
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             fixnum::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
+   __object-eq-hash-lock
+   (optimizer-resolve-class '(typedecl __object-eq-hash-lock) 'vector::t))
   (declare-type
    __object-eq-hash-next
    (optimizer-resolve-class '(typedecl __object-eq-hash-next) 't::t))

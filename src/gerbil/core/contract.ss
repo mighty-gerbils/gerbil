@@ -29,19 +29,19 @@ package: gerbil/core
 
 (module InterfaceInfo
   (import "expander"
-          (only-in "mop" @method))
+          "mop"
+          MOP-2 MOP-3)
   (export #t)
-  (defclass interface-info (name
-                            namespace
-                            interface-mixin
-                            interface-methods
-                            interface-precedence-list
-                            interface-descriptor
-                            instance-type
-                            instance-constructor instance-try-constructor
-                            instance-predicate instance-satisfies-predicate
-                            implementation-methods
-                            unchecked-implementation-methods))
+  (defclass (interface-info runtime-type-info)
+    (namespace
+     interface-mixin
+     interface-methods
+     interface-precedence-list
+     interface-descriptor
+     instance-constructor instance-try-constructor
+     instance-predicate instance-satisfies-predicate
+     implementation-methods
+     unchecked-implementation-methods))
 
   (defmethod {apply-macro-expander interface-info}
     (with-syntax ((cast (quote-syntax cast))
@@ -49,11 +49,10 @@ package: gerbil/core
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
-           (with-syntax ((klass (interface-info-instance-type self))
-                         (descriptor (interface-info-interface-descriptor self))
-                         (instance-type (interface-info-instance-type self)))
+           (with-syntax ((klass (!runtime-type-descriptor self))
+                         (descriptor (interface-info-interface-descriptor self)))
              #'(let ($obj obj)
-                 (begin-annotation (@type instance-type)
+                 (begin-annotation (@type klass)
                    (if (immediate-instance-of? klass $obj)
                      $obj
                      (cast descriptor $obj))))))
@@ -128,7 +127,7 @@ package: gerbil/core
          ((class-type-info? t)
           (!class-type-descriptor t))
          ((interface-info? t)
-          (interface-info-instance-type t))
+          (!runtime-type-descriptor t))
          (else
           (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
 
@@ -162,7 +161,7 @@ package: gerbil/core
                      val
                      (error "bad cast" klass val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (cast-it expr))))
@@ -189,14 +188,13 @@ package: gerbil/core
                        val
                        (contract-violation! "bad cast" expr predicate val)))))))
           ((interface-info? meta)
-           (with-syntax ((klass (interface-info-instance-type meta))
+           (with-syntax ((klass (!runtime-type-descriptor meta))
                          (cast-it (resolve-type->identifier stx #'type)))
              #'(begin-annotation (@type klass)
                  (let (val expr)
                    (and val (cast-it val))))))
           (else
            (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
-
 
   ;; type assertion (unchecked cast)
   (defsyntax (:- stx)
@@ -206,7 +204,17 @@ package: gerbil/core
        (with-syntax ((klass (resolve-type->type-descriptor stx #'type)))
          #'(begin-annotation (@type klass) expr)))))
 
-  ;; predicate contract check
+  (defrules do-with-lock (:- :)
+    ((_ lock :- type body rest ...)
+     (:- (do-with-lock lock body rest ...)
+         type))
+    ((_ lock : type body rest ...)
+     (: (do-with-lock lock body rest ...)
+         type))
+    ((_ lock body rest ...)
+     (with-lock lock (lambda () body rest ...))))
+
+    ;; predicate contract check
   (defrules :~ (:-)
     ((_ expr predicate)
      (let (val expr)
@@ -516,7 +524,7 @@ package: gerbil/core
       (let (type (resolve-type stx Interface))
         (with-syntax ((@@type (syntax-local-introduce '@@type))
                       (type type)
-                      (Instance::t (interface-info-instance-type type))
+                      (Instance::t (!runtime-type-descriptor type))
                       (var var)
                       (checked? checked?)
                       (cte (current-type-env))
@@ -776,7 +784,11 @@ package: gerbil/core
   (defrule (list-of? pred)
     (lambda (o)
       (and (list? o)
-           (andmap pred o)))))
+           (andmap pred o))))
+
+  (defrule (one-of val ...)
+    (lambda (o)
+      (or (eq? o `val) ...))))
 
 (module ClassMeta
   (export #t)
@@ -1665,11 +1677,12 @@ package: gerbil/core
                         #'(defsyntax name
                             (make-interface-info
                              name: 'name
+                             type-descriptor: (quote-syntax klass)
+                             id: 'klass-type-id
                              namespace: 'namespace
                              interface-mixin: [(quote-syntax mixin) ...]
                              interface-precedence-list: [(quote-syntax mixin-precedence-list) ...]
                              interface-methods: '(method ...)
-                             instance-type: (quote-syntax klass)
                              interface-descriptor: (quote-syntax descriptor)
                              instance-constructor: (quote-syntax make)
                              instance-try-constructor: (quote-syntax try-make)
@@ -1684,10 +1697,8 @@ package: gerbil/core
   (defsyntax (definterface-method stx)
     (def (emit-raw-method? return)
       (let (return-type (syntax-local-value return))
-        (if (and (class-type-info? return-type)
-                 (memq (!class-type-id return-type) '(t void)))
-          ;; no need for the raw method stub if we don't have to check the return type
-          #f
+        (if (class-type-info? return-type)
+          (not (memq (!class-type-id return-type) '(t void)))
           #t)))
 
     (def (make-checked-method-def Interface method-name raw-method-name unchecked-method-name signature return)
@@ -1726,11 +1737,15 @@ package: gerbil/core
             (syntax/loc stx
               (def (raw-method self . in)
                 (with-interface-unchecked-method self (Interface signature return)
-                  (: (unchecked-method self out ...) return))))
+                  (if __DEBUG
+                    (: (unchecked-method self out ...) return)
+                    (:- (unchecked-method self out ...) return)))))
             (syntax/loc stx
               (def (raw-method self . in)
                 (with-interface-unchecked-method self (Interface signature return)
-                  (: (##apply unchecked-method self out ...) return))))))
+                  (if __DEBUG
+                    (: (##apply unchecked-method self out ...) return)
+                    (:- (##apply unchecked-method self out ...) return)))))))
         '(begin)))
 
     (def (make-unchecked-method-def Interface unchecked-method-name signature return body)
@@ -1815,7 +1830,7 @@ package: gerbil/core
               (let (info (syntax-local-value #'id false))
                 (unless (interface-info? info)
                   (raise-syntax-error #f "not an interface type" stx #'id))
-                (with ((interface-info instance-type: type
+                (with ((interface-info type-descriptor: type
                                        interface-descriptor: descriptor
                                        instance-constructor: constructor
                                        instance-try-constructor: try-constructor
@@ -2320,20 +2335,12 @@ package: gerbil/core
       ((_ {method Type} impl rest ...)
        (and (identifier? #'method)
             (identifier? #'Type))
-       (if (syntax-local-class-type-info? #'Type)
-         (if (interface-declaration? #'(rest ...))
-           (generate-interface-method #'method #'Type #'impl #'(rest ...))
-           (generate-class-method #'method #'Type #'impl #'(rest ...)))
-         (raise-syntax-error #f "not defined as class" stx #'Type)))
-
-      ((_ (wtf method Type) . _)
-       (cond
-        ((resolve-identifier #'wtf)
-         => (lambda (b)
-              (raise-syntax-error #f "booooo!" stx (binding-id b))))
-        (else
-         (raise-syntax-error #f "booooo!" stx))))
-        ))
+       (let (klass (syntax-local-value #'Type))
+         (if (runtime-type-info? klass)
+           (if (interface-declaration? #'(rest ...))
+             (generate-interface-method #'method #'Type #'impl #'(rest ...))
+             (generate-class-method #'method #'Type #'impl #'(rest ...)))
+          (raise-syntax-error #f "not a valid class type" stx #'Type klass))))))
 
   (defsyntax (with-receiver stx)
     (syntax-case stx ()
@@ -2372,7 +2379,7 @@ package: gerbil/core
     (def (check-typedef-body! body)
       (def (body-opt? key)
         (memq (stx-e key)
-              '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
+              '(id: struct: name: constructor: transparent: final: print: equal: metaclass: acyclic:)))
       (unless (stx-plist? body body-opt?)
         (raise-syntax-error #f "invalid defclass body" stx body)))
 
@@ -2859,7 +2866,11 @@ package: gerbil/core
                                   => (lambda (equal)
                                        (let (equal (if (eq? equal #t) #'(slot ...) equal))
                                          (cons [equal: . equal] properties))))
-                                 (else properties))))
+                                 (else properties)))
+                               (properties
+                                (if (stx-e (stx-getq acyclic: body))
+                                  [[acyclic: . #t]]
+                                  [])))
                           properties))
                        ((values type-properties)
                         (if (null? properties)

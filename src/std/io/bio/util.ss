@@ -28,14 +28,12 @@
   (syntax-case stx ()
     ((_ (method reader . args) body ...)
      (with-syntax ((reader-method (stx-identifier #'method "BufferedReader-" #'method))
-                   (unchecked-method (stx-identifier #'method "&BufferedReader-" #'method)))
+                   (unchecked-method (stx-identifier #'method "&BufferedReader-" #'method))
+                   (raw-method       (stx-identifier #'method "__BufferedReader-") #'method)))
        #'(begin
-           (def (reader-method reader . args)
-             (using (reader : BufferedReader)
-               body ...))
-           (def (unchecked-method reader . args)
-             (using (reader :- BufferedReader)
-               body ...)))))))
+           (def (reader-method (reader : Reader) . args)
+             body ...)
+           (def unchecked-method raw-method)))))
 
 (defsyntax (defwriter-ext stx)
   (syntax-case stx ()
@@ -50,15 +48,13 @@
 (defsyntax (defwriter-ext* stx)
   (syntax-case stx ()
     ((_ (method writer . args) body ...)
-     (with-syntax ((writer-method (stx-identifier #'method "BufferedWriter-" #'method))
-                   (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method)))
+     (with-syntax ((writer-method    (stx-identifier #'method "BufferedWriter-" #'method))
+                   (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method))
+                   (raw-method       (stx-identifier #'method "__BufferedWriter-" #'method)))
        #'(begin
-           (def (writer-method writer . args)
-             (using (writer : BufferedWriter)
-               body ...))
-           (def (unchecked-method writer . args)
-             (using (writer :- BufferedWriter)
-               body ...)))))))
+           (def (writer-method (writer : BufferedWriter) . args) => :fixnum
+             body ...)
+           (def unchecked-method raw-methopd))))))
 
 ;; NB: Numbers are read and written in "network order", i.e. big endian
 

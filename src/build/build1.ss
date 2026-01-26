@@ -63,9 +63,6 @@
     "gerbil/core/contract.ss"
     "gerbil/core.ss"))
 
-(def gerbil-prelude-gambit
-  '("gerbil/gambit.ss"))
-
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))
 
@@ -98,8 +95,6 @@
 (compile-group gerbil-modules-expander)
 ;; compile compiler
 (compile-group gerbil-modules-compiler)
-;; compile gambit prelude (TODO: obsolete, it is just an empty shim now)
-(compile-group gerbil-prelude-gambit)
 
 ;; run the compile jobs to complete the build
 (execute-pending-compile-jobs!)
