@@ -1,16 +1,12 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; List utilities
-
+(import :std/error)
 (export
   plist?
   alist->plist
   psetq psetv pset psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
   premq premv prem premq! premv! prem!)
-
-(import
-  :std/error
-  :std/sugar)
 
 ;; This function checks if the list is a proper property-list.
 ;; ie it has the form [key1 val1 key2 val2]
@@ -55,7 +51,7 @@
 (defrule (define-pset! pset! cmp)
   (def (pset! lst key val)
     (unless (pair? lst)
-      (BUG 'pset! "Cannot destructively modify an empty plist" lst key val))
+      (raise-contract-violation pset! "non empty plist" lst))
     (let lp ((l lst))
       (match l
         ([k v . r] (if (cmp k key) (set-car! (cdr l) val) (lp r)))

@@ -1,17 +1,13 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; List utilities
-
+(import :std/error)
 (export
   alist?
   plist->alist
   acons
   asetq asetv aset asetq! asetv! aset! assq-set! assv-set! assoc-set!
   aremq aremv arem aremq! aremv! arem!)
-
-(import
-  :std/error
-  :std/sugar)
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]

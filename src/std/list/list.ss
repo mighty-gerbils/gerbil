@@ -1,6 +1,8 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; List utilities
+(import ./list-builder
+        :std/error)
 
 (export
   unique unique! duplicates delete-duplicates/hash
@@ -24,22 +26,6 @@
   separate-keyword-arguments
   first-and-only
   )
-;; The following are exporting these for backward compatibility only;
-;; we'll deprecate these reexported symbols as soon as we have a deprecation facility.
-(export
-  (import: ./list-builder)
-  (import: ./alist)
-  (import: ./plist))
-
-(import ./list-builder ./alist ./plist
-        (only-in ../srfi/1
-                 drop drop-right drop-right! take take-right take! reverse!
-                 take-while take-while! drop-while
-                 delete-duplicates delete-duplicates!
-                 split-at)
-        :std/error
-        :std/sugar
-        :std/assert)
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
@@ -394,5 +380,6 @@
 
 ;; : (List X) -> X
 (def (first-and-only x)
-  (assert! (and (pair? x) (null? (cdr x))))
+  (unless (and (pair? x) (null? (cdr x)))
+    (raise-contract-violation first-and-only "single element list" x))
   (car x))

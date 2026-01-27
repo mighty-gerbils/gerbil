@@ -8,34 +8,31 @@
    ;; TODO js and other target support
    (syntax-error "unsupported compilation target")))
 
-(export Time ExactTime CoarseTime PreciseTime InexactTime
-        current-time-coarse
-        current-time-precise
-        current-time-inexact)
+(export #t)
 
 (defstruct Time ()
   transparent: #t
   acyclic: #t)
 
-(defstruct (ExactTime Time) ((time :- :pair))
+(defstruct (ExactTime Time) ((time :- :t))
   transparent: #t
   acyclic: #t)
 (defstruct (InexactTime Time) ((time :- :flonum))
   name: time
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 
 (defstruct (CoarseTime ExactTime) ()
   name: time
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 (defstruct (PreciseTime ExactTime) ()
   name: time
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 
 (def (current-time-coarse) => CoarseTime
   (CoarseExactTime (system.current-time-coarse)))

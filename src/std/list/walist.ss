@@ -1,10 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo, fare
 ;;; wrapped associative lists
-
-(import :std/error
-        :std/string
-        ./alist)
+(import :std/error)
 (export
   AList AList?
   PureAList PureAList?
@@ -50,7 +47,7 @@
   transparent: #t)
 
 (defstruct ConcreteAList ((alist :- :list) (t :- :fixnum))
-  print: (alist)
+  print: (alist t)
   equal: #t)
 
 (defstruct (PureAList AList ConcreteAList) ()
@@ -60,32 +57,32 @@
 
 (defstruct (WAList PureAList) ()
   name: AList
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 (defstruct (WAListq PureAList) ()
   name: AList
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 (defstruct (WAListv PureAList) ()
   name: AList
-  final: #t
   transparent: #t
-  acyclic: #t)
+  acyclic: #t
+  final: #t)
 
 (defstruct (MutWAList MutAList) ()
   name: AList
-  final: #t
-  transparent: #t)
+  transparent: #t
+  final: #t)
 (defstruct (MutWAListq MutAList) ()
   name: AList
-  final: #t
-  transparent: #t)
+  transparent: #t
+  final: #t)
 (defstruct (MutWAListv MutAList) ()
   name: AList
-  final: #t
-  transparent: #t)
+  transparent: #t
+  final: #t)
 
 ;; low level constructor
 (defrule (deflist proc klass t)
@@ -178,9 +175,8 @@
          (null? w.alist))))
 
 ;; extension constructors
-(defrule (undefined-method where)
-  (lambda args
-    (raise-unsupported-method where)))
+(defrule (@undefined-method where method)
+  (lambda args (raise-unsupported-method where method args: args)))
 
 (defrule (defalist-method (proc arg ...)
            return
@@ -205,10 +201,10 @@
       (:- ((vector-ref ___acons w.t) w arg ...) return))))
 
 (defrules alist-method ()
-  ((_ undefined where method)
+  ((_ undefined where wamethod)
    (underscore? #'undefined)
-   (undefined-method where))
-  ((_ proc where method)
+   (@undefined-method where wamethod))
+  ((_ proc where wamethod)
    proc))
 
 (defrule (defacons proc klass)

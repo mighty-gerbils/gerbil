@@ -12,9 +12,9 @@
         queue-peek
         queue->list)
 
-(defstruct queue ((front  : :list)
-                  (back   :? :pair)
-                  (length : :fixnum))
+(defstruct queue ((front  :- :list)
+                  (back   :- :pair)
+                  (length :- :fixnum))
   constructor: :init!
   final: #t)
 

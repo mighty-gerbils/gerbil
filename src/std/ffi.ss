@@ -6,18 +6,28 @@
 (export #t)
 
 (defsyntax-case C-include ()
-  ((_ path)
-   (stx-string? #'path)
-   (with-syntax ((include-string (string-append "#include " (stx-e #'path))))
+  ((_ path rest ...)
+   (andmap stx-string? #'(path rest ...))
+   (with-syntax ((include-string
+                  (let loop ((rest (#'(path rest ...))))
+                    (match rest
+                      ([path]
+                       (string-append "#include " (stx-e #'path)))
+                      ([path . rest]
+                       (let (prev (loop rest))
+                         (string-append prev "\n" "#include " (stx-e #'path))))))))
      #'(begin-foreign (c-declare include-string)))))
 
 (defsyntax-case C-declare ()
-  ((_ code)
-   (stx-string? #'code)
-   #'(begin-foreign (c-declare code)))
   ((_ code rest ...)
    (andmap stx-string? #'(code rest ...))
-   (with-syntax ((code-string (apply string-append (map stx-e #'(code rest ...)))))
+   (with-syntax ((code-string
+                  (let loop ((rest (#'(path rest ...))))
+                    (match rest
+                      ([code] (stx-e #'code))
+                      ([code . rest]
+                       (let (prev (loop rest))
+                         (string-append prev "\n"  (stx-e #'code))))))))
      #'(begin-foreign (c-declare code-string)))))
 
 (defsyntax-case def-C (=>)
@@ -30,3 +40,12 @@
            (if __DEBUG
              (:  result return)
              (:- result return)))))))
+
+(defsyntax-case def-C-lambda ()
+  XXX)
+
+(defsyntax-case def-C-struct ()
+  XXX)
+
+(defsyntax-case def-C-const ()
+  XXX)

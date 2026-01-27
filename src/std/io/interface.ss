@@ -1,8 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Standard IO interfaces
-(import :std/sugar
-        :std/misc/timeout)
+(import :std/time/timeout
+        :std/net/address/address)
 (export #t timeout?)
 
 ;; closable io sources and sinks
@@ -17,7 +17,7 @@
   ;;   When `'end` `'current` is supplied, `position` may be positive or negative
   ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
   (seek (position : :integer)
-        (from :~ whence? := 'start))
+        (from     :~ whence? := 'start))
   => :void)
 
 ;; generic binary IO
@@ -78,7 +78,6 @@
   (available)
   => :fixnum)
 
-
 (interface (BufferedWriter Writer)
   ;; writes a single byte
   (write-u8 (u8 : :fixnum))
@@ -111,7 +110,6 @@
   (peek-char) => :t)
 
 (deftype @BufferedStringReader BufferedStringReader)
-
 (interface (BufferedStringReader PeekableStringReader)
   ;; puts back some chars previously read; can also inject characters.
   ;; - previous-input is a char or a list of chars injected into the buffer
@@ -161,9 +159,9 @@
   ;; the sockert's domain; AF_INET, AF_INET6, AF_LOCAL, etc ...
   (domain) => :fixnum
   ;; the socket's address
-  (address) => :t
+  (address) => Address
   ;; the socket's peer address, if any
-  (peer-address) => :t
+  (peer-address) => Address
   ;; getsockopt syscall
   (getsockopt (level  :  :fixnum)
               (option :  :fixnum))
@@ -234,7 +232,7 @@
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (sendto (peer   :~  address?)
+  (sendto (peer   :  Address)
           (u8v    :  :u8vector)
           (start  :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
           (end    :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
@@ -242,7 +240,7 @@
   => :fixnum
 
   ;; connect the datagram socket to a peer
-  (connect (peer :~ address?))
+  (connect (peer : Address))
   => :void
 
   ;; recv data from the connected peer
@@ -259,14 +257,10 @@
         (flags :  :fixnum                                                      :=  0))
   => :fixnum)
 
-(defrule (address? o)
-  (or (pair? o)
-      (string? o)))
-
 (defrule (previous-input? type?)
   (lambda (o)
     (or (type? o)
         ((list-of? type?) o))))
 
 (defrule (whence? p)
-  (cut <> memq '(start end current)))
+  (one-of start end current))

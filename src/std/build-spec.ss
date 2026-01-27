@@ -12,6 +12,7 @@
     "interface"
     "ssi"
     "interactive"
+    "error"
 
     "list/list-builder"
     "list/list"
@@ -26,6 +27,13 @@
     "sync/completion"
     "sync/barrier"
     "sync/channel"
+
+    "time/time"
+    "time/timeout"
+    "time/format"
+
+    "net/address/address"
+    "net/address/format"
 
     "io"
     "io/interface"
@@ -92,7 +100,10 @@
     "log/rotate"
     "log/compress"
 
-    "cli/getop"
+    "cli/getopt"
+
+    "os/error"
+    "os/time"
     ))
 
 #;(def (build-spec . _)

@@ -3,14 +3,8 @@
 ;; TODO: support Windows?
 ;; TODO: something inspired by UIOP:TRUENAMIZE, etc.
 
+(import (only-in :std/list/list when/list))
 (export #t)
-
-(import
-  (only-in :std/srfi/1 remove)
-  ;; NB: string-index from srfi/13 differs from Gambit's!!!
-  (only-in :std/srfi/13 string-suffix? string-index)
-  (only-in :std/misc/list when/list)
-  (only-in :std/sugar while))
 
 ;; : String (OrFalse String) -> String
 (def (path-default-extension path ext)

@@ -17,7 +17,7 @@
    (let* ((method (stx-e #'method))
           (info (interface-info-interface-descriptor info))
           (methods (interface-info-interface-methods info)))
-     (let loop ((rest methods) (index 1))
+     (let loop ((rest methods) (index 2))
        (match rest
          ([method-sig . rest]
           (if (eq? method (car method-sig))

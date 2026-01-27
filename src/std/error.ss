@@ -140,14 +140,14 @@
 (defraise/context (raise-context-error where message irritants ...)
   (ContextError message irritants: [irritants ...]))
 
-(defraise/context (raise-unsupported-method where)
-  (UnsupportedMethod "unsupported method" irritants: []))
+(defraise/context (raise-unsupported-method where method irritants ...)
+  (UnsupportedMethod "unsupported method" irritants: [method: 'method irritants ...]))
 
 (defraise/context (raise-contract-violation where contract irritants ...)
-  (ContractViolation "contract violation" irritants: ['contract irritants ...]))
+  (ContractViolation "contract violation" irritants: [contract: 'contract irritants ...]))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
-  (ContractViolation "contract violation" irritants: [expectation irritants ...]))
+  (ContractViolation "contract violation" irritants: [expectation: expectation irritants ...]))
 
 (defraise/context (raise-unbound-key where irritants ...)
   (UnboundKeyError "no value associated with key" irritants: [irritants ...]))

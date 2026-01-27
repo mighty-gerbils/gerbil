@@ -13,7 +13,7 @@
 (defstruct channel ((q     :- queue)
                     (mx    :- :mutex)
                     (cv    :- :condvar)
-                    (limit :? :fixnum)
+                    (limit :- :fixnum)
                     (eof   :- :boolean))
   constructor: :init!
   final: #t )
