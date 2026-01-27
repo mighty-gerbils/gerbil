@@ -356,6 +356,14 @@ namespace: #f
             :list))
       iv)))
 
+;; A variant of append that works on improper lists, notably used by quasiquote expansion.
+(def append*
+  (case-lambda
+    (() '())
+    ((x) x)
+    ((x y) (foldr cons y x))
+    (r (match (reverse r) ([x . l] (foldl append* x l))))))
+
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
 (def (remove-nulls! l)
@@ -872,8 +880,8 @@ namespace: #f
        (n (lambda () (newline e)))
        (v (lambda (l) (for-each (lambda (x) (d " ") (w x)) l) (n)))
        (x (lambda (expr thunk)
-            (f) (d "  ") (w expr) (d " =>")
-            (call-with-values thunk (lambda x (v x) (f) (apply values x))))))
+            (call-with-values thunk
+              (lambda x (f) (d "  ") (w expr) (d " =>") (v x) (f) (apply values x))))))
     (if tag
       (begin
         (unless (void? tag) (f) (d tag) (n))
