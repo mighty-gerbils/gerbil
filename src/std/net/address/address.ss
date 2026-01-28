@@ -13,6 +13,8 @@
   constructor: :init!
   final: #t)
 
+(def !NullAddres (NullAddress))
+
 (defstruct (NetAddress Address)
   ((bytes  :- :u8vector)
    (string :? :string))

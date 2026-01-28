@@ -24,18 +24,18 @@
 (defraise/context (raise-allocation-error where expr)
   (AllocationError "error allocating memory" irritants: [expr]))
 
-(defrule (check-os-error expr (prim arg ...))
-  (let (r expr)
-    (if (not (##fxnegative? r)) r
-        (raise-os-error prim r arg ...))))
-
-(defrule (check-os-errno expr (prim arg ...))
-  (let (r expr)
-    (if (not (##fxnegative? r)) r
-        (raise-os-errno prim arg ...))))
+(defsyntax-case check-os-error ()
+  ((_ (prim arg ...) errno: get-errno)
+   (with-syntax (((val ...) (gentemps #'(arg ...))))
+     #'(let ((val arg) ...)
+         (let (r (prim val ...))
+           (if (not (##fxnegative? r)) r
+               (raise-os-error prim (get-errno r) args: [val ...]))))))
+  ((_ expr)
+   (check-os-error expr errno: ##fx-)))
 
 (defsyntax-case do-retry-nonblock ()
-  ((_ (prim arg ...) errno: get-errno ERRNO ...)
+  ((_ (prim arg ...) errno: get-errno result: result ERRNO ...)
    (with-identifier (r '$r)
      (with-syntax (((val ...) (gentemps #'(arg ...))))
        #'(let ((val arg) ...)
@@ -45,33 +45,44 @@
                    (let (errno (get-errno r))
                      (cond
                       ((or (##fx= errno ERRNO) ...)
-                       #f)
+                       (result r))
                       ((##fx= errno EINTR)
                        (loop))
                       (else
                        (raise-os-error prim errno args: [val ...])))))))))))
-  ((_ (prim arg ...) ERRNO ...)
-   (do-retry-nonblock (prim arg ...) errno: ##fx- ERRNO ...)))
+  ((_ expr ERRNO ...)
+   (do-retry-nonblock expr
+     errno: ##fx-
+     result: (lambda (r) #f)
+     ERRNO ...)))
 
-(defrule (do-sys-retry-nonblock (prim arg ...) ERRNO ...)
-  (do-retry-nonblock (prim arg ...) errno: __get_errno ERRNO ...))
+(defrule (do-syscall expr ERRNO ...)
+  (do-retry-nonblock expr
+    errno: ##fx-
+    result: (lambda (r) r)
+    ERRNO ...))
 
 (defrules check-ptr ()
   ((_ (make arg ...))
    (let (r (make arg ...))
      (if r r (raise-allocation-error make '(make arg ...))))))
 
+(defrule (with-error cleanup body rest ...)
+  (try body rest ...
+       (catch (e) cleanup (raise e))))
+
 (C-include "<errno.h>"
            "<string.h>")
 
-(def-C (__errno)
+(def-C-code (__errno)
   => :fixnum
   "errno")
 
 (def (__get-errno _)
   (__errno))
 
-(def-C-lambda strerror (int) char-string)
+(def-C-lambda (strerror (errno int :- :fixnum))
+  => char-string :string)
 
 (def-C-const
   E2BIG

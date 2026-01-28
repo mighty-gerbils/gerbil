@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; OS File Devices
-(import :std/ffi
+(import :std/error
+        :std/ffi
         ./error
         ./device
         ./fcntl)
@@ -14,9 +15,76 @@
                        (flags : :fixnum)
                        (mode  : :fixnum))
   => FileDevice
-  XXX
-  )
+  (let* ((flags
+          (cond-expand
+            (linux (fxior flags O_NONBLOCK O_CLOEXEC O_NOATIME))
+            (else flags)))
+         (fd (do-syscall (__open path flags mode)))
+         (_
+          (cond-expand
+            ((not linux)
+             (with-error (__close-fd fd)
+               (fcntl-setfl! fd O_NONBLOCK)
+               (fcntl-setfd! fd FD_CLOEXEC)))
+            (else (void))))
+         (raw (__open-raw-device 'file fd (file-raw-device-direction flags))))
+    (FileDevice raw fd direction path)))
 
-(def (device-seek (dev : FileDevice) pos from)
+(def (file-device-seek (dev : FileDevice) (pos : :integer) (whence : :fixnum))
   => :void
-  XXX)
+  (do-check-device-open file-device-seek dev
+    (do-syscall (__lseek dev.fd pos whence))))
+
+(def (file-device-sync (dev : FileDevice))
+  => :void
+  (do-check-device-open file-device-sync dev
+    (do-syscall (__fsync dev.fd))))
+
+(def (file-raw-device-direction (flags : :fixnum)) => :fixnum
+  (cond
+   ((fx= (fxand flags O_RDWR)   O_RDWR)
+    DIRECTION-INOUT)
+   ((fx= (fxand flags O_RDONLY) O_RDONLY)
+    DIRECTION-IN)
+   ((fx= (fxand flags O_WRONLY) O_WRONLY)
+    DIRECTION-OUT)
+   (else
+    (raise-bad-argument file-raw-device-direction "direction control flags" flags))))
+
+(def (file-seek-whence (whence : :symbol)) => :fixnum
+  (case whence
+    ((start START set SET) (: SEEK_SET :fixnum))
+    ((current CURRENT)     (: SEEK_CUR :fixnum))
+    ((end END)             (: SEEK_END :fixnum))))
+
+(C-ffi-macrology)
+(C-include "<sys/types.h>"
+           "<sys/stat.h>"
+           "<unistd.h>")
+
+(def-C-const
+  SEEK_SET
+  SEEK_CUR
+  SEEK_END)
+
+(cond-expand
+  (linux
+   (def-C-const
+     SEEK_DATA
+     SEEK_HOLE)))
+
+(def-C-lambda (__open (path  char-string :- :string)
+                 (flags int         :- :fixnum)
+                 (mode  int         :- :fixnum))
+  => int :fixnum
+  "___TRAP_ERRNO(open(___arg1, ___arg2, ___arg3))")
+
+(def-C-lambda (__lseek (fd     int    :- :fixnum)
+                  (offset int64  :- :integer)
+                  (whence int    :- :fixnum))
+  => int :fixnum
+  "___TRAP_ERRNO(lseek(___arg1, ___arg2, ___arg3))")
+
+(def-C-code (__fsync (fd : :- :fixnum))
+  => :fixnum
+  "___TRAP_ERRNO(fsync(___INT(___ARG1)))")

@@ -17,28 +17,22 @@
   macro-raw-device-port-id
   macro-raw-device-port-type)
 
-(def DIRECTION-IN
-  (: (macro-direction-in)
-     :fixnum))
-(def DIRECTION-OUT
-  (: (macro-direction-out)
-     :fixnum))
-(def DIRECTION-INOUT
-  (: (macro-direction-inout)
-     :fixnum))
+(def DIRECTION-IN    #b01)
+(def DIRECTION-OUT   #b10)
+(def DIRECTION-INOUT #b11)
 
-(defstruct OSDevice ((raw       :- :raw-device-port)
-                     (fd        :- :fixnum)
-                     (direction :- :fixnum)
-                     (closed?   :- :boolean))
+(defstruct OSDevice
+  ((raw     :- :raw-device-port)
+   (fd      :- :fixnum)
+   (dir     :- :fixnum))
   print: (fd))
 
-(def (__open-raw-device (fd        :- :fixnum)
-                        (direction :- :fixnum)
-                        (closed?   :- :boolean))
+(def (__open-raw-device (id        :- :symbol)
+                        (fd        :- :fixnum)
+                        (direction :- :fixnum))
   => :raw-device-port
   (def (fail)
-    (##fail-check-settings 1 open-raw-device direction id fd))
+    (##fail-check-settings 1 __open-raw-device direction id fd))
   (: (##make-psettings
       direction '() '() fail
       (lambda (psettings)
@@ -52,48 +46,70 @@
 (defsyntax-case do-check-device-open ()
   ((_ where dev expr)
    (identifier? #'dev)
-   (with-identifier (dev.closed? #'dev #'dev ".closed?")
-     #'(if dev.closed?
-         (raise-io-closed device-wait-input! "OS device closed")
+   (with-identifier (dev.dir #'dev #'dev ".dir")
+     #'(if (fx= dev.dir 0)
+         (raise-io-closed where "OS device closed")
          expr)))
   ((_ where dev expr rest ...)
-   (do-check-device-open where dev (begin expr rest ...))))
+   #'(do-check-device-open where dev (begin expr rest ...))))
+
+(defsyntax-case do-check-device-direction ()
+  ((_ where dev direction expr)
+   (identifier? #'dev)
+   (with-identifier (dev.dir #'dev #'dev ".dir")
+     #'(if (fx= (fxand dev.dir direction)
+                direction)
+         expr
+         (raise-io-closed where "device does not allow io" device: dev direction: dev.dir))))
+  ((_ where dev direction expr rest ...)
+   #'(do-check-device-direction where dev direction (begin expr rest ...))))
+
+(defrule (do-check-device-input where dev expr rest ...)
+  (do-check-device-direction where dev DIRECTION-IN expr rest ...))
+(defrule (do-check-device-output where dev expr rest ...)
+  (do-check-device-direction where dev DIRECTION-OUT expr rest ...))
 
 ;; TODO safer output range interface
 (def (device-read (dev          : OSDevice)
                   (output       : :u8vector)
                   (output-start : :fixnum)
                   (output-end   : :fixnum))
-  (do-check-device-open device-read dev
-    (do-retry-nonblock
-     (__read dev.fd output output-start (fx- output-end output-start))
-     EAGAIN EWOULDBLOCK)))
+  => :fixnum
+  (do-check-device-input device-read dev
+    (do-syscall
+      (__read dev.fd output output-start (fx- output-end output-start))
+      EAGAIN EWOULDBLOCK)))
 
 ;; TODO safer input range interface
 (def (device-write (dev         : OSDevice)
                    (input       : :u8vector)
                    (input-start : :fixnum)
                    (input-end   : :fixnum))
-  (do-check-device-open devic e-write dev
-    (do-retry-nonblock
+  => :fixnum
+  (do-check-device-output device-write dev
+    (do-syscall
      (__write dev.fd input input-start (fx- input-end input-start))
      EAGAIN EWOULDBLOCK)))
 
 (def (device-close (dev : OSDevice))
   => :void
-  (unless dev.closed?
+  (unless (fx= dev.dir 0)
     (unwind-protect
       (close-port dev.raw)
       (set! dev.raw #f)
-      (set! dev.closed? #t))))
+      (set! dev.dir 0))))
+
+(def (device-closed? (dev : OSDevice))
+  => :boolean
+  (fx= dev.dir 0))
 
 (def (device-wait-input! (dev : OSDevice) (timeo #f))
-  (do-check-device-open device-waite-input! dev
+  (do-check-device-input device-wait-input! dev
     (let (ioc (macro-raw-device-port-rdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))
 
 (def (device-wait-output! (dev : OSDevice) (timeo #f))
-  (do-check-device-open device-wait-output! dev
+  (do-check-device-output device-wait-output! dev
     (let (ioc (macro-raw-device-port-wdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))
 
@@ -102,20 +118,28 @@
     (timeout->abs-timeout->seconds timeo)
     #t))
 
+(def (__close-fd (fd :- :fixnum))
+  => :fixnum
+  (do-syscall (__close fd)))
+
 (C-ffi-macrology)
 (C-include "<errno.h>"
            "<unistd.h>")
 
-(def-C (__read (fd    :- :fixnum)
-               (buf   :- :u8vector)
-               (start :- :fixnum)
-               (count :- :fixnum))
+(def-C-code (__read (fd    :- :fixnum)
+                    (buf   :- :u8vector)
+                    (start :- :fixnum)
+                    (count :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(read(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
 
-(def-C (__write (fd    :- :fixnum)
-                (buf   :- :u8vector)
-                (start :- :fixnum)
-                (count :- :fixnum))
+(def-C-code (__write (fd    :- :fixnum)
+                     (buf   :- :u8vector)
+                     (start :- :fixnum)
+                     (count :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(write(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
+
+(def-C-code (__close (fd    :- :fixnum))
+  => :fixnum
+  "___TRAP_ERRNO(close(___INT(___ARG1)))")

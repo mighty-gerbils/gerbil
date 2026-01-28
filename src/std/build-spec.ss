@@ -8,11 +8,11 @@
     "make"
     "test"
     "ffi"
-    "object"
+    "error"
     "interface"
+    "object"
     "ssi"
     "interactive"
-    "error"
 
     "list/list-builder"
     "list/list"

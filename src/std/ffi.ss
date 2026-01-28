@@ -13,8 +13,8 @@
 #define ___GERBIL_FFI_MACROLOGY
 #define ___U8VECTOR_AS(t, arg) ___CAST(t, ___BODY_AS (arg, ___tSUBTYPED))
 #define ___TRAP_ERRNO(expr) ({\
-                              int r = expr; \
-                              (r<0) ? (-errno) : r\
+                              int __r = expr; \
+                              (__r<0) ? (-errno) : __r\
                               })
 #endif
 END-C
@@ -45,14 +45,13 @@ END-C
                          (string-append prev "\n"  (stx-e #'code))))))))
      #'(begin-foreign (c-declare code-string)))))
 
-(defsyntax-case def-C (=>)
+(defsyntax-case def-C-code (=>)
   ((_ (proc contract ...) => return c-code)
    (and (syntax-local-runtime-type-info? #'return)
         (stx-string? #'c-code))
    (let* ((info (syntax-local-value #'return))
-          (type-id (runtime-type-id info))
           (wrap
-           (case type-id
+           (case (runtime-type-id info)
              ((fixnum) "__FIX")
              (else
               (raise-syntax-error #f "unsupported type" stx #'return)))))
@@ -66,6 +65,9 @@ END-C
   XXX)
 
 (defsyntax-case def-C-struct ()
+  XXX)
+
+(defsyntax-case def-C-union ()
   XXX)
 
 (defsyntax-case def-C-const ()
