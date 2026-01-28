@@ -104,6 +104,10 @@
 
     "os/error"
     "os/time"
+    "os/device"
+    "os/file"
+    "os/fcntl"
+    "os/socket"
     ))
 
 #;(def (build-spec . _)

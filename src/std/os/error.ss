@@ -9,7 +9,7 @@
 
 (defrule (raise-os-error where errno irritants ...)
   (let* ((errno (if (fx< errno 0) (fx- errno) errno))
-         (err (OSError (strerror errno) where: (exception-context where) irritants: ['where irritants ...])))
+         (err (OSError (strerror errno) where: (exception-context where) irritants: [primitive: 'where irritants ...])))
     (set! (OSError-errno err) errno)
     (raise err)))
 
@@ -34,32 +34,27 @@
     (if (not (##fxnegative? r)) r
         (raise-os-errno prim arg ...))))
 
-(defrules do-retry-nonblock ()
-  ((_ expr (prim arg ...) errno: get-errno ERRNO ...)
-   (let lp ()
-     (let (r expr)
-       (if (not (##fxnegative? r)) r
-           (let (errno (get-errno r))
-             (cond
-              ((or (##fx= errno ERRNO) ...)
-               #f)
-              ((##fx= errno EINTR)
-               (lp))
-              (else
-               (raise-os-error prim errno arg ...))))))))
-  ((_ expr (prim arg ...) ERRNO ...)
-   (do-retry-nonblock expr (prim arg ...) errno: ##fx- ERRNO ...
-     (let lp ()
-       (let (r expr)
-         (if (not (##fxnegative? r)) r
-             (let (errno (get-errno r))
-               (cond
-                ((or (##fx= errno ERRNO) ...)
-                 #f)
-                ((##fx= errno EINTR)
-                 (lp))
-                (else
-                 (raise-os-error prim errno arg ...))))))))))
+(defsyntax-case do-retry-nonblock ()
+  ((_ (prim arg ...) errno: get-errno ERRNO ...)
+   (with-identifier (r '$r)
+     (with-syntax (((val ...) (gentemps #'(arg ...))))
+       #'(let ((val arg) ...)
+           (let loop ()
+             (let (r (prim val ...))
+               (if (not (##fxnegative? r)) r
+                   (let (errno (get-errno r))
+                     (cond
+                      ((or (##fx= errno ERRNO) ...)
+                       #f)
+                      ((##fx= errno EINTR)
+                       (loop))
+                      (else
+                       (raise-os-error prim errno args: [val ...])))))))))))
+  ((_ (prim arg ...) ERRNO ...)
+   (do-retry-nonblock (prim arg ...) errno: ##fx- ERRNO ...)))
+
+(defrule (do-sys-retry-nonblock (prim arg ...) ERRNO ...)
+  (do-retry-nonblock (prim arg ...) errno: __get_errno ERRNO ...))
 
 (defrules check-ptr ()
   ((_ (make arg ...))
@@ -71,7 +66,10 @@
 
 (def-C (__errno)
   => :fixnum
-  "__FIX(errno)")
+  "errno")
+
+(def (__get-errno _)
+  (__errno))
 
 (def-C-lambda strerror (int) char-string)
 

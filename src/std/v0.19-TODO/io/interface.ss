@@ -92,6 +92,68 @@
           (close? : :t := #t))
   => :void)
 
+;; string/textual IO
+(interface (StringReader Closer)
+  ;; read into a string
+  (read-string (str   :  :string)
+               (start :~ (in-range? 0 (string-length str))               :- :fixnum :=  0)
+               (end   :~ (in-range-inclusive? start (string-length str)) :- :fixnum := (string-length str))
+               (need  :~  nonnegative-fixnum?                            :- :fixnum :=  0))
+  => :fixnum)
+
+(interface (PeekableStringReader StringReader)
+  ;; reads a single char
+  ;; returns the char or eof
+  (read-char) => :t
+  ;; peeks the next char
+  ;; returns the char or eof
+  (peek-char) => :t)
+
+(deftype @BufferedStringReader BufferedStringReader)
+(interface (BufferedStringReader PeekableStringReader)
+  ;; puts back some chars previously read; can also inject characters.
+  ;; - previous-input is a char or a list of chars injected into the buffer
+  (put-back (previous-input :~ (previous-input? char?)))
+  => :void
+
+  ;; skips the next count chars of input
+  (skip (count :~ nonnegative-fixnum? :- :fixnum))
+  => :void
+
+  ;; returns a new BufferedStringReader instance delimiting the input length that shares
+  ;; the underlying buffer; the limit must be a fixnum.
+  (delimit (limit :~ nonnegative-fixnum? :- :fixnum))
+  => @BufferedStringReader
+
+  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
+  (reset! (reader : StringReader)
+          (close? : :t := #t))
+  => :void
+
+  ;; returns the number of buffered chars available to read without further I/O
+  (available)
+  => :fixnum)
+
+
+(interface (StringWriter Closer)
+  ;; write a string
+  (write-string (str   :  :string)
+                (start :~ (in-range? 0 (string-length str))               :- :fixnum :=  0)
+                (end   :~ (in-range-inclusive? start (string-length str)) :- :fixnum := (string-length str)))
+  => :fixnum)
+
+(interface (BufferedStringWriter StringWriter)
+  ;; write a single char
+  (write-char (char : :char))
+  => :fixnum
+  ;; flush output
+  (flush)
+  => :void
+  ;; resets the underlying output and buffer state, allowing reuse of buffers.
+  (reset! (writer : StringWriter)
+          (close? : :t := #t))
+  => :void)
+
 ;; socket interfaces
 (interface (Socket Closer)
   ;; the sockert's domain; AF_INET, AF_INET6, AF_LOCAL, etc ...

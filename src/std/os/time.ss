@@ -5,33 +5,35 @@
         ./error)
 (export current-time-coarse current-time-precise)
 
-(C-include "<time.h>"
+(C-ffi-macrology)
+(C-include "<errno.h>"
+           "<time.h>"
            "<sys/time.h>")
 
 (def-C-struct timespec
-  ((sec  ts_sec  :- :integer uint64)
-   (usec ts_nsec :- :fixnum  long)))
+  ((sec  ts_sec  uint64 :- :integer)
+   (usec ts_nsec long   :- :fixnum)))
 
 (def-C-struct timeval
-  ((sec  tv_sec  :- :integer uint64)
-   (nsec tv_usec :- :fixnum  long)))
+  ((sec  ts_sec  uint64 :- :integer)
+   (usec ts_usec long   :- :fixnum)))
 
 (def-C (__gettimeofday (result :- :u8vector))
   => :fixnum
-  "___FIX(gettimeofday(___CAST (struct timeval*, ___BODY_AS (___ARG1, ___tSUBTYPED)), NULL))")
+  "___TRAP_ERRNO(gettimeofday(___U8VECTOR_AS (struct timeval* ___ARG1), NULL))")
 
 (def-C (__clock_getrealtime (result :- :uvector))
   => :fixnum
-  "___FIX(clock_gettime(CLOCK_REALTIME., ___CAST (struct timespec*, ___BODY_AS (___ARG1, ___tSUBTYPED))))")
+  "___TRAP_ERRNO(clock_gettime(CLOCK_REALTIME., ___U8VECTOR_AS (struct timespec*,___ARG1)))")
 
 (def (current-time-coarse) => timeval
   (using (result (make-timeval) :- timeval)
-    (check-os-errno (__gettimeofday result.bytes)
+    (check-os-error (__gettimeofday result.bytes)
       (current-time-coarse))
     result))
 
 (def (current-time-precise) => timespec
-  (using (result (make-timespec) :- timsepc)
-    (check-os-errno (__clock_getrealtime result.bytes)
+  (using (result (make-timespec) :- timespec)
+    (check-os-error (__clock_getrealtime result.bytes)
       (current-time-precise))
     result))

@@ -5,6 +5,21 @@
 (require ,(compilation-target? C))
 (export #t)
 
+(defrule (C-ffi-macrology)
+  (begin-foreign
+    (c-declare
+     #<<END-C
+#ifndef ___GERBIL_FFI_MACROLOGY
+#define ___GERBIL_FFI_MACROLOGY
+#define ___U8VECTOR_AS(t, arg) ___CAST(t, ___BODY_AS (arg, ___tSUBTYPED))
+#define ___TRAP_ERRNO(expr) ({\
+                              int r = expr; \
+                              (r<0) ? (-errno) : r\
+                              })
+#endif
+END-C
+)))
+
 (defsyntax-case C-include ()
   ((_ path rest ...)
    (andmap stx-string? #'(path rest ...))
@@ -32,13 +47,19 @@
 
 (defsyntax-case def-C (=>)
   ((_ (proc contract ...) => return c-code)
-   (stx-string? #'c-code)
-   (with-syntax (((arg ...)   (map stx-car #'(contract ...)))
-                 (code-string (string-append "___RESULT = " (stx-e #'c-code) ";")))
-     #'(def (proc contract ...) => return
-         (let (result (##c-code code-string arg ...))
-           (if __DEBUG
-             (:  result return)
+   (and (syntax-local-runtime-type-info? #'return)
+        (stx-string? #'c-code))
+   (let* ((info (syntax-local-value #'return))
+          (type-id (runtime-type-id info))
+          (wrap
+           (case type-id
+             ((fixnum) "__FIX")
+             (else
+              (raise-syntax-error #f "unsupported type" stx #'return)))))
+     (with-syntax (((arg ...)   (map car #'(contract ...)))
+                   (code-string (string-append "___RESULT = " wrap "(" (stx-e #'c-code) ");")))
+       #'(def (proc contract ...) => return
+           (let (result (##c-code code-string arg ...))
              (:- result return)))))))
 
 (defsyntax-case def-C-lambda ()

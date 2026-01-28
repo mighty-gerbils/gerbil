@@ -19,6 +19,7 @@
 (cond-expand
   (,(compilation-target? C)
    (import :std/ffi)
+   (C-ffi-macrology)
    (C-include "<stdio.h>")))
 
 ;;; base
@@ -265,9 +266,9 @@
    (def-C (__print-flonum (output-buf  :- :u8vector)
                           (output-size :- :fixnum)
                           (nfmt-buf    :- :u8vector)
-                          (num         :  :flonum))
+                          (num         :- :flonum))
      => :fixnum
-     "___FIX(snprintf(___CAST (char*, ___BODY_AS (___ARG1, ___tSUBTYPED)), ___INT(___ARG2), ___CAST (char*, ___BODY_AS (___ARG3, ___tSUBTYPED)), ___F64UNBOX(___ARG4)))"))
+     "snprintf(___U8VECTOR_AS (char*, ___ARG1), ___INT(___ARG2), ___U8VECTOR_AS (char*, ___ARG3), ___F64UNBOX(___ARG4))")))
 
 (defwriter-ext (format-finite-flonum writer num (env : FormatEnv))
   (cond-expand
