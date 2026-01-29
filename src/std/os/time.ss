@@ -25,7 +25,7 @@
    (usec ts_nsec :long)))
 
 (def-C-struct timeval
-  ((sec  ts_sec  :uint64)
+  ((sec  ts_sec  :u64)
    (usec ts_usec :long)))
 
 (def-C-syscall (__gettimeofday (result :- timeval))
