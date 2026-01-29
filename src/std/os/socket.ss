@@ -13,8 +13,8 @@
   ((domain :- :fixnum)
    (type   :- :fixnum)
    (proto  :- :fixnum)
-   (addr   :? Address)
-   (peer   :? Address)))
+   (local  :? Address)
+   (remote :? Address)))
 
 (def (open-socket-device (domain    : :fixnum)
                          (type      : :fixnum)
@@ -34,7 +34,9 @@
                (fcntl-setfl! fd O_NONBLOCK)
                (fcntl-setfd! fd FD_CLOEXEC)))
             (else (void))))
-         (raw (__open-raw-device 'socket fd direction)))
+         (raw
+          (with-error (__close-fd fd)
+            (__open-raw-device 'socket fd direction))))
     (SocketDevice raw fd direction domain type proto #f #f)))
 
 (def (open-client-socket-device (domain    : :fixnum)
@@ -71,11 +73,29 @@
 
 (def (socket-device-accept (sock : SocketDevice))
   => SocketDevice
-  XXX)
+  (do-check-device-input socket-device-accept sock
+    (let* ((sa (socket-device-sockaddr sock))
+           (fd
+            (cond-expand
+              (linux
+               (__accept4 sock.fd sa (fxior O_NONBLOCK O_CLOSEONEXEC)))
+              (else
+               (let (fd (__accept sock.fd sa))
+                 (with-error (__close-fd fd)
+                   (fcntl-setfl! fd O_NONBLOCK)
+                   (fcntl-setfd! fd FD_CLOEXEC))
+                 fd))))
+           (raw
+            (with-error (__close-fd fd)
+              (__open-raw-device 'socket fd DIRECTION-INOUT))))
+      (SocketDevice raw fd DIRECTION-INOUT
+                    sock.domain sock.type sock.proto
+                    (sockaddr->Address sa)
+                    #f))))
 
 (def (socket-device-connect (sock : SocketDevice) (addr : Address))
   => :fixnum
-  (do-check-device-output socket-connect sock
+  (do-check-device-output socket-device-connect sock
     (let (sa (socket-device-address->sockaddr addr))
       (do-syscall (__connect sock.fd sa)
         EINPROGRESS EAGAIN EWOULDBLOCK ))))
@@ -85,64 +105,78 @@
                          (input       : :u8vector)
                          (input-start : :fixnum)
                          (input-end   : :fixnum)
-                         (flags       : :fixnum := 0))
+                         (flags       : :fixnum))
   => :fixnum
-  XXX)
+  (do-check-device-output socket-device-send sock
+    (do-syscall (__send sock.fd input input-start (fx- input-end input-start) flags))))
 
 (def (socket-device-recv (sock         : SocketDevice)
                          (output       : :u8vector)
                          (output-start : :fixnum)
                          (output-end   : :fixnum)
-                         (flags        : :fixnum := 0))
+                         (flags        : :fixnum))
   => :fixnum
-  XXX)
+  (do-check-device-input socket-device-recv spck
+    (do-syscall (__recv sock.fd output output-start (fx- output-end output-start) flags))))
 
 (def (socket-device-sendto (sock        : SocketDevice)
-                           (peer        : Address)
                            (input       : :u8vector)
                            (input-start : :fixnum)
                            (input-end   : :fixnum)
-                           (flags       : :fixnum := 0))
+                           (flags       : :fixnum)
+                           (peer        : Address))
   => :fixnum
-  XXX)
+  (do-check-device-output socket-device-sendto sock
+    (let (sa (socket-device-address->sockaddr peer))
+      (do-syscall (__sendto sock.fd input input-start (fx- input-end input-start) flags, sa)))))
 
 (def (socket-device-recvfrom (sock         : SocketDevice)
                              (output       : :u8vector)
                              (output-start : :fixnum)
                              (output-end   : :fixnum)
-                             (flags        : :fixnum := 0))
-  => :values
-  XXX)
-
-(def (socket-device-sendmsg (sock  : SocketDevice)
-                            (name  : :u8vector)
-                            (io    : :u8vector)
-                            (ctl   : :u8vector)
-                            (flags : :fixnum))
+                             (flags        : :fixnum)
+                             (peer         : sockaddr))
   => :fixnum
-  XXX)
+  (do-check-device-input socket-device-recvfrom sock
+    (do-syscall (__recvfrom sock.fd output output-start (fx- output-end output-start) flags sa))))
 
-(def (socket-device-recvmsg (sock  : SocketDevice)
-                            (name  : :u8vector)
-                            (io    : :u8vector)
-                            (ctl   : :u8vector)
-                            (flags : :fixnum))
-  => :values
-  XXX)
+;; TODO sendmsg recvmsg
 
 (def (socket-device-getpeername (sock : SocketDevice))
   => Address
-  XXX
-  )
+  (cond
+   (sock.remote)
+   (else
+    (do-check-device-open socket-device-getpeername sock
+      (let (sa (socket-device-sockaddr sock))
+        (do-syscall (___getpeername sock.fd sa))
+        (let (addr (sockaddr->address sa))
+          (set! sock.remote addr)
+          addr))))))
 
 (def (socket-device-getsockname (sock : SocketDevice))
   => Address
-  XXX
-  )
+  (cond
+   (sock.local)
+   (else
+    (do-check-device-open socket-device-getsockname sock
+      (let (sa (socket-device-sockaddr sock))
+        (do-syscall (___getsockname sock.fd sa))
+        (let (addr (sockaddr->address sa))
+          (set! sock.local addr)
+          addr))))))
 
 ;;; utilities
 (def (socket-device-address->sockaddr (sock : SocketDevice) (addr : Address))
   => sockaddr
+  XXX)
+
+(def (socket-device-sockaddr (sock : SocketDevice))
+  => sockaddr
+  XXX)
+
+(def (sockaddr->address (sa : sockaddr))
+  => Address
   XXX)
 
 (C-ffi-macrology)
@@ -167,8 +201,7 @@
            (scope-id  sin6_scope_id  :u32)))
   (struct sockaddr_un
           ((family    sun_family     :ushort)
-           (path      sun_path       [:u8 108])))
-  (struct sockaddr_storage ()))
+           (path      sun_path       [:u8 108]))))
 
 (def-C-syscall (__socket (domain :- :fixnum)
                          (type   :- :fixnum)
@@ -181,15 +214,64 @@
 
 (def-C-syscall (__bind (fd   :- :fixnum)
                        (addr :- sockaddr))
-  "bind(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
+  "bind(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
 
 (def-C-syscalll (__connect (fd   :- :fixnum)
                            (addr :- sockaddr))
-  "connect(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
+  "connect(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
 
 (def-C-syscall (__listen (fd      :- :fixnum)
                          (backlog :- :fixnum))
   "listen(___arg1, ___arg2)")
+
+(def-C-syscall (__accept (fd :- :fixnum)
+                         (sa :- sockaddr))
+  "accept(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
+
+(cond-expand
+  (linux
+   (def-C-syscall (__accept4 (fd    :- fixnum)
+                             (sa    :- sockaddr)
+                             (flags :- :fixnum))
+     "accept4(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2), ___arg3)")))
+
+(def-C-syscall (__send (fd      :- :fixnum)
+                       (input   :- :u8vector)
+                       (start   :- :fixnum)
+                       (count   :- :fixnum)
+                       (flags   :- :fixnum))
+  "send(___arg1, (void*)(___arg2 + ___arg3), ___arg4, ___arg5)")
+
+(def-C-syscall (__recv (fd      :- :fixnum)
+                       (ouput   :- :u8vector)
+                       (start   :- :fixnum)
+                       (count   :- :fixnum)
+                       (flags   :- :fixnum))
+  "recv(___arg1, (void*)(___arg2 + ___arg3), ___arg4, ___arg5)")
+
+(def-C-syscall (__sendto (fd      :- :fixnum)
+                         (input   :- :u8vector)
+                         (start   :- :fixnum)
+                         (count   :- :fixnum)
+                         (flags   :- :fixnum)
+                         (dest    :- sockaddr))
+  "sendto(___arg1, (void*)(___arg2 + ___arg3), ___arg4, ___arg5, ___arg6, (socklen_t)___U8VECTORSIZE(___ARG6))")
+
+(def-C-syscall (__sendto (fd      :- :fixnum)
+                         (input   :- :u8vector)
+                         (start   :- :fixnum)
+                         (count   :- :fixnum)
+                         (flags   :- :fixnum)
+                         (src     :- sockaddr))
+  "recvfrom(___arg1, (void*)(___arg2 + ___arg3), ___arg4, ___arg5, ___arg6, (socklen_t)___U8VECTORSIZE(___ARG6))")
+
+(def-C-syscall (__getpeername (fd      :- :fixnum)
+                              (sa      :- sockaddr))
+  "getpeername(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
+
+(def-C-syscall (__getsockname (fd      :- :fixnum)
+                              (sa      :- sockaddr))
+  "getsockname(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
 
 #;(def-C-union sockaddr
   (struct sockaddr_in

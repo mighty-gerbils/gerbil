@@ -27,7 +27,9 @@
                (fcntl-setfl! fd O_NONBLOCK)
                (fcntl-setfd! fd FD_CLOEXEC)))
             (else (void))))
-         (raw (__open-raw-device 'file fd (file-raw-device-direction flags))))
+         (raw
+          (with-error (__close-fd fd)
+            (__open-raw-device 'file fd (file-raw-device-direction flags)))))
     (FileDevice raw fd direction path)))
 
 (def (file-device-seek (dev : FileDevice) (pos : :integer) (whence : :fixnum))
