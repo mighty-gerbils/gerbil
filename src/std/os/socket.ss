@@ -156,18 +156,19 @@
 
 (def-C-union sockaddr
   (struct sockaddr_in
-          ((family    sin_family     :uint)
+          ((family    sin_family     :ushort)
            (port      sin_port       :u16)
            (addr      sin_addr       [:u8 4])))
   (struct sockaddr_in6
-          ((family    sin6_family    :uint)
+          ((family    sin6_family    :ushort)
            (port      sin6_port      :u16)
            (flowinfo  sing6_flowinfo :u32)
            (addr      sin6_addr      [:u8 16])
            (scope-id  sin6_scope_id  :u32)))
   (struct sockaddr_un
-          ((family    sun_family     :uint)
-           (path      sun_path       [:u8 108]))))
+          ((family    sun_family     :ushort)
+           (path      sun_path       [:u8 108])))
+  (struct sockaddr_storage ()))
 
 (def-C-syscall (__socket (domain :- :fixnum)
                          (type   :- :fixnum)
