@@ -174,19 +174,19 @@
                          (proto  :- :fixnum))
   "socket(___arg1, ___arg2, __arg3)")
 
-(def-C-syscall (__shutdown (fd :- :int)
+(def-C-syscall (__shutdown (fd  :- :fixnum)
                            (how :- :fixnum))
   "shutdown(___arg1, ___arg2)")
 
-(def-C-syscall (__bind (fd   :- :int)
+(def-C-syscall (__bind (fd   :- :fixnum)
                        (addr :- sockaddr))
   "bind(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
 
-(def-C-syscalll (__connect (fd   :- :int)
+(def-C-syscalll (__connect (fd   :- :fixnum)
                            (addr :- sockaddr))
   "connect(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
 
-(def-C-syscall (__listen (fd      :- :int)
+(def-C-syscall (__listen (fd      :- :fixnum)
                          (backlog :- :fixnum))
   "listen(___arg1, ___arg2)")
 

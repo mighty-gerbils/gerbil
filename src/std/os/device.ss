@@ -23,12 +23,15 @@
 
 (defstruct OSDevice
   ((raw     :- :raw-device-port)
-   (fd      :- :int)
+   ;; Note: a file descriptor is represented as a fixnum for the
+   ;;       simple reason that it is physically impossible to overflow
+   ;;       as you would run out of memory with that many file descriptors
+   (fd      :- :fixnum)
    (dir     :- :fixnum))
   print: (fd))
 
 (def (__open-raw-device (id        :- :symbol)
-                        (fd        :- :int)
+                        (fd        :- :fixnum)
                         (direction :- :fixnum))
   => :raw-device-port
   (def (fail)
@@ -118,7 +121,7 @@
     (timeout->abs-timeout->seconds timeo)
     #t))
 
-(def (__close-fd (fd :- :int))
+(def (__close-fd (fd :- :fixnum))
   => :fixnum
   (do-syscall (__close fd)))
 
@@ -126,20 +129,20 @@
 (C-include "<errno.h>"
            "<unistd.h>")
 
-(def-C-syscall (__read (fd    :- :int)
+(def-C-syscall (__read (fd    :- :fixnum)
                        (buf   :- :u8vector)
                        (start :- :fixnum)
                        (count :- :fixnum))
   "read(___arg1, (void*)(___arg2 + ___arg3 ), ___arg4)")
 
-(def-C (__write (fd    :- :int)
+(def-C (__write (fd    :- :fixnum)
                 (buf   :- :u8vector)
                 (start :- :fixnum)
                 (count :- :fixnum))
   => :fixnum
   "write(___arg1, (void*)(___arg2 + ___arg3), ___arg4)")
 
-(def-C (__close (fd    :- :int))
+(def-C (__close (fd    :- :fixnum))
   => :fixnum
   "close(___arg1)")
 

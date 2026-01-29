@@ -31,6 +31,27 @@
 (C-include  "<unistd.h>"
             "<fcntl.h>")
 
+(def-C-syscall (__fcntl1 (fd  :- :fixnum)
+                         (cmd :- :fixnum))
+  "fcntl(___arg1, ___arg2)")
+
+(def-C-syscall (__fcntl2 (fd  :- :fixnum)
+                         (cmd :- :fixnum)
+                         (arg :- :fixnum))
+  "fcntl(___arg1, ___arg2, ___arg3)")
+
+;; (def-C-code (__fcntl1 (fd  :- :fixnum)
+;;                       (cmd :- :fixnum))
+;;   => :fixnum
+;;   "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2)))")
+
+;; (def-C-code (__fcntl2 (fd  :- :fixnum)
+;;                       (cmd :- :fixnum)
+;;                       (arg :- :fixnum))
+;;   => :fixnum
+;;   "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2), ___INT(___ARG3)))")
+
+
 (def-C-const
   F_GETFL
   F_SETFL
@@ -124,14 +145,3 @@
   S_ISUID
   S_ISGID
   S_ISVTX)
-
-(def-C-code (__fcntl1 (fd  :- :fixnum)
-                      (cmd :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2)))")
-
-(def-C-code (__fcntl2 (fd  :- :fixnum)
-                      (cmd :- :fixnum)
-                      (arg :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2), ___INT(___ARG3)))")
