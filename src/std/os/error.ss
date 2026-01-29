@@ -5,17 +5,17 @@
         :std/error)
 (export #t)
 
-(deferror-class OSError (errno) os-error?)
+(deferror-class OSError ((errno : :int)) os-error?)
 
 (defrule (raise-os-error where errno irritants ...)
-  (let* ((errno (if (fx< errno 0) (fx- errno) errno))
+  (let* ((errno errno)
+         (errno (if (int.< errno 0) (int.- errno) errno))
          (err (OSError (strerror errno) where: (exception-context where) irritants: [primitive: 'where irritants ...])))
     (set! (OSError-errno err) errno)
     (raise err)))
 
-(defrule (raise-os-errno where irritants ...)
-  (let (errno (__errno))
-    (raise-os-error where errno irritants ...)))
+(defrule (raise-os-errno where errno irritants ...)
+  (raise-os-error where errno irritants ...))
 
 (def os-error-errno OSError-errno)
 
@@ -34,38 +34,34 @@
   ((_ expr)
    (check-os-error expr errno: ##fx-)))
 
-(defsyntax-case do-retry-nonblock ()
+(defsyntax-case do-try-syscall ()
   ((_ (prim arg ...) errno: get-errno result: result ERRNO ...)
    (with-identifier (r '$r)
      (with-syntax (((val ...) (gentemps #'(arg ...))))
        #'(let ((val arg) ...)
            (let loop ()
              (let (r (prim val ...))
-               (if (not (##fxnegative? r)) r
+               (if (not (int.negative? r)) r
                    (let (errno (get-errno r))
                      (cond
-                      ((or (##fx= errno ERRNO) ...)
+                      ((or (int.= errno ERRNO) ...)
                        (result r))
-                      ((##fx= errno EINTR)
+                      ((int.= errno EINTR)
                        (loop))
                       (else
                        (raise-os-error prim errno args: [val ...])))))))))))
   ((_ expr ERRNO ...)
-   (do-retry-nonblock expr
-     errno: ##fx-
+   (do-try-syscall expr
+     errno: int.-
      result: (lambda (r) #f)
      ERRNO ...)))
 
 (defrule (do-syscall expr ERRNO ...)
-  (do-retry-nonblock expr
-    errno: ##fx-
-    result: (lambda (r) r)
-    ERRNO ...))
-
-(defrules check-ptr ()
-  ((_ (make arg ...))
-   (let (r (make arg ...))
-     (if r r (raise-allocation-error make '(make arg ...))))))
+  (: (do-try-syscall expr
+       errno: int.-
+       result: (lambda ((r :- :int)) => :int r)
+       ERRNO ...)
+     :int))
 
 (defrule (with-error cleanup body rest ...)
   (try body rest ...
@@ -74,14 +70,17 @@
 (C-include "<errno.h>"
            "<string.h>")
 
-(def-C-code (__errno)
-  => :fixnum
+(def-C (__errno)
+  => :int
   "errno")
 
-(def (__get-errno _)
+(def (__get-errno _) => :int
   (__errno))
 
-(def-C-lambda (strerror (errno int :- :fixnum))
+(def-C (strerror (errno int :- :fixnum))
+  => :c-string)
+
+#;(def-C-lambda (strerror (errno int :- :fixnum))
   => char-string :string)
 
 (def-C-const

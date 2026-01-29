@@ -45,24 +45,35 @@ END-C
                          (string-append prev "\n"  (stx-e #'code))))))))
      #'(begin-foreign (c-declare code-string)))))
 
-(defsyntax-case def-C-code (=>)
-  ((_ (proc contract ...) => return c-code)
-   (and (syntax-local-runtime-type-info? #'return)
-        (stx-string? #'c-code))
-   (let* ((info (syntax-local-value #'return))
-          (wrap
-           (case (runtime-type-id info)
-             ((fixnum) "__FIX")
-             (else
-              (raise-syntax-error #f "unsupported type" stx #'return)))))
-     (with-syntax (((arg ...)   (map car #'(contract ...)))
-                   (code-string (string-append "___RESULT = " wrap "(" (stx-e #'c-code) ");")))
-       #'(def (proc contract ...) => return
-           (let (result (##c-code code-string arg ...))
-             (:- result return)))))))
+(defsyntax-case def-C (=>)
+  XXX
+  )
 
-(defsyntax-case def-C-lambda ()
-  XXX)
+(defsyntax-case def-C-syscall ()
+  ((_ head code)
+   (stx-string? #'code)
+   (with-syntax ((code-string (string-append "___TRAP_ERRNO(" (stx-e #'code) ")")))
+     #'(def-C head => :int
+         code-string))))
+
+;; (defsyntax-case def-C-code (=>)
+;;   ((_ (proc contract ...) => return c-code)
+;;    (and (syntax-local-runtime-type-info? #'return)
+;;         (stx-string? #'c-code))
+;;    (let* ((info (syntax-local-value #'return))
+;;           (wrap
+;;            (case (runtime-type-id info)
+;;              ((fixnum) "__FIX")
+;;              (else
+;;               (raise-syntax-error #f "unsupported type" stx #'return)))))
+;;      (with-syntax (((arg ...)   (map car #'(contract ...)))
+;;                    (code-string (string-append "___RESULT = " wrap "(" (stx-e #'c-code) ");")))
+;;        #'(def (proc contract ...) => return
+;;            (let (result (##c-code code-string arg ...))
+;;              (:- result return)))))))
+
+;; (defsyntax-case def-C-lambda ()
+;;   XXX)
 
 (defsyntax-case def-C-struct ()
   XXX)

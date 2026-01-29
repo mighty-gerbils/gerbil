@@ -49,27 +49,6 @@
   => SocketDevice
   (open-socket-device domain type proto DIRECTION-IN))
 
-(def (socket-device-bind (sock : SocketDevice) (addr : Address))
-  => :void
-  (do-check-device-open socket-device-bind sock
-    (using (sa (socket-device-address->sockaddr addr) :- sockaddr)
-      (do-syscall (__bind sock.fd sa.body)))))
-
-(def (socket-device-listen (sock : SocketDevice) (backlog : :fixnuim := 10))
-  => :void
-  XXX)
-
-(def (socket-device-accept (sock : SocketDevice))
-  => SocketDevice
-  XXX)
-
-(def (socket-device-connect (sock : SocketDevice) (addr : Address))
-  => :fixnum
-  (do-check-device-output socket-connect sock
-    (using (sa (socket-device-address->sockaddr addr) :- sockaddr)
-      (do-syscall (__connect sock.fd sa.body)
-        EAGAIN EINPROGRESS))))
-
 (def (socket-device-shutdown (sock : SocketDevice) (how : :fixnum))
   => :void
   (do-check-device-open socket-shutdown sock
@@ -78,6 +57,28 @@
       (fxand sock.dir (fxnot how)))
     (when (fx= sock.dir 0)
       (device-close sock))))
+
+(def (socket-device-bind (sock : SocketDevice) (addr : Address))
+  => :void
+  (do-check-device-open socket-device-bind sock
+    (let (sa (socket-device-address->sockaddr addr))
+      (do-syscall (__bind sock.fd sa)))))
+
+(def (socket-device-listen (sock : SocketDevice) (backlog : :fixnuim := 10))
+  => :void
+  (do-check-device-input socket-device-listen sock
+    (do-syscall (__listen sock.fd backlog))))
+
+(def (socket-device-accept (sock : SocketDevice))
+  => SocketDevice
+  XXX)
+
+(def (socket-device-connect (sock : SocketDevice) (addr : Address))
+  => :fixnum
+  (do-check-device-output socket-connect sock
+    (let (sa (socket-device-address->sockaddr addr))
+      (do-syscall (__connect sock.fd sa)
+        EINPROGRESS EAGAIN EWOULDBLOCK ))))
 
 ;; TODO safer input/output range interface
 (def (socket-device-send (sock        : SocketDevice)
@@ -145,15 +146,51 @@
   XXX)
 
 (C-ffi-macrology)
-(C-include <sys/types.h>
-           <sys/socket.h>
-           <netinet/in.h>
-           <netinet/ip.h>
-           <netinet/tcp.h>
-           <arpa/inet.h>
-           <sys/un.h>)
+(C-include "<sys/types.h>"
+           "<sys/socket.h>"
+           "<netinet/in.h>"
+           "<netinet/ip.h>"
+           "<netinet/tcp.h>"
+           "<arpa/inet.h>"
+           "<sys/un.h>")
 
 (def-C-union sockaddr
+  (struct sockaddr_in
+          ((family    sin_family     :uint)
+           (port      sin_port       :u16)
+           (addr      sin_addr       [:u8 4])))
+  (struct sockaddr_in6
+          ((family    sin6_family    :uint)
+           (port      sin6_port      :u16)
+           (flowinfo  sing6_flowinfo :u32)
+           (addr      sin6_addr      [:u8 16])
+           (scope-id  sin6_scope_id  :u32)))
+  (struct sockaddr_un
+          ((family    sun_family     :uint)
+           (path      sun_path       [:u8 108]))))
+
+(def-C-syscall (__socket (domain :- :fixnum)
+                         (type   :- :fixnum)
+                         (proto  :- :fixnum))
+  "socket(___arg1, ___arg2, __arg3)")
+
+(def-C-syscall (__shutdown (fd :- :int)
+                           (how :- :fixnum))
+  "shutdown(___arg1, ___arg2)")
+
+(def-C-syscall (__bind (fd   :- :int)
+                       (addr :- sockaddr))
+  "bind(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
+
+(def-C-syscalll (__connect (fd   :- :int)
+                           (addr :- sockaddr))
+  "connect(___arg1, ___arg2, ___U8VECTORSIZE(___ARG2))")
+
+(def-C-syscall (__listen (fd      :- :int)
+                         (backlog :- :fixnum))
+  "listen(___arg1, ___arg2)")
+
+#;(def-C-union sockaddr
   (struct sockaddr_in
           ((family    sin_family     uint       :- :fixnum)
            (port      sin_port       uint16     :- :fixnum)
@@ -169,13 +206,13 @@
            (path      sun_path       [char 108] :- :u8vector))))
 
 
-(def-C-code (__socket (domain :- :fixnum)
+#;(def-C-code (__socket (domain :- :fixnum)
                       (type   :- :fixnum)
                       (proto  :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(socket(___INT(___ARG1), ___INT(___ARG2), ___INT(___ARG3))")
 
-(def-C-code (__bind (fd   :- :fixnum)
+#;(def-C-code (__bind (fd   :- :fixnum)
                     (addr :- :u8vector))
   => :fixnum
   "__TRAP_ERRNO(bind(___INT(___ARG1), ___U8VECTOR_AS(struct sockaddr *, ___ARG2), ___U8VECTORSIZE(___ARG2)))")

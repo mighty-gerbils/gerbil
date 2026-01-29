@@ -20,7 +20,9 @@
   (,(compilation-target? C)
    (import :std/ffi)
    (C-ffi-macrology)
-   (C-include "<stdio.h>")))
+   (C-include "<stdio.h>"))
+  (else
+   (syntax-error "unsupoorted target")))
 
 ;;; base
 (defwriter-ext (format-object-begin writer (klass : :class) (env : FormatEnv))
@@ -263,12 +265,22 @@
          (__buffer-format! buf #\% u8: conversion))
        buf))
 
-   (def-C-code (__print-flonum (output-buf  :- :u8vector)
-                               (output-size :- :fixnum)
-                               (nfmt-buf    :- :u8vector)
-                               (num         :- :flonum))
+   (def-C (__print-flonum (output-buf  :- :u8vector)
+                          (output-size :- :fixnum)
+                          (nfmt-buf    :- :u8vector)
+                          (num         :- :flonum))
      => :fixnum
-     "snprintf(___U8VECTOR_AS (char*, ___ARG1), ___INT(___ARG2), ___U8VECTOR_AS (char*, ___ARG3), ___F64UNBOX(___ARG4))")))
+     "snprintf((char*)___arg1, ___arg2, (char*) ___arg3, ___arg4)")
+
+   #;(def-C-code (__print-flonum (output-buf  :- :u8vector)
+   (output-size :- :fixnum) ;;
+   (nfmt-buf    :- :u8vector) ;;
+   (num         :- :flonum)) ;;
+   => :fixnum ;;
+   "snprintf(___U8VECTOR_AS (char*, ___ARG1), ___INT(___ARG2), ___U8VECTOR_AS (char*, ___ARG3), ___F64UNBOX(___ARG4))")
+   )
+  (else
+   (syntax-error "unsupported target")))
 
 (defwriter-ext (format-finite-flonum writer num (env : FormatEnv))
   (cond-expand

@@ -23,12 +23,12 @@
 
 (defstruct OSDevice
   ((raw     :- :raw-device-port)
-   (fd      :- :fixnum)
+   (fd      :- :int)
    (dir     :- :fixnum))
   print: (fd))
 
 (def (__open-raw-device (id        :- :symbol)
-                        (fd        :- :fixnum)
+                        (fd        :- :int)
                         (direction :- :fixnum))
   => :raw-device-port
   (def (fail)
@@ -118,7 +118,7 @@
     (timeout->abs-timeout->seconds timeo)
     #t))
 
-(def (__close-fd (fd :- :fixnum))
+(def (__close-fd (fd :- :int))
   => :fixnum
   (do-syscall (__close fd)))
 
@@ -126,20 +126,37 @@
 (C-include "<errno.h>"
            "<unistd.h>")
 
-(def-C-code (__read (fd    :- :fixnum)
+(def-C-syscall (__read (fd    :- :int)
+                       (buf   :- :u8vector)
+                       (start :- :fixnum)
+                       (count :- :fixnum))
+  "read(___arg1, (void*)(___arg2 + ___arg3 ), ___arg4)")
+
+(def-C (__write (fd    :- :int)
+                (buf   :- :u8vector)
+                (start :- :fixnum)
+                (count :- :fixnum))
+  => :fixnum
+  "write(___arg1, (void*)(___arg2 + ___arg3), ___arg4)")
+
+(def-C (__close (fd    :- :int))
+  => :fixnum
+  "close(___arg1)")
+
+#;(def-C-code (__read (fd    :- :fixnum)
                     (buf   :- :u8vector)
                     (start :- :fixnum)
                     (count :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(read(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
 
-(def-C-code (__write (fd    :- :fixnum)
+#;(def-C-code (__write (fd    :- :u)
                      (buf   :- :u8vector)
                      (start :- :fixnum)
                      (count :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(write(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
 
-(def-C-code (__close (fd    :- :fixnum))
+#;(def-C-code (__close (fd    :- :fixnum))
   => :fixnum
   "___TRAP_ERRNO(close(___INT(___ARG1)))")
