@@ -13,11 +13,13 @@
   constructor: :init!
   final: #t)
 
-(def !NullAddres (NullAddress))
+(defstruct (EndpointAddress Address) ()
+  transparent: #t
+  acyclic: #t)
 
 (defstruct (NetAddress Address)
   ((bytes  :- :u8vector)
-   (string :? :string))
+   (string :- :string))
   transparent: #t
   acyclic: #t)
 
@@ -36,9 +38,16 @@
   constructor: :init!
   final: #t)
 
-(defstruct (InetAddress Address)
-  ((net  :- NetAddress)
+(defstruct (InetAddress EndpointAddress)
+  ((net  :- IPAddress)
    (port :- :fixnum))
+  transparent: #t
+  acyclic: #t
+  constructor: :init!
+  final: #t)
+
+(defstruct (UnixAddress EndpointAddress)
+  ((string :- :string))
   transparent: #t
   acyclic: #t
   constructor: :init!
@@ -47,13 +56,6 @@
 (defstruct (DNSAddress Address)
   ((dns :- :string)
    (net :? InetAddress))
-  transparent: #t
-  acyclic: #t
-  constructor: :init!
-  final: #t)
-
-(defstruct (UnixAddress Address)
-  ((string :- :string))
   transparent: #t
   acyclic: #t
   constructor: :init!
@@ -74,3 +76,7 @@
   acyclic: #t
   constructor: :init!
   final: #t)
+
+(def (address-discard! (addr : Address))
+  => :void
+  XXX)

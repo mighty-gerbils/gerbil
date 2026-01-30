@@ -27,6 +27,7 @@
     "sync/completion"
     "sync/barrier"
     "sync/channel"
+    "sync/wrlock"
 
     "time/time"
     "time/timeout"

@@ -5,11 +5,11 @@
         :std/error)
 (export #t)
 
-(deferror-class OSError ((errno : :int)) os-error?)
+(deferror-class OSError ((errno : :fixnum)) os-error?)
 
 (defrule (raise-os-error where errno irritants ...)
   (let* ((errno errno)
-         (errno (if (int.< errno 0) (int.- errno) errno))
+         (errno (if (fx< errno 0) (fx- errno) errno))
          (err (OSError (strerror errno) where: (exception-context where) irritants: [primitive: 'where irritants ...])))
     (set! (OSError-errno err) errno)
     (raise err)))
@@ -24,12 +24,16 @@
 (defraise/context (raise-allocation-error where expr)
   (AllocationError "error allocating memory" irritants: [expr]))
 
+(defsyntax-case errno-case (else)
+  XXX
+  )
+
 (defsyntax-case check-os-error ()
   ((_ (prim arg ...) errno: get-errno)
    (with-syntax (((val ...) (gentemps #'(arg ...))))
      #'(let ((val arg) ...)
          (let (r (prim val ...))
-           (if (not (##fxnegative? r)) r
+           (if (not (fxnegative? r)) r
                (raise-os-error prim (get-errno r) args: [val ...]))))))
   ((_ expr)
    (check-os-error expr errno: ##fx-)))
@@ -41,27 +45,27 @@
        #'(let ((val arg) ...)
            (let loop ()
              (let (r (prim val ...))
-               (if (not (int.negative? r)) r
+               (if (not (fxnegative? r)) r
                    (let (errno (get-errno r))
                      (cond
-                      ((or (int.= errno ERRNO) ...)
+                      ((or (fx= errno ERRNO) ...)
                        (result r))
-                      ((int.= errno EINTR)
+                      ((fx= errno EINTR)
                        (loop))
                       (else
                        (raise-os-error prim errno args: [val ...])))))))))))
   ((_ expr ERRNO ...)
    (do-try-syscall expr
-     errno: int.-
+     errno: fx-
      result: (lambda (r) #f)
      ERRNO ...)))
 
 (defrule (do-syscall expr ERRNO ...)
   (: (do-try-syscall expr
-       errno: int.-
-       result: (lambda ((r :- :int)) => :int r)
+       errno: fx-
+       result: (lambda ((r :- :fixnum)) => :fixnum r)
        ERRNO ...)
-     :int))
+     :fixnum))
 
 (defrule (with-error cleanup body rest ...)
   (try body rest ...
@@ -71,17 +75,14 @@
            "<string.h>")
 
 (def-C (__errno)
-  => :int
+  => :fixnum
   "errno")
 
-(def (__get-errno _) => :int
+(def (__get-errno _) => :fixnum
   (__errno))
 
-(def-C (strerror (errno int :- :fixnum))
-  => :c-string)
-
-#;(def-C-lambda (strerror (errno int :- :fixnum))
-  => char-string :string)
+(def-C (strerror (errno :fixnum))
+  => :string)
 
 (def-C-const
   E2BIG

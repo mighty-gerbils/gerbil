@@ -53,7 +53,7 @@ END-C
   ((_ head code)
    (stx-string? #'code)
    (with-syntax ((code-string (string-append "___TRAP_ERRNO(" (stx-e #'code) ")")))
-     #'(def-C head => :int
+     #'(def-C head => :fixnum
          code-string))))
 
 ;; (defsyntax-case def-C-code (=>)

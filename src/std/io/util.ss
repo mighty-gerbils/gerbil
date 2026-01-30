@@ -1,13 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; stdio utilities
-(import :std/sugar
-        :std/error
+(import :std/error
         ./interface)
 (export io-copy!)
 
 (def default-u8vector-buffer-size (expt 2 15)) ; 32K
-(def default-string-buffer-size (expt 2 13))   ; 32KB - 4kchars
+(def default-string-buffer-size   (expt 2 13)) ; 32KB - 4kchars
 
 (def (io-copy! reader writer (buffer-or-size #f))
   (cond

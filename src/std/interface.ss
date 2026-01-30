@@ -4,6 +4,11 @@
 (import :gerbil/runtime/interface)
 (export #t)
 
+(defsyntax-case @implement ()
+  ((_ Interface klass)
+   XXX
+   ))
+
 (defsyntax-case @interface-descriptor ()
   ((_ Interface)
    (syntax-local-interface-info? #'Interface)

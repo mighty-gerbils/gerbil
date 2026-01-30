@@ -1,9 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; read-write locks
-(import :std/error
-        :std/sugar
-        :gerbil/runtime)
+(import :gerbil/runtime/hash
+        :std/error)
 (export make-rwlock
         rwlock?
         rwlock-read-lock!
@@ -13,7 +12,7 @@
         with-read-lock
         with-write-lock)
 
-(defstruct rwlock ((mx              :- :mutex)
+(defstruct RWLock ((mx              :- :mutex)
                    (rcv             :- :condvar)
                    (wcv             :- :condvar)
                    (readers         :- :fixnum)
@@ -22,7 +21,7 @@
   final: #t
   constructor: :init!)
 
-(defmethod {:init! rwlock}
+(defmethod {:init! RWLock}
   (lambda (self (name 'rwlock))
     (let ((mx (make-mutex name))
           (rcv (make-condition-variable (make-symbol name "-read-lock")))
@@ -34,18 +33,18 @@
       (set! self.writer #f)
       (set! self.writers-waiting 0))))
 
-(def (rwlock-read-lock! (rw : rwlock))
-  (let lp ()
+(def (rwlock-read-lock! (rw : RWLock))
+  (let loop ()
     (mutex-lock! rw.mx)
     (if (or rw.writer (fx> rw.writers-waiting 0))
       (begin
         (mutex-unlock! rw.mx rw.rcv)
-        (lp))
+        (loop))
       (begin
         (set! rw.readers (fx+ rw.readers 1))
         (mutex-unlock! rw.mx)))))
 
-(def (rwlock-read-unlock! (rw : rwlock))
+(def (rwlock-read-unlock! (rw : RWLock))
   (mutex-lock! rw.mx)
   (let* ((readers rw.readers)
          (readers-1 (fx- readers 1)))
@@ -57,22 +56,22 @@
       (condition-variable-signal! rw.wcv))
     (mutex-unlock! rw.mx)))
 
-(def (rwlock-write-lock! (rw : rwlock))
-  (let lp ((waiting? #f))
+(def (rwlock-write-lock! (rw : RWLock))
+  (let loop ((waiting? #f))
     (mutex-lock! rw.mx)
     (cond
      ((or (fx> rw.readers 0) rw.writer)
       (unless waiting?
         (set! rw.writers-waiting (fx+ rw.writers-waiting 1)))
       (mutex-unlock! rw.mx rw.wcv)
-      (lp #t))
+      (loop #t))
      (else
       (when waiting?
         (set! rw.writers-waiting (fx- rw.writers-waiting 1)))
       (set! rw.writer (current-thread))
       (mutex-unlock! rw.mx)))))
 
-(def (rwlock-write-unlock! (rw : rwlock))
+(def (rwlock-write-unlock! (rw : RWLock))
   (mutex-lock! rw.mx)
   (unless rw.writer
     (mutex-unlock! rw.mx)
@@ -83,27 +82,39 @@
     (condition-variable-broadcast! rw.rcv))
   (mutex-unlock! rw.mx))
 
-(defrule (with-rwlock rw proc lock! unlock!)
+(defrule (do-with-rwlock rw expr enter! exit!)
   (let (handler (current-exception-handler))
     (with-exception-handler
      (lambda (e)
        (with-catch void
          (lambda ()
-           (unlock! rw)
+           (exit! rw)
            (handler e)))
        ;; if the handler returns here the state is inconsistent -- we need to bail
        (##thread-end-with-uncaught-exception! e))
      (lambda ()
-       (lock! rw)
-       (let (result (proc))
-         (unlock! rw)
+       (enter! rw)
+       (let (result expr)
+         (exit! rw)
          result)))))
 
-(def (with-read-lock (rw : rwlock) (proc : :procedure))
-  (with-rwlock rw proc rwlock-read-lock! rwlock-read-unlock!))
+(defrules do-with-read-lock ()
+  ((_ rw expr)
+   (do-with-rwlock rw expr rwlock-read-lock! rwlock-read-unlock!))
+  ((_ rw expr rest ...)
+   (do-with-read-lock rw (begin expr rest ...))))
 
-(def (with-write-lock (rw : rwlock) (proc : :procedure))
-  (with-rwlock rw proc rwlock-write-lock! rwlock-write-unlock!))
+(defrules do-with-write-lock ()
+  ((_ rw expr)
+   (do-with-rwlock rw expr rwlock-write-lock! rwlock-write-unlock!))
+  ((_ rw expr rest ...)
+   (do-with-write-lock rw (begin expr rest ...))))
+
+(def (with-read-lock (rw : RWLock) (proc : :procedure))
+  (do-with-read-lock rw (proc)))
+
+(def (with-write-lock (rw : RWLock) (proc : :procedure))
+  (do-with-write-lock rw (proc) rwlock-write-lock! rwlock-write-unlock!))
 
 ;; methods for the Locker interface
 (defmethod {read-lock! rwlock}

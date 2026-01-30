@@ -3,7 +3,11 @@
 ;;; Standard IO interfaces
 (import :std/time/timeout
         :std/net/address/address)
-(export #t timeout?)
+(export #t)
+
+(def IN    1)
+(def OUT   2)
+(Def INOUT 3)
 
 ;; closable io sources and sinks
 (interface Closer
@@ -107,16 +111,16 @@
   ;; setsockopt syscall
   (setsockopt (level  :  :fixnum)
               (option :  :fixnum)
-              value)
+              (value  :  :t))
   => :void
   ;; input timeout
-  (set-input-timeout! (timeo :~ (maybe timeout?)))
+  (set-input-timeout! (timeo : Timeout))
   => :void
   ;; output timeout
-  (set-output-timeout! (timeo :~ (maybe timeout? )))
+  (set-output-timeout! (timeo : Timeout))
   => :void)
 
-(interface (StreamSocket Socket)
+(interface (ClientSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end.
@@ -135,8 +139,9 @@
         (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
         (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
         (flags :  :fixnum                                                      :=  0))
-  => :fixnum
+  => :fixnum)
 
+(interface (StreamSocket ClientSocket)
   ;; returns a Reader instance reading from the socket
   (reader) => Reader
 
@@ -145,14 +150,14 @@
 
   ;; shuts down the socket in one direction which must be 'in, 'out or 'inout
   ;; if both directions are closed the socket is also closed.
-  (shutdown (direction : :symbol))
+  (shutdown (direction :~ (one-of? ,IN ,OUT ,INOUT) : :fixnum))
   => :void)
 
 (interface (ServerSocket Socket)
   ;; accept waits for an incoming connection and returns a StreamSocket
   (accept) => StreamSocket)
 
-(interface (DatagramSocket Socket)
+(interface (DatagramSocket ClientSocket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - peer is a _box_ to place the peer's address.
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
@@ -179,21 +184,7 @@
 
   ;; connect the datagram socket to a peer
   (connect (peer : Address))
-  => :void
-
-  ;; recv data from the connected peer
-  (recv (u8v   :  :u8vector)
-        (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
-        (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
-        (flags :  :fixnum                                                      :=  0))
-  => :fixnum
-
-  ;; send data to the connected peer
-  (send (u8v   :  :u8vector)
-        (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
-        (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
-        (flags :  :fixnum                                                      :=  0))
-  => :fixnum)
+  => :void)
 
 (defrule (previous-input? type?)
   (lambda (o)

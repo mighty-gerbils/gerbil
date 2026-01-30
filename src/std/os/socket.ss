@@ -2,19 +2,18 @@
 ;;; © vyzo
 ;;; OS Socket Devices
 (import :std/ffi
-        :std/net/address/address
-        :std/net/address/inet
         ./error
         ./device
-        ./fcntl)
+        ./fcntl
+        ./sockaddr)
 (export #t)
 
 (defstruct (SocketDevice OSDevice)
   ((domain :- :fixnum)
    (type   :- :fixnum)
    (proto  :- :fixnum)
-   (local  :? Address)
-   (remote :? Address)))
+   (local  :? sockaddr)
+   (remote :? sockaddr)))
 
 (def (open-socket-device (domain    : :fixnum)
                          (type      : :fixnum)
@@ -51,36 +50,41 @@
   => SocketDevice
   (open-socket-device domain type proto DIRECTION-IN))
 
+(def (socket-device-close (sock : SocketDevice))
+  (when sock.local
+    (sockaddr-discard! sock.local)
+    (set! sock.local #f))
+  (when sock.remote
+    (sockaddr-discard! sock.remote)
+    (set! sock.local #f))
+  (device-close sock))
+
 (def (socket-device-shutdown (sock : SocketDevice) (how : :fixnum))
   => :void
-  (do-check-device-open socket-shutdown sock
+  (unless (fx= (fxand sock.dir how) 0)
     (__shutdown sock.fd how)
-    (set! sock.dir
-      (fxand sock.dir (fxnot how)))
-    (when (fx= sock.dir 0)
-      (device-close sock))))
+    (socket-device-close sock how)))
 
-(def (socket-device-bind (sock : SocketDevice) (addr : Address))
+(def (socket-device-bind (sock : SocketDevice) (sa : sockaddr))
   => :void
   (do-check-device-open socket-device-bind sock
-    (let (sa (socket-device-address->sockaddr addr))
-      (do-syscall (__bind sock.fd sa)))))
+    (do-syscall (__bind sock.fd sa))))
 
-(def (socket-device-listen (sock : SocketDevice) (backlog : :fixnuim := 10))
+(def (socket-device-listen (sock : SocketDevice) (backlog : :fixnum))
   => :void
   (do-check-device-input socket-device-listen sock
     (do-syscall (__listen sock.fd backlog))))
 
 (def (socket-device-accept (sock : SocketDevice))
-  => SocketDevice
+  => :t ;; SocketDevice or :fixnum
   (do-check-device-input socket-device-accept sock
     (let* ((sa (socket-device-sockaddr sock))
            (fd
             (cond-expand
               (linux
-               (__accept4 sock.fd sa (fxior O_NONBLOCK O_CLOSEONEXEC)))
+               (do-syscall (__accept4 sock.fd sa (fxior O_NONBLOCK O_CLOSEONEXEC))))
               (else
-               (let (fd (__accept sock.fd sa))
+               (let (fd (do-syscall (__accept sock.fd sa)))
                  (with-error (__close-fd fd)
                    (fcntl-setfl! fd O_NONBLOCK)
                    (fcntl-setfd! fd FD_CLOEXEC))
@@ -88,17 +92,17 @@
            (raw
             (with-error (__close-fd fd)
               (__open-raw-device 'socket fd DIRECTION-INOUT))))
-      (SocketDevice raw fd DIRECTION-INOUT
-                    sock.domain sock.type sock.proto
-                    (sockaddr->Address sa)
-                    #f))))
+      (if (fx< fd 0)
+        fd
+        (SocketDevice raw fd DIRECTION-INOUT
+                      sock.domain sock.type sock.proto
+                      #f sa)))))
 
-(def (socket-device-connect (sock : SocketDevice) (addr : Address))
+(def (socket-device-connect (sock : SocketDevice) (sa : sockaddr))
   => :fixnum
   (do-check-device-output socket-device-connect sock
-    (let (sa (socket-device-address->sockaddr addr))
-      (do-syscall (__connect sock.fd sa)
-        EINPROGRESS EAGAIN EWOULDBLOCK ))))
+    (do-syscall (__connect sock.fd sa)
+      EINPROGRESS EWOULDBLOCK EAGAIN)))
 
 ;; TODO safer input/output range interface
 (def (socket-device-send (sock        : SocketDevice)
@@ -124,11 +128,10 @@
                            (input-start : :fixnum)
                            (input-end   : :fixnum)
                            (flags       : :fixnum)
-                           (peer        : Address))
+                           (peer        : sockaddr))
   => :fixnum
   (do-check-device-output socket-device-sendto sock
-    (let (sa (socket-device-address->sockaddr peer))
-      (do-syscall (__sendto sock.fd input input-start (fx- input-end input-start) flags, sa)))))
+    (do-syscall (__sendto sock.fd input input-start (fx- input-end input-start) flags sa))))
 
 (def (socket-device-recvfrom (sock         : SocketDevice)
                              (output       : :u8vector)
@@ -143,40 +146,29 @@
 ;; TODO sendmsg recvmsg
 
 (def (socket-device-getpeername (sock : SocketDevice))
-  => Address
+  => sockaddr
   (cond
    (sock.remote)
    (else
     (do-check-device-open socket-device-getpeername sock
       (let (sa (socket-device-sockaddr sock))
         (do-syscall (___getpeername sock.fd sa))
-        (let (addr (sockaddr->address sa))
-          (set! sock.remote addr)
-          addr))))))
+        (set! sock.remote sa)
+        sa)))))
 
 (def (socket-device-getsockname (sock : SocketDevice))
-  => Address
+  => sockaddr
   (cond
    (sock.local)
    (else
     (do-check-device-open socket-device-getsockname sock
       (let (sa (socket-device-sockaddr sock))
         (do-syscall (___getsockname sock.fd sa))
-        (let (addr (sockaddr->address sa))
-          (set! sock.local addr)
-          addr))))))
-
-;;; utilities
-(def (socket-device-address->sockaddr (sock : SocketDevice) (addr : Address))
-  => sockaddr
-  XXX)
+        (set! sock.local sa)
+        sa)))))
 
 (def (socket-device-sockaddr (sock : SocketDevice))
   => sockaddr
-  XXX)
-
-(def (sockaddr->address (sa : sockaddr))
-  => Address
   XXX)
 
 (C-ffi-macrology)
@@ -187,21 +179,6 @@
            "<netinet/tcp.h>"
            "<arpa/inet.h>"
            "<sys/un.h>")
-
-(def-C-union sockaddr
-  (struct sockaddr_in
-          ((family    sin_family     :ushort)
-           (port      sin_port       :u16)
-           (addr      sin_addr       [:u8 4])))
-  (struct sockaddr_in6
-          ((family    sin6_family    :ushort)
-           (port      sin6_port      :u16)
-           (flowinfo  sing6_flowinfo :u32)
-           (addr      sin6_addr      [:u8 16])
-           (scope-id  sin6_scope_id  :u32)))
-  (struct sockaddr_un
-          ((family    sun_family     :ushort)
-           (path      sun_path       [:u8 108]))))
 
 (def-C-syscall (__socket (domain :- :fixnum)
                          (type   :- :fixnum)
@@ -272,33 +249,6 @@
 (def-C-syscall (__getsockname (fd      :- :fixnum)
                               (sa      :- sockaddr))
   "getsockname(___arg1, ___arg2, (socklen_t)___U8VECTORSIZE(___ARG2))")
-
-#;(def-C-union sockaddr
-  (struct sockaddr_in
-          ((family    sin_family     uint       :- :fixnum)
-           (port      sin_port       uint16     :- :fixnum)
-           (addr      sin_addr       [uint8 4]  :- :u8vector)))
-  (struct sockaddr_in6
-          ((family    sin6_family    uint       :- :fixnum)
-           (port      sin6_port      uint16     :- :fixnum)
-           (flowinfo  sing6_flowinfo uint32     :- :integer)
-           (addr      sin6_addr      [uint8 16] :- :u8vector)
-           (scope-id  sin6_scope_id  uint32     :- :integer)))
-  (struct sockaddr_un
-          ((family    sun_family     uint       :- :fixnum)
-           (path      sun_path       [char 108] :- :u8vector))))
-
-
-#;(def-C-code (__socket (domain :- :fixnum)
-                      (type   :- :fixnum)
-                      (proto  :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(socket(___INT(___ARG1), ___INT(___ARG2), ___INT(___ARG3))")
-
-#;(def-C-code (__bind (fd   :- :fixnum)
-                    (addr :- :u8vector))
-  => :fixnum
-  "__TRAP_ERRNO(bind(___INT(___ARG1), ___U8VECTOR_AS(struct sockaddr *, ___ARG2), ___U8VECTORSIZE(___ARG2)))")
 
 (def-C-const
   SHUT_RD

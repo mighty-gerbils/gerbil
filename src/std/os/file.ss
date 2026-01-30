@@ -63,6 +63,12 @@
 (C-include "<sys/types.h>"
            "<sys/stat.h>"
            "<unistd.h>")
+(C-declare ##<END-C
+#ifndef _LARGEFILE64_SOURCE
+#define _LARGEFILE64_SOURCE
+#endif
+END-C
+)
 
 (def-C-const
   SEEK_SET
@@ -75,18 +81,15 @@
      SEEK_DATA
      SEEK_HOLE)))
 
-(def-C-lambda (__open (path  char-string :- :string)
-                 (flags int         :- :fixnum)
-                 (mode  int         :- :fixnum))
-  => int :fixnum
-  "___TRAP_ERRNO(open(___arg1, ___arg2, ___arg3))")
+(def-C-syscall (__open (path  :- :string)
+                       (flags :- :fixnum)
+                       (mode  :- :fixnum))
+  "open(___arg1, ___arg2, ___arg3)")
 
-(def-C-lambda (__lseek (fd     int    :- :fixnum)
-                  (offset int64  :- :integer)
-                  (whence int    :- :fixnum))
-  => int :fixnum
-  "___TRAP_ERRNO(lseek(___arg1, ___arg2, ___arg3))")
+(def-C-syscall (__lseek (fd     :- :fixnum)
+                        (offset :- :int64)
+                        (whence :- :fixnum))
+  "lseek64(___arg1, ___arg2, ___arg3)")
 
-(def-C-code (__fsync (fd : :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(fsync(___INT(___ARG1)))")
+(def-C-syscall (__fsync (fd : :- :fixnum))
+  "fsync(___arg1)")

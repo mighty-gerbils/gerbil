@@ -4,4 +4,6 @@
 (import ./address)
 (export #t)
 
-XXX
+(def (address->inet-address (addr : Address)) => InetAddress
+  XXX
+  )

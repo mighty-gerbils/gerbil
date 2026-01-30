@@ -94,24 +94,30 @@
      (__write dev.fd input input-start (fx- input-end input-start))
      EAGAIN EWOULDBLOCK)))
 
-(def (device-close (dev : OSDevice))
+(def (device-close (dev : OSDevice) (direction : :fixnum := DIRECTION-INOUT))
   => :void
-  (unless (fx= dev.dir 0)
-    (unwind-protect
-      (close-port dev.raw)
-      (set! dev.raw #f)
-      (set! dev.dir 0))))
+  (unless (fx= (fxand dev.dir direction) 0)
+    (set! dev.dir
+      (fxand dev.dir (fxnot how)))
+    (when (fx= dev.dir 0)
+      (unwind-protect
+        (close-port dev.raw)
+        (set! dev.raw #f)))))
+
+(defrule (with-error-device-close sock body rest ...)
+  (with-error (device-close body)
+    body rest ...))
 
 (def (device-closed? (dev : OSDevice))
   => :boolean
   (fx= dev.dir 0))
 
-(def (device-wait-input! (dev : OSDevice) (timeo #f))
+(def (device-wait-input! (dev : OSDevice) (timeo : Timeout))
   (do-check-device-input device-wait-input! dev
     (let (ioc (macro-raw-device-port-rdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))
 
-(def (device-wait-output! (dev : OSDevice) (timeo #f))
+(def (device-wait-output! (dev : OSDevice) (timeo : Timeout))
   (do-check-device-output device-wait-output! dev
     (let (ioc (macro-raw-device-port-wdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))
