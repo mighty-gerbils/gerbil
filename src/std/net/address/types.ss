@@ -55,7 +55,7 @@
 
 (defstruct (DNSAddress Address)
   ((dns :- :string)
-   (net :? InetAddress))
+   (net :  :list))
   transparent: #t
   acyclic: #t
   constructor: :init!
@@ -76,7 +76,3 @@
   acyclic: #t
   constructor: :init!
   final: #t)
-
-(def (address-discard! (addr : Address))
-  => :void
-  XXX)

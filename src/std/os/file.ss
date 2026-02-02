@@ -53,12 +53,6 @@
    (else
     (raise-bad-argument file-raw-device-direction "direction control flags" flags))))
 
-(def (file-seek-whence (whence : :symbol)) => :fixnum
-  (case whence
-    ((start START set SET) (: SEEK_SET :fixnum))
-    ((current CURRENT)     (: SEEK_CUR :fixnum))
-    ((end END)             (: SEEK_END :fixnum))))
-
 (C-ffi-macrology)
 (C-include "<sys/types.h>"
            "<sys/stat.h>"
@@ -73,7 +67,9 @@ END-C
 (def-C-const
   SEEK_SET
   SEEK_CUR
-  SEEK_END)
+  SEEK_END
+  SEEK_DATA
+  SEEK_HOLE)
 
 (cond-expand
   (linux
@@ -89,7 +85,7 @@ END-C
 (def-C-syscall (__lseek (fd     :- :fixnum)
                         (offset :- :int64)
                         (whence :- :fixnum))
-  "lseek64(___arg1, ___arg2, ___arg3)")
+  "lseek(___arg1, ___arg2, ___arg3)")
 
 (def-C-syscall (__fsync (fd : :- :fixnum))
   "fsync(___arg1)")

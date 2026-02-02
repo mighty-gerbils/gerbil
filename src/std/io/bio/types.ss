@@ -1,32 +1,58 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffer types
+(import ../interface)
 (export #t)
 
-;; input-buffer
-;; - reader is an instance of Reader
+(defstruct basic-buffer
+  ((buf     :- :u8vector)
+   (closed? :- :boolean)
+   (owned?  :- :boolean)))
+
+;; basic-input-buffer
 ;; - buf is the buffer itself, as a u8vector
 ;; - rlo is the read cursor (where the user reads)
 ;; - rhi is the write cursor (where the reader pumps)
-(defstruct input-buffer (reader buf rlo rhi closed?)
-  final: #t )
+(defstruct (basic-input-buffer basic-buffer)
+  ((rlo     :- :fixnum)
+   (rhi     :- :fixnum)))
 
-;; delimited-input-buffer
+(defstruct (basic-output-buffer basic-buffer)
+  ((whi     :- :fixnum)))
+
+;; memory buffers
+(defstruct (memory-input-buffer basic-input-buffer)()
+  final: #t)
+
+(defstruct (memory-output-buffer basic-output-buffer) ()
+  final: #t)
+
+;; sources and sinks
+(defstruct (reader-input-buffer basic-input-buffer)
+  ((reader  :- Reader)))
+
+(defstruct (source-input-buffer reader-input-buffer) ()
+  final: #t)
+
+(defstruct (writer-output-buffer basic-output-buffer)
+  ((writer  :- Writer)))
+
+(defstruct (sink-output-buffer writer-output-buffer) ()
+  final: #t)
+
+;; messge buffers
+(defstruct (message-input-buffer reader-input-buffer) ()
+  final: #t)
+
+(defstruct (message-output-buffer writer-output-buffer) ()
+  final: #t)
+
+;; delimited input buffered readers
 ;; - in is an input-buffer or another delimited-input-buffer
 ;; - reamining is the number of bytes that remain to be read
 ;; - limit is the input limit
-(defstruct delimited-input-buffer (in remaining limit)
-  final: #t )
-
-;; output-buffer
-;; - writer is an instance of Writer
-;; - buf is the buffer itself, as a u8vector
-;; - whi is the write cursor
-(defstruct output-buffer (writer buf whi closed?)
-  final: #t )
-
-;; chunked-output-buffer
-;; - chunks is the list of current pending chunks.
-;; - output is the final output if the buffer is closed.
-(defstruct chunked-output-buffer (chunks output)
-  final: #t )
+(defstruct delimited-input-buffer
+  ((input     :- :t)
+   (remaining :- :integer)
+   (limit     :- :integer))
+  final: #t)

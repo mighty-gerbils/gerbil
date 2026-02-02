@@ -5,9 +5,9 @@
         :std/net/address/address)
 (export #t)
 
-(def IN    1)
-(def OUT   2)
-(Def INOUT 3)
+(defrule (byte? o)
+  (and (fixnum? o)
+       (fx<= 0 o 255)))
 
 ;; closable io sources and sinks
 (interface Closer
@@ -17,11 +17,11 @@
 (interface Seeker
   ;; Seek to a particular position in the backing IO source.
   ;; - position denotes where, relative to `from` that the cursor should be moved to.
-  ;;   When `'start` is supplied, `position` must be positive.
-  ;;   When `'end` `'current` is supplied, `position` may be positive or negative
+  ;;   When `START is supplied, `position` must be positive.
+  ;;   When `END` or `CURRENT` is supplied, `position` may be positive or negative
   ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
   (seek (position : :integer)
-        (from     :~ whence? := 'start))
+        (whence   : :fixnum)
   => :void)
 
 ;; generic binary IO
@@ -70,13 +70,9 @@
   => :void
 
   ;; returns a new BufferedReader instance delimiting the input length that shares the underlying
-  ;; buffer; the limit must be a fixnum.
-  (delimit (limit :~ nonnegative-fixnum? :- :fixnum))
+  ;; buffer; the limit must be an nonnegative integer
+  (delimit (limit :~ nonnegative-integer? :- :integer))
   => @BufferedReader
-
-  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! (reader : Reader) (close? :- :t := #t))
-  => :void
 
   ;; returns the number of buffered bytes available to read without further I/O
   (available)
@@ -84,16 +80,11 @@
 
 (interface (BufferedWriter Writer)
   ;; writes a single byte
-  (write-u8 (u8 : :fixnum))
+  (write-u8 (u8 :~ byte? : :fixnum))
   => :fixnum
 
   ;; flushes the buffer to the underlying output instance
   (flush)
-  => :void
-
-  ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! (output : Writer)
-          (close? : :t := #t))
   => :void)
 
 ;; socket interfaces
@@ -150,7 +141,7 @@
 
   ;; shuts down the socket in one direction which must be 'in, 'out or 'inout
   ;; if both directions are closed the socket is also closed.
-  (shutdown (direction :~ (one-of? ,IN ,OUT ,INOUT) : :fixnum))
+  (shutdown (direction : :fixnum))
   => :void)
 
 (interface (ServerSocket Socket)

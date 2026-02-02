@@ -17,19 +17,14 @@
 
 (defsyntax-ccase @interface-method-index ()
   ((_ Interface method)
-   (and (identifier #'Interface)
+   (and (syntax-local-interface-info? #'Interface)
         (identifier #'method))
-   (let* ((method (stx-e #'method))
-          (info (interface-info-interface-descriptor info))
-          (methods (interface-info-interface-methods info)))
-     (let loop ((rest methods) (index 2))
-       (match rest
-         ([method-sig . rest]
-          (if (eq? method (car method-sig))
-            index
-            (loop rest (fx+ index 1))))
-         (else
-          (raise-syntax-error #f "unknown interface method" stx #'Interface #'method)))))))
+   (let ((method (stx-e #'method))
+         (info (syntax-local-value #'Interface)))
+     (cond
+      ((interface-info-method-index info method))
+      (else
+       (raise-syntax-error #f "unknown interface method" stx #'Interface method))))))
 
 (defrule (@apply-prototype-method method-name method-index arg ...)
   (lambda (descriptor prototype receiver)

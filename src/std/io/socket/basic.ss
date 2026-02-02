@@ -72,10 +72,4 @@
 
 (def (basic-socket-close (sock : basic-socket))
   (do-with-write-lock sock.lock
-    (when sock.local
-      (address-discard! sock.local)
-      (set! sock.local #f))
-    (when sock.remote
-      (address-discard! sock.remote)
-      (set! sock.remote #f))
     (device-close sock.dev)))

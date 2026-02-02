@@ -44,6 +44,13 @@
           result))))
   interface: Reader)
 
+(defmethod {close input-file-io}
+  (lambda (self)
+    (device-close self.dev DIRECTION-IN))
+  interface: Closer)
+
+(@implement Reader input-file-io)
+
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
     (do-check-device-output file-io-write self.dev
@@ -61,20 +68,19 @@
           result))))
   interface: Writer)
 
-(defmethod {close input-file-io}
-  (lambda (self)
-    (device-close self.dev DIRECTION-IN))
-  interface: Closer)
-
 (defmethod {close output-file-io}
   (lambda (self)
     (device-close self.dev DIRECTION-OUT))
   interface: Closer)
 
+(@implement Writer output-file-io)
+
 (defmethod {seek file-io}
   (lambda (self position whence)
-    (file-device-seek self.dev position (file-seek-whence whence)))
+    (file-device-seek self.dev position whence))
   interface: Seeker)
+
+(@implement Seeker file-io)
 
 (defrule (open-file-io path flags mode make)
   (make dev: (open-file-device path flags mode)))

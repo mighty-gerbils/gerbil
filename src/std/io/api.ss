@@ -5,6 +5,7 @@
         ./bio/api
         ./socket/api
         ./dummy
+        ./counter
         ./delimited
         ./file
         ./util
@@ -14,6 +15,7 @@
            ./bio/api
            ./socket/api
            ./dummy
+           ./counter
            ./delimited
            ./file
            ./util
