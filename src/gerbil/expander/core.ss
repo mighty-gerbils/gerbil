@@ -61,11 +61,18 @@ namespace: gx
     (struct-instance-init! self (gensym 'L) (make-hash-table-eq) super)))
 
 ;; bindings
-(defstruct binding (id key phi)
-  transparent: #t)
+(defstruct binding (id key phi properties)
+  transparent: #t
+  constructor: :init!)
+
+(defmethod {:init! binding}
+  (lambda (self id key phi)
+    (set! self.id id)
+    (set! self.key key)
+    (set! self.phi phi)))
 
 ;; runtime bindings
-(defstruct (runtime-binding binding) ()
+(defstruct (runtime-binding binding) (type macro)
   transparent: #t)
 (defstruct (local-binding runtime-binding) ()
   transparent: #t)
@@ -76,6 +83,19 @@ namespace: gx
 (defstruct (extern-binding top-binding) ()
   transparent: #t)
 
+(defmethod {:init! runtime-binding}
+  binding:::init!)
+(defmethod {:init! local-binding}
+  binding:::init!)
+(defmethod {:init! top-binding}
+  binding:::init!)
+(defmethod {:init! module-binding}
+  (lambda (self id key phi ctx)
+    (binding:::init! self id key phi)
+    (set! self.context ctx)))
+(defmethod {:init! extern-binding}
+  binding:::init!)
+
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
   final: #t transparent: #t)
@@ -83,6 +103,21 @@ namespace: gx
   final: #t transparent: #t)
 (defstruct (alias-binding binding) (e)
   final: #t transparent: #t)
+
+(defmethod {:init! syntax-binding}
+  (lambda (self id key phi e)
+    (binding:::init! self id key phi)
+    (set! self.e e)))
+(defmethod {:init! import-binding}
+  (lambda (self id key phi e ctx weak?)
+    (binding:::init! self id key phi)
+    (set! self.e e)
+    (set! self.context ctx)
+    (set! self.weak? weak?)))
+(defmethod {:init! alias-binding}
+  (lambda (self id key phi e)
+    (binding:::init! self id key phi)
+    (set! self.e e)))
 
 ;; expanders [syntax-binding-e]
 (defstruct expander (e))

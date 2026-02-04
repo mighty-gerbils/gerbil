@@ -60,7 +60,11 @@ package: gerbil/core
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
     binding? binding-id
-    runtime-binding? top-binding? module-binding? extern-binding?
+    biding-properties binding-properties-set!
+    runtime-binding?
+    runtime-binding-type runtime-binding-type-set!
+    runtime-binding-macro runtime-binding-macro-set!
+    top-binding? module-binding? extern-binding?
     syntax-binding? syntax-binding-e
     alias-binding? alias-binding-e
     import-binding? import-binding-e

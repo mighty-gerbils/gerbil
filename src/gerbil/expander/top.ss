@@ -404,14 +404,37 @@ namespace: gx
       (stx-source stx)))))
 
 (def (core-expand-call% stx)
+  (def (expand-runtime-call rator-expr args)
+    (core-quote-syntax
+     (core-cons* '%#call rator-expr
+       (stx-map core-expand-expression args))
+     (stx-source stx)))
+
   (core-syntax-case stx ()
     ((_ rator . args)
      (stx-list? args)
-     (core-quote-syntax
-      (core-cons* '%#call
-        (core-expand-expression rator)
-        (stx-map core-expand-expression args))
-      (stx-source stx)))))
+     (let (rator-expr (core-expand-expression rator))
+       (core-syntax-case rator-expr (%#ref)
+         ((%#ref id)
+          (cond
+           ((resolve-identifier #'id)
+            => (lambda (bind)
+                 (let again ((bind bind))
+                 (cond
+                  ((and (runtime-binding? bind) (runtime-binding-macro bind))
+                   => (lambda (macro)
+                        (core-expand-expression
+                         (stx-wrap-source
+                          (cons macro args)
+                          (stx-source stx)))))
+                  ((import-binding? bind)
+                   (again (import-binding-e bind)))
+                  (else
+                   (expand-runtime-call rator-expr args))))))
+           (else
+            (expand-runtime-call rator-expr args))))
+         (else
+          (expand-runtime-call rator-expr args)))))))
 
 (def (core-expand-if% stx)
   (core-syntax-case stx ()
