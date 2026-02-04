@@ -645,14 +645,14 @@ package: gerbil/expander
    (@class gx#binding::t
            ()
            (object::t t::t)
-           (id key phi)
-           (id key phi)
-           #f
+           (id key phi properties)
+           (id key phi properties)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#binding:::init!))))
   (declare-type
    gx#binding::t
    (optimizer-resolve-class '(typedecl gx#binding::t) 'class::t))
@@ -661,33 +661,62 @@ package: gerbil/expander
   (declare-type gx#binding-id (@accessor gx#binding::t id #t))
   (declare-type gx#binding-key (@accessor gx#binding::t key #t))
   (declare-type gx#binding-phi (@accessor gx#binding::t phi #t))
+  (declare-type gx#binding-properties (@accessor gx#binding::t properties #t))
   (declare-type gx#binding-id-set! (@mutator gx#binding::t id #t))
   (declare-type gx#binding-key-set! (@mutator gx#binding::t key #t))
   (declare-type gx#binding-phi-set! (@mutator gx#binding::t phi #t))
+  (declare-type
+   gx#binding-properties-set!
+   (@mutator gx#binding::t properties #t))
   (declare-type gx#&binding-id (@accessor gx#binding::t id #f))
   (declare-type gx#&binding-key (@accessor gx#binding::t key #f))
   (declare-type gx#&binding-phi (@accessor gx#binding::t phi #f))
+  (declare-type gx#&binding-properties (@accessor gx#binding::t properties #f))
   (declare-type gx#&binding-id-set! (@mutator gx#binding::t id #f))
   (declare-type gx#&binding-key-set! (@mutator gx#binding::t key #f))
   (declare-type gx#&binding-phi-set! (@mutator gx#binding::t phi #f))
+  (declare-type
+   gx#&binding-properties-set!
+   (@mutator gx#binding::t properties #f))
+  (declare-type
+   gx#binding:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-class
    gx#runtime-binding::t
    (@class gx#runtime-binding::t
            (gx#binding::t)
            (gx#binding::t object::t t::t)
-           ()
-           (id key phi)
-           #f
+           (type macro)
+           (id key phi properties type macro)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#runtime-binding:::init!))))
   (declare-type
    gx#runtime-binding::t
    (optimizer-resolve-class '(typedecl gx#runtime-binding::t) 'class::t))
   (declare-type gx#runtime-binding? (@predicate gx#runtime-binding::t))
   (declare-type gx#make-runtime-binding (@constructor gx#runtime-binding::t))
+  (declare-type
+   gx#runtime-binding-type
+   (@accessor gx#runtime-binding::t type #t))
+  (declare-type
+   gx#runtime-binding-macro
+   (@accessor gx#runtime-binding::t macro #t))
   (declare-type gx#runtime-binding-id (@accessor gx#runtime-binding::t id #t))
   (declare-type
    gx#runtime-binding-key
@@ -695,6 +724,15 @@ package: gerbil/expander
   (declare-type
    gx#runtime-binding-phi
    (@accessor gx#runtime-binding::t phi #t))
+  (declare-type
+   gx#runtime-binding-properties
+   (@accessor gx#runtime-binding::t properties #t))
+  (declare-type
+   gx#runtime-binding-type-set!
+   (@mutator gx#runtime-binding::t type #t))
+  (declare-type
+   gx#runtime-binding-macro-set!
+   (@mutator gx#runtime-binding::t macro #t))
   (declare-type
    gx#runtime-binding-id-set!
    (@mutator gx#runtime-binding::t id #t))
@@ -704,6 +742,15 @@ package: gerbil/expander
   (declare-type
    gx#runtime-binding-phi-set!
    (@mutator gx#runtime-binding::t phi #t))
+  (declare-type
+   gx#runtime-binding-properties-set!
+   (@mutator gx#runtime-binding::t properties #t))
+  (declare-type
+   gx#&runtime-binding-type
+   (@accessor gx#runtime-binding::t type #f))
+  (declare-type
+   gx#&runtime-binding-macro
+   (@accessor gx#runtime-binding::t macro #f))
   (declare-type gx#&runtime-binding-id (@accessor gx#runtime-binding::t id #f))
   (declare-type
    gx#&runtime-binding-key
@@ -711,6 +758,15 @@ package: gerbil/expander
   (declare-type
    gx#&runtime-binding-phi
    (@accessor gx#runtime-binding::t phi #f))
+  (declare-type
+   gx#&runtime-binding-properties
+   (@accessor gx#runtime-binding::t properties #f))
+  (declare-type
+   gx#&runtime-binding-type-set!
+   (@mutator gx#runtime-binding::t type #f))
+  (declare-type
+   gx#&runtime-binding-macro-set!
+   (@mutator gx#runtime-binding::t macro #f))
   (declare-type
    gx#&runtime-binding-id-set!
    (@mutator gx#runtime-binding::t id #f))
@@ -720,27 +776,43 @@ package: gerbil/expander
   (declare-type
    gx#&runtime-binding-phi-set!
    (@mutator gx#runtime-binding::t phi #f))
+  (declare-type
+   gx#&runtime-binding-properties-set!
+   (@mutator gx#runtime-binding::t properties #f))
   (declare-class
    gx#local-binding::t
    (@class gx#local-binding::t
            (gx#runtime-binding::t)
            (gx#runtime-binding::t gx#binding::t object::t t::t)
            ()
-           (id key phi)
-           #f
+           (id key phi properties type macro)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#local-binding:::init!))))
   (declare-type
    gx#local-binding::t
    (optimizer-resolve-class '(typedecl gx#local-binding::t) 'class::t))
   (declare-type gx#local-binding? (@predicate gx#local-binding::t))
   (declare-type gx#make-local-binding (@constructor gx#local-binding::t))
+  (declare-type gx#local-binding-type (@accessor gx#local-binding::t type #t))
+  (declare-type
+   gx#local-binding-macro
+   (@accessor gx#local-binding::t macro #t))
   (declare-type gx#local-binding-id (@accessor gx#local-binding::t id #t))
   (declare-type gx#local-binding-key (@accessor gx#local-binding::t key #t))
   (declare-type gx#local-binding-phi (@accessor gx#local-binding::t phi #t))
+  (declare-type
+   gx#local-binding-properties
+   (@accessor gx#local-binding::t properties #t))
+  (declare-type
+   gx#local-binding-type-set!
+   (@mutator gx#local-binding::t type #t))
+  (declare-type
+   gx#local-binding-macro-set!
+   (@mutator gx#local-binding::t macro #t))
   (declare-type gx#local-binding-id-set! (@mutator gx#local-binding::t id #t))
   (declare-type
    gx#local-binding-key-set!
@@ -748,9 +820,25 @@ package: gerbil/expander
   (declare-type
    gx#local-binding-phi-set!
    (@mutator gx#local-binding::t phi #t))
+  (declare-type
+   gx#local-binding-properties-set!
+   (@mutator gx#local-binding::t properties #t))
+  (declare-type gx#&local-binding-type (@accessor gx#local-binding::t type #f))
+  (declare-type
+   gx#&local-binding-macro
+   (@accessor gx#local-binding::t macro #f))
   (declare-type gx#&local-binding-id (@accessor gx#local-binding::t id #f))
   (declare-type gx#&local-binding-key (@accessor gx#local-binding::t key #f))
   (declare-type gx#&local-binding-phi (@accessor gx#local-binding::t phi #f))
+  (declare-type
+   gx#&local-binding-properties
+   (@accessor gx#local-binding::t properties #f))
+  (declare-type
+   gx#&local-binding-type-set!
+   (@mutator gx#local-binding::t type #f))
+  (declare-type
+   gx#&local-binding-macro-set!
+   (@mutator gx#local-binding::t macro #f))
   (declare-type gx#&local-binding-id-set! (@mutator gx#local-binding::t id #f))
   (declare-type
    gx#&local-binding-key-set!
@@ -758,36 +846,63 @@ package: gerbil/expander
   (declare-type
    gx#&local-binding-phi-set!
    (@mutator gx#local-binding::t phi #f))
+  (declare-type
+   gx#&local-binding-properties-set!
+   (@mutator gx#local-binding::t properties #f))
   (declare-class
    gx#top-binding::t
    (@class gx#top-binding::t
            (gx#runtime-binding::t)
            (gx#runtime-binding::t gx#binding::t object::t t::t)
            ()
-           (id key phi)
-           #f
+           (id key phi properties type macro)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#top-binding:::init!))))
   (declare-type
    gx#top-binding::t
    (optimizer-resolve-class '(typedecl gx#top-binding::t) 'class::t))
   (declare-type gx#top-binding? (@predicate gx#top-binding::t))
   (declare-type gx#make-top-binding (@constructor gx#top-binding::t))
+  (declare-type gx#top-binding-type (@accessor gx#top-binding::t type #t))
+  (declare-type gx#top-binding-macro (@accessor gx#top-binding::t macro #t))
   (declare-type gx#top-binding-id (@accessor gx#top-binding::t id #t))
   (declare-type gx#top-binding-key (@accessor gx#top-binding::t key #t))
   (declare-type gx#top-binding-phi (@accessor gx#top-binding::t phi #t))
+  (declare-type
+   gx#top-binding-properties
+   (@accessor gx#top-binding::t properties #t))
+  (declare-type gx#top-binding-type-set! (@mutator gx#top-binding::t type #t))
+  (declare-type
+   gx#top-binding-macro-set!
+   (@mutator gx#top-binding::t macro #t))
   (declare-type gx#top-binding-id-set! (@mutator gx#top-binding::t id #t))
   (declare-type gx#top-binding-key-set! (@mutator gx#top-binding::t key #t))
   (declare-type gx#top-binding-phi-set! (@mutator gx#top-binding::t phi #t))
+  (declare-type
+   gx#top-binding-properties-set!
+   (@mutator gx#top-binding::t properties #t))
+  (declare-type gx#&top-binding-type (@accessor gx#top-binding::t type #f))
+  (declare-type gx#&top-binding-macro (@accessor gx#top-binding::t macro #f))
   (declare-type gx#&top-binding-id (@accessor gx#top-binding::t id #f))
   (declare-type gx#&top-binding-key (@accessor gx#top-binding::t key #f))
   (declare-type gx#&top-binding-phi (@accessor gx#top-binding::t phi #f))
+  (declare-type
+   gx#&top-binding-properties
+   (@accessor gx#top-binding::t properties #f))
+  (declare-type gx#&top-binding-type-set! (@mutator gx#top-binding::t type #f))
+  (declare-type
+   gx#&top-binding-macro-set!
+   (@mutator gx#top-binding::t macro #f))
   (declare-type gx#&top-binding-id-set! (@mutator gx#top-binding::t id #f))
   (declare-type gx#&top-binding-key-set! (@mutator gx#top-binding::t key #f))
   (declare-type gx#&top-binding-phi-set! (@mutator gx#top-binding::t phi #f))
+  (declare-type
+   gx#&top-binding-properties-set!
+   (@mutator gx#top-binding::t properties #f))
   (declare-class
    gx#module-binding::t
    (@class gx#module-binding::t
@@ -798,13 +913,13 @@ package: gerbil/expander
             object::t
             t::t)
            (context)
-           (id key phi context)
-           #f
+           (id key phi properties type macro context)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#module-binding:::init!))))
   (declare-type
    gx#module-binding::t
    (optimizer-resolve-class '(typedecl gx#module-binding::t) 'class::t))
@@ -813,12 +928,27 @@ package: gerbil/expander
   (declare-type
    gx#module-binding-context
    (@accessor gx#module-binding::t context #t))
+  (declare-type
+   gx#module-binding-type
+   (@accessor gx#module-binding::t type #t))
+  (declare-type
+   gx#module-binding-macro
+   (@accessor gx#module-binding::t macro #t))
   (declare-type gx#module-binding-id (@accessor gx#module-binding::t id #t))
   (declare-type gx#module-binding-key (@accessor gx#module-binding::t key #t))
   (declare-type gx#module-binding-phi (@accessor gx#module-binding::t phi #t))
   (declare-type
+   gx#module-binding-properties
+   (@accessor gx#module-binding::t properties #t))
+  (declare-type
    gx#module-binding-context-set!
    (@mutator gx#module-binding::t context #t))
+  (declare-type
+   gx#module-binding-type-set!
+   (@mutator gx#module-binding::t type #t))
+  (declare-type
+   gx#module-binding-macro-set!
+   (@mutator gx#module-binding::t macro #t))
   (declare-type
    gx#module-binding-id-set!
    (@mutator gx#module-binding::t id #t))
@@ -829,14 +959,32 @@ package: gerbil/expander
    gx#module-binding-phi-set!
    (@mutator gx#module-binding::t phi #t))
   (declare-type
+   gx#module-binding-properties-set!
+   (@mutator gx#module-binding::t properties #t))
+  (declare-type
    gx#&module-binding-context
    (@accessor gx#module-binding::t context #f))
+  (declare-type
+   gx#&module-binding-type
+   (@accessor gx#module-binding::t type #f))
+  (declare-type
+   gx#&module-binding-macro
+   (@accessor gx#module-binding::t macro #f))
   (declare-type gx#&module-binding-id (@accessor gx#module-binding::t id #f))
   (declare-type gx#&module-binding-key (@accessor gx#module-binding::t key #f))
   (declare-type gx#&module-binding-phi (@accessor gx#module-binding::t phi #f))
   (declare-type
+   gx#&module-binding-properties
+   (@accessor gx#module-binding::t properties #f))
+  (declare-type
    gx#&module-binding-context-set!
    (@mutator gx#module-binding::t context #f))
+  (declare-type
+   gx#&module-binding-type-set!
+   (@mutator gx#module-binding::t type #f))
+  (declare-type
+   gx#&module-binding-macro-set!
+   (@mutator gx#module-binding::t macro #f))
   (declare-type
    gx#&module-binding-id-set!
    (@mutator gx#module-binding::t id #f))
@@ -846,6 +994,9 @@ package: gerbil/expander
   (declare-type
    gx#&module-binding-phi-set!
    (@mutator gx#module-binding::t phi #f))
+  (declare-type
+   gx#&module-binding-properties-set!
+   (@mutator gx#module-binding::t properties #f))
   (declare-class
    gx#extern-binding::t
    (@class gx#extern-binding::t
@@ -856,21 +1007,36 @@ package: gerbil/expander
             object::t
             t::t)
            ()
-           (id key phi)
-           #f
+           (id key phi properties type macro)
+           :init!
            #t
            #f
            #f
            #f
-           #f))
+           ((:init! . gx#extern-binding:::init!))))
   (declare-type
    gx#extern-binding::t
    (optimizer-resolve-class '(typedecl gx#extern-binding::t) 'class::t))
   (declare-type gx#extern-binding? (@predicate gx#extern-binding::t))
   (declare-type gx#make-extern-binding (@constructor gx#extern-binding::t))
+  (declare-type
+   gx#extern-binding-type
+   (@accessor gx#extern-binding::t type #t))
+  (declare-type
+   gx#extern-binding-macro
+   (@accessor gx#extern-binding::t macro #t))
   (declare-type gx#extern-binding-id (@accessor gx#extern-binding::t id #t))
   (declare-type gx#extern-binding-key (@accessor gx#extern-binding::t key #t))
   (declare-type gx#extern-binding-phi (@accessor gx#extern-binding::t phi #t))
+  (declare-type
+   gx#extern-binding-properties
+   (@accessor gx#extern-binding::t properties #t))
+  (declare-type
+   gx#extern-binding-type-set!
+   (@mutator gx#extern-binding::t type #t))
+  (declare-type
+   gx#extern-binding-macro-set!
+   (@mutator gx#extern-binding::t macro #t))
   (declare-type
    gx#extern-binding-id-set!
    (@mutator gx#extern-binding::t id #t))
@@ -880,9 +1046,27 @@ package: gerbil/expander
   (declare-type
    gx#extern-binding-phi-set!
    (@mutator gx#extern-binding::t phi #t))
+  (declare-type
+   gx#extern-binding-properties-set!
+   (@mutator gx#extern-binding::t properties #t))
+  (declare-type
+   gx#&extern-binding-type
+   (@accessor gx#extern-binding::t type #f))
+  (declare-type
+   gx#&extern-binding-macro
+   (@accessor gx#extern-binding::t macro #f))
   (declare-type gx#&extern-binding-id (@accessor gx#extern-binding::t id #f))
   (declare-type gx#&extern-binding-key (@accessor gx#extern-binding::t key #f))
   (declare-type gx#&extern-binding-phi (@accessor gx#extern-binding::t phi #f))
+  (declare-type
+   gx#&extern-binding-properties
+   (@accessor gx#extern-binding::t properties #f))
+  (declare-type
+   gx#&extern-binding-type-set!
+   (@mutator gx#extern-binding::t type #f))
+  (declare-type
+   gx#&extern-binding-macro-set!
+   (@mutator gx#extern-binding::t macro #f))
   (declare-type
    gx#&extern-binding-id-set!
    (@mutator gx#extern-binding::t id #f))
@@ -892,19 +1076,97 @@ package: gerbil/expander
   (declare-type
    gx#&extern-binding-phi-set!
    (@mutator gx#extern-binding::t phi #f))
+  (declare-type
+   gx#&extern-binding-properties-set!
+   (@mutator gx#extern-binding::t properties #f))
+  (declare-type
+   gx#runtime-binding:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#local-binding:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#top-binding:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#module-binding:::init!
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#extern-binding:::init!
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-class
    gx#syntax-binding::t
    (@class gx#syntax-binding::t
            (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e)
-           (id key phi e)
-           #f
+           (id key phi properties e)
+           :init!
            #t
            #t
            #f
            #f
-           #f))
+           ((:init! . gx#syntax-binding:::init!))))
   (declare-type
    gx#syntax-binding::t
    (optimizer-resolve-class '(typedecl gx#syntax-binding::t) 'class::t))
@@ -914,6 +1176,9 @@ package: gerbil/expander
   (declare-type gx#syntax-binding-id (@accessor gx#syntax-binding::t id #t))
   (declare-type gx#syntax-binding-key (@accessor gx#syntax-binding::t key #t))
   (declare-type gx#syntax-binding-phi (@accessor gx#syntax-binding::t phi #t))
+  (declare-type
+   gx#syntax-binding-properties
+   (@accessor gx#syntax-binding::t properties #t))
   (declare-type gx#syntax-binding-e-set! (@mutator gx#syntax-binding::t e #t))
   (declare-type
    gx#syntax-binding-id-set!
@@ -924,10 +1189,16 @@ package: gerbil/expander
   (declare-type
    gx#syntax-binding-phi-set!
    (@mutator gx#syntax-binding::t phi #t))
+  (declare-type
+   gx#syntax-binding-properties-set!
+   (@mutator gx#syntax-binding::t properties #t))
   (declare-type gx#&syntax-binding-e (@accessor gx#syntax-binding::t e #f))
   (declare-type gx#&syntax-binding-id (@accessor gx#syntax-binding::t id #f))
   (declare-type gx#&syntax-binding-key (@accessor gx#syntax-binding::t key #f))
   (declare-type gx#&syntax-binding-phi (@accessor gx#syntax-binding::t phi #f))
+  (declare-type
+   gx#&syntax-binding-properties
+   (@accessor gx#syntax-binding::t properties #f))
   (declare-type gx#&syntax-binding-e-set! (@mutator gx#syntax-binding::t e #f))
   (declare-type
    gx#&syntax-binding-id-set!
@@ -938,19 +1209,22 @@ package: gerbil/expander
   (declare-type
    gx#&syntax-binding-phi-set!
    (@mutator gx#syntax-binding::t phi #f))
+  (declare-type
+   gx#&syntax-binding-properties-set!
+   (@mutator gx#syntax-binding::t properties #f))
   (declare-class
    gx#import-binding::t
    (@class gx#import-binding::t
            (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e context weak?)
-           (id key phi e context weak?)
-           #f
+           (id key phi properties e context weak?)
+           :init!
            #t
            #t
            #f
            #f
-           #f))
+           ((:init! . gx#import-binding:::init!))))
   (declare-type
    gx#import-binding::t
    (optimizer-resolve-class '(typedecl gx#import-binding::t) 'class::t))
@@ -966,6 +1240,9 @@ package: gerbil/expander
   (declare-type gx#import-binding-id (@accessor gx#import-binding::t id #t))
   (declare-type gx#import-binding-key (@accessor gx#import-binding::t key #t))
   (declare-type gx#import-binding-phi (@accessor gx#import-binding::t phi #t))
+  (declare-type
+   gx#import-binding-properties
+   (@accessor gx#import-binding::t properties #t))
   (declare-type gx#import-binding-e-set! (@mutator gx#import-binding::t e #t))
   (declare-type
    gx#import-binding-context-set!
@@ -982,6 +1259,9 @@ package: gerbil/expander
   (declare-type
    gx#import-binding-phi-set!
    (@mutator gx#import-binding::t phi #t))
+  (declare-type
+   gx#import-binding-properties-set!
+   (@mutator gx#import-binding::t properties #t))
   (declare-type gx#&import-binding-e (@accessor gx#import-binding::t e #f))
   (declare-type
    gx#&import-binding-context
@@ -992,6 +1272,9 @@ package: gerbil/expander
   (declare-type gx#&import-binding-id (@accessor gx#import-binding::t id #f))
   (declare-type gx#&import-binding-key (@accessor gx#import-binding::t key #f))
   (declare-type gx#&import-binding-phi (@accessor gx#import-binding::t phi #f))
+  (declare-type
+   gx#&import-binding-properties
+   (@accessor gx#import-binding::t properties #f))
   (declare-type gx#&import-binding-e-set! (@mutator gx#import-binding::t e #f))
   (declare-type
    gx#&import-binding-context-set!
@@ -1008,19 +1291,22 @@ package: gerbil/expander
   (declare-type
    gx#&import-binding-phi-set!
    (@mutator gx#import-binding::t phi #f))
+  (declare-type
+   gx#&import-binding-properties-set!
+   (@mutator gx#import-binding::t properties #f))
   (declare-class
    gx#alias-binding::t
    (@class gx#alias-binding::t
            (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e)
-           (id key phi e)
-           #f
+           (id key phi properties e)
+           :init!
            #t
            #t
            #f
            #f
-           #f))
+           ((:init! . gx#alias-binding:::init!))))
   (declare-type
    gx#alias-binding::t
    (optimizer-resolve-class '(typedecl gx#alias-binding::t) 'class::t))
@@ -1030,6 +1316,9 @@ package: gerbil/expander
   (declare-type gx#alias-binding-id (@accessor gx#alias-binding::t id #t))
   (declare-type gx#alias-binding-key (@accessor gx#alias-binding::t key #t))
   (declare-type gx#alias-binding-phi (@accessor gx#alias-binding::t phi #t))
+  (declare-type
+   gx#alias-binding-properties
+   (@accessor gx#alias-binding::t properties #t))
   (declare-type gx#alias-binding-e-set! (@mutator gx#alias-binding::t e #t))
   (declare-type gx#alias-binding-id-set! (@mutator gx#alias-binding::t id #t))
   (declare-type
@@ -1038,10 +1327,16 @@ package: gerbil/expander
   (declare-type
    gx#alias-binding-phi-set!
    (@mutator gx#alias-binding::t phi #t))
+  (declare-type
+   gx#alias-binding-properties-set!
+   (@mutator gx#alias-binding::t properties #t))
   (declare-type gx#&alias-binding-e (@accessor gx#alias-binding::t e #f))
   (declare-type gx#&alias-binding-id (@accessor gx#alias-binding::t id #f))
   (declare-type gx#&alias-binding-key (@accessor gx#alias-binding::t key #f))
   (declare-type gx#&alias-binding-phi (@accessor gx#alias-binding::t phi #f))
+  (declare-type
+   gx#&alias-binding-properties
+   (@accessor gx#alias-binding::t properties #f))
   (declare-type gx#&alias-binding-e-set! (@mutator gx#alias-binding::t e #f))
   (declare-type gx#&alias-binding-id-set! (@mutator gx#alias-binding::t id #f))
   (declare-type
@@ -1050,6 +1345,54 @@ package: gerbil/expander
   (declare-type
    gx#&alias-binding-phi-set!
    (@mutator gx#alias-binding::t phi #f))
+  (declare-type
+   gx#&alias-binding-properties-set!
+   (@mutator gx#alias-binding::t properties #f))
+  (declare-type
+   gx#syntax-binding:::init!
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#import-binding:::init!
+   (@lambda 7
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
+   gx#alias-binding:::init!
+   (@lambda 5
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
   (declare-class
    gx#expander::t
    (@class gx#expander::t

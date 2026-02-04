@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1770243150)
+  (define gerbil/expander/core::timestamp 1770248969)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -26,8 +26,8 @@
     (define gx#expander-context?
       (__make-class-predicate gx#expander-context::t))
     (define gx#make-expander-context
-      (lambda _%$args143722%_
-        (apply make-instance gx#expander-context::t _%$args143722%_)))
+      (lambda _%$args144911%_
+        (apply make-instance gx#expander-context::t _%$args144911%_)))
     (define gx#expander-context-id
       (__make-class-slot-accessor gx#expander-context::t 'id))
     (define gx#expander-context-table
@@ -54,8 +54,8 @@
        '#f))
     (define gx#root-context? (__make-class-predicate gx#root-context::t))
     (define gx#make-root-context
-      (lambda _%$args143719%_
-        (apply make-instance gx#root-context::t _%$args143719%_)))
+      (lambda _%$args144908%_
+        (apply make-instance gx#root-context::t _%$args144908%_)))
     (define gx#root-context-id
       (__make-class-slot-accessor gx#root-context::t 'id))
     (define gx#root-context-table
@@ -82,8 +82,8 @@
        '#f))
     (define gx#phi-context? (__make-class-predicate gx#phi-context::t))
     (define gx#make-phi-context
-      (lambda _%$args143716%_
-        (apply make-instance gx#phi-context::t _%$args143716%_)))
+      (lambda _%$args144905%_
+        (apply make-instance gx#phi-context::t _%$args144905%_)))
     (define gx#phi-context-super
       (__make-class-slot-accessor gx#phi-context::t 'super))
     (define gx#phi-context-up
@@ -134,8 +134,8 @@
        '#f))
     (define gx#top-context? (__make-class-predicate gx#top-context::t))
     (define gx#make-top-context
-      (lambda _%$args143713%_
-        (apply make-instance gx#top-context::t _%$args143713%_)))
+      (lambda _%$args144902%_
+        (apply make-instance gx#top-context::t _%$args144902%_)))
     (define gx#top-context-super
       (__make-class-slot-accessor gx#top-context::t 'super))
     (define gx#top-context-up
@@ -186,8 +186,8 @@
        '#f))
     (define gx#module-context? (__make-class-predicate gx#module-context::t))
     (define gx#make-module-context
-      (lambda _%$args143710%_
-        (apply make-instance gx#module-context::t _%$args143710%_)))
+      (lambda _%$args144899%_
+        (apply make-instance gx#module-context::t _%$args144899%_)))
     (define gx#module-context-ns
       (__make-class-slot-accessor gx#module-context::t 'ns))
     (define gx#module-context-path
@@ -286,8 +286,8 @@
        '#f))
     (define gx#prelude-context? (__make-class-predicate gx#prelude-context::t))
     (define gx#make-prelude-context
-      (lambda _%$args143707%_
-        (apply make-instance gx#prelude-context::t _%$args143707%_)))
+      (lambda _%$args144896%_
+        (apply make-instance gx#prelude-context::t _%$args144896%_)))
     (define gx#prelude-context-path
       (__make-class-slot-accessor gx#prelude-context::t 'path))
     (define gx#prelude-context-import
@@ -362,8 +362,8 @@
        '#f))
     (define gx#local-context? (__make-class-predicate gx#local-context::t))
     (define gx#make-local-context
-      (lambda _%$args143704%_
-        (apply make-instance gx#local-context::t _%$args143704%_)))
+      (lambda _%$args144893%_
+        (apply make-instance gx#local-context::t _%$args144893%_)))
     (define gx#local-context-super
       (__make-class-slot-accessor gx#local-context::t 'super))
     (define gx#local-context-up
@@ -405,95 +405,95 @@
     (define gx#&local-context-table-set!
       (__make-class-slot-unchecked-mutator gx#local-context::t 'table))
     (define gx#phi-context:::init!__%
-      (lambda (_%self143677%_ _%id143678%_ _%super143679%_)
-        (let ((_%self143682%_ _%self143677%_))
-          (if (##fx< '3 (##structure-length _%self143682%_))
+      (lambda (_%self144866%_ _%id144867%_ _%super144868%_)
+        (let ((_%self144871%_ _%self144866%_))
+          (if (##fx< '3 (##structure-length _%self144871%_))
               (begin
                 (##unchecked-structure-set!
-                 _%self143682%_
-                 _%id143678%_
+                 _%self144871%_
+                 _%id144867%_
                  '1
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self143682%_
+                 _%self144871%_
                  (make-hash-table-eq)
                  '2
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self143682%_
-                 _%super143679%_
+                 _%self144871%_
+                 _%super144868%_
                  '3
                  '#f
                  '#f)
                 '#!void)
               (error '"struct-instance-init!: too many arguments for struct"
-                     _%self143682%_
+                     _%self144871%_
                      '3
-                     (##structure-length _%self143682%_))))))
+                     (##structure-length _%self144871%_))))))
     (define gx#phi-context:::init!__0
-      (lambda (_%self143695%_ _%id143696%_)
-        (let ((_%super143698%_ (gx#current-expander-context)))
+      (lambda (_%self144884%_ _%id144885%_)
+        (let ((_%super144887%_ (gx#current-expander-context)))
           (gx#phi-context:::init!__%
-           _%self143695%_
-           _%id143696%_
-           _%super143698%_))))
+           _%self144884%_
+           _%id144885%_
+           _%super144887%_))))
     (define gx#phi-context:::init!
-      (lambda _g143764_
-        (let ((_g143765_ (##length _g143764_)))
-          (cond ((##fx= _g143765_ 2)
-                 (apply gx#phi-context:::init!__0 _g143764_))
-                ((##fx= _g143765_ 3)
-                 (apply gx#phi-context:::init!__% _g143764_))
+      (lambda _g144953_
+        (let ((_g144954_ (##length _g144953_)))
+          (cond ((##fx= _g144954_ 2)
+                 (apply gx#phi-context:::init!__0 _g144953_))
+                ((##fx= _g144954_ 3)
+                 (apply gx#phi-context:::init!__% _g144953_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#phi-context:::init!
-                  _g143764_))))))
+                  _g144953_))))))
     (__bind-method!__% gx#phi-context::t ':init! gx#phi-context:::init! '#f)
     (define gx#local-context:::init!__%
-      (lambda (_%self143530%_ _%super143531%_)
-        (let ((_%self143534%_ _%self143530%_))
-          (if (##fx< '3 (##structure-length _%self143534%_))
+      (lambda (_%self144719%_ _%super144720%_)
+        (let ((_%self144723%_ _%self144719%_))
+          (if (##fx< '3 (##structure-length _%self144723%_))
               (begin
                 (##unchecked-structure-set!
-                 _%self143534%_
+                 _%self144723%_
                  (##gensym 'L)
                  '1
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self143534%_
+                 _%self144723%_
                  (make-hash-table-eq)
                  '2
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self143534%_
-                 _%super143531%_
+                 _%self144723%_
+                 _%super144720%_
                  '3
                  '#f
                  '#f)
                 '#!void)
               (error '"struct-instance-init!: too many arguments for struct"
-                     _%self143534%_
+                     _%self144723%_
                      '3
-                     (##structure-length _%self143534%_))))))
+                     (##structure-length _%self144723%_))))))
     (define gx#local-context:::init!__0
-      (lambda (_%self143547%_)
-        (let ((_%super143549%_ (gx#current-expander-context)))
-          (gx#local-context:::init!__% _%self143547%_ _%super143549%_))))
+      (lambda (_%self144736%_)
+        (let ((_%super144738%_ (gx#current-expander-context)))
+          (gx#local-context:::init!__% _%self144736%_ _%super144738%_))))
     (define gx#local-context:::init!
-      (lambda _g143766_
-        (let ((_g143767_ (##length _g143766_)))
-          (cond ((##fx= _g143767_ 1)
-                 (apply gx#local-context:::init!__0 _g143766_))
-                ((##fx= _g143767_ 2)
-                 (apply gx#local-context:::init!__% _g143766_))
+      (lambda _g144955_
+        (let ((_g144956_ (##length _g144955_)))
+          (cond ((##fx= _g144956_ 1)
+                 (apply gx#local-context:::init!__0 _g144955_))
+                ((##fx= _g144956_ 2)
+                 (apply gx#local-context:::init!__% _g144955_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#local-context:::init!
-                  _g143766_))))))
+                  _g144955_))))))
     (__bind-method!__%
      gx#local-context::t
      ':init!
@@ -504,67 +504,111 @@
        'gx#binding::t
        'binding
        (list)
-       '(id key phi)
+       '(id key phi properties)
        (cons (cons 'struct: '#t) '())
-       '#f))
+       ':init!))
     (define gx#binding? (__make-class-predicate gx#binding::t))
     (define gx#make-binding
-      (lambda _%$args143404%_
-        (apply make-instance gx#binding::t _%$args143404%_)))
+      (lambda _%$args144593%_
+        (apply make-instance gx#binding::t _%$args144593%_)))
     (define gx#binding-id (__make-class-slot-accessor gx#binding::t 'id))
     (define gx#binding-key (__make-class-slot-accessor gx#binding::t 'key))
     (define gx#binding-phi (__make-class-slot-accessor gx#binding::t 'phi))
+    (define gx#binding-properties
+      (__make-class-slot-accessor gx#binding::t 'properties))
     (define gx#binding-id-set! (__make-class-slot-mutator gx#binding::t 'id))
     (define gx#binding-key-set! (__make-class-slot-mutator gx#binding::t 'key))
     (define gx#binding-phi-set! (__make-class-slot-mutator gx#binding::t 'phi))
+    (define gx#binding-properties-set!
+      (__make-class-slot-mutator gx#binding::t 'properties))
     (define gx#&binding-id
       (__make-class-slot-unchecked-accessor gx#binding::t 'id))
     (define gx#&binding-key
       (__make-class-slot-unchecked-accessor gx#binding::t 'key))
     (define gx#&binding-phi
       (__make-class-slot-unchecked-accessor gx#binding::t 'phi))
+    (define gx#&binding-properties
+      (__make-class-slot-unchecked-accessor gx#binding::t 'properties))
     (define gx#&binding-id-set!
       (__make-class-slot-unchecked-mutator gx#binding::t 'id))
     (define gx#&binding-key-set!
       (__make-class-slot-unchecked-mutator gx#binding::t 'key))
     (define gx#&binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#binding::t 'phi))
+    (define gx#&binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#binding::t 'properties))
+    (define gx#binding:::init!
+      (lambda (_%self144576%_ _%id144577%_ _%key144578%_ _%phi144579%_)
+        (let ((_%self144582%_ _%self144576%_))
+          (##unchecked-structure-set! _%self144582%_ _%id144577%_ '1 '#f '#f)
+          (##unchecked-structure-set! _%self144582%_ _%key144578%_ '2 '#f '#f)
+          (##unchecked-structure-set!
+           _%self144582%_
+           _%phi144579%_
+           '3
+           '#f
+           '#f))))
+    (__bind-method!__% gx#binding::t ':init! gx#binding:::init! '#f)
     (define gx#runtime-binding::t
       (__make-class-type
        'gx#runtime-binding::t
        'runtime-binding
        (list gx#binding::t)
-       '()
+       '(type macro)
        (cons (cons 'struct: '#t) '())
        '#f))
     (define gx#runtime-binding? (__make-class-predicate gx#runtime-binding::t))
     (define gx#make-runtime-binding
-      (lambda _%$args143401%_
-        (apply make-instance gx#runtime-binding::t _%$args143401%_)))
+      (lambda _%$args144451%_
+        (apply make-instance gx#runtime-binding::t _%$args144451%_)))
+    (define gx#runtime-binding-type
+      (__make-class-slot-accessor gx#runtime-binding::t 'type))
+    (define gx#runtime-binding-macro
+      (__make-class-slot-accessor gx#runtime-binding::t 'macro))
     (define gx#runtime-binding-id
       (__make-class-slot-accessor gx#runtime-binding::t 'id))
     (define gx#runtime-binding-key
       (__make-class-slot-accessor gx#runtime-binding::t 'key))
     (define gx#runtime-binding-phi
       (__make-class-slot-accessor gx#runtime-binding::t 'phi))
+    (define gx#runtime-binding-properties
+      (__make-class-slot-accessor gx#runtime-binding::t 'properties))
+    (define gx#runtime-binding-type-set!
+      (__make-class-slot-mutator gx#runtime-binding::t 'type))
+    (define gx#runtime-binding-macro-set!
+      (__make-class-slot-mutator gx#runtime-binding::t 'macro))
     (define gx#runtime-binding-id-set!
       (__make-class-slot-mutator gx#runtime-binding::t 'id))
     (define gx#runtime-binding-key-set!
       (__make-class-slot-mutator gx#runtime-binding::t 'key))
     (define gx#runtime-binding-phi-set!
       (__make-class-slot-mutator gx#runtime-binding::t 'phi))
+    (define gx#runtime-binding-properties-set!
+      (__make-class-slot-mutator gx#runtime-binding::t 'properties))
+    (define gx#&runtime-binding-type
+      (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'type))
+    (define gx#&runtime-binding-macro
+      (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'macro))
     (define gx#&runtime-binding-id
       (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'id))
     (define gx#&runtime-binding-key
       (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'key))
     (define gx#&runtime-binding-phi
       (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'phi))
+    (define gx#&runtime-binding-properties
+      (__make-class-slot-unchecked-accessor gx#runtime-binding::t 'properties))
+    (define gx#&runtime-binding-type-set!
+      (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'type))
+    (define gx#&runtime-binding-macro-set!
+      (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'macro))
     (define gx#&runtime-binding-id-set!
       (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'id))
     (define gx#&runtime-binding-key-set!
       (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'key))
     (define gx#&runtime-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'phi))
+    (define gx#&runtime-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#runtime-binding::t 'properties))
     (define gx#local-binding::t
       (__make-class-type
        'gx#local-binding::t
@@ -575,32 +619,56 @@
        '#f))
     (define gx#local-binding? (__make-class-predicate gx#local-binding::t))
     (define gx#make-local-binding
-      (lambda _%$args143398%_
-        (apply make-instance gx#local-binding::t _%$args143398%_)))
+      (lambda _%$args144448%_
+        (apply make-instance gx#local-binding::t _%$args144448%_)))
+    (define gx#local-binding-type
+      (__make-class-slot-accessor gx#local-binding::t 'type))
+    (define gx#local-binding-macro
+      (__make-class-slot-accessor gx#local-binding::t 'macro))
     (define gx#local-binding-id
       (__make-class-slot-accessor gx#local-binding::t 'id))
     (define gx#local-binding-key
       (__make-class-slot-accessor gx#local-binding::t 'key))
     (define gx#local-binding-phi
       (__make-class-slot-accessor gx#local-binding::t 'phi))
+    (define gx#local-binding-properties
+      (__make-class-slot-accessor gx#local-binding::t 'properties))
+    (define gx#local-binding-type-set!
+      (__make-class-slot-mutator gx#local-binding::t 'type))
+    (define gx#local-binding-macro-set!
+      (__make-class-slot-mutator gx#local-binding::t 'macro))
     (define gx#local-binding-id-set!
       (__make-class-slot-mutator gx#local-binding::t 'id))
     (define gx#local-binding-key-set!
       (__make-class-slot-mutator gx#local-binding::t 'key))
     (define gx#local-binding-phi-set!
       (__make-class-slot-mutator gx#local-binding::t 'phi))
+    (define gx#local-binding-properties-set!
+      (__make-class-slot-mutator gx#local-binding::t 'properties))
+    (define gx#&local-binding-type
+      (__make-class-slot-unchecked-accessor gx#local-binding::t 'type))
+    (define gx#&local-binding-macro
+      (__make-class-slot-unchecked-accessor gx#local-binding::t 'macro))
     (define gx#&local-binding-id
       (__make-class-slot-unchecked-accessor gx#local-binding::t 'id))
     (define gx#&local-binding-key
       (__make-class-slot-unchecked-accessor gx#local-binding::t 'key))
     (define gx#&local-binding-phi
       (__make-class-slot-unchecked-accessor gx#local-binding::t 'phi))
+    (define gx#&local-binding-properties
+      (__make-class-slot-unchecked-accessor gx#local-binding::t 'properties))
+    (define gx#&local-binding-type-set!
+      (__make-class-slot-unchecked-mutator gx#local-binding::t 'type))
+    (define gx#&local-binding-macro-set!
+      (__make-class-slot-unchecked-mutator gx#local-binding::t 'macro))
     (define gx#&local-binding-id-set!
       (__make-class-slot-unchecked-mutator gx#local-binding::t 'id))
     (define gx#&local-binding-key-set!
       (__make-class-slot-unchecked-mutator gx#local-binding::t 'key))
     (define gx#&local-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#local-binding::t 'phi))
+    (define gx#&local-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#local-binding::t 'properties))
     (define gx#top-binding::t
       (__make-class-type
        'gx#top-binding::t
@@ -611,32 +679,56 @@
        '#f))
     (define gx#top-binding? (__make-class-predicate gx#top-binding::t))
     (define gx#make-top-binding
-      (lambda _%$args143395%_
-        (apply make-instance gx#top-binding::t _%$args143395%_)))
+      (lambda _%$args144445%_
+        (apply make-instance gx#top-binding::t _%$args144445%_)))
+    (define gx#top-binding-type
+      (__make-class-slot-accessor gx#top-binding::t 'type))
+    (define gx#top-binding-macro
+      (__make-class-slot-accessor gx#top-binding::t 'macro))
     (define gx#top-binding-id
       (__make-class-slot-accessor gx#top-binding::t 'id))
     (define gx#top-binding-key
       (__make-class-slot-accessor gx#top-binding::t 'key))
     (define gx#top-binding-phi
       (__make-class-slot-accessor gx#top-binding::t 'phi))
+    (define gx#top-binding-properties
+      (__make-class-slot-accessor gx#top-binding::t 'properties))
+    (define gx#top-binding-type-set!
+      (__make-class-slot-mutator gx#top-binding::t 'type))
+    (define gx#top-binding-macro-set!
+      (__make-class-slot-mutator gx#top-binding::t 'macro))
     (define gx#top-binding-id-set!
       (__make-class-slot-mutator gx#top-binding::t 'id))
     (define gx#top-binding-key-set!
       (__make-class-slot-mutator gx#top-binding::t 'key))
     (define gx#top-binding-phi-set!
       (__make-class-slot-mutator gx#top-binding::t 'phi))
+    (define gx#top-binding-properties-set!
+      (__make-class-slot-mutator gx#top-binding::t 'properties))
+    (define gx#&top-binding-type
+      (__make-class-slot-unchecked-accessor gx#top-binding::t 'type))
+    (define gx#&top-binding-macro
+      (__make-class-slot-unchecked-accessor gx#top-binding::t 'macro))
     (define gx#&top-binding-id
       (__make-class-slot-unchecked-accessor gx#top-binding::t 'id))
     (define gx#&top-binding-key
       (__make-class-slot-unchecked-accessor gx#top-binding::t 'key))
     (define gx#&top-binding-phi
       (__make-class-slot-unchecked-accessor gx#top-binding::t 'phi))
+    (define gx#&top-binding-properties
+      (__make-class-slot-unchecked-accessor gx#top-binding::t 'properties))
+    (define gx#&top-binding-type-set!
+      (__make-class-slot-unchecked-mutator gx#top-binding::t 'type))
+    (define gx#&top-binding-macro-set!
+      (__make-class-slot-unchecked-mutator gx#top-binding::t 'macro))
     (define gx#&top-binding-id-set!
       (__make-class-slot-unchecked-mutator gx#top-binding::t 'id))
     (define gx#&top-binding-key-set!
       (__make-class-slot-unchecked-mutator gx#top-binding::t 'key))
     (define gx#&top-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#top-binding::t 'phi))
+    (define gx#&top-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#top-binding::t 'properties))
     (define gx#module-binding::t
       (__make-class-type
        'gx#module-binding::t
@@ -647,40 +739,64 @@
        '#f))
     (define gx#module-binding? (__make-class-predicate gx#module-binding::t))
     (define gx#make-module-binding
-      (lambda _%$args143392%_
-        (apply make-instance gx#module-binding::t _%$args143392%_)))
+      (lambda _%$args144442%_
+        (apply make-instance gx#module-binding::t _%$args144442%_)))
     (define gx#module-binding-context
       (__make-class-slot-accessor gx#module-binding::t 'context))
+    (define gx#module-binding-type
+      (__make-class-slot-accessor gx#module-binding::t 'type))
+    (define gx#module-binding-macro
+      (__make-class-slot-accessor gx#module-binding::t 'macro))
     (define gx#module-binding-id
       (__make-class-slot-accessor gx#module-binding::t 'id))
     (define gx#module-binding-key
       (__make-class-slot-accessor gx#module-binding::t 'key))
     (define gx#module-binding-phi
       (__make-class-slot-accessor gx#module-binding::t 'phi))
+    (define gx#module-binding-properties
+      (__make-class-slot-accessor gx#module-binding::t 'properties))
     (define gx#module-binding-context-set!
       (__make-class-slot-mutator gx#module-binding::t 'context))
+    (define gx#module-binding-type-set!
+      (__make-class-slot-mutator gx#module-binding::t 'type))
+    (define gx#module-binding-macro-set!
+      (__make-class-slot-mutator gx#module-binding::t 'macro))
     (define gx#module-binding-id-set!
       (__make-class-slot-mutator gx#module-binding::t 'id))
     (define gx#module-binding-key-set!
       (__make-class-slot-mutator gx#module-binding::t 'key))
     (define gx#module-binding-phi-set!
       (__make-class-slot-mutator gx#module-binding::t 'phi))
+    (define gx#module-binding-properties-set!
+      (__make-class-slot-mutator gx#module-binding::t 'properties))
     (define gx#&module-binding-context
       (__make-class-slot-unchecked-accessor gx#module-binding::t 'context))
+    (define gx#&module-binding-type
+      (__make-class-slot-unchecked-accessor gx#module-binding::t 'type))
+    (define gx#&module-binding-macro
+      (__make-class-slot-unchecked-accessor gx#module-binding::t 'macro))
     (define gx#&module-binding-id
       (__make-class-slot-unchecked-accessor gx#module-binding::t 'id))
     (define gx#&module-binding-key
       (__make-class-slot-unchecked-accessor gx#module-binding::t 'key))
     (define gx#&module-binding-phi
       (__make-class-slot-unchecked-accessor gx#module-binding::t 'phi))
+    (define gx#&module-binding-properties
+      (__make-class-slot-unchecked-accessor gx#module-binding::t 'properties))
     (define gx#&module-binding-context-set!
       (__make-class-slot-unchecked-mutator gx#module-binding::t 'context))
+    (define gx#&module-binding-type-set!
+      (__make-class-slot-unchecked-mutator gx#module-binding::t 'type))
+    (define gx#&module-binding-macro-set!
+      (__make-class-slot-unchecked-mutator gx#module-binding::t 'macro))
     (define gx#&module-binding-id-set!
       (__make-class-slot-unchecked-mutator gx#module-binding::t 'id))
     (define gx#&module-binding-key-set!
       (__make-class-slot-unchecked-mutator gx#module-binding::t 'key))
     (define gx#&module-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#module-binding::t 'phi))
+    (define gx#&module-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#module-binding::t 'properties))
     (define gx#extern-binding::t
       (__make-class-type
        'gx#extern-binding::t
@@ -691,32 +807,99 @@
        '#f))
     (define gx#extern-binding? (__make-class-predicate gx#extern-binding::t))
     (define gx#make-extern-binding
-      (lambda _%$args143389%_
-        (apply make-instance gx#extern-binding::t _%$args143389%_)))
+      (lambda _%$args144439%_
+        (apply make-instance gx#extern-binding::t _%$args144439%_)))
+    (define gx#extern-binding-type
+      (__make-class-slot-accessor gx#extern-binding::t 'type))
+    (define gx#extern-binding-macro
+      (__make-class-slot-accessor gx#extern-binding::t 'macro))
     (define gx#extern-binding-id
       (__make-class-slot-accessor gx#extern-binding::t 'id))
     (define gx#extern-binding-key
       (__make-class-slot-accessor gx#extern-binding::t 'key))
     (define gx#extern-binding-phi
       (__make-class-slot-accessor gx#extern-binding::t 'phi))
+    (define gx#extern-binding-properties
+      (__make-class-slot-accessor gx#extern-binding::t 'properties))
+    (define gx#extern-binding-type-set!
+      (__make-class-slot-mutator gx#extern-binding::t 'type))
+    (define gx#extern-binding-macro-set!
+      (__make-class-slot-mutator gx#extern-binding::t 'macro))
     (define gx#extern-binding-id-set!
       (__make-class-slot-mutator gx#extern-binding::t 'id))
     (define gx#extern-binding-key-set!
       (__make-class-slot-mutator gx#extern-binding::t 'key))
     (define gx#extern-binding-phi-set!
       (__make-class-slot-mutator gx#extern-binding::t 'phi))
+    (define gx#extern-binding-properties-set!
+      (__make-class-slot-mutator gx#extern-binding::t 'properties))
+    (define gx#&extern-binding-type
+      (__make-class-slot-unchecked-accessor gx#extern-binding::t 'type))
+    (define gx#&extern-binding-macro
+      (__make-class-slot-unchecked-accessor gx#extern-binding::t 'macro))
     (define gx#&extern-binding-id
       (__make-class-slot-unchecked-accessor gx#extern-binding::t 'id))
     (define gx#&extern-binding-key
       (__make-class-slot-unchecked-accessor gx#extern-binding::t 'key))
     (define gx#&extern-binding-phi
       (__make-class-slot-unchecked-accessor gx#extern-binding::t 'phi))
+    (define gx#&extern-binding-properties
+      (__make-class-slot-unchecked-accessor gx#extern-binding::t 'properties))
+    (define gx#&extern-binding-type-set!
+      (__make-class-slot-unchecked-mutator gx#extern-binding::t 'type))
+    (define gx#&extern-binding-macro-set!
+      (__make-class-slot-unchecked-mutator gx#extern-binding::t 'macro))
     (define gx#&extern-binding-id-set!
       (__make-class-slot-unchecked-mutator gx#extern-binding::t 'id))
     (define gx#&extern-binding-key-set!
       (__make-class-slot-unchecked-mutator gx#extern-binding::t 'key))
     (define gx#&extern-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#extern-binding::t 'phi))
+    (define gx#&extern-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#extern-binding::t 'properties))
+    (define gx#runtime-binding:::init! gx#binding:::init!)
+    (__bind-method!__%
+     gx#runtime-binding::t
+     ':init!
+     gx#runtime-binding:::init!
+     '#f)
+    (define gx#local-binding:::init! gx#binding:::init!)
+    (__bind-method!__%
+     gx#local-binding::t
+     ':init!
+     gx#local-binding:::init!
+     '#f)
+    (define gx#top-binding:::init! gx#binding:::init!)
+    (__bind-method!__% gx#top-binding::t ':init! gx#top-binding:::init! '#f)
+    (define gx#module-binding:::init!
+      (lambda (_%self144055%_
+               _%id144056%_
+               _%key144057%_
+               _%phi144058%_
+               _%ctx144059%_)
+        (let ((_%self144062%_ _%self144055%_))
+          (gx#binding:::init!
+           _%self144062%_
+           _%id144056%_
+           _%key144057%_
+           _%phi144058%_)
+          (##unchecked-structure-set!
+           _%self144062%_
+           _%ctx144059%_
+           '7
+           '#f
+           '#f))))
+    (__bind-method!__%
+     gx#module-binding::t
+     ':init!
+     gx#module-binding:::init!
+     '#f)
+    (define gx#extern-binding:::init! gx#binding:::init!)
+    (__bind-method!__%
+     gx#extern-binding::t
+     ':init!
+     gx#extern-binding:::init!
+     '#f)
     (define gx#syntax-binding::t
       (__make-class-type
        'gx#syntax-binding::t
@@ -727,8 +910,8 @@
        '#f))
     (define gx#syntax-binding? (__make-class-predicate gx#syntax-binding::t))
     (define gx#make-syntax-binding
-      (lambda _%$args143386%_
-        (apply make-instance gx#syntax-binding::t _%$args143386%_)))
+      (lambda _%$args143808%_
+        (apply make-instance gx#syntax-binding::t _%$args143808%_)))
     (define gx#syntax-binding-e
       (__make-class-slot-accessor gx#syntax-binding::t 'e))
     (define gx#syntax-binding-id
@@ -737,6 +920,8 @@
       (__make-class-slot-accessor gx#syntax-binding::t 'key))
     (define gx#syntax-binding-phi
       (__make-class-slot-accessor gx#syntax-binding::t 'phi))
+    (define gx#syntax-binding-properties
+      (__make-class-slot-accessor gx#syntax-binding::t 'properties))
     (define gx#syntax-binding-e-set!
       (__make-class-slot-mutator gx#syntax-binding::t 'e))
     (define gx#syntax-binding-id-set!
@@ -745,6 +930,8 @@
       (__make-class-slot-mutator gx#syntax-binding::t 'key))
     (define gx#syntax-binding-phi-set!
       (__make-class-slot-mutator gx#syntax-binding::t 'phi))
+    (define gx#syntax-binding-properties-set!
+      (__make-class-slot-mutator gx#syntax-binding::t 'properties))
     (define gx#&syntax-binding-e
       (__make-class-slot-unchecked-accessor gx#syntax-binding::t 'e))
     (define gx#&syntax-binding-id
@@ -753,6 +940,8 @@
       (__make-class-slot-unchecked-accessor gx#syntax-binding::t 'key))
     (define gx#&syntax-binding-phi
       (__make-class-slot-unchecked-accessor gx#syntax-binding::t 'phi))
+    (define gx#&syntax-binding-properties
+      (__make-class-slot-unchecked-accessor gx#syntax-binding::t 'properties))
     (define gx#&syntax-binding-e-set!
       (__make-class-slot-unchecked-mutator gx#syntax-binding::t 'e))
     (define gx#&syntax-binding-id-set!
@@ -761,6 +950,8 @@
       (__make-class-slot-unchecked-mutator gx#syntax-binding::t 'key))
     (define gx#&syntax-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#syntax-binding::t 'phi))
+    (define gx#&syntax-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#syntax-binding::t 'properties))
     (define gx#import-binding::t
       (__make-class-type
        'gx#import-binding::t
@@ -771,8 +962,8 @@
        '#f))
     (define gx#import-binding? (__make-class-predicate gx#import-binding::t))
     (define gx#make-import-binding
-      (lambda _%$args143383%_
-        (apply make-instance gx#import-binding::t _%$args143383%_)))
+      (lambda _%$args143805%_
+        (apply make-instance gx#import-binding::t _%$args143805%_)))
     (define gx#import-binding-e
       (__make-class-slot-accessor gx#import-binding::t 'e))
     (define gx#import-binding-context
@@ -785,6 +976,8 @@
       (__make-class-slot-accessor gx#import-binding::t 'key))
     (define gx#import-binding-phi
       (__make-class-slot-accessor gx#import-binding::t 'phi))
+    (define gx#import-binding-properties
+      (__make-class-slot-accessor gx#import-binding::t 'properties))
     (define gx#import-binding-e-set!
       (__make-class-slot-mutator gx#import-binding::t 'e))
     (define gx#import-binding-context-set!
@@ -797,6 +990,8 @@
       (__make-class-slot-mutator gx#import-binding::t 'key))
     (define gx#import-binding-phi-set!
       (__make-class-slot-mutator gx#import-binding::t 'phi))
+    (define gx#import-binding-properties-set!
+      (__make-class-slot-mutator gx#import-binding::t 'properties))
     (define gx#&import-binding-e
       (__make-class-slot-unchecked-accessor gx#import-binding::t 'e))
     (define gx#&import-binding-context
@@ -809,6 +1004,8 @@
       (__make-class-slot-unchecked-accessor gx#import-binding::t 'key))
     (define gx#&import-binding-phi
       (__make-class-slot-unchecked-accessor gx#import-binding::t 'phi))
+    (define gx#&import-binding-properties
+      (__make-class-slot-unchecked-accessor gx#import-binding::t 'properties))
     (define gx#&import-binding-e-set!
       (__make-class-slot-unchecked-mutator gx#import-binding::t 'e))
     (define gx#&import-binding-context-set!
@@ -821,6 +1018,8 @@
       (__make-class-slot-unchecked-mutator gx#import-binding::t 'key))
     (define gx#&import-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#import-binding::t 'phi))
+    (define gx#&import-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#import-binding::t 'properties))
     (define gx#alias-binding::t
       (__make-class-type
        'gx#alias-binding::t
@@ -831,8 +1030,8 @@
        '#f))
     (define gx#alias-binding? (__make-class-predicate gx#alias-binding::t))
     (define gx#make-alias-binding
-      (lambda _%$args143380%_
-        (apply make-instance gx#alias-binding::t _%$args143380%_)))
+      (lambda _%$args143802%_
+        (apply make-instance gx#alias-binding::t _%$args143802%_)))
     (define gx#alias-binding-e
       (__make-class-slot-accessor gx#alias-binding::t 'e))
     (define gx#alias-binding-id
@@ -841,6 +1040,8 @@
       (__make-class-slot-accessor gx#alias-binding::t 'key))
     (define gx#alias-binding-phi
       (__make-class-slot-accessor gx#alias-binding::t 'phi))
+    (define gx#alias-binding-properties
+      (__make-class-slot-accessor gx#alias-binding::t 'properties))
     (define gx#alias-binding-e-set!
       (__make-class-slot-mutator gx#alias-binding::t 'e))
     (define gx#alias-binding-id-set!
@@ -849,6 +1050,8 @@
       (__make-class-slot-mutator gx#alias-binding::t 'key))
     (define gx#alias-binding-phi-set!
       (__make-class-slot-mutator gx#alias-binding::t 'phi))
+    (define gx#alias-binding-properties-set!
+      (__make-class-slot-mutator gx#alias-binding::t 'properties))
     (define gx#&alias-binding-e
       (__make-class-slot-unchecked-accessor gx#alias-binding::t 'e))
     (define gx#&alias-binding-id
@@ -857,6 +1060,8 @@
       (__make-class-slot-unchecked-accessor gx#alias-binding::t 'key))
     (define gx#&alias-binding-phi
       (__make-class-slot-unchecked-accessor gx#alias-binding::t 'phi))
+    (define gx#&alias-binding-properties
+      (__make-class-slot-unchecked-accessor gx#alias-binding::t 'properties))
     (define gx#&alias-binding-e-set!
       (__make-class-slot-unchecked-mutator gx#alias-binding::t 'e))
     (define gx#&alias-binding-id-set!
@@ -865,6 +1070,71 @@
       (__make-class-slot-unchecked-mutator gx#alias-binding::t 'key))
     (define gx#&alias-binding-phi-set!
       (__make-class-slot-unchecked-mutator gx#alias-binding::t 'phi))
+    (define gx#&alias-binding-properties-set!
+      (__make-class-slot-unchecked-mutator gx#alias-binding::t 'properties))
+    (define gx#syntax-binding:::init!
+      (lambda (_%self143784%_
+               _%id143785%_
+               _%key143786%_
+               _%phi143787%_
+               _%e143788%_)
+        (let ((_%self143791%_ _%self143784%_))
+          (gx#binding:::init!
+           _%self143791%_
+           _%id143785%_
+           _%key143786%_
+           _%phi143787%_)
+          (##unchecked-structure-set! _%self143791%_ _%e143788%_ '5 '#f '#f))))
+    (__bind-method!__%
+     gx#syntax-binding::t
+     ':init!
+     gx#syntax-binding:::init!
+     '#f)
+    (define gx#import-binding:::init!
+      (lambda (_%self143642%_
+               _%id143643%_
+               _%key143644%_
+               _%phi143645%_
+               _%e143646%_
+               _%ctx143647%_
+               _%weak?143648%_)
+        (let ((_%self143651%_ _%self143642%_))
+          (gx#binding:::init!
+           _%self143651%_
+           _%id143643%_
+           _%key143644%_
+           _%phi143645%_)
+          (##unchecked-structure-set! _%self143651%_ _%e143646%_ '5 '#f '#f)
+          (##unchecked-structure-set! _%self143651%_ _%ctx143647%_ '6 '#f '#f)
+          (##unchecked-structure-set!
+           _%self143651%_
+           _%weak?143648%_
+           '7
+           '#f
+           '#f))))
+    (__bind-method!__%
+     gx#import-binding::t
+     ':init!
+     gx#import-binding:::init!
+     '#f)
+    (define gx#alias-binding:::init!
+      (lambda (_%self143502%_
+               _%id143503%_
+               _%key143504%_
+               _%phi143505%_
+               _%e143506%_)
+        (let ((_%self143509%_ _%self143502%_))
+          (gx#binding:::init!
+           _%self143509%_
+           _%id143503%_
+           _%key143504%_
+           _%phi143505%_)
+          (##unchecked-structure-set! _%self143509%_ _%e143506%_ '5 '#f '#f))))
+    (__bind-method!__%
+     gx#alias-binding::t
+     ':init!
+     gx#alias-binding:::init!
+     '#f)
     (define gx#expander::t
       (__make-class-type
        'gx#expander::t
@@ -1335,14 +1605,14 @@
         (let ((_%expression?143317%_ '#f))
           (gx#eval-syntax__% _%stx143315%_ _%expression?143317%_))))
     (define gx#eval-syntax
-      (lambda _g143768_
-        (let ((_g143769_ (##length _g143768_)))
-          (cond ((##fx= _g143769_ 1) (apply gx#eval-syntax__0 _g143768_))
-                ((##fx= _g143769_ 2) (apply gx#eval-syntax__% _g143768_))
+      (lambda _g144957_
+        (let ((_g144958_ (##length _g144957_)))
+          (cond ((##fx= _g144958_ 1) (apply gx#eval-syntax__0 _g144957_))
+                ((##fx= _g144958_ 2) (apply gx#eval-syntax__% _g144957_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#eval-syntax
-                  _g143768_))))))
+                  _g144957_))))))
     (define gx#eval-syntax*
       (lambda (_%stx143306%_)
         ((gx#current-expander-eval)
@@ -1357,14 +1627,14 @@
         (let ((_%expression?143301%_ '#f))
           (gx#core-expand__% _%stx143299%_ _%expression?143301%_))))
     (define gx#core-expand
-      (lambda _g143770_
-        (let ((_g143771_ (##length _g143770_)))
-          (cond ((##fx= _g143771_ 1) (apply gx#core-expand__0 _g143770_))
-                ((##fx= _g143771_ 2) (apply gx#core-expand__% _g143770_))
+      (lambda _g144959_
+        (let ((_g144960_ (##length _g144959_)))
+          (cond ((##fx= _g144960_ 1) (apply gx#core-expand__0 _g144959_))
+                ((##fx= _g144960_ 2) (apply gx#core-expand__% _g144959_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand
-                  _g143770_))))))
+                  _g144959_))))))
     (define gx#core-expand-top
       (lambda (_%stx143260%_)
         (let* ((_%stx143262%_ (gx#core-expand*__0 _%stx143260%_))
@@ -1427,7 +1697,7 @@
                           (gx#core-apply-expander__0
                            (##unchecked-structure-ref
                             _%bind143222%_
-                            '4
+                            '5
                             '#f
                             '#f)
                            (gx#stx-wrap-source
@@ -1440,7 +1710,7 @@
                                (gx#core-apply-expander__0
                                 (##unchecked-structure-ref
                                  _%bind143222%_
-                                 '4
+                                 '5
                                  '#f
                                  '#f)
                                 (gx#stx-wrap-source
@@ -1520,14 +1790,14 @@
         (let ((_%stop?143182%_ false))
           (gx#core-expand*__% _%stx143180%_ _%stop?143182%_))))
     (define gx#core-expand*
-      (lambda _g143772_
-        (let ((_g143773_ (##length _g143772_)))
-          (cond ((##fx= _g143773_ 1) (apply gx#core-expand*__0 _g143772_))
-                ((##fx= _g143773_ 2) (apply gx#core-expand*__% _g143772_))
+      (lambda _g144961_
+        (let ((_g144962_ (##length _g144961_)))
+          (cond ((##fx= _g144962_ 1) (apply gx#core-expand*__0 _g144961_))
+                ((##fx= _g144962_ 2) (apply gx#core-expand*__% _g144961_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand*
-                  _g143772_))))))
+                  _g144961_))))))
     (define gx#core-expand1
       (lambda (_%stx143120%_)
         (letrec ((_%step143122%_
@@ -1544,7 +1814,7 @@
                               (gx#core-apply-expander__0
                                (##unchecked-structure-ref
                                 _%bind143161%_
-                                '4
+                                '5
                                 '#f
                                 '#f)
                                _%stx143120%_)
@@ -1816,15 +2086,15 @@
            _%begin-form143077%_
            _%expand-e143079%_))))
     (define gx#core-expand-block
-      (lambda _g143774_
-        (let ((_g143775_ (##length _g143774_)))
-          (cond ((##fx= _g143775_ 2) (apply gx#core-expand-block__0 _g143774_))
-                ((##fx= _g143775_ 3) (apply gx#core-expand-block__1 _g143774_))
-                ((##fx= _g143775_ 4) (apply gx#core-expand-block__% _g143774_))
+      (lambda _g144963_
+        (let ((_g144964_ (##length _g144963_)))
+          (cond ((##fx= _g144964_ 2) (apply gx#core-expand-block__0 _g144963_))
+                ((##fx= _g144964_ 3) (apply gx#core-expand-block__1 _g144963_))
+                ((##fx= _g144964_ 4) (apply gx#core-expand-block__% _g144963_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-block
-                  _g143774_))))))
+                  _g144963_))))))
     (define gx#core-expand-block*
       (lambda (_%stx142840%_ _%expand-special142841%_)
         (let* ((_%g142842142853%_
@@ -2115,16 +2385,16 @@
         (let ((_%rpath142660%_ '#f))
           (gx#core-expand-include%__% _%stx142658%_ _%rpath142660%_))))
     (define gx#core-expand-include%
-      (lambda _g143776_
-        (let ((_g143777_ (##length _g143776_)))
-          (cond ((##fx= _g143777_ 1)
-                 (apply gx#core-expand-include%__0 _g143776_))
-                ((##fx= _g143777_ 2)
-                 (apply gx#core-expand-include%__% _g143776_))
+      (lambda _g144965_
+        (let ((_g144966_ (##length _g144965_)))
+          (cond ((##fx= _g144966_ 1)
+                 (apply gx#core-expand-include%__0 _g144965_))
+                ((##fx= _g144966_ 2)
+                 (apply gx#core-expand-include%__% _g144965_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-include%
-                  _g143776_))))))
+                  _g144965_))))))
     (define gx#core-apply-expander__%
       (lambda (_%K142574%_ _%stx142575%_ _%method142576%_)
         (if (procedure? _%K142574%_)
@@ -2158,16 +2428,16 @@
            _%stx142599%_
            _%method142601%_))))
     (define gx#core-apply-expander
-      (lambda _g143778_
-        (let ((_g143779_ (##length _g143778_)))
-          (cond ((##fx= _g143779_ 2)
-                 (apply gx#core-apply-expander__0 _g143778_))
-                ((##fx= _g143779_ 3)
-                 (apply gx#core-apply-expander__% _g143778_))
+      (lambda _g144967_
+        (let ((_g144968_ (##length _g144967_)))
+          (cond ((##fx= _g144968_ 2)
+                 (apply gx#core-apply-expander__0 _g144967_))
+                ((##fx= _g144968_ 3)
+                 (apply gx#core-apply-expander__% _g144967_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-apply-expander
-                  _g143778_))))))
+                  _g144967_))))))
     (define gx#expander::apply-macro-expander
       (lambda (_%self142559%_ _%stx142560%_)
         (let ((_%self142563%_ _%self142559%_))
@@ -2249,18 +2519,18 @@
            _%stx142115%_
            _%top?142117%_))))
     (define gx#top-special-form::apply-macro-expander
-      (lambda _g143780_
-        (let ((_g143781_ (##length _g143780_)))
-          (cond ((##fx= _g143781_ 2)
+      (lambda _g144969_
+        (let ((_g144970_ (##length _g144969_)))
+          (cond ((##fx= _g144970_ 2)
                  (apply gx#top-special-form::apply-macro-expander__0
-                        _g143780_))
-                ((##fx= _g143781_ 3)
+                        _g144969_))
+                ((##fx= _g144970_ 3)
                  (apply gx#top-special-form::apply-macro-expander__%
-                        _g143780_))
+                        _g144969_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#top-special-form::apply-macro-expander
-                  _g143780_))))))
+                  _g144969_))))))
     (__bind-method!__%
      gx#top-special-form::t
      'apply-macro-expander
@@ -2377,16 +2647,16 @@
            _%stx141644%_
            _%method141646%_))))
     (define gx#core-apply-user-expander
-      (lambda _g143782_
-        (let ((_g143783_ (##length _g143782_)))
-          (cond ((##fx= _g143783_ 2)
-                 (apply gx#core-apply-user-expander__0 _g143782_))
-                ((##fx= _g143783_ 3)
-                 (apply gx#core-apply-user-expander__% _g143782_))
+      (lambda _g144971_
+        (let ((_g144972_ (##length _g144971_)))
+          (cond ((##fx= _g144972_ 2)
+                 (apply gx#core-apply-user-expander__0 _g144971_))
+                ((##fx= _g144972_ 3)
+                 (apply gx#core-apply-user-expander__% _g144971_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-apply-user-expander
-                  _g143782_))))))
+                  _g144971_))))))
     (define gx#core-apply-user-macro
       (lambda (_%K141591%_
                _%stx141592%_
@@ -2427,13 +2697,13 @@
                _%bind141445%_
                'gx#import-binding::t)
               (_%lp141443%_
-               (##unchecked-structure-ref _%bind141445%_ '4 '#f '#f))
+               (##unchecked-structure-ref _%bind141445%_ '5 '#f '#f))
               (if (##structure-direct-instance-of?
                    _%bind141445%_
                    'gx#alias-binding::t)
                   (_%lp141443%_
                    (gx#core-resolve-identifier__%
-                    (##unchecked-structure-ref _%bind141445%_ '4 '#f '#f)
+                    (##unchecked-structure-ref _%bind141445%_ '5 '#f '#f)
                     _%phi141440%_
                     _%ctx141441%_))
                   _%bind141445%_)))))
@@ -2453,18 +2723,18 @@
            _%phi141460%_
            _%ctx141462%_))))
     (define gx#resolve-identifier
-      (lambda _g143784_
-        (let ((_g143785_ (##length _g143784_)))
-          (cond ((##fx= _g143785_ 1)
-                 (apply gx#resolve-identifier__0 _g143784_))
-                ((##fx= _g143785_ 2)
-                 (apply gx#resolve-identifier__1 _g143784_))
-                ((##fx= _g143785_ 3)
-                 (apply gx#resolve-identifier__% _g143784_))
+      (lambda _g144973_
+        (let ((_g144974_ (##length _g144973_)))
+          (cond ((##fx= _g144974_ 1)
+                 (apply gx#resolve-identifier__0 _g144973_))
+                ((##fx= _g144974_ 2)
+                 (apply gx#resolve-identifier__1 _g144973_))
+                ((##fx= _g144974_ 3)
+                 (apply gx#resolve-identifier__% _g144973_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#resolve-identifier
-                  _g143784_))))))
+                  _g144973_))))))
     (define gx#bind-identifier!__%
       (lambda (_%stx141394%_
                _%val141395%_
@@ -2514,16 +2784,16 @@
            _%phi141428%_
            _%ctx141430%_))))
     (define gx#bind-identifier!
-      (lambda _g143786_
-        (let ((_g143787_ (##length _g143786_)))
-          (cond ((##fx= _g143787_ 2) (apply gx#bind-identifier!__0 _g143786_))
-                ((##fx= _g143787_ 3) (apply gx#bind-identifier!__1 _g143786_))
-                ((##fx= _g143787_ 4) (apply gx#bind-identifier!__2 _g143786_))
-                ((##fx= _g143787_ 5) (apply gx#bind-identifier!__% _g143786_))
+      (lambda _g144975_
+        (let ((_g144976_ (##length _g144975_)))
+          (cond ((##fx= _g144976_ 2) (apply gx#bind-identifier!__0 _g144975_))
+                ((##fx= _g144976_ 3) (apply gx#bind-identifier!__1 _g144975_))
+                ((##fx= _g144976_ 4) (apply gx#bind-identifier!__2 _g144975_))
+                ((##fx= _g144976_ 5) (apply gx#bind-identifier!__% _g144975_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#bind-identifier!
-                  _g143786_))))))
+                  _g144975_))))))
     (define gx#core-resolve-identifier__%
       (lambda (_%stx141360%_ _%phi141361%_ _%ctx141362%_)
         (let _%lp141364%_ ((_%e141366%_ _%stx141360%_)
@@ -2592,18 +2862,18 @@
            _%phi141385%_
            _%ctx141387%_))))
     (define gx#core-resolve-identifier
-      (lambda _g143788_
-        (let ((_g143789_ (##length _g143788_)))
-          (cond ((##fx= _g143789_ 1)
-                 (apply gx#core-resolve-identifier__0 _g143788_))
-                ((##fx= _g143789_ 2)
-                 (apply gx#core-resolve-identifier__1 _g143788_))
-                ((##fx= _g143789_ 3)
-                 (apply gx#core-resolve-identifier__% _g143788_))
+      (lambda _g144977_
+        (let ((_g144978_ (##length _g144977_)))
+          (cond ((##fx= _g144978_ 1)
+                 (apply gx#core-resolve-identifier__0 _g144977_))
+                ((##fx= _g144978_ 2)
+                 (apply gx#core-resolve-identifier__1 _g144977_))
+                ((##fx= _g144978_ 3)
+                 (apply gx#core-resolve-identifier__% _g144977_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-resolve-identifier
-                  _g143788_))))))
+                  _g144977_))))))
     (define gx#core-resolve-binding
       (lambda (_%id141271%_
                _%phi141272%_
@@ -2717,7 +2987,7 @@
                                   'gx#import-binding::t)
                                  (or (##unchecked-structure-ref
                                       _%xval141220%_
-                                      '6
+                                      '7
                                       '#f
                                       '#f)
                                      (and (##structure-instance-of?
@@ -2748,7 +3018,7 @@
                                   'gx#import-binding::t)
                                  (or (##unchecked-structure-ref
                                       _%val141143%_
-                                      '6
+                                      '7
                                       '#f
                                       '#f)
                                      (and (##structure-instance-of?
@@ -2783,7 +3053,7 @@
                                        (cons (##structure-ref
                                               (##unchecked-structure-ref
                                                _%val141143%_
-                                               '5
+                                               '6
                                                '#f
                                                '#f)
                                               '1
@@ -2801,7 +3071,7 @@
                                                  (##structure-ref
                                                   (##unchecked-structure-ref
                                                    _%xval141220%_
-                                                   '5
+                                                   '6
                                                    '#f
                                                    '#f)
                                                   '1
@@ -2916,16 +3186,16 @@
            _%phi141261%_
            _%ctx141263%_))))
     (define gx#core-bind!
-      (lambda _g143790_
-        (let ((_g143791_ (##length _g143790_)))
-          (cond ((##fx= _g143791_ 2) (apply gx#core-bind!__0 _g143790_))
-                ((##fx= _g143791_ 3) (apply gx#core-bind!__1 _g143790_))
-                ((##fx= _g143791_ 4) (apply gx#core-bind!__2 _g143790_))
-                ((##fx= _g143791_ 5) (apply gx#core-bind!__% _g143790_))
+      (lambda _g144979_
+        (let ((_g144980_ (##length _g144979_)))
+          (cond ((##fx= _g144980_ 2) (apply gx#core-bind!__0 _g144979_))
+                ((##fx= _g144980_ 3) (apply gx#core-bind!__1 _g144979_))
+                ((##fx= _g144980_ 4) (apply gx#core-bind!__2 _g144979_))
+                ((##fx= _g144980_ 5) (apply gx#core-bind!__% _g144979_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind!
-                  _g143790_))))))
+                  _g144979_))))))
     (define gx#core-identifier-key
       (lambda (_%stx141073%_)
         (if (symbol? _%stx141073%_)
@@ -2959,7 +3229,7 @@
       (lambda (_%ctx141012%_ _%phi141013%_)
         (letrec ((_%make-phi141015%_
                   (lambda (_%super141071%_)
-                    (let ((__obj143763
+                    (let ((__obj144952
                            (##structure
                             gx#phi-context::t
                             '#f
@@ -2968,10 +3238,10 @@
                             '#f
                             '#f)))
                       (gx#phi-context:::init!__%
-                       __obj143763
+                       __obj144952
                        (##gensym 'phi)
                        _%super141071%_)
-                      __obj143763)))
+                      __obj144952)))
                  (_%make-phi/up141016%_
                   (lambda (_%ctx141066%_ _%super141067%_)
                     (let ((_%ctx+1141069%_
@@ -3134,15 +3404,15 @@
         (let ((_%stop?140975%_ gx#top-context?))
           (gx#core-context-top__% _%ctx140973%_ _%stop?140975%_))))
     (define gx#core-context-top
-      (lambda _g143792_
-        (let ((_g143793_ (##length _g143792_)))
-          (cond ((##fx= _g143793_ 0) (apply gx#core-context-top__0 _g143792_))
-                ((##fx= _g143793_ 1) (apply gx#core-context-top__1 _g143792_))
-                ((##fx= _g143793_ 2) (apply gx#core-context-top__% _g143792_))
+      (lambda _g144981_
+        (let ((_g144982_ (##length _g144981_)))
+          (cond ((##fx= _g144982_ 0) (apply gx#core-context-top__0 _g144981_))
+                ((##fx= _g144982_ 1) (apply gx#core-context-top__1 _g144981_))
+                ((##fx= _g144982_ 2) (apply gx#core-context-top__% _g144981_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-top
-                  _g143792_))))))
+                  _g144981_))))))
     (define gx#core-context-root__%
       (lambda (_%ctx140940%_)
         (let _%lp140942%_ ((_%ctx140944%_ _%ctx140940%_))
@@ -3155,14 +3425,14 @@
         (let ((_%ctx140950%_ (gx#current-expander-context)))
           (gx#core-context-root__% _%ctx140950%_))))
     (define gx#core-context-root
-      (lambda _g143794_
-        (let ((_g143795_ (##length _g143794_)))
-          (cond ((##fx= _g143795_ 0) (apply gx#core-context-root__0 _g143794_))
-                ((##fx= _g143795_ 1) (apply gx#core-context-root__% _g143794_))
+      (lambda _g144983_
+        (let ((_g144984_ (##length _g144983_)))
+          (cond ((##fx= _g144984_ 0) (apply gx#core-context-root__0 _g144983_))
+                ((##fx= _g144984_ 1) (apply gx#core-context-root__% _g144983_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-root
-                  _g143794_))))))
+                  _g144983_))))))
     (define gx#core-context-rebind?__%
       (lambda (_%ctx140922%_ . _%ignore140923%_)
         (let ((_%$e140925%_ (gx#current-expander-allow-rebind?)))
@@ -3182,18 +3452,18 @@
         (let ((_%ctx140932%_ (gx#current-expander-context)))
           (gx#core-context-rebind?__% _%ctx140932%_))))
     (define gx#core-context-rebind?
-      (lambda _g143796_
-        (let ((_g143797_ (##length _g143796_)))
-          (cond ((##fx= _g143797_ 0)
-                 (apply gx#core-context-rebind?__0 _g143796_))
-                ((##fx= _g143797_ 1)
-                 (apply gx#core-context-rebind?__% _g143796_))
-                ((##fx>= _g143797_ 1)
-                 (apply gx#core-context-rebind?__% _g143796_))
+      (lambda _g144985_
+        (let ((_g144986_ (##length _g144985_)))
+          (cond ((##fx= _g144986_ 0)
+                 (apply gx#core-context-rebind?__0 _g144985_))
+                ((##fx= _g144986_ 1)
+                 (apply gx#core-context-rebind?__% _g144985_))
+                ((##fx>= _g144986_ 1)
+                 (apply gx#core-context-rebind?__% _g144985_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-rebind?
-                  _g143796_))))))
+                  _g144985_))))))
     (define gx#core-context-namespace__%
       (lambda (_%ctx140905%_)
         (let ((_%$e140907%_ (gx#core-context-top__1 _%ctx140905%_)))
@@ -3211,37 +3481,37 @@
         (let ((_%ctx140917%_ (gx#current-expander-context)))
           (gx#core-context-namespace__% _%ctx140917%_))))
     (define gx#core-context-namespace
-      (lambda _g143798_
-        (let ((_g143799_ (##length _g143798_)))
-          (cond ((##fx= _g143799_ 0)
-                 (apply gx#core-context-namespace__0 _g143798_))
-                ((##fx= _g143799_ 1)
-                 (apply gx#core-context-namespace__% _g143798_))
+      (lambda _g144987_
+        (let ((_g144988_ (##length _g144987_)))
+          (cond ((##fx= _g144988_ 0)
+                 (apply gx#core-context-namespace__0 _g144987_))
+                ((##fx= _g144988_ 1)
+                 (apply gx#core-context-namespace__% _g144987_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-namespace
-                  _g143798_))))))
+                  _g144987_))))))
     (define gx#expander-binding?__%
       (lambda (_%bind140891%_ _%is?140892%_)
         (if (##structure-direct-instance-of?
              _%bind140891%_
              'gx#syntax-binding::t)
             (_%is?140892%_
-             (##unchecked-structure-ref _%bind140891%_ '4 '#f '#f))
+             (##unchecked-structure-ref _%bind140891%_ '5 '#f '#f))
             '#f)))
     (define gx#expander-binding?__0
       (lambda (_%bind140897%_)
         (let ((_%is?140899%_ gx#expander?))
           (gx#expander-binding?__% _%bind140897%_ _%is?140899%_))))
     (define gx#expander-binding?
-      (lambda _g143800_
-        (let ((_g143801_ (##length _g143800_)))
-          (cond ((##fx= _g143801_ 1) (apply gx#expander-binding?__0 _g143800_))
-                ((##fx= _g143801_ 2) (apply gx#expander-binding?__% _g143800_))
+      (lambda _g144989_
+        (let ((_g144990_ (##length _g144989_)))
+          (cond ((##fx= _g144990_ 1) (apply gx#expander-binding?__0 _g144989_))
+                ((##fx= _g144990_ 2) (apply gx#expander-binding?__% _g144989_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#expander-binding?
-                  _g143800_))))))
+                  _g144989_))))))
     (define gx#core-expander-binding?
       (lambda (_%bind140888%_)
         (gx#expander-binding?__% _%bind140888%_ gx#core-expander?)))
@@ -3288,16 +3558,16 @@
         (let ((_%bound?140862%_ gx#core-expander-binding?))
           (gx#core-bound-identifier?__% _%id140860%_ _%bound?140862%_))))
     (define gx#core-bound-identifier?
-      (lambda _g143802_
-        (let ((_g143803_ (##length _g143802_)))
-          (cond ((##fx= _g143803_ 1)
-                 (apply gx#core-bound-identifier?__0 _g143802_))
-                ((##fx= _g143803_ 2)
-                 (apply gx#core-bound-identifier?__% _g143802_))
+      (lambda _g144991_
+        (let ((_g144992_ (##length _g144991_)))
+          (cond ((##fx= _g144992_ 1)
+                 (apply gx#core-bound-identifier?__0 _g144991_))
+                ((##fx= _g144992_ 2)
+                 (apply gx#core-bound-identifier?__% _g144991_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bound-identifier?
-                  _g143802_))))))
+                  _g144991_))))))
     (define gx#core-identifier=?
       (lambda (_%x140844%_ _%y140845%_)
         (letrec ((_%y=?140847%_
@@ -3377,16 +3647,16 @@
            _%ctx140833%_
            _%marks140835%_))))
     (define gx#core-quote-syntax
-      (lambda _g143804_
-        (let ((_g143805_ (##length _g143804_)))
-          (cond ((##fx= _g143805_ 1) (apply gx#core-quote-syntax__0 _g143804_))
-                ((##fx= _g143805_ 2) (apply gx#core-quote-syntax__1 _g143804_))
-                ((##fx= _g143805_ 3) (apply gx#core-quote-syntax__2 _g143804_))
-                ((##fx= _g143805_ 4) (apply gx#core-quote-syntax__% _g143804_))
+      (lambda _g144993_
+        (let ((_g144994_ (##length _g144993_)))
+          (cond ((##fx= _g144994_ 1) (apply gx#core-quote-syntax__0 _g144993_))
+                ((##fx= _g144994_ 2) (apply gx#core-quote-syntax__1 _g144993_))
+                ((##fx= _g144994_ 3) (apply gx#core-quote-syntax__2 _g144993_))
+                ((##fx= _g144994_ 4) (apply gx#core-quote-syntax__% _g144993_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-quote-syntax
-                  _g143804_))))))
+                  _g144993_))))))
     (define gx#core-cons
       (lambda (_%hd140791%_ _%tl140792%_)
         (cons (gx#core-quote-syntax__0 _%hd140791%_) _%tl140792%_)))
@@ -3427,14 +3697,14 @@
         (let ((_%rel140780%_ '#f))
           (gx#core-resolve-path__% _%stx-path140778%_ _%rel140780%_))))
     (define gx#core-resolve-path
-      (lambda _g143806_
-        (let ((_g143807_ (##length _g143806_)))
-          (cond ((##fx= _g143807_ 1) (apply gx#core-resolve-path__0 _g143806_))
-                ((##fx= _g143807_ 2) (apply gx#core-resolve-path__% _g143806_))
+      (lambda _g144995_
+        (let ((_g144996_ (##length _g144995_)))
+          (cond ((##fx= _g144996_ 1) (apply gx#core-resolve-path__0 _g144995_))
+                ((##fx= _g144996_ 2) (apply gx#core-resolve-path__% _g144995_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-resolve-path
-                  _g143806_))))))
+                  _g144995_))))))
     (define gx#core-deserialize-mark__%
       (lambda (_%repr140710%_ _%ctx140711%_)
         (let* ((_%repr140712140719%_ _%repr140710%_)
@@ -3468,16 +3738,16 @@
         (let ((_%ctx140748%_ (gx#current-expander-context)))
           (gx#core-deserialize-mark__% _%repr140746%_ _%ctx140748%_))))
     (define gx#core-deserialize-mark
-      (lambda _g143808_
-        (let ((_g143809_ (##length _g143808_)))
-          (cond ((##fx= _g143809_ 1)
-                 (apply gx#core-deserialize-mark__0 _g143808_))
-                ((##fx= _g143809_ 2)
-                 (apply gx#core-deserialize-mark__% _g143808_))
+      (lambda _g144997_
+        (let ((_g144998_ (##length _g144997_)))
+          (cond ((##fx= _g144998_ 1)
+                 (apply gx#core-deserialize-mark__0 _g144997_))
+                ((##fx= _g144998_ 2)
+                 (apply gx#core-deserialize-mark__% _g144997_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-deserialize-mark
-                  _g143808_))))))
+                  _g144997_))))))
     (define gx#syntax-local-rewrap
       (lambda (_%stx140707%_)
         (gx#stx-rewrap _%stx140707%_ (gx#current-expander-marks))))
@@ -3505,21 +3775,21 @@
           (if (##structure-direct-instance-of?
                _%bind140661%_
                'gx#syntax-binding::t)
-              (##unchecked-structure-ref _%bind140661%_ '4 '#f '#f)
+              (##unchecked-structure-ref _%bind140661%_ '5 '#f '#f)
               (_%E140659%_ _%stx140658%_)))))
     (define gx#syntax-local-e__0
       (lambda (_%stx140666%_)
         (let ((_%E140668%_ gx#raise-syntax-ref-error))
           (gx#syntax-local-e__% _%stx140666%_ _%E140668%_))))
     (define gx#syntax-local-e
-      (lambda _g143810_
-        (let ((_g143811_ (##length _g143810_)))
-          (cond ((##fx= _g143811_ 1) (apply gx#syntax-local-e__0 _g143810_))
-                ((##fx= _g143811_ 2) (apply gx#syntax-local-e__% _g143810_))
+      (lambda _g144999_
+        (let ((_g145000_ (##length _g144999_)))
+          (cond ((##fx= _g145000_ 1) (apply gx#syntax-local-e__0 _g144999_))
+                ((##fx= _g145000_ 2) (apply gx#syntax-local-e__% _g144999_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#syntax-local-e
-                  _g143810_))))))
+                  _g144999_))))))
     (define gx#syntax-local-value__%
       (lambda (_%stx140642%_ _%E140643%_)
         (let ((_%e140645%_ (gx#syntax-local-e__% _%stx140642%_ _%E140643%_)))
@@ -3531,16 +3801,16 @@
         (let ((_%E140652%_ gx#raise-syntax-ref-error))
           (gx#syntax-local-value__% _%stx140650%_ _%E140652%_))))
     (define gx#syntax-local-value
-      (lambda _g143812_
-        (let ((_g143813_ (##length _g143812_)))
-          (cond ((##fx= _g143813_ 1)
-                 (apply gx#syntax-local-value__0 _g143812_))
-                ((##fx= _g143813_ 2)
-                 (apply gx#syntax-local-value__% _g143812_))
+      (lambda _g145001_
+        (let ((_g145002_ (##length _g145001_)))
+          (cond ((##fx= _g145002_ 1)
+                 (apply gx#syntax-local-value__0 _g145001_))
+                ((##fx= _g145002_ 2)
+                 (apply gx#syntax-local-value__% _g145001_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#syntax-local-value
-                  _g143812_))))))
+                  _g145001_))))))
     (define gx#raise-syntax-ref-error
       (lambda (_%stx140639%_)
         (gx#raise-syntax-error
