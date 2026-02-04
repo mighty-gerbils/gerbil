@@ -35,25 +35,27 @@
 
 (def (bio-write-uint (bio : basic-output-buffer) (uint : :integer) (len : :fixnum))
   => :fixnum
-  (let* ((whi bio.whi)
-         (whi+len (fx+ whi len))
-         (buf bio.buf)
+  (let* ((buf bio.buf)
          (buflen (u8vector-length buf)))
-    (cond
-     ((fx< whi+len buflen)
-      (let loop ((whi whi :- :fixnum)
-                 (shift (fx- (fxarithmetic-shift-left len 3) 8) :- :fixnum))
-        => :fixnum
-        (if (fx< whi whi+len)
-          (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
-            (u8vector-set! buf whi u8)
-            (loop (fx+ whi 1) (fx- shift 8)))
-          (begin
-            (__bio-output-advance! bio whi+len)
-            len))))
-     (else
-      (__bio-output-buffer-drain! bio buf whi)
-      (__bio-write-uint bio uint len)))))
+    (let again ()
+      => :fixnum
+      (let* ((whi bio.whi)
+             (whi+len (fx+ whi len)))
+        (cond
+         ((fx< whi+len buflen)
+          (let loop ((whi whi :- :fixnum)
+                     (shift (fx- (fxarithmetic-shift-left len 3) 8) :- :fixnum))
+            => :fixnum
+            (if (fx< whi whi+len)
+              (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
+                (u8vector-set! buf whi u8)
+                (loop (fx+ whi 1) (fx- shift 8)))
+              (begin
+                (__bio-output-advance! bio whi+len)
+                len))))
+         (else
+          (__bio-output-buffer-drain! bio buf whi)
+          (again)))))))
 
 (def (bio-write-uint-generic (writer : BufferedWriter) (uint : :integer) (len : :fixnum))
   => :fixnum

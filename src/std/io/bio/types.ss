@@ -54,5 +54,6 @@
 (defstruct delimited-input-buffer
   ((input     :- :t)
    (remaining :- :integer)
-   (limit     :- :integer))
+   (limit     :- :integer)
+   (closed?   :- :boolean))
   final: #t)

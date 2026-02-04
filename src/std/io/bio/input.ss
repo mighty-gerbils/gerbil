@@ -288,7 +288,7 @@
        (set! bio.closed? #t)
        (when bio.owned?
          (__buffer_cache.put! bio.buf))
-       (set! bio.buf #
+       (set! bio.buf #f)
        (__close bio))))
   ((_ input-buffer)
    (__bio-close-input input-buffer __bio-input-buffer-close)))

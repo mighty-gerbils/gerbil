@@ -120,9 +120,7 @@
             (__bio-input-advance! bio rlo rhi)
             (__bio-input-buffer-fill! bio buf bio.rhi 1)
             (loop bio.rlo bio.rhi shift x)))
-        (begin
-          (__bio-input-advance! bio rlo rhi)
-          x)))))
+        (raise-io-error bio-read-varuint "maximum bits exceeded" shift: shift max-bits: max-bits)))))
 
 (def (bio-read-varuint-generic (reader : Reader) (max-bits : :fixnum))
   => :integer
@@ -135,12 +133,12 @@
         (if (fx= (fxand next #x80) 0)
           x
           (loop (fx+ shift 7) x)))
-      x)))
+      (raise-io-error bio-read-varuint "maximum bits exceeded" shift: shift max-bits: max-bits))))
 
 (defreader-ext (read-varint reader (max-bits 64 : :finxum))
   => :integer
   (let* ((uint (reader.read-varuint max-bits))
-         (int (arithmetic-shift uint -1))
+         (int  (arithmetic-shift uint -1))
          (sign (bitwise-and uint 1)))
     (if (fx= sign 0)
       int
@@ -302,7 +300,11 @@
 (defreader-ext (peek-char-utf8 reader)
   ;; => :char or :eof
   (if (is-input-buffer-instance? reader)
-    (__bio-peek-char-utf8 (&interface-instance-object reader))
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! bio)
+      (if (fx<= 4 (u8vector-length bio.buf))
+        (__bio-peek-char-utf8 bio)
+        (__bio-peek-char-utf8-generic reader len)))
     (__bio-peek-char-utf8-generic reader)))
 
 (def (bio-peek-char-utf8 (bio : basic-input-buffer))
@@ -462,7 +464,9 @@
                                         :- :fixnum))
   => :fixnum
   (if (is-input-buffer-instance? reader)
-    (__bio-read-string-utf8 reader str start end need)
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! bio)
+      (__bio-read-string-utf8 bio str start end need))
     (__bio-read-string-utf8-generic reader str start end need)))
 
 (defrule (__bio-input-read-string input str start end need __read-char)
@@ -517,10 +521,12 @@
             (lambda (chars drop) (list->string (reverse! chars)))
             (lambda (chars drop) (list->string (reverse! (list-tail chars drop)))))))
     (if (is-input-buffer-instance? reader)
-      (__bio-read-line-utf8 (&interface-instance-object reader)
-                            separators
-                            read-more?
-                            finish)
+      (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+        (__check-buffer-open! bio)
+        (__bio-read-line-utf8 bio
+                              separators
+                              read-more?
+                              finish))
       (__bio-read-line-utf8-generic (&interface-instance-object reader)
                                     separators
                                     read-more?
@@ -550,7 +556,7 @@
                          (finsh      : :procedure))
   (__bio-input-read-line bio separators read-more? finish __bio-read-char-utf8))
 
-(def (bio-read-line-utf8-generic (reader        : Reader)
+(def (bio-read-line-utf8-generic (reader      : Reader)
                                  (separators : :list)
                                  (read-more? : :procedure)
                                  (finsh      : :procedure))

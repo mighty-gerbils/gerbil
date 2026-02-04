@@ -6,6 +6,7 @@
         ../interface
         ./types
         ./macros
+        ./buffer
         ./input)
 (export #t)
 (declare (not safe) (mostly-fixnum))
@@ -19,6 +20,8 @@
                          (input-need   :~ nonnegative-fixnum?
                                        :- :fixnum))
   => :fixnum
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read "buffer closed"))
   (let (remaining delim.remaining)
     (cond
      ((zero? remaining) 0)
@@ -35,6 +38,8 @@
       (raise-io-error bio-delimited-read "input limit exceeded" input-need remaining)))))
 
 (def (bio-delimited-read-u8 (delim : delimited-input-buffer))
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
   (let (remaining delim.remaining)
     (if (> remaining 0)
       (let (u8 (__bio-input-buffer-read-u8 delim.in))
@@ -43,6 +48,8 @@
       '#!eof)))
 
 (def (bio-delimited-peek-u8 (delim : delimited-input-buffer))
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
   (let (remaining delim.remaining)
     (if (> remaining 0)
       (__bio-input-buffer-peek-u8 delim.in)
@@ -50,6 +57,8 @@
 
 (def (bio-delimited-put-back (delim : delimited-input-buffer) previous-input)
   => :void
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
   (let* ((remaining delim.remaining)
          (new-remaining
           (+ (if (pair? previous-input) (length previous-input) 1)
@@ -61,6 +70,8 @@
 (def (bio-delimited-skip-input (delim : delimited-input-buffer)
                                (count :~ nonnegative-fixnum? :- :fixnum))
   => :void
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
   (let (remaining delim.remaining)
     (if (<= count remaining)
       (begin
@@ -69,20 +80,22 @@
         (void))
       (raise-io-error BufferedReader-read-bytes "input limit exceeded" count remaining))))
 
-(def (bio-delimited-delimit-input (delim : delimited-input-buffer) (limit : integer))
+(def (bio-delimited-delimit-input (delim : delimited-input-buffer) (limit : :integer))
   => BufferedReader
-  (BufferedReader (make-delimited-input-buffer delim limit limit)))
-
-(def (bio-delimited-reset-input! (delim : delimited-input-buffer) (reader : Reader) close?)
-  => :void
-  (set! delim.remaining delim.limit)
-  (__bio-input-buffer-reset! delim.in reader close?))
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
+  (let (limit (min limit delim.limit))
+    (BufferedReader (make-delimited-input-buffer delim limit limit))))
 
 (def (bio-delimited-available (delim : delimited-input-buffer)) => :fixnum
+  (unless delim.closed?
+    (raise-io-closed bio-delimited-read-u8 "buffer closed"))
   (min delim.remaining
        (__bio-input-buffer-available delim.in)))
 
 (def (bio-delimited-close (delim : delimited-input-buffer))
   => :void
-  (set! delim.remaining 0)
-  (__bio-buffer-close delim.in))
+  (unless delim.closed?
+    (set! delim.closed? #f)
+    (set! delim.remaining 0)
+    (__bio-buffer-close delim.in)))

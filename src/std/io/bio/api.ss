@@ -1,8 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO api
-(import :std/error
+(import :gerbil/runtime/interface
         :std/interface
+        :std/error
         ../interface
         ../port
         ./types
@@ -24,8 +25,8 @@
         open-memory-buffered-writer
         open-message-buffered-reader
         open-message-buffered-writer
-        get-buffer-output-u8vector
-        get-buffer-output-string-utf8
+        get-memory-output-u8vector
+        get-memory-output-string-utf8
         defreader-ext
         defwriter-ext
         very-small-buffer-size
@@ -47,6 +48,9 @@
   interface: BufferedReader)
 
 ;; source-input-buffer
+(defmethod {close source-input-buffer}
+  __source-close
+  interface: Closer)
 (defmethod {read source-input-buffer}
   __source-read
   interface: Reader)
@@ -59,17 +63,14 @@
 (defmethod {skip source-input-buffer}
   __source-skip
   interface: BufferedReader)
-(defmethod {reset! source-input-buffer}
-  __source-reset!
-  interface: BufferedReader)
-(defmethod {close source-input-buffer}
-  __source-close
-  interface: Closer)
 
 (@implement BufferedReader source-input-buffer)
 (@implement InputBuffer source-input-buffer)
 
 ;; sink-output-buffer
+(defmethod {close sink-output-buffer}
+  __sink-close
+  interface: Closer)
 (defmethod {write sink-output-buffer}
   __sink-write-bytes
   interface: Writer)
@@ -79,17 +80,14 @@
 (defmethod {flush sink-output-buffer}
   __sink-flush
   interface: BufferedWriter)
-(defmethod {reset! sink-output-buffer}
-  __sink-reset!
-  interface: BufferedWriter)
-(defmethod {close sink-output-buffer}
-  __sink-close
-  interface: Closer)
 
 (@implement BufferedWriter sink-output-buffer)
 (@implement OutputBuffer sink-output-buffer)
 
 ;; memory-input-buffer
+(defmethod {close memory-input-buffer}
+  __mem-close-input
+  interface: Closer)
 (defmethod {read memory-input-buffer}
   __mem-read
   interface: Reader)
@@ -102,17 +100,14 @@
 (defmethod {skip memory-input-buffer}
   __mem-skip
   interface: BufferedReader)
-(defmethod {reset! memory-input-buffer}
-  __mem-input-reset!
-  interface: BufferedReader)
-(defmethod {close memory-input-buffer}
-  __mem-input-close
-  interface: Closer)
 
 (@implement BufferedReader memory-input-buffer)
 (@implement InputBuffer memory-input-buffer)
 
 ;; memory-output-buffer
+(defmethod {close memory-output-buffer}
+  __mem-close-output
+  interface: Closer)
 (defmethod {write memory-output-buffer}
   __mem-write-bytes
   interface: Writer)
@@ -122,17 +117,14 @@
 (defmethod {flush memory-output-buffer}
   __mem-flush
   interface: BufferedWriter)
-(defmethod {reset! memory-output-buffer}
-  __mem-output-reset!
-  interface: BufferedWriter)
-(defmethod {close memory-output-buffer}
-  __mem-output-close
-  interface: Closer)
 
 (@implement BufferedWriter memory-output-buffer)
 (@implement OutputBuffer memory-output-buffer)
 
 ;; delimited-input-buffer BufferedReader implementation
+(defmethod {close delimited-input-buffer}
+  __bio-delimited-close
+  interface: Closer)
 (defmethod {read delimited-input-buffer}
   __bio-delimited-read-bytes
   interface: Reader)
@@ -151,15 +143,9 @@
 (defmethod {delimit delimited-input-buffer}
   __bio-delimited-delimit-input
   interface: BufferedReader)
-(defmethod {reset! delimited-input-buffer}
-  __bio-delimited-reset-input!
-  interface: BufferedReader)
 (defmethod {available delimited-input-buffer}
   __bio-delimited-available
   interface: BufferedReader)
-(defmethod {close delimited-input-buffer}
-  __bio-delimited-close
-  interface: Closer)
 
 (@implement BufferedReader delimited-input-buffer)
 
@@ -225,3 +211,11 @@
      (make-raw-binary-output-port pre-writer)))
    (else
     (raise-bad-argument open-buffered-writer "Writer instance or #f" pre-writer))))
+
+(def (get-memory-output-u8vector (inst : interface-instance) (done? : #t))
+  => :u8vector
+  XXX)
+
+(def (get-memory-output-string-utf8 (inst : interface-instance) (done? : #t))
+  => :u8vector
+  XXX)

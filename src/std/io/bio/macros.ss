@@ -21,46 +21,28 @@
   (basic-output-buffer? (&interface-instance-object writer)))
 
 (defsyntax-case defreader-ext
-  ((_ (method . args) body ...)
+  ((_ (method reader . args) body ...)
    (identifier? #'method)
    (with-identifiers
-       ((reader-method     #'method "BufferedReader-"  #'method)
-        (unchecked-method  #'method "&BufferedReader-" #'method))
+       ((checked-macro    #'method "BufferedReader-"  #'method)
+        (unchecked-macro  #'method "&" #'checked-macro)
+        (checked-method   #'method "::" #'checked-macro)
+        (unchecked-method #'method "__" #'checked-macro))
      #'(begin
-         (defreader-ext* (method . args) body ...)
-         (export reader-method unchecked-method)))))
-
-;; TODO implement with interface method infrastructure
-(defsyntax-case defreader-ext* ()
-  ((_ (method reader . args) body ...)
-   (and (identifier? #'method)
-        (identifier? #'reader))
-   (with-identifiers ((reader-method    #'method "BufferedReader-"   #'method)
-                      (unchecked-method #'method "&BufferedReader-"  #'method)
-                      (raw-method       #'method "__BufferedReader-" #'method))
-     #'(begin
-         (def (reader-method (reader : Reader) . args)
+         (definterface-extension-method BufferedReader (method reader . args)
            body ...)
-         (def unchecked-method raw-method)))))
+         (export checked-macro unchecked-macro checked-method unchecked-method)))))
 
-(defsyntax-case defwriter-ext ()
-  ((_ (method . args) body ...)
-   (identifier? #'method)
-   (with-identifiers ((writer-method    #'method "BufferedWriter-" #'method)
-                      (unchecked-method #'method "&BufferedWriter-" #'method))
-     #'(begin
-         (defwriter-ext* (method . args) body ...)
-         (export writer-method unchecked-method)))))
-
-;; TODO implement with interface method infrastructure
-(defsyntax-case defwriter-ext* ()
+(defsyntax-case defwriter-ext
   ((_ (method writer . args) body ...)
-   (and (identifier? #'method)
-        (identifier? #'writer))
-   (with-identifiers ((writer-method    #'method "BufferedWriter-"   #'method)
-                      (unchecked-method #'method "&BufferedWriter-"  #'method)
-                      (raw-method       #'method "__BufferedWriter-" #'method))
+   (identifier? #'method)
+   (with-identifiers
+       ((checked-macro    #'method "BufferedWriter-"  #'method)
+        (unchecked-macro  #'method "&" #'checked-macro)
+        (checked-method   #'method "::" #'checked-macro)
+        (unchecked-method #'method "__" #'checked-macro))
      #'(begin
-         (def (writer-method (writer : BufferedWriter) . args) => :fixnum
+         (definterface-extension-method BufferedWriter (method writer . args)
+           => :fixnum
            body ...)
-         (def unchecked-method raw-methopd)))))
+         (export checked-macro unchecked-macro checked-method unchecked-method)))))
