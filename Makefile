@@ -20,6 +20,12 @@ stage1:
 stdlib:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
 
+rebootstrap:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env ./bootstrap.sh
+
+repl:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env gxi
+
 check:
 	./build.sh env gxtest ./...
 
