@@ -66,24 +66,38 @@ namespace: #f
          (%#define-runtime HashTable? HashTable?)
          (%#define-runtime is-HashTable? is-HashTable?)
          (%#define-syntax HashTable |[:0:]#HashTable|)
-         (%#define-runtime HashTable-clear! HashTable-clear!)
-         (%#define-runtime &HashTable-clear! &HashTable-clear!)
-         (%#define-runtime HashTable-copy HashTable-copy)
+         (%#define-syntax &HashTable-clear! |[:0:]#&HashTable-clear!|)
+         (%#define-syntax HashTable-clear! |[:0:]#HashTable-clear!|)
+         (%#define-runtime __HashTable-clear! __HashTable-clear!)
+         (%#define-runtime ::HashTable-clear! ::HashTable-clear!)
+         (%#define-syntax &HashTable-copy |[:0:]#&HashTable-copy|)
+         (%#define-syntax HashTable-copy |[:0:]#HashTable-copy|)
          (%#define-runtime __HashTable-copy __HashTable-copy)
-         (%#define-runtime &HashTable-copy &HashTable-copy)
-         (%#define-runtime HashTable-delete! HashTable-delete!)
-         (%#define-runtime &HashTable-delete! &HashTable-delete!)
-         (%#define-runtime HashTable-for-each HashTable-for-each)
-         (%#define-runtime &HashTable-for-each &HashTable-for-each)
-         (%#define-runtime HashTable-length HashTable-length)
+         (%#define-runtime ::HashTable-copy ::HashTable-copy)
+         (%#define-syntax &HashTable-delete! |[:0:]#&HashTable-delete!|)
+         (%#define-syntax HashTable-delete! |[:0:]#HashTable-delete!|)
+         (%#define-runtime __HashTable-delete! __HashTable-delete!)
+         (%#define-runtime ::HashTable-delete! ::HashTable-delete!)
+         (%#define-syntax &HashTable-for-each |[:0:]#&HashTable-for-each|)
+         (%#define-syntax HashTable-for-each |[:0:]#HashTable-for-each|)
+         (%#define-runtime __HashTable-for-each __HashTable-for-each)
+         (%#define-runtime ::HashTable-for-each ::HashTable-for-each)
+         (%#define-syntax &HashTable-length |[:0:]#&HashTable-length|)
+         (%#define-syntax HashTable-length |[:0:]#HashTable-length|)
          (%#define-runtime __HashTable-length __HashTable-length)
-         (%#define-runtime &HashTable-length &HashTable-length)
-         (%#define-runtime HashTable-ref HashTable-ref)
-         (%#define-runtime &HashTable-ref &HashTable-ref)
-         (%#define-runtime HashTable-set! HashTable-set!)
-         (%#define-runtime &HashTable-set! &HashTable-set!)
-         (%#define-runtime HashTable-update! HashTable-update!)
-         (%#define-runtime &HashTable-update! &HashTable-update!)
+         (%#define-runtime ::HashTable-length ::HashTable-length)
+         (%#define-syntax &HashTable-ref |[:0:]#&HashTable-ref|)
+         (%#define-syntax HashTable-ref |[:0:]#HashTable-ref|)
+         (%#define-runtime __HashTable-ref __HashTable-ref)
+         (%#define-runtime ::HashTable-ref ::HashTable-ref)
+         (%#define-syntax &HashTable-set! |[:0:]#&HashTable-set!|)
+         (%#define-syntax HashTable-set! |[:0:]#HashTable-set!|)
+         (%#define-runtime __HashTable-set! __HashTable-set!)
+         (%#define-runtime ::HashTable-set! ::HashTable-set!)
+         (%#define-syntax &HashTable-update! |[:0:]#&HashTable-update!|)
+         (%#define-syntax HashTable-update! |[:0:]#HashTable-update!|)
+         (%#define-runtime __HashTable-update! __HashTable-update!)
+         (%#define-runtime ::HashTable-update! ::HashTable-update!)
          (%#define-runtime Locker::t Locker::t)
          (%#define-runtime Locker::interface Locker::interface)
          (%#define-runtime make-Locker make-Locker)
@@ -91,14 +105,22 @@ namespace: #f
          (%#define-runtime Locker? Locker?)
          (%#define-runtime is-Locker? is-Locker?)
          (%#define-syntax Locker |[:0:]#Locker|)
-         (%#define-runtime Locker-read-lock! Locker-read-lock!)
-         (%#define-runtime &Locker-read-lock! &Locker-read-lock!)
-         (%#define-runtime Locker-read-unlock! Locker-read-unlock!)
-         (%#define-runtime &Locker-read-unlock! &Locker-read-unlock!)
-         (%#define-runtime Locker-write-lock! Locker-write-lock!)
-         (%#define-runtime &Locker-write-lock! &Locker-write-lock!)
-         (%#define-runtime Locker-write-unlock! Locker-write-unlock!)
-         (%#define-runtime &Locker-write-unlock! &Locker-write-unlock!)
+         (%#define-syntax &Locker-read-lock! |[:0:]#&Locker-read-lock!|)
+         (%#define-syntax Locker-read-lock! |[:0:]#Locker-read-lock!|)
+         (%#define-runtime __Locker-read-lock! __Locker-read-lock!)
+         (%#define-runtime ::Locker-read-lock! ::Locker-read-lock!)
+         (%#define-syntax &Locker-read-unlock! |[:0:]#&Locker-read-unlock!|)
+         (%#define-syntax Locker-read-unlock! |[:0:]#Locker-read-unlock!|)
+         (%#define-runtime __Locker-read-unlock! __Locker-read-unlock!)
+         (%#define-runtime ::Locker-read-unlock! ::Locker-read-unlock!)
+         (%#define-syntax &Locker-write-lock! |[:0:]#&Locker-write-lock!|)
+         (%#define-syntax Locker-write-lock! |[:0:]#Locker-write-lock!|)
+         (%#define-runtime __Locker-write-lock! __Locker-write-lock!)
+         (%#define-runtime ::Locker-write-lock! ::Locker-write-lock!)
+         (%#define-syntax &Locker-write-unlock! |[:0:]#&Locker-write-unlock!|)
+         (%#define-syntax Locker-write-unlock! |[:0:]#Locker-write-unlock!|)
+         (%#define-runtime __Locker-write-unlock! __Locker-write-unlock!)
+         (%#define-runtime ::Locker-write-unlock! ::Locker-write-unlock!)
          (%#define-runtime gambit-table-update! gambit-table-update!)
          (%#define-runtime gambit-table-for-each gambit-table-for-each)
          (%#define-runtime gambit-table-clear! gambit-table-clear!)
@@ -167,56 +189,56 @@ namespace: #f
          (%#define-runtime is-hash-table? is-hash-table?)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#define-runtime
-          _%locked-hash-table::HashTable::ref117133%_
-          _%locked-hash-table::HashTable::ref117132%_)
+          _%locked-hash-table::HashTable::ref124597%_
+          _%locked-hash-table::HashTable::ref124596%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::set!117135%_
-          _%locked-hash-table::HashTable::set!117134%_)
+          _%locked-hash-table::HashTable::set!124599%_
+          _%locked-hash-table::HashTable::set!124598%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::update!117137%_
-          _%locked-hash-table::HashTable::update!117136%_)
+          _%locked-hash-table::HashTable::update!124601%_
+          _%locked-hash-table::HashTable::update!124600%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::delete!117139%_
-          _%locked-hash-table::HashTable::delete!117138%_)
+          _%locked-hash-table::HashTable::delete!124603%_
+          _%locked-hash-table::HashTable::delete!124602%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::for-each117141%_
-          _%locked-hash-table::HashTable::for-each117140%_)
+          _%locked-hash-table::HashTable::for-each124605%_
+          _%locked-hash-table::HashTable::for-each124604%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::length117143%_
-          _%locked-hash-table::HashTable::length117142%_)
+          _%locked-hash-table::HashTable::length124607%_
+          _%locked-hash-table::HashTable::length124606%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::copy117145%_
-          _%locked-hash-table::HashTable::copy117144%_)
+          _%locked-hash-table::HashTable::copy124609%_
+          _%locked-hash-table::HashTable::copy124608%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::clear!117147%_
-          _%locked-hash-table::HashTable::clear!117146%_)
+          _%locked-hash-table::HashTable::clear!124611%_
+          _%locked-hash-table::HashTable::clear!124610%_)
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
          (%#define-runtime
-          _%checked-hash-table::HashTable::ref117358%_
-          _%checked-hash-table::HashTable::ref117357%_)
+          _%checked-hash-table::HashTable::ref124822%_
+          _%checked-hash-table::HashTable::ref124821%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::set!117360%_
-          _%checked-hash-table::HashTable::set!117359%_)
+          _%checked-hash-table::HashTable::set!124824%_
+          _%checked-hash-table::HashTable::set!124823%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::update!117362%_
-          _%checked-hash-table::HashTable::update!117361%_)
+          _%checked-hash-table::HashTable::update!124826%_
+          _%checked-hash-table::HashTable::update!124825%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::delete!117364%_
-          _%checked-hash-table::HashTable::delete!117363%_)
+          _%checked-hash-table::HashTable::delete!124828%_
+          _%checked-hash-table::HashTable::delete!124827%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::for-each117366%_
-          _%checked-hash-table::HashTable::for-each117365%_)
+          _%checked-hash-table::HashTable::for-each124830%_
+          _%checked-hash-table::HashTable::for-each124829%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::length117368%_
-          _%checked-hash-table::HashTable::length117367%_)
+          _%checked-hash-table::HashTable::length124832%_
+          _%checked-hash-table::HashTable::length124831%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::copy117370%_
-          _%checked-hash-table::HashTable::copy117369%_)
+          _%checked-hash-table::HashTable::copy124834%_
+          _%checked-hash-table::HashTable::copy124833%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::clear!117372%_
-          _%checked-hash-table::HashTable::clear!117371%_)
+          _%checked-hash-table::HashTable::clear!124836%_
+          _%checked-hash-table::HashTable::clear!124835%_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
          (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
                   (%#define-runtime make-hash-table__@ make-hash-table__@)

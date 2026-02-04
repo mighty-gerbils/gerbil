@@ -23,8 +23,5 @@ namespace: gerbil/core/more-syntax-sugar
           with-identifier
           |gerbil/core/more-syntax-sugar[:0:]#with-identifier|)
          (%#define-syntax
-          defsyntax-case
-          |gerbil/core/more-syntax-sugar[:0:]#defsyntax-case|)
-         (%#define-syntax
           quasisyntax
           |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|))

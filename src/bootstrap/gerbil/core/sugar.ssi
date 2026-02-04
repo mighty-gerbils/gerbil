@@ -127,6 +127,9 @@ namespace: gerbil/core/sugar
                              defsyntax
                              |gerbil/core/sugar~Sugar-3[:0:]#defsyntax|))
                    (%#define-syntax
+                    defsyntax-case
+                    |gerbil/core/sugar~Sugar-3[:0:]#defsyntax-case|)
+                   (%#define-syntax
                     definline
                     |gerbil/core/sugar~Sugar-3[:0:]#definline|)
                    (%#define-syntax

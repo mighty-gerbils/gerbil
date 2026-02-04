@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1769384636)
+  (define gerbil/compiler/driver::timestamp 1770243158)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -10,21 +10,21 @@
     (define gxc#compile-timestamp
       (lambda ()
         (inexact->exact
-         (floor (let ((__tmp214662 (current-time)))
+         (floor (let ((__tmp224649 (current-time)))
                   (declare (not safe))
-                  (##time->seconds __tmp214662))))))
+                  (##time->seconds __tmp224649))))))
     (define gxc#compile-timestamp-nanos
       (lambda ()
-        (let ((__tmp214663 (current-time)))
+        (let ((__tmp224650 (current-time)))
           (declare (not safe))
-          (##time->seconds __tmp214663))))
+          (##time->seconds __tmp224650))))
     (define gxc#scheme-file-settings
       '(permissions: 420 char-encoding: UTF-8 eol-encoding: lf))
     (define gxc#with-output-to-scheme-file
-      (lambda (_%path214519%_ _%fun214520%_)
+      (lambda (_%path224506%_ _%fun224507%_)
         (with-output-to-file
-         (cons 'path: (cons _%path214519%_ gxc#scheme-file-settings))
-         _%fun214520%_)))
+         (cons 'path: (cons _%path224506%_ gxc#scheme-file-settings))
+         _%fun224507%_)))
     (define gxc#+gerbil-gsc+ '#f)
     (define gxc#gerbil-gsc
       (lambda ()
@@ -56,14 +56,14 @@
                     (##getenv '"GERBIL_AR" gxc#default-gerbil-ar))))
         gxc#+gerbil-ar+))
     (define gxc#gerbil-rpath
-      (lambda (_%gerbil-libdir214514%_)
-        (string-append '"-Wl,-rpath=" _%gerbil-libdir214514%_)))
+      (lambda (_%gerbil-libdir224501%_)
+        (string-append '"-Wl,-rpath=" _%gerbil-libdir224501%_)))
     (define gxc#compiler-obj-suffix '".o")
     (define gxc#include-source
-      (lambda (_%path214512%_)
-        (let ((__tmp214664 (object->string _%path214512%_)))
+      (lambda (_%path224499%_)
+        (let ((__tmp224651 (object->string _%path224499%_)))
           (declare (not safe))
-          (##string-append '"(include " __tmp214664 '")"))))
+          (##string-append '"(include " __tmp224651 '")"))))
     (define gxc#gerbil-runtime-modules
       '("gerbil/runtime/gambit"
         "gerbil/runtime/util"
@@ -84,411 +84,411 @@
         "gerbil/runtime/init"
         "gerbil/runtime"))
     (define gxc#delete-directory*
-      (lambda (_%dir214510%_) (delete-file-or-directory _%dir214510%_ '#t)))
+      (lambda (_%dir224497%_) (delete-file-or-directory _%dir224497%_ '#t)))
     (define gxc#compile-module__%
-      (lambda (_%srcpath214454%_ _%opts214455%_)
-        (if (string? _%srcpath214454%_)
+      (lambda (_%srcpath224441%_ _%opts224442%_)
+        (if (string? _%srcpath224441%_)
             '#!void
             (let ()
               (declare (not safe))
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _%srcpath214454%_)))
-        (let* ((_%outdir214457%_
+               _%srcpath224441%_)))
+        (let* ((_%outdir224444%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'output-dir: _%opts214455%_)))
-               (_%invoke-gsc?214459%_
+                  (pgetq__0 'output-dir: _%opts224442%_)))
+               (_%invoke-gsc?224446%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'invoke-gsc: _%opts214455%_)))
-               (_%target214464%_
-                (let ((_%$e214461%_
+                  (pgetq__0 'invoke-gsc: _%opts224442%_)))
+               (_%target224451%_
+                (let ((_%$e224448%_
                        (let ()
                          (declare (not safe))
-                         (pgetq__0 'target: _%opts214455%_))))
-                  (if _%$e214461%_ _%$e214461%_ 'C)))
-               (_%gsc-options214469%_
+                         (pgetq__0 'target: _%opts224442%_))))
+                  (if _%$e224448%_ _%$e224448%_ 'C)))
+               (_%gsc-options224456%_
                 (append (cons '"-target"
-                              (cons (symbol->string _%target214464%_) '()))
-                        (let ((_%$e214466%_
+                              (cons (symbol->string _%target224451%_) '()))
+                        (let ((_%$e224453%_
                                (let ()
                                  (declare (not safe))
-                                 (pgetq__0 'gsc-options: _%opts214455%_))))
-                          (if _%$e214466%_ _%$e214466%_ '()))))
-               (_%keep-scm?214471%_
+                                 (pgetq__0 'gsc-options: _%opts224442%_))))
+                          (if _%$e224453%_ _%$e224453%_ '()))))
+               (_%keep-scm?224458%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'keep-scm: _%opts214455%_)))
-               (_%verbosity214473%_
+                  (pgetq__0 'keep-scm: _%opts224442%_)))
+               (_%verbosity224460%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'verbose: _%opts214455%_)))
-               (_%optimize214475%_
+                  (pgetq__0 'verbose: _%opts224442%_)))
+               (_%optimize224462%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'optimize: _%opts214455%_)))
-               (_%debug214477%_
+                  (pgetq__0 'optimize: _%opts224442%_)))
+               (_%debug224464%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'debug: _%opts214455%_)))
-               (_%gen-ssxi214479%_
+                  (pgetq__0 'debug: _%opts224442%_)))
+               (_%gen-ssxi224466%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'generate-ssxi: _%opts214455%_)))
-               (_%parallel?214481%_
+                  (pgetq__0 'generate-ssxi: _%opts224442%_)))
+               (_%parallel?224468%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'parallel: _%opts214455%_))))
-          (if _%outdir214457%_
-              (let ((__tmp214665
+                  (pgetq__0 'parallel: _%opts224442%_))))
+          (if _%outdir224444%_
+              (let ((__tmp224652
                      (lambda ()
                        (let ()
                          (declare (not safe))
-                         (create-directory*__0 _%outdir214457%_)))))
+                         (create-directory*__0 _%outdir224444%_)))))
                 (declare (not safe))
-                (__with-lock gxc#+driver-mutex+ __tmp214665))
+                (__with-lock gxc#+driver-mutex+ __tmp224652))
               '#!void)
-          (if _%optimize214475%_
-              (let ((__tmp214666
+          (if _%optimize224462%_
+              (let ((__tmp224653
                      (lambda ()
                        (let ()
                          (declare (not safe))
                          (gxc#optimizer-info-init!)))))
                 (declare (not safe))
-                (__with-lock gxc#+driver-mutex+ __tmp214666))
+                (__with-lock gxc#+driver-mutex+ __tmp224653))
               '#!void)
-          (let ((__tmp214667
+          (let ((__tmp224654
                  (lambda ()
-                   (let ((__tmp214668
+                   (let ((__tmp224655
                           (lambda ()
-                            (let ((__tmp214669
+                            (let ((__tmp224656
                                    (lambda ()
-                                     (let ((__tmp214670
+                                     (let ((__tmp224657
                                             (lambda ()
-                                              (let ((__tmp214671
+                                              (let ((__tmp224658
                                                      (lambda ()
-                                                       (let ((__tmp214672
+                                                       (let ((__tmp224659
                                                               (lambda ()
-                                                                (let ((__tmp214673
+                                                                (let ((__tmp224660
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (lambda ()
-                                 (let ((__tmp214674
+                                 (let ((__tmp224661
                                         (lambda ()
-                                          (let ((__tmp214675
+                                          (let ((__tmp224662
                                                  (lambda ()
-                                                   (let ((__tmp214677
+                                                   (let ((__tmp224664
                                                           (lambda ()
-                                                            (let ((__tmp214679
+                                                            (let ((__tmp224666
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (lambda ()
-                             (let ((__tmp214680
+                             (let ((__tmp224667
                                     (lambda ()
-                                      (let ((__tmp214681
+                                      (let ((__tmp224668
                                              (lambda ()
                                                (let ()
                                                  (declare (not safe))
                                                  (gxc#verbose
                                                   '"compile "
-                                                  _%srcpath214454%_))
+                                                  _%srcpath224441%_))
                                                (gxc#compile-top-module
-                                                (let ((__tmp214682
+                                                (let ((__tmp224669
                                                        (lambda ()
                                                          (let ()
                                                            (declare (not safe))
                                                            (gx#import-module__0
-                                                            _%srcpath214454%_)))))
+                                                            _%srcpath224441%_)))))
                                                   (declare (not safe))
                                                   (__with-lock
                                                    gxc#+driver-mutex+
-                                                   __tmp214682))))))
+                                                   __tmp224669))))))
                                         (declare (not safe))
                                         (call-with-parameters__1
-                                         __tmp214681
+                                         __tmp224668
                                          gx#current-expander-compiling?
                                          '#t)))))
                                (declare (not safe))
                                (call-with-parameters__1
-                                __tmp214680
+                                __tmp224667
                                 gxc#current-compile-parallel
-                                _%parallel?214481%_))))
-                          (__tmp214678
+                                _%parallel?224468%_))))
+                          (__tmp224665
                            (cons (cons 'compile-module
-                                       (cons _%srcpath214454%_ '()))
+                                       (cons _%srcpath224441%_ '()))
                                  '())))
                       (declare (not safe))
                       (call-with-parameters__1
-                       __tmp214679
+                       __tmp224666
                        gxc#current-compile-context
-                       __tmp214678))))
-                 (__tmp214676 (gxc#compile-timestamp)))
+                       __tmp224665))))
+                 (__tmp224663 (gxc#compile-timestamp)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (call-with-parameters__1
-                                                      __tmp214677
+                                                      __tmp224664
                                                       gxc#current-compile-timestamp
-                                                      __tmp214676)))))
+                                                      __tmp224663)))))
                                             (declare (not safe))
                                             (call-with-parameters__1
-                                             __tmp214675
+                                             __tmp224662
                                              gxc#current-compile-generate-ssxi
-                                             _%gen-ssxi214479%_)))))
+                                             _%gen-ssxi224466%_)))))
                                    (declare (not safe))
                                    (call-with-parameters__1
-                                    __tmp214674
+                                    __tmp224661
                                     gxc#current-compile-debug
-                                    _%debug214477%_)))))
+                                    _%debug224464%_)))))
                           (declare (not safe))
                           (call-with-parameters__1
-                           __tmp214673
+                           __tmp224660
                            gxc#current-compile-optimize
-                           _%optimize214475%_)))))
+                           _%optimize224462%_)))))
                  (declare (not safe))
                  (call-with-parameters__1
-                  __tmp214672
+                  __tmp224659
                   gxc#current-compile-verbose
-                  _%verbosity214473%_)))))
+                  _%verbosity224460%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
                                                 (call-with-parameters__1
-                                                 __tmp214671
+                                                 __tmp224658
                                                  gxc#current-compile-keep-scm
-                                                 _%keep-scm?214471%_)))))
+                                                 _%keep-scm?224458%_)))))
                                        (declare (not safe))
                                        (call-with-parameters__1
-                                        __tmp214670
+                                        __tmp224657
                                         gxc#current-compile-gsc-options
-                                        _%gsc-options214469%_)))))
+                                        _%gsc-options224456%_)))))
                               (declare (not safe))
                               (call-with-parameters__1
-                               __tmp214669
+                               __tmp224656
                                gxc#current-compile-invoke-gsc
-                               _%invoke-gsc?214459%_)))))
+                               _%invoke-gsc?224446%_)))))
                      (declare (not safe))
                      (call-with-parameters__1
-                      __tmp214668
+                      __tmp224655
                       gx#current-compilation-target
-                      _%target214464%_)))))
+                      _%target224451%_)))))
             (declare (not safe))
             (call-with-parameters__1
-             __tmp214667
+             __tmp224654
              gxc#current-compile-output-dir
-             _%outdir214457%_)))))
+             _%outdir224444%_)))))
     (define gxc#compile-module__0
-      (lambda (_%srcpath214503%_)
-        (let ((_%opts214505%_ '()))
-          (gxc#compile-module__% _%srcpath214503%_ _%opts214505%_))))
+      (lambda (_%srcpath224490%_)
+        (let ((_%opts224492%_ '()))
+          (gxc#compile-module__% _%srcpath224490%_ _%opts224492%_))))
     (define gxc#compile-module
-      (lambda _g214683_
-        (let ((_g214684_ (let () (declare (not safe)) (##length _g214683_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214684_ 1))
-                 (apply gxc#compile-module__0 _g214683_))
-                ((let () (declare (not safe)) (##fx= _g214684_ 2))
-                 (apply gxc#compile-module__% _g214683_))
+      (lambda _g224670_
+        (let ((_g224671_ (let () (declare (not safe)) (##length _g224670_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224671_ 1))
+                 (apply gxc#compile-module__0 _g224670_))
+                ((let () (declare (not safe)) (##fx= _g224671_ 2))
+                 (apply gxc#compile-module__% _g224670_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-module
-                  _g214683_))))))
+                  _g224670_))))))
     (define gxc#compile-exe__%
-      (lambda (_%srcpath214404%_ _%opts214405%_)
-        (if (string? _%srcpath214404%_)
+      (lambda (_%srcpath224391%_ _%opts224392%_)
+        (if (string? _%srcpath224391%_)
             '#!void
             (let ()
               (declare (not safe))
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _%srcpath214404%_)))
-        (let* ((_%outdir214407%_
+               _%srcpath224391%_)))
+        (let* ((_%outdir224394%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'output-dir: _%opts214405%_)))
-               (_%invoke-gsc?214409%_
+                  (pgetq__0 'output-dir: _%opts224392%_)))
+               (_%invoke-gsc?224396%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'invoke-gsc: _%opts214405%_)))
-               (_%target214414%_
-                (let ((_%$e214411%_
+                  (pgetq__0 'invoke-gsc: _%opts224392%_)))
+               (_%target224401%_
+                (let ((_%$e224398%_
                        (let ()
                          (declare (not safe))
-                         (pgetq__0 'target: _%opts214405%_))))
-                  (if _%$e214411%_ _%$e214411%_ 'C)))
-               (_%gsc-options214419%_
+                         (pgetq__0 'target: _%opts224392%_))))
+                  (if _%$e224398%_ _%$e224398%_ 'C)))
+               (_%gsc-options224406%_
                 (append (cons '"-target"
-                              (cons (symbol->string _%target214414%_) '()))
-                        (let ((_%$e214416%_
+                              (cons (symbol->string _%target224401%_) '()))
+                        (let ((_%$e224403%_
                                (let ()
                                  (declare (not safe))
-                                 (pgetq__0 'gsc-options: _%opts214405%_))))
-                          (if _%$e214416%_ _%$e214416%_ '()))))
-               (_%keep-scm?214421%_
+                                 (pgetq__0 'gsc-options: _%opts224392%_))))
+                          (if _%$e224403%_ _%$e224403%_ '()))))
+               (_%keep-scm?224408%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'keep-scm: _%opts214405%_)))
-               (_%verbosity214423%_
+                  (pgetq__0 'keep-scm: _%opts224392%_)))
+               (_%verbosity224410%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'verbose: _%opts214405%_)))
-               (_%debug214425%_
+                  (pgetq__0 'verbose: _%opts224392%_)))
+               (_%debug224412%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'debug: _%opts214405%_)))
-               (_%parallel?214427%_
+                  (pgetq__0 'debug: _%opts224392%_)))
+               (_%parallel?224414%_
                 (let ()
                   (declare (not safe))
-                  (pgetq__0 'parallel: _%opts214405%_))))
-          (if _%outdir214407%_
-              (let ((__tmp214685
+                  (pgetq__0 'parallel: _%opts224392%_))))
+          (if _%outdir224394%_
+              (let ((__tmp224672
                      (lambda ()
                        (let ()
                          (declare (not safe))
-                         (create-directory*__0 _%outdir214407%_)))))
+                         (create-directory*__0 _%outdir224394%_)))))
                 (declare (not safe))
-                (__with-lock gxc#+driver-mutex+ __tmp214685))
+                (__with-lock gxc#+driver-mutex+ __tmp224672))
               '#!void)
-          (let ((__tmp214686
+          (let ((__tmp224673
                  (lambda ()
-                   (let ((__tmp214687
+                   (let ((__tmp224674
                           (lambda ()
-                            (let ((__tmp214688
+                            (let ((__tmp224675
                                    (lambda ()
-                                     (let ((__tmp214689
+                                     (let ((__tmp224676
                                             (lambda ()
-                                              (let ((__tmp214690
+                                              (let ((__tmp224677
                                                      (lambda ()
-                                                       (let ((__tmp214691
+                                                       (let ((__tmp224678
                                                               (lambda ()
-                                                                (let ((__tmp214692
+                                                                (let ((__tmp224679
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (lambda ()
-                                 (let ((__tmp214694
+                                 (let ((__tmp224681
                                         (lambda ()
-                                          (let ((__tmp214696
+                                          (let ((__tmp224683
                                                  (lambda ()
-                                                   (let ((__tmp214697
+                                                   (let ((__tmp224684
                                                           (lambda ()
-                                                            (let ((__tmp214698
+                                                            (let ((__tmp224685
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (lambda ()
                              (let ()
                                (declare (not safe))
-                               (gxc#verbose '"compile exe " _%srcpath214404%_))
+                               (gxc#verbose '"compile exe " _%srcpath224391%_))
                              (gxc#compile-executable-module
-                              (let ((__tmp214699
+                              (let ((__tmp224686
                                      (lambda ()
                                        (let ()
                                          (declare (not safe))
                                          (gx#import-module__0
-                                          _%srcpath214404%_)))))
+                                          _%srcpath224391%_)))))
                                 (declare (not safe))
-                                (__with-lock gxc#+driver-mutex+ __tmp214699))
-                              _%opts214405%_))))
+                                (__with-lock gxc#+driver-mutex+ __tmp224686))
+                              _%opts224392%_))))
                       (declare (not safe))
                       (call-with-parameters__1
-                       __tmp214698
+                       __tmp224685
                        gx#current-expander-compiling?
                        '#t)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (call-with-parameters__1
-                                                      __tmp214697
+                                                      __tmp224684
                                                       gxc#current-compile-parallel
-                                                      _%parallel?214427%_))))
-                                                (__tmp214695
+                                                      _%parallel?224414%_))))
+                                                (__tmp224682
                                                  (cons (cons 'compile-exe
-                                                             (cons _%srcpath214404%_
+                                                             (cons _%srcpath224391%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))
                '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (declare (not safe))
                                             (call-with-parameters__1
-                                             __tmp214696
+                                             __tmp224683
                                              gxc#current-compile-context
-                                             __tmp214695))))
-                                       (__tmp214693 (gxc#compile-timestamp)))
+                                             __tmp224682))))
+                                       (__tmp224680 (gxc#compile-timestamp)))
                                    (declare (not safe))
                                    (call-with-parameters__1
-                                    __tmp214694
+                                    __tmp224681
                                     gxc#current-compile-timestamp
-                                    __tmp214693)))))
+                                    __tmp224680)))))
                           (declare (not safe))
                           (call-with-parameters__1
-                           __tmp214692
+                           __tmp224679
                            gxc#current-compile-debug
-                           _%debug214425%_)))))
+                           _%debug224412%_)))))
                  (declare (not safe))
                  (call-with-parameters__1
-                  __tmp214691
+                  __tmp224678
                   gxc#current-compile-verbose
-                  _%verbosity214423%_)))))
+                  _%verbosity224410%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
                                                 (call-with-parameters__1
-                                                 __tmp214690
+                                                 __tmp224677
                                                  gxc#current-compile-keep-scm
-                                                 _%keep-scm?214421%_)))))
+                                                 _%keep-scm?224408%_)))))
                                        (declare (not safe))
                                        (call-with-parameters__1
-                                        __tmp214689
+                                        __tmp224676
                                         gxc#current-compile-gsc-options
-                                        _%gsc-options214419%_)))))
+                                        _%gsc-options224406%_)))))
                               (declare (not safe))
                               (call-with-parameters__1
-                               __tmp214688
+                               __tmp224675
                                gx#current-compilation-target
-                               _%target214414%_)))))
+                               _%target224401%_)))))
                      (declare (not safe))
                      (call-with-parameters__1
-                      __tmp214687
+                      __tmp224674
                       gxc#current-compile-invoke-gsc
-                      _%invoke-gsc?214409%_)))))
+                      _%invoke-gsc?224396%_)))))
             (declare (not safe))
             (call-with-parameters__1
-             __tmp214686
+             __tmp224673
              gxc#current-compile-output-dir
-             _%outdir214407%_)))))
+             _%outdir224394%_)))))
     (define gxc#compile-exe__0
-      (lambda (_%srcpath214446%_)
-        (let ((_%opts214448%_ '()))
-          (gxc#compile-exe__% _%srcpath214446%_ _%opts214448%_))))
+      (lambda (_%srcpath224433%_)
+        (let ((_%opts224435%_ '()))
+          (gxc#compile-exe__% _%srcpath224433%_ _%opts224435%_))))
     (define gxc#compile-exe
-      (lambda _g214700_
-        (let ((_g214701_ (let () (declare (not safe)) (##length _g214700_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214701_ 1))
-                 (apply gxc#compile-exe__0 _g214700_))
-                ((let () (declare (not safe)) (##fx= _g214701_ 2))
-                 (apply gxc#compile-exe__% _g214700_))
+      (lambda _g224687_
+        (let ((_g224688_ (let () (declare (not safe)) (##length _g224687_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224688_ 1))
+                 (apply gxc#compile-exe__0 _g224687_))
+                ((let () (declare (not safe)) (##fx= _g224688_ 2))
+                 (apply gxc#compile-exe__% _g224687_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-exe
-                  _g214700_))))))
+                  _g224687_))))))
     (define gxc#compile-executable-module
-      (lambda (_%ctx214400%_ _%opts214401%_)
+      (lambda (_%ctx224387%_ _%opts224388%_)
         (if (let ()
               (declare (not safe))
-              (pgetq__0 'full-program-optimization: _%opts214401%_))
+              (pgetq__0 'full-program-optimization: _%opts224388%_))
             (gxc#compile-executable-module/full-program-optimization
-             _%ctx214400%_
-             _%opts214401%_)
+             _%ctx224387%_
+             _%opts224388%_)
             (gxc#compile-executable-module/separate
-             _%ctx214400%_
-             _%opts214401%_))))
+             _%ctx224387%_
+             _%opts224388%_))))
     (define gxc#compile-executable-module/separate
-      (lambda (_%ctx214200%_ _%opts214201%_)
-        (letrec ((_%generate-stub214203%_
-                  (lambda (_%builtin-modules214396%_)
-                    (let ((_%mod-main214398%_
-                           (gxc#find-runtime-symbol _%ctx214200%_ 'main)))
-                      (let ((__tmp214702
+      (lambda (_%ctx224187%_ _%opts224188%_)
+        (letrec ((_%generate-stub224190%_
+                  (lambda (_%builtin-modules224383%_)
+                    (let ((_%mod-main224385%_
+                           (gxc#find-runtime-symbol _%ctx224187%_ 'main)))
+                      (let ((__tmp224689
                              (cons 'define
                                    (cons 'builtin-modules
                                          (cons (cons 'quote
-                                                     (cons _%builtin-modules214396%_
+                                                     (cons _%builtin-modules224383%_
                                                            '()))
                                                '())))))
                         (declare (not safe))
-                        (##write __tmp214702))
-                      (let ((__tmp214703
+                        (##write __tmp224689))
+                      (let ((__tmp224690
                              (cons 'define
                                    (cons (cons 'gerbil-main '())
                                          (cons (cons 'with-unwind-protect
@@ -498,7 +498,7 @@
                                (cons (cons 'gerbil-runtime-init!
                                            (cons 'builtin-modules '()))
                                      (cons (cons 'apply
-                                                 (cons _%mod-main214398%_
+                                                 (cons _%mod-main224385%_
                                                        (cons (cons 'cdr
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (cons (cons 'command-line '()) '()))
@@ -536,321 +536,321 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                '())))))
                         (declare (not safe))
-                        (##write __tmp214703))
+                        (##write __tmp224690))
                       (let () (declare (not safe)) (##write '(gerbil-main)))
                       (newline))))
-                 (_%get-libgerbil-ld-opts214204%_
-                  (lambda (_%gerbil-libdir214394%_)
-                    (let ((__tmp214704
+                 (_%get-libgerbil-ld-opts224191%_
+                  (lambda (_%gerbil-libdir224381%_)
+                    (let ((__tmp224691
                            (path-expand
                             '"libgerbil.ldd"
-                            _%gerbil-libdir214394%_)))
+                            _%gerbil-libdir224381%_)))
                       (declare (not safe))
-                      (##call-with-input-file __tmp214704 read))))
-                 (_%replace-extension214205%_
-                  (lambda (_%path214391%_ _%ext214392%_)
+                      (##call-with-input-file __tmp224691 read))))
+                 (_%replace-extension224192%_
+                  (lambda (_%path224378%_ _%ext224379%_)
                     (string-append
-                     (path-strip-extension _%path214391%_)
-                     _%ext214392%_)))
-                 (_%replace-extension-with-c214206%_
-                  (lambda (_%path214389%_)
-                    (_%replace-extension214205%_ _%path214389%_ '".c")))
-                 (_%replace-extension-with-object214207%_
-                  (lambda (_%path214387%_)
-                    (_%replace-extension214205%_
-                     _%path214387%_
+                     (path-strip-extension _%path224378%_)
+                     _%ext224379%_)))
+                 (_%replace-extension-with-c224193%_
+                  (lambda (_%path224376%_)
+                    (_%replace-extension224192%_ _%path224376%_ '".c")))
+                 (_%replace-extension-with-object224194%_
+                  (lambda (_%path224374%_)
+                    (_%replace-extension224192%_
+                     _%path224374%_
                      gxc#compiler-obj-suffix)))
-                 (_%userlib-module?214208%_
-                  (lambda (_%ctx214385%_)
-                    (if (_%exclude-module?214210%_ _%ctx214385%_)
+                 (_%userlib-module?224195%_
+                  (lambda (_%ctx224372%_)
+                    (if (_%exclude-module?224197%_ _%ctx224372%_)
                         '#f
-                        (not (_%libgerbil-module?214209%_ _%ctx214385%_)))))
-                 (_%libgerbil-module?214209%_
-                  (lambda (_%ctx214378%_)
-                    (let ((_%id-str214380%_
+                        (not (_%libgerbil-module?224196%_ _%ctx224372%_)))))
+                 (_%libgerbil-module?224196%_
+                  (lambda (_%ctx224365%_)
+                    (let ((_%id-str224367%_
                            (symbol->string
                             (##structure-ref
-                             _%ctx214378%_
+                             _%ctx224365%_
                              '1
                              gx#expander-context::t
                              '#f))))
-                      (if (_%exclude-module?214210%_ _%id-str214380%_)
+                      (if (_%exclude-module?224197%_ _%id-str224367%_)
                           '#f
-                          (let ((_%$e214382%_
+                          (let ((_%$e224369%_
                                  (let ()
                                    (declare (not safe))
                                    (##string-prefix?
                                     '"gerbil/"
-                                    _%id-str214380%_))))
-                            (if _%$e214382%_
-                                _%$e214382%_
+                                    _%id-str224367%_))))
+                            (if _%$e224369%_
+                                _%$e224369%_
                                 (let ()
                                   (declare (not safe))
                                   (##string-prefix?
                                    '"std/"
-                                   _%id-str214380%_))))))))
-                 (_%exclude-module?214210%_
-                  (lambda (_%ctx-or-str214374%_)
-                    (let ((_%str214376%_
-                           (if (string? _%ctx-or-str214374%_)
-                               _%ctx-or-str214374%_
+                                   _%id-str224367%_))))))))
+                 (_%exclude-module?224197%_
+                  (lambda (_%ctx-or-str224361%_)
+                    (let ((_%str224363%_
+                           (if (string? _%ctx-or-str224361%_)
+                               _%ctx-or-str224361%_
                                (symbol->string
                                 (##structure-ref
-                                 _%ctx-or-str214374%_
+                                 _%ctx-or-str224361%_
                                  '1
                                  gx#expander-context::t
                                  '#f)))))
                       (declare (not safe))
-                      (##string-prefix? '"gerbil/core" _%str214376%_))))
-                 (_%not-file-empty?214211%_
-                  (lambda (_%path214372%_)
-                    (not (gxc#file-empty? _%path214372%_))))
-                 (_%fold-libgerbil-runtime-scm214212%_
-                  (lambda (_%gerbil-staticdir214365%_ _%libgerbil-scm214366%_)
-                    (let ((_%gerbil-runtime-scm214370%_
-                           (let ((__tmp214705
-                                  (lambda (_%rtm214368%_)
+                      (##string-prefix? '"gerbil/core" _%str224363%_))))
+                 (_%not-file-empty?224198%_
+                  (lambda (_%path224359%_)
+                    (not (gxc#file-empty? _%path224359%_))))
+                 (_%fold-libgerbil-runtime-scm224199%_
+                  (lambda (_%gerbil-staticdir224352%_ _%libgerbil-scm224353%_)
+                    (let ((_%gerbil-runtime-scm224357%_
+                           (let ((__tmp224692
+                                  (lambda (_%rtm224355%_)
                                     (path-expand
-                                     (let ((__tmp214706
-                                            (let ((__tmp214707
+                                     (let ((__tmp224693
+                                            (let ((__tmp224694
                                                    (let ()
                                                      (declare (not safe))
                                                      (string-split
-                                                      _%rtm214368%_
+                                                      _%rtm224355%_
                                                       '#\/))))
                                               (declare (not safe))
                                               (string-join
-                                               __tmp214707
+                                               __tmp224694
                                                '"__"))))
                                        (declare (not safe))
-                                       (##string-append __tmp214706 '".scm"))
-                                     _%gerbil-staticdir214365%_))))
+                                       (##string-append __tmp224693 '".scm"))
+                                     _%gerbil-staticdir224352%_))))
                              (declare (not safe))
-                             (##map __tmp214705 gxc#gerbil-runtime-modules))))
-                      (_%remove-duplicates214213%_
-                       (append _%gerbil-runtime-scm214370%_
-                               _%libgerbil-scm214366%_)))))
-                 (_%remove-duplicates214213%_
-                  (lambda (_%strlst214325%_)
-                    (let _%loop214327%_ ((_%rest214329%_ _%strlst214325%_)
-                                         (_%result214330%_ '()))
-                      (let* ((_%rest214331214339%_ _%rest214329%_)
-                             (_%else214333214347%_
-                              (lambda () (reverse! _%result214330%_)))
-                             (_%K214335214353%_
-                              (lambda (_%rest214350%_ _%path214351%_)
-                                (if (member _%path214351%_ _%result214330%_)
-                                    (_%loop214327%_
-                                     _%rest214350%_
-                                     _%result214330%_)
-                                    (_%loop214327%_
-                                     _%rest214350%_
-                                     (cons _%path214351%_
-                                           _%result214330%_))))))
-                        (if (pair? _%rest214331214339%_)
-                            (let ((_%hd214336214356%_
+                             (##map __tmp224692 gxc#gerbil-runtime-modules))))
+                      (_%remove-duplicates224200%_
+                       (append _%gerbil-runtime-scm224357%_
+                               _%libgerbil-scm224353%_)))))
+                 (_%remove-duplicates224200%_
+                  (lambda (_%strlst224312%_)
+                    (let _%loop224314%_ ((_%rest224316%_ _%strlst224312%_)
+                                         (_%result224317%_ '()))
+                      (let* ((_%rest224318224326%_ _%rest224316%_)
+                             (_%else224320224334%_
+                              (lambda () (reverse! _%result224317%_)))
+                             (_%K224322224340%_
+                              (lambda (_%rest224337%_ _%path224338%_)
+                                (if (member _%path224338%_ _%result224317%_)
+                                    (_%loop224314%_
+                                     _%rest224337%_
+                                     _%result224317%_)
+                                    (_%loop224314%_
+                                     _%rest224337%_
+                                     (cons _%path224338%_
+                                           _%result224317%_))))))
+                        (if (pair? _%rest224318224326%_)
+                            (let ((_%hd224323224343%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%rest214331214339%_)))
-                                  (_%tl214337214358%_
+                                     (##car _%rest224318224326%_)))
+                                  (_%tl224324224345%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%rest214331214339%_))))
-                              (let* ((_%path214361%_ _%hd214336214356%_)
-                                     (_%rest214363%_ _%tl214337214358%_))
-                                (_%K214335214353%_
-                                 _%rest214363%_
-                                 _%path214361%_)))
-                            (_%else214333214347%_))))))
-                 (_%compile-stub214214%_
-                  (lambda (_%output-scm214221%_ _%output-bin214222%_)
-                    (let* ((_%gerbil-home214224%_
-                            (let ((__tmp214708
+                                     (##cdr _%rest224318224326%_))))
+                              (let* ((_%path224348%_ _%hd224323224343%_)
+                                     (_%rest224350%_ _%tl224324224345%_))
+                                (_%K224322224340%_
+                                 _%rest224350%_
+                                 _%path224348%_)))
+                            (_%else224320224334%_))))))
+                 (_%compile-stub224201%_
+                  (lambda (_%output-scm224208%_ _%output-bin224209%_)
+                    (let* ((_%gerbil-home224211%_
+                            (let ((__tmp224695
                                    (let ()
                                      (declare (not safe))
                                      (gerbil-home))))
                               (declare (not safe))
-                              (##getenv '"GERBIL_BUILD_PREFIX" __tmp214708)))
-                           (_%gerbil-libdir214226%_
-                            (path-expand '"lib" _%gerbil-home214224%_))
-                           (_%gerbil-staticdir214228%_
-                            (path-expand '"static" _%gerbil-libdir214226%_))
-                           (_%deps214230%_
-                            (gxc#find-runtime-module-deps _%ctx214200%_))
-                           (_%libgerbil-deps214232%_
+                              (##getenv '"GERBIL_BUILD_PREFIX" __tmp224695)))
+                           (_%gerbil-libdir224213%_
+                            (path-expand '"lib" _%gerbil-home224211%_))
+                           (_%gerbil-staticdir224215%_
+                            (path-expand '"static" _%gerbil-libdir224213%_))
+                           (_%deps224217%_
+                            (gxc#find-runtime-module-deps _%ctx224187%_))
+                           (_%libgerbil-deps224219%_
                             (let ()
                               (declare (not safe))
                               (##filter
-                               _%libgerbil-module?214209%_
-                               _%deps214230%_)))
-                           (_%libgerbil-scm214234%_
+                               _%libgerbil-module?224196%_
+                               _%deps224217%_)))
+                           (_%libgerbil-scm224221%_
                             (let ()
                               (declare (not safe))
                               (##map gxc#find-static-module-file
-                                     _%libgerbil-deps214232%_)))
-                           (_%libgerbil-scm214236%_
-                            (_%fold-libgerbil-runtime-scm214212%_
-                             _%gerbil-staticdir214228%_
-                             _%libgerbil-scm214234%_))
-                           (_%libgerbil-c214238%_
-                            (map _%replace-extension-with-c214206%_
-                                 _%libgerbil-scm214236%_))
-                           (_%libgerbil-o214240%_
-                            (map _%replace-extension-with-object214207%_
-                                 _%libgerbil-scm214236%_))
-                           (_%src-deps214242%_
+                                     _%libgerbil-deps224219%_)))
+                           (_%libgerbil-scm224223%_
+                            (_%fold-libgerbil-runtime-scm224199%_
+                             _%gerbil-staticdir224215%_
+                             _%libgerbil-scm224221%_))
+                           (_%libgerbil-c224225%_
+                            (map _%replace-extension-with-c224193%_
+                                 _%libgerbil-scm224223%_))
+                           (_%libgerbil-o224227%_
+                            (map _%replace-extension-with-object224194%_
+                                 _%libgerbil-scm224223%_))
+                           (_%src-deps224229%_
                             (let ()
                               (declare (not safe))
                               (##filter
-                               _%userlib-module?214208%_
-                               _%deps214230%_)))
-                           (_%src-deps-scm214244%_
+                               _%userlib-module?224195%_
+                               _%deps224217%_)))
+                           (_%src-deps-scm224231%_
                             (let ()
                               (declare (not safe))
                               (##map gxc#find-static-module-file
-                                     _%src-deps214242%_)))
-                           (_%src-deps-scm214246%_
+                                     _%src-deps224229%_)))
+                           (_%src-deps-scm224233%_
                             (let ()
                               (declare (not safe))
                               (##filter
-                               _%not-file-empty?214211%_
-                               _%src-deps-scm214244%_)))
-                           (_%src-deps-scm214248%_
+                               _%not-file-empty?224198%_
+                               _%src-deps-scm224231%_)))
+                           (_%src-deps-scm224235%_
                             (let ()
                               (declare (not safe))
-                              (##map path-expand _%src-deps-scm214246%_)))
-                           (_%src-deps-c214250%_
+                              (##map path-expand _%src-deps-scm224233%_)))
+                           (_%src-deps-c224237%_
                             (let ()
                               (declare (not safe))
-                              (##map _%replace-extension-with-c214206%_
-                                     _%src-deps-scm214248%_)))
-                           (_%src-deps-o214252%_
+                              (##map _%replace-extension-with-c224193%_
+                                     _%src-deps-scm224235%_)))
+                           (_%src-deps-o224239%_
                             (let ()
                               (declare (not safe))
-                              (##map _%replace-extension-with-object214207%_
-                                     _%src-deps-scm214248%_)))
-                           (_%src-bin-scm214254%_
-                            (gxc#find-static-module-file _%ctx214200%_))
-                           (_%src-bin-scm214256%_
-                            (path-expand _%src-bin-scm214254%_))
-                           (_%src-bin-c214258%_
-                            (_%replace-extension-with-c214206%_
-                             _%src-bin-scm214256%_))
-                           (_%src-bin-o214260%_
-                            (_%replace-extension-with-object214207%_
-                             _%src-bin-scm214256%_))
-                           (_%output-bin214262%_
-                            (path-expand _%output-bin214222%_))
-                           (_%output-scm214264%_
-                            (path-expand _%output-scm214221%_))
-                           (_%output-c214266%_
-                            (_%replace-extension-with-c214206%_
-                             _%output-scm214264%_))
-                           (_%output-o214268%_
-                            (_%replace-extension-with-object214207%_
-                             _%output-scm214264%_))
-                           (_%output_-c214270%_
-                            (_%replace-extension214205%_
-                             _%output-scm214264%_
+                              (##map _%replace-extension-with-object224194%_
+                                     _%src-deps-scm224235%_)))
+                           (_%src-bin-scm224241%_
+                            (gxc#find-static-module-file _%ctx224187%_))
+                           (_%src-bin-scm224243%_
+                            (path-expand _%src-bin-scm224241%_))
+                           (_%src-bin-c224245%_
+                            (_%replace-extension-with-c224193%_
+                             _%src-bin-scm224243%_))
+                           (_%src-bin-o224247%_
+                            (_%replace-extension-with-object224194%_
+                             _%src-bin-scm224243%_))
+                           (_%output-bin224249%_
+                            (path-expand _%output-bin224209%_))
+                           (_%output-scm224251%_
+                            (path-expand _%output-scm224208%_))
+                           (_%output-c224253%_
+                            (_%replace-extension-with-c224193%_
+                             _%output-scm224251%_))
+                           (_%output-o224255%_
+                            (_%replace-extension-with-object224194%_
+                             _%output-scm224251%_))
+                           (_%output_-c224257%_
+                            (_%replace-extension224192%_
+                             _%output-scm224251%_
                              '"_.c"))
-                           (_%output_-o214272%_
-                            (_%replace-extension214205%_
-                             _%output-scm214264%_
+                           (_%output_-o224259%_
+                            (_%replace-extension224192%_
+                             _%output-scm224251%_
                              (let ()
                                (declare (not safe))
                                (##string-append
                                 '"_"
                                 gxc#compiler-obj-suffix))))
-                           (_%gsc-link-opts214274%_ (gxc#gsc-link-options__0))
-                           (_%gsc-cc-opts214276%_
+                           (_%gsc-link-opts224261%_ (gxc#gsc-link-options__0))
+                           (_%gsc-cc-opts224263%_
                             (gxc#gsc-cc-options__%__0 '#f '#t))
-                           (_%gsc-static-opts214278%_
+                           (_%gsc-static-opts224265%_
                             (gxc#gsc-static-include-options
-                             _%gerbil-staticdir214228%_))
-                           (_%output-ld-opts214280%_ (gxc#gcc-ld-options))
-                           (_%libgerbil-ld-opts214282%_
-                            (_%get-libgerbil-ld-opts214204%_
-                             _%gerbil-libdir214226%_))
-                           (_%rpath214284%_
-                            (gxc#gerbil-rpath _%gerbil-libdir214226%_))
-                           (_%builtin-modules214288%_
-                            (_%remove-duplicates214213%_
-                             (let ((__tmp214709
-                                    (let ((__tmp214711
-                                           (lambda (_%mod214286%_)
+                             _%gerbil-staticdir224215%_))
+                           (_%output-ld-opts224267%_ (gxc#gcc-ld-options))
+                           (_%libgerbil-ld-opts224269%_
+                            (_%get-libgerbil-ld-opts224191%_
+                             _%gerbil-libdir224213%_))
+                           (_%rpath224271%_
+                            (gxc#gerbil-rpath _%gerbil-libdir224213%_))
+                           (_%builtin-modules224275%_
+                            (_%remove-duplicates224200%_
+                             (let ((__tmp224696
+                                    (let ((__tmp224698
+                                           (lambda (_%mod224273%_)
                                              (symbol->string
                                               (##structure-ref
-                                               _%mod214286%_
+                                               _%mod224273%_
                                                '1
                                                gx#expander-context::t
                                                '#f))))
-                                          (__tmp214710
-                                           (cons _%ctx214200%_
-                                                 _%deps214230%_)))
+                                          (__tmp224697
+                                           (cons _%ctx224187%_
+                                                 _%deps224217%_)))
                                       (declare (not safe))
-                                      (##map __tmp214711 __tmp214710))))
+                                      (##map __tmp224698 __tmp224697))))
                                (declare (not safe))
                                (##append
                                 gxc#gerbil-runtime-modules
-                                __tmp214709)))))
-                      (letrec ((_%compile-obj214291%_
-                                (lambda (_%scm-path214298%_ _%c-path214299%_)
-                                  (let* ((_%o-path214301%_
-                                          (_%replace-extension214205%_
-                                           _%c-path214299%_
+                                __tmp224696)))))
+                      (letrec ((_%compile-obj224278%_
+                                (lambda (_%scm-path224285%_ _%c-path224286%_)
+                                  (let* ((_%o-path224288%_
+                                          (_%replace-extension224192%_
+                                           _%c-path224286%_
                                            gxc#compiler-obj-suffix))
-                                         (_%lock214303%_
+                                         (_%lock224290%_
                                           (let ()
                                             (declare (not safe))
                                             (##string-append
-                                             _%o-path214301%_
+                                             _%o-path224288%_
                                              '".lock")))
-                                         (_%locked214305%_ '#f)
-                                         (_%unlock214308%_
+                                         (_%locked224292%_ '#f)
+                                         (_%unlock224295%_
                                           (lambda ()
-                                            (close-port _%locked214305%_)
+                                            (close-port _%locked224292%_)
                                             (let ()
                                               (declare (not safe))
                                               (##delete-file
-                                               _%lock214303%_)))))
-                                    (let _%retry214311%_ ()
+                                               _%lock224290%_)))))
+                                    (let _%retry224298%_ ()
                                       (if (let ()
                                             (declare (not safe))
-                                            (##file-exists? _%lock214303%_))
+                                            (##file-exists? _%lock224290%_))
                                           (begin
                                             (thread-sleep! '.01)
-                                            (_%retry214311%_))
+                                            (_%retry224298%_))
                                           (begin
-                                            (set! _%locked214305%_
-                                                  (let ((__tmp214712
+                                            (set! _%locked224292%_
+                                                  (let ((__tmp224699
                                                          (lambda ()
                                                            (open-file
                                                             (cons 'path:
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _%lock214303%_
+                          (cons _%lock224290%_
                                 (cons 'create: (cons '#t '()))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (__with-catch
                                                      false
-                                                     __tmp214712)))
-                                            (if _%locked214305%_
+                                                     __tmp224699)))
+                                            (if _%locked224292%_
                                                 '#!void
-                                                (_%retry214311%_)))))
-                                    (let ((__tmp214714
+                                                (_%retry224298%_)))))
+                                    (let ((__tmp224701
                                            (lambda ()
                                              (if (or (not (let ()
                                                             (declare
                                                               (not safe))
                                                             (##file-exists?
-                                                             _%o-path214301%_)))
-                                                     (not _%scm-path214298%_)
+                                                             _%o-path224288%_)))
+                                                     (not _%scm-path224285%_)
                                                      (let ()
                                                        (declare (not safe))
                                                        (file-newer?
-                                                        _%scm-path214298%_
-                                                        _%o-path214301%_)))
-                                                 (let ((_%gsc-cc-opts214322%_
+                                                        _%scm-path224285%_
+                                                        _%o-path224288%_)))
+                                                 (let ((_%gsc-cc-opts224309%_
                                                         (gxc#gsc-cc-options__%__0
                                                          '#f
                                                          '#f)))
@@ -860,41 +860,41 @@
                                                     absent-value
                                                     (gxc#gerbil-gsc)
                                                     (cons '"-obj"
-                                                          (let ((__tmp214715
+                                                          (let ((__tmp224702
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp214716 (cons _%c-path214299%_ '())))
+                         (let ((__tmp224703 (cons _%c-path224286%_ '())))
                            (declare (not safe))
                            (__foldr1
                             cons
-                            __tmp214716
-                            _%gsc-static-opts214278%_))))
+                            __tmp224703
+                            _%gsc-static-opts224265%_))))
                     (declare (not safe))
-                    (__foldr1 cons __tmp214715 _%gsc-cc-opts214322%_)))))
+                    (__foldr1 cons __tmp224702 _%gsc-cc-opts224309%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  '#!void)))
-                                          (__tmp214713
-                                           (lambda () (_%unlock214308%_))))
+                                          (__tmp224700
+                                           (lambda () (_%unlock224295%_))))
                                       (declare (not safe))
                                       (__with-unwind-protect
-                                       __tmp214714
-                                       __tmp214713))))))
-                        (let ((__tmp214717
+                                       __tmp224701
+                                       __tmp224700))))))
+                        (let ((__tmp224704
                                (lambda ()
-                                 (let ((__tmp214718
-                                        (path-directory _%output-bin214262%_)))
+                                 (let ((__tmp224705
+                                        (path-directory _%output-bin224249%_)))
                                    (declare (not safe))
-                                   (create-directory*__0 __tmp214718)))))
+                                   (create-directory*__0 __tmp224705)))))
                           (declare (not safe))
-                          (__with-lock gxc#+driver-mutex+ __tmp214717))
+                          (__with-lock gxc#+driver-mutex+ __tmp224704))
                         (gxc#with-output-to-scheme-file
-                         _%output-scm214264%_
+                         _%output-scm224251%_
                          (lambda ()
-                           (_%generate-stub214203%_
-                            _%builtin-modules214288%_)))
+                           (_%generate-stub224190%_
+                            _%builtin-modules224275%_)))
                         (if (let ()
                               (declare (not safe))
                               (gxc#current-compile-invoke-gsc))
-                            (let ((_%compile-it214296%_
+                            (let ((_%compile-it224283%_
                                    (lambda ()
                                      (gxc#invoke__%
                                       '#f
@@ -902,46 +902,46 @@
                                       absent-value
                                       (gxc#gerbil-gsc)
                                       (cons '"-link"
-                                            (let ((__tmp214719
-                                                   (let ((__tmp214720
-                                                          (let ((__tmp214721
+                                            (let ((__tmp224706
+                                                   (let ((__tmp224707
+                                                          (let ((__tmp224708
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons _%src-bin-scm214256%_
-                               (cons _%output-scm214264%_ '()))))
+                         (cons _%src-bin-scm224243%_
+                               (cons _%output-scm224251%_ '()))))
                     (declare (not safe))
-                    (__foldr1 cons __tmp214721 _%src-deps-scm214248%_))))
+                    (__foldr1 cons __tmp224708 _%src-deps-scm224235%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (__foldr1
                                                       cons
-                                                      __tmp214720
-                                                      _%libgerbil-c214238%_))))
+                                                      __tmp224707
+                                                      _%libgerbil-c224225%_))))
                                               (declare (not safe))
                                               (__foldr1
                                                cons
-                                               __tmp214719
-                                               _%gsc-link-opts214274%_))))
+                                               __tmp224706
+                                               _%gsc-link-opts224261%_))))
                                      (for-each
-                                      _%compile-obj214291%_
-                                      (let ((__tmp214722
-                                             (cons _%src-bin-scm214256%_
-                                                   (cons _%output-scm214264%_
+                                      _%compile-obj224278%_
+                                      (let ((__tmp224709
+                                             (cons _%src-bin-scm224243%_
+                                                   (cons _%output-scm224251%_
                                                          (cons '#f '())))))
                                         (declare (not safe))
                                         (__foldr1
                                          cons
-                                         __tmp214722
-                                         _%src-deps-scm214248%_))
-                                      (let ((__tmp214723
-                                             (cons _%src-bin-c214258%_
-                                                   (cons _%output-c214266%_
-                                                         (cons _%output_-c214270%_
+                                         __tmp224709
+                                         _%src-deps-scm224235%_))
+                                      (let ((__tmp224710
+                                             (cons _%src-bin-c224245%_
+                                                   (cons _%output-c224253%_
+                                                         (cons _%output_-c224257%_
                                                                '())))))
                                         (declare (not safe))
                                         (__foldr1
                                          cons
-                                         __tmp214723
-                                         _%src-deps-c214250%_)))
+                                         __tmp224710
+                                         _%src-deps-c224237%_)))
                                      (gxc#invoke__%
                                       '#f
                                       absent-value
@@ -949,71 +949,71 @@
                                       (gxc#gerbil-gcc)
                                       (cons '"-w"
                                             (cons '"-o"
-                                                  (cons _%output-bin214262%_
-                                                        (let ((__tmp214724
-                                                               (cons _%src-bin-o214260%_
+                                                  (cons _%output-bin224249%_
+                                                        (let ((__tmp224711
+                                                               (cons _%src-bin-o224247%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (cons _%output-o214268%_
-                                   (cons _%output_-o214272%_
-                                         (let ((__tmp214725
-                                                (let ((__tmp214726
-                                                       (let ((__tmp214728
+                             (cons _%output-o224255%_
+                                   (cons _%output_-o224259%_
+                                         (let ((__tmp224712
+                                                (let ((__tmp224713
+                                                       (let ((__tmp224715
                                                               (cons '"-L"
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons _%gerbil-libdir214226%_
+                            (cons _%gerbil-libdir224213%_
                                   (cons '"-lgambit"
-                                        _%libgerbil-ld-opts214282%_))))
-                     (__tmp214727
+                                        _%libgerbil-ld-opts224269%_))))
+                     (__tmp224714
                       (if (gxc#gerbil-enable-shared?)
-                          (cons _%rpath214284%_ '())
+                          (cons _%rpath224271%_ '())
                           '())))
                  (declare (not safe))
-                 (__foldr1 cons __tmp214728 __tmp214727))))
+                 (__foldr1 cons __tmp224715 __tmp224714))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
                                                   (__foldr1
                                                    cons
-                                                   __tmp214726
-                                                   _%output-ld-opts214280%_))))
+                                                   __tmp224713
+                                                   _%output-ld-opts224267%_))))
                                            (declare (not safe))
                                            (__foldr1
                                             cons
-                                            __tmp214725
-                                            _%libgerbil-o214240%_)))))))
+                                            __tmp224712
+                                            _%libgerbil-o224227%_)))))))
                   (declare (not safe))
-                  (__foldr1 cons __tmp214724 _%src-deps-o214252%_))))))
+                  (__foldr1 cons __tmp224711 _%src-deps-o224239%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     (let ((__tmp214729
-                                            (cons _%output-c214266%_
-                                                  (cons _%output_-c214270%_
-                                                        (cons _%output-o214268%_
-                                                              (cons _%output_-o214272%_
+                                     (let ((__tmp224716
+                                            (cons _%output-c224253%_
+                                                  (cons _%output_-c224257%_
+                                                        (cons _%output-o224255%_
+                                                              (cons _%output_-o224259%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        (declare (not safe))
-                                       (##for-each delete-file __tmp214729)))))
+                                       (##for-each delete-file __tmp224716)))))
                               (if (let ()
                                     (declare (not safe))
                                     (gxc#current-compile-parallel))
                                   (let ()
                                     (declare (not safe))
                                     (gxc#add-compile-job!__0
-                                     _%compile-it214296%_))
-                                  (_%compile-it214296%_)))
+                                     _%compile-it224283%_))
+                                  (_%compile-it224283%_)))
                             '#!void))))))
-          (let* ((_%output-bin214216%_
-                  (gxc#compile-exe-output-file _%ctx214200%_ _%opts214201%_))
-                 (_%output-scm214218%_
+          (let* ((_%output-bin224203%_
+                  (gxc#compile-exe-output-file _%ctx224187%_ _%opts224188%_))
+                 (_%output-scm224205%_
                   (let ()
                     (declare (not safe))
-                    (##string-append _%output-bin214216%_ '"__exe.scm"))))
-            (_%compile-stub214214%_
-             _%output-scm214218%_
-             _%output-bin214216%_)))))
+                    (##string-append _%output-bin224203%_ '"__exe.scm"))))
+            (_%compile-stub224201%_
+             _%output-scm224205%_
+             _%output-bin224203%_)))))
     (define gxc#compile-executable-module/full-program-optimization
-      (lambda (_%ctx214022%_ _%opts214023%_)
-        (letrec ((_%reset-declare214025%_
+      (lambda (_%ctx224009%_ _%opts224010%_)
+        (letrec ((_%reset-declare224012%_
                   (lambda ()
                     '(declare
                        (gambit-scheme)
@@ -1035,36 +1035,36 @@
                        (optimize-dead-definitions)
                        (generic)
                        (mostly-fixnum-flonum))))
-                 (_%generate-stub214026%_
-                  (lambda (_%deps214191%_)
-                    (let ((_%mod-main214193%_
-                           (gxc#find-runtime-symbol _%ctx214022%_ 'main))
-                          (_%reset-decl214194%_ (_%reset-declare214025%_))
-                          (_%user-decl214195%_ (_%user-declare214027%_)))
+                 (_%generate-stub224013%_
+                  (lambda (_%deps224178%_)
+                    (let ((_%mod-main224180%_
+                           (gxc#find-runtime-symbol _%ctx224009%_ 'main))
+                          (_%reset-decl224181%_ (_%reset-declare224012%_))
+                          (_%user-decl224182%_ (_%user-declare224014%_)))
                       (for-each
-                       (lambda (_%dep214197%_)
+                       (lambda (_%dep224184%_)
                          (let ()
                            (declare (not safe))
                            (##write '(##namespace (""))))
                          (newline)
                          (let ()
                            (declare (not safe))
-                           (##write _%reset-decl214194%_))
+                           (##write _%reset-decl224181%_))
                          (newline)
-                         (if _%user-decl214195%_
+                         (if _%user-decl224182%_
                              (begin
                                (let ()
                                  (declare (not safe))
-                                 (##write _%user-decl214195%_))
+                                 (##write _%user-decl224182%_))
                                (newline))
                              '#!void)
-                         (let ((__tmp214730
-                                (cons 'include (cons _%dep214197%_ '()))))
+                         (let ((__tmp224717
+                                (cons 'include (cons _%dep224184%_ '()))))
                            (declare (not safe))
-                           (##write __tmp214730))
+                           (##write __tmp224717))
                          (newline))
-                       _%deps214191%_)
-                      (let ((__tmp214731
+                       _%deps224178%_)
+                      (let ((__tmp224718
                              (cons 'define
                                    (cons (cons 'gerbil-main '())
                                          (cons (cons 'gerbil-runtime-init!
@@ -1074,176 +1074,176 @@
                    '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (cons (cons 'apply
-                                                           (cons _%mod-main214193%_
+                                                           (cons _%mod-main224180%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (cons (cons 'cdr (cons (cons 'command-line '()) '()))
                                '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      '()))))))
                         (declare (not safe))
-                        (##write __tmp214731))
+                        (##write __tmp224718))
                       (let () (declare (not safe)) (##write '(gerbil-main)))
                       (newline))))
-                 (_%user-declare214027%_
+                 (_%user-declare224014%_
                   (lambda ()
-                    (let* ((_%gsc-opts214096%_
+                    (let* ((_%gsc-opts224083%_
                             (let ()
                               (declare (not safe))
-                              (pgetq__0 'gsc-options: _%opts214023%_)))
-                           (_%gsc-prelude214098%_
-                            (if _%gsc-opts214096%_
-                                (member '"-prelude" _%gsc-opts214096%_)
+                              (pgetq__0 'gsc-options: _%opts224010%_)))
+                           (_%gsc-prelude224085%_
+                            (if _%gsc-opts224083%_
+                                (member '"-prelude" _%gsc-opts224083%_)
                                 '#f))
-                           (_%gsc-prelude214100%_
-                            (if _%gsc-prelude214098%_
+                           (_%gsc-prelude224087%_
+                            (if _%gsc-prelude224085%_
                                 (read (open-input-string
-                                       (cadr _%gsc-prelude214098%_)))
+                                       (cadr _%gsc-prelude224085%_)))
                                 '#f)))
-                      (let _%lp214103%_ ((_%rest214105%_
-                                          (cons _%gsc-prelude214100%_ '()))
-                                         (_%user-decls214106%_ '()))
-                        (let* ((_%rest214107214115%_ _%rest214105%_)
-                               (_%else214109214123%_
+                      (let _%lp224090%_ ((_%rest224092%_
+                                          (cons _%gsc-prelude224087%_ '()))
+                                         (_%user-decls224093%_ '()))
+                        (let* ((_%rest224094224102%_ _%rest224092%_)
+                               (_%else224096224110%_
                                 (lambda ()
-                                  (if (null? _%user-decls214106%_)
+                                  (if (null? _%user-decls224093%_)
                                       '#f
                                       (cons 'declare
-                                            (reverse _%user-decls214106%_)))))
-                               (_%K214111214179%_
-                                (lambda (_%rest214126%_ _%expr214127%_)
-                                  (let* ((_%expr214128214140%_ _%expr214127%_)
-                                         (_%else214131214148%_
+                                            (reverse _%user-decls224093%_)))))
+                               (_%K224098224166%_
+                                (lambda (_%rest224113%_ _%expr224114%_)
+                                  (let* ((_%expr224115224127%_ _%expr224114%_)
+                                         (_%else224118224135%_
                                           (lambda ()
-                                            (_%lp214103%_
-                                             _%rest214126%_
-                                             _%user-decls214106%_))))
-                                    (let ((_%K214136214169%_
-                                           (lambda (_%decls214167%_)
-                                             (_%lp214103%_
-                                              _%rest214126%_
+                                            (_%lp224090%_
+                                             _%rest224113%_
+                                             _%user-decls224093%_))))
+                                    (let ((_%K224123224156%_
+                                           (lambda (_%decls224154%_)
+                                             (_%lp224090%_
+                                              _%rest224113%_
                                               (let ()
                                                 (declare (not safe))
                                                 (__foldl1
                                                  cons
-                                                 _%user-decls214106%_
-                                                 _%decls214167%_)))))
-                                          (_%K214133214154%_
-                                           (lambda (_%exprs214152%_)
-                                             (_%lp214103%_
-                                              (append _%exprs214152%_
-                                                      _%rest214126%_)
-                                              _%user-decls214106%_))))
-                                      (if (pair? _%expr214128214140%_)
-                                          (let ((_%tl214138214174%_
+                                                 _%user-decls224093%_
+                                                 _%decls224154%_)))))
+                                          (_%K224120224141%_
+                                           (lambda (_%exprs224139%_)
+                                             (_%lp224090%_
+                                              (append _%exprs224139%_
+                                                      _%rest224113%_)
+                                              _%user-decls224093%_))))
+                                      (if (pair? _%expr224115224127%_)
+                                          (let ((_%tl224125224161%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _%expr214128214140%_)))
-                                                (_%hd214137214172%_
+                                                   (##cdr _%expr224115224127%_)))
+                                                (_%hd224124224159%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _%expr214128214140%_))))
+                                                   (##car _%expr224115224127%_))))
                                             (if (let ()
                                                   (declare (not safe))
-                                                  (##eq? _%hd214137214172%_
+                                                  (##eq? _%hd224124224159%_
                                                          'declare))
-                                                (let ((_%decls214177%_
-                                                       _%tl214138214174%_))
-                                                  (_%K214136214169%_
-                                                   _%decls214177%_))
+                                                (let ((_%decls224164%_
+                                                       _%tl224125224161%_))
+                                                  (_%K224123224156%_
+                                                   _%decls224164%_))
                                                 (if (let ()
                                                       (declare (not safe))
-                                                      (##eq? _%hd214137214172%_
+                                                      (##eq? _%hd224124224159%_
                                                              'begin))
-                                                    (let ((_%exprs214162%_
-                                                           _%tl214138214174%_))
-                                                      (_%K214133214154%_
-                                                       _%exprs214162%_))
-                                                    (_%else214131214148%_))))
-                                          (_%else214131214148%_)))))))
-                          (if (pair? _%rest214107214115%_)
-                              (let ((_%hd214112214182%_
+                                                    (let ((_%exprs224149%_
+                                                           _%tl224125224161%_))
+                                                      (_%K224120224141%_
+                                                       _%exprs224149%_))
+                                                    (_%else224118224135%_))))
+                                          (_%else224118224135%_)))))))
+                          (if (pair? _%rest224094224102%_)
+                              (let ((_%hd224099224169%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%rest214107214115%_)))
-                                    (_%tl214113214184%_
+                                       (##car _%rest224094224102%_)))
+                                    (_%tl224100224171%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%rest214107214115%_))))
-                                (let* ((_%expr214187%_ _%hd214112214182%_)
-                                       (_%rest214189%_ _%tl214113214184%_))
-                                  (_%K214111214179%_
-                                   _%rest214189%_
-                                   _%expr214187%_)))
-                              (_%else214109214123%_)))))))
-                 (_%compile-stub214028%_
-                  (lambda (_%output-scm214035%_ _%output-bin214036%_)
-                    (let* ((_%gerbil-home214038%_
-                            (let ((__tmp214732
+                                       (##cdr _%rest224094224102%_))))
+                                (let* ((_%expr224174%_ _%hd224099224169%_)
+                                       (_%rest224176%_ _%tl224100224171%_))
+                                  (_%K224098224166%_
+                                   _%rest224176%_
+                                   _%expr224174%_)))
+                              (_%else224096224110%_)))))))
+                 (_%compile-stub224015%_
+                  (lambda (_%output-scm224022%_ _%output-bin224023%_)
+                    (let* ((_%gerbil-home224025%_
+                            (let ((__tmp224719
                                    (let ()
                                      (declare (not safe))
                                      (gerbil-home))))
                               (declare (not safe))
-                              (##getenv '"GERBIL_BUILD_PREFIX" __tmp214732)))
-                           (_%gerbil-libdir214040%_
-                            (path-expand '"lib" _%gerbil-home214038%_))
-                           (_%runtime214042%_
+                              (##getenv '"GERBIL_BUILD_PREFIX" __tmp224719)))
+                           (_%gerbil-libdir224027%_
+                            (path-expand '"lib" _%gerbil-home224025%_))
+                           (_%runtime224029%_
                             (let ()
                               (declare (not safe))
                               (##map gxc#find-static-module-file
                                      gxc#gerbil-runtime-modules)))
-                           (_%gambit-sharp214044%_
+                           (_%gambit-sharp224031%_
                             (path-expand
                              '"lib/_gambit#.scm"
-                             _%gerbil-home214038%_))
-                           (_%include-gambit-sharp214046%_
-                            (gxc#include-source _%gambit-sharp214044%_))
-                           (_%bin-scm214048%_
-                            (gxc#find-static-module-file _%ctx214022%_))
-                           (_%deps214050%_
-                            (gxc#find-runtime-module-deps _%ctx214022%_))
-                           (_%deps214052%_
+                             _%gerbil-home224025%_))
+                           (_%include-gambit-sharp224033%_
+                            (gxc#include-source _%gambit-sharp224031%_))
+                           (_%bin-scm224035%_
+                            (gxc#find-static-module-file _%ctx224009%_))
+                           (_%deps224037%_
+                            (gxc#find-runtime-module-deps _%ctx224009%_))
+                           (_%deps224039%_
                             (let ()
                               (declare (not safe))
                               (##map gxc#find-static-module-file
-                                     _%deps214050%_)))
-                           (_%deps214057%_
-                            (let ((__tmp214733
-                                   (lambda (_%$obj214054%_)
-                                     (not (gxc#file-empty? _%$obj214054%_)))))
+                                     _%deps224037%_)))
+                           (_%deps224044%_
+                            (let ((__tmp224720
+                                   (lambda (_%$obj224041%_)
+                                     (not (gxc#file-empty? _%$obj224041%_)))))
                               (declare (not safe))
-                              (##filter __tmp214733 _%deps214052%_)))
-                           (_%deps214061%_
-                            (let ((__tmp214734
-                                   (lambda (_%f214059%_)
+                              (##filter __tmp224720 _%deps224039%_)))
+                           (_%deps224048%_
+                            (let ((__tmp224721
+                                   (lambda (_%f224046%_)
                                      (not (let ()
                                             (declare (not safe))
                                             (##member
-                                             _%f214059%_
-                                             _%runtime214042%_))))))
+                                             _%f224046%_
+                                             _%runtime224029%_))))))
                               (declare (not safe))
-                              (##filter __tmp214734 _%deps214057%_)))
-                           (_%output-base214063%_
-                            (let ((__tmp214735
+                              (##filter __tmp224721 _%deps224044%_)))
+                           (_%output-base224050%_
+                            (let ((__tmp224722
                                    (path-strip-extension
-                                    _%output-scm214035%_)))
+                                    _%output-scm224022%_)))
                               (declare (not safe))
-                              (##string-append __tmp214735)))
-                           (_%output-c214065%_
+                              (##string-append __tmp224722)))
+                           (_%output-c224052%_
                             (let ()
                               (declare (not safe))
-                              (##string-append _%output-base214063%_ '".c")))
-                           (_%output-o214067%_
+                              (##string-append _%output-base224050%_ '".c")))
+                           (_%output-o224054%_
                             (let ()
                               (declare (not safe))
                               (##string-append
-                               _%output-base214063%_
+                               _%output-base224050%_
                                gxc#compiler-obj-suffix)))
-                           (_%output-c_214069%_
+                           (_%output-c_224056%_
                             (let ()
                               (declare (not safe))
-                              (##string-append _%output-base214063%_ '"_.c")))
-                           (_%output-o_214071%_
-                            (let ((__tmp214736
+                              (##string-append _%output-base224050%_ '"_.c")))
+                           (_%output-o_224058%_
+                            (let ((__tmp224723
                                    (let ()
                                      (declare (not safe))
                                      (##string-append
@@ -1251,63 +1251,63 @@
                                       gxc#compiler-obj-suffix))))
                               (declare (not safe))
                               (##string-append
-                               _%output-base214063%_
-                               __tmp214736)))
-                           (_%gsc-link-opts214073%_ (gxc#gsc-link-options__0))
-                           (_%gsc-cc-opts214075%_
+                               _%output-base224050%_
+                               __tmp224723)))
+                           (_%gsc-link-opts224060%_ (gxc#gsc-link-options__0))
+                           (_%gsc-cc-opts224062%_
                             (gxc#gsc-cc-options__%__0 '#f '#t))
-                           (_%gsc-static-opts214077%_
+                           (_%gsc-static-opts224064%_
                             (gxc#gsc-static-include-options
-                             (path-expand '"static" _%gerbil-libdir214040%_)))
-                           (_%output-ld-opts214079%_ (gxc#gcc-ld-options))
-                           (_%gsc-gx-macros214081%_
+                             (path-expand '"static" _%gerbil-libdir224027%_)))
+                           (_%output-ld-opts224066%_ (gxc#gcc-ld-options))
+                           (_%gsc-gx-macros224068%_
                             (if (let ()
                                   (declare (not safe))
                                   (gerbil-runtime-smp?))
                                 (cons '"-e"
                                       (cons '"(define-cond-expand-feature|enable-smp|)"
                                             (cons '"-e"
-                                                  (cons _%include-gambit-sharp214046%_
+                                                  (cons _%include-gambit-sharp224033%_
                                                         '()))))
                                 (cons '"-e"
-                                      (cons _%include-gambit-sharp214046%_
+                                      (cons _%include-gambit-sharp224033%_
                                             '()))))
-                           (_%gsc-link-opts214083%_
+                           (_%gsc-link-opts224070%_
                             (let ()
                               (declare (not safe))
                               (##append
-                               _%gsc-link-opts214073%_
-                               _%gsc-gx-macros214081%_)))
-                           (_%rpath214085%_
-                            (gxc#gerbil-rpath _%gerbil-libdir214040%_))
-                           (_%default-ld-options214087%_
+                               _%gsc-link-opts224060%_
+                               _%gsc-gx-macros224068%_)))
+                           (_%rpath224072%_
+                            (gxc#gerbil-rpath _%gerbil-libdir224027%_))
+                           (_%default-ld-options224074%_
                             (cons '"-ldl" (cons '"-lm" '()))))
-                      (let ((__tmp214737
+                      (let ((__tmp224724
                              (lambda ()
-                               (let ((__tmp214738
-                                      (path-directory _%output-bin214036%_)))
+                               (let ((__tmp224725
+                                      (path-directory _%output-bin224023%_)))
                                  (declare (not safe))
-                                 (create-directory*__0 __tmp214738)))))
+                                 (create-directory*__0 __tmp224725)))))
                         (declare (not safe))
-                        (__with-lock gxc#+driver-mutex+ __tmp214737))
+                        (__with-lock gxc#+driver-mutex+ __tmp224724))
                       (gxc#with-output-to-scheme-file
-                       _%output-scm214035%_
+                       _%output-scm224022%_
                        (lambda ()
-                         (_%generate-stub214026%_
-                          (let ((__tmp214739
-                                 (let ((__tmp214740
-                                        (cons _%bin-scm214048%_ '())))
+                         (_%generate-stub224013%_
+                          (let ((__tmp224726
+                                 (let ((__tmp224727
+                                        (cons _%bin-scm224035%_ '())))
                                    (declare (not safe))
                                    (__foldr1
                                     cons
-                                    __tmp214740
-                                    _%deps214061%_))))
+                                    __tmp224727
+                                    _%deps224048%_))))
                             (declare (not safe))
-                            (__foldr1 cons __tmp214739 _%runtime214042%_)))))
+                            (__foldr1 cons __tmp224726 _%runtime224029%_)))))
                       (if (let ()
                             (declare (not safe))
                             (gxc#current-compile-invoke-gsc))
-                          (let ((_%compile-it214093%_
+                          (let ((_%compile-it224080%_
                                  (lambda ()
                                    (gxc#invoke__%
                                     '#f
@@ -1316,13 +1316,13 @@
                                     (gxc#gerbil-gsc)
                                     (cons '"-link"
                                           (cons '"-o"
-                                                (cons _%output-c_214069%_
-                                                      (let ((__tmp214741
-                                                             (cons _%output-scm214035%_
+                                                (cons _%output-c_224056%_
+                                                      (let ((__tmp224728
+                                                             (cons _%output-scm224022%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '())))
                 (declare (not safe))
-                (__foldr1 cons __tmp214741 _%gsc-link-opts214083%_))))))
+                (__foldr1 cons __tmp224728 _%gsc-link-opts224070%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                    (gxc#invoke__%
                                     '#f
@@ -1330,23 +1330,23 @@
                                     absent-value
                                     (gxc#gerbil-gsc)
                                     (cons '"-obj"
-                                          (let ((__tmp214742
-                                                 (let ((__tmp214743
-                                                        (cons _%output-c214065%_
-                                                              (cons _%output-c_214069%_
+                                          (let ((__tmp224729
+                                                 (let ((__tmp224730
+                                                        (cons _%output-c224052%_
+                                                              (cons _%output-c_224056%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (__foldr1
                                                     cons
-                                                    __tmp214743
-                                                    _%gsc-static-opts214077%_))))
+                                                    __tmp224730
+                                                    _%gsc-static-opts224064%_))))
                                             (declare (not safe))
                                             (__foldr1
                                              cons
-                                             __tmp214742
-                                             _%gsc-cc-opts214075%_))))
+                                             __tmp224729
+                                             _%gsc-cc-opts224062%_))))
                                    (gxc#invoke__%
                                     '#f
                                     absent-value
@@ -1354,27 +1354,27 @@
                                     (gxc#gerbil-gcc)
                                     (cons '"-w"
                                           (cons '"-o"
-                                                (cons _%output-bin214036%_
-                                                      (cons _%output-o214067%_
-                                                            (cons _%output-o_214071%_
+                                                (cons _%output-bin224023%_
+                                                      (cons _%output-o224054%_
+                                                            (cons _%output-o_224058%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp214744
-                                 (let ((__tmp214746
+                          (let ((__tmp224731
+                                 (let ((__tmp224733
                                         (cons '"-L"
-                                              (cons _%gerbil-libdir214040%_
+                                              (cons _%gerbil-libdir224027%_
                                                     (cons '"-lgambit"
-                                                          _%default-ld-options214087%_))))
-                                       (__tmp214745
+                                                          _%default-ld-options224074%_))))
+                                       (__tmp224732
                                         (if (gxc#gerbil-enable-shared?)
-                                            (cons _%rpath214085%_ '())
+                                            (cons _%rpath224072%_ '())
                                             '())))
                                    (declare (not safe))
-                                   (__foldr1 cons __tmp214746 __tmp214745))))
+                                   (__foldr1 cons __tmp224733 __tmp224732))))
                             (declare (not safe))
                             (__foldr1
                              cons
-                             __tmp214744
-                             _%output-ld-opts214079%_)))))))))))
+                             __tmp224731
+                             _%output-ld-opts224066%_)))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                             (if (let ()
                                   (declare (not safe))
@@ -1382,627 +1382,627 @@
                                 (let ()
                                   (declare (not safe))
                                   (gxc#add-compile-job!__0
-                                   _%compile-it214093%_))
-                                (_%compile-it214093%_)))
+                                   _%compile-it224080%_))
+                                (_%compile-it224080%_)))
                           '#!void)))))
-          (let* ((_%output-bin214030%_
-                  (gxc#compile-exe-output-file _%ctx214022%_ _%opts214023%_))
-                 (_%output-scm214032%_
+          (let* ((_%output-bin224017%_
+                  (gxc#compile-exe-output-file _%ctx224009%_ _%opts224010%_))
+                 (_%output-scm224019%_
                   (let ()
                     (declare (not safe))
-                    (##string-append _%output-bin214030%_ '"__exe.scm"))))
-            (_%compile-stub214028%_
-             _%output-scm214032%_
-             _%output-bin214030%_)))))
+                    (##string-append _%output-bin224017%_ '"__exe.scm"))))
+            (_%compile-stub224015%_
+             _%output-scm224019%_
+             _%output-bin224017%_)))))
     (define gxc#find-export-binding
-      (lambda (_%ctx213971%_ _%id213972%_)
-        (let ((_%$e214018%_
-               (let ((__tmp214748
-                      (lambda (_%e213973213975%_)
-                        (let* ((_%e213973213977213987%_ _%e213973213975%_)
-                               (_%else213979213995%_ (lambda () '#f))
-                               (_%K213981213999%_ (lambda () '#t)))
+      (lambda (_%ctx223958%_ _%id223959%_)
+        (let ((_%$e224005%_
+               (let ((__tmp224735
+                      (lambda (_%e223960223962%_)
+                        (let* ((_%e223960223964223974%_ _%e223960223962%_)
+                               (_%else223966223982%_ (lambda () '#f))
+                               (_%K223968223986%_ (lambda () '#t)))
                           (if (let ()
                                 (declare (not safe))
                                 (##structure-direct-instance-of?
-                                 _%e213973213977213987%_
+                                 _%e223960223964223974%_
                                  'gx#module-export::t))
-                              (let* ((_%e213982214002%_
+                              (let* ((_%e223969223989%_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _%e213973213977213987%_
+                                         _%e223960223964223974%_
                                          '1
                                          '#f
                                          '#f)))
-                                     (_%e213983214005%_
+                                     (_%e223970223992%_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _%e213973213977213987%_
+                                         _%e223960223964223974%_
                                          '2
                                          '#f
                                          '#f)))
-                                     (_%e213984214008%_
+                                     (_%e223971223995%_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _%e213973213977213987%_
+                                         _%e223960223964223974%_
                                          '3
                                          '#f
                                          '#f))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (##eq? _%e213984214008%_ '0))
-                                    (let ((_%e213985214011%_
+                                      (##eq? _%e223971223995%_ '0))
+                                    (let ((_%e223972223998%_
                                            (let ()
                                              (declare (not safe))
                                              (##unchecked-structure-ref
-                                              _%e213973213977213987%_
+                                              _%e223960223964223974%_
                                               '4
                                               '#f
                                               '#f))))
-                                      (if ((lambda (_%g214013214015%_)
-                                             (eq? _%g214013214015%_
-                                                  _%id213972%_))
-                                           _%e213985214011%_)
-                                          (_%K213981213999%_)
-                                          (_%else213979213995%_)))
-                                    (_%else213979213995%_)))
-                              (_%else213979213995%_)))))
-                     (__tmp214747
+                                      (if ((lambda (_%g224000224002%_)
+                                             (eq? _%g224000224002%_
+                                                  _%id223959%_))
+                                           _%e223972223998%_)
+                                          (_%K223968223986%_)
+                                          (_%else223966223982%_)))
+                                    (_%else223966223982%_)))
+                              (_%else223966223982%_)))))
+                     (__tmp224734
                       (##structure-ref
-                       _%ctx213971%_
+                       _%ctx223958%_
                        '9
                        gx#module-context::t
                        '#f)))
                  (declare (not safe))
-                 (__find __tmp214748 __tmp214747))))
-          (if _%$e214018%_
+                 (__find __tmp224735 __tmp224734))))
+          (if _%$e224005%_
               (let ()
                 (declare (not safe))
-                (gx#core-resolve-module-export _%$e214018%_))
+                (gx#core-resolve-module-export _%$e224005%_))
               '#f))))
     (define gxc#find-runtime-symbol
-      (lambda (_%ctx213962%_ _%id213963%_)
-        (let ((_%$e213965%_
-               (gxc#find-export-binding _%ctx213962%_ _%id213963%_)))
-          (if _%$e213965%_
-              ((lambda (_%bind213968%_)
+      (lambda (_%ctx223949%_ _%id223950%_)
+        (let ((_%$e223952%_
+               (gxc#find-export-binding _%ctx223949%_ _%id223950%_)))
+          (if _%$e223952%_
+              ((lambda (_%bind223955%_)
                  (if (let ()
                        (declare (not safe))
                        (##structure-instance-of?
-                        _%bind213968%_
+                        _%bind223955%_
                         'gx#runtime-binding::t))
                      '#!void
                      (let ()
                        (declare (not safe))
                        (gxc#raise-compile-error
                         '"export is not a runtime binding"
-                        _%id213963%_)))
-                 (##structure-ref _%bind213968%_ '1 gx#binding::t '#f))
-               _%$e213965%_)
-              (let ((__tmp214749
+                        _%id223950%_)))
+                 (##structure-ref _%bind223955%_ '1 gx#binding::t '#f))
+               _%$e223952%_)
+              (let ((__tmp224736
                      (##structure-ref
-                      _%ctx213962%_
+                      _%ctx223949%_
                       '1
                       gx#expander-context::t
                       '#f)))
                 (declare (not safe))
                 (gxc#raise-compile-error
                  '"module does not export symbol"
-                 __tmp214749
-                 _%id213963%_))))))
+                 __tmp224736
+                 _%id223950%_))))))
     (define gxc#find-runtime-module-deps
-      (lambda (_%ctx213828%_)
-        (letrec* ((_%ht213830%_
+      (lambda (_%ctx223815%_)
+        (letrec* ((_%ht223817%_
                    (let () (declare (not safe)) (make-hash-table-eq)))
-                  (_%import-set-template213831%_
-                   (lambda (_%in213907%_ _%phi213908%_)
-                     (let ((_%iphi213910%_
-                            (fx+ _%phi213908%_
+                  (_%import-set-template223818%_
+                   (lambda (_%in223894%_ _%phi223895%_)
+                     (let ((_%iphi223897%_
+                            (fx+ _%phi223895%_
                                  (##direct-structure-ref
-                                  _%in213907%_
+                                  _%in223894%_
                                   '2
                                   gx#import-set::t
                                   '#f)))
-                           (_%imports213911%_
+                           (_%imports223898%_
                             (##structure-ref
                              (##direct-structure-ref
-                              _%in213907%_
+                              _%in223894%_
                               '1
                               gx#import-set::t
                               '#f)
                              '8
                              gx#module-context::t
                              '#f)))
-                       (let _%lp213913%_ ((_%rest213915%_ _%imports213911%_)
-                                          (_%r213916%_ '()))
-                         (let* ((_%rest213917213925%_ _%rest213915%_)
-                                (_%else213919213933%_ (lambda () _%r213916%_))
-                                (_%K213921213950%_
-                                 (lambda (_%rest213936%_ _%in213937%_)
+                       (let _%lp223900%_ ((_%rest223902%_ _%imports223898%_)
+                                          (_%r223903%_ '()))
+                         (let* ((_%rest223904223912%_ _%rest223902%_)
+                                (_%else223906223920%_ (lambda () _%r223903%_))
+                                (_%K223908223937%_
+                                 (lambda (_%rest223923%_ _%in223924%_)
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
-                                          _%in213937%_
+                                          _%in223924%_
                                           'gx#module-context::t))
                                        (if (let ()
                                              (declare (not safe))
-                                             (##fxzero? _%iphi213910%_))
-                                           (_%lp213913%_
-                                            _%rest213936%_
-                                            (cons _%in213937%_ _%r213916%_))
-                                           (_%lp213913%_
-                                            _%rest213936%_
-                                            _%r213916%_))
+                                             (##fxzero? _%iphi223897%_))
+                                           (_%lp223900%_
+                                            _%rest223923%_
+                                            (cons _%in223924%_ _%r223903%_))
+                                           (_%lp223900%_
+                                            _%rest223923%_
+                                            _%r223903%_))
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
-                                              _%in213937%_
+                                              _%in223924%_
                                               'gx#module-import::t))
-                                           (let ((_%iphi213941%_
-                                                  (fx+ _%phi213908%_
+                                           (let ((_%iphi223928%_
+                                                  (fx+ _%phi223895%_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
-                                                          _%in213937%_
+                                                          _%in223924%_
                                                           '3
                                                           '#f
                                                           '#f)))))
                                              (if (let ()
                                                    (declare (not safe))
-                                                   (##fxzero? _%iphi213941%_))
-                                                 (_%lp213913%_
-                                                  _%rest213936%_
+                                                   (##fxzero? _%iphi223928%_))
+                                                 (_%lp223900%_
+                                                  _%rest223923%_
                                                   (cons (##direct-structure-ref
                                                          (let ()
                                                            (declare (not safe))
                                                            (##unchecked-structure-ref
-                                                            _%in213937%_
+                                                            _%in223924%_
                                                             '1
                                                             '#f
                                                             '#f))
                                                          '1
                                                          gx#module-export::t
                                                          '#f)
-                                                        _%r213916%_))
-                                                 (_%lp213913%_
-                                                  _%rest213936%_
-                                                  _%r213916%_)))
+                                                        _%r223903%_))
+                                                 (_%lp223900%_
+                                                  _%rest223923%_
+                                                  _%r223903%_)))
                                            (if (let ()
                                                  (declare (not safe))
                                                  (##structure-direct-instance-of?
-                                                  _%in213937%_
+                                                  _%in223924%_
                                                   'gx#import-set::t))
-                                               (let ((_%xphi213944%_
-                                                      (fx+ _%iphi213910%_
+                                               (let ((_%xphi223931%_
+                                                      (fx+ _%iphi223897%_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##unchecked-structure-ref
-                                                              _%in213937%_
+                                                              _%in223924%_
                                                               '2
                                                               '#f
                                                               '#f)))))
                                                  (if (let ()
                                                        (declare (not safe))
                                                        (##fxzero?
-                                                        _%xphi213944%_))
-                                                     (_%lp213913%_
-                                                      _%rest213936%_
+                                                        _%xphi223931%_))
+                                                     (_%lp223900%_
+                                                      _%rest223923%_
                                                       (cons (let ()
                                                               (declare
                                                                 (not safe))
                                                               (##unchecked-structure-ref
-                                                               _%in213937%_
+                                                               _%in223924%_
                                                                '1
                                                                '#f
                                                                '#f))
-                                                            _%r213916%_))
+                                                            _%r223903%_))
                                                      (if (let ()
                                                            (declare (not safe))
                                                            (##fxpositive?
-                                                            _%xphi213944%_))
-                                                         (_%lp213913%_
-                                                          _%rest213936%_
-                                                          (let ((__tmp214750
+                                                            _%xphi223931%_))
+                                                         (_%lp223900%_
+                                                          _%rest223923%_
+                                                          (let ((__tmp224737
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (_%import-set-template213831%_
-                          _%in213937%_
-                          _%iphi213910%_)))
+                         (_%import-set-template223818%_
+                          _%in223924%_
+                          _%iphi223897%_)))
                     (declare (not safe))
-                    (__foldl1 cons _%r213916%_ __tmp214750)))
-                 (_%lp213913%_ _%rest213936%_ _%r213916%_))))
+                    (__foldl1 cons _%r223903%_ __tmp224737)))
+                 (_%lp223900%_ _%rest223923%_ _%r223903%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_%lp213913%_
-                                                _%rest213936%_
-                                                _%r213916%_)))))))
-                           (if (pair? _%rest213917213925%_)
-                               (let ((_%hd213922213953%_
+                                               (_%lp223900%_
+                                                _%rest223923%_
+                                                _%r223903%_)))))))
+                           (if (pair? _%rest223904223912%_)
+                               (let ((_%hd223909223940%_
                                       (let ()
                                         (declare (not safe))
-                                        (##car _%rest213917213925%_)))
-                                     (_%tl213923213955%_
+                                        (##car _%rest223904223912%_)))
+                                     (_%tl223910223942%_
                                       (let ()
                                         (declare (not safe))
-                                        (##cdr _%rest213917213925%_))))
-                                 (let* ((_%in213958%_ _%hd213922213953%_)
-                                        (_%rest213960%_ _%tl213923213955%_))
-                                   (_%K213921213950%_
-                                    _%rest213960%_
-                                    _%in213958%_)))
-                               (_%else213919213933%_)))))))
-                  (_%find-deps213832%_
-                   (lambda (_%rest213840%_ _%deps213841%_)
-                     (let* ((_%rest213842213850%_ _%rest213840%_)
-                            (_%else213844213858%_ (lambda () _%deps213841%_))
-                            (_%K213846213895%_
-                             (lambda (_%rest213861%_ _%hd213862%_)
+                                        (##cdr _%rest223904223912%_))))
+                                 (let* ((_%in223945%_ _%hd223909223940%_)
+                                        (_%rest223947%_ _%tl223910223942%_))
+                                   (_%K223908223937%_
+                                    _%rest223947%_
+                                    _%in223945%_)))
+                               (_%else223906223920%_)))))))
+                  (_%find-deps223819%_
+                   (lambda (_%rest223827%_ _%deps223828%_)
+                     (let* ((_%rest223829223837%_ _%rest223827%_)
+                            (_%else223831223845%_ (lambda () _%deps223828%_))
+                            (_%K223833223882%_
+                             (lambda (_%rest223848%_ _%hd223849%_)
                                (if (let ()
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      _%hd213862%_
+                                      _%hd223849%_
                                       'gx#module-context::t))
-                                   (let ((_%id213865%_
+                                   (let ((_%id223852%_
                                           (let ()
                                             (declare (not safe))
                                             (##unchecked-structure-ref
-                                             _%hd213862%_
+                                             _%hd223849%_
                                              '1
                                              '#f
                                              '#f)))
-                                         (_%imports213866%_
+                                         (_%imports223853%_
                                           (let ()
                                             (declare (not safe))
                                             (##unchecked-structure-ref
-                                             _%hd213862%_
+                                             _%hd223849%_
                                              '8
                                              '#f
                                              '#f))))
                                      (if (let ()
                                            (declare (not safe))
                                            (__hash-get
-                                            _%ht213830%_
-                                            _%id213865%_))
-                                         (_%find-deps213832%_
-                                          _%rest213861%_
-                                          _%deps213841%_)
-                                         (let ((_%$e213869%_
+                                            _%ht223817%_
+                                            _%id223852%_))
+                                         (_%find-deps223819%_
+                                          _%rest223848%_
+                                          _%deps223828%_)
+                                         (let ((_%$e223856%_
                                                 (let ()
                                                   (declare (not safe))
                                                   (gx#core-context-prelude__%
-                                                   _%hd213862%_))))
-                                           (if _%$e213869%_
-                                               ((lambda (_%pre213872%_)
-                                                  (let ((_%xdeps213874%_
-                                                         (_%find-deps213832%_
-                                                          (cons _%pre213872%_
-                                                                _%imports213866%_)
-                                                          _%deps213841%_)))
+                                                   _%hd223849%_))))
+                                           (if _%$e223856%_
+                                               ((lambda (_%pre223859%_)
+                                                  (let ((_%xdeps223861%_
+                                                         (_%find-deps223819%_
+                                                          (cons _%pre223859%_
+                                                                _%imports223853%_)
+                                                          _%deps223828%_)))
                                                     (let ()
                                                       (declare (not safe))
                                                       (__hash-put!
-                                                       _%ht213830%_
-                                                       _%id213865%_
-                                                       _%hd213862%_))
-                                                    (_%find-deps213832%_
-                                                     _%rest213861%_
-                                                     (cons _%hd213862%_
-                                                           _%xdeps213874%_))))
-                                                _%$e213869%_)
-                                               (let ((_%xdeps213877%_
-                                                      (_%find-deps213832%_
-                                                       _%imports213866%_
-                                                       _%deps213841%_)))
+                                                       _%ht223817%_
+                                                       _%id223852%_
+                                                       _%hd223849%_))
+                                                    (_%find-deps223819%_
+                                                     _%rest223848%_
+                                                     (cons _%hd223849%_
+                                                           _%xdeps223861%_))))
+                                                _%$e223856%_)
+                                               (let ((_%xdeps223864%_
+                                                      (_%find-deps223819%_
+                                                       _%imports223853%_
+                                                       _%deps223828%_)))
                                                  (let ()
                                                    (declare (not safe))
                                                    (__hash-put!
-                                                    _%ht213830%_
-                                                    _%id213865%_
-                                                    _%hd213862%_))
-                                                 (_%find-deps213832%_
-                                                  _%rest213861%_
-                                                  (cons _%hd213862%_
-                                                        _%xdeps213877%_)))))))
+                                                    _%ht223817%_
+                                                    _%id223852%_
+                                                    _%hd223849%_))
+                                                 (_%find-deps223819%_
+                                                  _%rest223848%_
+                                                  (cons _%hd223849%_
+                                                        _%xdeps223864%_)))))))
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
-                                          _%hd213862%_
+                                          _%hd223849%_
                                           'gx#prelude-context::t))
-                                       (let ((_%id213880%_
+                                       (let ((_%id223867%_
                                               (let ()
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
-                                                 _%hd213862%_
+                                                 _%hd223849%_
                                                  '1
                                                  '#f
                                                  '#f))))
                                          (if (let ()
                                                (declare (not safe))
                                                (__hash-get
-                                                _%ht213830%_
-                                                _%id213880%_))
-                                             (_%find-deps213832%_
-                                              _%rest213861%_
-                                              _%deps213841%_)
-                                             (let ((_%xdeps213884%_
-                                                    (_%find-deps213832%_
+                                                _%ht223817%_
+                                                _%id223867%_))
+                                             (_%find-deps223819%_
+                                              _%rest223848%_
+                                              _%deps223828%_)
+                                             (let ((_%xdeps223871%_
+                                                    (_%find-deps223819%_
                                                      (let ()
                                                        (declare (not safe))
                                                        (##unchecked-structure-ref
-                                                        _%hd213862%_
+                                                        _%hd223849%_
                                                         '7
                                                         '#f
                                                         '#f))
-                                                     _%deps213841%_)))
+                                                     _%deps223828%_)))
                                                (if (let ()
                                                      (declare (not safe))
                                                      (__hash-get
-                                                      _%ht213830%_
-                                                      _%id213880%_))
-                                                   (_%find-deps213832%_
-                                                    _%rest213861%_
-                                                    _%xdeps213884%_)
+                                                      _%ht223817%_
+                                                      _%id223867%_))
+                                                   (_%find-deps223819%_
+                                                    _%rest223848%_
+                                                    _%xdeps223871%_)
                                                    (begin
                                                      (let ()
                                                        (declare (not safe))
                                                        (__hash-put!
-                                                        _%ht213830%_
-                                                        _%id213880%_
-                                                        _%hd213862%_))
-                                                     (_%find-deps213832%_
-                                                      _%rest213861%_
-                                                      (cons _%hd213862%_
-                                                            _%xdeps213884%_)))))))
+                                                        _%ht223817%_
+                                                        _%id223867%_
+                                                        _%hd223849%_))
+                                                     (_%find-deps223819%_
+                                                      _%rest223848%_
+                                                      (cons _%hd223849%_
+                                                            _%xdeps223871%_)))))))
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
-                                              _%hd213862%_
+                                              _%hd223849%_
                                               'gx#module-import::t))
                                            (if (fxzero? (let ()
                                                           (declare (not safe))
                                                           (##unchecked-structure-ref
-                                                           _%hd213862%_
+                                                           _%hd223849%_
                                                            '3
                                                            '#f
                                                            '#f)))
-                                               (_%find-deps213832%_
+                                               (_%find-deps223819%_
                                                 (cons (let ()
                                                         (declare (not safe))
                                                         (##unchecked-structure-ref
-                                                         _%hd213862%_
+                                                         _%hd223849%_
                                                          '1
                                                          '#f
                                                          '#f))
-                                                      _%rest213861%_)
-                                                _%deps213841%_)
-                                               (_%find-deps213832%_
-                                                _%rest213861%_
-                                                _%deps213841%_))
+                                                      _%rest223848%_)
+                                                _%deps223828%_)
+                                               (_%find-deps223819%_
+                                                _%rest223848%_
+                                                _%deps223828%_))
                                            (if (let ()
                                                  (declare (not safe))
                                                  (##structure-direct-instance-of?
-                                                  _%hd213862%_
+                                                  _%hd223849%_
                                                   'gx#module-export::t))
-                                               (_%find-deps213832%_
+                                               (_%find-deps223819%_
                                                 (cons (let ()
                                                         (declare (not safe))
                                                         (##unchecked-structure-ref
-                                                         _%hd213862%_
+                                                         _%hd223849%_
                                                          '1
                                                          '#f
                                                          '#f))
-                                                      _%rest213861%_)
-                                                _%deps213841%_)
+                                                      _%rest223848%_)
+                                                _%deps223828%_)
                                                (if (let ()
                                                      (declare (not safe))
                                                      (##structure-direct-instance-of?
-                                                      _%hd213862%_
+                                                      _%hd223849%_
                                                       'gx#import-set::t))
                                                    (if (fxzero? (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
-                          (##unchecked-structure-ref _%hd213862%_ '2 '#f '#f)))
-               (_%find-deps213832%_
+                          (##unchecked-structure-ref _%hd223849%_ '2 '#f '#f)))
+               (_%find-deps223819%_
                 (cons (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref _%hd213862%_ '1 '#f '#f))
-                      _%rest213861%_)
-                _%deps213841%_)
+                        (##unchecked-structure-ref _%hd223849%_ '1 '#f '#f))
+                      _%rest223848%_)
+                _%deps223828%_)
                (if (fxpositive?
                     (let ()
                       (declare (not safe))
-                      (##unchecked-structure-ref _%hd213862%_ '2 '#f '#f)))
-                   (let ((_%xdeps213891%_
-                          (_%import-set-template213831%_ _%hd213862%_ '0)))
-                     (_%find-deps213832%_
+                      (##unchecked-structure-ref _%hd223849%_ '2 '#f '#f)))
+                   (let ((_%xdeps223878%_
+                          (_%import-set-template223818%_ _%hd223849%_ '0)))
+                     (_%find-deps223819%_
                       (let ()
                         (declare (not safe))
-                        (__foldl1 cons _%rest213861%_ _%xdeps213891%_))
-                      _%deps213841%_))
-                   (_%find-deps213832%_ _%rest213861%_ _%deps213841%_)))
+                        (__foldl1 cons _%rest223848%_ _%xdeps223878%_))
+                      _%deps223828%_))
+                   (_%find-deps223819%_ _%rest223848%_ _%deps223828%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (let ()
                                                      (declare (not safe))
                                                      (error '"Unexpected module import"
-                                                            _%hd213862%_))))))))))
-                       (if (pair? _%rest213842213850%_)
-                           (let ((_%hd213847213898%_
+                                                            _%hd223849%_))))))))))
+                       (if (pair? _%rest223829223837%_)
+                           (let ((_%hd223834223885%_
                                   (let ()
                                     (declare (not safe))
-                                    (##car _%rest213842213850%_)))
-                                 (_%tl213848213900%_
+                                    (##car _%rest223829223837%_)))
+                                 (_%tl223835223887%_
                                   (let ()
                                     (declare (not safe))
-                                    (##cdr _%rest213842213850%_))))
-                             (let* ((_%hd213903%_ _%hd213847213898%_)
-                                    (_%rest213905%_ _%tl213848213900%_))
-                               (_%K213846213895%_
-                                _%rest213905%_
-                                _%hd213903%_)))
-                           (_%else213844213858%_))))))
-          (let ((__tmp214751
+                                    (##cdr _%rest223829223837%_))))
+                             (let* ((_%hd223890%_ _%hd223834223885%_)
+                                    (_%rest223892%_ _%tl223835223887%_))
+                               (_%K223833223882%_
+                                _%rest223892%_
+                                _%hd223890%_)))
+                           (_%else223831223845%_))))))
+          (let ((__tmp224738
                  (filter gx#expander-context-id
-                         (_%find-deps213832%_
-                          (let ((_%$e213834%_
+                         (_%find-deps223819%_
+                          (let ((_%$e223821%_
                                  (let ()
                                    (declare (not safe))
                                    (gx#core-context-prelude__%
-                                    _%ctx213828%_))))
-                            (if _%$e213834%_
-                                ((lambda (_%pre213837%_)
-                                   (cons _%pre213837%_
+                                    _%ctx223815%_))))
+                            (if _%$e223821%_
+                                ((lambda (_%pre223824%_)
+                                   (cons _%pre223824%_
                                          (##structure-ref
-                                          _%ctx213828%_
+                                          _%ctx223815%_
                                           '8
                                           gx#module-context::t
                                           '#f)))
-                                 _%$e213834%_)
+                                 _%$e223821%_)
                                 (##structure-ref
-                                 _%ctx213828%_
+                                 _%ctx223815%_
                                  '8
                                  gx#module-context::t
                                  '#f)))
                           '()))))
             (declare (not safe))
-            (##reverse __tmp214751)))))
+            (##reverse __tmp224738)))))
     (define gxc#find-static-module-file
-      (lambda (_%ctx213758%_)
-        (let* ((_%context-id213760%_
+      (lambda (_%ctx223745%_)
+        (let* ((_%context-id223747%_
                 (if (let ()
                       (declare (not safe))
                       (##structure-instance-of?
-                       _%ctx213758%_
+                       _%ctx223745%_
                        'gx#module-context::t))
                     (let ()
                       (declare (not safe))
-                      (##unchecked-structure-ref _%ctx213758%_ '1 '#f '#f))
-                    (string->symbol _%ctx213758%_)))
-               (_%scm213762%_
-                (let ((__tmp214752
-                       (gxc#static-module-name _%context-id213760%_)))
+                      (##unchecked-structure-ref _%ctx223745%_ '1 '#f '#f))
+                    (string->symbol _%ctx223745%_)))
+               (_%scm223749%_
+                (let ((__tmp224739
+                       (gxc#static-module-name _%context-id223747%_)))
                   (declare (not safe))
-                  (##string-append __tmp214752 '".scm")))
-               (_%dirs213764%_ (let () (declare (not safe)) (load-path)))
-               (_%dirs213770%_
-                (let ((_%user-libpath213766%_
+                  (##string-append __tmp224739 '".scm")))
+               (_%dirs223751%_ (let () (declare (not safe)) (load-path)))
+               (_%dirs223757%_
+                (let ((_%user-libpath223753%_
                        (let ()
                          (declare (not safe))
                          (##getenv '"GERBIL_PATH" '#f))))
-                  (if _%user-libpath213766%_
-                      (let ((_%user-libpath213768%_
-                             (path-expand '"lib" _%user-libpath213766%_)))
+                  (if _%user-libpath223753%_
+                      (let ((_%user-libpath223755%_
+                             (path-expand '"lib" _%user-libpath223753%_)))
                         (if (let ()
                               (declare (not safe))
-                              (##member _%user-libpath213768%_ _%dirs213764%_))
-                            _%dirs213764%_
-                            (cons _%user-libpath213768%_ _%dirs213764%_)))
-                      _%dirs213764%_)))
-               (_%dirs213780%_
-                (let ((_%$e213772%_
+                              (##member _%user-libpath223755%_ _%dirs223751%_))
+                            _%dirs223751%_
+                            (cons _%user-libpath223755%_ _%dirs223751%_)))
+                      _%dirs223751%_)))
+               (_%dirs223767%_
+                (let ((_%$e223759%_
                        (let ()
                          (declare (not safe))
                          (gxc#current-compile-output-dir))))
-                  (if _%$e213772%_
-                      ((lambda (_%g213774213776%_)
-                         (cons _%g213774213776%_ _%dirs213770%_))
-                       _%$e213772%_)
-                      _%dirs213770%_)))
-               (_%dirs213786%_
-                (let ((__tmp214753
-                       (lambda (_%g213781213783%_)
-                         (path-expand '"static" _%g213781213783%_))))
+                  (if _%$e223759%_
+                      ((lambda (_%g223761223763%_)
+                         (cons _%g223761223763%_ _%dirs223757%_))
+                       _%$e223759%_)
+                      _%dirs223757%_)))
+               (_%dirs223773%_
+                (let ((__tmp224740
+                       (lambda (_%g223768223770%_)
+                         (path-expand '"static" _%g223768223770%_))))
                   (declare (not safe))
-                  (##map __tmp214753 _%dirs213780%_))))
-          (let _%lp213789%_ ((_%rest213791%_ _%dirs213786%_))
-            (let* ((_%rest213792213800%_ _%rest213791%_)
-                   (_%else213794213808%_
+                  (##map __tmp224740 _%dirs223767%_))))
+          (let _%lp223776%_ ((_%rest223778%_ _%dirs223773%_))
+            (let* ((_%rest223779223787%_ _%rest223778%_)
+                   (_%else223781223795%_
                     (lambda ()
-                      (let ((__tmp214754
+                      (let ((__tmp224741
                              (##structure-ref
-                              _%ctx213758%_
+                              _%ctx223745%_
                               '1
                               gx#expander-context::t
                               '#f)))
                         (declare (not safe))
                         (gxc#raise-compile-error
                          '"cannot find static module"
-                         __tmp214754
-                         _%scm213762%_))))
-                   (_%K213796213816%_
-                    (lambda (_%rest213811%_ _%dir213812%_)
-                      (let ((_%path213814%_
-                             (path-expand _%scm213762%_ _%dir213812%_)))
+                         __tmp224741
+                         _%scm223749%_))))
+                   (_%K223783223803%_
+                    (lambda (_%rest223798%_ _%dir223799%_)
+                      (let ((_%path223801%_
+                             (path-expand _%scm223749%_ _%dir223799%_)))
                         (if (let ()
                               (declare (not safe))
-                              (##file-exists? _%path213814%_))
-                            _%path213814%_
-                            (_%lp213789%_ _%rest213811%_))))))
-              (if (pair? _%rest213792213800%_)
-                  (let ((_%hd213797213819%_
+                              (##file-exists? _%path223801%_))
+                            _%path223801%_
+                            (_%lp223776%_ _%rest223798%_))))))
+              (if (pair? _%rest223779223787%_)
+                  (let ((_%hd223784223806%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest213792213800%_)))
-                        (_%tl213798213821%_
+                           (##car _%rest223779223787%_)))
+                        (_%tl223785223808%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest213792213800%_))))
-                    (let* ((_%dir213824%_ _%hd213797213819%_)
-                           (_%rest213826%_ _%tl213798213821%_))
-                      (_%K213796213816%_ _%rest213826%_ _%dir213824%_)))
-                  (_%else213794213808%_)))))))
+                           (##cdr _%rest223779223787%_))))
+                    (let* ((_%dir223811%_ _%hd223784223806%_)
+                           (_%rest223813%_ _%tl223785223808%_))
+                      (_%K223783223803%_ _%rest223813%_ _%dir223811%_)))
+                  (_%else223781223795%_)))))))
     (define gxc#file-empty?
-      (lambda (_%path213756%_)
-        (zero? (let ((__tmp214755 (file-info _%path213756%_ '#t)))
+      (lambda (_%path223743%_)
+        (zero? (let ((__tmp224742 (file-info _%path223743%_ '#t)))
                  (declare (not safe))
-                 (##file-info-size __tmp214755)))))
+                 (##file-info-size __tmp224742)))))
     (define gxc#compile-top-module
-      (lambda (_%ctx213747%_)
-        (let ((__tmp214756
+      (lambda (_%ctx223734%_)
+        (let ((__tmp224743
                (lambda ()
-                 (let ((__tmp214757
+                 (let ((__tmp224744
                         (lambda ()
-                          (let ((__tmp214758
+                          (let ((__tmp224745
                                  (lambda ()
-                                   (let ((__tmp214760
+                                   (let ((__tmp224747
                                           (lambda ()
-                                            (let ((__tmp214762
+                                            (let ((__tmp224749
                                                    (lambda ()
-                                                     (let ((__tmp214764
+                                                     (let ((__tmp224751
                                                             (lambda ()
-                                                              (let ((__tmp214765
+                                                              (let ((__tmp224752
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (##structure-ref
-                              _%ctx213747%_
+                              _%ctx223734%_
                               '1
                               gx#expander-context::t
                               '#f)))
                         (declare (not safe))
-                        (gxc#verbose '"compile " __tmp214765))
+                        (gxc#verbose '"compile " __tmp224752))
                       (if (let ()
                             (declare (not safe))
                             (gxc#current-compile-optimize))
-                          (let ((__tmp214766
+                          (let ((__tmp224753
                                  (lambda ()
                                    (let ()
                                      (declare (not safe))
-                                     (gxc#optimize! _%ctx213747%_)))))
+                                     (gxc#optimize! _%ctx223734%_)))))
                             (declare (not safe))
-                            (__with-lock gxc#+driver-mutex+ __tmp214766))
+                            (__with-lock gxc#+driver-mutex+ __tmp224753))
                           '#!void)
-                      (gxc#collect-bindings _%ctx213747%_)
-                      (gxc#compile-runtime-code _%ctx213747%_)
-                      (gxc#compile-meta-code _%ctx213747%_)
+                      (gxc#collect-bindings _%ctx223734%_)
+                      (gxc#compile-runtime-code _%ctx223734%_)
+                      (gxc#compile-meta-code _%ctx223734%_)
                       (if (and (let ()
                                  (declare (not safe))
                                  (gxc#current-compile-optimize))
                                (let ()
                                  (declare (not safe))
                                  (gxc#current-compile-generate-ssxi)))
-                          (gxc#compile-ssxi-code _%ctx213747%_)
+                          (gxc#compile-ssxi-code _%ctx223734%_)
                           '#!void)))
-                   (__tmp214763
+                   (__tmp224750
                     (let ()
                       (declare (not safe))
                       (make-hash-table__%
@@ -2017,21 +2017,21 @@
                        absent-value))))
                (declare (not safe))
                (call-with-parameters__1
-                __tmp214764
+                __tmp224751
                 gxc#current-compile-runtime-names
-                __tmp214763))))
+                __tmp224750))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (__tmp214761
+                                                  (__tmp224748
                                                    (let ()
                                                      (declare (not safe))
                                                      (make-hash-table-eq))))
                                               (declare (not safe))
                                               (call-with-parameters__1
-                                               __tmp214762
+                                               __tmp224749
                                                gxc#current-compile-runtime-sections
-                                               __tmp214761))))
-                                         (__tmp214759
-                                          (let ((__obj214660
+                                               __tmp224748))))
+                                         (__tmp224746
+                                          (let ((__obj224647
                                                  (let ()
                                                    (declare (not safe))
                                                    (##structure
@@ -2041,166 +2041,166 @@
                                             (let ()
                                               (declare (not safe))
                                               (gxc#symbol-table:::init!
-                                               __obj214660))
-                                            __obj214660)))
+                                               __obj224647))
+                                            __obj224647)))
                                      (declare (not safe))
                                      (call-with-parameters__1
-                                      __tmp214760
+                                      __tmp224747
                                       gxc#current-compile-symbol-table
-                                      __tmp214759)))))
+                                      __tmp224746)))))
                             (declare (not safe))
                             (call-with-parameters__1
-                             __tmp214758
+                             __tmp224745
                              gx#current-expander-marks
                              '())))))
                    (declare (not safe))
                    (call-with-parameters__1
-                    __tmp214757
+                    __tmp224744
                     gx#current-expander-phi
                     '0)))))
           (declare (not safe))
           (call-with-parameters__1
-           __tmp214756
+           __tmp224743
            gx#current-expander-context
-           _%ctx213747%_))))
+           _%ctx223734%_))))
     (define gxc#collect-bindings
-      (lambda (_%ctx213745%_)
-        (let ((__tmp214767
-               (##structure-ref _%ctx213745%_ '11 gx#module-context::t '#f)))
+      (lambda (_%ctx223732%_)
+        (let ((__tmp224754
+               (##structure-ref _%ctx223732%_ '11 gx#module-context::t '#f)))
           (declare (not safe))
-          (gxc#apply-collect-bindings __tmp214767))))
+          (gxc#apply-collect-bindings __tmp224754))))
     (define gxc#compile-runtime-code
-      (lambda (_%ctx213689%_)
-        (letrec ((_%compile1213691%_
-                  (lambda (_%ctx213734%_)
-                    (let* ((_%code213736%_
+      (lambda (_%ctx223676%_)
+        (letrec ((_%compile1223678%_
+                  (lambda (_%ctx223721%_)
+                    (let* ((_%code223723%_
                             (##structure-ref
-                             _%ctx213734%_
+                             _%ctx223721%_
                              '11
                              gx#module-context::t
                              '#f))
-                           (_%rtm213740%_
-                            (let ((_%idstr213738%_
-                                   (let ((__tmp214768
+                           (_%rtm223727%_
+                            (let ((_%idstr223725%_
+                                   (let ((__tmp224755
                                           (##structure-ref
-                                           _%ctx213734%_
+                                           _%ctx223721%_
                                            '1
                                            gx#expander-context::t
                                            '#f)))
                                      (declare (not safe))
                                      (gxc#module-id->path-string
-                                      __tmp214768))))
+                                      __tmp224755))))
                               (declare (not safe))
-                              (##string-append _%idstr213738%_ '"~0")))
-                           (_%rtc?213742%_
+                              (##string-append _%idstr223725%_ '"~0")))
+                           (_%rtc?223729%_
                             (let ()
                               (declare (not safe))
-                              (gxc#apply-find-runtime-code _%code213736%_))))
-                      (if _%rtc?213742%_
-                          (let ((__tmp214769
+                              (gxc#apply-find-runtime-code _%code223723%_))))
+                      (if _%rtc?223729%_
+                          (let ((__tmp224756
                                  (let ()
                                    (declare (not safe))
                                    (gxc#current-compile-runtime-sections))))
                             (declare (not safe))
                             (hash-put!
-                             __tmp214769
-                             _%ctx213734%_
-                             _%rtm213740%_))
+                             __tmp224756
+                             _%ctx223721%_
+                             _%rtm223727%_))
                           '#!void)
-                      (_%generate-runtime-code213693%_
-                       _%ctx213734%_
-                       _%code213736%_
-                       (if _%rtc?213742%_ _%rtm213740%_ '#f)))))
-                 (_%context-timestamp213692%_
-                  (lambda (_%ctx213732%_)
-                    (let ((__tmp214770
-                           (let ((__tmp214771
+                      (_%generate-runtime-code223680%_
+                       _%ctx223721%_
+                       _%code223723%_
+                       (if _%rtc?223729%_ _%rtm223727%_ '#f)))))
+                 (_%context-timestamp223679%_
+                  (lambda (_%ctx223719%_)
+                    (let ((__tmp224757
+                           (let ((__tmp224758
                                   (symbol->string
                                    (##structure-ref
-                                    _%ctx213732%_
+                                    _%ctx223719%_
                                     '1
                                     gx#expander-context::t
                                     '#f))))
                              (declare (not safe))
-                             (##string-append __tmp214771 '"::timestamp"))))
+                             (##string-append __tmp224758 '"::timestamp"))))
                       (declare (not safe))
-                      (##string->symbol __tmp214770))))
-                 (_%generate-runtime-code213693%_
-                  (lambda (_%ctx213700%_ _%code213701%_ _%rtm213702%_)
-                    (let* ((_%runtime-code?213704%_ (if _%rtm213702%_ '#t '#f))
-                           (_%lifts213706%_ (box '()))
-                           (_%runtime-code213713%_
-                            (if _%runtime-code?213704%_
-                                (let ((__tmp214772
+                      (##string->symbol __tmp224757))))
+                 (_%generate-runtime-code223680%_
+                  (lambda (_%ctx223687%_ _%code223688%_ _%rtm223689%_)
+                    (let* ((_%runtime-code?223691%_ (if _%rtm223689%_ '#t '#f))
+                           (_%lifts223693%_ (box '()))
+                           (_%runtime-code223700%_
+                            (if _%runtime-code?223691%_
+                                (let ((__tmp224759
                                        (lambda ()
-                                         (let ((__tmp214773
+                                         (let ((__tmp224760
                                                 (lambda ()
-                                                  (let ((__tmp214774
+                                                  (let ((__tmp224761
                                                          (lambda ()
-                                                           (let ((__tmp214776
+                                                           (let ((__tmp224763
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (lambda ()
-                            (let ((__tmp214778
+                            (let ((__tmp224765
                                    (lambda ()
                                      (let ()
                                        (declare (not safe))
                                        (gxc#apply-generate-runtime
-                                        _%code213701%_))))
-                                  (__tmp214777
+                                        _%code223688%_))))
+                                  (__tmp224764
                                    (let ()
                                      (declare (not safe))
                                      (gxc#make-bound-identifier-table))))
                               (declare (not safe))
                               (call-with-parameters__1
-                               __tmp214778
+                               __tmp224765
                                gxc#current-compile-identifiers
-                               __tmp214777))))
-                         (__tmp214775
+                               __tmp224764))))
+                         (__tmp224762
                           (let () (declare (not safe)) (make-hash-table-eq))))
                      (declare (not safe))
                      (call-with-parameters__1
-                      __tmp214776
+                      __tmp224763
                       gxc#current-compile-marks
-                      __tmp214775)))))
+                      __tmp224762)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (call-with-parameters__1
-                                                     __tmp214774
+                                                     __tmp224761
                                                      gxc#current-compile-lift
-                                                     _%lifts213706%_)))))
+                                                     _%lifts223693%_)))))
                                            (declare (not safe))
                                            (call-with-parameters__1
-                                            __tmp214773
+                                            __tmp224760
                                             gx#current-expander-phi
                                             '0)))))
                                   (declare (not safe))
                                   (call-with-parameters__1
-                                   __tmp214772
+                                   __tmp224759
                                    gx#current-expander-context
-                                   _%ctx213700%_))
+                                   _%ctx223687%_))
                                 '#f))
-                           (_%runtime-code213715%_
-                            (if _%runtime-code?213704%_
-                                (if (null? (unbox _%lifts213706%_))
-                                    _%runtime-code213713%_
+                           (_%runtime-code223702%_
+                            (if _%runtime-code?223691%_
+                                (if (null? (unbox _%lifts223693%_))
+                                    _%runtime-code223700%_
                                     (cons 'begin
-                                          (let ((__tmp214780
-                                                 (cons _%runtime-code213713%_
+                                          (let ((__tmp224767
+                                                 (cons _%runtime-code223700%_
                                                        '()))
-                                                (__tmp214779
-                                                 (reverse (unbox _%lifts213706%_))))
+                                                (__tmp224766
+                                                 (reverse (unbox _%lifts223693%_))))
                                             (declare (not safe))
                                             (__foldr1
                                              cons
-                                             __tmp214780
-                                             __tmp214779))))
+                                             __tmp224767
+                                             __tmp224766))))
                                 '#f))
-                           (_%runtime-code213717%_
-                            (if _%runtime-code?213704%_
+                           (_%runtime-code223704%_
+                            (if _%runtime-code?223691%_
                                 (cons 'begin
                                       (cons (cons 'define
-                                                  (cons (_%context-timestamp213692%_
-                                                         _%ctx213700%_)
+                                                  (cons (_%context-timestamp223679%_
+                                                         _%ctx223687%_)
                                                         (cons (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2208,800 +2208,800 @@
                         (gxc#current-compile-timestamp))
                       '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (cons _%runtime-code213715%_ '())))
+                                            (cons _%runtime-code223702%_ '())))
                                 '#f))
-                           (_%loader-code213720%_
-                            (let ((__tmp214781
+                           (_%loader-code223707%_
+                            (let ((__tmp224768
                                    (lambda ()
                                      (let ()
                                        (declare (not safe))
                                        (gxc#apply-generate-loader
-                                        _%code213701%_)))))
+                                        _%code223688%_)))))
                               (declare (not safe))
                               (call-with-parameters__1
-                               __tmp214781
+                               __tmp224768
                                gx#current-expander-context
-                               _%ctx213700%_)))
-                           (_%loader-code213722%_
+                               _%ctx223687%_)))
+                           (_%loader-code223709%_
                             (cons 'begin
-                                  (cons _%loader-code213720%_
-                                        (cons (if _%runtime-code?213704%_
+                                  (cons _%loader-code223707%_
+                                        (cons (if _%runtime-code?223691%_
                                                   (cons 'load-module
-                                                        (cons _%rtm213702%_
+                                                        (cons _%rtm223689%_
                                                               '()))
                                                   '(begin))
                                               '()))))
-                           (_%scm0213724%_
-                            (gxc#compile-output-file _%ctx213700%_ '0 '".scm"))
-                           (_%scmrt213726%_
+                           (_%scm0223711%_
+                            (gxc#compile-output-file _%ctx223687%_ '0 '".scm"))
+                           (_%scmrt223713%_
                             (gxc#compile-output-file
-                             _%ctx213700%_
+                             _%ctx223687%_
                              '#f
                              '".scm"))
-                           (_%scms213728%_
-                            (gxc#compile-static-output-file _%ctx213700%_)))
-                      (if _%runtime-code?213704%_
+                           (_%scms223715%_
+                            (gxc#compile-static-output-file _%ctx223687%_)))
+                      (if _%runtime-code?223691%_
                           (gxc#compile-scm-file__0
-                           _%scm0213724%_
-                           _%runtime-code213717%_)
+                           _%scm0223711%_
+                           _%runtime-code223704%_)
                           '#!void)
-                      (let ((__tmp214782
+                      (let ((__tmp224769
                              (lambda ()
                                (gxc#compile-scm-file__0
-                                _%scmrt213726%_
-                                _%loader-code213722%_))))
+                                _%scmrt223713%_
+                                _%loader-code223709%_))))
                         (declare (not safe))
                         (call-with-parameters__1
-                         __tmp214782
+                         __tmp224769
                          gxc#current-compile-gsc-options
                          '#f))
                       (if (let ()
                             (declare (not safe))
-                            (##file-exists? _%scms213728%_))
+                            (##file-exists? _%scms223715%_))
                           (let ()
                             (declare (not safe))
-                            (##delete-file _%scms213728%_))
+                            (##delete-file _%scms223715%_))
                           '#!void)
-                      (if _%runtime-code?213704%_
+                      (if _%runtime-code?223691%_
                           (let ()
                             (declare (not safe))
-                            (##copy-file _%scm0213724%_ _%scms213728%_))
+                            (##copy-file _%scm0223711%_ _%scms223715%_))
                           (let ()
                             (declare (not safe))
-                            (##call-with-output-file _%scms213728%_ void)))))))
-          (let* ((_%all-modules213695%_
-                  (cons _%ctx213689%_ (gxc#lift-nested-modules _%ctx213689%_)))
-                 (__tmp214783
-                  (lambda (_%ctx213697%_)
-                    (let ((__tmp214784
-                           (lambda () (_%compile1213691%_ _%ctx213697%_))))
+                            (##call-with-output-file _%scms223715%_ void)))))))
+          (let* ((_%all-modules223682%_
+                  (cons _%ctx223676%_ (gxc#lift-nested-modules _%ctx223676%_)))
+                 (__tmp224770
+                  (lambda (_%ctx223684%_)
+                    (let ((__tmp224771
+                           (lambda () (_%compile1223678%_ _%ctx223684%_))))
                       (declare (not safe))
                       (call-with-parameters__1
-                       __tmp214784
+                       __tmp224771
                        gxc#current-compile-decls
                        '())))))
             (declare (not safe))
-            (##for-each __tmp214783 _%all-modules213695%_)))))
+            (##for-each __tmp224770 _%all-modules223682%_)))))
     (define gxc#compile-meta-code
-      (lambda (_%ctx213588%_)
-        (letrec ((_%compile-ssi213590%_
-                  (lambda (_%code213657%_)
-                    (let* ((_%path213659%_
+      (lambda (_%ctx223575%_)
+        (letrec ((_%compile-ssi223577%_
+                  (lambda (_%code223644%_)
+                    (let* ((_%path223646%_
                             (gxc#compile-output-file
-                             _%ctx213588%_
+                             _%ctx223575%_
                              '#f
                              '".ssi"))
-                           (_%prelude213671%_
-                            (let* ((_%super213661%_
+                           (_%prelude223658%_
+                            (let* ((_%super223648%_
                                     (##structure-ref
-                                     _%ctx213588%_
+                                     _%ctx223575%_
                                      '3
                                      gx#phi-context::t
                                      '#f))
-                                   (_%$e213663%_
+                                   (_%$e223650%_
                                     (##structure-ref
-                                     _%super213661%_
+                                     _%super223648%_
                                      '1
                                      gx#expander-context::t
                                      '#f)))
-                              (if _%$e213663%_
-                                  ((lambda (_%g213665213667%_)
+                              (if _%$e223650%_
+                                  ((lambda (_%g223652223654%_)
                                      (let ()
                                        (declare (not safe))
                                        (make-symbol__1
                                         '":"
-                                        _%g213665213667%_)))
-                                   _%$e213663%_)
+                                        _%g223652223654%_)))
+                                   _%$e223650%_)
                                   ':<root>)))
-                           (_%ns213673%_
+                           (_%ns223660%_
                             (##structure-ref
-                             _%ctx213588%_
+                             _%ctx223575%_
                              '6
                              gx#module-context::t
                              '#f))
-                           (_%idstr213675%_
+                           (_%idstr223662%_
                             (symbol->string
                              (##structure-ref
-                              _%ctx213588%_
+                              _%ctx223575%_
                               '1
                               gx#expander-context::t
                               '#f)))
-                           (_%pkg213683%_
-                            (let ((_%$e213677%_
+                           (_%pkg223670%_
+                            (let ((_%$e223664%_
                                    (let ()
                                      (declare (not safe))
-                                     (string-rindex__0 _%idstr213675%_ '#\/))))
-                              (if _%$e213677%_
-                                  ((lambda (_%x213680%_)
-                                     (let ((__tmp214785
+                                     (string-rindex__0 _%idstr223662%_ '#\/))))
+                              (if _%$e223664%_
+                                  ((lambda (_%x223667%_)
+                                     (let ((__tmp224772
                                             (substring
-                                             _%idstr213675%_
+                                             _%idstr223662%_
                                              '0
-                                             _%x213680%_)))
+                                             _%x223667%_)))
                                        (declare (not safe))
-                                       (##string->symbol __tmp214785)))
-                                   _%$e213677%_)
+                                       (##string->symbol __tmp224772)))
+                                   _%$e223664%_)
                                   '#f)))
-                           (_%rt213685%_
-                            (let ((__tmp214786
+                           (_%rt223672%_
+                            (let ((__tmp224773
                                    (let ()
                                      (declare (not safe))
                                      (gxc#current-compile-runtime-sections))))
                               (declare (not safe))
-                              (hash-get __tmp214786 _%ctx213588%_))))
+                              (hash-get __tmp224773 _%ctx223575%_))))
                       (let ()
                         (declare (not safe))
-                        (gxc#verbose '"compile " _%path213659%_))
+                        (gxc#verbose '"compile " _%path223646%_))
                       (gxc#with-output-to-scheme-file
-                       _%path213659%_
+                       _%path223646%_
                        (lambda ()
                          (let ()
                            (declare (not safe))
-                           (displayln '"prelude:" '" " _%prelude213671%_))
-                         (if _%pkg213683%_
+                           (displayln '"prelude:" '" " _%prelude223658%_))
+                         (if _%pkg223670%_
                              (let ()
                                (declare (not safe))
-                               (displayln '"package:" '" " _%pkg213683%_))
+                               (displayln '"package:" '" " _%pkg223670%_))
                              '#!void)
                          (let ()
                            (declare (not safe))
-                           (displayln '"namespace:" '" " _%ns213673%_))
+                           (displayln '"namespace:" '" " _%ns223660%_))
                          (newline)
-                         (pretty-print _%code213657%_)
-                         (if _%rt213685%_
+                         (pretty-print _%code223644%_)
+                         (if _%rt223672%_
                              (pretty-print
                               (cons '%#call
                                     (cons (cons '%#ref (cons 'load-module '()))
                                           (cons (cons '%#quote
-                                                      (cons _%rt213685%_ '()))
+                                                      (cons _%rt223672%_ '()))
                                                 '()))))
                              '#!void))))))
-                 (_%compile-phi213591%_
-                  (lambda (_%part213596%_)
-                    (let* ((_%part213597213610%_ _%part213596%_)
-                           (_%E213599213614%_
+                 (_%compile-phi223578%_
+                  (lambda (_%part223583%_)
+                    (let* ((_%part223584223597%_ _%part223583%_)
+                           (_%E223586223601%_
                             (lambda ()
                               (let ()
                                 (declare (not safe))
                                 (error '"No clause matching"
-                                       _%part213597213610%_
+                                       _%part223584223597%_
                                        '([phi-ctx phi n code])))
                               '#!void))
-                           (_%K213600213626%_
-                            (lambda (_%code213617%_
-                                     _%n213618%_
-                                     _%phi213619%_
-                                     _%phi-ctx213620%_)
-                              (let ((_%code213624%_
-                                     (let ((__tmp214787
+                           (_%K223587223613%_
+                            (lambda (_%code223604%_
+                                     _%n223605%_
+                                     _%phi223606%_
+                                     _%phi-ctx223607%_)
+                              (let ((_%code223611%_
+                                     (let ((__tmp224774
                                             (lambda ()
-                                              (let ((__tmp214788
+                                              (let ((__tmp224775
                                                      (lambda ()
                                                        (gxc#generate-runtime-phi
-                                                        _%code213617%_))))
+                                                        _%code223604%_))))
                                                 (declare (not safe))
                                                 (call-with-parameters__1
-                                                 __tmp214788
+                                                 __tmp224775
                                                  gx#current-expander-phi
-                                                 _%phi213619%_)))))
+                                                 _%phi223606%_)))))
                                        (declare (not safe))
                                        (call-with-parameters__1
-                                        __tmp214787
+                                        __tmp224774
                                         gx#current-expander-context
-                                        _%phi-ctx213620%_))))
+                                        _%phi-ctx223607%_))))
                                 (gxc#compile-scm-file__%
                                  (gxc#compile-output-file
-                                  _%ctx213588%_
-                                  _%n213618%_
+                                  _%ctx223575%_
+                                  _%n223605%_
                                   '".scm")
-                                 _%code213624%_
+                                 _%code223611%_
                                  '#t)))))
-                      (if (pair? _%part213597213610%_)
-                          (let ((_%hd213601213629%_
+                      (if (pair? _%part223584223597%_)
+                          (let ((_%hd223588223616%_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _%part213597213610%_)))
-                                (_%tl213602213631%_
+                                   (##car _%part223584223597%_)))
+                                (_%tl223589223618%_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _%part213597213610%_))))
-                            (let ((_%phi-ctx213634%_ _%hd213601213629%_))
-                              (if (pair? _%tl213602213631%_)
-                                  (let ((_%hd213603213636%_
+                                   (##cdr _%part223584223597%_))))
+                            (let ((_%phi-ctx223621%_ _%hd223588223616%_))
+                              (if (pair? _%tl223589223618%_)
+                                  (let ((_%hd223590223623%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%tl213602213631%_)))
-                                        (_%tl213604213638%_
+                                           (##car _%tl223589223618%_)))
+                                        (_%tl223591223625%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%tl213602213631%_))))
-                                    (let ((_%phi213641%_ _%hd213603213636%_))
-                                      (if (pair? _%tl213604213638%_)
-                                          (let ((_%hd213605213643%_
+                                           (##cdr _%tl223589223618%_))))
+                                    (let ((_%phi223628%_ _%hd223590223623%_))
+                                      (if (pair? _%tl223591223625%_)
+                                          (let ((_%hd223592223630%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _%tl213604213638%_)))
-                                                (_%tl213606213645%_
+                                                   (##car _%tl223591223625%_)))
+                                                (_%tl223593223632%_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _%tl213604213638%_))))
-                                            (let ((_%n213648%_
-                                                   _%hd213605213643%_))
-                                              (if (pair? _%tl213606213645%_)
-                                                  (let ((_%hd213607213650%_
+                                                   (##cdr _%tl223591223625%_))))
+                                            (let ((_%n223635%_
+                                                   _%hd223592223630%_))
+                                              (if (pair? _%tl223593223632%_)
+                                                  (let ((_%hd223594223637%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _%tl213606213645%_)))
-                                                        (_%tl213608213652%_
+                                                           (##car _%tl223593223632%_)))
+                                                        (_%tl223595223639%_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _%tl213606213645%_))))
-                                                    (let ((_%code213655%_
-                                                           _%hd213607213650%_))
-                                                      (if (null? _%tl213608213652%_)
-                                                          (_%K213600213626%_
-                                                           _%code213655%_
-                                                           _%n213648%_
-                                                           _%phi213641%_
-                                                           _%phi-ctx213634%_)
-                                                          (_%E213599213614%_))))
-                                                  (_%E213599213614%_))))
-                                          (_%E213599213614%_))))
-                                  (_%E213599213614%_))))
-                          (_%E213599213614%_))))))
-          (let ((_g214789_ (gxc#generate-meta-code _%ctx213588%_)))
+                                                           (##cdr _%tl223593223632%_))))
+                                                    (let ((_%code223642%_
+                                                           _%hd223594223637%_))
+                                                      (if (null? _%tl223595223639%_)
+                                                          (_%K223587223613%_
+                                                           _%code223642%_
+                                                           _%n223635%_
+                                                           _%phi223628%_
+                                                           _%phi-ctx223621%_)
+                                                          (_%E223586223601%_))))
+                                                  (_%E223586223601%_))))
+                                          (_%E223586223601%_))))
+                                  (_%E223586223601%_))))
+                          (_%E223586223601%_))))))
+          (let ((_g224776_ (gxc#generate-meta-code _%ctx223575%_)))
             (begin
-              (let ((_g214790_
+              (let ((_g224777_
                      (let ()
                        (declare (not safe))
-                       (if (##values? _g214789_)
-                           (##values-length _g214789_)
+                       (if (##values? _g224776_)
+                           (##values-length _g224776_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g214790_ 2)))
-                    (error "Context expects 2 values" _g214790_)))
-              (let ((_%ssi-code213593%_
-                     (let () (declare (not safe)) (##values-ref _g214789_ 0)))
-                    (_%phi-code213594%_
-                     (let () (declare (not safe)) (##values-ref _g214789_ 1))))
+                (if (not (let () (declare (not safe)) (##fx= _g224777_ 2)))
+                    (error "Context expects 2 values" _g224777_)))
+              (let ((_%ssi-code223580%_
+                     (let () (declare (not safe)) (##values-ref _g224776_ 0)))
+                    (_%phi-code223581%_
+                     (let () (declare (not safe)) (##values-ref _g224776_ 1))))
                 (begin
-                  (_%compile-ssi213590%_ _%ssi-code213593%_)
-                  (for-each _%compile-phi213591%_ _%phi-code213594%_))))))))
+                  (_%compile-ssi223577%_ _%ssi-code223580%_)
+                  (for-each _%compile-phi223578%_ _%phi-code223581%_))))))))
     (define gxc#compile-ssxi-code
-      (lambda (_%ctx213570%_)
-        (let* ((_%path213572%_
-                (gxc#compile-output-file _%ctx213570%_ '#f '".ssxi.ss"))
-               (_%code213574%_
-                (let ((__tmp214791
+      (lambda (_%ctx223557%_)
+        (let* ((_%path223559%_
+                (gxc#compile-output-file _%ctx223557%_ '#f '".ssxi.ss"))
+               (_%code223561%_
+                (let ((__tmp224778
                        (##structure-ref
-                        _%ctx213570%_
+                        _%ctx223557%_
                         '11
                         gx#module-context::t
                         '#f)))
                   (declare (not safe))
-                  (gxc#apply-generate-ssxi __tmp214791)))
-               (_%idstr213576%_
+                  (gxc#apply-generate-ssxi __tmp224778)))
+               (_%idstr223563%_
                 (symbol->string
                  (##structure-ref
-                  _%ctx213570%_
+                  _%ctx223557%_
                   '1
                   gx#expander-context::t
                   '#f)))
-               (_%pkg213584%_
-                (let ((_%$e213578%_
+               (_%pkg223571%_
+                (let ((_%$e223565%_
                        (let ()
                          (declare (not safe))
-                         (string-rindex__0 _%idstr213576%_ '#\/))))
-                  (if _%$e213578%_
-                      ((lambda (_%x213581%_)
-                         (let ((__tmp214792
-                                (substring _%idstr213576%_ '0 _%x213581%_)))
+                         (string-rindex__0 _%idstr223563%_ '#\/))))
+                  (if _%$e223565%_
+                      ((lambda (_%x223568%_)
+                         (let ((__tmp224779
+                                (substring _%idstr223563%_ '0 _%x223568%_)))
                            (declare (not safe))
-                           (##string->symbol __tmp214792)))
-                       _%$e213578%_)
+                           (##string->symbol __tmp224779)))
+                       _%$e223565%_)
                       '#f))))
           (let ()
             (declare (not safe))
-            (gxc#verbose '"compile " _%path213572%_))
+            (gxc#verbose '"compile " _%path223559%_))
           (gxc#with-output-to-scheme-file
-           _%path213572%_
+           _%path223559%_
            (lambda ()
              (let ()
                (declare (not safe))
                (displayln '"prelude: :gerbil/compiler/ssxi"))
-             (if _%pkg213584%_
+             (if _%pkg223571%_
                  (let ()
                    (declare (not safe))
-                   (displayln '"package: " _%pkg213584%_))
+                   (displayln '"package: " _%pkg223571%_))
                  '#!void)
              (newline)
-             (pretty-print _%code213574%_))))))
+             (pretty-print _%code223561%_))))))
     (define gxc#generate-meta-code
-      (lambda (_%ctx213563%_)
-        (let* ((_%state213565%_
-                (let ((__obj214661
+      (lambda (_%ctx223550%_)
+        (let* ((_%state223552%_
+                (let ((__obj224648
                        (let ()
                          (declare (not safe))
                          (##structure gxc#meta-state::t '#f '#f '#f '#f))))
                   (let ()
                     (declare (not safe))
-                    (gxc#meta-state:::init! __obj214661 _%ctx213563%_))
-                  __obj214661))
-               (_%ssi-code213567%_
-                (let ((__tmp214793
+                    (gxc#meta-state:::init! __obj224648 _%ctx223550%_))
+                  __obj224648))
+               (_%ssi-code223554%_
+                (let ((__tmp224780
                        (##structure-ref
-                        _%ctx213563%_
+                        _%ctx223550%_
                         '11
                         gx#module-context::t
                         '#f)))
                   (declare (not safe))
                   (gxc#apply-generate-meta__%
                    '#f
-                   _%state213565%_
-                   __tmp214793))))
-          (values _%ssi-code213567%_
+                   _%state223552%_
+                   __tmp224780))))
+          (values _%ssi-code223554%_
                   (let ()
                     (declare (not safe))
-                    (gxc#meta-state-end! _%state213565%_))))))
+                    (gxc#meta-state-end! _%state223552%_))))))
     (define gxc#generate-runtime-phi
-      (lambda (_%stx213554%_)
-        (let* ((_%lifts213556%_ (box '()))
-               (__tmp214794
+      (lambda (_%stx223541%_)
+        (let* ((_%lifts223543%_ (box '()))
+               (__tmp224781
                 (lambda ()
-                  (let ((__tmp214796
+                  (let ((__tmp224783
                          (lambda ()
-                           (let ((__tmp214798
+                           (let ((__tmp224785
                                   (lambda ()
-                                    (let ((_%code213561%_
+                                    (let ((_%code223548%_
                                            (let ()
                                              (declare (not safe))
                                              (gxc#apply-generate-runtime-phi
-                                              _%stx213554%_))))
-                                      (if (null? (unbox _%lifts213556%_))
-                                          _%code213561%_
+                                              _%stx223541%_))))
+                                      (if (null? (unbox _%lifts223543%_))
+                                          _%code223548%_
                                           (cons 'begin
-                                                (let ((__tmp214800
-                                                       (cons _%code213561%_
+                                                (let ((__tmp224787
+                                                       (cons _%code223548%_
                                                              '()))
-                                                      (__tmp214799
-                                                       (reverse (unbox _%lifts213556%_))))
+                                                      (__tmp224786
+                                                       (reverse (unbox _%lifts223543%_))))
                                                   (declare (not safe))
                                                   (__foldr1
                                                    cons
-                                                   __tmp214800
-                                                   __tmp214799)))))))
-                                 (__tmp214797
+                                                   __tmp224787
+                                                   __tmp224786)))))))
+                                 (__tmp224784
                                   (let ()
                                     (declare (not safe))
                                     (gxc#make-bound-identifier-table))))
                              (declare (not safe))
                              (call-with-parameters__1
-                              __tmp214798
+                              __tmp224785
                               gxc#current-compile-identifiers
-                              __tmp214797))))
-                        (__tmp214795
+                              __tmp224784))))
+                        (__tmp224782
                          (let () (declare (not safe)) (make-hash-table-eq))))
                     (declare (not safe))
                     (call-with-parameters__1
-                     __tmp214796
+                     __tmp224783
                      gxc#current-compile-marks
-                     __tmp214795)))))
+                     __tmp224782)))))
           (declare (not safe))
           (call-with-parameters__1
-           __tmp214794
+           __tmp224781
            gxc#current-compile-lift
-           _%lifts213556%_))))
+           _%lifts223543%_))))
     (define gxc#lift-nested-modules
-      (lambda (_%ctx213550%_)
-        (let ((_%modules213552%_ (box '())))
-          (let ((__tmp214801
-                 (##structure-ref _%ctx213550%_ '11 gx#module-context::t '#f)))
+      (lambda (_%ctx223537%_)
+        (let ((_%modules223539%_ (box '())))
+          (let ((__tmp224788
+                 (##structure-ref _%ctx223537%_ '11 gx#module-context::t '#f)))
             (declare (not safe))
-            (gxc#apply-lift-modules__% '#f _%modules213552%_ __tmp214801))
-          (reverse (unbox _%modules213552%_)))))
+            (gxc#apply-lift-modules__% '#f _%modules223539%_ __tmp224788))
+          (reverse (unbox _%modules223539%_)))))
     (define gxc#compile-scm-file__%
-      (lambda (_%path213530%_ _%code213531%_ _%phi?213532%_)
-        (let () (declare (not safe)) (gxc#verbose '"compile " _%path213530%_))
+      (lambda (_%path223517%_ _%code223518%_ _%phi?223519%_)
+        (let () (declare (not safe)) (gxc#verbose '"compile " _%path223517%_))
         (gxc#with-output-to-scheme-file
-         _%path213530%_
+         _%path223517%_
          (lambda ()
            (pretty-print
             (cons 'declare
                   (cons (cons 'block '())
                         (cons (cons 'standard-bindings '())
                               (cons (cons 'extended-bindings '())
-                                    (let ((__tmp214802
-                                           (if _%phi?213532%_
+                                    (let ((__tmp224789
+                                           (if _%phi?223519%_
                                                '((inlining-limit 200))
                                                '())))
                                       (declare (not safe))
-                                      (__foldr1 cons '() __tmp214802)))))))
-           (pretty-print _%code213531%_)))
+                                      (__foldr1 cons '() __tmp224789)))))))
+           (pretty-print _%code223518%_)))
         (if (let () (declare (not safe)) (gxc#current-compile-invoke-gsc))
-            (let ((_%compile-it213536%_
+            (let ((_%compile-it223523%_
                    (lambda ()
-                     (gxc#gsc-compile-file _%path213530%_ _%phi?213532%_))))
+                     (gxc#gsc-compile-file _%path223517%_ _%phi?223519%_))))
               (if (let () (declare (not safe)) (gxc#current-compile-parallel))
-                  (let ((__tmp214803
-                         (cons 'compile-file (cons _%path213530%_ '()))))
+                  (let ((__tmp224790
+                         (cons 'compile-file (cons _%path223517%_ '()))))
                     (declare (not safe))
-                    (gxc#add-compile-job!__% _%compile-it213536%_ __tmp214803))
-                  (_%compile-it213536%_)))
+                    (gxc#add-compile-job!__% _%compile-it223523%_ __tmp224790))
+                  (_%compile-it223523%_)))
             '#!void)))
     (define gxc#compile-scm-file__0
-      (lambda (_%path213541%_ _%code213542%_)
-        (let ((_%phi?213544%_ '#f))
+      (lambda (_%path223528%_ _%code223529%_)
+        (let ((_%phi?223531%_ '#f))
           (gxc#compile-scm-file__%
-           _%path213541%_
-           _%code213542%_
-           _%phi?213544%_))))
+           _%path223528%_
+           _%code223529%_
+           _%phi?223531%_))))
     (define gxc#compile-scm-file
-      (lambda _g214804_
-        (let ((_g214805_ (let () (declare (not safe)) (##length _g214804_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214805_ 2))
-                 (apply gxc#compile-scm-file__0 _g214804_))
-                ((let () (declare (not safe)) (##fx= _g214805_ 3))
-                 (apply gxc#compile-scm-file__% _g214804_))
+      (lambda _g224791_
+        (let ((_g224792_ (let () (declare (not safe)) (##length _g224791_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224792_ 2))
+                 (apply gxc#compile-scm-file__0 _g224791_))
+                ((let () (declare (not safe)) (##fx= _g224792_ 3))
+                 (apply gxc#compile-scm-file__% _g224791_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-scm-file
-                  _g214804_))))))
+                  _g224791_))))))
     (define gxc#gsc-link-options__%
-      (lambda (_%phi?213431%_)
-        (let _%lp213433%_ ((_%rest213435%_
+      (lambda (_%phi?223418%_)
+        (let _%lp223420%_ ((_%rest223422%_
                             (let ()
                               (declare (not safe))
                               (gxc#current-compile-gsc-options)))
-                           (_%opts213436%_ '()))
-          (let* ((_%rest213437213457%_ _%rest213435%_)
-                 (_%else213441213465%_
+                           (_%opts223423%_ '()))
+          (let* ((_%rest223424223444%_ _%rest223422%_)
+                 (_%else223428223452%_
                   (lambda ()
                     (if (let ()
                           (declare (not safe))
                           (gxc#current-compile-debug))
                         (cons '"-debug-source"
-                              (cons '"-track-scheme" (reverse _%opts213436%_)))
-                        (reverse _%opts213436%_)))))
-            (let ((_%K213451213508%_
-                   (lambda (_%rest213506%_)
-                     (_%lp213433%_ _%rest213506%_ _%opts213436%_)))
-                  (_%K213446213490%_
-                   (lambda (_%rest213488%_)
-                     (_%lp213433%_ _%rest213488%_ _%opts213436%_)))
-                  (_%K213443213472%_
-                   (lambda (_%rest213469%_ _%opt213470%_)
-                     (_%lp213433%_
-                      _%rest213469%_
-                      (cons _%opt213470%_ _%opts213436%_)))))
-              (if (pair? _%rest213437213457%_)
-                  (let ((_%tl213453213513%_
+                              (cons '"-track-scheme" (reverse _%opts223423%_)))
+                        (reverse _%opts223423%_)))))
+            (let ((_%K223438223495%_
+                   (lambda (_%rest223493%_)
+                     (_%lp223420%_ _%rest223493%_ _%opts223423%_)))
+                  (_%K223433223477%_
+                   (lambda (_%rest223475%_)
+                     (_%lp223420%_ _%rest223475%_ _%opts223423%_)))
+                  (_%K223430223459%_
+                   (lambda (_%rest223456%_ _%opt223457%_)
+                     (_%lp223420%_
+                      _%rest223456%_
+                      (cons _%opt223457%_ _%opts223423%_)))))
+              (if (pair? _%rest223424223444%_)
+                  (let ((_%tl223440223500%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest213437213457%_)))
-                        (_%hd213452213511%_
+                           (##cdr _%rest223424223444%_)))
+                        (_%hd223439223498%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest213437213457%_))))
-                    (if (equal? _%hd213452213511%_ '"-cc-options")
-                        (if (pair? _%tl213453213513%_)
-                            (let* ((_%tl213455213516%_
+                           (##car _%rest223424223444%_))))
+                    (if (equal? _%hd223439223498%_ '"-cc-options")
+                        (if (pair? _%tl223440223500%_)
+                            (let* ((_%tl223442223503%_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _%tl213453213513%_)))
-                                   (_%rest213519%_ _%tl213455213516%_))
-                              (_%K213451213508%_ _%rest213519%_))
-                            (let ((_%opt213480%_ _%hd213452213511%_)
-                                  (_%rest213482%_ _%tl213453213513%_))
-                              (_%K213443213472%_
-                               _%rest213482%_
-                               _%opt213480%_)))
-                        (if (equal? _%hd213452213511%_ '"-ld-options")
-                            (if (pair? _%tl213453213513%_)
-                                (let* ((_%tl213450213498%_
+                                      (##cdr _%tl223440223500%_)))
+                                   (_%rest223506%_ _%tl223442223503%_))
+                              (_%K223438223495%_ _%rest223506%_))
+                            (let ((_%opt223467%_ _%hd223439223498%_)
+                                  (_%rest223469%_ _%tl223440223500%_))
+                              (_%K223430223459%_
+                               _%rest223469%_
+                               _%opt223467%_)))
+                        (if (equal? _%hd223439223498%_ '"-ld-options")
+                            (if (pair? _%tl223440223500%_)
+                                (let* ((_%tl223437223485%_
                                         (let ()
                                           (declare (not safe))
-                                          (##cdr _%tl213453213513%_)))
-                                       (_%rest213501%_ _%tl213450213498%_))
-                                  (_%K213446213490%_ _%rest213501%_))
-                                (let ((_%opt213480%_ _%hd213452213511%_)
-                                      (_%rest213482%_ _%tl213453213513%_))
-                                  (_%K213443213472%_
-                                   _%rest213482%_
-                                   _%opt213480%_)))
-                            (let ((_%opt213480%_ _%hd213452213511%_)
-                                  (_%rest213482%_ _%tl213453213513%_))
-                              (_%K213443213472%_
-                               _%rest213482%_
-                               _%opt213480%_)))))
-                  (_%else213441213465%_)))))))
+                                          (##cdr _%tl223440223500%_)))
+                                       (_%rest223488%_ _%tl223437223485%_))
+                                  (_%K223433223477%_ _%rest223488%_))
+                                (let ((_%opt223467%_ _%hd223439223498%_)
+                                      (_%rest223469%_ _%tl223440223500%_))
+                                  (_%K223430223459%_
+                                   _%rest223469%_
+                                   _%opt223467%_)))
+                            (let ((_%opt223467%_ _%hd223439223498%_)
+                                  (_%rest223469%_ _%tl223440223500%_))
+                              (_%K223430223459%_
+                               _%rest223469%_
+                               _%opt223467%_)))))
+                  (_%else223428223452%_)))))))
     (define gxc#gsc-link-options__0
       (lambda ()
-        (let ((_%phi?213525%_ '#f)) (gxc#gsc-link-options__% _%phi?213525%_))))
+        (let ((_%phi?223512%_ '#f)) (gxc#gsc-link-options__% _%phi?223512%_))))
     (define gxc#gsc-link-options
-      (lambda _g214806_
-        (let ((_g214807_ (let () (declare (not safe)) (##length _g214806_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214807_ 0))
-                 (apply gxc#gsc-link-options__0 _g214806_))
-                ((let () (declare (not safe)) (##fx= _g214807_ 1))
-                 (apply gxc#gsc-link-options__% _g214806_))
+      (lambda _g224793_
+        (let ((_g224794_ (let () (declare (not safe)) (##length _g224793_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224794_ 0))
+                 (apply gxc#gsc-link-options__0 _g224793_))
+                ((let () (declare (not safe)) (##fx= _g224794_ 1))
+                 (apply gxc#gsc-link-options__% _g224793_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#gsc-link-options
-                  _g214806_))))))
+                  _g224793_))))))
     (define gxc#gsc-cc-options__%__%
-      (lambda (_%@@keywords213281%_ _%static?213277213282%_ _%phi?213283%_)
-        (let ((_%static?213285%_
-               (if (eq? _%static?213277213282%_ absent-value)
+      (lambda (_%@@keywords223268%_ _%static?223264223269%_ _%phi?223270%_)
+        (let ((_%static?223272%_
+               (if (eq? _%static?223264223269%_ absent-value)
                    '#f
-                   _%static?213277213282%_)))
-          (if _%phi?213283%_
+                   _%static?223264223269%_)))
+          (if _%phi?223270%_
               (if (let () (declare (not safe)) (gxc#current-compile-debug))
                   (cons '"-cc-options" (cons '"-g" '()))
                   '())
-              (let _%lp213287%_ ((_%rest213289%_
+              (let _%lp223274%_ ((_%rest223276%_
                                   (let ()
                                     (declare (not safe))
                                     (gxc#current-compile-gsc-options)))
-                                 (_%opts213290%_ '()))
-                (let* ((_%rest213291213317%_ _%rest213289%_)
-                       (_%else213296213325%_
+                                 (_%opts223277%_ '()))
+                (let* ((_%rest223278223304%_ _%rest223276%_)
+                       (_%else223283223312%_
                         (lambda ()
                           (if (let ()
                                 (declare (not safe))
                                 (gxc#current-compile-debug))
                               (cons '"-cc-options"
-                                    (cons '"-g" (reverse! _%opts213290%_)))
-                              (reverse! _%opts213290%_)))))
-                  (let ((_%K213311213388%_
-                         (lambda (_%rest213385%_ _%opt213386%_)
-                           (if _%static?213285%_
-                               (_%lp213287%_
-                                _%rest213385%_
-                                (cons _%opt213386%_
-                                      (cons '"-cc-options" _%opts213290%_)))
-                               (_%lp213287%_ _%rest213385%_ _%opts213290%_))))
-                        (_%K213306213365%_
-                         (lambda (_%rest213362%_ _%opt213363%_)
-                           (_%lp213287%_
-                            _%rest213362%_
-                            (cons _%opt213363%_
-                                  (cons '"-cc-options" _%opts213290%_)))))
-                        (_%K213301213345%_
-                         (lambda (_%rest213343%_)
-                           (_%lp213287%_ _%rest213343%_ _%opts213290%_)))
-                        (_%K213298213331%_
-                         (lambda (_%rest213329%_)
-                           (_%lp213287%_ _%rest213329%_ _%opts213290%_))))
-                    (if (pair? _%rest213291213317%_)
-                        (let ((_%tl213313213393%_
+                                    (cons '"-g" (reverse! _%opts223277%_)))
+                              (reverse! _%opts223277%_)))))
+                  (let ((_%K223298223375%_
+                         (lambda (_%rest223372%_ _%opt223373%_)
+                           (if _%static?223272%_
+                               (_%lp223274%_
+                                _%rest223372%_
+                                (cons _%opt223373%_
+                                      (cons '"-cc-options" _%opts223277%_)))
+                               (_%lp223274%_ _%rest223372%_ _%opts223277%_))))
+                        (_%K223293223352%_
+                         (lambda (_%rest223349%_ _%opt223350%_)
+                           (_%lp223274%_
+                            _%rest223349%_
+                            (cons _%opt223350%_
+                                  (cons '"-cc-options" _%opts223277%_)))))
+                        (_%K223288223332%_
+                         (lambda (_%rest223330%_)
+                           (_%lp223274%_ _%rest223330%_ _%opts223277%_)))
+                        (_%K223285223318%_
+                         (lambda (_%rest223316%_)
+                           (_%lp223274%_ _%rest223316%_ _%opts223277%_))))
+                    (if (pair? _%rest223278223304%_)
+                        (let ((_%tl223300223380%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%rest213291213317%_)))
-                              (_%hd213312213391%_
+                                 (##cdr _%rest223278223304%_)))
+                              (_%hd223299223378%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%rest213291213317%_))))
-                          (if (equal? _%hd213312213391%_ '"-cc-options")
-                              (if (pair? _%tl213313213393%_)
-                                  (let ((_%tl213315213398%_
+                                 (##car _%rest223278223304%_))))
+                          (if (equal? _%hd223299223378%_ '"-cc-options")
+                              (if (pair? _%tl223300223380%_)
+                                  (let ((_%tl223302223385%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%tl213313213393%_)))
-                                        (_%hd213314213396%_
+                                           (##cdr _%tl223300223380%_)))
+                                        (_%hd223301223383%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%tl213313213393%_))))
-                                    (if (equal? _%hd213314213396%_ '"-Bstatic")
-                                        (let ((_%opt213401%_
-                                               _%hd213314213396%_)
-                                              (_%rest213403%_
-                                               _%tl213315213398%_))
-                                          (_%K213311213388%_
-                                           _%rest213403%_
-                                           _%opt213401%_))
-                                        (let ((_%opt213378%_
-                                               _%hd213314213396%_)
-                                              (_%rest213380%_
-                                               _%tl213315213398%_))
-                                          (_%K213306213365%_
-                                           _%rest213380%_
-                                           _%opt213378%_))))
-                                  (let ((_%rest213337%_ _%tl213313213393%_))
-                                    (_%K213298213331%_ _%rest213337%_)))
-                              (if (equal? _%hd213312213391%_ '"-ld-options")
-                                  (if (pair? _%tl213313213393%_)
-                                      (let* ((_%tl213305213353%_
+                                           (##car _%tl223300223380%_))))
+                                    (if (equal? _%hd223301223383%_ '"-Bstatic")
+                                        (let ((_%opt223388%_
+                                               _%hd223301223383%_)
+                                              (_%rest223390%_
+                                               _%tl223302223385%_))
+                                          (_%K223298223375%_
+                                           _%rest223390%_
+                                           _%opt223388%_))
+                                        (let ((_%opt223365%_
+                                               _%hd223301223383%_)
+                                              (_%rest223367%_
+                                               _%tl223302223385%_))
+                                          (_%K223293223352%_
+                                           _%rest223367%_
+                                           _%opt223365%_))))
+                                  (let ((_%rest223324%_ _%tl223300223380%_))
+                                    (_%K223285223318%_ _%rest223324%_)))
+                              (if (equal? _%hd223299223378%_ '"-ld-options")
+                                  (if (pair? _%tl223300223380%_)
+                                      (let* ((_%tl223292223340%_
                                               (let ()
                                                 (declare (not safe))
-                                                (##cdr _%tl213313213393%_)))
-                                             (_%rest213356%_
-                                              _%tl213305213353%_))
-                                        (_%K213301213345%_ _%rest213356%_))
-                                      (let ((_%rest213337%_
-                                             _%tl213313213393%_))
-                                        (_%K213298213331%_ _%rest213337%_)))
-                                  (let ((_%rest213337%_ _%tl213313213393%_))
-                                    (_%K213298213331%_ _%rest213337%_)))))
-                        (_%else213296213325%_)))))))))
+                                                (##cdr _%tl223300223380%_)))
+                                             (_%rest223343%_
+                                              _%tl223292223340%_))
+                                        (_%K223288223332%_ _%rest223343%_))
+                                      (let ((_%rest223324%_
+                                             _%tl223300223380%_))
+                                        (_%K223285223318%_ _%rest223324%_)))
+                                  (let ((_%rest223324%_ _%tl223300223380%_))
+                                    (_%K223285223318%_ _%rest223324%_)))))
+                        (_%else223283223312%_)))))))))
     (define gxc#gsc-cc-options__%__0
-      (lambda (_%@@keywords213408%_ _%static?213277213409%_)
-        (let ((_%phi?213411%_ '#f))
+      (lambda (_%@@keywords223395%_ _%static?223264223396%_)
+        (let ((_%phi?223398%_ '#f))
           (gxc#gsc-cc-options__%__%
-           _%@@keywords213408%_
-           _%static?213277213409%_
-           _%phi?213411%_))))
+           _%@@keywords223395%_
+           _%static?223264223396%_
+           _%phi?223398%_))))
     (define gxc#gsc-cc-options__%
-      (lambda _g214808_
-        (let ((_g214809_ (let () (declare (not safe)) (##length _g214808_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214809_ 2))
-                 (apply gxc#gsc-cc-options__%__0 _g214808_))
-                ((let () (declare (not safe)) (##fx= _g214809_ 3))
-                 (apply gxc#gsc-cc-options__%__% _g214808_))
+      (lambda _g224795_
+        (let ((_g224796_ (let () (declare (not safe)) (##length _g224795_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224796_ 2))
+                 (apply gxc#gsc-cc-options__%__0 _g224795_))
+                ((let () (declare (not safe)) (##fx= _g224796_ 3))
+                 (apply gxc#gsc-cc-options__%__% _g224795_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#gsc-cc-options__%
-                  _g214808_))))))
+                  _g224795_))))))
     (define gxc#gsc-cc-options__@
-      (lambda (_%@@keywords213420%_ . _%args213421%_)
+      (lambda (_%@@keywords223407%_ . _%args223408%_)
         (apply gxc#gsc-cc-options__%
-               _%@@keywords213420%_
+               _%@@keywords223407%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords213420%_
+                  _%@@keywords223407%_
                   'static:
                   absent-value))
-               _%args213421%_)))
+               _%args223408%_)))
     (define gxc#gsc-cc-options
-      (lambda _%args213278213427%_
+      (lambda _%args223265223414%_
         (apply keyword-dispatch
                '#(static:)
                gxc#gsc-cc-options__@
-               _%args213278213427%_)))
+               _%args223265223414%_)))
     (define gxc#gsc-ld-options__%__%
-      (lambda (_%@@keywords213127%_ _%static?213123213128%_ _%phi?213129%_)
-        (let ((_%static?213131%_
-               (if (eq? _%static?213123213128%_ absent-value)
+      (lambda (_%@@keywords223114%_ _%static?223110223115%_ _%phi?223116%_)
+        (let ((_%static?223118%_
+               (if (eq? _%static?223110223115%_ absent-value)
                    '#f
-                   _%static?213123213128%_)))
-          (if _%phi?213129%_
+                   _%static?223110223115%_)))
+          (if _%phi?223116%_
               '()
-              (let _%lp213133%_ ((_%rest213135%_
+              (let _%lp223120%_ ((_%rest223122%_
                                   (let ()
                                     (declare (not safe))
                                     (gxc#current-compile-gsc-options)))
-                                 (_%opts213136%_ '()))
-                (let* ((_%rest213137213163%_ _%rest213135%_)
-                       (_%else213142213171%_
-                        (lambda () (reverse! _%opts213136%_))))
-                  (let ((_%K213157213234%_
-                         (lambda (_%rest213231%_ _%opt213232%_)
-                           (if _%static?213131%_
-                               (_%lp213133%_
-                                _%rest213231%_
-                                (cons _%opt213232%_
-                                      (cons '"-ld-options" _%opts213136%_)))
-                               (_%lp213133%_ _%rest213231%_ _%opts213136%_))))
-                        (_%K213152213211%_
-                         (lambda (_%rest213208%_ _%opt213209%_)
-                           (_%lp213133%_
-                            _%rest213208%_
-                            (cons _%opt213209%_
-                                  (cons '"-ld-options" _%opts213136%_)))))
-                        (_%K213147213191%_
-                         (lambda (_%rest213189%_)
-                           (_%lp213133%_ _%rest213189%_ _%opts213136%_)))
-                        (_%K213144213177%_
-                         (lambda (_%rest213175%_)
-                           (_%lp213133%_ _%rest213175%_ _%opts213136%_))))
-                    (if (pair? _%rest213137213163%_)
-                        (let ((_%tl213159213239%_
+                                 (_%opts223123%_ '()))
+                (let* ((_%rest223124223150%_ _%rest223122%_)
+                       (_%else223129223158%_
+                        (lambda () (reverse! _%opts223123%_))))
+                  (let ((_%K223144223221%_
+                         (lambda (_%rest223218%_ _%opt223219%_)
+                           (if _%static?223118%_
+                               (_%lp223120%_
+                                _%rest223218%_
+                                (cons _%opt223219%_
+                                      (cons '"-ld-options" _%opts223123%_)))
+                               (_%lp223120%_ _%rest223218%_ _%opts223123%_))))
+                        (_%K223139223198%_
+                         (lambda (_%rest223195%_ _%opt223196%_)
+                           (_%lp223120%_
+                            _%rest223195%_
+                            (cons _%opt223196%_
+                                  (cons '"-ld-options" _%opts223123%_)))))
+                        (_%K223134223178%_
+                         (lambda (_%rest223176%_)
+                           (_%lp223120%_ _%rest223176%_ _%opts223123%_)))
+                        (_%K223131223164%_
+                         (lambda (_%rest223162%_)
+                           (_%lp223120%_ _%rest223162%_ _%opts223123%_))))
+                    (if (pair? _%rest223124223150%_)
+                        (let ((_%tl223146223226%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%rest213137213163%_)))
-                              (_%hd213158213237%_
+                                 (##cdr _%rest223124223150%_)))
+                              (_%hd223145223224%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%rest213137213163%_))))
-                          (if (equal? _%hd213158213237%_ '"-ld-options")
-                              (if (pair? _%tl213159213239%_)
-                                  (let ((_%tl213161213244%_
+                                 (##car _%rest223124223150%_))))
+                          (if (equal? _%hd223145223224%_ '"-ld-options")
+                              (if (pair? _%tl223146223226%_)
+                                  (let ((_%tl223148223231%_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _%tl213159213239%_)))
-                                        (_%hd213160213242%_
+                                           (##cdr _%tl223146223226%_)))
+                                        (_%hd223147223229%_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _%tl213159213239%_))))
-                                    (if (equal? _%hd213160213242%_ '"-static")
-                                        (let ((_%opt213247%_
-                                               _%hd213160213242%_)
-                                              (_%rest213249%_
-                                               _%tl213161213244%_))
-                                          (_%K213157213234%_
-                                           _%rest213249%_
-                                           _%opt213247%_))
-                                        (let ((_%opt213224%_
-                                               _%hd213160213242%_)
-                                              (_%rest213226%_
-                                               _%tl213161213244%_))
-                                          (_%K213152213211%_
-                                           _%rest213226%_
-                                           _%opt213224%_))))
-                                  (let ((_%rest213183%_ _%tl213159213239%_))
-                                    (_%K213144213177%_ _%rest213183%_)))
-                              (if (equal? _%hd213158213237%_ '"-cc-options")
-                                  (if (pair? _%tl213159213239%_)
-                                      (let* ((_%tl213151213199%_
+                                           (##car _%tl223146223226%_))))
+                                    (if (equal? _%hd223147223229%_ '"-static")
+                                        (let ((_%opt223234%_
+                                               _%hd223147223229%_)
+                                              (_%rest223236%_
+                                               _%tl223148223231%_))
+                                          (_%K223144223221%_
+                                           _%rest223236%_
+                                           _%opt223234%_))
+                                        (let ((_%opt223211%_
+                                               _%hd223147223229%_)
+                                              (_%rest223213%_
+                                               _%tl223148223231%_))
+                                          (_%K223139223198%_
+                                           _%rest223213%_
+                                           _%opt223211%_))))
+                                  (let ((_%rest223170%_ _%tl223146223226%_))
+                                    (_%K223131223164%_ _%rest223170%_)))
+                              (if (equal? _%hd223145223224%_ '"-cc-options")
+                                  (if (pair? _%tl223146223226%_)
+                                      (let* ((_%tl223138223186%_
                                               (let ()
                                                 (declare (not safe))
-                                                (##cdr _%tl213159213239%_)))
-                                             (_%rest213202%_
-                                              _%tl213151213199%_))
-                                        (_%K213147213191%_ _%rest213202%_))
-                                      (let ((_%rest213183%_
-                                             _%tl213159213239%_))
-                                        (_%K213144213177%_ _%rest213183%_)))
-                                  (let ((_%rest213183%_ _%tl213159213239%_))
-                                    (_%K213144213177%_ _%rest213183%_)))))
-                        (_%else213142213171%_)))))))))
+                                                (##cdr _%tl223146223226%_)))
+                                             (_%rest223189%_
+                                              _%tl223138223186%_))
+                                        (_%K223134223178%_ _%rest223189%_))
+                                      (let ((_%rest223170%_
+                                             _%tl223146223226%_))
+                                        (_%K223131223164%_ _%rest223170%_)))
+                                  (let ((_%rest223170%_ _%tl223146223226%_))
+                                    (_%K223131223164%_ _%rest223170%_)))))
+                        (_%else223129223158%_)))))))))
     (define gxc#gsc-ld-options__%__0
-      (lambda (_%@@keywords213254%_ _%static?213123213255%_)
-        (let ((_%phi?213257%_ '#f))
+      (lambda (_%@@keywords223241%_ _%static?223110223242%_)
+        (let ((_%phi?223244%_ '#f))
           (gxc#gsc-ld-options__%__%
-           _%@@keywords213254%_
-           _%static?213123213255%_
-           _%phi?213257%_))))
+           _%@@keywords223241%_
+           _%static?223110223242%_
+           _%phi?223244%_))))
     (define gxc#gsc-ld-options__%
-      (lambda _g214810_
-        (let ((_g214811_ (let () (declare (not safe)) (##length _g214810_))))
-          (cond ((let () (declare (not safe)) (##fx= _g214811_ 2))
-                 (apply gxc#gsc-ld-options__%__0 _g214810_))
-                ((let () (declare (not safe)) (##fx= _g214811_ 3))
-                 (apply gxc#gsc-ld-options__%__% _g214810_))
+      (lambda _g224797_
+        (let ((_g224798_ (let () (declare (not safe)) (##length _g224797_))))
+          (cond ((let () (declare (not safe)) (##fx= _g224798_ 2))
+                 (apply gxc#gsc-ld-options__%__0 _g224797_))
+                ((let () (declare (not safe)) (##fx= _g224798_ 3))
+                 (apply gxc#gsc-ld-options__%__% _g224797_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#gsc-ld-options__%
-                  _g214810_))))))
+                  _g224797_))))))
     (define gxc#gsc-ld-options__@
-      (lambda (_%@@keywords213266%_ . _%args213267%_)
+      (lambda (_%@@keywords223253%_ . _%args223254%_)
         (apply gxc#gsc-ld-options__%
-               _%@@keywords213266%_
+               _%@@keywords223253%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords213266%_
+                  _%@@keywords223253%_
                   'static:
                   absent-value))
-               _%args213267%_)))
+               _%args223254%_)))
     (define gxc#gsc-ld-options
-      (lambda _%args213124213273%_
+      (lambda _%args223111223260%_
         (apply keyword-dispatch
                '#(static:)
                gxc#gsc-ld-options__@
-               _%args213124213273%_)))
+               _%args223111223260%_)))
     (define gxc#gsc-static-include-options
-      (lambda (_%staticdir213118%_)
-        (let ((_%user-staticdir213120%_
+      (lambda (_%staticdir223105%_)
+        (let ((_%user-staticdir223107%_
                (path-expand
                 (path-expand
                  '"lib/static"
@@ -3009,337 +3009,337 @@
           (cons '"-cc-options"
                 (cons (string-append
                        '"-I "
-                       _%staticdir213118%_
+                       _%staticdir223105%_
                        '" -I "
-                       _%user-staticdir213120%_)
+                       _%user-staticdir223107%_)
                       '())))))
     (define gxc#gcc-ld-options
       (lambda ()
-        (let _%lp213030%_ ((_%rest213032%_
+        (let _%lp223017%_ ((_%rest223019%_
                             (let ()
                               (declare (not safe))
                               (gxc#current-compile-gsc-options)))
-                           (_%opts213033%_ '()))
-          (let* ((_%rest213034213054%_ _%rest213032%_)
-                 (_%else213038213062%_ (lambda () _%opts213033%_)))
-            (let ((_%K213048213105%_
-                   (lambda (_%rest213103%_)
-                     (_%lp213030%_ _%rest213103%_ _%opts213033%_)))
-                  (_%K213043213083%_
-                   (lambda (_%rest213080%_ _%opt213081%_)
-                     (_%lp213030%_
-                      _%rest213080%_
-                      (let ((__tmp214812
-                             (let ((__tmp214813
+                           (_%opts223020%_ '()))
+          (let* ((_%rest223021223041%_ _%rest223019%_)
+                 (_%else223025223049%_ (lambda () _%opts223020%_)))
+            (let ((_%K223035223092%_
+                   (lambda (_%rest223090%_)
+                     (_%lp223017%_ _%rest223090%_ _%opts223020%_)))
+                  (_%K223030223070%_
+                   (lambda (_%rest223067%_ _%opt223068%_)
+                     (_%lp223017%_
+                      _%rest223067%_
+                      (let ((__tmp224799
+                             (let ((__tmp224800
                                     (let ()
                                       (declare (not safe))
-                                      (string-split _%opt213081%_ '#\space))))
+                                      (string-split _%opt223068%_ '#\space))))
                                (declare (not safe))
-                               (##filter gxc#not-string-empty? __tmp214813))))
+                               (##filter gxc#not-string-empty? __tmp224800))))
                         (declare (not safe))
-                        (##append _%opts213033%_ __tmp214812)))))
-                  (_%K213040213068%_
-                   (lambda (_%rest213066%_)
-                     (_%lp213030%_ _%rest213066%_ _%opts213033%_))))
-              (if (pair? _%rest213034213054%_)
-                  (let ((_%tl213050213110%_
+                        (##append _%opts223020%_ __tmp224799)))))
+                  (_%K223027223055%_
+                   (lambda (_%rest223053%_)
+                     (_%lp223017%_ _%rest223053%_ _%opts223020%_))))
+              (if (pair? _%rest223021223041%_)
+                  (let ((_%tl223037223097%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest213034213054%_)))
-                        (_%hd213049213108%_
+                           (##cdr _%rest223021223041%_)))
+                        (_%hd223036223095%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest213034213054%_))))
-                    (if (equal? _%hd213049213108%_ '"-cc-options")
-                        (if (pair? _%tl213050213110%_)
-                            (let* ((_%tl213052213113%_
+                           (##car _%rest223021223041%_))))
+                    (if (equal? _%hd223036223095%_ '"-cc-options")
+                        (if (pair? _%tl223037223097%_)
+                            (let* ((_%tl223039223100%_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _%tl213050213110%_)))
-                                   (_%rest213116%_ _%tl213052213113%_))
-                              (_%K213048213105%_ _%rest213116%_))
-                            (let ((_%rest213074%_ _%tl213050213110%_))
-                              (_%K213040213068%_ _%rest213074%_)))
-                        (if (equal? _%hd213049213108%_ '"-ld-options")
-                            (if (pair? _%tl213050213110%_)
-                                (let ((_%tl213047213093%_
+                                      (##cdr _%tl223037223097%_)))
+                                   (_%rest223103%_ _%tl223039223100%_))
+                              (_%K223035223092%_ _%rest223103%_))
+                            (let ((_%rest223061%_ _%tl223037223097%_))
+                              (_%K223027223055%_ _%rest223061%_)))
+                        (if (equal? _%hd223036223095%_ '"-ld-options")
+                            (if (pair? _%tl223037223097%_)
+                                (let ((_%tl223034223080%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%tl213050213110%_)))
-                                      (_%hd213046213091%_
+                                         (##cdr _%tl223037223097%_)))
+                                      (_%hd223033223078%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%tl213050213110%_))))
-                                  (let ((_%opt213096%_ _%hd213046213091%_)
-                                        (_%rest213098%_ _%tl213047213093%_))
-                                    (_%K213043213083%_
-                                     _%rest213098%_
-                                     _%opt213096%_)))
-                                (let ((_%rest213074%_ _%tl213050213110%_))
-                                  (_%K213040213068%_ _%rest213074%_)))
-                            (let ((_%rest213074%_ _%tl213050213110%_))
-                              (_%K213040213068%_ _%rest213074%_)))))
-                  (_%else213038213062%_)))))))
+                                         (##car _%tl223037223097%_))))
+                                  (let ((_%opt223083%_ _%hd223033223078%_)
+                                        (_%rest223085%_ _%tl223034223080%_))
+                                    (_%K223030223070%_
+                                     _%rest223085%_
+                                     _%opt223083%_)))
+                                (let ((_%rest223061%_ _%tl223037223097%_))
+                                  (_%K223027223055%_ _%rest223061%_)))
+                            (let ((_%rest223061%_ _%tl223037223097%_))
+                              (_%K223027223055%_ _%rest223061%_)))))
+                  (_%else223025223049%_)))))))
     (define gxc#not-string-empty?
-      (lambda (_%str213027%_)
-        (not (let () (declare (not safe)) (string-empty? _%str213027%_)))))
+      (lambda (_%str223014%_)
+        (not (let () (declare (not safe)) (string-empty? _%str223014%_)))))
     (define gxc#gsc-compile-file
-      (lambda (_%path213020%_ _%phi?213021%_)
-        (let ((_%gsc-link-opts213023%_
-               (gxc#gsc-link-options__% _%phi?213021%_))
-              (_%gsc-cc-opts213024%_
-               (gxc#gsc-cc-options__%__% '#f absent-value _%phi?213021%_))
-              (_%gsc-ld-opts213025%_
-               (gxc#gsc-ld-options__%__% '#f absent-value _%phi?213021%_)))
+      (lambda (_%path223007%_ _%phi?223008%_)
+        (let ((_%gsc-link-opts223010%_
+               (gxc#gsc-link-options__% _%phi?223008%_))
+              (_%gsc-cc-opts223011%_
+               (gxc#gsc-cc-options__%__% '#f absent-value _%phi?223008%_))
+              (_%gsc-ld-opts223012%_
+               (gxc#gsc-ld-options__%__% '#f absent-value _%phi?223008%_)))
           (gxc#invoke__%
            '#f
            absent-value
            absent-value
            (gxc#gerbil-gsc)
-           (let ((__tmp214814
-                  (let ((__tmp214815
-                         (let ((__tmp214816 (cons _%path213020%_ '())))
+           (let ((__tmp224801
+                  (let ((__tmp224802
+                         (let ((__tmp224803 (cons _%path223007%_ '())))
                            (declare (not safe))
                            (__foldr1
                             cons
-                            __tmp214816
-                            _%gsc-link-opts213023%_))))
+                            __tmp224803
+                            _%gsc-link-opts223010%_))))
                     (declare (not safe))
-                    (__foldr1 cons __tmp214815 _%gsc-ld-opts213025%_))))
+                    (__foldr1 cons __tmp224802 _%gsc-ld-opts223012%_))))
              (declare (not safe))
-             (__foldr1 cons __tmp214814 _%gsc-cc-opts213024%_))))))
+             (__foldr1 cons __tmp224801 _%gsc-cc-opts223011%_))))))
     (define gxc#compile-output-file
-      (lambda (_%ctx212986%_ _%n212987%_ _%ext212988%_)
-        (letrec ((_%module-relative-path212990%_
-                  (lambda (_%ctx213018%_)
+      (lambda (_%ctx222973%_ _%n222974%_ _%ext222975%_)
+        (letrec ((_%module-relative-path222977%_
+                  (lambda (_%ctx223005%_)
                     (path-strip-directory
-                     (let ((__tmp214817
+                     (let ((__tmp224804
                             (##structure-ref
-                             _%ctx213018%_
+                             _%ctx223005%_
                              '1
                              gx#expander-context::t
                              '#f)))
                        (declare (not safe))
-                       (gxc#module-id->path-string __tmp214817)))))
-                 (_%module-source-directory212991%_
-                  (lambda (_%ctx213014%_)
+                       (gxc#module-id->path-string __tmp224804)))))
+                 (_%module-source-directory222978%_
+                  (lambda (_%ctx223001%_)
                     (path-directory
-                     (let ((_%mpath213016%_
+                     (let ((_%mpath223003%_
                             (##structure-ref
-                             _%ctx213014%_
+                             _%ctx223001%_
                              '7
                              gx#module-context::t
                              '#f)))
-                       (if (string? _%mpath213016%_)
-                           _%mpath213016%_
-                           (last _%mpath213016%_))))))
-                 (_%section-string212992%_
-                  (lambda (_%n213008%_)
-                    (if (number? _%n213008%_)
+                       (if (string? _%mpath223003%_)
+                           _%mpath223003%_
+                           (last _%mpath223003%_))))))
+                 (_%section-string222979%_
+                  (lambda (_%n222995%_)
+                    (if (number? _%n222995%_)
                         (let ()
                           (declare (not safe))
-                          (##number->string _%n213008%_))
-                        (if (symbol? _%n213008%_)
+                          (##number->string _%n222995%_))
+                        (if (symbol? _%n222995%_)
                             (let ()
                               (declare (not safe))
-                              (##symbol->string _%n213008%_))
-                            (if (string? _%n213008%_)
-                                _%n213008%_
+                              (##symbol->string _%n222995%_))
+                            (if (string? _%n222995%_)
+                                _%n222995%_
                                 (let ()
                                   (declare (not safe))
                                   (gxc#raise-compile-error
                                    '"Unexpected section"
-                                   _%n213008%_)))))))
-                 (_%file-name212993%_
-                  (lambda (_%path213006%_)
-                    (if _%n212987%_
+                                   _%n222995%_)))))))
+                 (_%file-name222980%_
+                  (lambda (_%path222993%_)
+                    (if _%n222974%_
                         (string-append
-                         _%path213006%_
+                         _%path222993%_
                          '"~"
-                         (_%section-string212992%_ _%n212987%_)
-                         _%ext212988%_)
-                        (string-append _%path213006%_ _%ext212988%_))))
-                 (_%file-path212994%_
+                         (_%section-string222979%_ _%n222974%_)
+                         _%ext222975%_)
+                        (string-append _%path222993%_ _%ext222975%_))))
+                 (_%file-path222981%_
                   (lambda ()
-                    (let ((_%$e213000%_
+                    (let ((_%$e222987%_
                            (let ()
                              (declare (not safe))
                              (gxc#current-compile-output-dir))))
-                      (if _%$e213000%_
-                          ((lambda (_%outdir213003%_)
+                      (if _%$e222987%_
+                          ((lambda (_%outdir222990%_)
                              (path-expand
-                              (_%file-name212993%_
-                               (let ((__tmp214818
+                              (_%file-name222980%_
+                               (let ((__tmp224805
                                       (##structure-ref
-                                       _%ctx212986%_
+                                       _%ctx222973%_
                                        '1
                                        gx#expander-context::t
                                        '#f)))
                                  (declare (not safe))
-                                 (gxc#module-id->path-string __tmp214818)))
-                              _%outdir213003%_))
-                           _%$e213000%_)
+                                 (gxc#module-id->path-string __tmp224805)))
+                              _%outdir222990%_))
+                           _%$e222987%_)
                           (path-expand
-                           (_%file-name212993%_
-                            (_%module-relative-path212990%_ _%ctx212986%_))
-                           (_%module-source-directory212991%_
-                            _%ctx212986%_)))))))
-          (let ((_%path212996%_ (_%file-path212994%_)))
-            (let ((__tmp214819
+                           (_%file-name222980%_
+                            (_%module-relative-path222977%_ _%ctx222973%_))
+                           (_%module-source-directory222978%_
+                            _%ctx222973%_)))))))
+          (let ((_%path222983%_ (_%file-path222981%_)))
+            (let ((__tmp224806
                    (lambda ()
-                     (let ((__tmp214820 (path-directory _%path212996%_)))
+                     (let ((__tmp224807 (path-directory _%path222983%_)))
                        (declare (not safe))
-                       (create-directory*__0 __tmp214820)))))
+                       (create-directory*__0 __tmp224807)))))
               (declare (not safe))
-              (__with-lock gxc#+driver-mutex+ __tmp214819))
-            _%path212996%_))))
+              (__with-lock gxc#+driver-mutex+ __tmp224806))
+            _%path222983%_))))
     (define gxc#compile-static-output-file
-      (lambda (_%ctx212967%_)
-        (letrec ((_%file-name212969%_
-                  (lambda (_%id212984%_)
-                    (let ((__tmp214821 (gxc#static-module-name _%id212984%_)))
+      (lambda (_%ctx222954%_)
+        (letrec ((_%file-name222956%_
+                  (lambda (_%id222971%_)
+                    (let ((__tmp224808 (gxc#static-module-name _%id222971%_)))
                       (declare (not safe))
-                      (##string-append __tmp214821 '".scm"))))
-                 (_%file-path212970%_
+                      (##string-append __tmp224808 '".scm"))))
+                 (_%file-path222957%_
                   (lambda ()
-                    (let* ((_%file212976%_
-                            (_%file-name212969%_
+                    (let* ((_%file222963%_
+                            (_%file-name222956%_
                              (##structure-ref
-                              _%ctx212967%_
+                              _%ctx222954%_
                               '1
                               gx#expander-context::t
                               '#f)))
-                           (_%$e212978%_
+                           (_%$e222965%_
                             (let ()
                               (declare (not safe))
                               (gxc#current-compile-output-dir))))
-                      (if _%$e212978%_
-                          ((lambda (_%outdir212981%_)
+                      (if _%$e222965%_
+                          ((lambda (_%outdir222968%_)
                              (path-expand
-                              _%file212976%_
-                              (path-expand '"static" _%outdir212981%_)))
-                           _%$e212978%_)
-                          (path-expand _%file212976%_ '"static"))))))
-          (let ((_%path212972%_ (_%file-path212970%_)))
-            (let ((__tmp214822
+                              _%file222963%_
+                              (path-expand '"static" _%outdir222968%_)))
+                           _%$e222965%_)
+                          (path-expand _%file222963%_ '"static"))))))
+          (let ((_%path222959%_ (_%file-path222957%_)))
+            (let ((__tmp224809
                    (lambda ()
-                     (let ((__tmp214823 (path-directory _%path212972%_)))
+                     (let ((__tmp224810 (path-directory _%path222959%_)))
                        (declare (not safe))
-                       (create-directory*__0 __tmp214823)))))
+                       (create-directory*__0 __tmp224810)))))
               (declare (not safe))
-              (__with-lock gxc#+driver-mutex+ __tmp214822))
-            _%path212972%_))))
+              (__with-lock gxc#+driver-mutex+ __tmp224809))
+            _%path222959%_))))
     (define gxc#compile-exe-output-file
-      (lambda (_%ctx212960%_ _%opts212961%_)
-        (let ((_%$e212963%_
+      (lambda (_%ctx222947%_ _%opts222948%_)
+        (let ((_%$e222950%_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'output-file: _%opts212961%_))))
-          (if _%$e212963%_
-              _%$e212963%_
+                 (pgetq__0 'output-file: _%opts222948%_))))
+          (if _%$e222950%_
+              _%$e222950%_
               (path-strip-directory
                (symbol->string
                 (##structure-ref
-                 _%ctx212960%_
+                 _%ctx222947%_
                  '1
                  gx#expander-context::t
                  '#f)))))))
     (define gxc#static-module-name
-      (lambda (_%idstr212950%_)
-        (if (string? _%idstr212950%_)
-            (let* ((_%str212953%_
+      (lambda (_%idstr222937%_)
+        (if (string? _%idstr222937%_)
+            (let* ((_%str222940%_
                     (let ()
                       (declare (not safe))
-                      (gxc#module-id->path-string _%idstr212950%_)))
-                   (_%strs212955%_
+                      (gxc#module-id->path-string _%idstr222937%_)))
+                   (_%strs222942%_
                     (let ()
                       (declare (not safe))
-                      (string-split _%str212953%_ '#\/))))
+                      (string-split _%str222940%_ '#\/))))
               (declare (not safe))
-              (string-join _%strs212955%_ '"__"))
-            (if (symbol? _%idstr212950%_)
+              (string-join _%strs222942%_ '"__"))
+            (if (symbol? _%idstr222937%_)
                 (gxc#static-module-name
                  (let ()
                    (declare (not safe))
-                   (##symbol->string _%idstr212950%_)))
+                   (##symbol->string _%idstr222937%_)))
                 (let ()
                   (declare (not safe))
-                  (error '"Bad module id" _%idstr212950%_))))))
+                  (error '"Bad module id" _%idstr222937%_))))))
     (define gxc#gerbil-enable-shared?
       (lambda ()
-        (let ((__tmp214824
-               (let ((__tmp214825 (configure-command-string)))
+        (let ((__tmp224811
+               (let ((__tmp224812 (configure-command-string)))
                  (declare (not safe))
-                 (__string-split __tmp214825 '#\'))))
+                 (__string-split __tmp224812 '#\'))))
           (declare (not safe))
-          (##member '"--enable-shared" __tmp214824))))
+          (##member '"--enable-shared" __tmp224811))))
     (define gxc#invoke__%
-      (lambda (_%@@keywords212916%_
-               _%stdout-redirection212912212917%_
-               _%stderr-redirection212913212918%_
-               _%program212919%_
-               _%args212920%_)
-        (let* ((_%stdout-redirection212922%_
-                (if (eq? _%stdout-redirection212912212917%_ absent-value)
+      (lambda (_%@@keywords222903%_
+               _%stdout-redirection222899222904%_
+               _%stderr-redirection222900222905%_
+               _%program222906%_
+               _%args222907%_)
+        (let* ((_%stdout-redirection222909%_
+                (if (eq? _%stdout-redirection222899222904%_ absent-value)
                     '#f
-                    _%stdout-redirection212912212917%_))
-               (_%stderr-redirection212924%_
-                (if (eq? _%stderr-redirection212913212918%_ absent-value)
+                    _%stdout-redirection222899222904%_))
+               (_%stderr-redirection222911%_
+                (if (eq? _%stderr-redirection222900222905%_ absent-value)
                     '#f
-                    _%stderr-redirection212913212918%_)))
-          (let ((__tmp214826 (cons _%program212919%_ _%args212920%_)))
+                    _%stderr-redirection222900222905%_)))
+          (let ((__tmp224813 (cons _%program222906%_ _%args222907%_)))
             (declare (not safe))
-            (gxc#verbose '"invoke " __tmp214826))
-          (let* ((_%proc212926%_
+            (gxc#verbose '"invoke " __tmp224813))
+          (let* ((_%proc222913%_
                   (open-process
                    (cons 'path:
-                         (cons _%program212919%_
+                         (cons _%program222906%_
                                (cons 'arguments:
-                                     (cons _%args212920%_
+                                     (cons _%args222907%_
                                            (cons 'stdout-redirection:
-                                                 (cons _%stdout-redirection212922%_
+                                                 (cons _%stdout-redirection222909%_
                                                        (cons 'stderr-redirection:
-                                                             (cons _%stderr-redirection212924%_
+                                                             (cons _%stderr-redirection222911%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                 (_%output212931%_
-                  (if (or _%stdout-redirection212922%_
-                          _%stderr-redirection212924%_)
-                      (read-line _%proc212926%_ '#f)
+                 (_%output222918%_
+                  (if (or _%stdout-redirection222909%_
+                          _%stderr-redirection222911%_)
+                      (read-line _%proc222913%_ '#f)
                       '#f))
-                 (_%status212934%_ (process-status _%proc212926%_)))
-            (let () (declare (not safe)) (##close-port _%proc212926%_))
-            (if (zero? _%status212934%_)
+                 (_%status222921%_ (process-status _%proc222913%_)))
+            (let () (declare (not safe)) (##close-port _%proc222913%_))
+            (if (zero? _%status222921%_)
                 '#!void
                 (begin
-                  (display _%output212931%_)
-                  (let ((__tmp214827 (cons _%program212919%_ _%args212920%_)))
+                  (display _%output222918%_)
+                  (let ((__tmp224814 (cons _%program222906%_ _%args222907%_)))
                     (declare (not safe))
                     (gxc#raise-compile-error
                      '"Compilation error; process exit with nonzero status"
-                     __tmp214827
-                     _%status212934%_))))))))
+                     __tmp224814
+                     _%status222921%_))))))))
     (define gxc#invoke__@
-      (lambda (_%@@keywords212939%_ . _%args212940%_)
+      (lambda (_%@@keywords222926%_ . _%args222927%_)
         (apply gxc#invoke__%
-               _%@@keywords212939%_
+               _%@@keywords222926%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords212939%_
+                  _%@@keywords222926%_
                   'stdout-redirection:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords212939%_
+                  _%@@keywords222926%_
                   'stderr-redirection:
                   absent-value))
-               _%args212940%_)))
+               _%args222927%_)))
     (define gxc#invoke
-      (lambda _%args212914212946%_
+      (lambda _%args222901222933%_
         (apply keyword-dispatch
                '#(stderr-redirection: stdout-redirection:)
                gxc#invoke__@
-               _%args212914212946%_)))))
+               _%args222901222933%_)))))
