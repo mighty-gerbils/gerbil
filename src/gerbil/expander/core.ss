@@ -424,6 +424,10 @@ namespace: gx
          (core-cons id body))))))
 
 (def (core-apply-user-expander self stx (method 'apply-macro-expander))
+  ;; expander debugging support
+  (when __DEBUG-EXPANDER
+    (displayln "@expand " (syntax->datum stx))
+    (force-output))
   (with ((user-expander K ctx phi) self)
     (core-apply-user-macro K stx ctx phi method)))
 
