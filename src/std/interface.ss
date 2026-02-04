@@ -15,18 +15,18 @@
    (let (info (syntax-local-value #'Interface))
      (interface-info-interface-descriptor info))))
 
-(defsyntax-ccase @interface-method-index ()
+(defsyntax-ccase @interface-method-offset ()
   ((_ Interface method)
    (and (syntax-local-interface-info? #'Interface)
         (identifier #'method))
    (let ((method (stx-e #'method))
          (info (syntax-local-value #'Interface)))
      (cond
-      ((interface-info-method-index info method))
+      ((interface-info-method-offset info method))
       (else
        (raise-syntax-error #f "unknown interface method" stx #'Interface method))))))
 
-(defrule (@apply-prototype-method method-name method-index arg ...)
+(defrule (@apply-prototype-method method-name method-offset arg ...)
   (lambda (descriptor prototype receiver)
     (if prototype
       (let ()
@@ -34,7 +34,7 @@
         (let (method
               (##unchecked-structure-ref
                prototype
-               method-index
+               method-offset
                #f 'method-name))
           (method receiver arg ...)))
       (abort!
@@ -43,7 +43,7 @@
                          object: receiver
                          method: 'method-name)))))
 
-(defrule (@apply-prototype-method/fallback method-name method-index fallback arg ...)
+(defrule (@apply-prototype-method/fallback method-name method-offset fallback arg ...)
   (lambda (descriptor prototype receiver)
     (if prototype
       (let ()
@@ -51,7 +51,7 @@
         (let (method
               (##unchecked-structure-ref
                prototype
-               method-index
+               method-offset
                #f 'method-name))
           (method receiver arg ...)))
       (fallback receiver arg ...))))
@@ -63,7 +63,7 @@
            (method
             (##unchecked-structure-ref
                prototype
-               method-index
+               method-offset
                #f 'method-name)))
       (method receiver arg ...))))
 
@@ -73,11 +73,11 @@
     obj
     (@apply-prototype-method
      method
-     (@interface-method-index Interface method)
+     (@interface-method-offset Interface method)
      arg ...)
     (@apply-prototype-method/object
      method
-     (@interface-method-index Interface method)
+     (@interface-method-offset Interface method)
      arg ...)))
 
 ;; TODO extract interface method signature and check/set argument contracts
@@ -88,11 +88,11 @@
             obj create-prototype
             (@apply-prototype-method
              method
-             (@interface-method-index Interface method)
+             (@interface-method-offset Interface method)
              arg ...)
             (@apply-prototype-method/object
              method
-             (@interface-method-index Interface method)
+             (@interface-method-offset Interface method)
              arg ...))))
   ((_ Interface method (proc obj arg ...)) ~ Type)
   (def (proc obj arg ...) => Type
@@ -100,11 +100,11 @@
               obj create-prototype
               (@apply-prototype-method
                method
-               (@interface-method-index Interface method)
+               (@interface-method-offset Interface method)
                arg ...)
               (@apply-prototype-method/object
                method
-               (@interface-method-index Interface method)
+               (@interface-method-offset Interface method)
                arg ...))
        Type)))
 
@@ -116,11 +116,11 @@
             obj try-create-prototype
             (@apply-prototype-method/fallback
              method
-             (@interface-method-index Interface method)
+             (@interface-method-offset Interface method)
              fallback arg ...)
             (@apply-prototype-method/object
              method
-             (@interface-method-index Interface method)
+             (@interface-method-offset Interface method)
              arg ...))))
   ((_ Interface Interface method-name (proc obj arg ...) fallback ~ Type)
    (def (proc obj arg ...) => Type
@@ -128,10 +128,10 @@
                obj try-create-prototype
                (@apply-prototype-method/fallback
                 method
-                (@interface-method-index Interface method)
+                (@interface-method-offset Interface method)
                 fallback arg ...)
                (@apply-prototype-method/object
                 method
-                (@interface-method-index Interface method)
+                (@interface-method-offset Interface method)
                 arg ...))
         Type))))

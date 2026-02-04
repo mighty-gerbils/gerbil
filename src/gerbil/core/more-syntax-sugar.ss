@@ -37,14 +37,5 @@ package: gerbil/core
   (with-identifiers ((fresh-id components ...))
     body ...))
 
-(defsyntax (defsyntax-case stx)
-  (syntax-case stx ()
-    ((_ name (lit ...) clause ...)
-     (with-syntax (($stx (syntax-local-introduce 'stx)))
-       #'(defsyntax name
-           (lambda ($stx)
-             (syntax-case $stx (lit ...)
-               clause ...)))))))
-
 ;; TODO Not Implemented Yet -- barf
 (defrules quasisyntax ())
