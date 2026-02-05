@@ -660,51 +660,6 @@ package: gerbil/expander
              origin:
              gerbil/expander/top)))
   (declare-type
-   gx#macro-expand-define-values
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
-   gx#macro-expand-define-syntax
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
-   gx#macro-expand-define-alias
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
    gx#macro-expand-lambda%
    (@lambda 1
             #f
