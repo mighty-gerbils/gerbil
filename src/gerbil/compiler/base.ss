@@ -63,6 +63,21 @@ namespace: gxc
 (def current-compile-parallel
   (make-parameter #f))
 
+;; quote-syntax lifts
+(def current-compile-lift
+  (make-parameter #f))
+(def current-compile-marks
+  (make-parameter #f))
+(def current-compile-identifiers
+  (make-parameter #f))
+(def current-compile-boolean-context
+  (make-parameter #f))
+
+(def (make-bound-identifier-table)
+  (def (hash-e id)
+    (symbol-hash (stx-e id)))
+  (make-hash-table test: bound-identifier=? hash: hash-e))
+
 ;; locally scoped identifiers
 (def current-compile-local-env
   (make-parameter []))
@@ -87,7 +102,6 @@ namespace: gxc
 (defrules with-verbose-mutex ()
   ((_ expr)
    (with-lock __verbose-mutex (lambda () expr))))
-
 
 ;; these characters are restricted to avoid confusing shells and other tools
 (def module-path-reserved-chars
@@ -188,6 +202,30 @@ namespace: gxc
         (hash-put! ht sym g)
         g)))))
 
+(def (generate-runtime-identifier id)
+  (generate-runtime-identifier-key (core-identifier-key id)))
+
+(def (generate-runtime-identifier-key key)
+  (cond
+   ((interned-symbol? key) key)
+   ((uninterned-symbol? key)
+    (generate-runtime-gensym-reference key))
+   (else
+    (match key
+      ([eid . mark]
+       (cond
+        ((expander-mark-subst mark)
+         => (lambda (ht)
+              (cond
+               ((hash-get ht eid)
+                => (lambda (id)
+                     (if (interned-symbol? id) id
+                         (generate-runtime-gensym-reference id))))
+               (else
+                (generate-runtime-identifier-key eid)))))
+        (else
+         (generate-runtime-identifier-key eid))))))))
+
 (def (runtime-identifier=? id1 id2)
   (def (symbol-e id)
     (if (symbol? id) id
@@ -208,7 +246,12 @@ namespace: gxc
                     (cond
                      ((runtime-binding-macro bind)
                       => (lambda (macro-id)
-                           [macro: (generate-runtime-identifier macro-id) :: props]))
+                           (cond
+                            ((hash-get (current-compile-identifiers) id)
+                            => (lambda (stxq)
+                                 [macro: stxq]))
+                            (else
+                             (raise-compile-error "no syntax quote object for macro" id macro-id)))))
                      (else [])))
                    (props
                     (cond
