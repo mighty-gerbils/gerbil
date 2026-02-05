@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1770248969)
+  (define gerbil/expander/core::timestamp 1770313935)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -3356,7 +3356,8 @@
         (hash-put!
          (##unchecked-structure-ref _%ctx141005%_ '2 '#f '#f)
          _%key141006%_
-         _%val141007%_)))
+         _%val141007%_)
+        _%val141007%_))
     (define gx#core-context-resolve
       (lambda (_%ctx140991%_ _%key140992%_)
         (let _%lp140994%_ ((_%ctx140996%_ _%ctx140991%_))

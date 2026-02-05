@@ -30,6 +30,9 @@ namespace: gx
           core-expand-define-runtime%
           gx#core-expand-define-runtime%)
          (%#define-runtime
+          core-bind-runtime-properties!
+          gx#core-bind-runtime-properties!)
+         (%#define-runtime
           core-expand-define-syntax%
           gx#core-expand-define-syntax%)
          (%#define-runtime

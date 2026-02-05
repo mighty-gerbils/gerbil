@@ -108,6 +108,9 @@ namespace: gxc
                             gxc#generate-runtime-gensym-reference)))
          (%#define-runtime runtime-identifier=? gxc#runtime-identifier=?)
          (%#define-runtime identifier-symbol gxc#identifier-symbol)
+         (%#define-runtime
+          runtime-identifier-properties
+          gxc#runtime-identifier-properties)
          (%#define-runtime __compile-jobs gxc#__compile-jobs)
          (%#define-runtime __available-cores gxc#__available-cores)
          (%#define-runtime __jobs-mx gxc#__jobs-mx)

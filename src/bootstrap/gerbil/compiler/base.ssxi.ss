@@ -421,6 +421,21 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/base)))
   (declare-type
+   gxc#runtime-identifier-properties
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
    gxc#__compile-jobs
    (optimizer-resolve-class '(typedecl gxc#__compile-jobs) 'list::t))
   (declare-type

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1770248966)
+  (define gerbil/runtime/error::timestamp 1770313933)
   (begin
     (define Exception::t
       (let ((__tmp119352 (list)))
@@ -709,14 +709,14 @@
               (##write-string __tmp119369 _%port118820%_))))))
     (define Error::display-exception::specialize
       (lambda (__klass119328 __method-table119329)
-        (let ((__irritants119330
+        (let ((__continuation119330
                (let ((__slot119334
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass119328 'irritants))))
+                        (class-slot-offset __klass119328 'continuation))))
                  (if __slot119334
                      __slot119334
-                     (error '"Unknown slot" 'irritants))))
+                     (error '"Unknown slot" 'continuation))))
               (__message119331
                (let ((__slot119335
                       (let ()
@@ -725,14 +725,14 @@
                  (if __slot119335
                      __slot119335
                      (error '"Unknown slot" 'message))))
-              (__continuation119332
+              (__irritants119332
                (let ((__slot119336
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass119328 'continuation))))
+                        (class-slot-offset __klass119328 'irritants))))
                  (if __slot119336
                      __slot119336
-                     (error '"Unknown slot" 'continuation))))
+                     (error '"Unknown slot" 'irritants))))
               (__where119333
                (let ((__slot119337
                       (let ()
@@ -786,7 +786,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self118823%_
-                                   __irritants119330
+                                   __irritants119332
                                    '#f
                                    '#f))))
                            (if (null? _%irritants118841%_)
@@ -820,7 +820,7 @@
                                       (declare (not safe))
                                       (##unchecked-structure-ref
                                        _%self118823%_
-                                       __continuation119332
+                                       __continuation119330
                                        '#f
                                        '#f))))
                                (if _%cont118844118846%_
