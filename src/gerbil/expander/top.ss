@@ -272,7 +272,9 @@ namespace: gx
          (case key
            ((macro:)
             (runtime-binding-macro-set! bind
-              (core-quote-syntax prop))
+              (if (identifier? prop)
+                (core-quote-syntax prop)
+                (eval-prop)))
             (loop rest props))
            ((type:)
             (runtime-binding-type-set! bind

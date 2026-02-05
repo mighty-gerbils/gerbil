@@ -691,13 +691,14 @@ namespace: #f
       ((class-slot-offset klass slot) => K)
       (else (E obj slot))))))
 
+(def (__slot-error obj slot)
+  (error "Cannot find slot" object: obj slot: slot))
+
 (def (slot-ref obj (slot : :symbol) (E : :procedure := __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-ref obj off)) E))
 (def (slot-set! obj (slot : :symbol) val (E : :procedure := __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-set! obj off val)) E))
 
-(def (__slot-error obj slot)
-  (error "Cannot find slot" object: obj slot: slot))
 
 ;; Is maybe-sub-class a subclass of maybe-super-class?
 ; : TypeDescriptor TypeDescriptor -> Bool
