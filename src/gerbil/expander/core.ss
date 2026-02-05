@@ -673,9 +673,11 @@ namespace: gx
 
 (def (core-context-get ctx key)
   (hash-get (&expander-context-table ctx) key))
+
 (def (core-context-put! ctx key val)
   ;;(displayln `(core-context-put! ,(expander-context-id ctx) ,key ,val))
-  (hash-put! (&expander-context-table ctx) key val))
+  (hash-put! (&expander-context-table ctx) key val)
+  val)
 
 (def (core-context-resolve ctx key)
   (let lp ((ctx ctx))

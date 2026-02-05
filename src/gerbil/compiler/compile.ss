@@ -1476,8 +1476,9 @@ namespace: gxc
 (def (generate-meta-define-values% self stx)
   (def (generate1 id)
     (let ((eid (generate-runtime-binding-id id))
-          (ident (generate-runtime-identifier id)))
-      ['%#define-runtime ident eid]))
+          (ident (generate-runtime-identifier id))
+          (props (runtime-identifier-properties id)))
+      ['%#define-runtime ident eid props ...]))
 
   (def (generate* all)
     (match all

@@ -215,6 +215,15 @@ namespace: gx
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
   (core-syntax-case stx ()
+    ((_ (id) expr . props)
+     (identifier? id)
+     (let (bind (core-bind-runtime! id))
+       (core-bind-runtime-properties! bind props)
+       (core-quote-syntax
+        [(core-quote-syntax '%#define-values)
+         (core-quote-bind-values [id])
+         (core-expand-expression expr)]
+        (stx-source stx))))
     ((_ hd expr)
      (core-bind-values? hd)
      (begin
@@ -228,14 +237,43 @@ namespace: gx
 ;; (%#define-runtime id binding-id)
 (def (core-expand-define-runtime% stx)
   (core-syntax-case stx ()
-    ((_ id binding-id)
-     (and (identifier? id) (identifier? binding-id))
-     (let (eid (stx-e binding-id))
-       (core-bind-runtime-reference! id eid)
+    ((_ id binding-id . props)
+     (and (identifier? id)
+          (identifier? binding-id)
+          (stx-list? props))
+     (let* ((eid (stx-e binding-id))
+            (bind (core-bind-runtime-reference! id eid)))
+       (core-bind-runtime-properties! bind props)
        (core-quote-syntax
-        [(core-quote-syntax '%#define-runtime)
-         (core-quote-syntax id)
-         eid])))))
+               [(core-quote-syntax '%#define-runtime)
+                (core-quote-syntax id)
+                eid])))))
+
+(def (core-bind-runtime-properties! bind props)
+  (let loop ((rest props) (props []))
+    (core-syntax-case rest ()
+      ((key prop . rest)
+       (stx-keyword? key)
+       (let ((key (stx-e key))
+             (eval-prop
+              (lambda ()
+                (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+                  (eval-syntax prop)))))
+         (case key
+           ((macro:)
+            (runtime-binding-macro-set! bind
+              (eval-prop))
+            (loop rest props))
+           ((type:)
+            (runtime-binding-type-set! bind
+              (eval-prop))
+            (loop rest props))
+           (else
+            (loop rest (cons* (eval-prop) key props))))))
+      (()
+       (unless (null? props)
+         (binding-properties-set! bind (reverse! props)))))))
+
 
 ;; (%#define-syntax id expr)
 (def (core-expand-define-syntax% stx)

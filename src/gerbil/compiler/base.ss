@@ -199,6 +199,47 @@ namespace: gxc
     (generate-runtime-binding-id stx)
     (stx-e stx)))
 
+(def (runtime-identifier-properties id)
+  (let* ((bind (resolve-identifier id))
+         (runtime-props
+          (cond
+           ((runtime-binding? bind)
+            (let* ((props
+                    (cond
+                     ((runtime-binding-macro bind)
+                      => (lambda (macro)
+                           [macro: macro]))
+                     (else [])))
+                   (props
+                    (cond
+                     ((runtime-binding-type bind)
+                      => (lambda (type)
+                           (cond
+                            ((method-ref type ':repr)
+                             => (lambda (method)
+                                  (let (repr (method type))
+                                    [type: repr :: props])))
+                            (else
+                             (raise-compile-error "unrepresentable type" id type)))))
+                     (else props))))
+              props))
+           (else []))))
+         (cond
+          ((binding-properties bind)
+           => (lambda (props)
+                (foldl (lambda (prop props)
+                         (with ([key . value] prop)
+                           (cond
+                            ((method-ref value ':repr)
+                             => (lambda (method)
+                                  (let (repr (method value))
+                                    [key repr :: props])))
+                            (else
+                             [key ['quote value] :: props]))))
+                       runtime-props
+                       props)))
+          (else runtime-props))))
+
 ;; parallel build support
 (def __compile-jobs [])
 (def __available-cores
