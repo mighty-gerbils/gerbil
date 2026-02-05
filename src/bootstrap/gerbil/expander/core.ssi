@@ -998,6 +998,7 @@ namespace: gx
                             eval-syntax+1__0
                             gx#eval-syntax+1__0)
                            (%#define-runtime eval-syntax+1 gx#eval-syntax+1)))
+         (%#define-runtime eval-expression+1 gx#eval-expression+1)
          (%#define-runtime eval-syntax* gx#eval-syntax*)
          (%#begin (%#define-runtime core-expand__% gx#core-expand__%)
                   (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)

@@ -2096,6 +2096,21 @@ package: gerbil/expander
       origin:
       gerbil/expander/core))))
   (declare-type
+   gx#eval-expression+1
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/core)))
+  (declare-type
    gx#eval-syntax*
    (@lambda 1
             #f
