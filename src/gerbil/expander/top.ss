@@ -532,27 +532,6 @@ namespace: gx
      (core-cons '%#extern
        (generate body)))))
 
-(def (macro-expand-define-values stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (stx-andmap identifier? hd)
-     [(core-quote-syntax '%#define-values)
-      (stx-map identity hd)
-      expr])))
-
-(def (macro-expand-define-syntax stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (identifier? hd)
-     [(core-quote-syntax '%#define-syntax) hd expr])))
-
-(def (macro-expand-define-alias stx)
-  (core-syntax-case stx ()
-    ((_ id alias-id)
-     (and (identifier? id)
-          (identifier? alias-id))
-     [(core-quote-syntax '%#define-alias) id alias-id])))
-
 (def (macro-expand-lambda% stx)
   (core-syntax-case stx ()
     ((_ hd . body)
