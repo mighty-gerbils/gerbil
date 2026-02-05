@@ -83,6 +83,41 @@ package: gerbil/compiler
     '(typedecl gxc#current-compile-parallel)
     'procedure::t))
   (declare-type
+   gxc#current-compile-lift
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-lift)
+    'procedure::t))
+  (declare-type
+   gxc#current-compile-marks
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-marks)
+    'procedure::t))
+  (declare-type
+   gxc#current-compile-identifiers
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-identifiers)
+    'procedure::t))
+  (declare-type
+   gxc#current-compile-boolean-context
+   (optimizer-resolve-class
+    '(typedecl gxc#current-compile-boolean-context)
+    'procedure::t))
+  (declare-type
+   gxc#make-bound-identifier-table
+   (@lambda 0
+            #f
+            signature:
+            (return:
+             HashTable::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
    gxc#current-compile-local-env
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-local-env)
@@ -390,6 +425,36 @@ package: gerbil/compiler
       #f
       origin:
       gerbil/compiler/base))))
+  (declare-type
+   gxc#generate-runtime-identifier
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
+  (declare-type
+   gxc#generate-runtime-identifier-key
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/base)))
   (declare-type
    gxc#runtime-identifier=?
    (@lambda 2

@@ -96,6 +96,7 @@ namespace: gerbil/core/expander
                     (module-context-code gx#module-context-code)
                     (make-local-context gx#make-local-context)
                     (eval-syntax gx#eval-syntax)
+                    (eval-syntax+1 gx#eval-syntax+1)
                     (core-expand gx#core-expand)
                     (core-expand-head gx#core-expand-head)
                     (core-expand-expression+1 gx#core-expand-expression+1)

@@ -10,17 +10,6 @@ namespace: gxc
          (%#export #t)
          (%#define-runtime gambit-annotations gxc#gambit-annotations)
          (%#define-runtime checked-primitives gxc#checked-primitives)
-         (%#define-runtime current-compile-lift gxc#current-compile-lift)
-         (%#define-runtime current-compile-marks gxc#current-compile-marks)
-         (%#define-runtime
-          current-compile-identifiers
-          gxc#current-compile-identifiers)
-         (%#define-runtime
-          current-compile-boolean-context
-          gxc#current-compile-boolean-context)
-         (%#define-runtime
-          make-bound-identifier-table
-          gxc#make-bound-identifier-table)
          (%#define-runtime ::collect-bindings::t gxc#::collect-bindings::t)
          (%#define-runtime ::collect-bindings? gxc#::collect-bindings?)
          (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
@@ -246,12 +235,6 @@ namespace: gxc
           with-inline-unsafe-primitives
           |gxc[:0:]#with-inline-unsafe-primitives|)
          (%#define-runtime add-module-binding! gxc#add-module-binding!)
-         (%#define-runtime
-          generate-runtime-identifier
-          gxc#generate-runtime-identifier)
-         (%#define-runtime
-          generate-runtime-identifier-key
-          gxc#generate-runtime-identifier-key)
          (%#define-runtime generate-runtime-empty gxc#generate-runtime-empty)
          (%#define-runtime generate-runtime-begin% gxc#generate-runtime-begin%)
          (%#define-runtime

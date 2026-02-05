@@ -1345,6 +1345,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
+   __slot-error
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    slot-ref__%
    (@lambda 3
             #f
@@ -1580,21 +1595,6 @@ package: gerbil/runtime
       #f
       origin:
       gerbil/runtime/mop))))
-  (declare-type
-   __slot-error
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/mop)))
   (declare-type
    subclass?
    (@lambda 2
