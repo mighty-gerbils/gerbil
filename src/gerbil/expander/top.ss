@@ -260,24 +260,27 @@ namespace: gx
                 eid])))))
 
 (def (core-bind-runtime-properties! bind props)
+  (def (eval-prop prop)
+    (if (identifier? prop)
+      (syntax-local-value prop eval-expresision+1)
+      (eval-expression+1 prop)))
+
   (let loop ((rest props) (props []))
     (core-syntax-case rest ()
       ((key prop . rest)
        (stx-keyword? key)
        (let (key (stx-e key))
-         (def (eval-prop)
-           (eval-syntax+1 prop #t))
          (case key
            ((macro:)
             (runtime-binding-macro-set! bind
-              (eval-prop))
+              (eval-prop prop))
             (loop rest props))
            ((type:)
             (runtime-binding-type-set! bind
-              (eval-prop))
+              (eval-prop prop))
             (loop rest props))
            (else
-            (loop rest (cons* (eval-prop) key props))))))
+            (loop rest (cons* (eval-prop prop) key props))))))
       (()
        (unless (null? props)
          (binding-properties-set! bind (reverse! props)))))))

@@ -169,6 +169,9 @@ namespace: gx
   (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
     (eval-syntax stx expression?)))
 
+(def (eval-expression+1 stx)
+  (eval-syntax+1 stx #t))
+
 (def (eval-syntax* stx)
   ((current-expander-eval)
    ((current-expander-compile) stx)))
