@@ -34,6 +34,11 @@ namespace: gx
                             %#define-runtime)
         ((%#begin-syntax . _)
          (K (core-expand-begin-syntax% hd)))
+        ((%#define-values (id) expr . props)
+         (identifier? id)
+         (let (bind (core-bind-runtime! id))
+           (core-bind-runtime-properties! bind props)
+           (K hd)))
         ((%#define-values hd-bind expr)
          (core-bind-values? hd-bind)
          (begin
@@ -51,7 +56,7 @@ namespace: gx
       (match rest
         ([hd . rest]
          (core-syntax-case hd (%#define-values %#begin-syntax)
-           ((%#define-values hd-bind expr)
+           ((%#define-values hd-bind expr . ignore-props)
             (let (ehd
                   (core-quote-syntax
                    [(core-quote-syntax '%#define-values)
@@ -119,6 +124,11 @@ namespace: gx
     (core-syntax-case hd (%#define-values
                           %#define-syntax %#define-alias
                           %#declare)
+      ((%#define-values (id) expr . props)
+       (identifier? id)
+       (let (bind (core-bind-runtime! id))
+         (core-bind-runtime-properties! bind props)
+         (K rest (cons hd r))))
       ((%#define-values hd-bind expr)
        (core-bind-values? hd-bind)
        (begin
@@ -140,7 +150,7 @@ namespace: gx
       (core-syntax-case rest ()
         ((hd . rest)
          (core-syntax-case hd (%#define-values %#declare)
-           ((%#define-values hd-bind expr)
+           ((%#define-values hd-bind expr . ignore-props)
             (lp rest decls
                 (cons [(core-quote-bind-values hd-bind)
                        (core-expand-expression expr)]
