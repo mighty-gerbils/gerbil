@@ -262,7 +262,7 @@ namespace: gx
 (def (core-bind-runtime-properties! bind props)
   (def (eval-prop prop)
     (if (identifier? prop)
-      (syntax-local-value prop eval-expresision+1)
+      (syntax-local-value prop eval-expression+1)
       (eval-expression+1 prop)))
 
   (let loop ((rest props) (props []))
