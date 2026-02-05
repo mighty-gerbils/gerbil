@@ -165,6 +165,10 @@ namespace: gx
 (def (eval-syntax stx (expression? #f))
   (eval-syntax* (core-expand stx expression?)))
 
+(def (eval-syntax+1 stx (expression? #f))
+  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+    (eval-syntax stx expression?)))
+
 (def (eval-syntax* stx)
   ((current-expander-eval)
    ((current-expander-compile) stx)))
@@ -365,8 +369,7 @@ namespace: gx
        (identifier? id)
        (core-bound-identifier? id feature-binding?))
       ((unquote expr)
-       (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-         (eval-syntax expr)))
+       (eval-syntax+1 expr))
       ((combinator . body)
        (stx-list? body)
        (case (stx-e combinator)

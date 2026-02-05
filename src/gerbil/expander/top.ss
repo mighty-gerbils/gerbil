@@ -264,17 +264,13 @@ namespace: gx
     (core-syntax-case rest ()
       ((key prop . rest)
        (stx-keyword? key)
-       (let ((key (stx-e key))
-             (eval-prop
-              (lambda ()
-                (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-                  (eval-syntax prop)))))
+       (let (key (stx-e key))
+         (def (eval-prop)
+           (eval-syntax+1 prop #t))
          (case key
            ((macro:)
             (runtime-binding-macro-set! bind
-              (if (identifier? prop)
-                (core-quote-syntax prop)
-                (eval-prop)))
+              (eval-prop))
             (loop rest props))
            ((type:)
             (runtime-binding-type-set! bind

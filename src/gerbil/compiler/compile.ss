@@ -1496,7 +1496,7 @@ namespace: gxc
          (id
           (identifier? #'id)
           (generate* (foldl cons [(generate1 #'id)] r)))
-         (_ (generate* (reverse r))))))))
+         (_ (generate* (reverse! r))))))))
 
 (def (generate-meta-define-syntax% self stx)
   (ast-case stx ()

@@ -49,7 +49,9 @@ package: gerbil/core
     expander-context-id  module-context-ns
     module-context-import module-context-export module-context-code
     make-local-context
-    eval-syntax core-expand core-expand-head core-expand-expression+1
+    eval-syntax eval-syntax+1
+    core-expand core-expand-head
+    core-expand-expression+1
     import-module eval-module
     core-library-module-path? core-resolve-library-module-path
     core-resolve-module-path
