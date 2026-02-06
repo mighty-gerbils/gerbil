@@ -246,8 +246,7 @@ namespace: gxc
                     (cond
                      ((runtime-binding-macro bind)
                       => (lambda (macro-id)
-                           [macro:
-                            ['gx#syntax-local-value ['quote (generate-runtime-identifier macro-id)]]]))
+                           [macro: (generate-runtime-identifier macro-id)]))
 
                      (else [])))
                    (props
