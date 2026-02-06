@@ -2555,7 +2555,7 @@ package: gerbil/core
                           (hash-put! tab slot slot-type)
                           (loop-inner rest-slots result)))))))
                  (else
-                  (loop (foldr cons rest (!class-type-super klass)) result))))))
+                  (loop (append (!class-type-super klass) rest) result))))))
           (else (values (reverse! result) tab)))))
 
     (def (get-slot-table slots mixin-slots super contract-e getf mixf)

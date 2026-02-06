@@ -8,6 +8,7 @@ package: gerbil/core
 (import "runtime" "sugar" "mop"
         (phi: +1 "runtime" "expander" "sugar" "mop" "macro-object")
         (phi: +2 "runtime"))
+(import QuasiquoteRuntime (phi: +1 QuasiquoteExpander))
 (export #t
         (phi: +1 match-macro match-macro::t
                 make-match-macro match-macro?
@@ -28,7 +29,8 @@ package: gerbil/core
       (syntax-case hd (? and or not
                          cons cons* @list
                          values vector box
-                         quote quasiquote
+                         quote
+                         quasiquote qq-quote qq-list qq-list* qq-append append
                          eq? eqv? equal?
                          apply)
         ;; gated match
@@ -65,8 +67,38 @@ package: gerbil/core
          (if (stx-null? #'rest)
            [cons: (parse1 #'hd) (parse1 #'tl)]
            [cons: (parse1 #'hd) (parse1 #'(cons* tl . rest))]))
+        ((qq-list* x y . r)
+         (parse1 #'(cons* x y . r)))
         ((@list . body)
          (parse-list #'body))
+        ((qq-list . body)
+         (parse-list #'body))
+        ((qq-append . r)
+         (parse1 #'(append . r)))
+        ((append x)
+         (parse1 #'x))
+        ((append '() . r)
+         (parse1 #'(append . r)))
+        ((append (@list) . r)
+         (parse1 #'(append . r)))
+        ((append (list x ...) . r)
+         (parse1 #'(cons* x ... (append . r))))
+        ((append (@list x ...) . r)
+         (parse1 #'(cons* x ... (append . r))))
+        ((append (qq-list x ...) . r)
+         (parse1 #'(cons* x ... (append . r))))
+        ((append (cons x y) . r)
+         (parse1 #'(cons x (append y . r))))
+        ((append (cons* x ... y) . r)
+         (parse1 #'(cons* x ... (append y . r))))
+        ((append (qq-list* x ... y) . r)
+         (parse1 #'(cons* x ... (append y . r))))
+        ;; append when there is only one non-constant-length pattern, at the beginning
+        ((append x ... '())
+         (parse1 #'(append x ...)))
+        ((append x ... (@list))
+         (parse1 #'(append x ...)))
+        ;; TODO: infrastructure to match a list from the end
         ;; boxes
         ((box pat)
          [box: (parse1 #'pat)])
@@ -100,7 +132,9 @@ package: gerbil/core
         ((quote datum)
          [datum: (stx-e #'datum)])
         ((quasiquote qp)
-         (parse-qq #'qp))
+         (parse1 (quasiquote-expand #'qp)))
+        ((quote datum)
+         [datum: (stx-e #'datum)])
         ;; applicative destructuring
         ((apply getf pat)
          [apply: #'getf (parse1 #'pat)])
@@ -162,11 +196,6 @@ package: gerbil/core
            (cons* #'key (parse1 #'pat) (recur #'rest)))
           (_ (if (stx-null? rest) []
                  (parse-error rest))))))
-
-    (def (parse-qq hd)
-      (syntax-case hd ()
-        ;; XXX
-        ))
 
     (def (parse-error hd)
       (apply raise-syntax-error

@@ -409,7 +409,7 @@ namespace: gxc
         ([hd . rest]
          (match hd
            (['begin . exprs]
-            (lp (foldr cons rest exprs) r))
+            (lp (append exprs rest) r))
            (['quote _]
             (if (null? rest)
               (lp rest (cons hd r))
@@ -452,7 +452,7 @@ namespace: gxc
        (compile-e self #'expr)))
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
-       (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
+       (parameterize ((current-compile-decls (append decls (current-compile-decls))))
          ['begin ['declare decls ...]
                  (compile-e self #'expr)])))))
 
@@ -460,7 +460,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ . decls)
      (let (decls (map syntax->datum #'decls))
-       (current-compile-decls (foldr cons (current-compile-decls) decls))
+       (current-compile-decls (append decls (current-compile-decls)))
        ['declare decls ...]))))
 
 (def (generate-runtime-define-values% self stx)
