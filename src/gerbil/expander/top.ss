@@ -261,9 +261,7 @@ namespace: gx
 
 (def (core-bind-runtime-properties! bind props)
   (def (eval-prop prop)
-    (if (identifier? prop)
-      (syntax-local-value prop eval-expression+1)
-      (eval-expression+1 prop)))
+    (eval-expression+1 prop))
 
   (let loop ((rest props) (props []))
     (core-syntax-case rest ()
@@ -273,7 +271,7 @@ namespace: gx
          (case key
            ((macro:)
             (runtime-binding-macro-set! bind
-              (eval-prop prop))
+              (core-quote-syntax prop))
             (loop rest props))
            ((type:)
             (runtime-binding-type-set! bind
@@ -474,7 +472,7 @@ namespace: gx
                    => (lambda (macro)
                         (core-expand-expression
                          (stx-wrap-source
-                          (cons macro args)
+                          (cons (syntax-local-value macro) args)
                           (stx-source stx)))))
                   ((import-binding? bind)
                    (again (import-binding-e bind)))

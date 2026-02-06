@@ -247,7 +247,7 @@ namespace: gxc
                      ((runtime-binding-macro bind)
                       => (lambda (macro-id)
                            (cond
-                            ((hash-get (current-compile-identifiers) id)
+                            ((hash-get (current-compile-identifiers) macro-id)
                             => (lambda (stxq)
                                  [macro: stxq]))
                             (else
