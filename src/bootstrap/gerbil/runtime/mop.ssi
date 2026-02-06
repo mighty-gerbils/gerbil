@@ -21,34 +21,79 @@ namespace: #f
          (%#define-runtime t::t t::t)
          (%#define-runtime class::t class::t)
          (%#define-runtime object::t object::t)
-         (%#define-runtime class-type class-type)
-         (%#define-runtime __class-type __class-type)
-         (%#define-runtime class-type? class-type?)
-         (%#define-runtime class-type=? class-type=?)
-         (%#define-runtime __class-type=? __class-type=?)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/mop~1")))
-                  (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|))
+                  (%#define-syntax @class-type |[:0:]#@class-type|))
+         (%#define-runtime __class-type __class-type)
+         (%#define-runtime class-type class-type macro: @class-type)
+         (%#define-runtime class-type? class-type?)
+         (%#define-syntax @class-type=? |[:0:]#@class-type=?|)
+         (%#define-runtime __class-type=? __class-type=?)
+         (%#define-runtime class-type=? class-type=? macro: @class-type=?)
+         (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|)
          (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
-         (%#define-runtime type-opaque? type-opaque?)
+         (%#define-syntax @type-opaque? |[:0:]#@type-opaque?|)
          (%#define-runtime __type-opaque? __type-opaque?)
-         (%#define-runtime class-type-opaque? class-type-opaque?)
+         (%#define-runtime type-opaque? type-opaque? macro: @type-opaque?)
+         (%#define-syntax @class-type-opaque? |[:0:]#@class-type-opaque?|)
          (%#define-runtime __class-type-opaque? __class-type-opaque?)
-         (%#define-runtime type-extensible? type-extensible?)
+         (%#define-runtime
+          class-type-opaque?
+          class-type-opaque?
+          macro:
+          @class-type-opaque?)
+         (%#define-syntax @type-extensible? |[:0:]#@type-extensible?|)
          (%#define-runtime __type-extensible? __type-extensible?)
-         (%#define-runtime class-type-final? class-type-final?)
+         (%#define-runtime
+          type-extensible?
+          type-extensible?
+          macro:
+          @type-extensible?)
+         (%#define-syntax @class-type-final? |[:0:]#@class-type-final?|)
          (%#define-runtime __class-type-final? __class-type-final?)
-         (%#define-runtime class-type-struct? class-type-struct?)
+         (%#define-runtime
+          class-type-final?
+          class-type-final?
+          macro:
+          @class-type-final?)
+         (%#define-syntax @class-type-struct? |[:0:]#@class-type-struct?|)
          (%#define-runtime __class-type-struct? __class-type-struct?)
-         (%#define-runtime class-type-sealed? class-type-sealed?)
+         (%#define-runtime
+          class-type-struct?
+          class-type-struct?
+          macro:
+          @class-type-struct?)
+         (%#define-syntax @class-type-sealed? |[:0:]#@class-type-sealed?|)
          (%#define-runtime __class-type-sealed? __class-type-sealed?)
-         (%#define-runtime class-type-metaclass? class-type-metaclass?)
+         (%#define-runtime
+          class-type-sealed?
+          class-type-sealed?
+          macro:
+          @class-type-sealed?)
+         (%#define-syntax
+          @class-type-metaclass?
+          |[:0:]#@class-type-metaclass?|)
          (%#define-runtime __class-type-metaclass? __class-type-metaclass?)
-         (%#define-runtime class-type-system? class-type-system?)
+         (%#define-runtime
+          class-type-metaclass?
+          class-type-metaclass?
+          macro:
+          @class-type-metaclass?)
+         (%#define-syntax @class-type-system? |[:0:]#@class-type-system?|)
          (%#define-runtime __class-type-system? __class-type-system?)
-         (%#define-runtime class-type-acyclic? class-type-acyclic?)
+         (%#define-runtime
+          class-type-system?
+          class-type-system?
+          macro:
+          @class-type-system?)
+         (%#define-syntax @class-type-acyclic? |[:0:]#@class-type-acyclic?|)
          (%#define-runtime __class-type-acyclic? __class-type-acyclic?)
+         (%#define-runtime
+          class-type-acyclic?
+          class-type-acyclic?
+          macro:
+          @class-type-acyclic?)
          (%#define-runtime
           make-class-type-descriptor
           make-class-type-descriptor)
@@ -136,52 +181,116 @@ namespace: #f
          (%#define-runtime
           &class-type-interface-set!
           &class-type-interface-set!)
-         (%#define-runtime class-type-slot-list class-type-slot-list)
+         (%#define-syntax @class-type-slot-list |[:0:]#@class-type-slot-list|)
          (%#define-runtime __class-type-slot-list __class-type-slot-list)
-         (%#define-runtime class-type-field-count class-type-field-count)
+         (%#define-runtime
+          class-type-slot-list
+          class-type-slot-list
+          macro:
+          @class-type-slot-list)
+         (%#define-syntax
+          @class-type-field-count
+          |[:0:]#@class-type-field-count|)
          (%#define-runtime __class-type-field-count __class-type-field-count)
-         (%#define-runtime class-type-seal! class-type-seal!)
+         (%#define-runtime
+          class-type-field-count
+          class-type-field-count
+          macro:
+          @class-type-field-count)
+         (%#define-syntax @class-type-seal! |[:0:]#@class-type-seal!|)
          (%#define-runtime __class-type-seal! __class-type-seal!)
          (%#define-runtime
-          class-type-printable-slots
-          class-type-printable-slots)
+          class-type-seal!
+          class-type-seal!
+          macro:
+          @class-type-seal!)
+         (%#define-syntax
+          @class-type-printable-slots
+          |[:0:]#@class-type-printable-slots|)
          (%#define-runtime
           __class-type-printable-slots
           __class-type-printable-slots)
-         (%#define-runtime substruct? substruct?)
+         (%#define-runtime
+          class-type-printable-slots
+          class-type-printable-slots
+          macro:
+          @class-type-printable-slots)
+         (%#define-syntax @substruct? |[:0:]#@substruct?|)
          (%#define-runtime __substruct? __substruct?)
+         (%#define-runtime substruct? substruct? macro: @substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)
          (%#define-runtime base-struct/list base-struct/list)
          (%#define-runtime base-struct base-struct)
          (%#define-runtime find-super-constructor find-super-constructor)
          (%#define-runtime compute-class-slots compute-class-slots)
-         (%#define-runtime make-class-type make-class-type)
+         (%#define-syntax @make-class-type |[:0:]#@make-class-type|)
          (%#define-runtime __make-class-type __make-class-type)
-         (%#define-runtime class-precedence-list class-precedence-list)
+         (%#define-runtime
+          make-class-type
+          make-class-type
+          macro:
+          @make-class-type)
+         (%#define-syntax
+          @class-precedence-list
+          |[:0:]#@class-precedence-list|)
          (%#define-runtime __class-precedence-list __class-precedence-list)
+         (%#define-runtime
+          class-precedence-list
+          class-precedence-list
+          macro:
+          @class-precedence-list)
          (%#define-runtime compute-precedence-list compute-precedence-list)
-         (%#define-runtime make-class-predicate make-class-predicate)
+         (%#define-syntax @make-class-predicate |[:0:]#@make-class-predicate|)
          (%#define-runtime __make-class-predicate __make-class-predicate)
+         (%#define-runtime
+          make-class-predicate
+          make-class-predicate
+          macro:
+          @make-class-predicate)
          (%#define-syntax if-class-slot-field |[:0:]#if-class-slot-field|)
-         (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
+         (%#define-syntax
+          @make-class-slot-accessor
+          |[:0:]#@make-class-slot-accessor|)
          (%#define-runtime
           __make-class-slot-accessor
           __make-class-slot-accessor)
-         (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
+         (%#define-runtime
+          make-class-slot-accessor
+          make-class-slot-accessor
+          macro:
+          @make-class-slot-accessor)
+         (%#define-syntax
+          @make-class-slot-mutator
+          |[:0:]#@make-class-slot-mutator|)
          (%#define-runtime __make-class-slot-mutator __make-class-slot-mutator)
          (%#define-runtime
-          make-class-slot-unchecked-accessor
-          make-class-slot-unchecked-accessor)
+          make-class-slot-mutator
+          make-class-slot-mutator
+          macro:
+          @make-class-slot-mutator)
+         (%#define-syntax
+          @make-class-slot-unchecked-accessor
+          |[:0:]#@make-class-slot-unchecked-accessor|)
          (%#define-runtime
           __make-class-slot-unchecked-accessor
           __make-class-slot-unchecked-accessor)
          (%#define-runtime
-          make-class-slot-unchecked-mutator
-          make-class-slot-unchecked-mutator)
+          make-class-slot-unchecked-accessor
+          make-class-slot-unchecked-accessor
+          macro:
+          @make-class-slot-unchecked-accessor)
+         (%#define-syntax
+          @make-class-slot-unchecked-mutator
+          |[:0:]#@make-class-slot-unchecked-mutator|)
          (%#define-runtime
           __make-class-slot-unchecked-mutator
           __make-class-slot-unchecked-mutator)
+         (%#define-runtime
+          make-class-slot-unchecked-mutator
+          make-class-slot-unchecked-mutator
+          macro:
+          @make-class-slot-unchecked-mutator)
          (%#begin (%#define-runtime not-an-instance__% not-an-instance__%)
                   (%#begin (%#define-runtime
                             not-an-instance__0
@@ -215,96 +324,197 @@ namespace: #f
          (%#define-runtime
           make-class-cached-slot-unchecked-mutator
           make-class-cached-slot-unchecked-mutator)
-         (%#define-runtime class-slot-offset class-slot-offset)
+         (%#define-syntax @class-slot-offset |[:0:]#@class-slot-offset|)
          (%#define-runtime __class-slot-offset __class-slot-offset)
-         (%#define-runtime class-slot-ref class-slot-ref)
+         (%#define-runtime
+          class-slot-offset
+          class-slot-offset
+          macro:
+          @class-slot-offset)
+         (%#define-syntax @class-slot-ref |[:0:]#@class-slot-ref|)
          (%#define-runtime __class-slot-ref __class-slot-ref)
-         (%#define-runtime class-slot-set! class-slot-set!)
+         (%#define-runtime
+          class-slot-ref
+          class-slot-ref
+          macro:
+          @class-slot-ref)
+         (%#define-syntax @class-slot-set! |[:0:]#@class-slot-set!|)
          (%#define-runtime __class-slot-set! __class-slot-set!)
+         (%#define-runtime
+          class-slot-set!
+          class-slot-set!
+          macro:
+          @class-slot-set!)
          (%#define-runtime unchecked-field-ref unchecked-field-ref)
          (%#define-runtime unchecked-field-set! unchecked-field-set!)
          (%#define-runtime unchecked-slot-ref unchecked-slot-ref)
          (%#define-runtime unchecked-slot-set! unchecked-slot-set!)
          (%#define-syntax __slot-e |[:0:]#__slot-e|)
          (%#define-runtime __slot-error __slot-error)
-         (%#begin (%#define-runtime slot-ref__% slot-ref__%)
-                  (%#begin (%#define-runtime slot-ref__0 slot-ref__0)
-                           (%#define-runtime slot-ref slot-ref)))
+         (%#define-syntax @slot-ref |[:0:]#@slot-ref|)
          (%#begin (%#define-runtime __slot-ref__% __slot-ref__%)
                   (%#begin (%#define-runtime __slot-ref__0 __slot-ref__0)
                            (%#define-runtime __slot-ref __slot-ref)))
-         (%#begin (%#define-runtime slot-set!__% slot-set!__%)
-                  (%#begin (%#define-runtime slot-set!__0 slot-set!__0)
-                           (%#define-runtime slot-set! slot-set!)))
+         (%#begin (%#define-runtime slot-ref__% slot-ref__%)
+                  (%#begin (%#define-runtime slot-ref__0 slot-ref__0)
+                           (%#define-runtime
+                            slot-ref
+                            slot-ref
+                            macro:
+                            @slot-ref)))
+         (%#define-syntax @slot-set! |[:0:]#@slot-set!|)
          (%#begin (%#define-runtime __slot-set!__% __slot-set!__%)
                   (%#begin (%#define-runtime __slot-set!__0 __slot-set!__0)
                            (%#define-runtime __slot-set! __slot-set!)))
-         (%#define-runtime subclass? subclass?)
+         (%#begin (%#define-runtime slot-set!__% slot-set!__%)
+                  (%#begin (%#define-runtime slot-set!__0 slot-set!__0)
+                           (%#define-runtime
+                            slot-set!
+                            slot-set!
+                            macro:
+                            @slot-set!)))
+         (%#define-syntax @subclass? |[:0:]#@subclass?|)
          (%#define-runtime __subclass? __subclass?)
+         (%#define-runtime subclass? subclass? macro: @subclass?)
          (%#define-runtime object? object?)
-         (%#define-runtime direct-instance? direct-instance?)
+         (%#define-syntax @direct-instance? |[:0:]#@direct-instance?|)
          (%#define-runtime __direct-instance? __direct-instance?)
+         (%#define-runtime
+          direct-instance?
+          direct-instance?
+          macro:
+          @direct-instance?)
          (%#define-runtime immediate-instance-of? immediate-instance-of?)
-         (%#define-runtime struct-instance? struct-instance?)
+         (%#define-syntax @struct-instance? |[:0:]#@struct-instance?|)
          (%#define-runtime __struct-instance? __struct-instance?)
-         (%#define-runtime class-instance? class-instance?)
+         (%#define-runtime
+          struct-instance?
+          struct-instance?
+          macro:
+          @struct-instance?)
+         (%#define-syntax @class-instance? |[:0:]#@class-instance?|)
          (%#define-runtime __class-instance? __class-instance?)
-         (%#define-runtime make-object make-object)
+         (%#define-runtime
+          class-instance?
+          class-instance?
+          macro:
+          @class-instance?)
+         (%#define-syntax @make-object |[:0:]#@make-object|)
          (%#define-runtime __make-object __make-object)
-         (%#define-runtime object-class object-class)
+         (%#define-runtime make-object make-object macro: @make-object)
+         (%#define-syntax @object-class |[:0:]#@object-class|)
          (%#define-runtime __object-class __object-class)
-         (%#define-runtime object-fill! object-fill!)
+         (%#define-runtime object-class object-class macro: @object-class)
+         (%#define-syntax @object-fill! |[:0:]#@object-fill!|)
          (%#define-runtime __object-fill! __object-fill!)
-         (%#define-runtime new-instance new-instance)
+         (%#define-runtime object-fill! object-fill! macro: @object-fill!)
+         (%#define-syntax @new-instance |[:0:]#@new-instance|)
          (%#define-runtime __new-instance __new-instance)
-         (%#define-runtime make-instance make-instance)
+         (%#define-runtime new-instance new-instance macro: @new-instance)
+         (%#define-syntax @make-instance |[:0:]#@make-instance|)
          (%#define-runtime __make-instance __make-instance)
+         (%#define-runtime make-instance make-instance macro: @make-instance)
          (%#define-runtime make-class-instance make-class-instance)
-         (%#define-runtime struct-instance-init! struct-instance-init!)
+         (%#define-syntax
+          @struct-instance-init!
+          |[:0:]#@struct-instance-init!|)
          (%#define-runtime __struct-instance-init! __struct-instance-init!)
+         (%#define-runtime
+          struct-instance-init!
+          struct-instance-init!
+          macro:
+          @struct-instance-init!)
          (%#define-runtime ___struct-instance-init! ___struct-instance-init!)
-         (%#define-runtime class-instance-init! class-instance-init!)
+         (%#define-syntax @class-instance-init! |[:0:]#@class-instance-init!|)
          (%#define-runtime __class-instance-init! __class-instance-init!)
+         (%#define-runtime
+          class-instance-init!
+          class-instance-init!
+          macro:
+          @class-instance-init!)
          (%#define-runtime ___class-instance-init! ___class-instance-init!)
          (%#define-runtime
           __metaclass-instance-init!
           __metaclass-instance-init!)
-         (%#define-runtime constructor-init! constructor-init!)
+         (%#define-syntax @constructor-init! |[:0:]#@constructor-init!|)
          (%#define-runtime __constructor-init! __constructor-init!)
+         (%#define-runtime
+          constructor-init!
+          constructor-init!
+          macro:
+          @constructor-init!)
          (%#define-runtime ___constructor-init! ___constructor-init!)
-         (%#define-runtime struct-copy struct-copy)
+         (%#define-syntax @struct-copy |[:0:]#@struct-copy|)
          (%#define-runtime __struct-copy __struct-copy)
-         (%#define-runtime struct->list struct->list)
+         (%#define-runtime struct-copy struct-copy macro: @struct-copy)
+         (%#define-syntax @struct->list |[:0:]#@struct->list|)
          (%#define-runtime __struct->list __struct->list)
-         (%#define-runtime class->list class->list)
+         (%#define-runtime struct->list struct->list macro: @struct->list)
+         (%#define-syntax @class->list |[:0:]#@class->list|)
          (%#define-runtime __class->list __class->list)
-         (%#define-runtime call-method call-method)
+         (%#define-runtime class->list class->list macro: @class->list)
+         (%#define-syntax @call-method |[:0:]#@call-method|)
          (%#define-runtime __call-method __call-method)
-         (%#define-runtime method-ref method-ref)
+         (%#define-runtime call-method call-method macro: @call-method)
+         (%#define-syntax @method-ref |[:0:]#@method-ref|)
          (%#define-runtime __method-ref __method-ref)
+         (%#define-runtime method-ref method-ref macro: @method-ref)
          (%#define-runtime checked-method-ref checked-method-ref)
-         (%#define-runtime bound-method-ref bound-method-ref)
+         (%#define-syntax @bound-method-ref |[:0:]#@bound-method-ref|)
          (%#define-runtime __bound-method-ref __bound-method-ref)
-         (%#define-runtime checked-bound-method-ref checked-bound-method-ref)
+         (%#define-runtime
+          bound-method-ref
+          bound-method-ref
+          macro:
+          @bound-method-ref)
+         (%#define-syntax
+          @checked-bound-method-ref
+          |[:0:]#@checked-bound-method-ref|)
          (%#define-runtime
           __checked-bound-method-ref
           __checked-bound-method-ref)
-         (%#define-runtime find-method find-method)
+         (%#define-runtime
+          checked-bound-method-ref
+          checked-bound-method-ref
+          macro:
+          @checked-bound-method-ref)
+         (%#define-syntax @find-method |[:0:]#@find-method|)
          (%#define-runtime __find-method __find-method)
-         (%#define-runtime mixin-find-method mixin-find-method)
+         (%#define-runtime find-method find-method macro: @find-method)
+         (%#define-syntax @mixin-find-method |[:0:]#@mixin-find-method|)
          (%#define-runtime __mixin-find-method __mixin-find-method)
-         (%#define-runtime direct-method-ref direct-method-ref)
+         (%#define-runtime
+          mixin-find-method
+          mixin-find-method
+          macro:
+          @mixin-find-method)
+         (%#define-syntax @direct-method-ref |[:0:]#@direct-method-ref|)
          (%#define-runtime __direct-method-ref __direct-method-ref)
-         (%#define-runtime mixin-method-ref mixin-method-ref)
+         (%#define-runtime
+          direct-method-ref
+          direct-method-ref
+          macro:
+          @direct-method-ref)
+         (%#define-syntax @mixin-method-ref |[:0:]#@mixin-method-ref|)
          (%#define-runtime __mixin-method-ref __mixin-method-ref)
-         (%#begin (%#define-runtime bind-method!__% bind-method!__%)
-                  (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
-                           (%#define-runtime bind-method! bind-method!)))
+         (%#define-runtime
+          mixin-method-ref
+          mixin-method-ref
+          macro:
+          @mixin-method-ref)
+         (%#define-syntax @bind-method! |[:0:]#@bind-method!|)
          (%#begin (%#define-runtime __bind-method!__% __bind-method!__%)
                   (%#begin (%#define-runtime
                             __bind-method!__0
                             __bind-method!__0)
                            (%#define-runtime __bind-method! __bind-method!)))
+         (%#begin (%#define-runtime bind-method!__% bind-method!__%)
+                  (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
+                           (%#define-runtime
+                            bind-method!
+                            bind-method!
+                            macro:
+                            @bind-method!)))
          (%#begin (%#define-runtime
                    make-method-specializer-table__%
                    make-method-specializer-table__%)
@@ -364,16 +574,28 @@ namespace: #f
          (%#define-runtime
           __lookup-method-specializer
           __lookup-method-specializer)
-         (%#define-runtime specialize-class specialize-class)
+         (%#define-syntax @specialize-class |[:0:]#@specialize-class|)
          (%#define-runtime __specialize-class __specialize-class)
+         (%#define-runtime
+          specialize-class
+          specialize-class
+          macro:
+          @specialize-class)
          (%#define-runtime __specialize-method __specialize-method)
          (%#define-runtime ___specialize-class ___specialize-class)
-         (%#define-runtime seal-class! seal-class!)
+         (%#define-syntax @seal-class! |[:0:]#@seal-class!|)
          (%#define-runtime __seal-class! __seal-class!)
-         (%#define-runtime next-method next-method)
+         (%#define-runtime seal-class! seal-class! macro: @seal-class!)
+         (%#define-syntax @next-method |[:0:]#@next-method|)
          (%#define-runtime __next-method __next-method)
-         (%#define-runtime call-next-method call-next-method)
+         (%#define-runtime next-method next-method macro: @next-method)
+         (%#define-syntax @call-next-method |[:0:]#@call-next-method|)
          (%#define-runtime __call-next-method __call-next-method)
+         (%#define-runtime
+          call-next-method
+          call-next-method
+          macro:
+          @call-next-method)
          (%#define-runtime __shadow-classes __shadow-classes)
          (%#define-runtime __shadow-classes-lock __shadow-classes-lock)
          (%#begin (%#define-runtime __shadow-class__% __shadow-class__%)

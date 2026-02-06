@@ -84,20 +84,20 @@
                        _%t49274%_))
                     (_%loop49271%_
                      (gx#syntax-local-value
-                      (let ((__obj96982 _%t49274%_))
+                      (let ((__obj97296 _%t49274%_))
                         (if (let ()
                               (declare (not safe))
                               (##structure-direct-instance-of?
-                               __obj96982
+                               __obj97296
                                'gerbil/core/contract~TypeReference#type-reference::t))
                             (let ()
                               (declare (not safe))
                               (##unchecked-structure-ref
-                               __obj96982
+                               __obj97296
                                '1
                                '#f
                                '#f))
-                            (unchecked-slot-ref __obj96982 'identifier)))
+                            (unchecked-slot-ref __obj97296 'identifier)))
                       false))
                     (if (not _%t49274%_)
                         (gx#raise-syntax-error
@@ -134,21 +134,21 @@
                        |gerbil/core/contract~TypeReference[1]#type-reference::t|
                        _%t49252%_))
                     (let ((_%id49260%_
-                           (let ((__obj96983 _%t49252%_))
+                           (let ((__obj97297 _%t49252%_))
                              (if (let ()
                                    (declare (not safe))
                                    (##structure-direct-instance-of?
-                                    __obj96983
+                                    __obj97297
                                     'gerbil/core/contract~TypeReference#type-reference::t))
                                  (let ()
                                    (declare (not safe))
                                    (##unchecked-structure-ref
-                                    __obj96983
+                                    __obj97297
                                     '1
                                     '#f
                                     '#f))
                                  (unchecked-slot-ref
-                                  __obj96983
+                                  __obj97297
                                   'identifier)))))
                       (_%loop49247%_
                        _%id49260%_
@@ -176,31 +176,31 @@
               (class-instance?
                gerbil/core/mop~MOP-2#class-type-info::t
                _%t49234%_))
-            (let ((__obj96985 _%t49234%_))
+            (let ((__obj97299 _%t49234%_))
               (if (let ()
                     (declare (not safe))
                     (##structure-direct-instance-of?
-                     __obj96985
+                     __obj97299
                      'gerbil.core#class-type-info::t))
                   (let ()
                     (declare (not safe))
-                    (##unchecked-structure-ref __obj96985 '3 '#f '#f))
-                  (unchecked-slot-ref __obj96985 'type-descriptor)))
+                    (##unchecked-structure-ref __obj97299 '3 '#f '#f))
+                  (unchecked-slot-ref __obj97299 'type-descriptor)))
             (if (let ()
                   (declare (not safe))
                   (class-instance?
                    gerbil/core/contract~InterfaceInfo#interface-info::t
                    _%t49234%_))
-                (let ((__obj96984 _%t49234%_))
+                (let ((__obj97298 _%t49234%_))
                   (if (let ()
                         (declare (not safe))
                         (##structure-direct-instance-of?
-                         __obj96984
+                         __obj97298
                          'gerbil.core#runtime-type-info::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj96984 '3 '#f '#f))
-                      (unchecked-slot-ref __obj96984 'type-descriptor)))
+                        (##unchecked-structure-ref __obj97298 '3 '#f '#f))
+                      (unchecked-slot-ref __obj97298 'type-descriptor)))
                 (gx#raise-syntax-error
                  '#f
                  '"unexpected type; expected class, interface or type reference"

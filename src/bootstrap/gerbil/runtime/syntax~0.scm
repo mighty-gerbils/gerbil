@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/syntax::timestamp 1770342296)
+  (define gerbil/runtime/syntax::timestamp 1770342548)
   (begin
     (declare (not safe))
     (define SyntaxError::t
@@ -13,8 +13,8 @@
        '#f))
     (define SyntaxError? (__make-class-predicate SyntaxError::t))
     (define make-SyntaxError
-      (lambda _%$args134636%_
-        (apply make-instance SyntaxError::t _%$args134636%_)))
+      (lambda _%$args156347%_
+        (apply make-instance SyntaxError::t _%$args156347%_)))
     (define SyntaxError-message
       (__make-class-slot-accessor SyntaxError::t 'message))
     (define SyntaxError-irritants
@@ -71,249 +71,249 @@
     (define &SyntaxError-continuation-set!
       (__make-class-slot-unchecked-mutator SyntaxError::t 'continuation))
     (define SyntaxError::display-exception
-      (lambda (_%self134355%_ _%port134356%_)
-        (let ((_%self134359%_ _%self134355%_))
-          (letrec ((_%location134370%_
+      (lambda (_%self156066%_ _%port156067%_)
+        (let ((_%self156070%_ _%self156066%_))
+          (letrec ((_%location156081%_
                     (lambda ()
-                      (letrec ((_%from-irritants134511%_
+                      (letrec ((_%from-irritants156222%_
                                 (lambda ()
-                                  (let _%lp134596%_ ((_%rest134598%_
+                                  (let _%lp156307%_ ((_%rest156309%_
                                                       (##unchecked-structure-ref
-                                                       _%self134359%_
+                                                       _%self156070%_
                                                        '3
                                                        '#f
                                                        '#f)))
-                                    (let* ((_%rest134599134607%_
-                                            _%rest134598%_)
-                                           (_%else134601134615%_
+                                    (let* ((_%rest156310156318%_
+                                            _%rest156309%_)
+                                           (_%else156312156326%_
                                             (lambda () '#f))
-                                           (_%K134603134624%_
-                                            (lambda (_%rest134618%_
-                                                     _%hd134619%_)
-                                              (let ((_%$e134621%_
+                                           (_%K156314156335%_
+                                            (lambda (_%rest156329%_
+                                                     _%hd156330%_)
+                                              (let ((_%$e156332%_
                                                      (__AST-source
-                                                      _%hd134619%_)))
-                                                (if _%$e134621%_
-                                                    _%$e134621%_
-                                                    (_%lp134596%_
-                                                     _%rest134618%_))))))
-                                      (if (pair? _%rest134599134607%_)
-                                          (let ((_%hd134604134627%_
-                                                 (##car _%rest134599134607%_))
-                                                (_%tl134605134629%_
-                                                 (##cdr _%rest134599134607%_)))
-                                            (let* ((_%hd134632%_
-                                                    _%hd134604134627%_)
-                                                   (_%rest134634%_
-                                                    _%tl134605134629%_))
-                                              (_%K134603134624%_
-                                               _%rest134634%_
-                                               _%hd134632%_)))
-                                          (_%else134601134615%_))))))
-                               (_%from-context134512%_
+                                                      _%hd156330%_)))
+                                                (if _%$e156332%_
+                                                    _%$e156332%_
+                                                    (_%lp156307%_
+                                                     _%rest156329%_))))))
+                                      (if (pair? _%rest156310156318%_)
+                                          (let ((_%hd156315156338%_
+                                                 (##car _%rest156310156318%_))
+                                                (_%tl156316156340%_
+                                                 (##cdr _%rest156310156318%_)))
+                                            (let* ((_%hd156343%_
+                                                    _%hd156315156338%_)
+                                                   (_%rest156345%_
+                                                    _%tl156316156340%_))
+                                              (_%K156314156335%_
+                                               _%rest156345%_
+                                               _%hd156343%_)))
+                                          (_%else156312156326%_))))))
+                               (_%from-context156223%_
                                 (lambda ()
-                                  (let _%lp134518%_ ((_%rest134520%_
+                                  (let _%lp156229%_ ((_%rest156231%_
                                                       (##unchecked-structure-ref
-                                                       _%self134359%_
+                                                       _%self156070%_
                                                        '4
                                                        '#f
                                                        '#f)))
-                                    (let* ((_%rest134521134529%_
-                                            _%rest134520%_)
-                                           (_%else134523134537%_
+                                    (let* ((_%rest156232156240%_
+                                            _%rest156231%_)
+                                           (_%else156234156248%_
                                             (lambda () '#f))
-                                           (_%K134525134583%_
-                                            (lambda (_%rest134540%_
-                                                     _%hd134541%_)
-                                              (let* ((_%hd134542134552%_
-                                                      _%hd134541%_)
-                                                     (_%else134544134560%_
+                                           (_%K156236156294%_
+                                            (lambda (_%rest156251%_
+                                                     _%hd156252%_)
+                                              (let* ((_%hd156253156263%_
+                                                      _%hd156252%_)
+                                                     (_%else156255156271%_
                                                       (lambda ()
-                                                        (_%lp134518%_
-                                                         _%rest134540%_)))
-                                                     (_%K134546134568%_
-                                                      (lambda (_%loc134563%_)
-                                                        (let ((_%$e134565%_
+                                                        (_%lp156229%_
+                                                         _%rest156251%_)))
+                                                     (_%K156257156279%_
+                                                      (lambda (_%loc156274%_)
+                                                        (let ((_%$e156276%_
                                                                (__AST-source
-                                                                _%loc134563%_)))
-                                                          (if _%$e134565%_
-                                                              _%$e134565%_
-                                                              (_%lp134518%_
-                                                               _%rest134540%_))))))
-                                                (if (pair? _%hd134542134552%_)
-                                                    (let ((_%hd134547134571%_
-                                                           (##car _%hd134542134552%_))
-                                                          (_%tl134548134573%_
-                                                           (##cdr _%hd134542134552%_)))
-                                                      (if (##eq? _%hd134547134571%_
+                                                                _%loc156274%_)))
+                                                          (if _%$e156276%_
+                                                              _%$e156276%_
+                                                              (_%lp156229%_
+                                                               _%rest156251%_))))))
+                                                (if (pair? _%hd156253156263%_)
+                                                    (let ((_%hd156258156282%_
+                                                           (##car _%hd156253156263%_))
+                                                          (_%tl156259156284%_
+                                                           (##cdr _%hd156253156263%_)))
+                                                      (if (##eq? _%hd156258156282%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '@)
-                  (if (pair? _%tl134548134573%_)
-                      (let ((_%hd134549134576%_ (##car _%tl134548134573%_))
-                            (_%tl134550134578%_ (##cdr _%tl134548134573%_)))
-                        (let ((_%loc134581%_ _%hd134549134576%_))
-                          (if (null? _%tl134550134578%_)
-                              (_%K134546134568%_ _%loc134581%_)
-                              (_%else134544134560%_))))
-                      (_%else134544134560%_))
-                  (_%else134544134560%_)))
+                  (if (pair? _%tl156259156284%_)
+                      (let ((_%hd156260156287%_ (##car _%tl156259156284%_))
+                            (_%tl156261156289%_ (##cdr _%tl156259156284%_)))
+                        (let ((_%loc156292%_ _%hd156260156287%_))
+                          (if (null? _%tl156261156289%_)
+                              (_%K156257156279%_ _%loc156292%_)
+                              (_%else156255156271%_))))
+                      (_%else156255156271%_))
+                  (_%else156255156271%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%else134544134560%_))))))
-                                      (if (pair? _%rest134521134529%_)
-                                          (let ((_%hd134526134586%_
-                                                 (##car _%rest134521134529%_))
-                                                (_%tl134527134588%_
-                                                 (##cdr _%rest134521134529%_)))
-                                            (let* ((_%hd134591%_
-                                                    _%hd134526134586%_)
-                                                   (_%rest134593%_
-                                                    _%tl134527134588%_))
-                                              (_%K134525134583%_
-                                               _%rest134593%_
-                                               _%hd134591%_)))
-                                          (_%else134523134537%_)))))))
-                        (let ((_%$e134514%_ (_%from-irritants134511%_)))
-                          (if _%$e134514%_
-                              _%$e134514%_
-                              (_%from-context134512%_)))))))
+                                                    (_%else156255156271%_))))))
+                                      (if (pair? _%rest156232156240%_)
+                                          (let ((_%hd156237156297%_
+                                                 (##car _%rest156232156240%_))
+                                                (_%tl156238156299%_
+                                                 (##cdr _%rest156232156240%_)))
+                                            (let* ((_%hd156302%_
+                                                    _%hd156237156297%_)
+                                                   (_%rest156304%_
+                                                    _%tl156238156299%_))
+                                              (_%K156236156294%_
+                                               _%rest156304%_
+                                               _%hd156302%_)))
+                                          (_%else156234156248%_)))))))
+                        (let ((_%$e156225%_ (_%from-irritants156222%_)))
+                          (if _%$e156225%_
+                              _%$e156225%_
+                              (_%from-context156223%_)))))))
             (call-with-parameters__1
              (lambda ()
                (newline)
                (display '"*** ERROR IN ")
-               (let ((_%$e134373%_ (_%location134370%_)))
-                 (if _%$e134373%_
-                     ((lambda (_%loc134376%_)
-                        (##display-locat _%loc134376%_ '#t _%port134356%_))
-                      _%$e134373%_)
+               (let ((_%$e156084%_ (_%location156081%_)))
+                 (if _%$e156084%_
+                     ((lambda (_%loc156087%_)
+                        (##display-locat _%loc156087%_ '#t _%port156067%_))
+                      _%$e156084%_)
                      (display '"?")))
                (newline)
                (displayln
                 '"--- Syntax Error: "
-                (##unchecked-structure-ref _%self134359%_ '2 '#f '#f))
-               (let ((_%$e134379%_
-                      (##unchecked-structure-ref _%self134359%_ '4 '#f '#f)))
-                 (if _%$e134379%_
-                     ((lambda (_%where134382%_)
+                (##unchecked-structure-ref _%self156070%_ '2 '#f '#f))
+               (let ((_%$e156090%_
+                      (##unchecked-structure-ref _%self156070%_ '4 '#f '#f)))
+                 (if _%$e156090%_
+                     ((lambda (_%where156093%_)
                         (displayln '"--- Context: ")
-                        (let _%lp134384%_ ((_%rest134386%_ _%where134382%_))
-                          (let* ((_%rest134387134395%_ _%rest134386%_)
-                                 (_%else134389134403%_ (lambda () '#!void))
-                                 (_%K134391134453%_
-                                  (lambda (_%rest134406%_ _%hd134407%_)
-                                    (let* ((_%hd134408134418%_ _%hd134407%_)
-                                           (_%else134410134426%_
+                        (let _%lp156095%_ ((_%rest156097%_ _%where156093%_))
+                          (let* ((_%rest156098156106%_ _%rest156097%_)
+                                 (_%else156100156114%_ (lambda () '#!void))
+                                 (_%K156102156164%_
+                                  (lambda (_%rest156117%_ _%hd156118%_)
+                                    (let* ((_%hd156119156129%_ _%hd156118%_)
+                                           (_%else156121156137%_
                                             (lambda ()
-                                              (displayln '" at " _%hd134407%_)
-                                              (_%lp134384%_ _%rest134406%_)))
-                                           (_%K134412134438%_
-                                            (lambda (_%ctx134429%_)
-                                              (let ((_%$e134431%_
+                                              (displayln '" at " _%hd156118%_)
+                                              (_%lp156095%_ _%rest156117%_)))
+                                           (_%K156123156149%_
+                                            (lambda (_%ctx156140%_)
+                                              (let ((_%$e156142%_
                                                      (__AST-source
-                                                      _%ctx134429%_)))
-                                                (if _%$e134431%_
-                                                    ((lambda (_%loc134434%_)
+                                                      _%ctx156140%_)))
+                                                (if _%$e156142%_
+                                                    ((lambda (_%loc156145%_)
                                                        (display '" at ")
                                                        (##display-locat
-                                                        _%loc134434%_
+                                                        _%loc156145%_
                                                         '#t
-                                                        _%port134356%_)
+                                                        _%port156067%_)
                                                        (newline)
-                                                       (_%lp134384%_
-                                                        _%rest134406%_))
-                                                     _%$e134431%_)
+                                                       (_%lp156095%_
+                                                        _%rest156117%_))
+                                                     _%$e156142%_)
                                                     (if (##structure-instance-of?
-                                                         _%ctx134429%_
+                                                         _%ctx156140%_
                                                          'gerbil#AST::t)
                                                         (let ()
                                                           (display '" at ")
                                                           (__pp-syntax
-                                                           _%ctx134429%_)
-                                                          (_%lp134384%_
-                                                           _%rest134406%_))
-                                                        (_%lp134384%_
-                                                         _%rest134406%_)))))))
-                                      (if (pair? _%hd134408134418%_)
-                                          (let ((_%hd134413134441%_
-                                                 (##car _%hd134408134418%_))
-                                                (_%tl134414134443%_
-                                                 (##cdr _%hd134408134418%_)))
-                                            (if (##eq? _%hd134413134441%_ '@)
-                                                (if (pair? _%tl134414134443%_)
-                                                    (let ((_%hd134415134446%_
-                                                           (##car _%tl134414134443%_))
-                                                          (_%tl134416134448%_
-                                                           (##cdr _%tl134414134443%_)))
-                                                      (let ((_%ctx134451%_
-                                                             _%hd134415134446%_))
-                                                        (if (null? _%tl134416134448%_)
-                                                            (_%K134412134438%_
-                                                             _%ctx134451%_)
-                                                            (_%else134410134426%_))))
-                                                    (_%else134410134426%_))
-                                                (_%else134410134426%_)))
-                                          (_%else134410134426%_))))))
-                            (if (pair? _%rest134387134395%_)
-                                (let ((_%hd134392134456%_
-                                       (##car _%rest134387134395%_))
-                                      (_%tl134393134458%_
-                                       (##cdr _%rest134387134395%_)))
-                                  (let* ((_%hd134461%_ _%hd134392134456%_)
-                                         (_%rest134463%_ _%tl134393134458%_))
-                                    (_%K134391134453%_
-                                     _%rest134463%_
-                                     _%hd134461%_)))
+                                                           _%ctx156140%_)
+                                                          (_%lp156095%_
+                                                           _%rest156117%_))
+                                                        (_%lp156095%_
+                                                         _%rest156117%_)))))))
+                                      (if (pair? _%hd156119156129%_)
+                                          (let ((_%hd156124156152%_
+                                                 (##car _%hd156119156129%_))
+                                                (_%tl156125156154%_
+                                                 (##cdr _%hd156119156129%_)))
+                                            (if (##eq? _%hd156124156152%_ '@)
+                                                (if (pair? _%tl156125156154%_)
+                                                    (let ((_%hd156126156157%_
+                                                           (##car _%tl156125156154%_))
+                                                          (_%tl156127156159%_
+                                                           (##cdr _%tl156125156154%_)))
+                                                      (let ((_%ctx156162%_
+                                                             _%hd156126156157%_))
+                                                        (if (null? _%tl156127156159%_)
+                                                            (_%K156123156149%_
+                                                             _%ctx156162%_)
+                                                            (_%else156121156137%_))))
+                                                    (_%else156121156137%_))
+                                                (_%else156121156137%_)))
+                                          (_%else156121156137%_))))))
+                            (if (pair? _%rest156098156106%_)
+                                (let ((_%hd156103156167%_
+                                       (##car _%rest156098156106%_))
+                                      (_%tl156104156169%_
+                                       (##cdr _%rest156098156106%_)))
+                                  (let* ((_%hd156172%_ _%hd156103156167%_)
+                                         (_%rest156174%_ _%tl156104156169%_))
+                                    (_%K156102156164%_
+                                     _%rest156174%_
+                                     _%hd156172%_)))
                                 '#!void))))
-                      _%$e134379%_)
+                      _%$e156090%_)
                      '#!void))
-               (let* ((_%self.irritants134464134472%_
-                       (##unchecked-structure-ref _%self134359%_ '3 '#f '#f))
-                      (_%else134466134480%_ (lambda () '#!void))
-                      (_%K134468134493%_
-                       (lambda (_%rest134483%_ _%stx134484%_)
+               (let* ((_%self.irritants156175156183%_
+                       (##unchecked-structure-ref _%self156070%_ '3 '#f '#f))
+                      (_%else156177156191%_ (lambda () '#!void))
+                      (_%K156179156204%_
+                       (lambda (_%rest156194%_ _%stx156195%_)
                          (display '"... form:   ")
-                         (__pp-syntax _%stx134484%_)
+                         (__pp-syntax _%stx156195%_)
                          (for-each
-                          (lambda (_%detail134486%_)
+                          (lambda (_%detail156197%_)
                             (display '"... detail: ")
-                            (##write (__AST->datum _%detail134486%_))
-                            (let ((_%$e134488%_
-                                   (__AST-source _%detail134486%_)))
-                              (if _%$e134488%_
-                                  ((lambda (_%loc134491%_)
+                            (##write (__AST->datum _%detail156197%_))
+                            (let ((_%$e156199%_
+                                   (__AST-source _%detail156197%_)))
+                              (if _%$e156199%_
+                                  ((lambda (_%loc156202%_)
                                      (display '" at ")
                                      (##display-locat
-                                      _%loc134491%_
+                                      _%loc156202%_
                                       '#t
-                                      _%port134356%_))
-                                   _%$e134488%_)
+                                      _%port156067%_))
+                                   _%$e156199%_)
                                   '#!void))
                             (newline))
-                          _%rest134483%_))))
-                 (if (pair? _%self.irritants134464134472%_)
-                     (let ((_%hd134469134496%_
-                            (##car _%self.irritants134464134472%_))
-                           (_%tl134470134498%_
-                            (##cdr _%self.irritants134464134472%_)))
-                       (let* ((_%stx134501%_ _%hd134469134496%_)
-                              (_%rest134503%_ _%tl134470134498%_))
-                         (_%K134468134493%_ _%rest134503%_ _%stx134501%_)))
+                          _%rest156194%_))))
+                 (if (pair? _%self.irritants156175156183%_)
+                     (let ((_%hd156180156207%_
+                            (##car _%self.irritants156175156183%_))
+                           (_%tl156181156209%_
+                            (##cdr _%self.irritants156175156183%_)))
+                       (let* ((_%stx156212%_ _%hd156180156207%_)
+                              (_%rest156214%_ _%tl156181156209%_))
+                         (_%K156179156204%_ _%rest156214%_ _%stx156212%_)))
                      '#!void))
                (if __DEBUG
-                   (let ((_%cont134504134506%_
+                   (let ((_%cont156215156217%_
                           (##unchecked-structure-ref
-                           _%self134359%_
+                           _%self156070%_
                            '1
                            '#f
                            '#f)))
-                     (if _%cont134504134506%_
-                         (let ((_%cont134508%_ _%cont134504134506%_))
+                     (if _%cont156215156217%_
+                         (let ((_%cont156219%_ _%cont156215156217%_))
                            (display '"--- continuation backtrace:")
                            (newline)
-                           (display-continuation-backtrace _%cont134508%_))
+                           (display-continuation-backtrace _%cont156219%_))
                          '#f))
                    '#!void))
              current-output-port
-             _%port134356%_)))))
+             _%port156067%_)))))
     (__bind-method!__%
      SyntaxError::t
      'display-exception
@@ -321,37 +321,37 @@
      '#f)
     (__seal-class! SyntaxError::t)
     (define make-syntax-error
-      (lambda (_%message134226%_
-               _%irritants134227%_
-               _%where134228%_
-               _%context134229%_
-               _%marks134230%_
-               _%phi134231%_)
-        (let ((__obj134733
+      (lambda (_%message155937%_
+               _%irritants155938%_
+               _%where155939%_
+               _%context155940%_
+               _%marks155941%_
+               _%phi155942%_)
+        (let ((__obj156444
                (##structure SyntaxError::t '#f '#f '#f '#f '#f '#f '#f)))
-          (##unchecked-structure-set! __obj134733 _%message134226%_ '2 '#f '#f)
+          (##unchecked-structure-set! __obj156444 _%message155937%_ '2 '#f '#f)
           (##unchecked-structure-set!
-           __obj134733
-           _%irritants134227%_
+           __obj156444
+           _%irritants155938%_
            '3
            '#f
            '#f)
-          (##unchecked-structure-set! __obj134733 _%where134228%_ '4 '#f '#f)
-          (##unchecked-structure-set! __obj134733 _%context134229%_ '5 '#f '#f)
-          (##unchecked-structure-set! __obj134733 _%marks134230%_ '7 '#f '#f)
-          (##unchecked-structure-set! __obj134733 _%phi134231%_ '6 '#f '#f)
-          __obj134733)))
+          (##unchecked-structure-set! __obj156444 _%where155939%_ '4 '#f '#f)
+          (##unchecked-structure-set! __obj156444 _%context155940%_ '5 '#f '#f)
+          (##unchecked-structure-set! __obj156444 _%marks155941%_ '7 '#f '#f)
+          (##unchecked-structure-set! __obj156444 _%phi155942%_ '6 '#f '#f)
+          __obj156444)))
     (define syntax-error? SyntaxError?)
     (define __raise-syntax-error
-      (lambda (_%where134221%_
-               _%message134222%_
-               _%stx134223%_
+      (lambda (_%where155932%_
+               _%message155933%_
+               _%stx155934%_
                .
-               _%details134224%_)
+               _%details155935%_)
         (raise (make-syntax-error
-                _%message134222%_
-                (cons _%stx134223%_ _%details134224%_)
-                _%where134221%_
+                _%message155933%_
+                (cons _%stx155934%_ _%details155935%_)
+                _%where155932%_
                 '#f
                 '#f
                 '#f))))
@@ -365,7 +365,7 @@
        '#f))
     (define AST? (__make-class-predicate AST::t))
     (define make-AST
-      (lambda _%$args134218%_ (apply make-instance AST::t _%$args134218%_)))
+      (lambda _%$args155929%_ (apply make-instance AST::t _%$args155929%_)))
     (define AST-e (__make-class-slot-accessor AST::t 'e))
     (define AST-source (__make-class-slot-accessor AST::t 'source))
     (define AST-e-set! (__make-class-slot-mutator AST::t 'e))
@@ -376,167 +376,167 @@
     (define &AST-source-set!
       (__make-class-slot-unchecked-mutator AST::t 'source))
     (define __AST-e
-      (lambda (_%stx134216%_)
-        (if (##structure-instance-of? _%stx134216%_ 'gerbil#AST::t)
-            (##unchecked-structure-ref _%stx134216%_ '1 '#f '#f)
-            _%stx134216%_)))
+      (lambda (_%stx155927%_)
+        (if (##structure-instance-of? _%stx155927%_ 'gerbil#AST::t)
+            (##unchecked-structure-ref _%stx155927%_ '1 '#f '#f)
+            _%stx155927%_)))
     (define __AST-source
-      (lambda (_%stx134207%_)
-        (let _%lp134209%_ ((_%src134211%_ _%stx134207%_))
-          (if (##structure-instance-of? _%src134211%_ 'gerbil#AST::t)
-              (_%lp134209%_
-               (##unchecked-structure-ref _%src134211%_ '2 '#f '#f))
-              (if (##locat? _%src134211%_) _%src134211%_ '#f)))))
+      (lambda (_%stx155918%_)
+        (let _%lp155920%_ ((_%src155922%_ _%stx155918%_))
+          (if (##structure-instance-of? _%src155922%_ 'gerbil#AST::t)
+              (_%lp155920%_
+               (##unchecked-structure-ref _%src155922%_ '2 '#f '#f))
+              (if (##locat? _%src155922%_) _%src155922%_ '#f)))))
     (define __AST
-      (lambda (_%e134199%_ _%src-stx134200%_)
-        (let ((_%src134202%_ (__AST-source _%src-stx134200%_)))
-          (if (or (##structure-instance-of? _%e134199%_ 'gerbil#AST::t)
-                  (not _%src134202%_))
-              _%e134199%_
-              (##structure AST::t _%e134199%_ _%src134202%_)))))
+      (lambda (_%e155910%_ _%src-stx155911%_)
+        (let ((_%src155913%_ (__AST-source _%src-stx155911%_)))
+          (if (or (##structure-instance-of? _%e155910%_ 'gerbil#AST::t)
+                  (not _%src155913%_))
+              _%e155910%_
+              (##structure AST::t _%e155910%_ _%src155913%_)))))
     (define __AST-eq?
-      (lambda (_%stx134196%_ _%obj134197%_)
-        (eq? (__AST-e _%stx134196%_) _%obj134197%_)))
+      (lambda (_%stx155907%_ _%obj155908%_)
+        (eq? (__AST-e _%stx155907%_) _%obj155908%_)))
     (define __AST-pair?
-      (lambda (_%stx134194%_) (pair? (__AST-e _%stx134194%_))))
+      (lambda (_%stx155905%_) (pair? (__AST-e _%stx155905%_))))
     (define __AST-null?
-      (lambda (_%stx134192%_) (null? (__AST-e _%stx134192%_))))
+      (lambda (_%stx155903%_) (null? (__AST-e _%stx155903%_))))
     (define __AST-datum?
-      (lambda (_%stx134173%_)
-        (let* ((_%e134175%_ (__AST-e _%stx134173%_))
-               (_%$e134177%_ (number? _%e134175%_)))
-          (if _%$e134177%_
-              _%$e134177%_
-              (let ((_%$e134180%_ (string? _%e134175%_)))
-                (if _%$e134180%_
-                    _%$e134180%_
-                    (let ((_%$e134183%_ (char? _%e134175%_)))
-                      (if _%$e134183%_
-                          _%$e134183%_
-                          (let ((_%$e134186%_ (keyword? _%e134175%_)))
-                            (if _%$e134186%_
-                                _%$e134186%_
-                                (let ((_%$e134189%_ (boolean? _%e134175%_)))
-                                  (if _%$e134189%_
-                                      _%$e134189%_
-                                      (eq? _%e134175%_ '#!void)))))))))))))
+      (lambda (_%stx155884%_)
+        (let* ((_%e155886%_ (__AST-e _%stx155884%_))
+               (_%$e155888%_ (number? _%e155886%_)))
+          (if _%$e155888%_
+              _%$e155888%_
+              (let ((_%$e155891%_ (string? _%e155886%_)))
+                (if _%$e155891%_
+                    _%$e155891%_
+                    (let ((_%$e155894%_ (char? _%e155886%_)))
+                      (if _%$e155894%_
+                          _%$e155894%_
+                          (let ((_%$e155897%_ (keyword? _%e155886%_)))
+                            (if _%$e155897%_
+                                _%$e155897%_
+                                (let ((_%$e155900%_ (boolean? _%e155886%_)))
+                                  (if _%$e155900%_
+                                      _%$e155900%_
+                                      (eq? _%e155886%_ '#!void)))))))))))))
     (define __AST-id?
-      (lambda (_%stx134171%_) (symbol? (__AST-e _%stx134171%_))))
+      (lambda (_%stx155882%_) (symbol? (__AST-e _%stx155882%_))))
     (define __AST-id-list?__%
-      (lambda (_%stx134122%_ _%tail?134123%_)
-        (let _%lp134125%_ ((_%rest134127%_ _%stx134122%_))
-          (let* ((_%$e134129%_ _%rest134127%_)
-                 (_%$E134131134144%_
+      (lambda (_%stx155833%_ _%tail?155834%_)
+        (let _%lp155836%_ ((_%rest155838%_ _%stx155833%_))
+          (let* ((_%$e155840%_ _%rest155838%_)
+                 (_%$E155842155855%_
                   (lambda ()
-                    (let* ((_%$E134132134139%_
+                    (let* ((_%$E155843155850%_
                             (lambda ()
                               (__raise-syntax-error
                                '#f
                                '"Bad syntax; malformed ast clause"
-                               _%$e134129%_)))
-                           (_%rest134142%_ _%$e134129%_))
-                      (_%tail?134123%_ _%rest134142%_)))))
-            (if (__AST-pair? _%$e134129%_)
-                (let* ((_%$tgt134133134147%_ (__AST-e _%$e134129%_))
-                       (_%$hd134134134150%_ (##car _%$tgt134133134147%_))
-                       (_%$tl134135134153%_ (##cdr _%$tgt134133134147%_))
-                       (_%hd134157%_ _%$hd134134134150%_)
-                       (_%rest134159%_ _%$tl134135134153%_))
-                  (if (__AST-id? _%hd134157%_)
-                      (_%lp134125%_ _%rest134159%_)
+                               _%$e155840%_)))
+                           (_%rest155853%_ _%$e155840%_))
+                      (_%tail?155834%_ _%rest155853%_)))))
+            (if (__AST-pair? _%$e155840%_)
+                (let* ((_%$tgt155844155858%_ (__AST-e _%$e155840%_))
+                       (_%$hd155845155861%_ (##car _%$tgt155844155858%_))
+                       (_%$tl155846155864%_ (##cdr _%$tgt155844155858%_))
+                       (_%hd155868%_ _%$hd155845155861%_)
+                       (_%rest155870%_ _%$tl155846155864%_))
+                  (if (__AST-id? _%hd155868%_)
+                      (_%lp155836%_ _%rest155870%_)
                       '#f))
-                (_%$E134131134144%_))))))
+                (_%$E155842155855%_))))))
     (define __AST-id-list?__0
-      (lambda (_%stx134164%_)
-        (let ((_%tail?134166%_ __AST-null?))
-          (__AST-id-list?__% _%stx134164%_ _%tail?134166%_))))
+      (lambda (_%stx155875%_)
+        (let ((_%tail?155877%_ __AST-null?))
+          (__AST-id-list?__% _%stx155875%_ _%tail?155877%_))))
     (define __AST-id-list?
-      (lambda _g134735_
-        (let ((_g134736_ (##length _g134735_)))
-          (cond ((##fx= _g134736_ 1) (apply __AST-id-list?__0 _g134735_))
-                ((##fx= _g134736_ 2) (apply __AST-id-list?__% _g134735_))
+      (lambda _g156446_
+        (let ((_g156447_ (##length _g156446_)))
+          (cond ((##fx= _g156447_ 1) (apply __AST-id-list?__0 _g156446_))
+                ((##fx= _g156447_ 2) (apply __AST-id-list?__% _g156446_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __AST-id-list?
-                  _g134735_))))))
+                  _g156446_))))))
     (define __AST-bind-list?
-      (lambda (_%stx134114%_)
+      (lambda (_%stx155825%_)
         (__AST-id-list?__%
-         _%stx134114%_
-         (lambda (_%e134116%_)
-           (let ((_%$e134118%_ (__AST-null? _%e134116%_)))
-             (if _%$e134118%_ _%$e134118%_ (__AST-id? _%e134116%_)))))))
+         _%stx155825%_
+         (lambda (_%e155827%_)
+           (let ((_%$e155829%_ (__AST-null? _%e155827%_)))
+             (if _%$e155829%_ _%$e155829%_ (__AST-id? _%e155827%_)))))))
     (define __AST-list?__%
-      (lambda (_%stx134067%_ _%tail?134068%_)
-        (let _%lp134070%_ ((_%rest134072%_ _%stx134067%_))
-          (let* ((_%$e134074%_ _%rest134072%_)
-                 (_%$E134076134089%_
+      (lambda (_%stx155778%_ _%tail?155779%_)
+        (let _%lp155781%_ ((_%rest155783%_ _%stx155778%_))
+          (let* ((_%$e155785%_ _%rest155783%_)
+                 (_%$E155787155800%_
                   (lambda ()
-                    (let* ((_%$E134077134084%_
+                    (let* ((_%$E155788155795%_
                             (lambda ()
                               (__raise-syntax-error
                                '#f
                                '"Bad syntax; malformed ast clause"
-                               _%$e134074%_)))
-                           (_%rest134087%_ _%$e134074%_))
-                      (_%tail?134068%_ _%rest134087%_)))))
-            (if (__AST-pair? _%$e134074%_)
-                (let* ((_%$tgt134078134092%_ (__AST-e _%$e134074%_))
-                       (_%$hd134079134095%_ (##car _%$tgt134078134092%_))
-                       (_%$tl134080134098%_ (##cdr _%$tgt134078134092%_))
-                       (_%rest134102%_ _%$tl134080134098%_))
-                  (_%lp134070%_ _%rest134102%_))
-                (_%$E134076134089%_))))))
+                               _%$e155785%_)))
+                           (_%rest155798%_ _%$e155785%_))
+                      (_%tail?155779%_ _%rest155798%_)))))
+            (if (__AST-pair? _%$e155785%_)
+                (let* ((_%$tgt155789155803%_ (__AST-e _%$e155785%_))
+                       (_%$hd155790155806%_ (##car _%$tgt155789155803%_))
+                       (_%$tl155791155809%_ (##cdr _%$tgt155789155803%_))
+                       (_%rest155813%_ _%$tl155791155809%_))
+                  (_%lp155781%_ _%rest155813%_))
+                (_%$E155787155800%_))))))
     (define __AST-list?__0
-      (lambda (_%stx134107%_)
-        (let ((_%tail?134109%_ __AST-null?))
-          (__AST-list?__% _%stx134107%_ _%tail?134109%_))))
+      (lambda (_%stx155818%_)
+        (let ((_%tail?155820%_ __AST-null?))
+          (__AST-list?__% _%stx155818%_ _%tail?155820%_))))
     (define __AST-list?
-      (lambda _g134737_
-        (let ((_g134738_ (##length _g134737_)))
-          (cond ((##fx= _g134738_ 1) (apply __AST-list?__0 _g134737_))
-                ((##fx= _g134738_ 2) (apply __AST-list?__% _g134737_))
+      (lambda _g156448_
+        (let ((_g156449_ (##length _g156448_)))
+          (cond ((##fx= _g156449_ 1) (apply __AST-list?__0 _g156448_))
+                ((##fx= _g156449_ 2) (apply __AST-list?__% _g156448_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __AST-list?
-                  _g134737_))))))
+                  _g156448_))))))
     (define __AST->list
-      (lambda (_%stx134032%_)
-        (let* ((_%$e134034%_ _%stx134032%_)
-               (_%$E134036134049%_
+      (lambda (_%stx155743%_)
+        (let* ((_%$e155745%_ _%stx155743%_)
+               (_%$E155747155760%_
                 (lambda ()
-                  (let* ((_%$E134037134044%_
+                  (let* ((_%$E155748155755%_
                           (lambda ()
                             (__raise-syntax-error
                              '#f
                              '"Bad syntax; malformed ast clause"
-                             _%$e134034%_)))
-                         (_%rest134047%_ _%$e134034%_))
-                    (__AST-e _%rest134047%_)))))
-          (if (__AST-pair? _%$e134034%_)
-              (let* ((_%$tgt134038134052%_ (__AST-e _%$e134034%_))
-                     (_%$hd134039134055%_ (##car _%$tgt134038134052%_))
-                     (_%$tl134040134058%_ (##cdr _%$tgt134038134052%_))
-                     (_%hd134062%_ _%$hd134039134055%_)
-                     (_%rest134064%_ _%$tl134040134058%_))
-                (cons _%hd134062%_ (__AST->list _%rest134064%_)))
-              (_%$E134036134049%_)))))
+                             _%$e155745%_)))
+                         (_%rest155758%_ _%$e155745%_))
+                    (__AST-e _%rest155758%_)))))
+          (if (__AST-pair? _%$e155745%_)
+              (let* ((_%$tgt155749155763%_ (__AST-e _%$e155745%_))
+                     (_%$hd155750155766%_ (##car _%$tgt155749155763%_))
+                     (_%$tl155751155769%_ (##cdr _%$tgt155749155763%_))
+                     (_%hd155773%_ _%$hd155750155766%_)
+                     (_%rest155775%_ _%$tl155751155769%_))
+                (cons _%hd155773%_ (__AST->list _%rest155775%_)))
+              (_%$E155747155760%_)))))
     (define __AST->datum
-      (lambda (_%stx134025%_)
-        (if (##structure-instance-of? _%stx134025%_ 'gerbil#AST::t)
-            (__AST->datum (__AST-e _%stx134025%_))
-            (if (pair? _%stx134025%_)
-                (cons (__AST->datum (##car _%stx134025%_))
-                      (__AST->datum (##cdr _%stx134025%_)))
-                (if (vector? _%stx134025%_)
-                    (vector-map __AST->datum _%stx134025%_)
-                    (if (box? _%stx134025%_)
-                        (box (__AST->datum (unbox _%stx134025%_)))
-                        _%stx134025%_))))))
+      (lambda (_%stx155736%_)
+        (if (##structure-instance-of? _%stx155736%_ 'gerbil#AST::t)
+            (__AST->datum (__AST-e _%stx155736%_))
+            (if (pair? _%stx155736%_)
+                (cons (__AST->datum (##car _%stx155736%_))
+                      (__AST->datum (##cdr _%stx155736%_)))
+                (if (vector? _%stx155736%_)
+                    (vector-map __AST->datum _%stx155736%_)
+                    (if (box? _%stx155736%_)
+                        (box (__AST->datum (unbox _%stx155736%_)))
+                        _%stx155736%_))))))
     (define get-readenv
-      (lambda (_%port134023%_)
+      (lambda (_%port155734%_)
         (##make-readenv
-         _%port134023%_
+         _%port155734%_
          (current-readtable)
          __wrap-syntax
          __unwrap-syntax
@@ -544,93 +544,93 @@
          '()
          '#f)))
     (define read-syntax__%
-      (lambda (_%in134011%_)
-        (let ((_%e134013%_ (##read-datum-or-eof (get-readenv _%in134011%_))))
-          (if (eof-object? (__AST-e _%e134013%_))
-              (__AST-e _%e134013%_)
-              _%e134013%_))))
+      (lambda (_%in155722%_)
+        (let ((_%e155724%_ (##read-datum-or-eof (get-readenv _%in155722%_))))
+          (if (eof-object? (__AST-e _%e155724%_))
+              (__AST-e _%e155724%_)
+              _%e155724%_))))
     (define read-syntax__0
       (lambda ()
-        (let ((_%in134019%_ (current-input-port)))
-          (read-syntax__% _%in134019%_))))
+        (let ((_%in155730%_ (current-input-port)))
+          (read-syntax__% _%in155730%_))))
     (define read-syntax
-      (lambda _g134739_
-        (let ((_g134740_ (##length _g134739_)))
-          (cond ((##fx= _g134740_ 0) (apply read-syntax__0 _g134739_))
-                ((##fx= _g134740_ 1) (apply read-syntax__% _g134739_))
+      (lambda _g156450_
+        (let ((_g156451_ (##length _g156450_)))
+          (cond ((##fx= _g156451_ 0) (apply read-syntax__0 _g156450_))
+                ((##fx= _g156451_ 1) (apply read-syntax__% _g156450_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   read-syntax
-                  _g134739_))))))
+                  _g156450_))))))
     (define read-syntax-from-file
-      (lambda (_%path134006%_)
-        (let ((_%r134008%_
+      (lambda (_%path155717%_)
+        (let ((_%r155719%_
                (##read-all-as-a-begin-expr-from-path
-                (path-normalize _%path134006%_)
+                (path-normalize _%path155717%_)
                 (current-readtable)
                 __wrap-syntax
                 __unwrap-syntax)))
-          (if (vector? _%r134008%_)
-              (cdr (__AST-e (vector-ref _%r134008%_ '1)))
-              (error (err-code->string _%r134008%_) _%path134006%_)))))
+          (if (vector? _%r155719%_)
+              (cdr (__AST-e (vector-ref _%r155719%_ '1)))
+              (error (err-code->string _%r155719%_) _%path155717%_)))))
     (define __wrap-syntax
-      (lambda (_%re134003%_ _%e134004%_)
-        (if (eof-object? _%e134004%_)
-            _%e134004%_
-            (##structure AST::t _%e134004%_ (##readenv->locat _%re134003%_)))))
+      (lambda (_%re155714%_ _%e155715%_)
+        (if (eof-object? _%e155715%_)
+            _%e155715%_
+            (##structure AST::t _%e155715%_ (##readenv->locat _%re155714%_)))))
     (define __unwrap-syntax
-      (lambda (_%re134000%_ _%e134001%_) (__AST-e _%e134001%_)))
+      (lambda (_%re155711%_ _%e155712%_) (__AST-e _%e155712%_)))
     (define __pp-syntax
-      (lambda (_%stx133998%_) (pp (__AST->datum _%stx133998%_))))
+      (lambda (_%stx155709%_) (pp (__AST->datum _%stx155709%_))))
     (define __make-readtable
       (lambda ()
-        (let ((_%rt133996%_ (##make-standard-readtable)))
-          (macro-readtable-write-extended-read-macros?-set! _%rt133996%_ '#t)
-          (macro-readtable-bracket-handler-set! _%rt133996%_ '@list)
-          (macro-readtable-brace-handler-set! _%rt133996%_ '@method)
+        (let ((_%rt155707%_ (##make-standard-readtable)))
+          (macro-readtable-write-extended-read-macros?-set! _%rt155707%_ '#t)
+          (macro-readtable-bracket-handler-set! _%rt155707%_ '@list)
+          (macro-readtable-brace-handler-set! _%rt155707%_ '@method)
           (##readtable-char-sharp-handler-set!
-           _%rt133996%_
+           _%rt155707%_
            '#\!
            __read-sharp-bang)
-          _%rt133996%_)))
+          _%rt155707%_)))
     (define __readtable-bracket-keyword-set!
-      (lambda (_%rt133992%_ _%kw133993%_)
-        (macro-readtable-bracket-handler-set! _%rt133992%_ _%kw133993%_)))
+      (lambda (_%rt155703%_ _%kw155704%_)
+        (macro-readtable-bracket-handler-set! _%rt155703%_ _%kw155704%_)))
     (define __readtable-brace-keyword-set!
-      (lambda (_%rt133989%_ _%kw133990%_)
-        (macro-readtable-brace-handler-set! _%rt133989%_ _%kw133990%_)))
+      (lambda (_%rt155700%_ _%kw155701%_)
+        (macro-readtable-brace-handler-set! _%rt155700%_ _%kw155701%_)))
     (define __read-sharp-bang
-      (lambda (_%re133980%_ _%next133981%_ _%start-pos133982%_)
-        (if (eq? _%start-pos133982%_ '0)
-            (let* ((_%line133984%_
+      (lambda (_%re155691%_ _%next155692%_ _%start-pos155693%_)
+        (if (eq? _%start-pos155693%_ '0)
+            (let* ((_%line155695%_
                     (##read-line
-                     (macro-readenv-port _%re133980%_)
+                     (macro-readenv-port _%re155691%_)
                      '#\newline
                      '#f
                      ##max-fixnum))
-                   (_%script-line133986%_
+                   (_%script-line155697%_
                     (substring
-                     _%line133984%_
+                     _%line155695%_
                      '1
-                     (string-length _%line133984%_))))
+                     (string-length _%line155695%_))))
               (macro-readenv-script-line-set!
-               _%re133980%_
-               _%script-line133986%_)
+               _%re155691%_
+               _%script-line155697%_)
               (##script-marker))
             (##read-sharp-bang
-             _%re133980%_
-             _%next133981%_
-             _%start-pos133982%_))))
+             _%re155691%_
+             _%next155692%_
+             _%start-pos155693%_))))
     (set! ##readtable-setup-for-language! void)
     (define __*readtable* (__make-readtable))
     (define source-location? ##locat?)
     (define source-location-path?
-      (lambda (_%obj133978%_)
-        (if (source-location? _%obj133978%_)
-            (string? (##locat-container _%obj133978%_))
+      (lambda (_%obj155689%_)
+        (if (source-location? _%obj155689%_)
+            (string? (##locat-container _%obj155689%_))
             '#f)))
     (define source-location-path
-      (lambda (_%obj133976%_)
-        (if (##locat? _%obj133976%_)
-            (##container->path (##locat-container _%obj133976%_))
+      (lambda (_%obj155687%_)
+        (if (##locat? _%obj155687%_)
+            (##container->path (##locat-container _%obj155687%_))
             '#f)))))

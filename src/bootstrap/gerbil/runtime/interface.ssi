@@ -120,10 +120,24 @@ namespace: #f
           &prototype-table-table-set!)
          (%#define-syntax prototype-table |[:0:]#prototype-table|)
          (%#define-runtime prototype-table:::init! prototype-table:::init!)
-         (%#define-runtime __prototype-table-get __prototype-table-get)
+         (%#define-syntax
+          @__prototype-table-get
+          |[:0:]#@__prototype-table-get|)
          (%#define-runtime ____prototype-table-get ____prototype-table-get)
-         (%#define-runtime __prototype-table-set! __prototype-table-set!)
+         (%#define-runtime
+          __prototype-table-get
+          __prototype-table-get
+          macro:
+          @__prototype-table-get)
+         (%#define-syntax
+          @__prototype-table-set!
+          |[:0:]#@__prototype-table-set!|)
          (%#define-runtime ____prototype-table-set! ____prototype-table-set!)
+         (%#define-runtime
+          __prototype-table-set!
+          __prototype-table-set!
+          macro:
+          @__prototype-table-set!)
          (%#define-runtime interface-subclass? interface-subclass?)
          (%#define-runtime
           class-type-interface-table
@@ -136,6 +150,11 @@ namespace: #f
          (%#define-runtime cast cast)
          (%#define-runtime try-cast try-cast)
          (%#define-runtime satisfies? satisfies?)
-         (%#define-runtime with-prototype with-prototype)
-         (%#define-runtime __with-prototype __with-prototype))
+         (%#define-syntax @with-prototype |[:0:]#@with-prototype|)
+         (%#define-runtime __with-prototype __with-prototype)
+         (%#define-runtime
+          with-prototype
+          with-prototype
+          macro:
+          @with-prototype))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/interface~0"))

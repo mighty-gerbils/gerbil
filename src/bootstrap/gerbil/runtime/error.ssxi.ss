@@ -265,6 +265,21 @@ package: gerbil/runtime
     __raise-contract-violation-error__@))
   (declare-type contract-violation-error? (@predicate ContractViolation::t))
   (declare-type
+   __with-exception-handler
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/error)))
+  (declare-type
    with-exception-handler
    (@lambda 2
             #f
@@ -280,7 +295,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/error)))
   (declare-type
-   __with-exception-handler
+   __with-catch
    (@lambda 2
             #f
             signature:
@@ -307,21 +322,6 @@ package: gerbil/runtime
              (procedure::t procedure::t)
              unchecked:
              __with-catch
-             origin:
-             gerbil/runtime/error)))
-  (declare-type
-   __with-catch
-   (@lambda 2
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/error)))
   (declare-type
