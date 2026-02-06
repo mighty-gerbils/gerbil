@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1770338923)
+  (define gerbil/compiler/base::timestamp 1770341478)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -11,14 +11,14 @@
     (define gxc#current-compile-keep-scm (make-parameter '#f))
     (define gxc#current-compile-verbose
       (make-parameter
-       (let ((_%verbosity157868157870%_
+       (let ((_%verbosity157862157864%_
               (let ()
                 (declare (not safe))
                 (##getenv '"GERBIL_BUILD_VERBOSE" '#f))))
-         (if _%verbosity157868157870%_
-             (let* ((_%verbosity157872%_ _%verbosity157868157870%_)
-                    (_%$e157874%_ (string->number _%verbosity157872%_)))
-               (if _%$e157874%_ _%$e157874%_ _%verbosity157872%_))
+         (if _%verbosity157862157864%_
+             (let* ((_%verbosity157866%_ _%verbosity157862157864%_)
+                    (_%$e157868%_ (string->number _%verbosity157866%_)))
+               (if _%$e157868%_ _%$e157868%_ _%verbosity157866%_))
              '#f))))
     (define gxc#current-compile-optimize (make-parameter '#f))
     (define gxc#current-compile-debug (make-parameter '#f))
@@ -34,10 +34,10 @@
     (define gxc#current-compile-boolean-context (make-parameter '#f))
     (define gxc#make-bound-identifier-table
       (lambda ()
-        (letrec ((_%hash-e157865%_
-                  (lambda (_%id157867%_)
+        (letrec ((_%hash-e157859%_
+                  (lambda (_%id157861%_)
                     (symbol-hash
-                     (let () (declare (not safe)) (gx#stx-e _%id157867%_))))))
+                     (let () (declare (not safe)) (gx#stx-e _%id157861%_))))))
           (let ()
             (declare (not safe))
             (make-hash-table__%
@@ -45,29 +45,29 @@
              absent-value
              absent-value
              gx#bound-identifier=?
-             _%hash-e157865%_
+             _%hash-e157859%_
              absent-value
              absent-value
              absent-value
              absent-value)))))
     (define gxc#current-compile-local-env (make-parameter '()))
     (define gxc#symbol-table::t
-      (let ((__tmp157929 (list)) (__tmp157928 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp157923 (list)) (__tmp157922 (cons (cons 'struct: '#t) '())))
         (declare (not safe))
         (__make-class-type
          'gxc#symbol-table::t
          'symbol-table
-         __tmp157929
+         __tmp157923
          '(gensyms bindings)
-         __tmp157928
+         __tmp157922
          ':init!)))
     (define gxc#symbol-table?
       (let ()
         (declare (not safe))
         (__make-class-predicate gxc#symbol-table::t)))
     (define gxc#make-symbol-table
-      (lambda _%$args157861%_
-        (apply make-instance gxc#symbol-table::t _%$args157861%_)))
+      (lambda _%$args157855%_
+        (apply make-instance gxc#symbol-table::t _%$args157855%_)))
     (define gxc#symbol-table-gensyms
       (let ()
         (declare (not safe))
@@ -101,43 +101,43 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#symbol-table::t 'bindings)))
     (define gxc#symbol-table:::init!
-      (lambda (_%self157848%_)
-        (let ((_%self157851%_ _%self157848%_))
-          (if (let ((__tmp157930
+      (lambda (_%self157842%_)
+        (let ((_%self157845%_ _%self157842%_))
+          (if (let ((__tmp157924
                      (let ()
                        (declare (not safe))
-                       (##structure-length _%self157851%_))))
+                       (##structure-length _%self157845%_))))
                 (declare (not safe))
-                (##fx< '2 __tmp157930))
+                (##fx< '2 __tmp157924))
               (begin
-                (let ((__tmp157931
+                (let ((__tmp157925
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self157851%_
-                   __tmp157931
+                   _%self157845%_
+                   __tmp157925
                    '1
                    '#f
                    '#f))
-                (let ((__tmp157932
+                (let ((__tmp157926
                        (let () (declare (not safe)) (make-hash-table-eq))))
                   (declare (not safe))
                   (##unchecked-structure-set!
-                   _%self157851%_
-                   __tmp157932
+                   _%self157845%_
+                   __tmp157926
                    '2
                    '#f
                    '#f))
                 '#!void)
-              (let ((__tmp157933
+              (let ((__tmp157927
                      (let ()
                        (declare (not safe))
-                       (##structure-length _%self157851%_))))
+                       (##structure-length _%self157845%_))))
                 (declare (not safe))
                 (error '"struct-instance-init!: too many arguments for struct"
-                       _%self157851%_
+                       _%self157845%_
                        '2
-                       __tmp157933))))))
+                       __tmp157927))))))
     (let ()
       (declare (not safe))
       (__bind-method!__%
@@ -146,134 +146,134 @@
        gxc#symbol-table:::init!
        '#f))
     (define gxc#raise-compile-error
-      (lambda (_%message157717%_ _%stx157718%_ . _%details157719%_)
-        (let ((_%ctx157724%_
-               (let ((_%$e157721%_
+      (lambda (_%message157711%_ _%stx157712%_ . _%details157713%_)
+        (let ((_%ctx157718%_
+               (let ((_%$e157715%_
                       (let ()
                         (declare (not safe))
                         (gxc#current-compile-context))))
-                 (if _%$e157721%_ _%$e157721%_ '(compile)))))
+                 (if _%$e157715%_ _%$e157715%_ '(compile)))))
           (apply gx#raise-syntax-error
-                 _%ctx157724%_
-                 _%message157717%_
-                 _%stx157718%_
-                 _%details157719%_))))
+                 _%ctx157718%_
+                 _%message157711%_
+                 _%stx157712%_
+                 _%details157713%_))))
     (define gxc#verbose
-      (lambda _%args157714%_
+      (lambda _%args157708%_
         (if (let () (declare (not safe)) (gxc#current-compile-verbose))
-            (let ((__tmp157934
+            (let ((__tmp157928
                    (lambda ()
                      (let ()
                        (declare (not safe))
-                       (##apply displayln _%args157714%_)))))
+                       (##apply displayln _%args157708%_)))))
               (declare (not safe))
-              (__with-lock gxc#__verbose-mutex __tmp157934))
+              (__with-lock gxc#__verbose-mutex __tmp157928))
             '#!void)))
     (define gxc#__verbose-mutex (make-mutex 'compiler/driver))
     (define gxc#module-path-reserved-chars '":#<>&!?*;()[]{}|'`\"\\")
     (define gxc#module-id->path-string
-      (lambda (_%id157696%_)
-        (let* ((_%str157698%_
-                (if (symbol? _%id157696%_)
+      (lambda (_%id157690%_)
+        (let* ((_%str157692%_
+                (if (symbol? _%id157690%_)
                     (let ()
                       (declare (not safe))
-                      (##symbol->string _%id157696%_))
-                    _%id157696%_))
-               (_%len157700%_ (string-length _%str157698%_))
-               (_%res157702%_
-                (let () (declare (not safe)) (##make-string _%len157700%_))))
-          (let _%lp157705%_ ((_%i157707%_ '0))
-            (if (let () (declare (not safe)) (##fx< _%i157707%_ _%len157700%_))
-                (let* ((_%char157709%_ (string-ref _%str157698%_ _%i157707%_))
-                       (_%xchar157711%_
+                      (##symbol->string _%id157690%_))
+                    _%id157690%_))
+               (_%len157694%_ (string-length _%str157692%_))
+               (_%res157696%_
+                (let () (declare (not safe)) (##make-string _%len157694%_))))
+          (let _%lp157699%_ ((_%i157701%_ '0))
+            (if (let () (declare (not safe)) (##fx< _%i157701%_ _%len157694%_))
+                (let* ((_%char157703%_ (string-ref _%str157692%_ _%i157701%_))
+                       (_%xchar157705%_
                         (if (let ()
                               (declare (not safe))
                               (string-index__0
                                gxc#module-path-reserved-chars
-                               _%char157709%_))
+                               _%char157703%_))
                             '#\_
-                            _%char157709%_)))
-                  (string-set! _%res157702%_ _%i157707%_ _%xchar157711%_)
-                  (_%lp157705%_
-                   (let () (declare (not safe)) (##fx+ _%i157707%_ '1))))
-                _%res157702%_)))))
+                            _%char157703%_)))
+                  (string-set! _%res157696%_ _%i157701%_ _%xchar157705%_)
+                  (_%lp157699%_
+                   (let () (declare (not safe)) (##fx+ _%i157701%_ '1))))
+                _%res157696%_)))))
     (define gxc#map*
-      (lambda (_%proc157638%_ _%maybe-improper-list157639%_)
-        (let _%recur157641%_ ((_%rest157643%_ _%maybe-improper-list157639%_))
-          (let* ((_%rest157644157655%_ _%rest157643%_)
-                 (_%E157648157659%_
+      (lambda (_%proc157632%_ _%maybe-improper-list157633%_)
+        (let _%recur157635%_ ((_%rest157637%_ _%maybe-improper-list157633%_))
+          (let* ((_%rest157638157649%_ _%rest157637%_)
+                 (_%E157642157653%_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (error '"No clause matching"
-                             _%rest157644157655%_
+                             _%rest157638157649%_
                              '([hd . rest])
                              '([])
                              '(tail)))
                     '#!void)))
-            (let ((_%K157651157684%_
-                   (lambda (_%rest157681%_ _%hd157682%_)
-                     (cons (_%proc157638%_ _%hd157682%_)
-                           (_%recur157641%_ _%rest157681%_))))
-                  (_%K157650157675%_ (lambda () '()))
-                  (_%K157649157665%_
-                   (lambda (_%tail157663%_) (_%proc157638%_ _%tail157663%_))))
-              (let ((_%try-match157646157678%_
+            (let ((_%K157645157678%_
+                   (lambda (_%rest157675%_ _%hd157676%_)
+                     (cons (_%proc157632%_ _%hd157676%_)
+                           (_%recur157635%_ _%rest157675%_))))
+                  (_%K157644157669%_ (lambda () '()))
+                  (_%K157643157659%_
+                   (lambda (_%tail157657%_) (_%proc157632%_ _%tail157657%_))))
+              (let ((_%try-match157640157672%_
                      (lambda ()
-                       (if (null? _%rest157644157655%_)
-                           (_%K157650157675%_)
-                           (let ((_%tail157668%_ _%rest157644157655%_))
+                       (if (null? _%rest157638157649%_)
+                           (_%K157644157669%_)
+                           (let ((_%tail157662%_ _%rest157638157649%_))
                              (declare (not safe))
-                             (_%proc157638%_ _%tail157668%_))))))
-                (if (pair? _%rest157644157655%_)
-                    (let ((_%tl157653157689%_
+                             (_%proc157632%_ _%tail157662%_))))))
+                (if (pair? _%rest157638157649%_)
+                    (let ((_%tl157647157683%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%rest157644157655%_)))
-                          (_%hd157652157687%_
+                             (##cdr _%rest157638157649%_)))
+                          (_%hd157646157681%_
                            (let ()
                              (declare (not safe))
-                             (##car _%rest157644157655%_))))
-                      (let ((_%hd157692%_ _%hd157652157687%_)
-                            (_%rest157694%_ _%tl157653157689%_))
-                        (_%K157651157684%_ _%rest157694%_ _%hd157692%_)))
-                    (_%try-match157646157678%_))))))))
+                             (##car _%rest157638157649%_))))
+                      (let ((_%hd157686%_ _%hd157646157681%_)
+                            (_%rest157688%_ _%tl157647157683%_))
+                        (_%K157645157678%_ _%rest157688%_ _%hd157686%_)))
+                    (_%try-match157640157672%_))))))))
     (define gxc#symbol-in-local-scope?
-      (lambda (_%sym157633%_)
-        (let ((_%$e157635%_ (not (gxc#gensym-reference? _%sym157633%_))))
-          (if _%$e157635%_
-              _%$e157635%_
-              (memq _%sym157633%_
+      (lambda (_%sym157627%_)
+        (let ((_%$e157629%_ (not (gxc#gensym-reference? _%sym157627%_))))
+          (if _%$e157629%_
+              _%$e157629%_
+              (memq _%sym157627%_
                     (let ()
                       (declare (not safe))
                       (gxc#current-compile-local-env)))))))
     (define gxc#gensym-reference?
-      (lambda (_%sym157629%_)
-        (let ((_%str157631%_ (symbol->string _%sym157629%_)))
+      (lambda (_%sym157623%_)
+        (let ((_%str157625%_ (symbol->string _%sym157623%_)))
           (if (let ()
                 (declare (not safe))
-                (##string-prefix? '"_%" _%str157631%_))
+                (##string-prefix? '"_%" _%str157625%_))
               (let ()
                 (declare (not safe))
-                (##string-suffix? '"%_" _%str157631%_))
+                (##string-suffix? '"%_" _%str157625%_))
               '#f))))
     (define gxc#generate-runtime-binding-id
-      (lambda (_%id157600%_)
-        (let ((_%$e157602%_
+      (lambda (_%id157594%_)
+        (let ((_%$e157596%_
                (if (let ()
                      (declare (not safe))
                      (##structure-direct-instance-of?
-                      _%id157600%_
+                      _%id157594%_
                       'gx#syntax-quote::t))
                    (let ()
                      (declare (not safe))
-                     (gx#resolve-identifier__0 _%id157600%_))
+                     (gx#resolve-identifier__0 _%id157594%_))
                    '#f)))
-          (if _%$e157602%_
-              ((lambda (_%bind157605%_)
-                 (let ((_%eid157607%_
-                        (##structure-ref _%bind157605%_ '1 gx#binding::t '#f))
-                       (_%ht157608%_
+          (if _%$e157596%_
+              ((lambda (_%bind157599%_)
+                 (let ((_%eid157601%_
+                        (##structure-ref _%bind157599%_ '1 gx#binding::t '#f))
+                       (_%ht157602%_
                         (##structure-ref
                          (let ()
                            (declare (not safe))
@@ -283,155 +283,155 @@
                          '#f)))
                    (if (let ()
                          (declare (not safe))
-                         (interned-symbol? _%eid157607%_))
-                       _%eid157607%_
-                       (let ((_%$e157611%_
+                         (interned-symbol? _%eid157601%_))
+                       _%eid157601%_
+                       (let ((_%$e157605%_
                               (let ()
                                 (declare (not safe))
-                                (hash-get _%ht157608%_ _%eid157607%_))))
-                         (if _%$e157611%_
-                             _%$e157611%_
+                                (hash-get _%ht157602%_ _%eid157601%_))))
+                         (if _%$e157605%_
+                             _%$e157605%_
                              (if (let ()
                                    (declare (not safe))
                                    (##structure-instance-of?
-                                    _%bind157605%_
+                                    _%bind157599%_
                                     'gx#local-binding::t))
-                                 (let ((_%gid157615%_
+                                 (let ((_%gid157609%_
                                         (gxc#generate-runtime-gensym-reference__0
-                                         _%eid157607%_)))
+                                         _%eid157601%_)))
                                    (let ()
                                      (declare (not safe))
                                      (hash-put!
-                                      _%ht157608%_
-                                      _%eid157607%_
-                                      _%gid157615%_))
-                                   _%gid157615%_)
+                                      _%ht157602%_
+                                      _%eid157601%_
+                                      _%gid157609%_))
+                                   _%gid157609%_)
                                  (if (let ()
                                        (declare (not safe))
                                        (##structure-instance-of?
-                                        _%bind157605%_
+                                        _%bind157599%_
                                         'gx#module-binding::t))
-                                     (let ((_%gid157624%_
-                                            (let ((_%$e157618%_
+                                     (let ((_%gid157618%_
+                                            (let ((_%$e157612%_
                                                    (##structure-ref
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       _%bind157605%_
+                                                       _%bind157599%_
                                                        '7
                                                        '#f
                                                        '#f))
                                                     '6
                                                     gx#module-context::t
                                                     '#f)))
-                                              (if _%$e157618%_
-                                                  ((lambda (_%ns157621%_)
+                                              (if _%$e157612%_
+                                                  ((lambda (_%ns157615%_)
                                                      (let ()
                                                        (declare (not safe))
                                                        (make-symbol__1
-                                                        _%ns157621%_
+                                                        _%ns157615%_
                                                         '"#"
-                                                        _%eid157607%_)))
-                                                   _%$e157618%_)
+                                                        _%eid157601%_)))
+                                                   _%$e157612%_)
                                                   (gxc#generate-runtime-gensym-reference__0
-                                                   _%eid157607%_)))))
+                                                   _%eid157601%_)))))
                                        (let ()
                                          (declare (not safe))
                                          (hash-put!
-                                          _%ht157608%_
-                                          _%eid157607%_
-                                          _%gid157624%_))
-                                       _%gid157624%_)
+                                          _%ht157602%_
+                                          _%eid157601%_
+                                          _%gid157618%_))
+                                       _%gid157618%_)
                                      (gxc#raise-compile-error
                                       '"Cannot compile reference to uninterned binding"
-                                      _%id157600%_
-                                      _%eid157607%_
-                                      _%bind157605%_))))))))
-               _%$e157602%_)
-              (if (let ((__tmp157935
+                                      _%id157594%_
+                                      _%eid157601%_
+                                      _%bind157599%_))))))))
+               _%$e157596%_)
+              (if (let ((__tmp157929
                          (let ()
                            (declare (not safe))
-                           (gx#stx-e _%id157600%_))))
+                           (gx#stx-e _%id157594%_))))
                     (declare (not safe))
-                    (interned-symbol? __tmp157935))
-                  (let () (declare (not safe)) (gx#stx-e _%id157600%_))
+                    (interned-symbol? __tmp157929))
+                  (let () (declare (not safe)) (gx#stx-e _%id157594%_))
                   (gxc#raise-compile-error
                    '"Cannot compile reference to uninterned identifier"
-                   _%id157600%_))))))
+                   _%id157594%_))))))
     (define gxc#generate-runtime-binding-id*
-      (lambda (_%id157598%_)
-        (if (let () (declare (not safe)) (gx#identifier? _%id157598%_))
-            (gxc#generate-runtime-binding-id _%id157598%_)
+      (lambda (_%id157592%_)
+        (if (let () (declare (not safe)) (gx#identifier? _%id157592%_))
+            (gxc#generate-runtime-binding-id _%id157592%_)
             (gxc#generate-runtime-temporary__0))))
     (define gxc#generate-runtime-temporary__%
-      (lambda (_%top157585%_)
-        (if _%top157585%_
-            (let ((_%ns157587%_
+      (lambda (_%top157579%_)
+        (if _%top157579%_
+            (let ((_%ns157581%_
                    (##structure-ref
-                    (let ((__tmp157936
+                    (let ((__tmp157930
                            (let ()
                              (declare (not safe))
                              (gx#current-expander-context))))
                       (declare (not safe))
-                      (gx#core-context-top__1 __tmp157936))
+                      (gx#core-context-top__1 __tmp157930))
                     '6
                     gx#module-context::t
                     '#f))
-                  (_%phi157588%_
+                  (_%phi157582%_
                    (let () (declare (not safe)) (gx#current-expander-phi))))
-              (if _%ns157587%_
-                  (if (fxpositive? _%phi157588%_)
-                      (let ((__tmp157938 (number->string _%phi157588%_))
-                            (__tmp157937
+              (if _%ns157581%_
+                  (if (fxpositive? _%phi157582%_)
+                      (let ((__tmp157932 (number->string _%phi157582%_))
+                            (__tmp157931
                              (let () (declare (not safe)) (##gensym))))
                         (declare (not safe))
                         (make-symbol__1
-                         _%ns157587%_
+                         _%ns157581%_
                          '"["
-                         __tmp157938
+                         __tmp157932
                          '"]#_"
-                         __tmp157937
+                         __tmp157931
                          '"_"))
-                      (let ((__tmp157939
+                      (let ((__tmp157933
                              (let () (declare (not safe)) (##gensym))))
                         (declare (not safe))
-                        (make-symbol__1 _%ns157587%_ '"#_" __tmp157939 '"_")))
-                  (if (fxpositive? _%phi157588%_)
-                      (let ((__tmp157941 (number->string _%phi157588%_))
-                            (__tmp157940
+                        (make-symbol__1 _%ns157581%_ '"#_" __tmp157933 '"_")))
+                  (if (fxpositive? _%phi157582%_)
+                      (let ((__tmp157935 (number->string _%phi157582%_))
+                            (__tmp157934
                              (let () (declare (not safe)) (##gensym))))
                         (declare (not safe))
                         (make-symbol__1
                          '"["
-                         __tmp157941
+                         __tmp157935
                          '"]#_"
-                         __tmp157940
+                         __tmp157934
                          '"_"))
-                      (let ((__tmp157942
+                      (let ((__tmp157936
                              (let () (declare (not safe)) (##gensym))))
                         (declare (not safe))
-                        (make-symbol__1 '"_" __tmp157942 '"_")))))
-            (let ((__tmp157943 (let () (declare (not safe)) (##gensym))))
+                        (make-symbol__1 '"_" __tmp157936 '"_")))))
+            (let ((__tmp157937 (let () (declare (not safe)) (##gensym))))
               (declare (not safe))
-              (make-symbol__1 '"_" __tmp157943 '"_")))))
+              (make-symbol__1 '"_" __tmp157937 '"_")))))
     (define gxc#generate-runtime-temporary__0
       (lambda ()
-        (let ((_%top157594%_ '#f))
-          (gxc#generate-runtime-temporary__% _%top157594%_))))
+        (let ((_%top157588%_ '#f))
+          (gxc#generate-runtime-temporary__% _%top157588%_))))
     (define gxc#generate-runtime-temporary
-      (lambda _g157944_
-        (let ((_g157945_ (let () (declare (not safe)) (##length _g157944_))))
-          (cond ((let () (declare (not safe)) (##fx= _g157945_ 0))
-                 (apply gxc#generate-runtime-temporary__0 _g157944_))
-                ((let () (declare (not safe)) (##fx= _g157945_ 1))
-                 (apply gxc#generate-runtime-temporary__% _g157944_))
+      (lambda _g157938_
+        (let ((_g157939_ (let () (declare (not safe)) (##length _g157938_))))
+          (cond ((let () (declare (not safe)) (##fx= _g157939_ 0))
+                 (apply gxc#generate-runtime-temporary__0 _g157938_))
+                ((let () (declare (not safe)) (##fx= _g157939_ 1))
+                 (apply gxc#generate-runtime-temporary__% _g157938_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#generate-runtime-temporary
-                  _g157944_))))))
+                  _g157938_))))))
     (define gxc#generate-runtime-gensym-reference__%
-      (lambda (_%sym157563%_ _%quote?157564%_)
-        (let* ((_%ht157566%_
+      (lambda (_%sym157557%_ _%quote?157558%_)
+        (let* ((_%ht157560%_
                 (##structure-ref
                  (let ()
                    (declare (not safe))
@@ -439,142 +439,142 @@
                  '1
                  gxc#symbol-table::t
                  '#f))
-               (_%$e157568%_
+               (_%$e157562%_
                 (let ()
                   (declare (not safe))
-                  (hash-get _%ht157566%_ _%sym157563%_))))
-          (if _%$e157568%_
-              _%$e157568%_
-              (let ((_%g157572%_
-                     (if _%quote?157564%_
-                         (let ((__tmp157946
+                  (hash-get _%ht157560%_ _%sym157557%_))))
+          (if _%$e157562%_
+              _%$e157562%_
+              (let ((_%g157566%_
+                     (if _%quote?157558%_
+                         (let ((__tmp157940
                                 (let ()
                                   (declare (not safe))
                                   (gxc#current-compile-timestamp))))
                            (declare (not safe))
                            (make-symbol__1
                             '"__"
-                            _%sym157563%_
+                            _%sym157557%_
                             '"__"
-                            __tmp157946))
+                            __tmp157940))
                          (let ()
                            (declare (not safe))
-                           (make-symbol__1 '"_%" _%sym157563%_ '"%_")))))
+                           (make-symbol__1 '"_%" _%sym157557%_ '"%_")))))
                 (let ()
                   (declare (not safe))
-                  (hash-put! _%ht157566%_ _%sym157563%_ _%g157572%_))
-                _%g157572%_)))))
+                  (hash-put! _%ht157560%_ _%sym157557%_ _%g157566%_))
+                _%g157566%_)))))
     (define gxc#generate-runtime-gensym-reference__0
-      (lambda (_%sym157577%_)
-        (let ((_%quote?157579%_ '#f))
+      (lambda (_%sym157571%_)
+        (let ((_%quote?157573%_ '#f))
           (gxc#generate-runtime-gensym-reference__%
-           _%sym157577%_
-           _%quote?157579%_))))
+           _%sym157571%_
+           _%quote?157573%_))))
     (define gxc#generate-runtime-gensym-reference
-      (lambda _g157947_
-        (let ((_g157948_ (let () (declare (not safe)) (##length _g157947_))))
-          (cond ((let () (declare (not safe)) (##fx= _g157948_ 1))
-                 (apply gxc#generate-runtime-gensym-reference__0 _g157947_))
-                ((let () (declare (not safe)) (##fx= _g157948_ 2))
-                 (apply gxc#generate-runtime-gensym-reference__% _g157947_))
+      (lambda _g157941_
+        (let ((_g157942_ (let () (declare (not safe)) (##length _g157941_))))
+          (cond ((let () (declare (not safe)) (##fx= _g157942_ 1))
+                 (apply gxc#generate-runtime-gensym-reference__0 _g157941_))
+                ((let () (declare (not safe)) (##fx= _g157942_ 2))
+                 (apply gxc#generate-runtime-gensym-reference__% _g157941_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#generate-runtime-gensym-reference
-                  _g157947_))))))
+                  _g157941_))))))
     (define gxc#generate-runtime-identifier
-      (lambda (_%id157560%_)
+      (lambda (_%id157554%_)
         (gxc#generate-runtime-identifier-key
-         (let () (declare (not safe)) (gx#core-identifier-key _%id157560%_)))))
+         (let () (declare (not safe)) (gx#core-identifier-key _%id157554%_)))))
     (define gxc#generate-runtime-identifier-key
-      (lambda (_%key157515%_)
-        (if (let () (declare (not safe)) (interned-symbol? _%key157515%_))
-            _%key157515%_
-            (if (uninterned-symbol? _%key157515%_)
-                (gxc#generate-runtime-gensym-reference__0 _%key157515%_)
-                (let* ((_%key157519157526%_ _%key157515%_)
-                       (_%E157521157530%_
+      (lambda (_%key157509%_)
+        (if (let () (declare (not safe)) (interned-symbol? _%key157509%_))
+            _%key157509%_
+            (if (uninterned-symbol? _%key157509%_)
+                (gxc#generate-runtime-gensym-reference__0 _%key157509%_)
+                (let* ((_%key157513157520%_ _%key157509%_)
+                       (_%E157515157524%_
                         (lambda ()
                           (let ()
                             (declare (not safe))
                             (error '"No clause matching"
-                                   _%key157519157526%_
+                                   _%key157513157520%_
                                    '([eid . mark])))
                           '#!void))
-                       (_%K157522157548%_
-                        (lambda (_%mark157533%_ _%eid157534%_)
-                          (let ((_%$e157536%_
+                       (_%K157516157542%_
+                        (lambda (_%mark157527%_ _%eid157528%_)
+                          (let ((_%$e157530%_
                                  (##structure-ref
-                                  _%mark157533%_
+                                  _%mark157527%_
                                   '1
                                   gx#expander-mark::t
                                   '#f)))
-                            (if _%$e157536%_
-                                ((lambda (_%ht157539%_)
-                                   (let ((_%$e157541%_
+                            (if _%$e157530%_
+                                ((lambda (_%ht157533%_)
+                                   (let ((_%$e157535%_
                                           (let ()
                                             (declare (not safe))
                                             (hash-get
-                                             _%ht157539%_
-                                             _%eid157534%_))))
-                                     (if _%$e157541%_
-                                         ((lambda (_%id157544%_)
+                                             _%ht157533%_
+                                             _%eid157528%_))))
+                                     (if _%$e157535%_
+                                         ((lambda (_%id157538%_)
                                             (if (let ()
                                                   (declare (not safe))
                                                   (interned-symbol?
-                                                   _%id157544%_))
-                                                _%id157544%_
+                                                   _%id157538%_))
+                                                _%id157538%_
                                                 (gxc#generate-runtime-gensym-reference__0
-                                                 _%id157544%_)))
-                                          _%$e157541%_)
+                                                 _%id157538%_)))
+                                          _%$e157535%_)
                                          (gxc#generate-runtime-identifier-key
-                                          _%eid157534%_))))
-                                 _%$e157536%_)
+                                          _%eid157528%_))))
+                                 _%$e157530%_)
                                 (gxc#generate-runtime-identifier-key
-                                 _%eid157534%_))))))
-                  (if (pair? _%key157519157526%_)
-                      (let ((_%hd157523157551%_
+                                 _%eid157528%_))))))
+                  (if (pair? _%key157513157520%_)
+                      (let ((_%hd157517157545%_
                              (let ()
                                (declare (not safe))
-                               (##car _%key157519157526%_)))
-                            (_%tl157524157553%_
+                               (##car _%key157513157520%_)))
+                            (_%tl157518157547%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%key157519157526%_))))
-                        (let* ((_%eid157556%_ _%hd157523157551%_)
-                               (_%mark157558%_ _%tl157524157553%_))
-                          (_%K157522157548%_ _%mark157558%_ _%eid157556%_)))
-                      (_%E157521157530%_)))))))
+                               (##cdr _%key157513157520%_))))
+                        (let* ((_%eid157550%_ _%hd157517157545%_)
+                               (_%mark157552%_ _%tl157518157547%_))
+                          (_%K157516157542%_ _%mark157552%_ _%eid157550%_)))
+                      (_%E157515157524%_)))))))
     (define gxc#runtime-identifier=?
-      (lambda (_%id1157508%_ _%id2157509%_)
-        (letrec ((_%symbol-e157511%_
-                  (lambda (_%id157513%_)
-                    (if (symbol? _%id157513%_)
-                        _%id157513%_
-                        (gxc#generate-runtime-binding-id _%id157513%_)))))
-          (eq? (_%symbol-e157511%_ _%id1157508%_)
-               (_%symbol-e157511%_ _%id2157509%_)))))
+      (lambda (_%id1157502%_ _%id2157503%_)
+        (letrec ((_%symbol-e157505%_
+                  (lambda (_%id157507%_)
+                    (if (symbol? _%id157507%_)
+                        _%id157507%_
+                        (gxc#generate-runtime-binding-id _%id157507%_)))))
+          (eq? (_%symbol-e157505%_ _%id1157502%_)
+               (_%symbol-e157505%_ _%id2157503%_)))))
     (define gxc#identifier-symbol
-      (lambda (_%stx157506%_)
+      (lambda (_%stx157500%_)
         (if (let ()
               (declare (not safe))
               (##structure-direct-instance-of?
-               _%stx157506%_
+               _%stx157500%_
                'gx#syntax-quote::t))
-            (gxc#generate-runtime-binding-id _%stx157506%_)
-            (let () (declare (not safe)) (gx#stx-e _%stx157506%_)))))
+            (gxc#generate-runtime-binding-id _%stx157500%_)
+            (let () (declare (not safe)) (gx#stx-e _%stx157500%_)))))
     (define gxc#runtime-identifier-properties
       (lambda (_%id157422%_)
         (let* ((_%bind157424%_
                 (let ()
                   (declare (not safe))
                   (gx#resolve-identifier__0 _%id157422%_)))
-               (_%runtime-props157459%_
+               (_%runtime-props157453%_
                 (if (let ()
                       (declare (not safe))
                       (##structure-instance-of?
                        _%bind157424%_
                        'gx#runtime-binding::t))
-                    (let* ((_%props157439%_
+                    (let* ((_%props157433%_
                             (let ((_%$e157427%_
                                    (let ()
                                      (declare (not safe))
@@ -585,28 +585,20 @@
                                       '#f))))
                               (if _%$e157427%_
                                   ((lambda (_%macro-id157430%_)
-                                     (let ((_%$e157432%_
-                                            (let ((__tmp157949
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (gxc#current-compile-identifiers))))
-                                              (declare (not safe))
-                                              (hash-get
-                                               __tmp157949
-                                               _%macro-id157430%_))))
-                                       (if _%$e157432%_
-                                           ((lambda (_%stxq157435%_)
-                                              (cons 'macro:
-                                                    (cons _%stxq157435%_ '())))
-                                            _%$e157432%_)
-                                           (gxc#raise-compile-error
-                                            '"no syntax quote object for macro"
-                                            _%id157422%_
-                                            _%macro-id157430%_))))
+                                     (cons 'macro:
+                                           (cons (cons 'gx#syntax-local-value
+                                                       (cons (cons 'quote
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (gxc#generate-runtime-identifier
+                                  _%macro-id157430%_)
+                                 '()))
+                     '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '())))
                                    _%$e157427%_)
                                   '())))
-                           (_%props157455%_
-                            (let ((_%$e157441%_
+                           (_%props157449%_
+                            (let ((_%$e157435%_
                                    (let ()
                                      (declare (not safe))
                                      (##unchecked-structure-ref
@@ -614,92 +606,92 @@
                                       '5
                                       '#f
                                       '#f))))
-                              (if _%$e157441%_
-                                  ((lambda (_%type157444%_)
-                                     (let ((_%$e157446%_
+                              (if _%$e157435%_
+                                  ((lambda (_%type157438%_)
+                                     (let ((_%$e157440%_
                                             (let ()
                                               (declare (not safe))
                                               (__method-ref
-                                               _%type157444%_
+                                               _%type157438%_
                                                ':repr))))
-                                       (if _%$e157446%_
-                                           ((lambda (_%method157449%_)
-                                              (let ((_%repr157451%_
-                                                     (_%method157449%_
-                                                      _%type157444%_)))
+                                       (if _%$e157440%_
+                                           ((lambda (_%method157443%_)
+                                              (let ((_%repr157445%_
+                                                     (_%method157443%_
+                                                      _%type157438%_)))
                                                 (cons 'type:
-                                                      (cons _%repr157451%_
-                                                            _%props157439%_))))
-                                            _%$e157446%_)
+                                                      (cons _%repr157445%_
+                                                            _%props157433%_))))
+                                            _%$e157440%_)
                                            (gxc#raise-compile-error
                                             '"unrepresentable type"
                                             _%id157422%_
-                                            _%type157444%_))))
-                                   _%$e157441%_)
-                                  _%props157439%_))))
-                      _%props157455%_)
+                                            _%type157438%_))))
+                                   _%$e157435%_)
+                                  _%props157433%_))))
+                      _%props157449%_)
                     '()))
-               (_%$e157462%_
+               (_%$e157456%_
                 (##structure-ref _%bind157424%_ '4 gx#binding::t '#f)))
-          (if _%$e157462%_
-              ((lambda (_%props157465%_)
-                 (let ((__tmp157950
-                        (lambda (_%prop157467%_ _%props157468%_)
-                          (let* ((_%prop157469157476%_ _%prop157467%_)
-                                 (_%E157471157479%_
+          (if _%$e157456%_
+              ((lambda (_%props157459%_)
+                 (let ((__tmp157943
+                        (lambda (_%prop157461%_ _%props157462%_)
+                          (let* ((_%prop157463157470%_ _%prop157461%_)
+                                 (_%E157465157473%_
                                   (lambda ()
                                     (let ()
                                       (declare (not safe))
                                       (error '"No clause matching"
-                                             _%prop157469157476%_
+                                             _%prop157463157470%_
                                              '([key . value])))
                                     '#!void))
-                                 (_%K157472157493%_
-                                  (lambda (_%value157482%_ _%key157483%_)
-                                    (let ((_%$e157485%_
+                                 (_%K157466157487%_
+                                  (lambda (_%value157476%_ _%key157477%_)
+                                    (let ((_%$e157479%_
                                            (let ()
                                              (declare (not safe))
                                              (__method-ref
-                                              _%value157482%_
+                                              _%value157476%_
                                               ':repr))))
-                                      (if _%$e157485%_
-                                          ((lambda (_%method157488%_)
-                                             (let ((_%repr157490%_
-                                                    (_%method157488%_
-                                                     _%value157482%_)))
-                                               (cons _%key157483%_
-                                                     (cons _%repr157490%_
-                                                           _%props157468%_))))
-                                           _%$e157485%_)
-                                          (cons _%key157483%_
+                                      (if _%$e157479%_
+                                          ((lambda (_%method157482%_)
+                                             (let ((_%repr157484%_
+                                                    (_%method157482%_
+                                                     _%value157476%_)))
+                                               (cons _%key157477%_
+                                                     (cons _%repr157484%_
+                                                           _%props157462%_))))
+                                           _%$e157479%_)
+                                          (cons _%key157477%_
                                                 (cons (cons 'quote
-                                                            (cons _%value157482%_
+                                                            (cons _%value157476%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))
-              _%props157468%_)))))))
+              _%props157462%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                            (if (pair? _%prop157469157476%_)
-                                (let ((_%hd157473157496%_
+                            (if (pair? _%prop157463157470%_)
+                                (let ((_%hd157467157490%_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _%prop157469157476%_)))
-                                      (_%tl157474157498%_
+                                         (##car _%prop157463157470%_)))
+                                      (_%tl157468157492%_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _%prop157469157476%_))))
-                                  (let* ((_%key157501%_ _%hd157473157496%_)
-                                         (_%value157503%_ _%tl157474157498%_))
-                                    (_%K157472157493%_
-                                     _%value157503%_
-                                     _%key157501%_)))
-                                (_%E157471157479%_))))))
+                                         (##cdr _%prop157463157470%_))))
+                                  (let* ((_%key157495%_ _%hd157467157490%_)
+                                         (_%value157497%_ _%tl157468157492%_))
+                                    (_%K157466157487%_
+                                     _%value157497%_
+                                     _%key157495%_)))
+                                (_%E157465157473%_))))))
                    (declare (not safe))
                    (__foldl1
-                    __tmp157950
-                    _%runtime-props157459%_
-                    _%props157465%_)))
-               _%$e157462%_)
-              _%runtime-props157459%_))))
+                    __tmp157943
+                    _%runtime-props157453%_
+                    _%props157459%_)))
+               _%$e157456%_)
+              _%runtime-props157453%_))))
     (define gxc#__compile-jobs '())
     (define gxc#__available-cores
       (string->number
@@ -719,16 +711,16 @@
                (let () (declare (not safe)) (gxc#current-compile-context))))
           (gxc#add-compile-job!__% _%thunk157415%_ _%name157417%_))))
     (define gxc#add-compile-job!
-      (lambda _g157951_
-        (let ((_g157952_ (let () (declare (not safe)) (##length _g157951_))))
-          (cond ((let () (declare (not safe)) (##fx= _g157952_ 1))
-                 (apply gxc#add-compile-job!__0 _g157951_))
-                ((let () (declare (not safe)) (##fx= _g157952_ 2))
-                 (apply gxc#add-compile-job!__% _g157951_))
+      (lambda _g157944_
+        (let ((_g157945_ (let () (declare (not safe)) (##length _g157944_))))
+          (cond ((let () (declare (not safe)) (##fx= _g157945_ 1))
+                 (apply gxc#add-compile-job!__0 _g157944_))
+                ((let () (declare (not safe)) (##fx= _g157945_ 2))
+                 (apply gxc#add-compile-job!__% _g157944_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#add-compile-job!
-                  _g157951_))))))
+                  _g157944_))))))
     (define gxc#pending-compile-jobs
       (lambda ()
         (mutex-lock! gxc#__jobs-mx)
@@ -759,7 +751,7 @@
                  (begin
                    (set! gxc#__available-cores (- gxc#__available-cores '1))
                    (mutex-unlock! gxc#__jobs-mx)
-                   (let ((__tmp157953
+                   (let ((__tmp157946
                           (lambda ()
                             (let ()
                               (declare (not safe))
@@ -767,9 +759,9 @@
                                '"... execute compile job "
                                _%name157388%_)))))
                      (declare (not safe))
-                     (__with-lock gxc#__verbose-mutex __tmp157953))
-                   (let ((__tmp157955 (lambda () (_%thunk157387%_)))
-                         (__tmp157954
+                     (__with-lock gxc#__verbose-mutex __tmp157946))
+                   (let ((__tmp157948 (lambda () (_%thunk157387%_)))
+                         (__tmp157947
                           (lambda ()
                             (mutex-lock! gxc#__jobs-mx)
                             (set! gxc#__available-cores
@@ -779,25 +771,25 @@
                             (condition-variable-signal! gxc#__jobs-cv)
                             (mutex-unlock! gxc#__jobs-mx))))
                      (declare (not safe))
-                     (__with-unwind-protect __tmp157955 __tmp157954)))
+                     (__with-unwind-protect __tmp157948 __tmp157947)))
                  (begin
                    (mutex-unlock! gxc#__jobs-mx gxc#__jobs-cv)
                    (_%loop157391%_)))))
          _%name157388%_)))
     (define gxc#join!
       (lambda (_%thread157382%_)
-        (let ((__tmp157957
+        (let ((__tmp157950
                (lambda (_%exn157384%_)
                  (if (let ()
                        (declare (not safe))
                        (uncaught-exception? _%exn157384%_))
-                     (let ((__tmp157958
+                     (let ((__tmp157951
                             (let ()
                               (declare (not safe))
                               (uncaught-exception-reason _%exn157384%_))))
                        (declare (not safe))
-                       (raise __tmp157958))
+                       (raise __tmp157951))
                      (let () (declare (not safe)) (raise _%exn157384%_)))))
-              (__tmp157956 (lambda () (thread-join! _%thread157382%_))))
+              (__tmp157949 (lambda () (thread-join! _%thread157382%_))))
           (declare (not safe))
-          (__with-catch __tmp157957 __tmp157956))))))
+          (__with-catch __tmp157950 __tmp157949))))))

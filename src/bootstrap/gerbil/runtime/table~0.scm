@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/table::timestamp 1770338919)
+  (define gerbil/runtime/table::timestamp 1770341474)
   (begin
     (declare (not safe))
     (define __table::t.id 'gerbil#__table::t)
