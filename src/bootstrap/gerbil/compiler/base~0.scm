@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1770341478)
+  (define gerbil/compiler/base::timestamp 1770342300)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -586,14 +586,8 @@
                               (if _%$e157427%_
                                   ((lambda (_%macro-id157430%_)
                                      (cons 'macro:
-                                           (cons (cons 'gx#syntax-local-value
-                                                       (cons (cons 'quote
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons (gxc#generate-runtime-identifier
-                                  _%macro-id157430%_)
-                                 '()))
-                     '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (cons (gxc#generate-runtime-identifier
+                                                  _%macro-id157430%_)
                                                  '())))
                                    _%$e157427%_)
                                   '())))

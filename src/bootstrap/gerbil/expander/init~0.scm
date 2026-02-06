@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/init::timestamp 1770341478)
+  (define gerbil/expander/init::timestamp 1770342300)
   (begin
     (let ((__tmp156917
            (let ((__obj156915
