@@ -1715,15 +1715,15 @@ package: gerbil/core
           (if (stx-null? #'tail)
             (syntax/loc stx
               (defdispatch-rule (unchecked-macro $self in ...)
-                lift: unchecked-method
-                (:- (interface-dispatch-method Interface method ($self out ...))
-                    return)))
+                  lift: unchecked-method
+                  (:- (interface-dispatch-method Interface method ($self out ...))
+                      return)))
             (with-syntax (((out ... tail-out) #'(out ...)))
               (syntax/loc stx
                 (defdispatch-rule (unchecked-macro $self in ... . tail)
-                  lift: unchecked-method
-                  (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
-                      return))))))))
+                    lift: unchecked-method
+                    (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
+                        return))))))))
 
     (def (make-checked-macro Interface macro-name checked-method-name method signature return)
       (let (info   (syntax-local-value Interface))
@@ -1753,9 +1753,10 @@ package: gerbil/core
                       (: (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)
                       (:- (interface-dispatch-method Interface method ($self out ... :: tail-out)) return))))))))))
 
-    (def (make-unchecked-method-def Interface unchecked-method-name method signature return)
+    (def (make-unchecked-method-def Interface unchecked-method-name unchecked-macro-name method signature return)
       (with-syntax ((Interface Interface)
                     (unchecked-method unchecked-method-name)
+                    (unchecked-macro  unchecked-macro-name)
                     (method           method)
                     (return           return)
                     (signature        signature)
@@ -1764,20 +1765,25 @@ package: gerbil/core
                     ((out ...)        (signature-arguments-out signature)))
         (if (stx-null? #'tail)
           (syntax/loc stx
-            (def (unchecked-method $self in ...)
-              (with-interface-unchecked-method-signature $self (Interface signature return)
-                (:- (interface-dispatch-method Interface method ($self out ...))
-                    return))))
+            (define-values (unchecked-method)
+              (lambda ($self in ...)
+                (with-interface-unchecked-method-signature $self (Interface signature return)
+                  (:- (interface-dispatch-method Interface method ($self out ...))
+                      return)))
+              macro: unchecked-macro))
           (with-syntax (((out ... tail-out) #'(out ...)))
             (syntax/loc stx
-              (def (unchecked-method $self in ... . tail)
-                (with-interface-unchecked-method-signature $self (Interface signature return)
-                  (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
-                    return))))))))
+              (define-values (unchecked-method)
+                (lambda ($self in ... . tail)
+                  (with-interface-unchecked-method-signature $self (Interface signature return)
+                    (:- (interface-dispatch-method Interface method ($self out ... :: tail-out))
+                        return)))
+                macro: unchecked-macro))))))
 
-    (def (make-checked-method-def Interface checked-method-name unchecked-method-name method signature return)
+    (def (make-checked-method-def Interface checked-method-name checked-macro-name unchecked-method-name method signature return)
       (with-syntax ((Interface Interface)
                     (checked-method   checked-method-name)
+                    (checked-macro    checked-macro-name)
                     (unchecked-method unchecked-method-name)
                     (method           method)
                     (signature        signature)
@@ -1787,18 +1793,22 @@ package: gerbil/core
                     ((out ...)        (signature-arguments-out signature)))
         (if (stx-null? #'tail)
           (syntax/loc stx
-            (def (checked-method $self in ...)
-              (with-interface-checked-method-signature $self (Interface signature return unchecked-method)
-                (if __DEBUG
-                  (: (interface-dispatch-method Interface method ($self out ...)) return)
-                  (:- (interface-dispatch-method Interface method ($self out ...)) return)))))
-          (with-syntax (((out ... tail-out) #'(out ...)))
-            (syntax/loc stx
-              (def (checked-method $self in ... . tail)
+            (define-values (checked-method)
+              (lambda ($self in ...)
                 (with-interface-checked-method-signature $self (Interface signature return unchecked-method)
                   (if __DEBUG
-                    (: (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)
-                    (:- (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)))))))))
+                    (: (interface-dispatch-method Interface method ($self out ...)) return)
+                    (:- (interface-dispatch-method Interface method ($self out ...)) return))))
+              macro: checked-macro))
+          (with-syntax (((out ... tail-out) #'(out ...)))
+            (syntax/loc stx
+              (define-values (checked-method)
+                (lambda ($self in ... . tail)
+                  (with-interface-checked-method-signature $self (Interface signature return unchecked-method)
+                    (if __DEBUG
+                      (: (interface-dispatch-method Interface method ($self out ... :: tail-out)) return)
+                      (:- (interface-dispatch-method Interface method ($self out ... :: tail-out)) return))))
+                macro: checked-macro))))))
 
       (syntax-case stx ()
         ((_ Interface (method signature return))
@@ -1808,6 +1818,7 @@ package: gerbil/core
                 (interface-name (interface-info-name info))
                 (method-name
                  (stx-identifier #'Interface interface-name "-" #'method))
+                (checked-macro-name method-name)
                 (unchecked-macro-name
                  (stx-identifier #'Interface "&"  method-name))
                 (checked-method-name
@@ -1827,7 +1838,7 @@ package: gerbil/core
                          (defchecked-macro
                            (make-checked-macro
                             #'Interface
-                            method-name
+                            checked-macro-name
                             checked-method-name
                             method
                             #'signature
@@ -1836,6 +1847,7 @@ package: gerbil/core
                            (make-unchecked-method-def
                             #'Interface
                             unchecked-method-name
+                            unchecked-macro-name
                             method
                             #'signature
                             #'return))
@@ -1843,6 +1855,7 @@ package: gerbil/core
                            (make-checked-method-def
                             #'Interface
                             checked-method-name
+                            checked-macro-name
                             unchecked-method-name
                             method
                             #'signature
@@ -1888,10 +1901,10 @@ package: gerbil/core
                      ($method (##unchecked-structure-ref self offset #f 'method)))
                  ($method $object arg ...))))))))
 
-  (defrule (defdispatch-rule (macro in ...) lift: proc body rest ...)
+  (defrule (defdispatch-rule (macro . in) lift: proc body rest ...)
     (defrules macro ()
       ((_ arg (... ...))
-       (with-dispatch-arguments ((in ...) (arg (... ...))) body rest ...))
+       (with-dispatch-arguments (in (arg (... ...))) body rest ...))
       (id (identifier? #'id) proc)))
 
   (defsyntax (with-dispatch-arguments stx)
@@ -2153,62 +2166,81 @@ package: gerbil/core
   (defsyntax (def/c stx)
     (def (make-definition id args return body)
       (check-signature! stx args return)
-      (if (signature-has-keywords? args)
-        (make-keyword-def id args return body)
-        (let (unchecked-id (stx-identifier id "__" id))
-          (with-syntax ((defchecked (make-checked-def id unchecked-id args return))
-                        (defunchecked (make-unchecked-def unchecked-id args return body)))
-            #'(begin defchecked defunchecked)))))
+      (with-identifiers
+          ((unchecked-proc      id "__" id)
+           (checked-macro       id "@"  id))
+        (with-syntax ((defchecked-macro
+                        (make-checked-macro #'checked-macro id #'unchecked-proc
+                                            args return))
+                      (defunchecked-proc
+                        (make-unchecked-proc #'unchecked-proc
+                                             args return body))
+                      (defchecked-proc
+                        (make-checked-proc id #'unchecked-proc #'checked-macro
+                                              args return)))
+          #'(begin defchecked-macro defunchecked-proc defchecked-proc))))
 
-    (def (make-keyword-def id signature return body)
-      (with-syntax ((id id)
-                    (in (signature-arguments-in signature))
-                    (signature signature)
-                    (return return)
-                    (return-type (resolve-type->type-descriptor stx return))
-                    ((body ...) body))
+    (def (make-unchecked-proc unchecked-proc signature return body)
+      (with-syntax ((unchecked-proc  unchecked-proc)
+                    (signature       signature)
+                    (return          return)
+                    (return-type     (resolve-type->type-descriptor stx return))
+                    (in              (signature-arguments-in signature))
+                    ((body ...)       body))
         (syntax/loc stx
-          (def (id . in)
-            (with-procedure-signature (signature return #f)
-              (begin-annotation (@type return-type)
-                (with-procedure-contract signature
-                  body ...)))))))
-
-    (def (make-checked-def id unchecked-id signature return)
-      (with-syntax ((id id)
-                    (unchecked-id unchecked-id)
-                    (in (signature-arguments-in signature))
-                    ((out ...) (signature-arguments-out signature))
-                    (signature signature)
-                    (return return)
-                    (return-type (resolve-type->type-descriptor stx return)))
-        (if (stx-list? #'signature)
-          (syntax/loc stx
-            (def (id . in)
-              (with-procedure-signature (signature return unchecked-id)
+          (define-values (unchecked-proc)
+            (lambda in
+              (with-procedure-signature (#f return #f)
                 (begin-annotation (@type return-type)
-                  (with-procedure-contract signature
-                    (unchecked-id out ...))))))
+                  (with-procedure-unchecked-contract signature body ...))))))))
+
+    (def (make-checked-proc checked-proc unchecked-proc checked-macro signature return)
+      (with-syntax ((checked-proc   checked-proc)
+                    (unchecked-proc unchecked-proc)
+                    (checked-macro  checked-macro)
+                    (signature      signature)
+                    (return         return)
+                    (return-type    (resolve-type->type-descriptor stx return))
+                    (in             (signature-arguments-in signature))
+                    ((out ...)      (signature-arguments-out signature)))
+        (if (stx-list? #'in)
           (syntax/loc stx
-            (def (id . in)
-              (with-procedure-signature (signature return unchecked-id)
-                (begin-annotation (@type return-type)
-                  (with-procedure-contract signature
-                    (##apply unchecked-id out ...)))))))))
+            (define-values (checked-proc)
+              (lambda in
+                (with-procedure-signature (signature return unchecked-proc)
+                  (begin-annotation (@type return-type)
+                    (with-procedure-contract signature
+                      (unchecked-proc out ...)))))
+              macro: checked-macro))
+          (syntax/loc stx
+            (define-values (checked-proc)
+              (lambda in
+                (with-procedure-signature (signature return unchecked-proc)
+                  (begin-annotation (@type return-type)
+                    (with-procedure-contract signature
+                      (##apply unchecked-proc out ...)))))
+              macro: checked-macro)))))
 
-    (def (make-unchecked-def unchecked-id signature return body)
-      (with-syntax ((unchecked-id unchecked-id)
-                    (in (signature-arguments-in signature))
-                    (signature signature)
-                    (return return)
-                    ((body ...) body))
-        (syntax/loc stx
-          (def (unchecked-id . in)
-            (with-procedure-signature (#f return #f)
-              (with-procedure-unchecked-contract signature
-                                                 body ...))))))
+    (def (make-checked-macro checked-macro checked-proc unchecked-proc signature return)
+      (with-syntax ((checked-macro  checked-macro)
+                    (checked-proc   checked-proc)
+                    (unchecked-proc unchecked-proc)
+                    (in             (signature-arguments-in signature))
+                    ((out ...)      (signature-arguments-out signature))
+                    (contract       (make-procedure-contract stx signature #t)))
+        (if (stx-list? #'in)
+          (syntax/loc stx
+            (defdispatch-rule (checked-macro . in)
+              lift: checked-proc
+              (using contract
+                (unchecked-proc out ...))))
+          (syntax/loc stx
+            (defdispatch-rule (checked-macro . in)
+              lift: checked-proc
+              (using contract
+                (##apply unchecked-proc out ...)))))))
 
-    (syntax-case stx (=>)
+    (syntax-case stx (=> lambda/c)
       ((_ (id . args) => return body ...)
        (identifier? #'id)
        (if (is-signature? #'args)
@@ -2225,6 +2257,9 @@ package: gerbil/core
       ((_ ((head . rest) . args) body ...)
        #'(def/c (head . rest)
            (lambda/c args body ...)))
+      ((_ id (lambda/c hd body ...))
+       (identifier? #'id)
+       #'(def/c (id . hd) body ...))
       ((_ id expr)
        (identifier? #'id)
        #'(def id expr))))
