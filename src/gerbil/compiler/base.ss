@@ -246,12 +246,9 @@ namespace: gxc
                     (cond
                      ((runtime-binding-macro bind)
                       => (lambda (macro-id)
-                           (cond
-                            ((hash-get (current-compile-identifiers) macro-id)
-                            => (lambda (stxq)
-                                 [macro: stxq]))
-                            (else
-                             (raise-compile-error "no syntax quote object for macro" id macro-id)))))
+                           [macro:
+                            ['gx#syntax-local-value ['quote (generate-runtime-identifier macro-id)]]]))
+
                      (else [])))
                    (props
                     (cond
