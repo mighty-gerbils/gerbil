@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1770336543)
+  (define gerbil/compiler/base::timestamp 1770338923)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -593,7 +593,7 @@
                                               (declare (not safe))
                                               (hash-get
                                                __tmp157949
-                                               _%id157422%_))))
+                                               _%macro-id157430%_))))
                                        (if _%$e157432%_
                                            ((lambda (_%stxq157435%_)
                                               (cons 'macro:

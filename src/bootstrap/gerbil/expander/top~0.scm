@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/top::timestamp 1770336542)
+  (define gerbil/expander/top::timestamp 1770338922)
   (begin
     (declare (not safe))
     (define gx#core-expand-begin%
@@ -1159,11 +1159,7 @@
       (lambda (_%bind147878%_ _%props147879%_)
         (letrec ((_%eval-prop147881%_
                   (lambda (_%prop147941%_)
-                    (if (gx#identifier? _%prop147941%_)
-                        (gx#syntax-local-value__%
-                         _%prop147941%_
-                         gx#eval-expression+1)
-                        (gx#eval-expression+1 _%prop147941%_)))))
+                    (gx#eval-expression+1 _%prop147941%_))))
           (let _%loop147883%_ ((_%rest147885%_ _%props147879%_)
                                (_%props147886%_ '()))
             (let* ((_%e147887147898%_ _%rest147885%_)
@@ -1215,7 +1211,7 @@
                                                     (begin
                                                       (##structure-set!
                                                        _%bind147878%_
-                                                       (_%eval-prop147881%_
+                                                       (gx#core-quote-syntax__0
                                                         _%prop147928%_)
                                                        '6
                                                        gx#runtime-binding::t
@@ -1228,7 +1224,7 @@
                                                         (begin
                                                           (##structure-set!
                                                            _%bind147878%_
-                                                           (_%eval-prop147881%_
+                                                           (gx#eval-expression+1
                                                             _%prop147928%_)
                                                            '5
                                                            gx#runtime-binding::t
@@ -1238,7 +1234,7 @@
                                                            _%props147886%_))
                                                         (_%loop147883%_
                                                          _%rest147930%_
-                                                         (cons (_%eval-prop147881%_
+                                                         (cons (gx#eval-expression+1
                                                                 _%prop147928%_)
                                                                (cons _%key147932%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2204,8 +2200,9 @@
                                                        ((lambda (_%macro147022%_)
                                                           (gx#core-expand-expression
                                                            (gx#stx-wrap-source
-                                                            (cons _%macro147022%_
+                                                            (cons (gx#syntax-local-value__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _%macro147022%_)
                           _%args146971%_)
                     (gx#stx-source _%stx146932%_))))
                 _%$e147019%_)

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1770336541)
+  (define gerbil/runtime/error::timestamp 1770338920)
   (begin
     (define Exception::t
       (let ((__tmp119352 (list)))
@@ -709,22 +709,22 @@
               (##write-string __tmp119369 _%port118820%_))))))
     (define Error::display-exception::specialize
       (lambda (__klass119328 __method-table119329)
-        (let ((__message119330
+        (let ((__where119330
                (let ((__slot119334
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass119328 'message))))
+                        (class-slot-offset __klass119328 'where))))
                  (if __slot119334
                      __slot119334
-                     (error '"Unknown slot" 'message))))
-              (__where119331
+                     (error '"Unknown slot" 'where))))
+              (__message119331
                (let ((__slot119335
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass119328 'where))))
+                        (class-slot-offset __klass119328 'message))))
                  (if __slot119335
                      __slot119335
-                     (error '"Unknown slot" 'where))))
+                     (error '"Unknown slot" 'message))))
               (__continuation119332
                (let ((__slot119336
                       (let ()
@@ -756,7 +756,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self118823%_
-                                   __where119331
+                                   __where119330
                                    '#f
                                    '#f))))
                            (if _%$e118837%_
@@ -776,7 +776,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self118823%_
-                                   __message119330
+                                   __message119331
                                    '#f
                                    '#f))))
                            (declare (not safe))
