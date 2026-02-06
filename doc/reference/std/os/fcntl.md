@@ -1,104 +1,146 @@
-## File Descriptor Control
-::: tip usage
+# File Descriptor Control
+
+The `:std/os/fcntl` library provides bindings to the POSIX `fcntl()` system
+call for manipulating file descriptor flags and properties.
+
+::: tip To use the bindings from this module:
+```scheme
 (import :std/os/fcntl)
+```
 :::
 
-### fcntl
-```
-(fcntl raw cmd)
-(fcntl raw cmd arg)
-```
-
-Please document me!
-
-### fd-getfl
-```
-(fd-getfl raw)
+## fcntl
+```scheme
+(fcntl raw cmd) -> fixnum
+(fcntl raw cmd arg) -> fixnum
 ```
 
-Please document me!
+Performs a file control operation on the file descriptor *raw* (either a raw
+fd object or an integer). *cmd* is a `fcntl` command constant (e.g.,
+`F_GETFL`, `F_SETFL`). The optional *arg* is an integer argument for commands
+that require one. Returns the result of the `fcntl` call.
 
-### fd-setfl
-```
-(fd-setfl raw xflags)
-```
+Raises an OS error on failure.
 
-Please document me!
-
-### fd-setfl!
-```
-(fd-setfl! raw flags)
+## fd-getfl
+```scheme
+(fd-getfl raw) -> fixnum
 ```
 
-Please document me!
+Returns the file status flags for the file descriptor *raw*. Equivalent to
+`(fcntl raw F_GETFL)`.
 
-### fd-getfd
-```
-(fd-getfd raw)
-```
-
-Please document me!
-
-### fd-setfd
-```
-(fd-setfd raw xflags)
+## fd-setfl
+```scheme
+(fd-setfl raw xflags) -> fixnum
 ```
 
-Please document me!
+Adds *xflags* to the file status flags of *raw* using bitwise OR. Reads the
+current flags, ORs them with *xflags*, and sets the result. Returns the
+result of the `fcntl` call.
 
-### fd-setfd!
-```
-(fd-setfd! raw flags)
-```
+::: tip Example:
+```scheme
+(import :std/os/fcntl)
 
-Please document me!
-
-### fd-set-closeonexec
+;; Set non-blocking mode (additive)
+(fd-setfl my-fd O_NONBLOCK)
 ```
-(fd-set-closeonexec raw)
-```
+:::
 
-Please document me!
-
-### fd-set-nonblock
-```
-(fd-set-nonblock raw)
+## fd-setfl!
+```scheme
+(fd-setfl! raw flags) -> fixnum
 ```
 
-Please document me!
+Sets the file status flags for *raw* to exactly *flags* (replacing the
+current flags entirely). Equivalent to `(fcntl raw F_SETFL flags)`.
 
-### fd-set-nonblock/closeonexec
+## fd-getfd
+```scheme
+(fd-getfd raw) -> fixnum
 ```
-(fd-set-nonblock/closeonexec raw)
+
+Returns the file descriptor flags for *raw*. Equivalent to
+`(fcntl raw F_GETFD)`.
+
+## fd-setfd
+```scheme
+(fd-setfd raw xflags) -> fixnum
 ```
 
-Please document me!
+Adds *xflags* to the file descriptor flags of *raw* using bitwise OR.
 
-### Constants
+## fd-setfd!
+```scheme
+(fd-setfd! raw flags) -> fixnum
 ```
-O_ACCMODE
-O_APPEND
-O_CLOEXEC
-O_CREAT
-O_DIRECT
-O_DSYNC
-O_EXCL
-O_NOATIME
-O_NOCTTY
-O_NOFOLLOW
-O_NONBLOCK
-O_RDONLY
-O_RDWR
-O_SYNC
-O_TMPFILE
-O_TRUNC
-O_WRONLY
 
-F_GETFL
-F_SETFL
-F_GETFD
-F_SETFD
-F_DUPFD
+Sets the file descriptor flags for *raw* to exactly *flags* (replacing the
+current flags entirely). Equivalent to `(fcntl raw F_SETFD flags)`.
 
-FD_CLOEXEC
+## fd-set-closeonexec
+```scheme
+(fd-set-closeonexec raw) -> fixnum
 ```
+
+Sets the close-on-exec flag (`FD_CLOEXEC`) on the file descriptor *raw*.
+This ensures the file descriptor is automatically closed when the process
+calls `exec`.
+
+## fd-set-nonblock
+```scheme
+(fd-set-nonblock raw) -> fixnum
+```
+
+Sets the non-blocking flag (`O_NONBLOCK`) on the file descriptor *raw*. I/O
+operations on a non-blocking file descriptor return immediately if they would
+otherwise block.
+
+## fd-set-nonblock/closeonexec
+```scheme
+(fd-set-nonblock/closeonexec raw) -> fixnum
+```
+
+Convenience function that sets both `O_NONBLOCK` and `FD_CLOEXEC` on the
+file descriptor *raw*.
+
+## Constants
+
+### File Open Flags
+
+| Constant | Description |
+|----------|-------------|
+| `O_RDONLY` | Open for reading only |
+| `O_WRONLY` | Open for writing only |
+| `O_RDWR` | Open for reading and writing |
+| `O_ACCMODE` | Mask for access mode |
+| `O_CREAT` | Create file if it does not exist |
+| `O_EXCL` | Fail if file exists (with `O_CREAT`) |
+| `O_TRUNC` | Truncate file to zero length |
+| `O_APPEND` | Append to file |
+| `O_NONBLOCK` | Non-blocking mode |
+| `O_SYNC` | Synchronous writes |
+| `O_DSYNC` | Synchronous data writes |
+| `O_NOCTTY` | Don't make this the controlling terminal |
+| `O_NOFOLLOW` | Don't follow symlinks |
+| `O_CLOEXEC` | Set close-on-exec |
+| `O_DIRECT` | Direct I/O (Linux) |
+| `O_NOATIME` | Don't update access time (Linux) |
+| `O_TMPFILE` | Create unnamed temporary file (Linux) |
+
+### fcntl Commands
+
+| Constant | Description |
+|----------|-------------|
+| `F_GETFL` | Get file status flags |
+| `F_SETFL` | Set file status flags |
+| `F_GETFD` | Get file descriptor flags |
+| `F_SETFD` | Set file descriptor flags |
+| `F_DUPFD` | Duplicate file descriptor |
+
+### File Descriptor Flags
+
+| Constant | Description |
+|----------|-------------|
+| `FD_CLOEXEC` | Close-on-exec flag |

@@ -7,6 +7,8 @@ We can conceptually (and roughly) organize them in related group of modules:
   - [:std/misc/list](list.md)
   - [:std/misc/alist](alist.md)
   - [:std/misc/plist](plist.md)
+  - [:std/misc/walist](walist.md)
+  - [:std/misc/list-builder](list-builder.md)
 - Mapping Utilities:
   - [:std/misc/hash](hash.md)
   - [:std/misc/sync](sync.md)
@@ -19,6 +21,8 @@ We can conceptually (and roughly) organize them in related group of modules:
   - [:std/misc/barrier](barrier.md)
   - [:std/misc/rwlock](rwlock.md)
   - [:std/misc/threads](threads.md)
+  - [:std/misc/wg](wg.md)
+  - [:std/misc/concurrent-plan](concurrent-plan.md)
 - Queues:
   - [:std/misc/queue](queue.md)
   - [:std/misc/deque](deque.md)
@@ -33,11 +37,20 @@ We can conceptually (and roughly) organize them in related group of modules:
   - [:std/misc/string](string.md)
   - [:std/misc/text](text.md)
   - [:std/misc/template](template.md)
+- Data Structures:
+  - [:std/misc/evector](evector.md)
+  - [:std/misc/vector](vector.md)
+  - [:std/misc/dag](dag.md)
+- Numeric Utilities:
+  - [:std/misc/number](number.md)
+  - [:std/misc/decimal](decimal.md)
+  - [:std/misc/prime](prime.md)
+- Path Utilities:
+  - [:std/misc/path](path.md)
 - Object Utilities:
-  - [:std/misc/rtd](rtd.md)
   - [:std/misc/shared](shared.md)
 - Assorted Utilities:
   - [:std/misc/func](func.md)
-  - [:std/misc/number](number.md)
   - [:std/misc/shuffle](shuffle.md)
   - [:std/misc/uuid](uuid.md)
+  - [:std/misc/symbol](symbol.md)

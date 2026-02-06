@@ -12,3 +12,4 @@ These are libraries related to network programming:
 - [:std/net/sasl](sasl.md)
 - [:std/net/repl](repl.md)
 - [:std/net/s3](s3.md)
+- [:std/net/smtp](smtp.md)

@@ -10,8 +10,8 @@ POSIX:
 - [:std/os/fdio](fdio.md)
 - [:std/os/fcntl](fcntl.md)
 - [:std/os/flock](flock.md)
-- [:std/os/socket](socket.md)
 - [:std/os/pipe](pipe.md)
+- [:std/os/pid](pid.md)
 - [:std/os/signal](signal.md)
 - [:std/os/signal-handler](signal-handler.md)
 - [:std/os/hostname](hostname.md)
@@ -19,6 +19,6 @@ POSIX:
 
 OS-specific:
 - [:std/os/signalfd](signalfd.md) (Linux)
-- [:std/os/inotfy](inotify.md) (Linux)
+- [:std/os/inotify](inotify.md) (Linux)
 - [:std/os/epoll](epoll.md) (Linux)
 - [:std/os/kqueue](kqueue.md) (BSD, Darwin)

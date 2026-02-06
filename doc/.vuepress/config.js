@@ -123,7 +123,8 @@ module.exports = {
                                   "net/address",
                                   "net/sasl",
                                   "net/repl",
-                                  "net/s3"
+                                  "net/s3",
+                                  "net/smtp"
                               ]
                             },
 
@@ -138,6 +139,7 @@ module.exports = {
                                   "os/flock",
                                   "os/socket",
                                   "os/pipe",
+                                  "os/pid",
                                   "os/signal",
                                   "os/signal-handler",
                                   "os/signalfd",
@@ -206,9 +208,11 @@ module.exports = {
                                   'misc/bytes',
                                   'misc/channel',
                                   'misc/completion',
+                                  'misc/concurrent-plan',
+                                  'misc/dag',
                                   'misc/decimal',
-                                  'misc/evector',
                                   'misc/deque',
+                                  'misc/evector',
                                   'misc/func',
                                   'misc/hash',
                                   'misc/list',
@@ -228,6 +232,7 @@ module.exports = {
                                   'misc/shared',
                                   'misc/shuffle',
                                   'misc/string',
+                                  'misc/symbol',
                                   'misc/sync',
                                   'misc/template',
                                   'misc/text',
@@ -236,6 +241,7 @@ module.exports = {
                                   'misc/uuid',
                                   'misc/vector',
                                   'misc/walist',
+                                  'misc/wg',
 		                      ]
 		                    }
 	                    ]
