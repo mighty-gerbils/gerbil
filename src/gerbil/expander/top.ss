@@ -466,20 +466,20 @@ namespace: gx
        (core-syntax-case rator-expr (%#ref)
          ((%#ref id)
           (cond
-           ((resolve-identifier #'id)
+           ((resolve-identifier id)
             => (lambda (bind)
                  (let again ((bind bind))
-                 (cond
-                  ((and (runtime-binding? bind) (runtime-binding-macro bind))
-                   => (lambda (macro)
-                        (core-expand-expression
-                         (stx-wrap-source
-                          (cons (syntax-local-value macro) args)
-                          (stx-source stx)))))
-                  ((import-binding? bind)
-                   (again (import-binding-e bind)))
-                  (else
-                   (expand-runtime-call rator-expr args))))))
+                   (cond
+                    ((and (runtime-binding? bind) (runtime-binding-macro bind))
+                     => (lambda (macro)
+                          (core-expand-expression
+                           (stx-wrap-source
+                            (cons macro args)
+                            (stx-source stx)))))
+                    ((import-binding? bind)
+                     (again (import-binding-e bind)))
+                    (else
+                     (expand-runtime-call rator-expr args))))))
            (else
             (expand-runtime-call rator-expr args))))
          (else
