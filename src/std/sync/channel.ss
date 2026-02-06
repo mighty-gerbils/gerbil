@@ -1,16 +1,16 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; buffered channels
 (import :std/error
         :std/time/timeout
         :std/struct/queue
         :std/iter)
-(export channel make-channel channel?
+(export Channel Channel? make-channel
         channel-put channel-try-put channel-sync
         channel-get channel-try-get
         channel-close channel-closed?)
 
-(defstruct channel ((q     :- queue)
+(defstruct Channel ((q     :- Queue)
                     (mx    :- :mutex)
                     (cv    :- :condvar)
                     (limit :- :fixnum)
@@ -18,16 +18,15 @@
   constructor: :init!
   final: #t )
 
-(defmethod {:init! channel}
+(defmethod {:init! Channel}
   (lambda (self (limit :? :fixnum := #f))
-    (struct-instance-init! self
-      (make-queue)
-      (make-mutex 'channel)
-      (make-condition-variable 'channel)
-      limit #f)))
+    (set! self.q  (make-queue))
+    (set! self.mx (make-mutex 'channel))
+    (set! self.cv (make-condition-variable 'channel))
+    (set! self.limit limit)))
 
-(def (channel-put (ch : channel) val (timeo #f))
-  (let (timeo (make-timeout timeo))
+(def (channel-put (ch : Channel) val (timeo #f))
+  (let (timeo (timeout->abs-timeout timeo))
     (let lp ()
       (mutex-lock! ch.mx)
       (cond
@@ -45,7 +44,7 @@
           (lp)
           #f))))))
 
-(def (channel-try-put (ch : channel) val)
+(def (channel-try-put (ch : Channel) val)
   (mutex-lock! ch.mx)
   (cond
    (ch.eof
@@ -61,7 +60,7 @@
     (mutex-unlock! ch.mx)
     #f)))
 
-(def (channel-sync (ch : channel) . vals)
+(def (channel-sync (ch : Channel) . vals)
   (mutex-lock! ch.mx)
   (cond
    (ch.eof
@@ -73,8 +72,8 @@
       (condition-variable-broadcast! ch.cv))
     (mutex-unlock! ch.mx))))
 
-(def (channel-get (ch : channel) (timeo #f) (default #f))
-  (let (timeo (make-timeout timeo))
+(def (channel-get (ch : Channel) (timeo #f) (default #f))
+  (let (timeo (timeout->abs-timeout timeo))
     (let lp ()
       (mutex-lock! ch.mx)
       (cond
@@ -93,7 +92,7 @@
           (mutex-unlock! ch.mx)
           next))))))
 
-(def (channel-try-get (ch : channel) (default #f))
+(def (channel-try-get (ch : Channel) (default #f))
   (mutex-lock! ch.mx)
   (cond
    ((queue-empty? ch.q)
@@ -106,7 +105,7 @@
       (mutex-unlock! ch.mx)
       next))))
 
-(def (channel-close (ch : channel))
+(def (channel-close (ch : Channel))
   => :void
   (unless ch.eof
     (mutex-lock! ch.mx)
@@ -115,7 +114,7 @@
     (mutex-unlock! ch.mx)
     (void)))
 
-(def (channel-closed? ch)
+(def (channel-closed? (ch : Channel))
   (channel-eof ch))
 
 ;; TODO

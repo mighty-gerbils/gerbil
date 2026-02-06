@@ -1,10 +1,7 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
-;;; Gerbil error objects
-(import :gerbil/runtime/error
-        :gerbil/runtime/hash
-        :gerbil/runtime/thread
-        (for-syntax :gerbil/expander))
+;;; © vyzo
+;;; Gerbil standard error objects
+(import (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
         Error Error?

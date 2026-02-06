@@ -1,30 +1,29 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; asynchronous completions
 (import :std/error)
 (export make-completion
-        completion?
-        completion
+        Completion
+        Completion?
         completion-ready?
         completion-wait!
         completion-post!
         completion-error!
         with-completion-error)
 
-(defstruct completion ((mx :- :mutex)
+(defstruct Completion ((mx :- :mutex)
                        (cv :- :condvar)
                        ready? val exn)
   final: #t
   constructor: :init!
   print: (ready?))
 
-(defmethod {:init! completion}
+(defmethod {:init! Completion}
   (lambda (self (name 'completion)) ;; name is for debugging
-    (struct-instance-init! self
-                           (make-mutex name)
-                           (make-condition-variable name))))
+    (set! self.mx (make-mutex name))
+    (set! self.cv (make-condition-variable name))))
 
-(def (completion-wait! (c : completion))
+(def (completion-wait! (c : Completion))
   (let lp ()
     (mutex-lock! c.mx)
     (if c.ready?
@@ -38,7 +37,7 @@
         (lp)))))
 
 (defrule (do-completion-post! compl val set-e)
-  (using (c compl :- completion)
+  (using (c compl :- Completion)
     (mutex-lock! c.mx)
     (if c.ready?
       (begin
@@ -51,11 +50,11 @@
         (condition-variable-broadcast! c.cv)
         (void)))))
 
-(def (completion-post! (compl : completion) val)
-  (do-completion-post! compl val &completion-val-set!))
+(def (completion-post! (compl : Completion) val)
+  (do-completion-post! compl val &Completion-val-set!))
 
-(def (completion-error! (compl : completion) exn)
-  (do-completion-post! compl exn &completion-exn-set!))
+(def (completion-error! (compl : Completion) exn)
+  (do-completion-post! compl exn &Completion-exn-set!))
 
 (defrules with-completion-error ()
   ((_ compl expr rest ...)

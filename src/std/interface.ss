@@ -1,13 +1,16 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; interface utilities
-(import :gerbil/runtime/interface)
 (export #t)
 
 (defsyntax-case @implement ()
   ((_ Interface klass)
-   XXX
-   ))
+   (and (syntax-local-interface-info? #'Interface)
+        (syntax-local-class-info? #'klass))
+   (let (info (syntax-local-value #'Interface))
+     (with-syntax ((descriptor     (interface-info-interface-descriptor info))
+                   (instance-class (!runtime-type-descriptor info)))
+       #'(create-prototype descriptor instance-class klass)))))
 
 (defsyntax-case @interface-descriptor ()
   ((_ Interface)

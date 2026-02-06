@@ -1,8 +1,8 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; imperative queues
 (import :std/error)
-(export queue make-queue queue?
+(export Queue Queue? make-queue
         queue-length
         queue-empty?
         non-empty-queue?
@@ -12,25 +12,25 @@
         queue-peek
         queue->list)
 
-(defstruct queue ((front  :- :list)
+(defstruct Queue ((front  :- :list)
                   (back   :- :pair)
                   (length :- :fixnum))
   constructor: :init!
   final: #t)
 
-(defmethod {:init! queue}
+(defmethod {:init! Queue}
   (lambda (self)
     (struct-instance-init! self [] #f 0)))
 
-(def (queue-empty? (q : queue))
+(def (queue-empty? (q : Queue))
   => :boolean
   (null? q.front))
 
-(def (non-empty-queue? (q : queue))
+(def (non-empty-queue? (q : Queue))
   => :boolean
   (pair? q.front))
 
-(def (enqueue! (q : queue) v)
+(def (enqueue! (q : Queue) v)
   => :void
   (if (null? q.front)
     (let (front [v])
@@ -42,7 +42,7 @@
       (set! q.back new-back)
       (set! q.length (fx1+ q.length)))))
 
-(def (enqueue-front! (q : queue) v)
+(def (enqueue-front! (q : Queue) v)
   => :void
   (if (queue-empty? q)
     (enqueue! q v)
@@ -50,7 +50,7 @@
       (set! q.front new-front)
       (set! q.length (fx1+ q.length)))))
 
-(def (dequeue! (q : queue) (default absent-value))
+(def (dequeue! (q : Queue) (default absent-value))
   => :t
   (cond
    ((eq? q.front q.back)
@@ -69,7 +69,7 @@
     (raise-context-error dequeue! "cannot dequeue; empty queue" q))
    (else default)))
 
-(def (queue-peek (q : queue) (default absent-obj))
+(def (queue-peek (q : Queue) (default absent-obj))
   => :t
   (cond
    ((pair? q.front)
@@ -78,6 +78,6 @@
     (raise-context-error queue-peek "cannot peek; empty queue" q))
    (else default)))
 
-(def (queue->list (q : queue))
+(def (queue->list (q : Queue))
   => :list
   (list-copy q.front))
