@@ -17,6 +17,11 @@
 (def using-qq? #f) ;; are we expanding to the qq-list qq-list* qq-append qq-quote representation?
 
 (begin
+  (import :gerbil/core/sugar)
+  (import QuasiquoteRuntime))
+
+#;
+(begin
   (define :<root> ':<root>)
   (define gerbil/core ':gerbil/core)
   (include "../core/quasiquote.ss")
