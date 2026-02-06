@@ -211,77 +211,169 @@ the following keyword arguments, that may configure how your project is built.
 ## Interface
 
 ### make
+```scheme
+(make build-spec settings-keyword-arguments ...) -> void
 ```
-(make build-spec settings-keyword-arguments ...)
+
+Compiles all parts of the project that are not up-to-date. See the sections
+above for details on *build-spec* and settings keyword arguments.
+
+### make-clean
+```scheme
+(make-clean build-spec settings-keyword-arguments ...) -> void
 ```
 
-Compile all parts of the project that are not up-to-date.
-
-
+Removes all build outputs for the given *build-spec*. For each target
+specification, deletes the corresponding output files.
 
 ### shell-config
-```
-(shell-config ...)
+```scheme
+(shell-config cmd arg ...) -> string
 ```
 
-Please document me!
+Runs an external command *cmd* with the given arguments and returns its
+standard output as a string (a single line). Raises an error if the command
+exits with a nonzero status. Useful for querying system configuration tools
+in build scripts.
+
+::: tip Example:
+```scheme
+(shell-config "pkg-config" "--libs" "openssl")
+;; => "-lssl -lcrypto"
+```
+:::
 
 ### env-cppflags
-```
-(env-cppflags ...)
+```scheme
+(env-cppflags) -> procedure
 ```
 
-Please document me!
+Returns a procedure that prepends the `CPPFLAGS` environment variable to a
+string of compiler flags. If `CPPFLAGS` is not set, returns `identity`.
+
+::: tip Example:
+```scheme
+;; With CPPFLAGS="-I/usr/local/include"
+((env-cppflags) "-I/opt/include")
+;; => "-I/usr/local/include -I/opt/include"
+```
+:::
 
 ### env-ldflags
-```
-(env-ldflags ...)
+```scheme
+(env-ldflags) -> procedure
 ```
 
-Please document me!
+Returns a procedure that prepends the `LDFLAGS` environment variable to a
+string of linker flags. If `LDFLAGS` is not set, returns `identity`.
+
+::: tip Example:
+```scheme
+;; With LDFLAGS="-L/usr/local/lib"
+((env-ldflags) "-lmylib")
+;; => "-L/usr/local/lib -lmylib"
+```
+:::
 
 ### include-gambit-sharp
-```
-(include-gambit-sharp ...)
+```scheme
+(include-gambit-sharp) -> list
 ```
 
-Please document me!
+Returns a list of command-line arguments for `gsc` that include the Gambit
+sharp macros (`_gambit#.scm`). This is needed when compiling modules that
+use low-level Gambit macros. On SMP-enabled builds, also defines the
+`enable-smp` cond-expand feature.
 
 ### pkg-config
-```
-(pkg-config ...)
+```scheme
+(pkg-config lib arg ...) -> string
 ```
 
-Please document me!
+Runs `pkg-config` with `--silence-errors` for the library *lib* and any
+additional arguments. Returns the output as a string.
+
+::: tip Example:
+```scheme
+(pkg-config "openssl" "--libs")
+;; => "-lssl -lcrypto"
+
+(pkg-config "openssl" "--cflags")
+;; => "-I/usr/include/openssl"
+```
+:::
 
 ### pkg-config-libs
-```
-(pkg-config-libs ...)
+```scheme
+(pkg-config-libs lib ...) -> string
 ```
 
-Please document me!
+Returns the linker flags (`--libs`) for one or more libraries by calling
+`pkg-config`. Multiple library results are joined with spaces.
+
+::: tip Example:
+```scheme
+(pkg-config-libs "openssl" "zlib")
+;; => "-lssl -lcrypto -lz"
+```
+:::
 
 ### pkg-config-cflags
-```
-(pkg-config-cflags ...)
+```scheme
+(pkg-config-cflags lib ...) -> string
 ```
 
-Please document me!
+Returns the compiler flags (`--cflags`) for one or more libraries by calling
+`pkg-config`. Multiple library results are joined with spaces.
 
 ### ldflags
-```
-(ldflags ...)
+```scheme
+(ldflags lib flags) -> string
 ```
 
-Please document me!
+Tries `pkg-config-libs` for *lib*. If that fails, falls back to applying
+`env-ldflags` to *flags*. This provides a convenient way to resolve linker
+flags with a fallback.
+
+::: tip Example:
+```scheme
+;; In build.ss
+(ldflags "openssl" "-lssl -lcrypto")
+```
+:::
 
 ### cppflags
-```
-(cppflags ...)
+```scheme
+(cppflags lib flags) -> string
 ```
 
-Please document me!
+Tries `pkg-config-cflags` for *lib*. If that fails, falls back to applying
+`env-cppflags` to *flags*.
 
+### append-options
+```scheme
+(append-options opt ...) -> string
+```
+
+Joins multiple option strings with spaces, filtering out empty strings.
+Useful for combining compiler or linker flags.
+
+::: tip Example:
+```scheme
+(append-options "-I/usr/include" "" "-DFOO=1")
+;; => "-I/usr/include -DFOO=1"
+```
+:::
+
+### enable-shared?
+```scheme
+(enable-shared?) -> boolean
+```
+
+Returns `#t` if the Gambit runtime was configured with `--enable-shared`.
+Static executable targets (`static-exe:`, `optimized-static-exe:`) will raise
+an error if this returns `#t`, since static linkage is not possible with a
+shared runtime.
 
 ## Standard Package Build Script
 ::: tip usage
@@ -289,9 +381,24 @@ Please document me!
 :::
 
 ### defbuild-script
-```
+```scheme
 (defbuild-script build-spec settings-keyword-arguments ...)
 ```
 
-Define a `main` function that will built the project.
-See above.
+Defines a `main` function that will build the project. This is a convenience
+macro that wraps `make` with automatic `srcdir:` detection (from the location
+of the build script) and `prefix:` extraction (from `gerbil.pkg`).
+
+When the `main` function is invoked with `"compile"` or no arguments, it
+compiles the project. When invoked with `"clean"`, it removes build outputs.
+
+::: tip Example:
+```scheme
+#!/usr/bin/env gxi
+(import :std/build-script)
+(defbuild-script
+  '("mylib"
+    "mylib/util"
+    (exe: "main" bin: "myapp")))
+```
+:::

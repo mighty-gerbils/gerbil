@@ -1,382 +1,388 @@
 # Raw Socket Devices
 
 Gerbil provides raw socket devices to support network programming with
-sockets.  See the [tutorial](/tutorials/proxy.md) for an example
+sockets. See the [tutorial](/tutorials/proxy.md) for an example
 program that utilizes raw socket devices.
 
-::: tip usage
+::: tip To use the bindings from this module:
+```scheme
 (import :std/os/socket)
+```
 :::
 
-## socket
-```
-(socket domain type (proto 0))
-```
+## Socket Creation
 
-Please document me!
-
-## server-socket
-```
-(server-socket domain type (proto 0))
+### socket
+```scheme
+(socket domain type (proto 0)) -> fd
 ```
 
-Please document me!
+Creates a new socket with the given *domain* (e.g., `AF_INET`, `AF_INET6`,
+`AF_UNIX`), *type* (e.g., `SOCK_STREAM`, `SOCK_DGRAM`), and optional
+*proto*. Returns a raw device port (see `:std/os/fd`).
 
-## socket?
-```
-(socket? obj)
-```
+::: tip Example:
+```scheme
+(import :std/os/socket)
 
-Please document me!
-
-## socket-bind
+(def sock (socket AF_INET SOCK_STREAM))
 ```
-(socket-bind sock addr)
-```
+:::
 
-Please document me!
-
-## socket-listen
-```
-(socket-listen sock (backlog 10))
+### server-socket
+```scheme
+(server-socket domain type (proto 0)) -> fd
 ```
 
-Please document me!
+Creates a server socket. Similar to `socket`, but configured for accepting
+incoming connections.
 
-## socket-accept
-```
-(socket-accept sock (sa #f))
-```
-
-Please document me!
-
-## socket-connect
-```
-(socket-connect sock sa)
+### socket?
+```scheme
+(socket? obj) -> boolean
 ```
 
-Please document me!
+Returns `#t` if *obj* is a socket (raw device port of type `'socket`).
 
-## socket-shutdown
-```
-(socket-shutdown sock how)
-```
+## Connection Operations
 
-Please document me!
-
-## socket-close
-```
-(socket-close sock)
+### socket-bind
+```scheme
+(socket-bind sock addr) -> void
 ```
 
-Please document me!
+Binds the socket *sock* to the local address *addr* (a socket address
+object). Raises an OS error on failure.
 
-## socket-send
-```
-(socket-send sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
-```
+::: tip Example:
+```scheme
+(import :std/os/socket)
 
-Please document me!
-
-## socket-sendto
+(def sock (socket AF_INET SOCK_STREAM))
+(socket-bind sock (socket-address-in INADDR_ANY 8080))
 ```
-(socket-sendto sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
-```
+:::
 
-Please document me!
-
-## socket-sendmsg
-```
-(socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)
+### socket-listen
+```scheme
+(socket-listen sock (backlog 10)) -> void
 ```
 
-Please document me!
+Marks the socket *sock* as a passive socket that will accept incoming
+connections. The *backlog* parameter specifies the maximum length of the
+pending connection queue.
 
-## socket-recv
-```
-(socket-recv sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
-```
-
-Please document me!
-
-## socket-recvfrom
-```
-(socket-recvfrom sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
+### socket-accept
+```scheme
+(socket-accept sock (sa #f)) -> fd
 ```
 
-Please document me!
+Accepts an incoming connection on the listening socket *sock*. Returns a new
+socket for the accepted connection. If *sa* is a socket address object, it
+is filled with the peer's address.
 
-## socket-recvmsg
-```
-(socket-recvmsg sock name io ctl flags)
-```
-
-Please document me!
-
-## socket-recvmsg*
-```
-(socket-recvmsg* sock name-bytes rname io-bytes ctl-bytes rctl flags rflags)
+### socket-connect
+```scheme
+(socket-connect sock sa) -> void
 ```
 
-Please document me!
+Connects the socket *sock* to the remote address *sa*. Raises an OS error
+on failure.
 
-## socket-getpeername
-```
-(socket-getpeername sock (sa #f))
-```
-
-Please document me!
-
-## socket-getsockname
-```
-(socket-getsockname sock (sa #f))
+### socket-shutdown
+```scheme
+(socket-shutdown sock how) -> void
 ```
 
-Please document me!
+Shuts down part or all of the socket connection. *how* can be:
+- `SHUT_RD` — disable further receives
+- `SHUT_WR` — disable further sends
+- `SHUT_RDWR` — disable both
 
-## socket-getsockopt socket-setsockopt
-```
-(socket-getsockopt sock level opt)
-(socket-setsockopt sock level opt val)
-
-;;          level      opt                      get    set?
-(defsockopt SOL_SOCKET SO_ACCEPTCONN            int    #f)
-(defsockopt SOL_SOCKET SO_BINDTODEVICE          bytes  bytes)
-(defsockopt SOL_SOCKET SO_BROADCAST             int    int)
-(defsockopt SOL_SOCKET SO_DEBUG                 int    int)
-(defsockopt SOL_SOCKET SO_DOMAIN                int    #f)
-(defsockopt SOL_SOCKET SO_DONTROUTE             int    int)
-(defsockopt SOL_SOCKET SO_ERROR                 int    #f)
-(defsockopt SOL_SOCKET SO_KEEPALIVE             int    int)
-(defsockopt SOL_SOCKET SO_LINGER                linger linger)
-(defsockopt SOL_SOCKET SO_OOBLINE               int    int)
-(defsockopt SOL_SOCKET SO_PASSCRED              int    int)
-(defsockopt SOL_SOCKET SO_PEERCRED              bytes  bytes)
-(defsockopt SOL_SOCKET SO_PEEK_OFF              int    int)
-(defsockopt SOL_SOCKET SO_PROTOCOL              int    int)
-(defsockopt SOL_SOCKET SO_RCVBUF                int    int)
-(defsockopt SOL_SOCKET SO_SNDBUF                int    int)
-(defsockopt SOL_SOCKET SO_RCVLOWAT              int    int)
-(defsockopt SOL_SOCKET SO_SNDLOWAT              int    int)
-(defsockopt SOL_SOCKET SO_RCVTIMEO              tv     tv)
-(defsockopt SOL_SOCKET SO_SNDTIMEO              tv     tv)
-(defsockopt SOL_SOCKET SO_REUSEADDR             int    int)
-(defsockopt SOL_SOCKET SO_REUSEPORT             int    int)
-(defsockopt SOL_SOCKET SO_TYPE                  int    int)
-(defsockopt SOL_SOCKET SO_TIMESTAMP             int    int)
-(defsockopt SOL_SOCKET SO_USELOOPBACK           int    int)
-
-(defsockopt IPPROTO_IP IP_ADD_MEMBERSHIP         #f     mreq)
-(defsockopt IPPROTO_IP IP_DROP_MEMBERSHIP        #f     mreq)
-(defsockopt IPPROTO_IP IP_ADD_SOURCE_MEMBERSHIP  #f     mreq-src)
-(defsockopt IPPROTO_IP IP_DROP_SOURCE_MEMBERSHIP #f     mreq-src)
-(defsockopt IPPROTO_IP IP_BLOCK_SOURCE           #f     mreq-src)
-(defsockopt IPPROTO_IP IP_UNBLOCK_SOURCE         #f     mreq-src)
-(defsockopt IPPROTO_IP IP_FREEBIND               int    int)
-(defsockopt IPPROTO_IP IP_HDRINCL                int    int)
-(defsockopt IPPROTO_IP IP_MTU                    int    #f)
-(defsockopt IPPROTO_IP IP_MTU_DISCOVER           int    int)
-(defsockopt IPPROTO_IP IP_MULTICAST_ALL          int    int)
-(defsockopt IPPROTO_IP IP_MULTICAST_IF           #f     mreq)
-(defsockopt IPPROTO_IP IP_MULTICAST_LOOP         int    int)
-(defsockopt IPPROTO_IP IP_MULTICAST_TTL          int    int)
-(defsockopt IPPROTO_IP IP_NODEFRAG               int    int)
-(defsockopt IPPROTO_IP IP_OPTIONS                bytes  bytes)
-(defsockopt IPPROTO_IP IP_PKTINFO                bytes  bytes)
-(defsockopt IPPROTO_IP IP_RECVERR                int    int)
-(defsockopt IPPROTO_IP IP_RECVORIGDSTADDR        int    int)
-(defsockopt IPPROTO_IP IP_RECVOPTS               int    int)
-(defsockopt IPPROTO_IP IP_RECVTOS                int    int)
-(defsockopt IPPROTO_IP IP_RECVTTL                int    int)
-(defsockopt IPPROTO_IP IP_RETOPTS                int    int)
-(defsockopt IPPROTO_IP IP_ROUTER_ALERT           int    int)
-(defsockopt IPPROTO_IP IP_TOS                    int    int)
-(defsockopt IPPROTO_IP IP_TTL                    int    int)
-
-(defsockopt IPPROTO_IPV6 IPV6_ADDRFORM           #f     int)
-(defsockopt IPPROTO_IPV6 IPV6_ADD_MEMBERSHIP     #f     mreq6)
-(defsockopt IPPROTO_IPV6 IPV6_DROP_MEMBERSHIP    #f     mreq6)
-(defsockopt IPPROTO_IPV6 IPV6_MTU                int    int)
-(defsockopt IPPROTO_IPV6 IPV6_MTU_DISCOVER       int    int)
-(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_HOPS     int    int)
-(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_IF       int    int)
-(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_LOOP     int    int)
-(defsockopt IPPROTO_IPV6 IPV6_RECVPKTINFO        int    int)
-(defsockopt IPPROTO_IPV6 IPV6_RTHDR              int    int)
-(defsockopt IPPROTO_IPV6 IPV6_AUTHHDR            int    int)
-(defsockopt IPPROTO_IPV6 IPV6_DSTOPTS            int    int)
-(defsockopt IPPROTO_IPV6 IPV6_HOPOPTS            int    int)
-(defsockopt IPPROTO_IPV6 IPV6_FLOWINFO           int    int)
-(defsockopt IPPROTO_IPV6 IPV6_HOPLIMIT           int    int)
-(defsockopt IPPROTO_IPV6 IPV6_ROUTER_ALERT       int    int)
-(defsockopt IPPROTO_IPV6 IPV6_UNICAST_HOPS       int    int)
-(defsockopt IPPROTO_IPV6 IPV6_V6ONLY             int    int)
-
-(defsockopt IPPROTO_TCP TCP_CONGESTION           #f     bytes)
-(defsockopt IPPROTO_TCP TCP_CORK                 int    int)
-(defsockopt IPPROTO_TCP TCP_DEFER_ACCEPT         int    int)
-(defsockopt IPPROTO_TCP TCP_KEEPCNT              int    int)
-(defsockopt IPPROTO_TCP TCP_KEEPIDLE             int    int)
-(defsockopt IPPROTO_TCP TCP_KEEPINTVL            int    int)
-(defsockopt IPPROTO_TCP TCP_MAXSEG               int    int)
-(defsockopt IPPROTO_TCP TCP_NODELAY              int    int)
-(defsockopt IPPROTO_TCP TCP_SYNCNT               int    int)
-
+### socket-close
+```scheme
+(socket-close sock) -> void
 ```
 
-Please document me!
+Closes the socket *sock*.
 
-## socket-domain
-```
-(socket-domain sock)
-```
+## Data Transfer
 
-Please document me!
-
-## socket-address?
-```
-(socket-address? obj)
+### socket-send
+```scheme
+(socket-send sock bytes (start 0) (end (u8vector-length bytes)) (flags 0)) -> fixnum | #f
 ```
 
-Please document me!
+Sends data from byte vector *bytes* through the connected socket *sock*.
+Returns the number of bytes sent, or `#f` if the operation would block.
 
-## make-socket-address make-socket-address-in make-socket-address-in6 make-socket-address-un
-```
-(make-socket-address af)
-(make-socket-address-in)
-=>  (make-socket-address AF_INET)
-(make-socket-address-in6)
-=>  (make-socket-address AF_INET6)
-(make-socket-address-un)
-=>  (make-socket-address AF_UNIX)
+### socket-sendto
+```scheme
+(socket-sendto sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0)) -> fixnum | #f
 ```
 
-Please document me!
+Sends data to the address *sa* through the socket *sock* (for connectionless
+protocols like UDP). Returns the number of bytes sent, or `#f` if the
+operation would block.
 
-## socket-address socket-address-in socket-address-in6 socket-address-un
-```
-(socket-address addr)
-(socket-address-in host port)
-(socket-address-in6 host port)
-(socket-address-un path)
-```
-
-Please document me!
-
-## socket-address->address
-```
-(socket-address->address sa)
+### socket-sendmsg
+```scheme
+(socket-sendmsg sock name-bytes io-bytes ctl-bytes flags) -> fixnum | #f
 ```
 
-Please document me!
+Sends a message through the socket using the `sendmsg` system call, allowing
+ancillary data (control messages) to be included.
 
-## socket-address->string
-```
-(socket-address->string sa)
-```
-
-Please document me!
-
-## socket-address-family
-```
-(socket-address-family sa)
+### socket-recv
+```scheme
+(socket-recv sock bytes (start 0) (end (u8vector-length bytes)) (flags 0)) -> fixnum | #f
 ```
 
-Please document me!
+Receives data from the connected socket *sock* into byte vector *bytes*.
+Returns the number of bytes received, `0` on EOF, or `#f` if the operation
+would block.
 
+### socket-recvfrom
+```scheme
+(socket-recvfrom sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0)) -> fixnum | #f
+```
+
+Receives data and the sender's address from the socket *sock*. The address
+is stored in *sa*. Primarily used with connectionless protocols like UDP.
+
+### socket-recvmsg
+```scheme
+(socket-recvmsg sock name io ctl flags) -> fixnum | #f
+```
+
+Receives a message from the socket using the `recvmsg` system call.
+
+### socket-recvmsg*
+```scheme
+(socket-recvmsg* sock name-bytes rname io-bytes ctl-bytes rctl flags rflags) -> fixnum | #f
+```
+
+Extended variant of `socket-recvmsg` with output parameters for actual sizes
+of name, control data, and flags.
+
+## Socket Information
+
+### socket-getpeername
+```scheme
+(socket-getpeername sock (sa #f)) -> socket-address
+```
+
+Returns the address of the peer connected to socket *sock*. If *sa* is
+provided, it is used as the output buffer; otherwise a new socket address is
+allocated.
+
+### socket-getsockname
+```scheme
+(socket-getsockname sock (sa #f)) -> socket-address
+```
+
+Returns the local address bound to socket *sock*.
+
+### socket-domain
+```scheme
+(socket-domain sock) -> fixnum
+```
+
+Returns the address family (domain) of the socket *sock*.
+
+## Socket Options
+
+### socket-getsockopt
+```scheme
+(socket-getsockopt sock level opt) -> value
+```
+
+Gets a socket option. The *level* and *opt* are constants from the tables
+below. The return type depends on the option (integer, bytes, timeval, or
+linger struct).
+
+### socket-setsockopt
+```scheme
+(socket-setsockopt sock level opt val) -> void
+```
+
+Sets a socket option. Not all options are settable — see the table below.
+
+::: tip Example:
+```scheme
+(import :std/os/socket)
+
+(def sock (socket AF_INET SOCK_STREAM))
+(socket-setsockopt sock SOL_SOCKET SO_REUSEADDR 1)
+(socket-setsockopt sock IPPROTO_TCP TCP_NODELAY 1)
+```
+:::
+
+The following socket options are supported:
+
+**SOL_SOCKET level:**
+
+| Option | Get Type | Set Type | Description |
+|--------|----------|----------|-------------|
+| `SO_ACCEPTCONN` | int | — | Is socket accepting connections? |
+| `SO_BROADCAST` | int | int | Allow broadcast |
+| `SO_DEBUG` | int | int | Enable debugging |
+| `SO_DOMAIN` | int | — | Socket domain |
+| `SO_DONTROUTE` | int | int | Don't route |
+| `SO_ERROR` | int | — | Pending error |
+| `SO_KEEPALIVE` | int | int | Enable keepalive |
+| `SO_LINGER` | linger | linger | Linger on close |
+| `SO_RCVBUF` | int | int | Receive buffer size |
+| `SO_SNDBUF` | int | int | Send buffer size |
+| `SO_REUSEADDR` | int | int | Allow address reuse |
+| `SO_REUSEPORT` | int | int | Allow port reuse |
+| `SO_TYPE` | int | int | Socket type |
+
+**IPPROTO_TCP level:**
+
+| Option | Get Type | Set Type | Description |
+|--------|----------|----------|-------------|
+| `TCP_NODELAY` | int | int | Disable Nagle's algorithm |
+| `TCP_KEEPCNT` | int | int | Keepalive probe count |
+| `TCP_KEEPIDLE` | int | int | Keepalive idle time |
+| `TCP_KEEPINTVL` | int | int | Keepalive interval |
+| `TCP_MAXSEG` | int | int | Maximum segment size |
+
+## Socket Addresses
+
+### socket-address?
+```scheme
+(socket-address? obj) -> boolean
+```
+
+Returns `#t` if *obj* is a socket address object.
+
+### make-socket-address
+```scheme
+(make-socket-address af) -> socket-address
+```
+
+Allocates a socket address for the address family *af*.
+
+### make-socket-address-in
+```scheme
+(make-socket-address-in) -> socket-address
+```
+
+Allocates an `AF_INET` (IPv4) socket address. Equivalent to
+`(make-socket-address AF_INET)`.
+
+### make-socket-address-in6
+```scheme
+(make-socket-address-in6) -> socket-address
+```
+
+Allocates an `AF_INET6` (IPv6) socket address. Equivalent to
+`(make-socket-address AF_INET6)`.
+
+### make-socket-address-un
+```scheme
+(make-socket-address-un) -> socket-address
+```
+
+Allocates an `AF_UNIX` socket address. Equivalent to
+`(make-socket-address AF_UNIX)`.
+
+### socket-address
+```scheme
+(socket-address addr) -> socket-address
+```
+
+Creates a socket address from a string representation *addr*. The string
+format depends on the address family (e.g., `"127.0.0.1:8080"` for IPv4).
+
+### socket-address-in
+```scheme
+(socket-address-in host port) -> socket-address
+```
+
+Creates an IPv4 socket address for the given *host* (integer or `INADDR_ANY`)
+and *port* number.
+
+### socket-address-in6
+```scheme
+(socket-address-in6 host port) -> socket-address
+```
+
+Creates an IPv6 socket address for the given *host* and *port*.
+
+### socket-address-un
+```scheme
+(socket-address-un path) -> socket-address
+```
+
+Creates a Unix domain socket address for the given filesystem *path*.
+
+### socket-address->address
+```scheme
+(socket-address->address sa) -> list
+```
+
+Converts a socket address *sa* to a list representation.
+
+### socket-address->string
+```scheme
+(socket-address->string sa) -> string
+```
+
+Converts a socket address *sa* to a human-readable string representation.
+
+### socket-address-family
+```scheme
+(socket-address-family sa) -> fixnum
+```
+
+Returns the address family of the socket address *sa* (e.g., `AF_INET`).
 
 ## Constants
-```
-AF_UNSPEC
-AF_INET
-AF_INET6
-AF_UNIX
-AF_LOCAL
-AF_NETLINK
-AF_PACKET
-AF_ALG
-SOCK_STREAM
-SOCK_DGRAM
-SOCK_RAW
-SOCK_SEQPACKET
-SOCK_RDM
-SHUT_RD
-SHUT_WR
-SHUT_RDWR
-UNIX_MAX_PATH
-SOL_SOCKET
-SO_ACCEPTCONN
-SO_BINDTODEVICE
-SO_BROADCAST
-SO_DEBUG
-SO_DOMAIN
-SO_DONTROUTE
-SO_ERROR
-SO_KEEPALIVE
-SO_LINGER
-SO_OOBLINE
-SO_PASSCRED
-SO_PEERCRED
-SO_PEEK_OFF
-SO_PROTOCOL
-SO_RCVBUF
-SO_SNDBUF
-SO_RCVLOWAT
-SO_SNDLOWAT
-SO_RCVTIMEO
-SO_SNDTIMEO
-SO_REUSEADDR
-SO_REUSEPORT
-SO_TYPE
-SO_TIMESTAMP
-SO_USELOOPBACK
-IPPROTO_IPV6
-IPV6_ADDRFORM
-IPV6_ADD_MEMBERSHIP
-IPV6_DROP_MEMBERSHIP
-IPV6_MTU
-IPV6_MTU_DISCOVER
-IPV6_MULTICAST_HOPS
-IPV6_MULTICAST_IF
-IPV6_MULTICAST_LOOP
-IPV6_RECVPKTINFO
-IPV6_RTHDR
-IPV6_AUTHHDR
-IPV6_DSTOPTS
-IPV6_HOPOPTS
-IPV6_FLOWINFO
-IPV6_HOPLIMIT
-IPV6_ROUTER_ALERT
-IPV6_UNICAST_HOPS
-IPV6_V6ONLY
-IPPROTO_TCP
-TCP_CONGESTION
-TCP_CORK
-TCP_DEFER_ACCEPT
-TCP_KEEPCNT
-TCP_KEEPIDLE
-TCP_KEEPINTVL
-TCP_MAXSEG
-TCP_NODELAY
-TCP_SYNCNT
-IP_PMTUDISC_WANT
-IP_PMTUDISC_DONT
-IP_PMTUDISC_DO
-IP_PMTUDISC_PROBE
-IPTOS_LOWDELAY
-IPTOS_THROUGHPUT
-IPTOS_RELIABILITY
-IPTOS_MINCOST
-MSG_CONFIRM
-MSG_CTRUNC
-MSG_DONTROUTE
-MSG_DONTWAIT
-MSG_EOR
-MSG_ERRQUEUE
-MSG_MORE
-MSG_NOSIGNAL
-MSG_OOB
-MSG_PEEK
-MSG_TRUNC
-MSG_WAITALL
-```
+
+### Address Families
+
+| Constant | Description |
+|----------|-------------|
+| `AF_UNSPEC` | Unspecified |
+| `AF_INET` | IPv4 |
+| `AF_INET6` | IPv6 |
+| `AF_UNIX` | Unix domain |
+| `AF_LOCAL` | Same as `AF_UNIX` |
+| `AF_NETLINK` | Netlink (Linux) |
+| `AF_PACKET` | Packet (Linux) |
+| `AF_ALG` | Kernel crypto (Linux) |
+
+### Socket Types
+
+| Constant | Description |
+|----------|-------------|
+| `SOCK_STREAM` | Reliable, ordered byte stream (TCP) |
+| `SOCK_DGRAM` | Datagrams (UDP) |
+| `SOCK_RAW` | Raw protocol access |
+| `SOCK_SEQPACKET` | Reliable, ordered datagrams |
+| `SOCK_RDM` | Reliable datagrams |
+
+### Shutdown Modes
+
+| Constant | Description |
+|----------|-------------|
+| `SHUT_RD` | Disable receives |
+| `SHUT_WR` | Disable sends |
+| `SHUT_RDWR` | Disable both |
+
+### Message Flags
+
+| Constant | Description |
+|----------|-------------|
+| `MSG_CONFIRM` | Confirm path validity |
+| `MSG_DONTROUTE` | Don't route |
+| `MSG_DONTWAIT` | Non-blocking |
+| `MSG_EOR` | End of record |
+| `MSG_MORE` | More data to send |
+| `MSG_NOSIGNAL` | Don't generate SIGPIPE |
+| `MSG_OOB` | Out-of-band data |
+| `MSG_PEEK` | Peek at incoming data |
+| `MSG_TRUNC` | Data truncated |
+| `MSG_WAITALL` | Wait for full request |
