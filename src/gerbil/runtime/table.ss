@@ -28,7 +28,7 @@ namespace: #f
 
 (def (raw-table? obj)
   (and (##structure? obj)
-       (##structure-instance-of obj __table::t.id)))
+       (##structure-instance-of? obj __table::t.id)))
 
 (def (&raw-table-table tab)
   (##unchecked-structure-ref tab 1 __table::t 'raw-table-table))
