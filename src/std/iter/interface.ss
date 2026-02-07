@@ -4,9 +4,8 @@
 (export #t)
 
 (interface Iterator
-  (current)  => :t
-  (end?)     => :boolean
-  (advance!) => :void)
+  (next!) => :t ;; #!eof marks end of iteration
+  )
 
 (interface Iterable
   (iter) => Iterator)

@@ -5,7 +5,7 @@
 
 (defrules with-list-builder ()
   ((recur (c) body1 body+ ...)
-   (recur (c _unused) body1 body+ ...))
+   (recur (c $peek) body1 body+ ...))
   ((_ (poke peek) body1 body+ ...)
    (let* ((head [#f])
           (tail head))

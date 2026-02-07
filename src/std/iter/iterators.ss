@@ -26,20 +26,14 @@
   final: #t)
 
 (implement Iterator fixnum-range
-  (current
+  (next!
    (lambda (self)
-    (if (cmp self.cursor self.end)
-      self.cursor
-      '#!eof)))
-  (end?
-   (lambda (self)
-     (not (cmp self.cursor self.end))))
-  (advance!
-   (lambda (self)
-    (when (self.cmp self.cursor self.end)
-      (set! self.cursor
-        (or (##fx+? self.cursor self.step)
-            (raise-arithmetic-overflow fixnum-range-advance! self.cursor self.step)))))))
+     (if (self.cmp self.cursor self.end)
+       (let (cursor self.cursor)
+         (set! self.cursor
+           (fx+ cursor self.step))
+         cursor)
+       #!eof))))
 
 (defstruct number-range
   ((cursor :- :number)
@@ -48,19 +42,14 @@
   final: #t)
 
 (implement Iterator number-range
-  (current
+  (next!
    (lambda (self)
-    (if (cmp self.cursor self.end)
-      self.cursor
-      '#!eof)))
-  (end?
-   (lambda (self)
-     (not (cmp self.cursor self.end))))
-  (advance!
-   (lambda (self)
-    (when (self.cmp self.cursor self.end)
-      (set! self.cursor
-        (+ self.cursor self.step))))))
+     (if (self.cmp self.cursor self.end)
+       (let (cursor self.cursor)
+         (set! self.cursor
+           (+ cursor self.step))
+         cursor)
+       #!eof))))
 
 (defsyntax-case __in-number-range ()
   ((_ start end step cmp)
@@ -90,7 +79,9 @@
 (def* in-range
   (((end : :number))
    => Iterator
-   (iter-in-range< 0 end 1))
+   (if (< end 0)
+     (iter-in-range> 0 end -1)
+     (iter-in-range< 0 end 1)))
   (((start : :number) (end : :number))
    => Iterator
    (if (> start end)
@@ -98,9 +89,13 @@
      (iter-in-range< start end  1)))
   (((start : :number) (end : :number) (step : :number))
    => Iterator
-   (if (negative? step)
-     (iter-in-range> start end step)
-     (iter-in-range< start end step))))
+   (cond
+    ((> step 0)
+     (iter-in-range< start end step))
+    ((< step 0)
+     (iter-in-range> start end step))
+    (else
+     (raise-contract-violation in-range "non zero step" step)))))
 
 (def* in-range-inclusive
   (((end : :number))
@@ -113,49 +108,53 @@
      (iter-in-range<= start end  1)))
   (((start : :number) (end : :number) (step : :number))
    => Iterator
-   (if (negative? step)
-     (iter-in-range>= start end step)
-     (iter-in-range<= start end step))))
+   (cond
+    ((> step 0)
+     (iter-in-range<= start end step))
+    ((< step 0)
+     (iter-in-range>= start end step))
+    (else
+     (raise-contract-violation in-range-inclusive "non zero step" step)))))
 
-(defstruct integer-range
-  ((cursor :- :integer)
-   (step   :- :integer))
+(defstruct number-range
+  ((cursor :- :number)
+   (succ   :- :procedure)
+   (stop?  :- :procedure))
   final: #t)
 
-(implement Iterator integer-range
-  (current
-   (lambda (self) (self.cursor)))
-  (end?
-   (lambda (self) #f))
-  (advance!
+(implement Iterator number-range
+  (next!
    (lambda (self)
-     (set! self.cursor (+ self.cursor self.step)))))
+     (if (self.stop? self.cursor)
+       #!eof
+       (let (cursor self.cursor)
+         (set! self.cursor (self.succ cursor))
+         cursor)))))
 
 (def (in-integers (start : :integer := 0) (step : :integer := 1))
   => Iterator
-  (Iterator (make-integer-range start step)))
+  (Iterator (make-number-range start (cut + <> step) (lambda (x) #f))))
+
+(def (in-numbers (start : :number) (succ : :procedure) (stop? : :procedure))
+  (Iterator (make-number-range start succ stop?)))
 
 (defstruct list-iterator (cursor)
   final: #t)
 
 (implement Iterator list-iterator
-  (current
+  (next!
    (lambda (self)
-     (cond
-      ((pair? self.cursor)
-       (car self.cursor))
-      ((null? self.cursor)
-       '#!eof)
-      (else self.cursor))))
-  (end?
-   (lambda (self)
-     (or (null? self.cursor)
-         (eq? self.cursor '#!eof))))
-  (advance!
-   (lambda (self)
-     (if (pair? self.cursor)
-       (set! self.cursor (cdr self.cursor))
-       (set! self.cursor '#!eof)))))
+     (let (cursor self.cursor)
+       (cond
+        ((pair? cursor)
+         (let (next (car cursor))
+           (set! self.cursor (cdr cursor))
+           next))
+        ((null? cursor)
+         #!eof)
+        (else
+         (set! self.cursor '#!eof)
+         cursor))))))
 
 (def (in-list (lst : :list))
   => Iterator
@@ -166,21 +165,18 @@
 
 (defstruct vector-iterastor
   ((vector :- vector)
-   cursor  :- :fixnum)
+   (cursor  :- :fixnum))
   final: #t)
 
 (implement Iterator vector-iterator
-  (current
+  (next!
    (lambda (self)
-     (if (fx< self.cursor (vector-length self.vector))
-       (vector-ref self.vector self.cursor)
-       '#!eof)))
-  (end?
-   (lambda (self)
-     (fx>= self.cursor (vector-length self.vector))))
-  (advance!
-   (lambda (self)
-     (set! self.cursor (fx+ self.cursor 1)))))
+     (let (cursor self.cursor)
+       (if (fx< cursor (vector-length self.vector))
+         (let (next (vector-ref self.vector cursor))
+           (set! self.cursor (fx+ cursor 1))
+           next)
+         #!eof)))))
 
 (def (in-vector (vec : :vector))
   => Iterator
@@ -188,52 +184,6 @@
 
 (implement Iterable :vector
   (iter __in-vector))
-
-(defstruct hash-iterator
-  ((ht       :- HashTable)
-   (iter     :- :procedure)
-   (cursor   :- :t)
-   (continue :- :procedure))
-  constructor: :init!
-  final: #t)
-
-(defmethod {:init! hash-iterator}
-  (lambda (self (ht : HashTable) (iter : :procedure))
-    (set! self.ht ht)
-    (set! self.iter iter)))
-
-(def (__hash-iter! (self :- hash-iterator))
-  (let/cc K
-    (set! self.continue K)
-    (self.ht.for-each
-     (lambda (k v)
-       (set! self.cursor (self.iter k v))
-       (let/cc K
-         (let (continue self.continue)
-           (set! self.continue K)
-           (continue)))))
-    (set! self.cursor '#!eof)
-    (self.continue)))
-
-(def (hash-iter (ht : HashTable) (iter-e : :procedure))
-  => Iterator
-  (let (it (hash-iterator ht iter-e))
-    (__hash-iter! it)
-    (Iterator it)))
-
-(implement Iterator hash-iterator
-  (current
-   (lambda (self) self.cursor))
-  (end?
-   (lambda (self)
-     (eq? self.cursor '#!eof)))
-  (advance!
-   (lambda (self)
-    (unless (eq? self.cursor '#!eof)
-      (let/cc K
-        (let (continue self.continue)
-          (set! self.continue K)
-          (continue)))))))
 
 (defstruct raw-table-iterator
   ((tab    :- :vector)
@@ -249,7 +199,7 @@
     (set! self.cursor 0)))
 
 (implement Iterator raw-table-iterator
-  (current
+  (next!
    (lambda (self)
      (let* ((tab self.tab)
             (end (vector-length tab)))
@@ -259,35 +209,20 @@
              (if (eq? k unused-obj)
                (loop (fx+ cursor 2))
                (let (v (vector-ref tab (fx+ cursor 1)))
-                 (set! self.cursor cursor)
+                 (set! self.cursor (fx+ cursor 2))
                  (self.value k v))))
-           '#!eof)))))
-  (end?
-   (lambda (self)
-     (let* ((tab self.tab)
-            (end (vector-length tab)))
-       (let loop ((cursor self.cursor :- :fixnum))
-         (if (fx< cursor end)
-           (let (k (vector-ref tab cursor))
-             (if (eq? k unused-obj)
-               (loop (fx+ cursor 2))
-               (begin
-                 (set! self.cursor cursor)
-                 #f)))
-           #t)))))
-  (advance!
-   (lambda (self)
-     (let* ((tab self.tab)
-            (end (vector-length tab)))
-       (let loop ((cursor (fx+ self.cursor 2)) :- :fixnum)
-         (when (fx< cursor end)
-           (let (k (vector-ref tab cursor))
-             (if (eq? k unused-obj)
-               (loop (fx+ cursor 2))
-               (set! self.cursor cursor)))))))))
+           #!eof))))))
 
 (def (raw-table-iter tab iter-e)
-  (Iterator (raw-table-iterabor tab iter-e)))
+  => Iterator
+  (Iterator (raw-table-iterator tab iter-e)))
+
+(def (hash-iter (ht : HashTable) (iter-e : :procedure))
+  => Iterator
+  (in-coroutine
+   (lambda ((yield :- :procedure))
+     (ht.for-each
+      (lambda (k v) (yield (iter-e k v)))))))
 
 (def (in-hash (ht : HashTable))
   => Iterator
@@ -310,48 +245,46 @@
       (raw-table-iter tab hash-iter-value-e)
       (hash-iter ht hash-iter-value-e))))
 
-(def (hash-iter-e k v) (values k v))
+(def (hash-iter-e k v) (cons k v))
 (def (hash-iter-key-e k v) k)
 (def (hash-iter-value-e k v) v)
 
 (implement Iterable HashTable
   (iter __in-hash))
 
-(defstruct coroutine
-  ((cursor   :- :t)
-   (contiune :- :procedure))
+(defstruct coroutine-iterator
+  ((proc     :- :procedure)
+   (contiune :- :procedure)
+   (done?    :- :boolean))
   final: #t)
 
-(implement Iterator coroutine
-  (current
-   (lambda (self) self.cursor))
-  (end?
+(implement Iterator coroutine-iterator
+  (next!
    (lambda (self)
-     (eq? self.cursor '#!eof)))
-  (advance!
-   (lambda (self)
-    (unless (eq? self.cursor '#!eof)
-      (let/cc K
-        (let (continue self.continue)
-          (set! self.continue K)
-          (continue)))))))
+     (cond
+      (self.done? #!eof)
+      (self.continue
+       => (lambda (continue)
+            (let/cc K
+              (set! self.continue K)
+              (continue))))
+      (else
+       (let/cc K
+         (set! self.continue K)
+         (self.proc
+          (lambda (value)
+            (let/cc K
+              (let (continue self.continue)
+                (set! self.continue K)
+                (continue value)))))
+         (set! self.done? #t)
+         (let (continue self.continue)
+           (set! self.continue #f)
+           (continue #!eof))))))))
 
 (def (in-coroutine (proc : :procedure))
   => Iterator
-  (let (cort (coroutine #!void #f))
-    (__coroutine-start! cort proc)))
+  (Iterator (coroutine-iterator proc #f #f)))
 
-(def (__coroutine-start! (cort :- coroutine) (proc :- :procedure))
-  (let loop ()
-    (let/cc K
-      (set! self.continue K)
-      (proc
-       (lambda (value)
-         (set! self.cursor value)
-         (let/cc K
-           (let (continue self.continue)
-             (set! self.continue K)
-             (continue) ))
-         (loop)))))
-  (set! self.cursor '#!eof)
-  (self.continue))
+(implement Iterable :procedure
+  (iter __in-coroutine))

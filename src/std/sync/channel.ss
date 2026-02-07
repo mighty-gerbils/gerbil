@@ -126,13 +126,6 @@
   self.eof)
 
 (implement Iterator Channel
-  (current
+  (next!
    (lambda (self)
-     (if self.eof
-       '#!eof
-       (channel-peek self))))
-  (end?
-   (lambda (self) self.eof))
-  (advance!
-   (lambda (self)
-     (channel-get self))))
+     (channel-get self #f #!eof))))

@@ -86,12 +86,6 @@
   (list-copy q.front))
 
 (implement Iterator Queue
-  (current
-   (lambda (self)
-     (queue-peek self '#!eof)))
-  (end?
-   (lambda (self)
-     (eq? '#!eof (queue-peek self '#!eof))))
-  (advance!
+  (next!
    (lambda (self)
      (dequeue! self '#!eof))))
