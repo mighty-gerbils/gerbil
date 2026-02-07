@@ -10,8 +10,7 @@
         :std/sync/barrier
         :std/list/list
         :std/string/path
-        :std/iter
-        )
+        :std/iter)
 (export make
         make-clean
         shell-config
@@ -377,15 +376,12 @@ TODO:
   (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
   (def settings (apply make-settings keywords))
 
-  (for-each
-    (lambda (spec)
-      (for-each
-        (lambda (f)
-          (when (file-exists? f)
-            (displayln "... remove " f)
-            (delete-file-or-directory f)))
-        (spec-outputs spec settings)))
-    buildspec))
+  (for* ((spec buildspec)
+         (f    (spec-outputs spec settings)))
+    (when (file-exists? f)
+      (displayln "... remove " f)
+      (delete-file-or-directory f))))
+
 
 ;; Normalize-buildspec : buildspec -> buildspec
 ;; Groups the gsc: and static-include: and copy: specs inside the immediately following ssi:

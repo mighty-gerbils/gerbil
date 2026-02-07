@@ -2,29 +2,29 @@
 ;;; © vyzo
 ;;; thread barriers
 (import :std/error)
-(export make-barrier barrier? barrier
+(export make-barrier Barrier? Barrier
         barrier-wait!
         barrier-post!
         barrier-error!
         with-barrier-error)
 
-(defstruct barrier ((mx    :- :mutex)
+(defstruct Barrier ((mx    :- :mutex)
                     (cv    :- :condvar)
                     (count :- :fixnum)
                     (limit :- :fixnum)
                     exn)
   constructor: :init! final: #t )
 
-(defmethod {:init! barrier}
+(defmethod {:init! Barrier}
   (lambda (self (limit :~ nonnegative-fixnum? :- :fixnum))
-    (struct-instance-init! self
-                           (make-mutex 'barrier)
-                           (make-condition-variable 'barrier)
-                           0 limit)))
+    (set! self.mx (make-mutex 'barrier))
+    (set! self.cv (make-condition-variable 'barrier))
+    (set! self.count 0)
+    (set! self.limit limit)))
 
-(def (barrier-wait! (b : barrier))
+(def (barrier-wait! (b : Barrier))
   => :void
-  (let lp ()
+  (let loop ()
     => :void
     (mutex-lock! b.mx)
     (cond
@@ -33,12 +33,12 @@
       (abort! (raise b.exn)))
      ((fx< b.count b.limit)
       (mutex-unlock! b.mx b.cv)
-      (lp))
+      (loop))
      (else
       (mutex-unlock! b.mx)
       (void)))))
 
-(def (barrier-post! (b : barrier))
+(def (barrier-post! (b : Barrier))
   => :void
   (mutex-lock! b.mx)
   (let* ((count b.count)
@@ -49,7 +49,7 @@
     (mutex-unlock! b.mx)
     (void)))
 
-(def (barrier-error! (b : barrier) exn)
+(def (barrier-error! (b : Barrier) exn)
   => :void
   (mutex-lock! b.mx)
   (unless b.exn

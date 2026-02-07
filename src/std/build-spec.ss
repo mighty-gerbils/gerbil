@@ -5,34 +5,38 @@
 (def (build-spec . _)
   `(;; v0.19 stdlib
     (gxc: "build-config" (extra-inputs: ("build-features.ss")))
+    "interactive"
     "error"
     "interface"
-    "sync/completion"
+
+    "iter/interface"
+    "iter/iterators"
+    "iter/macros"
+    "iter/api"
+    "iter"
+
+    "list/list-builder"
+    "list/list"
+
+    "string/path"
+
     "struct/queue"
+
+    "sync/completion"
+    "sync/channel"
+    "sync/barrier"
+
     "time/time"
     "time/timeout"
 
-    ;; TODO till test
-
-    "iter"
-    "sync/channel"
-
-    "sync/barrier"
-    "list/list-builder"
-    "list/list"
-    "string/path"
-
     "make"
 
-
-
+    ;; TODO till test
     "test"
+
     "ffi"
-    "error"
-    "interface"
     "object"
-    "ssi"
-    "interactive"
+
 
     "list/plist"
     "list/alist"

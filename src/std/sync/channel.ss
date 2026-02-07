@@ -2,9 +2,10 @@
 ;;; © vyzo
 ;;; buffered channels
 (import :std/error
+        :std./interface
         :std/time/timeout
         :std/struct/queue
-        :std/iter)
+        :std/iter/interface)
 (export Channel Channel? make-channel
         channel-put channel-try-put channel-sync
         channel-get channel-try-get
@@ -27,7 +28,7 @@
 
 (def (channel-put (ch : Channel) val (timeo #f))
   (let (timeo (timeout->abs-timeout timeo))
-    (let lp ()
+    (let loop ()
       (mutex-lock! ch.mx)
       (cond
        (ch.eof
@@ -41,7 +42,7 @@
         #t)
        (else
         (if (mutex-unlock! ch.mx ch.cv timeo)
-          (lp)
+          (loop)
           #f))))))
 
 (def (channel-try-put (ch : Channel) val)
@@ -72,25 +73,32 @@
       (condition-variable-broadcast! ch.cv))
     (mutex-unlock! ch.mx))))
 
-(def (channel-get (ch : Channel) (timeo #f) (default #f))
-  (let (timeo (timeout->abs-timeout timeo))
-    (let lp ()
-      (mutex-lock! ch.mx)
-      (cond
-       ((queue-empty? ch.q)
+(defrule (__channel-front chan timeo default front)
+  (using (ch :- Channel)
+    (let (timeo (timeout->abs-timeout timeo))
+      (let loop ()
+        (mutex-lock! ch.mx)
         (cond
-         (ch.eof
-          (mutex-unlock! ch.mx)
-          #!eof)
-         ((mutex-unlock! ch.mx ch.cv timeo)
-          (lp))
-         (else default)))
-       (else
-        (let (next (dequeue! ch.q))
-          (when (and ch.limit (fx= (queue-length ch.q) (fx- (:- ch.limit :fixnum) 1)))
-            (condition-variable-broadcast! ch.cv)) ; unblock writers
-          (mutex-unlock! ch.mx)
-          next))))))
+         ((queue-empty? ch.q)
+          (cond
+           (ch.eof
+            (mutex-unlock! ch.mx)
+            #!eof)
+           ((mutex-unlock! ch.mx ch.cv timeo)
+            (loop))
+           (else default)))
+         (else
+          (let (next (front ch.q))
+            (when (and ch.limit (fx= (queue-length ch.q) (fx- (:- ch.limit :fixnum) 1)))
+              (condition-variable-broadcast! ch.cv)) ; unblock writers
+            (mutex-unlock! ch.mx)
+            next)))))))
+
+(def (channel-peek (ch : Channel) (timeo #f) (default #f))
+  (__channel-front ch timeo default queue-peek))
+
+(def (channel-get (ch : Channel) (timeo #f) (default #f))
+  (__channel-front ch timeo default dequeue!))
 
 (def (channel-try-get (ch : Channel) (default #f))
   (mutex-lock! ch.mx)
@@ -115,15 +123,16 @@
     (void)))
 
 (def (channel-closed? (ch : Channel))
-  (channel-eof ch))
+  self.eof)
 
-;; TODO
-#;(def (iter-channel (ch : channel))
-  (def (next it)
-    (with ((iterator ch) it)
-      (using (ch :- channel)
-        (let (val (channel-get ch))
-          (if (eof-object? val)
-            iter-end
-            val)))))
-  (make-iterator ch next))
+(implement Iterator Channel
+  (current
+   (lambda (self)
+     (if self.eof
+       '#!eof
+       (channel-peek self))))
+  (end?
+   (lambda (self) self.eof))
+  (advance!
+   (lambda (self)
+     (channel-get self))))

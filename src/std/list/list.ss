@@ -1,8 +1,8 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; List utilities
-(import ./list-builder
-        :std/error)
+(import :std/error
+        ./list-builder)
 
 (export
   unique unique! duplicates delete-duplicates/hash

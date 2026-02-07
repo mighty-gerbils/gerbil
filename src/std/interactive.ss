@@ -27,7 +27,7 @@
      (else
       (error "Invalid module path" mod))))
 
-  (def (reload-all! modbase)
+  (def (do-reload-all! modbase)
     (let* ((loaded-modules (list-modules))
            (to-reload
             (filter-map
@@ -48,41 +48,68 @@
       (for-each reload-module! to-reload))))
 (import (for-syntax Util))
 
-(defsyntax (reload! stx)
-  (syntax-case stx ()
-    ((_ mod)
-     (begin
-       (do-reload-module! (stx-e #'mod))
-       #'(import mod)))))
+(defsyntax-case reload1! ()
+  ((_ mod)
+   (begin
+     (do-reload-module! (stx-e #'mod))
+     #'(import mod))))
 
-(defrules reload ()
-  ((_ mod ...)
-   (begin (reload! mod) ...)))
+(defrule (reload! mod ...)
+  (begin (reload1! mod) ...))
+
+(defsyntax-case reload-all! ()
+  ((_ base)
+   (stx-string? #'base)
+   (begin
+     (do-reload-all! (stx-e #'base))
+     #'(import/base base))))
+
+(defsyntax-case import/base ()
+  ((_ base)
+   (stx-string? base)
+   (let* ((modbase (stx-e #'base))
+          (loaded-modules (list-modules))
+          (to-import
+           (filter-map
+            (lambda (p)
+              (with ([modpath . state] p)
+                 (and (not (eq? state 'builtin))
+                      (string-prefix? modbase modpath)
+                      (string->symbol
+                       (string-append ":" modpath)))))
+            loaded-modules)))
+     (with-syntax (((mod ...) to-import))
+       #'(import mod ...)))))
 
 ;; Enter a nested repl with the syntactic context of a module
 (def (enter-module! mod)
-  (parameterize ((gx#current-expander-context (gx#import-module mod #f #t)))
+  (parameterize ((current-expander-context (import-module mod #f #t)))
     (##repl)))
 
-(defrules enter! ()
-  ((_ mod)
-   (enter-module! 'mod)))
+(defrule (enter! mod)
+  (enter-module! 'mod))
 
 ;; Macro expansion
 ;; These two macros expand a form, pretty print the expansion, and
 ;; return the result of the expansion for debugging purposes.
 ;; @expand uses core-expand* while @expand1 performs a single step
 ;; expansion with core-expand1
-(defrules @expand ()
-  ((_ expr) (macro-expand 'expr)))
+(defrule (@expand expr)
+  (macro-expand 'expr))
 
-(defrules @expand1 ()
-  ((_ expr) (macro-expand1 'expr)))
+(defrule (@expand1 expr)
+  (macro-expand1 'expr))
 
-(def (macro-expand expr (expand-e gx#core-expand*))
-  (let (expr* (expand-e expr))
-    (pretty-print (gx#syntax->datum expr*))
-    expr*))
+(defrule (@expand-expr expr)
+  (macro-expand-expr 'expr))
+
+(def (macro-expand expr (expand-e core-expand*))
+  (let (expanded (expand-e expr))
+    (pretty-print (syntax->datum expanded))
+    expanded))
 
 (def (macro-expand1 expr)
-  (macro-expand expr gx#core-expand1))
+  (macro-expand expr core-expand1))
+
+(def (macro-expand-expr expr)
+  (macro-expand expr core-expand-expression))

@@ -302,6 +302,7 @@
                 definline definline*
                 define-values define-syntaxes
                 defcall-actor
+                implement
                 )
               'scheme-indent-function 'defun)
   )
@@ -437,7 +438,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
-   '("(\\(defstruct\\|defclass\\|defmessage\\|interface\\|deferror-class\\)\\s-+(?\\(@*\\sw+\\)"
+   '("(\\(defstruct\\|defclass\\|defmessage\\|interface\\|implement\\|deferror-class\\)\\s-+(?\\(@*\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-type-face)))
   (gerbil-fontlock-add

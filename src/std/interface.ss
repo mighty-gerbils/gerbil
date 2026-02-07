@@ -12,6 +12,14 @@
                    (instance-class (!runtime-type-descriptor info)))
        #'(create-prototype descriptor instance-class klass)))))
 
+(defrule (implement Interface klass (method proc) ...)
+  (begin
+    (defmethod {method klass}
+      proc
+      interface: Interface)
+    ...
+    (@implement Interface klass)))
+
 (defsyntax-case @interface-descriptor ()
   ((_ Interface)
    (syntax-local-interface-info? #'Interface)

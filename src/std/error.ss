@@ -79,6 +79,10 @@
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
 
+;; arithematic errors
+(deferror-class ArithmeticError () arithmetic-error?)
+(deferror-class (ArithmeticOverflow ArithmeticError) () arithmetic-overflow-error?)
+
 ;; utility macros
 (defsyntax (exception-context stx)
   (syntax-case stx ()
@@ -148,6 +152,9 @@
 
 (defraise/context (raise-unbound-key where irritants ...)
   (UnboundKeyError "no value associated with key" irritants: [irritants ...]))
+
+(defraise/context (raise-arithmetic-overflow where irritants ...)
+  (ArithmeticOverflow "arithmetic operation overflow" irritats: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

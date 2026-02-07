@@ -1,7 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; imperative queues
-(import :std/error)
+(import :std/error
+        :std/interface
+        :std/iter/interface)
 (export Queue Queue? make-queue
         queue-length
         queue-empty?
@@ -20,7 +22,8 @@
 
 (defmethod {:init! Queue}
   (lambda (self)
-    (struct-instance-init! self [] #f 0)))
+    (set! self.front [])
+    (set! self.length 0)))
 
 (def (queue-empty? (q : Queue))
   => :boolean
@@ -81,3 +84,14 @@
 (def (queue->list (q : Queue))
   => :list
   (list-copy q.front))
+
+(implement Iterator Queue
+  (current
+   (lambda (self)
+     (queue-peek self '#!eof)))
+  (end?
+   (lambda (self)
+     (eq? '#!eof (queue-peek self '#!eof))))
+  (advance!
+   (lambda (self)
+     (dequeue! self '#!eof))))
