@@ -15,28 +15,31 @@
   (abs-timeout) => :t ;; (Maybe :time)
   )
 
-(defmethod {abs-timeout Timeout}
-  (lambda (self)
-    (and self.t (__abs-timeout t)))
-  interface: AbsTimeout)
+(defcall-interface-method AbsTimeout abs-timeout
+  (__abs-timeout obj))
 
-(defmethod {abs-timeout InexactTime}
-  (lambda (self)
-    (seconds->time self.time)))
+(implement AbsTimeout Timeout
+  (abs-timeout
+   (lambda (self)
+     (and self.t (__abs-timeout t)))))
 
-(defmethod {abs-timeout :flonum}
-  (lambda (self)
-    (seconds->time (fl+ self (##current-time-point)) ))
-  interface: AbsTimeout)
+(implement AbsTimeout InexectTime
+  (abs-timeout
+   (lambda (self)
+     (seconds->time self.time))))
 
-(defmethod {abs-timeout :real}
-  (lambda (self)
-    (seconds->time (fl+ (inexact self) (##current-time-point)) ))
-  interface: AbsTimeout)
+(implement AbsTimeout :flonum
+  (abs-timeout
+   (lambda (self)
+     (seconds->time (fl+ self (##current-time-point))))))
 
-(defmethod {abs-timeout :time}
-  identity
-  interface: AbsTimeout)
+(implement AbsTimeout :real
+  (abs-timeout
+   (lambda (self)
+     (seconds->time (fl+ (inexact self) (##current-time-point)) ))))
+
+(implement AbsTimeout :time
+  (abs-timeout identity))
 
 (def (timeout? obj)
   (or (not obj)
@@ -54,6 +57,3 @@
         (: timeo :time)
         (no-timeout)))
     (no-timeout)))
-
-(defcall-interface-method AbsTimeout abs-timeout
-  (__abs-timeout obj))

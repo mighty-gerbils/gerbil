@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; buffered channels
 (import :std/error
-        :std./interface
+        :std/interface
         :std/time/timeout
         :std/struct/queue
         :std/iter/interface)
