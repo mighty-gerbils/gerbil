@@ -907,7 +907,7 @@ package: gerbil/core
   (defsystem-class-info :procedure procedure::t (:subtyped) procedure?)
   (defsystem-class-info :return return::t (:subtyped) ##return?)
 
-  ;; (defsystem-class-info :time time::t (:structure) time?)
+  (defsystem-class-info :time time::t (:structure) time?)
   (defsystem-class-info :thread thread::t (:structure) thread?)
   (defsystem-class-info :thread-group thread-group::t (:subtyped) thread-group?)
   (defsystem-class-info :mutex mutex::t (:subtyped) mutex?)
