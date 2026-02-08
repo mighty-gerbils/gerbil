@@ -32,6 +32,9 @@
 
     "make"
 
+    "test/base"
+    "test/unit"
+
     ;; TODO till gxtest
     ;; "test"
 
