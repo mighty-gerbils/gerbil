@@ -356,7 +356,11 @@ namespace: gxc
                 (eq? (!type-id type-b) 'procedure))
            (and (!class? type-a)
                 (!class? type-b)
-                (!class-subclass? type-a type-b)))))
+                (!class-subclass? type-a type-b))
+           ;; ugly, need to unify interfaces and classes
+           (and (!interface? type-a)
+                (eq? (!type-id type-b) 'gerbil#interface-descriptor::t))
+           )))
 
 (def (!class-subclass? klass-a klass-b)
   (or (eq? (!type-id klass-a) (!type-id klass-b))

@@ -5,7 +5,7 @@
 prelude: :<root>
 package: gerbil
 
-(import "core")
+(import "core" (phi: +1 "core") (phi: +2 "core"))
 (import "runtime")
 (export (except-from-out (import: "core")
                          GerbilRuntime)

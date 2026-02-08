@@ -2674,10 +2674,10 @@ package: gerbil/core
          #'(begin-annotation @loop
              ((letrec ((id proc)) id)
               init ...))))
-      ((_ id ((var init) ...) body ...)
+      ((_ id ((var init contract ...) ...) body ...)
        (and (identifier? #'id)
-            (is-signature? #'(var ...)))
-       #'(let/c id ((var init) ...) => :t body ...))
+            (is-signature? #'((var contract ...) ...)))
+       #'(let/c id ((var init contract ...) ...) => :t body ...))
       ((_ . body)
        #'(let . body))))
 
