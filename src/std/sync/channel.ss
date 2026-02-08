@@ -6,7 +6,8 @@
         :std/time/timeout
         :std/struct/queue
         :std/iter/interface)
-(export Channel Channel? make-channel
+(export Channel Channel?
+        (rename: make-Channel make-channel)
         channel-put channel-try-put channel-sync
         channel-get channel-try-get
         channel-close channel-closed?)
@@ -74,7 +75,7 @@
     (mutex-unlock! ch.mx))))
 
 (defrule (__channel-front chan timeo default front)
-  (using (ch :- Channel)
+  (using (ch chan :- Channel)
     (let (timeo (timeout->abs-timeout timeo))
       (let loop ()
         (mutex-lock! ch.mx)
@@ -123,7 +124,7 @@
     (void)))
 
 (def (channel-closed? (ch : Channel))
-  self.eof)
+  ch.eof)
 
 (implement Iterator Channel
   (next!

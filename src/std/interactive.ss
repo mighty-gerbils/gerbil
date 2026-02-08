@@ -1,12 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; interactive development utilities
-
+(import :gerbil/expander)
 (export #t (for-syntax #t))
 
 (module Util
-  (import :gerbil/core/expander
-          :gerbil/runtime/loader)
   (export #t)
   ;; Module reloading
   (def (do-reload-module! mod)
@@ -20,7 +18,7 @@
           (error "Invalid module path" mod))
          ((eq? (string-ref str 0) #\:)  ; library module
           (let (base (substring str 1 (string-length str)))
-            (reload-all! base)
+            (do-reload-all! base)
             (import-module mod #t #t)))
          (else                          ; top module
           (void)))))
@@ -66,7 +64,7 @@
 
 (defsyntax-case import/base ()
   ((_ base)
-   (stx-string? base)
+   (stx-string? #'base)
    (let* ((modbase (stx-e #'base))
           (loaded-modules (list-modules))
           (to-import

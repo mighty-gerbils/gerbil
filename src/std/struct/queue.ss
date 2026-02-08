@@ -4,8 +4,9 @@
 (import :std/error
         :std/interface
         :std/iter/interface)
-(export Queue Queue? make-queue
-        queue-length
+(export Queue Queue?
+        (rename: make-Queue make-queue)
+        (rename: Queue-length queue-length)
         queue-empty?
         non-empty-queue?
         enqueue!

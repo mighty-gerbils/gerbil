@@ -5,12 +5,14 @@
 
 (defsyntax-case @implement ()
   ((_ Interface klass)
-   (and (syntax-local-interface-info? #'Interface)
-        (syntax-local-class-info? #'klass))
-   (let (info (syntax-local-value #'Interface))
-     (with-syntax ((descriptor     (interface-info-interface-descriptor info))
-                   (instance-class (!runtime-type-descriptor info)))
-       #'(create-prototype descriptor instance-class klass)))))
+   (and (syntax-local-interface-info? #'Interface))
+
+   (let ((iface-info (syntax-local-value #'Interface))
+         (klass-info (syntax-local-value #'klass)))
+     (with-syntax ((descriptor     (interface-info-interface-descriptor iface-info))
+                   (instance-klass (!runtime-type-descriptor iface-info))
+                   (object-klass   (!runtime-type-descriptor klass-info)))
+       #'(create-prototype descriptor instance-klass object-klass)))))
 
 (defrule (implement Interface klass (method proc) ...)
   (begin
@@ -26,10 +28,10 @@
    (let (info (syntax-local-value #'Interface))
      (interface-info-interface-descriptor info))))
 
-(defsyntax-ccase @interface-method-offset ()
+(defsyntax-case @interface-method-offset ()
   ((_ Interface method)
    (and (syntax-local-interface-info? #'Interface)
-        (identifier #'method))
+        (identifier? #'method))
    (let ((method (stx-e #'method))
          (info (syntax-local-value #'Interface)))
      (cond
@@ -67,15 +69,15 @@
           (method receiver arg ...)))
       (fallback receiver arg ...))))
 
-(defrule (@apply-prototype-method/object method-name arg ...)
+(defrule (@apply-prototype-method/object method-name method-offset arg ...)
   (lambda (obj)
     (declare (not safe))
     (let* ((receiver (&interface-instance-object obj))
            (method
             (##unchecked-structure-ref
-               prototype
-               method-offset
-               #f 'method-name)))
+             obj
+             method-offset
+             #f 'method-name)))
       (method receiver arg ...))))
 
 ;; TODO extract interface method signature and check/set argument contracts
@@ -105,23 +107,23 @@
              method
              (@interface-method-offset Interface method)
              arg ...))))
-  ((_ Interface method (proc obj arg ...)) ~ Type)
-  (def (proc obj arg ...) => Type
-    (~ (@cast (@interface-descriptor Interface)
-              obj create-prototype
-              (@apply-prototype-method
-               method
-               (@interface-method-offset Interface method)
-               arg ...)
-              (@apply-prototype-method/object
-               method
-               (@interface-method-offset Interface method)
-               arg ...))
-       Type)))
+  ((_ Interface method (proc obj arg ...) ~ Type)
+   (def (proc obj arg ...) => Type
+     (~ (@cast (@interface-descriptor Interface)
+               obj create-prototype
+               (@apply-prototype-method
+                method
+                (@interface-method-offset Interface method)
+                arg ...)
+               (@apply-prototype-method/object
+                method
+                (@interface-method-offset Interface method)
+                arg ...))
+        Type))))
 
 ;; TODO extract interface method signature and check/set argument contracts
 (defrules defcall-interface-method/fallback ()
-  ((_ Interface Interface method (proc obj arg ...) fallback)
+  ((_ Interface method (proc obj arg ...) fallback)
    (def (proc obj arg ...)
      (@cast (@interface-descriptor Interface)
             obj try-create-prototype
@@ -133,7 +135,7 @@
              method
              (@interface-method-offset Interface method)
              arg ...))))
-  ((_ Interface Interface method-name (proc obj arg ...) fallback ~ Type)
+  ((_ Interface method-name (proc obj arg ...) fallback ~ Type)
    (def (proc obj arg ...) => Type
      (~ (@cast (@interface-descriptor Interface)
                obj try-create-prototype

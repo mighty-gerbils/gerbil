@@ -12,7 +12,7 @@
   in-range
   in-range-inclusive
   in-integers
-  in-numbers
+  in-number-series
   in-list
   in-vector
   in-hash

@@ -60,12 +60,12 @@
   (do-with-write-lock sock.lock
     (socket-device-setsockopt sock.dev level opt val)))
 
-(def (basic-socket-set-input-timeout! (sock : basic-socket) (timeo : Timeout))
+(def (basic-socket-set-input-timeout! (sock : basic-socket) (timeo : IOTimeout))
   (do-with-write-lock sock.lock
     (do-check-device-input sock.dev
       (set! sock.timeo-in timeo))))
 
-(def (basic-socket-set-output-timeout! (sock : basic-socket) (timeo : Timeout))
+(def (basic-socket-set-output-timeout! (sock : basic-socket) (timeo : IOTimeout))
   (do-with-write-lock sock.lock
     (do-check-device-output sock.dev
       (set! sock.timeo-out timeo))))

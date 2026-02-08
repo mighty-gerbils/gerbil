@@ -112,12 +112,12 @@
   => :boolean
   (fx= dev.dir 0))
 
-(def (device-wait-input! (dev : OSDevice) (timeo : Timeout))
+(def (device-wait-input! (dev : OSDevice) (timeo : IOTimeout))
   (do-check-device-input device-wait-input! dev
     (let (ioc (macro-raw-device-port-rdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))
 
-(def (device-wait-output! (dev : OSDevice) (timeo : Timeout))
+(def (device-wait-output! (dev : OSDevice) (timeo : IOTimeout))
   (do-check-device-output device-wait-output! dev
     (let (ioc (macro-raw-device-port-wdevice-condvar dev.raw))
       (##wait-for-io! ioc (__device-timeout timeo)))))

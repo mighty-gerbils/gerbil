@@ -4,28 +4,16 @@
 (import :std/error
         ./list-builder)
 
-(export
-  unique unique! duplicates delete-duplicates/hash
-  length=? length=n?
-  length<? length<n? length<=? length<=n?
-  length>? length>n? length>=? length>=n?
-  snoc append1
-  for-each!
-  push! pop!
-  flatten flatten1
-  rassoc
-  when/list when-list-or-empty listify keyword-when
-  slice slice-right
-  slice! slice-right!
-  butlast
-  split
-  take-until take-until! drop-until
-  group-consecutive group-n-consecutive group-same
-  map/car
-  every-consecutive?
-  separate-keyword-arguments
-  first-and-only
-  )
+(export #t)
+
+(def (append-map proc lst)
+  (let loop ((rest lst) (result []))
+    (match rest
+      ([hd . tl]
+      (let (next (proc hd))
+        (loop tl (cons next result))))
+      (else
+       (foldl (lambda (next r) (foldl cons r next)) rest result)))))
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
@@ -302,12 +290,46 @@
 (def (take-until  pred list) (take-while  (? (not pred)) list))
 (def (take-until! pred list) (take-while! (? (not pred)) list))
 
+(def (take-while pred lst)
+  (let loop ((rest lst))
+    (match rest
+      ([hd . tl]
+       (if (pred hd)
+         (cons hd (loop tl))))
+      (else rest))))
+
+(def (take-while! pred lst)
+  (match lst
+    ([hd . tl]
+     (if (pred hd)
+       (let loop ((rest tl) (prev lst))
+         (match rest
+           ([hd . tl]
+            (if (pred hd)
+              (loop tl rest)
+              (begin
+                (set! (cdr prev) [])
+                lst)))
+           (else
+            (set! (cdr prev) rest))))
+       []))))
+
 ;; drop-until returns a list with all elements from the point on pred returns #t.
 ;;
 ;; Example:
 ;;  (drop-until number? ['a [] "hi" 1 'c]) => (1 c)
 ;; : (List X) (X -> Bool) -> (List X)
 (def (drop-until pred list) (drop-while (? (not pred)) list))
+
+(def (drop-while pred lst)
+  (let loop ((rest lst))
+    (match rest
+      ([hd . tl]
+       (if (pred hd)
+         (loop tl)
+         rest))
+     (else rest))))
+
 
 ;; group consecutive equal elements of the list lst into a list-of-lists.
 ;; Example:

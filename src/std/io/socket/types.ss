@@ -10,8 +10,8 @@
 (defstruct basic-socket
   ((dev         :- SocketDevice)
    (lock        :- RWLock)
-   (timeo-in    :- Timeout)
-   (timeo-out   :- Timeout)
+   (timeo-in    :- IOTimeout)
+   (timeo-out   :- IOTimeout)
    (local       :? Address)
    (remote      :? Address))
   constructor: :init!)

@@ -2,10 +2,10 @@
 ;;; © vyzo
 ;;; asynchronous completions
 (import :std/error)
-(export make-completion
-        Completion
+(export Completion
         Completion?
-        completion-ready?
+        (rename: make-Completion make-completion)
+        (rename: Completion-ready? completion-ready?)
         completion-wait!
         completion-post!
         completion-error!

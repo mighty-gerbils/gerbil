@@ -36,7 +36,7 @@
 (def default-backlog 10)
 
 (def (tcp-connect (addr  : InetAddress)
-                  (timeo : Timeout := !NoTimeout))
+                  (timeo : IOTimeout := !NoTimeout))
   => StreamSocket
   (let (sock (connect addr SOCK_STREAM IPPROTO_TCP timeo))
     (with-error-device-close
@@ -55,7 +55,7 @@
       (ServerSocket server-sock))))
 
 (def (unix-connect (addr  : UnixAddress)
-                   (timeo : Timeout := !NoTimeout))
+                   (timeo : IOTimeout := !NoTimeout))
   => StreamSocket
   (let (sock (connect addr SOCK_STREAM 0 timeo))
     (using (stream-sock (make-stream-socket sock) : stream-socket)
@@ -71,7 +71,7 @@
       (set! server-sock.local addr)
       (ServerSocket server-sock))))
 
-(def (stream-connect (addr : Address) (timeo : Timeout := !NoTimeout))
+(def (stream-connect (addr : Address) (timeo : IOTimeout := !NoTimeout))
   => StreamSocket
   (using (addr (resolve-address->endpoint addr) :- EndpointAddress)
     (case addr.domain

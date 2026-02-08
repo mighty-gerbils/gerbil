@@ -15,7 +15,7 @@
 (def (connect (addr  : EndpointAddress)
               (type  : :fixnum)
               (proto : :fixnum)
-              (timeo : Timeout))
+              (timeo : IOTimeout))
   => SocketDevice
   (let (domain
         (case addr.domain

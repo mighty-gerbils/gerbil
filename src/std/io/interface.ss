@@ -105,10 +105,10 @@
               (value  :  :t))
   => :void
   ;; input timeout
-  (set-input-timeout! (timeo : Timeout))
+  (set-input-timeout! (timeo : IOTimeout))
   => :void
   ;; output timeout
-  (set-output-timeout! (timeo : Timeout))
+  (set-output-timeout! (timeo : IOTimeout))
   => :void)
 
 (interface (ClientSocket Socket)

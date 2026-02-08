@@ -5,11 +5,11 @@
         ./time)
 (export #t)
 
-(defstruct Timeout (t)
+(defstruct IOTimeout (t)
   transparent: #t
   final: #t)
 
-(def !NoTimeout (Timeout #f))
+(def !NoTimeout (IOTimeout #f))
 
 (interface AbsTimeout
   (abs-timeout) => :t ;; (Maybe :time)
@@ -18,12 +18,14 @@
 (defcall-interface-method AbsTimeout abs-timeout
   (__abs-timeout obj))
 
-(implement AbsTimeout Timeout
+(implement AbsTimeout IOTimeout
   (abs-timeout
    (lambda (self)
-     (and self.t (__abs-timeout t)))))
+     (cond
+      (self.t => (cut __abs-timeout <>))
+      (else #f)))))
 
-(implement AbsTimeout InexectTime
+(implement AbsTimeout InexactTime
   (abs-timeout
    (lambda (self)
      (seconds->time self.time))))

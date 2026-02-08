@@ -154,7 +154,7 @@
   (UnboundKeyError "no value associated with key" irritants: [irritants ...]))
 
 (defraise/context (raise-arithmetic-overflow where irritants ...)
-  (ArithmeticOverflow "arithmetic operation overflow" irritats: [irritants ...]))
+  (ArithmeticOverflow "arithmetic operation overflow" irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

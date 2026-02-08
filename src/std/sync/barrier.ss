@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; thread barriers
 (import :std/error)
-(export make-barrier Barrier? Barrier
+(export Barrier? Barrier
+        (rename: make-Barrier make-barrier)
         barrier-wait!
         barrier-post!
         barrier-error!

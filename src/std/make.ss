@@ -9,6 +9,8 @@
         :std/sync/channel
         :std/sync/barrier
         :std/list/list
+        :std/list/list-builder
+        :std/list/plist
         :std/string/path
         :std/iter)
 (export make

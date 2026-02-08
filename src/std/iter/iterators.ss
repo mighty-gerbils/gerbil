@@ -2,13 +2,15 @@
 ;;; © vyzo
 ;;; common iterators
 (import :std/interface
+        :std/error
         ./interface)
 (export #t)
 
 (def (iter obj) => Iterator
   (cond
    ((Iterator? obj) obj)
-   ((try-Iterator obj))
+   ((try-Iterator obj)
+    => (lambda ((iter :- Iterator)) => Iterator iter))
    ((Iterable? obj)
     (using (iterable obj :- Iterable)
       (iterable.iter)))
@@ -22,6 +24,7 @@
 (defstruct fixnum-range
   ((cursor :- :fixnum)
    (end    :- :fixnum)
+   (step   :- :fixnum)
    (cmp    :- :procedure))
   final: #t)
 
@@ -38,6 +41,7 @@
 (defstruct number-range
   ((cursor :- :number)
    (end    :- :number)
+   (step   :- :number)
    (cmp    :- :procedure))
   final: #t)
 
@@ -53,7 +57,7 @@
 
 (defsyntax-case __in-number-range ()
   ((_ start end step cmp)
-   (with-identifier (fxcmp #'cmp "##fx" #'cmp)
+   (with-identifier (fxcmp #'cmp "fx" #'cmp)
      #'(cond
         ((and (fixnum? start) (fixnum? end) (fixnum? step))
          (Iterator (fixnum-range start end step fxcmp)))
@@ -95,7 +99,7 @@
     ((< step 0)
      (iter-in-range> start end step))
     (else
-     (raise-contract-violation in-range "non zero step" step)))))
+     (raise-bad-argument in-range "non zero step" step)))))
 
 (def* in-range-inclusive
   (((end : :number))
@@ -114,15 +118,15 @@
     ((< step 0)
      (iter-in-range>= start end step))
     (else
-     (raise-contract-violation in-range-inclusive "non zero step" step)))))
+     (raise-bad-argument in-range-inclusive "non zero step" step)))))
 
-(defstruct number-range
+(defstruct number-series
   ((cursor :- :number)
    (succ   :- :procedure)
    (stop?  :- :procedure))
   final: #t)
 
-(implement Iterator number-range
+(implement Iterator number-series
   (next!
    (lambda (self)
      (if (self.stop? self.cursor)
@@ -133,10 +137,10 @@
 
 (def (in-integers (start : :integer := 0) (step : :integer := 1))
   => Iterator
-  (Iterator (make-number-range start (cut + <> step) (lambda (x) #f))))
+  (Iterator (make-number-series start (cut + <> step) (lambda (x) #f))))
 
-(def (in-numbers (start : :number) (succ : :procedure) (stop? : :procedure))
-  (Iterator (make-number-range start succ stop?)))
+(def (in-number-series (start : :number) (succ : :procedure) (stop? : :procedure))
+  (Iterator (make-number-series start succ stop?)))
 
 (defstruct list-iterator (cursor)
   final: #t)
@@ -163,9 +167,9 @@
 (implement Iterable :list
   (iter __in-list))
 
-(defstruct vector-iterastor
-  ((vector :- vector)
-   (cursor  :- :fixnum))
+(defstruct vector-iterator
+  ((vector :- :vector)
+   (cursor :- :fixnum))
   final: #t)
 
 (implement Iterator vector-iterator
@@ -235,7 +239,7 @@
   => Iterator
   (let (tab (&interface-instance-object ht))
     (if (raw-table? tab)
-      (raw-table-iter tab hash-iter-keys-e)
+      (raw-table-iter tab hash-iter-key-e)
       (hash-iter ht hash-iter-key-e))))
 
 (def (in-hash-values (ht : HashTable))
@@ -254,7 +258,7 @@
 
 (defstruct coroutine-iterator
   ((proc     :- :procedure)
-   (contiune :- :procedure)
+   (continue :- :procedure)
    (done?    :- :boolean))
   final: #t)
 
