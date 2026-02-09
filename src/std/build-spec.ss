@@ -26,6 +26,7 @@
     "sync/completion"
     "sync/channel"
     "sync/barrier"
+    "sync/wg"
 
     "time/time"
     "time/timeout"

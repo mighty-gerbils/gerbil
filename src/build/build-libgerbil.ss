@@ -7,7 +7,7 @@
         :std/build-config
         :std/make
         :std/iter
-        :std/misc/wg)
+        :std/sync/wg)
 
 (include "../std/build-spec.ss")
 
