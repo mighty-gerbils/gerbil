@@ -85,7 +85,7 @@ namespace: #f
     (begin-annotation
         (@mop.class class               ; type-id
                     (t::t)              ; super
-                    (id name super flags fields
+                    (id name flags super fields
                         precedence-list slot-vector slot-table
                         properties constructor methods
                         specializer interface) ; slots
