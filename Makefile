@@ -29,9 +29,11 @@ repl:
 check:
 	./build.sh env gxtest ./...
 
-mostly-clean:
-	rm -rf build/lib/gerbil
+stdlib-clean:
 	rm -rf build/lib/std
+
+mostly-clean: stdlib-clean
+	rm -rf build/lib/gerbil
 	rm -rf build/lib/static
 
 boot-clean: mostly-clean
