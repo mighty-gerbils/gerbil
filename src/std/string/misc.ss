@@ -13,17 +13,11 @@
   string-substitute-char-if
   string-whitespace?
   random-string
-  str str-format
   +cr+ +lf+ +crlf+
   as-string<?)
 
-(import
-  (only-in :gerbil/gambit write-substring write-string random-integer)
-  (only-in :std/error raise-bad-argument)
-  (only-in :std/srfi/13 string-every string-suffix? string-drop-right string-drop)
-  (only-in :std/format format fprintf)
-  (only-in :std/iter for in-range)
-  (only-in ./number decrement!))
+(import :std/error
+        :std/iter)
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -31,6 +25,9 @@
   (if (string-prefix? prefix string)
     (string-drop string (string-length prefix))
     string))
+
+(def (string-drop (s : :string) (count : :fixnum))
+  (substring s count (string-length s)))
 
 ;; Split a string based on the given prefix, if present.
 ;; Return two values:
@@ -47,6 +44,9 @@
   (if (string-suffix? suffix string)
     (string-drop-right string (string-length suffix))
     string))
+
+(def (string-drop-right (s : :string) (count : :fixnum))
+  (substring s 0 (fx- (string-length s) count)))
 
 ;; Split a string based on the given suffix, if present.
 ;; Return two values:
@@ -195,6 +195,15 @@
 (def (string-whitespace? s)
   (string-every char-whitespace? s))
 
+(def (string-every (pred : :procedure) (s : :string)) => :boolean
+  (let (len (string-length s))
+    (let loop ((i 0 :- :fixnum)) => :boolean
+      (if (fx< i len)
+        (let (next (string-ref s i))
+          (if (pred next)
+            (loop (fx+ i 1))
+            #f))
+        #t))))
 
 (def (random-word-char)
   (declare (not safe) (fixnum))
@@ -230,21 +239,21 @@
 ;; Examples:
 ;;  (str 2.0)               => "2.0"
 ;;  (str "hello" ", world") => "hello, world"
-(def* str
-  ((v) (if (string? v) v
-           (format (str-format v) v)))
-  (xs (if (andmap string? xs)
-        (string-concatenate xs)
-        (call-with-output-string
-         (lambda (port)
-           (let loop ((rest xs))
-             (match rest
-               ([v . rest]
-                (if (string? v)
-                  (write-string v port)
-                  (fprintf port (str-format v) v))
-                (loop rest))
-               (else (void)))))))))
+;; (def* str
+;;   ((v) (if (string? v) v
+;;            (format (str-format v) v)))
+;;   (xs (if (andmap string? xs)
+;;         (string-concatenate xs)
+;;         (call-with-output-string
+;;          (lambda (port)
+;;            (let loop ((rest xs))
+;;              (match rest
+;;                ([v . rest]
+;;                 (if (string? v)
+;;                   (write-string v port)
+;;                   (fprintf port (str-format v) v))
+;;                 (loop rest))
+;;                (else (void)))))))))
 
 ;; str-format takes any value and returns a formatting string, which can be
 ;; used by the :std/format family of procedures. Considers the :pr method
@@ -253,12 +262,12 @@
 ;; Examples:
 ;;  (str-format 5.0)   => "~f"
 ;;  (str-format [1 2]) => "~r"
-(def (str-format v)
-  (def (obj-pr? v) (method-ref v ':pr))
-  (cond
-   ((? (and number? inexact?) v) "~f")
-   ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
-   (else "~a")))
+;; (def (str-format v)
+;;   (def (obj-pr? v) (method-ref v ':pr))
+;;   (cond
+;;    ((? (and number? inexact?) v) "~f")
+;;    ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
+;;    (else "~a")))
 
 ;; Like CL SUBSTITUTE-IF but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char-if
@@ -278,7 +287,7 @@
       (for (i (if from-end? (in-range (1- end) (1- start) -1) (in-range start end)))
         (when (predicate (string-ref s i))
           (string-set! s i newchar)
-          (decrement! count)
+          (set! count (fx1- count))
           (when (zero? count) (return)))))
      (else
       (for (i (in-range start end))

@@ -36,6 +36,11 @@
     "test/unit"
     "test"
 
+    "hash"
+    "string/misc"
+
+    "cli/getopt"
+
     ;; TODO
 
     ;; "ffi"

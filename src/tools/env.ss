@@ -12,7 +12,7 @@
   (option 'gerbil-path "-G" "--gerbil-path"
     help: "specifies the GERBIL_PATH for ensemble operations"))
 
-(def (setup-local-env! opt)
+(def (setup-local-env! (opt : HashTable))
   (cond
    ((hash-get opt 'gerbil-path)
     => (lambda (path)
