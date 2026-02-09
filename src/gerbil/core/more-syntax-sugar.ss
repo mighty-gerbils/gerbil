@@ -5,7 +5,7 @@
 prelude: :<root>
 package: gerbil/core
 
-(import "runtime" "expander" "sugar"
+(import "runtime" "expander" "sugar" "more-sugar"
         (phi: +1 "runtime" "expander" "sugar"))
 (export #t)
 

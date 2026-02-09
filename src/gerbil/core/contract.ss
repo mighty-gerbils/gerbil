@@ -2042,7 +2042,7 @@ package: gerbil/core
                              ([arg . args-rest]
                               (let* ((id (if (stx-list? spec) (stx-car spec) spec))
                                      (bindings (cons [id arg] bindings)))
-                                (loop rest (cons key fullfilled) bindings)))
+                                (loop args-rest (cons key fullfilled) bindings)))
                              (else
                               (raise-syntax-error #f "missing value for keyword argument" stx first)))))
                      (else
