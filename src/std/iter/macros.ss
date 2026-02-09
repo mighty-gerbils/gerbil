@@ -10,7 +10,7 @@
 (begin-syntax
   (def (binding-contract? contract)
     (and (signature-contract? contract)
-         (not (member ':= contract free-identifier=?))))
+         (not (member ':= (syntax->list contract) free-identifier=?))))
 
   (def (for-binding? bind)
     (syntax-case bind (when unless)
@@ -43,15 +43,19 @@
   (def (make-lambda id traits body)
     (if (stx-null? traits)
       (with-syntax ((id id) (body (make-lambda-body id [] body)))
-         (syntax/loc stx
-           (lambda (id) body)))
+        (syntax/loc stx
+          (lambda (id) body)))
       (syntax-case traits ()
         ((filter-op filter-expr . contract)
          (and (identifier? #'filter-op)
               (member #'filter-op '(when unless) free-identifier=?))
          (with-syntax ((id id) (body (make-lambda-body id #'contract body)))
            (syntax/loc stx
-             (lambda (id) (filter-op filter-expr body))))))))
+             (lambda (id) (filter-op filter-expr body)))))
+        (contract
+         (with-syntax ((id id) (body (make-lambda-body id #'contract body)))
+           (syntax/loc stx
+             (lambda (id) body)))))))
 
   (def (make-lambda-body id contract body)
     (if (stx-null? contract)

@@ -73,11 +73,30 @@
   final: #t)
 
 (defclass (TestSuite TestObject) ()
+  constructor: :init!
   final: #t)
 
 (defclass (TestCase TestObject)
-  ((thunk   : :procedure))
+  ((main : :procedure))
+  constructor: :init!
   final: #t)
+
+(defmethod {:init! TestSuite}
+  (lambda (self (desc : :string) (thunk : :procedure))
+    (set! self.info     desc)
+    (set! self.subtests [])
+    (set! self.results  [])
+    (set! self.init!    thunk)
+    (set! self.finish!  void)))
+
+(defmethod {:init! TestCase}
+  (lambda (self (desc : :string) (thunk : :procedure))
+    (set! self.info     desc)
+    (set! self.subtests [])
+    (set! self.results  [])
+    (set! self.init!    void)
+    (set! self.finish!  void)
+    (set! self.main     thunk)))
 
 (def current-test-exit
   (make-parameter #f))
@@ -112,13 +131,13 @@
      TestObject))
 
 (def (test-summarize-results (ctx : :t) (results : :list)) => TestResult
-  (let (errors (filter test-result-error? mod.results))
+  (let (errors (filter test-result-error? results))
     (if (null? errors)
       (test-result-ok ctx)
       (test-result-errors ctx errors))))
 
 (defsyntax-case do-test! ()
-  ((_ test CONTEXT param expr)
+  ((_ test CONTEXT param body rest ...)
    (with-identifiers ((test.init!    #'test #'test ".init!")
                       (test.finish!  #'test #'test ".finish!")
                       (test.results  #'test #'test ".results"))
@@ -130,9 +149,9 @@
              (notice CONTEXT ctx)
              (try
               (test.init!)
-              expr
+              (begin body rest ...)
               (test.finish!)
-              (notice CONTEXT-OK ctx)
+              (notice OK ctx)
               (set! test.results (reverse! test.results))
               (test-summarize-results ctx test.results)
               (catch (e)
@@ -141,20 +160,21 @@
 
 (defsyntax-case do-subtest! ()
   ((_ test CONTEXT param run-it! SubtestType)
-   (with-identifiers ((test.subtests #'test #'test ".subtests")
+   (with-identifiers ((test.results  #'test #'test ".results")
+                      (test.subtests #'test #'test ".subtests")
                       (subtest       '$subtest))
-     (do-test! test CONTEXT param
-               (for (subtest (in-list test.subtests) : SubtestType)
-                 (let (result
-                       (let/cc E
-                         (parameterize ((current-test-exit E))
-                           (run-it! subtest))))
-                   (set! test.results (cons result test.results))))))))
+     #'(do-test! test CONTEXT param
+                 (for (subtest (in-list test.subtests) : SubtestType)
+                   (let (result
+                         (let/cc E
+                           (parameterize ((current-test-exit E))
+                             (run-it! subtest))))
+                     (set! test.results (cons result test.results))))))))
 
 (def (test-run! (harness : TestHarness)) => TestResult
   (if harness.config.capture-output?
     (let ((stdout (open-output-string))
-          (stderr (opten-output-string)))
+          (stderr (open-output-string)))
       (parameterize ((current-output-port stdout)
                      (current-error-port  stderr))
         (let (result (test-harness! harness))
@@ -165,23 +185,30 @@
 
 (def (test-harness! (harness : TestHarness)) => TestResult
   (parameterize ((current-test-config harness.config))
-    (do-subtest! harness HARNESS current-test-harness test-run-module! TestModule)))
+    (do-subtest! harness HARNESS current-test-harness test-module! TestModule)))
 
-(def (test-run-module! (mod : TestModule)) => TestResult
-  (do-subtest! mod MODULE current-test-module test-run-suite! TestSuite))
+(def (test-module! (mod : TestModule)) => TestResult
+  (do-subtest! mod MODULE current-test-module test-suite! TestSuite))
 
-(def (test-run-suite! (suite : TestSuite)) => TestResult
-  (do-subtest! suite SUITE current-test-suite test-run-case! TestCase))
+(def (test-suite! (suite : TestSuite)) => TestResult
+  (do-subtest! suite SUITE current-test-suite test-case! TestCase))
 
-(def (test-run-case! (tc : TestCase)) => TestResult
-  (do-test! tc CASE current-test-case tc.thunk))
+(def (test-case! (tc : TestCase)) => TestResult
+  (do-test! tc CASE current-test-case (tc.main)))
 
 ;; invoked from check macros
+(def (test-case-add! (desc : :string)
+                     (tc   : TestCase))
+  => :void
+  (using (suite (current-test-suite) : TestSuite)
+    (set! suite.subtests
+      (foldr cons [tc] suite.subtests))))
+
 (def (test-check! (desc : :t) (where : :string) (thunk : :procedure)) => :void
   (let (result
         (let/cc E
           (parameterize ((current-test-exit E))
-            (test-do-check! desc where tunk))))
+            (test-do-check! desc where thunk))))
     (def (add-result! (to : TestObject))
       (set! to.results
         (cons result to.results)))
@@ -203,41 +230,54 @@
 
 (defsyntax-case notice ()
   ((_ type ctx args ...)
-   (let* ((base-type-str (symol->string (stx-e #'type)))
+   (identifier? #'type)
+   (let* ((base-type-str (symbol->string (stx-e #'type)))
           (base-type-str
            (if (string-suffix? "-OK" base-type-str)
-             (substring base-type-string 0 (fx- (string-length base-type-str) 3))
+             (substring base-type-str 0 (fx- (string-length base-type-str) 3))
              base-type-str))
           (verbosity-str
            (string-append "VERBOSITY-" base-type-str)))
      (with-identifiers ((base-type #'type base-type-str)
                         (verbosity #'type verbosity-str))
-       #'(let (current-verbosity (current-test-verbosity))
-           (when (fx>= verbosity current-verbosity)
-             (if (eq? 'type 'ERROR)
-               (notice-error ctx args ...)
-               (notice-ok ctx args ...))))))))
+       (with-syntax
+           ((do-notice
+             (if (eq? (stx-e #'type) 'ERROR)
+               #'(notice-error ctx args ...)
+               #'(notice-ok ctx args ...))))
+         #'(let (current-verbosity (current-test-verbosity))
+             (when (fx>= verbosity current-verbosity)
+               do-notice)))))))
+
+(def (display-context ctx flush?)
+  (with ([sym to . rest] ctx)
+    (cond
+     ((TestObject? to)
+      (using (to :- TestObject)
+        (displayln sym " " to.info)))
+     (else
+      (display sym)
+      (display " ")
+      (display to)
+      (let loop ((rest rest))
+        (match rest
+          ([hd . rest]
+           (display " ")
+           (display hd)
+           (loop rest))
+          (else
+           (newline)
+           (when flush?
+             (force-output)))))))))
 
 (def (notice-error ctx e)
   (parameterize ((current-output-port (current-error-port)))
-    (with ([sym to] ctx)
-      (cond
-       ((TypeObject? to)
-        (using (to :- TypeObject)
-          (displayln sym " " to.info)))
-       (else
-        (displayln sym " " to))))
+    (display-context ctx #f)
     (display-exception e)
     (force-output)))
 
 (def (notice-ok ctx)
-  (with ([sym to] ctx)
-    (cond
-     ((TypeObject? to)
-      (using (to :- TypeObject)
-        (displayln sym " " to.info)))
-     (else
-      (displayln sym " " to)))))
+  (display-context ctx #t))
 
 (def (current-test-verbosity) => :fixnum
   (cond

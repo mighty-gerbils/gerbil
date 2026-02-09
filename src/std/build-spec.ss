@@ -34,9 +34,9 @@
 
     "test/base"
     "test/unit"
+    "test.ss"
 
-    ;; TODO till gxtest
-    ;; "test"
+    ;; TODO
 
     ;; "ffi"
     ;; "object"
