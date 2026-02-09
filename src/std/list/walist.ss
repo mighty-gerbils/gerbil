@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo, fare
 ;;; wrapped associative lists
-(import :std/error)
+(import :std/error :std/list/alist)
 (export
   AList AList?
   PureAList PureAList?
@@ -48,7 +48,7 @@
 
 (defstruct ConcreteAList ((alist :- :list) (t :- :fixnum))
   print: (alist t)
-  equal: #t)
+  transparent: #t)
 
 (defstruct (PureAList AList ConcreteAList) ()
   transparent: #t)
@@ -198,7 +198,7 @@
        (alist-method walistv!-method proc walistv!)))
     (def (proc (w : ConcreteAList) arg ...) => return
       (declare (not safe))
-      (:- ((vector-ref ___acons w.t) w arg ...) return))))
+      (:- ((vector-ref table w.t) w arg ...) return))))
 
 (defrules alist-method ()
   ((_ undefined where wamethod)
@@ -243,7 +243,7 @@
 
 (defrule (defassoc proc klass assf)
   (def (proc (w :- klass) k)
-    (assf w.alist k)))
+    (assf k w.alist)))
 
 (defassoc ___walist-assoc   WAList     assoc)
 (defassoc ___walistq-assoc  WAListq    assq)

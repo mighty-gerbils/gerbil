@@ -11,7 +11,9 @@
 
     "list/list-builder"
     "list/list"
+    "list/alist"
     "list/plist"
+    "list/walist"
 
     "string/path"
 
