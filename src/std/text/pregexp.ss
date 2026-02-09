@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Dorai Sitaram's pregexp, slightly modified
-(import :std/error
-        :std/sugar)
+(import :std/error)
 (export pregexp
         pregexp-match-positions
         pregexp-match

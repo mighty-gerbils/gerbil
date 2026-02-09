@@ -3,33 +3,31 @@
 ;;; tool to run tests without the need of glue code
 (import :gerbil/expander
         :std/cli/getopt
-        :std/format
-        :std/misc/ports
         :std/iter
-        :std/pregexp
-        :std/sort
-        :std/srfi/13
-        :std/sugar
-        :std/test
+        :std/hash
+        :std/text/pregexp
+        :std/test/base
         ./env)
 (export main)
 
-(extern namespace: "std/test"
-  !test-suite-error)
+(def (features->list features)
+  (map string->symbol (string-split features #\,)))
 
 (def (main . args)
   (call-with-getopt gxtest-main args
     program: "gxtest"
-    help: "run Gerbil tests in the command line"
+    help: "run Gerbil tests"
     global-env-flag
-    (flag 'verbose "-v"
-          help: "run in verbose mode where all test execution progress is displayed in stdout.")
-    (flag 'quiet "-q" "--quiet"
-	  help: "run in in quiet mode where only errors are displayed")
+    (option 'verbosity "-v" "--verbosity"
+            value: string->number
+            default: 3
+            help: "set the test verobisyt mode")
     (option 'run "-r" "--run"
             help: "only run test suites whose name matches a given regex")
-     ;; TODO this should be a multi-option for multiple features
+    ;; TODO this should be a multi-option for multiple feature when getopt supports it
     (option 'features "-D"
+            value: features->list
+            default: []
             help: "define one or more conditional expansion feature (comma separated) for enabling tests that require external services")
     (rest-arguments 'args
                     help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
@@ -39,66 +37,36 @@
   (let-hash opt
     (cond
      ((null? .args)
-      (run-tests ["."] .run .features .?verbose .?quiet))
+      (run-tests ["."] .run .features .verbosity))
      (else
-      (run-tests .args .run .features .?verbose .?quiet)))))
+      (run-tests .args .run .features .verbosity)))))
 
-(def (run-tests args filter features verbose? quiet?)
+(def (run-tests args filter features verbosity)
   (def import-errors [])
-  (def filter-rx (and filter (pregexp filter)))
+
+  (def (display-test-result result)
+    (if (test-result-ok? result)
+     (begin
+       (displayln 'OK)
+       (force-output))
+     (notice-error `(HARNESS ,args) result)))
 
   (when features
-    (let* ((features (string-split features #\,))
-           (features (map string->symbol features))
-           (root (core-context-root)))
+    (let (root (core-context-root))
       (for (feature features)
         (core-bind-feature! feature #f 0 root))))
 
-  (set-test-verbose! verbose?)
-  (test-begin!)
-
-  (let* ((files (collect-files args))
-         ((values suites errors) (prepare-suites files)))
-    (set! import-errors errors)
-    (for ([file setup! cleanup! suites] suites)
-      (let (suites (if filter (apply-filter filter-rx suites) suites))
-        (unless (null? suites)
-          (try
-           (displayln "=== " file)
-           (force-output)
-           (when setup!
-             (displayln ">>> setup")
-             (force-output)
-             (setup!))
-           (for ([name . suite] suites)
-             (displayln ">>> run " name)
-	     (let (buf (and quiet? (open-string "")))
-	       (parameterize ((current-error-port
-			       (or buf (current-error-port)))
-			      (current-output-port
-			       (or buf (current-output-port))))
-		 (run-test-suite! suite))
-	       (when buf (close-port buf))
-	       (when (and quiet? (!test-suite-error suite))
-		 (copy-port buf (current-output-port)))))
-           (finally
-            (when cleanup!
-              (displayln ">>> cleanup")
-              (force-output)
-              (cleanup!)))))))
-
-    (let (result (test-result))
-      (unless (null? import-errors)
-        (displayln "*** ERROR: there were errors importing the following test files, which were not run:")
-        (for-each displayln import-errors)
-        (exit 42))
-
-      (displayln result)
-      (unless (eq? result 'OK)
-        (exit 42)))))
+  (let* ((files   (collect-files args))
+         (allow   (if filter
+                    (let (rx (pregexp filter))
+                      (lambda (sym) (pregexp-match rx (symbol->string sym))))
+                    (lambda (sym) #t)))
+         (harness (prepare-harness files allow verbosity))
+         (result  (test-run! harness)))
+    (display-test-result result)))
 
 (def (collect-files args)
-  (reverse
+  (reverse!
    (for/fold (result []) (arg args)
      (cond
       ((string-suffix? "/..." arg)
@@ -123,60 +91,65 @@
      (else result))))
 
 (def (get-directory-files dir)
-  (sort (directory-files dir) string<?))
+  (list-sort string<? (directory-files dir)))
 
-(def (prepare-suites files)
-  (def errors [])
-  (values
-   (reverse
-    (for/fold (result []) (file files)
-      (let (ctx (try-import-module file))
-        (if ctx
-          (cons (cons file (prepare-suites-for-module ctx)) result)
-          (begin
-            (set! errors (cons file errors))
-            result)))))
-   errors))
+(def (prepare-harness (files : :list) (allow? : :procedure) (verbosity : :fixnum))
+  => TestHarness
+  (let* ((modules
+          (for/fold (r []) (file files : :string)
+            (cons (prepare-module file allow?) r)))
+         (desc
+          (object->string files))
+         (config
+          (TestConfig verbosity: verbosity capture-output?: #f)))
+    (TestHarness desc config modules)))
 
-(def (prepare-suites-for-module ctx)
-  (def setup! #f)
-  (def cleanup! #f)
-  (let (suites
-        (for/fold (suites []) (exported (module-context-export ctx))
-          (cond
-           ((and (runtime-export? exported)
-                 (string-suffix? "-test" (symbol->string (module-export-name exported))))
-            (cons (cons (module-export-name exported) (eval-export exported))
-                  suites))
-           ((and (runtime-export? exported)
-                 (eq? (module-export-name exported) 'test-setup!))
-            (set! setup! (eval-export exported))
-            suites)
-           ((and (runtime-export? exported)
-                 (eq? (module-export-name exported) 'test-cleanup!))
-            (set! cleanup! (eval-export exported))
-            suites)
-           (else suites))))
-    [setup! cleanup! suites]))
+(def (prepare-module (file : :string) (accept? : :procedure))
+  => TestModule
+  (try
+   (let* ((ctx     (import-module file #f #t))
+          (exports (module-context-export ctx)))
+     (let loop ((rest exports) (init #f) (finish #f) (suites []))
+       (match rest
+         ([export . rest]
+          (if (runtime-export? export)
+            (let (name (module-export-name export))
+              (cond
+               ((eq? name 'test-setup!)
+                (loop rest
+                      (: (eval-export export) :procedure)
+                      finish
+                      suites))
+               ((eq? name 'test-cleanup!)
+                (loop rest
+                      init
+                      (: (eval-export export) :procedure)
+                      suites))
+               (else
+                (let (name-str (symbol->string name))
+                  (if (and (string-suffix? "-test" name-str)
+                           (accept? name-str))
+                    (loop rest init finish
+                          (cons (: (eval-export export) TestSuite) suites))
+                    (loop rest init finish suites))))))
+            (loop rest init finish suites)))
+         (else
+          (TestModule file
+                      (reverse! suites)
+                      []
+                      (or init void)
+                      (or finish void))))))
+   (catch (e)
+      ;; import failed
+      (TestModule file
+                  []
+                  []
+                  (lambda () (raise e))
+                  void))))
 
 (def (runtime-export? exported)
-  (= (module-export-phi exported) 0))
+  (fx= (module-export-phi exported) 0))
 
 (def (eval-export exported)
   (let (bind (core-resolve-module-export exported))
     (eval (binding-id bind))))
-
-(def (try-import-module file)
-  (try
-   (import-module file #f #t)
-   (catch (e)
-     (eprintf "*** Error importing ~a: " file)
-     (display-exception e (current-error-port))
-     #f)))
-
-(def (apply-filter filter-rx suites)
-  (filter-map
-   (lambda (s)
-     (with ([name . suite] s)
-       (and (pregexp-match filter-rx (symbol->string name)) s)))
-   suites))

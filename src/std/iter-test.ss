@@ -4,13 +4,11 @@
 
 (import :std/test
         :std/error
-        :std/iter
-        (only-in :std/sugar hash)
-        (only-in :gerbil/core error-object? with-catch))
+        :std/iter)
 (export iter-test)
 
 (def (my-generator n)
-  (lambda ()
+  (lambda (yield)
     (let lp ((k 0))
       (when (< k n)
         (yield k)
@@ -30,30 +28,15 @@
           (displayln x " " y)))
       (check-output (test-for-2) "1 a\n2 b\n3 c\n")
 
-      (def (test-for-3-in-iota)
-        (for (x (in-iota 3))
-          (displayln x)))
-      (check-output (test-for-3-in-iota) "0\n1\n2\n")
-
       (def (test-for-3-in-range)
         (for (x (in-range 3))
           (displayln x)))
       (check-output (test-for-3-in-range) "0\n1\n2\n")
 
-      (def (test-for-4-in-iota)
-        (for (x (in-iota 4 3))
-          (displayln x)))
-      (check-output (test-for-4-in-iota) "3\n4\n5\n6\n")
-
       (def (test-for-4-in-range)
         (for (x (in-range 4 7))
           (displayln x)))
       (check-output (test-for-4-in-range) "4\n5\n6\n")
-
-      (def (test-for-5-in-iota)
-        (for (x (in-iota 3 5 2))
-          (displayln x)))
-      (check-output (test-for-5-in-iota) "5\n7\n9\n")
 
       (def (test-for-5-in-range)
         (for (x (in-range 5 10 2))
@@ -88,13 +71,13 @@
       (check (test-for/collect-1) => '((1 . a) (2 . b) (3 . c)))
 
       (def (test-for/collect-2-0)
-        (for/collect ((x (in-naturals))
+        (for/collect ((x (in-integers))
                       (y '#(a b c d)))
           (cons x y)))
       (check (test-for/collect-2-0) => '((0 . a) (1 . b) (2 . c) (3 . d)))
 
       (def (test-for/collect-2-1)
-        (for/collect ((x (in-naturals 1))
+        (for/collect ((x (in-integers 1))
                       (y '#(a b c d)))
           (cons x y)))
       (check (test-for/collect-2-1) => '((1 . a) (2 . b) (3 . c) (4 . d)))

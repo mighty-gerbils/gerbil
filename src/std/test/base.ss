@@ -55,31 +55,47 @@
 (def (test-result-error? (result : TestResult)) => :boolean
   (eq? result.result 'ERROR))
 
-(defclass TestObject
+(defstruct TestObject
   ((info     : :string)
    (subtests : :list)
    (results  : :list)
    (init!    : :procedure)
    (finish!  : :procedure))
-  print: (info results))
+  transparent: #t)
 
-(defclass (TestHarness TestObject)
+(defstruct (TestHarness TestObject)
   ((config  : TestConfig)
    (stdout  : :string)
    (stderr  : :string))
-  final: #t)
-
-(defclass (TestModule TestObject) ()
-  final: #t)
-
-(defclass (TestSuite TestObject) ()
   constructor: :init!
+  transparent: #t
   final: #t)
 
-(defclass (TestCase TestObject)
+(defstruct (TestModule TestObject) ()
+  transparent: #t
+  final: #t)
+
+(defstruct (TestSuite TestObject) ()
+  constructor: :init!
+  transparent: #t
+  final: #t)
+
+(defstruct (TestCase TestObject)
   ((main : :procedure))
   constructor: :init!
+  transparent: #t
   final: #t)
+
+(defmethod {:init! TestHarness}
+  (lambda (self (desc : :string) (config : TestConfig) (modules : :list))
+    (set! self.info     desc)
+    (set! self.subtests modules)
+    (set! self.results  [])
+    (set! self.init!    void)
+    (set! self.finish!  void)
+    (set! self.config   config)
+    (set! self.stdout   "")
+    (set! self.stderr   "")))
 
 (defmethod {:init! TestSuite}
   (lambda (self (desc : :string) (thunk : :procedure))
@@ -134,7 +150,7 @@
   (let (errors (filter test-result-error? results))
     (if (null? errors)
       (test-result-ok ctx)
-      (test-result-errors ctx errors))))
+      (test-result-errors ctx (reverse! errors)))))
 
 (defsyntax-case do-test! ()
   ((_ test CONTEXT param body rest ...)
@@ -145,14 +161,12 @@
                    (ERROR 'ERROR))
        #'(let (ctx `(CONTEXT ,test))
            (parameterize ((param test))
-             (set! test.results [])
              (notice CONTEXT ctx)
              (try
               (test.init!)
               (begin body rest ...)
               (test.finish!)
               (notice OK ctx)
-              (set! test.results (reverse! test.results))
               (test-summarize-results ctx test.results)
               (catch (e)
                 (notice ERROR ctx e)
@@ -197,8 +211,7 @@
   (do-test! tc CASE current-test-case (tc.main)))
 
 ;; invoked from check macros
-(def (test-case-add! (desc : :string)
-                     (tc   : TestCase))
+(def (test-case-add! (tc   : TestCase))
   => :void
   (using (suite (current-test-suite) : TestSuite)
     (set! suite.subtests
@@ -244,7 +257,7 @@
            ((do-notice
              (if (eq? (stx-e #'type) 'ERROR)
                #'(notice-error ctx args ...)
-               #'(notice-ok ctx args ...))))
+               #'(notice-info ctx args ...))))
          #'(let (current-verbosity (current-test-verbosity))
              (when (fx>= verbosity current-verbosity)
                do-notice)))))))
@@ -254,16 +267,15 @@
     (cond
      ((TestObject? to)
       (using (to :- TestObject)
-        (displayln sym " " to.info)))
+        (displayln sym " " to.info)
+        (when flush?
+          (force-output))))
      (else
-      (display sym)
-      (display " ")
-      (display to)
+      (display* sym " " to)
       (let loop ((rest rest))
         (match rest
           ([hd . rest]
-           (display " ")
-           (display hd)
+           (display* " " hd)
            (loop rest))
           (else
            (newline)
@@ -272,11 +284,27 @@
 
 (def (notice-error ctx e)
   (parameterize ((current-output-port (current-error-port)))
+    (display "ERROR ")
     (display-context ctx #f)
-    (display-exception e)
+    (display-test-error e)
     (force-output)))
 
-(def (notice-ok ctx)
+(def (display-test-error e)
+  (cond
+   ((TestResultError? e)
+    (using (err e :- TestResultError)
+      (display "at ")
+      (display-context err.context #f)
+      (display-exception err.exn)))
+   ((TestResultErrors? e)
+    (using (err e :- TestResultErrors)
+      (display "at ")
+      (display-context err.context #f)
+      (for-each display-test-error err.errors)))
+   (else
+    (display-exception e))))
+
+(def (notice-info ctx)
   (display-context ctx #t))
 
 (def (current-test-verbosity) => :fixnum

@@ -36,7 +36,6 @@
    (for-binding? #'bind)
    (for1 bind (let() body rest ...)))
   ((_ (bind ...) body rest ...)
-   (andmap for-binding? #'(bind ...))
    (forN (bind ...) (let () body rest ...))))
 
 (defsyntax (for1 stx)
@@ -129,16 +128,17 @@
   (for1-in-range-generic dispatch range <= >=))
 
 (defrules for1-in-range-generic ()
-  ((_ dispatch (start end step) < >)
+  ((_ dispatch (start end step) <? >?)
    (let (($start start) ($end end) ($step step))
      (cond
       ((> $step 0)
        (let loop ((k $start))
-         (unless (< k $end)
+         (when (<? k $end)
+           (dispatch k)
            (loop (+ k $step)))))
       ((< $step 0)
        (let loop ((k $start))
-         (unless (> k $end)
+         (when (>? k $end)
            (dispatch k)
            (loop (+ k $step)))))
       (else
@@ -146,8 +146,8 @@
   ((_ dispatch (start end) ops ...)
    (let (($start start) ($end end))
      (if (> $start $end)
-       (for1-in-range-generic dispatch (start end 1) ops ...)
-       (for1-in-range-generic dispatch (start end -1) ops ...))))
+       (for1-in-range-generic dispatch (start end -1) ops ...)
+       (for1-in-range-generic dispatch (start end 1) ops ...))))
   ((_ dispatch (end) ops ...)
    (for1-in-range-generic dispatch (0 end) ops ...)))
 
@@ -192,6 +192,7 @@
                (match?   #f))
       (syntax-case rest ()
         ((bind . rest)
+         (for-binding? #'bind)
          (syntax-case #'bind ()
            ((hd iter-expr . traits)
             (let (body
@@ -217,13 +218,25 @@
                          (raise-syntax-error #f "cannot apply contract to pattern" stx #'hd))))))
               (loop #'rest
                     (cons #'hd args)
-                    (cons #'it-expr it-exprs)
+                    (cons #'iter-expr it-exprs)
                     (cons (syntax-local-temp '$it) iters)
                     (cons (syntax-local-temp '$next) temps)
                     body
                     (or match? (not (identifier? #'hd))))))))
-        (_
-         (with-syntax (((arg ...) args)
+        ((filter-op filter-expr . filter-rest)
+         (and (identifier? #'filter-op)
+              (member #'filter-op '(when unless) free-identifier=?))
+         (let loop-filter ((rest #'(filter-op filter-expr . filter-rest)) (body body))
+           (syntax-case rest ()
+             ((filter-op filter-expr . filter-rest)
+              (and (identifier? #'filter-op)
+                   (member #'filter-op '(when unless) free-identifier=?))
+              (with-syntax ((body body))
+                (let (body #'(filter-op filter-expr body))
+                  (loop-filter #'filter-rest body))))
+             (() (loop [] args it-exprs iters temps body match?)))))
+        (()
+         (with-syntax (((arg ...) (reverse! args))
                        (body body))
            (values
             (if match?
@@ -239,7 +252,6 @@
 
   (syntax-case stx ()
     ((_ (bind ...) body)
-     (andmap for-binding? #'(bind ...))
      (let ((values dispatch it-exprs iters temps)
            (make-dispatch #'(bind ...) #'body))
        (with-syntax ((dispatch      dispatch)

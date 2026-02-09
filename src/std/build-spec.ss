@@ -31,6 +31,7 @@
     "time/timeout"
 
     "make"
+    "build-script"
 
     "test/base"
     "test/unit"
@@ -40,6 +41,8 @@
     "string/misc"
 
     "cli/getopt"
+
+    "text/pregexp"
 
     ;; TODO
 

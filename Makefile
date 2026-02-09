@@ -20,11 +20,17 @@ stage1:
 stdlib:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
 
+tools:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh tools
+
 rebootstrap:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env ./bootstrap.sh
 
 repl:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env gxi
+
+bash:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env bash
 
 check:
 	./build.sh env gxtest ./...
@@ -32,7 +38,10 @@ check:
 stdlib-clean:
 	rm -rf build/lib/std
 
-mostly-clean: stdlib-clean
+tools-clean:
+	rm -rf build/lib/gerbil/tools
+
+mostly-clean: stdlib-clean tools-clean
 	rm -rf build/lib/gerbil
 	rm -rf build/lib/static
 
