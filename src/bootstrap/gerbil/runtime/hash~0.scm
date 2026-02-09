@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/hash::timestamp 1770607521)
+  (define gerbil/runtime/hash::timestamp 1770660764)
   (begin
     (define UnboundKeyError::t
       (let ((__tmp159347 (list Error::t)))
@@ -4047,7 +4047,7 @@
               _%result151724%_))))
     (define __hash-ref__0
       (lambda (_%h151729%_ _%key151730%_)
-        (let ((_%default151732%_ (macro-absent-obj)))
+        (let ((_%default151732%_ absent-obj))
           (__hash-ref__% _%h151729%_ _%key151730%_ _%default151732%_))))
     (define __hash-ref
       (lambda _g159404_
@@ -4080,7 +4080,7 @@
           (__hash-ref__% _%h147542%_ _%key147533%_ _%default147534%_))))
     (define hash-ref__0
       (lambda (_%h147555%_ _%key147556%_)
-        (let ((_%default147558%_ (macro-absent-obj)))
+        (let ((_%default147558%_ absent-obj))
           (hash-ref__% _%h147555%_ _%key147556%_ _%default147558%_))))
     (define hash-ref
       (lambda _g159406_

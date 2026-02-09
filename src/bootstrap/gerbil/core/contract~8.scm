@@ -13764,7 +13764,7 @@
                                                   (cons _%arg71486%_ '()))
                                             _%bindings71420%_)))
                                 (_%loop71414%_
-                                 _%rest71445%_
+                                 _%args-rest71484%_
                                  (cons _%key71449%_ _%fullfilled71419%_)
                                  _%bindings71491%_)))))
                       (if (pair? _%rest7146071468%_)
