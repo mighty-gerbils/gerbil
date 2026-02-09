@@ -257,9 +257,9 @@
            ((do-notice
              (if (eq? (stx-e #'type) 'ERROR)
                #'(notice-error ctx args ...)
-               #'(notice-info ctx args ...))))
+               #'(notice-info 'type ctx args ...))))
          #'(let (current-verbosity (current-test-verbosity))
-             (when (fx>= verbosity current-verbosity)
+             (when (fx>= current-verbosity verbosity)
                do-notice)))))))
 
 (def (display-context ctx flush?)
@@ -304,8 +304,9 @@
    (else
     (display-exception e))))
 
-(def (notice-info ctx)
-  (display-context ctx #t))
+(def (notice-info t ctx)
+  (let (rectx (cons t (cdr ctx)))
+    (display-context rectx #t)))
 
 (def (current-test-verbosity) => :fixnum
   (cond
