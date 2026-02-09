@@ -63,7 +63,8 @@
                     (lambda (sym) #t)))
          (harness (prepare-harness files allow verbosity))
          (result  (test-run! harness)))
-    (display-test-result result)))
+    (display-test-result result)
+    (if (test-result-ok? result) 0 42)))
 
 (def (collect-files args)
   (reverse!
