@@ -34,7 +34,7 @@
 
     "test/base"
     "test/unit"
-    "test.ss"
+    "test"
 
     ;; TODO
 
