@@ -69,7 +69,7 @@
     (let* ((expected value)
            (result   expr))
       (unless (=? expected result)
-        (raise-test-error ctx "result doesn not match expectation"
+        (raise-test-error ctx "result does not match expectation"
                           test: 'expr
                           result: result
                           expectation: expected)))))
@@ -78,7 +78,7 @@
   (do-check! ctx expr
     (let (result expr)
       (unless (pred result)
-        (raise-test-error ctx "result doesn not satisfy expectation"
+        (raise-test-error ctx "result does not satisfy expectation"
                           test: 'expr
                           result: result
                           expectation: '(? pred))))))
@@ -91,7 +91,7 @@
         expr)
       (let (captured-output (get-output-string capture))
         (unless (string=? captured-output expected-output)
-          (raise-test-error ctx "output doesn not match expectation"
+          (raise-test-error ctx "output does not match expectation"
                             test: 'expr
                             result: captured-output
                             expectation: expected-output))))))
