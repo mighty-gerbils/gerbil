@@ -200,13 +200,13 @@
   (waref w k #f))
 
 (def (waput (w : PureAList) k v) => PureAList
-  (: (let/cc return
-       (let* ((op-test (__wa-test w))
-              (testf
-               (lambda ((p :- :pair) k)
-                 (op-test (car p) k)))
-              (wrapf (__wa-wrap w)))
-         (wrapf
+  (: (let* ((op-test (__wa-test w))
+            (testf
+             (lambda ((p :- :pair) k)
+               (op-test (car p) k)))
+            (wrapf (__wa-wrap w)))
+       (wrapf
+        (let/cc return
           (let loop ((rest w.alist))
             (match rest
               ([hd . rest]
@@ -214,7 +214,7 @@
                  (cons (cons k v) rest)
                  (cons hd (loop rest))))
               (else
-               (return w)))))))
+               (return (cons (cons k v) w.alist))))))))
      PureAList))
 
 (def (waput! (w : MutAList) k v) => MutAList
