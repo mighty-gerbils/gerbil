@@ -94,7 +94,7 @@ namespace: #f
                     #f                  ; final?
                     #f)                 ; metaclass
       (let* ((slots
-              '(id name super flags fields
+              '(id name flags super fields
                    precedence-list slot-vector slot-table properties constructor methods
                    specializer interface))
              (slot-vector
