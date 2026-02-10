@@ -53,4 +53,9 @@ clean:
 	rm -rf bootstrap
 	cd src/gambit && make clean
 
-.PHONY: all build install check clean mostly-clean
+real-clean:
+	rm -rf build
+	rm -rf bootstrap
+	cd src/gambit && make real-clean
+
+.PHONY: all build install boot stage0 stage1 stdlib tools rebootstrap repl bash check stdlib-clean tools-clean mostly-clean boot-clean clean real-clean
