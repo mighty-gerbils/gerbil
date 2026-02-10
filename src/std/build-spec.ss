@@ -55,6 +55,7 @@
     "io/interface"
     "io/bio/types"
     "io/bio/buffer"
+    "io/bio/macros"
 
     ;; TODO
 

@@ -20,7 +20,7 @@
 (defrule (is-output-buffer-instance? writer)
   (basic-output-buffer? (&interface-instance-object writer)))
 
-(defsyntax-case defreader-ext
+(defsyntax-case defreader-ext ()
   ((_ (method reader . args) body ...)
    (identifier? #'method)
    (with-identifiers
@@ -33,7 +33,7 @@
            body ...)
          (export checked-macro unchecked-macro checked-method unchecked-method)))))
 
-(defsyntax-case defwriter-ext
+(defsyntax-case defwriter-ext ()
   ((_ (method writer . args) body ...)
    (identifier? #'method)
    (with-identifiers
