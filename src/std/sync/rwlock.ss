@@ -1,16 +1,19 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; read-write locks
-(import :gerbil/runtime/hash
-        :std/error)
-(export make-rwlock
-        rwlock?
+(import :std/error
+        :std/interface)
+(export RWLock RWLock?
+        (rename: make-RWLock make-rwlock)
         rwlock-read-lock!
         rwlock-read-unlock!
         rwlock-write-lock!
         rwlock-write-unlock!
         with-read-lock
-        with-write-lock)
+        with-write-lock
+        do-with-read-lock
+        do-with-write-lock
+        do-with-rwlock)
 
 (defstruct RWLock ((mx              :- :mutex)
                    (rcv             :- :condvar)
@@ -117,22 +120,8 @@
   (do-with-write-lock rw (proc) rwlock-write-lock! rwlock-write-unlock!))
 
 ;; methods for the Locker interface
-(defmethod {read-lock! rwlock}
-  (lambda (self)
-    (rwlock-read-lock! self))
-  interface: Locker)
-
-(defmethod {read-unlock! rwlock}
-  (lambda (self)
-    (rwlock-read-unlock! self))
-  interface: Locker)
-
-(defmethod {write-lock! rwlock}
-  (lambda (self)
-    (rwlock-write-lock! self))
-  interface: Locker)
-
-(defmethod {write-unlock! rwlock}
-  (lambda (self)
-    (rwlock-write-unlock! self))
-  interface: Locker)
+(implement Locker RWLock
+  (read-lock!    __rwlock-read-lock!)
+  (read-unlock!  __rwlock-read-unlock!)
+  (write-lock!   __rwlock-write-lock!)
+  (write-unlock! __rwlock-write-unlock!))

@@ -47,27 +47,13 @@
 
     "text/pregexp"
 
+    "sync/rwlock"
+
     ;; TODO
 
     ;; "ffi"
     ;; "object"
 
-
-
-    ;; "list/alist"
-    ;; "list/walist"
-
-
-
-    ;; "struct/queue"
-
-
-
-
-    ;; "sync/wrlock"
-
-    ;; "time/time"
-    ;; "time/timeout"
     ;; "time/format"
 
     ;; "net/address/address"
