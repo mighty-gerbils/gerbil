@@ -3238,8 +3238,8 @@ package: gerbil/core
                                  (else properties)))
                                (properties
                                 (if (stx-e (stx-getq acyclic: body))
-                                  [[acyclic: . #t]]
-                                  [])))
+                                  (cons [acyclic: . #t] properties)
+                                  properties)))
                           properties))
                        ((values type-properties)
                         (if (null? properties)
