@@ -200,22 +200,48 @@
   (waref w k #f))
 
 (def (waput (w : PureAList) k v) => PureAList
-  (wacons (waremove w k) k v))
+  (: (let/cc return
+       (let* ((op-test (__wa-test w))
+              (testf
+               (lambda ((p :- :pair) k)
+                 (op-test (car p) k)))
+              (wrapf (__wa-wrap w)))
+         (wrapf
+          (let loop ((rest w.alist))
+            (match rest
+              ([hd . rest]
+               (if (testf w k)
+                 (cons (cons k v) rest)
+                 (cons hd (loop rest))))
+              (else
+               (return w)))))))
+     PureAList))
 
 (def (waput! (w : MutAList) k v) => MutAList
-  (cond
-   ((wassoc w k)
-    => (lambda ((p :- :pair)) => MutAList
-         (set! (cdr p) v)
-         w))
-   (else
-    (wacons! w k v))))
+  (let* ((op-test (__wa-test w))
+         (testf
+          (lambda ((p :- :pair) k)
+            (op-test (car p) k))))
+    (using (front w.alist :- :list)
+      (if (pair? front)
+        (if (testf (car front) k)
+          (set! (cdr front) v)
+          (let loop ((rest (cdr front)) (prev front))
+            (match rest
+              ([hd . tl]
+               (if (testf hd k)
+                 (set! (cdr hd) v)
+                 (loop tl rest)))
+              (else
+               (set! (cdr prev) [(cons k v)])))))
+        (set! w.alist [(cons k v)])))
+    w))
 
 (def (waremove (w : PureAList) k) => PureAList
-  (let ((testf
-         (let (op-test (__wa-test w))
-           (lambda ((p :- :pair) k)
-             (op-test (car p) k))))
+  (let* ((op-test (__wa-test w))
+         (testf
+          (lambda ((p :- :pair) k)
+            (op-test (car p) k)))
         (wrapf (__wa-wrap w)))
     (let loop ((rest w.alist) (pre []))
       => PureAList
@@ -227,8 +253,8 @@
         (else w)))))
 
 (def (waremove! (w : MutAList) k) => MutAList
-  (let (testf
-        (let (op-test (__wa-test w))
+  (let* ((op-test (__wa-test w))
+         (testf
           (lambda ((p :- :pair) k)
             (op-test (car p) k))))
     (using (front w.alist :- :list)
