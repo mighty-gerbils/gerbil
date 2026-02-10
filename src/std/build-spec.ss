@@ -48,6 +48,11 @@
     "text/pregexp"
 
     "sync/rwlock"
+    "net/address/types"
+    "io/interface/base"
+    "io/interface/bio"
+    "io/interface/socket"
+    "io/interface"
 
     ;; TODO
 
@@ -56,11 +61,11 @@
 
     ;; "time/format"
 
-    ;; "net/address/address"
+
     ;; "net/address/format"
 
     ;; "io"
-    ;; "io/interface"
+
     ;; "io/api"
     ;; "io/dummy"
     ;; "io/delimited"
@@ -75,18 +80,6 @@
     ;; "io/bio/inline"
     ;; "io/bio/util"
     ;; "io/bio/api"
-    ;; "io/strio/types"
-    ;; "io/strio/packed"
-    ;; "io/strio/reader"
-    ;; "io/strio/writer"
-    ;; "io/strio/utf8"
-    ;; "io/strio/chunked"
-    ;; "io/strio/input"
-    ;; "io/strio/output"
-    ;; "io/strio/inline"
-    ;; "io/strio/delimited"
-    ;; "io/strio/util"
-    ;; "io/strio/api"
     ;; "io/socket/types"
     ;; "io/socket/basic"
     ;; "io/socket/stream"
