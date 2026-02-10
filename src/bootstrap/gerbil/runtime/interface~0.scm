@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/interface::timestamp 1770660764)
+  (define gerbil/runtime/interface::timestamp 1770744574)
   (begin
     (define CastError::t
       (let ((__tmp142829 (list Error::t)))
@@ -141,7 +141,8 @@
     (define interface-descriptor::t
       (let ((__tmp142834 (list))
             (__tmp142833
-             (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))))
+             (cons (cons 'struct: '#t)
+                   (cons (cons 'final: '#t) '((print: type index))))))
         (declare (not safe))
         (__make-class-type
          'gerbil#interface-descriptor::t

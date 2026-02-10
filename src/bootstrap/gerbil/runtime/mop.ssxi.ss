@@ -40,8 +40,8 @@ package: gerbil/runtime
            (t::t)
            (t::t)
            (id name
-               super
                flags
+               super
                fields
                precedence-list
                slot-vector
@@ -52,8 +52,8 @@ package: gerbil/runtime
                specializer
                interface)
            (id name
-               super
                flags
+               super
                fields
                precedence-list
                slot-vector

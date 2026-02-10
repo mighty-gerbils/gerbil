@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1770660766)
+  (define gerbil/expander/module::timestamp 1770744576)
   (begin
     (declare (not safe))
     (define gx#__module-registry
@@ -31,7 +31,8 @@
        'module-import
        (list)
        '(source name phi weak?)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((print: source name phi weak?))))
        '#f))
     (define gx#module-import? (__make-class-predicate gx#module-import::t))
     (define gx#make-module-import
@@ -75,7 +76,8 @@
        'module-export
        (list)
        '(context key phi name weak?)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((transparent: . #t))))
        '#f))
     (define gx#module-export? (__make-class-predicate gx#module-export::t))
     (define gx#make-module-export
@@ -127,7 +129,8 @@
        'import-set
        (list)
        '(source phi imports)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((print: source phi))))
        '#f))
     (define gx#import-set? (__make-class-predicate gx#import-set::t))
     (define gx#make-import-set
@@ -163,7 +166,8 @@
        'export-set
        (list)
        '(source phi exports)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((print: source phi))))
        '#f))
     (define gx#export-set? (__make-class-predicate gx#export-set::t))
     (define gx#make-export-set

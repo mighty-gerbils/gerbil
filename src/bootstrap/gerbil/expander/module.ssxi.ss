@@ -279,8 +279,10 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type
    gx#export-expander::t
    (optimizer-resolve-class '(typedecl gx#export-expander::t) 'class::t))

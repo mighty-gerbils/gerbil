@@ -890,8 +890,8 @@
                            _%properties23637%_)))
                     (_%properties23655%_
                      (if (gx#stx-e (gx#stx-getq 'acyclic: _%body22698%_))
-                         (cons (cons 'acyclic: '#t) '())
-                         '())))
+                         (cons (cons 'acyclic: '#t) _%properties23652%_)
+                         _%properties23652%_)))
                _%properties23655%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (_%type-properties23701%_

@@ -15646,8 +15646,8 @@
                       _%properties84591%_)))
                (_%properties84617%_
                 (if (gx#stx-e (gx#stx-getq 'acyclic: _%body83160%_))
-                    (cons (cons 'acyclic: '#t) '())
-                    '())))
+                    (cons (cons 'acyclic: '#t) _%properties84614%_)
+                    _%properties84614%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   _%properties84617%_))
                                                (_%type-properties84660%_

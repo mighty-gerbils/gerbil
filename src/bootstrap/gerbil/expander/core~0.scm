@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1770660766)
+  (define gerbil/expander/core::timestamp 1770744576)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -21,7 +21,7 @@
        'expander-context
        (list)
        '(id table)
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((print: id)))
        ':init!))
     (define gx#expander-context?
       (__make-class-predicate gx#expander-context::t))
@@ -505,7 +505,7 @@
        'binding
        (list)
        '(id key phi properties)
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        ':init!))
     (define gx#binding? (__make-class-predicate gx#binding::t))
     (define gx#make-binding
@@ -555,7 +555,7 @@
        'runtime-binding
        (list gx#binding::t)
        '(type macro)
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        '#f))
     (define gx#runtime-binding? (__make-class-predicate gx#runtime-binding::t))
     (define gx#make-runtime-binding
@@ -615,7 +615,7 @@
        'local-binding
        (list gx#runtime-binding::t)
        '()
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        '#f))
     (define gx#local-binding? (__make-class-predicate gx#local-binding::t))
     (define gx#make-local-binding
@@ -675,7 +675,7 @@
        'top-binding
        (list gx#runtime-binding::t)
        '()
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        '#f))
     (define gx#top-binding? (__make-class-predicate gx#top-binding::t))
     (define gx#make-top-binding
@@ -735,7 +735,7 @@
        'module-binding
        (list gx#top-binding::t)
        '(context)
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        '#f))
     (define gx#module-binding? (__make-class-predicate gx#module-binding::t))
     (define gx#make-module-binding
@@ -803,7 +803,7 @@
        'extern-binding
        (list gx#top-binding::t)
        '()
-       (cons (cons 'struct: '#t) '())
+       (cons (cons 'struct: '#t) '((transparent: . #t)))
        '#f))
     (define gx#extern-binding? (__make-class-predicate gx#extern-binding::t))
     (define gx#make-extern-binding
@@ -906,7 +906,8 @@
        'syntax-binding
        (list gx#binding::t)
        '(e)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((transparent: . #t))))
        '#f))
     (define gx#syntax-binding? (__make-class-predicate gx#syntax-binding::t))
     (define gx#make-syntax-binding
@@ -958,7 +959,8 @@
        'import-binding
        (list gx#binding::t)
        '(e context weak?)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((transparent: . #t))))
        '#f))
     (define gx#import-binding? (__make-class-predicate gx#import-binding::t))
     (define gx#make-import-binding
@@ -1026,7 +1028,8 @@
        'alias-binding
        (list gx#binding::t)
        '(e)
-       (cons (cons 'struct: '#t) (cons (cons 'final: '#t) '()))
+       (cons (cons 'struct: '#t)
+             (cons (cons 'final: '#t) '((transparent: . #t))))
        '#f))
     (define gx#alias-binding? (__make-class-predicate gx#alias-binding::t))
     (define gx#make-alias-binding

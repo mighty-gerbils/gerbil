@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1770660763)
+  (define gerbil/runtime/mop::timestamp 1770744573)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -42,8 +42,8 @@
     (define class::t
       (let* ((_%slots133783%_
               '(id name
-                   super
                    flags
+                   super
                    fields
                    precedence-list
                    slot-vector

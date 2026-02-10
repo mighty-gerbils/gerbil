@@ -1,9 +1,10 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/common::timestamp 1770660766)
+  (define gerbil/expander/common::timestamp 1770744576)
   (begin
     (define gx#AST::t
-      (let ((__tmp170110 (list)) (__tmp170109 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp170110 (list))
+            (__tmp170109 (cons (cons 'struct: '#t) '((print: e)))))
         (declare (not safe))
         (__make-class-type
          'gerbil#AST::t

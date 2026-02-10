@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1770660768)
+  (define gerbil/compiler/optimize-base::timestamp 1770744578)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -151,7 +151,9 @@
        gxc#optimizer-info:::init!
        '#f))
     (define gxc#!type::t
-      (let ((__tmp207749 (list)) (__tmp207748 (cons (cons 'struct: '#t) '())))
+      (let ((__tmp207749 (list))
+            (__tmp207748
+             (cons (cons 'struct: '#t) '((equal: id) (print: id)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!type::t
@@ -183,7 +185,7 @@
         (__make-class-slot-unchecked-mutator gxc#!type::t 'id)))
     (define gxc#!abort::t
       (let ((__tmp207751 (list gxc#!type::t))
-            (__tmp207750 (cons (cons 'struct: '#t) '())))
+            (__tmp207750 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!abort::t
@@ -215,7 +217,7 @@
         (__make-class-slot-unchecked-mutator gxc#!abort::t 'id)))
     (define gxc#!alias::t
       (let ((__tmp207753 (list gxc#!type::t))
-            (__tmp207752 (cons (cons 'struct: '#t) '())))
+            (__tmp207752 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!alias::t
@@ -246,7 +248,11 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator gxc#!alias::t 'id)))
     (define gxc#!signature::t
-      (let ((__tmp207755 (list)) (__tmp207754 (cons (cons 'final: '#t) '())))
+      (let ((__tmp207755 (list))
+            (__tmp207754
+             (cons (cons 'final: '#t)
+                   '((equal: return effect arguments unchecked origin)
+                     (print: return effect arguments unchecked origin)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!signature::t
@@ -342,7 +348,9 @@
         (__make-class-slot-unchecked-mutator gxc#!signature::t 'origin)))
     (define gxc#!procedure::t
       (let ((__tmp207757 (list gxc#!type::t))
-            (__tmp207756 (cons (cons 'struct: '#t) '())))
+            (__tmp207756
+             (cons (cons 'struct: '#t)
+                   '((equal: signature) (print: signature)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!procedure::t
@@ -513,7 +521,20 @@
         (__make-class-slot-unchecked-mutator gxc#!class-meta::t 'id)))
     (define gxc#!class::t
       (let ((__tmp207761 (list gxc#!type::t))
-            (__tmp207760 (cons (cons 'struct: '#t) '())))
+            (__tmp207760
+             (cons (cons 'struct: '#t)
+                   '((equal:
+                      super
+                      precedence-list
+                      slots
+                      fields
+                      constructor
+                      struct?
+                      final?
+                      system?
+                      metaclass
+                      methods)
+                     (print: super precedence-list)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!class::t
@@ -713,7 +734,7 @@
         (__make-class-slot-unchecked-mutator gxc#!class::t 'id)))
     (define gxc#!predicate::t
       (let ((__tmp207763 (list gxc#!procedure::t))
-            (__tmp207762 (cons (cons 'struct: '#t) '())))
+            (__tmp207762 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!predicate::t
@@ -761,7 +782,7 @@
         (__make-class-slot-unchecked-mutator gxc#!predicate::t 'id)))
     (define gxc#!constructor::t
       (let ((__tmp207765 (list gxc#!procedure::t))
-            (__tmp207764 (cons (cons 'struct: '#t) '())))
+            (__tmp207764 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!constructor::t
@@ -811,7 +832,7 @@
         (__make-class-slot-unchecked-mutator gxc#!constructor::t 'id)))
     (define gxc#!accessor::t
       (let ((__tmp207767 (list gxc#!procedure::t))
-            (__tmp207766 (cons (cons 'struct: '#t) '())))
+            (__tmp207766 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!accessor::t
@@ -891,7 +912,7 @@
         (__make-class-slot-unchecked-mutator gxc#!accessor::t 'id)))
     (define gxc#!mutator::t
       (let ((__tmp207769 (list gxc#!procedure::t))
-            (__tmp207768 (cons (cons 'struct: '#t) '())))
+            (__tmp207768 (cons (cons 'struct: '#t) '((equal: slot checked?)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!mutator::t
@@ -971,7 +992,7 @@
         (__make-class-slot-unchecked-mutator gxc#!mutator::t 'id)))
     (define gxc#!interface::t
       (let ((__tmp207771 (list gxc#!type::t))
-            (__tmp207770 (cons (cons 'struct: '#t) '())))
+            (__tmp207770 (cons (cons 'struct: '#t) '((equal: methods)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!interface::t
@@ -1019,7 +1040,9 @@
         (__make-class-slot-unchecked-mutator gxc#!interface::t 'id)))
     (define gxc#!lambda::t
       (let ((__tmp207773 (list gxc#!procedure::t))
-            (__tmp207772 (cons (cons 'struct: '#t) '())))
+            (__tmp207772
+             (cons (cons 'struct: '#t)
+                   '((equal: arity dispatch inline inline-typedecl)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!lambda::t
@@ -1133,7 +1156,7 @@
         (__make-class-slot-unchecked-mutator gxc#!lambda::t 'id)))
     (define gxc#!case-lambda::t
       (let ((__tmp207775 (list gxc#!procedure::t))
-            (__tmp207774 (cons (cons 'struct: '#t) '())))
+            (__tmp207774 (cons (cons 'struct: '#t) '((equal: clauses)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!case-lambda::t
@@ -1199,7 +1222,8 @@
         (__make-class-slot-unchecked-mutator gxc#!case-lambda::t 'id)))
     (define gxc#!kw-lambda::t
       (let ((__tmp207777 (list gxc#!procedure::t))
-            (__tmp207776 (cons (cons 'struct: '#t) '())))
+            (__tmp207776
+             (cons (cons 'struct: '#t) '((equal: table dispatch)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!kw-lambda::t
@@ -1279,7 +1303,7 @@
         (__make-class-slot-unchecked-mutator gxc#!kw-lambda::t 'id)))
     (define gxc#!kw-lambda-primary::t
       (let ((__tmp207779 (list gxc#!procedure::t))
-            (__tmp207778 (cons (cons 'struct: '#t) '())))
+            (__tmp207778 (cons (cons 'struct: '#t) '((equal: keys main)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!kw-lambda-primary::t
@@ -1375,7 +1399,7 @@
          '!primitive
          __tmp207780
          '()
-         '()
+         '((equal:))
          '#f)))
     (define gxc#!primitive?
       (let () (declare (not safe)) (__make-class-predicate gxc#!primitive::t)))
@@ -1384,7 +1408,7 @@
         (apply make-instance gxc#!primitive::t _%$args207443%_)))
     (define gxc#!primitive-predicate::t
       (let ((__tmp207782 (list gxc#!primitive::t gxc#!procedure::t))
-            (__tmp207781 (cons (cons 'struct: '#t) '())))
+            (__tmp207781 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-predicate::t
@@ -1440,7 +1464,7 @@
         (__make-class-slot-unchecked-mutator gxc#!primitive-predicate::t 'id)))
     (define gxc#!primitive-lambda::t
       (let ((__tmp207784 (list gxc#!primitive::t gxc#!lambda::t))
-            (__tmp207783 (cons (cons 'struct: '#t) '())))
+            (__tmp207783 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-lambda::t
@@ -1574,7 +1598,7 @@
         (__make-class-slot-unchecked-mutator gxc#!primitive-lambda::t 'id)))
     (define gxc#!primitive-case-lambda::t
       (let ((__tmp207786 (list gxc#!primitive::t gxc#!case-lambda::t))
-            (__tmp207785 (cons (cons 'struct: '#t) '())))
+            (__tmp207785 (cons (cons 'struct: '#t) '((equal:)))))
         (declare (not safe))
         (__make-class-type
          'gxc#!primitive-case-lambda::t
