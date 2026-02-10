@@ -1,23 +1,25 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo, fare
 ;;; wrapped associative lists
-(import :std/error :std/list/alist)
+(import :std/error
+        :std/interface
+        ./alist)
 (export
   AList AList?
   PureAList PureAList?
   MutAList MutAList?
-  walist
-  walistq
-  walistv
-  walist!
-  walistq!
-  walistv!
   __walist
   __walistq
   __walistv
   __walist!
   __walistq!
   __walistv!
+  walist
+  walistq
+  walistv
+  walist!
+  walistq!
+  walistv!
   walist->list
   wanull
   wanullq
@@ -46,8 +48,7 @@
 (defclass AList ()
   transparent: #t)
 
-(defstruct ConcreteAList ((alist :- :list) (t :- :fixnum))
-  print: (alist t)
+(defstruct ConcreteAList ((alist :- :list))
   transparent: #t)
 
 (defstruct (PureAList AList ConcreteAList) ()
@@ -56,45 +57,67 @@
   transparent: #t)
 
 (defstruct (WAList PureAList) ()
-  name: AList
   transparent: #t
-  acyclic: #t
   final: #t)
 (defstruct (WAListq PureAList) ()
-  name: AList
   transparent: #t
-  acyclic: #t
   final: #t)
 (defstruct (WAListv PureAList) ()
-  name: AList
   transparent: #t
-  acyclic: #t
   final: #t)
 
 (defstruct (MutWAList MutAList) ()
-  name: AList
   transparent: #t
   final: #t)
 (defstruct (MutWAListq MutAList) ()
-  name: AList
   transparent: #t
   final: #t)
 (defstruct (MutWAListv MutAList) ()
-  name: AList
   transparent: #t
   final: #t)
 
-;; low level constructor
-(defrule (deflist proc klass t)
-  (def (proc (lst :- :list)) => klass
-    (klass lst t)))
+;; alist ops interface
+(interface AListOps
+  (wrap) => :procedure
+  (test) => :procedure
+  (assoc k) => :t)
 
-(deflist ___walist   WAList     0)
-(deflist ___walistq  WAListq    1)
-(deflist ___walistv  WAListv    2)
-(deflist ___walist!  MutWAList  3)
-(deflist ___walistq! MutWAListq 4)
-(deflist ___walistv! MutWAListv 5)
+(interface PureAListOps
+  (cons k v) => PureAList)
+
+(interface MutAListOps
+  (cons! k v) => :void)
+
+(defcall-interface-method AListOps wrap
+  (__wa-wrap obj)
+  :- :procedure)
+
+(defcall-interface-method AListOps test
+  (__wa-test obj)
+  :- :procedure)
+
+(defcall-interface-method AListOps assoc
+  (__wa-assoc obj k))
+
+(defcall-interface-method PureAListOps cons
+  (__wa-cons obj k v)
+  :- PureAList)
+
+(defcall-interface-method MutAListOps cons!
+  (__wa-cons! obj k v)
+  :- :void)
+
+;; low level constructor
+(defrule (deflist proc klass)
+  (def (proc (lst :- :list)) => klass
+    (klass lst)))
+
+(deflist ___walist   WAList)
+(deflist ___walistq  WAListq)
+(deflist ___walistv  WAListv)
+(deflist ___walist!  MutWAList)
+(deflist ___walistq! MutWAListq)
+(deflist ___walistv! MutWAListv)
 
 ;; safe constructor
 (defrule (deflist/check proc klass kons)
@@ -109,32 +132,6 @@
 (deflist/check walist!  MutWAList  ___walist!)
 (deflist/check walistq! MutWAListq ___walistq!)
 (deflist/check walistv! MutWAListv ___walistv!)
-
-(def ___wrap
-  (vector
-   ___walist
-   ___walistq
-   ___walistv
-   ___walist!
-   ___walistq!
-   ___walistv!))
-
-(def (___wawrap t)
-  (declare (not safe))
-  (vector-ref ___wrap t))
-
-(def ___test
-  (vector
-   equal?
-   eq?
-   eqv?
-   equal?
-   eq?
-   eqv?))
-
-(def (___watest t)
-  (declare (not safe))
-  (vector-ref ___test t))
 
 (defrule (defcollect macro wrap)
   (defrule (macro arg (... ...))
@@ -178,89 +175,18 @@
 (defrule (@undefined-method where method)
   (lambda args (raise-unsupported-method where method args: args)))
 
-(defrule (defalist-method (proc arg ...)
-           return
-           table
-           (walist-method
-            walistq-method
-            walistv-method
-            walist!-method
-            walistq!-method
-            walistv!-method))
-  (begin
-    (def table
-      (vector
-       (alist-method walist-method   proc walist)
-       (alist-method walistq-method  proc walistq)
-       (alist-method walistv-method  proc walistv)
-       (alist-method walist!-method  proc walist!)
-       (alist-method walistq!-method proc walistq!)
-       (alist-method walistv!-method proc walistv!)))
-    (def (proc (w : ConcreteAList) arg ...) => return
-      (declare (not safe))
-      (:- ((vector-ref table w.t) w arg ...) return))))
+(def (wacons (wa : PureAList) k v)
+  => PureAList
+  (__wa-cons wa k v))
 
-(defrules alist-method ()
-  ((_ undefined where wamethod)
-   (underscore? #'undefined)
-   (@undefined-method where wamethod))
-  ((_ proc where wamethod)
-   proc))
+(def (wacons! (wa : MutAList) k v)
+  => MutAList
+  (__wa-cons! wa k v)
+  wa)
 
-(defrule (defacons proc klass)
-  (def (proc (w :- klass) k v) => klass
-    (klass (cons (cons k v) w.alist) w.t)))
-
-(defacons ___walist-acons  WAList)
-(defacons ___walistq-acons WAListq)
-(defacons ___walistv-acons WAListv)
-
-(defalist-method (wacons k v)
-  PureAList
-   ___acons
-  (___walist-acons
-   ___walistq-acons
-   ___walistv-acons
-   _ _ _))
-
-(defrule (defacons! proc klass)
-  (def (proc (w :- klass) k v)
-    (declare (not safe))
-    (set! w.alist (cons (cons k v) w.alist))
-    w))
-
-(defacons! ___walist-acons!  MutWAList)
-(defacons! ___walistq-acons! MutWAListq)
-(defacons! ___walistv-acons! MutWAListv)
-
-(defalist-method (wacons! k v)
-  MutAList
-  ___acons!
-  (_ _ _
-     ___walist-acons!
-     ___walistq-acons!
-     ___walistv-acons!))
-
-(defrule (defassoc proc klass assf)
-  (def (proc (w :- klass) k)
-    (assf k w.alist)))
-
-(defassoc ___walist-assoc   WAList     assoc)
-(defassoc ___walistq-assoc  WAListq    assq)
-(defassoc ___walistv-assoc  WAListv    assv)
-(defassoc ___walist!-assoc  MutWAList  assoc)
-(defassoc ___walistq!-assoc MutWAListq assq)
-(defassoc ___walistv!-assoc MutWAListv assv)
-
-(defalist-method (wassoc k)
-  :t
-  ___assoc
-  (___walist-assoc
-   ___walistq-assoc
-   ___walistv-assoc
-   ___walist!-assoc
-   ___walistq!-assoc
-   ___walistv!-assoc))
+(def (wassoc (wa : AList) k)
+  ;; => Maybe :pair
+  (__wa-assoc wa k))
 
 (def (wakey? (w : ConcreteAList) k) => :boolean
   (if (wassoc w k) #t #f))
@@ -286,25 +212,25 @@
     (wacons! w k v))))
 
 (def (waremove (w : PureAList) k) => PureAList
-  (let (testf
-        (using (testf (___watest w.t) :- :procedure)
-          (lambda ((p :- :pair) k)
-            (testf (car p) k))))
+  (let ((testf
+         (let (op-test (__wa-test w))
+           (lambda ((p :- :pair) k)
+             (op-test (car p) k))))
+        (wrapf (__wa-wrap w)))
     (let loop ((rest w.alist) (pre []))
       => PureAList
       (match rest
         ([hd . tl]
          (if (testf hd k)
-           (using (wrap (___wawrap w.t) :- :procedure)
-             (:- (wrap (foldl cons tl pre)) PureAList))
+           (:- (wrapf (foldl cons tl pre)) PureAList)
            (loop tl (cons hd pre))))
         (else w)))))
 
 (def (waremove! (w : MutAList) k) => MutAList
   (let (testf
-        (using (testf (___watest w.t) :- :procedure)
+        (let (op-test (__wa-test w))
           (lambda ((p :- :pair) k)
-            (testf (car p) k))))
+            (op-test (car p) k))))
     (using (front w.alist :- :list)
       (when (pair? front)
         (if (testf (car front) k)
@@ -317,3 +243,44 @@
                  (loop tl rest)))
               (else (void))))))
       w)))
+
+(implement
+  (AListOps
+   (WAList
+    (wrap  (lambda (self) __walist))
+    (test  (lambda (self) equal?))
+    (assoc (lambda (self k) (assoc k self.alist))))
+   (WAListq
+    (wrap  (lambda (self) __walistq))
+    (test  (lambda (self) eq?))
+    (assoc (lambda (self k) (assq k self.alist))))
+   (WAListv
+    (wrap  (lambda (self) __walistv))
+    (test  (lambda (self) eqv?))
+    (assoc (lambda (self k) (assv k self.alist))))
+   (MutWAList
+    (wrap  (lambda (self) __walist!))
+    (test  (lambda (self) equal?))
+    (assoc (lambda (self k) (assoc k self.alist))))
+   (MutWAListq
+    (wrap  (lambda (self) __walistq!))
+    (test  (lambda (self) eq?))
+    (assoc (lambda (self k) (assq k self.alist))))
+   (MutWAListv
+    (wrap  (lambda (self) __walistv!))
+    (test  (lambda (self) eqv?))
+    (assoc (lambda (self k) (assv k self.alist)))))
+  (PureAListOps
+   (WAList
+    (cons  (lambda (self k v) (WAList (cons (cons k v) self.alist)))))
+   (WAListq
+    (cons  (lambda (self k v) (WAListq (cons (cons k v) self.alist)))))
+   (WAListv
+    (cons  (lambda (self k v) (WAListv (cons (cons k v) self.alist))))))
+  (MutAListOps
+   (MutWAList
+    (cons!  (lambda (self k v) (set! self.alist (cons (cons k v) self.alist)))))
+   (MutWAListq
+    (cons!  (lambda (self k v) (set! self.alist (cons (cons k v) self.alist)))))
+   (MutWAListv
+    (cons!  (lambda (self k v) (set! self.alist (cons (cons k v) self.alist)))))))

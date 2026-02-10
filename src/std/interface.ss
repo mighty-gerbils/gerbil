@@ -5,22 +5,55 @@
 
 (defsyntax-case @implement ()
   ((_ Interface klass)
-   (and (syntax-local-interface-info? #'Interface))
-
+   (and (syntax-local-interface-info? #'Interface)
+        (syntax-local-runtime-type-info? #'klass))
    (let ((iface-info (syntax-local-value #'Interface))
          (klass-info (syntax-local-value #'klass)))
      (with-syntax ((descriptor     (interface-info-interface-descriptor iface-info))
                    (instance-klass (!runtime-type-descriptor iface-info))
                    (object-klass   (!runtime-type-descriptor klass-info)))
-       #'(create-prototype descriptor instance-klass object-klass)))))
+       #'(create-prototype descriptor instance-klass object-klass))))
+  ((_ Interface klass rest ...)
+   #'(begin (@implement Interface klass)
+            (@implement Interface rest ...)))
+  ((_ Interface)
+   #'(begin)))
 
-(defrule (implement Interface klass (method proc) ...)
-  (begin
-    (defmethod {method klass}
-      proc
-      interface: Interface)
-    ...
-    (@implement Interface klass)))
+(defsyntax-case implement ()
+  ((_ Interface klass (method proc) ...)
+   (and (syntax-local-interface-info? #'Interface)
+        (syntax-local-runtime-type-info? #'klass))
+   #'(begin
+       (defmethod {method klass}
+         proc
+         interface: Interface)
+       ...
+       (@implement Interface klass)))
+   ((_ (Interface (klass (method proc) ...) ...) ...)
+   (and (andmap syntax-local-interface-info? #'(Interface ...))
+        (andmap (cut andmap syntax-local-runtime-type-info? <>)
+                #'((klass ...) ...)))
+   (with-syntax
+       (((methods ...)
+         (let loop ((rest #'((Interface (klass (method proc) ...) ...) ...))
+                    (methods []))
+           (syntax-case rest ()
+             (((Interface . klass-method-procs) . rest)
+              (loop #'rest
+                     (foldl
+                       (lambda (klass-method-procs methods)
+                         (with-syntax (((klass . method-procs) klass-method-procs))
+                           (foldl
+                             (lambda (method-proc methods)
+                               (with-syntax (((method proc) method-proc))
+                                 (cons #'(defmethod {method klass}
+                                           proc
+                                           interface: Interface)
+                                       methods)))
+                             methods #'method-procs)))
+                       methods #'klass-method-procs)))
+             (_ (reverse! methods))))))
+     #'(begin methods ... (@implement Interface klass ...) ...))))
 
 (defsyntax-case @interface-descriptor ()
   ((_ Interface)
