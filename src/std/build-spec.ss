@@ -54,6 +54,7 @@
     "io/interface/socket"
     "io/interface"
     "io/bio/types"
+    "io/bio/buffer"
 
     ;; TODO
 
