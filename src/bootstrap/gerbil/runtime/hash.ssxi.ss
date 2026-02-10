@@ -676,24 +676,24 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
-             .
-             _%locked-hash-table::HashTable::update!146883%_)
-            (HashTable::for-each
-             .
-             _%locked-hash-table::HashTable::for-each146887%_)
-            (HashTable::copy . _%locked-hash-table::HashTable::copy146891%_)
-            (HashTable::set! . _%locked-hash-table::HashTable::set!146881%_)
-            (HashTable::length
-             .
-             _%locked-hash-table::HashTable::length146889%_)
+           ((HashTable::ref . _%locked-hash-table::HashTable::ref146879%_)
             (HashTable::delete!
              .
              _%locked-hash-table::HashTable::delete!146885%_)
             (HashTable::clear!
              .
              _%locked-hash-table::HashTable::clear!146893%_)
-            (HashTable::ref . _%locked-hash-table::HashTable::ref146879%_))))
+            (HashTable::update!
+             .
+             _%locked-hash-table::HashTable::update!146883%_)
+            (HashTable::set! . _%locked-hash-table::HashTable::set!146881%_)
+            (HashTable::length
+             .
+             _%locked-hash-table::HashTable::length146889%_)
+            (HashTable::for-each
+             .
+             _%locked-hash-table::HashTable::for-each146887%_)
+            (HashTable::copy . _%locked-hash-table::HashTable::copy146891%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -735,24 +735,26 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
-             .
-             _%checked-hash-table::HashTable::update!147108%_)
-            (HashTable::for-each
-             .
-             _%checked-hash-table::HashTable::for-each147112%_)
-            (HashTable::copy . _%checked-hash-table::HashTable::copy147116%_)
-            (HashTable::set! . _%checked-hash-table::HashTable::set!147106%_)
-            (HashTable::length
-             .
-             _%checked-hash-table::HashTable::length147114%_)
+           ((HashTable::ref . _%checked-hash-table::HashTable::ref147104%_)
             (HashTable::delete!
              .
              _%checked-hash-table::HashTable::delete!147110%_)
             (HashTable::clear!
              .
              _%checked-hash-table::HashTable::clear!147118%_)
-            (HashTable::ref . _%checked-hash-table::HashTable::ref147104%_))))
+            (HashTable::update!
+             .
+             _%checked-hash-table::HashTable::update!147108%_)
+            (HashTable::set! . _%checked-hash-table::HashTable::set!147106%_)
+            (HashTable::length
+             .
+             _%checked-hash-table::HashTable::length147114%_)
+            (HashTable::for-each
+             .
+             _%checked-hash-table::HashTable::for-each147112%_)
+            (HashTable::copy
+             .
+             _%checked-hash-table::HashTable::copy147116%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))

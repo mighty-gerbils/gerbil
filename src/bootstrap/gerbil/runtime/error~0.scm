@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1770744574)
+  (define gerbil/runtime/error::timestamp 1770752334)
   (begin
     (define Exception::t
       (let ((__tmp139978 (list)))
@@ -742,22 +742,22 @@
                  (if __slot139908
                      __slot139908
                      (error '"Unknown slot" 'where))))
-              (__irritants139905
+              (__message139905
                (let ((__slot139909
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass139902 'irritants))))
+                        (class-slot-offset __klass139902 'message))))
                  (if __slot139909
                      __slot139909
-                     (error '"Unknown slot" 'irritants))))
-              (__message139906
+                     (error '"Unknown slot" 'message))))
+              (__irritants139906
                (let ((__slot139910
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass139902 'message))))
+                        (class-slot-offset __klass139902 'irritants))))
                  (if __slot139910
                      __slot139910
-                     (error '"Unknown slot" 'message))))
+                     (error '"Unknown slot" 'irritants))))
               (__continuation139907
                (let ((__slot139911
                       (let ()
@@ -816,7 +816,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self139340%_
-                                   __message139906
+                                   __message139905
                                    '#f
                                    '#f))))
                            (declare (not safe))
@@ -826,7 +826,7 @@
                                   (declare (not safe))
                                   (##unchecked-structure-ref
                                    _%self139340%_
-                                   __irritants139905
+                                   __irritants139906
                                    '#f
                                    '#f))))
                            (if (null? _%irritants139378%_)

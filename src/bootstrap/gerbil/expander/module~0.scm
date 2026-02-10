@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1770744576)
+  (define gerbil/expander/module::timestamp 1770752337)
   (begin
     (declare (not safe))
     (define gx#__module-registry
@@ -36,8 +36,8 @@
        '#f))
     (define gx#module-import? (__make-class-predicate gx#module-import::t))
     (define gx#make-module-import
-      (lambda _%$args183526%_
-        (apply make-instance gx#module-import::t _%$args183526%_)))
+      (lambda _%$args183533%_
+        (apply make-instance gx#module-import::t _%$args183533%_)))
     (define gx#module-import-source
       (__make-class-slot-accessor gx#module-import::t 'source))
     (define gx#module-import-name
@@ -81,8 +81,8 @@
        '#f))
     (define gx#module-export? (__make-class-predicate gx#module-export::t))
     (define gx#make-module-export
-      (lambda _%$args183523%_
-        (apply make-instance gx#module-export::t _%$args183523%_)))
+      (lambda _%$args183530%_
+        (apply make-instance gx#module-export::t _%$args183530%_)))
     (define gx#module-export-context
       (__make-class-slot-accessor gx#module-export::t 'context))
     (define gx#module-export-key
@@ -134,8 +134,8 @@
        '#f))
     (define gx#import-set? (__make-class-predicate gx#import-set::t))
     (define gx#make-import-set
-      (lambda _%$args183520%_
-        (apply make-instance gx#import-set::t _%$args183520%_)))
+      (lambda _%$args183527%_
+        (apply make-instance gx#import-set::t _%$args183527%_)))
     (define gx#import-set-source
       (__make-class-slot-accessor gx#import-set::t 'source))
     (define gx#import-set-phi
@@ -171,8 +171,8 @@
        '#f))
     (define gx#export-set? (__make-class-predicate gx#export-set::t))
     (define gx#make-export-set
-      (lambda _%$args183517%_
-        (apply make-instance gx#export-set::t _%$args183517%_)))
+      (lambda _%$args183524%_
+        (apply make-instance gx#export-set::t _%$args183524%_)))
     (define gx#export-set-source
       (__make-class-slot-accessor gx#export-set::t 'source))
     (define gx#export-set-phi
@@ -207,8 +207,8 @@
        ':init!))
     (define gx#import-expander? (__make-class-predicate gx#import-expander::t))
     (define gx#make-import-expander
-      (lambda _%$args183514%_
-        (apply make-instance gx#import-expander::t _%$args183514%_)))
+      (lambda _%$args183521%_
+        (apply make-instance gx#import-expander::t _%$args183521%_)))
     (define gx#import-expander-context
       (__make-class-slot-accessor gx#import-expander::t 'context))
     (define gx#import-expander-phi
@@ -243,8 +243,8 @@
        ':init!))
     (define gx#export-expander? (__make-class-predicate gx#export-expander::t))
     (define gx#make-export-expander
-      (lambda _%$args183511%_
-        (apply make-instance gx#export-expander::t _%$args183511%_)))
+      (lambda _%$args183518%_
+        (apply make-instance gx#export-expander::t _%$args183518%_)))
     (define gx#export-expander-context
       (__make-class-slot-accessor gx#export-expander::t 'context))
     (define gx#export-expander-phi
@@ -280,8 +280,8 @@
     (define gx#import-export-expander?
       (__make-class-predicate gx#import-export-expander::t))
     (define gx#make-import-export-expander
-      (lambda _%$args183508%_
-        (apply make-instance gx#import-export-expander::t _%$args183508%_)))
+      (lambda _%$args183515%_
+        (apply make-instance gx#import-export-expander::t _%$args183515%_)))
     (define gx#import-export-expander-context
       (__make-class-slot-accessor gx#import-export-expander::t 'context))
     (define gx#import-export-expander-phi
@@ -316,249 +316,249 @@
     (define gx#current-module-reader-args (make-parameter '#f))
     (define gx#source-file-settings '(char-encoding: UTF-8 eol-encoding: lf))
     (define gx#call-with-input-source-file
-      (lambda (_%path183505%_ _%fun183506%_)
+      (lambda (_%path183512%_ _%fun183513%_)
         (call-with-input-file
-         (cons 'path: (cons _%path183505%_ gx#source-file-settings))
-         _%fun183506%_)))
+         (cons 'path: (cons _%path183512%_ gx#source-file-settings))
+         _%fun183513%_)))
     (define gx#module-context:::init!
-      (lambda (_%self183488%_
-               _%id183489%_
-               _%super183490%_
-               _%ns183491%_
-               _%path183492%_)
-        (let ((_%self183495%_ _%self183488%_))
-          (if (##fx< '11 (##structure-length _%self183495%_))
+      (lambda (_%self183495%_
+               _%id183496%_
+               _%super183497%_
+               _%ns183498%_
+               _%path183499%_)
+        (let ((_%self183502%_ _%self183495%_))
+          (if (##fx< '11 (##structure-length _%self183502%_))
               (begin
                 (##unchecked-structure-set!
-                 _%self183495%_
-                 _%id183489%_
+                 _%self183502%_
+                 _%id183496%_
                  '1
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self183495%_
+                 _%self183502%_
                  (make-hash-table-eq)
                  '2
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self183495%_
-                 _%super183490%_
+                 _%self183502%_
+                 _%super183497%_
                  '3
                  '#f
                  '#f)
-                (##unchecked-structure-set! _%self183495%_ '#f '4 '#f '#f)
-                (##unchecked-structure-set! _%self183495%_ '#f '5 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '#f '4 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '#f '5 '#f '#f)
                 (##unchecked-structure-set!
-                 _%self183495%_
-                 _%ns183491%_
+                 _%self183502%_
+                 _%ns183498%_
                  '6
                  '#f
                  '#f)
                 (##unchecked-structure-set!
-                 _%self183495%_
-                 _%path183492%_
+                 _%self183502%_
+                 _%path183499%_
                  '7
                  '#f
                  '#f)
-                (##unchecked-structure-set! _%self183495%_ '() '8 '#f '#f)
-                (##unchecked-structure-set! _%self183495%_ '() '9 '#f '#f)
-                (##unchecked-structure-set! _%self183495%_ '#f '10 '#f '#f)
-                (##unchecked-structure-set! _%self183495%_ '#f '11 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '() '8 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '() '9 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '#f '10 '#f '#f)
+                (##unchecked-structure-set! _%self183502%_ '#f '11 '#f '#f)
                 '#!void)
               (error '"struct-instance-init!: too many arguments for struct"
-                     _%self183495%_
+                     _%self183502%_
                      '11
-                     (##structure-length _%self183495%_))))))
+                     (##structure-length _%self183502%_))))))
     (__bind-method!__%
      gx#module-context::t
      ':init!
      gx#module-context:::init!
      '#f)
     (define gx#prelude-context:::init!__%
-      (lambda (_%self183321%_ _%ctx183322%_ _%root183323%_)
-        (let* ((_%self183326%_ _%self183321%_)
-               (_%super183342%_
-                (let ((_%$e183336%_ _%root183323%_))
-                  (if _%$e183336%_
-                      _%$e183336%_
-                      (let ((_%$e183339%_ (gx#core-context-root__0)))
-                        (if _%$e183339%_
-                            _%$e183339%_
-                            (let ((__obj183570
+      (lambda (_%self183328%_ _%ctx183329%_ _%root183330%_)
+        (let* ((_%self183333%_ _%self183328%_)
+               (_%super183349%_
+                (let ((_%$e183343%_ _%root183330%_))
+                  (if _%$e183343%_
+                      _%$e183343%_
+                      (let ((_%$e183346%_ (gx#core-context-root__0)))
+                        (if _%$e183346%_
+                            _%$e183346%_
+                            (let ((__obj183577
                                    (##structure gx#root-context::t '#f '#f)))
-                              (let ((__constructor183571
+                              (let ((__constructor183578
                                      (direct-method-ref
                                       gx#root-context::t
-                                      __obj183570
+                                      __obj183577
                                       ':init!)))
-                                (if __constructor183571
-                                    (__constructor183571 __obj183570)
+                                (if __constructor183578
+                                    (__constructor183578 __obj183577)
                                     (error '"missing constructor method implementation"
                                            'class:
                                            gx#root-context::t
                                            'method:
                                            ':init!)))
-                              __obj183570)))))))
-          (if _%ctx183322%_
-              (let ((_%id183345%_
+                              __obj183577)))))))
+          (if _%ctx183329%_
+              (let ((_%id183352%_
                      (##structure-ref
-                      _%ctx183322%_
+                      _%ctx183329%_
                       '1
                       gx#expander-context::t
                       '#f))
-                    (_%path183346%_
+                    (_%path183353%_
                      (##structure-ref
-                      _%ctx183322%_
+                      _%ctx183329%_
                       '7
                       gx#module-context::t
                       '#f))
-                    (_%in183347%_
+                    (_%in183354%_
                      (map gx#core-module-export->import
                           (##structure-ref
-                           _%ctx183322%_
+                           _%ctx183329%_
                            '9
                            gx#module-context::t
                            '#f)))
-                    (_%e183348%_
+                    (_%e183355%_
                      (__make-atomic-promise
-                      (lambda () (gx#eval-module _%ctx183322%_)))))
-                (if (##fx< '8 (##structure-length _%self183326%_))
+                      (lambda () (gx#eval-module _%ctx183329%_)))))
+                (if (##fx< '8 (##structure-length _%self183333%_))
                     (begin
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       _%id183345%_
+                       _%self183333%_
+                       _%id183352%_
                        '1
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       (make-hash-table-eq 'size: (##length _%in183347%_))
+                       _%self183333%_
+                       (make-hash-table-eq 'size: (##length _%in183354%_))
                        '2
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       _%super183342%_
+                       _%self183333%_
+                       _%super183349%_
                        '3
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
+                       _%self183333%_
                        '#f
                        '4
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
+                       _%self183333%_
                        '#f
                        '5
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       _%path183346%_
+                       _%self183333%_
+                       _%path183353%_
                        '6
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       _%in183347%_
+                       _%self183333%_
+                       _%in183354%_
                        '7
                        '#f
                        '#f)
                       (##unchecked-structure-set!
-                       _%self183326%_
-                       _%e183348%_
+                       _%self183333%_
+                       _%e183355%_
                        '8
                        '#f
                        '#f)
                       '#!void)
                     (error '"struct-instance-init!: too many arguments for struct"
-                           _%self183326%_
+                           _%self183333%_
                            '8
-                           (##structure-length _%self183326%_)))
+                           (##structure-length _%self183333%_)))
                 (##for-each
-                 (lambda (_%g183349183351%_)
+                 (lambda (_%g183356183358%_)
                    (gx#core-bind-weak-import!__%
-                    _%g183349183351%_
-                    _%self183326%_))
-                 _%in183347%_))
-              (if (##fx< '8 (##structure-length _%self183326%_))
+                    _%g183356183358%_
+                    _%self183333%_))
+                 _%in183354%_))
+              (if (##fx< '8 (##structure-length _%self183333%_))
                   (begin
-                    (##unchecked-structure-set! _%self183326%_ '#f '1 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '#f '1 '#f '#f)
                     (##unchecked-structure-set!
-                     _%self183326%_
+                     _%self183333%_
                      (make-hash-table-eq)
                      '2
                      '#f
                      '#f)
                     (##unchecked-structure-set!
-                     _%self183326%_
-                     _%super183342%_
+                     _%self183333%_
+                     _%super183349%_
                      '3
                      '#f
                      '#f)
-                    (##unchecked-structure-set! _%self183326%_ '#f '4 '#f '#f)
-                    (##unchecked-structure-set! _%self183326%_ '#f '5 '#f '#f)
-                    (##unchecked-structure-set! _%self183326%_ '#f '6 '#f '#f)
-                    (##unchecked-structure-set! _%self183326%_ '() '7 '#f '#f)
-                    (##unchecked-structure-set! _%self183326%_ '#f '8 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '#f '4 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '#f '5 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '#f '6 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '() '7 '#f '#f)
+                    (##unchecked-structure-set! _%self183333%_ '#f '8 '#f '#f)
                     '#!void)
                   (error '"struct-instance-init!: too many arguments for struct"
-                         _%self183326%_
+                         _%self183333%_
                          '8
-                         (##structure-length _%self183326%_)))))))
+                         (##structure-length _%self183333%_)))))))
     (define gx#prelude-context:::init!__0
-      (lambda (_%self183357%_ _%ctx183358%_)
-        (let ((_%root183360%_ '#f))
+      (lambda (_%self183364%_ _%ctx183365%_)
+        (let ((_%root183367%_ '#f))
           (gx#prelude-context:::init!__%
-           _%self183357%_
-           _%ctx183358%_
-           _%root183360%_))))
+           _%self183364%_
+           _%ctx183365%_
+           _%root183367%_))))
     (define gx#prelude-context:::init!
-      (lambda _g183577_
-        (let ((_g183578_ (##length _g183577_)))
-          (cond ((##fx= _g183578_ 2)
-                 (apply gx#prelude-context:::init!__0 _g183577_))
-                ((##fx= _g183578_ 3)
-                 (apply gx#prelude-context:::init!__% _g183577_))
+      (lambda _g183584_
+        (let ((_g183585_ (##length _g183584_)))
+          (cond ((##fx= _g183585_ 2)
+                 (apply gx#prelude-context:::init!__0 _g183584_))
+                ((##fx= _g183585_ 3)
+                 (apply gx#prelude-context:::init!__% _g183584_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#prelude-context:::init!
-                  _g183577_))))))
+                  _g183584_))))))
     (__bind-method!__%
      gx#prelude-context::t
      ':init!
      gx#prelude-context:::init!
      '#f)
     (define gx#import-export-expander-init!
-      (lambda (_%self183195%_ _%e183196%_)
-        (if (##fx< '3 (##structure-length _%self183195%_))
+      (lambda (_%self183202%_ _%e183203%_)
+        (if (##fx< '3 (##structure-length _%self183202%_))
             (begin
               (##unchecked-structure-set!
-               _%self183195%_
-               _%e183196%_
+               _%self183202%_
+               _%e183203%_
                '1
                '#f
                '#f)
               (##unchecked-structure-set!
-               _%self183195%_
+               _%self183202%_
                (gx#current-expander-context)
                '2
                '#f
                '#f)
               (##unchecked-structure-set!
-               _%self183195%_
+               _%self183202%_
                (##fx- (gx#current-expander-phi) '1)
                '3
                '#f
                '#f)
               '#!void)
             (error '"struct-instance-init!: too many arguments for struct"
-                   _%self183195%_
+                   _%self183202%_
                    '3
-                   (##structure-length _%self183195%_)))))
+                   (##structure-length _%self183202%_)))))
     (define gx#import-expander:::init! gx#import-export-expander-init!)
     (__bind-method!__%
      gx#import-expander::t
@@ -578,10 +578,10 @@
      gx#import-export-expander:::init!
      '#f)
     (define gx#import-expander::apply-import-expander
-      (lambda (_%g182821182824%_ _%g182822182826%_)
+      (lambda (_%g182828182831%_ _%g182829182833%_)
         (gx#core-apply-user-expander__%
-         _%g182821182824%_
-         _%g182822182826%_
+         _%g182828182831%_
+         _%g182829182833%_
          'apply-import-expander)))
     (__bind-method!__%
      gx#import-expander::t
@@ -589,10 +589,10 @@
      gx#import-expander::apply-import-expander
      '#f)
     (define gx#export-expander::apply-export-expander
-      (lambda (_%g182692182695%_ _%g182693182697%_)
+      (lambda (_%g182699182702%_ _%g182700182704%_)
         (gx#core-apply-user-expander__%
-         _%g182692182695%_
-         _%g182693182697%_
+         _%g182699182702%_
+         _%g182700182704%_
          'apply-export-expander)))
     (__bind-method!__%
      gx#export-expander::t
@@ -600,115 +600,115 @@
      gx#export-expander::apply-export-expander
      '#f)
     (define gx#module-source-path
-      (lambda (_%ctx182563%_)
-        (let* ((_%path182565%_
-                (##structure-ref _%ctx182563%_ '7 gx#module-context::t '#f))
-               (_%path182567%_
-                (if (pair? _%path182565%_)
-                    (##last _%path182565%_)
-                    _%path182565%_)))
-          (if (string? _%path182567%_) _%path182567%_ '#f))))
+      (lambda (_%ctx182570%_)
+        (let* ((_%path182572%_
+                (##structure-ref _%ctx182570%_ '7 gx#module-context::t '#f))
+               (_%path182574%_
+                (if (pair? _%path182572%_)
+                    (##last _%path182572%_)
+                    _%path182572%_)))
+          (if (string? _%path182574%_) _%path182574%_ '#f))))
     (define gx#import-module__%
-      (lambda (_%path182539%_ _%reload?182540%_ _%eval?182541%_)
-        (let ((_%ctx182543%_
+      (lambda (_%path182546%_ _%reload?182547%_ _%eval?182548%_)
+        (let ((_%ctx182550%_
                ((gx#current-expander-module-import)
-                _%path182539%_
-                _%reload?182540%_)))
-          (if (and _%ctx182543%_ _%eval?182541%_)
-              (gx#eval-module _%ctx182543%_)
+                _%path182546%_
+                _%reload?182547%_)))
+          (if (and _%ctx182550%_ _%eval?182548%_)
+              (gx#eval-module _%ctx182550%_)
               '#!void)
-          _%ctx182543%_)))
+          _%ctx182550%_)))
     (define gx#import-module__0
-      (lambda (_%path182548%_)
-        (let* ((_%reload?182550%_ '#f) (_%eval?182552%_ '#f))
+      (lambda (_%path182555%_)
+        (let* ((_%reload?182557%_ '#f) (_%eval?182559%_ '#f))
           (gx#import-module__%
-           _%path182548%_
-           _%reload?182550%_
-           _%eval?182552%_))))
+           _%path182555%_
+           _%reload?182557%_
+           _%eval?182559%_))))
     (define gx#import-module__1
-      (lambda (_%path182554%_ _%reload?182555%_)
-        (let ((_%eval?182557%_ '#f))
+      (lambda (_%path182561%_ _%reload?182562%_)
+        (let ((_%eval?182564%_ '#f))
           (gx#import-module__%
-           _%path182554%_
-           _%reload?182555%_
-           _%eval?182557%_))))
+           _%path182561%_
+           _%reload?182562%_
+           _%eval?182564%_))))
     (define gx#import-module
-      (lambda _g183579_
-        (let ((_g183580_ (##length _g183579_)))
-          (cond ((##fx= _g183580_ 1) (apply gx#import-module__0 _g183579_))
-                ((##fx= _g183580_ 2) (apply gx#import-module__1 _g183579_))
-                ((##fx= _g183580_ 3) (apply gx#import-module__% _g183579_))
+      (lambda _g183586_
+        (let ((_g183587_ (##length _g183586_)))
+          (cond ((##fx= _g183587_ 1) (apply gx#import-module__0 _g183586_))
+                ((##fx= _g183587_ 2) (apply gx#import-module__1 _g183586_))
+                ((##fx= _g183587_ 3) (apply gx#import-module__% _g183586_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#import-module
-                  _g183579_))))))
+                  _g183586_))))))
     (define gx#eval-module
-      (lambda (_%mod182536%_)
-        ((gx#current-expander-module-eval) _%mod182536%_)))
+      (lambda (_%mod182543%_)
+        ((gx#current-expander-module-eval) _%mod182543%_)))
     (define gx#core-eval-module
-      (lambda (_%obj182515%_)
-        (letrec ((_%force-e182517%_
-                  (lambda (_%getf182531%_ _%e182532%_)
+      (lambda (_%obj182522%_)
+        (letrec ((_%force-e182524%_
+                  (lambda (_%getf182538%_ _%e182539%_)
                     (call-with-parameters__1
                      (lambda ()
                        (call-with-parameters__1
-                        (lambda () (force (_%getf182531%_ _%e182532%_)))
+                        (lambda () (force (_%getf182538%_ _%e182539%_)))
                         gx#current-expander-phi
                         '0))
                      gx#current-expander-context
-                     _%e182532%_))))
-          (let _%recur182519%_ ((_%e182521%_ _%obj182515%_))
-            (if (##structure-instance-of? _%e182521%_ 'gx#module-context::t)
+                     _%e182539%_))))
+          (let _%recur182526%_ ((_%e182528%_ _%obj182522%_))
+            (if (##structure-instance-of? _%e182528%_ 'gx#module-context::t)
                 (let ()
-                  (let ((_%$e182524%_
-                         (gx#core-context-prelude__% _%e182521%_)))
-                    (if _%$e182524%_ (_%recur182519%_ _%$e182524%_) '#!void))
-                  (_%force-e182517%_ gx#module-context-e _%e182521%_))
+                  (let ((_%$e182531%_
+                         (gx#core-context-prelude__% _%e182528%_)))
+                    (if _%$e182531%_ (_%recur182526%_ _%$e182531%_) '#!void))
+                  (_%force-e182524%_ gx#module-context-e _%e182528%_))
                 (if (##structure-instance-of?
-                     _%e182521%_
+                     _%e182528%_
                      'gx#prelude-context::t)
-                    (_%force-e182517%_ gx#prelude-context-e _%e182521%_)
-                    (if (gx#stx-string? _%e182521%_)
-                        (_%recur182519%_
+                    (_%force-e182524%_ gx#prelude-context-e _%e182528%_)
+                    (if (gx#stx-string? _%e182528%_)
+                        (_%recur182526%_
                          (gx#import-module__0
-                          (gx#core-resolve-module-path__0 _%e182521%_)))
-                        (if (gx#core-library-module-path? _%e182521%_)
-                            (_%recur182519%_
+                          (gx#core-resolve-module-path__0 _%e182528%_)))
+                        (if (gx#core-library-module-path? _%e182528%_)
+                            (_%recur182526%_
                              (gx#import-module__0
                               (gx#core-resolve-library-module-path
-                               _%e182521%_)))
-                            (error '"cannot eval module" _%obj182515%_)))))))))
+                               _%e182528%_)))
+                            (error '"cannot eval module" _%obj182522%_)))))))))
     (define gx#core-context-prelude__%
-      (lambda (_%ctx182495%_)
-        (let _%lp182497%_ ((_%e182499%_ _%ctx182495%_))
-          (if (or (##structure-instance-of? _%e182499%_ 'gx#module-context::t)
-                  (##structure-instance-of? _%e182499%_ 'gx#local-context::t))
-              (_%lp182497%_ (##unchecked-structure-ref _%e182499%_ '3 '#f '#f))
-              (if (##structure-instance-of? _%e182499%_ 'gx#prelude-context::t)
-                  _%e182499%_
+      (lambda (_%ctx182502%_)
+        (let _%lp182504%_ ((_%e182506%_ _%ctx182502%_))
+          (if (or (##structure-instance-of? _%e182506%_ 'gx#module-context::t)
+                  (##structure-instance-of? _%e182506%_ 'gx#local-context::t))
+              (_%lp182504%_ (##unchecked-structure-ref _%e182506%_ '3 '#f '#f))
+              (if (##structure-instance-of? _%e182506%_ 'gx#prelude-context::t)
+                  _%e182506%_
                   '#f)))))
     (define gx#core-context-prelude__0
       (lambda ()
-        (let ((_%ctx182511%_ (gx#current-expander-context)))
-          (gx#core-context-prelude__% _%ctx182511%_))))
+        (let ((_%ctx182518%_ (gx#current-expander-context)))
+          (gx#core-context-prelude__% _%ctx182518%_))))
     (define gx#core-context-prelude
-      (lambda _g183581_
-        (let ((_g183582_ (##length _g183581_)))
-          (cond ((##fx= _g183582_ 0)
-                 (apply gx#core-context-prelude__0 _g183581_))
-                ((##fx= _g183582_ 1)
-                 (apply gx#core-context-prelude__% _g183581_))
+      (lambda _g183588_
+        (let ((_g183589_ (##length _g183588_)))
+          (cond ((##fx= _g183589_ 0)
+                 (apply gx#core-context-prelude__0 _g183588_))
+                ((##fx= _g183589_ 1)
+                 (apply gx#core-context-prelude__% _g183588_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-prelude
-                  _g183581_))))))
+                  _g183588_))))))
     (define gx#core-module->prelude-context
-      (lambda (_%ctx182486%_)
-        (let ((_%$e182488%_ (__hash-get gx#__module-registry _%ctx182486%_)))
-          (if _%$e182488%_
-              _%$e182488%_
-              (let ((_%pre182492%_
-                     (let ((__obj183572
+      (lambda (_%ctx182493%_)
+        (let ((_%$e182495%_ (__hash-get gx#__module-registry _%ctx182493%_)))
+          (if _%$e182495%_
+              _%$e182495%_
+              (let ((_%pre182499%_
+                     (let ((__obj183579
                             (##structure
                              gx#prelude-context::t
                              '#f
@@ -720,17 +720,17 @@
                              '#f
                              '#f)))
                        (gx#prelude-context:::init!__0
-                        __obj183572
-                        _%ctx182486%_)
-                       __obj183572)))
-                (__hash-put! gx#__module-registry _%ctx182486%_ _%pre182492%_)
-                _%pre182492%_)))))
+                        __obj183579
+                        _%ctx182493%_)
+                       __obj183579)))
+                (__hash-put! gx#__module-registry _%ctx182493%_ _%pre182499%_)
+                _%pre182499%_)))))
     (define gx#core-import-module__%
-      (lambda (_%rpath182354%_ _%reload?182355%_)
-        (letrec ((_%import-source182357%_
-                  (lambda (_%path182445%_)
-                    (if (member _%path182445%_ (gx#current-expander-path))
-                        (error '"Cyclic expansion" _%path182445%_)
+      (lambda (_%rpath182361%_ _%reload?182362%_)
+        (letrec ((_%import-source182364%_
+                  (lambda (_%path182452%_)
+                    (if (member _%path182452%_ (gx#current-expander-path))
+                        (error '"Cyclic expansion" _%path182452%_)
                         '#!void)
                     (call-with-parameters__1
                      (lambda ()
@@ -744,46 +744,46 @@
                                  (lambda ()
                                    (call-with-parameters__1
                                     (lambda ()
-                                      (let ((_g183583_
+                                      (let ((_g183590_
                                              (gx#core-read-module
-                                              _%path182445%_)))
+                                              _%path182452%_)))
                                         (begin
-                                          (let ((_g183584_
-                                                 (if (##values? _g183583_)
+                                          (let ((_g183591_
+                                                 (if (##values? _g183590_)
                                                      (##values-length
-                                                      _g183583_)
+                                                      _g183590_)
                                                      1)))
-                                            (if (not (##fx= _g183584_ 4))
+                                            (if (not (##fx= _g183591_ 4))
                                                 (error "Context expects 4 values"
-                                                       _g183584_)))
-                                          (let ((_%pre182453%_
-                                                 (##values-ref _g183583_ 0))
-                                                (_%id182454%_
-                                                 (##values-ref _g183583_ 1))
-                                                (_%ns182455%_
-                                                 (##values-ref _g183583_ 2))
-                                                (_%body182456%_
-                                                 (##values-ref _g183583_ 3)))
-                                            (let* ((_%prelude182466%_
+                                                       _g183591_)))
+                                          (let ((_%pre182460%_
+                                                 (##values-ref _g183590_ 0))
+                                                (_%id182461%_
+                                                 (##values-ref _g183590_ 1))
+                                                (_%ns182462%_
+                                                 (##values-ref _g183590_ 2))
+                                                (_%body182463%_
+                                                 (##values-ref _g183590_ 3)))
+                                            (let* ((_%prelude182473%_
                                                     (if (##structure-instance-of?
-                                                         _%pre182453%_
+                                                         _%pre182460%_
                                                          'gx#prelude-context::t)
-                                                        _%pre182453%_
+                                                        _%pre182460%_
                                                         (if (##structure-instance-of?
-                                                             _%pre182453%_
+                                                             _%pre182460%_
                                                              'gx#module-context::t)
                                                             (gx#core-module->prelude-context
-                                                             _%pre182453%_)
-                                                            (if (string? _%pre182453%_)
+                                                             _%pre182460%_)
+                                                            (if (string? _%pre182460%_)
                                                                 (gx#core-module->prelude-context
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#core-import-module__0 _%pre182453%_))
-                        (if (not _%pre182453%_)
-                            (let ((_%$e182462%_
+                         (gx#core-import-module__0 _%pre182460%_))
+                        (if (not _%pre182460%_)
+                            (let ((_%$e182469%_
                                    (gx#current-expander-module-prelude)))
-                              (if _%$e182462%_
-                                  _%$e182462%_
-                                  (let ((__obj183573
+                              (if _%$e182469%_
+                                  _%$e182469%_
+                                  (let ((__obj183580
                                          (##structure
                                           gx#prelude-context::t
                                           '#f
@@ -795,15 +795,15 @@
                                           '#f
                                           '#f)))
                                     (gx#prelude-context:::init!__0
-                                     __obj183573
+                                     __obj183580
                                      '#f)
-                                    __obj183573)))
+                                    __obj183580)))
                             (error '"cannot import module; unknown prelude"
-                                   _%rpath182354%_
-                                   _%pre182453%_))))))
+                                   _%rpath182361%_
+                                   _%pre182460%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (_%ctx182468%_
-                                                    (let ((__obj183574
+                                                   (_%ctx182475%_
+                                                    (let ((__obj183581
                                                            (##structure
                                                             gx#module-context::t
                                                             '#f
@@ -818,54 +818,54 @@
                                                             '#f
                                                             '#f)))
                                                       (gx#module-context:::init!
-                                                       __obj183574
-                                                       _%id182454%_
-                                                       _%prelude182466%_
-                                                       _%ns182455%_
-                                                       _%path182445%_)
-                                                      __obj183574))
-                                                   (_%body182470%_
+                                                       __obj183581
+                                                       _%id182461%_
+                                                       _%prelude182473%_
+                                                       _%ns182462%_
+                                                       _%path182452%_)
+                                                      __obj183581))
+                                                   (_%body182477%_
                                                     (gx#core-expand-module-begin
-                                                     _%body182456%_
-                                                     _%ctx182468%_))
-                                                   (_%body182472%_
+                                                     _%body182463%_
+                                                     _%ctx182475%_))
+                                                   (_%body182479%_
                                                     (gx#core-quote-syntax__%
                                                      (gx#core-cons
                                                       '%#begin
-                                                      _%body182470%_)
-                                                     _%path182445%_
-                                                     _%ctx182468%_
+                                                      _%body182477%_)
+                                                     _%path182452%_
+                                                     _%ctx182475%_
                                                      '())))
                                               (##unchecked-structure-set!
-                                               _%ctx182468%_
+                                               _%ctx182475%_
                                                (__make-atomic-promise
                                                 (lambda ()
                                                   (gx#eval-syntax*
-                                                   _%body182472%_)))
+                                                   _%body182479%_)))
                                                '10
                                                '#f
                                                '#f)
                                               (##unchecked-structure-set!
-                                               _%ctx182468%_
-                                               _%body182472%_
+                                               _%ctx182475%_
+                                               _%body182479%_
                                                '11
                                                '#f
                                                '#f)
                                               (__hash-put!
                                                gx#__module-registry
-                                               _%path182445%_
-                                               _%ctx182468%_)
+                                               _%path182452%_
+                                               _%ctx182475%_)
                                               (__hash-put!
                                                gx#__module-registry
-                                               _%id182454%_
-                                               _%ctx182468%_)
-                                              _%ctx182468%_)))))
+                                               _%id182461%_
+                                               _%ctx182475%_)
+                                              _%ctx182475%_)))))
                                     gx#current-export-expander-phi
                                     '#f))
                                  gx#current-import-expander-phi
                                  '#f))
                               gx#current-expander-path
-                              (cons _%path182445%_
+                              (cons _%path182452%_
                                     (gx#current-expander-path))))
                            gx#current-expander-phi
                            '0))
@@ -873,135 +873,156 @@
                         '()))
                      gx#current-expander-context
                      (gx#core-context-root__0))))
-                 (_%import-submodule182358%_
-                  (lambda (_%rpath182374%_)
-                    (let* ((_%rpath182375182382%_ _%rpath182374%_)
-                           (_%E182377182385%_
+                 (_%import-submodule182365%_
+                  (lambda (_%rpath182381%_)
+                    (let* ((_%rpath182382182389%_ _%rpath182381%_)
+                           (_%E182384182392%_
                             (lambda ()
                               (error '"No clause matching"
-                                     _%rpath182375182382%_
+                                     _%rpath182382182389%_
                                      '([origin . refs]))
                               '#!void))
-                           (_%K182378182433%_
-                            (lambda (_%refs182388%_ _%origin182389%_)
-                              (let ((_%ctx182391%_
-                                     (if _%origin182389%_
+                           (_%K182385182440%_
+                            (lambda (_%refs182395%_ _%origin182396%_)
+                              (let ((_%ctx182398%_
+                                     (if _%origin182396%_
                                          (gx#core-import-module__%
-                                          _%origin182389%_
-                                          _%reload?182355%_)
+                                          _%origin182396%_
+                                          _%reload?182362%_)
                                          (gx#current-expander-context))))
-                                (let _%lp182393%_ ((_%rest182395%_
-                                                    _%refs182388%_)
-                                                   (_%ctx182396%_
-                                                    _%ctx182391%_))
-                                  (let* ((_%rest182397182405%_ _%rest182395%_)
-                                         (_%else182399182413%_
-                                          (lambda () _%ctx182396%_))
-                                         (_%K182401182421%_
-                                          (lambda (_%rest182416%_ _%id182417%_)
-                                            (let ((_%bind182419%_
+                                (let _%lp182400%_ ((_%rest182402%_
+                                                    _%refs182395%_)
+                                                   (_%ctx182403%_
+                                                    _%ctx182398%_))
+                                  (let* ((_%rest182404182412%_ _%rest182402%_)
+                                         (_%else182406182420%_
+                                          (lambda () _%ctx182403%_))
+                                         (_%K182408182428%_
+                                          (lambda (_%rest182423%_ _%id182424%_)
+                                            (let ((_%bind182426%_
                                                    (gx#resolve-identifier__%
-                                                    _%id182417%_
+                                                    _%id182424%_
                                                     '0
-                                                    _%ctx182396%_)))
+                                                    _%ctx182403%_)))
                                               (if (and (##structure-direct-instance-of?
-                                                        _%bind182419%_
+                                                        _%bind182426%_
                                                         'gx#syntax-binding::t)
                                                        (##structure-instance-of?
                                                         (##unchecked-structure-ref
-                                                         _%bind182419%_
+                                                         _%bind182426%_
                                                          '5
                                                          '#f
                                                          '#f)
                                                         'gx#module-context::t))
-                                                  (_%lp182393%_
-                                                   _%rest182416%_
+                                                  (_%lp182400%_
+                                                   _%rest182423%_
                                                    (##unchecked-structure-ref
-                                                    _%bind182419%_
+                                                    _%bind182426%_
                                                     '5
                                                     '#f
                                                     '#f))
                                                   (error '"cannot import submodule; not bound as a module"
-                                                         _%rpath182374%_
-                                                         _%id182417%_
-                                                         _%bind182419%_))))))
-                                    (if (pair? _%rest182397182405%_)
-                                        (let ((_%hd182402182424%_
-                                               (##car _%rest182397182405%_))
-                                              (_%tl182403182426%_
-                                               (##cdr _%rest182397182405%_)))
-                                          (let* ((_%id182429%_
-                                                  _%hd182402182424%_)
-                                                 (_%rest182431%_
-                                                  _%tl182403182426%_))
-                                            (_%K182401182421%_
-                                             _%rest182431%_
-                                             _%id182429%_)))
-                                        (_%else182399182413%_))))))))
-                      (if (pair? _%rpath182375182382%_)
-                          (let ((_%hd182379182436%_
-                                 (##car _%rpath182375182382%_))
-                                (_%tl182380182438%_
-                                 (##cdr _%rpath182375182382%_)))
-                            (let* ((_%origin182441%_ _%hd182379182436%_)
-                                   (_%refs182443%_ _%tl182380182438%_))
-                              (_%K182378182433%_
-                               _%refs182443%_
-                               _%origin182441%_)))
-                          (_%E182377182385%_))))))
-          (let ((_%$e182360%_
-                 (if (not _%reload?182355%_)
-                     (__hash-get gx#__module-registry _%rpath182354%_)
+                                                         _%rpath182381%_
+                                                         _%id182424%_
+                                                         _%bind182426%_))))))
+                                    (if (pair? _%rest182404182412%_)
+                                        (let ((_%hd182409182431%_
+                                               (##car _%rest182404182412%_))
+                                              (_%tl182410182433%_
+                                               (##cdr _%rest182404182412%_)))
+                                          (let* ((_%id182436%_
+                                                  _%hd182409182431%_)
+                                                 (_%rest182438%_
+                                                  _%tl182410182433%_))
+                                            (_%K182408182428%_
+                                             _%rest182438%_
+                                             _%id182436%_)))
+                                        (_%else182406182420%_))))))))
+                      (if (pair? _%rpath182382182389%_)
+                          (let ((_%hd182386182443%_
+                                 (##car _%rpath182382182389%_))
+                                (_%tl182387182445%_
+                                 (##cdr _%rpath182382182389%_)))
+                            (let* ((_%origin182448%_ _%hd182386182443%_)
+                                   (_%refs182450%_ _%tl182387182445%_))
+                              (_%K182385182440%_
+                               _%refs182450%_
+                               _%origin182448%_)))
+                          (_%E182384182392%_))))))
+          (let ((_%$e182367%_
+                 (if (not _%reload?182362%_)
+                     (__hash-get gx#__module-registry _%rpath182361%_)
                      '#f)))
-            (if _%$e182360%_
-                _%$e182360%_
-                (if (list? _%rpath182354%_)
-                    (_%import-submodule182358%_ _%rpath182354%_)
-                    (if (gx#core-library-module-path? _%rpath182354%_)
-                        (let ((_%ctx182365%_
+            (if _%$e182367%_
+                _%$e182367%_
+                (if (list? _%rpath182361%_)
+                    (_%import-submodule182365%_ _%rpath182361%_)
+                    (if (gx#core-library-module-path? _%rpath182361%_)
+                        (let ((_%ctx182372%_
                                (gx#core-import-module__%
                                 (gx#core-resolve-library-module-path
-                                 _%rpath182354%_)
-                                _%reload?182355%_)))
+                                 _%rpath182361%_)
+                                _%reload?182362%_)))
                           (__hash-put!
                            gx#__module-registry
-                           _%rpath182354%_
-                           _%ctx182365%_)
-                          _%ctx182365%_)
-                        (let* ((_%npath182368%_
-                                (path-normalize _%rpath182354%_))
-                               (_%$e182370%_
-                                (if (not _%reload?182355%_)
+                           _%rpath182361%_
+                           _%ctx182372%_)
+                          _%ctx182372%_)
+                        (let* ((_%npath182375%_
+                                (path-normalize _%rpath182361%_))
+                               (_%$e182377%_
+                                (if (not _%reload?182362%_)
                                     (__hash-get
                                      gx#__module-registry
-                                     _%npath182368%_)
+                                     _%npath182375%_)
                                     '#f)))
-                          (if _%$e182370%_
-                              _%$e182370%_
-                              (_%import-source182357%_
-                               _%npath182368%_))))))))))
+                          (if _%$e182377%_
+                              _%$e182377%_
+                              (_%import-source182364%_
+                               _%npath182375%_))))))))))
     (define gx#core-import-module__0
-      (lambda (_%rpath182479%_)
-        (let ((_%reload?182481%_ '#f))
-          (gx#core-import-module__% _%rpath182479%_ _%reload?182481%_))))
+      (lambda (_%rpath182486%_)
+        (let ((_%reload?182488%_ '#f))
+          (gx#core-import-module__% _%rpath182486%_ _%reload?182488%_))))
     (define gx#core-import-module
-      (lambda _g183585_
-        (let ((_g183586_ (##length _g183585_)))
-          (cond ((##fx= _g183586_ 1)
-                 (apply gx#core-import-module__0 _g183585_))
-                ((##fx= _g183586_ 2)
-                 (apply gx#core-import-module__% _g183585_))
+      (lambda _g183592_
+        (let ((_g183593_ (##length _g183592_)))
+          (cond ((##fx= _g183593_ 1)
+                 (apply gx#core-import-module__0 _g183592_))
+                ((##fx= _g183593_ 2)
+                 (apply gx#core-import-module__% _g183592_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-import-module
-                  _g183585_))))))
+                  _g183592_))))))
     (define gx#core-read-module
       (lambda (_%path182343%_)
         (__with-catch
          (lambda (_%exn182345%_)
-           (if (and (datum-parsing-exception? _%exn182345%_)
-                    (eq? (datum-parsing-exception-filepos _%exn182345%_) '0))
-               (gx#core-read-module/lang _%path182343%_)
+           (if (datum-parsing-exception? _%exn182345%_)
+               (let ((_%pos182347%_
+                      (datum-parsing-exception-filepos _%exn182345%_)))
+                 (if (= _%pos182347%_ '0)
+                     (gx#core-read-module/lang _%path182343%_)
+                     (gx#raise-syntax-error
+                      'read-module
+                      '"error reading module"
+                      _%path182343%_
+                      (call-with-parameters__1
+                       (lambda ()
+                         (call-with-output-string
+                          '""
+                          (lambda (_%g182349182351%_)
+                            (display-exception__%
+                             _%exn182345%_
+                             _%g182349182351%_))))
+                       dump-stack-trace?
+                       '#f)
+                      (cons 'line:
+                            (cons (##filepos-line _%pos182347%_)
+                                  (cons 'col:
+                                        (cons (##filepos-col _%pos182347%_)
+                                              '())))))))
                (gx#raise-syntax-error
                 'read-module
                 '"error reading module"
@@ -1010,8 +1031,8 @@
                  (lambda ()
                    (call-with-output-string
                     '""
-                    (lambda (_%g182347182349%_)
-                      (display-exception__% _%exn182345%_ _%g182347182349%_))))
+                    (lambda (_%g182354182356%_)
+                      (display-exception__% _%exn182345%_ _%g182354182356%_))))
                  dump-stack-trace?
                  '#f))))
          (lambda () (gx#core-read-module/sexp _%path182343%_)))))
@@ -1025,7 +1046,7 @@
           (let* ((_%e182203182227%_ _%body182199%_)
                  (_%E182219182253%_
                   (lambda ()
-                    (let ((_g183587_
+                    (let ((_g183594_
                            (if _%pkg182202%_
                                (values _%pre182200%_
                                        _%ns182201%_
@@ -1035,15 +1056,15 @@
                                 _%pre182200%_
                                 _%ns182201%_))))
                       (begin
-                        (let ((_g183588_
-                               (if (##values? _g183587_)
-                                   (##values-length _g183587_)
+                        (let ((_g183595_
+                               (if (##values? _g183594_)
+                                   (##values-length _g183594_)
                                    1)))
-                          (if (not (##fx= _g183588_ 3))
-                              (error "Context expects 3 values" _g183588_)))
-                        (let ((_%pre182231%_ (##values-ref _g183587_ 0))
-                              (_%ns182232%_ (##values-ref _g183587_ 1))
-                              (_%pkg182233%_ (##values-ref _g183587_ 2)))
+                          (if (not (##fx= _g183595_ 3))
+                              (error "Context expects 3 values" _g183595_)))
+                        (let ((_%pre182231%_ (##values-ref _g183594_ 0))
+                              (_%ns182232%_ (##values-ref _g183594_ 1))
+                              (_%pkg182233%_ (##values-ref _g183594_ 2)))
                           (let* ((_%prelude182239%_
                                   (if (gx#core-bound-module-prelude?
                                        _%pre182231%_)
@@ -1208,7 +1229,7 @@
                            _%ns182106%_
                            _%pkg182107%_
                            _%args182108%_)
-                    (let ((_g183589_
+                    (let ((_g183596_
                            (if _%pkg182107%_
                                (values _%pre182105%_
                                        _%ns182106%_
@@ -1218,15 +1239,15 @@
                                 _%pre182105%_
                                 _%ns182106%_))))
                       (begin
-                        (let ((_g183590_
-                               (if (##values? _g183589_)
-                                   (##values-length _g183589_)
+                        (let ((_g183597_
+                               (if (##values? _g183596_)
+                                   (##values-length _g183596_)
                                    1)))
-                          (if (not (##fx= _g183590_ 3))
-                              (error "Context expects 3 values" _g183590_)))
-                        (let ((_%pre182110%_ (##values-ref _g183589_ 0))
-                              (_%ns182111%_ (##values-ref _g183589_ 1))
-                              (_%pkg182112%_ (##values-ref _g183589_ 2)))
+                          (if (not (##fx= _g183597_ 3))
+                              (error "Context expects 3 values" _g183597_)))
+                        (let ((_%pre182110%_ (##values-ref _g183596_ 0))
+                              (_%ns182111%_ (##values-ref _g183596_ 1))
+                              (_%pkg182112%_ (##values-ref _g183596_ 2)))
                           (let* ((_%prelude182114%_
                                   (gx#import-module__0 _%pre182110%_))
                                  (_%read-module-body182169%_
@@ -1543,16 +1564,16 @@
         (let ((_%rel181955%_ '#f))
           (gx#core-resolve-module-path__% _%stx-path181953%_ _%rel181955%_))))
     (define gx#core-resolve-module-path
-      (lambda _g183591_
-        (let ((_g183592_ (##length _g183591_)))
-          (cond ((##fx= _g183592_ 1)
-                 (apply gx#core-resolve-module-path__0 _g183591_))
-                ((##fx= _g183592_ 2)
-                 (apply gx#core-resolve-module-path__% _g183591_))
+      (lambda _g183598_
+        (let ((_g183599_ (##length _g183598_)))
+          (cond ((##fx= _g183599_ 1)
+                 (apply gx#core-resolve-module-path__0 _g183598_))
+                ((##fx= _g183599_ 2)
+                 (apply gx#core-resolve-module-path__% _g183598_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-resolve-module-path
-                  _g183591_))))))
+                  _g183598_))))))
     (define gx#core-resolve-library-module-path
       (lambda (_%libpath181824%_)
         (let* ((_%spath181826%_ (symbol->string (gx#stx-e _%libpath181824%_)))
@@ -1787,16 +1808,16 @@
         (let ((_%exists?181779%_ '#f))
           (gx#core-library-package-plist__% _%dir181777%_ _%exists?181779%_))))
     (define gx#core-library-package-plist
-      (lambda _g183593_
-        (let ((_g183594_ (##length _g183593_)))
-          (cond ((##fx= _g183594_ 1)
-                 (apply gx#core-library-package-plist__0 _g183593_))
-                ((##fx= _g183594_ 2)
-                 (apply gx#core-library-package-plist__% _g183593_))
+      (lambda _g183600_
+        (let ((_g183601_ (##length _g183600_)))
+          (cond ((##fx= _g183601_ 1)
+                 (apply gx#core-library-package-plist__0 _g183600_))
+                ((##fx= _g183601_ 2)
+                 (apply gx#core-library-package-plist__% _g183600_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-library-package-plist
-                  _g183593_))))))
+                  _g183600_))))))
     (define gx#core-library-module-path?
       (lambda (_%stx181751%_)
         (gx#core-special-module-path? _%stx181751%_ '#\:)))
@@ -1863,7 +1884,7 @@
                    _%key181670%_
                    (let* ((_%e181673%_
                            (gx#core-resolve-module-export _%source181671%_))
-                          (__obj183575
+                          (__obj183582
                            (##structure
                             gx#import-binding::t
                             '#f
@@ -1874,7 +1895,7 @@
                             '#f
                             '#f)))
                      (gx#import-binding:::init!
-                      __obj183575
+                      __obj183582
                       (##unchecked-structure-ref _%e181673%_ '1 '#f '#f)
                       _%key181670%_
                       _%phi181669%_
@@ -1882,7 +1903,7 @@
                       (##unchecked-structure-ref _%source181671%_ '1 '#f '#f)
                       (let ((_%$e181675%_ _%force-weak?181652%_))
                         (if _%$e181675%_ _%$e181675%_ _%weak?181668%_)))
-                     __obj183575)
+                     __obj183582)
                    gx#core-context-rebind?
                    _%phi181669%_
                    _%ctx181651%_))))
@@ -1939,15 +1960,15 @@
            _%ctx181711%_
            _%force-weak?181713%_))))
     (define gx#core-bind-import!
-      (lambda _g183595_
-        (let ((_g183596_ (##length _g183595_)))
-          (cond ((##fx= _g183596_ 1) (apply gx#core-bind-import!__0 _g183595_))
-                ((##fx= _g183596_ 2) (apply gx#core-bind-import!__1 _g183595_))
-                ((##fx= _g183596_ 3) (apply gx#core-bind-import!__% _g183595_))
+      (lambda _g183602_
+        (let ((_g183603_ (##length _g183602_)))
+          (cond ((##fx= _g183603_ 1) (apply gx#core-bind-import!__0 _g183602_))
+                ((##fx= _g183603_ 2) (apply gx#core-bind-import!__1 _g183602_))
+                ((##fx= _g183603_ 3) (apply gx#core-bind-import!__% _g183602_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-import!
-                  _g183595_))))))
+                  _g183602_))))))
     (define gx#core-bind-weak-import!__%
       (lambda (_%in181636%_ _%ctx181637%_)
         (gx#core-bind-import!__% _%in181636%_ _%ctx181637%_ '#t)))
@@ -1956,16 +1977,16 @@
         (let ((_%ctx181644%_ (gx#current-expander-context)))
           (gx#core-bind-weak-import!__% _%in181642%_ _%ctx181644%_))))
     (define gx#core-bind-weak-import!
-      (lambda _g183597_
-        (let ((_g183598_ (##length _g183597_)))
-          (cond ((##fx= _g183598_ 1)
-                 (apply gx#core-bind-weak-import!__0 _g183597_))
-                ((##fx= _g183598_ 2)
-                 (apply gx#core-bind-weak-import!__% _g183597_))
+      (lambda _g183604_
+        (let ((_g183605_ (##length _g183604_)))
+          (cond ((##fx= _g183605_ 1)
+                 (apply gx#core-bind-weak-import!__0 _g183604_))
+                ((##fx= _g183605_ 2)
+                 (apply gx#core-bind-weak-import!__% _g183604_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-weak-import!
-                  _g183597_))))))
+                  _g183604_))))))
     (define gx#core-resolve-module-export
       (lambda (_%out181529%_)
         (letrec ((_%subst181531%_
@@ -2151,18 +2172,18 @@
            _%rename181521%_
            _%dphi181523%_))))
     (define gx#core-module-export->import
-      (lambda _g183599_
-        (let ((_g183600_ (##length _g183599_)))
-          (cond ((##fx= _g183600_ 1)
-                 (apply gx#core-module-export->import__0 _g183599_))
-                ((##fx= _g183600_ 2)
-                 (apply gx#core-module-export->import__1 _g183599_))
-                ((##fx= _g183600_ 3)
-                 (apply gx#core-module-export->import__% _g183599_))
+      (lambda _g183606_
+        (let ((_g183607_ (##length _g183606_)))
+          (cond ((##fx= _g183607_ 1)
+                 (apply gx#core-module-export->import__0 _g183606_))
+                ((##fx= _g183607_ 2)
+                 (apply gx#core-module-export->import__1 _g183606_))
+                ((##fx= _g183607_ 3)
+                 (apply gx#core-module-export->import__% _g183606_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-module-export->import
-                  _g183599_))))))
+                  _g183606_))))))
     (define gx#core-expand-module%
       (lambda (_%stx181354%_)
         (letrec ((_%make-context181356%_
@@ -2201,7 +2222,7 @@
                                           (cons _%bind-id181437%_
                                                 (cons _%path181443%_ '())))))
                                 _%bind-id181437%_))
-                           (__obj183576
+                           (__obj183583
                             (##structure
                              gx#module-context::t
                              '#f
@@ -2216,12 +2237,12 @@
                              '#f
                              '#f)))
                       (gx#module-context:::init!
-                       __obj183576
+                       __obj183583
                        _%mod-id181439%_
                        _%super181435%_
                        _%ns181441%_
                        _%path181451%_)
-                      __obj183576)))
+                      __obj183583)))
                  (_%valid-module-id?181357%_
                   (lambda (_%id181408%_)
                     (let* ((_%str181410%_ (symbol->string _%id181408%_))
@@ -3241,16 +3262,16 @@
            _%stx180949%_
            _%internal-expand?180951%_))))
     (define gx#core-expand-import%
-      (lambda _g183601_
-        (let ((_g183602_ (##length _g183601_)))
-          (cond ((##fx= _g183602_ 1)
-                 (apply gx#core-expand-import%__0 _g183601_))
-                ((##fx= _g183602_ 2)
-                 (apply gx#core-expand-import%__% _g183601_))
+      (lambda _g183608_
+        (let ((_g183609_ (##length _g183608_)))
+          (cond ((##fx= _g183609_ 1)
+                 (apply gx#core-expand-import%__0 _g183608_))
+                ((##fx= _g183609_ 2)
+                 (apply gx#core-expand-import%__% _g183608_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-import%
-                  _g183601_))))))
+                  _g183608_))))))
     (define gx#core-import-nested-module
       (lambda (_%spath180537%_ _%where180538%_)
         (let* ((_%e180539180546%_ _%spath180537%_)
@@ -3333,7 +3354,7 @@
          '#t)))
     (define gx#core-expand-export%__%
       (lambda (_%stx180030%_ _%internal-expand?180031%_)
-        (letrec* ((_%make-export__183529183530%_
+        (letrec* ((_%make-export__183536183537%_
                    (lambda (_%bind180483%_
                             _%phi180484%_
                             _%ctx180485%_
@@ -3363,51 +3384,51 @@
                               (##structure-direct-instance-of?
                                _%bind180483%_
                                'gx#import-binding::t)))))))
-                  (_%make-export__0__183531183534%_
+                  (_%make-export__0__183538183541%_
                    (lambda (_%bind180499%_)
                      (let* ((_%phi180501%_ (gx#current-export-expander-phi))
                             (_%ctx180503%_ (gx#current-expander-context))
                             (_%name180505%_ '#f))
-                       (_%make-export__183529183530%_
+                       (_%make-export__183536183537%_
                         _%bind180499%_
                         _%phi180501%_
                         _%ctx180503%_
                         _%name180505%_))))
-                  (_%make-export__1__183532183535%_
+                  (_%make-export__1__183539183542%_
                    (lambda (_%bind180507%_ _%phi180508%_)
                      (let* ((_%ctx180510%_ (gx#current-expander-context))
                             (_%name180512%_ '#f))
-                       (_%make-export__183529183530%_
+                       (_%make-export__183536183537%_
                         _%bind180507%_
                         _%phi180508%_
                         _%ctx180510%_
                         _%name180512%_))))
-                  (_%make-export__2__183533183536%_
+                  (_%make-export__2__183540183543%_
                    (lambda (_%bind180514%_ _%phi180515%_ _%ctx180516%_)
                      (let ((_%name180518%_ '#f))
-                       (_%make-export__183529183530%_
+                       (_%make-export__183536183537%_
                         _%bind180514%_
                         _%phi180515%_
                         _%ctx180516%_
                         _%name180518%_))))
                   (_%make-export180033%_
-                   (lambda _g183603_
-                     (let ((_g183604_ (##length _g183603_)))
-                       (cond ((##fx= _g183604_ 1)
-                              (apply _%make-export__0__183531183534%_
-                                     _g183603_))
-                             ((##fx= _g183604_ 2)
-                              (apply _%make-export__1__183532183535%_
-                                     _g183603_))
-                             ((##fx= _g183604_ 3)
-                              (apply _%make-export__2__183533183536%_
-                                     _g183603_))
-                             ((##fx= _g183604_ 4)
-                              (apply _%make-export__183529183530%_ _g183603_))
+                   (lambda _g183610_
+                     (let ((_g183611_ (##length _g183610_)))
+                       (cond ((##fx= _g183611_ 1)
+                              (apply _%make-export__0__183538183541%_
+                                     _g183610_))
+                             ((##fx= _g183611_ 2)
+                              (apply _%make-export__1__183539183542%_
+                                     _g183610_))
+                             ((##fx= _g183611_ 3)
+                              (apply _%make-export__2__183540183543%_
+                                     _g183610_))
+                             ((##fx= _g183611_ 4)
+                              (apply _%make-export__183536183537%_ _g183610_))
                              (else
                               (##raise-wrong-number-of-arguments-exception
                                'case-lambda-dispatch
-                               _g183603_))))))
+                               _g183610_))))))
                   (_%expand1180034%_
                    (lambda (_%hd180188%_
                             _%K180189%_
@@ -3561,7 +3582,7 @@
                                  ((lambda (_%bind180349%_)
                                     (_%K180189%_
                                      _%rest180190%_
-                                     (cons (_%make-export__183529183530%_
+                                     (cons (_%make-export__183536183537%_
                                             _%bind180349%_
                                             _%phi180344%_
                                             (gx#current-expander-context)
@@ -3633,7 +3654,7 @@
                                                ((lambda (_%bind180399%_)
                                                   (_%K180189%_
                                                    _%rest180190%_
-                                                   (cons (_%make-export__183529183530%_
+                                                   (cons (_%make-export__183536183537%_
                                                           _%bind180399%_
                                                           _%phi180394%_
                                                           (gx#current-expander-context)
@@ -3666,7 +3687,7 @@
                                            ((lambda (_%bind180411%_)
                                               (_%K180189%_
                                                _%rest180190%_
-                                               (cons (_%make-export__0__183531183534%_
+                                               (cons (_%make-export__0__183538183541%_
                                                       _%bind180411%_)
                                                      _%r180191%_)))
                                             _%$e180408%_)
@@ -3723,7 +3744,7 @@
                                                       _%set180430%_)
                                                      (_%lp180427%_
                                                       _%bind-rest180452%_
-                                                      (cons (_%make-export__2__183533183536%_
+                                                      (cons (_%make-export__2__183540183543%_
                                                              _%bind180453%_
                                                              _%current-phi180420%_
                                                              _%current-ctx180418%_)
@@ -4013,16 +4034,16 @@
            _%stx180528%_
            _%internal-expand?180530%_))))
     (define gx#core-expand-export%
-      (lambda _g183605_
-        (let ((_g183606_ (##length _g183605_)))
-          (cond ((##fx= _g183606_ 1)
-                 (apply gx#core-expand-export%__0 _g183605_))
-                ((##fx= _g183606_ 2)
-                 (apply gx#core-expand-export%__% _g183605_))
+      (lambda _g183612_
+        (let ((_g183613_ (##length _g183612_)))
+          (cond ((##fx= _g183613_ 1)
+                 (apply gx#core-expand-export%__0 _g183612_))
+                ((##fx= _g183613_ 2)
+                 (apply gx#core-expand-export%__% _g183612_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-export%
-                  _g183605_))))))
+                  _g183612_))))))
     (define gx#core-expand-export-source
       (lambda (_%hd180027%_)
         (gx#core-expand-export%__%
@@ -4099,17 +4120,17 @@
            _%phi179988%_
            _%ctx179990%_))))
     (define gx#core-bind-feature!
-      (lambda _g183607_
-        (let ((_g183608_ (##length _g183607_)))
-          (cond ((##fx= _g183608_ 1)
-                 (apply gx#core-bind-feature!__0 _g183607_))
-                ((##fx= _g183608_ 2)
-                 (apply gx#core-bind-feature!__1 _g183607_))
-                ((##fx= _g183608_ 3)
-                 (apply gx#core-bind-feature!__2 _g183607_))
-                ((##fx= _g183608_ 4)
-                 (apply gx#core-bind-feature!__% _g183607_))
+      (lambda _g183614_
+        (let ((_g183615_ (##length _g183614_)))
+          (cond ((##fx= _g183615_ 1)
+                 (apply gx#core-bind-feature!__0 _g183614_))
+                ((##fx= _g183615_ 2)
+                 (apply gx#core-bind-feature!__1 _g183614_))
+                ((##fx= _g183615_ 3)
+                 (apply gx#core-bind-feature!__2 _g183614_))
+                ((##fx= _g183615_ 4)
+                 (apply gx#core-bind-feature!__% _g183614_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-feature!
-                  _g183607_))))))))
+                  _g183614_))))))))
