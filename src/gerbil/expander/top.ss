@@ -34,6 +34,11 @@ namespace: gx
                             %#define-runtime)
         ((%#begin-syntax . _)
          (K (core-expand-begin-syntax% hd)))
+        ((%#define-values (id) expr . props)
+         (identifier? id)
+         (let (bind (core-bind-runtime! id))
+           (core-bind-runtime-properties! bind props)
+           (K hd)))
         ((%#define-values hd-bind expr)
          (core-bind-values? hd-bind)
          (begin
@@ -51,7 +56,7 @@ namespace: gx
       (match rest
         ([hd . rest]
          (core-syntax-case hd (%#define-values %#begin-syntax)
-           ((%#define-values hd-bind expr)
+           ((%#define-values hd-bind expr . ignore-props)
             (let (ehd
                   (core-quote-syntax
                    [(core-quote-syntax '%#define-values)
@@ -119,6 +124,11 @@ namespace: gx
     (core-syntax-case hd (%#define-values
                           %#define-syntax %#define-alias
                           %#declare)
+      ((%#define-values (id) expr . props)
+       (identifier? id)
+       (let (bind (core-bind-runtime! id))
+         (core-bind-runtime-properties! bind props)
+         (K rest (cons hd r))))
       ((%#define-values hd-bind expr)
        (core-bind-values? hd-bind)
        (begin
@@ -140,7 +150,7 @@ namespace: gx
       (core-syntax-case rest ()
         ((hd . rest)
          (core-syntax-case hd (%#define-values %#declare)
-           ((%#define-values hd-bind expr)
+           ((%#define-values hd-bind expr . ignore-props)
             (lp rest decls
                 (cons [(core-quote-bind-values hd-bind)
                        (core-expand-expression expr)]
@@ -215,6 +225,15 @@ namespace: gx
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
   (core-syntax-case stx ()
+    ((_ (id) expr . props)
+     (identifier? id)
+     (let (bind (core-bind-runtime! id))
+       (core-bind-runtime-properties! bind props)
+       (core-quote-syntax
+        [(core-quote-syntax '%#define-values)
+         (core-quote-bind-values [id])
+         (core-expand-expression expr)]
+        (stx-source stx))))
     ((_ hd expr)
      (core-bind-values? hd)
      (begin
@@ -228,14 +247,44 @@ namespace: gx
 ;; (%#define-runtime id binding-id)
 (def (core-expand-define-runtime% stx)
   (core-syntax-case stx ()
-    ((_ id binding-id)
-     (and (identifier? id) (identifier? binding-id))
-     (let (eid (stx-e binding-id))
-       (core-bind-runtime-reference! id eid)
+    ((_ id binding-id . props)
+     (and (identifier? id)
+          (identifier? binding-id)
+          (stx-list? props))
+     (let* ((eid (stx-e binding-id))
+            (bind (core-bind-runtime-reference! id eid)))
+       (core-bind-runtime-properties! bind props)
        (core-quote-syntax
-        [(core-quote-syntax '%#define-runtime)
-         (core-quote-syntax id)
-         eid])))))
+               [(core-quote-syntax '%#define-runtime)
+                (core-quote-syntax id)
+                eid])))))
+
+(def (core-bind-runtime-properties! bind props)
+  (def (eval-prop prop)
+    (eval-expression+1 prop))
+
+  (let loop ((rest props) (props []))
+    (core-syntax-case rest ()
+      ((key prop . rest)
+       (stx-keyword? key)
+       (let (key (stx-e key))
+         (case key
+           ((macro:)
+            (runtime-binding-macro-set! bind
+              (if (identifier? prop)
+                (core-quote-syntax prop)
+                (eval-prop prop)))
+            (loop rest props))
+           ((type:)
+            (runtime-binding-type-set! bind
+              (eval-prop prop))
+            (loop rest props))
+           (else
+            (loop rest (cons* (eval-prop prop) key props))))))
+      (()
+       (unless (null? props)
+         (binding-properties-set! bind (reverse! props)))))))
+
 
 ;; (%#define-syntax id expr)
 (def (core-expand-define-syntax% stx)
@@ -404,14 +453,37 @@ namespace: gx
       (stx-source stx)))))
 
 (def (core-expand-call% stx)
+  (def (expand-runtime-call rator-expr args)
+    (core-quote-syntax
+     (core-cons* '%#call rator-expr
+       (stx-map core-expand-expression args))
+     (stx-source stx)))
+
   (core-syntax-case stx ()
     ((_ rator . args)
      (stx-list? args)
-     (core-quote-syntax
-      (core-cons* '%#call
-        (core-expand-expression rator)
-        (stx-map core-expand-expression args))
-      (stx-source stx)))))
+     (let (rator-expr (core-expand-expression rator))
+       (core-syntax-case rator-expr (%#ref)
+         ((%#ref id)
+          (cond
+           ((resolve-identifier id)
+            => (lambda (bind)
+                 (let again ((bind bind))
+                   (cond
+                    ((and (runtime-binding? bind) (runtime-binding-macro bind))
+                     => (lambda (macro)
+                          (core-expand-expression
+                           (stx-wrap-source
+                            (cons macro args)
+                            (stx-source stx)))))
+                    ((import-binding? bind)
+                     (again (import-binding-e bind)))
+                    (else
+                     (expand-runtime-call rator-expr args))))))
+           (else
+            (expand-runtime-call rator-expr args))))
+         (else
+          (expand-runtime-call rator-expr args)))))))
 
 (def (core-expand-if% stx)
   (core-syntax-case stx ()
@@ -470,27 +542,6 @@ namespace: gx
      (stx-list? body)
      (core-cons '%#extern
        (generate body)))))
-
-(def (macro-expand-define-values stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (stx-andmap identifier? hd)
-     [(core-quote-syntax '%#define-values)
-      (stx-map identity hd)
-      expr])))
-
-(def (macro-expand-define-syntax stx)
-  (core-syntax-case stx ()
-    ((_ hd expr)
-     (identifier? hd)
-     [(core-quote-syntax '%#define-syntax) hd expr])))
-
-(def (macro-expand-define-alias stx)
-  (core-syntax-case stx ()
-    ((_ id alias-id)
-     (and (identifier? id)
-          (identifier? alias-id))
-     [(core-quote-syntax '%#define-alias) id alias-id])))
 
 (def (macro-expand-lambda% stx)
   (core-syntax-case stx ()

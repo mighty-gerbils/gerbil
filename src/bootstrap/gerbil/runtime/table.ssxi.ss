@@ -6,6 +6,21 @@ package: gerbil/runtime
    __table::t.id
    (optimizer-resolve-class '(typedecl __table::t.id) 'symbol::t))
   (declare-type
+   raw-table?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/table)))
+  (declare-type
    &raw-table-table
    (@lambda 1
             #f
@@ -2359,6 +2374,9 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/table)))
+  (declare-type
+   unused-obj
+   (optimizer-resolve-class '(typedecl unused-obj) 't::t))
   (declare-type
    __gc-table::t.id
    (optimizer-resolve-class '(typedecl __gc-table::t.id) 'symbol::t))

@@ -61,11 +61,18 @@ namespace: gx
     (struct-instance-init! self (gensym 'L) (make-hash-table-eq) super)))
 
 ;; bindings
-(defstruct binding (id key phi)
-  transparent: #t)
+(defstruct binding (id key phi properties)
+  transparent: #t
+  constructor: :init!)
+
+(defmethod {:init! binding}
+  (lambda (self id key phi)
+    (set! self.id id)
+    (set! self.key key)
+    (set! self.phi phi)))
 
 ;; runtime bindings
-(defstruct (runtime-binding binding) ()
+(defstruct (runtime-binding binding) (type macro)
   transparent: #t)
 (defstruct (local-binding runtime-binding) ()
   transparent: #t)
@@ -76,6 +83,19 @@ namespace: gx
 (defstruct (extern-binding top-binding) ()
   transparent: #t)
 
+(defmethod {:init! runtime-binding}
+  binding:::init!)
+(defmethod {:init! local-binding}
+  binding:::init!)
+(defmethod {:init! top-binding}
+  binding:::init!)
+(defmethod {:init! module-binding}
+  (lambda (self id key phi ctx)
+    (binding:::init! self id key phi)
+    (set! self.context ctx)))
+(defmethod {:init! extern-binding}
+  binding:::init!)
+
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
   final: #t transparent: #t)
@@ -83,6 +103,21 @@ namespace: gx
   final: #t transparent: #t)
 (defstruct (alias-binding binding) (e)
   final: #t transparent: #t)
+
+(defmethod {:init! syntax-binding}
+  (lambda (self id key phi e)
+    (binding:::init! self id key phi)
+    (set! self.e e)))
+(defmethod {:init! import-binding}
+  (lambda (self id key phi e ctx weak?)
+    (binding:::init! self id key phi)
+    (set! self.e e)
+    (set! self.context ctx)
+    (set! self.weak? weak?)))
+(defmethod {:init! alias-binding}
+  (lambda (self id key phi e)
+    (binding:::init! self id key phi)
+    (set! self.e e)))
 
 ;; expanders [syntax-binding-e]
 (defstruct expander (e))
@@ -129,6 +164,13 @@ namespace: gx
 ;;; expander driver
 (def (eval-syntax stx (expression? #f))
   (eval-syntax* (core-expand stx expression?)))
+
+(def (eval-syntax+1 stx (expression? #f))
+  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+    (eval-syntax stx expression?)))
+
+(def (eval-expression+1 stx)
+  (eval-syntax+1 stx #t))
 
 (def (eval-syntax* stx)
   ((current-expander-eval)
@@ -330,8 +372,7 @@ namespace: gx
        (identifier? id)
        (core-bound-identifier? id feature-binding?))
       ((unquote expr)
-       (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-         (eval-syntax expr)))
+       (eval-syntax+1 expr))
       ((combinator . body)
        (stx-list? body)
        (case (stx-e combinator)
@@ -424,6 +465,10 @@ namespace: gx
          (core-cons id body))))))
 
 (def (core-apply-user-expander self stx (method 'apply-macro-expander))
+  ;; expander debugging support
+  (when __DEBUG-EXPANDER
+    (displayln "@expand " (syntax->datum stx))
+    (force-output))
   (with ((user-expander K ctx phi) self)
     (core-apply-user-macro K stx ctx phi method)))
 
@@ -634,9 +679,11 @@ namespace: gx
 
 (def (core-context-get ctx key)
   (hash-get (&expander-context-table ctx) key))
+
 (def (core-context-put! ctx key val)
   ;;(displayln `(core-context-put! ,(expander-context-id ctx) ,key ,val))
-  (hash-put! (&expander-context-table ctx) key val))
+  (hash-put! (&expander-context-table ctx) key val)
+  val)
 
 (def (core-context-resolve ctx key)
   (let lp ((ctx ctx))

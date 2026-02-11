@@ -27,4 +27,7 @@ package: gerbil/expander
   (declare-type gx#&AST-e (@accessor gx#AST::t e #f))
   (declare-type gx#&AST-source (@accessor gx#AST::t source #f))
   (declare-type gx#&AST-e-set! (@mutator gx#AST::t e #f))
-  (declare-type gx#&AST-source-set! (@mutator gx#AST::t source #f)))
+  (declare-type gx#&AST-source-set! (@mutator gx#AST::t source #f))
+  (declare-type
+   gx#__DEBUG-EXPANDER
+   (optimizer-resolve-class '(typedecl gx#__DEBUG-EXPANDER) 'boolean::t)))

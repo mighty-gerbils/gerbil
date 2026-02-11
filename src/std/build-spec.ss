@@ -1,13 +1,155 @@
 ;; -*- Gerbil -*-
-
+;; gerbil stdlib build spec
 (def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
 
 (def (build-spec . _)
-  `(;; v0.19 ported ...
+  `(;; v0.19 stdlib
+    (gxc: "build-config" (extra-inputs: ("build-features.ss")))
+    "interactive"
+    "error"
+    "interface"
+
+    "list/list-builder"
+    "list/list"
+    "list/alist"
+    "list/plist"
+    "list/walist"
+
+    "string/path"
+
+    "iter/interface"
+    "iter/iterators"
+    "iter/macros"
+    "iter/api"
+    "iter"
+
+    "struct/queue"
+
+    "sync/completion"
+    "sync/channel"
+    "sync/barrier"
+    "sync/wg"
+
+    "time/time"
+    "time/timeout"
+
+    "make"
+    "build-script"
+
+    "test/base"
+    "test/unit"
+    "test"
+
+    "hash"
+    "string/misc"
+
+    "cli/getopt"
+
+    "text/pregexp"
+
+    ;; TODO
+
+    ;; "ffi"
+    ;; "object"
+
+
+
+    ;; "list/alist"
+    ;; "list/walist"
+
+
+
+    ;; "struct/queue"
+
+
+
+
+    ;; "sync/wrlock"
+
+    ;; "time/time"
+    ;; "time/timeout"
+    ;; "time/format"
+
+    ;; "net/address/address"
+    ;; "net/address/format"
+
+    ;; "io"
+    ;; "io/interface"
+    ;; "io/api"
+    ;; "io/dummy"
+    ;; "io/delimited"
+    ;; "io/file"
+    ;; "io/util"
+    ;; "io/port"
+    ;; "io/bio/types"
+    ;; "io/bio/input"
+    ;; "io/bio/delimited"
+    ;; "io/bio/output"
+    ;; "io/bio/chunked"
+    ;; "io/bio/inline"
+    ;; "io/bio/util"
+    ;; "io/bio/api"
+    ;; "io/strio/types"
+    ;; "io/strio/packed"
+    ;; "io/strio/reader"
+    ;; "io/strio/writer"
+    ;; "io/strio/utf8"
+    ;; "io/strio/chunked"
+    ;; "io/strio/input"
+    ;; "io/strio/output"
+    ;; "io/strio/inline"
+    ;; "io/strio/delimited"
+    ;; "io/strio/util"
+    ;; "io/strio/api"
+    ;; "io/socket/types"
+    ;; "io/socket/basic"
+    ;; "io/socket/stream"
+    ;; "io/socket/server"
+    ;; "io/socket/datagram"
+    ;; "io/socket/socket"
+    ;; "io/socket/api"
+
+    ;; "serde/scan"
+    ;; "serde/scanner"
+    ;; "serde/serialize"
+    ;; "serde/opaque"
+
+    ;; "format/env"
+    ;; "format/ioutil"
+    ;; "format/io"
+    ;; "format/writer"
+    ;; "format/reader"
+    ;; "format/string"
+
+    ;; "encoding/json/env"
+    ;; "encoding/json/io"
+    ;; "encoding/json/writer"
+    ;; "encoding/json/reader"
+
+    ;; "log/interface"
+    ;; "log/level"
+    ;; "log/proto"
+    ;; "log/system"
+    ;; "log/macros"
+    ;; "log/user"
+    ;; "log/default"
+    ;; "log/format"
+    ;; "log/console"
+    ;; "log/rotate"
+    ;; "log/compress"
+
+    ;; "cli/getopt"
+
+    ;; "os/error"
+    ;; "os/time"
+    ;; "os/device"
+    ;; "os/file"
+    ;; "os/fcntl"
+    ;; "os/socket"
     ))
 
 #;(def (build-spec . _)
-  `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
+  `(
     "metaclass"
     "hash-table"
     "interactive"
@@ -22,7 +164,7 @@
     "sugar"
     "values"
     "assert"
-    "make"
+
     "build-script"
     (gxc: "error" ,@(include-gambit-sharp))
     "getopt"
@@ -35,7 +177,7 @@
     (gxc: "event" ,@(include-gambit-sharp))
     "coroutine"
     "iter"
-    "test"
+
     "stxparam"
     "stxutil"
     "source"
@@ -49,42 +191,6 @@
     "cli/shell"
     "cli/print-exit"
     "cli/multicall"
-    ;; stdio
-    "io"
-    "io/interface"
-    "io/api"
-    "io/dummy"
-    "io/delimited"
-    "io/file"
-    "io/util"
-    "io/port"
-    "io/bio/types"
-    "io/bio/input"
-    "io/bio/delimited"
-    "io/bio/output"
-    "io/bio/chunked"
-    "io/bio/inline"
-    "io/bio/util"
-    "io/bio/api"
-    "io/strio/types"
-    "io/strio/packed"
-    "io/strio/reader"
-    "io/strio/writer"
-    "io/strio/utf8"
-    "io/strio/chunked"
-    "io/strio/input"
-    "io/strio/output"
-    "io/strio/inline"
-    "io/strio/delimited"
-    "io/strio/util"
-    "io/strio/api"
-    "io/socket/types"
-    "io/socket/basic"
-    "io/socket/stream"
-    "io/socket/server"
-    "io/socket/datagram"
-    "io/socket/socket"
-    "io/socket/api"
     ;; debugging
     "debug/DBG"
     (gxc: "debug/heap" ,@(include-gambit-sharp))

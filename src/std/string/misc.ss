@@ -1,0 +1,321 @@
+;; -*- Gerbil -*-
+;;;; String utilities
+
+(export
+  string-split-prefix
+  string-trim-prefix
+  string-split-suffix
+  string-trim-suffix
+  string-split-eol
+  string-trim-eol
+  string-subst
+  string-substitute-char
+  string-substitute-char-if
+  string-whitespace?
+  random-string
+  +cr+ +lf+ +crlf+
+  as-string<?)
+
+(import :std/error
+        :std/iter)
+
+;; If the string starts with given prefix, return the end of the string after the prefix.
+;; Otherwise, return the entire string. NB: Only remove the prefix once.
+(def (string-trim-prefix prefix string)
+  (if (string-prefix? prefix string)
+    (string-drop string (string-length prefix))
+    string))
+
+(def (string-drop (s : :string) (count : :fixnum))
+  (substring s count (string-length s)))
+
+;; Split a string based on the given prefix, if present.
+;; Return two values:
+;; - the trimmed string,
+;; - the prefix (eq? to the argument) if found, or an empty string if not found
+(def (string-split-prefix prefix string)
+  (let ((trimmed (string-trim-prefix prefix string)))
+    (if (eq? trimmed string) (values string "") (values trimmed prefix))))
+
+
+;; If the string ends with given suffix, return the beginning of the string up to the suffix.
+;; Otherwise, return the entire string. NB: Only remove the suffix once.
+(def (string-trim-suffix suffix string)
+  (if (string-suffix? suffix string)
+    (string-drop-right string (string-length suffix))
+    string))
+
+(def (string-drop-right (s : :string) (count : :fixnum))
+  (substring s 0 (fx- (string-length s) count)))
+
+;; Split a string based on the given suffix, if present.
+;; Return two values:
+;; - the trimmed string,
+;; - the suffix (eq? to the argument) if found, or an empty string if not found
+(def (string-split-suffix suffix string)
+  (let ((trimmed (string-trim-suffix suffix string)))
+    (if (eq? trimmed string) (values string "") (values trimmed suffix))))
+
+
+;; Line endings
+(define +cr+ "\r")
+(define +lf+ "\n")
+(define +crlf+ "\r\n")
+
+;; TODO: do we want a parameter to list the allowed line endings in the current context?
+;; a function to add the default line-ending, which would be the first in that list,
+;; or maybe a separate parameter? Indeed, we can't just iterate through such a list
+;; to find the longest suffix if +lf+ is in front of +crlf+ -- longer must be tested first.
+
+;; Trim any single end-of-line marker CR, LF or CRLF at the end of the string.
+;; NB: This function will only remove one end-of-line marker,
+;; like the shell when processing $(subprocess output) or perl's chomp.
+;; Use (string-trim-right string (char-set #\return #\newline)) to remove all of them.
+(def (string-trim-eol string)
+  (defrules try ()
+    ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
+                        (if (eq? trimmed string) fallback trimmed))))
+  (try +crlf+ (try +lf+ (try +cr+ string)))) ;; NB: note how we try the longer +crlf+ *before* +lf+.
+
+
+;; Split a string based on any end-of-line marker CR, LF or CRLF at the end of the string.
+;; Return two values:
+;; - the trimmed string
+;; - the eol marker found, or the empty string if not found
+(def (string-split-eol string)
+  (defrules try ()
+    ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
+                        (if (eq? trimmed string) fallback (values trimmed eol)))))
+  (try +crlf+ (try +lf+ (try +cr+ (values string "")))))
+
+
+;; string-subst helper which handles the case that the argument 'old' is an empty string.
+;;   new    non-empty
+;;   count  non-zero, number of replacements (-1 means no limit)
+(def (subst-helper-empty-old str new count)
+  (declare (fixnum))
+  (def len-str (string-length str))
+  (if (= count 1)
+    (string-append new str)         ; add 'new' and leave procedure
+    (call-with-output-string
+     (lambda (port)
+       (write-string new port) ; 'count' > 1, add 'new' before the first character
+       (let ((stop (1- len-str))
+             (count (if (or (negative? count) (> count len-str))
+		      (1+ len-str)  ; the maximal number of replacements is len + 1
+		      count)))
+	 (let loop ((i 0)
+		    (matches 1))    ; 1 because 'new' was already added once
+	   (cond
+	    ((= matches count)
+	     (write-string new port)
+	     (write-substring str i len-str port))
+	    ((= i stop)
+	     (unless (zero? i) (write-string new port))
+	     (write-char (string-ref str i) port)
+	     (write-string new port))
+	    (else
+	     (unless (zero? i) (write-string new port))
+	     (write-char (string-ref str i) port)
+	     (loop (1+ i) (1+ matches))))))))))
+
+
+;; string-subst helper which handles the case that the argument 'old' is a non-empty string.
+;;   str    non-empty
+;;   old    non-empty
+;;   new    can be empty
+;;   count  non-zero, number of replacements (-1 means no limit)
+(def (subst-helper-nonempty-old str old new count)
+  (declare (fixnum))
+  (def len-str (string-length str))
+  (def size-old (1- (string-length old)))
+  (def size-str (1- (string-length str)))
+  (call-with-output-string
+   (lambda (port)
+     (let loop ((i 0)       ; position in str
+		(matches 0)
+		(last 0)    ; position after last match in str
+		(j 0))      ; position in old
+       (cond
+	((= matches count)  ; stop, limit reached
+	 (write-substring str i len-str port))
+	((= i size-str)     ; stop, end of str
+	 (if (and (eq? (string-ref str i) (string-ref old j))
+                  (= j size-old))
+	   (write-string new port)
+	   (write-substring str last len-str port)))
+	(else
+	 (if (eq? (string-ref str i) (string-ref old j))
+           (if (= j size-old)                        ; match of old in str
+	     (begin
+	       (write-string new port)
+	       (loop (1+ i) (1+ matches) (1+ i) 0))
+	     (loop (1+ i) matches last (1+ j)))      ; char equal, not yet a match
+	   (begin
+	     (write-substring str last (1+ i) port)  ; no match, continue search
+	     (loop (1+ i) matches (1+ i) 0)))))))))
+
+
+;; In str replace the string old with string new.
+;; The procedure accepts only a fixnum or #f for count.
+;;   count > 0   limit replacements
+;;   count #f    no limit
+;;   count <= 0  return input
+;;
+;; Example:
+;;  (string-subst "abc" "b" "_") => "a_c"
+;;  (string-subst "abc" "" "_")  => "_a_b_c_"
+(def (string-subst str old new count: (count #f))
+  (declare (fixnum))
+  (unless (or (not count) (fixnum? count))
+    (raise-bad-argument string-subst "fixnum or #f: count" count))
+  (def old-empty? (string-empty? old))
+  (def new-empty? (string-empty? new))
+  (def str-empty? (string-empty? str))
+  (if (or (and old-empty? new-empty?)
+	  (and count (<= count 0)))
+    str
+    (let (count (if (number? count) count -1)) ; convert #f to -1
+      (cond
+       (old-empty? (subst-helper-empty-old str new count))
+       (str-empty? str)
+       (else       (subst-helper-nonempty-old str old new count))))))
+
+;; Returns true when the string s consists only of whitespace characters.
+;;
+;;   " "   space
+;;   "\n"  line feed
+;;   "\t"  horizontal tab
+;;   "\r"  carriage return
+;;   "\f"  form feed
+;;   "\v"  vertical tab
+;;
+;; Example:
+;;  (string-whitespace? " \n\r \t") => #t
+(def (string-whitespace? s)
+  (string-every char-whitespace? s))
+
+(def (string-every (pred : :procedure) (s : :string)) => :boolean
+  (let (len (string-length s))
+    (let loop ((i 0 :- :fixnum)) => :boolean
+      (if (fx< i len)
+        (let (next (string-ref s i))
+          (if (pred next)
+            (loop (fx+ i 1))
+            #f))
+        #t))))
+
+(def (random-word-char)
+  (declare (not safe) (fixnum))
+  (def n (random-integer 63))
+  (integer->char
+   (+ n (cond
+	 ((< n 10) 48) ; 0-9
+	 ((< n 36) 55) ; A-Z
+	 ((< n 62) 61) ; a-z
+	 (else 33))))) ; _
+
+
+;; random-string returns a string consisting of regex word-boundary
+;; characters [a-zA-Z0-9_]. Throws an error if len is not a fixnum.
+;;
+;; Example:
+;;  (random-string) => "5CfMyYd2Ob"
+(def (random-string (len 10))
+  (declare (not safe) (fixnum))
+  (unless (fixnum? len)
+    (raise-bad-argument random-string "fixnum" len))
+  (if (> len 0)
+    (let (str (make-string len))
+      (do ((i 0 (1+ i)))
+	  ((= i len))
+	(string-set! str i (random-word-char)))
+      str)
+    ""))
+
+;; str converts all of its arguments into a single string.
+;; When called without an argument an empty string is returned.
+;;
+;; Examples:
+;;  (str 2.0)               => "2.0"
+;;  (str "hello" ", world") => "hello, world"
+;; (def* str
+;;   ((v) (if (string? v) v
+;;            (format (str-format v) v)))
+;;   (xs (if (andmap string? xs)
+;;         (string-concatenate xs)
+;;         (call-with-output-string
+;;          (lambda (port)
+;;            (let loop ((rest xs))
+;;              (match rest
+;;                ([v . rest]
+;;                 (if (string? v)
+;;                   (write-string v port)
+;;                   (fprintf port (str-format v) v))
+;;                 (loop rest))
+;;                (else (void)))))))))
+
+;; str-format takes any value and returns a formatting string, which can be
+;; used by the :std/format family of procedures. Considers the :pr method
+;; from :std/misc/repr.
+;;
+;; Examples:
+;;  (str-format 5.0)   => "~f"
+;;  (str-format [1 2]) => "~r"
+;; (def (str-format v)
+;;   (def (obj-pr? v) (method-ref v ':pr))
+;;   (cond
+;;    ((? (and number? inexact?) v) "~f")
+;;    ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
+;;    (else "~a")))
+
+;; Like CL SUBSTITUTE-IF but specialized for strings and chars. Mind the argument order.
+(def (string-substitute-char-if
+      string newchar predicate
+      start: (start #f)
+      end: (end #f)
+      from-end: (from-end? #f)
+      count: (count #f)
+      in-place: (in-place? #f))
+  (unless start (set! start 0))
+  (unless end (set! end (string-length string)))
+  (def s (if in-place? string (string-copy string)))
+  (let/cc return
+    (cond
+     ((equal? count 0) (return))
+     (count
+      (for (i (if from-end? (in-range (1- end) (1- start) -1) (in-range start end)))
+        (when (predicate (string-ref s i))
+          (string-set! s i newchar)
+          (set! count (fx1- count))
+          (when (zero? count) (return)))))
+     (else
+      (for (i (in-range start end))
+        (when (predicate (string-ref s i))
+          (string-set! s i newchar))))))
+  s)
+
+;; Like CL SUBSTITUTE but specialized for strings and chars. Mind the argument order.
+(def (string-substitute-char
+      string newchar oldchar
+      test: (test #f)
+      test-not: (test-not #f)
+      key: (key #f)
+      start: (start #f)
+      end: (end #f)
+      from-end: (from-end? #f)
+      count: (count #f)
+      in-place: (in-place? #f))
+  (let* ((key (or key identity))
+         (predicate
+          (cond
+           (test (lambda (x) (test oldchar (key x))))
+           (test-not (lambda (x) (not (test-not oldchar (key x)))))
+           (key (lambda (x) (equal? oldchar (key x))))
+           (else (cut eqv? oldchar <>)))))
+    (string-substitute-char-if
+     string newchar predicate
+     start: start end: end count: count from-end: from-end? in-place: in-place?)))
+
+(def (as-string<? x y)
+  (string<? (as-string x) (as-string y)))

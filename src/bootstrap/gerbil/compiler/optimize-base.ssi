@@ -132,14 +132,24 @@ namespace: gxc
           gxc#&!procedure-unchecked-signature-set!)
          (%#define-runtime &!procedure-id-set! gxc#&!procedure-id-set!)
          (%#define-syntax !procedure |gxc[:0:]#!procedure|)
-         (%#define-runtime make-!procedure gxc#make-!procedure)
+         (%#define-syntax @make-!procedure |gxc[:0:]#@make-!procedure|)
          (%#define-runtime __make-!procedure gxc#__make-!procedure)
          (%#define-runtime
-          !procedure-signature-set!
-          gxc#!procedure-signature-set!)
+          make-!procedure
+          gxc#make-!procedure
+          macro:
+          @make-!procedure)
+         (%#define-syntax
+          @!procedure-signature-set!
+          |gxc[:0:]#@!procedure-signature-set!|)
          (%#define-runtime
           __!procedure-signature-set!
           gxc#__!procedure-signature-set!)
+         (%#define-runtime
+          !procedure-signature-set!
+          gxc#!procedure-signature-set!
+          macro:
+          @!procedure-signature-set!)
          (%#define-runtime !class-meta::t gxc#!class-meta::t)
          (%#define-runtime !class-meta? gxc#!class-meta?)
          (%#define-runtime make-!class-meta gxc#make-!class-meta)

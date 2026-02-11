@@ -6,6 +6,7 @@ namespace: #f
          (%#export #t)
          (%#define-runtime __table::t.id __table::t.id)
          (%#define-runtime __table::t __table::t)
+         (%#define-runtime raw-table? raw-table?)
          (%#define-runtime &raw-table-table &raw-table-table)
          (%#define-runtime &raw-table-count &raw-table-count)
          (%#define-runtime &raw-table-free &raw-table-free)
@@ -236,6 +237,7 @@ namespace: #f
          (%#define-runtime
           immediate-table-delete!/lock
           immediate-table-delete!/lock)
+         (%#define-runtime unused-obj unused-obj)
          (%#define-syntax probe-step |[:0:]#probe-step|)
          (%#define-syntax __table-ref |[:0:]#__table-ref|)
          (%#define-syntax __table-set! |[:0:]#__table-set!|)

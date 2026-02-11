@@ -3,7 +3,7 @@
 ;;; object related utilities
 (export #t)
 
-(defsyntax-case defobject-cachee ()
+(defsyntax-case defobject-cache ()
   ((_ name klass new reset!)
    (with-identifiers
        ((cache #'name #'name "__cache")

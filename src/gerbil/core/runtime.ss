@@ -1447,7 +1447,6 @@ package: gerbil/core
     values-count
     values-ref
     values->list
-    cons*
     foldl
     foldr
     andmap

@@ -379,7 +379,7 @@ else
          build_doc || die
          ;;
        "env")
-           $*
+           exec "$@"
          ;;
        *)
          feedback_err "Unknown command."

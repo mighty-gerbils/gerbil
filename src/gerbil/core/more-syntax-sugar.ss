@@ -5,7 +5,7 @@
 prelude: :<root>
 package: gerbil/core
 
-(import "runtime" "expander" "sugar"
+(import "runtime" "expander" "sugar" "more-sugar"
         (phi: +1 "runtime" "expander" "sugar"))
 (export #t)
 
@@ -36,15 +36,6 @@ package: gerbil/core
   (identifier? #'fresh-id)
   (with-identifiers ((fresh-id components ...))
     body ...))
-
-(defsyntax (defsyntax-case stx)
-  (syntax-case stx ()
-    ((_ name (lit ...) clause ...)
-     (with-syntax (($stx (syntax-local-introduce 'stx)))
-       #'(defsyntax name
-           (lambda ($stx)
-             (syntax-case $stx (lit ...)
-               clause ...)))))))
 
 ;; TODO Not Implemented Yet -- barf
 (defrules quasisyntax ())

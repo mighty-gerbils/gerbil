@@ -26,6 +26,10 @@ namespace: #f
                         seed 5 #f
                         lock 5 #f)))
 
+(def (raw-table? obj)
+  (and (##structure? obj)
+       (##structure-instance-of? obj __table::t.id)))
+
 (def (&raw-table-table tab)
   (##unchecked-structure-ref tab 1 __table::t 'raw-table-table))
 (def (&raw-table-count tab)
@@ -372,6 +376,9 @@ namespace: #f
   immediate-hash eq?)
 
 ;;; table implementation; open addressing, quadratic probing
+(def unused-obj
+  (values (macro-unused-obj)))
+
 (defrules probe-step ()
   ((_ start i size)
    (let (next-probe (fx+ start i (fx* i i)))

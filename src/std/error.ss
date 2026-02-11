@@ -1,10 +1,7 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
-;;; Gerbil error objects
-(import :gerbil/runtime/error
-        :gerbil/runtime/hash
-        :gerbil/runtime/thread
-        (for-syntax :gerbil/expander))
+;;; © vyzo
+;;; Gerbil standard error objects
+(import (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
         Error Error?
@@ -82,6 +79,10 @@
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
 
+;; arithematic errors
+(deferror-class ArithmeticError () arithmetic-error?)
+(deferror-class (ArithmeticOverflow ArithmeticError) () arithmetic-overflow-error?)
+
 ;; utility macros
 (defsyntax (exception-context stx)
   (syntax-case stx ()
@@ -140,17 +141,20 @@
 (defraise/context (raise-context-error where message irritants ...)
   (ContextError message irritants: [irritants ...]))
 
-(defraise/context (raise-unsupported-method where)
-  (UnsupportedMethod "unsupported method" irritants: []))
+(defraise/context (raise-unsupported-method where method irritants ...)
+  (UnsupportedMethod "unsupported method" irritants: [method: 'method irritants ...]))
 
 (defraise/context (raise-contract-violation where contract irritants ...)
-  (ContractViolation "contract violation" irritants: ['contract irritants ...]))
+  (ContractViolation "contract violation" irritants: [contract: 'contract irritants ...]))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
-  (ContractViolation "contract violation" irritants: [expectation irritants ...]))
+  (ContractViolation "contract violation" irritants: [expectation: expectation irritants ...]))
 
 (defraise/context (raise-unbound-key where irritants ...)
   (UnboundKeyError "no value associated with key" irritants: [irritants ...]))
+
+(defraise/context (raise-arithmetic-overflow where irritants ...)
+  (ArithmeticOverflow "arithmetic operation overflow" irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

@@ -581,6 +581,7 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :return
                     |gerbil/core/mop~MOP-5[:0:]#:return|)
+                   (%#define-syntax :time |gerbil/core/mop~MOP-5[:0:]#:time|)
                    (%#define-syntax
                     :thread
                     |gerbil/core/mop~MOP-5[:0:]#:thread|)

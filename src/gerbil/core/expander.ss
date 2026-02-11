@@ -49,7 +49,9 @@ package: gerbil/core
     expander-context-id  module-context-ns
     module-context-import module-context-export module-context-code
     make-local-context
-    eval-syntax core-expand core-expand-head core-expand-expression+1
+    eval-syntax eval-syntax+1
+    core-expand core-expand-head
+    core-expand-expression+1
     import-module eval-module
     core-library-module-path? core-resolve-library-module-path
     core-resolve-module-path
@@ -60,7 +62,11 @@ package: gerbil/core
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
     binding? binding-id
-    runtime-binding? top-binding? module-binding? extern-binding?
+    biding-properties binding-properties-set!
+    runtime-binding?
+    runtime-binding-type runtime-binding-type-set!
+    runtime-binding-macro runtime-binding-macro-set!
+    top-binding? module-binding? extern-binding?
     syntax-binding? syntax-binding-e
     alias-binding? alias-binding-e
     import-binding? import-binding-e

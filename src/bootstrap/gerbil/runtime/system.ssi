@@ -11,20 +11,21 @@ namespace: #f
          (%#define-runtime gerbil-system-manifest gerbil-system-manifest)
          (%#define-runtime __build-manifest __build-manifest)
          (%#define-runtime build-manifest build-manifest)
-         (%#define-runtime build-manifest-set! build-manifest-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/system~1")))
+                  (%#define-syntax
+                   @build-manifest-set!
+                   |[:0:]#@build-manifest-set!|))
          (%#define-runtime __build-manifest-set! __build-manifest-set!)
-         (%#begin (%#define-runtime
-                   display-build-manifest__%
-                   display-build-manifest__%)
-                  (%#begin (%#define-runtime
-                            display-build-manifest__0
-                            display-build-manifest__0)
-                           (%#define-runtime
-                            display-build-manifest__1
-                            display-build-manifest__1)
-                           (%#define-runtime
-                            display-build-manifest
-                            display-build-manifest)))
+         (%#define-runtime
+          build-manifest-set!
+          build-manifest-set!
+          macro:
+          @build-manifest-set!)
+         (%#define-syntax
+          @display-build-manifest
+          |[:0:]#@display-build-manifest|)
          (%#begin (%#define-runtime
                    __display-build-manifest__%
                    __display-build-manifest__%)
@@ -37,17 +38,25 @@ namespace: #f
                            (%#define-runtime
                             __display-build-manifest
                             __display-build-manifest)))
+         (%#begin (%#define-runtime
+                   display-build-manifest__%
+                   display-build-manifest__%)
+                  (%#begin (%#define-runtime
+                            display-build-manifest__0
+                            display-build-manifest__0)
+                           (%#define-runtime
+                            display-build-manifest__1
+                            display-build-manifest__1)
+                           (%#define-runtime
+                            display-build-manifest
+                            display-build-manifest
+                            macro:
+                            @display-build-manifest)))
          (%#define-runtime build-manifest/layer build-manifest/layer)
          (%#define-runtime build-manifest/head build-manifest/head)
-         (%#begin (%#define-runtime
-                   build-manifest-string__%
-                   build-manifest-string__%)
-                  (%#begin (%#define-runtime
-                            build-manifest-string__0
-                            build-manifest-string__0)
-                           (%#define-runtime
-                            build-manifest-string
-                            build-manifest-string)))
+         (%#define-syntax
+          @build-manifest-string
+          |[:0:]#@build-manifest-string|)
          (%#begin (%#define-runtime
                    __build-manifest-string__%
                    __build-manifest-string__%)
@@ -57,13 +66,29 @@ namespace: #f
                            (%#define-runtime
                             __build-manifest-string
                             __build-manifest-string)))
+         (%#begin (%#define-runtime
+                   build-manifest-string__%
+                   build-manifest-string__%)
+                  (%#begin (%#define-runtime
+                            build-manifest-string__0
+                            build-manifest-string__0)
+                           (%#define-runtime
+                            build-manifest-string
+                            build-manifest-string
+                            macro:
+                            @build-manifest-string)))
          (%#define-runtime
           gerbil-system-version-string
           gerbil-system-version-string)
          (%#define-runtime __gerbil-greeting __gerbil-greeting)
          (%#define-runtime gerbil-greeting gerbil-greeting)
-         (%#define-runtime gerbil-greeting-set! gerbil-greeting-set!)
+         (%#define-syntax @gerbil-greeting-set! |[:0:]#@gerbil-greeting-set!|)
          (%#define-runtime __gerbil-greeting-set! __gerbil-greeting-set!)
+         (%#define-runtime
+          gerbil-greeting-set!
+          gerbil-greeting-set!
+          macro:
+          @gerbil-greeting-set!)
          (%#define-runtime gerbil-system gerbil-system)
          (%#define-runtime gerbil-home gerbil-home)
          (%#define-runtime gerbil-path gerbil-path)

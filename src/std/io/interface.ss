@@ -1,9 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Standard IO interfaces
-(import :std/sugar
-        :std/misc/timeout)
-(export #t timeout?)
+(import :std/time/timeout
+        :std/net/address/address)
+(export #t)
+
+(defrule (byte? o)
+  (and (fixnum? o)
+       (fx<= 0 o 255)))
 
 ;; closable io sources and sinks
 (interface Closer
@@ -13,11 +17,11 @@
 (interface Seeker
   ;; Seek to a particular position in the backing IO source.
   ;; - position denotes where, relative to `from` that the cursor should be moved to.
-  ;;   When `'start` is supplied, `position` must be positive.
-  ;;   When `'end` `'current` is supplied, `position` may be positive or negative
+  ;;   When `START is supplied, `position` must be positive.
+  ;;   When `END` or `CURRENT` is supplied, `position` may be positive or negative
   ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
   (seek (position : :integer)
-        (from :~ whence? := 'start))
+        (whence   : :fixnum))
   => :void)
 
 ;; generic binary IO
@@ -66,94 +70,21 @@
   => :void
 
   ;; returns a new BufferedReader instance delimiting the input length that shares the underlying
-  ;; buffer; the limit must be a fixnum.
-  (delimit (limit :~ nonnegative-fixnum? :- :fixnum))
+  ;; buffer; the limit must be an nonnegative integer
+  (delimit (limit :~ nonnegative-integer? :- :integer))
   => @BufferedReader
-
-  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! (reader : Reader) (close? :- :t := #t))
-  => :void
 
   ;; returns the number of buffered bytes available to read without further I/O
   (available)
   => :fixnum)
 
-
 (interface (BufferedWriter Writer)
   ;; writes a single byte
-  (write-u8 (u8 : :fixnum))
+  (write-u8 (u8 :~ byte? : :fixnum))
   => :fixnum
 
   ;; flushes the buffer to the underlying output instance
   (flush)
-  => :void
-
-  ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! (output : Writer)
-          (close? : :t := #t))
-  => :void)
-
-;; string/textual IO
-(interface (StringReader Closer)
-  ;; read into a string
-  (read-string (str   :  :string)
-               (start :~ (in-range? 0 (string-length str))               :- :fixnum :=  0)
-               (end   :~ (in-range-inclusive? start (string-length str)) :- :fixnum := (string-length str))
-               (need  :~  nonnegative-fixnum?                            :- :fixnum :=  0))
-  => :fixnum)
-
-(interface (PeekableStringReader StringReader)
-  ;; reads a single char
-  ;; returns the char or eof
-  (read-char) => :t
-  ;; peeks the next char
-  ;; returns the char or eof
-  (peek-char) => :t)
-
-(deftype @BufferedStringReader BufferedStringReader)
-
-(interface (BufferedStringReader PeekableStringReader)
-  ;; puts back some chars previously read; can also inject characters.
-  ;; - previous-input is a char or a list of chars injected into the buffer
-  (put-back (previous-input :~ (previous-input? char?)))
-  => :void
-
-  ;; skips the next count chars of input
-  (skip (count :~ nonnegative-fixnum? :- :fixnum))
-  => :void
-
-  ;; returns a new BufferedStringReader instance delimiting the input length that shares
-  ;; the underlying buffer; the limit must be a fixnum.
-  (delimit (limit :~ nonnegative-fixnum? :- :fixnum))
-  => @BufferedStringReader
-
-  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! (reader : StringReader)
-          (close? : :t := #t))
-  => :void
-
-  ;; returns the number of buffered chars available to read without further I/O
-  (available)
-  => :fixnum)
-
-
-(interface (StringWriter Closer)
-  ;; write a string
-  (write-string (str   :  :string)
-                (start :~ (in-range? 0 (string-length str))               :- :fixnum :=  0)
-                (end   :~ (in-range-inclusive? start (string-length str)) :- :fixnum := (string-length str)))
-  => :fixnum)
-
-(interface (BufferedStringWriter StringWriter)
-  ;; write a single char
-  (write-char (char : :char))
-  => :fixnum
-  ;; flush output
-  (flush)
-  => :void
-  ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! (writer : StringWriter)
-          (close? : :t := #t))
   => :void)
 
 ;; socket interfaces
@@ -161,9 +92,9 @@
   ;; the sockert's domain; AF_INET, AF_INET6, AF_LOCAL, etc ...
   (domain) => :fixnum
   ;; the socket's address
-  (address) => :t
-  ;; the socket's peer address, if any
-  (peer-address) => :t
+  (address) => Address
+  ;; the socket's peer address, a NullAddress if not connected
+  (peer-address) => Address
   ;; getsockopt syscall
   (getsockopt (level  :  :fixnum)
               (option :  :fixnum))
@@ -171,16 +102,16 @@
   ;; setsockopt syscall
   (setsockopt (level  :  :fixnum)
               (option :  :fixnum)
-              value)
+              (value  :  :t))
   => :void
   ;; input timeout
-  (set-input-timeout! (timeo :~ (maybe timeout?)))
+  (set-input-timeout! (timeo : IOTimeout))
   => :void
   ;; output timeout
-  (set-output-timeout! (timeo :~ (maybe timeout? )))
+  (set-output-timeout! (timeo : IOTimeout))
   => :void)
 
-(interface (StreamSocket Socket)
+(interface (ClientSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end.
@@ -199,8 +130,9 @@
         (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
         (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
         (flags :  :fixnum                                                      :=  0))
-  => :fixnum
+  => :fixnum)
 
+(interface (StreamSocket ClientSocket)
   ;; returns a Reader instance reading from the socket
   (reader) => Reader
 
@@ -209,14 +141,14 @@
 
   ;; shuts down the socket in one direction which must be 'in, 'out or 'inout
   ;; if both directions are closed the socket is also closed.
-  (shutdown (direction : :symbol))
+  (shutdown (direction : :fixnum))
   => :void)
 
 (interface (ServerSocket Socket)
   ;; accept waits for an incoming connection and returns a StreamSocket
   (accept) => StreamSocket)
 
-(interface (DatagramSocket Socket)
+(interface (DatagramSocket ClientSocket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - peer is a _box_ to place the peer's address.
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
@@ -234,7 +166,7 @@
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (sendto (peer   :~  address?)
+  (sendto (peer   :  Address)
           (u8v    :  :u8vector)
           (start  :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
           (end    :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
@@ -242,26 +174,8 @@
   => :fixnum
 
   ;; connect the datagram socket to a peer
-  (connect (peer :~ address?))
-  => :void
-
-  ;; recv data from the connected peer
-  (recv (u8v   :  :u8vector)
-        (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
-        (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
-        (flags :  :fixnum                                                      :=  0))
-  => :fixnum
-
-  ;; send data to the connected peer
-  (send (u8v   :  :u8vector)
-        (start :~ (in-range? 0 (u8vector-length u8v))               :- :fixnum :=  0)
-        (end   :~ (in-range-inclusive? start (u8vector-length u8v)) :- :fixnum := (u8vector-length u8v))
-        (flags :  :fixnum                                                      :=  0))
-  => :fixnum)
-
-(defrule (address? o)
-  (or (pair? o)
-      (string? o)))
+  (connect (peer : Address))
+  => :void)
 
 (defrule (previous-input? type?)
   (lambda (o)
@@ -269,4 +183,4 @@
         ((list-of? type?) o))))
 
 (defrule (whence? p)
-  (cut <> memq '(start end current)))
+  (one-of start end current))

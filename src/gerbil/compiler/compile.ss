@@ -53,21 +53,6 @@ namespace: gxc
     ##structure-ref
     ##structure-set!))
 
-;; quote-syntax lifts
-(def current-compile-lift
-  (make-parameter #f))
-(def current-compile-marks
-  (make-parameter #f))
-(def current-compile-identifiers
-  (make-parameter #f))
-(def current-compile-boolean-context
-  (make-parameter #f))
-
-(def (make-bound-identifier-table)
-  (def (hash-e id)
-    (symbol-hash (stx-e id)))
-  (make-hash-table test: bound-identifier=? hash: hash-e))
-
 ;; method that collects top level bindings
 (defcompile-method (apply-collect-bindings)
   (::collect-bindings ::void) ()
@@ -374,31 +359,6 @@ namespace: gxc
       (hash-put! ht eid
                  (make-binding-id (generate-runtime-gensym-reference eid)
                                   syntax?)))))
-
-(def (generate-runtime-identifier id)
-  (generate-runtime-identifier-key (core-identifier-key id)))
-
-(def (generate-runtime-identifier-key key)
-  (cond
-   ((interned-symbol? key) key)
-   ((uninterned-symbol? key)
-    (generate-runtime-gensym-reference key))
-   (else
-    (match key
-      ([eid . mark]
-       (cond
-        ((expander-mark-subst mark)
-         => (lambda (ht)
-              (cond
-               ((hash-get ht eid)
-                => (lambda (id)
-                     (if (interned-symbol? id) id
-                         (generate-runtime-gensym-reference id))))
-               (else
-                (generate-runtime-identifier-key eid)))))
-        (else
-         (generate-runtime-identifier-key eid))))))))
-
 (def (generate-runtime-empty self stx)
   '(begin))
 
@@ -1476,8 +1436,9 @@ namespace: gxc
 (def (generate-meta-define-values% self stx)
   (def (generate1 id)
     (let ((eid (generate-runtime-binding-id id))
-          (ident (generate-runtime-identifier id)))
-      ['%#define-runtime ident eid]))
+          (ident (generate-runtime-identifier id))
+          (props (runtime-identifier-properties id)))
+      ['%#define-runtime ident eid props ...]))
 
   (def (generate* all)
     (match all
@@ -1495,7 +1456,7 @@ namespace: gxc
          (id
           (identifier? #'id)
           (generate* (foldl cons [(generate1 #'id)] r)))
-         (_ (generate* (reverse r))))))))
+         (_ (generate* (reverse! r))))))))
 
 (def (generate-meta-define-syntax% self stx)
   (ast-case stx ()

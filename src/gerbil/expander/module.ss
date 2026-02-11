@@ -210,9 +210,14 @@ namespace: gx
 (def (core-read-module path)
   (with-catch
    (lambda (exn)
-     (if (and (datum-parsing-exception? exn)
-              (eq? (datum-parsing-exception-filepos exn) 0))
-       (core-read-module/lang path)
+     (if (datum-parsing-exception? exn)
+       (let (pos (datum-parsing-exception-filepos exn))
+         (if (= pos 0)
+           (core-read-module/lang path)
+           (raise-syntax-error 'read-module "error reading module" path
+                               (parameterize ((dump-stack-trace? #f))
+                                 (call-with-output-string "" (cut display-exception exn <>)))
+                               [line: (##filepos-line pos) col: (##filepos-col pos)])))
        (raise-syntax-error 'read-module "error reading module" path
                            (parameterize ((dump-stack-trace? #f))
                              (call-with-output-string "" (cut display-exception exn <>))))))
