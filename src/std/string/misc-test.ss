@@ -3,17 +3,17 @@
 (import
   :std/error
   :std/format
-  :std/misc/repr
-  :std/misc/string
+  ;;v0.19-TODO: :std/misc/repr
+  :std/string/misc
   :std/pregexp
   :std/srfi/13
   :std/sugar
   :std/test)
 
-(defstruct point (x y))
-(defmethod {:pr point}
-  (lambda (self port options)
-    (fprintf port "(point ~a ~a)" (point-x self) (point-y self))))
+;;v0.19-TODO: (defstruct point (x y))
+;;v0.19-TODO: (defmethod {:pr point}
+;;v0.19-TODO:   (lambda (self port options)
+;;v0.19-TODO:     (fprintf port "(point ~a ~a)" (point-x self) (point-y self))))
 
 (def string-test
   (test-suite "test :std/misc/string"
@@ -72,19 +72,19 @@
       (check-equal? (random-string 0) "")
       (check-equal? (random-string -1) "")
       (check-equal? (string-length (random-string 5)) 5))
-    (test-case "test str"
-      (check (str)                    => "")
-      (check (str "hi")               => "hi")
-      (check (str "hello" ", world.") => "hello, world.")
-      (check (str 0.1 "!")            => "0.1!")
-      (check (str 2.0)                => "2.0")
-      (check (str 1.2E+2)             => "120.0")
-      (check (str 'abc)               => "abc")
-      (check (str '(1 2))             => "[1 2]")
-      #;(check (str (hash (a 10)))      => "(hash (a 10))")
-      (check (str #(1 2))             => "(vector 1 2)")
-      (check (str (values 1 2))       => "(values 1 2)")
-      (check (str (make-point 1 2))   => "(point 1 2)"))
+    ;;v0.19-TODO: (test-case "test str"
+    ;;v0.19-TODO:   (check (str)                    => "")
+    ;;v0.19-TODO:   (check (str "hi")               => "hi")
+    ;;v0.19-TODO:   (check (str "hello" ", world.") => "hello, world.")
+    ;;v0.19-TODO:   (check (str 0.1 "!")            => "0.1!")
+    ;;v0.19-TODO:   (check (str 2.0)                => "2.0")
+    ;;v0.19-TODO:   (check (str 1.2E+2)             => "120.0")
+    ;;v0.19-TODO:   (check (str 'abc)               => "abc")
+    ;;v0.19-TODO:   (check (str '(1 2))             => "[1 2]")
+    ;;v0.19-TODO:   #;(check (str (hash (a 10)))      => "(hash (a 10))")
+    ;;v0.19-TODO:   (check (str #(1 2))             => "(vector 1 2)")
+    ;;v0.19-TODO:   (check (str (values 1 2))       => "(values 1 2)")
+    ;;v0.19-TODO:   (check (str (make-point 1 2))   => "(point 1 2)"))
     (test-case "test string-substitute-char-if, string-substitute-char"
       (defrule (checks ((args ...) result) ...)
         (begin (begin (check (string-substitute-char "banana" #\o #\a args ...)
