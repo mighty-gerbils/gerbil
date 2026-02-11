@@ -210,7 +210,7 @@
           (let loop ((rest w.alist))
             (match rest
               ([hd . rest]
-               (if (testf w k)
+               (if (testf hd k)
                  (cons (cons k v) rest)
                  (cons hd (loop rest))))
               (else
@@ -225,7 +225,7 @@
     (using (front w.alist :- :list)
       (if (pair? front)
         (if (testf (car front) k)
-          (set! (cdr front) v)
+          (set! (cdr (car front)) v)
           (let loop ((rest (cdr front)) (prev front))
             (match rest
               ([hd . tl]
@@ -233,7 +233,7 @@
                  (set! (cdr hd) v)
                  (loop tl rest)))
               (else
-               (set! (cdr prev) [(cons k v)])))))
+               (set! w.alist (cons (cons k v) w.alist))))))
         (set! w.alist [(cons k v)])))
     w))
 

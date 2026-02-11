@@ -74,6 +74,6 @@
         (check (PureAList? "hello world") => #f)
         (check (AList? '((a . 1) (b . 2))) => #f)
         ;; type-of
-        (check (class-of w) => std/list/walist#AList::t)
+        (check (class-of w) => std/list/walist#WAList::t)
         (check (class-of wq!) => std/list/walist#MutWAListq::t)
         (check (eq? (class-of w) (class-of wq!)) => #f)))))
