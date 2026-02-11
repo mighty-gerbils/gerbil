@@ -121,8 +121,8 @@
            => (lambda (locat)
                 (call-with-output-string "" (cut ##display-locat locat #t <>))))
           (else
-           (expander-context-id (core-context-top))))))
-     #'(test-check! 'expr 'where (lambda () body rest ...)))))
+           (symbol->string (expander-context-id (core-context-top)))))))
+     #'(test-check! 'expr where (lambda () body rest ...)))))
 
 (def (equal-values? a b)
   (if (##values? a)

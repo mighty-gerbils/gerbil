@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; :std/misc/channel test
 
-(import :std/misc/channel
+(import ./channel
         :std/test
         :std/sugar
         :std/error
