@@ -61,6 +61,8 @@
     "io/bio/cache"
     "io/bio/input"
     "io/bio/output"
+    "io/bio/reader"
+    "io/bio/writer"
 
     ;; TODO
 

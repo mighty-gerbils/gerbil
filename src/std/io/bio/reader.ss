@@ -4,48 +4,19 @@
 (import :std/error
         ../interface
         ./types
-        ./macros
         ./buffer
-        ./input
-        ./cache)
+        ./cache
+        ./macros
+        ./input)
 (export #t)
 (declare (not safe))
 
 (defreader-ext (read-u8! reader)
-  => :u8
+  => :fixnum
   (let (u8 (reader.read-u8))
     (if (eof-object? u8)
       (raise-premature-end-of-input read-u8!)
-      u8)))
-
-(defreader-ext (read-u16 reader)
-  => :fixnum
-  (:- (reader.read-uint reader 2) :fixnum))
-(defreader-ext (read-s16 reader)
-  => :fixnum
-  (:- (reader.read-sint reader 2) :fixnum))
-(defreader-ext (read-u32 reader)
-  => :integer
-  (reader.read-uint reader 4))
-(defreader-ext (read-s32 reader)
-  => :integer
-  (reader.read-sint reader 4))
-(defreader-ext (read-u64 reader)
-  => :integer
-  (reader.read-uint reader 8))
-(defreader-ext (read-s64 reader)
-  => :integer
-  (reader.read-sint reader 8))
-
-(defreader-ext (read-uint reader (len : :fixnum))
-  => :integer
-  (if (is-input-buffer-instance? reader)
-    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= len (u8vector-length bio.buf))
-        (__bio-read-uint bio uint len)
-        (__bio-read-uint-generic reader uint len)))
-    (__bio-read-uint-generic reader len)))
+      (:- u8 :fixnum))))
 
 (def (bio-read-uint (bio : basic-input-buffer) (len : :fixnum))
   => :integer
@@ -68,7 +39,7 @@
         (__bio-input-buffer-fill! bio buf rhi need)
         (__bio-read-uint bio len))))))
 
-(def (bio-read-uint-generic (reader : Reader) (len : :fixnum))
+(def (bio-read-uint-generic (reader : BufferedReader) (len : :fixnum))
   => :integer
   (let loop ((i 0 :- :fixnum) (x 0 :- :integer))
     => :integer
@@ -79,10 +50,15 @@
           (loop (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next))))
       x)))
 
-(defreader-ext (read-sint reader (len : :fixnum))
+(defreader-ext (read-uint reader (len : :fixnum))
   => :integer
-  (let (uint (reader.read-uint len))
-    (complement-input uint len)))
+  (if (is-input-buffer-instance? reader)
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! read-uint bio)
+      (if (fx<= len (u8vector-length bio.buf))
+        (__bio-read-uint bio len)
+        (__bio-read-uint-generic reader len)))
+    (__bio-read-uint-generic reader len)))
 
 (def (complement-input (uint : :integer) (len : :fixnum))
   => :integer
@@ -91,15 +67,29 @@
       uint
       (- uint (expt-cache.get bits)))))
 
-(defreader-ext (read-varuint reader (max-bits 64 : :fixnum))
+(defreader-ext (read-sint reader (len : :fixnum))
   => :integer
-  (if (is-input-buffer-instance? reader)
-    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= (fx/ max-bits 8) (u8vector-length bio.buf))
-        (__bio-read-varuint bio max-bits)
-        (__bio-read-varuint-generic reader max-bits)))
-    (__bio-read-varuint-generic reader max-bits)))
+  (let (uint (reader.read-uint len))
+    (complement-input uint len)))
+
+(defreader-ext (read-u16 reader)
+  => :fixnum
+  (:- (reader.read-uint 2) :fixnum))
+(defreader-ext (read-s16 reader)
+  => :fixnum
+  (:- (reader.read-sint 2) :fixnum))
+(defreader-ext (read-u32 reader)
+  => :integer
+  (reader.read-uint 4))
+(defreader-ext (read-s32 reader)
+  => :integer
+  (reader.read-sint 4))
+(defreader-ext (read-u64 reader)
+  => :integer
+  (reader.read-uint 8))
+(defreader-ext (read-s64 reader)
+  => :integer
+  (reader.read-sint 8))
 
 (def (bio-read-varuint (bio : basic-input-buffer) (max-bits : :fixnum))
   => :integer
@@ -122,7 +112,7 @@
             (loop bio.rlo bio.rhi shift x)))
         (raise-io-error bio-read-varuint "maximum bits exceeded" shift: shift max-bits: max-bits)))))
 
-(def (bio-read-varuint-generic (reader : Reader) (max-bits : :fixnum))
+(def (bio-read-varuint-generic (reader : BufferedReader) (max-bits : :fixnum))
   => :integer
   (let loop ((shift 0 :- :fixnum) (x 0 :- :integer))
     => :integer
@@ -135,7 +125,17 @@
           (loop (fx+ shift 7) x)))
       (raise-io-error bio-read-varuint "maximum bits exceeded" shift: shift max-bits: max-bits))))
 
-(defreader-ext (read-varint reader (max-bits 64 : :finxum))
+(defreader-ext (read-varuint reader (max-bits 64 : :fixnum))
+  => :integer
+  (if (is-input-buffer-instance? reader)
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! read-varuint bio)
+      (if (fx<= (fx/ max-bits 8) (u8vector-length bio.buf))
+        (__bio-read-varuint bio max-bits)
+        (__bio-read-varuint-generic reader max-bits)))
+    (__bio-read-varuint-generic reader max-bits)))
+
+(defreader-ext (read-varint reader (max-bits 64 : :fixnum))
   => :integer
   (let* ((uint (reader.read-varuint max-bits))
          (int  (arithmetic-shift uint -1))
@@ -143,16 +143,6 @@
     (if (fx= sign 0)
       int
       (bitwise-not int))))
-
-(defreader-ext (read-char-utf8 reader)
-  ;; => :char or :eof
-  (if (is-input-buffer-instance? reader)
-    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= 4 (u8vector-length bio.buf))
-        (__bio-read-char-utf8 bio)
-        (__bio-read-char-utf8-generic reader len)))
-    (__bio-read-char-utf8-generic reader)))
 
 (def (bio-read-char-utf8 (bio : basic-input-buffer))
   (let loop ()
@@ -297,15 +287,15 @@
       ;; Bad encoding; use replacement character
       #\xfffd))))
 
-(defreader-ext (peek-char-utf8 reader)
+(defreader-ext (read-char-utf8 reader)
   ;; => :char or :eof
   (if (is-input-buffer-instance? reader)
     (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
+      (__check-buffer-open! read-char-utf8 bio)
       (if (fx<= 4 (u8vector-length bio.buf))
-        (__bio-peek-char-utf8 bio)
-        (__bio-peek-char-utf8-generic reader len)))
-    (__bio-peek-char-utf8-generic reader)))
+        (__bio-read-char-utf8 bio)
+        (__bio-read-char-utf8-generic reader)))
+    (__bio-read-char-utf8-generic reader)))
 
 (def (bio-peek-char-utf8 (bio : basic-input-buffer))
   (let loop ()
@@ -375,7 +365,7 @@
             (loop)
             '#!eof))))))
 
-(def (peek-char-utf8-generic (reader : Reader))
+(def (bio-peek-char-utf8-generic (reader : BufferedReader))
   (let (byte1 (reader.peek-u8))
     (cond
      ((eof-object? byte1)
@@ -445,29 +435,21 @@
       ;; Bad encoding; use replacement character
       #\xfffd))))
 
+(defreader-ext (peek-char-utf8 reader)
+  ;; => :char or :eof
+  (if (is-input-buffer-instance? reader)
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! peer-char-utf8 bio)
+      (if (fx<= 4 (u8vector-length bio.buf))
+        (__bio-peek-char-utf8 bio)
+        (__bio-peek-char-utf8-generic reader)))
+    (__bio-peek-char-utf8-generic reader)))
+
 (defreader-ext (read-char-utf8! reader)
   (let (char (reader.read-char-utf8))
     (if (eof-object? char)
       (raise-premature-end-of-input read-char!)
       char)))
-
-(defreader-ext (read-string-utf8 reader
-                                 (str   : :string)
-                                 (start 0
-                                        :~ (in-range? 0 (string-length str))
-                                        :- :fixnum)
-                                 (end   (string-length str)
-                                        :~ (in-range-inclusive? start (string-length str))
-                                        :- :fixnum)
-                                 (need  0
-                                        :~ nonnegative-fixnum?
-                                        :- :fixnum))
-  => :fixnum
-  (if (is-input-buffer-instance? reader)
-    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
-      (__bio-read-string-utf8 bio str start end need))
-    (__bio-read-string-utf8-generic reader str start end need)))
 
 (defrule (__bio-input-read-string input str start end need __read-char)
   (let (count (fx- end start))
@@ -500,7 +482,59 @@
                                    (end   (string-length str) : :fixnum)
                                    (need  0                   : :fixnum))
   => :fixnum
-  (__bio-input-read-string bio str start end need __bio-read-char-utf8-generic))
+  (__bio-input-read-string reader str start end need __bio-read-char-utf8-generic))
+
+(defreader-ext (read-string-utf8 reader
+                                 (str   : :string)
+                                 (start 0
+                                        :~ (in-range? 0 (string-length str))
+                                        :- :fixnum)
+                                 (end   (string-length str)
+                                        :~ (in-range-inclusive? start (string-length str))
+                                        :- :fixnum)
+                                 (need  0
+                                        :~ nonnegative-fixnum?
+                                        :- :fixnum))
+  => :fixnum
+  (if (is-input-buffer-instance? reader)
+    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
+      (__check-buffer-open! read-string-utf8 bio)
+      (__bio-read-string-utf8 bio str start end need))
+    (__bio-read-string-utf8-generic reader str start end need)))
+
+(defrule (__bio-input-read-line input separators read-more? finish __peek-char __read-char)
+  (let (next (__peek-char input))
+    (if (eof-object? next)
+      '#!eof
+      (let loop ((chars []) (chars-read 0) (separators-rest separators) (separators-count 0))
+        (if (read-more? chars-read)
+          (let (next (__read-char input))
+            (if (eof-object? next)
+              (finish chars separators-count)
+              (match separators-rest
+                ([sep . separators-rest]
+                 (if (eq? sep next)
+                   (loop (cons next chars) (fx+ chars-read 1) separators-rest (fx+ separators-count 1))
+                   (loop (cons next chars) (fx+ chars-read 1) separators 0)))
+                ([]
+                 (finish (cons next chars) separators-count)))))
+          (finish chars separators-count))))))
+
+(def (bio-read-line-utf8 (bio        : basic-input-buffer)
+                         (separators : :list)
+                         (read-more? : :procedure)
+                         (finish     : :procedure))
+  (__bio-input-read-line bio separators read-more? finish
+                         __bio-peek-char-utf8
+                         __bio-read-char-utf8))
+
+(def (bio-read-line-utf8-generic (reader     : Reader)
+                                 (separators : :list)
+                                 (read-more? : :procedure)
+                                 (finish     : :procedure))
+  (__bio-input-read-line reader separators read-more? finish
+                         __bio-peek-char-utf8-generic
+                         __bio-read-char-utf8-generic))
 
 (defreader-ext (read-line-utf8 reader
                                (sep          #\newline : :t) ; Maybe char or list of chars
@@ -522,7 +556,7 @@
             (lambda (chars drop) (list->string (reverse! (list-tail chars drop)))))))
     (if (is-input-buffer-instance? reader)
       (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-        (__check-buffer-open! bio)
+        (__check-buffer-open! read-line-utf8 bio)
         (__bio-read-line-utf8 bio
                               separators
                               read-more?
@@ -531,33 +565,3 @@
                                     separators
                                     read-more?
                                     finish))))
-
-(defrule (__bio-input-read-line input separators read-more? finish __peek-char __read-char)
-  (let (next (__peek-char input))
-    (if (eof-object? next)
-      '#!eof
-      (let loop ((chars []) (chars-read 0) (separators-rest separators) (separators-count 0))
-        (if (read-more? chars-read)
-          (let (next (__read-char input))
-            (if (eof-object? next)
-              (finish chars serpartors-count)
-              (match separators-rest
-                ([sep . separators-rest]
-                 (if (eq? sep next)
-                   (loop (cons next chars) (fx+ chars-read 1) separators-rest (fx+ separators-count 1))
-                   (loop (cons next chars) (fx+ chars-read 1) separators 0)))
-                ([]
-                 (finish (cons next chars) separators-count)))))
-          (finish chars separators-count))))))
-
-(def (bio-read-line-utf8 (bio        : basic-input-buffer)
-                         (separators : :list)
-                         (read-more? : :procedure)
-                         (finsh      : :procedure))
-  (__bio-input-read-line bio separators read-more? finish __bio-read-char-utf8))
-
-(def (bio-read-line-utf8-generic (reader      : Reader)
-                                 (separators : :list)
-                                 (read-more? : :procedure)
-                                 (finsh      : :procedure))
-  (__bio-input-read-line bio separators read-more? finish __bio-read-char-utf8-generic))

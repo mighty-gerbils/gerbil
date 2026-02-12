@@ -10,11 +10,11 @@
 (declare (not safe))
 
 (defrule (__bio-output-advance! output whi)
-  (using (bio output :- output-buffer)
+  (using (bio output :- basic-output-buffer)
     (set! bio.whi whi)))
 
 (defrule (__bio-output-consume! output)
-  (using (bio output :- output-buffer)
+  (using (bio output :- basic-output-buffer)
     (set! bio.whi 0)))
 
 (defrules __bio-write ()
