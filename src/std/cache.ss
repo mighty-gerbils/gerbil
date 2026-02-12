@@ -16,10 +16,6 @@
   ;; TODO mem-usage
   )
 
-(implement CacheOps ObjectCache
-  (size   &ObjectCache-size)
-  (flush! __object-cache-flush))
-
 (defcall-interface-method CacheOps flush!
   (__cache-flush! cache))
 
@@ -29,12 +25,11 @@
 
 ;; The global cache -- it is a registry of all (standard) caches in the process
 (defstruct (GlobalCache Cache)
-  ((caches   :- :list)
-   (max-size :- :fixnum))
+  ((caches   :- :list))
   final: #t)
 
 (def __global-cache
-  (GlobalCache '/system/cache (SpinLock) [] DEFAULT-OBJECT-CACHE-SIZE))
+  (GlobalCache '/system/cache (SpinLock) []))
 
 (def (global-cache-size)
   => :fixnum
@@ -72,17 +67,21 @@
     (set! cache.objects [])
     (set! cache.size 0)))
 
+(implement CacheOps ObjectCache
+  (size   &ObjectCache-size)
+  (flush! __object-cache-flush!))
+
 (def (object-cache-get (cache : ObjectCache))
-  (do-with-spin-lock cache.lock :- klass
+  (do-with-spin-lock cache.lock
     (if (null? cache.objects)
       (cache.new)
       (using (p cache.objects :- :pair)
         (let (obj (car p))
-          (set! cache.objectx (cdr p))
+          (set! cache.objects (cdr p))
           (set! cache.size    (fx- cache.size 1))
           obj)))))
 
-(def (object-cache-put! (cache : ObjectCache))
+(def (object-cache-put! (cache : ObjectCache) o)
   => :void
   (cache.reset! o)
   (do-with-spin-lock cache.lock
@@ -120,4 +119,4 @@
              cache.size))
          (global-cache-register! cache))))
   ((_ name klass new reset!)
-   (defobject-cache name klass new reset! DEFAULT-OBJECT-CACHE-SIZE)))
+   #'(defobject-cache name klass new reset! DEFAULT-OBJECT-CACHE-SIZE)))

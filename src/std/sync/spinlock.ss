@@ -48,7 +48,7 @@
     (##vector-cas! lk 0 0 1)))
 
 (defrules do-with-spin-lock ()
-  ((_ lock-expr body rest ... ~ klass)
+  ((_ lock-expr ~ klass body rest ...)
    (signature-contract? #'(~ klass))
    (~ (do-with-spin-lock lock-expr body rest ...)
       klass))

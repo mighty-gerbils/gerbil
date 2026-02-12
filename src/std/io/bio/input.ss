@@ -5,7 +5,8 @@
         ../interface
         ./types
         ./buffer
-        ./cache)
+        ./cache
+        ./macros)
 (export #t)
 
 (defrule (__bio-input-advance! input-buffer new-rlo rhi)
@@ -122,7 +123,7 @@
 
 (def (bio-put-back (bio : basic-input-buffer) previous-input)
   => :void
-  (__check-buffer-open! bio)
+  (__check-buffer-open! bio-put-back bio)
   (if (fixnum? previous-input)
     (__bio-put-back-one bio previous-input)
     (__bio-put-back-many bio previous-input)))
@@ -275,11 +276,12 @@
   ((_ input-buffer count)
    (__bio-skip-input input-buffer count __bio-input-buffer-read)))
 
-(def (bio-delimit-input (bio : basic-input-buffer)
-                        (limit :~ nonnegative-integer? :- :integer))
-  => BufferedReader
-  (__check-buffer-open! bio)
-  (BufferedReader (make-delimited-input-buffer bio limit limit)))
+;; TODO
+;; (def (bio-delimit-input (bio : basic-input-buffer)
+;;                         (limit :~ nonnegative-integer? :- :integer))
+;;   => BufferedReader
+;;   (__check-buffer-open! bio-delimit-input bio)
+;;   (BufferedReader (make-delimited-input-buffer bio limit limit)))
 
 (defrules __bio-close-input ()
   ((_ input-buffer __close)
@@ -295,5 +297,5 @@
 
 (def (bio-input-available (bio : basic-input-buffer))
   => :fixnum
-  (__check-buffer-open! bio)
+  (__check-buffer-open! bio-input-available bio)
   (fx- bio.rhi bio.rlo))

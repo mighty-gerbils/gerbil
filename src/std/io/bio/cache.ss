@@ -1,7 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffered io related caches
-(import :std/iter
+(import :std/error
+        :std/interface
+        :std/iter
         :std/cache
         :std/sync/spinlock)
 (export #t)
@@ -14,7 +16,7 @@
 (implement CacheOps ExptCache
   (size
    (lambda (self)
-     (do-with-spin-lock self.lock
+     (do-with-spin-lock self.lock : :fixnum
        (for/fold (r 0) (e self.expts)
          (unless (immediate? e) (fx+ r 1))))))
   (flush!
@@ -45,7 +47,8 @@
           (expt 2 len))))))
 
 (defstruct (BufferCache Cache)
-  ((caches :- :vector))
+  ((caches         :- :vector)
+   (max-cache-size :- :fixnum))
   final: #t)
 
 (implement CacheOps BufferCache
@@ -58,10 +61,12 @@
    (lambda (self)
      (do-with-spin-lock self.lock :- :fixnum
        (for (cache (in-vector self.caches) when cache :- ObjectCache)
-         (__chache-flush! cache))))))
+         (__cache-flush! cache))))))
 
 (def __buffer-cache
-  (BufferCache '/system/cache/bio/buffer (SpinLock) (make-vector 64 #f)))
+  (BufferCache '/system/cache/bio/buffer (SpinLock)
+               (make-vector 64 #f)
+               DEFAULT-OBJECT-CACHE-SIZE))
 
 (global-cache-register! __buffer-cache)
 
@@ -69,45 +74,51 @@
   => :u8vector
   (let* ((bits   (integer-length size))
          (bucket (fx- bits 1)))
-    (using (cache __buffer-cache :- BufferCache)
-      (cond
-       ((do-with-spin-lock cache.lock
-          (if (fx< bucket (vector-length cache.caches))
-            (cond
-             ((vector-ref cache.caches bucket))
-             (else #f))
-            #f))
-        => (lambda ((ocache :- ObjectCache))
-             => :u8vector
-             (:- (object-cache-get ocache) :u8vector)))
-       (else
-        (make-u8vector size))))))
+    (let again ((bucket bucket)
+                (bucket-size (fxshift 1 bucket)))
+      (if (fx< bucket-size size)
+        (again (fx+ bucket 1) (fxshift bucket-size 1))
+        (using (cache __buffer-cache :- BufferCache)
+          (cond
+           ((do-with-spin-lock cache.lock
+              (and (fx< bucket (vector-length cache.caches))
+                   (vector-ref cache.caches bucket)))
+            => (lambda ((ocache :- ObjectCache))
+                 => :u8vector
+                 (:- (object-cache-get ocache) :u8vector)))
+           (else
+            (make-u8vector size))))))))
 
 (def (buffer-cache.put! (buf : :u8vector))
   => :void
   (let* ((size   (u8vector-length buf))
          (bits   (integer-length size))
          (bucket (fx- bits 1)))
-    (using (cache __buffer-cache :- BufferCache)
-      (do-with-spin-lock cache.lock
-        (when (fx< bucket (vector-length cache.caches))
-          (cond
-           ((vector-ref cache.caches bucket)
-            => (lambda ((ocache :- ObjectCache))
-                 (object-cache-put! ocache buf)))
-           (else
-            (let (ocache
-                  (ObjectCache (make-symbol "system/cache/bio/buffer/" size)
-                               (SpinLock)
-                               []
-                               cache.max-size
-                               (lambda (size) (make-u8vector size))
-                               (lambda (buf)
-                                 (when (fx> (u8vector-length buf size))
-                                   (u8vector-shrink! buf size))
-                                 (u8vector-fill! buf 0 0 size))))
-              (vector-set! cache.caches buckect ocache)
-              (object-cache-put! ocache buf)))))))))
+    (let again ((bucket bucket)
+                (bucket-size (fxshift 1 bucket)))
+      (if (fx< bucket-size size)
+        (again (fx+ bucket 1) (fxshift bucket-size 1))
+        (using (cache __buffer-cache :- BufferCache)
+          (do-with-spin-lock cache.lock
+            (when (fx< bucket (vector-length cache.caches))
+              (cond
+               ((vector-ref cache.caches bucket)
+                => (lambda ((ocache :- ObjectCache))
+                     (object-cache-put! ocache buf)))
+               (else
+                (let (ocache
+                      (ObjectCache (make-symbol "system/cache/bio/buffer/" size)
+                                   (SpinLock)
+                                   []
+                                   0
+                                   cache.max-cache-size
+                                   (lambda () (make-u8vector bucket-size))
+                                   (lambda (buf)
+                                     (when (fx> (u8vector-length buf) bucket-size)
+                                       (u8vector-shrink! buf bucket-size))
+                                     (u8vector-fill! buf 0 0 bucket-size))))
+                  (vector-set! cache.caches bucket ocache)
+                  (object-cache-put! ocache buf)))))))))))
 
 (def very-small-buffer-size 256)
 (def small-buffer-size      1024)
@@ -117,7 +128,7 @@
   => :u8vector
   (cond
    ((fixnum? buffer-or-size)
-    (__buffer_cache.get buffer-or-size))
+    (buffer-cache.get buffer-or-size))
    ((u8vector? buffer-or-size)
     buffer-or-size)
    (else

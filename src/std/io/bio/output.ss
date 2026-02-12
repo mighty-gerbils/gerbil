@@ -4,7 +4,8 @@
 (import ../interface
         ./types
         ./buffer
-        ./cache)
+        ./cache
+        ./macros)
 (export #t)
 (declare (not safe))
 
