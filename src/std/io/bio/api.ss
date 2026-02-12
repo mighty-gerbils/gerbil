@@ -36,17 +36,6 @@
                  ./writer))
 
 ;;; Interface
-;; basic-input-buffer common methods
-(defmethod {put-back basic-input-buffer}
-  __bio-put-back
-  interface: BufferedReader)
-(defmethod {delimit basic-input-buffer}
-  __bio-delimit-input
-  interface: BufferedReader)
-(defmethod {available basic-input-buffer}
-  __bio-input-available
-  interface: BufferedReader)
-
 ;; source-input-buffer
 (defmethod {close source-input-buffer}
   __source-close
@@ -85,69 +74,10 @@
 (@implement OutputBuffer sink-output-buffer)
 
 ;; memory-input-buffer
-(defmethod {close memory-input-buffer}
-  __mem-close-input
-  interface: Closer)
-(defmethod {read memory-input-buffer}
-  __mem-read
-  interface: Reader)
-(defmethod {read-u8 memory-input-buffer}
-  __mem-read-u8
-  interface: PeekableReader)
-(defmethod {peek-u8 memory-input-buffer}
-  __mem-peek-u8
-  interface: PeekableReader)
-(defmethod {skip memory-input-buffer}
-  __mem-skip
-  interface: BufferedReader)
-
-(@implement BufferedReader memory-input-buffer)
-(@implement InputBuffer memory-input-buffer)
 
 ;; memory-output-buffer
-(defmethod {close memory-output-buffer}
-  __mem-close-output
-  interface: Closer)
-(defmethod {write memory-output-buffer}
-  __mem-write-bytes
-  interface: Writer)
-(defmethod {write-u8 memory-output-buffer}
-  __mem-write-u8
-  interface: BufferedWriter)
-(defmethod {flush memory-output-buffer}
-  __mem-flush
-  interface: BufferedWriter)
-
-(@implement BufferedWriter memory-output-buffer)
-(@implement OutputBuffer memory-output-buffer)
 
 ;; delimited-input-buffer BufferedReader implementation
-(defmethod {close delimited-input-buffer}
-  __bio-delimited-close
-  interface: Closer)
-(defmethod {read delimited-input-buffer}
-  __bio-delimited-read-bytes
-  interface: Reader)
-(defmethod {read-u8 delimited-input-buffer}
-  __bio-delimited-read-u8
-  interface: PeekableReader)
-(defmethod {peek-u8 delimited-input-buffer}
-  __bio-delimited-peek-u8
-  interface: PeekableReader)
-(defmethod {put-back delimited-input-buffer}
-  __bio-delimited-put-back
-  interface: BufferedReader)
-(defmethod {skip delimited-input-buffer}
-  __bio-delimited-skip-input
-  interface: BufferedReader)
-(defmethod {delimit delimited-input-buffer}
-  __bio-delimited-delimit-input
-  interface: BufferedReader)
-(defmethod {available delimited-input-buffer}
-  __bio-delimited-available
-  interface: BufferedReader)
-
-(@implement BufferedReader delimited-input-buffer)
 
 ;; constructors
 (def (open-source-buffered-reader (reader : Reader) (buffer : u8vector) (owned? : :boolean))

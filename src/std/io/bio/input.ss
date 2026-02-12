@@ -276,13 +276,6 @@
   ((_ input-buffer count)
    (__bio-skip-input input-buffer count __bio-input-buffer-read)))
 
-;; TODO
-;; (def (bio-delimit-input (bio : basic-input-buffer)
-;;                         (limit :~ nonnegative-integer? :- :integer))
-;;   => BufferedReader
-;;   (__check-buffer-open! bio-delimit-input bio)
-;;   (BufferedReader (make-delimited-input-buffer bio limit limit)))
-
 (defrules __bio-close-input ()
   ((_ input-buffer __close)
    (using (bio input-buffer :- basic-input-buffer)
@@ -299,3 +292,11 @@
   => :fixnum
   (__check-buffer-open! bio-input-available bio)
   (fx- bio.rhi bio.rlo))
+
+(defmethod {put-back basic-input-buffer}
+  __bio-put-back
+  interface: BufferedReader)
+
+(defmethod {available basic-input-buffer}
+  __bio-input-available
+  interface: BufferedReader)

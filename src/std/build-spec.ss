@@ -63,6 +63,7 @@
     "io/bio/output"
     "io/bio/reader"
     "io/bio/writer"
+    "io/bio/delimited"
     "io/bio/memory"
 
     ;; TODO

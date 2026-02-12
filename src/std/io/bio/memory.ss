@@ -8,6 +8,7 @@
         ./buffer
         ./macros
         ./input
+        ./delimited
         ./output)
 (export #t)
 (declare (not safe))
@@ -21,18 +22,6 @@
   (__mem-error! memory-output-buffer-drain!))
 (defrule (__mem-write-error! arg ...)
   (__mem-error! memory-output-buffer-write!))
-
-(implement InputBuffer memory-input-buffer
-  (fill!
-   (lambda (self buf rhi need)
-     (__mem-fill-error! self buf rhi need)))
-  (close void))
-
-(implement OutputBuffer memory-output-buffer
-  (drain!
-   (lambda (self buf whi)
-     (__mem-drain-error! self buf whi)))
-  (close void))
 
 (def (mem-read (mem    : memory-input-buffer)
                (output : :u8vector)
@@ -88,3 +77,39 @@
 (def (mem-close-output (mem : memory-output-buffer))
   => :void
   (__bio-close-output mem void void))
+
+(implement
+  (Closer
+   (memory-input-buffer
+    (close __mem-close-input))
+   (memory-output-buffer
+    (close __mem-close-output)))
+  (Reader
+   (memory-input-buffer
+    (read __mem-read)))
+  (PeekableReader
+   (memory-input-buffer
+    (read-u8 __mem-read-u8)
+    (peek-u8 __mem-peek-u8)))
+  (BufferedReader
+   (memory-input-buffer
+    (skip __mem-skip)))
+  (Writer
+   (memory-output-buffer
+    (write __mem-write)))
+  (BufferedWriter
+   (memory-output-buffer
+    (write-u8 __mem-write-u8)
+    (flush   __mem-flush)))
+  (InputBuffer
+   (memory-input-buffer
+    (fill!
+     (lambda (self buf rhi need)
+       (__mem-fill-error! self buf rhi need)))
+    (close void)))
+  (OutputBuffer
+   (memory-output-buffer
+    (drain!
+     (lambda (self buf whi)
+       (__mem-drain-error! self buf whi)))
+    (close void))))
