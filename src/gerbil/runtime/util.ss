@@ -72,7 +72,8 @@ namespace: #f
 
 (defrules __unlock-inline! ()
   ((_ mx)
-   (begin
+   (let ()
+     (declare (not interrupts-enabled))
      (##vector-set! mx 1 #f)
      (##vector-cas! mx 0 0 1))))
 

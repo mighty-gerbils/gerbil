@@ -2218,19 +2218,33 @@ package: gerbil/core
   (defsyntax (def/c stx)
     (def (make-definition id args return body)
       (check-signature! stx args return)
-      (with-identifiers
-          ((unchecked-proc      id "__" id)
-           (checked-macro       id "@"  id))
-        (with-syntax ((defchecked-macro
-                        (make-checked-macro #'checked-macro id #'unchecked-proc
-                                            args return))
-                      (defunchecked-proc
-                        (make-unchecked-proc #'unchecked-proc
-                                             args return body))
-                      (defchecked-proc
-                        (make-checked-proc id #'unchecked-proc #'checked-macro
-                                              args return)))
-          #'(begin defchecked-macro defunchecked-proc defchecked-proc))))
+      (let ((values macro body)
+            (definition-body body))
+        (with-identifier (unchecked-proc  id "__" id)
+          (with-syntax*
+              ((checked-macro
+                (if macro
+                  macro
+                  (stx-identifier id "@" id)))
+               (defchecked-macro
+                 (if macro
+                   '(begin)
+                   (make-checked-macro #'checked-macro id #'unchecked-proc
+                                       args return)))
+               (defunchecked-proc
+                 (make-unchecked-proc #'unchecked-proc
+                                      args return body))
+               (defchecked-proc
+                 (make-checked-proc id #'unchecked-proc #'checked-macro
+                                    args return)))
+            #'(begin defchecked-macro defunchecked-proc defchecked-proc)))))
+
+    (def (definition-body body)
+      (syntax-case body ()
+        ((macro: macro body rest ...)
+         (values #'macro #'(body rest ...)))
+        (_
+         (values #f body))))
 
     (def (make-unchecked-proc unchecked-proc signature return body)
       (with-syntax ((unchecked-proc  unchecked-proc)
@@ -2316,28 +2330,49 @@ package: gerbil/core
        (identifier? #'id)
        #'(def id expr))))
 
-  (defsyntax (with-procedure-signature stx)
-    (syntax-case stx ()
-      ((_ (#f return #f) body ...)
-       (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
-         #'(begin-annotation (@type.signature return: return-type)
-             (let () body ...))))
-      ((_ (signature return unchecked) body ...)
-       (with-syntax ((lambda-signature (make-procedure-lambda-signature stx #'signature #'return #'unchecked)))
-         #'(begin-annotation (@type.signature . lambda-signature)
-             (let () body ...))))))
+  (defsyntax-case definline ()
+    ((_ (proc . signature) => return body rest ...)
+     (and (identifier? #'proc)
+          (is-signature? #'signature)
+          (syntax-local-runtime-type-info? #'return))
+     (with-identifier (macro #'proc "@" #'proc)
+       (with-syntax ((in        (signature-arguments-in #'signature))
+                     ((out ...) (signature-arguments-out #'signature))
+                     (contract  (make-procedure-contract stx #'signature #t)))
+         #'(begin
+             (defdispatch-rule (macro . in)
+               lift: proc
+               (: (using contract
+                    body rest ...)
+                  return))
+             (def/c (proc . signature)
+               => return
+               macro: macro
+               body rest ...)))))
+    ((_ (proc . signature) body rest ...)
+     (and (identifier? #'proc)
+          (is-signature? #'signature))
+     #'(definline (proc . signature) => :t body rest ...)))
 
-  (defsyntax (with-procedure-contract stx)
-    (syntax-case stx ()
-      ((_ signature body ...)
-       (with-syntax ((contract (make-procedure-contract stx #'signature #t)))
-         #'(using contract body ...)))))
+  (defsyntax-case with-procedure-signature ()
+    ((_ (#f return #f) body ...)
+     (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
+       #'(begin-annotation (@type.signature return: return-type)
+           (let () body ...))))
+    ((_ (signature return unchecked) body ...)
+     (with-syntax ((lambda-signature (make-procedure-lambda-signature stx #'signature #'return #'unchecked)))
+       #'(begin-annotation (@type.signature . lambda-signature)
+           (let () body ...)))))
 
-  (defsyntax (with-procedure-unchecked-contract stx)
-    (syntax-case stx ()
-      ((_ signature body ...)
-       (with-syntax ((contract (make-procedure-contract stx #'signature #f)))
-         #'(using contract body ...)))))
+  (defsyntax-case with-procedure-contract ()
+    ((_ signature body ...)
+     (with-syntax ((contract (make-procedure-contract stx #'signature #t)))
+       #'(using contract body ...))))
+
+  (defsyntax-case with-procedure-unchecked-contract ()
+    ((_ signature body ...)
+     (with-syntax ((contract (make-procedure-contract stx #'signature #f)))
+       #'(using contract body ...))))
 
   (defsyntax (lambda/c stx)
     (def (make-lambda signature return body)
