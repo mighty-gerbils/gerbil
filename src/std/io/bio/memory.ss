@@ -2,10 +2,11 @@
 ;;; © vyzo
 ;;; in memory buffered io
 (import :std/error
+        :std/interface
         ../interface
         ./types
-        ./macros
         ./buffer
+        ./macros
         ./input
         ./output)
 (export #t)
@@ -19,75 +20,71 @@
 (defrule (__mem-drain-error! arg ...)
   (__mem-error! memory-output-buffer-drain!))
 (defrule (__mem-write-error! arg ...)
-  (__mem-error! memory-output-buffer-drain!))
+  (__mem-error! memory-output-buffer-write!))
 
-(defmethod {fill! memory-input-buffer}
-  (lambda (self buf rhi need)
-    (__mem-fill-error! self buf rhi need))
-  interface: InputBuffer)
+(implement InputBuffer memory-input-buffer
+  (fill!
+   (lambda (self buf rhi need)
+     (__mem-fill-error! self buf rhi need)))
+  (close void))
 
-(defmethod {close memory-input-buffer}
-  void
-  interface: InputBuffer)
+(implement OutputBuffer memory-output-buffer
+  (drain!
+   (lambda (self buf whi)
+     (__mem-drain-error! self buf whi)))
+  (close void))
 
-(defmethod {drain! memory-output-buffer}
-  (lambda (self buf whi)
-    (__mem-drain-error! self buf whi))
-  interface: OutputBuffer)
-
-(defmethod {close memory-output-buffer}
-  void
-  interface: OutputBuffer)
-
-(def (mem-read (mem          : memory-input-buffer)
-               (output       : :u8vector)
-               (output-start : :fixnum)
-               (output-end   : :fixnum)
-               (input-need   : :fixnum))
+(def (mem-read (mem    : memory-input-buffer)
+               (output : :u8vector)
+               (start  :~ (in-range? 0 (u8vector-length output))
+                       :- :fixnum)
+               (end    :~ (in-range-inclusive? start (u8vector-length output))
+                       :- :fixnum)
+               (need   : :fixnum))
   => :fixnum
-  (__check-buffer-open! mem)
-  (__bio-read mem output output-start output-end input-need
+  (__check-buffer-open! mem-read mem)
+  (__bio-read mem output start end need
               __mem-fill-error! __zero __zero))
 
 (def (mem-read-u8 (mem : memory-input-buffer))
-  (__check-buffer-open! mem)
-  (__bio-read-u8 mem ___mem-fill-error!))
+  (__check-buffer-open! mem-read-u8 mem)
+  (__bio-read-u8 mem __mem-fill-error!))
 
 (def (mem-peek-u8 (mem : memory-input-buffer))
-  (__check-buffer-open! mem)
+  (__check-buffer-open! mem-peek-u8 mem)
   (__bio-peek-u8 mem __mem-fill-error!))
 
 (def (mem-skip (mem : memory-input-buffer)
                (count :~ nonnegative-fixnum? :- :fixnum))
   => :void
-  (__check-buffer-open! mem)
+  (__check-buffer-open! mem-skip mem)
   (__bio-skip-input mem count __zero))
 
 (def (mem-close-input (mem : memory-input-buffer))
   => :void
   (__bio-close-input mem void))
 
-(def (mem-write (mem         : memory-output-buffer)
-                 (input       : :u8vector)
-                 (input-start :~ (in-range? 0 (u8vector-length u8v))
-                              :- :fixnum)
-                 (input-end   :~ (in-range-inclusive? start (u8vector-length u8v))
-                              :- :fixnum))
+(def (mem-write (mem   : memory-output-buffer)
+                (input : :u8vector)
+                (start :~ (in-range? 0 (u8vector-length input))
+                       :- :fixnum)
+                (end   :~ (in-range-inclusive? start (u8vector-length input))
+                       :- :fixnum))
   => :fixnum
-  (__check-output-open? mem)
-  (__bio-write-bytes mem input input-start input-end
-                     __mem-drain-error! __mem-write-error! __mem-write-error!))
+  (__check-buffer-open! mem-write mem)
+  (__bio-write mem input start end
+               __mem-drain-error! __mem-write-error! __mem-write-error!))
 
-(def (mem-write-u8 (mem : memory-output-buffer) (u8 :~ byte? :- : :fixnum))
+(def (mem-write-u8 (mem : memory-output-buffer) (u8 :~ byte? :- :fixnum))
   => :fixnum
-  (__check-output-open? mem)
+  (__check-buffer-open! mem-write-u8 mem)
   (__bio-write-u8 mem u8 __mem-drain-error! __mem-write-error!))
 
 (def (mem-flush (mem : memory-output-buffer))
   => :void
-  (__check-output-open? mem)
+  (__check-buffer-open! mem-flush mem)
   (void))
 
 (def (mem-close-output (mem : memory-output-buffer))
   => :void
-  (__bio-close-output mem void))
+  (__bio-close-output mem void void))

@@ -83,9 +83,9 @@
 
 (def (object-cache-put! (cache : ObjectCache) o)
   => :void
-  (cache.reset! o)
   (do-with-spin-lock cache.lock
     (when (fx< cache.size cache.max-size)
+      (cache.reset! o)
       (set! cache.objects (cons o cache.objects))
       (set! cache.size    (fx+ cache.size 1)))))
 

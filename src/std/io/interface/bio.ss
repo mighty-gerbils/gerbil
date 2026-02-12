@@ -47,7 +47,7 @@
 
 (interface (BufferedWriter Writer)
   ;; writes a single byte
-  (write-u8 (u8 :~ byte? : :fixnum))
+  (write-u8 (u8 :~ byte? :- :fixnum))
   => :fixnum
 
   ;; flushes the buffer to the underlying output instance

@@ -288,8 +288,8 @@
    (using (bio input-buffer :- basic-input-buffer)
      (unless bio.closed?
        (set! bio.closed? #t)
-       (when bio.cheched?
-         (__buffer_cache.put! bio.buf))
+       (when bio.cached?
+         (buffer-cache.put! bio.buf))
        (set! bio.buf #f)
        (__close bio))))
   ((_ input-buffer)

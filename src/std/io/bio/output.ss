@@ -19,9 +19,9 @@
 
 (defrules __bio-write ()
   ((_ output-buffer input input-start input-end
-      ___drain!
-      ___write
-      ___retry)
+      __drain!
+      __write
+      __retry)
    (using (bio output-buffer :- basic-output-buffer)
      (let* ((output-want (fx- input-end input-start))
             (whi bio.whi)
@@ -90,8 +90,8 @@
        (unless bio.closed?
          (set! bio.closed? #t)
          (with-catch (lambda (e) (set! exn e)) (cut __drain! bio bio.buf bio.whi))
-         (when bio.owned?
-           (__buffer_cache.put! bio.buf))
+         (when bio.cached?
+           (buffer-cache.put! bio.buf))
          (set! bio.buf #f)
          (__close bio)
          (when exn (raise exn))))))
