@@ -7,16 +7,19 @@
         ../interface
         ../port
         ./types
-        ./input
-        ./output
-        ./macros
+        ./buffer
         ./cache
+        ./macros
+        ./input
+        ./delimited
         ./reader
+        ./output
         ./writer
-        ./srcsnk
+        ./delimited
         ./memory
+        ./srcsnk
         ./message
-        ./delimited)
+        )
 (export open-buffered-reader
         open-buffered-writer
         open-source-buffered-reader
@@ -34,50 +37,6 @@
         default-buffer-size
         (import: ./reader
                  ./writer))
-
-;;; Interface
-;; source-input-buffer
-(defmethod {close source-input-buffer}
-  __source-close
-  interface: Closer)
-(defmethod {read source-input-buffer}
-  __source-read
-  interface: Reader)
-(defmethod {read-u8 source-input-buffer}
-  __source-read-u8
-  interface: PeekableReader)
-(defmethod {peek-u8 source-input-buffer}
-  __source-peek-u8
-  interface: PeekableReader)
-(defmethod {skip source-input-buffer}
-  __source-skip
-  interface: BufferedReader)
-
-(@implement BufferedReader source-input-buffer)
-(@implement InputBuffer source-input-buffer)
-
-;; sink-output-buffer
-(defmethod {close sink-output-buffer}
-  __sink-close
-  interface: Closer)
-(defmethod {write sink-output-buffer}
-  __sink-write-bytes
-  interface: Writer)
-(defmethod {write-u8 sink-output-buffer}
-  __sink-write-u8
-  interface: BufferedWriter)
-(defmethod {flush sink-output-buffer}
-  __sink-flush
-  interface: BufferedWriter)
-
-(@implement BufferedWriter sink-output-buffer)
-(@implement OutputBuffer sink-output-buffer)
-
-;; memory-input-buffer
-
-;; memory-output-buffer
-
-;; delimited-input-buffer BufferedReader implementation
 
 ;; constructors
 (def (open-source-buffered-reader (reader : Reader) (buffer : u8vector) (owned? : :boolean))

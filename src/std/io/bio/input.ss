@@ -72,7 +72,7 @@
         ;; empty buffer (rlo=rhi=0)
         ((or (fx>= input-need (u8vector-length buf)) fx>= input-want (u8vector-length buf))
          ;; needed/wanted bytes exceed buffer size, read unbuffered
-         (__read output output-start output-end input-need))
+         (__read bio output output-start output-end input-need))
         (else
          (let (read (__fill! bio buf 0 input-need))
            (if (fx> read 0)
@@ -268,10 +268,10 @@
                  (cond
                   ((fx= skip 0) (void))
                   ((fx<= skip buflen)
-                   (__read buf 0 skip skip)
+                   (__read bio buf 0 skip skip)
                    (void))
                   (else
-                   (__read buf 0 buflen buflen)
+                   (__read bio buf 0 buflen buflen)
                    (loop (fx- skip buflen))))))))))))
   ((_ input-buffer count)
    (__bio-skip-input input-buffer count __bio-input-buffer-read)))

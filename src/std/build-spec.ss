@@ -65,6 +65,7 @@
     "io/bio/writer"
     "io/bio/delimited"
     "io/bio/memory"
+    "io/bio/srcsnk"
 
     ;; TODO
 
