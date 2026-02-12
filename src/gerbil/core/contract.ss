@@ -1869,14 +1869,14 @@ package: gerbil/core
          (let* ((info (syntax-local-value #'Interface))
                 (interface-name (interface-info-name info))
                 (method-name
-                 (stx-identifier #'Interface interface-name "-" #'method))
+                 (stx-identifier #'method interface-name "-" #'method))
                 (checked-macro-name method-name)
                 (unchecked-macro-name
-                 (stx-identifier #'Interface "&"  method-name))
+                 (stx-identifier #'method "&"  method-name))
                 (checked-method-name
-                 (stx-identifier #'Interface "::" method-name))
+                 (stx-identifier #'method "::" method-name))
                 (unchecked-method-name
-                 (stx-identifier #'Interface "__" method-name))
+                 (stx-identifier #'method "__" method-name))
                 (method (stx-e #'method)))
            (check-signature! stx #'signature #'return)
            (with-syntax ((defunchecked-macro
@@ -2085,13 +2085,14 @@ package: gerbil/core
 
   (defsyntax-case definterface-extension-method (=>)
     ((_ Interface (method self . signature) => return body ...)
-     (syntax-local-interface-info? #'Interface)
+     (and (syntax-local-interface-info? #'Interface)
+          (syntax-local-runtime-type-info? #'return))
      (let* ((info           (syntax-local-value #'Interface))
             (interface-name (interface-info-name info)))
-       (with-identifiers ((method-name      #'Interface interface-name "-" #'method)
-                          (unchecked-macro  #'Interface "&"  #'method-name)
-                          (checked-method   #'Interface "::" #'method-name)
-                          (unchecked-method #'Interface "__" #'method-name))
+       (with-identifiers ((method-name      #'method interface-name "-" #'method)
+                          (unchecked-macro  #'method "&"  #'method-name)
+                          (checked-method   #'method "::" #'method-name)
+                          (unchecked-method #'method "__" #'method-name))
          (with-syntax (((in ... . tail)    (signature-arguments-in #'signature))
                        ((out ...)          (signature-arguments-out #'signature))
                        (checked-contract   (make-interface-method-contract stx #'self #'Interface #'signature #t))
@@ -2106,16 +2107,18 @@ package: gerbil/core
                  (defdispatch-rule (checked-macro self in ...)
                    lift: checked-method
                    (using checked-contract
-                     (unchecked-method self out ...) return))
+                     (unchecked-method self out ...)))
                  (def (unchecked-method self in ...)
                    (with-interface-unchecked-method-signature self (Interface signature return)
                      body ...))
-                 (def (checked-method self in ...)
-                   (with-interface-checked-method-signature self (Interface signature return unchecked-method)
-                     body ...)))
+                 (def checked-method
+                   (lambda (self in ...)
+                     (with-interface-checked-method-signature self (Interface signature return unchecked-method)
+                       body ...))
+                   macro: checked-macro))
              (with-syntax (((out ... tail-out) #'(out ...)))
                #'(begin
-                   (defdispatch-rule (unchecked-macro $self in ... tail (... ...))
+                   (defdispatch-rule (unchecked-macro self in ... tail (... ...))
                      lift: unchecked-method
                      (using unchecked-contract
                        (unchecked-method self out ... tail-out (... ...))))
@@ -2126,9 +2129,11 @@ package: gerbil/core
                    (def (unchecked-method self in ... . tail)
                      (with-interface-unchecked-method-signature self (Interface signature return)
                        body ...))
-                   (def (checked-method self in ... . tail)
-                     (with-interface-checked-method-signature self (Interface signature return unchecked-method)
-                       body ...)))))))))
+                   (define-values (checked-method)
+                     (lambda (self in ... . tail)
+                       (with-interface-checked-method-signature self (Interface signature return unchecked-method)
+                         body ...)
+                       macro: unchecked-macro)))))))))
     ((_ Interface (method self . signature) body ...)
      #'(definterface-extension-method Interface (method self . signature) => :t body ...)))
 
