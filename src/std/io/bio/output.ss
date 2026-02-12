@@ -18,7 +18,7 @@
 
 (defrules __bio-write ()
   ((_ output-buffer input input-start input-end
-      ___drain
+      ___drain!
       ___write
       ___retry)
    (using (bio output-buffer :- basic-output-buffer)

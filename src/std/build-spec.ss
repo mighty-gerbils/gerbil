@@ -47,7 +47,9 @@
 
     "text/pregexp"
 
+    "cache"
     "sync/rwlock"
+    "sync/spinlock"
     "net/address/types"
     "io/interface/base"
     "io/interface/bio"
@@ -56,6 +58,9 @@
     "io/bio/types"
     "io/bio/buffer"
     "io/bio/macros"
+    "io/bio/cache"
+    "io/bio/input"
+    "io/bio/output"
 
     ;; TODO
 
@@ -75,10 +80,7 @@
     ;; "io/file"
     ;; "io/util"
     ;; "io/port"
-    ;; "io/bio/types"
-    ;; "io/bio/input"
     ;; "io/bio/delimited"
-    ;; "io/bio/output"
     ;; "io/bio/chunked"
     ;; "io/bio/inline"
     ;; "io/bio/util"

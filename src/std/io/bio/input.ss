@@ -66,7 +66,7 @@
                      (fx- input-need have)
                      0)
                    0))
-                (read (__bio-read-bytes bio output output-start output-end input-need)))
+                (read (__read bio output output-start output-end input-need)))
            (fx+ have read)))
         ;; empty buffer (rlo=rhi=0)
         ((or (fx>= input-need (u8vector-length buf)) fx>= input-want (u8vector-length buf))
@@ -286,7 +286,7 @@
    (using (bio input-buffer :- basic-input-buffer)
      (unless bio.closed?
        (set! bio.closed? #t)
-       (when bio.owned?
+       (when bio.cheched?
          (__buffer_cache.put! bio.buf))
        (set! bio.buf #f)
        (__close bio))))

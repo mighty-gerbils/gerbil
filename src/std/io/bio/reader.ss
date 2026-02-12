@@ -87,9 +87,9 @@
 (def (complement-input (uint : :integer) (len : :fixnum))
   => :integer
   (let (bits (fxarithmetic-shift-left len 3))
-    (if (< uint (__expt-cache-get (fx- bits 1)))
+    (if (< uint (expt-cache.get (fx- bits 1)))
       uint
-      (- uint (__expt-cache-get bits)))))
+      (- uint (expt-cache.get bits)))))
 
 (defreader-ext (read-varuint reader (max-bits 64 : :fixnum))
   => :integer

@@ -75,7 +75,7 @@
   => :integer
   (if (< int 0)
     (let (bits (fxarithmetic-shift-left len 3))
-      (+ (__expt-cache-get bits) int))
+      (+ (expt-cache.get bits) int))
     int))
 
 (defwriter-ext (write-varuint writer (uint : :integer) (max-bits 64 : :fixnum))
