@@ -451,38 +451,44 @@
       (raise-premature-end-of-input read-char!)
       char)))
 
-(defrule (__bio-input-read-string input str start end need __read-char)
+(defrule (__bio-input-read-string input str start end need chars __read-char)
   (let (count (fx- end start))
     (let loop ((i    0    :- :fixnum)
                (need need :- :fixnum)
                (read 0    :- :fixnum))
       => :fixnum
+      (defrule (return read)
+        (begin0 read
+          (when chars
+            (set! (box chars) i))))
       (if (fx< i count)
         (let (next (__read-char input))
           (if (eof-object? next)
             (if (fx> need 0)
               (raise-premature-end-of-input read-string)
-              read)
+              (return read))
             (begin
               (string-set! str i next)
               (loop (fx+ i 1) (fx- need 1) (fx+ read 1)))))
-        read))))
+        (return read)))))
 
 (def (bio-read-string-utf8 (bio                       : basic-input-buffer)
                            (str                       : :string)
                            (start 0                   : :fixnum)
                            (end   (string-length str) : :fixnum)
-                           (need  0                   : :fixnum))
+                           (need  0                   : :fixnum)
+                           (chars #f                  :? :box))
   => :fixnum
-  (__bio-input-read-string bio str start end need __bio-read-char-utf8))
+  (__bio-input-read-string bio str start end need chars __bio-read-char-utf8))
 
 (def (bio-read-string-utf8-generic (reader                    : BufferedReader)
                                    (str                       : :string)
                                    (start 0                   : :fixnum)
                                    (end   (string-length str) : :fixnum)
-                                   (need  0                   : :fixnum))
+                                   (need  0                   : :fixnum)
+                                   (chars #f                  :? :box))
   => :fixnum
-  (__bio-input-read-string reader str start end need __bio-read-char-utf8-generic))
+  (__bio-input-read-string reader str start end need chars __bio-read-char-utf8-generic))
 
 (defreader-ext (read-string-utf8 reader
                                  (str   : :string)

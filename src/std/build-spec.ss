@@ -66,6 +66,8 @@
     "io/bio/delimited"
     "io/bio/memory"
     "io/bio/srcsnk"
+    ;;"io/bio/message"
+    "io/bio/api"
 
     ;; TODO
 
