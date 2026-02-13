@@ -356,7 +356,8 @@ namespace: #f
     (cond
      ((##type? type)
       (cond
-       ((eq? type ##type-type) r)
+       ((eq? type ##type-type)
+        (reverse! r))
        ((##type-super type)
         => (lambda (super)
              => :list
