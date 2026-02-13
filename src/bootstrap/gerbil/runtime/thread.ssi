@@ -121,6 +121,9 @@ namespace: #f
                            (%#define-runtime
                             dump-stack-trace!
                             dump-stack-trace!)))
+         (%#define-syntax @thread-dead? |[:0:]#@thread-dead?|)
+         (%#define-runtime __thread-dead? __thread-dead?)
+         (%#define-runtime thread-dead? thread-dead? macro: @thread-dead?)
          (%#extern
           (actor-thread? actor-thread?)
           (construct-actor-thread construct-actor-thread)

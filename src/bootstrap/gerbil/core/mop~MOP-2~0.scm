@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1770752322)
+  (define gerbil/core/mop~MOP-2::timestamp 1771022561)
   (begin
     (define gerbil/core/mop~MOP-2#runtime-type-info::t
       (make-class-type
@@ -13,10 +13,10 @@
     (define gerbil/core/mop~MOP-2#runtime-type-info?
       (make-class-predicate gerbil/core/mop~MOP-2#runtime-type-info::t))
     (define gerbil/core/mop~MOP-2#make-runtime-type-info
-      (lambda _%$args22682%_
+      (lambda _%$args22625%_
         (apply make-instance
                gerbil/core/mop~MOP-2#runtime-type-info::t
-               _%$args22682%_)))
+               _%$args22625%_)))
     (define gerbil/core/mop~MOP-2#!runtime-type-id
       (make-class-slot-accessor
        gerbil/core/mop~MOP-2#runtime-type-info::t
@@ -90,10 +90,10 @@
     (define gerbil/core/mop~MOP-2#class-type-info?
       (make-class-predicate gerbil/core/mop~MOP-2#class-type-info::t))
     (define gerbil/core/mop~MOP-2#make-class-type-info
-      (lambda _%$args22679%_
+      (lambda _%$args22622%_
         (apply make-instance
                gerbil/core/mop~MOP-2#class-type-info::t
-               _%$args22679%_)))
+               _%$args22622%_)))
     (define gerbil/core/mop~MOP-2#!class-type-super
       (make-class-slot-accessor
        gerbil/core/mop~MOP-2#class-type-info::t
@@ -425,182 +425,182 @@
        gerbil/core/mop~MOP-2#class-type-info::t
        'type-descriptor))
     (define gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
-      (lambda (_%self22592%_ _%stx22593%_)
-        (let* ((_%g2259522614%_
-                (lambda (_%g2259622611%_)
+      (lambda (_%self22535%_ _%stx22536%_)
+        (let* ((_%g2253822557%_
+                (lambda (_%g2253922554%_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _%g2259622611%_)))
-               (_%g2259422676%_
-                (lambda (_%g2259622617%_)
-                  (if (gx#stx-pair? _%g2259622617%_)
-                      (let ((_%e2259822619%_ (gx#syntax-e _%g2259622617%_)))
-                        (let ((_%hd2259922622%_
+                   _%g2253922554%_)))
+               (_%g2253722619%_
+                (lambda (_%g2253922560%_)
+                  (if (gx#stx-pair? _%g2253922560%_)
+                      (let ((_%e2254122562%_ (gx#syntax-e _%g2253922560%_)))
+                        (let ((_%hd2254222565%_
                                (let ()
                                  (declare (not safe))
-                                 (##car _%e2259822619%_)))
-                              (_%tl2260022624%_
+                                 (##car _%e2254122562%_)))
+                              (_%tl2254322567%_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _%e2259822619%_))))
-                          (if (gx#stx-pair/null? _%tl2260022624%_)
-                              (let ((_g27218_
+                                 (##cdr _%e2254122562%_))))
+                          (if (gx#stx-pair/null? _%tl2254322567%_)
+                              (let ((_g27161_
                                      (gx#syntax-split-splice
-                                      _%tl2260022624%_
+                                      _%tl2254322567%_
                                       '0)))
                                 (begin
-                                  (let ((_g27219_
+                                  (let ((_g27162_
                                          (let ()
                                            (declare (not safe))
-                                           (if (##values? _g27218_)
-                                               (##values-length _g27218_)
+                                           (if (##values? _g27161_)
+                                               (##values-length _g27161_)
                                                1))))
                                     (if (not (let ()
                                                (declare (not safe))
-                                               (##fx= _g27219_ 2)))
+                                               (##fx= _g27162_ 2)))
                                         (error "Context expects 2 values"
-                                               _g27219_)))
-                                  (let ((_%target2260122627%_
+                                               _g27162_)))
+                                  (let ((_%target2254422570%_
                                          (let ()
                                            (declare (not safe))
-                                           (##values-ref _g27218_ 0)))
-                                        (_%tl2260322629%_
+                                           (##values-ref _g27161_ 0)))
+                                        (_%tl2254622572%_
                                          (let ()
                                            (declare (not safe))
-                                           (##values-ref _g27218_ 1))))
-                                    (if (gx#stx-null? _%tl2260322629%_)
-                                        (letrec ((_%loop2260422632%_
-                                                  (lambda (_%hd2260222635%_
-                                                           _%arg2260822637%_)
+                                           (##values-ref _g27161_ 1))))
+                                    (if (gx#stx-null? _%tl2254622572%_)
+                                        (letrec ((_%loop2254722575%_
+                                                  (lambda (_%hd2254522578%_
+                                                           _%arg2255122580%_)
                                                     (if (gx#stx-pair?
-                                                         _%hd2260222635%_)
-                                                        (let ((_%e2260522639%_
+                                                         _%hd2254522578%_)
+                                                        (let ((_%e2254822582%_
                                                                (gx#syntax-e
-                                                                _%hd2260222635%_)))
-                                                          (let ((_%lp-hd2260622642%_
+                                                                _%hd2254522578%_)))
+                                                          (let ((_%lp-hd2254922585%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let () (declare (not safe)) (##car _%e2260522639%_)))
-                        (_%lp-tl2260722644%_
+                         (let () (declare (not safe)) (##car _%e2254822582%_)))
+                        (_%lp-tl2255022587%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%e2260522639%_))))
-                    (_%loop2260422632%_
-                     _%lp-tl2260722644%_
-                     (cons _%lp-hd2260622642%_ _%arg2260822637%_))))
-                (let ((_%arg2260922647%_ (reverse _%arg2260822637%_)))
-                  ((lambda (_%g2259722649%_)
-                     (let ((_%$e22663%_
-                            (let ((__obj27124 _%self22592%_))
+                           (##cdr _%e2254822582%_))))
+                    (_%loop2254722575%_
+                     _%lp-tl2255022587%_
+                     (cons _%lp-hd2254922585%_ _%arg2255122580%_))))
+                (let ((_%arg2255222590%_ (reverse _%arg2255122580%_)))
+                  ((lambda (_%g2254022592%_)
+                     (let ((_%$e22606%_
+                            (let ((__obj27067 _%self22535%_))
                               (if (let ()
                                     (declare (not safe))
                                     (##structure-direct-instance-of?
-                                     __obj27124
+                                     __obj27067
                                      'gerbil.core#class-type-info::t))
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     __obj27124
+                                     __obj27067
                                      '13
                                      '#f
                                      '#f))
                                   (class-slot-ref
                                    gerbil/core/mop~MOP-2#class-type-info::t
-                                   __obj27124
+                                   __obj27067
                                    'constructor)))))
-                       (if _%$e22663%_
-                           ((lambda (_%make22666%_)
-                              (cons _%make22666%_
-                                    (foldr (lambda (_%g2266722670%_
-                                                    _%g2266822672%_)
-                                             (cons _%g2266722670%_
-                                                   _%g2266822672%_))
+                       (if _%$e22606%_
+                           ((lambda (_%make22609%_)
+                              (cons _%make22609%_
+                                    (foldr (lambda (_%g2261022613%_
+                                                    _%g2261122615%_)
+                                             (cons _%g2261022613%_
+                                                   _%g2261122615%_))
                                            '()
-                                           _%g2259722649%_)))
-                            _%$e22663%_)
+                                           _%g2254022592%_)))
+                            _%$e22606%_)
                            (gx#raise-syntax-error
                             '#f
                             '"no constructor defined for class"
-                            _%stx22593%_
-                            _%self22592%_))))
-                   _%arg2260922647%_))))))
+                            _%stx22536%_
+                            _%self22535%_))))
+                   _%arg2255222590%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (_%loop2260422632%_
-                                           _%target2260122627%_
+                                          (_%loop2254722575%_
+                                           _%target2254422570%_
                                            '()))
-                                        (_%g2259522614%_ _%g2259622617%_)))))
-                              (_%g2259522614%_ _%g2259622617%_))))
-                      (_%g2259522614%_ _%g2259622617%_)))))
-          (_%g2259422676%_ _%stx22593%_))))
+                                        (_%g2253822557%_ _%g2253922560%_)))))
+                              (_%g2253822557%_ _%g2253922560%_))))
+                      (_%g2253822557%_ _%g2253922560%_)))))
+          (_%g2253722619%_ _%stx22536%_))))
     (bind-method!
      gerbil/core/mop~MOP-2#class-type-info::t
      'apply-macro-expander
      gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
     (define gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%
-      (lambda (_%stx22574%_ _%is?22575%_)
-        (if (gx#identifier? _%stx22574%_)
-            (let ((_%e2257622578%_ (gx#syntax-local-value _%stx22574%_ false)))
-              (if _%e2257622578%_
-                  (let ((_%e22580%_ _%e2257622578%_))
+      (lambda (_%stx22517%_ _%is?22518%_)
+        (if (gx#identifier? _%stx22517%_)
+            (let ((_%e2251922521%_ (gx#syntax-local-value _%stx22517%_ false)))
+              (if _%e2251922521%_
+                  (let ((_%e22523%_ _%e2251922521%_))
                     (if (let ()
                           (declare (not safe))
                           (class-instance?
                            gerbil/core/mop~MOP-2#runtime-type-info::t
-                           _%e22580%_))
-                        (_%is?22575%_ _%e22580%_)
+                           _%e22523%_))
+                        (_%is?22518%_ _%e22523%_)
                         '#f))
                   '#f))
             '#f)))
     (define gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0
-      (lambda (_%stx22585%_)
-        (let ((_%is?22587%_ true))
+      (lambda (_%stx22528%_)
+        (let ((_%is?22530%_ true))
           (gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%
-           _%stx22585%_
-           _%is?22587%_))))
+           _%stx22528%_
+           _%is?22530%_))))
     (define gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?
-      (lambda _g27220_
-        (let ((_g27221_ (let () (declare (not safe)) (##length _g27220_))))
-          (cond ((let () (declare (not safe)) (##fx= _g27221_ 1))
+      (lambda _g27163_
+        (let ((_g27164_ (let () (declare (not safe)) (##length _g27163_))))
+          (cond ((let () (declare (not safe)) (##fx= _g27164_ 1))
                  (apply gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0
-                        _g27220_))
-                ((let () (declare (not safe)) (##fx= _g27221_ 2))
+                        _g27163_))
+                ((let () (declare (not safe)) (##fx= _g27164_ 2))
                  (apply gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%
-                        _g27220_))
+                        _g27163_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?
-                  _g27220_))))))
+                  _g27163_))))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-      (lambda (_%stx22555%_ _%is?22556%_)
-        (if (gx#identifier? _%stx22555%_)
-            (let ((_%e2255722559%_ (gx#syntax-local-value _%stx22555%_ false)))
-              (if _%e2255722559%_
-                  (let ((_%e22561%_ _%e2255722559%_))
+      (lambda (_%stx22498%_ _%is?22499%_)
+        (if (gx#identifier? _%stx22498%_)
+            (let ((_%e2250022502%_ (gx#syntax-local-value _%stx22498%_ false)))
+              (if _%e2250022502%_
+                  (let ((_%e22504%_ _%e2250022502%_))
                     (if (let ()
                           (declare (not safe))
                           (class-instance?
                            gerbil/core/mop~MOP-2#class-type-info::t
-                           _%e22561%_))
-                        (_%is?22556%_ _%e22561%_)
+                           _%e22504%_))
+                        (_%is?22499%_ _%e22504%_)
                         '#f))
                   '#f))
             '#f)))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-      (lambda (_%stx22566%_)
-        (let ((_%is?22568%_ true))
+      (lambda (_%stx22509%_)
+        (let ((_%is?22511%_ true))
           (gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-           _%stx22566%_
-           _%is?22568%_))))
+           _%stx22509%_
+           _%is?22511%_))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-      (lambda _g27222_
-        (let ((_g27223_ (let () (declare (not safe)) (##length _g27222_))))
-          (cond ((let () (declare (not safe)) (##fx= _g27223_ 1))
+      (lambda _g27165_
+        (let ((_g27166_ (let () (declare (not safe)) (##length _g27165_))))
+          (cond ((let () (declare (not safe)) (##fx= _g27166_ 1))
                  (apply gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-                        _g27222_))
-                ((let () (declare (not safe)) (##fx= _g27223_ 2))
+                        _g27165_))
+                ((let () (declare (not safe)) (##fx= _g27166_ 2))
                  (apply gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-                        _g27222_))
+                        _g27165_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-                  _g27222_))))))))
+                  _g27165_))))))))

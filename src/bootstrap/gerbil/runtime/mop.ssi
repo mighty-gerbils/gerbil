@@ -181,6 +181,7 @@ namespace: #f
          (%#define-runtime
           &class-type-interface-set!
           &class-type-interface-set!)
+         (%#define-runtime type-field-list type-field-list)
          (%#define-syntax @class-type-slot-list |[:0:]#@class-type-slot-list|)
          (%#define-runtime __class-type-slot-list __class-type-slot-list)
          (%#define-runtime

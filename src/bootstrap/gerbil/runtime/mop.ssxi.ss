@@ -491,6 +491,21 @@ package: gerbil/runtime
   (declare-type class-type-interface-set! (@mutator class::t interface #t))
   (declare-type &class-type-interface-set! (@mutator class::t interface #f))
   (declare-type
+   type-field-list
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             list::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    __class-type-slot-list
    (@lambda 1
             #f
