@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1771022573)
+  (define gerbil/runtime/mop::timestamp 1771025393)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -1227,7 +1227,7 @@
             (let ((_%r134258%_ _%r134255%_))
               (if (let () (declare (not safe)) (##type? _%type134254%_))
                   (if (eq? _%type134254%_ ##type-type)
-                      _%r134258%_
+                      (reverse! _%r134258%_)
                       (let ((_%$e134270%_
                              (let ()
                                (declare (not safe))
@@ -1278,7 +1278,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@369.29-369.34"
+               '"\"gerbil/runtime/mop.ss\"@370.29-370.34"
                'contract:
                'class-type?
                'value:
@@ -1311,7 +1311,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@371.31-371.36"
+               '"\"gerbil/runtime/mop.ss\"@372.31-372.36"
                'contract:
                'class-type?
                'value:
@@ -1346,7 +1346,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@374.25-374.30"
+               '"\"gerbil/runtime/mop.ss\"@375.25-375.30"
                'contract:
                'class-type?
                'value:
@@ -1472,7 +1472,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@381.35-381.40"
+               '"\"gerbil/runtime/mop.ss\"@382.35-382.40"
                'contract:
                'class-type?
                'value:
@@ -1519,7 +1519,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@427.47-427.65"
+                     '"\"gerbil/runtime/mop.ss\"@428.47-428.65"
                      'contract:
                      'class-type?
                      'value:
@@ -1529,7 +1529,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@427.19-427.35"
+               '"\"gerbil/runtime/mop.ss\"@428.19-428.35"
                'contract:
                'class-type?
                'value:
@@ -2061,7 +2061,7 @@
                                             (raise-contract-violation-error
                                              '"contract violation"
                                              'context:
-                                             '"\"gerbil/runtime/mop.ss\"@524.24-524.35"
+                                             '"\"gerbil/runtime/mop.ss\"@525.24-525.35"
                                              'contract:
                                              '(? (or not symbol?))
                                              'value:
@@ -2071,7 +2071,7 @@
                                       (raise-contract-violation-error
                                        '"contract violation"
                                        'context:
-                                       '"\"gerbil/runtime/mop.ss\"@523.24-523.34"
+                                       '"\"gerbil/runtime/mop.ss\"@524.24-524.34"
                                        'contract:
                                        'list?
                                        'value:
@@ -2081,7 +2081,7 @@
                                 (raise-contract-violation-error
                                  '"contract violation"
                                  'context:
-                                 '"\"gerbil/runtime/mop.ss\"@522.24-522.36"
+                                 '"\"gerbil/runtime/mop.ss\"@523.24-523.36"
                                  'contract:
                                  'list?
                                  'value:
@@ -2091,7 +2091,7 @@
                           (raise-contract-violation-error
                            '"contract violation"
                            'context:
-                           '"\"gerbil/runtime/mop.ss\"@521.24-521.37"
+                           '"\"gerbil/runtime/mop.ss\"@522.24-522.37"
                            'contract:
                            'list?
                            'value:
@@ -2101,7 +2101,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@520.24-520.28"
+                     '"\"gerbil/runtime/mop.ss\"@521.24-521.28"
                      'contract:
                      'symbol?
                      'value:
@@ -2111,7 +2111,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@519.24-519.26"
+               '"\"gerbil/runtime/mop.ss\"@520.24-520.26"
                'contract:
                'symbol?
                'value:
@@ -2135,7 +2135,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@557.30-557.35"
+               '"\"gerbil/runtime/mop.ss\"@558.30-558.35"
                'contract:
                'class-type?
                'value:
@@ -2192,7 +2192,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@569.29-569.34"
+               '"\"gerbil/runtime/mop.ss\"@570.29-570.34"
                'contract:
                'class-type?
                'value:
@@ -2278,7 +2278,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@600.50-600.54"
+                     '"\"gerbil/runtime/mop.ss\"@601.50-601.54"
                      'contract:
                      'symbol?
                      'value:
@@ -2288,7 +2288,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@600.33-600.38"
+               '"\"gerbil/runtime/mop.ss\"@601.33-601.38"
                'contract:
                'class-type?
                'value:
@@ -2372,7 +2372,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@608.49-608.53"
+                     '"\"gerbil/runtime/mop.ss\"@609.49-609.53"
                      'contract:
                      'symbol?
                      'value:
@@ -2382,7 +2382,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@608.32-608.37"
+               '"\"gerbil/runtime/mop.ss\"@609.32-609.37"
                'contract:
                'class-type?
                'value:
@@ -2468,7 +2468,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@616.60-616.64"
+                     '"\"gerbil/runtime/mop.ss\"@617.60-617.64"
                      'contract:
                      'symbol?
                      'value:
@@ -2478,7 +2478,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@616.43-616.48"
+               '"\"gerbil/runtime/mop.ss\"@617.43-617.48"
                'contract:
                'class-type?
                'value:
@@ -2564,7 +2564,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@624.59-624.63"
+                     '"\"gerbil/runtime/mop.ss\"@625.59-625.63"
                      'contract:
                      'symbol?
                      'value:
@@ -2574,7 +2574,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@624.42-624.47"
+               '"\"gerbil/runtime/mop.ss\"@625.42-625.47"
                'contract:
                'class-type?
                'value:
@@ -2882,7 +2882,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@686.43-686.47"
+                     '"\"gerbil/runtime/mop.ss\"@687.43-687.47"
                      'contract:
                      'symbolic?
                      'value:
@@ -2892,7 +2892,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@686.26-686.31"
+               '"\"gerbil/runtime/mop.ss\"@687.26-687.31"
                'contract:
                'class-type?
                'value:
@@ -2966,7 +2966,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@689.44-689.48"
+                     '"\"gerbil/runtime/mop.ss\"@690.44-690.48"
                      'contract:
                      'symbolic?
                      'value:
@@ -2976,7 +2976,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@689.23-689.28"
+               '"\"gerbil/runtime/mop.ss\"@690.23-690.28"
                'contract:
                'class-type?
                'value:
@@ -3052,7 +3052,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@695.45-695.49"
+                     '"\"gerbil/runtime/mop.ss\"@696.45-696.49"
                      'contract:
                      'symbolic?
                      'value:
@@ -3062,7 +3062,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@695.24-695.29"
+               '"\"gerbil/runtime/mop.ss\"@696.24-696.29"
                'contract:
                'class-type?
                'value:
@@ -3160,7 +3160,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@721.38-721.39"
+                     '"\"gerbil/runtime/mop.ss\"@722.38-722.39"
                      'contract:
                      'procedure?
                      'value:
@@ -3170,7 +3170,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@721.21-721.25"
+               '"\"gerbil/runtime/mop.ss\"@722.21-722.25"
                'contract:
                'symbol?
                'value:
@@ -3257,7 +3257,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@723.43-723.44"
+                     '"\"gerbil/runtime/mop.ss\"@724.43-724.44"
                      'contract:
                      'procedure?
                      'value:
@@ -3267,7 +3267,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@723.22-723.26"
+               '"\"gerbil/runtime/mop.ss\"@724.22-724.26"
                'contract:
                'symbol?
                'value:
@@ -3343,7 +3343,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@729.45-729.62"
+                     '"\"gerbil/runtime/mop.ss\"@730.45-730.62"
                      'contract:
                      'class-type?
                      'value:
@@ -3353,7 +3353,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@729.18-729.33"
+               '"\"gerbil/runtime/mop.ss\"@730.18-730.33"
                'contract:
                'class-type?
                'value:
@@ -3387,7 +3387,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@743.25-743.30"
+               '"\"gerbil/runtime/mop.ss\"@744.25-744.30"
                'contract:
                'class-type?
                'value:
@@ -3419,7 +3419,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@772.25-772.30"
+               '"\"gerbil/runtime/mop.ss\"@773.25-773.30"
                'contract:
                'class-type?
                'value:
@@ -3447,7 +3447,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@777.24-777.29"
+               '"\"gerbil/runtime/mop.ss\"@778.24-778.29"
                'contract:
                'class-type?
                'value:
@@ -3482,7 +3482,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@782.37-782.38"
+                     '"\"gerbil/runtime/mop.ss\"@783.37-783.38"
                      'contract:
                      'fixnum?
                      'value:
@@ -3492,7 +3492,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@782.20-782.25"
+               '"\"gerbil/runtime/mop.ss\"@783.20-783.25"
                'contract:
                'class-type?
                'value:
@@ -3512,7 +3512,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@802.21-802.24"
+               '"\"gerbil/runtime/mop.ss\"@803.21-803.24"
                'contract:
                'object?
                'value:
@@ -3550,7 +3550,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@807.21-807.24"
+               '"\"gerbil/runtime/mop.ss\"@808.21-808.24"
                'contract:
                'object?
                'value:
@@ -3585,7 +3585,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@818.21-818.26"
+               '"\"gerbil/runtime/mop.ss\"@819.21-819.26"
                'contract:
                'class-type?
                'value:
@@ -3669,7 +3669,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@821.22-821.27"
+               '"\"gerbil/runtime/mop.ss\"@822.22-822.27"
                'contract:
                'class-type?
                'value:
@@ -3704,7 +3704,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@846.30-846.33"
+               '"\"gerbil/runtime/mop.ss\"@847.30-847.33"
                'contract:
                'object?
                'value:
@@ -3755,7 +3755,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@886.29-886.32"
+               '"\"gerbil/runtime/mop.ss\"@887.29-887.32"
                'contract:
                'object?
                'value:
@@ -3870,7 +3870,7 @@
                           (raise-contract-violation-error
                            '"contract violation"
                            'context:
-                           '"\"gerbil/runtime/mop.ss\"@910.63-910.66"
+                           '"\"gerbil/runtime/mop.ss\"@911.63-911.66"
                            'contract:
                            'object?
                            'value:
@@ -3880,7 +3880,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@910.43-910.50"
+                     '"\"gerbil/runtime/mop.ss\"@911.43-911.50"
                      'contract:
                      'symbol?
                      'value:
@@ -3890,7 +3890,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@910.26-910.31"
+               '"\"gerbil/runtime/mop.ss\"@911.26-911.31"
                'contract:
                'class-type?
                'value:
@@ -3927,7 +3927,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@924.20-924.26"
+               '"\"gerbil/runtime/mop.ss\"@925.20-925.26"
                'contract:
                'object?
                'value:
@@ -3961,7 +3961,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@927.21-927.24"
+               '"\"gerbil/runtime/mop.ss\"@928.21-928.24"
                'contract:
                'object?
                'value:
@@ -4022,7 +4022,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@935.20-935.23"
+               '"\"gerbil/runtime/mop.ss\"@936.20-936.23"
                'contract:
                'object?
                'value:
@@ -4059,7 +4059,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@950.24-950.26"
+               '"\"gerbil/runtime/mop.ss\"@951.24-951.26"
                'contract:
                'symbol?
                'value:
@@ -4083,7 +4083,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@977.23-977.25"
+               '"\"gerbil/runtime/mop.ss\"@978.23-978.25"
                'contract:
                'symbol?
                'value:
@@ -4140,7 +4140,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@985.29-985.31"
+               '"\"gerbil/runtime/mop.ss\"@986.29-986.31"
                'contract:
                'symbol?
                'value:
@@ -4162,7 +4162,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@994.37-994.39"
+               '"\"gerbil/runtime/mop.ss\"@995.37-995.39"
                'contract:
                'symbol?
                'value:
@@ -4214,7 +4214,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@999.41-999.43"
+                     '"\"gerbil/runtime/mop.ss\"@1000.41-1000.43"
                      'contract:
                      'symbol?
                      'value:
@@ -4224,7 +4224,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@999.20-999.25"
+               '"\"gerbil/runtime/mop.ss\"@1000.20-1000.25"
                'contract:
                'class-type?
                'value:
@@ -4271,7 +4271,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1008.37-1008.39"
+               '"\"gerbil/runtime/mop.ss\"@1009.37-1009.39"
                'contract:
                'symbol?
                'value:
@@ -4370,7 +4370,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@1011.47-1011.49"
+                     '"\"gerbil/runtime/mop.ss\"@1012.47-1012.49"
                      'contract:
                      'symbol?
                      'value:
@@ -4380,7 +4380,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1011.26-1011.31"
+               '"\"gerbil/runtime/mop.ss\"@1012.26-1012.31"
                'contract:
                'class-type?
                'value:
@@ -4414,7 +4414,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@1041.46-1041.48"
+                     '"\"gerbil/runtime/mop.ss\"@1042.46-1042.48"
                      'contract:
                      'symbol?
                      'value:
@@ -4424,7 +4424,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1041.25-1041.30"
+               '"\"gerbil/runtime/mop.ss\"@1042.25-1042.30"
                'contract:
                'class-type?
                'value:
@@ -4530,7 +4530,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@1044.42-1044.46"
+                     '"\"gerbil/runtime/mop.ss\"@1045.42-1045.46"
                      'contract:
                      'procedure?
                      'value:
@@ -4540,7 +4540,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1044.27-1044.29"
+               '"\"gerbil/runtime/mop.ss\"@1045.27-1045.29"
                'contract:
                'symbol?
                'value:
@@ -5340,7 +5340,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1094.25-1094.30"
+               '"\"gerbil/runtime/mop.ss\"@1095.25-1095.30"
                'contract:
                'class-type?
                'value:
@@ -5525,7 +5525,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1140.20-1140.25"
+               '"\"gerbil/runtime/mop.ss\"@1141.20-1141.25"
                'contract:
                'class-type?
                'value:
@@ -5610,7 +5610,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@1162.44-1162.46"
+                     '"\"gerbil/runtime/mop.ss\"@1163.44-1163.46"
                      'contract:
                      'symbol?
                      'value:
@@ -5620,7 +5620,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1162.20-1162.28"
+               '"\"gerbil/runtime/mop.ss\"@1163.20-1163.28"
                'contract:
                'class-type?
                'value:
@@ -5667,7 +5667,7 @@
                     (raise-contract-violation-error
                      '"contract violation"
                      'context:
-                     '"\"gerbil/runtime/mop.ss\"@1173.49-1173.51"
+                     '"\"gerbil/runtime/mop.ss\"@1174.49-1174.51"
                      'contract:
                      'symbol?
                      'value:
@@ -5677,7 +5677,7 @@
               (raise-contract-violation-error
                '"contract violation"
                'context:
-               '"\"gerbil/runtime/mop.ss\"@1173.25-1173.33"
+               '"\"gerbil/runtime/mop.ss\"@1174.25-1174.33"
                'contract:
                'class-type?
                'value:

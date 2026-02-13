@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop-system-classes::timestamp 1771022573)
+  (define gerbil/runtime/mop-system-classes::timestamp 1771025395)
   (begin
     (declare
       (not optimize-dead-definitions
