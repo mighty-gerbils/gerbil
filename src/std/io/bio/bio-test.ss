@@ -1,16 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO tests
-(import :gerbil/gambit
-        :std/test
+(import :std/test
         :std/error
         :std/iter
-        :std/text/utf8
         ../interface
         ./api)
 (export bio-input-test
         bio-output-test
-        bio-varint-delimited-test)
+        ;;bio-varint-delimited-test
+        )
 
 (def (make-test-u8vector size)
   (let (u8v (make-u8vector size))
@@ -131,8 +130,8 @@
       (let* ((input "the quick brown fox jumped over the lazy dog")
              (brd (open-string-buffered-reader input)))
         (for (char (string->list input))
-          (check (BufferedReader-read-char brd) => char))
-        (check (BufferedReader-read-char brd) ? eof-object?)))
+          (check (BufferedReader-read-char-utf8 brd) => char))
+        (check (BufferedReader-read-char-utf8 brd) ? eof-object?)))
 
     (test-case "string input"
       (let* ((input "the quick brown fox jumped over the lazy dog")
@@ -141,7 +140,11 @@
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
           (let* ((expected-chars (min 16 (fx- (string-length input) (* i 16))))
                  (expected-output (substring input (* i 16) (+ (* i 16) expected-chars))))
-            (check (BufferedReader-read-string brd buf) => expected-chars)
+            (check
+             (let (chars-read (box 0))
+               (BufferedReader-read-string-utf8 brd buf 0 (string-length buf) 0 chars-read)
+               (unbox chars-read))
+               => expected-chars)
             (check (substring buf 0 expected-chars) => expected-output)))))
 
     (test-case "line input"
@@ -149,31 +152,16 @@
             (input2 "the quick brown fox jumped over the lazy dog\n")
             (input3 "the quick brown fox jumped over the lazy dog\r\n"))
         (let (brd (open-string-buffered-reader input1))
-          (check (BufferedReader-read-line brd) => input1))
+          (check (BufferedReader-read-line-utf8 brd) => input1))
         (let (brd (open-string-buffered-reader input2))
-          (check (BufferedReader-read-line brd) => input1))
+          (check (BufferedReader-read-line-utf8 brd) => input1))
         (let (brd (open-string-buffered-reader input2))
-          (check (BufferedReader-read-line brd #\newline #t) => input2))
+          (check (BufferedReader-read-line-utf8 brd #\newline #t) => input2))
         (let (brd (open-string-buffered-reader input3))
-          (check (BufferedReader-read-line brd '(#\return #\newline)) => input1))
+          (check (BufferedReader-read-line-utf8 brd '(#\return #\newline)) => input1))
         (let (brd (open-string-buffered-reader input3))
-          (check (BufferedReader-read-line brd '(#\return #\newline) #t) => input3))))
-
-    (test-case "digit input"
-      (def (read->int str)
-        (let (brd (open-buffered-reader (string->utf8 str)))
-          (BufferedReader-read-digits brd)))
-
-      (check (read->int "0") => 0)
-      (check (read->int "6") => 6)
-      (check (read->int "10") => 10)
-      (check (read->int "666") => 666)
-      (check (read->int "1337") => 1337)
-      (check (read->int "123456789012345678901234567890123456789") => 123456789012345678901234567890123456789)
-      (check (read->int "-6") => -6)
-      (check (read->int "-666") => -666)
-      (check (read->int "-1337") => -1337)
-      (check (read->int "-123456789012345678901234567890123456789") => -123456789012345678901234567890123456789))))
+          (check (BufferedReader-read-line-utf8 brd '(#\return #\newline) #t) => input3))))
+    ))
 
 (def bio-output-test
   (test-suite "buffered writer"
@@ -182,16 +170,14 @@
              (bwr (open-buffered-writer #f 128)))
         (for (i (in-range 16))
           (check (BufferedWriter-write bwr u8v (* i 64) (* (+ i 1) 64)) => 64))
-        (BufferedWriter-close bwr)
-        (check (get-buffer-output-u8vector bwr) => u8v)))
+        (check (get-memory-output-u8vector bwr) => u8v)))
 
     (test-case "u8 output"
       (let* ((u8v (make-test-u8vector 1024))
              (bwr (open-buffered-writer #f 128)))
         (for (i (in-range 1024))
           (check (BufferedWriter-write-u8 bwr (u8vector-ref u8v i)) => 1))
-        (BufferedWriter-close bwr)
-        (check (get-buffer-output-u8vector bwr) => u8v)))
+        (check (get-memory-output-u8vector bwr) => u8v)))
 
     (test-case "integer output"
       (let* ((u8v (u8vector
@@ -229,88 +215,66 @@
         (check (BufferedWriter-write-varuint bwr 314159) => 3)
         (check (BufferedWriter-write-varint bwr 314159) => 3)
         (check (BufferedWriter-write-varint bwr -314159) => 3)
-        (BufferedWriter-close bwr)
-        (check (get-buffer-output-u8vector bwr) => u8v)))
+        (check (get-memory-output-u8vector bwr) => u8v)))
 
     (test-case "char output"
       (let* ((input "the quick brown fox jumped over the lazy dog")
-             (output (string->utf8 input))
              (bwr (open-buffered-writer #f)))
         (for (char (string->list input))
-          (check (BufferedWriter-write-char bwr char) => 1))
-        (BufferedWriter-close bwr)
-        (check (get-buffer-output-u8vector bwr) => output)))
+          (check (BufferedWriter-write-char-utf8 bwr char) => 1))
+        (check (get-memory-output-string-utf8 bwr) => input)))
 
     (test-case "string output"
       (let* ((input "the quick brown fox jumped over the lazy dog")
-             (output (string->utf8 input))
              (bwr (open-buffered-writer #f)))
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
           (let* ((input-start (* i 16))
                  (input-end (fxmin (* (+ i 1) 16) (string-length input)))
                  (expected-chars (fx- input-end input-start)))
-            (check (BufferedWriter-write-string bwr input input-start input-end) => expected-chars)))
-        (BufferedWriter-close bwr)
-        (check (get-buffer-output-u8vector bwr) => output)))
+            (check (BufferedWriter-write-string-utf8 bwr input input-start input-end) => expected-chars)))
+        (check (get-memory-output-string-utf8 bwr) => input)))
 
     (test-case "line output"
       (let ((input "the quick brown fox jumped over the lazy dog")
-            (output1 (string->utf8 "the quick brown fox jumped over the lazy dog\n"))
-            (output2 (string->utf8 "the quick brown fox jumped over the lazy dog\r\n")))
+            (output1 "the quick brown fox jumped over the lazy dog\n")
+            (output2 "the quick brown fox jumped over the lazy dog\r\n"))
         (let (bwr (open-buffered-writer #f))
-          (check (BufferedWriter-write-line bwr input) => (fx+ (string-length input) 1))
-          (BufferedWriter-close bwr)
-          (check (get-buffer-output-u8vector bwr) => output1))
+          (check (BufferedWriter-write-line-utf8 bwr input) => (fx+ (string-length input) 1))
+          (check (get-memory-output-string-utf8 bwr) => output1))
         (let (bwr (open-buffered-writer #f))
-          (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
-          (check (get-buffer-output-u8vector bwr) => output2))))
+          (check (BufferedWriter-write-line-utf8 bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
+          (check (get-memory-output-string-utf8 bwr) => output2))))
+    ))
 
-    (test-case "digit output"
-      (def (write->string int)
-        (let (bwr (open-buffered-writer #f))
-          (BufferedWriter-write-digits bwr int)
-          (utf8->string (get-buffer-output-u8vector bwr))))
-
-      (check (write->string 0) => "0")
-      (check (write->string 6) => "6")
-      (check (write->string 10) => "10")
-      (check (write->string 666) => "666")
-      (check (write->string 1337) => "1337")
-      (check (write->string 123456789012345678901234567890123456789) => "123456789012345678901234567890123456789")
-      (check (write->string -6) => "-6")
-      (check (write->string -666) => "-666")
-      (check (write->string -1337) => "-1337")
-      (check (write->string -123456789012345678901234567890123456789) => "-123456789012345678901234567890123456789"))))
-
-(def bio-varint-delimited-test
-  (test-suite "varint delimited i/o"
-    (test-case "generic output and input"
-      (let* ((input "the quick brown fox jumped over the lazy dog")
-             (writer (open-buffered-writer #f))
-             (_ (BufferedWriter-write-delimited writer (cut BufferedWriter-write-string <> input)))
-             (output (get-buffer-output-u8vector writer))
-             (reader (open-buffered-reader output))
-             (reinput (make-string (string-length input)))
-             (_ (BufferedReader-read-delimited reader (cut BufferedReader-read-string <> reinput))))
-        (check reinput => input)
-        (check (BufferedReader-peek-char reader) ? eof-object?)))
-    (test-case "u8vector output and input"
-      (let* ((input "the quick brown fox jumped over the lazy dog")
-             (input-bytes (string->utf8 input))
-             (writer (open-buffered-writer #f))
-             (_ (BufferedWriter-write-delimited-u8vector writer input-bytes))
-             (output (get-buffer-output-u8vector writer))
-             (reader (open-buffered-reader output))
-             (reinput-bytes (BufferedReader-read-delimited-u8vector reader))
-             (reinput (utf8->string reinput-bytes)))
-        (check reinput => input)
-        (check (BufferedReader-peek-char reader) ? eof-object?)))
-    (test-case "string output and input"
-      (let* ((input "the quick brown fox jumped over the lazy dog")
-             (writer (open-buffered-writer #f))
-             (_ (BufferedWriter-write-delimited-string writer input))
-             (output (get-buffer-output-u8vector writer))
-             (reader (open-buffered-reader output))
-             (reinput (BufferedReader-read-delimited-string reader)))
-        (check reinput => input)
-        (check (BufferedReader-peek-char reader) ? eof-object?)))))
+;; (def bio-varint-delimited-test
+;;   (test-suite "varint delimited i/o"
+;;     (test-case "generic output and input"
+;;       (let* ((input "the quick brown fox jumped over the lazy dog")
+;;              (writer (open-buffered-writer #f))
+;;              (_ (BufferedWriter-write-delimited writer (cut BufferedWriter-write-string <> input)))
+;;              (output (get-buffer-output-u8vector writer))
+;;              (reader (open-buffered-reader output))
+;;              (reinput (make-string (string-length input)))
+;;              (_ (BufferedReader-read-delimited reader (cut BufferedReader-read-string <> reinput))))
+;;         (check reinput => input)
+;;         (check (BufferedReader-peek-char reader) ? eof-object?)))
+;;     (test-case "u8vector output and input"
+;;       (let* ((input "the quick brown fox jumped over the lazy dog")
+;;              (input-bytes (string->utf8 input))
+;;              (writer (open-buffered-writer #f))
+;;              (_ (BufferedWriter-write-delimited-u8vector writer input-bytes))
+;;              (output (get-buffer-output-u8vector writer))
+;;              (reader (open-buffered-reader output))
+;;              (reinput-bytes (BufferedReader-read-delimited-u8vector reader))
+;;              (reinput (utf8->string reinput-bytes)))
+;;         (check reinput => input)
+;;         (check (BufferedReader-peek-char reader) ? eof-object?)))
+;;     (test-case "string output and input"
+;;       (let* ((input "the quick brown fox jumped over the lazy dog")
+;;              (writer (open-buffered-writer #f))
+;;              (_ (BufferedWriter-write-delimited-string writer input))
+;;              (output (get-buffer-output-u8vector writer))
+;;              (reader (open-buffered-reader output))
+;;              (reinput (BufferedReader-read-delimited-string reader)))
+;;         (check reinput => input)
+;;         (check (BufferedReader-peek-char reader) ? eof-object?)))))

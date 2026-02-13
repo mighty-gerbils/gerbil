@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffered input
-(import :std/interface
+(import :std/error
         ../interface
         ./types
         ./buffer

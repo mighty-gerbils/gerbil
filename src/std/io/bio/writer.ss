@@ -92,7 +92,8 @@
             (loop (fx+ whi 1) (arithmetic-shift uint -7) (fx+ wrote 1)))
           (begin
             (u8vector-set! buf whi uint)
-            (__bio-output-advance! bio whi)
+            (let (whi (fx+ whi 1))
+              (__bio-output-advance! bio whi))
             (fx+ wrote 1))))
        (else
         (__bio-output-buffer-drain! bio buf whi)

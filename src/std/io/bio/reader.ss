@@ -102,7 +102,7 @@
                  (limb (fxand next #x7f))
                  (x (bitwise-ior (arithmetic-shift limb shift) x)))
             (if (fx= (fxand next #x80) 0)
-              (begin
+              (let (rlo (fx+ rlo 1))
                 (__bio-input-advance! bio rlo rhi)
                 x)
               (loop (fx+ rlo 1) rhi (fx+ shift 7) x)))
@@ -500,13 +500,15 @@
                                         :- :fixnum)
                                  (need  0
                                         :~ nonnegative-fixnum?
-                                        :- :fixnum))
+                                        :- :fixnum)
+                                 (chars #f
+                                        :? :box))
   => :fixnum
   (if (is-input-buffer-instance? reader)
     (using (bio (&interface-instance-object reader) :- basic-input-buffer)
       (__check-buffer-open! read-string-utf8 bio)
-      (__bio-read-string-utf8 bio str start end need))
-    (__bio-read-string-utf8-generic reader str start end need)))
+      (__bio-read-string-utf8 bio str start end need chars))
+    (__bio-read-string-utf8-generic reader str start end need chars)))
 
 (defrule (__bio-input-read-line input separators read-more? finish __peek-char __read-char)
   (let (next (__peek-char input))

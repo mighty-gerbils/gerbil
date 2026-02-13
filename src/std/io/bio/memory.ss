@@ -6,6 +6,7 @@
         ../interface
         ./types
         ./buffer
+        ./cache
         ./macros
         ./input
         ./delimited
@@ -16,12 +17,31 @@
 (defrule (__mem-error! where)
   (raise-io-error where "no underlying io device"))
 
-(defrule (__mem-fill-error! arg ...)
-  (__mem-error! memory-input-buffer-fill!))
-(defrule (__mem-drain-error! arg ...)
-  (__mem-error! memory-output-buffer-drain!))
-(defrule (__mem-write-error! arg ...)
-  (__mem-error! memory-output-buffer-write!))
+(defrule (__mem-fill! input-buffer buf rhi need)
+  (if (fx> need 0)
+    (raise-premature-end-of-input mem-read)
+    0))
+
+(defrule (__mem-read! input-buffer output start end need)
+  (if (fx> need 0)
+    (raise-premature-end-of-input mem-read)
+    0))
+
+(defrule (__mem-drain! output-buffer buf whi)
+  (__mem-write! output-buffer buf 0 whi))
+
+(defrule (__mem-write! output-buffer input start end)
+  (using (mem output-buffer :- memory-output-buffer)
+    (let* ((size        (u8vector-length mem.buf))
+           (input-size (fx- end start))
+           (new-size   (fx+ size (max input-size size)))
+           (new-buf    (buffer-cache.get new-size)))
+      (subu8vector-move! input start end new-buf 0)
+      (when mem.cached?
+        (buffer-cache.put! mem.buf))
+      (set! mem.buf new-buf)
+      (set! mem.cached? #t)
+      input-size)))
 
 (def (mem-read (mem    : memory-input-buffer)
                (output : :u8vector)
@@ -33,15 +53,15 @@
   => :fixnum
   (__check-buffer-open! mem-read mem)
   (__bio-read mem output start end need
-              __mem-fill-error! __zero __zero))
+              __mem-fill! __mem-read! __mem-read))
 
 (def (mem-read-u8 (mem : memory-input-buffer))
   (__check-buffer-open! mem-read-u8 mem)
-  (__bio-read-u8 mem __mem-fill-error!))
+  (__bio-read-u8 mem __mem-fill!))
 
 (def (mem-peek-u8 (mem : memory-input-buffer))
   (__check-buffer-open! mem-peek-u8 mem)
-  (__bio-peek-u8 mem __mem-fill-error!))
+  (__bio-peek-u8 mem __mem-fill!))
 
 (def (mem-skip (mem : memory-input-buffer)
                (count :~ nonnegative-fixnum? :- :fixnum))
@@ -61,13 +81,23 @@
                        :- :fixnum))
   => :fixnum
   (__check-buffer-open! mem-write mem)
+  (__mem-write-bytes mem input start end))
+
+(def (__mem-write-bytes (mem :- memory-output-buffer)
+                        (input :- :u8vector)
+                        (start :- :fixnum)
+                        (end :- :fixnum))
   (__bio-write mem input start end
-               __mem-drain-error! __mem-write-error! __mem-write-error!))
+               __mem-drain! __mem-write! __mem-write-bytes))
 
 (def (mem-write-u8 (mem : memory-output-buffer) (u8 :~ byte? :- :fixnum))
   => :fixnum
   (__check-buffer-open! mem-write-u8 mem)
-  (__bio-write-u8 mem u8 __mem-drain-error! __mem-write-error!))
+  (__mem-write-u8! mem u8))
+
+(def (__mem-write-u8! (mem :- memory-output-buffer) (u8 :- :fixnum))
+  => :fixnum
+  (__bio-write-u8 mem u8 __mem-drain! __mem-write-u8!))
 
 (def (mem-flush (mem : memory-output-buffer))
   => :void
@@ -105,11 +135,11 @@
    (memory-input-buffer
     (fill!
      (lambda (self buf rhi need)
-       (__mem-fill-error! self buf rhi need)))
+       (__mem-fill! self buf rhi need)))
     (close void)))
   (OutputBuffer
    (memory-output-buffer
     (drain!
      (lambda (self buf whi)
-       (__mem-drain-error! self buf whi)))
+       (__mem-drain! self buf whi)))
     (close void))))

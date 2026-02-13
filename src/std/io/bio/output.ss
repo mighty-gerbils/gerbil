@@ -42,7 +42,7 @@
         ;; empty buffer
         ((fx>= output-want buflen)
          ;; large write, do it unbuffered
-         (__write input input-start input-end))
+         (__write bio input input-start input-end))
         (else
          ;; fits in buffer, copy it
          (subu8vector-move! input input-start input-end buf 0)

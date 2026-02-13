@@ -28,8 +28,8 @@
     (set! src.reader #f)))
 
 (defrule (__sink-write! output-buffer input start end)
-  (using (snk output-bufer :- sink-output-buffer)
-    (snk.wrkter.write intput start end)))
+  (using (snk output-buffer :- sink-output-buffer)
+    (snk.writer.write input start end)))
 
 (defrule (__sink-drain! output-buffer buf whi)
   (using (snk output-buffer :- sink-output-buffer)
@@ -99,7 +99,7 @@
   => :fixnum
   (__bio-write snk input start end
                __sink-drain!
-               snk.writer.write
+               __sink-write!
                __sink-write-bytes))
 
 (def (sink-write-u8 (snk : sink-output-buffer) (u8 :~ byte? :- :fixnum))
@@ -107,7 +107,7 @@
   (__check-buffer-open! sink-write-u8 snk)
   (__sink-write-u8! snk u8))
 
-(def (sink-write-u8! (snk : sink-output-buffer) (u8 : :fixnum))
+(def (__sink-write-u8! (snk : sink-output-buffer) (u8 : :fixnum))
   (__bio-write-u8 snk u8 __sink-drain! __sink-write-u8!))
 
 (def (sink-flush (snk : sink-output-buffer))

@@ -13,7 +13,7 @@
 
 (defrule (__check-delimited-open! where delimited-buffer)
   (using (delim delimited-buffer :- delimited-input-buffer)
-    (unless delim.closed?
+    (when delim.closed?
       (raise-io-closed where "buffer closed"))))
 
 (def (bio-delimited-read (delim  : delimited-input-buffer)
