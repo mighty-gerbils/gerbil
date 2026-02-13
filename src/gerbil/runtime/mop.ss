@@ -342,6 +342,30 @@ namespace: #f
   (specializer    12)
   (interface      13))
 
+(def (type-field-list type) => :list
+  (def (fields->list (fields :- :vector) (r :- :list)) => :list
+    (let (fields-len (vector-length fields))
+      (let loop ((i 0 :- :fixnum) (r r :- :list))
+        => :list
+        (if (fx< i fields-len)
+          (loop (fx+ i 3)
+                (cons (vector-ref fields i) r))
+          r))))
+  (let loop ((type type) (r [] :- :list))
+    => :list
+    (cond
+     ((##type? type)
+      (cond
+       ((eq? type ##type-type) r)
+       ((##type-super type)
+        => (lambda (super)
+             => :list
+             (loop super (fields->list (##type-fields type) r))))
+       (else
+        (reverse! (fields->list (##type-fields type) r)))))
+     (else
+      (reverse! r)))))
+
 (def (class-type-slot-list (klass : :class)) => :list
   (vector->list (class-type-slot-vector klass) 1))
 (def (class-type-field-count (klass : :class)) => :fixnum
