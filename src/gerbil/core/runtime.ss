@@ -1639,6 +1639,9 @@ package: gerbil/core
     void::t
     unbound::t
     unbound2::t
+    unused::t
+    deleted::t
+    absent::t
     dssl-token::t
     optional::t
     key::t
@@ -1710,7 +1713,12 @@ package: gerbil/core
     socket-info::t
     address-info::t
 
-    special?
+    special-object?
+    unbound-object?
+    unbound2-object?
+    unused-object?
+    deleted-object?
+    absent-object?
     dssl-token?
     dssl-optional?
     dssl-rest?

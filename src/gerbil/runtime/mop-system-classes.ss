@@ -207,14 +207,23 @@ namespace: #f
        (not (fixnum? obj))
        (not (flonum? obj))))
 
-(defpred (special? obj) :- :special
+(defpred (special-object? obj) :- :special
   (##special? obj))
 
-(defpred (unbound? obj) :- :unbound
+(defpred (unbound-object? obj) :- :unbound
   (eq? obj #!unbound))
 
-(defpred (unbound2? obj) :- :unbound2
+(defpred (unbound2-object? obj) :- :unbound2
   (eq? obj #!unbound2))
+
+(defpred (unused-object? obj) :- :unused
+  (eq? obj (macro-unused-obj)))
+
+(defpred (deleted-object? obj) :- :deleted
+  (eq? obj (macro-deleted-obj)))
+
+(defpred (absent-object? obj) :- :absent
+  (eq? obj (macro-absent-obj)))
 
 (defpred (ddsl-token? obj) :- :dssl-token
   (or (eq? obj #!key)
