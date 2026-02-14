@@ -1574,6 +1574,7 @@ package: gerbil/core
     &class-type-slot-table
     &class-type-properties
     &class-type-constructor
+    type-field-list
     class-type-slot-list
     class-type-field-count
     class-type-seal!
