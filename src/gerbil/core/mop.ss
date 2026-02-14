@@ -795,17 +795,13 @@ package: gerbil/core
       (with-syntax (((_ id . _) stx))
         (let (str (symbol->string (stx-e #'id)))
           (if (string-prefix? ":" str)
-            (values (syntax-local-introduce
-                     (make-symbol ":" str))
-                    (syntax-local-introduce
-                     (make-symbol "SystemClass-" (substring str 1 (string-length str)))))
-            (values (syntax-local-introduce
-                     (make-symbol "::" str))
-                    (syntax-local-introduce
-                     (make-symbol "SystemClass-" str)))))))
+            (syntax-local-introduce
+             (make-symbol ":" str))
+            (syntax-local-introduce
+             (make-symbol "::" str))))))
 
     (def (generate-system-class-with-fields stx klass fields)
-      (let* (((values id type-module) (system-class-id stx))
+      (let* ((id (system-class-id stx))
              (fields
               ;; type fields can shadow each other, they are not slots
               ;; so we transform the field name to be relative to the
@@ -846,11 +842,10 @@ package: gerbil/core
              (setfs
               (map (cut stx-identifier id id "-" <> "-set!")
                    fields)))
-        (emit-system-class stx klass type-module fields field-offsets &getfs &setfs getfs setfs)))
+        (emit-system-class stx klass fields field-offsets &getfs &setfs getfs setfs)))
 
-    (def (emit-system-class stx klass type-module fields field-offsets &getfs &setfs getfs setfs)
-      (with-syntax ((type-module        type-module)
-                    (type-id            (class-type-id klass))
+    (def (emit-system-class stx klass fields field-offsets &getfs &setfs getfs setfs)
+      (with-syntax ((type-id            (class-type-id klass))
                     (type-name          (class-type-name klass))
                     ((field ...)        fields)
                     ((field-offset ...) field-offsets)
@@ -861,21 +856,18 @@ package: gerbil/core
                     ((_ id type (super ...) predicate)
                      stx))
         #'(begin
-            (module type-module
-              (export #t)
-              (defrule (&field-ref obj)
-                (##unchecked-structure-ref obj field-offset type 'field))
-              ...
-              (defrule (&field-set! obj val)
-                (##unchecked-structure-set! obj val field-offset type 'field))
-              ...
-              (defrule (field-ref obj)
-                (##structure-ref obj field-offset type 'field))
-              ...
-              (defrule (field-set! obj val)
-                (##structure-set! obj val field-offset type 'field))
-              ...)
-            (import type-module)
+            (def (&field-ref obj)
+              (##unchecked-structure-ref obj field-offset type 'field))
+            ...
+            (def (&field-set! obj val)
+              (##unchecked-structure-set! obj val field-offset type 'field))
+            ...
+            (def (field-ref obj)
+              (##structure-ref obj field-offset type 'field))
+            ...
+            (def (field-set! obj val)
+              (##structure-set! obj val field-offset type 'field))
+            ...
             (defsyntax id
               (make-class-type-info
                id:                  'type-id
