@@ -1658,6 +1658,7 @@ namespace: gerbil/core/runtime
                     (&class-type-slot-table &class-type-slot-table)
                     (&class-type-properties &class-type-properties)
                     (&class-type-constructor &class-type-constructor)
+                    (type-field-list type-field-list)
                     (class-type-slot-list class-type-slot-list)
                     (class-type-field-count class-type-field-count)
                     (class-type-seal! class-type-seal!)

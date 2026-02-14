@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1771030465)
+  (define gerbil/core/contract~TypeEnv::timestamp 1771036660)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type
@@ -13,10 +13,10 @@
     (define gerbil/core/contract~TypeEnv#type-env?
       (make-class-predicate gerbil/core/contract~TypeEnv#type-env::t))
     (define gerbil/core/contract~TypeEnv#make-type-env
-      (lambda _%$args51189%_
+      (lambda _%$args234601%_
         (apply make-instance
                gerbil/core/contract~TypeEnv#type-env::t
-               _%$args51189%_)))
+               _%$args234601%_)))
     (define gerbil/core/contract~TypeEnv#type-env-var
       (make-class-slot-accessor gerbil/core/contract~TypeEnv#type-env::t 'var))
     (define gerbil/core/contract~TypeEnv#type-env-type
@@ -79,22 +79,22 @@
       (lambda ()
         (gx#syntax-local-value (gx#syntax-local-introduce '@@type) false)))
     (define gerbil/core/contract~TypeEnv#type-env-lookup
-      (lambda (_%var51179%_)
-        (let _%loop51181%_ ((_%te51183%_
-                             (gerbil/core/contract~TypeEnv#current-type-env)))
-          (if (not _%te51183%_)
+      (lambda (_%var234591%_)
+        (let _%loop234593%_ ((_%te234595%_
+                              (gerbil/core/contract~TypeEnv#current-type-env)))
+          (if (not _%te234595%_)
               '#f
               (if (gx#free-identifier=?
-                   _%var51179%_
+                   _%var234591%_
                    (##direct-structure-ref
-                    _%te51183%_
+                    _%te234595%_
                     '1
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f))
-                  _%te51183%_
-                  (_%loop51181%_
+                  _%te234595%_
+                  (_%loop234593%_
                    (##direct-structure-ref
-                    _%te51183%_
+                    _%te234595%_
                     '4
                     gerbil/core/contract~TypeEnv#type-env::t
                     '#f)))))))))

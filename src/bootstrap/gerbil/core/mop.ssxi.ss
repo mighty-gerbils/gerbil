@@ -580,4 +580,64 @@ package: gerbil/core
              unchecked:
              #f
              origin:
-             gerbil/core/mop~MOP-4))))
+             gerbil/core/mop~MOP-4)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#generate-simple-system-class|
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#system-class-id|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#generate-system-class-with-fields|
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#emit-system-class|
+   (@lambda 9
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5))))
