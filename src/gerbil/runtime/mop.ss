@@ -1282,9 +1282,73 @@ END-C
          (else
           (error "unexpected tag width" tb)))))
 
-   (def __class
-     (let* ((len (##vector-length __type))
-            (cv (##make-vector len #f)))
+   (def __primitive-class
+     (make-vector (vector-length __type) #f))
+
+   (def __boxvalues-class
+     (make-vector 2 #f))
+
+   (def __subtype-class
+     (make-vector 32 #f))
+
+   (def __char-class #f)
+
+   (def __special-class
+     (make-vector 16 #f))
+
+   (defrule (@primclass i klass-expr)
+     (cond
+      ((##vector-ref __primitive-class i))
+      (else
+       (let (klass klass-expr)
+         (##vector-set! __primitive-class i klass)
+         klass))))
+
+   (defrule (@boxvalues obj box-klass-espr values-klass-espr)
+     (if (fx= (##values-length obj) 1)
+       (cond
+        ((##vector-ref __boxvalues-class 0))
+        (else
+         (let (klass box-klass-espr)
+           (##vector-set! __boxvalues-class 0 klass)
+           klass)))
+       (cond
+        ((##vector-ref __boxvalues-class 1))
+        (else
+         (let (klass values-klass-espr)
+           (##vector-set! __boxvalues-class 1 klass)
+           klass)))))
+
+   (defrule (@subclass st klass-expr)
+     (cond
+      ((##vector-ref __subtype-class st))
+      (else
+       (let (klass klass-expr)
+         (##vector-set! __subtype-class st klass)
+         klass))))
+
+   (defrule (@special obj char-klass-expr special-klass-expr)
+     (let (x (##type-cast obj 0))
+       (if (fx> x 0)
+         ;; char
+         (cond
+          (__char-class)
+          (else
+           (let (klass char-klass-expr)
+             (set! __char-class klass)
+             klass)))
+         ;; atom
+         (let (t (fx- x))
+           (cond
+            ((##vector-ref __special-class t))
+            (else
+             (let (klass special-klass-expr)
+               (##vector-set! __special-class t klass)
+               klass)))))))
+
+   (def __class-of
+     (let* ((len (vector-length __type))
+            (cv  (make-vector len #f)))
        (let loop ((i 0))
          (if (##fx< i len)
            (let* ((t (##vector-ref __type i))
@@ -1294,9 +1358,8 @@ END-C
                      (lambda (obj) (error "object type is undefined" obj)))
                     ((memq t '(fixnum flonum stflonum haflonum pair vector))
                      (lambda (obj)
-                       ;; TODO cache to avoid hash table lookup
                        (declare (not interrupts-enabled) (not safe))
-                       (__system-class t)))
+                       (@primclass i (__system-class t))))
                     ((eq? t 'subtyped)
                      (lambda (obj)
                        (declare (not interrupts-enabled) (not safe))
@@ -1308,33 +1371,45 @@ END-C
                                klass
                                (__shadow-class klass))))
                           ((##fx= st (macro-subtype-boxvalues)) ; box or values?
-                           (if (fx= (##values-length obj) 1)
-                             ;; TODO cache to avoid hash table lookup
-                             (__system-class 'box)
-                             (__system-class 'values)))
-                          ((##vector-ref __subtype-id st)
-                           ;; TODO cache to avoid hash table lookup
-                           => __system-class)
+                           (@boxvalues
+                            obj
+                            (__system-class 'box)
+                            (__system-class 'values)))
                           (else
-                           (error "unknown class" subtype: st object: obj))))))
+                           (@subclass
+                            st
+                            (cond
+                             ((##vector-ref __subtype-id st)
+                              => (lambda (subtype-t)
+                                   (@subclass st (__system-class subtype-t))))
+                             (else
+                              (error "unknown class" object: obj subtype: st)))))))))
                     ((eq? t 'special)
                      (lambda (obj)
                        ;; TODO optimize this to void the cond
                        (declare (not interrupts-enabled) (not safe))
-                       (cond
-                        ((char? obj)          (__system-class 'char))
-                        ((eq? obj '())        (__system-class 'null))
-                        ((eq? obj #f)         (__system-class 'boolean))
-                        ((eq? obj #t)         (__system-class 'boolean))
-                        ((eq? obj #!void)     (__system-class 'void))
-                        ((eq? obj #!eof)      (__system-class 'eof))
-                        ((eq? obj #!unbound)  (__system-class 'unbound))
-                        ((eq? obj #!unbound2) (__system-class 'unbound2))
-                        ((eq? obj #!optional) (__system-class 'optional))
-                        ((eq? obj #!rest)     (__system-class 'rest))
-                        ((eq? obj #!key)      (__system-class 'key))
-                        (else
-                         (__system-class 'special)))))
+                       (@special
+                        obj
+                        (__system-class 'char)
+                        (cond
+                         ((eq? obj '())        (__system-class 'null))
+                         ((eq? obj #f)         (__system-class 'false))
+                         ((eq? obj #t)         (__system-class 'true))
+                         ((eq? obj #!void)     (__system-class 'void))
+                         ((eq? obj #!eof)      (__system-class 'eof))
+                         ((eq? obj #!unbound)  (__system-class 'unbound))
+                         ((eq? obj #!unbound2) (__system-class 'unbound2))
+                         ((eq? obj #!optional) (__system-class 'optional))
+                         ((eq? obj #!rest)     (__system-class 'rest))
+                         ((eq? obj #!key)      (__system-class 'key))
+                         ((eq? obj (macro-unused-obj))
+                          (__system-class 'unused))
+                         ((eq? obj (macro-deleted-obj))
+                          (__system-class 'deleted))
+                         ((eq? obj (macro-absent-obj))
+                          (__system-class 'absent))
+                         (else
+                          (__system-class 'unknown))))))
                     (else
                      (error "unexpected object type" t)))))
              (##vector-set! cv i f)
@@ -1354,7 +1429,7 @@ END-C
        (not safe)
        (not interrupts-enabled))
      (:- (let* ((t (##type obj))
-                (f (##vector-ref __class t)))
+                (f (##vector-ref __class-of t)))
            (f obj))
          :class))
 

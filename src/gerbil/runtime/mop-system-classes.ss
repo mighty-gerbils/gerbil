@@ -87,10 +87,14 @@ namespace: #f
 (defsystem-class void::t void (atom::t) ((acyclic: . #t)))
 (defsystem-class unbound::t unbound (atom::t) ((acyclic: . #t)))
 (defsystem-class unbound2::t unbound2 (atom::t) ((acyclic: . #t)))
+(defsystem-class unused::t unused (atom::t) ((acyclic: . #t)))
+(defsystem-class deleted::t deleted (atom::t) ((acyclic: . #t)))
+(defsystem-class absent::t absent (atom::t) ((acyclic: . #t)))
 (defsystem-class dssl-token::t dssl-token (atom::t) ((acyclic: . #t)))
 (defsystem-class optional::t optional (dssl-token::t) ((acyclic: . #t)))
 (defsystem-class rest::t rest (dssl-token::t) ((acyclic: . #t)))
 (defsystem-class key::t key (dssl-token::t) ((acyclic: . #t)))
+(defsystem-class unknown::t unknown (atom::t) ((acyclic: . #t)))
 
 ;; numbers
 (defsystem-class number::t number (builtin::t) ((acyclic: . #t)))
