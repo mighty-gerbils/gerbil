@@ -968,8 +968,8 @@ package: gerbil/core
   (defsystem-class-info :f32vector f32vector::t (:hvector) f32vector?)
   (defsystem-class-info :f64vector f64vector::t (:hvector) f64vector?)
   (defsystem-class-info :values values::t (:sequence) ##values?)
+  (defsystem-class-info :box box::t (:values) box?)
 
-  (defsystem-class-info :box box::t (:subtyped) box?)
   (defsystem-class-info :frame frame::t (:subtyped) ##frame?)
   (defsystem-class-info :continuation continuation::t (:subtyped) continuation?)
   (defsystem-class-info :promise promise::t (:subtyped) promise?)

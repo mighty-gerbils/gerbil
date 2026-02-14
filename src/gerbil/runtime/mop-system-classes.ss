@@ -134,9 +134,11 @@ namespace: #f
 (defsystem-class f32vector::t f32vector (hvector::t) ((acyclic: . #t)))
 (defsystem-class f64vector::t f64vector (hvector::t) ((acyclic: . #t)))
 
+(defsystem-class hunk::t hunk (subtyped::t))
+(defsystem-class values::t values (hunk::t sequence::t))
+(defsystem-class box::t box (hunk::t))
+
 ;; special
-(defsystem-class values::t values (sequence::t))
-(defsystem-class box::t box (subtyped::t))
 (defsystem-class frame::t frame (subtyped::t))
 (defsystem-class continuation::t continuation (subtyped::t))
 (defsystem-class promise::t promise (subtyped::t))
@@ -202,10 +204,8 @@ namespace: #f
        (not (class-type? (##structure-type obj)))))
 
 (defpred (atom? obj) :- :atom
-  (and (immediate? obj)
-       (not (char? obj))
-       (not (fixnum? obj))
-       (not (flonum? obj))))
+  (and (##special? obj)
+       (##fx< (##type-cast obj 0) 0)))
 
 (defpred (special-object? obj) :- :special
   (##special? obj))
@@ -245,23 +245,47 @@ namespace: #f
 (defpred (haflonum? obj) :- :haflonum
   (and (flonum? obj) (##mem-allocated? obj)))
 
+(defrule (subtype-property-vector t ...)
+  (let (vec (make-vector 32 #f))
+    (vector-set! vec t #t) ...
+    vec))
+
+(def __subtyped-class-sequence
+  (subtype-property-vector
+   (macro-subtype-boxvalues)
+   (macro-subtype-vector)
+   (macro-subtype-string)
+   (macro-subtype-s8vector)
+   (macro-subtype-u8vector)
+   (macro-subtype-s16vector)
+   (macro-subtype-u16vector)
+   (macro-subtype-s32vector)
+   (macro-subtype-u32vector)
+   (macro-subtype-f32vector)
+   (macro-subtype-s64vector)
+   (macro-subtype-u64vector)
+   (macro-subtype-f64vector)))
+
 (defpred (sequence? obj) :- :sequence
-  (or (vector? obj)
-      (string? obj)
-      (hvector? obj)))
+  (and (##subtyped? obj)
+       (##vector-ref __subtyped-class-sequence (##subtype obj))))
+
+(def __subtyped-class-hvector
+  (subtype-property-vector
+   (macro-subtype-s8vector)
+   (macro-subtype-u8vector)
+   (macro-subtype-s16vector)
+   (macro-subtype-u16vector)
+   (macro-subtype-s32vector)
+   (macro-subtype-u32vector)
+   (macro-subtype-f32vector)
+   (macro-subtype-s64vector)
+   (macro-subtype-u64vector)
+   (macro-subtype-f64vector)))
 
 (defpred (hvector? obj) :- :hvector
-  ;; TODO optimize this
-  (or (u8vector? obj)
-      (s8vector? obj)
-      (u16vector? obj)
-      (s16vector? obj)
-      (u32vector? obj)
-      (s32vector? obj)
-      (u64vector? obj)
-      (s64vector? obj)
-      (f32vector? obj)
-      (f64vector? obj)))
+  (and (##subtyped? obj)
+       (##vector-ref __subtyped-class-hvector (##subtype obj))))
 
 (defpred (weak? obj) :- :weak
   (and (##subtyped? obj)
