@@ -195,6 +195,54 @@ package: gerbil/runtime
    unbound2::t
    (optimizer-resolve-class '(typedecl unbound2::t) 'class::t))
   (declare-class
+   unused::t
+   (@class unused
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unused::t
+   (optimizer-resolve-class '(typedecl unused::t) 'class::t))
+  (declare-class
+   deleted::t
+   (@class deleted
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   deleted::t
+   (optimizer-resolve-class '(typedecl deleted::t) 'class::t))
+  (declare-class
+   absent::t
+   (@class absent
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   absent::t
+   (optimizer-resolve-class '(typedecl absent::t) 'class::t))
+  (declare-class
    dssl-token::t
    (@class dssl-token
            (atom::t)
@@ -256,6 +304,22 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type key::t (optimizer-resolve-class '(typedecl key::t) 'class::t))
+  (declare-class
+   unknown::t
+   (@class unknown
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unknown::t
+   (optimizer-resolve-class '(typedecl unknown::t) 'class::t))
   (declare-class
    number::t
    (@class number (builtin::t) (builtin::t t::t) () () #f #f #f #f #f #f))

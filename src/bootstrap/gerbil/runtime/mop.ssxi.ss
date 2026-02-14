@@ -3212,7 +3212,24 @@ package: gerbil/runtime
       origin:
       gerbil/runtime/mop))))
   (declare-type __type (optimizer-resolve-class '(typedecl __type) 't::t))
-  (declare-type __class (optimizer-resolve-class '(typedecl __class) 't::t))
+  (declare-type
+   __primitive-class
+   (optimizer-resolve-class '(typedecl __primitive-class) 'vector::t))
+  (declare-type
+   __boxvalues-class
+   (optimizer-resolve-class '(typedecl __boxvalues-class) 'vector::t))
+  (declare-type
+   __subtype-class
+   (optimizer-resolve-class '(typedecl __subtype-class) 'vector::t))
+  (declare-type
+   __char-class
+   (optimizer-resolve-class '(typedecl __char-class) 't::t))
+  (declare-type
+   __special-class
+   (optimizer-resolve-class '(typedecl __special-class) 'vector::t))
+  (declare-type
+   __class-of
+   (optimizer-resolve-class '(typedecl __class-of) 't::t))
   (declare-type
    type-of
    (@lambda 1

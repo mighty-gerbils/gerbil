@@ -1,37 +1,37 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1771093447)
+  (define gerbil/runtime/error::timestamp 1771101397)
   (begin
     (define Exception::t
-      (let ((__tmp141693 (list)))
+      (let ((__tmp142116 (list)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/error#Exception::t
          'Exception
-         __tmp141693
+         __tmp142116
          '()
          '()
          '#f)))
     (define Exception?
       (let () (declare (not safe)) (__make-class-predicate Exception::t)))
     (define make-Exception
-      (lambda _%$args141611%_
-        (apply make-instance Exception::t _%$args141611%_)))
+      (lambda _%$args142034%_
+        (apply make-instance Exception::t _%$args142034%_)))
     (define StackTrace::t
-      (let ((__tmp141694 (list)))
+      (let ((__tmp142117 (list)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/error#StackTrace::t
          'StackTrace
-         __tmp141694
+         __tmp142117
          '(continuation)
          '((transparent: . #t))
          '#f)))
     (define StackTrace?
       (let () (declare (not safe)) (__make-class-predicate StackTrace::t)))
     (define make-StackTrace
-      (lambda _%$args141608%_
-        (apply make-instance StackTrace::t _%$args141608%_)))
+      (lambda _%$args142031%_
+        (apply make-instance StackTrace::t _%$args142031%_)))
     (define StackTrace-continuation
       (let ()
         (declare (not safe))
@@ -49,19 +49,19 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator StackTrace::t 'continuation)))
     (define Error::t
-      (let ((__tmp141695 (list StackTrace::t Exception::t)))
+      (let ((__tmp142118 (list StackTrace::t Exception::t)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/error#Error::t
          'Error
-         __tmp141695
+         __tmp142118
          '(message irritants where)
          '((transparent: . #t))
          ':init!)))
     (define Error?
       (let () (declare (not safe)) (__make-class-predicate Error::t)))
     (define make-Error
-      (lambda _%$args141605%_ (apply make-instance Error::t _%$args141605%_)))
+      (lambda _%$args142028%_ (apply make-instance Error::t _%$args142028%_)))
     (define Error-message
       (let ()
         (declare (not safe))
@@ -127,12 +127,12 @@
         (declare (not safe))
         (__make-class-slot-unchecked-mutator Error::t 'continuation)))
     (define ContractViolation::t
-      (let ((__tmp141696 (list Error::t)))
+      (let ((__tmp142119 (list Error::t)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/error#ContractViolation::t
          'ContractViolation
-         __tmp141696
+         __tmp142119
          '()
          '()
          '#f)))
@@ -141,8 +141,8 @@
         (declare (not safe))
         (__make-class-predicate ContractViolation::t)))
     (define make-ContractViolation
-      (lambda _%$args141602%_
-        (apply make-instance ContractViolation::t _%$args141602%_)))
+      (lambda _%$args142025%_
+        (apply make-instance ContractViolation::t _%$args142025%_)))
     (define ContractViolation-message
       (let ()
         (declare (not safe))
@@ -214,12 +214,12 @@
          ContractViolation::t
          'continuation)))
     (define RuntimeException::t
-      (let ((__tmp141697 (list StackTrace::t Exception::t)))
+      (let ((__tmp142120 (list StackTrace::t Exception::t)))
         (declare (not safe))
         (__make-class-type
          'gerbil/runtime/error#RuntimeException::t
          'RuntimeException
-         __tmp141697
+         __tmp142120
          '(exception)
          '((transparent: . #t))
          '#f)))
@@ -228,8 +228,8 @@
         (declare (not safe))
         (__make-class-predicate RuntimeException::t)))
     (define make-RuntimeException
-      (lambda _%$args141599%_
-        (apply make-instance RuntimeException::t _%$args141599%_)))
+      (lambda _%$args142022%_
+        (apply make-instance RuntimeException::t _%$args142022%_)))
     (define RuntimeException-exception
       (let ()
         (declare (not safe))
@@ -267,129 +267,129 @@
          RuntimeException::t
          'continuation)))
     (define gerbil-exception-handler-hook
-      (lambda (_%exn141594%_ _%continue141595%_)
-        (let ((_%exn141597%_ (wrap-runtime-exception _%exn141594%_)))
+      (lambda (_%exn142017%_ _%continue142018%_)
+        (let ((_%exn142020%_ (wrap-runtime-exception _%exn142017%_)))
           (declare (not safe))
-          (##repl-exception-handler-hook _%exn141597%_ _%continue141595%_))))
+          (##repl-exception-handler-hook _%exn142020%_ _%continue142018%_))))
     (let ()
       (declare (not safe))
       (##primordial-exception-handler-hook-set! gerbil-exception-handler-hook))
     (define raise
-      (lambda (_%exn141590%_)
+      (lambda (_%exn142013%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? StackTrace::t _%exn141590%_))
+              (class-instance? StackTrace::t _%exn142013%_))
             (if (let ()
                   (declare (not safe))
-                  (unchecked-slot-ref _%exn141590%_ 'continuation))
+                  (unchecked-slot-ref _%exn142013%_ 'continuation))
                 '#!void
-                (let ((__tmp141698
-                       (lambda (_%cont141592%_)
+                (let ((__tmp142121
+                       (lambda (_%cont142015%_)
                          (let ()
                            (declare (not safe))
                            (unchecked-slot-set!
-                            _%exn141590%_
+                            _%exn142013%_
                             'continuation
-                            _%cont141592%_)))))
+                            _%cont142015%_)))))
                   (declare (not safe))
-                  (##continuation-capture __tmp141698)))
+                  (##continuation-capture __tmp142121)))
             '#!void)
-        (let () (declare (not safe)) (##raise _%exn141590%_))))
+        (let () (declare (not safe)) (##raise _%exn142013%_))))
     (define error
-      (lambda (_%message141587%_ . _%irritants141588%_)
-        (raise (let ((__obj141690
+      (lambda (_%message142010%_ . _%irritants142011%_)
+        (raise (let ((__obj142113
                       (let ()
                         (declare (not safe))
                         (##structure Error::t '#f '#f '#f '#f))))
                  (Error:::init!
-                  __obj141690
-                  _%message141587%_
+                  __obj142113
+                  _%message142010%_
                   'irritants:
-                  _%irritants141588%_)
-                 __obj141690))))
+                  _%irritants142011%_)
+                 __obj142113))))
     (define __raise-contract-violation-error__%
-      (lambda (_%@@keywords141562%_
-               _%ctx141557141563%_
-               _%contract-expr141558141564%_
-               _%value141559141565%_
-               _%message141566%_)
-        (let* ((_%ctx141568%_
-                (if (eq? _%ctx141557141563%_ absent-value)
+      (lambda (_%@@keywords141985%_
+               _%ctx141980141986%_
+               _%contract-expr141981141987%_
+               _%value141982141988%_
+               _%message141989%_)
+        (let* ((_%ctx141991%_
+                (if (eq? _%ctx141980141986%_ absent-value)
                     '#f
-                    _%ctx141557141563%_))
-               (_%contract-expr141570%_
-                (if (eq? _%contract-expr141558141564%_ absent-value)
+                    _%ctx141980141986%_))
+               (_%contract-expr141993%_
+                (if (eq? _%contract-expr141981141987%_ absent-value)
                     '#f
-                    _%contract-expr141558141564%_))
-               (_%value141572%_
-                (if (eq? _%value141559141565%_ absent-value)
+                    _%contract-expr141981141987%_))
+               (_%value141995%_
+                (if (eq? _%value141982141988%_ absent-value)
                     '#f
-                    _%value141559141565%_)))
-          (raise (let ((__obj141691
+                    _%value141982141988%_)))
+          (raise (let ((__obj142114
                         (let ()
                           (declare (not safe))
                           (##structure ContractViolation::t '#f '#f '#f '#f))))
                    (ContractViolation:::init!
-                    __obj141691
-                    _%message141566%_
+                    __obj142114
+                    _%message141989%_
                     'where:
-                    _%ctx141568%_
+                    _%ctx141991%_
                     'irritants:
                     (cons 'contract:
-                          (cons _%contract-expr141570%_
-                                (cons 'value: (cons _%value141572%_ '())))))
-                   __obj141691)))))
+                          (cons _%contract-expr141993%_
+                                (cons 'value: (cons _%value141995%_ '())))))
+                   __obj142114)))))
     (define __raise-contract-violation-error__@
-      (lambda (_%@@keywords141577%_ . _%args141578%_)
+      (lambda (_%@@keywords142000%_ . _%args142001%_)
         (apply __raise-contract-violation-error__%
-               _%@@keywords141577%_
+               _%@@keywords142000%_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords141577%_
+                  _%@@keywords142000%_
                   'context:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords141577%_
+                  _%@@keywords142000%_
                   'contract:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _%@@keywords141577%_
+                  _%@@keywords142000%_
                   'value:
                   absent-value))
-               _%args141578%_)))
+               _%args142001%_)))
     (define __raise-contract-violation-error
-      (lambda _%args141560141584%_
+      (lambda _%args141983142007%_
         (apply keyword-dispatch
                '#(context: #f value: contract:)
                __raise-contract-violation-error__@
-               _%args141560141584%_)))
+               _%args141983142007%_)))
     (set! raise-contract-violation-error __raise-contract-violation-error)
     (define contract-violation-error? ContractViolation?)
     (define __with-exception-handler
-      (lambda (_%handler141531%_ _%thunk141532%_)
-        (let* ((_%handler141535%_ _%handler141531%_)
-               (_%thunk141543%_ _%thunk141532%_)
-               (__tmp141699
-                (lambda (_%exn141552%_)
-                  (let ((_%exn141554%_ (wrap-runtime-exception _%exn141552%_)))
+      (lambda (_%handler141954%_ _%thunk141955%_)
+        (let* ((_%handler141958%_ _%handler141954%_)
+               (_%thunk141966%_ _%thunk141955%_)
+               (__tmp142122
+                (lambda (_%exn141975%_)
+                  (let ((_%exn141977%_ (wrap-runtime-exception _%exn141975%_)))
                     (declare (not safe))
-                    (_%handler141535%_ _%exn141554%_)))))
+                    (_%handler141958%_ _%exn141977%_)))))
           (declare (not safe))
-          (##with-exception-handler __tmp141699 _%thunk141543%_))))
+          (##with-exception-handler __tmp142122 _%thunk141966%_))))
     (define with-exception-handler
-      (lambda (_%handler139566%_ _%thunk139567%_)
-        (if (procedure? _%handler139566%_)
-            (let ((_%handler139571%_ _%handler139566%_))
-              (if (procedure? _%thunk139567%_)
-                  (let ((_%thunk139581%_ _%thunk139567%_))
+      (lambda (_%handler139989%_ _%thunk139990%_)
+        (if (procedure? _%handler139989%_)
+            (let ((_%handler139994%_ _%handler139989%_))
+              (if (procedure? _%thunk139990%_)
+                  (let ((_%thunk140004%_ _%thunk139990%_))
                     (__with-exception-handler
-                     _%handler139571%_
-                     _%thunk139581%_))
+                     _%handler139994%_
+                     _%thunk140004%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -398,7 +398,7 @@
                      'contract:
                      'procedure?
                      'value:
-                     _%thunk139567%_)
+                     _%thunk139990%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -408,37 +408,37 @@
                'contract:
                'procedure?
                'value:
-               _%handler139566%_)
+               _%handler139989%_)
               '#!void))))
     (define __with-catch
-      (lambda (_%handler141473%_ _%thunk141474%_)
-        (let* ((_%handler141477%_ _%handler141473%_)
-               (_%thunk141485%_ _%thunk141474%_)
-               (__tmp141700
-                (lambda (_%cont141494%_)
-                  (let* ((_%handler141498%_
-                          (lambda (_%exn141496%_)
+      (lambda (_%handler141896%_ _%thunk141897%_)
+        (let* ((_%handler141900%_ _%handler141896%_)
+               (_%thunk141908%_ _%thunk141897%_)
+               (__tmp142123
+                (lambda (_%cont141917%_)
+                  (let* ((_%handler141921%_
+                          (lambda (_%exn141919%_)
                             (let ()
                               (declare (not safe))
                               (##continuation-graft
-                               _%cont141494%_
-                               _%handler141477%_
-                               _%exn141496%_))))
-                         (_%thunk141501%_ _%thunk141485%_)
-                         (_%handler141506%_ _%handler141498%_)
-                         (_%thunk141521%_ _%thunk141501%_))
+                               _%cont141917%_
+                               _%handler141900%_
+                               _%exn141919%_))))
+                         (_%thunk141924%_ _%thunk141908%_)
+                         (_%handler141929%_ _%handler141921%_)
+                         (_%thunk141944%_ _%thunk141924%_))
                     (__with-exception-handler
-                     _%handler141506%_
-                     _%thunk141521%_)))))
+                     _%handler141929%_
+                     _%thunk141944%_)))))
           (declare (not safe))
-          (##continuation-capture __tmp141700))))
+          (##continuation-capture __tmp142123))))
     (define with-catch
-      (lambda (_%handler139711%_ _%thunk139712%_)
-        (if (procedure? _%handler139711%_)
-            (let ((_%handler139716%_ _%handler139711%_))
-              (if (procedure? _%thunk139712%_)
-                  (let ((_%thunk139726%_ _%thunk139712%_))
-                    (__with-catch _%handler139716%_ _%thunk139726%_))
+      (lambda (_%handler140134%_ _%thunk140135%_)
+        (if (procedure? _%handler140134%_)
+            (let ((_%handler140139%_ _%handler140134%_))
+              (if (procedure? _%thunk140135%_)
+                  (let ((_%thunk140149%_ _%thunk140135%_))
+                    (__with-catch _%handler140139%_ _%thunk140149%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -447,7 +447,7 @@
                      'contract:
                      'procedure?
                      'value:
-                     _%thunk139712%_)
+                     _%thunk140135%_)
                     '#!void)))
             (begin
               (raise-contract-violation-error
@@ -457,21 +457,21 @@
                'contract:
                'procedure?
                'value:
-               _%handler139711%_)
+               _%handler140134%_)
               '#!void))))
     (define with-exception-catcher with-catch)
     (define wrap-runtime-exception
-      (lambda (_%exn141460%_)
-        (if (or (heap-overflow-exception? _%exn141460%_)
-                (stack-overflow-exception? _%exn141460%_))
-            _%exn141460%_
+      (lambda (_%exn141883%_)
+        (if (or (heap-overflow-exception? _%exn141883%_)
+                (stack-overflow-exception? _%exn141883%_))
+            _%exn141883%_
             (if (let ()
                   (declare (not safe))
-                  (class-instance? Exception::t _%exn141460%_))
-                _%exn141460%_
-                (if (macro-exception? _%exn141460%_)
-                    (let ((_%rte141468%_
-                           (let ((__obj141692
+                  (class-instance? Exception::t _%exn141883%_))
+                _%exn141883%_
+                (if (macro-exception? _%exn141883%_)
+                    (let ((_%rte141891%_
+                           (let ((__obj142115
                                   (let ()
                                     (declare (not safe))
                                     (##structure
@@ -481,145 +481,145 @@
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-set!
-                                __obj141692
-                                _%exn141460%_
+                                __obj142115
+                                _%exn141883%_
                                 '2
                                 '#f
                                 '#f))
-                             __obj141692)))
-                      (let ((__tmp141701
-                             (lambda (_%cont141470%_)
-                               (let ((__tmp141702
+                             __obj142115)))
+                      (let ((__tmp142124
+                             (lambda (_%cont141893%_)
+                               (let ((__tmp142125
                                       (let ()
                                         (declare (not safe))
-                                        (##continuation-next _%cont141470%_))))
+                                        (##continuation-next _%cont141893%_))))
                                  (declare (not safe))
                                  (unchecked-slot-set!
-                                  _%rte141468%_
+                                  _%rte141891%_
                                   'continuation
-                                  __tmp141702)))))
+                                  __tmp142125)))))
                         (declare (not safe))
-                        (##continuation-capture __tmp141701))
-                      _%rte141468%_)
-                    _%exn141460%_)))))
+                        (##continuation-capture __tmp142124))
+                      _%rte141891%_)
+                    _%exn141883%_)))))
     (define exception? Exception?)
     (define error? Error?)
     (define error-object?
-      (lambda (_%obj141455%_)
-        (let ((_%$e141457%_
+      (lambda (_%obj141878%_)
+        (let ((_%$e141880%_
                (let ()
                  (declare (not safe))
-                 (class-instance? Error::t _%obj141455%_))))
-          (if _%$e141457%_ _%$e141457%_ (error-exception? _%obj141455%_)))))
+                 (class-instance? Error::t _%obj141878%_))))
+          (if _%$e141880%_ _%$e141880%_ (error-exception? _%obj141878%_)))))
     (define error-message
-      (lambda (_%obj141414%_)
-        (let ((_%$e141450%_
-               (let* ((_%obj141416%_ _%obj141414%_)
-                      (_%slot141419%_ 'message)
-                      (_%E141422%_ false)
-                      (_%slot141427%_ _%slot141419%_)
-                      (_%E141440%_ _%E141422%_))
+      (lambda (_%obj141837%_)
+        (let ((_%$e141873%_
+               (let* ((_%obj141839%_ _%obj141837%_)
+                      (_%slot141842%_ 'message)
+                      (_%E141845%_ false)
+                      (_%slot141850%_ _%slot141842%_)
+                      (_%E141863%_ _%E141845%_))
                  (declare (not safe))
-                 (__slot-ref__% _%obj141416%_ _%slot141427%_ _%E141440%_))))
-          (if _%$e141450%_
-              _%$e141450%_
-              (if (error-exception? _%obj141414%_)
-                  (error-exception-message _%obj141414%_)
+                 (__slot-ref__% _%obj141839%_ _%slot141850%_ _%E141863%_))))
+          (if _%$e141873%_
+              _%$e141873%_
+              (if (error-exception? _%obj141837%_)
+                  (error-exception-message _%obj141837%_)
                   '#f)))))
     (define error-irritants
-      (lambda (_%obj141409%_)
+      (lambda (_%obj141832%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? Error::t _%obj141409%_))
+              (class-instance? Error::t _%obj141832%_))
             (let ()
               (declare (not safe))
-              (unchecked-slot-ref _%obj141409%_ 'irritants))
-            (if (error-exception? _%obj141409%_)
-                (error-exception-parameters _%obj141409%_)
+              (unchecked-slot-ref _%obj141832%_ 'irritants))
+            (if (error-exception? _%obj141832%_)
+                (error-exception-parameters _%obj141832%_)
                 '#f))))
     (define error-trace
-      (lambda (_%obj141407%_)
+      (lambda (_%obj141830%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? Error::t _%obj141407%_))
+              (class-instance? Error::t _%obj141830%_))
             (let ()
               (declare (not safe))
-              (unchecked-slot-ref _%obj141407%_ 'where))
+              (unchecked-slot-ref _%obj141830%_ 'where))
             '#f)))
     (define display-exception__%
-      (lambda (_%e141368%_ _%port141369%_)
-        (let ((_%$e141391%_
-               (let* ((_%obj141371%_ _%e141368%_)
-                      (_%id141374%_ 'display-exception)
-                      (_%id141379%_ _%id141374%_))
+      (lambda (_%e141791%_ _%port141792%_)
+        (let ((_%$e141814%_
+               (let* ((_%obj141794%_ _%e141791%_)
+                      (_%id141797%_ 'display-exception)
+                      (_%id141802%_ _%id141797%_))
                  (declare (not safe))
-                 (__method-ref _%obj141371%_ _%id141379%_))))
-          (if _%$e141391%_
-              ((lambda (_%f141394%_) (_%f141394%_ _%e141368%_ _%port141369%_))
-               _%$e141391%_)
+                 (__method-ref _%obj141794%_ _%id141802%_))))
+          (if _%$e141814%_
+              ((lambda (_%f141817%_) (_%f141817%_ _%e141791%_ _%port141792%_))
+               _%$e141814%_)
               (let ()
                 (declare (not safe))
-                (##default-display-exception _%e141368%_ _%port141369%_))))))
+                (##default-display-exception _%e141791%_ _%port141792%_))))))
     (define display-exception__0
-      (lambda (_%e141400%_)
-        (let ((_%port141402%_ (current-error-port)))
-          (display-exception__% _%e141400%_ _%port141402%_))))
+      (lambda (_%e141823%_)
+        (let ((_%port141825%_ (current-error-port)))
+          (display-exception__% _%e141823%_ _%port141825%_))))
     (define display-exception
-      (lambda _g141703_
-        (let ((_g141704_ (let () (declare (not safe)) (##length _g141703_))))
-          (cond ((let () (declare (not safe)) (##fx= _g141704_ 1))
-                 (apply display-exception__0 _g141703_))
-                ((let () (declare (not safe)) (##fx= _g141704_ 2))
-                 (apply display-exception__% _g141703_))
+      (lambda _g142126_
+        (let ((_g142127_ (let () (declare (not safe)) (##length _g142126_))))
+          (cond ((let () (declare (not safe)) (##fx= _g142127_ 1))
+                 (apply display-exception__0 _g142126_))
+                ((let () (declare (not safe)) (##fx= _g142127_ 2))
+                 (apply display-exception__% _g142126_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   display-exception
-                  _g141703_))))))
+                  _g142126_))))))
     (let ()
       (declare (not safe))
       (##display-exception-hook-set! display-exception))
     (define Error:::init!
-      (lambda (_%self141346%_ _%message141347%_ . _%rest141348%_)
-        (let* ((_%self141351%_ _%self141346%_)
-               (_%message141365%_
-                (if (string? _%message141347%_)
-                    _%message141347%_
+      (lambda (_%self141769%_ _%message141770%_ . _%rest141771%_)
+        (let* ((_%self141774%_ _%self141769%_)
+               (_%message141788%_
+                (if (string? _%message141770%_)
+                    _%message141770%_
                     (call-with-output-string
                      '""
-                     (lambda (_%g141360141362%_)
-                       (display _%message141347%_ _%g141360141362%_))))))
+                     (lambda (_%g141783141785%_)
+                       (display _%message141770%_ _%g141783141785%_))))))
           (let ()
             (declare (not safe))
-            (unchecked-slot-set! _%self141351%_ 'message _%message141365%_))
-          (apply class-instance-init! _%self141351%_ _%rest141348%_))))
+            (unchecked-slot-set! _%self141774%_ 'message _%message141788%_))
+          (apply class-instance-init! _%self141774%_ _%rest141771%_))))
     (define Error:::init!::specialize
-      (lambda (__klass141613 __method-table141614)
-        (let ((__message141615
-               (let ((__slot141616
+      (lambda (__klass142036 __method-table142037)
+        (let ((__message142038
+               (let ((__slot142039
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141613 'message))))
-                 (if __slot141616
-                     __slot141616
+                        (class-slot-offset __klass142036 'message))))
+                 (if __slot142039
+                     __slot142039
                      (error '"Unknown slot" 'message)))))
-          (lambda (_%self141346%_ _%message141347%_ . _%rest141348%_)
-            (let* ((_%self141351%_ _%self141346%_)
-                   (_%message141365%_
-                    (if (string? _%message141347%_)
-                        _%message141347%_
+          (lambda (_%self141769%_ _%message141770%_ . _%rest141771%_)
+            (let* ((_%self141774%_ _%self141769%_)
+                   (_%message141788%_
+                    (if (string? _%message141770%_)
+                        _%message141770%_
                         (call-with-output-string
                          '""
-                         (lambda (_%g141360141362%_)
-                           (display _%message141347%_ _%g141360141362%_))))))
+                         (lambda (_%g141783141785%_)
+                           (display _%message141770%_ _%g141783141785%_))))))
               (let ()
                 (declare (not safe))
                 (##unchecked-structure-set!
-                 _%self141351%_
-                 _%message141365%_
-                 __message141615
+                 _%self141774%_
+                 _%message141788%_
+                 __message142038
                  '#f
                  '#f))
-              (apply class-instance-init! _%self141351%_ _%rest141348%_))))))
+              (apply class-instance-init! _%self141774%_ _%rest141771%_))))))
     (let ()
       (declare (not safe))
       (bind-specializer! Error:::init! Error:::init!::specialize))
@@ -636,30 +636,30 @@
        '#f))
     (define dump-stack-trace? (make-parameter '#f))
     (define Error::display-exception
-      (lambda (_%self141051%_ _%port141052%_)
-        (let ((_%self141055%_ _%self141051%_))
-          (let ((_%tmp-port141065%_ (open-output-string))
-                (_%display-error-newline141066%_
-                 (> (output-port-column _%port141052%_) '0)))
-            (fix-port-width! _%tmp-port141065%_)
-            (let ((__tmp141705
+      (lambda (_%self141474%_ _%port141475%_)
+        (let ((_%self141478%_ _%self141474%_))
+          (let ((_%tmp-port141488%_ (open-output-string))
+                (_%display-error-newline141489%_
+                 (> (output-port-column _%port141475%_) '0)))
+            (fix-port-width! _%tmp-port141488%_)
+            (let ((__tmp142128
                    (lambda ()
-                     (if _%display-error-newline141066%_ (newline) '#!void)
+                     (if _%display-error-newline141489%_ (newline) '#!void)
                      (display '"*** ERROR IN ")
-                     (let ((_%$e141069%_
+                     (let ((_%$e141492%_
                             (let ()
                               (declare (not safe))
-                              (unchecked-slot-ref _%self141055%_ 'where))))
-                       (if _%$e141069%_ (display _%$e141069%_) (display '"?")))
-                     (let ((__tmp141706
-                            (let ((__tmp141707
-                                   (let ((_%obj141073%_ _%self141055%_))
+                              (unchecked-slot-ref _%self141478%_ 'where))))
+                       (if _%$e141492%_ (display _%$e141492%_) (display '"?")))
+                     (let ((__tmp142129
+                            (let ((__tmp142130
+                                   (let ((_%obj141496%_ _%self141478%_))
                                      (if (let ()
                                            (declare (not safe))
-                                           (object? _%obj141073%_))
-                                         (let ((_%obj141078%_ _%obj141073%_))
+                                           (object? _%obj141496%_))
+                                         (let ((_%obj141501%_ _%obj141496%_))
                                            (declare (not safe))
-                                           (__object-class _%obj141078%_))
+                                           (__object-class _%obj141501%_))
                                          (begin
                                            (raise-contract-violation-error
                                             '"contract violation"
@@ -668,135 +668,135 @@
                                             'contract:
                                             'object?
                                             'value:
-                                            _%obj141073%_)
+                                            _%obj141496%_)
                                            '#!void)))))
                               (declare (not safe))
-                              (##type-name __tmp141707))))
+                              (##type-name __tmp142130))))
                        (declare (not safe))
-                       (display* '" [" __tmp141706 '"]: "))
-                     (let ((__tmp141708
+                       (display* '" [" __tmp142129 '"]: "))
+                     (let ((__tmp142131
                             (let ()
                               (declare (not safe))
-                              (unchecked-slot-ref _%self141055%_ 'message))))
+                              (unchecked-slot-ref _%self141478%_ 'message))))
                        (declare (not safe))
-                       (displayln __tmp141708))
-                     (let ((_%irritants141093%_
+                       (displayln __tmp142131))
+                     (let ((_%irritants141516%_
                             (let ()
                               (declare (not safe))
-                              (unchecked-slot-ref _%self141055%_ 'irritants))))
-                       (if (null? _%irritants141093%_)
+                              (unchecked-slot-ref _%self141478%_ 'irritants))))
+                       (if (null? _%irritants141516%_)
                            '#!void
                            (begin
                              (display '"--- irritants: ")
                              (for-each
-                              (lambda (_%obj141095%_)
-                                (if (u8vector? _%obj141095%_)
-                                    (let ((__tmp141709
+                              (lambda (_%obj141518%_)
+                                (if (u8vector? _%obj141518%_)
+                                    (let ((__tmp142132
                                            (cons '<u8vector>
                                                  (cons (let ()
                                                          (declare (not safe))
                                                          (##u8vector-length
-                                                          _%obj141095%_))
+                                                          _%obj141518%_))
                                                        '()))))
                                       (declare (not safe))
-                                      (##write __tmp141709))
+                                      (##write __tmp142132))
                                     (let ()
                                       (declare (not safe))
-                                      (##write _%obj141095%_)))
+                                      (##write _%obj141518%_)))
                                 (let ()
                                   (declare (not safe))
                                   (##write-char '#\space)))
-                              _%irritants141093%_)
+                              _%irritants141516%_)
                              (newline))))
                      (if (let () (declare (not safe)) (dump-stack-trace?))
-                         (let ((_%cont141096141098%_
+                         (let ((_%cont141519141521%_
                                 (let ()
                                   (declare (not safe))
                                   (unchecked-slot-ref
-                                   _%self141055%_
+                                   _%self141478%_
                                    'continuation))))
-                           (if _%cont141096141098%_
-                               (let ((_%cont141100%_ _%cont141096141098%_))
+                           (if _%cont141519141521%_
+                               (let ((_%cont141523%_ _%cont141519141521%_))
                                  (let ()
                                    (declare (not safe))
                                    (displayln '"--- continuation backtrace:"))
                                  (display-continuation-backtrace
-                                  _%cont141100%_))
+                                  _%cont141523%_))
                                '#f))
                          '#!void))))
               (declare (not safe))
               (call-with-parameters__1
-               __tmp141705
+               __tmp142128
                current-output-port
-               _%tmp-port141065%_))
-            (let ((__tmp141710 (get-output-string _%tmp-port141065%_)))
+               _%tmp-port141488%_))
+            (let ((__tmp142133 (get-output-string _%tmp-port141488%_)))
               (declare (not safe))
-              (##write-string __tmp141710 _%port141052%_))))))
+              (##write-string __tmp142133 _%port141475%_))))))
     (define Error::display-exception::specialize
-      (lambda (__klass141617 __method-table141618)
-        (let ((__continuation141619
-               (let ((__slot141623
+      (lambda (__klass142040 __method-table142041)
+        (let ((__continuation142042
+               (let ((__slot142046
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141617 'continuation))))
-                 (if __slot141623
-                     __slot141623
+                        (class-slot-offset __klass142040 'continuation))))
+                 (if __slot142046
+                     __slot142046
                      (error '"Unknown slot" 'continuation))))
-              (__message141620
-               (let ((__slot141624
+              (__message142043
+               (let ((__slot142047
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141617 'message))))
-                 (if __slot141624
-                     __slot141624
+                        (class-slot-offset __klass142040 'message))))
+                 (if __slot142047
+                     __slot142047
                      (error '"Unknown slot" 'message))))
-              (__where141621
-               (let ((__slot141625
+              (__irritants142044
+               (let ((__slot142048
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141617 'where))))
-                 (if __slot141625
-                     __slot141625
-                     (error '"Unknown slot" 'where))))
-              (__irritants141622
-               (let ((__slot141626
+                        (class-slot-offset __klass142040 'irritants))))
+                 (if __slot142048
+                     __slot142048
+                     (error '"Unknown slot" 'irritants))))
+              (__where142045
+               (let ((__slot142049
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141617 'irritants))))
-                 (if __slot141626
-                     __slot141626
-                     (error '"Unknown slot" 'irritants)))))
-          (lambda (_%self141051%_ _%port141052%_)
-            (let ((_%self141055%_ _%self141051%_))
-              (let ((_%tmp-port141065%_ (open-output-string))
-                    (_%display-error-newline141066%_
-                     (> (output-port-column _%port141052%_) '0)))
-                (fix-port-width! _%tmp-port141065%_)
-                (let ((__tmp141711
+                        (class-slot-offset __klass142040 'where))))
+                 (if __slot142049
+                     __slot142049
+                     (error '"Unknown slot" 'where)))))
+          (lambda (_%self141474%_ _%port141475%_)
+            (let ((_%self141478%_ _%self141474%_))
+              (let ((_%tmp-port141488%_ (open-output-string))
+                    (_%display-error-newline141489%_
+                     (> (output-port-column _%port141475%_) '0)))
+                (fix-port-width! _%tmp-port141488%_)
+                (let ((__tmp142134
                        (lambda ()
-                         (if _%display-error-newline141066%_ (newline) '#!void)
+                         (if _%display-error-newline141489%_ (newline) '#!void)
                          (display '"*** ERROR IN ")
-                         (let ((_%$e141069%_
+                         (let ((_%$e141492%_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _%self141055%_
-                                   __where141621
+                                   _%self141478%_
+                                   __where142045
                                    '#f
                                    '#f))))
-                           (if _%$e141069%_
-                               (display _%$e141069%_)
+                           (if _%$e141492%_
+                               (display _%$e141492%_)
                                (display '"?")))
-                         (let ((__tmp141712
-                                (let ((__tmp141713
-                                       (let ((_%obj141073%_ _%self141055%_))
+                         (let ((__tmp142135
+                                (let ((__tmp142136
+                                       (let ((_%obj141496%_ _%self141478%_))
                                          (if (let ()
                                                (declare (not safe))
-                                               (object? _%obj141073%_))
-                                             (let ((_%obj141078%_
-                                                    _%obj141073%_))
+                                               (object? _%obj141496%_))
+                                             (let ((_%obj141501%_
+                                                    _%obj141496%_))
                                                (declare (not safe))
-                                               (__object-class _%obj141078%_))
+                                               (__object-class _%obj141501%_))
                                              (begin
                                                (raise-contract-violation-error
                                                 '"contract violation"
@@ -805,82 +805,82 @@
                                                 'contract:
                                                 'object?
                                                 'value:
-                                                _%obj141073%_)
+                                                _%obj141496%_)
                                                '#!void)))))
                                   (declare (not safe))
-                                  (##type-name __tmp141713))))
+                                  (##type-name __tmp142136))))
                            (declare (not safe))
-                           (display* '" [" __tmp141712 '"]: "))
-                         (let ((__tmp141714
+                           (display* '" [" __tmp142135 '"]: "))
+                         (let ((__tmp142137
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _%self141055%_
-                                   __message141620
+                                   _%self141478%_
+                                   __message142043
                                    '#f
                                    '#f))))
                            (declare (not safe))
-                           (displayln __tmp141714))
-                         (let ((_%irritants141093%_
+                           (displayln __tmp142137))
+                         (let ((_%irritants141516%_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _%self141055%_
-                                   __irritants141622
+                                   _%self141478%_
+                                   __irritants142044
                                    '#f
                                    '#f))))
-                           (if (null? _%irritants141093%_)
+                           (if (null? _%irritants141516%_)
                                '#!void
                                (begin
                                  (display '"--- irritants: ")
                                  (for-each
-                                  (lambda (_%obj141095%_)
-                                    (if (u8vector? _%obj141095%_)
-                                        (let ((__tmp141715
+                                  (lambda (_%obj141518%_)
+                                    (if (u8vector? _%obj141518%_)
+                                        (let ((__tmp142138
                                                (cons '<u8vector>
                                                      (cons (let ()
                                                              (declare
                                                                (not safe))
                                                              (##u8vector-length
-                                                              _%obj141095%_))
+                                                              _%obj141518%_))
                                                            '()))))
                                           (declare (not safe))
-                                          (##write __tmp141715))
+                                          (##write __tmp142138))
                                         (let ()
                                           (declare (not safe))
-                                          (##write _%obj141095%_)))
+                                          (##write _%obj141518%_)))
                                     (let ()
                                       (declare (not safe))
                                       (##write-char '#\space)))
-                                  _%irritants141093%_)
+                                  _%irritants141516%_)
                                  (newline))))
                          (if (let () (declare (not safe)) (dump-stack-trace?))
-                             (let ((_%cont141096141098%_
+                             (let ((_%cont141519141521%_
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-ref
-                                       _%self141055%_
-                                       __continuation141619
+                                       _%self141478%_
+                                       __continuation142042
                                        '#f
                                        '#f))))
-                               (if _%cont141096141098%_
-                                   (let ((_%cont141100%_ _%cont141096141098%_))
+                               (if _%cont141519141521%_
+                                   (let ((_%cont141523%_ _%cont141519141521%_))
                                      (let ()
                                        (declare (not safe))
                                        (displayln
                                         '"--- continuation backtrace:"))
                                      (display-continuation-backtrace
-                                      _%cont141100%_))
+                                      _%cont141523%_))
                                    '#f))
                              '#!void))))
                   (declare (not safe))
                   (call-with-parameters__1
-                   __tmp141711
+                   __tmp142134
                    current-output-port
-                   _%tmp-port141065%_))
-                (let ((__tmp141716 (get-output-string _%tmp-port141065%_)))
+                   _%tmp-port141488%_))
+                (let ((__tmp142139 (get-output-string _%tmp-port141488%_)))
                   (declare (not safe))
-                  (##write-string __tmp141716 _%port141052%_))))))))
+                  (##write-string __tmp142139 _%port141475%_))))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -894,88 +894,88 @@
        Error::display-exception
        '#t))
     (define RuntimeException::display-exception
-      (lambda (_%self140908%_ _%port140909%_)
-        (let* ((_%self140912%_ _%self140908%_)
-               (_%tmp-port140922%_ (open-output-string)))
-          (fix-port-width! _%tmp-port140922%_)
-          (let ((__tmp141717
+      (lambda (_%self141331%_ _%port141332%_)
+        (let* ((_%self141335%_ _%self141331%_)
+               (_%tmp-port141345%_ (open-output-string)))
+          (fix-port-width! _%tmp-port141345%_)
+          (let ((__tmp142140
                  (let ()
                    (declare (not safe))
-                   (unchecked-slot-ref _%self140912%_ 'exception))))
+                   (unchecked-slot-ref _%self141335%_ 'exception))))
             (declare (not safe))
-            (##default-display-exception __tmp141717 _%tmp-port140922%_))
+            (##default-display-exception __tmp142140 _%tmp-port141345%_))
           (if (let () (declare (not safe)) (dump-stack-trace?))
-              (let ((_%cont140923140925%_
+              (let ((_%cont141346141348%_
                      (let ()
                        (declare (not safe))
-                       (unchecked-slot-ref _%self140912%_ 'continuation))))
-                (if _%cont140923140925%_
-                    (let ((_%cont140927%_ _%cont140923140925%_))
+                       (unchecked-slot-ref _%self141335%_ 'continuation))))
+                (if _%cont141346141348%_
+                    (let ((_%cont141350%_ _%cont141346141348%_))
                       (display '"--- continuation backtrace:"
-                               _%tmp-port140922%_)
-                      (newline _%tmp-port140922%_)
+                               _%tmp-port141345%_)
+                      (newline _%tmp-port141345%_)
                       (display-continuation-backtrace
-                       _%cont140927%_
-                       _%tmp-port140922%_))
+                       _%cont141350%_
+                       _%tmp-port141345%_))
                     '#f))
               '#!void)
-          (let ((__tmp141718 (get-output-string _%tmp-port140922%_)))
+          (let ((__tmp142141 (get-output-string _%tmp-port141345%_)))
             (declare (not safe))
-            (##write-string __tmp141718 _%port140909%_)))))
+            (##write-string __tmp142141 _%port141332%_)))))
     (define RuntimeException::display-exception::specialize
-      (lambda (__klass141627 __method-table141628)
-        (let ((__exception141629
-               (let ((__slot141631
+      (lambda (__klass142050 __method-table142051)
+        (let ((__continuation142052
+               (let ((__slot142054
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141627 'exception))))
-                 (if __slot141631
-                     __slot141631
-                     (error '"Unknown slot" 'exception))))
-              (__continuation141630
-               (let ((__slot141632
+                        (class-slot-offset __klass142050 'continuation))))
+                 (if __slot142054
+                     __slot142054
+                     (error '"Unknown slot" 'continuation))))
+              (__exception142053
+               (let ((__slot142055
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass141627 'continuation))))
-                 (if __slot141632
-                     __slot141632
-                     (error '"Unknown slot" 'continuation)))))
-          (lambda (_%self140908%_ _%port140909%_)
-            (let* ((_%self140912%_ _%self140908%_)
-                   (_%tmp-port140922%_ (open-output-string)))
-              (fix-port-width! _%tmp-port140922%_)
-              (let ((__tmp141719
+                        (class-slot-offset __klass142050 'exception))))
+                 (if __slot142055
+                     __slot142055
+                     (error '"Unknown slot" 'exception)))))
+          (lambda (_%self141331%_ _%port141332%_)
+            (let* ((_%self141335%_ _%self141331%_)
+                   (_%tmp-port141345%_ (open-output-string)))
+              (fix-port-width! _%tmp-port141345%_)
+              (let ((__tmp142142
                      (let ()
                        (declare (not safe))
                        (##unchecked-structure-ref
-                        _%self140912%_
-                        __exception141629
+                        _%self141335%_
+                        __exception142053
                         '#f
                         '#f))))
                 (declare (not safe))
-                (##default-display-exception __tmp141719 _%tmp-port140922%_))
+                (##default-display-exception __tmp142142 _%tmp-port141345%_))
               (if (let () (declare (not safe)) (dump-stack-trace?))
-                  (let ((_%cont140923140925%_
+                  (let ((_%cont141346141348%_
                          (let ()
                            (declare (not safe))
                            (##unchecked-structure-ref
-                            _%self140912%_
-                            __continuation141630
+                            _%self141335%_
+                            __continuation142052
                             '#f
                             '#f))))
-                    (if _%cont140923140925%_
-                        (let ((_%cont140927%_ _%cont140923140925%_))
+                    (if _%cont141346141348%_
+                        (let ((_%cont141350%_ _%cont141346141348%_))
                           (display '"--- continuation backtrace:"
-                                   _%tmp-port140922%_)
-                          (newline _%tmp-port140922%_)
+                                   _%tmp-port141345%_)
+                          (newline _%tmp-port141345%_)
                           (display-continuation-backtrace
-                           _%cont140927%_
-                           _%tmp-port140922%_))
+                           _%cont141350%_
+                           _%tmp-port141345%_))
                         '#f))
                   '#!void)
-              (let ((__tmp141720 (get-output-string _%tmp-port140922%_)))
+              (let ((__tmp142143 (get-output-string _%tmp-port141345%_)))
                 (declare (not safe))
-                (##write-string __tmp141720 _%port140909%_)))))))
+                (##write-string __tmp142143 _%port141332%_)))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -989,2636 +989,2636 @@
        RuntimeException::display-exception
        '#f))
     (define fix-port-width!
-      (lambda (_%port140780%_)
-        (if (macro-character-port? _%port140780%_)
-            (let ((_%old-width140782%_
-                   (macro-character-port-output-width _%port140780%_)))
+      (lambda (_%port141203%_)
+        (if (macro-character-port? _%port141203%_)
+            (let ((_%old-width141205%_
+                   (macro-character-port-output-width _%port141203%_)))
               (macro-character-port-output-width-set!
-               _%port140780%_
-               (lambda (_%port140784%_) '256))
-              _%old-width140782%_)
+               _%port141203%_
+               (lambda (_%port141207%_) '256))
+              _%old-width141205%_)
             '#!void)))
     (define reset-port-width!
-      (lambda (_%port140777%_ _%old-width140778%_)
-        (if (macro-character-port? _%port140777%_)
+      (lambda (_%port141200%_ _%old-width141201%_)
+        (if (macro-character-port? _%port141200%_)
             (macro-character-port-output-width-set!
-             _%port140777%_
-             _%old-width140778%_)
+             _%port141200%_
+             _%old-width141201%_)
             '#!void)))
     (define datum-parsing-exception-filepos
-      (lambda (_%e140775%_)
-        (macro-readenv-filepos (datum-parsing-exception-readenv _%e140775%_))))
+      (lambda (_%e141198%_)
+        (macro-readenv-filepos (datum-parsing-exception-readenv _%e141198%_))))
     (define abandoned-mutex-exception?
-      (lambda (_%exn140769%_)
+      (lambda (_%exn141192%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140769%_))
-            (let ((_%e140772%_
+              (class-instance? RuntimeException::t _%exn141192%_))
+            (let ((_%e141195%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140769%_ 'exception))))
-              (macro-abandoned-mutex-exception? _%e140772%_))
-            (macro-abandoned-mutex-exception? _%exn140769%_))))
+                     (unchecked-slot-ref _%exn141192%_ 'exception))))
+              (macro-abandoned-mutex-exception? _%e141195%_))
+            (macro-abandoned-mutex-exception? _%exn141192%_))))
     (define cfun-conversion-exception?
-      (lambda (_%exn140765%_)
+      (lambda (_%exn141188%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140765%_))
-            (let ((_%e140767%_
+              (class-instance? RuntimeException::t _%exn141188%_))
+            (let ((_%e141190%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140765%_ 'exception))))
-              (macro-cfun-conversion-exception? _%e140767%_))
-            (macro-cfun-conversion-exception? _%exn140765%_))))
+                     (unchecked-slot-ref _%exn141188%_ 'exception))))
+              (macro-cfun-conversion-exception? _%e141190%_))
+            (macro-cfun-conversion-exception? _%exn141188%_))))
     (define cfun-conversion-exception-arguments
-      (lambda (_%exn140761%_)
+      (lambda (_%exn141184%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140761%_))
-            (let ((_%e140763%_
+              (class-instance? RuntimeException::t _%exn141184%_))
+            (let ((_%e141186%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140761%_ 'exception))))
-              (if (macro-cfun-conversion-exception? _%e140763%_)
-                  (macro-cfun-conversion-exception-arguments _%e140763%_)
+                     (unchecked-slot-ref _%exn141184%_ 'exception))))
+              (if (macro-cfun-conversion-exception? _%e141186%_)
+                  (macro-cfun-conversion-exception-arguments _%e141186%_)
                   (error '"not an instance"
                          'cfun-conversion-exception?
                          (cons 'cfun-conversion-exception-arguments
-                               (cons _%e140763%_ '())))))
-            (if (macro-cfun-conversion-exception? _%exn140761%_)
-                (macro-cfun-conversion-exception-arguments _%exn140761%_)
+                               (cons _%e141186%_ '())))))
+            (if (macro-cfun-conversion-exception? _%exn141184%_)
+                (macro-cfun-conversion-exception-arguments _%exn141184%_)
                 (error '"not an instance"
                        'cfun-conversion-exception?
                        (cons 'cfun-conversion-exception-arguments
-                             (cons _%exn140761%_ '())))))))
+                             (cons _%exn141184%_ '())))))))
     (define cfun-conversion-exception-code
-      (lambda (_%exn140757%_)
+      (lambda (_%exn141180%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140757%_))
-            (let ((_%e140759%_
+              (class-instance? RuntimeException::t _%exn141180%_))
+            (let ((_%e141182%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140757%_ 'exception))))
-              (if (macro-cfun-conversion-exception? _%e140759%_)
-                  (macro-cfun-conversion-exception-code _%e140759%_)
+                     (unchecked-slot-ref _%exn141180%_ 'exception))))
+              (if (macro-cfun-conversion-exception? _%e141182%_)
+                  (macro-cfun-conversion-exception-code _%e141182%_)
                   (error '"not an instance"
                          'cfun-conversion-exception?
                          (cons 'cfun-conversion-exception-code
-                               (cons _%e140759%_ '())))))
-            (if (macro-cfun-conversion-exception? _%exn140757%_)
-                (macro-cfun-conversion-exception-code _%exn140757%_)
+                               (cons _%e141182%_ '())))))
+            (if (macro-cfun-conversion-exception? _%exn141180%_)
+                (macro-cfun-conversion-exception-code _%exn141180%_)
                 (error '"not an instance"
                        'cfun-conversion-exception?
                        (cons 'cfun-conversion-exception-code
-                             (cons _%exn140757%_ '())))))))
+                             (cons _%exn141180%_ '())))))))
     (define cfun-conversion-exception-message
-      (lambda (_%exn140753%_)
+      (lambda (_%exn141176%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140753%_))
-            (let ((_%e140755%_
+              (class-instance? RuntimeException::t _%exn141176%_))
+            (let ((_%e141178%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140753%_ 'exception))))
-              (if (macro-cfun-conversion-exception? _%e140755%_)
-                  (macro-cfun-conversion-exception-message _%e140755%_)
+                     (unchecked-slot-ref _%exn141176%_ 'exception))))
+              (if (macro-cfun-conversion-exception? _%e141178%_)
+                  (macro-cfun-conversion-exception-message _%e141178%_)
                   (error '"not an instance"
                          'cfun-conversion-exception?
                          (cons 'cfun-conversion-exception-message
-                               (cons _%e140755%_ '())))))
-            (if (macro-cfun-conversion-exception? _%exn140753%_)
-                (macro-cfun-conversion-exception-message _%exn140753%_)
+                               (cons _%e141178%_ '())))))
+            (if (macro-cfun-conversion-exception? _%exn141176%_)
+                (macro-cfun-conversion-exception-message _%exn141176%_)
                 (error '"not an instance"
                        'cfun-conversion-exception?
                        (cons 'cfun-conversion-exception-message
-                             (cons _%exn140753%_ '())))))))
+                             (cons _%exn141176%_ '())))))))
     (define cfun-conversion-exception-procedure
-      (lambda (_%exn140747%_)
+      (lambda (_%exn141170%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140747%_))
-            (let ((_%e140750%_
+              (class-instance? RuntimeException::t _%exn141170%_))
+            (let ((_%e141173%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140747%_ 'exception))))
-              (if (macro-cfun-conversion-exception? _%e140750%_)
-                  (macro-cfun-conversion-exception-procedure _%e140750%_)
+                     (unchecked-slot-ref _%exn141170%_ 'exception))))
+              (if (macro-cfun-conversion-exception? _%e141173%_)
+                  (macro-cfun-conversion-exception-procedure _%e141173%_)
                   (error '"not an instance"
                          'cfun-conversion-exception?
                          (cons 'cfun-conversion-exception-procedure
-                               (cons _%e140750%_ '())))))
-            (if (macro-cfun-conversion-exception? _%exn140747%_)
-                (macro-cfun-conversion-exception-procedure _%exn140747%_)
+                               (cons _%e141173%_ '())))))
+            (if (macro-cfun-conversion-exception? _%exn141170%_)
+                (macro-cfun-conversion-exception-procedure _%exn141170%_)
                 (error '"not an instance"
                        'cfun-conversion-exception?
                        (cons 'cfun-conversion-exception-procedure
-                             (cons _%exn140747%_ '())))))))
+                             (cons _%exn141170%_ '())))))))
     (define datum-parsing-exception?
-      (lambda (_%exn140743%_)
+      (lambda (_%exn141166%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140743%_))
-            (let ((_%e140745%_
+              (class-instance? RuntimeException::t _%exn141166%_))
+            (let ((_%e141168%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140743%_ 'exception))))
-              (macro-datum-parsing-exception? _%e140745%_))
-            (macro-datum-parsing-exception? _%exn140743%_))))
+                     (unchecked-slot-ref _%exn141166%_ 'exception))))
+              (macro-datum-parsing-exception? _%e141168%_))
+            (macro-datum-parsing-exception? _%exn141166%_))))
     (define datum-parsing-exception-kind
-      (lambda (_%exn140739%_)
+      (lambda (_%exn141162%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140739%_))
-            (let ((_%e140741%_
+              (class-instance? RuntimeException::t _%exn141162%_))
+            (let ((_%e141164%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140739%_ 'exception))))
-              (if (macro-datum-parsing-exception? _%e140741%_)
-                  (macro-datum-parsing-exception-kind _%e140741%_)
+                     (unchecked-slot-ref _%exn141162%_ 'exception))))
+              (if (macro-datum-parsing-exception? _%e141164%_)
+                  (macro-datum-parsing-exception-kind _%e141164%_)
                   (error '"not an instance"
                          'datum-parsing-exception?
                          (cons 'datum-parsing-exception-kind
-                               (cons _%e140741%_ '())))))
-            (if (macro-datum-parsing-exception? _%exn140739%_)
-                (macro-datum-parsing-exception-kind _%exn140739%_)
+                               (cons _%e141164%_ '())))))
+            (if (macro-datum-parsing-exception? _%exn141162%_)
+                (macro-datum-parsing-exception-kind _%exn141162%_)
                 (error '"not an instance"
                        'datum-parsing-exception?
                        (cons 'datum-parsing-exception-kind
-                             (cons _%exn140739%_ '())))))))
+                             (cons _%exn141162%_ '())))))))
     (define datum-parsing-exception-parameters
-      (lambda (_%exn140735%_)
+      (lambda (_%exn141158%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140735%_))
-            (let ((_%e140737%_
+              (class-instance? RuntimeException::t _%exn141158%_))
+            (let ((_%e141160%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140735%_ 'exception))))
-              (if (macro-datum-parsing-exception? _%e140737%_)
-                  (macro-datum-parsing-exception-parameters _%e140737%_)
+                     (unchecked-slot-ref _%exn141158%_ 'exception))))
+              (if (macro-datum-parsing-exception? _%e141160%_)
+                  (macro-datum-parsing-exception-parameters _%e141160%_)
                   (error '"not an instance"
                          'datum-parsing-exception?
                          (cons 'datum-parsing-exception-parameters
-                               (cons _%e140737%_ '())))))
-            (if (macro-datum-parsing-exception? _%exn140735%_)
-                (macro-datum-parsing-exception-parameters _%exn140735%_)
+                               (cons _%e141160%_ '())))))
+            (if (macro-datum-parsing-exception? _%exn141158%_)
+                (macro-datum-parsing-exception-parameters _%exn141158%_)
                 (error '"not an instance"
                        'datum-parsing-exception?
                        (cons 'datum-parsing-exception-parameters
-                             (cons _%exn140735%_ '())))))))
+                             (cons _%exn141158%_ '())))))))
     (define datum-parsing-exception-readenv
-      (lambda (_%exn140729%_)
+      (lambda (_%exn141152%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140729%_))
-            (let ((_%e140732%_
+              (class-instance? RuntimeException::t _%exn141152%_))
+            (let ((_%e141155%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140729%_ 'exception))))
-              (if (macro-datum-parsing-exception? _%e140732%_)
-                  (macro-datum-parsing-exception-readenv _%e140732%_)
+                     (unchecked-slot-ref _%exn141152%_ 'exception))))
+              (if (macro-datum-parsing-exception? _%e141155%_)
+                  (macro-datum-parsing-exception-readenv _%e141155%_)
                   (error '"not an instance"
                          'datum-parsing-exception?
                          (cons 'datum-parsing-exception-readenv
-                               (cons _%e140732%_ '())))))
-            (if (macro-datum-parsing-exception? _%exn140729%_)
-                (macro-datum-parsing-exception-readenv _%exn140729%_)
+                               (cons _%e141155%_ '())))))
+            (if (macro-datum-parsing-exception? _%exn141152%_)
+                (macro-datum-parsing-exception-readenv _%exn141152%_)
                 (error '"not an instance"
                        'datum-parsing-exception?
                        (cons 'datum-parsing-exception-readenv
-                             (cons _%exn140729%_ '())))))))
+                             (cons _%exn141152%_ '())))))))
     (define deadlock-exception?
-      (lambda (_%exn140723%_)
+      (lambda (_%exn141146%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140723%_))
-            (let ((_%e140726%_
+              (class-instance? RuntimeException::t _%exn141146%_))
+            (let ((_%e141149%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140723%_ 'exception))))
-              (macro-deadlock-exception? _%e140726%_))
-            (macro-deadlock-exception? _%exn140723%_))))
+                     (unchecked-slot-ref _%exn141146%_ 'exception))))
+              (macro-deadlock-exception? _%e141149%_))
+            (macro-deadlock-exception? _%exn141146%_))))
     (define divide-by-zero-exception?
-      (lambda (_%exn140719%_)
+      (lambda (_%exn141142%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140719%_))
-            (let ((_%e140721%_
+              (class-instance? RuntimeException::t _%exn141142%_))
+            (let ((_%e141144%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140719%_ 'exception))))
-              (macro-divide-by-zero-exception? _%e140721%_))
-            (macro-divide-by-zero-exception? _%exn140719%_))))
+                     (unchecked-slot-ref _%exn141142%_ 'exception))))
+              (macro-divide-by-zero-exception? _%e141144%_))
+            (macro-divide-by-zero-exception? _%exn141142%_))))
     (define divide-by-zero-exception-arguments
-      (lambda (_%exn140715%_)
+      (lambda (_%exn141138%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140715%_))
-            (let ((_%e140717%_
+              (class-instance? RuntimeException::t _%exn141138%_))
+            (let ((_%e141140%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140715%_ 'exception))))
-              (if (macro-divide-by-zero-exception? _%e140717%_)
-                  (macro-divide-by-zero-exception-arguments _%e140717%_)
+                     (unchecked-slot-ref _%exn141138%_ 'exception))))
+              (if (macro-divide-by-zero-exception? _%e141140%_)
+                  (macro-divide-by-zero-exception-arguments _%e141140%_)
                   (error '"not an instance"
                          'divide-by-zero-exception?
                          (cons 'divide-by-zero-exception-arguments
-                               (cons _%e140717%_ '())))))
-            (if (macro-divide-by-zero-exception? _%exn140715%_)
-                (macro-divide-by-zero-exception-arguments _%exn140715%_)
+                               (cons _%e141140%_ '())))))
+            (if (macro-divide-by-zero-exception? _%exn141138%_)
+                (macro-divide-by-zero-exception-arguments _%exn141138%_)
                 (error '"not an instance"
                        'divide-by-zero-exception?
                        (cons 'divide-by-zero-exception-arguments
-                             (cons _%exn140715%_ '())))))))
+                             (cons _%exn141138%_ '())))))))
     (define divide-by-zero-exception-procedure
-      (lambda (_%exn140709%_)
+      (lambda (_%exn141132%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140709%_))
-            (let ((_%e140712%_
+              (class-instance? RuntimeException::t _%exn141132%_))
+            (let ((_%e141135%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140709%_ 'exception))))
-              (if (macro-divide-by-zero-exception? _%e140712%_)
-                  (macro-divide-by-zero-exception-procedure _%e140712%_)
+                     (unchecked-slot-ref _%exn141132%_ 'exception))))
+              (if (macro-divide-by-zero-exception? _%e141135%_)
+                  (macro-divide-by-zero-exception-procedure _%e141135%_)
                   (error '"not an instance"
                          'divide-by-zero-exception?
                          (cons 'divide-by-zero-exception-procedure
-                               (cons _%e140712%_ '())))))
-            (if (macro-divide-by-zero-exception? _%exn140709%_)
-                (macro-divide-by-zero-exception-procedure _%exn140709%_)
+                               (cons _%e141135%_ '())))))
+            (if (macro-divide-by-zero-exception? _%exn141132%_)
+                (macro-divide-by-zero-exception-procedure _%exn141132%_)
                 (error '"not an instance"
                        'divide-by-zero-exception?
                        (cons 'divide-by-zero-exception-procedure
-                             (cons _%exn140709%_ '())))))))
+                             (cons _%exn141132%_ '())))))))
     (define error-exception?
-      (lambda (_%exn140705%_)
+      (lambda (_%exn141128%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140705%_))
-            (let ((_%e140707%_
+              (class-instance? RuntimeException::t _%exn141128%_))
+            (let ((_%e141130%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140705%_ 'exception))))
-              (macro-error-exception? _%e140707%_))
-            (macro-error-exception? _%exn140705%_))))
+                     (unchecked-slot-ref _%exn141128%_ 'exception))))
+              (macro-error-exception? _%e141130%_))
+            (macro-error-exception? _%exn141128%_))))
     (define error-exception-message
-      (lambda (_%exn140701%_)
+      (lambda (_%exn141124%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140701%_))
-            (let ((_%e140703%_
+              (class-instance? RuntimeException::t _%exn141124%_))
+            (let ((_%e141126%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140701%_ 'exception))))
-              (if (macro-error-exception? _%e140703%_)
-                  (macro-error-exception-message _%e140703%_)
+                     (unchecked-slot-ref _%exn141124%_ 'exception))))
+              (if (macro-error-exception? _%e141126%_)
+                  (macro-error-exception-message _%e141126%_)
                   (error '"not an instance"
                          'error-exception?
                          (cons 'error-exception-message
-                               (cons _%e140703%_ '())))))
-            (if (macro-error-exception? _%exn140701%_)
-                (macro-error-exception-message _%exn140701%_)
+                               (cons _%e141126%_ '())))))
+            (if (macro-error-exception? _%exn141124%_)
+                (macro-error-exception-message _%exn141124%_)
                 (error '"not an instance"
                        'error-exception?
                        (cons 'error-exception-message
-                             (cons _%exn140701%_ '())))))))
+                             (cons _%exn141124%_ '())))))))
     (define error-exception-parameters
-      (lambda (_%exn140695%_)
+      (lambda (_%exn141118%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140695%_))
-            (let ((_%e140698%_
+              (class-instance? RuntimeException::t _%exn141118%_))
+            (let ((_%e141121%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140695%_ 'exception))))
-              (if (macro-error-exception? _%e140698%_)
-                  (macro-error-exception-parameters _%e140698%_)
+                     (unchecked-slot-ref _%exn141118%_ 'exception))))
+              (if (macro-error-exception? _%e141121%_)
+                  (macro-error-exception-parameters _%e141121%_)
                   (error '"not an instance"
                          'error-exception?
                          (cons 'error-exception-parameters
-                               (cons _%e140698%_ '())))))
-            (if (macro-error-exception? _%exn140695%_)
-                (macro-error-exception-parameters _%exn140695%_)
+                               (cons _%e141121%_ '())))))
+            (if (macro-error-exception? _%exn141118%_)
+                (macro-error-exception-parameters _%exn141118%_)
                 (error '"not an instance"
                        'error-exception?
                        (cons 'error-exception-parameters
-                             (cons _%exn140695%_ '())))))))
+                             (cons _%exn141118%_ '())))))))
     (define expression-parsing-exception?
-      (lambda (_%exn140691%_)
+      (lambda (_%exn141114%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140691%_))
-            (let ((_%e140693%_
+              (class-instance? RuntimeException::t _%exn141114%_))
+            (let ((_%e141116%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140691%_ 'exception))))
-              (macro-expression-parsing-exception? _%e140693%_))
-            (macro-expression-parsing-exception? _%exn140691%_))))
+                     (unchecked-slot-ref _%exn141114%_ 'exception))))
+              (macro-expression-parsing-exception? _%e141116%_))
+            (macro-expression-parsing-exception? _%exn141114%_))))
     (define expression-parsing-exception-kind
-      (lambda (_%exn140687%_)
+      (lambda (_%exn141110%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140687%_))
-            (let ((_%e140689%_
+              (class-instance? RuntimeException::t _%exn141110%_))
+            (let ((_%e141112%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140687%_ 'exception))))
-              (if (macro-expression-parsing-exception? _%e140689%_)
-                  (macro-expression-parsing-exception-kind _%e140689%_)
+                     (unchecked-slot-ref _%exn141110%_ 'exception))))
+              (if (macro-expression-parsing-exception? _%e141112%_)
+                  (macro-expression-parsing-exception-kind _%e141112%_)
                   (error '"not an instance"
                          'expression-parsing-exception?
                          (cons 'expression-parsing-exception-kind
-                               (cons _%e140689%_ '())))))
-            (if (macro-expression-parsing-exception? _%exn140687%_)
-                (macro-expression-parsing-exception-kind _%exn140687%_)
+                               (cons _%e141112%_ '())))))
+            (if (macro-expression-parsing-exception? _%exn141110%_)
+                (macro-expression-parsing-exception-kind _%exn141110%_)
                 (error '"not an instance"
                        'expression-parsing-exception?
                        (cons 'expression-parsing-exception-kind
-                             (cons _%exn140687%_ '())))))))
+                             (cons _%exn141110%_ '())))))))
     (define expression-parsing-exception-parameters
-      (lambda (_%exn140683%_)
+      (lambda (_%exn141106%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140683%_))
-            (let ((_%e140685%_
+              (class-instance? RuntimeException::t _%exn141106%_))
+            (let ((_%e141108%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140683%_ 'exception))))
-              (if (macro-expression-parsing-exception? _%e140685%_)
-                  (macro-expression-parsing-exception-parameters _%e140685%_)
+                     (unchecked-slot-ref _%exn141106%_ 'exception))))
+              (if (macro-expression-parsing-exception? _%e141108%_)
+                  (macro-expression-parsing-exception-parameters _%e141108%_)
                   (error '"not an instance"
                          'expression-parsing-exception?
                          (cons 'expression-parsing-exception-parameters
-                               (cons _%e140685%_ '())))))
-            (if (macro-expression-parsing-exception? _%exn140683%_)
-                (macro-expression-parsing-exception-parameters _%exn140683%_)
+                               (cons _%e141108%_ '())))))
+            (if (macro-expression-parsing-exception? _%exn141106%_)
+                (macro-expression-parsing-exception-parameters _%exn141106%_)
                 (error '"not an instance"
                        'expression-parsing-exception?
                        (cons 'expression-parsing-exception-parameters
-                             (cons _%exn140683%_ '())))))))
+                             (cons _%exn141106%_ '())))))))
     (define expression-parsing-exception-source
-      (lambda (_%exn140677%_)
+      (lambda (_%exn141100%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140677%_))
-            (let ((_%e140680%_
+              (class-instance? RuntimeException::t _%exn141100%_))
+            (let ((_%e141103%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140677%_ 'exception))))
-              (if (macro-expression-parsing-exception? _%e140680%_)
-                  (macro-expression-parsing-exception-source _%e140680%_)
+                     (unchecked-slot-ref _%exn141100%_ 'exception))))
+              (if (macro-expression-parsing-exception? _%e141103%_)
+                  (macro-expression-parsing-exception-source _%e141103%_)
                   (error '"not an instance"
                          'expression-parsing-exception?
                          (cons 'expression-parsing-exception-source
-                               (cons _%e140680%_ '())))))
-            (if (macro-expression-parsing-exception? _%exn140677%_)
-                (macro-expression-parsing-exception-source _%exn140677%_)
+                               (cons _%e141103%_ '())))))
+            (if (macro-expression-parsing-exception? _%exn141100%_)
+                (macro-expression-parsing-exception-source _%exn141100%_)
                 (error '"not an instance"
                        'expression-parsing-exception?
                        (cons 'expression-parsing-exception-source
-                             (cons _%exn140677%_ '())))))))
+                             (cons _%exn141100%_ '())))))))
     (define file-exists-exception?
-      (lambda (_%exn140673%_)
+      (lambda (_%exn141096%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140673%_))
-            (let ((_%e140675%_
+              (class-instance? RuntimeException::t _%exn141096%_))
+            (let ((_%e141098%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140673%_ 'exception))))
-              (macro-file-exists-exception? _%e140675%_))
-            (macro-file-exists-exception? _%exn140673%_))))
+                     (unchecked-slot-ref _%exn141096%_ 'exception))))
+              (macro-file-exists-exception? _%e141098%_))
+            (macro-file-exists-exception? _%exn141096%_))))
     (define file-exists-exception-arguments
-      (lambda (_%exn140669%_)
+      (lambda (_%exn141092%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140669%_))
-            (let ((_%e140671%_
+              (class-instance? RuntimeException::t _%exn141092%_))
+            (let ((_%e141094%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140669%_ 'exception))))
-              (if (macro-file-exists-exception? _%e140671%_)
-                  (macro-file-exists-exception-arguments _%e140671%_)
+                     (unchecked-slot-ref _%exn141092%_ 'exception))))
+              (if (macro-file-exists-exception? _%e141094%_)
+                  (macro-file-exists-exception-arguments _%e141094%_)
                   (error '"not an instance"
                          'file-exists-exception?
                          (cons 'file-exists-exception-arguments
-                               (cons _%e140671%_ '())))))
-            (if (macro-file-exists-exception? _%exn140669%_)
-                (macro-file-exists-exception-arguments _%exn140669%_)
+                               (cons _%e141094%_ '())))))
+            (if (macro-file-exists-exception? _%exn141092%_)
+                (macro-file-exists-exception-arguments _%exn141092%_)
                 (error '"not an instance"
                        'file-exists-exception?
                        (cons 'file-exists-exception-arguments
-                             (cons _%exn140669%_ '())))))))
+                             (cons _%exn141092%_ '())))))))
     (define file-exists-exception-procedure
-      (lambda (_%exn140663%_)
+      (lambda (_%exn141086%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140663%_))
-            (let ((_%e140666%_
+              (class-instance? RuntimeException::t _%exn141086%_))
+            (let ((_%e141089%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140663%_ 'exception))))
-              (if (macro-file-exists-exception? _%e140666%_)
-                  (macro-file-exists-exception-procedure _%e140666%_)
+                     (unchecked-slot-ref _%exn141086%_ 'exception))))
+              (if (macro-file-exists-exception? _%e141089%_)
+                  (macro-file-exists-exception-procedure _%e141089%_)
                   (error '"not an instance"
                          'file-exists-exception?
                          (cons 'file-exists-exception-procedure
-                               (cons _%e140666%_ '())))))
-            (if (macro-file-exists-exception? _%exn140663%_)
-                (macro-file-exists-exception-procedure _%exn140663%_)
+                               (cons _%e141089%_ '())))))
+            (if (macro-file-exists-exception? _%exn141086%_)
+                (macro-file-exists-exception-procedure _%exn141086%_)
                 (error '"not an instance"
                        'file-exists-exception?
                        (cons 'file-exists-exception-procedure
-                             (cons _%exn140663%_ '())))))))
+                             (cons _%exn141086%_ '())))))))
     (define fixnum-overflow-exception?
-      (lambda (_%exn140659%_)
+      (lambda (_%exn141082%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140659%_))
-            (let ((_%e140661%_
+              (class-instance? RuntimeException::t _%exn141082%_))
+            (let ((_%e141084%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140659%_ 'exception))))
-              (macro-fixnum-overflow-exception? _%e140661%_))
-            (macro-fixnum-overflow-exception? _%exn140659%_))))
+                     (unchecked-slot-ref _%exn141082%_ 'exception))))
+              (macro-fixnum-overflow-exception? _%e141084%_))
+            (macro-fixnum-overflow-exception? _%exn141082%_))))
     (define fixnum-overflow-exception-arguments
-      (lambda (_%exn140655%_)
+      (lambda (_%exn141078%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140655%_))
-            (let ((_%e140657%_
+              (class-instance? RuntimeException::t _%exn141078%_))
+            (let ((_%e141080%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140655%_ 'exception))))
-              (if (macro-fixnum-overflow-exception? _%e140657%_)
-                  (macro-fixnum-overflow-exception-arguments _%e140657%_)
+                     (unchecked-slot-ref _%exn141078%_ 'exception))))
+              (if (macro-fixnum-overflow-exception? _%e141080%_)
+                  (macro-fixnum-overflow-exception-arguments _%e141080%_)
                   (error '"not an instance"
                          'fixnum-overflow-exception?
                          (cons 'fixnum-overflow-exception-arguments
-                               (cons _%e140657%_ '())))))
-            (if (macro-fixnum-overflow-exception? _%exn140655%_)
-                (macro-fixnum-overflow-exception-arguments _%exn140655%_)
+                               (cons _%e141080%_ '())))))
+            (if (macro-fixnum-overflow-exception? _%exn141078%_)
+                (macro-fixnum-overflow-exception-arguments _%exn141078%_)
                 (error '"not an instance"
                        'fixnum-overflow-exception?
                        (cons 'fixnum-overflow-exception-arguments
-                             (cons _%exn140655%_ '())))))))
+                             (cons _%exn141078%_ '())))))))
     (define fixnum-overflow-exception-procedure
-      (lambda (_%exn140649%_)
+      (lambda (_%exn141072%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140649%_))
-            (let ((_%e140652%_
+              (class-instance? RuntimeException::t _%exn141072%_))
+            (let ((_%e141075%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140649%_ 'exception))))
-              (if (macro-fixnum-overflow-exception? _%e140652%_)
-                  (macro-fixnum-overflow-exception-procedure _%e140652%_)
+                     (unchecked-slot-ref _%exn141072%_ 'exception))))
+              (if (macro-fixnum-overflow-exception? _%e141075%_)
+                  (macro-fixnum-overflow-exception-procedure _%e141075%_)
                   (error '"not an instance"
                          'fixnum-overflow-exception?
                          (cons 'fixnum-overflow-exception-procedure
-                               (cons _%e140652%_ '())))))
-            (if (macro-fixnum-overflow-exception? _%exn140649%_)
-                (macro-fixnum-overflow-exception-procedure _%exn140649%_)
+                               (cons _%e141075%_ '())))))
+            (if (macro-fixnum-overflow-exception? _%exn141072%_)
+                (macro-fixnum-overflow-exception-procedure _%exn141072%_)
                 (error '"not an instance"
                        'fixnum-overflow-exception?
                        (cons 'fixnum-overflow-exception-procedure
-                             (cons _%exn140649%_ '())))))))
+                             (cons _%exn141072%_ '())))))))
     (define heap-overflow-exception?
-      (lambda (_%exn140643%_)
+      (lambda (_%exn141066%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140643%_))
-            (let ((_%e140646%_
+              (class-instance? RuntimeException::t _%exn141066%_))
+            (let ((_%e141069%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140643%_ 'exception))))
-              (macro-heap-overflow-exception? _%e140646%_))
-            (macro-heap-overflow-exception? _%exn140643%_))))
+                     (unchecked-slot-ref _%exn141066%_ 'exception))))
+              (macro-heap-overflow-exception? _%e141069%_))
+            (macro-heap-overflow-exception? _%exn141066%_))))
     (define inactive-thread-exception?
-      (lambda (_%exn140639%_)
+      (lambda (_%exn141062%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140639%_))
-            (let ((_%e140641%_
+              (class-instance? RuntimeException::t _%exn141062%_))
+            (let ((_%e141064%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140639%_ 'exception))))
-              (macro-inactive-thread-exception? _%e140641%_))
-            (macro-inactive-thread-exception? _%exn140639%_))))
+                     (unchecked-slot-ref _%exn141062%_ 'exception))))
+              (macro-inactive-thread-exception? _%e141064%_))
+            (macro-inactive-thread-exception? _%exn141062%_))))
     (define inactive-thread-exception-arguments
-      (lambda (_%exn140635%_)
+      (lambda (_%exn141058%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140635%_))
-            (let ((_%e140637%_
+              (class-instance? RuntimeException::t _%exn141058%_))
+            (let ((_%e141060%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140635%_ 'exception))))
-              (if (macro-inactive-thread-exception? _%e140637%_)
-                  (macro-inactive-thread-exception-arguments _%e140637%_)
+                     (unchecked-slot-ref _%exn141058%_ 'exception))))
+              (if (macro-inactive-thread-exception? _%e141060%_)
+                  (macro-inactive-thread-exception-arguments _%e141060%_)
                   (error '"not an instance"
                          'inactive-thread-exception?
                          (cons 'inactive-thread-exception-arguments
-                               (cons _%e140637%_ '())))))
-            (if (macro-inactive-thread-exception? _%exn140635%_)
-                (macro-inactive-thread-exception-arguments _%exn140635%_)
+                               (cons _%e141060%_ '())))))
+            (if (macro-inactive-thread-exception? _%exn141058%_)
+                (macro-inactive-thread-exception-arguments _%exn141058%_)
                 (error '"not an instance"
                        'inactive-thread-exception?
                        (cons 'inactive-thread-exception-arguments
-                             (cons _%exn140635%_ '())))))))
+                             (cons _%exn141058%_ '())))))))
     (define inactive-thread-exception-procedure
-      (lambda (_%exn140629%_)
+      (lambda (_%exn141052%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140629%_))
-            (let ((_%e140632%_
+              (class-instance? RuntimeException::t _%exn141052%_))
+            (let ((_%e141055%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140629%_ 'exception))))
-              (if (macro-inactive-thread-exception? _%e140632%_)
-                  (macro-inactive-thread-exception-procedure _%e140632%_)
+                     (unchecked-slot-ref _%exn141052%_ 'exception))))
+              (if (macro-inactive-thread-exception? _%e141055%_)
+                  (macro-inactive-thread-exception-procedure _%e141055%_)
                   (error '"not an instance"
                          'inactive-thread-exception?
                          (cons 'inactive-thread-exception-procedure
-                               (cons _%e140632%_ '())))))
-            (if (macro-inactive-thread-exception? _%exn140629%_)
-                (macro-inactive-thread-exception-procedure _%exn140629%_)
+                               (cons _%e141055%_ '())))))
+            (if (macro-inactive-thread-exception? _%exn141052%_)
+                (macro-inactive-thread-exception-procedure _%exn141052%_)
                 (error '"not an instance"
                        'inactive-thread-exception?
                        (cons 'inactive-thread-exception-procedure
-                             (cons _%exn140629%_ '())))))))
+                             (cons _%exn141052%_ '())))))))
     (define initialized-thread-exception?
-      (lambda (_%exn140625%_)
+      (lambda (_%exn141048%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140625%_))
-            (let ((_%e140627%_
+              (class-instance? RuntimeException::t _%exn141048%_))
+            (let ((_%e141050%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140625%_ 'exception))))
-              (macro-initialized-thread-exception? _%e140627%_))
-            (macro-initialized-thread-exception? _%exn140625%_))))
+                     (unchecked-slot-ref _%exn141048%_ 'exception))))
+              (macro-initialized-thread-exception? _%e141050%_))
+            (macro-initialized-thread-exception? _%exn141048%_))))
     (define initialized-thread-exception-arguments
-      (lambda (_%exn140621%_)
+      (lambda (_%exn141044%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140621%_))
-            (let ((_%e140623%_
+              (class-instance? RuntimeException::t _%exn141044%_))
+            (let ((_%e141046%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140621%_ 'exception))))
-              (if (macro-initialized-thread-exception? _%e140623%_)
-                  (macro-initialized-thread-exception-arguments _%e140623%_)
+                     (unchecked-slot-ref _%exn141044%_ 'exception))))
+              (if (macro-initialized-thread-exception? _%e141046%_)
+                  (macro-initialized-thread-exception-arguments _%e141046%_)
                   (error '"not an instance"
                          'initialized-thread-exception?
                          (cons 'initialized-thread-exception-arguments
-                               (cons _%e140623%_ '())))))
-            (if (macro-initialized-thread-exception? _%exn140621%_)
-                (macro-initialized-thread-exception-arguments _%exn140621%_)
+                               (cons _%e141046%_ '())))))
+            (if (macro-initialized-thread-exception? _%exn141044%_)
+                (macro-initialized-thread-exception-arguments _%exn141044%_)
                 (error '"not an instance"
                        'initialized-thread-exception?
                        (cons 'initialized-thread-exception-arguments
-                             (cons _%exn140621%_ '())))))))
+                             (cons _%exn141044%_ '())))))))
     (define initialized-thread-exception-procedure
-      (lambda (_%exn140615%_)
+      (lambda (_%exn141038%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140615%_))
-            (let ((_%e140618%_
+              (class-instance? RuntimeException::t _%exn141038%_))
+            (let ((_%e141041%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140615%_ 'exception))))
-              (if (macro-initialized-thread-exception? _%e140618%_)
-                  (macro-initialized-thread-exception-procedure _%e140618%_)
+                     (unchecked-slot-ref _%exn141038%_ 'exception))))
+              (if (macro-initialized-thread-exception? _%e141041%_)
+                  (macro-initialized-thread-exception-procedure _%e141041%_)
                   (error '"not an instance"
                          'initialized-thread-exception?
                          (cons 'initialized-thread-exception-procedure
-                               (cons _%e140618%_ '())))))
-            (if (macro-initialized-thread-exception? _%exn140615%_)
-                (macro-initialized-thread-exception-procedure _%exn140615%_)
+                               (cons _%e141041%_ '())))))
+            (if (macro-initialized-thread-exception? _%exn141038%_)
+                (macro-initialized-thread-exception-procedure _%exn141038%_)
                 (error '"not an instance"
                        'initialized-thread-exception?
                        (cons 'initialized-thread-exception-procedure
-                             (cons _%exn140615%_ '())))))))
+                             (cons _%exn141038%_ '())))))))
     (define invalid-hash-number-exception?
-      (lambda (_%exn140611%_)
+      (lambda (_%exn141034%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140611%_))
-            (let ((_%e140613%_
+              (class-instance? RuntimeException::t _%exn141034%_))
+            (let ((_%e141036%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140611%_ 'exception))))
-              (macro-invalid-hash-number-exception? _%e140613%_))
-            (macro-invalid-hash-number-exception? _%exn140611%_))))
+                     (unchecked-slot-ref _%exn141034%_ 'exception))))
+              (macro-invalid-hash-number-exception? _%e141036%_))
+            (macro-invalid-hash-number-exception? _%exn141034%_))))
     (define invalid-hash-number-exception-arguments
-      (lambda (_%exn140607%_)
+      (lambda (_%exn141030%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140607%_))
-            (let ((_%e140609%_
+              (class-instance? RuntimeException::t _%exn141030%_))
+            (let ((_%e141032%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140607%_ 'exception))))
-              (if (macro-invalid-hash-number-exception? _%e140609%_)
-                  (macro-invalid-hash-number-exception-arguments _%e140609%_)
+                     (unchecked-slot-ref _%exn141030%_ 'exception))))
+              (if (macro-invalid-hash-number-exception? _%e141032%_)
+                  (macro-invalid-hash-number-exception-arguments _%e141032%_)
                   (error '"not an instance"
                          'invalid-hash-number-exception?
                          (cons 'invalid-hash-number-exception-arguments
-                               (cons _%e140609%_ '())))))
-            (if (macro-invalid-hash-number-exception? _%exn140607%_)
-                (macro-invalid-hash-number-exception-arguments _%exn140607%_)
+                               (cons _%e141032%_ '())))))
+            (if (macro-invalid-hash-number-exception? _%exn141030%_)
+                (macro-invalid-hash-number-exception-arguments _%exn141030%_)
                 (error '"not an instance"
                        'invalid-hash-number-exception?
                        (cons 'invalid-hash-number-exception-arguments
-                             (cons _%exn140607%_ '())))))))
+                             (cons _%exn141030%_ '())))))))
     (define invalid-hash-number-exception-procedure
-      (lambda (_%exn140601%_)
+      (lambda (_%exn141024%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140601%_))
-            (let ((_%e140604%_
+              (class-instance? RuntimeException::t _%exn141024%_))
+            (let ((_%e141027%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140601%_ 'exception))))
-              (if (macro-invalid-hash-number-exception? _%e140604%_)
-                  (macro-invalid-hash-number-exception-procedure _%e140604%_)
+                     (unchecked-slot-ref _%exn141024%_ 'exception))))
+              (if (macro-invalid-hash-number-exception? _%e141027%_)
+                  (macro-invalid-hash-number-exception-procedure _%e141027%_)
                   (error '"not an instance"
                          'invalid-hash-number-exception?
                          (cons 'invalid-hash-number-exception-procedure
-                               (cons _%e140604%_ '())))))
-            (if (macro-invalid-hash-number-exception? _%exn140601%_)
-                (macro-invalid-hash-number-exception-procedure _%exn140601%_)
+                               (cons _%e141027%_ '())))))
+            (if (macro-invalid-hash-number-exception? _%exn141024%_)
+                (macro-invalid-hash-number-exception-procedure _%exn141024%_)
                 (error '"not an instance"
                        'invalid-hash-number-exception?
                        (cons 'invalid-hash-number-exception-procedure
-                             (cons _%exn140601%_ '())))))))
+                             (cons _%exn141024%_ '())))))))
     (define invalid-utf8-encoding-exception?
-      (lambda (_%exn140597%_)
+      (lambda (_%exn141020%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140597%_))
-            (let ((_%e140599%_
+              (class-instance? RuntimeException::t _%exn141020%_))
+            (let ((_%e141022%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140597%_ 'exception))))
-              (macro-invalid-utf8-encoding-exception? _%e140599%_))
-            (macro-invalid-utf8-encoding-exception? _%exn140597%_))))
+                     (unchecked-slot-ref _%exn141020%_ 'exception))))
+              (macro-invalid-utf8-encoding-exception? _%e141022%_))
+            (macro-invalid-utf8-encoding-exception? _%exn141020%_))))
     (define invalid-utf8-encoding-exception-arguments
-      (lambda (_%exn140593%_)
+      (lambda (_%exn141016%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140593%_))
-            (let ((_%e140595%_
+              (class-instance? RuntimeException::t _%exn141016%_))
+            (let ((_%e141018%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140593%_ 'exception))))
-              (if (macro-invalid-utf8-encoding-exception? _%e140595%_)
-                  (macro-invalid-utf8-encoding-exception-arguments _%e140595%_)
+                     (unchecked-slot-ref _%exn141016%_ 'exception))))
+              (if (macro-invalid-utf8-encoding-exception? _%e141018%_)
+                  (macro-invalid-utf8-encoding-exception-arguments _%e141018%_)
                   (error '"not an instance"
                          'invalid-utf8-encoding-exception?
                          (cons 'invalid-utf8-encoding-exception-arguments
-                               (cons _%e140595%_ '())))))
-            (if (macro-invalid-utf8-encoding-exception? _%exn140593%_)
-                (macro-invalid-utf8-encoding-exception-arguments _%exn140593%_)
+                               (cons _%e141018%_ '())))))
+            (if (macro-invalid-utf8-encoding-exception? _%exn141016%_)
+                (macro-invalid-utf8-encoding-exception-arguments _%exn141016%_)
                 (error '"not an instance"
                        'invalid-utf8-encoding-exception?
                        (cons 'invalid-utf8-encoding-exception-arguments
-                             (cons _%exn140593%_ '())))))))
+                             (cons _%exn141016%_ '())))))))
     (define invalid-utf8-encoding-exception-procedure
-      (lambda (_%exn140587%_)
+      (lambda (_%exn141010%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140587%_))
-            (let ((_%e140590%_
+              (class-instance? RuntimeException::t _%exn141010%_))
+            (let ((_%e141013%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140587%_ 'exception))))
-              (if (macro-invalid-utf8-encoding-exception? _%e140590%_)
-                  (macro-invalid-utf8-encoding-exception-procedure _%e140590%_)
+                     (unchecked-slot-ref _%exn141010%_ 'exception))))
+              (if (macro-invalid-utf8-encoding-exception? _%e141013%_)
+                  (macro-invalid-utf8-encoding-exception-procedure _%e141013%_)
                   (error '"not an instance"
                          'invalid-utf8-encoding-exception?
                          (cons 'invalid-utf8-encoding-exception-procedure
-                               (cons _%e140590%_ '())))))
-            (if (macro-invalid-utf8-encoding-exception? _%exn140587%_)
-                (macro-invalid-utf8-encoding-exception-procedure _%exn140587%_)
+                               (cons _%e141013%_ '())))))
+            (if (macro-invalid-utf8-encoding-exception? _%exn141010%_)
+                (macro-invalid-utf8-encoding-exception-procedure _%exn141010%_)
                 (error '"not an instance"
                        'invalid-utf8-encoding-exception?
                        (cons 'invalid-utf8-encoding-exception-procedure
-                             (cons _%exn140587%_ '())))))))
+                             (cons _%exn141010%_ '())))))))
     (define join-timeout-exception?
-      (lambda (_%exn140583%_)
+      (lambda (_%exn141006%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140583%_))
-            (let ((_%e140585%_
+              (class-instance? RuntimeException::t _%exn141006%_))
+            (let ((_%e141008%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140583%_ 'exception))))
-              (macro-join-timeout-exception? _%e140585%_))
-            (macro-join-timeout-exception? _%exn140583%_))))
+                     (unchecked-slot-ref _%exn141006%_ 'exception))))
+              (macro-join-timeout-exception? _%e141008%_))
+            (macro-join-timeout-exception? _%exn141006%_))))
     (define join-timeout-exception-arguments
-      (lambda (_%exn140579%_)
+      (lambda (_%exn141002%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140579%_))
-            (let ((_%e140581%_
+              (class-instance? RuntimeException::t _%exn141002%_))
+            (let ((_%e141004%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140579%_ 'exception))))
-              (if (macro-join-timeout-exception? _%e140581%_)
-                  (macro-join-timeout-exception-arguments _%e140581%_)
+                     (unchecked-slot-ref _%exn141002%_ 'exception))))
+              (if (macro-join-timeout-exception? _%e141004%_)
+                  (macro-join-timeout-exception-arguments _%e141004%_)
                   (error '"not an instance"
                          'join-timeout-exception?
                          (cons 'join-timeout-exception-arguments
-                               (cons _%e140581%_ '())))))
-            (if (macro-join-timeout-exception? _%exn140579%_)
-                (macro-join-timeout-exception-arguments _%exn140579%_)
+                               (cons _%e141004%_ '())))))
+            (if (macro-join-timeout-exception? _%exn141002%_)
+                (macro-join-timeout-exception-arguments _%exn141002%_)
                 (error '"not an instance"
                        'join-timeout-exception?
                        (cons 'join-timeout-exception-arguments
-                             (cons _%exn140579%_ '())))))))
+                             (cons _%exn141002%_ '())))))))
     (define join-timeout-exception-procedure
-      (lambda (_%exn140573%_)
+      (lambda (_%exn140996%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140573%_))
-            (let ((_%e140576%_
+              (class-instance? RuntimeException::t _%exn140996%_))
+            (let ((_%e140999%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140573%_ 'exception))))
-              (if (macro-join-timeout-exception? _%e140576%_)
-                  (macro-join-timeout-exception-procedure _%e140576%_)
+                     (unchecked-slot-ref _%exn140996%_ 'exception))))
+              (if (macro-join-timeout-exception? _%e140999%_)
+                  (macro-join-timeout-exception-procedure _%e140999%_)
                   (error '"not an instance"
                          'join-timeout-exception?
                          (cons 'join-timeout-exception-procedure
-                               (cons _%e140576%_ '())))))
-            (if (macro-join-timeout-exception? _%exn140573%_)
-                (macro-join-timeout-exception-procedure _%exn140573%_)
+                               (cons _%e140999%_ '())))))
+            (if (macro-join-timeout-exception? _%exn140996%_)
+                (macro-join-timeout-exception-procedure _%exn140996%_)
                 (error '"not an instance"
                        'join-timeout-exception?
                        (cons 'join-timeout-exception-procedure
-                             (cons _%exn140573%_ '())))))))
+                             (cons _%exn140996%_ '())))))))
     (define keyword-expected-exception?
-      (lambda (_%exn140569%_)
+      (lambda (_%exn140992%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140569%_))
-            (let ((_%e140571%_
+              (class-instance? RuntimeException::t _%exn140992%_))
+            (let ((_%e140994%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140569%_ 'exception))))
-              (macro-keyword-expected-exception? _%e140571%_))
-            (macro-keyword-expected-exception? _%exn140569%_))))
+                     (unchecked-slot-ref _%exn140992%_ 'exception))))
+              (macro-keyword-expected-exception? _%e140994%_))
+            (macro-keyword-expected-exception? _%exn140992%_))))
     (define keyword-expected-exception-arguments
-      (lambda (_%exn140565%_)
+      (lambda (_%exn140988%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140565%_))
-            (let ((_%e140567%_
+              (class-instance? RuntimeException::t _%exn140988%_))
+            (let ((_%e140990%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140565%_ 'exception))))
-              (if (macro-keyword-expected-exception? _%e140567%_)
-                  (macro-keyword-expected-exception-arguments _%e140567%_)
+                     (unchecked-slot-ref _%exn140988%_ 'exception))))
+              (if (macro-keyword-expected-exception? _%e140990%_)
+                  (macro-keyword-expected-exception-arguments _%e140990%_)
                   (error '"not an instance"
                          'keyword-expected-exception?
                          (cons 'keyword-expected-exception-arguments
-                               (cons _%e140567%_ '())))))
-            (if (macro-keyword-expected-exception? _%exn140565%_)
-                (macro-keyword-expected-exception-arguments _%exn140565%_)
+                               (cons _%e140990%_ '())))))
+            (if (macro-keyword-expected-exception? _%exn140988%_)
+                (macro-keyword-expected-exception-arguments _%exn140988%_)
                 (error '"not an instance"
                        'keyword-expected-exception?
                        (cons 'keyword-expected-exception-arguments
-                             (cons _%exn140565%_ '())))))))
+                             (cons _%exn140988%_ '())))))))
     (define keyword-expected-exception-procedure
-      (lambda (_%exn140559%_)
+      (lambda (_%exn140982%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140559%_))
-            (let ((_%e140562%_
+              (class-instance? RuntimeException::t _%exn140982%_))
+            (let ((_%e140985%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140559%_ 'exception))))
-              (if (macro-keyword-expected-exception? _%e140562%_)
-                  (macro-keyword-expected-exception-procedure _%e140562%_)
+                     (unchecked-slot-ref _%exn140982%_ 'exception))))
+              (if (macro-keyword-expected-exception? _%e140985%_)
+                  (macro-keyword-expected-exception-procedure _%e140985%_)
                   (error '"not an instance"
                          'keyword-expected-exception?
                          (cons 'keyword-expected-exception-procedure
-                               (cons _%e140562%_ '())))))
-            (if (macro-keyword-expected-exception? _%exn140559%_)
-                (macro-keyword-expected-exception-procedure _%exn140559%_)
+                               (cons _%e140985%_ '())))))
+            (if (macro-keyword-expected-exception? _%exn140982%_)
+                (macro-keyword-expected-exception-procedure _%exn140982%_)
                 (error '"not an instance"
                        'keyword-expected-exception?
                        (cons 'keyword-expected-exception-procedure
-                             (cons _%exn140559%_ '())))))))
+                             (cons _%exn140982%_ '())))))))
     (define length-mismatch-exception?
-      (lambda (_%exn140555%_)
+      (lambda (_%exn140978%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140555%_))
-            (let ((_%e140557%_
+              (class-instance? RuntimeException::t _%exn140978%_))
+            (let ((_%e140980%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140555%_ 'exception))))
-              (macro-length-mismatch-exception? _%e140557%_))
-            (macro-length-mismatch-exception? _%exn140555%_))))
+                     (unchecked-slot-ref _%exn140978%_ 'exception))))
+              (macro-length-mismatch-exception? _%e140980%_))
+            (macro-length-mismatch-exception? _%exn140978%_))))
     (define length-mismatch-exception-arg-id
-      (lambda (_%exn140551%_)
+      (lambda (_%exn140974%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140551%_))
-            (let ((_%e140553%_
+              (class-instance? RuntimeException::t _%exn140974%_))
+            (let ((_%e140976%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140551%_ 'exception))))
-              (if (macro-length-mismatch-exception? _%e140553%_)
-                  (macro-length-mismatch-exception-arg-id _%e140553%_)
+                     (unchecked-slot-ref _%exn140974%_ 'exception))))
+              (if (macro-length-mismatch-exception? _%e140976%_)
+                  (macro-length-mismatch-exception-arg-id _%e140976%_)
                   (error '"not an instance"
                          'length-mismatch-exception?
                          (cons 'length-mismatch-exception-arg-id
-                               (cons _%e140553%_ '())))))
-            (if (macro-length-mismatch-exception? _%exn140551%_)
-                (macro-length-mismatch-exception-arg-id _%exn140551%_)
+                               (cons _%e140976%_ '())))))
+            (if (macro-length-mismatch-exception? _%exn140974%_)
+                (macro-length-mismatch-exception-arg-id _%exn140974%_)
                 (error '"not an instance"
                        'length-mismatch-exception?
                        (cons 'length-mismatch-exception-arg-id
-                             (cons _%exn140551%_ '())))))))
+                             (cons _%exn140974%_ '())))))))
     (define length-mismatch-exception-arguments
-      (lambda (_%exn140547%_)
+      (lambda (_%exn140970%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140547%_))
-            (let ((_%e140549%_
+              (class-instance? RuntimeException::t _%exn140970%_))
+            (let ((_%e140972%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140547%_ 'exception))))
-              (if (macro-length-mismatch-exception? _%e140549%_)
-                  (macro-length-mismatch-exception-arguments _%e140549%_)
+                     (unchecked-slot-ref _%exn140970%_ 'exception))))
+              (if (macro-length-mismatch-exception? _%e140972%_)
+                  (macro-length-mismatch-exception-arguments _%e140972%_)
                   (error '"not an instance"
                          'length-mismatch-exception?
                          (cons 'length-mismatch-exception-arguments
-                               (cons _%e140549%_ '())))))
-            (if (macro-length-mismatch-exception? _%exn140547%_)
-                (macro-length-mismatch-exception-arguments _%exn140547%_)
+                               (cons _%e140972%_ '())))))
+            (if (macro-length-mismatch-exception? _%exn140970%_)
+                (macro-length-mismatch-exception-arguments _%exn140970%_)
                 (error '"not an instance"
                        'length-mismatch-exception?
                        (cons 'length-mismatch-exception-arguments
-                             (cons _%exn140547%_ '())))))))
+                             (cons _%exn140970%_ '())))))))
     (define length-mismatch-exception-procedure
-      (lambda (_%exn140541%_)
+      (lambda (_%exn140964%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140541%_))
-            (let ((_%e140544%_
+              (class-instance? RuntimeException::t _%exn140964%_))
+            (let ((_%e140967%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140541%_ 'exception))))
-              (if (macro-length-mismatch-exception? _%e140544%_)
-                  (macro-length-mismatch-exception-procedure _%e140544%_)
+                     (unchecked-slot-ref _%exn140964%_ 'exception))))
+              (if (macro-length-mismatch-exception? _%e140967%_)
+                  (macro-length-mismatch-exception-procedure _%e140967%_)
                   (error '"not an instance"
                          'length-mismatch-exception?
                          (cons 'length-mismatch-exception-procedure
-                               (cons _%e140544%_ '())))))
-            (if (macro-length-mismatch-exception? _%exn140541%_)
-                (macro-length-mismatch-exception-procedure _%exn140541%_)
+                               (cons _%e140967%_ '())))))
+            (if (macro-length-mismatch-exception? _%exn140964%_)
+                (macro-length-mismatch-exception-procedure _%exn140964%_)
                 (error '"not an instance"
                        'length-mismatch-exception?
                        (cons 'length-mismatch-exception-procedure
-                             (cons _%exn140541%_ '())))))))
+                             (cons _%exn140964%_ '())))))))
     (define mailbox-receive-timeout-exception?
-      (lambda (_%exn140537%_)
+      (lambda (_%exn140960%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140537%_))
-            (let ((_%e140539%_
+              (class-instance? RuntimeException::t _%exn140960%_))
+            (let ((_%e140962%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140537%_ 'exception))))
-              (macro-mailbox-receive-timeout-exception? _%e140539%_))
-            (macro-mailbox-receive-timeout-exception? _%exn140537%_))))
+                     (unchecked-slot-ref _%exn140960%_ 'exception))))
+              (macro-mailbox-receive-timeout-exception? _%e140962%_))
+            (macro-mailbox-receive-timeout-exception? _%exn140960%_))))
     (define mailbox-receive-timeout-exception-arguments
-      (lambda (_%exn140533%_)
+      (lambda (_%exn140956%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140533%_))
-            (let ((_%e140535%_
+              (class-instance? RuntimeException::t _%exn140956%_))
+            (let ((_%e140958%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140533%_ 'exception))))
-              (if (macro-mailbox-receive-timeout-exception? _%e140535%_)
+                     (unchecked-slot-ref _%exn140956%_ 'exception))))
+              (if (macro-mailbox-receive-timeout-exception? _%e140958%_)
                   (macro-mailbox-receive-timeout-exception-arguments
-                   _%e140535%_)
+                   _%e140958%_)
                   (error '"not an instance"
                          'mailbox-receive-timeout-exception?
                          (cons 'mailbox-receive-timeout-exception-arguments
-                               (cons _%e140535%_ '())))))
-            (if (macro-mailbox-receive-timeout-exception? _%exn140533%_)
+                               (cons _%e140958%_ '())))))
+            (if (macro-mailbox-receive-timeout-exception? _%exn140956%_)
                 (macro-mailbox-receive-timeout-exception-arguments
-                 _%exn140533%_)
+                 _%exn140956%_)
                 (error '"not an instance"
                        'mailbox-receive-timeout-exception?
                        (cons 'mailbox-receive-timeout-exception-arguments
-                             (cons _%exn140533%_ '())))))))
+                             (cons _%exn140956%_ '())))))))
     (define mailbox-receive-timeout-exception-procedure
-      (lambda (_%exn140527%_)
+      (lambda (_%exn140950%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140527%_))
-            (let ((_%e140530%_
+              (class-instance? RuntimeException::t _%exn140950%_))
+            (let ((_%e140953%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140527%_ 'exception))))
-              (if (macro-mailbox-receive-timeout-exception? _%e140530%_)
+                     (unchecked-slot-ref _%exn140950%_ 'exception))))
+              (if (macro-mailbox-receive-timeout-exception? _%e140953%_)
                   (macro-mailbox-receive-timeout-exception-procedure
-                   _%e140530%_)
+                   _%e140953%_)
                   (error '"not an instance"
                          'mailbox-receive-timeout-exception?
                          (cons 'mailbox-receive-timeout-exception-procedure
-                               (cons _%e140530%_ '())))))
-            (if (macro-mailbox-receive-timeout-exception? _%exn140527%_)
+                               (cons _%e140953%_ '())))))
+            (if (macro-mailbox-receive-timeout-exception? _%exn140950%_)
                 (macro-mailbox-receive-timeout-exception-procedure
-                 _%exn140527%_)
+                 _%exn140950%_)
                 (error '"not an instance"
                        'mailbox-receive-timeout-exception?
                        (cons 'mailbox-receive-timeout-exception-procedure
-                             (cons _%exn140527%_ '())))))))
+                             (cons _%exn140950%_ '())))))))
     (define module-not-found-exception?
-      (lambda (_%exn140523%_)
+      (lambda (_%exn140946%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140523%_))
-            (let ((_%e140525%_
+              (class-instance? RuntimeException::t _%exn140946%_))
+            (let ((_%e140948%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140523%_ 'exception))))
-              (macro-module-not-found-exception? _%e140525%_))
-            (macro-module-not-found-exception? _%exn140523%_))))
+                     (unchecked-slot-ref _%exn140946%_ 'exception))))
+              (macro-module-not-found-exception? _%e140948%_))
+            (macro-module-not-found-exception? _%exn140946%_))))
     (define module-not-found-exception-arguments
-      (lambda (_%exn140519%_)
+      (lambda (_%exn140942%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140519%_))
-            (let ((_%e140521%_
+              (class-instance? RuntimeException::t _%exn140942%_))
+            (let ((_%e140944%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140519%_ 'exception))))
-              (if (macro-module-not-found-exception? _%e140521%_)
-                  (macro-module-not-found-exception-arguments _%e140521%_)
+                     (unchecked-slot-ref _%exn140942%_ 'exception))))
+              (if (macro-module-not-found-exception? _%e140944%_)
+                  (macro-module-not-found-exception-arguments _%e140944%_)
                   (error '"not an instance"
                          'module-not-found-exception?
                          (cons 'module-not-found-exception-arguments
-                               (cons _%e140521%_ '())))))
-            (if (macro-module-not-found-exception? _%exn140519%_)
-                (macro-module-not-found-exception-arguments _%exn140519%_)
+                               (cons _%e140944%_ '())))))
+            (if (macro-module-not-found-exception? _%exn140942%_)
+                (macro-module-not-found-exception-arguments _%exn140942%_)
                 (error '"not an instance"
                        'module-not-found-exception?
                        (cons 'module-not-found-exception-arguments
-                             (cons _%exn140519%_ '())))))))
+                             (cons _%exn140942%_ '())))))))
     (define module-not-found-exception-procedure
-      (lambda (_%exn140513%_)
+      (lambda (_%exn140936%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140513%_))
-            (let ((_%e140516%_
+              (class-instance? RuntimeException::t _%exn140936%_))
+            (let ((_%e140939%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140513%_ 'exception))))
-              (if (macro-module-not-found-exception? _%e140516%_)
-                  (macro-module-not-found-exception-procedure _%e140516%_)
+                     (unchecked-slot-ref _%exn140936%_ 'exception))))
+              (if (macro-module-not-found-exception? _%e140939%_)
+                  (macro-module-not-found-exception-procedure _%e140939%_)
                   (error '"not an instance"
                          'module-not-found-exception?
                          (cons 'module-not-found-exception-procedure
-                               (cons _%e140516%_ '())))))
-            (if (macro-module-not-found-exception? _%exn140513%_)
-                (macro-module-not-found-exception-procedure _%exn140513%_)
+                               (cons _%e140939%_ '())))))
+            (if (macro-module-not-found-exception? _%exn140936%_)
+                (macro-module-not-found-exception-procedure _%exn140936%_)
                 (error '"not an instance"
                        'module-not-found-exception?
                        (cons 'module-not-found-exception-procedure
-                             (cons _%exn140513%_ '())))))))
+                             (cons _%exn140936%_ '())))))))
     (define multiple-c-return-exception?
-      (lambda (_%exn140507%_)
+      (lambda (_%exn140930%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140507%_))
-            (let ((_%e140510%_
+              (class-instance? RuntimeException::t _%exn140930%_))
+            (let ((_%e140933%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140507%_ 'exception))))
-              (macro-multiple-c-return-exception? _%e140510%_))
-            (macro-multiple-c-return-exception? _%exn140507%_))))
+                     (unchecked-slot-ref _%exn140930%_ 'exception))))
+              (macro-multiple-c-return-exception? _%e140933%_))
+            (macro-multiple-c-return-exception? _%exn140930%_))))
     (define no-such-file-or-directory-exception?
-      (lambda (_%exn140503%_)
+      (lambda (_%exn140926%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140503%_))
-            (let ((_%e140505%_
+              (class-instance? RuntimeException::t _%exn140926%_))
+            (let ((_%e140928%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140503%_ 'exception))))
-              (macro-no-such-file-or-directory-exception? _%e140505%_))
-            (macro-no-such-file-or-directory-exception? _%exn140503%_))))
+                     (unchecked-slot-ref _%exn140926%_ 'exception))))
+              (macro-no-such-file-or-directory-exception? _%e140928%_))
+            (macro-no-such-file-or-directory-exception? _%exn140926%_))))
     (define no-such-file-or-directory-exception-arguments
-      (lambda (_%exn140499%_)
+      (lambda (_%exn140922%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140499%_))
-            (let ((_%e140501%_
+              (class-instance? RuntimeException::t _%exn140922%_))
+            (let ((_%e140924%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140499%_ 'exception))))
-              (if (macro-no-such-file-or-directory-exception? _%e140501%_)
+                     (unchecked-slot-ref _%exn140922%_ 'exception))))
+              (if (macro-no-such-file-or-directory-exception? _%e140924%_)
                   (macro-no-such-file-or-directory-exception-arguments
-                   _%e140501%_)
+                   _%e140924%_)
                   (error '"not an instance"
                          'no-such-file-or-directory-exception?
                          (cons 'no-such-file-or-directory-exception-arguments
-                               (cons _%e140501%_ '())))))
-            (if (macro-no-such-file-or-directory-exception? _%exn140499%_)
+                               (cons _%e140924%_ '())))))
+            (if (macro-no-such-file-or-directory-exception? _%exn140922%_)
                 (macro-no-such-file-or-directory-exception-arguments
-                 _%exn140499%_)
+                 _%exn140922%_)
                 (error '"not an instance"
                        'no-such-file-or-directory-exception?
                        (cons 'no-such-file-or-directory-exception-arguments
-                             (cons _%exn140499%_ '())))))))
+                             (cons _%exn140922%_ '())))))))
     (define no-such-file-or-directory-exception-procedure
-      (lambda (_%exn140493%_)
+      (lambda (_%exn140916%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140493%_))
-            (let ((_%e140496%_
+              (class-instance? RuntimeException::t _%exn140916%_))
+            (let ((_%e140919%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140493%_ 'exception))))
-              (if (macro-no-such-file-or-directory-exception? _%e140496%_)
+                     (unchecked-slot-ref _%exn140916%_ 'exception))))
+              (if (macro-no-such-file-or-directory-exception? _%e140919%_)
                   (macro-no-such-file-or-directory-exception-procedure
-                   _%e140496%_)
+                   _%e140919%_)
                   (error '"not an instance"
                          'no-such-file-or-directory-exception?
                          (cons 'no-such-file-or-directory-exception-procedure
-                               (cons _%e140496%_ '())))))
-            (if (macro-no-such-file-or-directory-exception? _%exn140493%_)
+                               (cons _%e140919%_ '())))))
+            (if (macro-no-such-file-or-directory-exception? _%exn140916%_)
                 (macro-no-such-file-or-directory-exception-procedure
-                 _%exn140493%_)
+                 _%exn140916%_)
                 (error '"not an instance"
                        'no-such-file-or-directory-exception?
                        (cons 'no-such-file-or-directory-exception-procedure
-                             (cons _%exn140493%_ '())))))))
+                             (cons _%exn140916%_ '())))))))
     (define noncontinuable-exception?
-      (lambda (_%exn140489%_)
+      (lambda (_%exn140912%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140489%_))
-            (let ((_%e140491%_
+              (class-instance? RuntimeException::t _%exn140912%_))
+            (let ((_%e140914%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140489%_ 'exception))))
-              (macro-noncontinuable-exception? _%e140491%_))
-            (macro-noncontinuable-exception? _%exn140489%_))))
+                     (unchecked-slot-ref _%exn140912%_ 'exception))))
+              (macro-noncontinuable-exception? _%e140914%_))
+            (macro-noncontinuable-exception? _%exn140912%_))))
     (define noncontinuable-exception-reason
-      (lambda (_%exn140483%_)
+      (lambda (_%exn140906%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140483%_))
-            (let ((_%e140486%_
+              (class-instance? RuntimeException::t _%exn140906%_))
+            (let ((_%e140909%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140483%_ 'exception))))
-              (if (macro-noncontinuable-exception? _%e140486%_)
-                  (macro-noncontinuable-exception-reason _%e140486%_)
+                     (unchecked-slot-ref _%exn140906%_ 'exception))))
+              (if (macro-noncontinuable-exception? _%e140909%_)
+                  (macro-noncontinuable-exception-reason _%e140909%_)
                   (error '"not an instance"
                          'noncontinuable-exception?
                          (cons 'noncontinuable-exception-reason
-                               (cons _%e140486%_ '())))))
-            (if (macro-noncontinuable-exception? _%exn140483%_)
-                (macro-noncontinuable-exception-reason _%exn140483%_)
+                               (cons _%e140909%_ '())))))
+            (if (macro-noncontinuable-exception? _%exn140906%_)
+                (macro-noncontinuable-exception-reason _%exn140906%_)
                 (error '"not an instance"
                        'noncontinuable-exception?
                        (cons 'noncontinuable-exception-reason
-                             (cons _%exn140483%_ '())))))))
+                             (cons _%exn140906%_ '())))))))
     (define nonempty-input-port-character-buffer-exception?
-      (lambda (_%exn140479%_)
+      (lambda (_%exn140902%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140479%_))
-            (let ((_%e140481%_
+              (class-instance? RuntimeException::t _%exn140902%_))
+            (let ((_%e140904%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140479%_ 'exception))))
+                     (unchecked-slot-ref _%exn140902%_ 'exception))))
               (macro-nonempty-input-port-character-buffer-exception?
-               _%e140481%_))
+               _%e140904%_))
             (macro-nonempty-input-port-character-buffer-exception?
-             _%exn140479%_))))
+             _%exn140902%_))))
     (define nonempty-input-port-character-buffer-exception-arguments
-      (lambda (_%exn140475%_)
+      (lambda (_%exn140898%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140475%_))
-            (let ((_%e140477%_
+              (class-instance? RuntimeException::t _%exn140898%_))
+            (let ((_%e140900%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140475%_ 'exception))))
+                     (unchecked-slot-ref _%exn140898%_ 'exception))))
               (if (macro-nonempty-input-port-character-buffer-exception?
-                   _%e140477%_)
+                   _%e140900%_)
                   (macro-nonempty-input-port-character-buffer-exception-arguments
-                   _%e140477%_)
+                   _%e140900%_)
                   (error '"not an instance"
                          'nonempty-input-port-character-buffer-exception?
                          (cons 'nonempty-input-port-character-buffer-exception-arguments
-                               (cons _%e140477%_ '())))))
+                               (cons _%e140900%_ '())))))
             (if (macro-nonempty-input-port-character-buffer-exception?
-                 _%exn140475%_)
+                 _%exn140898%_)
                 (macro-nonempty-input-port-character-buffer-exception-arguments
-                 _%exn140475%_)
+                 _%exn140898%_)
                 (error '"not an instance"
                        'nonempty-input-port-character-buffer-exception?
                        (cons 'nonempty-input-port-character-buffer-exception-arguments
-                             (cons _%exn140475%_ '())))))))
+                             (cons _%exn140898%_ '())))))))
     (define nonempty-input-port-character-buffer-exception-procedure
-      (lambda (_%exn140469%_)
+      (lambda (_%exn140892%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140469%_))
-            (let ((_%e140472%_
+              (class-instance? RuntimeException::t _%exn140892%_))
+            (let ((_%e140895%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140469%_ 'exception))))
+                     (unchecked-slot-ref _%exn140892%_ 'exception))))
               (if (macro-nonempty-input-port-character-buffer-exception?
-                   _%e140472%_)
+                   _%e140895%_)
                   (macro-nonempty-input-port-character-buffer-exception-procedure
-                   _%e140472%_)
+                   _%e140895%_)
                   (error '"not an instance"
                          'nonempty-input-port-character-buffer-exception?
                          (cons 'nonempty-input-port-character-buffer-exception-procedure
-                               (cons _%e140472%_ '())))))
+                               (cons _%e140895%_ '())))))
             (if (macro-nonempty-input-port-character-buffer-exception?
-                 _%exn140469%_)
+                 _%exn140892%_)
                 (macro-nonempty-input-port-character-buffer-exception-procedure
-                 _%exn140469%_)
+                 _%exn140892%_)
                 (error '"not an instance"
                        'nonempty-input-port-character-buffer-exception?
                        (cons 'nonempty-input-port-character-buffer-exception-procedure
-                             (cons _%exn140469%_ '())))))))
+                             (cons _%exn140892%_ '())))))))
     (define nonprocedure-operator-exception?
-      (lambda (_%exn140465%_)
+      (lambda (_%exn140888%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140465%_))
-            (let ((_%e140467%_
+              (class-instance? RuntimeException::t _%exn140888%_))
+            (let ((_%e140890%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140465%_ 'exception))))
-              (macro-nonprocedure-operator-exception? _%e140467%_))
-            (macro-nonprocedure-operator-exception? _%exn140465%_))))
+                     (unchecked-slot-ref _%exn140888%_ 'exception))))
+              (macro-nonprocedure-operator-exception? _%e140890%_))
+            (macro-nonprocedure-operator-exception? _%exn140888%_))))
     (define nonprocedure-operator-exception-arguments
-      (lambda (_%exn140461%_)
+      (lambda (_%exn140884%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140461%_))
-            (let ((_%e140463%_
+              (class-instance? RuntimeException::t _%exn140884%_))
+            (let ((_%e140886%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140461%_ 'exception))))
-              (if (macro-nonprocedure-operator-exception? _%e140463%_)
-                  (macro-nonprocedure-operator-exception-arguments _%e140463%_)
+                     (unchecked-slot-ref _%exn140884%_ 'exception))))
+              (if (macro-nonprocedure-operator-exception? _%e140886%_)
+                  (macro-nonprocedure-operator-exception-arguments _%e140886%_)
                   (error '"not an instance"
                          'nonprocedure-operator-exception?
                          (cons 'nonprocedure-operator-exception-arguments
-                               (cons _%e140463%_ '())))))
-            (if (macro-nonprocedure-operator-exception? _%exn140461%_)
-                (macro-nonprocedure-operator-exception-arguments _%exn140461%_)
+                               (cons _%e140886%_ '())))))
+            (if (macro-nonprocedure-operator-exception? _%exn140884%_)
+                (macro-nonprocedure-operator-exception-arguments _%exn140884%_)
                 (error '"not an instance"
                        'nonprocedure-operator-exception?
                        (cons 'nonprocedure-operator-exception-arguments
-                             (cons _%exn140461%_ '())))))))
+                             (cons _%exn140884%_ '())))))))
     (define nonprocedure-operator-exception-code
-      (lambda (_%exn140457%_)
+      (lambda (_%exn140880%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140457%_))
-            (let ((_%e140459%_
+              (class-instance? RuntimeException::t _%exn140880%_))
+            (let ((_%e140882%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140457%_ 'exception))))
-              (if (macro-nonprocedure-operator-exception? _%e140459%_)
-                  (macro-nonprocedure-operator-exception-code _%e140459%_)
+                     (unchecked-slot-ref _%exn140880%_ 'exception))))
+              (if (macro-nonprocedure-operator-exception? _%e140882%_)
+                  (macro-nonprocedure-operator-exception-code _%e140882%_)
                   (error '"not an instance"
                          'nonprocedure-operator-exception?
                          (cons 'nonprocedure-operator-exception-code
-                               (cons _%e140459%_ '())))))
-            (if (macro-nonprocedure-operator-exception? _%exn140457%_)
-                (macro-nonprocedure-operator-exception-code _%exn140457%_)
+                               (cons _%e140882%_ '())))))
+            (if (macro-nonprocedure-operator-exception? _%exn140880%_)
+                (macro-nonprocedure-operator-exception-code _%exn140880%_)
                 (error '"not an instance"
                        'nonprocedure-operator-exception?
                        (cons 'nonprocedure-operator-exception-code
-                             (cons _%exn140457%_ '())))))))
+                             (cons _%exn140880%_ '())))))))
     (define nonprocedure-operator-exception-operator
-      (lambda (_%exn140453%_)
+      (lambda (_%exn140876%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140453%_))
-            (let ((_%e140455%_
+              (class-instance? RuntimeException::t _%exn140876%_))
+            (let ((_%e140878%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140453%_ 'exception))))
-              (if (macro-nonprocedure-operator-exception? _%e140455%_)
-                  (macro-nonprocedure-operator-exception-operator _%e140455%_)
+                     (unchecked-slot-ref _%exn140876%_ 'exception))))
+              (if (macro-nonprocedure-operator-exception? _%e140878%_)
+                  (macro-nonprocedure-operator-exception-operator _%e140878%_)
                   (error '"not an instance"
                          'nonprocedure-operator-exception?
                          (cons 'nonprocedure-operator-exception-operator
-                               (cons _%e140455%_ '())))))
-            (if (macro-nonprocedure-operator-exception? _%exn140453%_)
-                (macro-nonprocedure-operator-exception-operator _%exn140453%_)
+                               (cons _%e140878%_ '())))))
+            (if (macro-nonprocedure-operator-exception? _%exn140876%_)
+                (macro-nonprocedure-operator-exception-operator _%exn140876%_)
                 (error '"not an instance"
                        'nonprocedure-operator-exception?
                        (cons 'nonprocedure-operator-exception-operator
-                             (cons _%exn140453%_ '())))))))
+                             (cons _%exn140876%_ '())))))))
     (define nonprocedure-operator-exception-rte
-      (lambda (_%exn140447%_)
+      (lambda (_%exn140870%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140447%_))
-            (let ((_%e140450%_
+              (class-instance? RuntimeException::t _%exn140870%_))
+            (let ((_%e140873%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140447%_ 'exception))))
-              (if (macro-nonprocedure-operator-exception? _%e140450%_)
-                  (macro-nonprocedure-operator-exception-rte _%e140450%_)
+                     (unchecked-slot-ref _%exn140870%_ 'exception))))
+              (if (macro-nonprocedure-operator-exception? _%e140873%_)
+                  (macro-nonprocedure-operator-exception-rte _%e140873%_)
                   (error '"not an instance"
                          'nonprocedure-operator-exception?
                          (cons 'nonprocedure-operator-exception-rte
-                               (cons _%e140450%_ '())))))
-            (if (macro-nonprocedure-operator-exception? _%exn140447%_)
-                (macro-nonprocedure-operator-exception-rte _%exn140447%_)
+                               (cons _%e140873%_ '())))))
+            (if (macro-nonprocedure-operator-exception? _%exn140870%_)
+                (macro-nonprocedure-operator-exception-rte _%exn140870%_)
                 (error '"not an instance"
                        'nonprocedure-operator-exception?
                        (cons 'nonprocedure-operator-exception-rte
-                             (cons _%exn140447%_ '())))))))
+                             (cons _%exn140870%_ '())))))))
     (define not-in-compilation-context-exception?
-      (lambda (_%exn140443%_)
+      (lambda (_%exn140866%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140443%_))
-            (let ((_%e140445%_
+              (class-instance? RuntimeException::t _%exn140866%_))
+            (let ((_%e140868%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140443%_ 'exception))))
-              (macro-not-in-compilation-context-exception? _%e140445%_))
-            (macro-not-in-compilation-context-exception? _%exn140443%_))))
+                     (unchecked-slot-ref _%exn140866%_ 'exception))))
+              (macro-not-in-compilation-context-exception? _%e140868%_))
+            (macro-not-in-compilation-context-exception? _%exn140866%_))))
     (define not-in-compilation-context-exception-arguments
-      (lambda (_%exn140439%_)
+      (lambda (_%exn140862%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140439%_))
-            (let ((_%e140441%_
+              (class-instance? RuntimeException::t _%exn140862%_))
+            (let ((_%e140864%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140439%_ 'exception))))
-              (if (macro-not-in-compilation-context-exception? _%e140441%_)
+                     (unchecked-slot-ref _%exn140862%_ 'exception))))
+              (if (macro-not-in-compilation-context-exception? _%e140864%_)
                   (macro-not-in-compilation-context-exception-arguments
-                   _%e140441%_)
+                   _%e140864%_)
                   (error '"not an instance"
                          'not-in-compilation-context-exception?
                          (cons 'not-in-compilation-context-exception-arguments
-                               (cons _%e140441%_ '())))))
-            (if (macro-not-in-compilation-context-exception? _%exn140439%_)
+                               (cons _%e140864%_ '())))))
+            (if (macro-not-in-compilation-context-exception? _%exn140862%_)
                 (macro-not-in-compilation-context-exception-arguments
-                 _%exn140439%_)
+                 _%exn140862%_)
                 (error '"not an instance"
                        'not-in-compilation-context-exception?
                        (cons 'not-in-compilation-context-exception-arguments
-                             (cons _%exn140439%_ '())))))))
+                             (cons _%exn140862%_ '())))))))
     (define not-in-compilation-context-exception-procedure
-      (lambda (_%exn140433%_)
+      (lambda (_%exn140856%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140433%_))
-            (let ((_%e140436%_
+              (class-instance? RuntimeException::t _%exn140856%_))
+            (let ((_%e140859%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140433%_ 'exception))))
-              (if (macro-not-in-compilation-context-exception? _%e140436%_)
+                     (unchecked-slot-ref _%exn140856%_ 'exception))))
+              (if (macro-not-in-compilation-context-exception? _%e140859%_)
                   (macro-not-in-compilation-context-exception-procedure
-                   _%e140436%_)
+                   _%e140859%_)
                   (error '"not an instance"
                          'not-in-compilation-context-exception?
                          (cons 'not-in-compilation-context-exception-procedure
-                               (cons _%e140436%_ '())))))
-            (if (macro-not-in-compilation-context-exception? _%exn140433%_)
+                               (cons _%e140859%_ '())))))
+            (if (macro-not-in-compilation-context-exception? _%exn140856%_)
                 (macro-not-in-compilation-context-exception-procedure
-                 _%exn140433%_)
+                 _%exn140856%_)
                 (error '"not an instance"
                        'not-in-compilation-context-exception?
                        (cons 'not-in-compilation-context-exception-procedure
-                             (cons _%exn140433%_ '())))))))
+                             (cons _%exn140856%_ '())))))))
     (define number-of-arguments-limit-exception?
-      (lambda (_%exn140429%_)
+      (lambda (_%exn140852%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140429%_))
-            (let ((_%e140431%_
+              (class-instance? RuntimeException::t _%exn140852%_))
+            (let ((_%e140854%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140429%_ 'exception))))
-              (macro-number-of-arguments-limit-exception? _%e140431%_))
-            (macro-number-of-arguments-limit-exception? _%exn140429%_))))
+                     (unchecked-slot-ref _%exn140852%_ 'exception))))
+              (macro-number-of-arguments-limit-exception? _%e140854%_))
+            (macro-number-of-arguments-limit-exception? _%exn140852%_))))
     (define number-of-arguments-limit-exception-arguments
-      (lambda (_%exn140425%_)
+      (lambda (_%exn140848%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140425%_))
-            (let ((_%e140427%_
+              (class-instance? RuntimeException::t _%exn140848%_))
+            (let ((_%e140850%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140425%_ 'exception))))
-              (if (macro-number-of-arguments-limit-exception? _%e140427%_)
+                     (unchecked-slot-ref _%exn140848%_ 'exception))))
+              (if (macro-number-of-arguments-limit-exception? _%e140850%_)
                   (macro-number-of-arguments-limit-exception-arguments
-                   _%e140427%_)
+                   _%e140850%_)
                   (error '"not an instance"
                          'number-of-arguments-limit-exception?
                          (cons 'number-of-arguments-limit-exception-arguments
-                               (cons _%e140427%_ '())))))
-            (if (macro-number-of-arguments-limit-exception? _%exn140425%_)
+                               (cons _%e140850%_ '())))))
+            (if (macro-number-of-arguments-limit-exception? _%exn140848%_)
                 (macro-number-of-arguments-limit-exception-arguments
-                 _%exn140425%_)
+                 _%exn140848%_)
                 (error '"not an instance"
                        'number-of-arguments-limit-exception?
                        (cons 'number-of-arguments-limit-exception-arguments
-                             (cons _%exn140425%_ '())))))))
+                             (cons _%exn140848%_ '())))))))
     (define number-of-arguments-limit-exception-procedure
-      (lambda (_%exn140419%_)
+      (lambda (_%exn140842%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140419%_))
-            (let ((_%e140422%_
+              (class-instance? RuntimeException::t _%exn140842%_))
+            (let ((_%e140845%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140419%_ 'exception))))
-              (if (macro-number-of-arguments-limit-exception? _%e140422%_)
+                     (unchecked-slot-ref _%exn140842%_ 'exception))))
+              (if (macro-number-of-arguments-limit-exception? _%e140845%_)
                   (macro-number-of-arguments-limit-exception-procedure
-                   _%e140422%_)
+                   _%e140845%_)
                   (error '"not an instance"
                          'number-of-arguments-limit-exception?
                          (cons 'number-of-arguments-limit-exception-procedure
-                               (cons _%e140422%_ '())))))
-            (if (macro-number-of-arguments-limit-exception? _%exn140419%_)
+                               (cons _%e140845%_ '())))))
+            (if (macro-number-of-arguments-limit-exception? _%exn140842%_)
                 (macro-number-of-arguments-limit-exception-procedure
-                 _%exn140419%_)
+                 _%exn140842%_)
                 (error '"not an instance"
                        'number-of-arguments-limit-exception?
                        (cons 'number-of-arguments-limit-exception-procedure
-                             (cons _%exn140419%_ '())))))))
+                             (cons _%exn140842%_ '())))))))
     (define os-exception?
-      (lambda (_%exn140415%_)
+      (lambda (_%exn140838%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140415%_))
-            (let ((_%e140417%_
+              (class-instance? RuntimeException::t _%exn140838%_))
+            (let ((_%e140840%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140415%_ 'exception))))
-              (macro-os-exception? _%e140417%_))
-            (macro-os-exception? _%exn140415%_))))
+                     (unchecked-slot-ref _%exn140838%_ 'exception))))
+              (macro-os-exception? _%e140840%_))
+            (macro-os-exception? _%exn140838%_))))
     (define os-exception-arguments
-      (lambda (_%exn140411%_)
+      (lambda (_%exn140834%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140411%_))
-            (let ((_%e140413%_
+              (class-instance? RuntimeException::t _%exn140834%_))
+            (let ((_%e140836%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140411%_ 'exception))))
-              (if (macro-os-exception? _%e140413%_)
-                  (macro-os-exception-arguments _%e140413%_)
+                     (unchecked-slot-ref _%exn140834%_ 'exception))))
+              (if (macro-os-exception? _%e140836%_)
+                  (macro-os-exception-arguments _%e140836%_)
                   (error '"not an instance"
                          'os-exception?
                          (cons 'os-exception-arguments
-                               (cons _%e140413%_ '())))))
-            (if (macro-os-exception? _%exn140411%_)
-                (macro-os-exception-arguments _%exn140411%_)
+                               (cons _%e140836%_ '())))))
+            (if (macro-os-exception? _%exn140834%_)
+                (macro-os-exception-arguments _%exn140834%_)
                 (error '"not an instance"
                        'os-exception?
                        (cons 'os-exception-arguments
-                             (cons _%exn140411%_ '())))))))
+                             (cons _%exn140834%_ '())))))))
     (define os-exception-code
-      (lambda (_%exn140407%_)
+      (lambda (_%exn140830%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140407%_))
-            (let ((_%e140409%_
+              (class-instance? RuntimeException::t _%exn140830%_))
+            (let ((_%e140832%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140407%_ 'exception))))
-              (if (macro-os-exception? _%e140409%_)
-                  (macro-os-exception-code _%e140409%_)
+                     (unchecked-slot-ref _%exn140830%_ 'exception))))
+              (if (macro-os-exception? _%e140832%_)
+                  (macro-os-exception-code _%e140832%_)
                   (error '"not an instance"
                          'os-exception?
-                         (cons 'os-exception-code (cons _%e140409%_ '())))))
-            (if (macro-os-exception? _%exn140407%_)
-                (macro-os-exception-code _%exn140407%_)
+                         (cons 'os-exception-code (cons _%e140832%_ '())))))
+            (if (macro-os-exception? _%exn140830%_)
+                (macro-os-exception-code _%exn140830%_)
                 (error '"not an instance"
                        'os-exception?
-                       (cons 'os-exception-code (cons _%exn140407%_ '())))))))
+                       (cons 'os-exception-code (cons _%exn140830%_ '())))))))
     (define os-exception-message
-      (lambda (_%exn140403%_)
+      (lambda (_%exn140826%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140403%_))
-            (let ((_%e140405%_
+              (class-instance? RuntimeException::t _%exn140826%_))
+            (let ((_%e140828%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140403%_ 'exception))))
-              (if (macro-os-exception? _%e140405%_)
-                  (macro-os-exception-message _%e140405%_)
+                     (unchecked-slot-ref _%exn140826%_ 'exception))))
+              (if (macro-os-exception? _%e140828%_)
+                  (macro-os-exception-message _%e140828%_)
                   (error '"not an instance"
                          'os-exception?
-                         (cons 'os-exception-message (cons _%e140405%_ '())))))
-            (if (macro-os-exception? _%exn140403%_)
-                (macro-os-exception-message _%exn140403%_)
+                         (cons 'os-exception-message (cons _%e140828%_ '())))))
+            (if (macro-os-exception? _%exn140826%_)
+                (macro-os-exception-message _%exn140826%_)
                 (error '"not an instance"
                        'os-exception?
                        (cons 'os-exception-message
-                             (cons _%exn140403%_ '())))))))
+                             (cons _%exn140826%_ '())))))))
     (define os-exception-procedure
-      (lambda (_%exn140397%_)
+      (lambda (_%exn140820%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140397%_))
-            (let ((_%e140400%_
+              (class-instance? RuntimeException::t _%exn140820%_))
+            (let ((_%e140823%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140397%_ 'exception))))
-              (if (macro-os-exception? _%e140400%_)
-                  (macro-os-exception-procedure _%e140400%_)
+                     (unchecked-slot-ref _%exn140820%_ 'exception))))
+              (if (macro-os-exception? _%e140823%_)
+                  (macro-os-exception-procedure _%e140823%_)
                   (error '"not an instance"
                          'os-exception?
                          (cons 'os-exception-procedure
-                               (cons _%e140400%_ '())))))
-            (if (macro-os-exception? _%exn140397%_)
-                (macro-os-exception-procedure _%exn140397%_)
+                               (cons _%e140823%_ '())))))
+            (if (macro-os-exception? _%exn140820%_)
+                (macro-os-exception-procedure _%exn140820%_)
                 (error '"not an instance"
                        'os-exception?
                        (cons 'os-exception-procedure
-                             (cons _%exn140397%_ '())))))))
+                             (cons _%exn140820%_ '())))))))
     (define permission-denied-exception?
-      (lambda (_%exn140393%_)
+      (lambda (_%exn140816%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140393%_))
-            (let ((_%e140395%_
+              (class-instance? RuntimeException::t _%exn140816%_))
+            (let ((_%e140818%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140393%_ 'exception))))
-              (macro-permission-denied-exception? _%e140395%_))
-            (macro-permission-denied-exception? _%exn140393%_))))
+                     (unchecked-slot-ref _%exn140816%_ 'exception))))
+              (macro-permission-denied-exception? _%e140818%_))
+            (macro-permission-denied-exception? _%exn140816%_))))
     (define permission-denied-exception-arguments
-      (lambda (_%exn140389%_)
+      (lambda (_%exn140812%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140389%_))
-            (let ((_%e140391%_
+              (class-instance? RuntimeException::t _%exn140812%_))
+            (let ((_%e140814%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140389%_ 'exception))))
-              (if (macro-permission-denied-exception? _%e140391%_)
-                  (macro-permission-denied-exception-arguments _%e140391%_)
+                     (unchecked-slot-ref _%exn140812%_ 'exception))))
+              (if (macro-permission-denied-exception? _%e140814%_)
+                  (macro-permission-denied-exception-arguments _%e140814%_)
                   (error '"not an instance"
                          'permission-denied-exception?
                          (cons 'permission-denied-exception-arguments
-                               (cons _%e140391%_ '())))))
-            (if (macro-permission-denied-exception? _%exn140389%_)
-                (macro-permission-denied-exception-arguments _%exn140389%_)
+                               (cons _%e140814%_ '())))))
+            (if (macro-permission-denied-exception? _%exn140812%_)
+                (macro-permission-denied-exception-arguments _%exn140812%_)
                 (error '"not an instance"
                        'permission-denied-exception?
                        (cons 'permission-denied-exception-arguments
-                             (cons _%exn140389%_ '())))))))
+                             (cons _%exn140812%_ '())))))))
     (define permission-denied-exception-procedure
-      (lambda (_%exn140383%_)
+      (lambda (_%exn140806%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140383%_))
-            (let ((_%e140386%_
+              (class-instance? RuntimeException::t _%exn140806%_))
+            (let ((_%e140809%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140383%_ 'exception))))
-              (if (macro-permission-denied-exception? _%e140386%_)
-                  (macro-permission-denied-exception-procedure _%e140386%_)
+                     (unchecked-slot-ref _%exn140806%_ 'exception))))
+              (if (macro-permission-denied-exception? _%e140809%_)
+                  (macro-permission-denied-exception-procedure _%e140809%_)
                   (error '"not an instance"
                          'permission-denied-exception?
                          (cons 'permission-denied-exception-procedure
-                               (cons _%e140386%_ '())))))
-            (if (macro-permission-denied-exception? _%exn140383%_)
-                (macro-permission-denied-exception-procedure _%exn140383%_)
+                               (cons _%e140809%_ '())))))
+            (if (macro-permission-denied-exception? _%exn140806%_)
+                (macro-permission-denied-exception-procedure _%exn140806%_)
                 (error '"not an instance"
                        'permission-denied-exception?
                        (cons 'permission-denied-exception-procedure
-                             (cons _%exn140383%_ '())))))))
+                             (cons _%exn140806%_ '())))))))
     (define range-exception?
-      (lambda (_%exn140379%_)
+      (lambda (_%exn140802%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140379%_))
-            (let ((_%e140381%_
+              (class-instance? RuntimeException::t _%exn140802%_))
+            (let ((_%e140804%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140379%_ 'exception))))
-              (macro-range-exception? _%e140381%_))
-            (macro-range-exception? _%exn140379%_))))
+                     (unchecked-slot-ref _%exn140802%_ 'exception))))
+              (macro-range-exception? _%e140804%_))
+            (macro-range-exception? _%exn140802%_))))
     (define range-exception-arg-id
-      (lambda (_%exn140375%_)
+      (lambda (_%exn140798%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140375%_))
-            (let ((_%e140377%_
+              (class-instance? RuntimeException::t _%exn140798%_))
+            (let ((_%e140800%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140375%_ 'exception))))
-              (if (macro-range-exception? _%e140377%_)
-                  (macro-range-exception-arg-id _%e140377%_)
+                     (unchecked-slot-ref _%exn140798%_ 'exception))))
+              (if (macro-range-exception? _%e140800%_)
+                  (macro-range-exception-arg-id _%e140800%_)
                   (error '"not an instance"
                          'range-exception?
                          (cons 'range-exception-arg-id
-                               (cons _%e140377%_ '())))))
-            (if (macro-range-exception? _%exn140375%_)
-                (macro-range-exception-arg-id _%exn140375%_)
+                               (cons _%e140800%_ '())))))
+            (if (macro-range-exception? _%exn140798%_)
+                (macro-range-exception-arg-id _%exn140798%_)
                 (error '"not an instance"
                        'range-exception?
                        (cons 'range-exception-arg-id
-                             (cons _%exn140375%_ '())))))))
+                             (cons _%exn140798%_ '())))))))
     (define range-exception-arguments
-      (lambda (_%exn140371%_)
+      (lambda (_%exn140794%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140371%_))
-            (let ((_%e140373%_
+              (class-instance? RuntimeException::t _%exn140794%_))
+            (let ((_%e140796%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140371%_ 'exception))))
-              (if (macro-range-exception? _%e140373%_)
-                  (macro-range-exception-arguments _%e140373%_)
+                     (unchecked-slot-ref _%exn140794%_ 'exception))))
+              (if (macro-range-exception? _%e140796%_)
+                  (macro-range-exception-arguments _%e140796%_)
                   (error '"not an instance"
                          'range-exception?
                          (cons 'range-exception-arguments
-                               (cons _%e140373%_ '())))))
-            (if (macro-range-exception? _%exn140371%_)
-                (macro-range-exception-arguments _%exn140371%_)
+                               (cons _%e140796%_ '())))))
+            (if (macro-range-exception? _%exn140794%_)
+                (macro-range-exception-arguments _%exn140794%_)
                 (error '"not an instance"
                        'range-exception?
                        (cons 'range-exception-arguments
-                             (cons _%exn140371%_ '())))))))
+                             (cons _%exn140794%_ '())))))))
     (define range-exception-procedure
-      (lambda (_%exn140365%_)
+      (lambda (_%exn140788%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140365%_))
-            (let ((_%e140368%_
+              (class-instance? RuntimeException::t _%exn140788%_))
+            (let ((_%e140791%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140365%_ 'exception))))
-              (if (macro-range-exception? _%e140368%_)
-                  (macro-range-exception-procedure _%e140368%_)
+                     (unchecked-slot-ref _%exn140788%_ 'exception))))
+              (if (macro-range-exception? _%e140791%_)
+                  (macro-range-exception-procedure _%e140791%_)
                   (error '"not an instance"
                          'range-exception?
                          (cons 'range-exception-procedure
-                               (cons _%e140368%_ '())))))
-            (if (macro-range-exception? _%exn140365%_)
-                (macro-range-exception-procedure _%exn140365%_)
+                               (cons _%e140791%_ '())))))
+            (if (macro-range-exception? _%exn140788%_)
+                (macro-range-exception-procedure _%exn140788%_)
                 (error '"not an instance"
                        'range-exception?
                        (cons 'range-exception-procedure
-                             (cons _%exn140365%_ '())))))))
+                             (cons _%exn140788%_ '())))))))
     (define rpc-remote-error-exception?
-      (lambda (_%exn140361%_)
+      (lambda (_%exn140784%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140361%_))
-            (let ((_%e140363%_
+              (class-instance? RuntimeException::t _%exn140784%_))
+            (let ((_%e140786%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140361%_ 'exception))))
-              (macro-rpc-remote-error-exception? _%e140363%_))
-            (macro-rpc-remote-error-exception? _%exn140361%_))))
+                     (unchecked-slot-ref _%exn140784%_ 'exception))))
+              (macro-rpc-remote-error-exception? _%e140786%_))
+            (macro-rpc-remote-error-exception? _%exn140784%_))))
     (define rpc-remote-error-exception-arguments
-      (lambda (_%exn140357%_)
+      (lambda (_%exn140780%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140357%_))
-            (let ((_%e140359%_
+              (class-instance? RuntimeException::t _%exn140780%_))
+            (let ((_%e140782%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140357%_ 'exception))))
-              (if (macro-rpc-remote-error-exception? _%e140359%_)
-                  (macro-rpc-remote-error-exception-arguments _%e140359%_)
+                     (unchecked-slot-ref _%exn140780%_ 'exception))))
+              (if (macro-rpc-remote-error-exception? _%e140782%_)
+                  (macro-rpc-remote-error-exception-arguments _%e140782%_)
                   (error '"not an instance"
                          'rpc-remote-error-exception?
                          (cons 'rpc-remote-error-exception-arguments
-                               (cons _%e140359%_ '())))))
-            (if (macro-rpc-remote-error-exception? _%exn140357%_)
-                (macro-rpc-remote-error-exception-arguments _%exn140357%_)
+                               (cons _%e140782%_ '())))))
+            (if (macro-rpc-remote-error-exception? _%exn140780%_)
+                (macro-rpc-remote-error-exception-arguments _%exn140780%_)
                 (error '"not an instance"
                        'rpc-remote-error-exception?
                        (cons 'rpc-remote-error-exception-arguments
-                             (cons _%exn140357%_ '())))))))
+                             (cons _%exn140780%_ '())))))))
     (define rpc-remote-error-exception-message
-      (lambda (_%exn140353%_)
+      (lambda (_%exn140776%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140353%_))
-            (let ((_%e140355%_
+              (class-instance? RuntimeException::t _%exn140776%_))
+            (let ((_%e140778%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140353%_ 'exception))))
-              (if (macro-rpc-remote-error-exception? _%e140355%_)
-                  (macro-rpc-remote-error-exception-message _%e140355%_)
+                     (unchecked-slot-ref _%exn140776%_ 'exception))))
+              (if (macro-rpc-remote-error-exception? _%e140778%_)
+                  (macro-rpc-remote-error-exception-message _%e140778%_)
                   (error '"not an instance"
                          'rpc-remote-error-exception?
                          (cons 'rpc-remote-error-exception-message
-                               (cons _%e140355%_ '())))))
-            (if (macro-rpc-remote-error-exception? _%exn140353%_)
-                (macro-rpc-remote-error-exception-message _%exn140353%_)
+                               (cons _%e140778%_ '())))))
+            (if (macro-rpc-remote-error-exception? _%exn140776%_)
+                (macro-rpc-remote-error-exception-message _%exn140776%_)
                 (error '"not an instance"
                        'rpc-remote-error-exception?
                        (cons 'rpc-remote-error-exception-message
-                             (cons _%exn140353%_ '())))))))
+                             (cons _%exn140776%_ '())))))))
     (define rpc-remote-error-exception-procedure
-      (lambda (_%exn140347%_)
+      (lambda (_%exn140770%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140347%_))
-            (let ((_%e140350%_
+              (class-instance? RuntimeException::t _%exn140770%_))
+            (let ((_%e140773%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140347%_ 'exception))))
-              (if (macro-rpc-remote-error-exception? _%e140350%_)
-                  (macro-rpc-remote-error-exception-procedure _%e140350%_)
+                     (unchecked-slot-ref _%exn140770%_ 'exception))))
+              (if (macro-rpc-remote-error-exception? _%e140773%_)
+                  (macro-rpc-remote-error-exception-procedure _%e140773%_)
                   (error '"not an instance"
                          'rpc-remote-error-exception?
                          (cons 'rpc-remote-error-exception-procedure
-                               (cons _%e140350%_ '())))))
-            (if (macro-rpc-remote-error-exception? _%exn140347%_)
-                (macro-rpc-remote-error-exception-procedure _%exn140347%_)
+                               (cons _%e140773%_ '())))))
+            (if (macro-rpc-remote-error-exception? _%exn140770%_)
+                (macro-rpc-remote-error-exception-procedure _%exn140770%_)
                 (error '"not an instance"
                        'rpc-remote-error-exception?
                        (cons 'rpc-remote-error-exception-procedure
-                             (cons _%exn140347%_ '())))))))
+                             (cons _%exn140770%_ '())))))))
     (define scheduler-exception?
-      (lambda (_%exn140343%_)
+      (lambda (_%exn140766%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140343%_))
-            (let ((_%e140345%_
+              (class-instance? RuntimeException::t _%exn140766%_))
+            (let ((_%e140768%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140343%_ 'exception))))
-              (macro-scheduler-exception? _%e140345%_))
-            (macro-scheduler-exception? _%exn140343%_))))
+                     (unchecked-slot-ref _%exn140766%_ 'exception))))
+              (macro-scheduler-exception? _%e140768%_))
+            (macro-scheduler-exception? _%exn140766%_))))
     (define scheduler-exception-reason
-      (lambda (_%exn140337%_)
+      (lambda (_%exn140760%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140337%_))
-            (let ((_%e140340%_
+              (class-instance? RuntimeException::t _%exn140760%_))
+            (let ((_%e140763%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140337%_ 'exception))))
-              (if (macro-scheduler-exception? _%e140340%_)
-                  (macro-scheduler-exception-reason _%e140340%_)
+                     (unchecked-slot-ref _%exn140760%_ 'exception))))
+              (if (macro-scheduler-exception? _%e140763%_)
+                  (macro-scheduler-exception-reason _%e140763%_)
                   (error '"not an instance"
                          'scheduler-exception?
                          (cons 'scheduler-exception-reason
-                               (cons _%e140340%_ '())))))
-            (if (macro-scheduler-exception? _%exn140337%_)
-                (macro-scheduler-exception-reason _%exn140337%_)
+                               (cons _%e140763%_ '())))))
+            (if (macro-scheduler-exception? _%exn140760%_)
+                (macro-scheduler-exception-reason _%exn140760%_)
                 (error '"not an instance"
                        'scheduler-exception?
                        (cons 'scheduler-exception-reason
-                             (cons _%exn140337%_ '())))))))
+                             (cons _%exn140760%_ '())))))))
     (define sfun-conversion-exception?
-      (lambda (_%exn140333%_)
+      (lambda (_%exn140756%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140333%_))
-            (let ((_%e140335%_
+              (class-instance? RuntimeException::t _%exn140756%_))
+            (let ((_%e140758%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140333%_ 'exception))))
-              (macro-sfun-conversion-exception? _%e140335%_))
-            (macro-sfun-conversion-exception? _%exn140333%_))))
+                     (unchecked-slot-ref _%exn140756%_ 'exception))))
+              (macro-sfun-conversion-exception? _%e140758%_))
+            (macro-sfun-conversion-exception? _%exn140756%_))))
     (define sfun-conversion-exception-arguments
-      (lambda (_%exn140329%_)
+      (lambda (_%exn140752%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140329%_))
-            (let ((_%e140331%_
+              (class-instance? RuntimeException::t _%exn140752%_))
+            (let ((_%e140754%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140329%_ 'exception))))
-              (if (macro-sfun-conversion-exception? _%e140331%_)
-                  (macro-sfun-conversion-exception-arguments _%e140331%_)
+                     (unchecked-slot-ref _%exn140752%_ 'exception))))
+              (if (macro-sfun-conversion-exception? _%e140754%_)
+                  (macro-sfun-conversion-exception-arguments _%e140754%_)
                   (error '"not an instance"
                          'sfun-conversion-exception?
                          (cons 'sfun-conversion-exception-arguments
-                               (cons _%e140331%_ '())))))
-            (if (macro-sfun-conversion-exception? _%exn140329%_)
-                (macro-sfun-conversion-exception-arguments _%exn140329%_)
+                               (cons _%e140754%_ '())))))
+            (if (macro-sfun-conversion-exception? _%exn140752%_)
+                (macro-sfun-conversion-exception-arguments _%exn140752%_)
                 (error '"not an instance"
                        'sfun-conversion-exception?
                        (cons 'sfun-conversion-exception-arguments
-                             (cons _%exn140329%_ '())))))))
+                             (cons _%exn140752%_ '())))))))
     (define sfun-conversion-exception-code
-      (lambda (_%exn140325%_)
+      (lambda (_%exn140748%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140325%_))
-            (let ((_%e140327%_
+              (class-instance? RuntimeException::t _%exn140748%_))
+            (let ((_%e140750%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140325%_ 'exception))))
-              (if (macro-sfun-conversion-exception? _%e140327%_)
-                  (macro-sfun-conversion-exception-code _%e140327%_)
+                     (unchecked-slot-ref _%exn140748%_ 'exception))))
+              (if (macro-sfun-conversion-exception? _%e140750%_)
+                  (macro-sfun-conversion-exception-code _%e140750%_)
                   (error '"not an instance"
                          'sfun-conversion-exception?
                          (cons 'sfun-conversion-exception-code
-                               (cons _%e140327%_ '())))))
-            (if (macro-sfun-conversion-exception? _%exn140325%_)
-                (macro-sfun-conversion-exception-code _%exn140325%_)
+                               (cons _%e140750%_ '())))))
+            (if (macro-sfun-conversion-exception? _%exn140748%_)
+                (macro-sfun-conversion-exception-code _%exn140748%_)
                 (error '"not an instance"
                        'sfun-conversion-exception?
                        (cons 'sfun-conversion-exception-code
-                             (cons _%exn140325%_ '())))))))
+                             (cons _%exn140748%_ '())))))))
     (define sfun-conversion-exception-message
-      (lambda (_%exn140321%_)
+      (lambda (_%exn140744%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140321%_))
-            (let ((_%e140323%_
+              (class-instance? RuntimeException::t _%exn140744%_))
+            (let ((_%e140746%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140321%_ 'exception))))
-              (if (macro-sfun-conversion-exception? _%e140323%_)
-                  (macro-sfun-conversion-exception-message _%e140323%_)
+                     (unchecked-slot-ref _%exn140744%_ 'exception))))
+              (if (macro-sfun-conversion-exception? _%e140746%_)
+                  (macro-sfun-conversion-exception-message _%e140746%_)
                   (error '"not an instance"
                          'sfun-conversion-exception?
                          (cons 'sfun-conversion-exception-message
-                               (cons _%e140323%_ '())))))
-            (if (macro-sfun-conversion-exception? _%exn140321%_)
-                (macro-sfun-conversion-exception-message _%exn140321%_)
+                               (cons _%e140746%_ '())))))
+            (if (macro-sfun-conversion-exception? _%exn140744%_)
+                (macro-sfun-conversion-exception-message _%exn140744%_)
                 (error '"not an instance"
                        'sfun-conversion-exception?
                        (cons 'sfun-conversion-exception-message
-                             (cons _%exn140321%_ '())))))))
+                             (cons _%exn140744%_ '())))))))
     (define sfun-conversion-exception-procedure
-      (lambda (_%exn140315%_)
+      (lambda (_%exn140738%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140315%_))
-            (let ((_%e140318%_
+              (class-instance? RuntimeException::t _%exn140738%_))
+            (let ((_%e140741%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140315%_ 'exception))))
-              (if (macro-sfun-conversion-exception? _%e140318%_)
-                  (macro-sfun-conversion-exception-procedure _%e140318%_)
+                     (unchecked-slot-ref _%exn140738%_ 'exception))))
+              (if (macro-sfun-conversion-exception? _%e140741%_)
+                  (macro-sfun-conversion-exception-procedure _%e140741%_)
                   (error '"not an instance"
                          'sfun-conversion-exception?
                          (cons 'sfun-conversion-exception-procedure
-                               (cons _%e140318%_ '())))))
-            (if (macro-sfun-conversion-exception? _%exn140315%_)
-                (macro-sfun-conversion-exception-procedure _%exn140315%_)
+                               (cons _%e140741%_ '())))))
+            (if (macro-sfun-conversion-exception? _%exn140738%_)
+                (macro-sfun-conversion-exception-procedure _%exn140738%_)
                 (error '"not an instance"
                        'sfun-conversion-exception?
                        (cons 'sfun-conversion-exception-procedure
-                             (cons _%exn140315%_ '())))))))
+                             (cons _%exn140738%_ '())))))))
     (define stack-overflow-exception?
-      (lambda (_%exn140309%_)
+      (lambda (_%exn140732%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140309%_))
-            (let ((_%e140312%_
+              (class-instance? RuntimeException::t _%exn140732%_))
+            (let ((_%e140735%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140309%_ 'exception))))
-              (macro-stack-overflow-exception? _%e140312%_))
-            (macro-stack-overflow-exception? _%exn140309%_))))
+                     (unchecked-slot-ref _%exn140732%_ 'exception))))
+              (macro-stack-overflow-exception? _%e140735%_))
+            (macro-stack-overflow-exception? _%exn140732%_))))
     (define started-thread-exception?
-      (lambda (_%exn140305%_)
+      (lambda (_%exn140728%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140305%_))
-            (let ((_%e140307%_
+              (class-instance? RuntimeException::t _%exn140728%_))
+            (let ((_%e140730%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140305%_ 'exception))))
-              (macro-started-thread-exception? _%e140307%_))
-            (macro-started-thread-exception? _%exn140305%_))))
+                     (unchecked-slot-ref _%exn140728%_ 'exception))))
+              (macro-started-thread-exception? _%e140730%_))
+            (macro-started-thread-exception? _%exn140728%_))))
     (define started-thread-exception-arguments
-      (lambda (_%exn140301%_)
+      (lambda (_%exn140724%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140301%_))
-            (let ((_%e140303%_
+              (class-instance? RuntimeException::t _%exn140724%_))
+            (let ((_%e140726%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140301%_ 'exception))))
-              (if (macro-started-thread-exception? _%e140303%_)
-                  (macro-started-thread-exception-arguments _%e140303%_)
+                     (unchecked-slot-ref _%exn140724%_ 'exception))))
+              (if (macro-started-thread-exception? _%e140726%_)
+                  (macro-started-thread-exception-arguments _%e140726%_)
                   (error '"not an instance"
                          'started-thread-exception?
                          (cons 'started-thread-exception-arguments
-                               (cons _%e140303%_ '())))))
-            (if (macro-started-thread-exception? _%exn140301%_)
-                (macro-started-thread-exception-arguments _%exn140301%_)
+                               (cons _%e140726%_ '())))))
+            (if (macro-started-thread-exception? _%exn140724%_)
+                (macro-started-thread-exception-arguments _%exn140724%_)
                 (error '"not an instance"
                        'started-thread-exception?
                        (cons 'started-thread-exception-arguments
-                             (cons _%exn140301%_ '())))))))
+                             (cons _%exn140724%_ '())))))))
     (define started-thread-exception-procedure
-      (lambda (_%exn140295%_)
+      (lambda (_%exn140718%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140295%_))
-            (let ((_%e140298%_
+              (class-instance? RuntimeException::t _%exn140718%_))
+            (let ((_%e140721%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140295%_ 'exception))))
-              (if (macro-started-thread-exception? _%e140298%_)
-                  (macro-started-thread-exception-procedure _%e140298%_)
+                     (unchecked-slot-ref _%exn140718%_ 'exception))))
+              (if (macro-started-thread-exception? _%e140721%_)
+                  (macro-started-thread-exception-procedure _%e140721%_)
                   (error '"not an instance"
                          'started-thread-exception?
                          (cons 'started-thread-exception-procedure
-                               (cons _%e140298%_ '())))))
-            (if (macro-started-thread-exception? _%exn140295%_)
-                (macro-started-thread-exception-procedure _%exn140295%_)
+                               (cons _%e140721%_ '())))))
+            (if (macro-started-thread-exception? _%exn140718%_)
+                (macro-started-thread-exception-procedure _%exn140718%_)
                 (error '"not an instance"
                        'started-thread-exception?
                        (cons 'started-thread-exception-procedure
-                             (cons _%exn140295%_ '())))))))
+                             (cons _%exn140718%_ '())))))))
     (define terminated-thread-exception?
-      (lambda (_%exn140291%_)
+      (lambda (_%exn140714%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140291%_))
-            (let ((_%e140293%_
+              (class-instance? RuntimeException::t _%exn140714%_))
+            (let ((_%e140716%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140291%_ 'exception))))
-              (macro-terminated-thread-exception? _%e140293%_))
-            (macro-terminated-thread-exception? _%exn140291%_))))
+                     (unchecked-slot-ref _%exn140714%_ 'exception))))
+              (macro-terminated-thread-exception? _%e140716%_))
+            (macro-terminated-thread-exception? _%exn140714%_))))
     (define terminated-thread-exception-arguments
-      (lambda (_%exn140287%_)
+      (lambda (_%exn140710%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140287%_))
-            (let ((_%e140289%_
+              (class-instance? RuntimeException::t _%exn140710%_))
+            (let ((_%e140712%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140287%_ 'exception))))
-              (if (macro-terminated-thread-exception? _%e140289%_)
-                  (macro-terminated-thread-exception-arguments _%e140289%_)
+                     (unchecked-slot-ref _%exn140710%_ 'exception))))
+              (if (macro-terminated-thread-exception? _%e140712%_)
+                  (macro-terminated-thread-exception-arguments _%e140712%_)
                   (error '"not an instance"
                          'terminated-thread-exception?
                          (cons 'terminated-thread-exception-arguments
-                               (cons _%e140289%_ '())))))
-            (if (macro-terminated-thread-exception? _%exn140287%_)
-                (macro-terminated-thread-exception-arguments _%exn140287%_)
+                               (cons _%e140712%_ '())))))
+            (if (macro-terminated-thread-exception? _%exn140710%_)
+                (macro-terminated-thread-exception-arguments _%exn140710%_)
                 (error '"not an instance"
                        'terminated-thread-exception?
                        (cons 'terminated-thread-exception-arguments
-                             (cons _%exn140287%_ '())))))))
+                             (cons _%exn140710%_ '())))))))
     (define terminated-thread-exception-procedure
-      (lambda (_%exn140281%_)
+      (lambda (_%exn140704%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140281%_))
-            (let ((_%e140284%_
+              (class-instance? RuntimeException::t _%exn140704%_))
+            (let ((_%e140707%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140281%_ 'exception))))
-              (if (macro-terminated-thread-exception? _%e140284%_)
-                  (macro-terminated-thread-exception-procedure _%e140284%_)
+                     (unchecked-slot-ref _%exn140704%_ 'exception))))
+              (if (macro-terminated-thread-exception? _%e140707%_)
+                  (macro-terminated-thread-exception-procedure _%e140707%_)
                   (error '"not an instance"
                          'terminated-thread-exception?
                          (cons 'terminated-thread-exception-procedure
-                               (cons _%e140284%_ '())))))
-            (if (macro-terminated-thread-exception? _%exn140281%_)
-                (macro-terminated-thread-exception-procedure _%exn140281%_)
+                               (cons _%e140707%_ '())))))
+            (if (macro-terminated-thread-exception? _%exn140704%_)
+                (macro-terminated-thread-exception-procedure _%exn140704%_)
                 (error '"not an instance"
                        'terminated-thread-exception?
                        (cons 'terminated-thread-exception-procedure
-                             (cons _%exn140281%_ '())))))))
+                             (cons _%exn140704%_ '())))))))
     (define type-exception?
-      (lambda (_%exn140277%_)
+      (lambda (_%exn140700%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140277%_))
-            (let ((_%e140279%_
+              (class-instance? RuntimeException::t _%exn140700%_))
+            (let ((_%e140702%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140277%_ 'exception))))
-              (macro-type-exception? _%e140279%_))
-            (macro-type-exception? _%exn140277%_))))
+                     (unchecked-slot-ref _%exn140700%_ 'exception))))
+              (macro-type-exception? _%e140702%_))
+            (macro-type-exception? _%exn140700%_))))
     (define type-exception-arg-id
-      (lambda (_%exn140273%_)
+      (lambda (_%exn140696%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140273%_))
-            (let ((_%e140275%_
+              (class-instance? RuntimeException::t _%exn140696%_))
+            (let ((_%e140698%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140273%_ 'exception))))
-              (if (macro-type-exception? _%e140275%_)
-                  (macro-type-exception-arg-id _%e140275%_)
+                     (unchecked-slot-ref _%exn140696%_ 'exception))))
+              (if (macro-type-exception? _%e140698%_)
+                  (macro-type-exception-arg-id _%e140698%_)
                   (error '"not an instance"
                          'type-exception?
                          (cons 'type-exception-arg-id
-                               (cons _%e140275%_ '())))))
-            (if (macro-type-exception? _%exn140273%_)
-                (macro-type-exception-arg-id _%exn140273%_)
+                               (cons _%e140698%_ '())))))
+            (if (macro-type-exception? _%exn140696%_)
+                (macro-type-exception-arg-id _%exn140696%_)
                 (error '"not an instance"
                        'type-exception?
                        (cons 'type-exception-arg-id
-                             (cons _%exn140273%_ '())))))))
+                             (cons _%exn140696%_ '())))))))
     (define type-exception-arguments
-      (lambda (_%exn140269%_)
+      (lambda (_%exn140692%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140269%_))
-            (let ((_%e140271%_
+              (class-instance? RuntimeException::t _%exn140692%_))
+            (let ((_%e140694%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140269%_ 'exception))))
-              (if (macro-type-exception? _%e140271%_)
-                  (macro-type-exception-arguments _%e140271%_)
+                     (unchecked-slot-ref _%exn140692%_ 'exception))))
+              (if (macro-type-exception? _%e140694%_)
+                  (macro-type-exception-arguments _%e140694%_)
                   (error '"not an instance"
                          'type-exception?
                          (cons 'type-exception-arguments
-                               (cons _%e140271%_ '())))))
-            (if (macro-type-exception? _%exn140269%_)
-                (macro-type-exception-arguments _%exn140269%_)
+                               (cons _%e140694%_ '())))))
+            (if (macro-type-exception? _%exn140692%_)
+                (macro-type-exception-arguments _%exn140692%_)
                 (error '"not an instance"
                        'type-exception?
                        (cons 'type-exception-arguments
-                             (cons _%exn140269%_ '())))))))
+                             (cons _%exn140692%_ '())))))))
     (define type-exception-procedure
-      (lambda (_%exn140265%_)
+      (lambda (_%exn140688%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140265%_))
-            (let ((_%e140267%_
+              (class-instance? RuntimeException::t _%exn140688%_))
+            (let ((_%e140690%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140265%_ 'exception))))
-              (if (macro-type-exception? _%e140267%_)
-                  (macro-type-exception-procedure _%e140267%_)
+                     (unchecked-slot-ref _%exn140688%_ 'exception))))
+              (if (macro-type-exception? _%e140690%_)
+                  (macro-type-exception-procedure _%e140690%_)
                   (error '"not an instance"
                          'type-exception?
                          (cons 'type-exception-procedure
-                               (cons _%e140267%_ '())))))
-            (if (macro-type-exception? _%exn140265%_)
-                (macro-type-exception-procedure _%exn140265%_)
+                               (cons _%e140690%_ '())))))
+            (if (macro-type-exception? _%exn140688%_)
+                (macro-type-exception-procedure _%exn140688%_)
                 (error '"not an instance"
                        'type-exception?
                        (cons 'type-exception-procedure
-                             (cons _%exn140265%_ '())))))))
+                             (cons _%exn140688%_ '())))))))
     (define type-exception-type-id
-      (lambda (_%exn140259%_)
+      (lambda (_%exn140682%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140259%_))
-            (let ((_%e140262%_
+              (class-instance? RuntimeException::t _%exn140682%_))
+            (let ((_%e140685%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140259%_ 'exception))))
-              (if (macro-type-exception? _%e140262%_)
-                  (macro-type-exception-type-id _%e140262%_)
+                     (unchecked-slot-ref _%exn140682%_ 'exception))))
+              (if (macro-type-exception? _%e140685%_)
+                  (macro-type-exception-type-id _%e140685%_)
                   (error '"not an instance"
                          'type-exception?
                          (cons 'type-exception-type-id
-                               (cons _%e140262%_ '())))))
-            (if (macro-type-exception? _%exn140259%_)
-                (macro-type-exception-type-id _%exn140259%_)
+                               (cons _%e140685%_ '())))))
+            (if (macro-type-exception? _%exn140682%_)
+                (macro-type-exception-type-id _%exn140682%_)
                 (error '"not an instance"
                        'type-exception?
                        (cons 'type-exception-type-id
-                             (cons _%exn140259%_ '())))))))
+                             (cons _%exn140682%_ '())))))))
     (define unbound-global-exception?
-      (lambda (_%exn140255%_)
+      (lambda (_%exn140678%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140255%_))
-            (let ((_%e140257%_
+              (class-instance? RuntimeException::t _%exn140678%_))
+            (let ((_%e140680%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140255%_ 'exception))))
-              (macro-unbound-global-exception? _%e140257%_))
-            (macro-unbound-global-exception? _%exn140255%_))))
+                     (unchecked-slot-ref _%exn140678%_ 'exception))))
+              (macro-unbound-global-exception? _%e140680%_))
+            (macro-unbound-global-exception? _%exn140678%_))))
     (define unbound-global-exception-code
-      (lambda (_%exn140251%_)
+      (lambda (_%exn140674%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140251%_))
-            (let ((_%e140253%_
+              (class-instance? RuntimeException::t _%exn140674%_))
+            (let ((_%e140676%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140251%_ 'exception))))
-              (if (macro-unbound-global-exception? _%e140253%_)
-                  (macro-unbound-global-exception-code _%e140253%_)
+                     (unchecked-slot-ref _%exn140674%_ 'exception))))
+              (if (macro-unbound-global-exception? _%e140676%_)
+                  (macro-unbound-global-exception-code _%e140676%_)
                   (error '"not an instance"
                          'unbound-global-exception?
                          (cons 'unbound-global-exception-code
-                               (cons _%e140253%_ '())))))
-            (if (macro-unbound-global-exception? _%exn140251%_)
-                (macro-unbound-global-exception-code _%exn140251%_)
+                               (cons _%e140676%_ '())))))
+            (if (macro-unbound-global-exception? _%exn140674%_)
+                (macro-unbound-global-exception-code _%exn140674%_)
                 (error '"not an instance"
                        'unbound-global-exception?
                        (cons 'unbound-global-exception-code
-                             (cons _%exn140251%_ '())))))))
+                             (cons _%exn140674%_ '())))))))
     (define unbound-global-exception-rte
-      (lambda (_%exn140247%_)
+      (lambda (_%exn140670%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140247%_))
-            (let ((_%e140249%_
+              (class-instance? RuntimeException::t _%exn140670%_))
+            (let ((_%e140672%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140247%_ 'exception))))
-              (if (macro-unbound-global-exception? _%e140249%_)
-                  (macro-unbound-global-exception-rte _%e140249%_)
+                     (unchecked-slot-ref _%exn140670%_ 'exception))))
+              (if (macro-unbound-global-exception? _%e140672%_)
+                  (macro-unbound-global-exception-rte _%e140672%_)
                   (error '"not an instance"
                          'unbound-global-exception?
                          (cons 'unbound-global-exception-rte
-                               (cons _%e140249%_ '())))))
-            (if (macro-unbound-global-exception? _%exn140247%_)
-                (macro-unbound-global-exception-rte _%exn140247%_)
+                               (cons _%e140672%_ '())))))
+            (if (macro-unbound-global-exception? _%exn140670%_)
+                (macro-unbound-global-exception-rte _%exn140670%_)
                 (error '"not an instance"
                        'unbound-global-exception?
                        (cons 'unbound-global-exception-rte
-                             (cons _%exn140247%_ '())))))))
+                             (cons _%exn140670%_ '())))))))
     (define unbound-global-exception-variable
-      (lambda (_%exn140241%_)
+      (lambda (_%exn140664%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140241%_))
-            (let ((_%e140244%_
+              (class-instance? RuntimeException::t _%exn140664%_))
+            (let ((_%e140667%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140241%_ 'exception))))
-              (if (macro-unbound-global-exception? _%e140244%_)
-                  (macro-unbound-global-exception-variable _%e140244%_)
+                     (unchecked-slot-ref _%exn140664%_ 'exception))))
+              (if (macro-unbound-global-exception? _%e140667%_)
+                  (macro-unbound-global-exception-variable _%e140667%_)
                   (error '"not an instance"
                          'unbound-global-exception?
                          (cons 'unbound-global-exception-variable
-                               (cons _%e140244%_ '())))))
-            (if (macro-unbound-global-exception? _%exn140241%_)
-                (macro-unbound-global-exception-variable _%exn140241%_)
+                               (cons _%e140667%_ '())))))
+            (if (macro-unbound-global-exception? _%exn140664%_)
+                (macro-unbound-global-exception-variable _%exn140664%_)
                 (error '"not an instance"
                        'unbound-global-exception?
                        (cons 'unbound-global-exception-variable
-                             (cons _%exn140241%_ '())))))))
+                             (cons _%exn140664%_ '())))))))
     (define unbound-key-exception?
-      (lambda (_%exn140237%_)
+      (lambda (_%exn140660%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140237%_))
-            (let ((_%e140239%_
+              (class-instance? RuntimeException::t _%exn140660%_))
+            (let ((_%e140662%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140237%_ 'exception))))
-              (macro-unbound-key-exception? _%e140239%_))
-            (macro-unbound-key-exception? _%exn140237%_))))
+                     (unchecked-slot-ref _%exn140660%_ 'exception))))
+              (macro-unbound-key-exception? _%e140662%_))
+            (macro-unbound-key-exception? _%exn140660%_))))
     (define unbound-key-exception-arguments
-      (lambda (_%exn140233%_)
+      (lambda (_%exn140656%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140233%_))
-            (let ((_%e140235%_
+              (class-instance? RuntimeException::t _%exn140656%_))
+            (let ((_%e140658%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140233%_ 'exception))))
-              (if (macro-unbound-key-exception? _%e140235%_)
-                  (macro-unbound-key-exception-arguments _%e140235%_)
+                     (unchecked-slot-ref _%exn140656%_ 'exception))))
+              (if (macro-unbound-key-exception? _%e140658%_)
+                  (macro-unbound-key-exception-arguments _%e140658%_)
                   (error '"not an instance"
                          'unbound-key-exception?
                          (cons 'unbound-key-exception-arguments
-                               (cons _%e140235%_ '())))))
-            (if (macro-unbound-key-exception? _%exn140233%_)
-                (macro-unbound-key-exception-arguments _%exn140233%_)
+                               (cons _%e140658%_ '())))))
+            (if (macro-unbound-key-exception? _%exn140656%_)
+                (macro-unbound-key-exception-arguments _%exn140656%_)
                 (error '"not an instance"
                        'unbound-key-exception?
                        (cons 'unbound-key-exception-arguments
-                             (cons _%exn140233%_ '())))))))
+                             (cons _%exn140656%_ '())))))))
     (define unbound-key-exception-procedure
-      (lambda (_%exn140227%_)
+      (lambda (_%exn140650%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140227%_))
-            (let ((_%e140230%_
+              (class-instance? RuntimeException::t _%exn140650%_))
+            (let ((_%e140653%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140227%_ 'exception))))
-              (if (macro-unbound-key-exception? _%e140230%_)
-                  (macro-unbound-key-exception-procedure _%e140230%_)
+                     (unchecked-slot-ref _%exn140650%_ 'exception))))
+              (if (macro-unbound-key-exception? _%e140653%_)
+                  (macro-unbound-key-exception-procedure _%e140653%_)
                   (error '"not an instance"
                          'unbound-key-exception?
                          (cons 'unbound-key-exception-procedure
-                               (cons _%e140230%_ '())))))
-            (if (macro-unbound-key-exception? _%exn140227%_)
-                (macro-unbound-key-exception-procedure _%exn140227%_)
+                               (cons _%e140653%_ '())))))
+            (if (macro-unbound-key-exception? _%exn140650%_)
+                (macro-unbound-key-exception-procedure _%exn140650%_)
                 (error '"not an instance"
                        'unbound-key-exception?
                        (cons 'unbound-key-exception-procedure
-                             (cons _%exn140227%_ '())))))))
+                             (cons _%exn140650%_ '())))))))
     (define unbound-os-environment-variable-exception?
-      (lambda (_%exn140223%_)
+      (lambda (_%exn140646%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140223%_))
-            (let ((_%e140225%_
+              (class-instance? RuntimeException::t _%exn140646%_))
+            (let ((_%e140648%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140223%_ 'exception))))
-              (macro-unbound-os-environment-variable-exception? _%e140225%_))
-            (macro-unbound-os-environment-variable-exception? _%exn140223%_))))
+                     (unchecked-slot-ref _%exn140646%_ 'exception))))
+              (macro-unbound-os-environment-variable-exception? _%e140648%_))
+            (macro-unbound-os-environment-variable-exception? _%exn140646%_))))
     (define unbound-os-environment-variable-exception-arguments
-      (lambda (_%exn140219%_)
+      (lambda (_%exn140642%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140219%_))
-            (let ((_%e140221%_
+              (class-instance? RuntimeException::t _%exn140642%_))
+            (let ((_%e140644%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140219%_ 'exception))))
+                     (unchecked-slot-ref _%exn140642%_ 'exception))))
               (if (macro-unbound-os-environment-variable-exception?
-                   _%e140221%_)
+                   _%e140644%_)
                   (macro-unbound-os-environment-variable-exception-arguments
-                   _%e140221%_)
+                   _%e140644%_)
                   (error '"not an instance"
                          'unbound-os-environment-variable-exception?
                          (cons 'unbound-os-environment-variable-exception-arguments
-                               (cons _%e140221%_ '())))))
+                               (cons _%e140644%_ '())))))
             (if (macro-unbound-os-environment-variable-exception?
-                 _%exn140219%_)
+                 _%exn140642%_)
                 (macro-unbound-os-environment-variable-exception-arguments
-                 _%exn140219%_)
+                 _%exn140642%_)
                 (error '"not an instance"
                        'unbound-os-environment-variable-exception?
                        (cons 'unbound-os-environment-variable-exception-arguments
-                             (cons _%exn140219%_ '())))))))
+                             (cons _%exn140642%_ '())))))))
     (define unbound-os-environment-variable-exception-procedure
-      (lambda (_%exn140213%_)
+      (lambda (_%exn140636%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140213%_))
-            (let ((_%e140216%_
+              (class-instance? RuntimeException::t _%exn140636%_))
+            (let ((_%e140639%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140213%_ 'exception))))
+                     (unchecked-slot-ref _%exn140636%_ 'exception))))
               (if (macro-unbound-os-environment-variable-exception?
-                   _%e140216%_)
+                   _%e140639%_)
                   (macro-unbound-os-environment-variable-exception-procedure
-                   _%e140216%_)
+                   _%e140639%_)
                   (error '"not an instance"
                          'unbound-os-environment-variable-exception?
                          (cons 'unbound-os-environment-variable-exception-procedure
-                               (cons _%e140216%_ '())))))
+                               (cons _%e140639%_ '())))))
             (if (macro-unbound-os-environment-variable-exception?
-                 _%exn140213%_)
+                 _%exn140636%_)
                 (macro-unbound-os-environment-variable-exception-procedure
-                 _%exn140213%_)
+                 _%exn140636%_)
                 (error '"not an instance"
                        'unbound-os-environment-variable-exception?
                        (cons 'unbound-os-environment-variable-exception-procedure
-                             (cons _%exn140213%_ '())))))))
+                             (cons _%exn140636%_ '())))))))
     (define unbound-serial-number-exception?
-      (lambda (_%exn140209%_)
+      (lambda (_%exn140632%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140209%_))
-            (let ((_%e140211%_
+              (class-instance? RuntimeException::t _%exn140632%_))
+            (let ((_%e140634%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140209%_ 'exception))))
-              (macro-unbound-serial-number-exception? _%e140211%_))
-            (macro-unbound-serial-number-exception? _%exn140209%_))))
+                     (unchecked-slot-ref _%exn140632%_ 'exception))))
+              (macro-unbound-serial-number-exception? _%e140634%_))
+            (macro-unbound-serial-number-exception? _%exn140632%_))))
     (define unbound-serial-number-exception-arguments
-      (lambda (_%exn140205%_)
+      (lambda (_%exn140628%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140205%_))
-            (let ((_%e140207%_
+              (class-instance? RuntimeException::t _%exn140628%_))
+            (let ((_%e140630%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140205%_ 'exception))))
-              (if (macro-unbound-serial-number-exception? _%e140207%_)
-                  (macro-unbound-serial-number-exception-arguments _%e140207%_)
+                     (unchecked-slot-ref _%exn140628%_ 'exception))))
+              (if (macro-unbound-serial-number-exception? _%e140630%_)
+                  (macro-unbound-serial-number-exception-arguments _%e140630%_)
                   (error '"not an instance"
                          'unbound-serial-number-exception?
                          (cons 'unbound-serial-number-exception-arguments
-                               (cons _%e140207%_ '())))))
-            (if (macro-unbound-serial-number-exception? _%exn140205%_)
-                (macro-unbound-serial-number-exception-arguments _%exn140205%_)
+                               (cons _%e140630%_ '())))))
+            (if (macro-unbound-serial-number-exception? _%exn140628%_)
+                (macro-unbound-serial-number-exception-arguments _%exn140628%_)
                 (error '"not an instance"
                        'unbound-serial-number-exception?
                        (cons 'unbound-serial-number-exception-arguments
-                             (cons _%exn140205%_ '())))))))
+                             (cons _%exn140628%_ '())))))))
     (define unbound-serial-number-exception-procedure
-      (lambda (_%exn140199%_)
+      (lambda (_%exn140622%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140199%_))
-            (let ((_%e140202%_
+              (class-instance? RuntimeException::t _%exn140622%_))
+            (let ((_%e140625%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140199%_ 'exception))))
-              (if (macro-unbound-serial-number-exception? _%e140202%_)
-                  (macro-unbound-serial-number-exception-procedure _%e140202%_)
+                     (unchecked-slot-ref _%exn140622%_ 'exception))))
+              (if (macro-unbound-serial-number-exception? _%e140625%_)
+                  (macro-unbound-serial-number-exception-procedure _%e140625%_)
                   (error '"not an instance"
                          'unbound-serial-number-exception?
                          (cons 'unbound-serial-number-exception-procedure
-                               (cons _%e140202%_ '())))))
-            (if (macro-unbound-serial-number-exception? _%exn140199%_)
-                (macro-unbound-serial-number-exception-procedure _%exn140199%_)
+                               (cons _%e140625%_ '())))))
+            (if (macro-unbound-serial-number-exception? _%exn140622%_)
+                (macro-unbound-serial-number-exception-procedure _%exn140622%_)
                 (error '"not an instance"
                        'unbound-serial-number-exception?
                        (cons 'unbound-serial-number-exception-procedure
-                             (cons _%exn140199%_ '())))))))
+                             (cons _%exn140622%_ '())))))))
     (define uncaught-exception?
-      (lambda (_%exn140195%_)
+      (lambda (_%exn140618%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140195%_))
-            (let ((_%e140197%_
+              (class-instance? RuntimeException::t _%exn140618%_))
+            (let ((_%e140620%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140195%_ 'exception))))
-              (macro-uncaught-exception? _%e140197%_))
-            (macro-uncaught-exception? _%exn140195%_))))
+                     (unchecked-slot-ref _%exn140618%_ 'exception))))
+              (macro-uncaught-exception? _%e140620%_))
+            (macro-uncaught-exception? _%exn140618%_))))
     (define uncaught-exception-arguments
-      (lambda (_%exn140191%_)
+      (lambda (_%exn140614%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140191%_))
-            (let ((_%e140193%_
+              (class-instance? RuntimeException::t _%exn140614%_))
+            (let ((_%e140616%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140191%_ 'exception))))
-              (if (macro-uncaught-exception? _%e140193%_)
-                  (macro-uncaught-exception-arguments _%e140193%_)
+                     (unchecked-slot-ref _%exn140614%_ 'exception))))
+              (if (macro-uncaught-exception? _%e140616%_)
+                  (macro-uncaught-exception-arguments _%e140616%_)
                   (error '"not an instance"
                          'uncaught-exception?
                          (cons 'uncaught-exception-arguments
-                               (cons _%e140193%_ '())))))
-            (if (macro-uncaught-exception? _%exn140191%_)
-                (macro-uncaught-exception-arguments _%exn140191%_)
+                               (cons _%e140616%_ '())))))
+            (if (macro-uncaught-exception? _%exn140614%_)
+                (macro-uncaught-exception-arguments _%exn140614%_)
                 (error '"not an instance"
                        'uncaught-exception?
                        (cons 'uncaught-exception-arguments
-                             (cons _%exn140191%_ '())))))))
+                             (cons _%exn140614%_ '())))))))
     (define uncaught-exception-procedure
-      (lambda (_%exn140187%_)
+      (lambda (_%exn140610%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140187%_))
-            (let ((_%e140189%_
+              (class-instance? RuntimeException::t _%exn140610%_))
+            (let ((_%e140612%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140187%_ 'exception))))
-              (if (macro-uncaught-exception? _%e140189%_)
-                  (macro-uncaught-exception-procedure _%e140189%_)
+                     (unchecked-slot-ref _%exn140610%_ 'exception))))
+              (if (macro-uncaught-exception? _%e140612%_)
+                  (macro-uncaught-exception-procedure _%e140612%_)
                   (error '"not an instance"
                          'uncaught-exception?
                          (cons 'uncaught-exception-procedure
-                               (cons _%e140189%_ '())))))
-            (if (macro-uncaught-exception? _%exn140187%_)
-                (macro-uncaught-exception-procedure _%exn140187%_)
+                               (cons _%e140612%_ '())))))
+            (if (macro-uncaught-exception? _%exn140610%_)
+                (macro-uncaught-exception-procedure _%exn140610%_)
                 (error '"not an instance"
                        'uncaught-exception?
                        (cons 'uncaught-exception-procedure
-                             (cons _%exn140187%_ '())))))))
+                             (cons _%exn140610%_ '())))))))
     (define uncaught-exception-reason
-      (lambda (_%exn140181%_)
+      (lambda (_%exn140604%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140181%_))
-            (let ((_%e140184%_
+              (class-instance? RuntimeException::t _%exn140604%_))
+            (let ((_%e140607%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140181%_ 'exception))))
-              (if (macro-uncaught-exception? _%e140184%_)
-                  (macro-uncaught-exception-reason _%e140184%_)
+                     (unchecked-slot-ref _%exn140604%_ 'exception))))
+              (if (macro-uncaught-exception? _%e140607%_)
+                  (macro-uncaught-exception-reason _%e140607%_)
                   (error '"not an instance"
                          'uncaught-exception?
                          (cons 'uncaught-exception-reason
-                               (cons _%e140184%_ '())))))
-            (if (macro-uncaught-exception? _%exn140181%_)
-                (macro-uncaught-exception-reason _%exn140181%_)
+                               (cons _%e140607%_ '())))))
+            (if (macro-uncaught-exception? _%exn140604%_)
+                (macro-uncaught-exception-reason _%exn140604%_)
                 (error '"not an instance"
                        'uncaught-exception?
                        (cons 'uncaught-exception-reason
-                             (cons _%exn140181%_ '())))))))
+                             (cons _%exn140604%_ '())))))))
     (define uninitialized-thread-exception?
-      (lambda (_%exn140177%_)
+      (lambda (_%exn140600%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140177%_))
-            (let ((_%e140179%_
+              (class-instance? RuntimeException::t _%exn140600%_))
+            (let ((_%e140602%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140177%_ 'exception))))
-              (macro-uninitialized-thread-exception? _%e140179%_))
-            (macro-uninitialized-thread-exception? _%exn140177%_))))
+                     (unchecked-slot-ref _%exn140600%_ 'exception))))
+              (macro-uninitialized-thread-exception? _%e140602%_))
+            (macro-uninitialized-thread-exception? _%exn140600%_))))
     (define uninitialized-thread-exception-arguments
-      (lambda (_%exn140173%_)
+      (lambda (_%exn140596%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140173%_))
-            (let ((_%e140175%_
+              (class-instance? RuntimeException::t _%exn140596%_))
+            (let ((_%e140598%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140173%_ 'exception))))
-              (if (macro-uninitialized-thread-exception? _%e140175%_)
-                  (macro-uninitialized-thread-exception-arguments _%e140175%_)
+                     (unchecked-slot-ref _%exn140596%_ 'exception))))
+              (if (macro-uninitialized-thread-exception? _%e140598%_)
+                  (macro-uninitialized-thread-exception-arguments _%e140598%_)
                   (error '"not an instance"
                          'uninitialized-thread-exception?
                          (cons 'uninitialized-thread-exception-arguments
-                               (cons _%e140175%_ '())))))
-            (if (macro-uninitialized-thread-exception? _%exn140173%_)
-                (macro-uninitialized-thread-exception-arguments _%exn140173%_)
+                               (cons _%e140598%_ '())))))
+            (if (macro-uninitialized-thread-exception? _%exn140596%_)
+                (macro-uninitialized-thread-exception-arguments _%exn140596%_)
                 (error '"not an instance"
                        'uninitialized-thread-exception?
                        (cons 'uninitialized-thread-exception-arguments
-                             (cons _%exn140173%_ '())))))))
+                             (cons _%exn140596%_ '())))))))
     (define uninitialized-thread-exception-procedure
-      (lambda (_%exn140167%_)
+      (lambda (_%exn140590%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140167%_))
-            (let ((_%e140170%_
+              (class-instance? RuntimeException::t _%exn140590%_))
+            (let ((_%e140593%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140167%_ 'exception))))
-              (if (macro-uninitialized-thread-exception? _%e140170%_)
-                  (macro-uninitialized-thread-exception-procedure _%e140170%_)
+                     (unchecked-slot-ref _%exn140590%_ 'exception))))
+              (if (macro-uninitialized-thread-exception? _%e140593%_)
+                  (macro-uninitialized-thread-exception-procedure _%e140593%_)
                   (error '"not an instance"
                          'uninitialized-thread-exception?
                          (cons 'uninitialized-thread-exception-procedure
-                               (cons _%e140170%_ '())))))
-            (if (macro-uninitialized-thread-exception? _%exn140167%_)
-                (macro-uninitialized-thread-exception-procedure _%exn140167%_)
+                               (cons _%e140593%_ '())))))
+            (if (macro-uninitialized-thread-exception? _%exn140590%_)
+                (macro-uninitialized-thread-exception-procedure _%exn140590%_)
                 (error '"not an instance"
                        'uninitialized-thread-exception?
                        (cons 'uninitialized-thread-exception-procedure
-                             (cons _%exn140167%_ '())))))))
+                             (cons _%exn140590%_ '())))))))
     (define unknown-keyword-argument-exception?
-      (lambda (_%exn140163%_)
+      (lambda (_%exn140586%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140163%_))
-            (let ((_%e140165%_
+              (class-instance? RuntimeException::t _%exn140586%_))
+            (let ((_%e140588%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140163%_ 'exception))))
-              (macro-unknown-keyword-argument-exception? _%e140165%_))
-            (macro-unknown-keyword-argument-exception? _%exn140163%_))))
+                     (unchecked-slot-ref _%exn140586%_ 'exception))))
+              (macro-unknown-keyword-argument-exception? _%e140588%_))
+            (macro-unknown-keyword-argument-exception? _%exn140586%_))))
     (define unknown-keyword-argument-exception-arguments
-      (lambda (_%exn140159%_)
+      (lambda (_%exn140582%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140159%_))
-            (let ((_%e140161%_
+              (class-instance? RuntimeException::t _%exn140582%_))
+            (let ((_%e140584%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140159%_ 'exception))))
-              (if (macro-unknown-keyword-argument-exception? _%e140161%_)
+                     (unchecked-slot-ref _%exn140582%_ 'exception))))
+              (if (macro-unknown-keyword-argument-exception? _%e140584%_)
                   (macro-unknown-keyword-argument-exception-arguments
-                   _%e140161%_)
+                   _%e140584%_)
                   (error '"not an instance"
                          'unknown-keyword-argument-exception?
                          (cons 'unknown-keyword-argument-exception-arguments
-                               (cons _%e140161%_ '())))))
-            (if (macro-unknown-keyword-argument-exception? _%exn140159%_)
+                               (cons _%e140584%_ '())))))
+            (if (macro-unknown-keyword-argument-exception? _%exn140582%_)
                 (macro-unknown-keyword-argument-exception-arguments
-                 _%exn140159%_)
+                 _%exn140582%_)
                 (error '"not an instance"
                        'unknown-keyword-argument-exception?
                        (cons 'unknown-keyword-argument-exception-arguments
-                             (cons _%exn140159%_ '())))))))
+                             (cons _%exn140582%_ '())))))))
     (define unknown-keyword-argument-exception-procedure
-      (lambda (_%exn140153%_)
+      (lambda (_%exn140576%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140153%_))
-            (let ((_%e140156%_
+              (class-instance? RuntimeException::t _%exn140576%_))
+            (let ((_%e140579%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140153%_ 'exception))))
-              (if (macro-unknown-keyword-argument-exception? _%e140156%_)
+                     (unchecked-slot-ref _%exn140576%_ 'exception))))
+              (if (macro-unknown-keyword-argument-exception? _%e140579%_)
                   (macro-unknown-keyword-argument-exception-procedure
-                   _%e140156%_)
+                   _%e140579%_)
                   (error '"not an instance"
                          'unknown-keyword-argument-exception?
                          (cons 'unknown-keyword-argument-exception-procedure
-                               (cons _%e140156%_ '())))))
-            (if (macro-unknown-keyword-argument-exception? _%exn140153%_)
+                               (cons _%e140579%_ '())))))
+            (if (macro-unknown-keyword-argument-exception? _%exn140576%_)
                 (macro-unknown-keyword-argument-exception-procedure
-                 _%exn140153%_)
+                 _%exn140576%_)
                 (error '"not an instance"
                        'unknown-keyword-argument-exception?
                        (cons 'unknown-keyword-argument-exception-procedure
-                             (cons _%exn140153%_ '())))))))
+                             (cons _%exn140576%_ '())))))))
     (define unterminated-process-exception?
-      (lambda (_%exn140149%_)
+      (lambda (_%exn140572%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140149%_))
-            (let ((_%e140151%_
+              (class-instance? RuntimeException::t _%exn140572%_))
+            (let ((_%e140574%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140149%_ 'exception))))
-              (macro-unterminated-process-exception? _%e140151%_))
-            (macro-unterminated-process-exception? _%exn140149%_))))
+                     (unchecked-slot-ref _%exn140572%_ 'exception))))
+              (macro-unterminated-process-exception? _%e140574%_))
+            (macro-unterminated-process-exception? _%exn140572%_))))
     (define unterminated-process-exception-arguments
-      (lambda (_%exn140145%_)
+      (lambda (_%exn140568%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140145%_))
-            (let ((_%e140147%_
+              (class-instance? RuntimeException::t _%exn140568%_))
+            (let ((_%e140570%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140145%_ 'exception))))
-              (if (macro-unterminated-process-exception? _%e140147%_)
-                  (macro-unterminated-process-exception-arguments _%e140147%_)
+                     (unchecked-slot-ref _%exn140568%_ 'exception))))
+              (if (macro-unterminated-process-exception? _%e140570%_)
+                  (macro-unterminated-process-exception-arguments _%e140570%_)
                   (error '"not an instance"
                          'unterminated-process-exception?
                          (cons 'unterminated-process-exception-arguments
-                               (cons _%e140147%_ '())))))
-            (if (macro-unterminated-process-exception? _%exn140145%_)
-                (macro-unterminated-process-exception-arguments _%exn140145%_)
+                               (cons _%e140570%_ '())))))
+            (if (macro-unterminated-process-exception? _%exn140568%_)
+                (macro-unterminated-process-exception-arguments _%exn140568%_)
                 (error '"not an instance"
                        'unterminated-process-exception?
                        (cons 'unterminated-process-exception-arguments
-                             (cons _%exn140145%_ '())))))))
+                             (cons _%exn140568%_ '())))))))
     (define unterminated-process-exception-procedure
-      (lambda (_%exn140139%_)
+      (lambda (_%exn140562%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140139%_))
-            (let ((_%e140142%_
+              (class-instance? RuntimeException::t _%exn140562%_))
+            (let ((_%e140565%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140139%_ 'exception))))
-              (if (macro-unterminated-process-exception? _%e140142%_)
-                  (macro-unterminated-process-exception-procedure _%e140142%_)
+                     (unchecked-slot-ref _%exn140562%_ 'exception))))
+              (if (macro-unterminated-process-exception? _%e140565%_)
+                  (macro-unterminated-process-exception-procedure _%e140565%_)
                   (error '"not an instance"
                          'unterminated-process-exception?
                          (cons 'unterminated-process-exception-procedure
-                               (cons _%e140142%_ '())))))
-            (if (macro-unterminated-process-exception? _%exn140139%_)
-                (macro-unterminated-process-exception-procedure _%exn140139%_)
+                               (cons _%e140565%_ '())))))
+            (if (macro-unterminated-process-exception? _%exn140562%_)
+                (macro-unterminated-process-exception-procedure _%exn140562%_)
                 (error '"not an instance"
                        'unterminated-process-exception?
                        (cons 'unterminated-process-exception-procedure
-                             (cons _%exn140139%_ '())))))))
+                             (cons _%exn140562%_ '())))))))
     (define wrong-number-of-arguments-exception?
-      (lambda (_%exn140135%_)
+      (lambda (_%exn140558%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140135%_))
-            (let ((_%e140137%_
+              (class-instance? RuntimeException::t _%exn140558%_))
+            (let ((_%e140560%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140135%_ 'exception))))
-              (macro-wrong-number-of-arguments-exception? _%e140137%_))
-            (macro-wrong-number-of-arguments-exception? _%exn140135%_))))
+                     (unchecked-slot-ref _%exn140558%_ 'exception))))
+              (macro-wrong-number-of-arguments-exception? _%e140560%_))
+            (macro-wrong-number-of-arguments-exception? _%exn140558%_))))
     (define wrong-number-of-arguments-exception-arguments
-      (lambda (_%exn140131%_)
+      (lambda (_%exn140554%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140131%_))
-            (let ((_%e140133%_
+              (class-instance? RuntimeException::t _%exn140554%_))
+            (let ((_%e140556%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140131%_ 'exception))))
-              (if (macro-wrong-number-of-arguments-exception? _%e140133%_)
+                     (unchecked-slot-ref _%exn140554%_ 'exception))))
+              (if (macro-wrong-number-of-arguments-exception? _%e140556%_)
                   (macro-wrong-number-of-arguments-exception-arguments
-                   _%e140133%_)
+                   _%e140556%_)
                   (error '"not an instance"
                          'wrong-number-of-arguments-exception?
                          (cons 'wrong-number-of-arguments-exception-arguments
-                               (cons _%e140133%_ '())))))
-            (if (macro-wrong-number-of-arguments-exception? _%exn140131%_)
+                               (cons _%e140556%_ '())))))
+            (if (macro-wrong-number-of-arguments-exception? _%exn140554%_)
                 (macro-wrong-number-of-arguments-exception-arguments
-                 _%exn140131%_)
+                 _%exn140554%_)
                 (error '"not an instance"
                        'wrong-number-of-arguments-exception?
                        (cons 'wrong-number-of-arguments-exception-arguments
-                             (cons _%exn140131%_ '())))))))
+                             (cons _%exn140554%_ '())))))))
     (define wrong-number-of-arguments-exception-procedure
-      (lambda (_%exn140125%_)
+      (lambda (_%exn140548%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140125%_))
-            (let ((_%e140128%_
+              (class-instance? RuntimeException::t _%exn140548%_))
+            (let ((_%e140551%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140125%_ 'exception))))
-              (if (macro-wrong-number-of-arguments-exception? _%e140128%_)
+                     (unchecked-slot-ref _%exn140548%_ 'exception))))
+              (if (macro-wrong-number-of-arguments-exception? _%e140551%_)
                   (macro-wrong-number-of-arguments-exception-procedure
-                   _%e140128%_)
+                   _%e140551%_)
                   (error '"not an instance"
                          'wrong-number-of-arguments-exception?
                          (cons 'wrong-number-of-arguments-exception-procedure
-                               (cons _%e140128%_ '())))))
-            (if (macro-wrong-number-of-arguments-exception? _%exn140125%_)
+                               (cons _%e140551%_ '())))))
+            (if (macro-wrong-number-of-arguments-exception? _%exn140548%_)
                 (macro-wrong-number-of-arguments-exception-procedure
-                 _%exn140125%_)
+                 _%exn140548%_)
                 (error '"not an instance"
                        'wrong-number-of-arguments-exception?
                        (cons 'wrong-number-of-arguments-exception-procedure
-                             (cons _%exn140125%_ '())))))))
+                             (cons _%exn140548%_ '())))))))
     (define wrong-number-of-values-exception?
-      (lambda (_%exn140121%_)
+      (lambda (_%exn140544%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140121%_))
-            (let ((_%e140123%_
+              (class-instance? RuntimeException::t _%exn140544%_))
+            (let ((_%e140546%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140121%_ 'exception))))
-              (macro-wrong-number-of-values-exception? _%e140123%_))
-            (macro-wrong-number-of-values-exception? _%exn140121%_))))
+                     (unchecked-slot-ref _%exn140544%_ 'exception))))
+              (macro-wrong-number-of-values-exception? _%e140546%_))
+            (macro-wrong-number-of-values-exception? _%exn140544%_))))
     (define wrong-number-of-values-exception-code
-      (lambda (_%exn140117%_)
+      (lambda (_%exn140540%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140117%_))
-            (let ((_%e140119%_
+              (class-instance? RuntimeException::t _%exn140540%_))
+            (let ((_%e140542%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140117%_ 'exception))))
-              (if (macro-wrong-number-of-values-exception? _%e140119%_)
-                  (macro-wrong-number-of-values-exception-code _%e140119%_)
+                     (unchecked-slot-ref _%exn140540%_ 'exception))))
+              (if (macro-wrong-number-of-values-exception? _%e140542%_)
+                  (macro-wrong-number-of-values-exception-code _%e140542%_)
                   (error '"not an instance"
                          'wrong-number-of-values-exception?
                          (cons 'wrong-number-of-values-exception-code
-                               (cons _%e140119%_ '())))))
-            (if (macro-wrong-number-of-values-exception? _%exn140117%_)
-                (macro-wrong-number-of-values-exception-code _%exn140117%_)
+                               (cons _%e140542%_ '())))))
+            (if (macro-wrong-number-of-values-exception? _%exn140540%_)
+                (macro-wrong-number-of-values-exception-code _%exn140540%_)
                 (error '"not an instance"
                        'wrong-number-of-values-exception?
                        (cons 'wrong-number-of-values-exception-code
-                             (cons _%exn140117%_ '())))))))
+                             (cons _%exn140540%_ '())))))))
     (define wrong-number-of-values-exception-rte
-      (lambda (_%exn140113%_)
+      (lambda (_%exn140536%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140113%_))
-            (let ((_%e140115%_
+              (class-instance? RuntimeException::t _%exn140536%_))
+            (let ((_%e140538%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140113%_ 'exception))))
-              (if (macro-wrong-number-of-values-exception? _%e140115%_)
-                  (macro-wrong-number-of-values-exception-rte _%e140115%_)
+                     (unchecked-slot-ref _%exn140536%_ 'exception))))
+              (if (macro-wrong-number-of-values-exception? _%e140538%_)
+                  (macro-wrong-number-of-values-exception-rte _%e140538%_)
                   (error '"not an instance"
                          'wrong-number-of-values-exception?
                          (cons 'wrong-number-of-values-exception-rte
-                               (cons _%e140115%_ '())))))
-            (if (macro-wrong-number-of-values-exception? _%exn140113%_)
-                (macro-wrong-number-of-values-exception-rte _%exn140113%_)
+                               (cons _%e140538%_ '())))))
+            (if (macro-wrong-number-of-values-exception? _%exn140536%_)
+                (macro-wrong-number-of-values-exception-rte _%exn140536%_)
                 (error '"not an instance"
                        'wrong-number-of-values-exception?
                        (cons 'wrong-number-of-values-exception-rte
-                             (cons _%exn140113%_ '())))))))
+                             (cons _%exn140536%_ '())))))))
     (define wrong-number-of-values-exception-vals
-      (lambda (_%exn140107%_)
+      (lambda (_%exn140530%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140107%_))
-            (let ((_%e140110%_
+              (class-instance? RuntimeException::t _%exn140530%_))
+            (let ((_%e140533%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140107%_ 'exception))))
-              (if (macro-wrong-number-of-values-exception? _%e140110%_)
-                  (macro-wrong-number-of-values-exception-vals _%e140110%_)
+                     (unchecked-slot-ref _%exn140530%_ 'exception))))
+              (if (macro-wrong-number-of-values-exception? _%e140533%_)
+                  (macro-wrong-number-of-values-exception-vals _%e140533%_)
                   (error '"not an instance"
                          'wrong-number-of-values-exception?
                          (cons 'wrong-number-of-values-exception-vals
-                               (cons _%e140110%_ '())))))
-            (if (macro-wrong-number-of-values-exception? _%exn140107%_)
-                (macro-wrong-number-of-values-exception-vals _%exn140107%_)
+                               (cons _%e140533%_ '())))))
+            (if (macro-wrong-number-of-values-exception? _%exn140530%_)
+                (macro-wrong-number-of-values-exception-vals _%exn140530%_)
                 (error '"not an instance"
                        'wrong-number-of-values-exception?
                        (cons 'wrong-number-of-values-exception-vals
-                             (cons _%exn140107%_ '())))))))
+                             (cons _%exn140530%_ '())))))))
     (define wrong-processor-c-return-exception?
-      (lambda (_%exn140101%_)
+      (lambda (_%exn140524%_)
         (if (let ()
               (declare (not safe))
-              (class-instance? RuntimeException::t _%exn140101%_))
-            (let ((_%e140104%_
+              (class-instance? RuntimeException::t _%exn140524%_))
+            (let ((_%e140527%_
                    (let ()
                      (declare (not safe))
-                     (unchecked-slot-ref _%exn140101%_ 'exception))))
-              (macro-wrong-processor-c-return-exception? _%e140104%_))
-            (macro-wrong-processor-c-return-exception? _%exn140101%_))))))
+                     (unchecked-slot-ref _%exn140524%_ 'exception))))
+              (macro-wrong-processor-c-return-exception? _%e140527%_))
+            (macro-wrong-processor-c-return-exception? _%exn140524%_))))))
