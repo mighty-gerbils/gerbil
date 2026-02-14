@@ -911,192 +911,152 @@ package: gerbil/core
   (import MOP-5 (phi: +1 MOP-2))
   (export #t)
 
-  (module root-classes
-    (export #t)
-    ;; the root
-    (defsystem-class-info :t t::t () true)
+  ;; the root
+  (defsystem-class-info :t t::t () true)
 
-    ;; class as a stystem class
-    (defsystem-class-info :class class::t (:t) class-type?)
-    ;; and as an instance
-    (defsyntax class
-      (make-class-type-info
-       id: 'class
-       name: 'class
-       super: [(quote-syntax :t)]
-       slots: '(id name super flags fields
-                   precedence-list slot-vector slot-table properties constructor methods
-                   specializer interface)
-       struct?: #t
-       type-descriptor: (quote-syntax class::t)
-       constructor: (quote-syntax make-class-type)
-       predicate: (quote-syntax class-type?)
-       accessors:
-       [['id :: (quote-syntax class-type-id)]
-        ['name :: (quote-syntax class-type-name)]
-        ['super :: (quote-syntax class-type-super)]
-        ['flags :: (quote-syntax class-type-flags)]
-        ['fields :: (quote-syntax class-type-fields)]
-        ['precedence-list :: (quote-syntax class-type-precedence-list)]
-        ['slot-vector :: (quote-syntax class-type-slot-vector)]
-        ['slot-table :: (quote-syntax class-type-slot-table)]
-        ['properties :: (quote-syntax class-type-properties)]
-        ['constructor :: (quote-syntax class-type-constructor)]
-        ['methods :: (quote-syntax class-type-methods)]
-        ['specializer :: (quote-syntax class-type-specializer)]
-        ['interface :: (quote-syntax class-type-interface)]]
-       mutators: []                     ; read only
-       unchecked-accessors:
-       [['id :: (quote-syntax &class-type-id)]
-        ['name :: (quote-syntax &class-type-name)]
-        ['super :: (quote-syntax &class-type-super)]
-        ['flags :: (quote-syntax &class-type-flags)]
-        ['fields :: (quote-syntax &class-type-fields)]
-        ['precedence-list :: (quote-syntax &class-type-precedence-list)]
-        ['slot-vector :: (quote-syntax &class-type-slot-vector)]
-        ['slot-table :: (quote-syntax &class-type-slot-table)]
-        ['properties :: (quote-syntax &class-type-properties)]
-        ['constructor :: (quote-syntax &class-type-constructor)]
-        ['methods :: (quote-syntax &class-type-methods)]
-        ['specializer :: (quote-syntax &class-type-specializer)]
-        ['interface :: (quote-syntax &class-type-interface)]]
-       unchecked-mutators: []           ; read only
-       ))
+  ;; class as a stystem class
+  (defsystem-class-info :class class::t (:t) class-type?)
+  ;; and as an instance
+  (defsyntax class
+    (make-class-type-info
+     id: 'class
+     name: 'class
+     super: [(quote-syntax :t)]
+     slots: '(id name super flags fields
+                 precedence-list slot-vector slot-table properties constructor methods
+                 specializer interface)
+     struct?: #t
+     type-descriptor: (quote-syntax class::t)
+     constructor: (quote-syntax make-class-type)
+     predicate: (quote-syntax class-type?)
+     accessors:
+     [['id :: (quote-syntax class-type-id)]
+      ['name :: (quote-syntax class-type-name)]
+      ['super :: (quote-syntax class-type-super)]
+      ['flags :: (quote-syntax class-type-flags)]
+      ['fields :: (quote-syntax class-type-fields)]
+      ['precedence-list :: (quote-syntax class-type-precedence-list)]
+      ['slot-vector :: (quote-syntax class-type-slot-vector)]
+      ['slot-table :: (quote-syntax class-type-slot-table)]
+      ['properties :: (quote-syntax class-type-properties)]
+      ['constructor :: (quote-syntax class-type-constructor)]
+      ['methods :: (quote-syntax class-type-methods)]
+      ['specializer :: (quote-syntax class-type-specializer)]
+      ['interface :: (quote-syntax class-type-interface)]]
+     mutators: []                       ; read only
+     unchecked-accessors:
+     [['id :: (quote-syntax &class-type-id)]
+      ['name :: (quote-syntax &class-type-name)]
+      ['super :: (quote-syntax &class-type-super)]
+      ['flags :: (quote-syntax &class-type-flags)]
+      ['fields :: (quote-syntax &class-type-fields)]
+      ['precedence-list :: (quote-syntax &class-type-precedence-list)]
+      ['slot-vector :: (quote-syntax &class-type-slot-vector)]
+      ['slot-table :: (quote-syntax &class-type-slot-table)]
+      ['properties :: (quote-syntax &class-type-properties)]
+      ['constructor :: (quote-syntax &class-type-constructor)]
+      ['methods :: (quote-syntax &class-type-methods)]
+      ['specializer :: (quote-syntax &class-type-specializer)]
+      ['interface :: (quote-syntax &class-type-interface)]]
+     unchecked-mutators: []             ; read only
+     ))
 
-    ;; objects
-    (defsystem-class-info :object object::t (:t) object?)
+  ;; objects
+  (defsystem-class-info :object object::t (:t) object?)
 
-    ;; NOTE: this must match gerbil/runtime/mop-system-classes
-    (defsystem-class-info :builtin builtin::t (:t) builtin-object?)
-    (defsystem-class-info :subtyped subtyped::t (:builtin) builtin-subtyped?)
-    (defsystem-class-info :structure structure::t (:subtyped) builtin-structure?)
-    (defsystem-class-info :immediate immediate::t (:builtin) immediate?))
+  ;; NOTE: this must match gerbil/runtime/mop-system-classes
+  (defsystem-class-info :builtin builtin::t (:t) builtin-object?)
+  (defsystem-class-info :subtyped subtyped::t (:builtin) builtin-subtyped?)
+  (defsystem-class-info :structure structure::t (:subtyped) builtin-structure?)
+  (defsystem-class-info :immediate immediate::t (:builtin) immediate?)
 
-  (import root-classes)
+  (defsystem-class-info :special special::t (:immediate) special?)
+  (defsystem-class-info :atom atom::t (:special) atom?)
+  (defsystem-class-info :char char::t (:immediate) char?)
+  (defsystem-class-info :boolean boolean::t (:immediate) boolean?)
+  (defsystem-class-info :true true::t (:boolean :atom) true?)
+  (defsystem-class-info :false false::t (:boolean :atom) not)
+  (defsystem-class-info :eof eof::t (:atom) eof-object?)
+  (defsystem-class-info :void void::t (:atom) void?)
+  (defsystem-class-info :unbound unbound::t (:atom) unbound?)
+  (defsystem-class-info :unbound2 unbound2::t (:atom) unbound2?)
+  (defsystem-class-info :dssl-token dssl-token::t (:atom) dssl-token?)
+  (defsystem-class-info :dssl-optional optional::t (:dssl-token) dssl-optional?)
+  (defsystem-class-info :dssl-rest rest::t (:dssl-token) dssl-rest?)
+  (defsystem-class-info :dssl-key key::t (:dssl-token) dssl-key?)
 
-  (module immediate-classes
-    (export #t)
-    (defsystem-class-info :special special::t (:immediate) special?)
-    (defsystem-class-info :atom atom::t (:special) atom?)
-    (defsystem-class-info :char char::t (:immediate) char?)
-    (defsystem-class-info :boolean boolean::t (:immediate) boolean?)
-    (defsystem-class-info :true true::t (:boolean :atom) true?)
-    (defsystem-class-info :false false::t (:boolean :atom) not)
-    (defsystem-class-info :eof eof::t (:atom) eof-object?)
-    (defsystem-class-info :void void::t (:atom) void?)
-    (defsystem-class-info :unbound unbound::t (:atom) unbound?)
-    (defsystem-class-info :unbound2 unbound2::t (:atom) unbound2?)
-    (defsystem-class-info :dssl-token dssl-token::t (:atom) dssl-token?)
-    (defsystem-class-info :dssl-optional optional::t (:dssl-token) dssl-optional?)
-    (defsystem-class-info :dssl-rest rest::t (:dssl-token) dssl-rest?)
-    (defsystem-class-info :dssl-key key::t (:dssl-token) dssl-key?))
+  (defsystem-class-info :number number::t (:builtin) number?)
+  (defsystem-class-info :real real::t (:number) real?)
+  (defsystem-class-info :integer integer::t (:real) exact-integer?)
+  (defsystem-class-info :fixnum fixnum::t (:integer :immediate) fixnum?)
+  (defsystem-class-info :bignum bignum::t (:integer :subtyped) ##bignum?)
+  (defsystem-class-info :ratnum ratnum::t (:real :subgtyped) ##ratnum?)
+  (defsystem-class-info :flonum flonum::t (:real) flonum?)
+  (defsystem-class-info :stflonum stflonum::t (:flonum :immediate) stflonum?)
+  (defsystem-class-info :haflonum haflonum::t (:flonum :subtyped) haflonum?)
+  (defsystem-class-info :cpxnum cpxnum::t (:number :subtyped) ##cpxnum?)
 
-  (import immediate-classes)
+  (defsystem-class-info :symbolic symbolic::t (:subtyped) symbolic?)
+  (defsystem-class-info :symbol symbol::t (:symbolic) symbol?)
+  (defsystem-class-info :keyword keyword::t (:symbolic) keyword?)
 
-  (module number-classes
-    (export #t)
-    (defsystem-class-info :number number::t (:builtin) number?)
-    (defsystem-class-info :real real::t (:number) real?)
-    (defsystem-class-info :integer integer::t (:real) exact-integer?)
-    (defsystem-class-info :fixnum fixnum::t (:integer :immediate) fixnum?)
-    (defsystem-class-info :bignum bignum::t (:integer :subtyped) ##bignum?)
-    (defsystem-class-info :ratnum ratnum::t (:real :subgtyped) ##ratnum?)
-    (defsystem-class-info :flonum flonum::t (:real) flonum?)
-    (defsystem-class-info :stflonum stflonum::t (:flonum :immediate) stflonum?)
-    (defsystem-class-info :haflonum haflonum::t (:flonum :subtyped) haflonum?)
-    (defsystem-class-info :cpxnum cpxnum::t (:number :subtyped) ##cpxnum?))
+  (defsystem-class-info :list list::t (:builtin) list?)
+  (defsystem-class-info :pair pair::t (:list :subtyped) pair?)
+  (defsystem-class-info :null null::t (:list :atom) null?)
 
-  (import number-classes)
+  (defsystem-class-info :sequence sequence::t (:subtyped) sequence?)
+  (defsystem-class-info :vector vector::t (:sequence) vector?)
+  (defsystem-class-info :string string::t (:sequence) string?)
+  (defsystem-class-info :hvector hvector::t (:sequence) hvector?)
+  (defsystem-class-info :u8vector u8vector::t (:hvector) u8vector?)
+  (defsystem-class-info :s8vector s8vector::t (:hvector) s8vector?)
+  (defsystem-class-info :u16vector u16vector::t (:hvector) u16vector?)
+  (defsystem-class-info :s16vector s16vector::t (:hvector) s16vector?)
+  (defsystem-class-info :u32vector u32vector::t (:hvector) u32vector?)
+  (defsystem-class-info :s32vector s32vector::t (:hvector) s32vector?)
+  (defsystem-class-info :u64vector u64vector::t (:hvector) u64vector?)
+  (defsystem-class-info :s64vector s64vector::t (:hvector) s64vector?)
+  (defsystem-class-info :f32vector f32vector::t (:hvector) f32vector?)
+  (defsystem-class-info :f64vector f64vector::t (:hvector) f64vector?)
+  (defsystem-class-info :values values::t (:sequence) ##values?)
 
-  (module symbolic-classes
-    (export #t)
-    (defsystem-class-info :symbolic symbolic::t (:subtyped) symbolic?)
-    (defsystem-class-info :symbol symbol::t (:symbolic) symbol?)
-    (defsystem-class-info :keyword keyword::t (:symbolic) keyword?))
+  (defsystem-class-info :box box::t (:subtyped) box?)
+  (defsystem-class-info :frame frame::t (:subtyped) ##frame?)
+  (defsystem-class-info :continuation continuation::t (:subtyped) continuation?)
+  (defsystem-class-info :promise promise::t (:subtyped) promise?)
+  (defsystem-class-info :weak weak::t (:subtyped) weak?)
+  (defsystem-class-info :foreign foreign::t (:subtyped) foreign?)
 
-  (import symbolic-classes)
+  (defsystem-class-info :procedure procedure::t (:subtyped) procedure?)
+  (defsystem-class-info :return return::t (:subtyped) ##return?)
 
-  (module list-classes
-    (export #t)
-    (defsystem-class-info :list list::t (:builtin) list?)
-    (defsystem-class-info :pair pair::t (:list :subtyped) pair?)
-    (defsystem-class-info :null null::t (:list :atom) null?))
-
-  (import list-classes)
-
-  (module sequence-classes
-    (export #t)
-    (defsystem-class-info :sequence sequence::t (:subtyped) sequence?)
-    (defsystem-class-info :vector vector::t (:sequence) vector?)
-    (defsystem-class-info :string string::t (:sequence) string?)
-    (defsystem-class-info :hvector hvector::t (:sequence) hvector?)
-    (defsystem-class-info :u8vector u8vector::t (:hvector) u8vector?)
-    (defsystem-class-info :s8vector s8vector::t (:hvector) s8vector?)
-    (defsystem-class-info :u16vector u16vector::t (:hvector) u16vector?)
-    (defsystem-class-info :s16vector s16vector::t (:hvector) s16vector?)
-    (defsystem-class-info :u32vector u32vector::t (:hvector) u32vector?)
-    (defsystem-class-info :s32vector s32vector::t (:hvector) s32vector?)
-    (defsystem-class-info :u64vector u64vector::t (:hvector) u64vector?)
-    (defsystem-class-info :s64vector s64vector::t (:hvector) s64vector?)
-    (defsystem-class-info :f32vector f32vector::t (:hvector) f32vector?)
-    (defsystem-class-info :f64vector f64vector::t (:hvector) f64vector?)
-    (defsystem-class-info :values values::t (:sequence) ##values?))
-
-  (import sequence-classes)
-
-  (module control-classes
-    (export #t)
-    (defsystem-class-info :box box::t (:subtyped) box?)
-    (defsystem-class-info :frame frame::t (:subtyped) ##frame?)
-    (defsystem-class-info :continuation continuation::t (:subtyped) continuation?)
-    (defsystem-class-info :promise promise::t (:subtyped) promise?)
-    (defsystem-class-info :weak weak::t (:subtyped) weak?)
-    (defsystem-class-info :foreign foreign::t (:subtyped) foreign?)
-
-    (defsystem-class-info :procedure procedure::t (:subtyped) procedure?)
-    (defsystem-class-info :return return::t (:subtyped) ##return?))
-
-  (import control-classes)
-
-  (module structure-classes
-    (export #t)
-    (defsystem-class-info :time time::t (:structure) time?)
-    (defsystem-class-info :thread thread::t (:structure) thread?)
-    (defsystem-class-info :thread-group thread-group::t (:subtyped) thread-group?)
-    (defsystem-class-info :mutex mutex::t (:subtyped) mutex?)
-    (defsystem-class-info :condvar condvar::t (:subtyped) condvar?)
-    (defsystem-class-info :port port::t (:subtyped) port?)
-    (defsystem-class-info :object-port object-port::t (:port) object-port?)
-    (defsystem-class-info :character-port character-port::t (:object-port) character-port?)
-    (defsystem-class-info :byte-port byte-port::t (:character-port) byte-port?)
-    (defsystem-class-info :device-port device-port::t (:byte-port) device-port?)
-    (defsystem-class-info :vector-port vector-port::t (:object-port) vector-port?)
-    (defsystem-class-info :string-port string-port::t (:character-port) string-port?)
-    (defsystem-class-info :u8vector-port u8vector-port::t (:byte-port) u8vector-port?)
-    (defsystem-class-info :raw-device-port raw-device-port::t (:port) raw-device-port?)
-    (defsystem-class-info :tcp-server-port tcp-server-port::t (:object-port) tcp-server-port?)
-    (defsystem-class-info :udp-port udp-port::t (:object-port) udp-port?)
-    (defsystem-class-info :directory-port directory-port::t (:object-port) directory-port?)
-    (defsystem-class-info :event-queue-port event-queue-port::t (:object-port) event-queue-port?)
-    (defsystem-class-info :table table::t (:subtyped) table?)
-    (defsystem-class-info :readenv readenv::t (:subtyped) readenv?)
-    (defsystem-class-info :writeenv writeenv::t (:subtyped) writeenv?)
-    (defsystem-class-info :readtable readtable::t (:subtyped) readtable?)
-    (defsystem-class-info :processor processor::t (:subtyped) processor?)
-    (defsystem-class-info :vm vm::t (:subtyped) vm?)
-    (defsystem-class-info :file-info file-info::t (:subtyped) file-info?)
-    (defsystem-class-info :socket-info socket-info::t (:subtyped) socket-info?)
-    (defsystem-class-info :address-info address-info::t (:subtyped) address-info?))
-
-  (import structure-classes)
-  (export (import: root-classes
-                   immediate-classes
-                   number-classes
-                   symbolic-classes
-                   list-classes
-                   sequence-classes
-                   control-classes
-                   structure-classes)))
+  (defsystem-class-info :time time::t (:structure) time?)
+  (defsystem-class-info :thread thread::t (:structure) thread?)
+  (defsystem-class-info :thread-group thread-group::t (:subtyped) thread-group?)
+  (defsystem-class-info :mutex mutex::t (:subtyped) mutex?)
+  (defsystem-class-info :condvar condvar::t (:subtyped) condvar?)
+  (defsystem-class-info :port port::t (:subtyped) port?)
+  (defsystem-class-info :object-port object-port::t (:port) object-port?)
+  (defsystem-class-info :character-port character-port::t (:object-port) character-port?)
+  (defsystem-class-info :byte-port byte-port::t (:character-port) byte-port?)
+  (defsystem-class-info :device-port device-port::t (:byte-port) device-port?)
+  (defsystem-class-info :vector-port vector-port::t (:object-port) vector-port?)
+  (defsystem-class-info :string-port string-port::t (:character-port) string-port?)
+  (defsystem-class-info :u8vector-port u8vector-port::t (:byte-port) u8vector-port?)
+  (defsystem-class-info :raw-device-port raw-device-port::t (:port) raw-device-port?)
+  (defsystem-class-info :tcp-server-port tcp-server-port::t (:object-port) tcp-server-port?)
+  (defsystem-class-info :udp-port udp-port::t (:object-port) udp-port?)
+  (defsystem-class-info :directory-port directory-port::t (:object-port) directory-port?)
+  (defsystem-class-info :event-queue-port event-queue-port::t (:object-port) event-queue-port?)
+  (defsystem-class-info :table table::t (:subtyped) table?)
+  (defsystem-class-info :readenv readenv::t (:subtyped) readenv?)
+  (defsystem-class-info :writeenv writeenv::t (:subtyped) writeenv?)
+  (defsystem-class-info :readtable readtable::t (:subtyped) readtable?)
+  (defsystem-class-info :processor processor::t (:subtyped) processor?)
+  (defsystem-class-info :vm vm::t (:subtyped) vm?)
+  (defsystem-class-info :file-info file-info::t (:subtyped) file-info?)
+  (defsystem-class-info :socket-info socket-info::t (:subtyped) socket-info?)
+  (defsystem-class-info :address-info address-info::t (:subtyped) address-info?))
 
 (import MOP-1 MOP-4
         MOP-system-classes
