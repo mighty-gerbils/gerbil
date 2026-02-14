@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1771101369)
+  (define gerbil/core/mop~MOP-2::timestamp 1771104475)
   (begin
     (define gerbil/core/mop~MOP-2#runtime-type-info::t
       (make-class-type
@@ -462,30 +462,30 @@
                                  (declare (not safe))
                                  (##cdr _%e2254222563%_))))
                           (if (gx#stx-pair/null? _%tl2254422568%_)
-                              (let ((_g27515_
+                              (let ((_g27518_
                                      (gx#syntax-split-splice
                                       _%tl2254422568%_
                                       '0)))
                                 (begin
-                                  (let ((_g27516_
+                                  (let ((_g27519_
                                          (let ()
                                            (declare (not safe))
-                                           (if (##values? _g27515_)
-                                               (##values-length _g27515_)
+                                           (if (##values? _g27518_)
+                                               (##values-length _g27518_)
                                                1))))
                                     (if (not (let ()
                                                (declare (not safe))
-                                               (##fx= _g27516_ 2)))
+                                               (##fx= _g27519_ 2)))
                                         (error "Context expects 2 values"
-                                               _g27516_)))
+                                               _g27519_)))
                                   (let ((_%target2254522571%_
                                          (let ()
                                            (declare (not safe))
-                                           (##values-ref _g27515_ 0)))
+                                           (##values-ref _g27518_ 0)))
                                         (_%tl2254722573%_
                                          (let ()
                                            (declare (not safe))
-                                           (##values-ref _g27515_ 1))))
+                                           (##values-ref _g27518_ 1))))
                                     (if (gx#stx-null? _%tl2254722573%_)
                                         (letrec ((_%loop2254822576%_
                                                   (lambda (_%hd2254622579%_
@@ -575,18 +575,18 @@
            _%stx22529%_
            _%is?22531%_))))
     (define gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?
-      (lambda _g27517_
-        (let ((_g27518_ (let () (declare (not safe)) (##length _g27517_))))
-          (cond ((let () (declare (not safe)) (##fx= _g27518_ 1))
+      (lambda _g27520_
+        (let ((_g27521_ (let () (declare (not safe)) (##length _g27520_))))
+          (cond ((let () (declare (not safe)) (##fx= _g27521_ 1))
                  (apply gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0
-                        _g27517_))
-                ((let () (declare (not safe)) (##fx= _g27518_ 2))
+                        _g27520_))
+                ((let () (declare (not safe)) (##fx= _g27521_ 2))
                  (apply gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%
-                        _g27517_))
+                        _g27520_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?
-                  _g27517_))))))
+                  _g27520_))))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
       (lambda (_%stx22499%_ _%is?22500%_)
         (if (gx#identifier? _%stx22499%_)
@@ -609,15 +609,15 @@
            _%stx22510%_
            _%is?22512%_))))
     (define gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-      (lambda _g27519_
-        (let ((_g27520_ (let () (declare (not safe)) (##length _g27519_))))
-          (cond ((let () (declare (not safe)) (##fx= _g27520_ 1))
+      (lambda _g27522_
+        (let ((_g27523_ (let () (declare (not safe)) (##length _g27522_))))
+          (cond ((let () (declare (not safe)) (##fx= _g27523_ 1))
                  (apply gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0
-                        _g27519_))
-                ((let () (declare (not safe)) (##fx= _g27520_ 2))
+                        _g27522_))
+                ((let () (declare (not safe)) (##fx= _g27523_ 2))
                  (apply gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%
-                        _g27519_))
+                        _g27522_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core/mop~MOP-2#syntax-local-class-type-info?
-                  _g27519_))))))))
+                  _g27522_))))))))

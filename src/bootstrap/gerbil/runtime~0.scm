@@ -1,2 +1,2 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(begin (define gerbil/runtime::timestamp 1771101400) '#!void)
+(begin (define gerbil/runtime::timestamp 1771104506) '#!void)

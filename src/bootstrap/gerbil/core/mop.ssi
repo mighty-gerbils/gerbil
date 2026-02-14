@@ -512,6 +512,15 @@ namespace: gerbil/core/mop
                     :unbound2
                     |gerbil/core/mop~MOP-system-classes[:0:]#:unbound2|)
                    (%#define-syntax
+                    :unused
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:unused|)
+                   (%#define-syntax
+                    :deleted
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:deleted|)
+                   (%#define-syntax
+                    :absent
+                    |gerbil/core/mop~MOP-system-classes[:0:]#:absent|)
+                   (%#define-syntax
                     :dssl-token
                     |gerbil/core/mop~MOP-system-classes[:0:]#:dssl-token|)
                    (%#define-syntax

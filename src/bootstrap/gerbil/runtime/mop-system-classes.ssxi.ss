@@ -781,10 +781,26 @@ package: gerbil/runtime
    f64vector::t
    (optimizer-resolve-class '(typedecl f64vector::t) 'class::t))
   (declare-class
+   hunk::t
+   (@class hunk
+           (subtyped::t)
+           (subtyped::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   hunk::t
+   (optimizer-resolve-class '(typedecl hunk::t) 'class::t))
+  (declare-class
    values::t
    (@class values
-           (sequence::t)
-           (sequence::t subtyped::t builtin::t t::t)
+           (hunk::t sequence::t)
+           (hunk::t sequence::t subtyped::t builtin::t t::t)
            ()
            ()
            #f
@@ -799,8 +815,8 @@ package: gerbil/runtime
   (declare-class
    box::t
    (@class box
-           (subtyped::t)
-           (subtyped::t builtin::t t::t)
+           (hunk::t)
+           (hunk::t subtyped::t builtin::t t::t)
            ()
            ()
            #f
@@ -1382,16 +1398,25 @@ package: gerbil/runtime
   (declare-type builtin-subtyped? (@primitive-predicate subtyped::t))
   (declare-type builtin-structure? (@primitive-predicate structure::t))
   (declare-type atom? (@primitive-predicate atom::t))
-  (declare-type special? (@primitive-predicate special::t))
-  (declare-type unbound? (@primitive-predicate unbound::t))
-  (declare-type unbound2? (@primitive-predicate unbound2::t))
+  (declare-type special-object? (@primitive-predicate special::t))
+  (declare-type unbound-object? (@primitive-predicate unbound::t))
+  (declare-type unbound2-object? (@primitive-predicate unbound2::t))
+  (declare-type unused-object? (@primitive-predicate unused::t))
+  (declare-type deleted-object? (@primitive-predicate deleted::t))
+  (declare-type absent-object? (@primitive-predicate absent::t))
   (declare-type ddsl-token? (@primitive-predicate dssl-token::t))
   (declare-type ddsl-key? (@primitive-predicate key::t))
   (declare-type ddsl-optional? (@primitive-predicate optional::t))
   (declare-type ddsl-rest? (@primitive-predicate key::t))
   (declare-type stflonum? (@primitive-predicate stflonum::t))
   (declare-type haflonum? (@primitive-predicate haflonum::t))
+  (declare-type
+   __subtyped-class-sequence
+   (optimizer-resolve-class '(typedecl __subtyped-class-sequence) 'vector::t))
   (declare-type sequence? (@primitive-predicate sequence::t))
+  (declare-type
+   __subtyped-class-hvector
+   (optimizer-resolve-class '(typedecl __subtyped-class-hvector) 'vector::t))
   (declare-type hvector? (@primitive-predicate hvector::t))
   (declare-type weak? (@primitive-predicate weak::t))
   (declare-type object-port? (@primitive-predicate object-port::t))
