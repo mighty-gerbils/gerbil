@@ -535,9 +535,9 @@
   (define |gxc[1]#_g209266_|
     (gx#core-deserialize-mark
      '(0
-       (id . _%id205541%_)
        (arg205516 . _%arg205516205574%_)
        (arg205517 . _%arg205517205588%_)
+       (id . _%id205541%_)
        (arg . _%arg205604%_))
      (gx#import-module '(:gerbil/core/contract Interface))))
   (define |gxc[1]#_g209267_|
@@ -551,8 +551,8 @@
     (gx#core-deserialize-mark
      '(0
        (id . _%id205620%_)
-       ($obj . _%$obj205763%_)
-       (signature . _%signature205622%_))
+       (signature . _%signature205622%_)
+       ($obj . _%$obj205763%_))
      (gx#import-module '(:gerbil/core/contract TypedDefinitions))))
   (define |gxc[1]#_g209270_|
     (##structure
@@ -582,9 +582,9 @@
   (define |gxc[1]#_g209281_|
     (gx#core-deserialize-mark
      '(0
-       (id . _%id205684%_)
        (arg205660 . _%arg205660205717%_)
        (arg205661 . _%arg205661205731%_)
+       (id . _%id205684%_)
        (arg . _%arg205747%_))
      (gx#import-module '(:gerbil/core/contract Interface))))
   (define |gxc[1]#_g209282_|

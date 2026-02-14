@@ -5,8 +5,8 @@
      '(0
        (arg168377 . _%arg168377168448%_)
        (id . _%id168401%_)
-       (arg168376 . _%arg168376168434%_)
-       (arg . _%arg168464%_))
+       (arg . _%arg168464%_)
+       (arg168376 . _%arg168376168434%_))
      (gx#import-module '(:gerbil/core/contract Interface))))
   (define |[1]#_g169563_|
     (##structure
@@ -29,10 +29,10 @@
   (define |[1]#_g169567_|
     (gx#core-deserialize-mark
      '(0
-       (id . _%id168535%_)
        (arg168512 . _%arg168512168582%_)
-       (arg . _%arg168598%_)
-       (arg168511 . _%arg168511168568%_))
+       (arg168511 . _%arg168511168568%_)
+       (id . _%id168535%_)
+       (arg . _%arg168598%_))
      (gx#import-module '(:gerbil/core/contract Interface))))
   (define |[1]#_g169568_|
     (##structure
@@ -55,10 +55,10 @@
   (define |[1]#_g169572_|
     (gx#core-deserialize-mark
      '(0
-       (arg168645 . _%arg168645168702%_)
-       (id . _%id168669%_)
        (arg168646 . _%arg168646168716%_)
-       (arg . _%arg168732%_))
+       (id . _%id168669%_)
+       (arg . _%arg168732%_)
+       (arg168645 . _%arg168645168702%_))
      (gx#import-module '(:gerbil/core/contract Interface))))
   (define |[1]#_g169573_|
     (##structure
