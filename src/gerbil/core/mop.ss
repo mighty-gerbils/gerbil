@@ -807,13 +807,14 @@ package: gerbil/core
     (def (generate-system-class-with-fields stx klass fields)
       (let* (((values id type-module) (system-class-id stx))
              (fields
-                ;; type fields can shadow each other, they are not slots
-                ;; so we transform the field name to be relative to the
-                ;; current class
-                (let loop ((rest fields) (normalized []))
-                  (if (pair? rest)
-                    (let ((field (car rest))
-                          (rest  (cdr rest)))
+              ;; type fields can shadow each other, they are not slots
+              ;; so we transform the field name to be relative to the
+              ;; current class
+              (let loop ((rest fields) (normalized []))
+                (if (pair? rest)
+                  (let ((field (car rest))
+                        (rest  (cdr rest)))
+                    (if (memq field rest)
                       (cond
                        ((agetq field normalized)
                         => (lambda (previous)
@@ -821,17 +822,16 @@ package: gerbil/core
                                (loop rest
                                      (cons (cons field normalized-field)
                                            normalized)))))
-                       ((memq field rest)
+                       (else
                         (let (normalized-field (make-symbol "super-" field))
                           (loop rest
                                 (cons (cons field normalized-field)
-                                      normalized))))
-                       (else
-                        (loop rest
-                              (cons (cons field field)
-                                    normalized)))))
-                    (foldl (lambda (n r) (cons (cdr n) r))
-                           [] normalized))))
+                                      normalized)))))
+                      (loop rest
+                            (cons (cons field field)
+                                  normalized))))
+                  (foldl (lambda (n r) (cons (cdr n) r))
+                         [] normalized))))
              (field-offsets
               (iota (length fields) 1))
              (&getfs
@@ -846,10 +846,12 @@ package: gerbil/core
              (setfs
               (map (cut stx-identifier id id "-" <> "-set!")
                    fields)))
-        (emit-system-class stx type-module fields field-offsets &getfs &setfs getfs setfs)))
+        (emit-system-class stx klass type-module fields field-offsets &getfs &setfs getfs setfs)))
 
-    (def (emit-system-class stx type-module fields field-offsets &getfs &setfs getfs setfs)
+    (def (emit-system-class stx klass type-module fields field-offsets &getfs &setfs getfs setfs)
       (with-syntax ((type-module        type-module)
+                    (type-id            (class-type-id klass))
+                    (type-name          (class-type-name klass))
                     ((field ...)        fields)
                     ((field-offset ...) field-offsets)
                     ((&field-ref ...)   &getfs)
