@@ -268,7 +268,9 @@ package: gerbil/core
      (slot-defaults ;; Maybe AListOf Symbol -> syntax
       !class-type-slot-defaults !class-type-slot-defaults-set!)
      (slot-contracts ;; Maybe AListOf Symbol -> syntax
-      !class-type-slot-contracts !class-type-slot-contracts-set!)))
+      !class-type-slot-contracts !class-type-slot-contracts-set!)
+     (slot-offsets   ;; Maybe AList Symbol fixnum
+      !class-type-slot-offsets !class-type-slot-offsets-set!)))
 
   (def (class-type-info::apply-macro-expander self stx)
     (syntax-case stx ()
@@ -340,7 +342,8 @@ package: gerbil/core
                     constructor predicate
                     accessors mutators
                     unchecked-accessors unchecked-mutators
-                    slot-types slot-defaults slot-contracts)
+                    slot-types slot-defaults slot-contracts
+                    slot-offsets)
      struct?: #f
      final?: #f
      system?: #f
@@ -369,7 +372,8 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators)]
       ['slot-types :: (quote-syntax !class-type-slot-types)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults)]
-      ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset)]]
      mutators:
      [['id :: (quote-syntax !class-type-id-set!)]
       ['name :: (quote-syntax !class-type-name-set!)]
@@ -391,7 +395,8 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators-set!)]
       ['slot-types :: (quote-syntax !class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults-set!)]
-      ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset-set!)]]
      unchecked-accessors:
      [['id :: (quote-syntax &!class-type-id)]
       ['name :: (quote-syntax &!class-type-name)]
@@ -413,7 +418,8 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators)]
       ['slot-types :: (quote-syntax &!class-type-slot-types)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults)]
-      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]]
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset)]]
      unchecked-mutators:
      [['id :: (quote-syntax &!class-type-id-set!)]
       ['name :: (quote-syntax &!class-type-name-set!)]
@@ -435,7 +441,8 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]
       ['slot-types :: (quote-syntax &!class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults-set!)]
-      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]])))
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset-set!)]])))
 
 (module MOP-4
   (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))
@@ -773,36 +780,10 @@ package: gerbil/core
 
   (begin-syntax
     (def (generate-simple-system-class stx klass)
-      (with-syntax (((_ id type (super ...) predicate)
-                     stx)
-                    (type-id   (class-type-id klass))
-                    (type-name (class-type-name klass)))
-        #'(defsyntax id
-            (make-class-type-info
-             id: 'type-id
-             name: 'type-name
-             super: [(quote-syntax super) ...]
-             slots: []
-             system?: #t
-             type-descriptor: (quote-syntax type)
-             predicate: (quote-syntax predicate)
-             accessors: []
-             mutators: []
-             unchecked-accessors: []
-             unchecked-mutators: []))))
-
-    (def (system-class-id stx)
-      (with-syntax (((_ id . _) stx))
-        (let (str (symbol->string (stx-e #'id)))
-          (if (string-prefix? ":" str)
-            (syntax-local-introduce
-             (make-symbol ":" str))
-            (syntax-local-introduce
-             (make-symbol "::" str))))))
+      (emit-system-class stx klass [] []))
 
     (def (generate-system-class-with-fields stx klass fields)
-      (let* ((id (system-class-id stx))
-             (fields
+      (let* ((fields
               ;; type fields can shadow each other, they are not slots
               ;; so we transform the field name to be relative to the
               ;; current class
@@ -829,58 +810,31 @@ package: gerbil/core
                   (foldl (lambda (n r) (cons (cdr n) r))
                          [] normalized))))
              (field-offsets
-              (iota (length fields) 1))
-             (&getfs
-              (map (cut stx-identifier id "&" id "-" <>)
-                   fields))
-             (&setfs
-              (map (cut stx-identifier id "&" id "-" <> "-set!")
-                   fields))
-             (getfs
-              (map (cut stx-identifier id id "-" <>)
-                   fields))
-             (setfs
-              (map (cut stx-identifier id id "-" <> "-set!")
-                   fields)))
-        (emit-system-class stx klass fields field-offsets &getfs &setfs getfs setfs)))
+              (iota (length fields) 1)))
+        (emit-system-class stx klass fields field-offsets)))
 
-    (def (emit-system-class stx klass fields field-offsets &getfs &setfs getfs setfs)
+    (def (emit-system-class stx klass fields field-offsets )
       (with-syntax ((type-id            (class-type-id klass))
                     (type-name          (class-type-name klass))
                     ((field ...)        fields)
                     ((field-offset ...) field-offsets)
-                    ((&field-ref ...)   &getfs)
-                    ((&field-set! ...)  &setfs)
-                    ((field-ref ...)    getfs)
-                    ((field-set! ...)   setfs)
                     ((_ id type (super ...) predicate)
                      stx))
-        #'(begin
-            (def (&field-ref obj)
-              (##unchecked-structure-ref obj field-offset type 'field))
-            ...
-            (def (&field-set! obj val)
-              (##unchecked-structure-set! obj val field-offset type 'field))
-            ...
-            (def (field-ref obj)
-              (##structure-ref obj field-offset type 'field))
-            ...
-            (def (field-set! obj val)
-              (##structure-set! obj val field-offset type 'field))
-            ...
-            (defsyntax id
-              (make-class-type-info
-               id:                  'type-id
-               name:                'type-name
-               super:               [(quote-syntax super) ...]
-               slots:               []
-               system?:             #t
-               type-descriptor:     (quote-syntax type)
-               predicate:           (quote-syntax predicate)
-               accessors:           [['field :: (quote-syntax field-ref)] ...]
-               mutators:            [['field :: (quote-syntax field-set!)] ...]
-               unchecked-accessors: [['field :: (quote-syntax &field-ref)] ...]
-               unchecked-mutators:  [['field :: (quote-syntax &field-set!)] ...]))))))
+        (syntax/loc stx
+          (defsyntax id
+            (make-class-type-info
+             id:                  'type-id
+             name:                'type-name
+             super:               [(quote-syntax super) ...]
+             slots:               []
+             system?:             #t
+             type-descriptor:     (quote-syntax type)
+             predicate:           (quote-syntax predicate)
+             accessors:           []
+             mutators:            []
+             unchecked-accessors: []
+             unchecked-mutators:  []
+             slot-offsets:        [['field :: field-offset] ...]))))))
 
   (defsyntax (defsystem-class-info stx)
     (syntax-case stx ()

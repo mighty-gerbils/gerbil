@@ -9,8 +9,6 @@ package: gerbil
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
-(extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
-
 (def builtin-modules
   '(;; :gerbil/runtime
     "gerbil/runtime/gambit"
@@ -122,7 +120,6 @@ package: gerbil
 (def (init!)
   (gerbil-runtime-init! builtin-modules)
   (gerbil-load-expander!)
-  (set-lang! 'gerbil)
   ;; hook ##begin -- gambit wraps it around scripts
   (eval '(define-alias ##begin begin)))
 
@@ -138,7 +135,7 @@ package: gerbil
            (eval-syntax '(import :gerbil/core))
            (set! lang-prelude (import-module ':gerbil/core))
            (set! lang-readtable __*readtable*))
-          ((gerbil)
+          ((gerbil/base)
            (eval-syntax '(import :gerbil/base))
            (set! lang-prelude (import-module ':gerbil/base))
            (set! lang-readtable  __*readtable*))
@@ -146,15 +143,13 @@ package: gerbil
            (eval-syntax '(import :gerbil/polydactyl))
            (set! lang-prelude (import-module ':gerbil/polydactyl))
            (set! lang-readtable (eval-syntax '|gerbil/polydactyl[1]#*readtable*|)))
-          ((r7rs)
-           (eval-syntax '(import :scheme/r7rs :scheme/base))
-           (set! lang-prelude (import-module ':scheme/r7rs))
-           (set! lang-readtable (##make-standard-readtable)))
           (else
            (eval-syntax `(import ,lang))
            (set! lang-prelude (import-module lang))
-           ;; TODO lang-specific readtables for user langs
-           (set! lang-readtable __*readtable*))))
+           (let (readtable
+                 (try (eval-syntax+1 '(lang-readtable))
+                      (catch (e) __*readtable*)))
+             (set! lang-readtable readtable)))))
       (current-expander-context top)
       (current-expander-module-prelude (make-prelude-context lang-prelude))
       (set! +current-lang+ lang)

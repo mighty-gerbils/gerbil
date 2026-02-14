@@ -462,10 +462,17 @@ package: gerbil/core
     (def (get-slot-accessor stx klass-or-id slot)
       (let* ((klass (if (identifier? klass-or-id)
                       (resolve-type stx klass-or-id)
-                      klass-or-id))
-             (accessors (!class-type-unchecked-accessors klass)))
+                      klass-or-id)))
         (cond
-         ((agetq slot accessors))
+         ((agetq slot (!class-type-unchecked-accessors klass)))
+         ((agetq slot (or (!class-type-slot-offsets klass) []))
+          => (lambda (offset)
+               (with-syntax ((rtd (!runtime-type-descriptor klass))
+                             (slot slot)
+                             (offset offset))
+                 (syntax/loc stx
+                   (lambda ($obj)
+                     (##unchecked-structure-ref $obj offset rtd 'slot))))))
          (else
           (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
@@ -478,6 +485,14 @@ package: gerbil/core
                          (!class-type-unchecked-mutators klass))))
         (cond
          ((agetq slot mutators))
+         ((agetq slot (or (!class-type-slot-offsets klass) []))
+          => (lambda (offset)
+               (with-syntax ((rtd (!runtime-type-descriptor klass))
+                             (slot slot)
+                             (offset offset))
+                 (syntax/loc stx
+                   (lambda ($obj $val)
+                     (##unchecked-structure-set! $obj $val offset rtd 'slot))))))
          (else
           (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
 
