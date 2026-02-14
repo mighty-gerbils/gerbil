@@ -254,31 +254,33 @@ namespace: #f
   (and (##subtyped? obj)
        (eq? (##subtype obj) (macro-subtype-weak))))
 
-(defpred (object-port? obj) :- :object-port
+(defpred (object-port? obj)      :- :object-port
   (##structure-instance-of? obj (##type-id (macro-type-object-port))))
-(defpred (character-port? obj) :- :character-port
+(defpred (character-port? obj)   :- :character-port
   (##structure-instance-of? obj (##type-id (macro-type-character-port))))
-(defpred (device-port? obj) :- :device-port
+(defpred (byte-port? obj) :-     :byte-port
+  (##structure-instance-of? obj (##type-id (macro-type-byte-port))))
+(defpred (device-port? obj)      :- :device-port
   (##structure-instance-of? obj (##type-id (macro-type-device-port))))
-(defpred (vector-port? obj) :- :vector-port
+(defpred (vector-port? obj)      :- :vector-port
   (##structure-instance-of? obj (##type-id (macro-type-vector-port))))
-(defpred (string-port? obj) :- :string-port
+(defpred (string-port? obj)      :- :string-port
   (##structure-instance-of? obj (##type-id (macro-type-string-port))))
-(defpred (u8vector-port? obj) :- :u8vector-port
+(defpred (u8vector-port? obj)    :- :u8vector-port
   (##structure-instance-of? obj (##type-id (macro-type-u8vector-port))))
-(defpred (raw-device-port? obj) :- :raw-device-port
+(defpred (raw-device-port? obj)  :- :raw-device-port
   (##structure-instance-of? obj (##type-id (macro-type-raw-device-port))))
-(defpred (tcp-server-port? obj) :- :tcp-server-port
+(defpred (tcp-server-port? obj)  :- :tcp-server-port
   (##structure-instance-of? obj (##type-id (macro-type-tcp-server-port))))
-(defpred (udp-port? obj) :- :udp-port
+(defpred (udp-port? obj)         :- :udp-port
   (##structure-instance-of? obj (##type-id (macro-type-udp-port))))
-(defpred (directory-port? obj) :- :directory-port
+(defpred (directory-port? obj)   :- :directory-port
   (##structure-instance-of? obj (##type-id (macro-type-directory-port))))
 (defpred (event-queue-port? obj) :- :event-queue-port
   (##structure-instance-of? obj (##type-id (macro-type-event-queue-port))))
-(defpred (readenv? obj) :- :readenv
+(defpred (readenv? obj)          :- :readenv
   (##structure-instance-of? obj (##type-id (macro-type-readenv))))
-(defpred (writeenv? obj) :- :writeenv
+(defpred (writeenv? obj)         :- :writeenv
   (##structure-instance-of? obj (##type-id (macro-type-writeenv))))
-(defpred (vm? obj) :- :vm
+(defpred (vm? obj)               :- :vm
   (##structure-instance-of? obj (##type-id (macro-type-vm))))
