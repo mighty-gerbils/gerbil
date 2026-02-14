@@ -676,24 +676,24 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
-             .
-             _%locked-hash-table::HashTable::update!331422%_)
-            (HashTable::copy . _%locked-hash-table::HashTable::copy331430%_)
+           ((HashTable::ref . _%locked-hash-table::HashTable::ref157603%_)
+            (HashTable::copy . _%locked-hash-table::HashTable::copy157615%_)
             (HashTable::for-each
              .
-             _%locked-hash-table::HashTable::for-each331426%_)
+             _%locked-hash-table::HashTable::for-each157611%_)
+            (HashTable::update!
+             .
+             _%locked-hash-table::HashTable::update!157607%_)
             (HashTable::length
              .
-             _%locked-hash-table::HashTable::length331428%_)
-            (HashTable::set! . _%locked-hash-table::HashTable::set!331420%_)
+             _%locked-hash-table::HashTable::length157613%_)
+            (HashTable::set! . _%locked-hash-table::HashTable::set!157605%_)
             (HashTable::clear!
              .
-             _%locked-hash-table::HashTable::clear!331432%_)
+             _%locked-hash-table::HashTable::clear!157617%_)
             (HashTable::delete!
              .
-             _%locked-hash-table::HashTable::delete!331424%_)
-            (HashTable::ref . _%locked-hash-table::HashTable::ref331418%_))))
+             _%locked-hash-table::HashTable::delete!157609%_))))
   (declare-type
    locked-hash-table::t
    (optimizer-resolve-class '(typedecl locked-hash-table::t) 'class::t))
@@ -735,24 +735,24 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((HashTable::update!
-             .
-             _%checked-hash-table::HashTable::update!331647%_)
-            (HashTable::copy . _%checked-hash-table::HashTable::copy331655%_)
+           ((HashTable::ref . _%checked-hash-table::HashTable::ref157828%_)
+            (HashTable::copy . _%checked-hash-table::HashTable::copy157840%_)
             (HashTable::for-each
              .
-             _%checked-hash-table::HashTable::for-each331651%_)
+             _%checked-hash-table::HashTable::for-each157836%_)
+            (HashTable::update!
+             .
+             _%checked-hash-table::HashTable::update!157832%_)
             (HashTable::length
              .
-             _%checked-hash-table::HashTable::length331653%_)
-            (HashTable::set! . _%checked-hash-table::HashTable::set!331645%_)
+             _%checked-hash-table::HashTable::length157838%_)
+            (HashTable::set! . _%checked-hash-table::HashTable::set!157830%_)
             (HashTable::clear!
              .
-             _%checked-hash-table::HashTable::clear!331657%_)
+             _%checked-hash-table::HashTable::clear!157842%_)
             (HashTable::delete!
              .
-             _%checked-hash-table::HashTable::delete!331649%_)
-            (HashTable::ref . _%checked-hash-table::HashTable::ref331643%_))))
+             _%checked-hash-table::HashTable::delete!157834%_))))
   (declare-type
    checked-hash-table::t
    (optimizer-resolve-class '(typedecl checked-hash-table::t) 'class::t))
@@ -891,7 +891,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::ref331418%_
+   _%locked-hash-table::HashTable::ref157603%_
    (@lambda 3
             #f
             signature:
@@ -906,7 +906,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::set!331420%_
+   _%locked-hash-table::HashTable::set!157605%_
    (@lambda 3
             #f
             signature:
@@ -921,7 +921,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::update!331422%_
+   _%locked-hash-table::HashTable::update!157607%_
    (@lambda 4
             #f
             signature:
@@ -936,7 +936,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::delete!331424%_
+   _%locked-hash-table::HashTable::delete!157609%_
    (@lambda 2
             #f
             signature:
@@ -951,7 +951,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::for-each331426%_
+   _%locked-hash-table::HashTable::for-each157611%_
    (@lambda 2
             #f
             signature:
@@ -966,7 +966,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::length331428%_
+   _%locked-hash-table::HashTable::length157613%_
    (@lambda 1
             #f
             signature:
@@ -981,7 +981,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::copy331430%_
+   _%locked-hash-table::HashTable::copy157615%_
    (@lambda 1
             #f
             signature:
@@ -996,7 +996,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%locked-hash-table::HashTable::clear!331432%_
+   _%locked-hash-table::HashTable::clear!157617%_
    (@lambda 1
             #f
             signature:
@@ -1011,7 +1011,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::ref331643%_
+   _%checked-hash-table::HashTable::ref157828%_
    (@lambda 3
             #f
             signature:
@@ -1026,7 +1026,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::set!331645%_
+   _%checked-hash-table::HashTable::set!157830%_
    (@lambda 3
             #f
             signature:
@@ -1041,7 +1041,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::update!331647%_
+   _%checked-hash-table::HashTable::update!157832%_
    (@lambda 4
             #f
             signature:
@@ -1056,7 +1056,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::delete!331649%_
+   _%checked-hash-table::HashTable::delete!157834%_
    (@lambda 2
             #f
             signature:
@@ -1071,7 +1071,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::for-each331651%_
+   _%checked-hash-table::HashTable::for-each157836%_
    (@lambda 2
             #f
             signature:
@@ -1086,7 +1086,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::length331653%_
+   _%checked-hash-table::HashTable::length157838%_
    (@lambda 1
             #f
             signature:
@@ -1101,7 +1101,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::copy331655%_
+   _%checked-hash-table::HashTable::copy157840%_
    (@lambda 1
             #f
             signature:
@@ -1116,7 +1116,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/hash)))
   (declare-type
-   _%checked-hash-table::HashTable::clear!331657%_
+   _%checked-hash-table::HashTable::clear!157842%_
    (@lambda 1
             #f
             signature:

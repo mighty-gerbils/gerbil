@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1771036674)
+  (define gerbil/runtime/loader::timestamp 1771037608)
   (begin
     (define __modules
       (let ()
@@ -34,34 +34,34 @@
     (define __load-order-next '1)
     (define load-path (lambda () __load-path))
     (define add-load-path!
-      (lambda _%paths352859%_
-        (if (let () (declare (not safe)) (andmap__0 string? _%paths352859%_))
+      (lambda _%paths179044%_
+        (if (let () (declare (not safe)) (andmap__0 string? _%paths179044%_))
             '#!void
             (let ()
               (declare (not safe))
               (error '"bad load path; expected list of paths"
-                     _%paths352859%_)))
-        (let ((__tmp352969
-               (lambda (_%p352861%_)
-                 (set! __load-path (cons _%p352861%_ __load-path))))
-              (__tmp352968 (reverse! _%paths352859%_)))
+                     _%paths179044%_)))
+        (let ((__tmp179154
+               (lambda (_%p179046%_)
+                 (set! __load-path (cons _%p179046%_ __load-path))))
+              (__tmp179153 (reverse! _%paths179044%_)))
           (declare (not safe))
-          (##for-each __tmp352969 __tmp352968))))
+          (##for-each __tmp179154 __tmp179153))))
     (define __set-load-path!
-      (lambda (_%paths352847%_)
-        (let ((_%paths352850%_ _%paths352847%_))
-          (if (let () (declare (not safe)) (andmap__0 string? _%paths352850%_))
+      (lambda (_%paths179032%_)
+        (let ((_%paths179035%_ _%paths179032%_))
+          (if (let () (declare (not safe)) (andmap__0 string? _%paths179035%_))
               '#!void
               (let ()
                 (declare (not safe))
                 (error '"bad load path; expected list of paths"
-                       _%paths352850%_)))
-          (set! __load-path _%paths352850%_))))
+                       _%paths179035%_)))
+          (set! __load-path _%paths179035%_))))
     (define set-load-path!
-      (lambda (_%paths351891%_)
-        (if (list? _%paths351891%_)
-            (let ((_%paths351895%_ _%paths351891%_))
-              (__set-load-path! _%paths351895%_))
+      (lambda (_%paths178076%_)
+        (if (list? _%paths178076%_)
+            (let ((_%paths178080%_ _%paths178076%_))
+              (__set-load-path! _%paths178080%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -70,241 +70,241 @@
                'contract:
                'list?
                'value:
-               _%paths351891%_)
+               _%paths178076%_)
               '#!void))))
     (define __load-module
-      (lambda (_%modpath352617%_)
-        (let ((_%modpath352620%_ _%modpath352617%_))
+      (lambda (_%modpath178802%_)
+        (let ((_%modpath178805%_ _%modpath178802%_))
           (mutex-lock! __load-mx)
-          (let ((_%$e352655%_
-                 (let* ((_%h352629%_ __modules)
-                        (_%key352632%_ _%modpath352620%_)
-                        (_%h352639%_
-                         (let ((_%$obj352636%_ _%h352629%_))
+          (let ((_%$e178840%_
+                 (let* ((_%h178814%_ __modules)
+                        (_%key178817%_ _%modpath178805%_)
+                        (_%h178824%_
+                         (let ((_%$obj178821%_ _%h178814%_))
                            (if (and (let ()
                                       (declare (not safe))
-                                      (##structure? _%$obj352636%_))
+                                      (##structure? _%$obj178821%_))
                                     (eq? HashTable::t
                                          (let ()
                                            (declare (not safe))
-                                           (##structure-type _%$obj352636%_)))
+                                           (##structure-type _%$obj178821%_)))
                                     '#t)
-                               _%$obj352636%_
+                               _%$obj178821%_
                                (let ()
                                  (declare (not safe))
-                                 (cast HashTable::interface _%$obj352636%_)))))
-                        (_%h352641%_ _%h352639%_))
+                                 (cast HashTable::interface _%$obj178821%_)))))
+                        (_%h178826%_ _%h178824%_))
                    (declare (not safe))
-                   (__hash-get _%h352641%_ _%key352632%_))))
-            (if _%$e352655%_
-                ((lambda (_%state352658%_)
-                   (if (or (eq? 'builtin _%state352658%_)
-                           (string? _%state352658%_))
-                       (let () (mutex-unlock! __load-mx) _%state352658%_)
-                       (if (eq? 'loading _%state352658%_)
+                   (__hash-get _%h178826%_ _%key178817%_))))
+            (if _%$e178840%_
+                ((lambda (_%state178843%_)
+                   (if (or (eq? 'builtin _%state178843%_)
+                           (string? _%state178843%_))
+                       (let () (mutex-unlock! __load-mx) _%state178843%_)
+                       (if (eq? 'loading _%state178843%_)
                            (let ()
                              (mutex-unlock! __load-mx __load-cv)
-                             (let* ((_%modpath352665%_ _%modpath352620%_)
-                                    (_%modpath352670%_ _%modpath352665%_))
-                               (__load-module _%modpath352670%_)))
-                           (if (and (pair? _%state352658%_)
+                             (let* ((_%modpath178850%_ _%modpath178805%_)
+                                    (_%modpath178855%_ _%modpath178850%_))
+                               (__load-module _%modpath178855%_)))
+                           (if (and (pair? _%state178843%_)
                                     (eq? (let ()
                                            (declare (not safe))
-                                           (##car _%state352658%_))
+                                           (##car _%state178843%_))
                                          'error))
                                (let ()
                                  (mutex-unlock! __load-mx)
-                                 (let ((__tmp352970 (cadr _%state352658%_)))
+                                 (let ((__tmp179155 (cadr _%state178843%_)))
                                    (declare (not safe))
-                                   (raise __tmp352970)))
+                                   (raise __tmp179155)))
                                (let ()
                                  (mutex-unlock! __load-mx)
                                  (let ()
                                    (declare (not safe))
                                    (error '"inernal error; unexpected loading state"
-                                          _%state352658%_)))))))
-                 _%$e352655%_)
-                (let ((_%$e352685%_ (__find-library-module _%modpath352620%_)))
-                  (if _%$e352685%_
-                      ((lambda (_%path352688%_)
-                         (let* ((_%h352690%_ __modules)
-                                (_%key352693%_ _%modpath352620%_)
-                                (_%value352696%_ 'loading)
-                                (_%h352703%_
-                                 (let ((_%$obj352700%_ _%h352690%_))
+                                          _%state178843%_)))))))
+                 _%$e178840%_)
+                (let ((_%$e178870%_ (__find-library-module _%modpath178805%_)))
+                  (if _%$e178870%_
+                      ((lambda (_%path178873%_)
+                         (let* ((_%h178875%_ __modules)
+                                (_%key178878%_ _%modpath178805%_)
+                                (_%value178881%_ 'loading)
+                                (_%h178888%_
+                                 (let ((_%$obj178885%_ _%h178875%_))
                                    (if (and (let ()
                                               (declare (not safe))
-                                              (##structure? _%$obj352700%_))
+                                              (##structure? _%$obj178885%_))
                                             (eq? HashTable::t
                                                  (let ()
                                                    (declare (not safe))
                                                    (##structure-type
-                                                    _%$obj352700%_)))
+                                                    _%$obj178885%_)))
                                             '#t)
-                                       _%$obj352700%_
+                                       _%$obj178885%_
                                        (let ()
                                          (declare (not safe))
                                          (cast HashTable::interface
-                                               _%$obj352700%_)))))
-                                (_%h352705%_ _%h352703%_))
+                                               _%$obj178885%_)))))
+                                (_%h178890%_ _%h178888%_))
                            (declare (not safe))
                            (__hash-put!
-                            _%h352705%_
-                            _%key352693%_
-                            _%value352696%_))
+                            _%h178890%_
+                            _%key178878%_
+                            _%value178881%_))
                          (mutex-unlock! __load-mx)
-                         (let ((__tmp352972
-                                (lambda (_%exn352719%_)
+                         (let ((__tmp179157
+                                (lambda (_%exn178904%_)
                                   (mutex-lock! __load-mx)
-                                  (let* ((_%h352721%_ __modules)
-                                         (_%key352724%_ _%modpath352620%_)
-                                         (_%value352727%_
+                                  (let* ((_%h178906%_ __modules)
+                                         (_%key178909%_ _%modpath178805%_)
+                                         (_%value178912%_
                                           (cons 'error
-                                                (cons _%exn352719%_ '())))
-                                         (_%h352734%_
-                                          (let ((_%$obj352731%_ _%h352721%_))
+                                                (cons _%exn178904%_ '())))
+                                         (_%h178919%_
+                                          (let ((_%$obj178916%_ _%h178906%_))
                                             (if (and (let ()
                                                        (declare (not safe))
                                                        (##structure?
-                                                        _%$obj352731%_))
+                                                        _%$obj178916%_))
                                                      (eq? HashTable::t
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (##structure-type
-                                                             _%$obj352731%_)))
+                                                             _%$obj178916%_)))
                                                      '#t)
-                                                _%$obj352731%_
+                                                _%$obj178916%_
                                                 (let ()
                                                   (declare (not safe))
                                                   (cast HashTable::interface
-                                                        _%$obj352731%_)))))
-                                         (_%h352736%_ _%h352734%_))
+                                                        _%$obj178916%_)))))
+                                         (_%h178921%_ _%h178919%_))
                                     (declare (not safe))
                                     (__hash-put!
-                                     _%h352736%_
-                                     _%key352724%_
-                                     _%value352727%_))
+                                     _%h178921%_
+                                     _%key178909%_
+                                     _%value178912%_))
                                   (condition-variable-broadcast! __load-cv)
                                   (mutex-unlock! __load-mx)
                                   (let ()
                                     (declare (not safe))
-                                    (raise _%exn352719%_))))
-                               (__tmp352971
+                                    (raise _%exn178904%_))))
+                               (__tmp179156
                                 (lambda ()
-                                  (let ((_%loaded-path352750%_
-                                         (load _%path352688%_)))
+                                  (let ((_%loaded-path178935%_
+                                         (load _%path178873%_)))
                                     (mutex-lock! __load-mx)
-                                    (let* ((_%h352752%_ __modules)
-                                           (_%key352755%_ _%modpath352620%_)
-                                           (_%value352758%_
-                                            _%loaded-path352750%_)
-                                           (_%h352765%_
-                                            (let ((_%$obj352762%_ _%h352752%_))
+                                    (let* ((_%h178937%_ __modules)
+                                           (_%key178940%_ _%modpath178805%_)
+                                           (_%value178943%_
+                                            _%loaded-path178935%_)
+                                           (_%h178950%_
+                                            (let ((_%$obj178947%_ _%h178937%_))
                                               (if (and (let ()
                                                          (declare (not safe))
                                                          (##structure?
-                                                          _%$obj352762%_))
+                                                          _%$obj178947%_))
                                                        (eq? HashTable::t
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (##structure-type
-                                                               _%$obj352762%_)))
+                                                               _%$obj178947%_)))
                                                        '#t)
-                                                  _%$obj352762%_
+                                                  _%$obj178947%_
                                                   (let ()
                                                     (declare (not safe))
                                                     (cast HashTable::interface
-                                                          _%$obj352762%_)))))
-                                           (_%h352767%_ _%h352765%_))
+                                                          _%$obj178947%_)))))
+                                           (_%h178952%_ _%h178950%_))
                                       (declare (not safe))
                                       (__hash-put!
-                                       _%h352767%_
-                                       _%key352755%_
-                                       _%value352758%_))
-                                    (if (let* ((_%h352781%_ __load-order)
-                                               (_%key352784%_
-                                                _%modpath352620%_)
-                                               (_%h352791%_
-                                                (let ((_%$obj352788%_
-                                                       _%h352781%_))
+                                       _%h178952%_
+                                       _%key178940%_
+                                       _%value178943%_))
+                                    (if (let* ((_%h178966%_ __load-order)
+                                               (_%key178969%_
+                                                _%modpath178805%_)
+                                               (_%h178976%_
+                                                (let ((_%$obj178973%_
+                                                       _%h178966%_))
                                                   (if (and (let ()
                                                              (declare
                                                                (not safe))
                                                              (##structure?
-                                                              _%$obj352788%_))
+                                                              _%$obj178973%_))
                                                            (eq? HashTable::t
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
-                          (##structure-type _%$obj352788%_)))
+                          (##structure-type _%$obj178973%_)))
                    '#t)
-              _%$obj352788%_
+              _%$obj178973%_
               (let ()
                 (declare (not safe))
-                (cast HashTable::interface _%$obj352788%_)))))
+                (cast HashTable::interface _%$obj178973%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_%h352793%_ _%h352791%_))
+                                               (_%h178978%_ _%h178976%_))
                                           (declare (not safe))
                                           (__hash-get
-                                           _%h352793%_
-                                           _%key352784%_))
+                                           _%h178978%_
+                                           _%key178969%_))
                                         '#!void
                                         (begin
-                                          (let* ((_%h352804%_ __load-order)
-                                                 (_%key352807%_
-                                                  _%modpath352620%_)
-                                                 (_%value352810%_
+                                          (let* ((_%h178989%_ __load-order)
+                                                 (_%key178992%_
+                                                  _%modpath178805%_)
+                                                 (_%value178995%_
                                                   __load-order-next)
-                                                 (_%h352817%_
-                                                  (let ((_%$obj352814%_
-                                                         _%h352804%_))
+                                                 (_%h179002%_
+                                                  (let ((_%$obj178999%_
+                                                         _%h178989%_))
                                                     (if (and (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##structure? _%$obj352814%_))
+                       (##structure? _%$obj178999%_))
                      (eq? HashTable::t
                           (let ()
                             (declare (not safe))
-                            (##structure-type _%$obj352814%_)))
+                            (##structure-type _%$obj178999%_)))
                      '#t)
-                _%$obj352814%_
+                _%$obj178999%_
                 (let ()
                   (declare (not safe))
-                  (cast HashTable::interface _%$obj352814%_)))))
+                  (cast HashTable::interface _%$obj178999%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (_%h352819%_ _%h352817%_))
+                                                 (_%h179004%_ _%h179002%_))
                                             (declare (not safe))
                                             (__hash-put!
-                                             _%h352819%_
-                                             _%key352807%_
-                                             _%value352810%_))
+                                             _%h179004%_
+                                             _%key178992%_
+                                             _%value178995%_))
                                           (set! __load-order-next
-                                                (let* ((_%x352831%_
+                                                (let* ((_%x179016%_
                                                         __load-order-next)
-                                                       (_%x352836%_
-                                                        _%x352831%_))
+                                                       (_%x179021%_
+                                                        _%x179016%_))
                                                   (declare (not safe))
-                                                  (__1+ _%x352836%_)))))
+                                                  (__1+ _%x179021%_)))))
                                     (condition-variable-broadcast! __load-cv)
                                     (mutex-unlock! __load-mx)
-                                    _%loaded-path352750%_))))
+                                    _%loaded-path178935%_))))
                            (declare (not safe))
-                           (__with-catch __tmp352972 __tmp352971)))
-                       _%$e352685%_)
+                           (__with-catch __tmp179157 __tmp179156)))
+                       _%$e178870%_)
                       (let ()
                         (mutex-unlock! __load-mx)
                         (let ()
                           (declare (not safe))
                           (error '"module not found"
-                                 _%modpath352620%_))))))))))
+                                 _%modpath178805%_))))))))))
     (define load-module
-      (lambda (_%modpath352025%_)
-        (if (string? _%modpath352025%_)
-            (let ((_%modpath352029%_ _%modpath352025%_))
-              (__load-module _%modpath352029%_))
+      (lambda (_%modpath178210%_)
+        (if (string? _%modpath178210%_)
+            (let ((_%modpath178214%_ _%modpath178210%_))
+              (__load-module _%modpath178214%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -313,147 +313,147 @@
                'contract:
                'string?
                'value:
-               _%modpath352025%_)
+               _%modpath178210%_)
               '#!void))))
     (define __reload-module!
-      (lambda (_%modpath352466%_)
-        (let ((_%modpath352469%_ _%modpath352466%_))
+      (lambda (_%modpath178651%_)
+        (let ((_%modpath178654%_ _%modpath178651%_))
           (mutex-lock! __load-mx)
-          (let ((_%$e352504%_
-                 (let* ((_%h352478%_ __modules)
-                        (_%key352481%_ _%modpath352469%_)
-                        (_%h352488%_
-                         (let ((_%$obj352485%_ _%h352478%_))
+          (let ((_%$e178689%_
+                 (let* ((_%h178663%_ __modules)
+                        (_%key178666%_ _%modpath178654%_)
+                        (_%h178673%_
+                         (let ((_%$obj178670%_ _%h178663%_))
                            (if (and (let ()
                                       (declare (not safe))
-                                      (##structure? _%$obj352485%_))
+                                      (##structure? _%$obj178670%_))
                                     (eq? HashTable::t
                                          (let ()
                                            (declare (not safe))
-                                           (##structure-type _%$obj352485%_)))
+                                           (##structure-type _%$obj178670%_)))
                                     '#t)
-                               _%$obj352485%_
+                               _%$obj178670%_
                                (let ()
                                  (declare (not safe))
-                                 (cast HashTable::interface _%$obj352485%_)))))
-                        (_%h352490%_ _%h352488%_))
+                                 (cast HashTable::interface _%$obj178670%_)))))
+                        (_%h178675%_ _%h178673%_))
                    (declare (not safe))
-                   (__hash-get _%h352490%_ _%key352481%_))))
-            (if _%$e352504%_
-                ((lambda (_%state352507%_)
-                   (if (eq? _%state352507%_ 'builtin)
+                   (__hash-get _%h178675%_ _%key178666%_))))
+            (if _%$e178689%_
+                ((lambda (_%state178692%_)
+                   (if (eq? _%state178692%_ 'builtin)
                        (let ()
                          (mutex-unlock! __load-mx)
                          (let ()
                            (declare (not safe))
                            (error '"cannot reload builtin module"
-                                  _%modpath352469%_)))
-                       (if (eq? 'loading _%state352507%_)
+                                  _%modpath178654%_)))
+                       (if (eq? 'loading _%state178692%_)
                            (let ()
                              (mutex-unlock! __load-mx __load-cv)
                              (let ()
                                (declare (not safe))
                                (error '"module is still loading")))
-                           (if (string? _%state352507%_)
-                               (let ((_%latest-path352512%_
+                           (if (string? _%state178692%_)
+                               (let ((_%latest-path178697%_
                                       (__find-library-module
-                                       _%modpath352469%_)))
+                                       _%modpath178654%_)))
                                  (if (or (equal? (path-extension
-                                                  _%state352507%_)
+                                                  _%state178692%_)
                                                  '".scm")
-                                         (not (equal? _%state352507%_
-                                                      _%latest-path352512%_)))
+                                         (not (equal? _%state178692%_
+                                                      _%latest-path178697%_)))
                                      (begin
-                                       (let* ((_%h352517%_ __modules)
-                                              (_%key352520%_ _%modpath352469%_)
-                                              (_%h352527%_
-                                               (let ((_%$obj352524%_
-                                                      _%h352517%_))
+                                       (let* ((_%h178702%_ __modules)
+                                              (_%key178705%_ _%modpath178654%_)
+                                              (_%h178712%_
+                                               (let ((_%$obj178709%_
+                                                      _%h178702%_))
                                                  (if (and (let ()
                                                             (declare
                                                               (not safe))
                                                             (##structure?
-                                                             _%$obj352524%_))
+                                                             _%$obj178709%_))
                                                           (eq? HashTable::t
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##structure-type _%$obj352524%_)))
+                         (##structure-type _%$obj178709%_)))
                   '#t)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _%$obj352524%_
+                                                     _%$obj178709%_
                                                      (let ()
                                                        (declare (not safe))
                                                        (cast HashTable::interface
-                                                             _%$obj352524%_)))))
-                                              (_%h352529%_ _%h352527%_))
+                                                             _%$obj178709%_)))))
+                                              (_%h178714%_ _%h178712%_))
                                          (declare (not safe))
                                          (__hash-remove!
-                                          _%h352529%_
-                                          _%key352520%_))
+                                          _%h178714%_
+                                          _%key178705%_))
                                        (mutex-unlock! __load-mx)
-                                       (let* ((_%modpath352544%_
-                                               _%modpath352469%_)
-                                              (_%modpath352549%_
-                                               _%modpath352544%_))
-                                         (__load-module _%modpath352549%_)))
+                                       (let* ((_%modpath178729%_
+                                               _%modpath178654%_)
+                                              (_%modpath178734%_
+                                               _%modpath178729%_))
+                                         (__load-module _%modpath178734%_)))
                                      (mutex-unlock! __load-mx)))
-                               (if (and (pair? _%state352507%_)
+                               (if (and (pair? _%state178692%_)
                                         (eq? (let ()
                                                (declare (not safe))
-                                               (##car _%state352507%_))
+                                               (##car _%state178692%_))
                                              'error))
                                    (let ()
-                                     (let* ((_%h352560%_ __modules)
-                                            (_%key352563%_ _%modpath352469%_)
-                                            (_%h352570%_
-                                             (let ((_%$obj352567%_
-                                                    _%h352560%_))
+                                     (let* ((_%h178745%_ __modules)
+                                            (_%key178748%_ _%modpath178654%_)
+                                            (_%h178755%_
+                                             (let ((_%$obj178752%_
+                                                    _%h178745%_))
                                                (if (and (let ()
                                                           (declare (not safe))
                                                           (##structure?
-                                                           _%$obj352567%_))
+                                                           _%$obj178752%_))
                                                         (eq? HashTable::t
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##structure-type _%$obj352567%_)))
+                       (##structure-type _%$obj178752%_)))
                 '#t)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _%$obj352567%_
+                                                   _%$obj178752%_
                                                    (let ()
                                                      (declare (not safe))
                                                      (cast HashTable::interface
-                                                           _%$obj352567%_)))))
-                                            (_%h352572%_ _%h352570%_))
+                                                           _%$obj178752%_)))))
+                                            (_%h178757%_ _%h178755%_))
                                        (declare (not safe))
                                        (__hash-remove!
-                                        _%h352572%_
-                                        _%key352563%_))
+                                        _%h178757%_
+                                        _%key178748%_))
                                      (mutex-unlock! __load-mx)
-                                     (let* ((_%modpath352584%_
-                                             _%modpath352469%_)
-                                            (_%modpath352589%_
-                                             _%modpath352584%_))
-                                       (__load-module _%modpath352589%_)))
+                                     (let* ((_%modpath178769%_
+                                             _%modpath178654%_)
+                                            (_%modpath178774%_
+                                             _%modpath178769%_))
+                                       (__load-module _%modpath178774%_)))
                                    (let ()
                                      (mutex-unlock! __load-mx)
                                      (let ()
                                        (declare (not safe))
                                        (error '"inernal error; unexpected loading state"
-                                              _%state352507%_))))))))
-                 _%$e352504%_)
+                                              _%state178692%_))))))))
+                 _%$e178689%_)
                 (let ()
                   (mutex-unlock! __load-mx)
-                  (let* ((_%modpath352601%_ _%modpath352469%_)
-                         (_%modpath352606%_ _%modpath352601%_))
-                    (__load-module _%modpath352606%_))))))))
+                  (let* ((_%modpath178786%_ _%modpath178654%_)
+                         (_%modpath178791%_ _%modpath178786%_))
+                    (__load-module _%modpath178791%_))))))))
     (define reload-module!
-      (lambda (_%modpath352159%_)
-        (if (string? _%modpath352159%_)
-            (let ((_%modpath352163%_ _%modpath352159%_))
-              (__reload-module! _%modpath352163%_))
+      (lambda (_%modpath178344%_)
+        (if (string? _%modpath178344%_)
+            (let ((_%modpath178348%_ _%modpath178344%_))
+              (__reload-module! _%modpath178348%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -462,168 +462,168 @@
                'contract:
                'string?
                'value:
-               _%modpath352159%_)
+               _%modpath178344%_)
               '#!void))))
     (define __find-library-module
-      (lambda (_%modpath352400%_)
-        (letrec ((_%find-compiled-file352402%_
-                  (lambda (_%npath352455%_)
-                    (let ((_%basepath352457%_
+      (lambda (_%modpath178585%_)
+        (letrec ((_%find-compiled-file178587%_
+                  (lambda (_%npath178640%_)
+                    (let ((_%basepath178642%_
                            (let ()
                              (declare (not safe))
-                             (##string-append _%npath352455%_ '".o"))))
-                      (let _%lp352459%_ ((_%current352461%_ '#f)
-                                         (_%n352462%_ '1))
-                        (let ((_%next352464%_
-                               (let ((__tmp352973
-                                      (number->string _%n352462%_)))
+                             (##string-append _%npath178640%_ '".o"))))
+                      (let _%lp178644%_ ((_%current178646%_ '#f)
+                                         (_%n178647%_ '1))
+                        (let ((_%next178649%_
+                               (let ((__tmp179158
+                                      (number->string _%n178647%_)))
                                  (declare (not safe))
                                  (##string-append
-                                  _%basepath352457%_
-                                  __tmp352973))))
+                                  _%basepath178642%_
+                                  __tmp179158))))
                           (if (let ()
                                 (declare (not safe))
-                                (##file-exists? _%next352464%_))
-                              (_%lp352459%_
-                               _%next352464%_
+                                (##file-exists? _%next178649%_))
+                              (_%lp178644%_
+                               _%next178649%_
                                (let ()
                                  (declare (not safe))
-                                 (##fx+ _%n352462%_ '1)))
-                              _%current352461%_))))))
-                 (_%find-source-file352403%_
-                  (lambda (_%npath352451%_)
-                    (let ((_%spath352453%_
+                                 (##fx+ _%n178647%_ '1)))
+                              _%current178646%_))))))
+                 (_%find-source-file178588%_
+                  (lambda (_%npath178636%_)
+                    (let ((_%spath178638%_
                            (let ()
                              (declare (not safe))
-                             (##string-append _%npath352451%_ '".scm"))))
+                             (##string-append _%npath178636%_ '".scm"))))
                       (if (let ()
                             (declare (not safe))
-                            (##file-exists? _%spath352453%_))
-                          _%spath352453%_
+                            (##file-exists? _%spath178638%_))
+                          _%spath178638%_
                           '#f)))))
-          (let _%lp352405%_ ((_%rest352407%_ (load-path)))
-            (let* ((_%rest352408352416%_ _%rest352407%_)
-                   (_%else352410352424%_ (lambda () '#f))
-                   (_%K352412352439%_
-                    (lambda (_%rest352427%_ _%dir352428%_)
-                      (let* ((_%npath352430%_
+          (let _%lp178590%_ ((_%rest178592%_ (load-path)))
+            (let* ((_%rest178593178601%_ _%rest178592%_)
+                   (_%else178595178609%_ (lambda () '#f))
+                   (_%K178597178624%_
+                    (lambda (_%rest178612%_ _%dir178613%_)
+                      (let* ((_%npath178615%_
                               (path-expand
-                               _%modpath352400%_
-                               (path-expand _%dir352428%_)))
-                             (_%$e352432%_
-                              (_%find-compiled-file352402%_ _%npath352430%_)))
-                        (if _%$e352432%_
-                            (path-normalize _%$e352432%_)
-                            (let ((_%$e352435%_
-                                   (_%find-source-file352403%_
-                                    _%npath352430%_)))
-                              (if _%$e352435%_
-                                  (path-normalize _%$e352435%_)
-                                  (_%lp352405%_ _%rest352427%_))))))))
-              (if (pair? _%rest352408352416%_)
-                  (let ((_%hd352413352442%_
+                               _%modpath178585%_
+                               (path-expand _%dir178613%_)))
+                             (_%$e178617%_
+                              (_%find-compiled-file178587%_ _%npath178615%_)))
+                        (if _%$e178617%_
+                            (path-normalize _%$e178617%_)
+                            (let ((_%$e178620%_
+                                   (_%find-source-file178588%_
+                                    _%npath178615%_)))
+                              (if _%$e178620%_
+                                  (path-normalize _%$e178620%_)
+                                  (_%lp178590%_ _%rest178612%_))))))))
+              (if (pair? _%rest178593178601%_)
+                  (let ((_%hd178598178627%_
                          (let ()
                            (declare (not safe))
-                           (##car _%rest352408352416%_)))
-                        (_%tl352414352444%_
+                           (##car _%rest178593178601%_)))
+                        (_%tl178599178629%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%rest352408352416%_))))
-                    (let* ((_%dir352447%_ _%hd352413352442%_)
-                           (_%rest352449%_ _%tl352414352444%_))
-                      (_%K352412352439%_ _%rest352449%_ _%dir352447%_)))
-                  (_%else352410352424%_)))))))
+                           (##cdr _%rest178593178601%_))))
+                    (let* ((_%dir178632%_ _%hd178598178627%_)
+                           (_%rest178634%_ _%tl178599178629%_))
+                      (_%K178597178624%_ _%rest178634%_ _%dir178632%_)))
+                  (_%else178595178609%_)))))))
     (define list-modules
       (lambda ()
         (let ()
           (mutex-lock! __load-mx)
-          (let ((_%result352398%_
-                 (let* ((_%h352377%_ __modules)
-                        (_%h352384%_
-                         (let ((_%$obj352381%_ _%h352377%_))
+          (let ((_%result178583%_
+                 (let* ((_%h178562%_ __modules)
+                        (_%h178569%_
+                         (let ((_%$obj178566%_ _%h178562%_))
                            (if (and (let ()
                                       (declare (not safe))
-                                      (##structure? _%$obj352381%_))
+                                      (##structure? _%$obj178566%_))
                                     (eq? HashTable::t
                                          (let ()
                                            (declare (not safe))
-                                           (##structure-type _%$obj352381%_)))
+                                           (##structure-type _%$obj178566%_)))
                                     '#t)
-                               _%$obj352381%_
+                               _%$obj178566%_
                                (let ()
                                  (declare (not safe))
-                                 (cast HashTable::interface _%$obj352381%_)))))
-                        (_%h352386%_ _%h352384%_))
+                                 (cast HashTable::interface _%$obj178566%_)))))
+                        (_%h178571%_ _%h178569%_))
                    (declare (not safe))
-                   (__hash->list _%h352386%_))))
+                   (__hash->list _%h178571%_))))
             (mutex-unlock! __load-mx)
-            _%result352398%_))))
+            _%result178583%_))))
     (define __module-load-order
-      (lambda (_%modpath352307%_)
-        (let ((_%modpath352310%_ _%modpath352307%_))
+      (lambda (_%modpath178492%_)
+        (let ((_%modpath178495%_ _%modpath178492%_))
           (mutex-lock! __load-mx)
-          (let ((_%ord352373%_
-                 (if (eq? (let* ((_%h352319%_ __modules)
-                                 (_%key352322%_ _%modpath352310%_)
-                                 (_%h352329%_
-                                  (let ((_%$obj352326%_ _%h352319%_))
+          (let ((_%ord178558%_
+                 (if (eq? (let* ((_%h178504%_ __modules)
+                                 (_%key178507%_ _%modpath178495%_)
+                                 (_%h178514%_
+                                  (let ((_%$obj178511%_ _%h178504%_))
                                     (if (and (let ()
                                                (declare (not safe))
-                                               (##structure? _%$obj352326%_))
+                                               (##structure? _%$obj178511%_))
                                              (eq? HashTable::t
                                                   (let ()
                                                     (declare (not safe))
                                                     (##structure-type
-                                                     _%$obj352326%_)))
+                                                     _%$obj178511%_)))
                                              '#t)
-                                        _%$obj352326%_
+                                        _%$obj178511%_
                                         (let ()
                                           (declare (not safe))
                                           (cast HashTable::interface
-                                                _%$obj352326%_)))))
-                                 (_%h352331%_ _%h352329%_))
+                                                _%$obj178511%_)))))
+                                 (_%h178516%_ _%h178514%_))
                             (declare (not safe))
-                            (__hash-get _%h352331%_ _%key352322%_))
+                            (__hash-get _%h178516%_ _%key178507%_))
                           'builtin)
                      '0
-                     (let ((_%$e352369%_
-                            (let* ((_%h352346%_ __load-order)
-                                   (_%key352349%_ _%modpath352310%_)
-                                   (_%h352356%_
-                                    (let ((_%$obj352353%_ _%h352346%_))
+                     (let ((_%$e178554%_
+                            (let* ((_%h178531%_ __load-order)
+                                   (_%key178534%_ _%modpath178495%_)
+                                   (_%h178541%_
+                                    (let ((_%$obj178538%_ _%h178531%_))
                                       (if (and (let ()
                                                  (declare (not safe))
-                                                 (##structure? _%$obj352353%_))
+                                                 (##structure? _%$obj178538%_))
                                                (eq? HashTable::t
                                                     (let ()
                                                       (declare (not safe))
                                                       (##structure-type
-                                                       _%$obj352353%_)))
+                                                       _%$obj178538%_)))
                                                '#t)
-                                          _%$obj352353%_
+                                          _%$obj178538%_
                                           (let ()
                                             (declare (not safe))
                                             (cast HashTable::interface
-                                                  _%$obj352353%_)))))
-                                   (_%h352358%_ _%h352356%_))
+                                                  _%$obj178538%_)))))
+                                   (_%h178543%_ _%h178541%_))
                               (declare (not safe))
-                              (__hash-get _%h352358%_ _%key352349%_))))
-                       (if _%$e352369%_ _%$e352369%_ '#f)))))
+                              (__hash-get _%h178543%_ _%key178534%_))))
+                       (if _%$e178554%_ _%$e178554%_ '#f)))))
             (mutex-unlock! __load-mx)
-            (if (exact-integer? _%ord352373%_)
-                _%ord352373%_
+            (if (exact-integer? _%ord178558%_)
+                _%ord178558%_
                 (begin
                   (let ()
                     (declare (not safe))
                     (error '"unknown module load order"
                            'module:
-                           _%modpath352310%_))
+                           _%modpath178495%_))
                   '#!void))))))
     (define module-load-order
-      (lambda (_%modpath352293%_)
-        (if (string? _%modpath352293%_)
-            (let ((_%modpath352297%_ _%modpath352293%_))
-              (__module-load-order _%modpath352297%_))
+      (lambda (_%modpath178478%_)
+        (if (string? _%modpath178478%_)
+            (let ((_%modpath178482%_ _%modpath178478%_))
+              (__module-load-order _%modpath178482%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -632,5 +632,5 @@
                'contract:
                'string?
                'value:
-               _%modpath352293%_)
+               _%modpath178478%_)
               '#!void))))))
