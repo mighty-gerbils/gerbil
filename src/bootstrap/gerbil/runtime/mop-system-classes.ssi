@@ -110,6 +110,7 @@ namespace: #f
          (%#define-runtime weak? weak?)
          (%#define-runtime object-port? object-port?)
          (%#define-runtime character-port? character-port?)
+         (%#define-runtime byte-port? byte-port?)
          (%#define-runtime device-port? device-port?)
          (%#define-runtime vector-port? vector-port?)
          (%#define-runtime string-port? string-port?)

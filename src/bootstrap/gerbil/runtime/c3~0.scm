@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/c3::timestamp 1771092625)
+  (define gerbil/runtime/c3::timestamp 1771093446)
   (begin
     (define c4-linearize__%
       (lambda (_%@@keywords120612%_

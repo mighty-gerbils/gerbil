@@ -1,27 +1,27 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gxc[1]#_g257881_|
+  (define |gxc[1]#_g257885_|
     (##structure
      gx#syntax-quote::t
      '::generate-runtime-empty
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g257883_|
+  (define |gxc[1]#_g257887_|
     (##structure
      gx#syntax-quote::t
      '::generate-ssxi::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g257885_|
+  (define |gxc[1]#_g257889_|
     (##structure
      gx#syntax-quote::t
      'make-::generate-ssxi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g257887_|
+  (define |gxc[1]#_g257891_|
     (##structure
      gx#syntax-quote::t
      '::generate-ssxi?
@@ -29,7 +29,7 @@
      (gx#current-expander-context)
      '()))
   (define |gxc[:0:]#::generate-ssxi|
-    (let ((__obj257849
+    (let ((__obj257853
            (let ()
              (declare (not safe))
              (##structure
@@ -59,63 +59,63 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj257849
+         __obj257853
          'gxc#::generate-ssxi::t
          '1
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '::generate-ssxi '2 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '::generate-ssxi '2 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '5 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '5 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '7 '#f '#f))
-      (let ((__tmp257880 (cons |gxc[1]#_g257881_| '())))
+        (##unchecked-structure-set! __obj257853 '() '7 '#f '#f))
+      (let ((__tmp257884 (cons |gxc[1]#_g257885_| '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 __tmp257880 '4 '#f '#f))
+        (##unchecked-structure-set! __obj257853 __tmp257884 '4 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '#f '8 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '#t '9 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '#t '9 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '#f '11 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '#f '11 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '#f '12 '#f '#f))
-      (let ((__tmp257882 |gxc[1]#_g257883_|))
-        (declare (not safe))
-        (##unchecked-structure-set! __obj257849 __tmp257882 '3 '#f '#f))
-      (let ((__tmp257884 |gxc[1]#_g257885_|))
-        (declare (not safe))
-        (##unchecked-structure-set! __obj257849 __tmp257884 '13 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '#f '12 '#f '#f))
       (let ((__tmp257886 |gxc[1]#_g257887_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 __tmp257886 '14 '#f '#f))
+        (##unchecked-structure-set! __obj257853 __tmp257886 '3 '#f '#f))
+      (let ((__tmp257888 |gxc[1]#_g257889_|))
+        (declare (not safe))
+        (##unchecked-structure-set! __obj257853 __tmp257888 '13 '#f '#f))
+      (let ((__tmp257890 |gxc[1]#_g257891_|))
+        (declare (not safe))
+        (##unchecked-structure-set! __obj257853 __tmp257890 '14 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '15 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '15 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '16 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '16 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '17 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '17 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '18 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '18 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '19 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '19 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '21 '#f '#f))
+        (##unchecked-structure-set! __obj257853 '() '21 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj257849 '() '20 '#f '#f))
-      __obj257849)))
+        (##unchecked-structure-set! __obj257853 '() '20 '#f '#f))
+      __obj257853)))

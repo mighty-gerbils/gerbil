@@ -1332,6 +1332,7 @@ package: gerbil/runtime
   (declare-type weak? (@primitive-predicate weak::t))
   (declare-type object-port? (@primitive-predicate object-port::t))
   (declare-type character-port? (@primitive-predicate character-port::t))
+  (declare-type byte-port? (@primitive-predicate byte-port::t))
   (declare-type device-port? (@primitive-predicate device-port::t))
   (declare-type vector-port? (@primitive-predicate vector-port::t))
   (declare-type string-port? (@primitive-predicate string-port::t))
