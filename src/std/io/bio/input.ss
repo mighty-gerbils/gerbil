@@ -164,7 +164,7 @@
       (set! bio.rhi 1)
       (void)))))
 
-(def (bio-put-back-many (bio : basic-input-buffer) previous-input)
+(def (bio-put-back-many (bio : basic-input-buffer) (previous-input : :list))
   => :void
   (def (put-back! buf rlo previous-input)
     (let loop ((rest previous-input) (i rlo))

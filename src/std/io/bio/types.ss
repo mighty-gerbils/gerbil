@@ -58,3 +58,17 @@
    (limit     :- :integer)
    (closed?   :- :boolean))
   final: #t)
+
+;; port buffers
+(defstruct basic-port-buffer
+  ((port    :- :port)
+   (closed? :- :boolean)))
+
+(defstruct (port-input-buffer basic-port-buffer)
+  ((putback :- :u8vector)
+   (rlo     :- :fixnum)
+   (rhi     :- :fixnum))
+  final: #t)
+
+(defstruct (port-output-buffer basic-port-buffer) ()
+  final: #t)
