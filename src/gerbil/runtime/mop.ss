@@ -343,29 +343,28 @@ namespace: #f
   (interface      13))
 
 (def (type-field-list type) => :list
-  (def (fields->list (fields :- :vector) (r :- :list)) => :list
+  (def (fields->list (fields :- :vector)) => :list
     (let (fields-len (vector-length fields))
-      (let loop ((i 0 :- :fixnum) (r r :- :list))
+      (let loop ((i 0 :- :fixnum) (r [] :- :list))
         => :list
         (if (fx< i fields-len)
           (loop (fx+ i 3)
                 (cons (vector-ref fields i) r))
-          r))))
-  (let loop ((type type) (r [] :- :list))
+          (reverse! r)))))
+  (let loop ((type type))
     => :list
     (cond
      ((##type? type)
       (cond
        ((eq? type ##type-type)
-        (reverse! r))
+        [])
        ((##type-super type)
         => (lambda (super)
              => :list
-             (loop super (fields->list (##type-fields type) r))))
+             (append (loop super) (fields->list (##type-fields type)))))
        (else
-        (reverse! (fields->list (##type-fields type) r)))))
-     (else
-      (reverse! r)))))
+        (fields->list (##type-fields type)))))
+     (else []))))
 
 (def (class-type-slot-list (klass : :class)) => :list
   (vector->list (class-type-slot-vector klass) 1))
