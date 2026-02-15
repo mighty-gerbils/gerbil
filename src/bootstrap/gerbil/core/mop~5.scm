@@ -6511,30 +6511,29 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27497 '() '18 '#f '#f))
         (let ((__tmp28103
-               (cons (cons 'read-datum '1)
-                     (cons (cons 'write-datum '2)
-                           (cons (cons 'newline '3)
-                                 (cons (cons 'force-output '4)
-                                       (cons (cons 'mutex '5)
-                                             (cons (cons 'rkind '6)
-                                                   (cons (cons 'wkind '7)
-                                                         (cons (cons 'name '8)
-                                                               (cons (cons 'wait
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'close '10)
-                                   (cons (cons 'roptions '11)
-                                         (cons (cons 'rtimeout '12)
-                                               (cons (cons 'rtimeout-thunk '13)
-                                                     (cons (cons 'set-rtimeout
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '14)
-                   (cons (cons 'woptions '15)
-                         (cons (cons 'wtimeout '16)
-                               (cons (cons 'wtimeout-thunk '17)
-                                     (cons (cons 'set-wtimeout '18)
-                                           (cons (cons 'io-exception-handler
-                                                       '19)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
                                                  '())))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6609,53 +6608,53 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27498 '() '18 '#f '#f))
         (let ((__tmp28110
-               (cons (cons 'rbuf '1)
-                     (cons (cons 'rlo '2)
-                           (cons (cons 'rhi '3)
-                                 (cons (cons 'rchars '4)
-                                       (cons (cons 'rlines '5)
-                                             (cons (cons 'rcurline '6)
-                                                   (cons (cons 'rbuf-fill '7)
-                                                         (cons (cons 'peek-eof?
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '8)
-                       (cons (cons 'wbuf '9)
-                             (cons (cons 'wlo '10)
-                                   (cons (cons 'whi '11)
-                                         (cons (cons 'wchars '12)
-                                               (cons (cons 'wlines '13)
-                                                     (cons (cons 'wcurline '14)
-                                                           (cons (cons 'wbuf-drain
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'input-readtable '16)
-                               (cons (cons 'output-readtable '17)
-                                     (cons (cons 'output-width '18)
-                                           (cons (cons 'read-datum '19)
-                                                 (cons (cons 'write-datum '20)
-                                                       (cons (cons 'newline
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rbuf '20)
+                                                       (cons (cons 'rlo '21)
+                                                             (cons (cons 'rhi
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '21)
-                     (cons (cons 'force-output '22)
-                           (cons (cons 'mutex '23)
-                                 (cons (cons 'rkind '24)
-                                       (cons (cons 'wkind '25)
-                                             (cons (cons 'name '26)
-                                                   (cons (cons 'wait '27)
-                                                         (cons (cons 'close
+                                 '22)
+                           (cons (cons 'rchars '23)
+                                 (cons (cons 'rlines '24)
+                                       (cons (cons 'rcurline '25)
+                                             (cons (cons 'rbuf-fill '26)
+                                                   (cons (cons 'peek-eof? '27)
+                                                         (cons (cons 'wbuf '28)
+                                                               (cons (cons 'wlo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '28)
-                       (cons (cons 'roptions '29)
-                             (cons (cons 'rtimeout '30)
-                                   (cons (cons 'rtimeout-thunk '31)
-                                         (cons (cons 'set-rtimeout '32)
-                                               (cons (cons 'woptions '33)
-                                                     (cons (cons 'wtimeout '34)
-                                                           (cons (cons 'wtimeout-thunk
+                                   '29)
+                             (cons (cons 'whi '30)
+                                   (cons (cons 'wchars '31)
+                                         (cons (cons 'wlines '32)
+                                               (cons (cons 'wcurline '33)
+                                                     (cons (cons 'wbuf-drain
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '35)
-                         (cons (cons 'set-wtimeout '36)
-                               (cons (cons 'io-exception-handler '37)
+                         '34)
+                   (cons (cons 'input-readtable '35)
+                         (cons (cons 'output-readtable '36)
+                               (cons (cons 'output-width '37)
                                      '())))))))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6728,63 +6727,63 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27499 '() '18 '#f '#f))
         (let ((__tmp28117
-               (cons (cons 'super-rbuf '1)
-                     (cons (cons 'super-rlo '2)
-                           (cons (cons 'super-rhi '3)
-                                 (cons (cons 'super-rbuf-fill '4)
-                                       (cons (cons 'super-wbuf '5)
-                                             (cons (cons 'super-wlo '6)
-                                                   (cons (cons 'super-whi '7)
-                                                         (cons (cons 'super-wbuf-drain
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '8)
-                       (cons (cons 'rbuf '9)
-                             (cons (cons 'rlo '10)
-                                   (cons (cons 'rhi '11)
-                                         (cons (cons 'rchars '12)
-                                               (cons (cons 'rlines '13)
-                                                     (cons (cons 'rcurline '14)
-                                                           (cons (cons 'rbuf-fill
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'peek-eof? '16)
-                               (cons (cons 'wbuf '17)
-                                     (cons (cons 'wlo '18)
-                                           (cons (cons 'whi '19)
-                                                 (cons (cons 'wchars '20)
-                                                       (cons (cons 'wlines '21)
-                                                             (cons (cons 'wcurline
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'super-rbuf '20)
+                                                       (cons (cons 'super-rlo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '22)
-                           (cons (cons 'wbuf-drain '23)
-                                 (cons (cons 'input-readtable '24)
-                                       (cons (cons 'output-readtable '25)
-                                             (cons (cons 'output-width '26)
-                                                   (cons (cons 'read-datum '27)
-                                                         (cons (cons 'write-datum
+                           '21)
+                     (cons (cons 'super-rhi '22)
+                           (cons (cons 'rchars '23)
+                                 (cons (cons 'rlines '24)
+                                       (cons (cons 'rcurline '25)
+                                             (cons (cons 'super-rbuf-fill '26)
+                                                   (cons (cons 'peek-eof? '27)
+                                                         (cons (cons 'super-wbuf
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '28)
-                       (cons (cons 'newline '29)
-                             (cons (cons 'force-output '30)
-                                   (cons (cons 'mutex '31)
-                                         (cons (cons 'rkind '32)
-                                               (cons (cons 'wkind '33)
-                                                     (cons (cons 'name '34)
-                                                           (cons (cons 'wait
+                       (cons (cons 'super-wlo '29)
+                             (cons (cons 'super-whi '30)
+                                   (cons (cons 'wchars '31)
+                                         (cons (cons 'wlines '32)
+                                               (cons (cons 'wcurline '33)
+                                                     (cons (cons 'super-wbuf-drain
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '35)
-                         (cons (cons 'close '36)
-                               (cons (cons 'roptions '37)
-                                     (cons (cons 'rtimeout '38)
-                                           (cons (cons 'rtimeout-thunk '39)
-                                                 (cons (cons 'set-rtimeout '40)
-                                                       (cons (cons 'woptions
+                         '34)
+                   (cons (cons 'input-readtable '35)
+                         (cons (cons 'output-readtable '36)
+                               (cons (cons 'output-width '37)
+                                     (cons (cons 'rbuf '38)
+                                           (cons (cons 'rlo '39)
+                                                 (cons (cons 'rhi '40)
+                                                       (cons (cons 'rbuf-fill
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '41)
-                     (cons (cons 'wtimeout '42)
-                           (cons (cons 'wtimeout-thunk '43)
-                                 (cons (cons 'set-wtimeout '44)
-                                       (cons (cons 'io-exception-handler '45)
+                     (cons (cons 'wbuf '42)
+                           (cons (cons 'wlo '43)
+                                 (cons (cons 'whi '44)
+                                       (cons (cons 'wbuf-drain '45)
                                              '())))))))))))))))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6858,70 +6857,70 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27500 '() '18 '#f '#f))
         (let ((__tmp28124
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'wdevice-condvar '2)
-                           (cons (cons 'event-condvar '3)
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
                                  (cons (cons 'super-name '4)
-                                       (cons (cons 'super-rbuf '5)
-                                             (cons (cons 'super-rlo '6)
-                                                   (cons (cons 'super-rhi '7)
-                                                         (cons (cons 'super-rbuf-fill
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '8)
-                       (cons (cons 'super-wbuf '9)
-                             (cons (cons 'super-wlo '10)
-                                   (cons (cons 'super-whi '11)
-                                         (cons (cons 'super-wbuf-drain '12)
-                                               (cons (cons 'rbuf '13)
-                                                     (cons (cons 'rlo '14)
-                                                           (cons (cons 'rhi
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'rchars '16)
-                               (cons (cons 'rlines '17)
-                                     (cons (cons 'rcurline '18)
-                                           (cons (cons 'rbuf-fill '19)
-                                                 (cons (cons 'peek-eof? '20)
-                                                       (cons (cons 'wbuf '21)
-                                                             (cons (cons 'wlo
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'super-rbuf '20)
+                                                       (cons (cons 'super-rlo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '22)
-                           (cons (cons 'whi '23)
-                                 (cons (cons 'wchars '24)
-                                       (cons (cons 'wlines '25)
-                                             (cons (cons 'wcurline '26)
-                                                   (cons (cons 'wbuf-drain '27)
-                                                         (cons (cons 'input-readtable
+                           '21)
+                     (cons (cons 'super-rhi '22)
+                           (cons (cons 'rchars '23)
+                                 (cons (cons 'rlines '24)
+                                       (cons (cons 'rcurline '25)
+                                             (cons (cons 'super-rbuf-fill '26)
+                                                   (cons (cons 'peek-eof? '27)
+                                                         (cons (cons 'super-wbuf
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '28)
-                       (cons (cons 'output-readtable '29)
-                             (cons (cons 'output-width '30)
-                                   (cons (cons 'read-datum '31)
-                                         (cons (cons 'write-datum '32)
-                                               (cons (cons 'newline '33)
-                                                     (cons (cons 'force-output
+                       (cons (cons 'super-wlo '29)
+                             (cons (cons 'super-whi '30)
+                                   (cons (cons 'wchars '31)
+                                         (cons (cons 'wlines '32)
+                                               (cons (cons 'wcurline '33)
+                                                     (cons (cons 'super-wbuf-drain
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '34)
-                   (cons (cons 'mutex '35)
-                         (cons (cons 'rkind '36)
-                               (cons (cons 'wkind '37)
-                                     (cons (cons 'name '38)
-                                           (cons (cons 'wait '39)
-                                                 (cons (cons 'close '40)
-                                                       (cons (cons 'roptions
+                   (cons (cons 'input-readtable '35)
+                         (cons (cons 'output-readtable '36)
+                               (cons (cons 'output-width '37)
+                                     (cons (cons 'rbuf '38)
+                                           (cons (cons 'rlo '39)
+                                                 (cons (cons 'rhi '40)
+                                                       (cons (cons 'rbuf-fill
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '41)
-                     (cons (cons 'rtimeout '42)
-                           (cons (cons 'rtimeout-thunk '43)
-                                 (cons (cons 'set-rtimeout '44)
-                                       (cons (cons 'woptions '45)
-                                             (cons (cons 'wtimeout '46)
-                                                   (cons (cons 'wtimeout-thunk
+                     (cons (cons 'wbuf '42)
+                           (cons (cons 'wlo '43)
+                                 (cons (cons 'whi '44)
+                                       (cons (cons 'wbuf-drain '45)
+                                             (cons (cons 'rdevice-condvar '46)
+                                                   (cons (cons 'wdevice-condvar
                                                                '47)
-                                                         (cons (cons 'set-wtimeout
+                                                         (cons (cons 'event-condvar
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '48)
-                       (cons (cons 'io-exception-handler '49)
+                       (cons (cons 'name '49)
                              '())))))))))))))))))))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -6996,47 +6995,46 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27501 '() '18 '#f '#f))
         (let ((__tmp28130
-               (cons (cons 'rbuf '1)
-                     (cons (cons 'rlo '2)
-                           (cons (cons 'rhi '3)
-                                 (cons (cons 'rbuf-fill '4)
-                                       (cons (cons 'wbuf '5)
-                                             (cons (cons 'wlo '6)
-                                                   (cons (cons 'whi '7)
-                                                         (cons (cons 'wbuf-drain
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '8)
-                       (cons (cons 'peer '9)
-                             (cons (cons 'fifo '10)
-                                   (cons (cons 'rcondvar '11)
-                                         (cons (cons 'wcondvar '12)
-                                               (cons (cons 'capacity '13)
-                                                     (cons (cons 'read-datum
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '14)
-                   (cons (cons 'write-datum '15)
-                         (cons (cons 'newline '16)
-                               (cons (cons 'force-output '17)
-                                     (cons (cons 'mutex '18)
-                                           (cons (cons 'rkind '19)
-                                                 (cons (cons 'wkind '20)
-                                                       (cons (cons 'name '21)
-                                                             (cons (cons 'wait
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rbuf '20)
+                                                       (cons (cons 'rlo '21)
+                                                             (cons (cons 'rhi
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                  '22)
-                           (cons (cons 'close '23)
-                                 (cons (cons 'roptions '24)
-                                       (cons (cons 'rtimeout '25)
-                                             (cons (cons 'rtimeout-thunk '26)
-                                                   (cons (cons 'set-rtimeout
-                                                               '27)
-                                                         (cons (cons 'woptions
+                           (cons (cons 'rbuf-fill '23)
+                                 (cons (cons 'wbuf '24)
+                                       (cons (cons 'wlo '25)
+                                             (cons (cons 'whi '26)
+                                                   (cons (cons 'wbuf-drain '27)
+                                                         (cons (cons 'peer '28)
+                                                               (cons (cons 'fifo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '28)
-                       (cons (cons 'wtimeout '29)
-                             (cons (cons 'wtimeout-thunk '30)
-                                   (cons (cons 'set-wtimeout '31)
-                                         (cons (cons 'io-exception-handler '32)
+                                   '29)
+                             (cons (cons 'rcondvar '30)
+                                   (cons (cons 'wcondvar '31)
+                                         (cons (cons 'capacity '32)
                                                '()))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7108,61 +7106,61 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27502 '() '18 '#f '#f))
         (let ((__tmp28136
-               (cons (cons 'peer '1)
-                     (cons (cons 'fifo '2)
-                           (cons (cons 'rcondvar '3)
-                                 (cons (cons 'wcondvar '4)
-                                       (cons (cons 'width '5)
-                                             (cons (cons 'capacity '6)
-                                                   (cons (cons 'rbuf '7)
-                                                         (cons (cons 'rlo '8)
-                                                               (cons (cons 'rhi
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'rchars '10)
-                                   (cons (cons 'rlines '11)
-                                         (cons (cons 'rcurline '12)
-                                               (cons (cons 'rbuf-fill '13)
-                                                     (cons (cons 'peek-eof?
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '14)
-                   (cons (cons 'wbuf '15)
-                         (cons (cons 'wlo '16)
-                               (cons (cons 'whi '17)
-                                     (cons (cons 'wchars '18)
-                                           (cons (cons 'wlines '19)
-                                                 (cons (cons 'wcurline '20)
-                                                       (cons (cons 'wbuf-drain
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rbuf '20)
+                                                       (cons (cons 'rlo '21)
+                                                             (cons (cons 'rhi
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '21)
-                     (cons (cons 'input-readtable '22)
-                           (cons (cons 'output-readtable '23)
-                                 (cons (cons 'output-width '24)
-                                       (cons (cons 'read-datum '25)
-                                             (cons (cons 'write-datum '26)
-                                                   (cons (cons 'newline '27)
-                                                         (cons (cons 'force-output
+                                 '22)
+                           (cons (cons 'rchars '23)
+                                 (cons (cons 'rlines '24)
+                                       (cons (cons 'rcurline '25)
+                                             (cons (cons 'rbuf-fill '26)
+                                                   (cons (cons 'peek-eof? '27)
+                                                         (cons (cons 'wbuf '28)
+                                                               (cons (cons 'wlo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '28)
-                       (cons (cons 'mutex '29)
-                             (cons (cons 'rkind '30)
-                                   (cons (cons 'wkind '31)
-                                         (cons (cons 'name '32)
-                                               (cons (cons 'wait '33)
-                                                     (cons (cons 'close '34)
-                                                           (cons (cons 'roptions
+                                   '29)
+                             (cons (cons 'whi '30)
+                                   (cons (cons 'wchars '31)
+                                         (cons (cons 'wlines '32)
+                                               (cons (cons 'wcurline '33)
+                                                     (cons (cons 'wbuf-drain
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '35)
-                         (cons (cons 'rtimeout '36)
-                               (cons (cons 'rtimeout-thunk '37)
-                                     (cons (cons 'set-rtimeout '38)
-                                           (cons (cons 'woptions '39)
-                                                 (cons (cons 'wtimeout '40)
-                                                       (cons (cons 'wtimeout-thunk
+                         '34)
+                   (cons (cons 'input-readtable '35)
+                         (cons (cons 'output-readtable '36)
+                               (cons (cons 'output-width '37)
+                                     (cons (cons 'peer '38)
+                                           (cons (cons 'fifo '39)
+                                                 (cons (cons 'rcondvar '40)
+                                                       (cons (cons 'wcondvar
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '41)
-                     (cons (cons 'set-wtimeout '42)
-                           (cons (cons 'io-exception-handler '43)
+                     (cons (cons 'width '42)
+                           (cons (cons 'capacity '43)
                                  '())))))))))))))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7236,71 +7234,71 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27503 '() '18 '#f '#f))
         (let ((__tmp28142
-               (cons (cons 'peer '1)
-                     (cons (cons 'fifo '2)
-                           (cons (cons 'rcondvar '3)
-                                 (cons (cons 'wcondvar '4)
-                                       (cons (cons 'width '5)
-                                             (cons (cons 'capacity '6)
-                                                   (cons (cons 'super-rbuf '7)
-                                                         (cons (cons 'super-rlo
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '8)
-                       (cons (cons 'super-rhi '9)
-                             (cons (cons 'super-rbuf-fill '10)
-                                   (cons (cons 'super-wbuf '11)
-                                         (cons (cons 'super-wlo '12)
-                                               (cons (cons 'super-whi '13)
-                                                     (cons (cons 'super-wbuf-drain
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '14)
-                   (cons (cons 'rbuf '15)
-                         (cons (cons 'rlo '16)
-                               (cons (cons 'rhi '17)
-                                     (cons (cons 'rchars '18)
-                                           (cons (cons 'rlines '19)
-                                                 (cons (cons 'rcurline '20)
-                                                       (cons (cons 'rbuf-fill
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'super-rbuf '20)
+                                                       (cons (cons 'super-rlo
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '21)
-                     (cons (cons 'peek-eof? '22)
-                           (cons (cons 'wbuf '23)
-                                 (cons (cons 'wlo '24)
-                                       (cons (cons 'whi '25)
-                                             (cons (cons 'wchars '26)
-                                                   (cons (cons 'wlines '27)
-                                                         (cons (cons 'wcurline
+                     (cons (cons 'super-rhi '22)
+                           (cons (cons 'rchars '23)
+                                 (cons (cons 'rlines '24)
+                                       (cons (cons 'rcurline '25)
+                                             (cons (cons 'super-rbuf-fill '26)
+                                                   (cons (cons 'peek-eof? '27)
+                                                         (cons (cons 'super-wbuf
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '28)
-                       (cons (cons 'wbuf-drain '29)
-                             (cons (cons 'input-readtable '30)
-                                   (cons (cons 'output-readtable '31)
-                                         (cons (cons 'output-width '32)
-                                               (cons (cons 'read-datum '33)
-                                                     (cons (cons 'write-datum
+                       (cons (cons 'super-wlo '29)
+                             (cons (cons 'super-whi '30)
+                                   (cons (cons 'wchars '31)
+                                         (cons (cons 'wlines '32)
+                                               (cons (cons 'wcurline '33)
+                                                     (cons (cons 'super-wbuf-drain
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '34)
-                   (cons (cons 'newline '35)
-                         (cons (cons 'force-output '36)
-                               (cons (cons 'mutex '37)
-                                     (cons (cons 'rkind '38)
-                                           (cons (cons 'wkind '39)
-                                                 (cons (cons 'name '40)
-                                                       (cons (cons 'wait '41)
-                                                             (cons (cons 'close
+                   (cons (cons 'input-readtable '35)
+                         (cons (cons 'output-readtable '36)
+                               (cons (cons 'output-width '37)
+                                     (cons (cons 'rbuf '38)
+                                           (cons (cons 'rlo '39)
+                                                 (cons (cons 'rhi '40)
+                                                       (cons (cons 'rbuf-fill
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '42)
-                           (cons (cons 'roptions '43)
-                                 (cons (cons 'rtimeout '44)
-                                       (cons (cons 'rtimeout-thunk '45)
-                                             (cons (cons 'set-rtimeout '46)
-                                                   (cons (cons 'woptions '47)
-                                                         (cons (cons 'wtimeout
+                           '41)
+                     (cons (cons 'wbuf '42)
+                           (cons (cons 'wlo '43)
+                                 (cons (cons 'whi '44)
+                                       (cons (cons 'wbuf-drain '45)
+                                             (cons (cons 'peer '46)
+                                                   (cons (cons 'fifo '47)
+                                                         (cons (cons 'rcondvar
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '48)
-                       (cons (cons 'wtimeout-thunk '49)
-                             (cons (cons 'set-wtimeout '50)
-                                   (cons (cons 'io-exception-handler '51)
+                       (cons (cons 'wcondvar '49)
+                             (cons (cons 'width '50)
+                                   (cons (cons 'capacity '51)
                                          '())))))))))))))))))))))))))))))))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7380,31 +7378,30 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27504 '() '18 '#f '#f))
         (let ((__tmp28148
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'wdevice-condvar '2)
-                           (cons (cons 'type '3)
-                                 (cons (cons 'id '4)
-                                       (cons (cons 'specific '5)
-                                             (cons (cons 'mutex '6)
-                                                   (cons (cons 'rkind '7)
-                                                         (cons (cons 'wkind '8)
-                                                               (cons (cons 'name
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'wait '10)
-                                   (cons (cons 'close '11)
-                                         (cons (cons 'roptions '12)
-                                               (cons (cons 'rtimeout '13)
-                                                     (cons (cons 'rtimeout-thunk
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '14)
-                   (cons (cons 'set-rtimeout '15)
-                         (cons (cons 'woptions '16)
-                               (cons (cons 'wtimeout '17)
-                                     (cons (cons 'wtimeout-thunk '18)
-                                           (cons (cons 'set-wtimeout '19)
-                                                 (cons (cons 'io-exception-handler
-                                                             '20)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'rdevice-condvar '16)
+                               (cons (cons 'wdevice-condvar '17)
+                                     (cons (cons 'type '18)
+                                           (cons (cons 'id '19)
+                                                 (cons (cons 'specific '20)
                                                        '()))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7479,31 +7476,32 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27505 '() '18 '#f '#f))
         (let ((__tmp28154
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'client-psettings '2)
-                           (cons (cons 'read-datum '3)
-                                 (cons (cons 'write-datum '4)
-                                       (cons (cons 'newline '5)
-                                             (cons (cons 'force-output '6)
-                                                   (cons (cons 'mutex '7)
-                                                         (cons (cons 'rkind '8)
-                                                               (cons (cons 'wkind
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'name '10)
-                                   (cons (cons 'wait '11)
-                                         (cons (cons 'close '12)
-                                               (cons (cons 'roptions '13)
-                                                     (cons (cons 'rtimeout '14)
-                                                           (cons (cons 'rtimeout-thunk
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'set-rtimeout '16)
-                               (cons (cons 'woptions '17)
-                                     (cons (cons 'wtimeout '18)
-                                           (cons (cons 'wtimeout-thunk '19)
-                                                 (cons (cons 'set-wtimeout '20)
-                                                       (cons (cons 'io-exception-handler
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rdevice-condvar
+                                                             '20)
+                                                       (cons (cons 'client-psettings
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '21)
                      '())))))))))))))))))))))))
@@ -7576,36 +7574,35 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27506 '() '18 '#f '#f))
         (let ((__tmp28160
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'wdevice-condvar '2)
-                           (cons (cons 'latest-source '3)
-                                 (cons (cons 'read-datum '4)
-                                       (cons (cons 'write-datum '5)
-                                             (cons (cons 'newline '6)
-                                                   (cons (cons 'force-output
-                                                               '7)
-                                                         (cons (cons 'mutex '8)
-                                                               (cons (cons 'rkind
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'wkind '10)
-                                   (cons (cons 'name '11)
-                                         (cons (cons 'wait '12)
-                                               (cons (cons 'close '13)
-                                                     (cons (cons 'roptions '14)
-                                                           (cons (cons 'rtimeout
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'rtimeout-thunk '16)
-                               (cons (cons 'set-rtimeout '17)
-                                     (cons (cons 'woptions '18)
-                                           (cons (cons 'wtimeout '19)
-                                                 (cons (cons 'wtimeout-thunk
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rdevice-condvar
                                                              '20)
-                                                       (cons (cons 'set-wtimeout
+                                                       (cons (cons 'wdevice-condvar
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '21)
-                     (cons (cons 'io-exception-handler '22)
+                     (cons (cons 'latest-source '22)
                            '()))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7681,35 +7678,33 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27507 '() '18 '#f '#f))
         (let ((__tmp28166
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'path '2)
-                           (cons (cons 'read-datum '3)
-                                 (cons (cons 'write-datum '4)
-                                       (cons (cons 'newline '5)
-                                             (cons (cons 'force-output '6)
-                                                   (cons (cons 'mutex '7)
-                                                         (cons (cons 'rkind '8)
-                                                               (cons (cons 'wkind
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'name '10)
-                                   (cons (cons 'wait '11)
-                                         (cons (cons 'close '12)
-                                               (cons (cons 'roptions '13)
-                                                     (cons (cons 'rtimeout '14)
-                                                           (cons (cons 'rtimeout-thunk
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'set-rtimeout '16)
-                               (cons (cons 'woptions '17)
-                                     (cons (cons 'wtimeout '18)
-                                           (cons (cons 'wtimeout-thunk '19)
-                                                 (cons (cons 'set-wtimeout '20)
-                                                       (cons (cons 'io-exception-handler
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '21)
-                     '())))))))))))))))))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rdevice-condvar
+                                                             '20)
+                                                       (cons (cons 'path '21)
+                                                             '())))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
           (declare (not safe))
@@ -7783,31 +7778,32 @@
           (declare (not safe))
           (##unchecked-structure-set! __obj27508 '() '18 '#f '#f))
         (let ((__tmp28172
-               (cons (cons 'rdevice-condvar '1)
-                     (cons (cons 'selector '2)
-                           (cons (cons 'read-datum '3)
-                                 (cons (cons 'write-datum '4)
-                                       (cons (cons 'newline '5)
-                                             (cons (cons 'force-output '6)
-                                                   (cons (cons 'mutex '7)
-                                                         (cons (cons 'rkind '8)
-                                                               (cons (cons 'wkind
+               (cons (cons 'mutex '1)
+                     (cons (cons 'rkind '2)
+                           (cons (cons 'wkind '3)
+                                 (cons (cons 'name '4)
+                                       (cons (cons 'wait '5)
+                                             (cons (cons 'close '6)
+                                                   (cons (cons 'roptions '7)
+                                                         (cons (cons 'rtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '9)
-                             (cons (cons 'name '10)
-                                   (cons (cons 'wait '11)
-                                         (cons (cons 'close '12)
-                                               (cons (cons 'roptions '13)
-                                                     (cons (cons 'rtimeout '14)
-                                                           (cons (cons 'rtimeout-thunk
+                             '8)
+                       (cons (cons 'rtimeout-thunk '9)
+                             (cons (cons 'set-rtimeout '10)
+                                   (cons (cons 'woptions '11)
+                                         (cons (cons 'wtimeout '12)
+                                               (cons (cons 'wtimeout-thunk '13)
+                                                     (cons (cons 'set-wtimeout
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '15)
-                         (cons (cons 'set-rtimeout '16)
-                               (cons (cons 'woptions '17)
-                                     (cons (cons 'wtimeout '18)
-                                           (cons (cons 'wtimeout-thunk '19)
-                                                 (cons (cons 'set-wtimeout '20)
-                                                       (cons (cons 'io-exception-handler
+                         '14)
+                   (cons (cons 'io-exception-handler '15)
+                         (cons (cons 'read-datum '16)
+                               (cons (cons 'write-datum '17)
+                                     (cons (cons 'newline '18)
+                                           (cons (cons 'force-output '19)
+                                                 (cons (cons 'rdevice-condvar
+                                                             '20)
+                                                       (cons (cons 'selector
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '21)
                      '())))))))))))))))))))))))
