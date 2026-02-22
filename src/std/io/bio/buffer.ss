@@ -51,3 +51,10 @@
 
 (defcall-interface-method OutputBuffer close
   (__bio-output-buffer-close obj))
+
+(interface DetachableBuffer
+  (detach!)
+  => :void)
+
+(defcall-interface-method DetachableBuffer detach!
+  (__bio-output-buffer-detach! obj))

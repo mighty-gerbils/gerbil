@@ -5,6 +5,7 @@
         ../interface
         ./types
         ./buffer
+        ./cache
         ./macros
         ./input
         ./delimited
@@ -119,6 +120,17 @@
   => :void
   (__bio-close-output snk __sink-close! __sink-drain!))
 
+(def (sink-detach! (snk : sink-output-buffer))
+  => :void
+  (unless snk.closed?
+    (unwind-protect
+     (__sink-flush snk)
+     (set! snk.closed? #t)
+     (when snk.cached?
+       (buffer-cache.put! snk.buf))
+     (set! snk.buf #f)
+     (set! snk.writer #f))))
+
 (implement
   (Closer
    (source-input-buffer
@@ -157,4 +169,7 @@
        (__sink-drain! self buf whi)))
     (close
      (lambda (self)
-       (__sink-close! self))))))
+       (__sink-close! self)))))
+  (DetachableBuffer
+   (sink-output-buffer
+    (detach! __sink-detach!))))

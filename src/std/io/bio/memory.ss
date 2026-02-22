@@ -142,4 +142,7 @@
     (drain!
      (lambda (self buf whi)
        (__mem-drain! self buf whi)))
-    (close void))))
+    (close void)))
+  (DetachableBuffer
+   (memory-output-buffer
+    (detach! void))))

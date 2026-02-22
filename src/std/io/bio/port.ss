@@ -186,13 +186,10 @@
   (__check-port-open! port-flush pio)
   (force-output pio.port))
 
-(def (port-close-output (pio : port-input-buffer))
+(def (port-close-output (pio : port-output-buffer))
   => :void
   (unless pio.closed?
     (set! pio.closed? #t)
-    (when pio.putback
-      (buffer-cache.put! pio.putback)
-      (set! pio.putback #f))
     (let ((flush-exn #f) (close-exn #f))
       (with-catch (lambda (e) (set! flush-exn e)) (cut force-output pio.port))
       (with-catch (lambda (e) (set! close-exn e)) (cut close-output-port pio.port))
@@ -200,6 +197,13 @@
       (cond
        ((or close-exn flush-exn) => raise)))))
 
+(def (port-detach! (pio : port-output-buffer))
+  => :void
+  (unless pio.closed?
+    (unwind-protect
+      (__port-flush pio)
+      (set! pio.closed? #t)
+      (set! pio.port #f))))
 
 (implement
   (Closer
@@ -226,4 +230,7 @@
   (BufferedWriter
    (port-output-buffer
     (write-u8 __port-write-u8)
-    (flush    __port-flush))))
+    (flush    __port-flush)))
+  (DetachableBuffer
+   (port-output-buffer
+    (detach!   __port-detach!))))

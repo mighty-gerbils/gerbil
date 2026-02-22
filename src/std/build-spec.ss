@@ -70,6 +70,13 @@
     ;;"io/bio/message"
     "io/bio/api"
 
+    "format/ascii"
+    "format/format-string"
+    ;;"format/env"
+
+    ;;"format/format"
+    ;;"format/api"
+
     ;; TODO
 
     ;; "ffi"
