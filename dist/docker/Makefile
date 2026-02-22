@@ -1,5 +1,22 @@
 include image.mk
 
+# Docker Hub image targets (used by CI: .github/workflows/docker-image.yml)
+# Both are alpine-based, gerbilxx includes database support
+gerbil gerbilxx:
+	$(docker) build --target $(target) \
+	--rm=true --no-cache \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-march=" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="alpine" \
+	--build-arg packages="$(alpine_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="no" \
+	--build-arg with_db="YES" \
+	-t gerbil/$@:$(arch)-$(BRANCH) $(ROOT_DIR)
+
+.PHONY: gerbil gerbilxx
+
 package-tgz:
 	$(docker) run -v $(ROOT_DIR):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
 	bash -c "tar -czvf /src/gerbil-$(BRANCH).$(arch).tgz /opt/gerbil"
