@@ -115,8 +115,7 @@
                                    (lambda () (make-u8vector bucket-size))
                                    (lambda (buf)
                                      (when (fx> (u8vector-length buf) bucket-size)
-                                       (u8vector-shrink! buf bucket-size))
-                                     (u8vector-fill! buf 0 0 bucket-size))))
+                                       (u8vector-shrink! buf bucket-size)))))
                   (vector-set! cache.caches bucket ocache)
                   (object-cache-put! ocache buf)))))))))))
 

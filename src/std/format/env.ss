@@ -25,12 +25,15 @@
   (one-of ,FORMAT-WRITE ,FORMAT-DISPLAY ,FORMAT-DEBUG))
 
 (defrule (format-cycles?)
-  (one-of ,FORMAT-NO-CYCLES ,FORMAT-CYCLES ,FORMAT-ALLOW-CYCLES))
+  (one-of ,FORMAT-NO-CYCLES ,FORMAT-CHECK-CYCLES ,FORMAT-ALLOW-CYCLES))
+
+(defrule (format-compression?)
+  (one-of ,FORMAT-NO-COMPRESSION ,FORMAT-STD-COMPRESSION))
 
 (defrule (format-flonum-conversion?)
   (one-of #\e #\E #\f #\F #\g #\G))
 
-(defrule (format-integer-base?)
+(defrule (format-integer-conversion?)
   (one-of #\b #\o #\d #\x #\X))
 
 (defrule (format-char-ascii-names?)
@@ -38,6 +41,14 @@
 
 (defrule (format-optional-fixnum?)
   (? (or not nonnegative-fixnum?)))
+
+(defrule (format-flags?)
+  (list-of? (one-of #\0 #\- #\+ #\space)))
+
+(defrule (format-optional-flags?)
+  (lambda (o)
+    (or (not o)
+        ((format-flags?) o))))
 
 ;; format environment
 (defclass FormatOpt
@@ -47,19 +58,22 @@
    (cycles           :- :fixnum)
    ;; write compression mode
    (compress         :- :fixnum)
+   ;; number format
+   (flags            :- :list) ; #\0 #\- #\space #\+
+   (width            :- :fixnum)
+   (precision        :- :fixnum)
    ;; flonums
-   (flonum-precision :- :fixnum)
-   (flonum-coversion :- :fixnum)
+   (flonum-repr      :- :fixnum)
    ;; integers
    (integer-prefix   :- :fixnum)
+   (integer-align    :- :fixnum)
    (integer-alphabet :- :u8vector)
-   (integer-width    :- :fixnum)
    ;; max sequence elements to display
    (max-elements     :- :fixnum)
    ;; char ascii name set
-   (char-ascii-names :~ :fixnum))
+   (char-ascii-names :- :fixnum))
+  constructor: :init!
   transparent: #t
-  construct: :init!
   final: #t)
 
 (defstruct FormatEnv
@@ -68,39 +82,42 @@
   constructor: :init!
   final: #t)
 
-(defmethod {:init! FormatEnv}
-  (lambda (self style:             (style             :~ (format-style?)             := FORMAT-DEBUG)
-           cycles:            (cycles            :~ (format-cycles?)            := FORMAT-ALLOW-CYCLES)
-           compress:          (compress          :~ (format-compression?)       := FORMAT-NO-COMPRESSION)
-
-           flonum-precision:  (flonum-precision  :~ (format-optional-fixnum?)   := #f)
-           flonum-conversion: (flonum-conversion :~ (format-flonum-conversion?) := #\g)
-           integer-base:      (integer-base      :~ (format-integer-base?)      := #\d)
-           max-elements:      (max-elements      :~ (format-optional-fixnum?)   := #f)
-           char-ascii-names:  (char-ascii-names  :~ (format-char-ascii-names?)  := FORMAT-CHAR-SCHEME-NAMES))
+(defmethod {:init! FormatOpt}
+  (lambda (self style:              (style              :~ (format-style?)              := FORMAT-DEBUG)
+           cycles:             (cycles             :~ (format-cycles?)             := FORMAT-ALLOW-CYCLES)
+           compress:           (compress           :~ (format-compression?)        := FORMAT-NO-COMPRESSION)
+           flags:              (flags              :~ (format-optional-flags?)     := #f)
+           width:              (width              :~ (format-optional-fixnum?)    := #f)
+           precision:          (precision          :~ (format-optional-fixnum?)    := #f)
+           flonum-conversion:  (flonum-conversion  :~ (format-flonum-conversion?)  := #\g)
+           integer-conversion: (integer-conversion :~ (format-integer-conversion?) := #\d)
+           max-elements:       (max-elements      :~ (format-optional-fixnum?)     := #f)
+           char-ascii-names:   (char-ascii-names  :~ (format-char-ascii-names?)    := FORMAT-CHAR-SCHEME-NAMES))
     (set! self.cycles cycles)
     (set! self.compress compress)
     (set! self.style style)
-    (set! self.flonum-precision flonum-precision)
-    (__set-flonum-coversion! self flonum-conversion)
-    (__set-integer-base! self integer-base)
+    (set! self.flags flags)
+    (set! self.width width)
+    (set! self.precision precision)
+    (__set-flonum-conversion! self flonum-conversion)
+    (__set-integer-conversion! self integer-conversion)
     (set! self.max-elements max-elements)
     (set! self.char-ascii-names char-ascii-names)))
 
-(def (__set-flonum-conversion! (env :- FormatEnv) (conversion :- :char))
-  (set! env.flonum-conversion (char->integer conversion)))
+(def (__set-flonum-conversion! (opt :- FormatOpt) (conversion :- :char))
+  (set! opt.flonum-repr (char->integer conversion)))
 
-(def (__set-integer-base! (env :- FormatEnv) (base :- :char))
+(def (__set-integer-conversion! (opt :- FormatOpt) (base :- :char))
   (cond
-   ((agetq base __integer-bases)
+   ((agetq base __integer-conversions)
     => (lambda (lst)
          (with ([prefix-char alphabet width] lst)
-           (set! env.integer-prefix   (and prefix-char (char->integer prefix-char)))
-           (set! env.integer-alphabet alphabet)
-           (set! env.integer-width    width)))))
-     (raise-contract-violation-error where "integer base" base: base))
+           (set! opt.integer-prefix   (and prefix-char (char->integer prefix-char)))
+           (set! opt.integer-alphabet alphabet)
+           (set! opt.integer-align    width)))))
+     (raise-contract-violation where "integer base" base: base))
 
-(def __integer-bases
+(def __integer-conversions
   [[#\b #\b __alphabet-binary  1]
    [#\o #\o __alphabet-octal   3]
    [#\d #f  __alphabet-decimal 2]
@@ -108,7 +125,7 @@
    [#\X #\x __alphabet-HEX     2]])
 
 (defsyntax-case do-format-option ()
-  ((_ where opt slot (option ...) ...)
+  ((_ where opt slot option ...)
    (with-identifier (opt.slot #'opt #'opt "." #'slot)
      (with-syntax
          (((clause ...)
@@ -122,13 +139,14 @@
                      (andmap identifier? #'(format-option ...))
                      #'((or (fx= opt.slot format-option) ...)
                         expr))))
-                  #'(option ...)))
-            (contract-string
-             (string-append "format " (symbol->string (stx-e #'slot)))))
+                #'(option ...)))
+          (contract-string
+           (string-append "format." (symbol->string (stx-e #'slot))))
+          (slot-key (symbol->keyword (stx-e #'elot))))
          #'(cond
             clause ...
             (raise-contract-violation-error where contract-string
-                                            (@symbol->keyword slot)
+                                            slot-key
                                             opt.slot))))))
 
 (defrules do-format-style ()
@@ -167,17 +185,19 @@
 (def __default-format-opt
   (delay-atomic
    (FormatOpt
-    style:  FORMAT-WRITE
-    cycles: FORMAT-ALLOW-CYCLES
-    compress: FORMAT-NO-COMPRESSION
-    flonum-precision: #f
-    flonum-conversion: #\g
-    integer-base: 10
-    max-elements: #f
-    char-ascii-names: FORMAT-CHAR-SCHEME-NAMES)))
+    style:              FORMAT-WRITE
+    cycles:             FORMAT-ALLOW-CYCLES
+    compress:           FORMAT-NO-COMPRESSION
+    flags:              #f
+    width:              #f
+    precision:          #f
+    flonum-conversion:  #\g
+    integer-conversion: #\d
+    max-elements:       #f
+    char-ascii-names:   FORMAT-CHAR-SCHEME-NAMES)))
 
 (def (format-options (opt (current-format-opt))) => FormatOpt
-  (: (or opt (force __default-format-opt))))
+  (: (or opt (force __default-format-opt)) FormatOpt))
 
 (def (format-environment (opt : FormatOpt := (format-options))) => FormatEnv
   (FormatEnv opt: opt))
@@ -197,58 +217,63 @@
   ((_ env (slot value) ...)
    (and (identifier? #'env)
         (andmap stx-keyword? #'(slot ...)))
-   (with-syntax ((((slot safe-value set-it!) ...)
-                  (map (lambda (slot value)
-                         (let (key (stx-e slot))
-                           (with-syntax
-                               (((contract setf!)
-                                 (case key
-                                   ((style:)
-                                    '(format-style?            &FormetEnv-style-set!))
-                                   ((cycles:)
-                                    '(format-cycles?           &FormetEnv-cycles-set!))
-                                   ((compress:)
-                                    '(format-compression?      &FormatEnv-compress-set!))
-                                   ((flonum-precision:)
-                                    '(format-optional-fixnum?  &FormatEnv-flonum-precision-set!))
-                                   ((flonum-conversion:)
-                                    '(format-flonum-conversion? __set-flonum-conversion!))
-                                   ((integer-base:)
-                                    '(format-integer-base?      __set-integer-base!))
-                                   ((max-elements:)
-                                    '(format-optional-fixnum?   &FormatEnv-max-elements-set!))
-                                   ((char-ascii-names:)
-                                    '(format-char-ascii-names?  &FormatEnv-char-ascii-names-set!))
-                                   (else
-                                    (raise-syntax-error #f "unexpected format option" stx slot))))
-                                (value value)
-                                (slot (keyword->symbol key)))
-                             #'((:~ value (contract)) #'setf!))))
-                       #'(slot ...)
-                       #'(value ...))))
-     (@derive-format-env env (slot safe-value) ...)))
+   (with-syntax
+       ((((slot safe-value set-it!) ...)
+         (map (lambda (slot value)
+                (let (key (stx-e slot))
+                  (with-syntax
+                      (((contract setf!)
+                        (case key
+                          ((style:)
+                           '(format-style?              &FormetEnv-style-set!))
+                          ((cycles:)
+                           '(format-cycles?             &FormetEnv-cycles-set!))
+                          ((compress:)
+                           '(format-compression?        &FormatEnv-compress-set!))
+                          ((flags:)
+                           '(format-optional-flags?     &FormatEnv-flags-set!))
+                          ((width:)
+                           '(format-optional-fixnum?    &FormatEnv-width-set!))
+                          ((precision:)
+                           '(format-optional-fixnum?    &FormatEnv-precision-set!))
+                          ((flonum-conversion:)
+                           '(format-flonum-conversion?  __set-flonum-conversion!))
+                          ((integer-conversion:)
+                           '(format-integer-conversion? __set-integer-conversion!))
+                          ((max-elements:)
+                           '(format-optional-fixnum?     &FormatEnv-max-elements-set!))
+                          ((char-ascii-names:)
+                           '(format-char-ascii-names?    &FormatEnv-char-ascii-names-set!))
+                          (else
+                           (raise-syntax-error #f "unexpected format option" stx slot))))
+                       (value value)
+                       (slot (keyword->symbol key)))
+                    #'((:~ value (contract)) #'setf!))))
+              #'(slot ...)
+              #'(value ...))))
+     #'(@derive-format-env env (slot safe-value set-it!) ...)))
   ((_ (slot value) ...)
    (andmap stx-keyword? #'(slot ...))
    (with-identifiers ((env     '$senv)
                       (env.opt #'env #'env ".opt"))
      #'(let (env (new-instance FormatEnv::t))
          (set! env.opt (format-options))
-         (@derive-format-env env (slot value) ...)))))
+         (@format-env env (slot value) ...)))))
 
 (defmethod {:init! FormatEnv}
   (lambda (self scan: (scan :? ScanEnv) opt: (opt : FormatOpt))
       (if scan
         (set! self.scan scan)
-        (let ((compress?
-               (do-format-compress FormatEnv:::init! opt
-                 #f #T))
-              (scan?
-               (or compress?
-                   (do-format-cycles FormatEnv:::init! opt
-                     #f #t #t)))
-              (allow-cycles?
-               (do-format-cycles FormatEnv:::init! opt
-                 #f #f #t)))
+        (let* ((compress?
+                (do-format-compress FormatEnv:::init! opt
+                                    #f #t))
+               (scan?
+                (or compress?
+                    (do-format-cycles FormatEnv:::init! opt
+                                      #f #t #t)))
+               (allow-cycles?
+                (do-format-cycles FormatEnv:::init! opt
+                                  #f #f #t)))
           (when scan?
             (set! self.scan (ScanEnv allow-cycles? compress?)))))
       (set! self.opt opt)))

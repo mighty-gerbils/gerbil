@@ -1,14 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; object writer
-(import :gerbil/runtime/mop
-        :gerbil/runtime/interface
-        :gerbil/runtime/hash
-        :std/error
+(import :std/error
         :std/interface
-        :std/object
         :std/io/interface
         :std/io/bio/api
+        :std/io/bio/cache
         :std/serde/scan
         :std/serde/serialize
         ./env
@@ -206,6 +203,8 @@
 (defspecial-object-writer void)
 (defspecial-object-writer unbound)
 (defspecial-object-writer unbound2)
+(defspecial-object-writer deleted)
+(defspecial-object-writer absent)
 (defspecial-object-writer optional)
 (defspecial-object-writer rest)
 (defspecial-object-writer key)
@@ -234,6 +233,11 @@
 
 (defobject-writer :fixnum (format-fixnum writer int env)
   (do-write-integer writer int env write-fixnum-with-base))
+
+(defobject-writer :integer (format-integer writer num env)
+  (if (fixnum? num)
+    (format-fixnum num env)
+    (format-bignum num env)))
 
 (defobject-writer :ratnum (format-ratnum writer num env)
   (do-write (wr 0)
@@ -293,7 +297,7 @@
              (writer.write str-buf 0 nwr)
            (__flonum-buffer.put! str-buf)
            (__flonum-buffer.put! fmt-buf))
-         (raise-io-error format-finite-flonum "failed to format flonum" error-code: nwr))))
+         (raise-io-error format-flonum "failed to format flonum" error-code: nwr))))
     (else
      ;; TODO we should write an efficient implementation of this, following
      ;;      feeley's in gambit implementation to avoid the intermediate string

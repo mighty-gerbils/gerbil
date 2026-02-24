@@ -70,17 +70,22 @@
     ;;"io/bio/message"
     "io/bio/api"
 
+    "serde/scan"
+    "serde/serialize"
+    ;;"serde/opaque"
+    "serde/interned"
+    ;;"serde/scanner"
+
+    ;;"ffi"
     "format/ascii"
     "format/format-string"
-    ;;"format/env"
-
-    ;;"format/format"
+    "format/env"
+    ;;"format/ioutil"
+    ;;"format/io"
+    ;;"format/writer"
     ;;"format/api"
 
     ;; TODO
-
-    ;; "ffi"
-    ;; "object"
 
     ;; "time/format"
 

@@ -29,7 +29,7 @@
   final: #t)
 
 (def __global-cache
-  (GlobalCache '/system/cache (SpinLock) []))
+  (GlobalCache '/sys/cache (SpinLock) []))
 
 (def (global-cache-size)
   => :fixnum
@@ -52,7 +52,7 @@
       (set! global.caches (cons cache global.caches)))))
 
 ;; object caches
-(def DEFAULT-OBJECT-CACHE-SIZE 256)
+(def DEFAULT-OBJECT-CACHE-SIZE 128)
 
 (defstruct (ObjectCache Cache)
   ((objects  :- :list)

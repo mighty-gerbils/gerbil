@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; opaque objects
-(import XXX)
 (export #t)
 
 (defstruct Opaque (klass object)

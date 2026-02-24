@@ -35,10 +35,10 @@
       wr)))
 
 (defwriter-ext (display writer obj (env : FormatEnv))
-  (writer.format obj (format-env-with-style env FORMAT-DISPLAY)))
+  (writer.format obj (@format-env env (style: FORMAT-DISPLAY))))
 
 (defwriter-ext (debug writer obj (env : FormatEnv))
-  (writer.format obj (format-env-with-style env FORMAT-DEBUG)))
+  (writer.format obj (@format-env env (style: FORMAT-DEBUG))))
 
 (defwriter-ext (format writer obj (env : FormatEnv))
   (defrule (do-object obj)
