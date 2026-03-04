@@ -24,7 +24,9 @@
        ((##fx= (##vector-cas! lk 0 1 0) 0)
         (##vector-set! lk 1 (current-thread)))
        ((##fx< spin max-spin)
-        (##thread-yield!)
+        (cond-expand
+          ((not gerbil-smp)
+           (##thread-yield!)))
         (again (##fx+ spin 1)))
        (else
         (__check-spin-deadlock! lk)
