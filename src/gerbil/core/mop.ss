@@ -199,8 +199,16 @@ package: gerbil/core
       ;; the runtime identifier of the class's type descriptor
       !runtime-type-descriptor !runtime-type-descriptor-set!)))
 
+  (defclass-type meta-object::t ()
+    make-meta-object
+    meta-object?
+    id: gerbil.core#meta-object::t
+    name: meta-object
+    slots:
+    ((methods meta-object-methods meta-object-methods-set!)))
+
   ;; class meta type; expansion time class reflection.
-  (defclass-type class-type-info::t (runtime-type-info::t)
+  (defclass-type class-type-info::t (runtime-type-info::t meta-object::t)
     make-class-type-info
     class-type-info?
     id: gerbil.core#class-type-info::t
@@ -215,7 +223,9 @@ package: gerbil/core
       !class-type-name !class-type-name-set!)
      (type-descriptor ;; Identifier
       ;; the runtime identifier of the class's type descriptor
-      !class-type-descriptor !class-type-descriptor-set!))
+      !class-type-descriptor !class-type-descriptor-set!)
+     (methods
+      !class-type-methods !class-type-methods-set!))
     slots:
     ((super ;; ListOf Identifier
       ;; the class's super list; identifiers point to class-type-infos
@@ -328,11 +338,29 @@ package: gerbil/core
       ['name :: (quote-syntax &!runtime-type-name-set!)]
       ['type-descriptor :: (quote-syntax &!runtime-type-descriptor-set!)]]))
 
+  (defsyntax meta-object
+    (make-class-type-info
+     id: 'gerbil.core#meta-object::t
+     name: 'meta-object
+     super: []
+     slots: '(methods)
+     type-descriptor: (quote-syntax meta-object::t)
+     constructor: (quote-syntax make-meta-object)
+     predicate: (quote-syntax meta-object?)
+     accessors:
+     [['methods :: (quote-syntax meta-object-methods)]]
+     mutators:
+     [['methods :: (quote-syntax meta-object-methods-set!)]]
+     unchecked-accessors:
+     [['methods :: (quote-syntax &meta-object-methods)]]
+     unchecked-mutators:
+     [['methods :: (quote-syntax &meta-object-methods-set!)]]))
+
   (defsyntax class-type-info
     (make-class-type-info
      id: 'gerbil.core#class-type-info::t
      name: 'class-type-info
-     super: [(quote-syntax runtime-type-info)]
+     super: [(quote-syntax runtime-type-info) (quote-syntax meta-object)]
      slots: '(super slots
                     precedence-list
                     ordered-slots
@@ -344,10 +372,6 @@ package: gerbil/core
                     unchecked-accessors unchecked-mutators
                     slot-types slot-defaults slot-contracts
                     slot-offsets)
-     struct?: #f
-     final?: #f
-     system?: #f
-     constructor-method: #f
      type-descriptor: (quote-syntax class-type-info::t)
      constructor: (quote-syntax make-class-type-info)
      predicate: (quote-syntax class-type-info?)
@@ -373,7 +397,8 @@ package: gerbil/core
       ['slot-types :: (quote-syntax !class-type-slot-types)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults)]
       ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]
-      ['slot-offset :: (quote-syntax !class-type-slot-offset)]]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset)]
+      ['methods :: (quote-syntax !class-type-methods)]]
      mutators:
      [['id :: (quote-syntax !class-type-id-set!)]
       ['name :: (quote-syntax !class-type-name-set!)]
@@ -396,7 +421,8 @@ package: gerbil/core
       ['slot-types :: (quote-syntax !class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults-set!)]
       ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]
-      ['slot-offset :: (quote-syntax !class-type-slot-offset-set!)]]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset-set!)]
+      ['methods :: (quote-syntax !class-type-methods-set!)]]
      unchecked-accessors:
      [['id :: (quote-syntax &!class-type-id)]
       ['name :: (quote-syntax &!class-type-name)]
@@ -419,7 +445,8 @@ package: gerbil/core
       ['slot-types :: (quote-syntax &!class-type-slot-types)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults)]
       ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]
-      ['slot-offset :: (quote-syntax &!class-type-slot-offset)]]
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset)]
+      ['methods :: (quote-syntax &!class-type-methods)]]
      unchecked-mutators:
      [['id :: (quote-syntax &!class-type-id-set!)]
       ['name :: (quote-syntax &!class-type-name-set!)]
@@ -442,7 +469,8 @@ package: gerbil/core
       ['slot-types :: (quote-syntax &!class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults-set!)]
       ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]
-      ['slot-offset :: (quote-syntax &!class-type-slot-offset-set!)]])))
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset-set!)]
+      ['methods :: (quote-syntax &!class-type-methods-set!)]])))
 
 (module MOP-4
   (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))

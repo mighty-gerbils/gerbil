@@ -819,8 +819,7 @@ package: gerbil/core
 
 (module ClassMeta
   (export #t)
-  (import "expander" MOP-2
-          (for-template TypeCast))
+  (import "expander" "mop" MOP-2 MOP-3)
   (def (!class-precedence-list klass)
     (cond
      ((!class-type-precedence-list klass))
@@ -856,7 +855,66 @@ package: gerbil/core
                                   (core-quote-syntax ':t)]
                             head))))))))
         (set! (!class-type-precedence-list klass) precedence-list)
-        precedence-list)))))
+        precedence-list))))
+
+  (defmethod {precedence-list class-type-info}
+    !class-precedence-list)
+
+  (begin-syntax
+    (def (meta-object-methods! meta)
+      (cond
+       ((meta-object-methods meta))
+       (else
+        (let (tab (make-hash-table-eq))
+          (set! (meta-object-methods meta) tab)
+          tab)))))
+
+  (def (meta-object-method-ref meta method)
+    (alet (tab (meta-object-methods meta))
+      (hash-get tab method)))
+
+  (def (get-meta-object-method meta method)
+    (or (meta-object-method-ref meta method)
+        (get-meta-object-method-mixin meta method)))
+
+  (def (get-meta-object-method-mixin meta method)
+    (cond
+     ((method-ref meta 'precedence-list)
+      => (lambda (get-precedence-list)
+           (let loop ((rest (get-precedence-list meta)))
+             (match rest
+               ([klass . rest]
+                (let (meta (syntax-local-value klass))
+                  (or (and (meta-object? meta)
+                           (meta-object-method-ref meta method))
+                      (loop rest))))
+               (else #f)))))
+     (else #f)))
+
+  ;; meta object method dispatch
+  (defsyntax-case @call-meta-object ()
+    ((_ klass (method arg ...))
+     (identifier? #'method)
+     (let (meta (syntax-local-value #'klass false))
+       (unless (meta-object? meta)
+         (raise-syntax-error #f "not a meta-object" stx #'klass meta))
+       #'(let (meta (syntax-local-value #'klass))
+           (cond
+            ((get-meta-object-method meta 'method)
+             => (lambda (proc)
+                  (proc meta arg ...)))
+            (else
+             (error "missing meta object method" meta-object: meta method: 'method)))))))
+
+  (defsyntax-case defmethod-for-meta ()
+    ((_ klass (method arg ...) body rest ...)
+     (identifier? #'method)
+     (let (meta (syntax-local-value #'klass false))
+       (unless (meta-object? meta)
+         (raise-syntax-error #f "not a meta-object" stx #'klass meta))
+       #'(begin-syntax
+           (let (tab (meta-object-methods! (syntax-local-value #'klass)))
+             (hash-put! tab 'method (lambda (arg ...) body rest ...))))))))
 
 (module Interface
   (import TypeCast TypeReference Using
