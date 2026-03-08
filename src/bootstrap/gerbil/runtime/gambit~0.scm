@@ -1,4 +1,4 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/gambit::timestamp 1773009258)
+  (define gerbil/runtime/gambit::timestamp 1773012981)
   (let () (declare (not safe)) (##void)))

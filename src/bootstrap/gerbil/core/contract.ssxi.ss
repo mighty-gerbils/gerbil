@@ -985,6 +985,21 @@ package: gerbil/core
              origin:
              gerbil/core/contract~ClassMeta)))
   (declare-type
+   gerbil/core/contract~ClassMeta#call-meta-object
+   (@lambda (2)
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__%|
    (@lambda 6
             #f

@@ -3,39 +3,39 @@
   (define |gerbil/core/contract~ClassMeta[1]#meta-object-methods!|
     (lambda (_%meta57867%_)
       (let ((_%$e57870%_
-             (let ((__obj100665 _%meta57867%_))
+             (let ((__obj100675 _%meta57867%_))
                (if (let ()
                      (declare (not safe))
                      (##structure-direct-instance-of?
-                      __obj100665
+                      __obj100675
                       'gerbil.core#meta-object::t))
                    (let ()
                      (declare (not safe))
-                     (##unchecked-structure-ref __obj100665 '1 '#f '#f))
+                     (##unchecked-structure-ref __obj100675 '1 '#f '#f))
                    (class-slot-ref
                     gerbil/core/mop~MOP-2#meta-object::t
-                    __obj100665
+                    __obj100675
                     'methods)))))
         (if _%$e57870%_
             _%$e57870%_
             (let ((_%tab57876%_ (make-hash-table-eq)))
-              (let ((__obj100666 _%meta57867%_))
+              (let ((__obj100676 _%meta57867%_))
                 (if (let ()
                       (declare (not safe))
                       (##structure-direct-instance-of?
-                       __obj100666
+                       __obj100676
                        'gerbil.core#meta-object::t))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
-                       __obj100666
+                       __obj100676
                        _%tab57876%_
                        '1
                        '#f
                        '#f))
                     (class-slot-set!
                      gerbil/core/mop~MOP-2#meta-object::t
-                     __obj100666
+                     __obj100676
                      'methods
                      _%tab57876%_)))
               _%tab57876%_)))))
@@ -95,28 +95,28 @@
                                                        (##cdr _%e5789657950%_))))
                                                 (if (gx#stx-pair/null?
                                                      _%tl5789857957%_)
-                                                    (let ((_g100874_
+                                                    (let ((_g100884_
                                                            (gx#syntax-split-splice
                                                             _%tl5789857957%_
                                                             '0)))
                                                       (begin
-                                                        (let ((_g100875_
+                                                        (let ((_g100885_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (if (##values? _g100874_)
-                             (##values-length _g100874_)
+                         (if (##values? _g100884_)
+                             (##values-length _g100884_)
                              1))))
-                  (if (not (let () (declare (not safe)) (##fx= _g100875_ 2)))
-                      (error "Context expects 2 values" _g100875_)))
+                  (if (not (let () (declare (not safe)) (##fx= _g100885_ 2)))
+                      (error "Context expects 2 values" _g100885_)))
                 (let ((_%target5789957960%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100874_ 0)))
+                         (##values-ref _g100884_ 0)))
                       (_%tl5790157963%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100874_ 1))))
+                         (##values-ref _g100884_ 1))))
                   (if (gx#stx-null? _%tl5790157963%_)
                       (letrec ((_%loop5790257966%_
                                 (lambda (_%hd5790057970%_ _%arg5790657973%_)
@@ -176,62 +176,20 @@
                                                              '()))
                                                  '()))
                                      '()))
-                         (cons (cons (gx#datum->syntax '#f 'cond)
-                                     (cons (cons (cons (gx#datum->syntax
-                                                        '#f
-                                                        'get-meta-object-method)
-                                                       (cons (gx#datum->syntax
-                                                              '#f
-                                                              'meta)
-                                                             (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                  '#f
-                                  'quote)
-                                 (cons _%g5788557990%_ '()))
-                           '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (cons (gx#datum->syntax
-                                                        '#f
-                                                        '=>)
-                                                       (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '#f
-                            'lambda)
-                           (cons (cons (gx#datum->syntax '#f 'proc) '())
-                                 (cons (cons (gx#datum->syntax '#f 'proc)
-                                             (cons (gx#datum->syntax '#f 'meta)
-                                                   (foldr (lambda (_%g5801658019%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _%g5801758022%_)
-                    (cons _%g5801658019%_ _%g5801758022%_))
-                  '()
-                  _%g5788457988%_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                       '())))
-                     '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                         (cons (cons (gx#datum->syntax '#f 'call-meta-object)
+                                     (cons (gx#datum->syntax '#f 'meta)
                                            (cons (cons (gx#datum->syntax
                                                         '#f
-                                                        'else)
-                                                       (cons (cons (gx#datum->syntax
+                                                        'quote)
+                                                       (cons _%g5788557990%_
+                                                             '()))
+                                                 (foldr (lambda (_%g5801658019%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '#f
-                            'error)
-                           (cons '"missing meta object method"
-                                 (cons 'meta-object:
-                                       (cons (gx#datum->syntax '#f 'meta)
-                                             (cons 'method:
-                                                   (cons (cons (gx#datum->syntax
-                                                                '#f
-                                                                'quote)
-                                                               (cons _%g5788557990%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '()))
-                 '()))))))
+                         _%g5801758022%_)
+                  (cons _%g5801658019%_ _%g5801758022%_))
+                '()
+                _%g5788457988%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                     '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 '())))
                                '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (_%g5788257913%_
@@ -308,28 +266,28 @@
                                                        (##cdr _%e5804958115%_))))
                                                 (if (gx#stx-pair/null?
                                                      _%tl5805158122%_)
-                                                    (let ((_g100876_
+                                                    (let ((_g100886_
                                                            (gx#syntax-split-splice
                                                             _%tl5805158122%_
                                                             '0)))
                                                       (begin
-                                                        (let ((_g100877_
+                                                        (let ((_g100887_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (if (##values? _g100876_)
-                             (##values-length _g100876_)
+                         (if (##values? _g100886_)
+                             (##values-length _g100886_)
                              1))))
-                  (if (not (let () (declare (not safe)) (##fx= _g100877_ 2)))
-                      (error "Context expects 2 values" _g100877_)))
+                  (if (not (let () (declare (not safe)) (##fx= _g100887_ 2)))
+                      (error "Context expects 2 values" _g100887_)))
                 (let ((_%target5805258125%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100876_ 0)))
+                         (##values-ref _g100886_ 0)))
                       (_%tl5805458128%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100876_ 1))))
+                         (##values-ref _g100886_ 1))))
                   (if (gx#stx-null? _%tl5805458128%_)
                       (letrec ((_%loop5805558131%_
                                 (lambda (_%hd5805358135%_ _%arg5805958138%_)
@@ -364,28 +322,28 @@
                                                        (##cdr _%e5806158153%_))))
                                                 (if (gx#stx-pair/null?
                                                      _%tl5806358160%_)
-                                                    (let ((_g100878_
+                                                    (let ((_g100888_
                                                            (gx#syntax-split-splice
                                                             _%tl5806358160%_
                                                             '0)))
                                                       (begin
-                                                        (let ((_g100879_
+                                                        (let ((_g100889_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (if (##values? _g100878_)
-                             (##values-length _g100878_)
+                         (if (##values? _g100888_)
+                             (##values-length _g100888_)
                              1))))
-                  (if (not (let () (declare (not safe)) (##fx= _g100879_ 2)))
-                      (error "Context expects 2 values" _g100879_)))
+                  (if (not (let () (declare (not safe)) (##fx= _g100889_ 2)))
+                      (error "Context expects 2 values" _g100889_)))
                 (let ((_%target5806458163%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100878_ 0)))
+                         (##values-ref _g100888_ 0)))
                       (_%tl5806658166%_
                        (let ()
                          (declare (not safe))
-                         (##values-ref _g100878_ 1))))
+                         (##values-ref _g100888_ 1))))
                   (if (gx#stx-null? _%tl5806658166%_)
                       (letrec ((_%loop5806758169%_
                                 (lambda (_%hd5806558173%_ _%rest5807158176%_)
