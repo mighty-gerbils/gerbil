@@ -891,6 +891,14 @@ package: gerbil/core
                (else #f)))))
      (else #f)))
 
+  (def (call-meta-object meta method . args)
+    (cond
+     ((get-meta-object-method meta method)
+      => (lambda (proc)
+           (apply proc meta args)))
+     (else
+      (error "missing meta object method" meta-object: meta method: 'method))))
+
   ;; meta object method dispatch
   (defsyntax-case @call-meta-object ()
     ((_ klass (method arg ...))
@@ -899,12 +907,7 @@ package: gerbil/core
        (unless (meta-object? meta)
          (raise-syntax-error #f "not a meta-object" stx #'klass meta))
        #'(let (meta (syntax-local-value #'klass))
-           (cond
-            ((get-meta-object-method meta 'method)
-             => (lambda (proc)
-                  (proc meta arg ...)))
-            (else
-             (error "missing meta object method" meta-object: meta method: 'method)))))))
+           (call-meta-object meta 'method arg ...)))))
 
   (defsyntax-case defmethod-for-meta ()
     ((_ klass (method arg ...) body rest ...)

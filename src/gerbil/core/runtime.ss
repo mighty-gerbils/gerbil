@@ -1713,6 +1713,10 @@ package: gerbil/core
     socket-info::t
     address-info::t
 
+    builtin-object?
+    builtin-subtyped?
+    builtin-structure?
+    atom?
     special-object?
     unbound-object?
     unbound2-object?
