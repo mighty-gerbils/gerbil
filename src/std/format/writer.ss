@@ -9,6 +9,7 @@
         :std/serde/scan
         :std/serde/serialize
         ./env
+        ./ascii
         ./ioutil
         ./io)
 (export #t)
@@ -22,7 +23,16 @@
    (syntax-error "unsupoorted target")))
 
 ;;; base
-(defwriter-ext (format-object-begin writer (klass : :class) (env : FormatEnv))
+(defwriter-ext (format-object-type writer (klass : class) (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-lparen)
+    (writer.write-symbol/quote klass.name)
+    (writer.write-space)
+    (writer.write-symbol/quote klass.id)
+    (writer.write-rparen)
+    wr))
+
+(defwriter-ext (format-object-begin writer (klass : class) (env : FormatEnv))
   (do-write (wr 0)
     (writer.write-sharp)
     (writer.write-lbrace)
@@ -32,22 +42,8 @@
 (defwriter-ext (format-object-end writer (env : FormatEnv))
   (writer.write-rbrace))
 
-(defwriteer-ext (format-object-type-full (klass : :class) (env : FormatEnv))
-  (do-write (wr 0)
-    (writer.write-symbol/quote klass.name)
-    (writer.write-colon)
-    (writer.write-sharp)
-    (writer.write-colon)
-    (writer.write-symbol/quote klass.id)
-    wr))
-
-(defwriter-ext (format-object-type writer (klass : :class) (env : FormatEnv))
-  (do-format-style format-object-type env.opt
-    (writer.format-object-type-full klass env)
-    (writer.write-symbol/quote klass.name)))
-
 ;; standard classes
-(defobject-writer :class (format-class writer klass env)
+(defobject-writer class (format-class writer klass env)
   (do-write (wr 0)
     (writer.format-object-begin (class-type klass) env)
     (writer.write-space)
@@ -56,15 +52,19 @@
     wr))
 
 ;; standard objects
-(defobject-writer :object (format-object writer obj env)
-  (let (klass (object-class obj))
-    (do-write (wr 0)
-      (writer.format-object-begin klass env)
-      (writer.format-object-slots obj klass env)
-      (writer.format-object-end env)
-      wr)))
+(defwriter-ext (format-field writer (slot : :symbol) obj (env : FormatEnv))
+  (do-write (wr 0)
+    (writer.write-space)
+    (writer.write-symbol/quote slot)
+    (writer.write-colon)
+    (writer.write-space)
+    (writer.format obj env)
+    wr))
 
-(defwriter-ext (format-object-slots writer obj (klass : :class) (env : FormatEnv))
+(defwriter-ext (format-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : FormatEnv))
+  (writer.format-field slot (unchecked-field-ref obj offset) env))
+
+(defwriter-ext (format-object-slots writer obj (klass : class) (env : FormatEnv))
   (let (len (##structure-length obj))
     (if (fx> len 1)
       (cond
@@ -88,23 +88,21 @@
                           (slot   (car spec) :- :symbol)
                           (offset (cdr spec) :- :fixnum))
                     (do-write (wr wr)
-                      (wrier.format-slot obj slot offset env)
+                      (writer.format-slot obj slot offset env)
                       (loop rest wr))))
                  (else wr)))))
        (else 0))
       0)))
 
-(defwriter-ext (format-field writer (slot : :symbol) obj (env : FormatEnv))
-  (do-write (wr 0)
-    (writer.write-space)
-    (writer.write-symbol/quote slot)
-    (writer.write-colon)
-    (writer.write-space)
-    (writer.format obj env)
-    wr))
+(defobject-writer :object (format-object writer obj env)
+  (let (klass (object-class obj))
+    (do-write (wr 0)
+      (writer.format-object-begin klass env)
+      (writer.format-object-slots obj klass env)
+      (writer.format-object-end env)
+      wr)))
 
-(defwriter-ext (format-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : FormatEnv))
-  (writer.format-field slot (unchecked-field-ref obj offset) env))
+
 
 (defobject-writer interface-instance (format-interface-instance writer inst env)
   (do-write (wr 0)
@@ -116,8 +114,9 @@
 (defobject-writer HashTable (format-hash-table writer ht env)
   (do-write (wr 0)
     (writer.format-object-begin (object-class ht) env)
+    (writer.write-space)
+    (writer.write-lparen)
     (let (wr-body 0)
-      (writer.write-lparen)
       (ht.for-each
        (lambda (k v)
          (do-write (wr 0)
@@ -136,8 +135,8 @@
     wr))
 
 ;; builtin objects
-(defobject-writer :t (format-t writer writer obj env)
-  (using (klass (class-of obj) :- :class)
+(defobject-writer :t (format-t writer obj env)
+  (using (klass (class-of obj) :- class)
     (do-write (wr 0)
       (writer.format-object-begin klass env)
       (writer.format-object-end env)
@@ -152,28 +151,25 @@
         (try-ascii-special-char aint
           (lambda ((asci :- ascii-special-char-info)) => :fixnum
              (if asci.char-esc?
-               (cond
-                ((and env.opt.ascii-char-std asci.char-std-name)
-                 (writer.write-symbol asci.char-std-name))
-                (asci.char-scm-name
-                 (writer.write-symbol asci.char-scm-name))
-                (else
-                 (do-write (wr wr)
-                   (writer.write-u8 (@char->int #\x))
-                   (writer.write-nonnegative-fixnum-hex aint #f)
-                   wr)))
-               (writer.write-char char)))
-          (writer.write-char char)))
+               (do-format-char-ascii-names format-char env.opt
+                 (if asci.char-scm-name
+                   (writer.write-symbol asci.char-scm-name)
+                   (writer.write-char-utf8 char))
+                 (if asci.char-std-name
+                   (writer.write-symbol asci.char-std-name)
+                   (writer.write-char-utf8 char)))
+               (writer.write-char-utf8 char)))
+          (writer.write-char-utf8 char)))
       wr)
-    (writer.write-char char)))
+    (writer.write-char-utf8 char)))
 
-(defobject-writer :true (format-true atom env)
+(defobject-writer :true (format-true writer atom env)
   (do-write (wr 0)
     (writer.write-sharp)
     (writer.write-u8 (@char->int #\t))
     wr))
 
-(defobject-writer :false (format-false atom env)
+(defobject-writer :false (format-false writer atom env)
   (do-write (wr 0)
     (writer.write-sharp)
     (writer.write-u8 (@char->int #\f))
@@ -181,7 +177,10 @@
 
 (defsyntax-case do-write-special ()
   ((_ writer sym)
-   (with-identifier (writer.write-sharp #'writer #'writer ".write-sharp")
+   (with-identifiers ((writer.write-sharp            #'writer #'writer ".write-sharp")
+                      (writer.write-bang             #'writer #'writer ".write-bang")
+                      (writer.write-interned-symbol  #'writer #'writer ".write-interned-symbol"))
+
      #'(do-write (wr 0)
          (writer.write-sharp)
          (writer.write-bang)
@@ -205,39 +204,125 @@
 (defspecial-object-writer unbound2)
 (defspecial-object-writer deleted)
 (defspecial-object-writer absent)
-(defspecial-object-writer optional)
-(defspecial-object-writer rest)
-(defspecial-object-writer key)
+(defspecial-object-writer dssl-optional optional)
+(defspecial-object-writer dssl-rest rest)
+(defspecial-object-writer dssl-key key)
 
 (defsyntax-case do-write-integer ()
   ((_ writer int env write-method)
    (with-identifiers ((env.opt                  #'env #'env ".opt")
+                      (env.opt.flags            #'env #'env ".opt.flags")
+                      (env.opt.width            #'env #'env ".opt.width")
                       (env.opt.integer-prefix   #'env #'env ".opt.integer-prefix")
                       (env.opt.integer-alphabet #'env #'env ".opt.integer-alphabet")
-                      (env.opt.integer-width    #'env #'env ".opt.integer-width")
+                      (env.opt.integer-gits     #'env #'env ".opt.integer-gits")
+                      (writer.write-minus       #'writer #'writer ".write-minus")
                       (writer.write-sharp       #'writer #'writer ".write-sharp")
+                      (writer.write-zeros       #'writer #'writer ".write-zeros")
+                      (writer.write-spaces      #'writer #'writer ".write-spaces")
                       (writer.write-u8          #'writer #'writer ".write-u8")
                       (writer.write-method      #'writer #'writer "." #'write-method))
-     #'(do-format-style write-method env.opt
-         (if env.opt.integer-prefix
-           (do-write (wr 0)
-             (writer.write-sharp)
-             (writer.write-u8 env.opt.integer-prefix)
-             (write.write-method int env.opt.integer-alphabet env.opt.integer-width)
-             wr)
-           (writer.write-method int env.opt.integer-alphabet env.opt.integer-width))
-         (writer.write-method int env.opt.integer-alphabet env.opt.integer-width)))))
+     #'(let-syntax ((getflag
+                     (syntax-rules ()
+                       ((_ c) (and env.opt.flags (memq c env.opt.flags))))))
+         (let ((left-align  (getflag #\-))
+               (zero-pad    (getflag #\0))
+               (always-sign (getflag #\+)))
+
+           (defrule (write-prefix)
+             (do-write (wr 0)
+               (writer.write-sharp)
+               (writer.write-u8 env.opt.integer-prefix)
+               wr))
+
+           (defrule (write-int int)
+             (writer.write-method int
+                                  env.opt.integer-alphabet
+                                  env.opt.integer-gits
+                                  always-sign))
+
+           (defrule (write-int-pad int pad)
+             (do-write (wr 0)
+               (writer.write-zeros pad)
+               (write-int int)
+               wr))
+
+           (defrule (write-int-negative-pad int pad)
+             (do-write (wr 0)
+               (writer.write-minus)
+               (writer.write-zeros pad)
+               (write-int (- int))
+               wr))
+
+           (defrule (do-format-int int expr)
+             (do-format-style write-method env.opt
+               (if env.opt.integer-prefix
+                 (do-write (wr 0)
+                   (write-prefix)
+                   expr
+                   wr)
+                 expr)
+               expr))
+
+           (defrule (format-int int)
+             (do-format-int int (write-int int)))
+
+           (defrule (count-digits)
+             (format-integer-length int
+                                    env.opt.integer-alphabet
+                                    env.opt.integer-gits
+                                    always-sign))
+           (if env.opt.width
+             (let* ((digits (count-digits))
+                    (digits (if env.opt.integer-prefix
+                              (do-format-style write-method env.opt
+                                (fx+ digits 2)
+                                digits)
+                              digits)))
+               (if (fx< digits env.opt.width)
+                 (let (pad (fx- env.opt.width digits))
+                   (cond
+                    (zero-pad
+                     (if (negative? int)
+                       (do-format-int int (write-int-negative-pad int pad))
+                       (do-format-int int (write-int-pad int pad))))
+                    (left-align
+                     (format-int int))
+                    (else
+                     (do-write (wr 0)
+                       (writer.write-spaces pad)
+                       (format-int int)
+                       wr))))
+                 (format-int int)))
+             (format-int int)))))))
+
+(def (format-integer-length (int : :integer) (alphabet : :u8vector) (gits : :fixnum) (sign? : :fixnum))
+  => :fixnum
+  (let* ((base  (u8vector-length alphabet))
+         (width (exact (ceiling (log int base))))
+         (width
+          (if (fx> gits 1)
+            (let (lead  (fx% width gits))
+              (if (fx> lead 0)
+                (fx+ width 1)
+                width))
+            width))
+         (width
+          (if (or sign? (negative? int))
+            (fx+ width 1)
+            width)))
+    width))
 
 (defobject-writer :bignum (format-bignum writer int env)
-  (do-write-integer writer int env write-integer-with-base))
+  (do-write-integer writer int env write-bignum))
 
 (defobject-writer :fixnum (format-fixnum writer int env)
-  (do-write-integer writer int env write-fixnum-with-base))
+  (do-write-integer writer int env write-fixnum))
 
 (defobject-writer :integer (format-integer writer num env)
   (if (fixnum? num)
-    (format-fixnum num env)
-    (format-bignum num env)))
+    (writer.format-fixnum num env)
+    (writer.format-bignum num env)))
 
 (defobject-writer :ratnum (format-ratnum writer num env)
   (do-write (wr 0)
@@ -246,58 +331,78 @@
     (writer.format (##ratnum-denominator num) env)
     wr))
 
-(defobject-writer :flonum (format-flonum writer num env)
-  (cond
-   ((##flfinite? num)
-    ;; not nan or infinity
-    (writer.format-finite-flonum num env))
-   ((##flinfinite? num)
-    (if (##flnegative? num)
-      (writer.write (@string->utf8 "-inf.0"))
-      (writer.write (@string->utf8 "+inf.0"))))
-   (else ; nan, has no sign (always positive)
-    (writer.write (@string->utf8 "+nan.0")))))
-
 (cond-expand
   (,(compilation-target? C)
-   (defobject-cache __flonum-buffer :u8vector (cut make-u8vector 256) void)
-
-   (def (__flonum-buffer.get-fmt precision conversion) => :u8vector
-     (let (buf (__flonum-buffer.get))
-       (if precision
-         (__buffer-format! buf "%." decimal: precision u8: conversion)
-         (__buffer-format! buf #\% u8: conversion))
-       buf))
-
-   (def-C (__print-flonum (output-buf  :- :u8vector)
-                          (output-size :- :fixnum)
-                          (nfmt-buf    :- :u8vector)
-                          (num         :- :flonum))
+   (def (buffer-write-digits (buf : :u8vector) (i : :fixnum) (int : :fixnum))
      => :fixnum
-     "snprintf((char*)___arg1, ___arg2, (char*) ___arg3, ___arg4)")
+     (let loop ((i i :- :fixnum) (int int :- :fixnum))
+       => :fixnum
+       (if (fx< int 10)
+         (begin
+           (u8vector-set! buf i (fx+ #x30 int))
+           (fx+ i 1))
+         (let ((q (fx/ int 10))
+               (r (fx% int 10)))
+           (let (i (loop i q))
+             (u8vector-set! buf i (fx+ #x30 r))
+             (fx+ i 1))))))
 
-   #;(def-C-code (__print-flonum (output-buf  :- :u8vector)
-   (output-size :- :fixnum) ;;
-   (nfmt-buf    :- :u8vector) ;;
-   (num         :- :flonum)) ;;
-   => :fixnum ;;
-   "snprintf(___U8VECTOR_AS (char*, ___ARG1), ___INT(___ARG2), ___U8VECTOR_AS (char*, ___ARG3), ___F64UNBOX(___ARG4))")
-   )
+   (def (buffer-cache-get-float-format-buffer (opt : FormatOpt)) => :u8vector
+     (let (buf (buffer-cache.get 32))
+       (u8vector-set! buf 0 (@char->int #\%))
+       (let* ((i (if opt.flags
+                   (for/fold (i 1) (flag (in-list opt.flags) : :char)
+                     (u8vector-set! buf i (integer->char flag))
+                     (fx+ i 1))
+                   1))
+              (i (if opt.precision
+                   (buffer-write-digits buf i opt.precision)
+                   i))
+              (i (if opt.width
+                   (begin
+                     (u8vector-set! buf i (@char->int #\.))
+                     (buffer-write-digits buf (fx+ i 1) opt.width))
+                   i)))
+           (u8vector-set! buf i opt.flonum-repr)
+           (u8vector-set! buf (fx+ i 1) 0)
+           buf)))
+
+   (def (buffer-cache-get-float-output-buffer (opt : FormatOpt)) => :u8vector
+     (let* ((buflen
+             (fxmax
+              (fx+ (or opt.width 6)
+                   (if opt.precision (fx+ opt.precision 1) 6)
+                   4)
+              32))
+            (buflen
+             (fxshift 1 (integer-length buflen))))
+       (buffer-cache.get buflen)))
+
+   (def-C (__printf-float (output-buf  :- :u8vector)
+                          (fmt-buf     :- :u8vector)
+                          (float       :- :flonum))
+     => :fixnum
+     "snprintf((char*)___arg1, ___U8VECTOR_LENGTH(___ARG1), (char*) ___arg2, ___arg3)"))
   (else
    (syntax-error "unsupported target")))
 
-(defwriter-ext (format-finite-flonum writer num (env : FormatEnv))
+(defwriter-ext (format-float writer (num : :flonum) (env : FormatEnv))
   (cond-expand
     (,(compilation-target? C)
-     (let* ((fmt-buf (__flonum-buffer.get-fmt env.opt.flonum-precision env.opt.flonum-conversion))
-            (str-buf (__flonum-buffer.get))
-            (nwr     (__print-flonum str-buf (##u8vector-length str-buf) fmt-buf num)))
-       (if (fx> nwr 0)
+     (let* ((fmt-buf (buffer-cache.get-float-format-buffer env.opt))
+            (str-buf (buffer-cache.get-float-output-buffer env.opt))
+            (wr      (__print-float str-buf fmt-buf num)))
+       (defrule (release!)
+         (begin
+           (buffer-cache.put! str-buf)
+           (buffer-cache.put! fmt-buf)))
+       (if (fx> wr 0)
          (begin0
-             (writer.write str-buf 0 nwr)
-           (__flonum-buffer.put! str-buf)
-           (__flonum-buffer.put! fmt-buf))
-         (raise-io-error format-flonum "failed to format flonum" error-code: nwr))))
+             (writer.write str-buf 0 wr)
+           (release!))
+         (begin
+           (release!)
+           (raise-io-error format-flonum "failed to format float" error: wr)))))
     (else
      ;; TODO we should write an efficient implementation of this, following
      ;;      feeley's in gambit implementation to avoid the intermediate string
@@ -306,19 +411,27 @@
      ;;      in production
      (syntax-error "unsupported compilation target"))))
 
+(defobject-writer :flonum (format-flonum writer num env)
+  (cond
+   ((##flfinite? num)
+    ;; not nan or infinity
+    (writer.format-float num env))
+   ((##flinfinite? num)
+    (if (##flnegative? num)
+      (writer.write (@string->utf8 "-inf.0"))
+      (writer.write (@string->utf8 "+inf.0"))))
+   (else ; nan, has no sign (always positive)
+    (writer.write (@string->utf8 "+nan.0")))))
+
 (defobject-writer :cpxnum (format-cpxnum writer num env)
-  (let ((real (cpxnum-real num))
-        (imag (cpxnum-imag num)))
-    (do-write (wr 0)
-      (if (zero? real)
-        0
-        (do-write (wr wr)
-          (writer.format real env)
-          (writer.write-plus)
-          wr))
-      (writer.write-u8 (@char->int #\i))
-      (writer.format imag env)
-      wr)))
+  (do-write (wr 0)
+    (if (zero? real)
+      0
+      (writer.format (##cpxnum-real num) env))
+    (let (env (@format-env env (flags: (format-flag-set #\+ env.opt.flags))))
+      (writer.format (##cpxnum-imag num) env))
+    (writer.write-u8 (@char->int #\i))
+    wr))
 
 (defobject-writer :symbol (format-symbol writer sym env)
   (do-format-style format-symbol env.opt
@@ -539,7 +652,7 @@
                  (last   #f)
                  (depth  0)
                  (space? #f)
-                 (wr     wr))
+                 (wr     0))
         => :fixnum
         (cond
          ((and cont (##fx< depth max-frames))

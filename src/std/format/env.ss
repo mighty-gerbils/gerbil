@@ -66,7 +66,7 @@
    (flonum-repr      :- :fixnum)
    ;; integers
    (integer-prefix   :- :fixnum)
-   (integer-align    :- :fixnum)
+   (integer-gits     :- :fixnum)
    (integer-alphabet :- :u8vector)
    ;; max sequence elements to display
    (max-elements     :- :fixnum)
@@ -114,13 +114,13 @@
          (with ([prefix-char alphabet width] lst)
            (set! opt.integer-prefix   (and prefix-char (char->integer prefix-char)))
            (set! opt.integer-alphabet alphabet)
-           (set! opt.integer-align    width)))))
-     (raise-contract-violation where "integer base" base: base))
+           (set! opt.integer-gits     width)))))
+     (raise-contract-violation set-integer-conversion! "integer base" base: base))
 
 (def __integer-conversions
   [[#\b #\b __alphabet-binary  1]
    [#\o #\o __alphabet-octal   3]
-   [#\d #f  __alphabet-decimal 2]
+   [#\d #f  __alphabet-decimal 1]
    [#\x #\x __alphabet-hex     2]
    [#\X #\x __alphabet-HEX     2]])
 
@@ -145,9 +145,9 @@
           (slot-key (symbol->keyword (stx-e #'elot))))
          #'(cond
             clause ...
-            (raise-contract-violation-error where contract-string
-                                            slot-key
-                                            opt.slot))))))
+            (else
+             (raise-contract-violation where contract-string
+                                       slot-key opt.slot)))))))
 
 (defrules do-format-style ()
   ((_ where opt do-format-write do-format-display do-format-debug)
@@ -177,7 +177,7 @@
   ((_ where opt do-scheme-names do-std-names)
    (do-format-option where opt char-ascii-names
                      (FORMAT-CHAR-SCHEME-NAMES do-scheme-names)
-                     (FORMAT-CHAR-STD-NAMES? do-std-names))))
+                     (FORMAT-CHAR-STD-NAMES     do-std-names))))
 
 (def current-format-opt
   (make-parameter #f))
@@ -225,30 +225,30 @@
                       (((contract setf!)
                         (case key
                           ((style:)
-                           '(format-style?              &FormetEnv-style-set!))
+                           '(format-style?              &FormatOpt-style-set!))
                           ((cycles:)
-                           '(format-cycles?             &FormetEnv-cycles-set!))
+                           '(format-cycles?             &FormetOpt-cycles-set!))
                           ((compress:)
-                           '(format-compression?        &FormatEnv-compress-set!))
+                           '(format-compression?        &FormatOpt-compress-set!))
                           ((flags:)
-                           '(format-optional-flags?     &FormatEnv-flags-set!))
+                           '(format-optional-flags?     &FormatOpt-flags-set!))
                           ((width:)
-                           '(format-optional-fixnum?    &FormatEnv-width-set!))
+                           '(format-optional-fixnum?    &FormatOpt-width-set!))
                           ((precision:)
-                           '(format-optional-fixnum?    &FormatEnv-precision-set!))
+                           '(format-optional-fixnum?    &FormatOpt-precision-set!))
                           ((flonum-conversion:)
                            '(format-flonum-conversion?  __set-flonum-conversion!))
                           ((integer-conversion:)
                            '(format-integer-conversion? __set-integer-conversion!))
                           ((max-elements:)
-                           '(format-optional-fixnum?     &FormatEnv-max-elements-set!))
+                           '(format-optional-fixnum?     &FormatOpt-max-elements-set!))
                           ((char-ascii-names:)
-                           '(format-char-ascii-names?    &FormatEnv-char-ascii-names-set!))
+                           '(format-char-ascii-names?    &FormatOpt-char-ascii-names-set!))
                           (else
-                           (raise-syntax-error #f "unexpected format option" stx slot))))
+                           (raise-syntax-error #f "unexpected format option" key slot))))
                        (value value)
                        (slot (keyword->symbol key)))
-                    #'((:~ value (contract)) #'setf!))))
+                    #'(slot (:~ value (contract)) setf!))))
               #'(slot ...)
               #'(value ...))))
      #'(@derive-format-env env (slot safe-value set-it!) ...)))
@@ -259,6 +259,13 @@
      #'(let (env (new-instance FormatEnv::t))
          (set! env.opt (format-options))
          (@format-env env (slot value) ...)))))
+
+(def (format-flag-set flag flags)
+  (if flags
+    (if (memq flag flags)
+      flags
+      (cons flag flags))
+    [flag]))
 
 (defmethod {:init! FormatEnv}
   (lambda (self scan: (scan :? ScanEnv) opt: (opt : FormatOpt))

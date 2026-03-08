@@ -76,13 +76,13 @@
     "serde/interned"
     ;;"serde/scanner"
 
-    ;;"ffi"
+    "ffi"
     "format/ascii"
     "format/format-string"
     "format/env"
-    ;;"format/ioutil"
-    ;;"format/io"
-    ;;"format/writer"
+    "format/ioutil"
+    "format/io"
+    "format/writer"
     ;;"format/api"
 
     ;; TODO

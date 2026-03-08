@@ -6,6 +6,7 @@
         :std/sync/spinlock
         :std/io/interface
         :std/io/bio/api)
+(export #t)
 
 (defstruct (InternedReprCache Cache)
   (table)
@@ -33,38 +34,42 @@
 (global-cache-register! __interned-symbolic-repr)
 
 (defsyntax-case do-write-interned-symbolic ()
-  ((writer obj write-method slot)
+  ((_ writer obj write-method slot)
    (with-identifiers ((writer.write       #'writer #'writer ".write")
                       (repr               '$repr)
                       (repr.slot           #'repr #'repr "." #'slot)
                       (buffer             '$buffer)
-                      (buffer.write-method #'buffer #'buffer "." #'write-method))
+                      (buffer.write-method #'buffer #'buffer "." #'write-method)
+                      (cache               '$cache)
+                      (cache.lock          #'cache #'cache ".lock")
+                      (cache.table         #'cache #'cache ".table"))
      (with-syntax ((slot-key (symbol->keyword (stx-e #'slot))))
-       #'(cond
-          ((do-with-spin-lock __interned-symbolic-repr.lock
-             (symbolic-table-ref __interned-symbolic-repr.table obj #f))
-           => (lambda ((repr :- interned-symbolic-repr))
-                => :fixnum
-                 (if repr.slot
-                   (writer.write repr.slot)
-                   (using (buffer (open-buffered-writer #f very-small-buffer-size)
-                                  :- BufferedWriter)
-                     (buffer.write-method obj)
-                     (let (bytes (get-memory-output-u8vector buffer))
-                       ;; it's ok if we overwrite a concurrent write
-                       (set! repr.slot bytes)
-                       (writer.write bytes))))))
-          (else
-           (using (buffer (open-buffered-writer #f very-small-buffer-size)
-                          :- BufferedWriter)
-             (buffer.write-method obj)
-             (let* ((bytes (get-memory-output-u8vector buffer))
-                    (repr  (interned-symbolic-repr slot-key bytes)))
-               (do-with-spin-lock __interned-symbolic-repr.lock
-                 (cond
-                  ((symbolic-table-ref __interned-symbolic-repr.table obj #f)
-                   => (lambda ((repr :- interned-symbolic-repr))
-                        (set! repr.slot bytes)))
-                  (else
-                   (symbolic-table-set! __interned-symbolic-repr obj repr)))))
-             (writer.write bytes))))))))
+       #'(using (cache __interned-symbolic-repr :- InternedReprCache)
+           (cond
+            ((do-with-spin-lock cache.lock
+               (symbolic-table-ref cache.table obj #f))
+             => (lambda ((repr :- interned-symbolic-repr))
+                  => :fixnum
+                  (if repr.slot
+                    (writer.write repr.slot)
+                    (using (buffer (open-buffered-writer #f very-small-buffer-size)
+                                   :- BufferedWriter)
+                      (buffer.write-method obj)
+                      (let (bytes (get-memory-output-u8vector buffer))
+                        ;; it's ok if we overwrite a concurrent write
+                        (set! repr.slot bytes)
+                        (writer.write bytes))))))
+            (else
+             (using (buffer (open-buffered-writer #f very-small-buffer-size)
+                            :- BufferedWriter)
+               (buffer.write-method obj)
+               (let* ((bytes (get-memory-output-u8vector buffer))
+                      (repr  (interned-symbolic-repr slot-key bytes)))
+                 (do-with-spin-lock cache.lock
+                   (cond
+                    ((symbolic-table-ref cache.table obj #f)
+                     => (lambda ((repr :- interned-symbolic-repr))
+                          (set! repr.slot bytes)))
+                    (else
+                     (symbolic-table-set! cache.table obj repr))))
+                 (writer.write bytes))))))))))

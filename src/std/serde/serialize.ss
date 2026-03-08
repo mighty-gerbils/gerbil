@@ -16,7 +16,13 @@
 (defsyntax (@serialize stx)
   (syntax-case stx ()
     ((_ obj senv do-object do-anchor do-reference)
-     (with-identifier (env '$env)
+     (with-identifiers ((env             '$env)
+                        (env.written     #'env #'env ".written")
+                        (env.scanned     #'env #'env ".scanned")
+                        (env.scanned.ref #'env #'env ".scanned.ref")
+                        (env.cycles      #'env #'env ".cycles")
+                        (env.cycles.ref  #'env #'env ".cycles.ref")
+                        (env.compress?   #'env #'env ".compress?"))
        #'(using (env senv :- ScanEnv)
            (defrule (has-cycle? obj)
              (env.cycles.ref obj #f))
@@ -29,7 +35,7 @@
                      (do-reference id)
                      (do-object obj))))
             ((has-cycle? obj)
-             => (lambda ((id :- :fixunum)) => :fixnum
+             => (lambda ((id :- :fixnum)) => :fixnum
                    (hash-put! env.written obj id)
                    (do-anchor obj id)))
             ((hash-get env.scanned obj)
