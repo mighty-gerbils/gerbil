@@ -10,7 +10,7 @@
   (export #t)
 
   (defmethod-for-meta :u8vector (expand-ffi-c-unwrap self raw-arg arg)
-    (string-append "u8 *" arg " = ___U8VECTOR_AS(u8*, " raw-arg ")"))
+    (string-append "__uint8_t*" arg " = ___U8VECTOR_AS(__uint8_t*, " raw-arg ")"))
 
   (defmethod-for-meta :fixnum (expand-ffi-c-unwrap self raw-arg arg)
     (string-append "int " arg " = ___INT(" raw-arg ")"))
@@ -81,17 +81,16 @@ END-C
           (c-args       (map (lambda (n) (string-append "___arg" n))
                              arg-iota-str))
           (c-unwrap     (map (lambda (klass raw-arg arg)
-                               (@call-meta-object klass (expand-ffi-c-unwrap raw-arg arg)))
+                               (call-meta-object klass 'expand-ffi-c-unwrap raw-arg arg))
                              arg-klasses raw-args c-args))
           (c-code      (stx-e #'code))
-          (return-wrap (@call-meta-object klass (expand-ffi-c-wrap c-code))))
+          (return-wrap (call-meta-object return-klass 'expand-ffi-c-wrap c-code)))
      (with-syntax ((code (string-append
-                          "({"
                           (foldl (lambda (unwrap r)
                                    (string-append r unwrap ";"))
-                                 c-unwrap "")
+                                 "" c-unwrap)
                           "___RESULT = " return-wrap ";"
-                          "})")))
+                          )))
        #'(def (proc (arg ~ type) ...)
            => return
            (:- (##c-code code arg ...)

@@ -8,6 +8,7 @@
         :std/io/bio/cache
         :std/serde/scan
         :std/serde/serialize
+        :std/iter
         ./env
         ./ascii
         ./ioutil
@@ -18,7 +19,8 @@
   (,(compilation-target? C)
    (import :std/ffi)
    (C-ffi-macrology)
-   (C-include "<stdio.h>"))
+   (C-include "<sys/types.h>"
+              "<stdio.h>"))
   (else
    (syntax-error "unsupoorted target")))
 
@@ -70,7 +72,8 @@
       (cond
        ((fx= env.opt.style FORMAT-DEBUG)
         (let (slots (vector->list (class-type-slot-vector klass) 1))
-          (let loop ((rest slots) (offset 1) (wr 0))
+          (let loop ((rest slots) (offset 1) (wr 0 :- :fixnum))
+            => :fixnum
             (match rest
               ([slot . rest]
                (using (slot :- :symbol)
@@ -81,7 +84,8 @@
        ((class-type-printable-slots klass)
         ;; print spec: [[slot . offset] ...]
         => (lambda (lst)
-             (let loop ((rest lst) (wr 0))
+             (let loop ((rest lst) (wr 0 :- :fixnum))
+               => :fixnum
                (match rest
                  ([print-spec . rest]
                   (using ((spec   print-spec :- :pair)
@@ -352,7 +356,7 @@
        (u8vector-set! buf 0 (@char->int #\%))
        (let* ((i (if opt.flags
                    (for/fold (i 1) (flag (in-list opt.flags) : :char)
-                     (u8vector-set! buf i (integer->char flag))
+                     (u8vector-set! buf i (char->integer flag))
                      (fx+ i 1))
                    1))
               (i (if opt.precision
@@ -378,19 +382,19 @@
              (fxshift 1 (integer-length buflen))))
        (buffer-cache.get buflen)))
 
-   (def-C (__printf-float (output-buf  :- :u8vector)
-                          (fmt-buf     :- :u8vector)
-                          (float       :- :flonum))
+   (def-C (__print-float (output-buf  :- :u8vector)
+                         (fmt-buf     :- :u8vector)
+                         (float       :- :flonum))
      => :fixnum
-     "snprintf((char*)___arg1, ___U8VECTOR_LENGTH(___ARG1), (char*) ___arg2, ___arg3)"))
+     "snprintf((char*)___arg1, ___U8VECTORSIZE(___ARG1), (char*) ___arg2, ___arg3)"))
   (else
    (syntax-error "unsupported target")))
 
 (defwriter-ext (format-float writer (num : :flonum) (env : FormatEnv))
   (cond-expand
     (,(compilation-target? C)
-     (let* ((fmt-buf (buffer-cache.get-float-format-buffer env.opt))
-            (str-buf (buffer-cache.get-float-output-buffer env.opt))
+     (let* ((fmt-buf (buffer-cache-get-float-format-buffer env.opt))
+            (str-buf (buffer-cache-get-float-output-buffer env.opt))
             (wr      (__print-float str-buf fmt-buf num)))
        (defrule (release!)
          (begin
@@ -425,9 +429,10 @@
 
 (defobject-writer :cpxnum (format-cpxnum writer num env)
   (do-write (wr 0)
-    (if (zero? real)
-      0
-      (writer.format (##cpxnum-real num) env))
+    (let (real (##cpxnum-real num))
+      (if (zero? real)
+        0
+        (writer.format real env)))
     (let (env (@format-env env (flags: (format-flag-set #\+ env.opt.flags))))
       (writer.format (##cpxnum-imag num) env))
     (writer.write-u8 (@char->int #\i))
@@ -440,8 +445,8 @@
 
 (defobject-writer :keyword (format-keyword writer key env)
   (do-format-style format-keyword env.opt
-    (writer.write-keyword/quote sym)
-    (writer.write-keyword sym)))
+    (writer.write-keyword/quote key)
+    (writer.write-keyword key)))
 
 (defobject-writer :list (format-list writer lst env)
   (do-write (wr 0)
@@ -479,11 +484,12 @@
 (defobject-writer :string (format-string writer str env)
   (do-format-style format-string env.opt
     (writer.write-string/quote str)
-    (writer.write-string str)))
+    (writer.write-string-utf8 str)))
 
 (defsyntax-case do-write-vector ()
   ((_ writer v env prefix left right v-length v-ref type format-method)
    (with-identifiers ((writer.write         #'writer #'writer ".write")
+                      (writer.write-space   #'writer #'writer ".write-space")
                       (writer.write-sharp   #'writer #'writer ".write-sharp")
                       (writer.write-left    #'writer #'writer ".write-" #'left)
                       (writer.write-right   #'writer #'writer ".write-" #'right)
@@ -645,14 +651,14 @@
            #f #f #t))
         (max-frames (or env.opt.max-elements ##max-fixnum)))
     (do-write (wr 0)
-      (writer.write-object-begin continuation::t env)
+      (writer.format-object-begin continuation::t env)
       (writer.write-space)
       (writer.write-lparen)
       (let loop ((cont  (##continuation-first-frame cont all-frames?))
                  (last   #f)
                  (depth  0)
                  (space? #f)
-                 (wr     0))
+                 (wr     0 :- :fixnum))
         => :fixnum
         (cond
          ((and cont (##fx< depth max-frames))
@@ -673,12 +679,12 @@
                        => :fixnum
                        (writer.format name env)))
                  (else
-                  (writer.write-interned-symbol '???))))
+                  (writer.write-interned-symbol '???)))
               (loop (##continuation-next-frame cont all-frames?)
                     creator
                     (fx+ depth 1)
                     #t
-                    wr))))
+                    wr)))))
          (cont
           (do-write (wr wr)
             (if space?
@@ -695,18 +701,18 @@
 
 (defobject-writer :procedure (format-procedure writer proc env)
   (do-write (wr 0)
-    (writer.write-object-begin procedure::t env)
+    (writer.format-object-begin procedure::t env)
     (writer.write-space)
     (writer.format (##procedure-name proc) env)
-    (writer.write-object-end env)
+    (writer.format-object-end env)
     wr))
 
 (defobject-writer :foreign (format-foreign writer obj env)
   (do-write (wr 0)
-    (writer.write-object-begin foreign::t env)
+    (writer.format-object-begin foreign::t env)
     (writer.write-space)
     (writer.format (##foreign-tags obj) env)
-    (writer.write-object-end env)
+    (writer.format-object-end env)
     wr))
 
 (defobject-writer :structure (format-builtin-structure writer obj env)
@@ -720,8 +726,8 @@
 
 (defobject-writer :time (format-builtin-time writer t env)
   (do-write (wr 0)
-    (writer.write-object-begin time::t env)
+    (writer.format-object-begin time::t env)
     (writer.write-space)
     (writer.format (##time->seconds t) env)
-    (writer.write-object-end env)
+    (writer.format-object-end env)
     wr))

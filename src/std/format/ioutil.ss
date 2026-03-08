@@ -72,6 +72,7 @@
   (backslash  #\\)
   (slash      #\/)
   (pipe       #\|)
+  (ampersand  #\&)
   (zero       #\0))
 
 (defwriter-ext (write-zeros writer (count : :fixnum))
@@ -99,7 +100,7 @@
 
 (defwriter-ext (write-string/escape writer (str : :string) (escape : :procedure))
   (let (len (string-length str))
-    (let loop ((i 0 :- :fixnum) (wr 0))
+    (let loop ((i 0 :- :fixnum) (wr 0 :- :fixnum))
       => :fixnum
       (if (fx< i len)
         (let* ((char (##string-ref str i))
@@ -162,7 +163,7 @@
          &ascii-special-char-info-symbol-esc?
          &ascii-special-char-info-symbol-esc-char)))
 
-(def (__symbol-quote? (char :- :fixnum))
+(def (__symbol-quote? (char :- :char))
   (let (aint (char->integer char))
     (try-ascii-special-char aint
       &ascii-special-char-info-symbol-esc?)))
