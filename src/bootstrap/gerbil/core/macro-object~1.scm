@@ -1,48 +1,48 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/macro-object[1]#_g28364_|
+  (define |gerbil/core/macro-object[1]#_g28386_|
     (##structure
      gx#syntax-quote::t
      'macro-object::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28366_|
+  (define |gerbil/core/macro-object[1]#_g28388_|
     (##structure
      gx#syntax-quote::t
      'make-macro-object
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28368_|
+  (define |gerbil/core/macro-object[1]#_g28390_|
     (##structure
      gx#syntax-quote::t
      'macro-object?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28370_|
+  (define |gerbil/core/macro-object[1]#_g28392_|
     (##structure
      gx#syntax-quote::t
      'macro-object-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28372_|
+  (define |gerbil/core/macro-object[1]#_g28394_|
     (##structure
      gx#syntax-quote::t
      'macro-object-macro-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28374_|
+  (define |gerbil/core/macro-object[1]#_g28396_|
     (##structure
      gx#syntax-quote::t
      '&macro-object-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/macro-object[1]#_g28376_|
+  (define |gerbil/core/macro-object[1]#_g28398_|
     (##structure
      gx#syntax-quote::t
      '&macro-object-macro-set!
@@ -50,7 +50,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/macro-object[:0:]#macro-object|
-    (let ((__obj28361
+    (let ((__obj28383
            (let ()
              (declare (not safe))
              (##structure
@@ -76,59 +76,60 @@
               '#f
               '#f
               '#f
+              '#f
               '#f))))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj28361
+         __obj28383
          'gerbil.core#macro-object::t
-         '1
+         '2
          '#f
          '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 'macro-object '2 '#f '#f))
+        (##unchecked-structure-set! __obj28383 'macro-object '3 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '(macro) '5 '#f '#f))
+        (##unchecked-structure-set! __obj28383 '(macro) '6 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '() '4 '#f '#f))
+        (##unchecked-structure-set! __obj28383 '() '5 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '#f '8 '#f '#f))
+        (##unchecked-structure-set! __obj28383 '#f '9 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '#f '9 '#f '#f))
+        (##unchecked-structure-set! __obj28383 '#f '10 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '#f '11 '#f '#f))
+        (##unchecked-structure-set! __obj28383 '#f '12 '#f '#f))
       (let ()
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 '#f '12 '#f '#f))
-      (let ((__tmp28363 |gerbil/core/macro-object[1]#_g28364_|))
+        (##unchecked-structure-set! __obj28383 '#f '13 '#f '#f))
+      (let ((__tmp28385 |gerbil/core/macro-object[1]#_g28386_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28363 '3 '#f '#f))
-      (let ((__tmp28365 |gerbil/core/macro-object[1]#_g28366_|))
+        (##unchecked-structure-set! __obj28383 __tmp28385 '4 '#f '#f))
+      (let ((__tmp28387 |gerbil/core/macro-object[1]#_g28388_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28365 '13 '#f '#f))
-      (let ((__tmp28367 |gerbil/core/macro-object[1]#_g28368_|))
+        (##unchecked-structure-set! __obj28383 __tmp28387 '14 '#f '#f))
+      (let ((__tmp28389 |gerbil/core/macro-object[1]#_g28390_|))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28367 '14 '#f '#f))
-      (let ((__tmp28369
-             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28370_|) '())))
+        (##unchecked-structure-set! __obj28383 __tmp28389 '15 '#f '#f))
+      (let ((__tmp28391
+             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28392_|) '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28369 '15 '#f '#f))
-      (let ((__tmp28371
-             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28372_|) '())))
+        (##unchecked-structure-set! __obj28383 __tmp28391 '16 '#f '#f))
+      (let ((__tmp28393
+             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28394_|) '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28371 '16 '#f '#f))
-      (let ((__tmp28373
-             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28374_|) '())))
+        (##unchecked-structure-set! __obj28383 __tmp28393 '17 '#f '#f))
+      (let ((__tmp28395
+             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28396_|) '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28373 '17 '#f '#f))
-      (let ((__tmp28375
-             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28376_|) '())))
+        (##unchecked-structure-set! __obj28383 __tmp28395 '18 '#f '#f))
+      (let ((__tmp28397
+             (cons (cons 'macro |gerbil/core/macro-object[1]#_g28398_|) '())))
         (declare (not safe))
-        (##unchecked-structure-set! __obj28361 __tmp28375 '18 '#f '#f))
-      __obj28361)))
+        (##unchecked-structure-set! __obj28383 __tmp28397 '19 '#f '#f))
+      __obj28383)))

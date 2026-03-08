@@ -905,6 +905,86 @@ package: gerbil/core
              origin:
              gerbil/core/contract~ClassMeta)))
   (declare-type
+   gerbil/core/contract~ClassMeta#class-type-info::precedence-list
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-method
+   gerbil/core/mop~MOP-2#class-type-info::t
+   precedence-list
+   gerbil/core/contract~ClassMeta#class-type-info::precedence-list
+   #f)
+  (declare-type
+   |gerbil/core/contract~ClassMeta[1]#meta-object-methods!|
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-type
+   gerbil/core/contract~ClassMeta#meta-object-method-ref
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-type
+   gerbil/core/contract~ClassMeta#get-meta-object-method
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-type
+   gerbil/core/contract~ClassMeta#get-meta-object-method-mixin
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~ClassMeta)))
+  (declare-type
    |gerbil/core/contract~Interface[1]#check-signature!__%|
    (@lambda 6
             #f

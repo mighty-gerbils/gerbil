@@ -692,21 +692,7 @@ package: gerbil/runtime
              #f
              origin:
              gerbil/runtime/table)))
-  (declare-type
-   __eq-hash
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/runtime/table)))
+  (declare-type __eq-hash (@lambda 1 __object->eq-hash))
   (declare-type
    eqv-hash
    (@lambda 1

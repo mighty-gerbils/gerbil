@@ -736,7 +736,7 @@ package: gerbil/runtime
             #f
             signature:
             (return:
-             values::t
+             t::t
              effect:
              #f
              arguments:
