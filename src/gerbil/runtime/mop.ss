@@ -492,27 +492,11 @@ namespace: #f
 ;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
 ;;   -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
 (def (compute-class-slots class-precedence-list direct-slots)
-  (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
-         (slot-table (make-symbolic-table #f 0))
-         (r-slots '(__class))
-         (process-slot
-          (lambda (slot)
-            (unless (symbol? slot)
-              (error "invalid slot name" slot))
-            (when (eq? (symbolic-table-ref slot-table slot absent-value)
-                       absent-value);; ignore if already registered as a slot
-              (symbolic-table-set! slot-table slot next-slot)
-              (symbolic-table-set! slot-table (symbol->keyword slot) next-slot)
-              (set! r-slots (cons slot r-slots))
-              (set! next-slot (##fx+ next-slot 1)))))
-         (process-slots (cut for-each process-slot <>)))
-    (for-each (lambda (mixin)
-                (process-slots
-                 (agetq direct-slots: (&class-type-properties mixin) [])))
-              (reverse class-precedence-list))
-    (process-slots direct-slots)
-    (let (slot-vector (list->vector (reverse r-slots)))
-      (values slot-vector slot-table))))
+  (c4-compute-class-slots class-precedence-list direct-slots
+    (lambda (mixin)
+      (agetq direct-slots: (&class-type-properties mixin) []))
+    (lambda (slot-list slot-table)
+      (values (list->vector slot-list) slot-table))))
 
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor

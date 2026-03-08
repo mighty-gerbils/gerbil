@@ -11,7 +11,8 @@ prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
-(export c4-linearize)
+(export c4-linearize
+        c4-compute-class-slots)
 (import "util")
 
 ;; C5 linearization algorithm: given a top object x from which to compute the precedence list,
@@ -181,3 +182,25 @@ namespace: #f
                          (remove-next! next tails))))))))
       (def super-struct (match sis ([s . _] s) (else #f)))
       (values precedence-list super-struct)))))
+
+(def (c4-compute-class-slots precedence-list direct-slot-list
+       mixin-slot-names
+       result)
+  (let* ((next-slot 1) ;; 0 is the class slot
+         (slot-table (make-symbolic-table #f 0))
+         (r-slots ['class])
+         (process-slot
+          (lambda (slot)
+            (unless (symbol? slot)
+              (error "invalid slot name" slot))
+            (when (eq? (symbolic-table-ref slot-table slot absent-value)
+                       absent-value);; ignore if already registered as a slot
+              (symbolic-table-set! slot-table slot next-slot)
+              (symbolic-table-set! slot-table (symbol->keyword slot) next-slot)
+              (set! r-slots (cons slot r-slots))
+              (set! next-slot (##fx+ next-slot 1)))))
+         (process-slots (cut for-each process-slot <>)))
+    (for-each (lambda (mixin) (process-slots (mixin-slot-names mixin)))
+              (reverse precedence-list))
+    (process-slots direct-slot-list)
+    (result (reverse! r-slots) slot-table)))
