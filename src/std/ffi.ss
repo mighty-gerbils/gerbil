@@ -6,29 +6,22 @@
 (export #t)
 
 (module FFIMethods
-  ;; XXX  these need to be meta methods
+  (import ClassMeta)
   (export #t)
-  (defmethod {expand-ffi-c-unwrap :u8vector}
-    (lambda (self raw-arg arg)
-      (string-append "u8 *" arg " = ___U8VECTOR_AS(u8*, " raw-arg ")")))
 
-  (defmethod {expand-ffi-c-unwrap :fixnum}
-    (lambda (self raw-arg arg)
-      (string-append "int " arg " = ___INT(" raw-arg ")")))
+  (defmethod-for-meta :u8vector (expand-ffi-c-unwrap self raw-arg arg)
+    (string-append "u8 *" arg " = ___U8VECTOR_AS(u8*, " raw-arg ")"))
 
-  (defmethod {expand-ffi-c-unwrap :flonum}
-    (lambda (self raw-arg arg)
-      (string-append "double " arg " = ___F64UNBOX(" raw-arg ")")))
+  (defmethod-for-meta :fixnum (expand-ffi-c-unwrap self raw-arg arg)
+    (string-append "int " arg " = ___INT(" raw-arg ")"))
 
-  (defmethod {expand-ffi-c-wrap :fixnum}
-    (lambda (self code)
-      (string-append "___FIX(" code ")"))))
+  (defmethod-for-meta :flonum (expand-ffi-c-unwrap self raw-arg arg)
+    (string-append "double " arg " = ___F64UNBOX(" raw-arg ")"))
+
+  (defmethod-for-meta :fixnum (expand-ffi-c-wrap self code)
+    (string-append "___FIX(" code ")")))
 
 (import (for-syntax FFIMethods))
-
-(begin-syntax
-  (def (eval-class-type id)
-    (eval-syntax+1 (!runtime-type-descriptor (syntax-local-value id)))))
 
 (defrule (C-ffi-macrology)
   (begin-foreign
@@ -75,23 +68,23 @@ END-C
                        (member sigil '(: :-) free-identifier=?)))
                 #'(~ ...))
         (andmap identifier? #'(arg ...))
-        (andmap syntax-local-runtime-type-info? #'(type ...))
-        (syntax-local-runtime-type-info? #'return)
+        (andmap (cut syntax-local-runtime-type-info? <> meta-object?) #'(type ...))
+        (syntax-local-runtime-type-info? #'return meta-object?)
         (stx-string? #'code))
    (let* ((args         #'(arg ...))
           (arg-iota     (iota (length args) 1))
           (arg-iota-str (map number->string arg-iota))
-          (arg-klasses  (map eval-class-type #'(type ...)))
-          (return-klass (eval-class-type #'return))
+          (arg-klasses  (map syntax-local-value #'(type ...)))
+          (return-klass (syntax-local-value #'return))
           (raw-args     (map (lambda (n) (string-append "___ARG" n))
                              arg-iota-str))
           (c-args       (map (lambda (n) (string-append "___arg" n))
                              arg-iota-str))
           (c-unwrap     (map (lambda (klass raw-arg arg)
-                               {klass.expand-ffi-c-unwrap raw-arg arg})
+                               (@call-meta-object klass (expand-ffi-c-unwrap raw-arg arg)))
                              arg-klasses raw-args c-args))
           (c-code      (stx-e #'code))
-          (return-wrap {return-klass.expand-ffi-c-wrap c-code}))
+          (return-wrap (@call-meta-object klass (expand-ffi-c-wrap c-code))))
      (with-syntax ((code (string-append
                           "({"
                           (foldl (lambda (unwrap r)
