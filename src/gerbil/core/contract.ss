@@ -2118,7 +2118,7 @@ package: gerbil/core
                  (defdispatch-rule (unchecked-macro self in ...)
                    lift: unchecked-method
                    (using unchecked-contract
-                     (unchecked--method self out ...)))
+                     (unchecked-method self out ...)))
                  (defdispatch-rule (checked-macro self in ...)
                    lift: checked-method
                    (using checked-contract
