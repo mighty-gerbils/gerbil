@@ -83,7 +83,7 @@
     "format/ioutil"
     "format/io"
     "format/writer"
-    ;;"format/api"
+    "format/api"
 
     ;; TODO
 

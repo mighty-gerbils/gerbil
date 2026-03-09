@@ -20,12 +20,13 @@
 (def (make-formatter (fmt                       :  :string)
                      (env  (format-environment) :  FormatEnv))
   => Formater
-  (Formatter fmt env))
+  (Formater fmt env))
 
 (def (apply-formater (fmt : Formater) . args)
   => :string
-  (let (writer (open-buffered-writer #f very-small-buffer-size))
-    (formater-write fmt writer args)
+  (let* ((writer (open-buffered-writer #f very-small-buffer-size))
+         (folder (make-folder-for-writer fmt writer)))
+    (formater-fold folder fmt args)
     (get-memory-output-string-utf8 writer)))
 
 (def (apply-formater-to-output (fmt : Formater) output . args)
@@ -33,24 +34,24 @@
   (cond
    ((try-BufferedWriter output)
     => (lambda ((writer :- BufferedWriter))
-         => :fixnumn
-         (formater-write fmt writer args)))
+         => :fixnum
+         (let (folder (make-folder-for-writer fmt writer))
+           (formater-fold folder fmt.fmt args))))
    (else
-    (using (writer (open-buffered-writer output very-small-buffer-size) :- BufferedWriter)
-      (let (wr     (formater-write fmt writer args))
-        (__bio-output-buffer-detach! writer)
-        wr)))))
+    (let* ((writer (open-buffered-writer output very-small-buffer-size))
+           (folder (make-folder-for-writer fmt writer)))
+      (begin0
+          (formater-fold folder fmt.fmt args)
+        (__bio-output-buffer-detach! writer))))))
 
-(def (formater-write (fmt       :  Formater)
-                     (writer    :  BufferedWriter)
-                     (args      :  :list)
-                     (folder #f :? FormatFolder))
+(def (formater-fold (folder : FormatFolder)
+                    (fmt    : :string)
+                    (args   : :list))
   => :fixnum
-  (let (folder (or folder (make-folder-for-writer fmt writer)))
-    (: (fold-format-string folder fmt.fmt 0 args)
-       :fixnum)))
+  (: (fold-format-string folder fmt 0 args)
+     :fixnum))
 
-(def (make-folder-for-writer (fmt : Formatter) (writer : BufferedWriter)) => FormatFolder
+(def (make-folder-for-writer (fmt : Formater) (writer : BufferedWriter)) => FormatFolder
   (let ((fold-char
          (lambda ((char   :- :char)
              (result :- :fixnum))
@@ -78,13 +79,13 @@
                   ((#\s) (writer.format  arg fmt.env))
                   ((#\q) (writer.debug   arg fmt.env))
                   (else
-                   (raise-bad-argument format "object format specifier: a%, %s, or %q" how))))))
+                   (raise-bad-argument format "object format specifier: %a, %s, or %q" how))))))
         (error!
          (lambda (msg . args)
-           (raise-bad-argument format msg args))))
-  (FormatFolder
-   fold-char
-   fold-int
-   fold-float
-   fold-object
-   fold-object)))
+           (raise-bad-argument format msg format: fmt.fmt args: args))))
+    (FormatFolder
+     fold-char
+     fold-int
+     fold-float
+     fold-object
+     error!)))
