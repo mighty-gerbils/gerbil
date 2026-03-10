@@ -75,7 +75,6 @@
       (writer.flush)
       wr)))
 
-
 ;;; Reader interface
 ;; (interface ObjectReader
 ;;   (read! (reader : BufferedReader) (env : FormatEnv)) => :void)

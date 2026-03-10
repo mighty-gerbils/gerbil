@@ -33,36 +33,36 @@
   (set! env.next 1))
 
 (def (scan-object! obj (env : ScanEnv) (path [] : :list)) => :fixnum
-  (if (or env.compress? (not (acyclic-object? obj)))
-    (cond
-     ((hash-get env.scanned obj)
-      => (lambda (e) => :fixnum
-           (if env.compress?
-             (using ((e             :- :pair)
-                     (id    (car e) :- :fixnum)
-                     (count (cdr e) :- :fixnum))
-               (set! (cdr e) (fx1+ count))
-               (unless (env.cycles.ref obj #f)
-                 (when (memq obj path)
-                   (if env.allow-cycles?
-                     (env.cycles.set! obj id)
-                     (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
-               id)
-             (using (id e :- :fixnum)
-               (unless (env.cycles.ref obj #f)
-                 (when (memq obj path)
-                   ;; it's a cycle
-                   (if env.allow-cycles?
-                     (env.cycles.set! obj id)
-                     (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
-               id))))
+  (cond
+   ((acyclic-object? obj)
+    -1)
+   ((hash-get env.scanned obj)
+    => (lambda (e) => :fixnum
+          (if env.compress?
+            (using ((e             :- :pair)
+                    (id    (car e) :- :fixnum)
+                    (count (cdr e) :- :fixnum))
+              (set! (cdr e) (fx1+ count))
+              (unless (env.cycles.ref obj #f)
+                (when (memq obj path)
+                  (if env.allow-cycles?
+                    (env.cycles.set! obj id)
+                    (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
+              id)
+            (using (id e :- :fixnum)
+              (unless (env.cycles.ref obj #f)
+                (when (memq obj path)
+                  ;; it's a cycle
+                  (if env.allow-cycles?
+                    (env.cycles.set! obj id)
+                    (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
+              id))))
      (else
       (let (id env.next)
         (set! env.next (fx1+ id))
         (hash-put! env.scanned obj (if env.compress? (cons id 1) id))
         (apply-object-scanner obj env (cons obj path))
-        id)))
-    -1))
+        id))))
 
 (def (apply-object-scanner obj (env : ScanEnv) (path : :list)) => :void
   (__object-scan! obj env path))

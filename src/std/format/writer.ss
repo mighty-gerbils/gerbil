@@ -71,7 +71,7 @@
     (if (fx> len 1)
       (cond
        ((fx= env.opt.style FORMAT-DEBUG)
-        (let (slots (vector->list (class-type-slot-vector klass) 1))
+        (let (slots (class-type-field-list klass))
           (let loop ((rest slots) (offset 1) (wr 0 :- :fixnum))
             => :fixnum
             (match rest
@@ -106,8 +106,6 @@
       (writer.format-object-end env)
       wr)))
 
-
-
 (defobject-writer interface-instance (format-interface-instance writer inst env)
   (do-write (wr 0)
     (writer.format-object-begin (object-class inst) env)
@@ -139,7 +137,7 @@
     wr))
 
 ;; builtin objects
-(defobject-writer :t (format-t writer obj env)
+(defobject-writer :builtin (format-builtin writer obj env)
   (using (klass (class-of obj) :- class)
     (do-write (wr 0)
       (writer.format-object-begin klass env)
@@ -448,38 +446,97 @@
     (writer.write-keyword/quote key)
     (writer.write-keyword key)))
 
+(defsyntax-case do-inner-format ()
+  ((_ (writer env) body rest ...)
+   (with-syntax ((do-format           (syntax-local-introduce 'do-format))
+                 (do-format-raw       (syntax-local-introduce 'do-format-raw))
+                 (do-format-anchor    (syntax-local-introduce 'do-format-anchor))
+                 (do-format-reference (syntax-local-introduce 'do-format-reference)))
+     (with-identifiers ((writer.write-space      #'writer #'writer ".write-space")
+                        (writer.format           #'writer #'writer ".format")
+                        (writer.format-raw       #'writer #'writer ".format-raw")
+                        (writer.format-anchor    #'writer #'writer ".format-anchor")
+                        (writer.format-reference #'writer #'writer ".format-reference"))
+       #'(let ()
+           (defrule (do-format obj wr)
+             (do-write (wr wr)
+               (writer.write-space)
+               (writer.format obj env)
+               wr))
+
+           (defrule (do-format-raw obj wr)
+             (do-write (wr wr)
+               (writer.write-space)
+               (writer.format-raw obj env)
+               wr))
+
+           (defrule (do-format-anchor obj id wr)
+             (do-write (wr wr)
+               (writer.write-space)
+               (writer.format-anchor obj id env)
+               wr))
+
+           (defrule (do-format-reference id wr)
+             (do-write (wr wr)
+               (writer.write-space)
+               (writer.format-reference id env)
+               wr))
+
+           body rest ...)))))
+
 (defobject-writer :list (format-list writer lst env)
-  (do-write (wr 0)
-    (writer.write-lparen)
-    (let loop ((rest lst) (space? #f) (wr wr))
-      (match rest
+  (do-inner-format (writer env)
+    (do-write (wr 0)
+      (writer.write-lparen)
+      (match lst
         ([hd . tl]
-         (cond
-          ((pair? tl)
-           (do-write (wr wr)
-             (if space?
-               (writer.write-space)
-               0)
-             (writer.format hd env)
-             (loop tl #t wr)))
-          ((null? tl)
-           (do-write (wr wr)
-             (writer.format hd env)
-             wr))
-          (else
-           (do-write (wr wr)
-             (if space?
-               (writer.write-space)
-               0)
-             (writer.format hd env)
-             (writer.write-space)
-             (writer.write-dot)
-             (writer.write-space)
-             (writer.format rest env)
-             wr))))
-        (else wr)))
-    (writer.write-rparen)
-    wr))
+         (do-write (wr 0)
+           (writer.format hd env)
+           (let loop ((rest tl) (wr 0 :- :fixnum))
+             => :fixnum
+
+             (defrule (do-loop obj)
+               (with ([hd . tl] obj)
+                 (do-write (wr wr)
+                   (do-format hd wr)
+                   (loop tl wr))))
+
+             (defrule (do-tail wr continue)
+               (do-write (wr wr)
+                 (writer.write-space)
+                 (writer.write-dot)
+                 continue
+                 (writer.write-rparen)
+                 wr))
+
+             (cond
+              ((pair? rest)
+               (@serialize rest env.scan
+                           (lambda (obj) => :fixnum
+                              (do-loop obj))
+                           (lambda (obj id) => :fixnum
+                              (do-tail wr
+                                       (do-format-anchor obj id wr)))
+                           (lambda (id) => :fixnum
+                              (do-tail wr
+                                       (do-format-reference id wr)))))
+              ((null? rest)
+               (do-write (wr wr)
+                 (writer.write-rparen)
+                 wr))
+              (else
+               (do-tail wr
+                        (@serialize rest env.scan
+                                    (lambda (obj) => :fixnum
+                                       (do-format-raw obj wr))
+                                    (lambda (obj id) => :fixnum
+                                       (do-format-anchor obj id wr))
+                                    (lambda (id) => :fixnum
+                                       (do-format-reference id wr)))))))
+           wr))
+        (else
+         (writer.write-rparen)))
+      wr)))
 
 (defobject-writer :string (format-string writer str env)
   (do-format-style format-string env.opt
@@ -698,6 +755,12 @@
 
 (defobject-writer :promise (format-promise writer p env)
   (writer.format (force p) env))
+
+;; (defobject-writer :weak (format-weak writer p env)
+;;   XXX)
+
+;; (defobject-writer :return (format-return writer p env)
+;;   XXX)
 
 (defobject-writer :procedure (format-procedure writer proc env)
   (do-write (wr 0)
