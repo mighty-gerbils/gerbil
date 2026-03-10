@@ -366,6 +366,22 @@ namespace: #f
         (fields->list (##type-fields type)))))
      (else []))))
 
+(def (class-type-field-list (klass : :class)) => :list
+  (def (get-fields! klass type)
+    (let (fields (type-field-list type))
+      (set! (class-type-properties klass)
+        (cons (cons fields: fields)
+              (class-type-properties klass)))
+      fields))
+  (let (props (class-type-properties klass))
+    (:- (cond
+         ((agetq fields: props))
+         ((agetq system-type: props)
+          => (cut get-fields! klass <>))
+         (else
+          (get-fields! klass klass)))
+        :list)))
+
 (def (class-type-slot-list (klass : :class)) => :list
   (vector->list (class-type-slot-vector klass) 1))
 (def (class-type-field-count (klass : :class)) => :fixnum
