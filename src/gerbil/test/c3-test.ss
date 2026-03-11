@@ -1,29 +1,26 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c4 linearization algorithm (a.k.a. c3 plus proper handling of structs)
-;;prelude: "../core"
 
 (export c3-test)
 
 (import
-  ;; :gerbil/runtime/c3
   :gerbil/runtime/mop
-  (only-in :gerbil/runtime/util append-reverse-until)
+  (only-in :gerbil/runtime/util append-reverse-until remove-nulls!) ;;<-- comment out to test with custom runtime/util.ss
   (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)
   (only-in :std/test test-suite test-case check check-exception)
   (only-in :std/values first-value))
 
-;;(define gerbil/runtime 'gerbil/runtime)
-;;(define :gerbil/core ':gerbil/core)
+;; Uncomment below to test custom runtime/c3.ss
+;;(define gerbil/runtime 'gerbil/runtime) (include "../runtime/c3.ss")
+;; Uncomment below to test custom runtime/util.ss
 ;;(include "../../gerbil/runtime/util.ss")
-;;(include "../runtime/c3.ss")
-;;(extern namespace: #f append-reverse-until)
 
 (module <tsi>
   (export #t)
   (import (only-in :std/text/char-set char-ascii-lowercase?))
-  (def (test-struct? sym)
+  (def (test-suffix? sym)
     (char-ascii-lowercase? (string-ref (symbol->string sym) 0))))
 
 (import <tsi> (phi: +1 <tsi>))
@@ -33,7 +30,7 @@
   (syntax-case stx ()
     ((ctx (my-objects my-supers my-descriptors) (object supers ...) ...)
      (with-syntax ((((struct? descr) ...)
-                    (stx-map (lambda (o) [(test-struct? (syntax-e o))
+                    (stx-map (lambda (o) [(test-suffix? (syntax-e o))
                                      (stx-identifier #'ctx o "::t")])
                              #'(object ...))))
        #'(begin
@@ -66,7 +63,9 @@
   (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1)
   ;; Check that suffix support filters out cases that break the suffix
   (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBB) ;; works, but (SBc sBs SBB) fails
-  )
+  ;; Check a case from the compiler that failed during one bootstrap
+  (t) (object t) (type object) (procedure type)
+  (Primitive object) (primitive-predicate Primitive procedure))
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -77,12 +76,15 @@
     (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O) #;(CG --- error!)
     (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
     (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
+    ;; C4 extension with suffixes:
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
     (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
     (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
     ;; Check that suffix support filters out cases that break the suffix
-    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB) ;; works, but (SBc sBs SBB) fails
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB) ;; works, but later (SBc sBs SBB) should fail
+    (t) (object t) (type object t) (procedure type object t)
+    (Primitive object t) (primitive-predicate Primitive procedure type object t)
     ))
 
 (defrule (def-alist-getter getter alist table)
@@ -96,11 +98,11 @@
   (hash-ensure-ref
    my-compute-precedence-list-cache x
    (cut first-value
-        (c4-linearize [x] (my-get-supers x) ;; rely on values being reified first-class objects
-                      get-precedence-list: my-compute-precedence-list
-                      struct: test-struct?
-                      eq: eq?
-                      get-name: identity))))
+        (c4-linearize* [x] [(my-get-supers x)] ;; rely on values being reified first-class objects
+                       get-precedence-list: my-compute-precedence-list
+                       suffix: test-suffix?
+                       eq: eq?
+                       get-name: identity))))
 
 ;;; Previous implementation:
 (def (old-linearize-supers x (get-supers my-get-supers))
@@ -159,7 +161,8 @@
              => '((9 12 14 15) (6 4 2 a b c d e)))
       (check (remove-nulls! [[] [] [] [1] [2] [] [] [3] [] []]) => [[1][2][3]])
       (check (remove-nulls! [[1] [2] [] [] [3]]) => [[1][2][3]]))
-    (test-case "c3 linearization"
+    (test-case "c4 linearization"
+      ;; check all the working cases above
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
       ;; check discrepancy with old MRO resolution algorithm
       (check (my-compute-precedence-list 'Z) =>  '(Z K1 K2 K3 D A B C E O))
@@ -171,15 +174,25 @@
       (check (my-compute-precedence-list 'AA) => '(AA BB CC EE DD FF GG HH))
       (check (old-linearize-supers 'AA) =>       '(AA BB CC EE DD FF GG HH)) ; same
       (check (my-compute-precedence-list 'a) =>  '(a o O))
-
       ;; Try and fail to compute a precedence-list for the confused-grid example in the C3 paper
-      (hash-put! my-supers-table 'CG '(HVG VHG))
+      (hash-put! my-supers-table 'CG '(HVG VHG)) ;; beware: breaks the table so tests can't run twice
       (check-exception (my-compute-precedence-list 'CG) true)
-
       ;; Try and fail to compute a precedence-list for a case that fails to preserve suffix property
       (hash-put! my-supers-table 'SBc '(sBs SBB))
-      (check-exception (my-compute-precedence-list 'SBc) true))
-
+      (check-exception (my-compute-precedence-list 'SBc) true)
+      ;; Try with the local-order as a DAG
+      (def (my-c4-linearize* local-order)
+        (first-value
+         (c4-linearize* [] local-order
+                        get-precedence-list: my-compute-precedence-list
+                        suffix: test-suffix?
+                        eq: eq?
+                        get-name: identity)))
+      (check (my-c4-linearize* '((A) (B) (C))) => '(A B C O))
+      (check (my-c4-linearize* '((A B) (C A))) => '(C A B O))
+      (check (my-c4-linearize* '((C A) (C B))) => '(C A B O))
+      (check (my-c4-linearize* '((C B) (C A))) => '(C B A O))
+      (check-exception (my-c4-linearize* '((A B) (B C) (C A))) true))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => (map (lambda (lst) (append lst '(object t))) my-precedence-lists))

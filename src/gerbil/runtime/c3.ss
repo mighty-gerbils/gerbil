@@ -6,7 +6,6 @@
 ;;; See ../../../doc/reference/gerbil/runtime/c3.md for detailed explanations.
 ;;; See ../test/c3-test.ss for tests.
 ;;;
-
 prelude: "../core"
 package: gerbil/runtime
 namespace: #f
@@ -21,7 +20,7 @@ namespace: #f
                    eq: (eq eq?)
                    get-name: (get-name identity))
   => :values
-  (c4-linearize* (reverse rhead) supers
+  (c4-linearize* (reverse rhead) (list supers)
                  get-precedence-list: get-precedence-list
                  suffix: struct?
                  eq: eq
@@ -31,25 +30,23 @@ namespace: #f
 ;; i.e. the best total order between its ancestors (transitive parents).
 ;; - head is a prefix to prepend to the precedence list, typically [x] or []
 ;;   depending on whether to include x as head of the result.
-;; - parents the list of parents of x, typically (get-supers x)
+;; - parents the list of total orders of parents of x, typically just (list (get-supers x))
 ;; - get-precedence-list gets the precedence list for a parent, including the parent itself in front
-;; - suffix is a predicate that tells if a specification follows the suffix property, i.e.
-;;   must have its precedence list be a suffix of any subclass' precedence list
-;;   (with single inheritance among suffixes)
+;; - suffix is a predicate that tells if a specification has the suffix property, i.e.
+;;   must have its precedence list be a suffix of any descendent's precedence list
+;;   (with single inheritance among suffix specifications but not interstitial infix ones)
 ;; - eq is an equality predicate between list elements (defaults to eq?).
 ;; - get-name gets the name of a object/class, for debugging only (defaults to identity).
-;; Returns three values:
+;; Returns two values:
 ;; - the linearized precedence list,
 ;; - the most specific suffix ancestor if any
-;; - a table that maps each ancestor to the tail of the precedence list starting with it.
-;; : (List X) (List X) \
+;; : (List X) (List (NonEmptyList X)) \
 ;;  get-precedence-info: (X -> (NonEmptyList X) (OrFalse X) (Hash X (List X))) \
 ;;  suffix: (X -> Bool) \
 ;;  super-suffix: (X -> (OrFalse X)) \
 ;;  eq: ?(X X -> Bool) \
-;;  eq: ?(-> (Hash X (List X))) \
 ;;  get-name: ?(X -> Y) \
-;; -> (List X) (OrFalse X) (Hash X (List X))
+;; -> (List X) (OrFalse X)
 (def (c4-linearize* head parents
                     get-precedence-list: get-precedence-list
                     suffix: suffix?
@@ -57,19 +54,21 @@ namespace: #f
                     eq: (eq eq?)
                     get-name: (get-name identity))
   => :values
+  (set! parents (remove-nulls! parents)) ;; allow but remove nulls, e.g. [(get-supers)] when no supers
   (cond
    ((null? parents) ;; 0 parents: it's a base class
     (values head #f))
-   ((null? (cdr parents)) ;; 1 parent: it's effectively single inheritance
-    (let* ((parent (car parents))
+   ((and (null? (cdr parents))
+         (null? (cdar parents))) ;; 1 list of 1 parent: it's effectively single inheritance
+    (let* ((parent (caar parents))
            (pl (get-precedence-list parent)))
       (values (append head pl)
               (if (suffix? parent) parent (super-suffix parent)))))
    (else ;; 2 parents or more: it's effectively multiple inheritance
-    (let (;; precedence lists to merge
-          (pls (map get-precedence-list parents)) ;; : (List (NonEmptyList X))
-          ;; super suffix: the most-specific suffix ancestor (known so far)
-          (ss #f)) ;; : (OrFalse X)
+    (let (;; reverse list or reverse (precedence lists or local order lists) to merge
+          (rcandidates '()) ;; : (List (NonEmptyList X))
+          (suffix #f) ;; : (OrFalse X) ;; most specific super suffix (known so far)
+          (suffix-tail [])) ;; precedence list of the above, or [] if false
 
       ;; Utilities
       (def (get-names lst)
@@ -77,8 +76,13 @@ namespace: #f
       (def (err . a)
         (apply error "Inconsistent precedence graph"
                head: (get-names head)
-               precedence-lists: (map get-names pls)
-               common-suffix-suffix: (get-name ss)
+               parents: (map get-names parents)
+               precedence-lists: (map get-names
+                                      (map get-precedence-list
+                                           ;; (delete-duplicates ...)
+                                           (foldl append [] parents)))
+               common-suffix-tail: (get-names suffix-tail)
+               rcandidates: (map get-names rcandidates)
                a))
 
       ;; is s2 a suffix of s1?
@@ -106,41 +110,81 @@ namespace: #f
              (else (loop (super-suffix t1)
                          (super-suffix t2))))))))
 
-      ;; Reverse the precedence lists,
+      ;; Define a table and populate the hash-table of counts for ancestors
+      (def ancestor-counts (make-table test: eq)) ;; Gambit hash-table
+      (def (get-ancestor-count c) (table-ref ancestor-counts c 0))
+      (def (increment-ancestor-count c) (table-set! ancestor-counts c (1+ (get-ancestor-count c))))
+      (def (decrement-ancestor-count c) (table-set! ancestor-counts c (1- (get-ancestor-count c))))
+
+      ;; For each parent in the parents lists, accumulate the reverse of its precedence lists,
+      ;; if not already present in the ancestors,
       ;; after removing each of their most specific element and its precedence list.
       ;; Update the ss variable with each of the suffix specifications found.
       ;; This is a C4 specific step, not needed in plain C3.
-      (def rpls ;; : (List (List X))
-        (map (lambda (pl)
-               (let-values (((tl rh) (append-reverse-until suffix? pl [])))
-                 (unless (null? tl)
-                   (set! ss (merge-suffix ss (car tl))))
-                 rh))
-             pls))
+      (for-each
+        (lambda (parent-list)
+          (for-each
+            (lambda (parent)
+              (when (zero? (get-ancestor-count parent))
+                ;; New parent: iterate to first suffix
+                (let loop ((al (get-precedence-list parent))
+                           (r []))
+                  (def (done)
+                    (unless (null? r)
+                      (set! rcandidates (cons r rcandidates))))
+                  (match al
+                    ([] (done))
+                    ([a . ar]
+                     (if (suffix? a)
+                       ;; Found suffix; the rest of the precedence list is its precedence list.
+                       (let (ms (merge-suffix a suffix))
+                         (unless (eq ms suffix)
+                           ;; Newer longer suffix
+                           (let loop2 ((tl al))
+                             (match tl
+                               ([] (void))
+                               ([t . tr] (unless (eq t suffix)
+                                           (increment-ancestor-count t)
+                                           (loop2 tr)))))
+                           (set! suffix a)
+                           (set! suffix-tail al))
+                         (done))
+                       (begin
+                         (increment-ancestor-count a)
+                         (loop ar (cons a r)))))))))
+          parent-list))
+        parents)
 
-      ;; The most specific super suffix is now known, its precedence list is the tail of that of x.
-      (def suffix-tail (if ss (get-precedence-list ss) []))
       (def suffix-tail-index (make-table test: eq)) ;; Gambit hash-table because we can't use runtime/hash
-      (def suffix-length 0)
-      (let loop ((i 0) (t suffix-tail))
+      (let loop ((i (length suffix-tail)) (t suffix-tail))
         (match t
-          ([] (set! suffix-length i))
-          ([a . r] (table-set! suffix-tail-index a i) (loop (1+ i) r))))
+          ([] (void))
+          ([a . r]
+           (table-set! suffix-tail-index a i) (loop (1- i) r))))
 
-      ;; Add the list of parents at the end of the set of precedence-lists,
+      ;; Prepend the reversed lists of reversed parents to
+      ;; the reversed lists of reversed precedence-lists,
       ;; to enforce the local precedence order.
-      ;; Putting it at the *end* gives local precedence order
+      ;; Putting it at the *end* (once re-reversed) gives local precedence order
       ;; lower priority than depth-first search, which promotes tail sharing,
       ;; which is the right thing that C3 does (though not explained by the C3 paper).
-      ;; We add the parents in reverse order, because the rpls above is in reverse order.
+      ;; We add the parents in reverse order, because the rcandidates is in reverse order.
       ;; We do want parents to be processed by unssr-rpl like the other precedence lists.
-      ;; This step is needed by C3 (not just C4) though lists would not be reversed without C4.
-      (append1! rpls (reverse parents))
+      ;; This step is needed by C3 (not just C4) though none of the lists would be reversed
+      ;; in plain C4, and plain C3 has only one list.
+      ;; NB: that as an optimization, we filter off singleton parent lists
+      (def r-local-order
+        (filter-map (lambda (parent-list) (and (not (null? (cdr parent-list)))
+                                          (reverse parent-list)))
+                    parents))
+      (for-each (lambda (cl) (for-each increment-ancestor-count cl)) r-local-order)
+      ;; The append below is technically part of C3 (where r-local-order is a singleton).
+      (set! rcandidates (append r-local-order rcandidates))
 
       ;; Remove the common suffix-tail (most-specific suffix ancestor and ancestors)
-      ;; from each parent's precedence lists. Return them in the usual order.
+      ;; from each reversed candidate list. Return them in the usual (re-reversed) order.
       ;;
-      ;; We already reversed those precedence list after removing their own suffix-tail.
+      ;; We already reversed those candidate lists after removing their own suffix-tail.
       ;; We will be reversing them back, but as we go, we will remove
       ;; from the end of the lists (beginning of them in their initially reversed state),
       ;; the ancestors that are in the correct order in the suffix, until we reach one
@@ -150,52 +194,46 @@ namespace: #f
       ;; NB: We can safely assume that there was no inconsistency in the suffix-tail itself
       ;; which is an ancestor's precedence list, so already checked for inconsistency.
       ;;
-      ;; This function processes the (reversed, tail-stripped) precedence list of one parent,
-      ;; : (List X) -> (List X)
-      (def (remove-suffix-tail-and-reverse rpl)
-        (let u ((pl-rhead rpl) ;; suffixless reversed prefix to yet to process
-                (suffix-pos suffix-length)) ;; how far are we in the suffix?
-          (match pl-rhead
+      ;; This function processes the (reversed, tail-stripped) precedence list of one parent
+      ;; : (NonEmptyList X) -> (List X)
+      (def (remove-suffix-tail-and-reverse rcl)
+        (let u ((cl-rhead rcl) ;; suffixless reversed prefix to yet to process
+                (suffix-pos -1)) ;; how far are we in the suffix?
+          (match cl-rhead
             ([] []) ;; done processing -- all ancestors already in the suffix tail
-            ([c . plrh]
+            ([c . clrh]
              (let ((p (table-ref suffix-tail-index c #f)))
+               (def (err2 . a)
+                 (apply err
+                   reverse-candidate-list: (get-names rcl)
+                   suffix-tail-index: (map (match <> ([a . i] [(get-name a) :: i]))
+                                           (table->list suffix-tail-index))
+                   c: (get-name c)
+                   p: p
+                   suffix-pos: suffix-pos
+                   a))
                (cond
                 ((not p)
-                 (let-values (((plrh2 h)
+                 (let-values (((clrh2 h)
                                (append-reverse-until
-                                (cut table-ref suffix-tail-index <> #f) plrh [c])))
-                   (if (null? plrh2)
+                                (cut table-ref suffix-tail-index <> #f) clrh [c])))
+                   (if (null? clrh2)
                      h
-                     (err precedence-list-head: (get-names (reverse plrh2))
-                          ancestor-out-of-order-vs-suffix-tail: (get-name (car plrh2))
-                          precedence-list-tail: (get-names h)
-                          suffix-tail: suffix-tail))))
-                ((< p suffix-pos)
-                 (u plrh p))
+                     (err2
+                      precedence-list-tail: (get-names h)
+                      ancestor-out-of-order-vs-suffix-tail: (get-name (car clrh2))
+                      precedence-list-head: (get-names (reverse clrh2))))))
+                ((> p suffix-pos)
+                 (u clrh p))
                 (else
-                 (err precedence-list-head: (get-names (reverse pl-rhead))
-                      ancestor-out-of-order-vs-suffix-tail: (get-name c)
-                      suffix-pos: suffix-pos
-                      suffix-tail: suffix-tail))))))))
-
-      ;; Heads of precedence lists
-      ;; precedence lists of the parents in usual order, followed by the local order,
-      ;; but after removing the most-specific suffix and its ancestors
+                 (err2 ancestor-out-of-order-vs-suffix-tail: (get-name c)))))))))
+      ;; List of list of candidates
+      ;; precedence lists of the parents in usual order, followed by the local order lists,
+      ;; but after removing from each list the elements of the suffix-tail
       ;; : (List (NonEmptyList X))
-      (def hpls (remove-nulls! (map remove-suffix-tail-and-reverse rpls)))
+      (def candidates (reverse (remove-nulls! (map remove-suffix-tail-and-reverse rcandidates))))
 
-      ;; Define a table and populate the hash-table of counts for ancestors
-      (def ancestor-counts (make-table test: eq)) ;; Gambit hash-table
-      (def (get-ancestor-count c) (table-ref ancestor-counts c 0))
-      (def (count-ancestors! l)
-        (for-each
-          (lambda (c) (table-set! ancestor-counts c (+ 1 (get-ancestor-count c))))
-          l))
-
-      (count-ancestors! suffix-tail)
-      (for-each (lambda (l) (count-ancestors! (cdr l))) hpls)
-
-      ;; Now for the C3 algorithm proper (that technically includes the append1! above):
+      ;; Now for the C3 algorithm proper (that technically includes the append above):
       ;; Extract classes in the precedence list one by one, applying a simple heuristic
       ;; that prioritizes classes based on a depth-first traversal.
 
@@ -206,6 +244,10 @@ namespace: #f
       ;; NB: In practice, in CL land (loading as much as possible of Quicklisp 2025-06-22),
       ;; we have 99% of the time d≤3, n≤19; but exceptionally, d goes to 61, n to 66.
       ;; In a pure functional data structure library I wrote (LIL), I get to d=15 and n=38.
+
+      ;; First, promote the heads of candidates list as candidate,
+      ;; uncounting them from the tails of the candidate lists.
+      (for-each (lambda (cl) (decrement-ancestor-count (car cl))) candidates)
 
       ;; Next super selection loop, enforcing the ordering constraint and
       ;; otherwise implementing the earlier-in-list-first search heuristic.
@@ -218,7 +260,8 @@ namespace: #f
                c
                (loop rts)))
             (else
-             (err)))))
+             (err ;; ancestor-counts: (table->list ancestor-counts)
+              c3-select-next: 'fail)))))
 
       ;; Cleanup after lists after next element in the precedence list was chosen
       ;; - popping the candidate off the lists it appears in
@@ -229,7 +272,7 @@ namespace: #f
           (match t
             ([(and hd [(? (cut eq next <>)) . tl]) . rr]
              (match tl
-               ([c . _] (table-set! ancestor-counts c (- (get-ancestor-count c) 1)))
+               ([c . _] (decrement-ancestor-count c))
                (_ (void))) ;; we could merge this with remove-nulls! but it would add complexity.
              (set-car! t tl)
              (loop rr))
@@ -242,7 +285,7 @@ namespace: #f
       ;; as that of the precedence list of its top element, thereby being that very same list,
       ;; and then share the tail. But we don't, so we eschew that sharing optimization.
       (def precedence-list
-        (let c3loop ((rhead (reverse head)) (tails hpls))
+        (let c3loop ((rhead (reverse head)) (tails candidates))
           (match tails
             ([]
              (append-reverse rhead suffix-tail))
@@ -252,4 +295,4 @@ namespace: #f
              (let* ((next (c3-select-next tails)))
                (c3loop (cons next rhead)
                        (remove-nulls! (remove-next! next tails))))))))
-      (values precedence-list ss)))))
+      (values precedence-list suffix)))))
