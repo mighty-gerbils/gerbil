@@ -542,7 +542,7 @@ In the example hierarchy above, here is the precedence list for the
 
 Here we see the expected classes up until color, and then we have the
 `object` class, which is the class of all standard class instances,
-and `t`, which is the top class. These are [System Classes](#system-classes),
+and `t`, which is the top class. These are [System Classes](#system_classes),
 which we discuss below.
 
 #### Structs
