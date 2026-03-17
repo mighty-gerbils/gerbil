@@ -180,7 +180,7 @@ $ rm -rf bootstrap/*
 
 # copy the builtin ssxi module
 $ mkdir -p bootstrap/gerbil
-$ cp gerbil/builtin.ssxi.ss bootstrap/gerbil
+$ cp gerbil/builtin.ssxi.ss bootstrap/gerbil/
 
 # compile the bootstrap with the current installed compiler
 $ gxc -O -d bootstrap -s -S gerbil/core/{runtime,expander,sugar,mop,macro-object,match,more-sugar,more-syntax-sugar,module-sugar}.ss gerbil/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,method,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/gambit.ss
@@ -192,6 +192,11 @@ If you have made incompatible changes (see strictures below) in the
 core, the simple recompilation approach outlined above is
 insufficient.  What you want to do in this case is a recursive
 bootstrap recompilation.
+
+If you are still in the `src/` subdirectory, go back to the top the Gerbil repository:
+```
+cd ..
+```
 
 - First build the base bootstrap, using your extant gxc -- either latest master or previous recursive bootstrap in your branch:
 ```
@@ -237,8 +242,7 @@ and succeed in bootstrapping your changes.
 
 ### Strictures on Modifying Parts of the Gerbil Bootstrap
 
-***Every change to the Gerbil Bootstrap
-must be API-compatible from one version to the next***:
+***Every change to the Gerbil Bootstrap must be API-compatible from one version to the next***:
 both the old and new versions of Gerbil
 (before and after recompiling the bootstrap) must be able to use them.
 
