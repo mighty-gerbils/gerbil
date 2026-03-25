@@ -72,8 +72,8 @@ else
   readonly gerbil_version="$(git describe --tags --always)"
 fi
 readonly gerbil_targets=""
-readonly default_gambit_tag=64f4d369f84299bc5d1086838347789a55f9cde1
-readonly default_gambit_config="--enable-targets=${gerbil_targets} --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=tE8,f8,-8 --enable-trust-c-tco"
+readonly default_gambit_tag=cdee7acf249e25b63524195cafdee2686acc49c3
+readonly default_gambit_config="--enable-targets=${gerbil_targets} --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=tE8,f8,-8 --enable-trust-c-tco --enable-multiple-threaded-vms --enable-smp"
 prefix="/opt/gerbil"
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"

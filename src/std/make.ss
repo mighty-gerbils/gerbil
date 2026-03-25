@@ -205,8 +205,6 @@ TODO:
 
 (def (make-build buildspec-in settings)
   (def buildspec (normalize-buildspec buildspec-in))
-  ;; mutex for imports
-  (def import-mx (make-mutex 'import))
   ;; mute for dependency timestamps (mauling of load-path)
   (def dependency-mx (make-mutex 'dependency))
   ;; table of module id -> completion, indicating completion of a build
@@ -221,9 +219,10 @@ TODO:
   ;; the build workers
   (def build-worker-count
     (max 1 (settings-parallelize settings)))
-  ;; import with mutex
+  ;; import with mutex; must use +driver-mutex+ (same mutex that compile-module
+  ;; and optimize! use) to prevent concurrent access to __module-registry
   (def (import/mx mod)
-    (with-lock import-mx (cut import-module mod #f #f)))
+    (with-lock +driver-mutex+ (cut import-module mod #f #f)))
   ;; spec module id
   (def (module-id spec)
     (let* ((file (spec-file spec settings))

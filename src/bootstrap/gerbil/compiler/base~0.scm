@@ -482,7 +482,7 @@
       (string->number
        (let () (declare (not safe)) (##getenv '"GERBIL_BUILD_CORES" '"1"))))
     (define gxc#__jobs-mx (make-mutex))
-    (define gxc#__jobs-cv (make-condition-variable))
+    (define gxc#__execute-foreground-thread '#f)
     (define gxc#add-compile-job!__%
       (lambda (_%thunk142230%_ _%name142231%_)
         (mutex-lock! gxc#__jobs-mx)
@@ -514,53 +514,47 @@
           (mutex-unlock! gxc#__jobs-mx)
           _%result142227%_)))
     (define gxc#execute-pending-compile-jobs!
+      ;; Use thread-send/thread-receive (like build0-lib.scm's parallel-build) to
+      ;; avoid thread-join! condvar race conditions under Gambit SMP where signals
+      ;; can be lost when thread-join! must actually block.
+      ;;
+      ;; gxc#__execute-foreground-thread is set before any threads start so that
+      ;; make-compile-job threads can send completion messages back to us.
+      ;; Threads are pre-created by add-compile-job! (inside compile-module's
+      ;; parameterize) so they correctly capture dynamic parameter values.
       (lambda ()
-        (let _%loop142221%_ ()
-          (let ((_%pending142224%_ (gxc#pending-compile-jobs)))
-            (if (null? _%pending142224%_)
-                '#!void
-                (begin
-                  (let ()
-                    (declare (not safe))
-                    (##for-each thread-start! _%pending142224%_))
-                  (let ()
-                    (declare (not safe))
-                    (##for-each gxc#join! _%pending142224%_))))))))
+        (set! gxc#__execute-foreground-thread (current-thread))
+        (let _loop_ ()
+          (let ((_pending_ (gxc#pending-compile-jobs)))
+            (if (not (null? _pending_))
+              (begin
+                (let ((_n-cores_ (max 1 gxc#__available-cores)))
+                  (let _worker-loop_ ((_queue_ _pending_) (_workers_ 0))
+                    (let ((_ready?_ (and (pair? _queue_) (< _workers_ _n-cores_))))
+                      (cond
+                        ((and (< 0 _workers_) (thread-receive (and _ready?_ 0) '#f))
+                         => (lambda (_thread_)
+                              (gxc#join! _thread_)
+                              (_worker-loop_ _queue_ (- _workers_ 1))))
+                        (_ready?_
+                         (thread-start! (car _queue_))
+                         (_worker-loop_ (cdr _queue_) (+ _workers_ 1)))))))
+                (_loop_)))))
+        (set! gxc#__execute-foreground-thread '#f)))
     (define gxc#make-compile-job
-      (lambda (_%thunk142210%_ _%name142211%_)
+      (lambda (_thunk_ _name_)
         (make-thread
          (lambda ()
-           (let _%loop142214%_ ()
-             (mutex-lock! gxc#__jobs-mx)
-             (if (> gxc#__available-cores '0)
-                 (begin
-                   (set! gxc#__available-cores (- gxc#__available-cores '1))
-                   (mutex-unlock! gxc#__jobs-mx)
-                   (let ((__tmp142639
-                          (lambda ()
-                            (let ()
-                              (declare (not safe))
-                              (displayln
-                               '"... execute compile job "
-                               _%name142211%_)))))
-                     (declare (not safe))
-                     (__with-lock gxc#__verbose-mutex __tmp142639))
-                   (let ((__tmp142641 (lambda () (_%thunk142210%_)))
-                         (__tmp142640
-                          (lambda ()
-                            (mutex-lock! gxc#__jobs-mx)
-                            (set! gxc#__available-cores
-                                  (let ()
-                                    (declare (not safe))
-                                    (##fx+ gxc#__available-cores '1)))
-                            (condition-variable-signal! gxc#__jobs-cv)
-                            (mutex-unlock! gxc#__jobs-mx))))
-                     (declare (not safe))
-                     (__with-unwind-protect __tmp142641 __tmp142640)))
-                 (begin
-                   (mutex-unlock! gxc#__jobs-mx gxc#__jobs-cv)
-                   (_%loop142214%_)))))
-         _%name142211%_)))
+           (__with-lock gxc#__verbose-mutex
+             (lambda ()
+               (displayln "... execute compile job " _name_)))
+           (dynamic-wind
+             (lambda () '#f)
+             _thunk_
+             (lambda ()
+               (let ((_fg_ gxc#__execute-foreground-thread))
+                 (if _fg_ (thread-send _fg_ (current-thread)))))))
+         _name_)))
     (define gxc#join!
       (lambda (_%thread142205%_)
         (let ((__tmp142643

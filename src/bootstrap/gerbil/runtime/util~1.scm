@@ -114,23 +114,13 @@
                                       ((lambda (_%L92250%_)
                                          (cons (gx#datum->syntax '#f 'let)
                                                (cons '()
-                                                     (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          '#f
-                          'declare)
-                         (cons (cons (gx#datum->syntax '#f 'not)
-                                     (cons (gx#datum->syntax
-                                            '#f
-                                            'interrupts-enabled)
-                                           '()))
-                               '()))
-                   (cons (cons (gx#datum->syntax '#f 'let)
-                               (cons (gx#datum->syntax '#f 'again)
-                                     (cons '()
-                                           (cons (cons (gx#datum->syntax
-                                                        '#f
-                                                        'unless)
-                                                       (cons (cons (gx#datum->syntax
+                                                     (cons (cons (gx#datum->syntax '#f 'let)
+                                               (cons (gx#datum->syntax '#f 'again)
+                                                     (cons '()
+                                                           (cons (cons (gx#datum->syntax
+                                                                        '#f
+                                                                        'unless)
+                                                                       (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '#f
                             '##fx=)
@@ -144,7 +134,7 @@
                                  '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  '()))))
-                         '())))))
+                         '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        _%hd9221692244%_)
                                       (_%g9220992223%_ _%g9221092227%_))))

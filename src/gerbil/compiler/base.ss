@@ -205,7 +205,10 @@ namespace: gxc
   (string->number
    (getenv "GERBIL_BUILD_CORES" "1")))
 (def __jobs-mx (make-mutex))
-(def __jobs-cv (make-condition-variable))
+
+;; Set by execute-pending-compile-jobs! so make-compile-job threads can notify
+;; it on completion via thread-send. Avoids thread-join! SMP condvar race.
+(def __execute-foreground-thread #f)
 
 (def (add-compile-job! thunk (name (current-compile-context)))
   (mutex-lock! __jobs-mx)
@@ -221,32 +224,46 @@ namespace: gxc
     result))
 
 (def (execute-pending-compile-jobs!)
+  ;; Use thread-send/thread-receive (like build0-lib.scm's parallel-build) to
+  ;; avoid thread-join! condvar race conditions under Gambit SMP where signals
+  ;; can be lost when thread-join! must actually block.
+  ;;
+  ;; __execute-foreground-thread is set before any threads start so that
+  ;; make-compile-job threads can send completion messages back to us.
+  ;; Threads are pre-created by add-compile-job! (inside compile-module's
+  ;; parameterize) so they correctly capture dynamic parameter values.
+  (set! __execute-foreground-thread (current-thread))
   (let loop ()
     (let (pending (pending-compile-jobs))
       (unless (null? pending)
-        (for-each thread-start! pending)
-        (for-each join! pending)))))
+        (let (n-cores (max 1 __available-cores))
+          (let worker-loop ((queue pending) (workers 0))
+            (let (ready? (and (pair? queue) (< workers n-cores)))
+              (cond
+               ((and (positive? workers) (thread-receive (and ready? 0) #f))
+                => (lambda (thread)
+                     (join! thread) ; fast: thread sent msg in dynamic-wind exit, nearly done
+                     (worker-loop queue (- workers 1))))
+               (ready?
+                (thread-start! (car queue))
+                (worker-loop (cdr queue) (+ workers 1)))))))
+        (loop))))
+  (set! __execute-foreground-thread #f))
 
 (def (make-compile-job thunk name)
+  ;; Thread is created here (inside compile-module's parameterize) so it
+  ;; correctly captures dynamic parameter values like current-compile-gsc-options.
+  ;; dynamic-wind exit notifies execute-pending-compile-jobs! via thread-send.
   (make-thread
    (lambda ()
-     (let loop ()
-       (mutex-lock! __jobs-mx)
-       (if (> __available-cores 0)
-         (begin
-           (set! __available-cores (1- __available-cores))
-           (mutex-unlock! __jobs-mx)
-           (with-verbose-mutex
-            (displayln "... execute compile job " name))
-           (unwind-protect
-             (thunk)
-             (mutex-lock! __jobs-mx)
-             (set! __available-cores (fx1+ __available-cores))
-             (condition-variable-signal! __jobs-cv)
-             (mutex-unlock! __jobs-mx)))
-         (begin
-           (mutex-unlock! __jobs-mx __jobs-cv)
-           (loop)))))
+     (with-verbose-mutex
+      (displayln "... execute compile job " name))
+     (dynamic-wind
+       void
+       thunk
+       (lambda ()
+         (let (fg __execute-foreground-thread)
+           (when fg (thread-send fg (current-thread)))))))
    name))
 
 (defrules go! ()

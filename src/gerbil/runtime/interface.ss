@@ -112,7 +112,6 @@ namespace: #f
 (defrules defcast ()
   ((_ cast-it do-prototype do-instance)
    (def (cast-it descriptor obj)
-     (declare (not interrupts-enabled))
      (let* ((klass (&interface-descriptor-type descriptor))
             (klass-id (##type-id klass))
             (obj-klass (class-of obj))

@@ -739,7 +739,6 @@
                                                    (##type-id
                                                     _%obj-klass112469%_)))))
                                       (let ()
-                                        (declare (not interrupts-enabled))
                                         (let _%again112528%_ ()
                                           (if (let ((__tmp113042
                                                      (let ()
@@ -978,7 +977,6 @@
                                                    (##type-id
                                                     _%obj-klass112303%_)))))
                                       (let ()
-                                        (declare (not interrupts-enabled))
                                         (let _%again112362%_ ()
                                           (if (let ((__tmp113044
                                                      (let ()
@@ -1135,7 +1133,6 @@
                   (_%else112319112387%_)))))))
     (define cast
       (lambda (_%descriptor112259%_ _%obj112261%_)
-        (declare (not interrupts-enabled))
         (let* ((_%klass112265%_
                 (let ()
                   (declare (not safe))
@@ -1161,7 +1158,6 @@
                            '#f)))
                   (let ()
                     (let ()
-                      (declare (not interrupts-enabled))
                       (let _%again112283%_ ()
                         (if (let ((__tmp113045
                                    (let ()
@@ -1234,7 +1230,6 @@
                        _%obj112261%_))))))))
     (define try-cast
       (lambda (_%descriptor112217%_ _%obj112219%_)
-        (declare (not interrupts-enabled))
         (let* ((_%klass112223%_
                 (let ()
                   (declare (not safe))
@@ -1257,7 +1252,6 @@
                      (##unchecked-structure-ref _%obj112219%_ '1 '#f '#f)))
                   (let ()
                     (let ()
-                      (declare (not interrupts-enabled))
                       (let _%again112241%_ ()
                         (if (let ((__tmp113046
                                    (let ()
@@ -1332,7 +1326,6 @@
                        _%obj112219%_))))))))
     (define satisfies?
       (lambda (_%descriptor112177%_ _%obj112179%_)
-        (declare (not interrupts-enabled))
         (let* ((_%klass112183%_
                 (let ()
                   (declare (not safe))
@@ -1355,7 +1348,6 @@
                      (##unchecked-structure-ref _%obj112179%_ '1 '#f '#f)))
                   (let ()
                     (let ()
-                      (declare (not interrupts-enabled))
                       (let _%again112201%_ ()
                         (if (let ((__tmp113047
                                    (let ()

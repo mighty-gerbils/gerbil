@@ -1248,11 +1248,11 @@ END-C
                      (lambda (obj) (error "object type is undefined" obj)))
                     ((memq t '(fixnum flonum pair vector))
                      (lambda (obj)
-                       (declare (not interrupts-enabled) (not safe))
+                       (declare (not safe))
                        (__system-class t)))
                     ((eq? t 'subtyped)
                      (lambda (obj)
-                       (declare (not interrupts-enabled) (not safe))
+                       (declare (not safe))
                        (let (st (##subtype obj))
                          (cond
                           ((##fx= st (macro-subtype-structure)) ; object
@@ -1270,7 +1270,7 @@ END-C
                            (error "unknown class" subtype: st object: obj))))))
                     ((eq? t 'special)
                      (lambda (obj)
-                       (declare (not interrupts-enabled) (not safe))
+                       (declare (not safe))
                        (cond
                         ((char? obj)      (__system-class 'char))
                         ((eq? obj '())    (__system-class 'null))
@@ -1288,16 +1288,12 @@ END-C
 
    ;; the type-of operator
    (def (type-of obj) => :symbol
-     (declare
-       (not safe)
-       (not interrupts-enabled))
+     (declare (not safe))
      (:- (##vector-ref __type (##type obj)) :symbol))
 
    ;; the class-of operator
    (def (class-of obj) => :class
-     (declare
-       (not safe)
-       (not interrupts-enabled))
+     (declare (not safe))
      (:- (let* ((t (##type obj))
                 (f (##vector-ref __class t)))
            (f obj))

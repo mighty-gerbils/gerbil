@@ -23,7 +23,6 @@ namespace: #f
    (defrules __lock-inline! ()
      ((_ mx)
       (let ()
-        (declare (not interrupts-enabled))
         (let again ((spin 0))
           (cond
            ((##fx= (##vector-cas! mx 0 1 0) 0))
@@ -36,7 +35,6 @@ namespace: #f
    (defrules __lock-inline! ()
      ((_ mx)
       (let ()
-        (declare (not interrupts-enabled))
         (let again ()
           (unless (##fx= (##vector-cas! mx 0 1 0) 0)
             (##thread-yield!)

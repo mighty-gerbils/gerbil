@@ -4,3 +4,4 @@
  (call-with-input-file ".build.stage0" read-all-as-lines)
  (compiler '("-e" "(include \"~~lib/_gambit#.scm\")"))
  false)
+(exit 0)

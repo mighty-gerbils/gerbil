@@ -21,7 +21,6 @@ namespace: #f
        (let (once (vector 0))
          (dynamic-wind
              (lambda ()
-               (declare (not interrupts-enabled))
                (unless (##fx= (##vector-cas! once 0 1 0) 0)
                  (error "Cannot reenter atomic block"))
                (mutex-lock! mx))
@@ -41,7 +40,6 @@ namespace: #f
   (let (once (vector 0))
     (dynamic-wind
         (lambda ()
-          (declare (not interrupts-enabled))
           (unless (##fx= (##vector-cas! once 0 1 0) 0)
             (error "Cannot re-enter unwind protected block")))
         K fini)))

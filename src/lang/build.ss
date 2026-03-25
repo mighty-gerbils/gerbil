@@ -35,3 +35,5 @@
     )
   libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
   debug: 'src)
+
+(exit 0)

@@ -45,7 +45,7 @@ export GERBIL_GSC
 GERBIL_LOADPATH="${GERBIL_BUILD_PREFIX}/lib"
 export GERBIL_LOADPATH
 
-GAMBOPT="~~bin=${GERBIL_BUILD_PREFIX}/bin,~~lib=${GERBIL_BUILD_PREFIX}/lib,~~include=${GERBIL_BUILD_PREFIX}/include"
+GAMBOPT="~~bin=${GERBIL_BUILD_PREFIX}/bin,~~lib=${GERBIL_BUILD_PREFIX}/lib,~~include=${GERBIL_BUILD_PREFIX}/include,m8G"
 export GAMBOPT
 
 PATH="${GERBIL_BUILD_PREFIX}/bin:${GERBIL_STAGE0}/bin:${PATH}"
@@ -116,7 +116,7 @@ build_gambit() {
   feedback_low "Building Gambit in ${GERBIL_BUILD_PREFIX}/gambit"
   feedback_mid "Building core gambit"
   (cd gambit && rm -rf boot gsc-boot) || die
-  (cd gambit && m="make -j ${GERBIL_BUILD_CORES:-1}" && $m bootstrap && $m from-scratch)
+  (cd gambit && m="make -j ${GERBIL_BUILD_CORES:-1}" && $m bootstrap)
 
   feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
   cp -v gambit/gsi/gsi "${GERBIL_STAGE0}/bin"

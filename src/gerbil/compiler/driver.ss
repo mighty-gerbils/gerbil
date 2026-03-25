@@ -10,7 +10,7 @@ namespace: gxc
         "base"
         "compile"
         "optimize")
-(export compile-module compile-exe)
+(export compile-module compile-exe +driver-mutex+)
 
 (extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
 
@@ -22,7 +22,9 @@ namespace: gxc
 (def +driver-mutex+ (make-mutex 'compiler/driver))
 (defrules with-driver-mutex ()
   ((_ expr)
-   (with-lock +driver-mutex+ (lambda () expr))))
+   (if (eq? (mutex-state +driver-mutex+) (current-thread))
+     expr ;; already holding the mutex — reentrant call
+     (with-lock +driver-mutex+ (lambda () expr)))))
 
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
@@ -617,26 +619,27 @@ namespace: gxc
   (zero? (file-info-size (file-info path #t))))
 
 (def (compile-top-module ctx)
-  (parameterize ((current-expander-context ctx)
-                 (current-expander-phi 0)
-                 (current-expander-marks [])
-                 (current-compile-symbol-table
-                  (make-symbol-table))
-                 (current-compile-runtime-sections
-                  (make-hash-table-eq))
-                 (current-compile-runtime-names
-                  (make-hash-table)))
-    (verbose "compile " (expander-context-id ctx))
-    (when (current-compile-optimize)
-      (with-driver-mutex (optimize! ctx)))
-    (collect-bindings ctx)
+  (with-driver-mutex
+   (parameterize ((current-expander-context ctx)
+                  (current-expander-phi 0)
+                  (current-expander-marks [])
+                  (current-compile-symbol-table
+                   (make-symbol-table))
+                  (current-compile-runtime-sections
+                   (make-hash-table-eq))
+                  (current-compile-runtime-names
+                   (make-hash-table)))
+     (verbose "compile " (expander-context-id ctx))
+     (when (current-compile-optimize)
+       (optimize! ctx))
+     (collect-bindings ctx)
 
-    (compile-runtime-code ctx)
-    (compile-meta-code ctx)
+     (compile-runtime-code ctx)
+     (compile-meta-code ctx)
 
-    (when (and (current-compile-optimize)
-               (current-compile-generate-ssxi))
-      (compile-ssxi-code ctx))))
+     (when (and (current-compile-optimize)
+                (current-compile-generate-ssxi))
+       (compile-ssxi-code ctx)))))
 
 (def (collect-bindings ctx)
   (apply-collect-bindings

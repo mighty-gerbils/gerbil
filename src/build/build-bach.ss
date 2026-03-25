@@ -202,3 +202,5 @@
                 (when (file-exists? path)
                   (delete-file path))))
             '(".ssi" ".scm" "~0.scm" )))
+
+(exit 0)

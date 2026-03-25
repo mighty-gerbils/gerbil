@@ -4186,7 +4186,6 @@
     (define bind-specializer!
       (lambda (_%method-proc104832%_ _%specializer104833%_)
         (let ()
-          (declare (not interrupts-enabled))
           (let _%again104837%_ ()
             (if (let ((__tmp109513
                        (let ()
@@ -4208,7 +4207,6 @@
     (define __lookup-method-specializer
       (lambda (_%proc104822%_)
         (let ()
-          (declare (not interrupts-enabled))
           (let _%again104826%_ ()
             (if (let ((__tmp109514
                        (let ()
@@ -4735,7 +4733,6 @@
     (define __lookup-class-specializer
       (lambda (_%klass104559%_)
         (let ()
-          (declare (not interrupts-enabled))
           (let _%again104563%_ ()
             (if (let ((__tmp109542
                        (let ()
@@ -4759,7 +4756,6 @@
     (define __bind-class-specializer!
       (lambda (_%klass104550%_ _%method-table104551%_)
         (let ()
-          (declare (not interrupts-enabled))
           (let _%again104555%_ ()
             (if (let ((__tmp109543
                        (let ()
@@ -5142,7 +5138,6 @@
                          _%klass104282%_))
                       _%klass104282%_))))
           (let ()
-            (declare (not interrupts-enabled))
             (let _%again104212%_ ()
               (if (let ((__tmp109549
                          (let ()

@@ -103,3 +103,4 @@
 
 ;; run the compile jobs to complete the build
 (execute-pending-compile-jobs!)
+(##exit-abruptly 0)
