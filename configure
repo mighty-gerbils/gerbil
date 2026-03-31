@@ -226,33 +226,8 @@ else
     fi
 fi
 
-if [ ! -f MANIFEST -o ! -f src/gambit/configure ] ; then
-  git submodule init || die
-  git submodule update --force || die
-  (cd src/gambit && git fetch origin && git checkout "${gambit_tag}" && touch configure config.status) || die
-  unset gambit_stamp_version
-fi
-
 gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_shared} ${gambit_config}"
 (export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config ) || die
-
-if [ -n "$gambit_stamp_version" ] ; then
-  sed -i -e "s/^stamp:/stamp-orig:/" src/gambit/include/makefile
-  echo stamp: >> src/gambit/include/makefile
-  cat >> src/gambit/include/stamp.h <<EOF
-#ifndef ___STAMP_VERSION
-#define ___STAMP_VERSION "${gambit_stamp_version}"
-#endif
-
-#ifndef ___STAMP_YMD
-#define ___STAMP_YMD ${gambit_stamp_ymd}
-#endif
-
-#ifndef ___STAMP_HMS
-#define ___STAMP_HMS ${gambit_stamp_hms}
-#endif
-EOF
-fi
 
 rm -f build-env.sh
 cat > build-env.sh <<EOF
