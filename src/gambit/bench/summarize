@@ -1,0 +1,163 @@
+#!/usr/bin/awk -f
+
+function clearvars () {
+  real       = "#f";
+  cpu        = "#f";
+  codesize   = "#f";
+  crashed    = 0;
+  failed     = 0;
+  runtime    = 0;
+  cycles     = "#f";
+  instrs     = "#f";
+  branches   = "#f";
+  branchmisses = "#f";
+}
+
+
+function output () {
+  if (runtime == 1) {
+
+    if (real == "") {
+      crashed = 1;
+    }
+
+    failure = "";
+
+    if (crashed != 0) {
+      failure = "CRASH";
+    }
+    else if (failed != 0) {
+      failure = "FAIL";
+    }
+
+    printf "(%-9s ", test;
+    if (real == "#f" && cpu == "#f") {
+      printf "%9s %9s ", real, cpu;
+    }
+    else if (real == "#f") {
+      printf "%9s %9.6f ", real, cpu;
+    }
+    else if (cpu == "#f") {
+      printf "%9.6f %9s ", real, cpu;
+    }
+    else {
+      printf "%9.6f %9.6f ", real, cpu;
+    }
+    printf "%9s %9s %9s %9s %6s)\n", cycles, instrs, branches, branchmisses, failure;
+  }
+
+  clearvars();
+}
+
+BEGIN {
+  test       = "";
+  clearvars();
+}
+
+/^Testing/ {
+  output();
+  test=$2;
+}
+
+/^Compiling.../ {
+  runtime = 0;
+}
+
+/^Running.../ {
+  if (runtime == 1) {
+    output();
+  }
+  runtime = 1;
+}
+
+runtime == 1 && $0 == "*** wrong result ***" {
+  failed = 1;
+}
+
+runtime == 1 && /^Command .* with non-zero/ {
+  crashed = 1;
+}
+
+runtime == 1 && /^Command terminated by signal/ {
+  crashed = 1;
+}
+
+runtime == 1 && /Abort trap/ {
+  crashed = 1;
+}
+
+runtime == 1 && / === context ===/ {
+  crashed = 1;
+}
+
+runtime == 1 && /ERROR/ && $0 !~ /^FATAL-ERROR$/ && $0 !~ /^SCHEME-ERROR$/ && $0 !~ /^SLATEX-ERROR$/ {
+  crashed = 1;
+}
+
+runtime == 1 && /^[ ]*[0-9.]+ secs cpu time \([0-9.]+ user, [0-9.]+ system\)$/ {
+  if (cpu == "#f") {
+    cpu = $1;
+  }
+}
+
+runtime == 1 && /^[ ]*[0-9]+ ms cpu time \([0-9]+ user, [0-9]+ system\)$/ {
+  if (cpu == "#f") {
+    cpu = $1/1000;
+  }
+}
+
+runtime == 1 && /^[ ]*[0-9.]+ secs real time$/ {
+  if (real == "#f") {
+    real = $1;
+  }
+}
+
+runtime == 1 && /^[ ]*([0-9.]+) real [ ]*([0-9.]+) user [ ]*([0-9.]+) sys$/ {
+  if (cpu == "#f") {
+    cpu = ($3 + $5);
+  }
+  if (real == "#f") {
+    real = $1;
+  }
+}
+
+runtime == 1 && /^[ ]*[0-9]+ ms real time$/ {
+  if (real == "#f") {
+    real = $1/1000;
+  }
+}
+
+runtime == 1 && /^cpu time: ([0-9]+) real time: ([0-9]+)/ {
+  if (cpu == "#f") {
+    cpu = $3;
+  }
+  if (real == "#f") {
+    real = $6;
+  }
+}
+
+runtime == 1 && /^code size = [0-9]+$/ {
+  codesize = $4;
+}
+
+runtime == 1 && /^[ ]*[0-9,]+[ ]+cycles .*$/ {
+  cycles = $1;
+  gsub(",","",cycles);
+}
+
+runtime == 1 && /^[ ]*[0-9,]+[ ]+instructions .*$/ {
+  instrs = $1;
+  gsub(",","",instrs);
+}
+
+runtime == 1 && /^[ ]*[0-9,]+[ ]+branches .*$/ {
+  branches = $1;
+  gsub(",","",branches);
+}
+
+runtime == 1 && /^[ ]*[0-9,]+[ ]+branch-misses .*$/ {
+  branchmisses = $1;
+  gsub(",","",branchmisses);
+}
+
+END { output() }

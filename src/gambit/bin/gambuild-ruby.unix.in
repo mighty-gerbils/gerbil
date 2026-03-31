@@ -1,0 +1,66 @@
+#! /bin/sh
+
+case "$1" in
+
+  "obj")
+
+    if test "${GAMBUILD_VERBOSE}" != ""; then
+      echo "cat ${BUILD_OBJ_INPUT_FILENAMES_PARAM} > \"${BUILD_OBJ_OUTPUT_FILENAME_PARAM}\""
+    fi
+
+    cat ${BUILD_OBJ_INPUT_FILENAMES_PARAM} > "${BUILD_OBJ_OUTPUT_FILENAME_PARAM}"
+    ;;
+
+  "dyn")
+
+    if test "${GAMBUILD_VERBOSE}" != ""; then
+      echo "cat ${BUILD_DYN_INPUT_FILENAMES_PARAM} > \"${BUILD_DYN_OUTPUT_FILENAME_PARAM}\""
+    fi
+
+    cat ${BUILD_DYN_INPUT_FILENAMES_PARAM} > "${BUILD_DYN_OUTPUT_FILENAME_PARAM}"
+    ;;
+
+  "lib")
+
+    if test "${GAMBUILD_VERBOSE}" != ""; then
+      echo "echo BUILD_LIB not yet implemented"
+    fi
+
+    echo BUILD_LIB not yet implemented
+    ;;
+
+  "exe")
+
+    if test "${BUILD_EXE_BASE_LIBRARY_PARAM}" = ""; then
+      BUILD_EXE_BASE_LIB="${GAMBITDIR_LIB}/_gambit.rb"
+    else
+      BUILD_EXE_BASE_LIB="${BUILD_EXE_BASE_LIBRARY_PARAM}.rb"
+    fi
+
+    if test "${GAMBUILD_VERBOSE}" != ""; then
+      case "${BUILD_EXE_OUTPUT_FILENAME_PARAM}" in
+        *.rb) echo cat ${BUILD_EXE_INPUT_FILENAMES_PARAM} "\"${BUILD_EXE_BASE_LIB}\" > \"${BUILD_EXE_OUTPUT_FILENAME_PARAM}\""
+              ;;
+           *) echo "echo \"#! /usr/bin/env ruby\" > \"${BUILD_EXE_OUTPUT_FILENAME_PARAM}\""
+              echo cat ${BUILD_EXE_INPUT_FILENAMES_PARAM} "\"${BUILD_EXE_BASE_LIB}\" >> \"${BUILD_EXE_OUTPUT_FILENAME_PARAM}\""
+              echo "chmod +x \"${BUILD_EXE_OUTPUT_FILENAME_PARAM}\""
+              ;;
+      esac
+    fi
+
+    case "${BUILD_EXE_OUTPUT_FILENAME_PARAM}" in
+      *.rb) cat ${BUILD_EXE_INPUT_FILENAMES_PARAM} "${BUILD_EXE_BASE_LIB}" > "${BUILD_EXE_OUTPUT_FILENAME_PARAM}"
+            ;;
+         *) echo "#! /usr/bin/env ruby" > "${BUILD_EXE_OUTPUT_FILENAME_PARAM}"
+            cat ${BUILD_EXE_INPUT_FILENAMES_PARAM} "${BUILD_EXE_BASE_LIB}" >> "${BUILD_EXE_OUTPUT_FILENAME_PARAM}"
+            chmod +x "${BUILD_EXE_OUTPUT_FILENAME_PARAM}"
+            ;;
+    esac
+    ;;
+
+  *)
+    echo "gambuild-ruby unknown operation \"$1\""
+    exit 1
+    ;;
+
+esac

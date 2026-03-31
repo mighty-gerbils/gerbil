@@ -1,0 +1,591 @@
+#! /bin/sh
+
+# The following bindings are determined by the configure script.  The
+# bindings for CORCXXFLAGS_GAMBUILD and LDFLAGS_GAMBUILD can be
+# overridden by setting the corresponding environment variables.
+
+if test "${CORCXXFLAGS_GAMBUILD+set}" != set; then
+  CORCXXFLAGS_GAMBUILD=@CORCXXFLAGS_GAMBUILD_SH@
+fi
+
+if test "${LDFLAGS_GAMBUILD+set}" != set; then
+  LDFLAGS_GAMBUILD=@LDFLAGS_GAMBUILD_SH@
+fi
+
+C_COMPILER=@C_COMPILER_SH@
+C_PREPROC=@C_PREPROC_SH@
+PKG_CONFIG=@PKG_CONFIG_SH@
+
+FLAGS_OBJ=@FLAGS_OBJ_GAMBUILD_SH@
+FLAGS_DYN=@FLAGS_DYN_GAMBUILD_SH@
+FLAGS_LIB=@FLAGS_LIB_GAMBUILD_SH@
+FLAGS_EXE=@FLAGS_EXE_GAMBUILD_SH@
+
+FLAGS_OPT=@FLAGS_OPT_GAMBUILD_SH@
+FLAGS_OPT_RTS=@FLAGS_OPT_RTS_GAMBUILD_SH@
+
+DEFS_OBJ=@DEFS_OBJ_GAMBUILD_SH@
+DEFS_DYN=@DEFS_DYN_GAMBUILD_SH@
+DEFS_LIB=@DEFS_LIB_GAMBUILD_SH@
+DEFS_EXE=@DEFS_EXE_GAMBUILD_SH@
+
+BUILD_OBJ=@BUILD_OBJ_GAMBUILD_SH@
+BUILD_DYN=@BUILD_DYN_GAMBUILD_SH@
+BUILD_LIB=@BUILD_LIB_GAMBUILD_SH@
+BUILD_EXE=@BUILD_EXE_GAMBUILD_SH@
+
+DEFS=@DEFS_SH@
+LIBS=@LIBS_SH@
+GAMBITLIB=@GAMBITLIB_SH@
+GAMBITGSCLIB=@GAMBITGSCLIB_SH@
+GAMBITGSILIB=@GAMBITGSILIB_SH@
+LIB_PREFIX=@LIB_PREFIX_SH@
+LIB_EXTENSION=@LIB_EXTENSION_SH@
+OBJ_EXTENSION=@OBJ_EXTENSION_SH@
+EXE_EXTENSION=@EXE_EXTENSION_SH@
+BAT_EXTENSION=@BAT_EXTENSION_SH@
+
+ALL_BUILD_FEATURES=@ALL_BUILD_FEATURES_SH@
+BUILD_FEATURE_C_COMP=@BUILD_FEATURE_C_COMP_SH@
+BUILD_FEATURE_OS="unix"
+
+GAMBUILD_CC_OPTIONS_REGEXP="^ #|\\*/\"\\*/\"cc-options|#"
+GAMBUILD_LD_OPTIONS_PRELUDE_REGEXP="^ #|\\*/\"\\*/\"ld-options-prelude|#"
+GAMBUILD_LD_OPTIONS_REGEXP="^ #|\\*/\"\\*/\"ld-options|#"
+GAMBUILD_PKG_CONFIG_REGEXP="^ #|\\*/\"\\*/\"pkg-config|#"
+GAMBUILD_PKG_CONFIG_PATH_REGEXP="^ #|\\*/\"\\*/\"pkg-config-path|#"
+
+GAMBUILD_SPACE=' '
+GAMBUILD_NL='
+'
+
+scheme_string_decode()
+{
+  printf "%s" "$1" | sed -e "s,\\\\\\\",\\\",g" -e "s,\\\\\\\\,,g" -e "s,\\\\t,	,g" -e "s,\\\\v,,g" -e "s,\\\\f,,g" -e "s,,\\\\,g" -e "s,^\",,g" -e "s,\"$,,g"
+}
+
+shell_string_encode()
+{
+  printf "%s" "$1" | sed "s,','\\\\'',g;s,^,',;s,\$,'," ;
+}
+
+shell_quote()
+{
+  RESULT=""
+  for arg in $1 ; do
+    if test -z "$RESULT" ; then
+      RESULT="$(shell_string_encode ${arg})"
+    else
+      RESULT="${RESULT} $(shell_string_encode ${arg})"
+    fi
+  done
+  printf "%s" "${RESULT}"
+}
+
+sed_quote()
+{
+  # see: https://stackoverflow.com/questions/29613304/is-it-possible-to-escape-regex-metacharacters-reliably-with-sed
+  printf "%s" "$1" | sed 's/[&/\]/\\&/g'
+}
+
+eval_sexpr()
+{
+  sexpr="$(printf "%s" "$1" | sed -e "s,\\\\\\\\,,g" -e "s,\\\\\\\",,g" -e "s,',,g" -e "s,\\\\t,	,g" -e "s,\\\\v,,g" -e "s,\\\\f,,g")"
+
+  # temporarily remove doublequotes in strings
+  sexpr="$(printf "%s" "$sexpr" | sed -e "s/\\\\\\\\\\\\\\\\//g" -e "s/\\\\\\\\\"//g")"
+
+  # create a table of the strings in sexpr
+  str=
+  prev=""
+  while test "$sexpr" != "$prev"; do
+    prev="$sexpr"
+    str=_$str
+    eval "STR$str=$(printf "%s" "$sexpr" | sed -e "s/[^\\\"]*\\\"\\([^\\\"]*\\)\\\".*/\\1/" -e "s/^/'/" -e "s/$/'/")"
+    sexpr="$(printf "%s" "$sexpr" | sed -e "s/\\\"[^\\\"]*\\\"/$str/")"
+  done
+
+  sexpr="$(printf "%s" "$sexpr" | sed -e "s/)/ )/g")"
+
+  GAMBUILD_SAVE_IFS2="$IFS"
+  IFS="${GAMBUILD_SPACE}"
+
+  for feature in ${ALL_BUILD_FEATURES}; do
+    if test "$feature" = "${BUILD_FEATURE_OS}" -o \
+            "$feature" = "${BUILD_FEATURE_C_COMP}"; then
+      sexpr="$(printf "%s" "$sexpr" | sed -e "s/ $feature / #t /g")"
+    else
+      sexpr="$(printf "%s" "$sexpr" | sed -e "s/ $feature / #f /g")"
+    fi
+  done
+
+  IFS="${GAMBUILD_SAVE_IFS2}"
+
+  # apply reduction rules until a normal form is reached
+  prev=""
+  while test "$sexpr" != "$prev"; do
+    prev="$sexpr"
+    sexpr="$(printf "%s" "$sexpr" | sed \
+      -e "s/(and #t /(and /g" \
+      -e "s/(and #f #t /(and #f /g" \
+      -e "s/(and #f #f /(and #f /g" \
+      -e "s/(and #f )/#f/g" \
+      -e "s/(and )/#t/g" \
+      -e "s/(or #f /(or /g" \
+      -e "s/(or #t #t /(or #t /g" \
+      -e "s/(or #t #f /(or #t /g" \
+      -e "s/(or #t )/#t/g" \
+      -e "s/(or )/#f/g" \
+      -e "s/(not #t )/#f/g" \
+      -e "s/(not #f )/#t/g" \
+      -e "s/^(when #t \([^() ]*\) )/\1/g" \
+      -e "s/^(when #f \([^() ]*\) )//g")"
+  done
+
+  if test "$sexpr" != "" ; then
+    if printf "%s" "$sexpr" | grep "^_*$" > /dev/null ; then
+      # get string and put doublequotes back in string
+      eval "printf \"%s\" \"\\\"\$STR$sexpr\\\"\"" | sed -e "s//'/g" -e "s//\\\\\"/g" -e "s//\\\\\\\\/g"
+    else
+      printf "%s" "unsupported expression"
+    fi
+  fi
+}
+
+get_meta_info()
+{
+  for info in $(grep "$2" "$1" | sed -e "s,$2,,g"); do
+    val_info="$(eval_sexpr "$info")"
+    if test "$val_info" != ""; then
+      if test "$val_info" = "unsupported expression"; then
+        printf "%s\n" "*** WARNING -- unsupported meta-info is being ignored: $info" >> /dev/tty
+      else
+        printf "%s\n" "$val_info"
+      fi
+    fi
+  done
+}
+
+get_meta_info_list()
+{
+  GAMBUILD_META_INFO_LIST=""
+  for info in $(get_meta_info "$1" "$2"); do
+    GAMBUILD_META_INFO_LIST="${GAMBUILD_META_INFO_LIST}$(scheme_string_decode "${info}") "
+  done
+}
+
+process_pkg_config()
+{
+  for arg in $1; do
+    if test -z "${PKG_CONFIG}"; then
+      printf "%s\n" "*** WARNING -- the pkg-config program is unavailable but is needed to get C compiler options using 'pkg-config --cflags $arg' and 'pkg-config --libs $arg'" >> /dev/tty
+      exit 1
+    else
+      GAMBUILD_SAVE_IFS2="$IFS"
+      IFS="${GAMBUILD_SPACE}"
+      set -e
+      GAMBUILD_PKG_CONFIG_CFLAGS="$(${PKG_CONFIG} --cflags $arg)"
+      GAMBUILD_PKG_CONFIG_LIBS="$(${PKG_CONFIG} --libs $arg)"
+      set +e
+      IFS="${GAMBUILD_SAVE_IFS2}"
+      accumulate_cc_options "${GAMBUILD_PKG_CONFIG_CFLAGS}" "${GAMBUILD_NL}"
+      accumulate_ld_options "${GAMBUILD_PKG_CONFIG_LIBS}" "${GAMBUILD_NL}"
+    fi
+  done
+}
+
+accumulate_cc_options()
+{
+  GAMBUILD_SAVE_IFS2="$IFS"
+  IFS="$2"
+  for flag in $1 ; do
+    GAMBUILD_CC_OPTIONS="${GAMBUILD_CC_OPTIONS}$flag "
+  done
+  IFS="${GAMBUILD_SAVE_IFS2}"
+}
+
+accumulate_ld_options_prelude()
+{
+  GAMBUILD_SAVE_IFS2="$IFS"
+  IFS="$2"
+  for flag in $1 ; do
+    GAMBUILD_LD_OPTIONS_PRELUDE="${GAMBUILD_LD_OPTIONS_PRELUDE}$flag "
+  done
+  IFS="${GAMBUILD_SAVE_IFS2}"
+}
+
+accumulate_ld_options()
+{
+  GAMBUILD_SAVE_IFS2="$IFS"
+  IFS="$2"
+  for flag in $1 ; do
+    GAMBUILD_LD_OPTIONS="${GAMBUILD_LD_OPTIONS}$flag "
+  done
+  IFS="${GAMBUILD_SAVE_IFS2}"
+}
+
+process_pkg_config_path()
+{
+  for path in $1; do
+    if test -z "${GAMBUILD_PKG_CONFIG_PATH}"; then
+      GAMBUILD_PKG_CONFIG_PATH="$path"
+    else
+      # prepend path so that last path added has priority
+      GAMBUILD_PKG_CONFIG_PATH="$path:${GAMBUILD_PKG_CONFIG_PATH}"
+    fi
+  done
+}
+
+extract_cc_ld_options()
+{
+  GAMBUILD_CC_OPTIONS=""
+  GAMBUILD_LD_OPTIONS_PRELUDE=""
+  GAMBUILD_LD_OPTIONS=""
+  GAMBUILD_PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
+
+  GAMBUILD_SAVE_IFS="$IFS"
+  IFS="${GAMBUILD_NL}"
+
+  if test ! -z "$1"; then
+    get_meta_info_list "$1" "${GAMBUILD_PKG_CONFIG_PATH_REGEXP}"
+    process_pkg_config_path "${GAMBUILD_META_INFO_LIST}"
+  fi
+
+  process_pkg_config_path "$3"
+
+  export PKG_CONFIG_PATH="${GAMBUILD_PKG_CONFIG_PATH}"
+
+  if test ! -z "$1"; then
+    get_meta_info_list "$1" "${GAMBUILD_PKG_CONFIG_REGEXP}"
+    process_pkg_config "${GAMBUILD_META_INFO_LIST}"
+  fi
+
+  process_pkg_config "$2"
+
+  for file in $1; do
+
+    get_meta_info_list "$file" "${GAMBUILD_CC_OPTIONS_REGEXP}"
+    GAMBUILD_CC_OPTIONS="${GAMBUILD_CC_OPTIONS}${GAMBUILD_META_INFO_LIST}"
+
+    get_meta_info_list "$file" "${GAMBUILD_LD_OPTIONS_PRELUDE_REGEXP}"
+    GAMBUILD_LD_OPTIONS_PRELUDE="${GAMBUILD_LD_OPTIONS_PRELUDE}${GAMBUILD_META_INFO_LIST}"
+
+    get_meta_info_list "$file" "${GAMBUILD_LD_OPTIONS_REGEXP}"
+    GAMBUILD_LD_OPTIONS="${GAMBUILD_LD_OPTIONS}${GAMBUILD_META_INFO_LIST}"
+
+  done
+
+  accumulate_cc_options "$4" "${GAMBUILD_NL}"
+  accumulate_ld_options_prelude "$5" "${GAMBUILD_NL}"
+  accumulate_ld_options "$6" "${GAMBUILD_NL}"
+
+  IFS="${GAMBUILD_SAVE_IFS}"
+}
+
+substitute_common()
+{
+  printf "%s" "$1" | sed \
+    -e "s\${C_COMPILER}$(sed_quote "${C_COMPILER}")g" \
+    -e "s\${C_PREPROC}$(sed_quote "${C_PREPROC}")g" \
+    -e "s\${PKG_CONFIG}$(sed_quote "${PKG_CONFIG}")g" \
+    -e "s\${GAMBITDIR_INCLUDE}$(sed_quote "${GAMBITDIR_INCLUDE}")g" \
+    -e "s\${GAMBITDIR_LIB}$(sed_quote "${GAMBITDIR_LIB}")g" \
+    -e "s\${DEFS_DYN}$(sed_quote "${DEFS_DYN}")g" \
+    -e "s\${DEFS_EXE}$(sed_quote "${DEFS_EXE}")g" \
+    -e "s\${DEFS_OBJ}$(sed_quote "${DEFS_OBJ}")g" \
+    -e "s\${FLAGS_DYN}$(sed_quote "${FLAGS_DYN}")g" \
+    -e "s\${FLAGS_EXE}$(sed_quote "${FLAGS_EXE}")g" \
+    -e "s\${FLAGS_OBJ}$(sed_quote "${FLAGS_OBJ}")g" \
+    -e "s\${FLAGS_OPT}$(sed_quote "${FLAGS_OPT}")g" \
+    -e "s\${LIBS}$(sed_quote "${LIBS}")g"
+}
+
+substitute_obj()
+{
+  printf "%s" "$(substitute_common "$1")" | sed \
+    -e "s\${BUILD_OBJ_CC_OPTIONS_PARAM}$(sed_quote "${BUILD_OBJ_CC_OPTIONS_PARAM}")g" \
+    -e "s\${BUILD_OBJ_INPUT_FILENAMES_PARAM}$(sed_quote "$(shell_quote "${BUILD_OBJ_INPUT_FILENAMES_PARAM}")")g" \
+    -e "s\${BUILD_OBJ_OUTPUT_FILENAME_PARAM}$(sed_quote "$(shell_quote "${BUILD_OBJ_OUTPUT_FILENAME_PARAM}")")g"
+}
+
+substitute_dyn()
+{
+  printf "%s" "$(substitute_common "$1")" | sed \
+    -e "s\${BUILD_DYN_CC_OPTIONS_PARAM}$(sed_quote "${BUILD_DYN_CC_OPTIONS_PARAM}")g" \
+    -e "s\${BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM}$(sed_quote "${BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM}")g" \
+    -e "s\${BUILD_DYN_LD_OPTIONS_PARAM}$(sed_quote "${BUILD_DYN_LD_OPTIONS_PARAM}")g" \
+    -e "s\${BUILD_DYN_INPUT_FILENAMES_PARAM}$(sed_quote "$(shell_quote "${BUILD_DYN_INPUT_FILENAMES_PARAM}")")g" \
+    -e "s\${BUILD_DYN_OUTPUT_FILENAME_PARAM}$(sed_quote "$(shell_quote "${BUILD_DYN_OUTPUT_FILENAME_PARAM}")")g"
+}
+
+substitute_exe()
+{
+  printf "%s" "$(substitute_common "$1")" | sed \
+    -e "s\${BUILD_EXE_CC_OPTIONS_PARAM}$(sed_quote "${BUILD_EXE_CC_OPTIONS_PARAM}")g" \
+    -e "s\${BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM}$(sed_quote "${BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM}")g" \
+    -e "s\${BUILD_EXE_LD_OPTIONS_PARAM}$(sed_quote "${BUILD_EXE_LD_OPTIONS_PARAM}")g" \
+    -e "s\${BUILD_EXE_INPUT_FILENAMES_PARAM}$(sed_quote "$(shell_quote "${BUILD_EXE_INPUT_FILENAMES_PARAM}")")g" \
+    -e "s\${BUILD_EXE_OUTPUT_FILENAME_PARAM}$(sed_quote "$(shell_quote "${BUILD_EXE_OUTPUT_FILENAME_PARAM}")")g"
+}
+
+case "$1" in
+
+  "obj")
+
+    if test ! -z "${BUILD_OBJ_CC_PARAM}"; then
+      C_COMPILER="${BUILD_OBJ_CC_PARAM}"
+      FLAGS_OBJ=""
+    fi
+
+    extract_cc_ld_options "${BUILD_OBJ_META_INFO_FILE_PARAM}" "${BUILD_OBJ_PKG_CONFIG_PARAM}" "${BUILD_OBJ_PKG_CONFIG_PATH_PARAM}" "${BUILD_OBJ_CC_OPTIONS_PARAM}" "${BUILD_OBJ_LD_OPTIONS_PRELUDE_PARAM}" "${BUILD_OBJ_LD_OPTIONS_PARAM}"
+
+    BUILD_OBJ_CC_OPTIONS_PARAM="${GAMBUILD_CC_OPTIONS}"
+
+    BUILD_OBJ_CMD="$(substitute_obj "$BUILD_OBJ")"
+
+    if test ! -z "${GAMBUILD_VERBOSE}"; then
+      printf "%s\n" "${BUILD_OBJ_CMD}"
+    fi
+
+    eval "${BUILD_OBJ_CMD}"
+    ;;
+
+  "dyn")
+
+    if test ! -z "${BUILD_DYN_CC_PARAM}"; then
+      C_COMPILER="${BUILD_DYN_CC_PARAM}"
+      FLAGS_DYN=""
+    fi
+
+    extract_cc_ld_options "${BUILD_DYN_META_INFO_FILE_PARAM}" "${BUILD_DYN_PKG_CONFIG_PARAM}" "${BUILD_DYN_PKG_CONFIG_PATH_PARAM}" "${BUILD_DYN_CC_OPTIONS_PARAM}" "${BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM}" "${BUILD_DYN_LD_OPTIONS_PARAM}"
+
+    BUILD_DYN_CC_OPTIONS_PARAM="${GAMBUILD_CC_OPTIONS}"
+    BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM="${GAMBUILD_LD_OPTIONS_PRELUDE}"
+    BUILD_DYN_LD_OPTIONS_PARAM="${GAMBUILD_LD_OPTIONS}"
+
+    BUILD_DYN_CMD="$(substitute_dyn "$BUILD_DYN")"
+
+    if test ! -z "${GAMBUILD_VERBOSE}"; then
+      printf "%s\n" "${BUILD_DYN_CMD}"
+    fi
+
+    eval "${BUILD_DYN_CMD}"
+    ;;
+
+  "lib")
+
+    if test ! -z "${BUILD_LIB_CC_PARAM}"; then
+      C_COMPILER="${BUILD_LIB_CC_PARAM}"
+      FLAGS_LIB=""
+    fi
+
+    BUILD_LIB_CMD="$BUILD_LIB"
+
+    if test ! -z "${GAMBUILD_VERBOSE}"; then
+      printf "%s\n" "${BUILD_LIB_CMD}"
+    fi
+
+    eval "${BUILD_LIB_CMD}"
+    ;;
+
+  "exe")
+
+    if test ! -z "${BUILD_EXE_CC_PARAM}"; then
+      C_COMPILER="${BUILD_EXE_CC_PARAM}"
+      FLAGS_EXE=""
+    fi
+
+    extract_cc_ld_options "${BUILD_EXE_META_INFO_FILE_PARAM}" "${BUILD_EXE_PKG_CONFIG_PARAM}" "${BUILD_EXE_PKG_CONFIG_PATH_PARAM}" "${BUILD_EXE_CC_OPTIONS_PARAM}" "${BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM}" "${BUILD_EXE_LD_OPTIONS_PARAM}"
+
+    BUILD_EXE_CC_OPTIONS_PARAM="${GAMBUILD_CC_OPTIONS}"
+    BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM="${GAMBUILD_LD_OPTIONS_PRELUDE}"
+    BUILD_EXE_LD_OPTIONS_PARAM="${GAMBUILD_LD_OPTIONS}"
+
+    BUILD_EXE_CMD="$(substitute_exe "$BUILD_EXE")"
+
+    if test ! -z "${GAMBUILD_VERBOSE}"; then
+      printf "%s\n" "${BUILD_EXE_CMD}"
+    fi
+
+    eval "${BUILD_EXE_CMD}"
+    ;;
+
+  "CORCXXFLAGS_GAMBUILD")
+    printf "%s\n" "${CORCXXFLAGS_GAMBUILD}"
+    ;;
+
+  "LDFLAGS_GAMBUILD")
+    printf "%s\n" "${LDFLAGS_GAMBUILD}"
+    ;;
+
+  "C_COMPILER")
+    printf "%s\n" "${C_COMPILER}"
+    ;;
+
+  "C_PREPROC")
+    printf "%s\n" "${C_PREPROC}"
+    ;;
+
+  "PKG_CONFIG")
+    printf "%s\n" "${PKG_CONFIG}"
+    ;;
+
+  "FLAGS_OBJ")
+    printf "%s\n" "${FLAGS_OBJ}"
+    ;;
+
+  "FLAGS_DYN")
+    printf "%s\n" "${FLAGS_DYN}"
+    ;;
+
+  "FLAGS_LIB")
+    printf "%s\n" "${FLAGS_LIB}"
+    ;;
+
+  "FLAGS_EXE")
+    printf "%s\n" "${FLAGS_EXE}"
+    ;;
+
+  "FLAGS_OPT")
+    printf "%s\n" "${FLAGS_OPT}"
+    ;;
+
+  "FLAGS_OPT_RTS")
+    printf "%s\n" "${FLAGS_OPT_RTS}"
+    ;;
+
+  "DEFS_OBJ")
+    printf "%s\n" "${DEFS_OBJ}"
+    ;;
+
+  "DEFS_DYN")
+    printf "%s\n" "${DEFS_DYN}"
+    ;;
+
+  "DEFS_LIB")
+    printf "%s\n" "${DEFS_LIB}"
+    ;;
+
+  "DEFS_EXE")
+    printf "%s\n" "${DEFS_EXE}"
+    ;;
+
+  "BUILD_OBJ")
+    printf "%s\n" "${BUILD_OBJ}"
+    ;;
+
+  "BUILD_DYN")
+    printf "%s\n" "${BUILD_DYN}"
+    ;;
+
+  "BUILD_LIB")
+    printf "%s\n" "${BUILD_LIB}"
+    ;;
+
+  "BUILD_EXE")
+    printf "%s\n" "${BUILD_EXE}"
+    ;;
+
+  "DEFS")
+    printf "%s\n" "${DEFS}"
+    ;;
+
+  "LIBS")
+    printf "%s\n" "${LIBS}"
+    ;;
+
+  "GAMBITLIB")
+    printf "%s\n" "${GAMBITLIB}"
+    ;;
+
+  "GAMBITGSCLIB")
+    printf "%s\n" "${GAMBITGSCLIB}"
+    ;;
+
+  "GAMBITGSILIB")
+    printf "%s\n" "${GAMBITGSILIB}"
+    ;;
+
+  "LIB_PREFIX")
+    printf "%s\n" "${LIB_PREFIX}"
+    ;;
+
+  "LIB_EXTENSION")
+    printf "%s\n" "${LIB_EXTENSION}"
+    ;;
+
+  "OBJ_EXTENSION")
+    printf "%s\n" "${OBJ_EXTENSION}"
+    ;;
+
+  "EXE_EXTENSION")
+    printf "%s\n" "${EXE_EXTENSION}"
+    ;;
+
+  "BAT_EXTENSION")
+    printf "%s\n" "${BAT_EXTENSION}"
+    ;;
+
+  "ALL_BUILD_FEATURES")
+    printf "%s\n" "${ALL_BUILD_FEATURES}"
+    ;;
+
+  "BUILD_FEATURE_OS")
+    printf "%s\n" "${BUILD_FEATURE_OS}"
+    ;;
+
+  "BUILD_FEATURE_C_COMP")
+    printf "%s\n" "${BUILD_FEATURE_C_COMP}"
+    ;;
+
+  "")
+    # Dump configure script settings
+
+    ESC_SH="sed -e s/\\\\/\\\\\\\\\\\\\\\\/g -e s/\\\"/\\\\\\\"/g -e s/\\\$/\\\\\\\$/g -e s/^/\"/ -e s/$/\"/"
+
+    printf "%s\n" C_COMPILER=`printf "%s" "${C_COMPILER}" | ${ESC_SH}`
+    printf "%s\n" C_PREPROC=`printf "%s" "${C_PREPROC}" | ${ESC_SH}`
+    printf "%s\n" PKG_CONFIG=`printf "%s" "${PKG_CONFIG}" | ${ESC_SH}`
+
+    printf "%s\n" CORCXXFLAGS_GAMBUILD=`printf "%s" "${CORCXXFLAGS_GAMBUILD}" | ${ESC_SH}`
+    printf "%s\n" LDFLAGS_GAMBUILD=`printf "%s" "${LDFLAGS_GAMBUILD}" | ${ESC_SH}`
+
+    printf "%s\n" FLAGS_OBJ=`printf "%s" "${FLAGS_OBJ}" | ${ESC_SH}`
+    printf "%s\n" FLAGS_DYN=`printf "%s" "${FLAGS_DYN}" | ${ESC_SH}`
+    printf "%s\n" FLAGS_LIB=`printf "%s" "${FLAGS_LIB}" | ${ESC_SH}`
+    printf "%s\n" FLAGS_EXE=`printf "%s" "${FLAGS_EXE}" | ${ESC_SH}`
+
+    printf "%s\n" FLAGS_OPT=`printf "%s" "${FLAGS_OPT}" | ${ESC_SH}`
+    printf "%s\n" FLAGS_OPT_RTS=`printf "%s" "${FLAGS_OPT_RTS}" | ${ESC_SH}`
+
+    printf "%s\n" DEFS_OBJ=`printf "%s" "${DEFS_OBJ}" | ${ESC_SH}`
+    printf "%s\n" DEFS_DYN=`printf "%s" "${DEFS_DYN}" | ${ESC_SH}`
+    printf "%s\n" DEFS_LIB=`printf "%s" "${DEFS_LIB}" | ${ESC_SH}`
+    printf "%s\n" DEFS_EXE=`printf "%s" "${DEFS_EXE}" | ${ESC_SH}`
+
+    printf "%s\n" BUILD_OBJ=`printf "%s" "${BUILD_OBJ}" | ${ESC_SH}`
+    printf "%s\n" BUILD_DYN=`printf "%s" "${BUILD_DYN}" | ${ESC_SH}`
+    printf "%s\n" BUILD_LIB=`printf "%s" "${BUILD_LIB}" | ${ESC_SH}`
+    printf "%s\n" BUILD_EXE=`printf "%s" "${BUILD_EXE}" | ${ESC_SH}`
+
+    printf "%s\n" DEFS=`printf "%s" "${DEFS}" | ${ESC_SH}`
+    printf "%s\n" LIBS=`printf "%s" "${LIBS}" | ${ESC_SH}`
+    printf "%s\n" GAMBITLIB=`printf "%s" "${GAMBITLIB}" | ${ESC_SH}`
+    printf "%s\n" GAMBITGSCLIB=`printf "%s" "${GAMBITGSCLIB}" | ${ESC_SH}`
+    printf "%s\n" GAMBITGSILIB=`printf "%s" "${GAMBITGSILIB}" | ${ESC_SH}`
+    printf "%s\n" LIB_PREFIX=`printf "%s" "${LIB_PREFIX}" | ${ESC_SH}`
+    printf "%s\n" LIB_EXTENSION=`printf "%s" "${LIB_EXTENSION}" | ${ESC_SH}`
+    printf "%s\n" OBJ_EXTENSION=`printf "%s" "${OBJ_EXTENSION}" | ${ESC_SH}`
+    printf "%s\n" EXE_EXTENSION=`printf "%s" "${EXE_EXTENSION}" | ${ESC_SH}`
+    printf "%s\n" BAT_EXTENSION=`printf "%s" "${BAT_EXTENSION}" | ${ESC_SH}`
+    printf "%s\n" ALL_BUILD_FEATURES=`printf "%s" "${ALL_BUILD_FEATURES}" | ${ESC_SH}`
+    printf "%s\n" BUILD_FEATURE_OS=`printf "%s" "${BUILD_FEATURE_OS}" | ${ESC_SH}`
+    printf "%s\n" BUILD_FEATURE_C_COMP=`printf "%s" "${BUILD_FEATURE_C_COMP}" | ${ESC_SH}`
+    ;;
+
+  *)
+    printf "%s\n" "gambuild-C unknown operation \"$1\""
+    exit 1
+    ;;
+
+esac

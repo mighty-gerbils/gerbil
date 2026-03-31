@@ -1,0 +1,952 @@
+/* File: "os_io.h" */
+
+/* Copyright (c) 1994-2020 by Marc Feeley, All Rights Reserved. */
+
+#ifndef ___OS_IO_H
+#define ___OS_IO_H
+
+#include "os.h"
+#include "os_time.h"
+
+
+/*---------------------------------------------------------------------------*/
+
+
+typedef struct ___device_group_struct
+  {
+    struct ___device_struct *list; /* list of devices in this group */
+  } ___device_group;
+
+/*TODO: remove "DEVICE" from names*/
+#define ___NONE_KIND              0
+#define ___WAITABLE_KIND          1
+#define ___OBJECT_KIND            (___WAITABLE_KIND+2)
+#define ___CHARACTER_KIND         (___OBJECT_KIND+4)
+#define ___BYTE_KIND              (___CHARACTER_KIND+8)
+#define ___DEVICE_KIND            (___BYTE_KIND+16)
+#define ___FILE_DEVICE_KIND       (___DEVICE_KIND+32)
+#define ___PIPE_DEVICE_KIND       (___DEVICE_KIND+64)
+#define ___PROCESS_DEVICE_KIND    (___PIPE_DEVICE_KIND+131072)
+#define ___TTY_DEVICE_KIND        (___DEVICE_KIND+128)
+#define ___SERIAL_DEVICE_KIND     (___DEVICE_KIND+256)
+#define ___TCP_CLIENT_DEVICE_KIND (___DEVICE_KIND+512)
+#define ___TCP_SERVER_DEVICE_KIND (___OBJECT_KIND+1024)
+#define ___DIRECTORY_KIND         (___OBJECT_KIND+2048)
+#define ___EVENT_QUEUE_KIND       (___OBJECT_KIND+4096)
+#define ___TIMER_KIND             (___OBJECT_KIND+8192)
+#define ___VECTOR_KIND            (___OBJECT_KIND+16384)
+#define ___STRING_KIND            (___CHARACTER_KIND+32768)
+#define ___U8VECTOR_KIND          (___BYTE_KIND+65536)
+#define ___RAW_DEVICE_KIND        (___WAITABLE_KIND+262144)
+#define ___UDP_DEVICE_KIND        (___OBJECT_KIND+524288)
+
+#define ___OPEN_STATE(x)      ((x)&(1<<12))
+#define ___OPEN_STATE_MASK(x) ((x)&~(1<<12))
+#define ___OPEN_STATE_OPEN    (0<<12)
+#define ___OPEN_STATE_CLOSED  (1<<12)
+
+#define ___DIRECTION_RD 1
+#define ___DIRECTION_WR 2
+
+#define ___STAGE_OPEN     0
+#define ___STAGE_CLOSING1 1
+#define ___STAGE_CLOSING2 2
+#define ___STAGE_CLOSED   3
+
+#define ___SELECT_PASS_CHECK 0
+#define ___SELECT_PASS_1     1
+#define ___SELECT_PASS_2     2
+#define ___SELECT_PASS_3     3
+
+#define ___STREAM_OPTIONS(icee,ice,iee,ib,ocee,oce,oee,ob)      \
+(icee+ice+iee+ib)+((ocee+oce+oee+ob)<<15)
+#define ___STREAM_OPTIONS_INPUT(options) ((options)&((1<<15)-1))
+#define ___STREAM_OPTIONS_OUTPUT(options) (((options)>>15)&((1<<15)-1))
+
+#ifdef USE_OPENSSL
+#define ___TLS_OPTION_SERVER_MODE 1
+#define ___TLS_OPTION_USE_DIFFIE_HELLMAN 1<<1
+#define ___TLS_OPTION_USE_ELLIPTIC_CURVES 1<<2
+#define ___TLS_OPTION_REQUEST_CLIENT_AUTHENTICATION 1<<3
+#define ___TLS_OPTION_INSERT_EMPTY_FRAGMENTS 1<<8
+#endif
+
+typedef struct ___device_struct
+  {
+    void *vtbl;
+
+#ifdef USE_PUMPS
+    LONG refcount;                 /* device structure is released when zero */
+#else
+    int refcount;                  /* device structure is released when zero */
+#endif
+
+    ___device_group *group;        /* device group this device belongs to */
+    struct ___device_struct *prev; /* bidirectional list pointer to previous */
+    struct ___device_struct *next; /* bidirectional list pointer to next */
+    int direction;                 /* ___DIRECTION_RD and/or ___DIRECTION_WR */
+    int close_direction;           /* ___DIRECTION_RD and/or ___DIRECTION_WR */
+    int read_stage;                /* ___STAGE_OPEN ... ___STAGE_CLOSED */
+    int write_stage;               /* ___STAGE_OPEN ... ___STAGE_CLOSED */
+  } ___device;
+
+#ifndef MAX_CONDVARS
+#define MAX_CONDVARS 8192
+#endif
+
+#ifdef USE_select_or_poll
+
+typedef ___UWORD ___fdbits;
+
+#define ___FDBITS ___WORD_WIDTH
+#define ___FD_ELT(fd) ((fd) >> ___LOG_WORD_WIDTH)
+#define ___FD_MASK(fd) ((___fdbits) 1 << ((fd) % ___WORD_WIDTH))
+
+#define ___FD_ZERO(set, sz)                        \
+  memset ((set), 0, sz/8)
+#define ___FD_SET(fd, set)                    \
+  ((set)[___FD_ELT (fd)] |= ___FD_MASK (fd))
+#define ___FD_CLR(fd, set)                    \
+  ((set)[___FD_ELT (fd)] &= ~___FD_MASK (fd))
+#define ___FD_ISSET(fd, set)                  \
+  ((set)[___FD_ELT (fd)] & ___FD_MASK (fd))
+
+#endif
+
+typedef struct ___device_select_state_struct
+  {
+    ___device **devs; /* devices to select on */
+
+    ___time timeout; /* absolute timeout of the select */
+    ___F64 relative_timeout; /* relative timeout of the select in seconds */
+    ___BOOL timeout_reached; /* did select reach the timeout? */
+
+    int devs_next[MAX_CONDVARS];
+
+#ifdef USE_select_or_poll
+
+#ifdef USE_select
+    int highest_fd_plus_1;
+    ___fdbits *readfds;
+    ___fdbits *writefds;
+    ___fdbits *exceptfds;
+#endif
+
+#ifdef USE_poll
+    struct pollfd pollfds[MAX_CONDVARS];
+    int pollfd_count;
+    /* active set bitmaps */
+    ___fdbits *readfds;
+    ___fdbits *writefds;
+#endif
+
+#endif
+
+#ifdef USE_MsgWaitForMultipleObjects
+    DWORD message_queue_mask;
+    int message_queue_dev_pos;
+    DWORD nb_wait_objs;
+    HANDLE wait_objs_buffer[MAXIMUM_WAIT_OBJECTS];
+    int wait_obj_to_dev_pos[MAXIMUM_WAIT_OBJECTS];
+#endif
+
+#ifdef USE_MACOS
+    /*********************/
+#endif
+  } ___device_select_state;
+
+
+#ifdef USE_FDSET_RESIZING
+
+extern void ___fdset_resize_pstate
+   ___P((___processor_state ___ps,
+         int maxfd),
+        ());
+
+extern ___BOOL ___fdset_resize
+   ___P((int fd1,
+         int fd2),
+        ());
+
+#endif
+
+extern int ___io_settings_merge
+   ___P((int io_settings,
+         int io_settings_to_fill_default),
+        ());
+
+extern int ___io_settings_finalize
+   ___P((int io_settings,
+         int io_settings_to_fill_default),
+        ());
+
+extern void ___device_select_add_relative_timeout
+   ___P((___device_select_state *state,
+         int i,
+         ___F64 seconds),
+        ());
+
+extern void ___device_select_add_timeout
+   ___P((___device_select_state *state,
+         int i,
+         ___time timeout),
+        ());
+
+
+#define FOR_READING 0
+#define FOR_WRITING 1
+#define FOR_EVENT   2
+
+#ifdef USE_POSIX
+
+extern void ___device_select_add_fd
+   ___P((___device_select_state *state,
+         int fd,
+         int for_op),
+        ());
+
+#endif
+
+
+#ifdef USE_MsgWaitForMultipleObjects
+
+extern void ___device_select_add_wait_obj
+   ___P((___device_select_state *state,
+         int i,
+         HANDLE wait_obj),
+        ());
+
+#endif
+
+
+typedef struct ___device_vtbl_struct
+  {
+#define ___device_kind(self) \
+___CAST(___device_vtbl*,(self)->vtbl)->kind(self)
+
+    int (*kind) ___P((___device *self),());
+
+#define ___device_select_virt(self,for_op,i,pass,state) \
+___CAST(___device_vtbl*,(self)->vtbl)->select_virt(self,for_op,i,pass,state)
+
+    ___SCMOBJ (*select_virt)
+       ___P((___device *self,
+             int for_op,
+             int i,
+             int pass,
+             ___device_select_state *state),
+            ());
+
+#define ___device_release_virt(self) \
+___CAST(___device_vtbl*,(self)->vtbl)->release_virt(self)
+
+    ___SCMOBJ (*release_virt)
+       ___P((___device *self),
+            ());
+
+#define ___device_force_output_virt(self,level) \
+___CAST(___device_vtbl*,(self)->vtbl)->force_output_virt(self,level)
+
+    ___SCMOBJ (*force_output_virt)
+       ___P((___device *self,
+             int level),
+            ());
+
+#define ___device_close_virt(self,direction) \
+___CAST(___device_vtbl*,(self)->vtbl)->close_virt(self,direction)
+
+    ___SCMOBJ (*close_virt)
+       ___P((___device *self,
+             int direction),
+            ());
+  } ___device_vtbl;
+
+
+/*---------------------------------------------------------------------------*/
+
+
+typedef struct ___io_module_struct
+  {
+    ___BOOL setup;
+
+    ___device_group *dgroup;
+
+#ifdef USE_POSIX
+
+#define ___IO_MODULE_INIT
+
+#endif
+
+#ifdef USE_WIN32
+
+    HANDLE always_signaled;  /* this event is always signaled */
+
+#define ___IO_MODULE_INIT , 0
+
+#endif
+  } ___io_module;
+
+
+extern ___io_module ___io_mod;
+
+
+/*---------------------------------------------------------------------------*/
+
+/* Device groups. */
+
+
+extern ___SCMOBJ ___device_group_setup
+   ___P((___device_group **dgroup),
+        ());
+
+extern void ___device_group_cleanup
+   ___P((___device_group *dgroup),
+        ());
+
+extern void ___device_add_to_group
+   ___P((___device_group *dgroup,
+         ___device *dev),
+        ());
+
+extern void ___device_remove_from_group
+   ___P((___device *dev),
+        ());
+
+extern ___device_group *___global_device_group ___PVOID;
+
+
+/*---------------------------------------------------------------------------*/
+
+typedef ___SSIZE_T ___stream_index;
+
+/* Nonblocking pipes */
+
+#ifdef USE_PUMPS
+
+/*
+ * A pipe is a unidirectional FIFO data structure that buffers data
+ * between a "writer" that writes data to the pipe and a "reader" that
+ * reads this data.  Independently from the FIFO buffer, a pipe has a
+ * "reader error indicator" and a "writer error indicator".  When
+ * created the error indicators are set to "no error" and the FIFO
+ * contains no data.
+ *
+ * Typically the writer writes bytes and out-of-band messages at one
+ * end with a "write" operation and the reader reads these bytes and
+ * out-of-band messages in the same order at the other end with a
+ * "read" operation.  Out-of-band messages are used to request some
+ * special action from the reader and are expected to be infrequent.
+ * When a read operation extracts an out-of-band message from the pipe
+ * it reports that zero bytes can be read from the pipe and sets the
+ * out-of-band structure (one of the parameters of the read
+ * operation).  The writer can set the "writer error indicator" when
+ * it needs to transmit an error code to the reader.  After all
+ * previously written bytes and out-of-band messages are read by the
+ * reader, the next read operation will return this error code and the
+ * error indicator is reset to "no error".  Similarly, the reader can
+ * set the "reader error indicator" when it needs to transmit an error
+ * code to the writer.  The next write operation will return this
+ * error code and the error indicator is reset to "no error".
+ *
+ * The nonblocking pipes implemented here have read and write
+ * operations that don't block the calling thread.  When the data
+ * transfer requested can't be performed immediately these operations
+ * will return with a special error code (EAGAIN).  This allows the
+ * calling thread to do other things before attempting the operation
+ * again.  We say a pipe is "ready for an operation" if calling that
+ * operation will not return EAGAIN (i.e. the operations will succeed
+ * with no error or will fail with some error different from EAGAIN).
+ *
+ * Specifically,
+ *
+ *   a pipe is ready for reading when
+ *     - the "writer error indicator" is not "no error"
+ *     - or
+ *       - the "reader error indicator" is "no error"
+ *       - and
+ *         - an out-of-band message is in the pipe
+ *         - or at least one byte is in the FIFO buffer
+ *
+ *   a pipe is ready for writing when
+ *     - the "reader error indicator" is not "no error"
+ *     - or
+ *       - the "writer error indicator" is "no error"
+ *       - and no out-of-band message is in the pipe
+ *       - and at least one byte is free in the FIFO buffer
+ *       - and the previous read operation did not return an error or
+ *         an out-of-band message
+ *         (at creation a pipe is not ready for writing and the first
+ *         "read" operation will make the pipe ready for writing, in other
+ *         words, after it reports an error or out-of-band message, the
+ *         writer blocks until the reader shows some interest in more data)
+ *
+ * This table summarizes the states of a pipe (an R means ready for
+ * reading and a W means ready for writing and a w means ready for
+ * writing iff the most recent read operation did not return an
+ * error or out-of-band message):
+ *
+ *        no writer :  writer     reader      bytes in FIFO buffer
+ *          error   :  error      error?      (N is size of buffer)
+ *        +----+----+----+----+
+ *        |  w | R  | R  | R  |     no           0 bytes
+ *        +----+----+----+----+
+ *        | Rw | R  | R  | R  |     no           > 0 bytes but < N
+ *        +----+----+----+----+
+ *        | R  | R  | R  | R  |     no           = N
+ *        +----+----+----+----+
+ *        |  W |  W | RW | RW |     yes          0 bytes
+ *        +----+----+----+----+
+ *        |  W |  W | RW | RW |     yes          > 0 bytes but < N
+ *        +----+----+----+----+
+ *        |  W |  W | RW | RW |     yes          = N
+ *        +----+----+----+----+
+ *        :!oob:oob :!oob:oob :
+ *
+ */
+
+typedef struct ___nonblocking_pipe_oob_msg_struct
+  {
+    int op; /* operation */
+    ___stream_index stream_index_param; /* parameters */
+  } ___nonblocking_pipe_oob_msg;
+
+typedef struct ___nonblocking_pipe_struct
+  {
+    HANDLE mutex;     /* mutex to serialize access to the pipe */
+    HANDLE revent;    /* event, signaled iff ready for reading */
+    HANDLE wevent;    /* event, signaled iff ready for writing */
+    ___SCMOBJ rerr;   /* the reader error indicator */
+    ___SCMOBJ werr;   /* the writer error indicator */
+    ___BOOL oob;      /* the out-of-band indicator */
+    ___nonblocking_pipe_oob_msg oob_msg; /* out-of-band message */
+    DWORD rd;         /* the read pointer of the circular buffer */
+    DWORD wr;         /* the write pointer of the circular buffer */
+    DWORD size;       /* size of the circular buffer */
+    ___U8 *buffer;    /* the circular buffer */
+  } ___nonblocking_pipe;
+
+#define OOB_EOS           0
+#define OOB_SEEK_TELL     1
+#define OOB_SEEK_ABS      2
+#define OOB_SEEK_REL      3
+#define OOB_SEEK_REL_END  4
+#define OOB_FORCE_OUTPUT0 5
+#define OOB_FORCE_OUTPUT1 6
+#define OOB_FORCE_OUTPUT2 7
+#define OOB_FORCE_OUTPUT3 8
+
+typedef struct ___device_stream_pump_struct
+  {
+    HANDLE thread;
+    ___nonblocking_pipe pipe;
+  } ___device_stream_pump;
+
+#define PIPE_BUFFER_SIZE 16384
+
+/*
+ * It is important that the PUMP_PRIORITY be above that of the main
+ * program (which is THREAD_PRIORITY_NORMAL) so that I/O operations,
+ * such as flushing output buffers, will be done as soon as the pump
+ * reads it from the nonblocking pipe.  Thus the operation will appear
+ * to be synchronous to the main program.
+ */
+
+#define PUMP_PRIORITY THREAD_PRIORITY_ABOVE_NORMAL
+
+#endif
+
+
+/*---------------------------------------------------------------------------*/
+
+/* Devices. */
+
+
+/* Timer device. */
+
+typedef struct ___device_timer_struct
+  {
+    ___device base;
+    ___time expiry;
+  } ___device_timer;
+
+typedef struct ___device_timer_vtbl_struct
+  {
+    ___device_vtbl base;
+  } ___device_timer_vtbl;
+
+extern ___SCMOBJ ___device_timer_setup
+   ___P((___device_timer **dev,
+         ___device_group *dgroup),
+        ());
+
+extern void ___device_timer_set_expiry
+   ___P((___device_timer *dev,
+         ___time expiry),
+        ());
+
+/* Byte stream device. */
+
+typedef struct ___device_stream_struct
+  {
+    ___device base;
+
+    int io_settings; /* I/O settings that override defaults */
+
+#ifdef USE_PUMPS
+    ___device_stream_pump *read_pump;
+    ___device_stream_pump *write_pump;
+#endif
+  } ___device_stream;
+
+typedef struct ___device_stream_vtbl_struct
+  {
+    ___device_vtbl base;
+
+#define ___device_stream_select_raw_virt(self,for_op,i,pass,state) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->select_raw_virt(self,for_op,i,pass,state)
+
+    ___SCMOBJ (*select_raw_virt)
+       ___P((___device_stream *self,
+             int for_op,
+             int i,
+             int pass,
+             ___device_select_state *state),
+            ());
+
+#define ___device_stream_release_raw_virt(self) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->release_raw_virt(self)
+
+    ___SCMOBJ (*release_raw_virt)
+       ___P((___device_stream *self),
+            ());
+
+#define ___device_stream_force_output_raw_virt(self,level) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->force_output_raw_virt(self,level)
+
+    ___SCMOBJ (*force_output_raw_virt)
+       ___P((___device_stream *self,
+             int level),
+            ());
+
+#define ___device_stream_close_raw_virt(self,direction) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->close_raw_virt(self,direction)
+
+    ___SCMOBJ (*close_raw_virt)
+       ___P((___device_stream *self,
+             int direction),
+            ());
+
+#define ___device_stream_seek_raw_virt(self,pos,whence) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->seek_raw_virt(self,pos,whence)
+
+    ___SCMOBJ (*seek_raw_virt)
+       ___P((___device_stream *self,
+             ___stream_index *pos,
+             int whence),
+            ());
+
+#define ___device_stream_read_raw_virt(self,buf,len,len_done) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->read_raw_virt(self,buf,len,len_done)
+
+    ___SCMOBJ (*read_raw_virt)
+       ___P((___device_stream *self,
+             ___U8 *buf,
+             ___stream_index len,
+             ___stream_index *len_done),
+            ());
+
+#define ___device_stream_write_raw_virt(self,buf,len,len_done) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->write_raw_virt(self,buf,len,len_done)
+
+    ___SCMOBJ (*write_raw_virt)
+       ___P((___device_stream *self,
+             ___U8 *buf,
+             ___stream_index len,
+             ___stream_index *len_done),
+            ());
+
+#define ___device_stream_width(self) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->width(self)
+
+    ___SCMOBJ (*width)
+       ___P((___device_stream *self),
+            ());
+
+#define ___device_stream_default_options(self) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->default_options(self)
+
+    ___SCMOBJ (*default_options)
+       ___P((___device_stream *self),
+            ());
+
+#define ___device_stream_options_set(self,options) \
+___CAST(___device_stream_vtbl*,(self)->base.vtbl)->options_set(self,options)
+
+    ___SCMOBJ (*options_set)
+       ___P((___device_stream *self,
+             ___SCMOBJ options),
+            ());
+  } ___device_stream_vtbl;
+
+extern ___SCMOBJ ___device_stream_select_virt
+   ___P((___device *self,
+         int for_op,
+         int i,
+         int pass,
+         ___device_select_state *state),
+        ());
+
+extern ___SCMOBJ ___device_stream_release_virt
+   ___P((___device *self),
+        ());
+
+extern ___SCMOBJ ___device_stream_force_output_virt
+   ___P((___device *self,
+         int level),
+        ());
+
+extern ___SCMOBJ ___device_stream_close_virt
+   ___P((___device *self,
+         int direction),
+        ());
+
+extern ___SCMOBJ ___device_stream_seek
+   ___P((___device_stream *self,
+         ___stream_index *pos,
+         int whence),
+        ());
+
+extern ___SCMOBJ ___device_stream_read
+   ___P((___device_stream *self,
+         ___U8 *buf,
+         ___stream_index len,
+         ___stream_index *len_done),
+        ());
+
+extern ___SCMOBJ ___device_stream_write
+   ___P((___device_stream *self,
+         ___U8 *buf,
+         ___stream_index len,
+         ___stream_index *len_done),
+        ());
+
+extern ___SCMOBJ ___device_stream_setup
+   ___P((___device_stream *dev,
+         ___device_group *dgroup,
+         int direction,
+         int io_settings,
+         int pumps_on),
+        ());
+
+extern ___SCMOBJ ___device_select
+   ___P((___device **devs,
+         int nb_read_devs,
+         int nb_write_devs,
+         int nb_event_devs,
+         ___time timeout),
+        ());
+
+extern void ___device_select_abort
+   ___P((___processor_state ___ps),
+        ());
+
+extern ___SCMOBJ ___device_force_output
+   ___P((___device *self,
+         int level),
+        ());
+
+extern ___SCMOBJ ___device_close
+   ___P((___device *self,
+         int direction),
+        ());
+
+extern ___SCMOBJ ___device_cleanup
+   ___P((___device *self),
+        ());
+
+extern ___SCMOBJ ___device_cleanup_from_ptr
+   ___P((void *ptr),
+        ());
+
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Device operations. */
+
+extern ___SCMOBJ ___os_device_kind
+   ___P((___SCMOBJ dev),
+        ());
+
+extern ___SCMOBJ ___os_device_force_output
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ level),
+        ());
+
+extern ___SCMOBJ ___os_device_close
+   ___P((___SCMOBJ dev,
+         ___SCMOBJ direction),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Stream device operations. */
+
+extern ___SCMOBJ ___os_device_stream_seek
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ pos,
+         ___SCMOBJ whence),
+        ());
+
+extern ___SCMOBJ ___os_device_stream_read
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ buffer,
+         ___SCMOBJ lo,
+         ___SCMOBJ hi),
+        ());
+
+extern ___SCMOBJ ___os_device_stream_write
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ buffer,
+         ___SCMOBJ lo,
+         ___SCMOBJ hi),
+        ());
+
+extern ___SCMOBJ ___os_device_stream_width
+   ___P((___SCMOBJ dev_condvar),
+        ());
+
+extern ___SCMOBJ ___os_device_stream_default_options
+   ___P((___SCMOBJ dev),
+        ());
+
+extern ___SCMOBJ ___os_device_stream_options_set
+   ___P((___SCMOBJ dev,
+         ___SCMOBJ options),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening a predefined device (stdin, stdout, stderr, console, etc). */
+
+extern ___SCMOBJ ___os_device_stream_open_predefined
+   ___P((___SCMOBJ index,
+         ___SCMOBJ flags),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening a path. */
+
+extern ___SCMOBJ ___os_device_stream_open_path
+   ___P((___SCMOBJ path,
+         ___SCMOBJ flags,
+         ___SCMOBJ mode),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening a process. */
+
+extern ___SCMOBJ ___os_device_stream_open_process
+   ___P((___SCMOBJ path_and_args,
+         ___SCMOBJ environment,
+         ___SCMOBJ directory,
+         ___SCMOBJ options),
+        ());
+
+extern ___SCMOBJ ___os_device_process_pid
+   ___P((___SCMOBJ dev),
+        ());
+
+extern ___SCMOBJ ___os_device_process_status
+   ___P((___SCMOBJ dev),
+        ());
+
+extern void ___cleanup_child_interrupt_handling ___PVOID;
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening a TCP client. */
+
+extern ___SCMOBJ ___os_device_tcp_client_open
+   ___P((___SCMOBJ local_addr,
+         ___SCMOBJ local_port_num,
+         ___SCMOBJ addr,
+         ___SCMOBJ port_num,
+         ___SCMOBJ options,
+         ___SCMOBJ tls_context,
+         ___SCMOBJ server_name),
+        ());
+
+extern ___SCMOBJ ___os_device_tcp_client_socket_info
+   ___P((___SCMOBJ dev,
+         ___SCMOBJ peer),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening and reading a TCP server. */
+
+extern ___SCMOBJ ___os_device_tcp_server_open
+   ___P((___SCMOBJ local_addr,
+         ___SCMOBJ local_port_num,
+         ___SCMOBJ backlog,
+         ___SCMOBJ options,
+         ___SCMOBJ tls_context),
+        ());
+
+extern ___SCMOBJ ___os_device_tcp_server_read
+   ___P((___SCMOBJ dev_condvar),
+        ());
+
+extern ___SCMOBJ ___os_device_tcp_server_socket_info
+   ___P((___SCMOBJ dev),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* TLS context. */
+
+extern ___SCMOBJ ___os_make_tls_context
+   ___P((___SCMOBJ min_tls_version,
+         ___SCMOBJ options,
+         ___SCMOBJ certificate_path,
+         ___SCMOBJ private_key_path,
+         ___SCMOBJ dh_params_path,
+         ___SCMOBJ elliptic_curve_name,
+         ___SCMOBJ client_ca_path),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening a UDP socket. */
+
+extern ___SCMOBJ ___os_device_udp_open
+   ___P((___SCMOBJ local_addr,
+         ___SCMOBJ local_port_num,
+         ___SCMOBJ options),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_read_subu8vector
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ buffer,
+         ___SCMOBJ lo,
+         ___SCMOBJ hi),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_write_subu8vector
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ buffer,
+         ___SCMOBJ lo,
+         ___SCMOBJ hi),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_destination_set
+   ___P((___SCMOBJ dev_condvar,
+         ___SCMOBJ addr,
+         ___SCMOBJ port_num),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_socket_info
+   ___P((___SCMOBJ dev,
+         ___SCMOBJ source),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_socket_receive_buffer_size
+   ___P((___SCMOBJ dev),
+        ());
+
+extern ___SCMOBJ ___os_device_udp_socket_send_buffer_size
+   ___P((___SCMOBJ dev),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening and reading a directory. */
+
+extern ___SCMOBJ ___os_device_directory_open_path
+   ___P((___SCMOBJ path,
+         ___SCMOBJ ignore_hidden),
+        ());
+
+extern ___SCMOBJ ___os_device_directory_read
+   ___P((___SCMOBJ dev_condvar),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Opening an event-queue. */
+
+extern ___SCMOBJ ___os_device_event_queue_open
+   ___P((___SCMOBJ index),
+        ());
+
+extern ___SCMOBJ ___os_device_event_queue_read
+   ___P((___SCMOBJ dev_condvar),
+        ());
+
+/* Opening a raw device (file descriptor) */
+
+extern ___SCMOBJ ___os_device_raw_open_from_fd
+   ___P((___SCMOBJ fd,
+         ___SCMOBJ flags),
+        ());
+
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/* Waiting for I/O to become possible on a set of devices. */
+
+extern ___SCMOBJ ___os_condvar_select
+   ___P((___SCMOBJ devices,
+         ___SCMOBJ timeout),
+        ());
+
+/*   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   */
+
+/*
+ * Decoding and encoding of a buffer of Scheme characters to a buffer
+ * of bytes.
+ */
+
+extern ___SCMOBJ ___os_port_decode_chars
+   ___P((___SCMOBJ port,
+         ___SCMOBJ want,
+         ___SCMOBJ eof),
+        ());
+
+extern ___SCMOBJ ___os_port_encode_chars
+   ___P((___SCMOBJ port),
+        ());
+
+
+/*---------------------------------------------------------------------------*/
+
+/* I/O module initialization/finalization. */
+
+
+extern ___SCMOBJ ___setup_io_pstate
+   ___P((___processor_state ___ps),
+        ());
+
+extern void ___cleanup_io_pstate
+   ___P((___processor_state ___ps),
+        ());
+
+extern ___SCMOBJ ___setup_io_vmstate
+   ___P((___virtual_machine_state ___vms),
+        ());
+
+extern void ___cleanup_io_vmstate
+   ___P((___virtual_machine_state ___vms),
+        ());
+
+extern ___SCMOBJ ___setup_io_module ___PVOID;
+
+extern void ___cleanup_io_module ___PVOID;
+
+
+/*---------------------------------------------------------------------------*/
+
+
+#endif

@@ -1,0 +1,47 @@
+@echo off
+
+rem Script parameters are passed in the following environment variables:
+rem   GAMBITDIR_DOC
+rem   GAMBDOC_ARG1_PARAM
+rem   GAMBDOC_ARG2_PARAM
+rem   GAMBDOC_ARG3_PARAM
+rem   GAMBDOC_ARG4_PARAM
+rem   ...
+
+rem echo GAMBITDIR_DOC = %GAMBITDIR_DOC%
+rem echo GAMBDOC_ARG1_PARAM = %GAMBDOC_ARG1_PARAM%
+rem echo GAMBDOC_ARG2_PARAM = %GAMBDOC_ARG2_PARAM%
+rem echo GAMBDOC_ARG3_PARAM = %GAMBDOC_ARG3_PARAM%
+rem echo GAMBDOC_ARG4_PARAM = %GAMBDOC_ARG4_PARAM%
+
+if "%GAMBDOC_ARG1_PARAM%" == "help" goto operation_help
+
+echo *** WARNING -- unsupported operation: %GAMBDOC_ARG1_PARAM%
+exit /b 1
+
+:operation_help
+
+set browser_list=explorer.exe netscape.exe mozilla.exe firefox.exe lynx.exe
+
+rem if "@HELP_BROWSER@" != "" set browser_list=@HELP_BROWSER@
+
+set browser_list=%browser_list% %GAMBDOC_ARG3_PARAM%
+
+set url="file://%GAMBITDIR_DOC%\gambit.html#%GAMBDOC_ARG4_PARAM%"
+
+set browser=
+
+for %%f in (%browser_list%) do if not "%%~$PATH:f" == "" set browser=%%f
+
+if not "%browser%" == "" goto start_browser
+
+echo *** WARNING -- none of these browsers can be found to view the documentation:
+echo ***            %browser_list%
+
+exit /b 1
+
+:start_browser
+
+%browser% %url%
+
+exit /b 0

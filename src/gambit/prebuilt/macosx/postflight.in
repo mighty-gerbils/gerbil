@@ -1,0 +1,63 @@
+#! /bin/sh
+
+# Copyright (c) 1994-2015 by Marc Feeley, All Rights Reserved.
+
+PROGRAMS="@PROGRAMS@"
+LIBRARIES="@LIBRARIES@"
+INCLUDES="@INCLUDES@"
+
+BIN_DIR="@BIN_DIR@"
+LIB_DIR="@LIB_DIR@"
+INCLUDE_DIR="@INCLUDE_DIR@"
+
+INSTALL_DIR="@INSTALL_DIR@"
+GAMBIT_BIN_DIR="$INSTALL_DIR/current/bin"
+GAMBIT_LIB_DIR="$INSTALL_DIR/current/lib"
+GAMBIT_INCLUDE_DIR="$INSTALL_DIR/current/include"
+
+install_safely() # dir, gambit_dir, files
+{
+  DIR="$1"
+  GAMBIT_DIR="$2"
+  FILES="$3"
+
+  EXISTING_CORRECT=""
+  EXISTING_INCORRECT=""
+  MISSING=""
+
+  if [ ! -e "$DIR" ] ; then
+    mkdir -p -m 0755 "$DIR"
+  fi
+
+  for f in $FILES ; do
+
+    if [ -e "$DIR/$f" ] ; then
+      if [ -L "$DIR/$f" -a "`readlink \"$DIR/$f\"`" == "$GAMBIT_DIR/$f" ] ; then
+        EXISTING_CORRECT="$EXISTING_CORRECT $f"
+      else
+        EXISTING_INCORRECT="$EXISTING_INCORRECT $f"
+      fi
+    else
+      MISSING="$MISSING $f"
+    fi
+
+  done
+
+  for f in $EXISTING_INCORRECT ; do
+
+    # This should not happen because the InstallationCheck script aborts
+    # the installation when an existing file would be clobbered.
+    # However for safety we save the file under a different name.
+
+    mv "$DIR/$f" "$DIR/$f-orig"
+
+  done
+
+  for f in $EXISTING_INCORRECT $MISSING ; do
+    ln -s "$GAMBIT_DIR/$f" "$DIR/$f"
+  done
+}
+
+install_safely "$BIN_DIR" "$GAMBIT_BIN_DIR" "$PROGRAMS"
+install_safely "$LIB_DIR" "$GAMBIT_LIB_DIR" "$LIBRARIES"
+install_safely "$INCLUDE_DIR" "$GAMBIT_INCLUDE_DIR" "$INCLUDES"

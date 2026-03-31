@@ -1,0 +1,103 @@
+#! /bin/sh
+
+# Copyright (c) 1994-2021 by Marc Feeley, All Rights Reserved.
+
+herefromroot="prebuilt/windows"
+rootfromhere="../.."
+
+PACKAGE_SHORTNAME="@PACKAGE_SHORTNAME@"
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+PACKAGE_STRING="@PACKAGE_STRING@"
+PACKAGE_BUGREPORT="@PACKAGE_BUGREPORT@"
+PACKAGE_TARNAME="@PACKAGE_TARNAME@"
+PACKAGE_SUBDIR="@PACKAGE_SUBDIR@"
+
+MAKENSIS="/c/Program Files (x86)/NSIS/makensis.exe"
+#MAKENSIS="/c/Program Files/NSIS/makensis.exe"
+
+VARIANT="$1"
+RUN_TESTS="$2"
+
+SOURCE_DIR="$INSTALL_PREFIX"
+DOS_SOURCE_DIR="`echo \"$INSTALL_PREFIX\" | sed -e \"s|/|\\\\\\\\|g\"`"
+VERSION="`echo $PACKAGE_VERSION | sed -e s/^v//g`"
+EXE_FILE="$PACKAGE_TARNAME-windows-$VARIANT.exe"
+ICON_FILE="gambit.ico"
+UNICON_FILE="gambit.ico"
+NSI_FILE="gambit.nsi"
+
+instantiate_file() # input, output
+{
+  sed -e "s|@SOURCE_DIR@|$SOURCE_DIR|g" -e "s|@DOS_SOURCE_DIR@|$DOS_SOURCE_DIR|g" -e "s|@VERSION@|$VERSION|g" -e "s|@EXE_FILE@|$EXE_FILE|g" -e "s|@ICON_FILE@|$ICON_FILE|g" -e "s|@UNICON_FILE@|$UNICON_FILE|g" -e "s|@NAME@|$PACKAGE_NAME|g" -e "s|@TARNAME@|$PACKAGE_TARNAME|g" -e "s|@VARIANT@|$VARIANT|g" "$1" > "$2"
+}
+
+cleanup()
+{
+  rm -rf "$NSI_FILE" "$SOURCE_DIR/$PACKAGE_VERSION"
+}
+
+install_gambit()
+{
+  cd "$rootfromhere"
+  make clean
+  make -j
+  make modules
+  make _gambit.js _gambit.py
+  make install
+
+  if [ "$RUN_TESTS" == "0" ] ; then
+    echo "************ TESTS SKIPPED ($VARIANT variant)"
+  else
+
+    TESTS_SUCCESS=0
+
+    make check > build-phase2-tests.out
+
+    cat build-phase2-tests.out
+
+    if fgrep "============ ALL TESTS SUCCESSFUL" build-phase2-tests.out > /dev/null; then
+      TESTS_SUCCESS=1
+    fi
+
+    rm -f build-phase2-tests.out
+
+    if [ "$TESTS_SUCCESS" == "1" ] ; then
+      echo "************ TESTS SUCCESSFUL ($VARIANT variant)"
+    else
+      echo "************ TESTS FAILED ($VARIANT variant)"
+      cleanup
+      exit 1
+    fi
+
+  fi
+
+  cd "$herefromroot"
+}
+
+uninstall_gambit()
+{
+  "$SOURCE_DIR/$PACKAGE_VERSION/bin/uninstall-gambit"
+}
+
+create_nsi()
+{
+  for file in "$NSI_FILE" ; do
+    instantiate_file "$file.in" "$file"
+  done
+}
+
+create_exe()
+{
+  "$MAKENSIS" "$NSI_FILE"
+}
+
+cd "`dirname $0`"
+
+cleanup
+rm -f "$EXE_FILE"
+install_gambit
+create_nsi
+create_exe
+mv "$EXE_FILE" "$rootfromhere"
+cleanup
