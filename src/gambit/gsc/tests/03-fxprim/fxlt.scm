@@ -1,0 +1,26 @@
+(declare (extended-bindings) (not constant-fold) (not safe))
+
+(define a 11)
+(define b 11)
+(define c 22)
+
+(define (test2 x y)
+  (println (##fx<))
+  (println (if (##fx<) 11 22))
+  (println (##fx< x))
+  (println (if (##fx< x) 11 22))
+  (println (##fx< x y))
+  (println (if (##fx< x y) 11 22))
+  (println (##fx< x y 17))
+  (println (if (##fx< x y 17) 11 22))
+  (println (##fx< x y 5))
+  (println (if (##fx< x y 5) 11 22)))
+
+(define (test x)
+  (test2 x a)
+  (test2 x b)
+  (test2 x c))
+
+(test a)
+(test b)
+(test c)

@@ -1,0 +1,81 @@
+environment:
+  matrix:
+    - arch: "x86-64"
+      tools: "mingw"
+
+    - arch: "x86-64"
+      tools: "cygwin"
+
+# Tests are not performed on 32 bit cygwin because of a bug in cygwin.
+# It seems that the FPU control word is not saved/restored properly
+# when a signal is handled causing some floating point operations to
+# round the result incorrectly at seemingly random moments (when
+# heartbeat interrupts occur).  This problem causes test3 to fail with
+# error messages such as:
+#
+# Number readback failure for (+ 1e20 (* 25 16384.))
+# 1.0000000000000041e20
+#   ==> #f
+#  BUT EXPECTED #t
+
+#    - arch: "x86-32"
+#      tools: "cygwin"
+
+
+# Tests are not performed on 32 bit mingw because the unit test script
+# sometimes hangs, seemingly because the subprocess termination
+# notification is not received.  This might be a bug with Gambit but
+# most likely it is a bug with the mingw libraries (why would 64 bit
+# mingw not cause problems?).
+
+#    - arch: "x86-32"
+#      tools: "mingw"
+
+
+
+install:
+
+  - ps: if($env:tools -eq 'mingw')
+        {
+          if($env:arch -eq 'x86-64')
+          {
+            $env:c_comp = 'gcc';
+            curl -outfile mw64.7z "http://libgd.blob.core.windows.net/mingw/x86_64-4.9.1-release-posix-seh-rt_v3-rev1.7z";
+            if((Get-FileHash mw64.7z -Algorithm SHA1).Hash -ne "91A35AE296C1A71802AB0C7228EE57F9AAC5D7C7")
+            {
+              echo "Invalid file hash";
+              exit 1;
+            };
+            7z x -oC:\ mw64.7z | out-null;
+          }
+        }
+        elseif($env:tools -eq 'cygwin')
+        {
+          $env:c_comp = 'gcc';
+        }
+
+
+
+build_script:
+
+  - SET PATH=C:\MinGW\msys\1.0\bin;%PATH%
+
+  - IF [%tools%]==[mingw] IF [%arch%]==[x86-32] SET PATH=C:\MinGW\bin;%PATH%
+  - IF [%tools%]==[mingw] IF [%arch%]==[x86-64] SET PATH=C:\mingw64\bin;%PATH%
+  - IF [%tools%]==[mingw] sh -c "%c_comp% -v;./configure --enable-debug --enable-multiple-threaded-vms CC=%c_comp%;make -j2"
+
+  - IF [%tools%]==[cygwin] IF [%arch%]==[x86-32] SET PATH=C:\cygwin\bin;%PATH%
+  - IF [%tools%]==[cygwin] IF [%arch%]==[x86-64] SET PATH=C:\cygwin64\bin;%PATH%
+  - IF [%tools%]==[cygwin] sh -c "%c_comp% -v;./configure --enable-debug --enable-multiple-threaded-vms CC=%c_comp%;make -j2"
+
+test_script:
+
+  - sh -c "make check"
+
+notifications:
+
+  - provider: Webhook
+    url: https://webhooks.gitter.im/e/10dcede290b4a8c5da07
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true

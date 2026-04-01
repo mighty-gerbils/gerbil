@@ -1,0 +1,19 @@
+* text eol=lf
+*.tgz binary
+*.png binary
+*.tiff binary
+*.key binary
+*.exe binary
+*.dmg binary
+*.zip binary
+*.pdf binary
+*.bat binary
+*.ai binary
+*.ico binary
+*.fdd binary
+*.nsi.in binary
+*.windows.in binary
+_*.c linguist-generated
+lib/psyntax*.pp linguist-generated
+tests/test*.ok -text
+tests/error.scm -text

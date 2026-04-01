@@ -1,0 +1,265 @@
+#!/bin/sh
+
+### File: "build-gambit-iOS"
+
+### Copyright (c) 2010-2019 by Marc Feeley, All Rights Reserved.
+
+# The following definitions should be adjusted to your context.
+
+# Which ./configure options are to be used?
+# Strangely, when using clang (which is now the only option for iOS), the
+# executable is 30% faster when *not* using --enable-single-host.
+#config_options="--enable-single-host"
+config_options=""
+prefix_subdir="current"
+
+# The following two settings are only relevant when this script is used
+# outside of the Gambit distribution tree.  In this case the Gambit
+# distribution must be downloaded.
+gambit_dist_if_downloaded="gambc-v4_9_3-devel"
+update_with_latest_changes_if_downloaded="yes"
+
+# The following options can be set from the command line.
+num_simultaneous_jobs=2
+
+select_macosx()
+{
+  gambit_dir="`pwd`/gambit-macosx"
+  gambit_prefix="$gambit_dir/$prefix_subdir"
+
+  echo "*** Selecting Mac OS X."
+
+  config_options_extras=
+
+  export CC="gcc"
+  export CXX="g++"
+  export CFLAGS=""
+  export CXXFLAGS="$CFLAGS"
+  export LD="ld"
+  export LDFLAGS=""
+}
+
+select_ios()
+{
+  platform_type="$1"
+  arch="$2"
+
+  gambit_dir="`pwd`/gambit-iOS"
+  gambit_prefix="$gambit_dir/$prefix_subdir"
+
+  ios_platform="$platform_type.platform"
+
+  developer_dir="`xcode-select --print-path`"
+  platforms_dir="$developer_dir/Platforms"
+  ios_platform_dir="$platforms_dir/$ios_platform"
+  ios_sdks="$ios_platform_dir/Developer/SDKs"
+
+  sdk_version=`(cd "$ios_sdks"; ls -1d *.sdk |sed -e 's/\.sdk$//' -e 's/^[^0-9\.]*//' |awk 'BEGIN{best = 0.0}($0 + 0.0) > best + 0.0{best = $0;}END{print best}')`
+  ios_sdk="$platform_type$sdk_version.sdk"
+
+  ios_sdk_dir="$ios_sdks/$ios_sdk"
+
+  echo "*** Selecting platform \"$ios_platform\" and SDK \"$ios_sdk\" for \"$arch\"."
+
+  case "$platform_type" in
+
+           iPhoneOS) sdk_name="iphoneos"
+                     ;;
+
+    iPhoneSimulator) sdk_name="iphonesimulator"
+                     ;;
+
+  esac
+
+  config_options_extras=--host=x86_64-apple-darwin
+
+  # this needs to be updated when a new Xcode is released
+  iphoneos_version_min="6.0"
+
+  export CC="xcrun -sdk $sdk_name gcc -isysroot $ios_sdk_dir -arch $arch -miphoneos-version-min=$iphoneos_version_min"
+  export CXX="xcrun -sdk $sdk_name g++ -isysroot $ios_sdk_dir -arch $arch -miphoneos-version-min=$iphoneos_version_min"
+  export CFLAGS="-Wno-trigraphs -Wreturn-type -Wunused-variable"
+  export CXXFLAGS="$CFLAGS"
+  export LD="ld -arch $arch"
+  export LDFLAGS=""
+}
+
+download_gambit_dist_tgz()
+{
+  gambit_dist="$gambit_dist_if_downloaded"
+  update_with_latest_changes="$update_with_latest_changes_if_downloaded"
+
+  major_minor="`echo \"$gambit_dist\" | sed -e \"s/gambc-\\([^_]*_[^_]*\\)\\(.*\\)/\\1/g\" -e \"s/_/./g\"`"
+
+  if [ ! -f "$gambit_dist.tgz" ]; then
+    curl "http://www.iro.umontreal.ca/~gambit/download/gambit/$major_minor/source/$gambit_dist.tgz" > "$gambit_dist.tgz"
+  fi
+}
+
+get_gambit_dist_tgz()
+{
+  rootfromhere="`grep \"^rootfromhere = *\" makefile 2> /dev/null | sed -e \"s/rootfromhere = //\"`"
+  gambit_dist="`grep \"^PACKAGE_TARNAME = *\" makefile 2> /dev/null | sed -e \"s/PACKAGE_TARNAME = *//\"`"
+
+  if [ "$gambit_dist" == "" ]; then
+
+    download_gambit_dist_tgz
+
+    downloaded="yes"
+
+  else
+
+    (cd "$rootfromhere" ; make dist)
+    mv "$rootfromhere/$gambit_dist.tgz" .
+
+    update_with_latest_changes="no"
+    downloaded="no"
+
+  fi
+}
+
+unpack_gambit()
+{
+  dir="$1"
+  rm -rf "$dir"
+  tar zxf "$gambit_dist.tgz"
+  mv "$gambit_dist" "$dir"
+}  
+
+configure_gambit()
+{
+  dir="$1"
+  unpack_gambit "$dir"
+  cd "$dir"
+  ./configure --prefix="$gambit_prefix" $config_options_extras $config_options
+  cd ..
+}
+
+make_gambit()
+{
+  dir="$1"
+  what="$2"
+  cd "$dir"
+
+  if [ "$update_with_latest_changes" == "yes" ]; then
+     echo "Updating to latest from master"
+     make update
+  fi
+
+  make clean
+
+  if [ "$what" == "skip-gsi-gsc" ]; then
+
+    # we only care about the Gambit runtime library so avoid building gsi and gsc
+
+    cd lib
+    make -j $num_simultaneous_jobs || exit 1
+    cd ..
+
+    for f in $gambit_dir/gsi/*.c $gambit_dir/gsc/*.c ; do
+      touch ${f%.c}.o
+    done
+
+    touch $gambit_dir/gsi/libgambcgsi.a $gambit_dir/gsc/libgambcgsc.a
+    touch $gambit_dir/gsi/gsi $gambit_dir/gsc/gsc
+
+  fi
+
+  make -j $num_simultaneous_jobs || exit 1
+
+  make install
+
+  cd ..
+}
+
+build_macosx()
+{
+  select_macosx
+
+  configure_gambit "$gambit_dir"
+
+  make_gambit "$gambit_dir" "all"
+}
+
+build_one_ios()
+{
+  platform_type="$1"
+  arch="$2"
+
+  select_ios "$platform_type" "$arch"
+
+  configure_gambit "$gambit_dir"
+
+  make_gambit "$gambit_dir" "skip-gsi-gsc-NOT"
+
+  for library in `(cd $gambit_prefix/lib; ls *.a)` ; do
+
+    if [ -e "temp-lib/$library" ]; then
+
+      # Combine the libraries of the various architectures into a universal library.
+
+      lipo temp-lib/$library $gambit_prefix/lib/$library -output temp-lib/new-$library -create
+      mv temp-lib/new-$library $gambit_prefix/lib/$library
+
+    fi
+
+    cp $gambit_prefix/lib/$library temp-lib/
+
+  done
+}
+
+build_all_ios()
+{
+  rm -rf temp-lib
+  mkdir temp-lib
+
+  for arch in i386 x86_64 ; do
+    build_one_ios iPhoneSimulator "$arch"
+  done
+
+  for arch in arm64 arm64e armv7 armv7s ; do
+    build_one_ios iPhoneOS "$arch"
+  done
+
+  rm -rf temp-lib
+}
+
+script_name="build-gambit-iOS"
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    -h|--help)
+       echo "$script_name - build gambit library for iOS"
+       echo " "
+       echo "$script_name [options]"
+       echo " "
+       echo "options:"
+       echo "-h, --help                Show help"
+       echo "-j, --jobs <number>       Number of simultaneous jobs for make to use."
+       echo "                          Should be equal to number of CPU cores."
+       echo "--no-update               Don't update downloaded Gambit distribution"
+       exit 0
+       ;;
+    --no-update)
+      update_with_latest_changes_if_downloaded=no
+      shift
+      ;;
+    -j|--jobs)
+       shift
+       num_simultaneous_jobs=$1
+       shift
+       ;;
+    *)
+      printf 'Unknown option: %s\n' "$1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+get_gambit_dist_tgz
+build_all_ios
+
+# If you also want to build the Mac OS X version, then uncomment the
+# following line:
+
+#build_macosx

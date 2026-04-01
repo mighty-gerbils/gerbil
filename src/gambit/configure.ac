@@ -1,0 +1,4138 @@
+# Configure template for Gambit system.
+
+# Copyright (c) 1994-2023 by Marc Feeley, All Rights Reserved.
+
+# Process this file with autoconf to produce a configure script.
+
+AC_INIT(Gambit,v4.9.7,gambit@iro.umontreal.ca,gambit-v4_9_7)
+
+AC_CONFIG_HEADERS(include/config.h)
+
+PACKAGE_SHORTNAME="gambit"
+
+AC_SUBST(PACKAGE_SHORTNAME)
+AC_SUBST(PACKAGE_NAME)
+AC_SUBST(PACKAGE_VERSION)
+AC_SUBST(PACKAGE_STRING)
+AC_SUBST(PACKAGE_BUGREPORT)
+AC_SUBST(PACKAGE_TARNAME)
+
+AC_COPYRIGHT([[Copyright (c) 1994-2020 by Marc Feeley, All Rights Reserved.]])
+
+AC_CONFIG_SRCDIR(include/gambit.h.in)
+
+AC_PREFIX_DEFAULT(`if test -d "C:" ; then
+  echo "C:/Program Files/$PACKAGE_NAME" ;
+else
+  echo "/usr/local/$PACKAGE_NAME" ;
+fi`)
+
+# This replace AC_CANONICAL_SYSTEM
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
+###############################################################################
+#
+# Accumulate subsystems to include in runtime library.
+
+RTLIBSUBSYS=""
+RTLIBMAKEFILES=""
+
+###############################################################################
+#
+# To accumulate flags and definitions for C compilation.
+
+GAMBITLIB_DEFS=""
+
+FLAGS_OBJ=""
+FLAGS_DYN=""
+FLAGS_LIB=""
+FLAGS_EXE=""
+
+FLAGS_OBJ_DYN=""
+FLAGS_OBJ_DYN_LIB_EXE=""
+FLAGS_DYN_LIB=""
+FLAGS_OPT=""
+FLAGS_OPT_RTS=""
+
+DEFS_OBJ=""
+DEFS_DYN="-D___DYNAMIC"
+DEFS_LIB=""
+DEFS_EXE=""
+
+DEFS_OBJ_DYN_LIB_EXE=""
+
+if test "${COMPILATION_OPTIONS+set}" != set; then
+  COMPILATION_OPTIONS=""
+fi
+
+RTLIB_COND_EXPAND_FEATURES=""
+
+userlibdir="~/.gambit_userlib"
+instlibdir="~~userlib"
+
+# use the octal code \\176 instead of ~ to avoid a mingw bug on Windows
+
+userlibdir="`echo $userlibdir | sed -e s/~/\\\\\\\\176/g`"
+instlibdir="`echo $instlibdir | sed -e s/~/\\\\\\\\176/g`"
+
+###############################################################################
+#
+# To accumulate flags to propagate to bootstrap configure script.
+
+BOOTSTRAP_CONFIGURE_FLAGS=""
+
+AC_SUBST(BOOTSTRAP_CONFIGURE_FLAGS)
+
+###############################################################################
+#
+# Use GNU features when available.
+
+AC_DEFINE([_GNU_SOURCE],[],[Use GNU features when available])
+
+###############################################################################
+#
+# Check if the system must be compiled using the C compiler or C++ compiler.
+
+AC_ARG_ENABLE(cplusplus,
+              AS_HELP_STRING([--enable-cplusplus],
+                             [compile using C++ compiler (default is NO)]),
+              ENABLE_CPLUSPLUS=$enableval,
+              ENABLE_CPLUSPLUS=no)
+
+if test "${CFLAGS+set}" != set; then
+  CFLAGS=""
+fi
+
+if test "${CXXFLAGS+set}" != set; then
+  CXXFLAGS=""
+fi
+
+if test "${LDFLAGS+set}" != set; then
+  LDFLAGS=""
+fi
+
+case "$target_os" in
+
+  darwin*) if test "$CC" = ""; then
+             SEARCH_LIST_FOR_CC="i686-apple-darwin11-gcc-4.2.1 i686-apple-darwin10-gcc-4.2.1 gcc clang"
+             for cc in $SEARCH_LIST_FOR_CC; do
+               AC_CHECK_PROG(HAVE_SPECIAL_CC, $cc, yes)
+               if test "$HAVE_SPECIAL_CC" = yes; then
+                 CC=$cc
+                 break
+               fi
+               unset ac_cv_prog_HAVE_SPECIAL_CC
+             done
+           fi
+
+           if test "$CXX" = "" -a "$ENABLE_CPLUSPLUS" = yes; then
+             SEARCH_LIST_FOR_CXX="i686-apple-darwin11-g++-4.2.1 i686-apple-darwin10-g++-4.2.1 g++ clang++"
+             for cxx in $SEARCH_LIST_FOR_CXX; do
+               AC_CHECK_PROG(HAVE_SPECIAL_CXX, $cxx, yes)
+               if test "$HAVE_SPECIAL_CXX" = yes; then
+                 CXX=$cxx
+                 break
+               fi
+               unset ac_cv_prog_HAVE_SPECIAL_CXX
+             done
+           fi
+           ;;
+
+esac
+
+AC_LANG(C)
+AC_PROG_CC
+AC_PROG_CPP
+C_COMPILER=$CC
+C_PREPROC=$CPP
+
+if test "$ENABLE_CPLUSPLUS" = yes; then
+
+  #AC_LANG(C++)
+  AC_PROG_CXX
+  AC_PROG_CXXCPP
+  C_COMPILER=$CXX
+  C_PREPROC=$CXXCPP
+
+fi
+
+# Don't search for pkg-config, just assume it is in the path
+#AC_PATH_PROG(PKG_CONFIG, pkg-config, , $PATH:/usr/bin:/usr/bin/X11:/usr/local/bin)
+PKG_CONFIG="pkg-config"
+
+AC_SUBST(C_COMPILER)
+AC_SUBST(C_PREPROC)
+AC_SUBST(PKG_CONFIG)
+
+AC_SUBST(C_COMPILER_MF)
+AC_SUBST(C_PREPROC_MF)
+AC_SUBST(PKG_CONFIG_MF)
+
+AC_SUBST(C_COMPILER_SH)
+AC_SUBST(C_PREPROC_SH)
+AC_SUBST(PKG_CONFIG_SH)
+
+AC_SUBST(C_COMPILER_BAT)
+AC_SUBST(C_PREPROC_BAT)
+AC_SUBST(PKG_CONFIG_BAT)
+
+###############################################################################
+#
+# Check if the system must include GUIDE (Gambit Universal IDE).
+
+AC_ARG_ENABLE(guide,
+              AS_HELP_STRING([--enable-guide],
+                             [include the Gambit Universal IDE (default is NO)]),
+              ENABLE_GUIDE=$enableval,
+              ENABLE_GUIDE=no)
+
+if test "$ENABLE_GUIDE" = yes; then
+  if test "$ENABLE_CPLUSPLUS" = yes; then
+
+    # Determine if Qt is available, if the version is good, etc
+
+    ac_qmake='qmake -o conftest.qt /dev/null >&5'
+
+    rm -f conftest.qt
+
+    if { (eval echo "$as_me:$LINENO: \"$ac_qmake\"") >&5
+      (eval $ac_qmake) 2>&5
+      ac_status=$?
+      echo "$as_me:$LINENO: \$? = $ac_status" >&5
+      (exit $ac_status); }; then
+
+      ac_qt_version_check="grep -q '^# Generated by qmake ([^)]*) (Qt 3\\.3\\..*' conftest.qt"
+
+      if { (eval echo "$as_me:$LINENO: \"$ac_qt_version_check\"") >&5
+        (eval $ac_qt_version_check) 2>&5
+        ac_status=$?
+        echo "$as_me:$LINENO: \$? = $ac_status" >&5
+        (exit $ac_status); }; then
+
+        QTINCPATH=`sed -n -e '/^INCPATH[[ 	]]*=[[ 	]]*\(.*\)/s//\1/p' conftest.qt`
+        QTLIBS=`sed -n -e '/^LIBS[[ 	]]*=[[ 	]]*\\\$(SUBLIBS)[[ 	]]*\(.*\)/s//\1/p' conftest.qt`
+
+      else
+
+        qt_version=`sed -n -e '/^# Generated by qmake (\([^)]*\)) (Qt \([0-9]*\.[0-9]*\).*/s//\2/p' conftest.qt`
+
+        ENABLE_GUIDE=no
+        AC_MSG_NOTICE([
+************************************************************************
+***                                                                  ***
+*** The Gambit Universal IDE requires that the system be built using ***
+*** the Qt GUI library version 3.3.  Version $qt_version of Qt is currently  ***
+*** installed.                                                       ***
+***                                                                  ***
+************************************************************************
+])
+
+      fi
+
+    else
+
+      ENABLE_GUIDE=no
+      AC_MSG_NOTICE([
+************************************************************************
+***                                                                  ***
+*** The Gambit Universal IDE requires that the system be built using ***
+*** the Qt GUI library.  This library could not be located.  Make    ***
+*** sure that the program qmake is in your PATH.                     ***
+***                                                                  ***
+************************************************************************
+])
+
+    fi
+
+  else
+
+    ENABLE_GUIDE=no
+    AC_MSG_NOTICE([
+************************************************************************
+***                                                                  ***
+*** The Gambit Universal IDE requires that the system be built using ***
+*** a C++ compiler.  You must specify both "--enable-cplusplus" and  ***
+*** "--enable-guide" to include the Gambit Universal IDE.            ***
+***                                                                  ***
+************************************************************************
+])
+
+  fi
+fi
+
+if test "$ENABLE_GUIDE" = yes; then
+  AC_DEFINE([___GUIDE],[],[Enable GUIDE])
+  AC_SUBST(QTINCPATH)
+  RTLIBSUBSYS="$RTLIBSUBSYS guide"
+  RTLIBMAKEFILES="$RTLIBMAKEFILES lib/guide/guidepro lib/guide/makefile lib/guide/images/makefile"
+  LIBS="$LIBS $QTLIBS"
+fi
+
+AC_SUBST(ENABLE_GUIDE)
+
+###############################################################################
+#
+# Check if a specific C optimization level should be used.  An
+# optimization level of -O1 will be used by default.
+
+AC_ARG_ENABLE(c-opt,
+              AS_HELP_STRING([--enable-c-opt@<:@=level@:>@],
+                             [use higher C optimization level (default is NO)]),
+              ENABLE_C_OPT=$enableval,
+              ENABLE_C_OPT=no)
+
+if test "$ENABLE_C_OPT" != no; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-c-opt=$ENABLE_C_OPT"
+fi
+
+###############################################################################
+#
+# Check if a specific C optimization level should be used for the RTS.  An
+# optimization level of -O3 (if that is available from the compiler) will be
+# used by default. If the option is omitted, we treat that as "yes".
+
+AC_ARG_ENABLE(c-opt-rts,
+              AS_HELP_STRING([--enable-c-opt-rts@<:@=level@:>@],
+                             [use specified C optimization level for the RTS (default is the highest supported by the compiler)]),
+              ENABLE_C_OPT_RTS=$enableval,
+              ENABLE_C_OPT_RTS=yes)
+
+if test "$ENABLE_C_OPT_RTS" != yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-c-opt-rts=$ENABLE_C_OPT_RTS"
+fi
+
+###############################################################################
+#
+# Check if position independent code should be generated (this is usually
+# enabled but can cause problems in some situations so this is mostly intended
+# as a way to disable it).
+
+AC_ARG_ENABLE(pic,
+              AS_HELP_STRING([--enable-pic],
+                             [build system with position independent code (default is YES)]),
+              ENABLE_PIC=$enableval,
+              ENABLE_PIC=yes)
+
+###############################################################################
+#
+# Check if the system is to be debugged.
+
+AC_ARG_ENABLE(debug,
+              AS_HELP_STRING([--enable-debug],
+                             [build system so that it can be debugged (default is NO)]),
+              ENABLE_DEBUG=$enableval,
+              ENABLE_DEBUG=no)
+
+if test "$ENABLE_DEBUG" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug"
+fi
+
+# Check if a debugging log file (gambit.log) should be generated.
+
+AC_ARG_ENABLE(debug-log,
+              AS_HELP_STRING([--enable-debug-log],
+                             [build system so that it generates a debugging log file (default is NO)]),
+              ENABLE_DEBUG_LOG=$enableval,
+              ENABLE_DEBUG_LOG=no)
+
+if test "$ENABLE_DEBUG_LOG" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-log"
+fi
+
+# Check if a C backtrace should be produced when a program crashes.
+
+AC_ARG_ENABLE(debug-c-backtrace,
+              AS_HELP_STRING([--enable-debug-c-backtrace],
+                             [build system so that it generates a C backtrace when a program crashes (default is NO)]),
+              ENABLE_DEBUG_C_BACKTRACE=$enableval,
+              ENABLE_DEBUG_C_BACKTRACE=no)
+
+if test "$ENABLE_DEBUG_C_BACKTRACE" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-c-backtrace"
+  AC_DEFINE([___DEBUG_C_BACKTRACE],[],[Enable generation of debugging log file])
+  ENABLE_DEBUG=yes
+fi
+
+# Check if debugging of the control flow history is needed.
+
+AC_ARG_ENABLE(debug-ctrl-flow-history,
+              AS_HELP_STRING([--enable-debug-ctrl-flow-history],
+                             [build system so that it tracks the control flow history (default is NO)]),
+              ENABLE_DEBUG_CTRL_FLOW_HISTORY=$enableval,
+              ENABLE_DEBUG_CTRL_FLOW_HISTORY=no)
+
+if test "$ENABLE_DEBUG_CTRL_FLOW_HISTORY" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-ctrl-flow-history"
+  AC_DEFINE([___DEBUG_CTRL_FLOW_HISTORY],[],[Enable debugging of control flow history])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DEBUG_CTRL_FLOW_HISTORY"
+  ENABLE_DEBUG_LOG=yes
+fi
+
+# Check if debugging of the host changes is needed.
+
+AC_ARG_ENABLE(debug-host-changes,
+              AS_HELP_STRING([--enable-debug-host-changes],
+                             [build system so that it tracks the host changes (default is NO)]),
+              ENABLE_DEBUG_HOST_CHANGES=$enableval,
+              ENABLE_DEBUG_HOST_CHANGES=no)
+
+if test "$ENABLE_DEBUG_HOST_CHANGES" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-host-changes"
+  AC_DEFINE([___DEBUG_HOST_CHANGES],[],[Enable debugging of host changes])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DEBUG_HOST_CHANGES"
+  ENABLE_DEBUG_LOG=yes
+fi
+
+# Check if debugging the memory allocations is needed.
+
+AC_ARG_ENABLE(debug-alloc-mem,
+              AS_HELP_STRING([--enable-debug-alloc-mem],
+                             [build system so that it tracks the memory allocations (default is NO)]),
+              ENABLE_DEBUG_ALLOC_MEM=$enableval,
+              ENABLE_DEBUG_ALLOC_MEM=no)
+
+if test "$ENABLE_DEBUG_ALLOC_MEM" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-alloc-mem"
+  AC_DEFINE([___DEBUG_ALLOC_MEM],[],[Enable debugging the memory allocations])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DEBUG_ALLOC_MEM"
+  ENABLE_DEBUG_LOG=yes
+fi
+
+# Check if debugging the garbage collector is needed.
+
+AC_ARG_ENABLE(debug-garbage-collect,
+              AS_HELP_STRING([--enable-debug-garbage-collect],
+                             [build system so that it detects issues in the garbage collect (default is NO)]),
+              ENABLE_DEBUG_GARBAGE_COLLECT=$enableval,
+              ENABLE_DEBUG_GARBAGE_COLLECT=no)
+
+if test "$ENABLE_DEBUG_GARBAGE_COLLECT" = yes; then
+  BOOTSTRAP_CONFIGURE_FLAGS="$BOOTSTRAP_CONFIGURE_FLAGS --enable-debug-garbage-collect"
+  AC_DEFINE([___DEBUG_GARBAGE_COLLECT],[],[Enable debugging of garbage collect])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DEBUG_GARBAGE_COLLECT"
+  ENABLE_DEBUG_LOG=yes
+fi
+
+# Turn on debugging.
+
+if test "$ENABLE_DEBUG" = yes; then
+  AC_DEFINE([___DEBUG],[],[Enable debugging])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DEBUG"
+fi
+
+if test "$ENABLE_DEBUG_LOG" = yes; then
+  AC_DEFINE([___DEBUG_LOG],[],[Enable generation of debugging log file])
+fi
+
+###############################################################################
+#
+# Check if the system should keep an activity log.
+
+AC_ARG_ENABLE(activity-log,
+              AS_HELP_STRING([--enable-activity-log],
+                             [build system so it keeps an activity log (default is NO)]),
+              ENABLE_ACTIVITY_LOG=$enableval,
+              ENABLE_ACTIVITY_LOG=no)
+
+if test "$ENABLE_ACTIVITY_LOG" = yes; then
+  CONF_ACTIVITY_LOG="___ACTIVITY_LOG"
+else
+  CONF_ACTIVITY_LOG="___NO_ACTIVITY_LOG"
+fi
+
+AC_SUBST(CONF_ACTIVITY_LOG)
+
+###############################################################################
+#
+# Check if the system is to be profiled.
+
+AC_ARG_ENABLE(profile,
+              AS_HELP_STRING([--enable-profile],
+                             [build system so that it can be profiled (default is NO)]),
+              ENABLE_PROFILE=$enableval,
+              ENABLE_PROFILE=no)
+
+if test "$ENABLE_PROFILE" = yes; then
+  AC_DEFINE([___PROFILE],[],[Enable profiling])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___PROFILE"
+fi
+
+###############################################################################
+#
+# Check if the system is to be compiled to accumulate coverage statistics.
+
+AC_ARG_ENABLE(coverage,
+              AS_HELP_STRING([--enable-coverage],
+                             [build system to accumulate coverage statistics (default is NO)]),
+              ENABLE_COVERAGE=$enableval,
+              ENABLE_COVERAGE=no)
+
+###############################################################################
+#
+# Check if the system is to be compiled with trial run feedback.
+
+AC_ARG_ENABLE(feedback1,
+              AS_HELP_STRING([--enable-feedback1],
+                             [build system to accumulate trial run data (default is NO)]),
+              ENABLE_FEEDBACK1=$enableval,
+              ENABLE_FEEDBACK1=no)
+
+AC_ARG_ENABLE(feedback2,
+              AS_HELP_STRING([--enable-feedback2],
+                             [build system using trial run feedback (default is NO)]),
+              ENABLE_FEEDBACK2=$enableval,
+              ENABLE_FEEDBACK2=no)
+
+###############################################################################
+#
+# Check if a single C function should be generated for all the Scheme
+# procedures in a file.  This makes the executable much faster but the
+# compilation will be much longer and take much more memory.
+# By default there is a limit to the number of control points in a
+# file for single host mode to be used.  The limit is configurable.
+
+AC_ARG_ENABLE(single-host,
+              AS_HELP_STRING([--enable-single-host@<:@=N@:>@],
+                             [compile each Scheme module as a single C function (by default each Scheme procedure is compiled to a C function, otherwise N, which defaults to 30000, is the maximum number of control points in the module to use single host mode and the special case N=0 avoids a limit)]),
+              ENABLE_SINGLE_HOST=$enableval,
+              ENABLE_SINGLE_HOST=no)
+
+CONF_SINGLE_HOST_LIMIT="30000"
+
+if test "$ENABLE_SINGLE_HOST" != no; then
+  AC_DEFINE([___SINGLE_HOST],[],[Enable single host mode])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___SINGLE_HOST"
+  if test "$ENABLE_SINGLE_HOST" != yes; then
+    CONF_SINGLE_HOST_LIMIT="$ENABLE_SINGLE_HOST"
+    ENABLE_SINGLE_HOST=yes
+  fi
+fi
+
+AC_SUBST(CONF_SINGLE_HOST_LIMIT)
+
+###############################################################################
+#
+# Determine the largest size of a module where the normal C compilation
+# optimization level will be used. Beyond that limit the optimization level
+# is lowered to keep the compilation time reasonable for large modules.
+# A setting of 0 deactivates the lowering of the optimization level.
+
+AC_ARG_ENABLE(optimized-module-limit,
+              AS_HELP_STRING([--enable-optimized-module-limit=N],
+                             [set the maximal size of a module to use the normal C compilation optimization level (N is the number of control points in the module beyond which the optimization level is lowered; N=0 deactivates the lowering of the optimization level; N=20000 is the default)]),
+              ENABLE_OPTIMIZED_MODULE_LIMIT=$enableval,
+              ENABLE_OPTIMIZED_MODULE_LIMIT=20000)
+
+CONF_OPTIMIZED_MODULE_LIMIT="$ENABLE_OPTIMIZED_MODULE_LIMIT"
+
+AC_SUBST(CONF_OPTIMIZED_MODULE_LIMIT)
+AC_SUBST(CONF_GNUC_HOST_FUNCTION_ATTRIBUTES_UNOPTIMIZED_MODULE)
+AC_SUBST(CONF_GNUC_HOST_FUNCTION_ATTRIBUTES_OPTIMIZED_MODULE)
+
+###############################################################################
+#
+# Check if the system must support mixing the execution of code generated
+# by the C backend and machine code generated by one of the native backends.
+
+AC_ARG_ENABLE(lowlevel-exec,
+              AS_HELP_STRING([--enable-lowlevel-exec],
+                             [build system so C and machine code can be mixed (default is NO)]),
+              ENABLE_LOWLEVEL_EXEC=$enableval,
+              ENABLE_LOWLEVEL_EXEC=no)
+
+if test "$ENABLE_LOWLEVEL_EXEC" = yes; then
+  AC_DEFINE([___SUPPORT_LOWLEVEL_EXEC],[],[Enable lowlevel code execution])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___SUPPORT_LOWLEVEL_EXEC"
+fi
+
+###############################################################################
+#
+# Check if inline code should be generated for jumps.  It is possible
+# that on some platforms this will result in a faster but larger
+# executable program.
+
+AC_ARG_ENABLE(inline-jumps,
+              AS_HELP_STRING([--enable-inline-jumps],
+                             [generate inline code for jumps (default is NO)]),
+              ENABLE_INLINE_JUMPS=$enableval,
+              ENABLE_INLINE_JUMPS=no)
+
+if test "$ENABLE_INLINE_JUMPS" = yes; then
+  AC_DEFINE([___INLINE_JUMPS],[],[Enable inlining of jumps])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___INLINE_JUMPS"
+fi
+
+###############################################################################
+#
+# Check if code should trust that the C compiler does TCO (tail call
+# optimization) properly.
+
+AC_ARG_ENABLE(trust-c-tco,
+              AS_HELP_STRING([--enable-trust-c-tco],
+                             [trust C compiler does TCO properly (default is NO)]),
+              ENABLE_TRUST_C_TCO=$enableval,
+              ENABLE_TRUST_C_TCO=no)
+
+if test "$ENABLE_TRUST_C_TCO" = yes; then
+  AC_DEFINE([___TRUST_C_TCO],[],[Trust C compiler does TCO properly])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___TRUST_C_TCO"
+fi
+
+###############################################################################
+#
+# Check if expensive GCC optimizations should be used.  This makes the
+# executable faster but the compilation will be much longer and take
+# much more memory.
+
+AC_ARG_ENABLE(gcc-opts,
+              AS_HELP_STRING([--enable-gcc-opts],
+                             [use expensive GCC optimizations (default is NO)]),
+              ENABLE_GCC_OPTS=$enableval,
+              ENABLE_GCC_OPTS=no)
+
+###############################################################################
+#
+# Check if GNU GCC specific options should be used.  When the system
+# is to be built in a setting where the target C compiler is either
+# the GNU GCC or the LLVM GCC it is advisable to avoid using GNU GCC
+# specific options that are not accepted by the LLVM GCC compiler
+# (this is the case on OS X, where the program "gcc" may be the LLVM
+# GCC which is part of Xcode, or the GNU GCC if it was installed
+# manually).
+
+AC_ARG_ENABLE(gnu-gcc-specific-options,
+              AS_HELP_STRING([--enable-gnu-gcc-specific-options],
+                             [use GNU GCC specific options (default is YES)]),
+              ENABLE_GNU_GCC_SPECIFIC_OPTIONS=$enableval,
+              ENABLE_GNU_GCC_SPECIFIC_OPTIONS=yes)
+
+AC_ARG_ENABLE(gnu-gcc-no-strict-aliasing,
+              AS_HELP_STRING([--enable-gnu-gcc-no-strict-aliasing],
+                             [use GNU GCC -fno-strict-aliasing option (default is YES)]),
+              ENABLE_GNU_GCC_NO_STRICT_ALIASING=$enableval,
+              ENABLE_GNU_GCC_NO_STRICT_ALIASING=yes)
+
+###############################################################################
+#
+
+# Check if system should be built for a specific machine architecture.
+# The default, an empty string, will select the architecture the C
+# compiler defaults to.  Using "native" as the architecture will select
+# the architecture being used for the build.
+
+AC_ARG_ENABLE(march,
+              AS_HELP_STRING([--enable-march=arch],
+                             [build for specific machine architecture (default is native)]),
+              ENABLE_MARCH=$enableval,
+              ENABLE_MARCH=no_enable_march)
+
+###############################################################################
+#
+# Check if direct calls to C library functions should be generated for
+# dynamically loaded modules.  This typically leads to more efficient
+# code by allowing the C compiler to inline C library calls in
+# dynamically loaded modules (for example calls to the math functions
+# sqrt, sin, etc).
+
+AC_ARG_ENABLE(dynamic-clib,
+              AS_HELP_STRING([--enable-dynamic-clib],
+                             [allow direct calls to C library in dynamically loaded modules (default is NO)]),
+              ENABLE_DYNAMIC_CLIB=$enableval,
+              ENABLE_DYNAMIC_CLIB=no)
+
+if test "$ENABLE_DYNAMIC_CLIB" = yes; then
+  AC_DEFINE([___CAN_IMPORT_CLIB_DYNAMICALLY],[],[Enable direct calls to C library in dynamically loaded modules])
+  AC_DEFINE([___CAN_IMPORT_SETJMP_DYNAMICALLY],[],[Enable direct calls to setjmp in dynamically loaded modules])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___CAN_IMPORT_CLIB_DYNAMICALLY -D___CAN_IMPORT_SETJMP_DYNAMICALLY"
+fi
+
+###############################################################################
+#
+# Check the width of Scheme characters.
+
+AC_ARG_ENABLE(char-size,
+              AS_HELP_STRING([--enable-char-size=N],
+                             [Scheme character size in bytes (default is 4)]),
+              CHAR_SIZE=$enableval,
+              CHAR_SIZE=4)
+
+if test "$CHAR_SIZE" = 1; then
+  CONF_MAX_CHR="0xff"
+else
+if test "$CHAR_SIZE" = 2; then
+  CONF_MAX_CHR="0xffff"
+else
+  CONF_MAX_CHR="0x10ffff"
+fi
+fi
+
+AC_SUBST(CONF_MAX_CHR)
+
+###############################################################################
+#
+# Check the encoding of filesystem paths.
+
+AC_ARG_ENABLE(path-encoding,
+              AS_HELP_STRING([--enable-path-encoding=utf8|latin1|ucs2|ucs4|wchar|native],
+                             [Filesystem path encoding (default is ucs2 on Windows and utf8 on other OSes)]),
+              ENABLE_PATH_ENCODING=$enableval,
+              ENABLE_PATH_ENCODING=no)
+
+if test "$ENABLE_PATH_ENCODING" = utf8; then
+  AC_DEFINE([___PATH_ENCODING_UTF8],[],[Select UTF-8 for path encoding])
+else
+  if test "$ENABLE_PATH_ENCODING" = latin1; then
+    AC_DEFINE([___PATH_ENCODING_LATIN1],[],[Select LATIN-1 for path encoding])
+  else
+    if test "$ENABLE_PATH_ENCODING" = ucs2; then
+      AC_DEFINE([___PATH_ENCODING_UCS2],[],[Select UCS-2 for path encoding])
+    else
+      if test "$ENABLE_PATH_ENCODING" = ucs4; then
+        AC_DEFINE([___PATH_ENCODING_UCS4],[],[Select UCS-4 for path encoding])
+      else
+        if test "$ENABLE_PATH_ENCODING" = wchar; then
+          AC_DEFINE([___PATH_ENCODING_WCHAR],[],[Select WCHAR for path encoding])
+        else
+          if test "$ENABLE_PATH_ENCODING" = native; then
+            AC_DEFINE([___PATH_ENCODING_NATIVE],[],[Select NATIVE for path encoding])
+          fi
+        fi
+      fi
+    fi
+  fi
+fi
+
+###############################################################################
+#
+# Determine module search order.
+
+AC_ARG_ENABLE(module-search-order,
+              AS_HELP_STRING([--enable-module-search-order=...],
+                             [Module search order (default is ~~lib,~~userlib)]),
+              ENABLE_MODULE_SEARCH_ORDER=$enableval,
+              ENABLE_MODULE_SEARCH_ORDER=[\~\~lib,\~\~userlib])
+
+DEFAULT_RUNTIME_OPTIONS=""
+
+if test "$ENABLE_MODULE_SEARCH_ORDER" != ""; then
+  # must reverse order for runtime options
+  for p in `echo "$ENABLE_MODULE_SEARCH_ORDER" | sed -e 's/,/ /g'`; do
+    if test "$DEFAULT_RUNTIME_OPTIONS" != ""; then
+      DEFAULT_RUNTIME_OPTIONS=",$DEFAULT_RUNTIME_OPTIONS"
+    fi
+    DEFAULT_RUNTIME_OPTIONS="search=$p$DEFAULT_RUNTIME_OPTIONS"
+  done
+fi
+
+###############################################################################
+#
+# Determine module whitelist.
+
+AC_ARG_ENABLE(module-whitelist,
+              AS_HELP_STRING([--enable-module-whitelist=...],
+                             [Module whitelist (default is github.com/gambit)]),
+              ENABLE_MODULE_WHITELIST=$enableval,
+              ENABLE_MODULE_WHITELIST=[github.com/gambit])
+
+if test "$ENABLE_MODULE_WHITELIST" != ""; then
+  MODULE_WHITELIST=`echo "$ENABLE_MODULE_WHITELIST" | sed -e "s/^/whitelist=/" -e "s/,/,whitelist=/g"`
+  if test "$DEFAULT_RUNTIME_OPTIONS" != ""; then
+    DEFAULT_RUNTIME_OPTIONS="$DEFAULT_RUNTIME_OPTIONS,"
+  fi
+  DEFAULT_RUNTIME_OPTIONS="$DEFAULT_RUNTIME_OPTIONS$MODULE_WHITELIST"
+fi
+
+###############################################################################
+#
+# Determine default runtime options.
+
+AC_ARG_ENABLE(default-runtime-options,
+              AS_HELP_STRING([--enable-default-runtime-options=...],
+                             [Default runtime options (default is none)]),
+              ENABLE_DEFAULT_RUNTIME_OPTIONS=$enableval,
+              ENABLE_DEFAULT_RUNTIME_OPTIONS=)
+
+if test "$ENABLE_DEFAULT_RUNTIME_OPTIONS" != ""; then
+  if test "$DEFAULT_RUNTIME_OPTIONS" != ""; then
+    DEFAULT_RUNTIME_OPTIONS=",$DEFAULT_RUNTIME_OPTIONS"
+  fi
+  DEFAULT_RUNTIME_OPTIONS="$ENABLE_DEFAULT_RUNTIME_OPTIONS$DEFAULT_RUNTIME_OPTIONS"
+fi
+
+if test "$DEFAULT_RUNTIME_OPTIONS" != ""; then
+  DEFAULT_RUNTIME_OPTIONS=`echo "$DEFAULT_RUNTIME_OPTIONS" | sed -e "s/\(.\)/'\1', /g" -e "s/''', /'\\\\\\\\'', /g" -e "s/'\\\\\\\\', /'\\\\\\\\\\\\\\\\', /g" -e "s/^/{/" -e "s/$/'\\\\\\\\0'}/"`
+  AC_DEFINE_UNQUOTED([___DEFAULT_RUNTIME_OPTIONS],[$DEFAULT_RUNTIME_OPTIONS],[Select default runtime options])
+fi
+
+###############################################################################
+#
+# Determine default compile options.
+
+AC_ARG_ENABLE(default-compile-options,
+              AS_HELP_STRING([--enable-default-compile-options=...],
+                             [Default compile options (default is (compactness 9))]),
+              ENABLE_DEFAULT_COMPILE_OPTIONS=$enableval,
+              ENABLE_DEFAULT_COMPILE_OPTIONS="(compactness 9)")
+
+
+if test "$ENABLE_DEFAULT_COMPILE_OPTIONS" != ""; then
+  DEFAULT_COMPILE_OPTIONS="$ENABLE_DEFAULT_COMPILE_OPTIONS"
+else
+  DEFAULT_COMPILE_OPTIONS=""
+fi
+
+if test "$DEFAULT_COMPILE_OPTIONS" != ""; then
+  DEFAULT_COMPILE_OPTIONS=`echo "$DEFAULT_COMPILE_OPTIONS" | sed -e "s/\(.\)/'\1', /g" -e "s/''', /'\\\\\\\\'', /g" -e "s/'\\\\\\\\', /'\\\\\\\\\\\\\\\\', /g" -e "s/^/{/" -e "s/$/'\\\\\\\\0'}/"`
+  AC_DEFINE_UNQUOTED([___DEFAULT_COMPILE_OPTIONS],[$DEFAULT_COMPILE_OPTIONS],[Select default compile options])
+fi
+
+###############################################################################
+#
+# Determine targets to build.
+
+AC_ARG_ENABLE(targets,
+              AS_HELP_STRING([--enable-targets=...],
+                             [Targets to build in addition to C (default is js)]),
+              ENABLE_TARGETS=$enableval,
+              ENABLE_TARGETS=js)
+
+BUILD_TARGETS="C"
+
+if test "$ENABLE_TARGETS" != ""; then
+  for t in `echo "$ENABLE_TARGETS" | sed -e 's/,/ /g'`; do
+    if test "$t" != "C"; then
+      BUILD_TARGETS="$BUILD_TARGETS $t"
+    fi
+  done
+fi
+
+echo BUILD_TARGETS="$BUILD_TARGETS"
+
+###############################################################################
+#
+# Check the size of the type "void*".  On many systems it is the same
+# size as "long".  If this isn't the case then define
+# ___VOIDSTAR_WIDTH appropriately.
+
+AC_CHECK_SIZEOF(void*)
+AC_CHECK_SIZEOF(long)
+
+if test "$ac_cv_sizeof_voidp" != "$ac_cv_sizeof_long"; then
+  CONF_VOIDSTAR_WIDTH="($ac_cv_sizeof_voidp * ___CHAR_WIDTH)"
+else
+  CONF_VOIDSTAR_WIDTH="___LONG_WIDTH"
+fi
+
+AC_SUBST(CONF_VOIDSTAR_WIDTH)
+
+###############################################################################
+#
+# Check for existence of the type "bool".  If the compiler does not
+# support it, the ___BOOL type will be mapped to "int".
+
+AC_CHECK_TYPE([bool])
+
+if test "$ac_cv_type_bool" = yes; then
+  CONF_BOOL="bool"
+else
+  CONF_BOOL="int"
+fi
+
+AC_SUBST(CONF_BOOL)
+
+###############################################################################
+#
+# Check if a shared library must be built.
+
+AC_ARG_ENABLE(shared,
+              AS_HELP_STRING([--enable-shared],
+                             [build the Scheme runtime system as a shared library (default is NO)]),
+              ENABLE_SHARED=$enableval,
+              ENABLE_SHARED=no)
+
+if test "$ENABLE_SHARED" = yes; then
+  AC_DEFINE([___SHARED],[],[Enable shared libraries])
+  # don't add to DEFS_OBJ_DYN_LIB_EXE
+fi
+
+###############################################################################
+#
+# Check if only ANSI C headers and libraries should be used.
+
+AC_ARG_ENABLE(ansi-c,
+              AS_HELP_STRING([--enable-ansi-c],
+                             [link only with ANSI C libraries (default is NO)]),
+              ANSI_C=$enableval,
+              ANSI_C=no)
+
+###############################################################################
+#
+# Check if symbolic links should be used for files not in the
+# central installation directory.
+
+AC_ARG_ENABLE(symlinks,
+              AS_HELP_STRING([--enable-symlinks],
+                             [use symbolic links for installed files not in the central installation directory (default is YES)]),
+              ENABLE_SYMLINKS=$enableval,
+              ENABLE_SYMLINKS=no)
+
+###############################################################################
+#
+# Determine the path of the Gambit central installation directory.
+
+AC_ARG_ENABLE(gambitdir,
+              AS_HELP_STRING([--enable-gambitdir=DIR],
+                             [Path to use for the Gambit central installation directory (default is to use --prefix)]),
+              ENABLE_GAMBITDIR=$enableval,
+              ENABLE_GAMBITDIR=)
+
+###############################################################################
+#
+# Determine the name to use for the Gambit interpreter and compiler.
+
+AC_ARG_ENABLE(interpreter-name,
+              AS_HELP_STRING([--enable-interpreter-name=INTERP],
+                             [Name to use for Gambit interpreter (default is gsi)]),
+              ENABLE_INTERPRETER_NAME=$enableval,
+              ENABLE_INTERPRETER_NAME="gsi")
+
+AC_ARG_ENABLE(compiler-name,
+              AS_HELP_STRING([--enable-compiler-name=COMP],
+                             [Name to use for Gambit compiler (default is gsc)]),
+              ENABLE_COMPILER_NAME=$enableval,
+              ENABLE_COMPILER_NAME="gsc")
+
+###############################################################################
+#
+# Check if multiple installed versions are supported.
+
+AC_ARG_ENABLE(multiple-versions,
+              AS_HELP_STRING([--enable-multiple-versions],
+                             [multiple installed versions are supported (default is NO)]),
+              ENABLE_MULTIPLE_VERSIONS=$enableval,
+              ENABLE_MULTIPLE_VERSIONS=no)
+
+###############################################################################
+#
+# Check if shared libraries should be linked to using an absolute path.
+
+AC_ARG_ENABLE(absolute-shared-libs,
+              AS_HELP_STRING([--enable-absolute-shared-libs],
+                             [shared libraries should be linked to using an absolute path (default is YES)]),
+              ENABLE_ABSOLUTE_SHARED_LIBS=$enableval,
+              ENABLE_ABSOLUTE_SHARED_LIBS=yes)
+
+if test "$ENABLE_SHARED" != yes; then
+  ENABLE_ABSOLUTE_SHARED_LIBS=no
+fi
+
+###############################################################################
+#
+# Check if library names should contain a version number suffix.
+
+AC_ARG_ENABLE(versioned-shared-libs,
+              AS_HELP_STRING([--enable-versioned-shared-libs],
+                             [library names should contain a version number suffix (default is NO)]),
+              ENABLE_VERSIONED_SHARED_LIBS=$enableval,
+              ENABLE_VERSIONED_SHARED_LIBS=no)
+
+###############################################################################
+#
+# Check if library names should contain a special suffix.
+
+AC_ARG_ENABLE(lib-suffix,
+              AS_HELP_STRING([--enable-lib-suffix],
+                             [library names should contain a suffix before the extension (default is NO)]),
+              LIB_SUFFIX=$enableval,
+              LIB_SUFFIX=no)
+
+if test "$LIB_SUFFIX" = no; then
+  LIB_SUFFIX=""
+else
+  if test "$LIB_SUFFIX" = yes; then
+    LIB_SUFFIX="-`echo $PACKAGE_VERSION | sed -e 's/\./_/g'`"
+  fi
+fi
+
+###############################################################################
+#
+# Determine which browser to use for help.
+
+AC_ARG_ENABLE(help-browser,
+              AS_HELP_STRING([--enable-help-browser=BROWSER],
+                             [Browser to use for help (default is to search)]),
+              HELP_BROWSER=$enableval,
+              HELP_BROWSER="")
+
+###############################################################################
+#
+# Check if the system must perform type checking.
+
+AC_ARG_ENABLE(type-checking,
+              AS_HELP_STRING([--enable-type-checking],
+                             [perform type checking (default is YES)]),
+              ENABLE_TYPE_CHECKING=$enableval,
+              ENABLE_TYPE_CHECKING=yes)
+
+if test "$ENABLE_TYPE_CHECKING" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-type-checking|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-type-checking|)"
+fi
+
+###############################################################################
+#
+# Check if the system must automatically force promises.
+
+AC_ARG_ENABLE(auto-forcing,
+              AS_HELP_STRING([--enable-auto-forcing],
+                             [automatically force promises (default is NO)]),
+              ENABLE_AUTO_FORCING=$enableval,
+              ENABLE_AUTO_FORCING=no)
+
+if test "$ENABLE_AUTO_FORCING" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-auto-forcing|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-auto-forcing|)"
+fi
+
+###############################################################################
+#
+# Check if the system must support the #.<expression> syntax.
+
+AC_ARG_ENABLE(sharp-dot,
+              AS_HELP_STRING([--enable-sharp-dot],
+                             [support #.<expression> syntax (default is YES)]),
+              ENABLE_SHARP_DOT=$enableval,
+              ENABLE_SHARP_DOT=yes)
+
+if test "$ENABLE_SHARP_DOT" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-sharp-dot|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-sharp-dot|)"
+fi
+
+###############################################################################
+#
+# Check which numerical types need to be supported.
+
+AC_ARG_ENABLE(bignum,
+              AS_HELP_STRING([--enable-bignum],
+                             [support infinite precision integers (default is YES)]),
+              ENABLE_BIGNUM=$enableval,
+              ENABLE_BIGNUM=yes)
+
+if test "$ENABLE_BIGNUM" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-bignum|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-bignum|)"
+fi
+
+AC_ARG_ENABLE(ratnum,
+              AS_HELP_STRING([--enable-ratnum],
+                             [support exact rational numbers (default is YES)]),
+              ENABLE_RATNUM=$enableval,
+              ENABLE_RATNUM=yes)
+
+if test "$ENABLE_RATNUM" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-ratnum|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-ratnum|)"
+fi
+
+AC_ARG_ENABLE(cpxnum,
+              AS_HELP_STRING([--enable-cpxnum],
+                             [support complex numbers (default is YES)]),
+              ENABLE_CPXNUM=$enableval,
+              ENABLE_CPXNUM=yes)
+
+if test "$ENABLE_CPXNUM" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-cpxnum|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-cpxnum|)"
+fi
+
+AC_ARG_ENABLE(s8vector,
+              AS_HELP_STRING([--enable-s8vector],
+                             [support s8vector type (default is YES)]),
+              ENABLE_S8VECTOR=$enableval,
+              ENABLE_S8VECTOR=yes)
+
+if test "$ENABLE_S8VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-s8vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-s8vector|)"
+fi
+
+AC_ARG_ENABLE(u16vector,
+              AS_HELP_STRING([--enable-u16vector],
+                             [support u16vector type (default is YES)]),
+              ENABLE_U16VECTOR=$enableval,
+              ENABLE_U16VECTOR=yes)
+
+if test "$ENABLE_U16VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-u16vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-u16vector|)"
+fi
+
+AC_ARG_ENABLE(s16vector,
+              AS_HELP_STRING([--enable-s16vector],
+                             [support s16vector type (default is YES)]),
+              ENABLE_S16VECTOR=$enableval,
+              ENABLE_S16VECTOR=yes)
+
+if test "$ENABLE_S16VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-s16vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-s16vector|)"
+fi
+
+AC_ARG_ENABLE(u32vector,
+              AS_HELP_STRING([--enable-u32vector],
+                             [support u32vector type (default is YES)]),
+              ENABLE_U32VECTOR=$enableval,
+              ENABLE_U32VECTOR=yes)
+
+if test "$ENABLE_U32VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-u32vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-u32vector|)"
+fi
+
+AC_ARG_ENABLE(s32vector,
+              AS_HELP_STRING([--enable-s32vector],
+                             [support s32vector type (default is YES)]),
+              ENABLE_S32VECTOR=$enableval,
+              ENABLE_S32VECTOR=yes)
+
+if test "$ENABLE_S32VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-s32vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-s32vector|)"
+fi
+
+AC_ARG_ENABLE(u64vector,
+              AS_HELP_STRING([--enable-u64vector],
+                             [support u64vector type (default is YES)]),
+              ENABLE_U64VECTOR=$enableval,
+              ENABLE_U64VECTOR=yes)
+
+if test "$ENABLE_U64VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-u64vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-u64vector|)"
+fi
+
+AC_ARG_ENABLE(s64vector,
+              AS_HELP_STRING([--enable-s64vector],
+                             [support s64vector type (default is YES)]),
+              ENABLE_S64VECTOR=$enableval,
+              ENABLE_S64VECTOR=yes)
+
+if test "$ENABLE_S64VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-s64vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-s64vector|)"
+fi
+
+AC_ARG_ENABLE(f32vector,
+              AS_HELP_STRING([--enable-f32vector],
+                             [support f32vector type (default is YES)]),
+              ENABLE_F32VECTOR=$enableval,
+              ENABLE_F32VECTOR=yes)
+
+if test "$ENABLE_F32VECTOR" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-f32vector|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-f32vector|)"
+fi
+
+###############################################################################
+#
+# Check if debugging information for the Scheme runtime library is to
+# be generated when the system is bootstrapped (with
+# "make bootstrap; make bootclean; make").
+
+AC_ARG_ENABLE(rtlib-debug,
+              AS_HELP_STRING([--enable-rtlib-debug],
+                             [Include all debugging information in the code generated for the Scheme runtime library (default is NO)]),
+              ENABLE_RTLIB_DEBUG=$enableval,
+              ENABLE_RTLIB_DEBUG=no)
+
+if test "$ENABLE_RTLIB_DEBUG" = yes; then
+
+  COMPILATION_OPTIONS="$COMPILATION_OPTIONS -debug"
+
+fi
+
+AC_ARG_ENABLE(rtlib-debug-location,
+              AS_HELP_STRING([--enable-rtlib-debug-location],
+                             [Include source code location debugging information in the code generated for the Scheme runtime library (default is NO)]),
+              ENABLE_RTLIB_DEBUG_LOCATION=$enableval,
+              ENABLE_RTLIB_DEBUG_LOCATION=no)
+
+if test "$ENABLE_RTLIB_DEBUG_LOCATION" = yes; then
+
+  COMPILATION_OPTIONS="$COMPILATION_OPTIONS -debug-location"
+
+fi
+
+AC_ARG_ENABLE(rtlib-debug-source,
+              AS_HELP_STRING([--enable-rtlib-debug-source],
+                             [Include the source code debugging information in the code generated for the Scheme runtime library (default is NO)]),
+              ENABLE_RTLIB_DEBUG_SOURCE=$enableval,
+              ENABLE_RTLIB_DEBUG_SOURCE=no)
+
+if test "$ENABLE_RTLIB_DEBUG_SOURCE" = yes; then
+
+  COMPILATION_OPTIONS="$COMPILATION_OPTIONS -debug-source"
+
+fi
+
+AC_ARG_ENABLE(rtlib-debug-environments,
+              AS_HELP_STRING([--enable-rtlib-debug-environments],
+                             [Include environment debugging information in the code generated for the Scheme runtime library (default is NO)]),
+              ENABLE_RTLIB_DEBUG_ENVIRONMENTS=$enableval,
+              ENABLE_RTLIB_DEBUG_ENVIRONMENTS=no)
+
+if test "$ENABLE_RTLIB_DEBUG_ENVIRONMENTS" = yes; then
+
+  COMPILATION_OPTIONS="$COMPILATION_OPTIONS -debug-environments"
+
+fi
+
+AC_ARG_ENABLE(track-scheme,
+              AS_HELP_STRING([--enable-track-scheme],
+                             [Include Scheme code location in C code generated (default is NO)]),
+              ENABLE_TRACK_SCHEME=$enableval,
+              ENABLE_TRACK_SCHEME=no)
+
+if test "$ENABLE_TRACK_SCHEME" = yes; then
+
+  COMPILATION_OPTIONS="$COMPILATION_OPTIONS -track-scheme"
+
+fi
+
+###############################################################################
+#
+# Check whether to enable poll as the select method
+
+AC_ARG_ENABLE(poll,
+              AS_HELP_STRING([--enable-poll],
+                             [Enable poll as the select method (default is NO)]),
+              ENABLE_POLL=$enableval,
+              ENABLE_POLL=no)
+
+if test "$ENABLE_POLL" = yes; then
+  AC_DEFINE([USE_POLL_FOR_SELECT],[],[Enable use of poll instead of select])
+fi
+
+###############################################################################
+#
+# Check whether to enable high-resolution timing
+
+AC_ARG_ENABLE(high-res-timing,
+              AS_HELP_STRING([--enable-high-res-timing],
+                             [Enable high-resolution timing (default is NO)]),
+              ENABLE_HIGH_RES_TIMING=$enableval,
+              ENABLE_HIGH_RES_TIMING=no)
+
+if test "$ENABLE_HIGH_RES_TIMING" = yes; then
+  AC_DEFINE([USE_HIGH_RES_TIMING],[],[Enable high-resolution timing])
+fi
+
+###############################################################################
+#
+# Check if the runtime system must be compiled to support multiple
+# Gambit VM instances or not.  A Gambit VM instance has its own global
+# environment and heap, separate from other Gambit VM instances.
+
+AC_ARG_ENABLE(multiple-vms,
+              AS_HELP_STRING([--enable-multiple-vms],
+                             [support multiple Gambit VM instances (default is NO)]),
+              ENABLE_MULTIPLE_VMS=$enableval,
+              ENABLE_MULTIPLE_VMS=no)
+
+if test "$ENABLE_MULTIPLE_VMS" = no; then
+  CONF_SINGLE_MULTIPLE_VMS="___SINGLE_VM"
+else
+  CONF_SINGLE_MULTIPLE_VMS="___MULTIPLE_VMS"
+fi
+
+AC_SUBST(CONF_SINGLE_MULTIPLE_VMS)
+
+###############################################################################
+#
+# Check if the runtime system must be compiled to support multiple OS
+# threads per Gambit VM instance.  In other words, is it allowed for
+# multiple OS threads to be running in a given VM instance?
+
+AC_ARG_ENABLE(multiple-threaded-vms,
+              AS_HELP_STRING([--enable-multiple-threaded-vms],
+                             [support multiple OS threads per Gambit VM instance (default is NO)]),
+              ENABLE_MULTIPLE_THREADED_VMS=$enableval,
+              ENABLE_MULTIPLE_THREADED_VMS=no)
+
+if test "$ENABLE_MULTIPLE_THREADED_VMS" = no; then
+  CONF_SINGLE_MULTIPLE_THREADED_VMS="___SINGLE_THREADED_VMS"
+else
+  CONF_SINGLE_MULTIPLE_THREADED_VMS="___MULTIPLE_THREADED_VMS"
+fi
+
+AC_SUBST(CONF_SINGLE_MULTIPLE_THREADED_VMS)
+
+###############################################################################
+#
+# Check if the SMP Scheme thread scheduler should be enabled.
+
+AC_ARG_ENABLE(smp,
+              AS_HELP_STRING([--enable-smp],
+                             [support SMP Scheme thread scheduler (default is NO)]),
+              ENABLE_SMP=$enableval,
+              ENABLE_SMP=no)
+
+if test "$ENABLE_SMP" = yes; then
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|enable-smp|)"
+else
+  RTLIB_COND_EXPAND_FEATURES="$RTLIB_COND_EXPAND_FEATURES(define-cond-expand-feature|disable-smp|)"
+fi
+
+###############################################################################
+#
+# Determine the maximum number of OS threads (processors) per
+# Gambit VM instance.
+
+AC_ARG_ENABLE(max-processors,
+              AS_HELP_STRING([--enable-max-processors=N],
+                             [Max number of processors per Gambit VM instance (default is 64)]),
+              MAX_PROCESSORS=$enableval,
+              MAX_PROCESSORS=64)
+
+if test "$ENABLE_MULTIPLE_THREADED_VMS" = no; then
+  CONF_MAX_PROCESSORS=1
+else
+  CONF_MAX_PROCESSORS="$MAX_PROCESSORS"
+fi
+
+AC_SUBST(CONF_MAX_PROCESSORS)
+
+###############################################################################
+#
+# Check if OS threads are supported by the runtime system and if so
+# which thread system is to be used.
+
+AC_ARG_ENABLE(thread-system,
+              AS_HELP_STRING([--enable-thread-system@<:@=thread-system@:>@],
+                             [use OS threads (default is YES)]),
+              ENABLE_THREAD_SYSTEM=$enableval,
+              ENABLE_THREAD_SYSTEM=yes)
+
+if test "$ENABLE_MULTIPLE_VMS" != no -o "$ENABLE_MULTIPLE_THREADED_VMS" != no; then
+  ENABLE_THREAD_SYSTEM=yes
+fi
+
+###############################################################################
+#
+# Check if thread local storage variables can be referenced from
+# dynamically loaded code.
+
+AC_ARG_ENABLE(dynamic-tls,
+              AS_HELP_STRING([--enable-dynamic-tls],
+                             [allow thread local storage variables to be referenced from dynamically loaded code (default is NO)]),
+              ENABLE_DYNAMIC_TLS=$enableval,
+              ENABLE_DYNAMIC_TLS=no)
+
+if test "$ENABLE_DYNAMIC_TLS" = yes; then
+  AC_DEFINE([___DYNAMIC_TLS],[],[Enable dynamic linking of TLS])
+  DEFS_OBJ_DYN_LIB_EXE="$DEFS_OBJ_DYN_LIB_EXE -D___DYNAMIC_TLS"
+fi
+
+###############################################################################
+#
+# Check if SSL support should be added using OpenSSL.
+
+AC_ARG_ENABLE(openssl,
+              AS_HELP_STRING([--enable-openssl],
+                             [compile with SSL support using OpenSSL (default is NO)]),
+              ENABLE_OPENSSL=$enableval,
+              ENABLE_OPENSSL=no)
+
+if test "$ENABLE_OPENSSL" = yes; then
+  AC_DEFINE([USE_OPENSSL],[],[Enable SSL support using OpenSSL])
+  AC_SEARCH_LIBS([main], [ssl crypto], [], [
+    AC_MSG_ERROR([unable to find the SSL libraries])
+  ])
+fi
+
+###############################################################################
+#
+# Check for C compiler.
+
+AC_DEFUN([AC_CHECK_C_COMPILER_DEF],
+[AC_CACHE_CHECK([whether $C_COMPILER defines $1], [ac_cv_$2],
+[
+rm -f conftest.$ac_ext
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+int
+main ()
+{
+#ifndef $1
+       choke me
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  ac_cv_$2="yes"
+else
+  ac_cv_$2=""
+fi
+])
+$2="$ac_cv_$2"
+AC_SUBST($2)
+])
+
+AC_DEFUN([AC_CHECK_C_COMPILER_OPT],
+[AC_CACHE_CHECK([whether $C_COMPILER accepts $1], [ac_cv_$2],
+[
+rm -f conftest.$ac_ext
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+int
+main ()
+{
+  return 0;
+}
+_ACEOF
+ac_test_CFLAGS=${CFLAGS+set}
+ac_test_CXXFLAGS=${CXXFLAGS+set}
+ac_save_CFLAGS=$CFLAGS
+ac_save_CXXFLAGS=$CXXFLAGS
+CFLAGS="$1$3"
+CXXFLAGS="$1$3"
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  ac_cv_$2=" $1"
+else
+  ac_cv_$2=""
+fi
+if test "$ac_test_CFLAGS" = set; then
+  CFLAGS=$ac_save_CFLAGS
+fi
+if test "$ac_test_CXXFLAGS" = set; then
+  CXXFLAGS=$ac_save_CXXFLAGS
+fi
+])
+$2="$ac_cv_$2"
+AC_SUBST($2)
+])
+
+AC_DEFUN([AC_CHECK_C_COMPILER_CPP_EXPR],
+[AC_CACHE_CHECK([how $C_COMPILER's preprocessor evaluates $1], [ac_cv_$2],
+[
+rm -f conftest.$ac_ext
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+int
+main ()
+{
+#if $1
+#else
+       choke me
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  ac_cv_$2="yes"
+else
+  ac_cv_$2=""
+fi
+])
+$2="$ac_cv_$2"
+AC_SUBST($2)
+])
+
+AC_CHECK_C_COMPILER_DEF(__GNUC__,C_COMP_GNUC)
+AC_CHECK_C_COMPILER_DEF(__clang__,C_COMP_CLANG)
+AC_CHECK_C_COMPILER_DEF(__llvm__,C_COMP_LLVM)
+AC_CHECK_C_COMPILER_DEF(_MSC_VER,C_COMP_VISUALC)
+#AC_CHECK_C_COMPILER_DEF(__WATCOMC__,C_COMP_WATCOMC)
+#AC_CHECK_C_COMPILER_DEF(__BORLANDC__,C_COMP_BORLANDC)
+AC_CHECK_C_COMPILER_DEF(_WIN32,OS_WIN32)
+
+ALL_BUILD_FEATURES="unix windows gcc clang visualc cc"
+
+if test "$C_COMP_CLANG" = yes; then
+  BUILD_FEATURE_C_COMP="clang"
+else
+  if test "$C_COMP_GNUC" = yes; then
+    if test "$C_COMP_LLVM" = yes; then
+      BUILD_FEATURE_C_COMP="cc"
+    else
+      BUILD_FEATURE_C_COMP="gcc"
+    fi
+  else
+    if test "$C_COMP_VISUALC" = yes; then
+      BUILD_FEATURE_C_COMP="visualc"
+    else
+      BUILD_FEATURE_C_COMP="cc"
+    fi
+  fi
+fi
+
+###############################################################################
+#
+# Check for header files.
+
+AC_CHECK_HEADERS(errno.h)
+AC_CHECK_HEADERS(float.h)
+AC_CHECK_HEADERS(signal.h)
+AC_CHECK_HEADERS(stdio.h)
+AC_CHECK_HEADERS(stdlib.h)
+AC_CHECK_HEADERS(string.h)
+AC_CHECK_HEADERS(time.h)
+
+# Default path separator
+PATH_SEP="/"
+
+# Shell environment checks
+
+AC_DEFUN([AC_CHECK_ENVIRON],
+[AC_CACHE_CHECK([for environ], ac_cv_environ,
+[
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([
+      #ifdef __cplusplus
+      extern "C" {
+      #endif
+      extern char **environ;
+      #ifdef __cplusplus
+      }
+      #endif
+    ],[char   *arg0 = *environ;])],
+  ac_cv_environ=yes,
+  ac_cv_environ=no)
+])
+  if test $ac_cv_environ = yes; then
+    AC_DEFINE([HAVE_ENVIRON],[],[Defined when environ is available])
+  fi
+])
+
+AC_DEFUN([AC_CHECK__NSGETENVIRON],
+[AC_CHECK_HEADERS(crt_externs.h)
+ AC_CACHE_CHECK([for _NSGetEnviron], ac_cv__NSGetEnviron,
+[
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+    #ifdef HAVE_CRT_EXTERNS_H
+    #include <crt_externs.h>
+    #endif
+    ],[char *arg0 = *(*_NSGetEnviron());])],
+  ac_cv__NSGetEnviron=yes,
+  ac_cv__NSGetEnviron=no)
+])
+  if test $ac_cv__NSGetEnviron = yes; then
+    AC_DEFINE([HAVE__NSGETENVIRON],[],[Defined when _NSGetEnviron is available])
+  fi
+])
+
+AC_DEFUN([AC_CHECK__NSGETEXECUTABLEPATH],
+[AC_CHECK_HEADERS(mach-o/dyld.h)
+ AC_CHECK_FUNCS(_NSGetExecutablePath)
+])
+
+AC_DEFUN([AC_CHECK_REMOVE],
+[
+  AC_CHECK_FUNCS(remove)
+])
+
+AC_DEFUN([AC_CHECK_RENAME],
+[
+  AC_CHECK_FUNCS(rename)
+])
+
+AC_DEFUN([AC_CHECK_MKDIR],
+[
+  AC_CHECK_HEADERS(sys/stat.h)
+  AC_CHECK_HEADERS(sys/types.h)
+  AC_CHECK_HEADERS(fcntl.h)
+  AC_CHECK_FUNCS(mkdir)
+])
+
+AC_DEFUN([AC_CHECK_OPENDIR],
+[
+  AC_CHECK_HEADERS(dirent.h)
+  AC_CHECK_FUNCS(opendir)
+  AC_CHECK_FUNCS(fdopendir)
+])
+
+AC_DEFUN([AC_CHECK_STAT],
+[
+  AC_CHECK_HEADERS(stat.h)
+  AC_CHECK_HEADERS(sys/stat.h)
+  AC_CHECK_FUNCS(stat)
+  AC_CHECK_FUNCS(stat64)
+  AC_CHECK_TYPE([struct stat64],
+                [AC_DEFINE([HAVE_STRUCT_STAT64],[],[Defined when struct stat64 is available])],
+                [],
+                [#include <sys/stat.h>])
+])
+
+AC_DEFUN([AC_CHECK_GETCWD],
+[
+  AC_CHECK_FUNCS(getcwd)
+])
+
+AC_DEFUN([AC_CHECK_SIGSET_T],
+[
+  CONF_USE_SIGSET_T="___USE_NO_SIGSET_T"
+  AC_CACHE_CHECK([for sigset_t], ac_cv_type_sigset_t,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SIGNAL_H
+      #include <signal.h>
+      #endif
+      ],[sigset_t ss;])],
+    ac_cv_type_sigset_t=yes,
+    ac_cv_type_sigset_t=no)
+  ])
+  if test $ac_cv_type_sigset_t = yes; then
+    CONF_USE_SIGSET_T="___USE_SIGSET_T"
+  fi
+  AC_SUBST(CONF_USE_SIGSET_T)
+])
+
+
+AC_DEFUN([AC_CHECK_COMMON],
+[
+  AC_CHECK_ENVIRON
+  AC_CHECK__NSGETENVIRON
+  AC_CHECK__NSGETEXECUTABLEPATH
+  AC_CHECK_REMOVE
+  AC_CHECK_RENAME
+  AC_CHECK_MKDIR
+  AC_CHECK_OPENDIR
+  AC_CHECK_STAT
+  AC_CHECK_GETCWD
+  AC_CHECK_SIGSET_T
+])
+
+# Check for OS functions and header files
+
+if test "$ANSI_C" = yes; then
+
+  # Check if linking to the math library needs some special linker flags.
+
+  AC_SEARCH_LIBS(asin,m)
+
+  # The following functions should be provided by an ANSI-C conforming
+  # compiler, but it is safest to double check.  If they are not
+  # available, the system will still compile but some functionality
+  # will be missing from the Gambit runtime system.
+
+  AC_CHECK_FUNCS(getenv)
+  AC_CHECK_FUNCS(time)
+  AC_CHECK_FUNCS(clock)
+
+  # Check for common functions which are frequently available
+  # even if not strictly ANSI-C.
+
+  AC_CHECK_COMMON
+
+else
+
+  AC_CHECK_HEADERS(unistd.h)
+  AC_CHECK_HEADERS(pwd.h)
+  AC_CHECK_HEADERS(dlfcn.h)
+  AC_CHECK_HEADERS(dl.h)
+  AC_CHECK_HEADERS(sys/dxe.h)
+  AC_CHECK_HEADERS(mach-o/dyld.h)
+  AC_CHECK_HEADERS(mach/mach_time.h)
+  AC_CHECK_HEADERS(mach/thread_act.h)
+  AC_CHECK_HEADERS(sys/types.h)
+  AC_CHECK_HEADERS(sys/time.h)
+  AC_CHECK_HEADERS(sys/times.h)
+  AC_CHECK_HEADERS(sys/timeb.h)
+  AC_CHECK_HEADERS(sys/timers.h)
+  AC_CHECK_HEADERS(sys/resource.h)
+  AC_CHECK_HEADERS(sys/wait.h)
+  AC_CHECK_HEADERS(sys/mman.h)
+  AC_CHECK_HEADERS(syslog.h)
+  AC_CHECK_HEADERS(execinfo.h)
+  AC_CHECK_HEADERS(netdb.h)
+  AC_CHECK_HEADERS(grp.h)
+  #AC_CHECK_HEADERS(windows.h)
+  #AC_CHECK_HEADERS(io.h)
+  #AC_CHECK_HEADERS(tchar.h)
+  AC_CHECK_HEADERS(fpu_control.h)
+  AC_CHECK_HEADERS(os2.h)
+  AC_CHECK_HEADERS(dos.h)
+  AC_CHECK_HEADERS(direct.h)
+  #AC_CHECK_HEADERS(Retrace.h)
+  #AC_CHECK_HEADERS(Files.h)
+  #AC_CHECK_HEADERS(Finder.h)
+  #AC_CHECK_HEADERS(Errors.h)
+  #AC_CHECK_HEADERS(Folders.h)
+  #AC_CHECK_HEADERS(OSUtils.h)
+  #AC_CHECK_HEADERS(Power.h)
+  #AC_CHECK_HEADERS(CodeFragments.h)
+  #AC_CHECK_HEADERS(SIOUX.h)
+  #AC_CHECK_HEADERS(mac_gui.h)
+  #AC_CHECK_HEADERS(unix.h)
+  AC_CHECK_HEADERS(wdefwin.h)
+  AC_CHECK_HEADERS(tfork.h)
+  AC_CHECK_HEADERS(curses.h)
+  AC_CHECK_HEADERS(ncurses.h)
+  AC_CHECK_HEADERS(netinet/in.h)
+  AC_CHECK_HEADERS(arpa/inet.h)
+  AC_CHECK_HEADERS(termios.h)
+  #AC_CHECK_HEADERS(term.h)
+  AC_CHECK_HEADERS(pty.h)
+  AC_CHECK_HEADERS(stropts.h)
+  AC_CHECK_HEADERS(libutil.h)
+  AC_CHECK_HEADERS(util.h)
+  AC_CHECK_HEADERS(sys/fpu.h)
+  AC_CHECK_HEADERS(fenv.h)
+  AC_CHECK_HEADERS(fcntl.h)
+  AC_CHECK_HEADERS(sys/ioctl.h)
+  AC_CHECK_HEADERS(sys/socket.h)
+  AC_CHECK_HEADERS(strings.h)
+  AC_CHECK_HEADERS(memory.h)
+  AC_CHECK_HEADERS(sys/sysctl.h)
+  AC_CHECK_HEADERS(sys/syscall.h)
+  AC_CHECK_HEADERS(linux/fs.h)
+  AC_CHECK_HEADERS(ws2tcpip.h)
+  AC_CHECK_HEADERS(TargetConditionals.h)
+  AC_CHECK_HEADERS(AvailabilityMacros.h)
+  AC_CHECK_HEADERS(poll.h)
+  AC_CHECK_HEADERS(sched.h)
+
+  AC_CHECK_COMMON
+
+  if test "$C_COMP_VISUALC" != yes; then
+
+    AC_DEFUN([AC_TYPE_SOCKLEN_T],
+    [AC_CACHE_CHECK([for socklen_t], ac_cv_type_socklen_t,
+    [
+      AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([#include <sys/types.h>
+       #ifdef HAVE_SYS_SOCKET_H
+       #include <sys/socket.h>
+       #endif
+       #ifdef HAVE_WS2TCPIP_H
+       #include <ws2tcpip.h>
+       #endif],
+      [socklen_t len = 42; return 0;])],
+      ac_cv_type_socklen_t=yes,
+      ac_cv_type_socklen_t=no)
+    ])
+      if test $ac_cv_type_socklen_t != yes; then
+        AC_DEFINE([socklen_t],[int],[C type for socklen_t])
+      fi
+    ])
+
+    AC_TYPE_SOCKLEN_T
+
+  fi
+
+  #AC_TYPE_MODE_T
+  #AC_TYPE_OFF_T
+  #AC_TYPE_PID_T
+  #AC_TYPE_SIGNAL
+  #AC_TYPE_SIZE_T
+  #AC_TYPE_UID_T
+
+  #AC_HEADER_DIRENT
+  #AC_HEADER_STAT
+  #AC_HEADER_STDC
+  #AC_HEADER_SYS_WAIT
+  #AC_HEADER_TIME
+  #AC_HEADER_TIOCGWINSZ
+  #AC_FUNC_SELECT_ARGTYPES
+
+  #AC_FUNC_CLOSEDIR_VOID
+  #AC_FUNC_FSEEKO
+  #AC_FUNC_STAT
+  #AC_FUNC_LSTAT
+
+  FLAGS_WINDOWS="-D_WINDOWS -D_WIN32_WINNT=0x0600 -DUNICODE -D_UNICODE"
+
+  if test "$C_COMP_VISUALC" = yes; then
+
+    PATH_SEP="\\\\\\\\\\\\\\\\"
+
+    LIBS="$LIBS Kernel32.Lib User32.Lib Gdi32.Lib WS2_32.Lib"
+
+    if test "$ENABLE_HIGH_RES_TIMING" = yes; then
+      LIBS="$LIBS WinMM.Lib"
+    fi
+
+    FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE $FLAGS_WINDOWS"
+
+    # For compatibility with Windows XP
+    FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE -D_ATL_XP_TARGETING"
+
+  else
+
+    case "$target_os" in
+
+       mingw* | msys*)
+
+               # The following redefinition of PATH_SEP is dubious on
+               # mingw/msys (see issue #828).
+               #PATH_SEP="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"
+
+               # add Windows libraries needed by MinGW
+
+               LIBS="$LIBS -lws2_32"
+
+               if test "$ENABLE_HIGH_RES_TIMING" = yes; then
+                 LIBS="$LIBS -lwinmm"
+               fi
+
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE $FLAGS_WINDOWS"
+               ;;
+
+            *) # check libraries for other systems
+
+               AC_SEARCH_LIBS(asin,m)
+
+               AC_SEARCH_LIBS(backtrace_symbols_fd,execinfo)
+
+               AC_SEARCH_LIBS(dlopen,dl)
+               AC_SEARCH_LIBS(shl_load,dld)
+
+               #AC_SEARCH_LIBS(tgetstr,ncurses curses)
+               #AC_SEARCH_LIBS(tigetstr,ncurses curses)
+
+               AC_SEARCH_LIBS(socket,socket)
+
+               AC_SEARCH_LIBS(gethostbyname,nsl resolv xnet)
+
+               AC_SEARCH_LIBS(hstrerror,resolv)
+
+               AC_SEARCH_LIBS(openpty,util)
+
+               AC_SEARCH_LIBS(clock_gettime,rt)
+
+               AC_SEARCH_LIBS(timeBeginPeriod,winmm)
+               ;;
+    esac
+
+  fi
+
+  # detect WSL
+
+  ON_WSL="no"
+
+  if test -r /proc/version; then
+    if grep -q Microsoft /proc/version; then
+      ON_WSL="yes"
+    fi
+  fi
+
+  AC_CHECK_FUNCS(backtrace_symbols_fd)
+  AC_CHECK_FUNCS(chdir)
+  AC_CHECK_FUNCS(execvp)
+  AC_CHECK_FUNCS(fcntl)
+  AC_CHECK_FUNCS(getgrnam)
+  AC_CHECK_FUNCS(getpid)
+  AC_CHECK_FUNCS(getppid)
+  AC_CHECK_FUNCS(getpwnam)
+  AC_CHECK_FUNCS(ioctl)
+  AC_CHECK_FUNCS(link)
+  AC_CHECK_FUNCS(mkfifo)
+  AC_CHECK_FUNCS(mmap)
+  AC_CHECK_FUNCS(open)
+  AC_CHECK_FUNCS(pipe)
+  AC_CHECK_FUNCS(readlink)
+  AC_CHECK_FUNCS(rmdir)
+  AC_CHECK_FUNCS(socket)
+  AC_CHECK_FUNCS(socketpair)
+  AC_CHECK_FUNCS(strerror)
+  AC_CHECK_FUNCS(symlink)
+  AC_CHECK_FUNCS(sysconf)
+  AC_CHECK_FUNCS(sysctl)
+  AC_CHECK_FUNCS(sysctlbyname)
+  AC_CHECK_FUNCS(syslog)
+  AC_CHECK_FUNCS(unlink)
+  AC_CHECK_FUNCS(utimes)
+  AC_CHECK_FUNCS(waitpid)
+
+  AC_CHECK_FUNCS(fstatat)
+  AC_CHECK_FUNCS(linkat)
+  AC_CHECK_FUNCS(mkdirat)
+  AC_CHECK_FUNCS(mkfifoat)
+  AC_CHECK_FUNCS(openat)
+  AC_CHECK_FUNCS(readlinkat)
+  AC_CHECK_FUNCS(renameat)
+  if test "$ON_WSL" != yes; then
+    AC_CHECK_FUNCS(renameat2)
+    AC_CHECK_FUNCS(renameatx_np)
+  fi
+  AC_CHECK_FUNCS(symlinkat)
+  AC_CHECK_FUNCS(unlinkat)
+
+  # The following checks for library functions have been written
+  # specially to catch the case where they are declared as inline
+  # functions.  This was done when porting to the Android platform,
+  # but it may be useful for other platforms as well.
+
+  # used to be: AC_CHECK_FUNCS(tcgetattr)
+
+  AC_DEFUN([AC_CHECK_FUNC_TCGETSETATTR],
+  [AC_CACHE_CHECK([for tcgetsetattr], ac_cv_func_tcgetsetattr,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_TERMIOS_H
+      #include <termios.h>
+      #endif
+      ],[int fd = 1; struct termios tios; tcgetattr (fd, &tios); tcsetattr (fd, TCSANOW, &tios);])],
+    ac_cv_func_tcgetsetattr=yes,
+    ac_cv_func_tcgetsetattr=no)
+  ])
+    if test $ac_cv_func_tcgetsetattr = yes; then
+      AC_DEFINE([HAVE_TCGETSETATTR],[],[Defined when tcgetattr and tcsetattr are available])
+    fi
+  ])
+
+  AC_CHECK_FUNC_TCGETSETATTR
+
+  # used to be: AC_CHECK_FUNCS(sigaction)
+
+  AC_DEFUN([AC_CHECK_FUNC_SIGACTION],
+  [AC_CACHE_CHECK([for sigaction], ac_cv_func_sigaction,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SIGNAL_H
+      #include <signal.h>
+      #endif
+      ],[struct sigaction sa1, sa2; sigaction (1, &sa1, &sa2);])],
+    ac_cv_func_sigaction=yes,
+    ac_cv_func_sigaction=no)
+  ])
+    if test $ac_cv_func_sigaction = yes; then
+      AC_DEFINE([HAVE_SIGACTION],[],[Defined when sigaction is available])
+    fi
+  ])
+
+  AC_CHECK_FUNC_SIGACTION
+
+  # used to be: AC_CHECK_FUNCS(sigemptyset)
+  #             AC_CHECK_FUNCS(sigaddset)
+
+  AC_DEFUN([AC_CHECK_FUNC_SIGSET],
+  [AC_CACHE_CHECK([for sigemptyset/sigaddset], ac_cv_func_sigset,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SIGNAL_H
+      #include <signal.h>
+      #endif
+      ],[sigset_t ss; sigemptyset (&ss); sigaddset (&ss, 1);])],
+    ac_cv_func_sigset=yes,
+    ac_cv_func_sigset=no)
+  ])
+    if test $ac_cv_func_sigset = yes; then
+      AC_DEFINE([HAVE_SIGEMPTYSET],[],[Defined when sigemptyset is available])
+      AC_DEFINE([HAVE_SIGADDSET],[],[Defined when sigaddset is available])
+    fi
+  ])
+
+  AC_CHECK_FUNC_SIGSET
+
+  # used to be: AC_CHECK_FUNCS(sigprocmask)
+
+  AC_DEFUN([AC_CHECK_FUNC_SIGPROCMASK],
+  [AC_CACHE_CHECK([for sigprocmask], ac_cv_func_sigprocmask,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SIGNAL_H
+      #include <signal.h>
+      #endif
+      ],[sigset_t ss1, ss2; sigemptyset (&ss1); sigaddset (&ss1, 1); sigprocmask (SIG_BLOCK, &ss1, &ss2);])],
+    ac_cv_func_sigprocmask=yes,
+    ac_cv_func_sigprocmask=no)
+  ])
+    if test $ac_cv_func_sigprocmask = yes; then
+      AC_DEFINE([HAVE_SIGPROCMASK],[],[Defined when sigprocmask is available])
+    fi
+  ])
+
+  AC_CHECK_FUNC_SIGPROCMASK
+
+  # used to be: AC_CHECK_FUNCS(signal)
+
+  AC_DEFUN([AC_CHECK_FUNC_SIGNAL],
+  [AC_CACHE_CHECK([for signal], ac_cv_func_signal,
+  [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+      #ifdef HAVE_SIGNAL_H
+      #include <signal.h>
+      #endif
+      ],[signal (1, SIG_DFL);])],
+    ac_cv_func_signal=yes,
+    ac_cv_func_signal=no)
+  ])
+    if test $ac_cv_func_signal = yes; then
+      AC_DEFINE([HAVE_SIGNAL],[],[Defined when signal is available])
+    fi
+  ])
+
+  AC_CHECK_FUNC_SIGNAL
+
+  AC_CHECK_FUNCS(clock_gettime)
+  AC_CHECK_FUNCS(mach_absolute_time)
+  AC_CHECK_FUNCS(getclock)
+  #AC_CHECK_FUNCS(GetSystemTime)
+  AC_CHECK_FUNCS(gettimeofday)
+  AC_CHECK_FUNCS(ftime)
+  AC_CHECK_FUNCS(time)
+
+  #AC_CHECK_FUNCS(Sleep)
+  AC_CHECK_FUNCS(sleep)
+  if test "$ON_WSL" = yes; then
+    AC_DEFINE([USE_ITIMER_REAL],[],[Force using ITIMER_REAL])
+  else
+    AC_CHECK_FUNCS(nanosleep)
+  fi
+
+  AC_CHECK_FUNCS(setitimer)
+  AC_CHECK_FUNCS(dos_setvect)
+  AC_CHECK_FUNCS(DosStartTimer)
+  AC_CHECK_FUNCS(VInstall)
+  #AC_CHECK_FUNCS(CreateThread)
+
+  #AC_CHECK_FUNCS(GetProcessTimes)
+  AC_CHECK_FUNCS(getrusage)
+  AC_CHECK_FUNCS(times)
+  AC_CHECK_FUNCS(clock)
+  AC_CHECK_FUNCS(DosQuerySysInfo)
+
+  AC_CHECK_FUNCS(shl_load)
+  #AC_CHECK_FUNCS(LoadLibrary)
+  AC_CHECK_FUNCS(DosLoadModule)
+  AC_CHECK_FUNCS(dxe_load)
+  AC_CHECK_FUNCS(GetDiskFragment)
+  AC_CHECK_FUNCS(dlopen)
+  AC_CHECK_FUNCS(NSLinkModule) # has been deprecated by Apple
+
+  AC_CHECK_FUNCS(gethostname)
+  AC_CHECK_FUNCS(inet_pton)
+  AC_CHECK_FUNCS(getaddrinfo)
+  AC_CHECK_FUNCS(gethostbyname)
+  AC_CHECK_FUNCS(gethostbyaddr)
+  AC_CHECK_FUNCS(getservbyname)
+  AC_CHECK_FUNCS(getservbyport)
+  AC_CHECK_FUNCS(getprotobyname)
+  AC_CHECK_FUNCS(getprotobynumber)
+  AC_CHECK_FUNCS(getnetbyname)
+
+  AC_CHECK_FUNCS(select)
+  AC_CHECK_FUNCS(poll)
+  AC_CHECK_FUNCS(ppoll)
+  #AC_CHECK_FUNCS(MsgWaitForMultipleObjects)
+
+  #AC_CHECK_FUNCS(tgetstr)
+  #AC_CHECK_FUNCS(tigetstr)
+
+  AC_CHECK_FUNCS(openpty)
+  AC_CHECK_FUNCS(getpt)
+  AC_CHECK_FUNCS(ptsname)
+  AC_CHECK_FUNCS(ctermid)
+  AC_CHECK_FUNCS(isastream)
+
+  AC_CHECK_FUNCS(hstrerror)
+
+  AC_CHECK_FUNCS(snprintf)
+
+  AC_CHECK_FUNCS(sched_getcpu)
+
+  case "$target_os" in
+    # the OpenBSD test is always lowercase
+    openbsd*)
+      # OpenBSD/mips64(el) does have get_fpc_csr(), but lacks union fpc_csr.
+      ;;
+    *)
+      AC_CHECK_FUNCS(get_fpc_csr)
+      ;;
+  esac
+
+fi
+
+###############################################################################
+#
+# Determine which thread system to use.
+
+# Check for threading system early, in case this has an impact on
+# other functionality.
+
+CONF_THREAD_SYSTEM="___USE_NO_THREAD_SYSTEM"
+CONF_THREAD_LOCAL_STORAGE_CLASS="___NO_THREAD_LOCAL_STORAGE_CLASS"
+
+if test "$ENABLE_THREAD_SYSTEM" != no; then
+
+  FOUND_THREAD_SYSTEM="no"
+
+  if test "$FOUND_THREAD_SYSTEM" = no -a \( "$ENABLE_THREAD_SYSTEM" = yes -o "$ENABLE_THREAD_SYSTEM" = posix -o "$ENABLE_THREAD_SYSTEM" = pthreads \); then
+
+    # check if posix thread system is available
+
+    ORIG_CFLAGS="$CFLAGS"
+    ORIG_LIBS="$LIBS"
+
+    for opt in "" "OPT_CFLAGS=\"-mt\"" "OPT_CFLAGS=\"-pthread\"" "OPT_LIBS=\"-lpthread\""; do
+
+      OPT_CFLAGS=""
+      OPT_LIBS=""
+
+      eval "$opt"
+
+      CFLAGS="$ORIG_CFLAGS $OPT_CFLAGS"
+      LIBS="$ORIG_LIBS $OPT_LIBS"
+
+      AC_MSG_CHECKING([for posix threads with CFLAGS='$CFLAGS' and LIBS='$LIBS'])
+
+      AC_LINK_IFELSE(
+        [AC_LANG_PROGRAM([
+           #include <pthread.h>
+           void *start_fn (void *ptr) { return ptr; }
+        ],[
+           pthread_t thread;
+           pthread_mutex_t mut;
+           if (pthread_mutex_init (&mut, NULL) == 0 &&
+               pthread_mutex_lock (&mut) == 0 &&
+               pthread_mutex_unlock (&mut) == 0 &&
+               pthread_mutex_destroy (&mut) == 0) {
+             pthread_create (&thread, NULL, start_fn, NULL);
+             pthread_join (thread, NULL);
+           }
+        ])],[
+         AC_MSG_RESULT([yes])
+         FOUND_THREAD_SYSTEM="posix"
+         FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE $OPT_CFLAGS"
+         break
+        ],[
+         AC_MSG_RESULT([no])
+         LIBS="$ORIG_LIBS"
+        ])
+
+      CFLAGS="$ORIG_CFLAGS"
+
+    done
+
+  fi
+
+  if test "$FOUND_THREAD_SYSTEM" = no -a \( "$ENABLE_THREAD_SYSTEM" = yes -o "$ENABLE_THREAD_SYSTEM" = win32 \); then
+
+    # check if win32 thread system is available
+
+    AC_MSG_CHECKING([for win32 threads])
+
+    if test "$OS_WIN32" = yes; then
+      AC_MSG_RESULT([yes])
+      FOUND_THREAD_SYSTEM="win32"
+    else
+      AC_MSG_RESULT([no])
+    fi
+
+  fi
+
+  if test "$FOUND_THREAD_SYSTEM" != no; then
+
+    case "$FOUND_THREAD_SYSTEM" in
+
+      posix)
+        CONF_THREAD_SYSTEM="___USE_POSIX_THREAD_SYSTEM"
+        ;;
+
+      win32)
+        CONF_THREAD_SYSTEM="___USE_WIN32_THREAD_SYSTEM"
+        ;;
+
+    esac
+
+    AC_MSG_CHECKING([for thread local storage class])
+
+    TLS_CLASS="none"
+
+    for tls_class in "thread_local" "__thread" "_Thread_local" "__declspec(thread)"; do
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+        #include <stdlib.h>
+        ] $tls_class [ int foo;
+       ],[
+        foo = 42;
+       ])],[TLS_CLASS="$tls_class"; break])
+    done
+
+    AC_MSG_RESULT($TLS_CLASS)
+
+    if test "$TLS_CLASS" != none; then
+      CONF_THREAD_LOCAL_STORAGE_CLASS="___THREAD_LOCAL_STORAGE_CLASS $TLS_CLASS"
+    fi
+
+  else
+
+    if test "$ENABLE_THREAD_SYSTEM" = yes; then
+
+      AC_MSG_NOTICE([
+*********************************************************************
+***                                                               ***
+*** A thread system is required for this configuration but none   ***
+*** of the supported thread systems (posix threads and win32      ***
+*** threads) are available on this platform. The configuration    ***
+*** will proceed as though --disable-thread-system,               ***
+*** --disable-multiple-vms, and --disable-multiple-threaded-vms   ***
+*** were specified.                                               ***
+***                                                               ***
+*********************************************************************
+])
+
+    else
+
+      AC_MSG_NOTICE([
+*********************************************************************
+***                                                               ***
+*** The thread system selected with --enable-thread-system=XXX    ***
+*** is not available on this platform. The configuration will     ***
+*** proceed as though --disable-thread-system,                    ***
+*** --disable-multiple-vms, and --disable-multiple-threaded-vms   ***
+*** were specified.                                               ***
+***                                                               ***
+*********************************************************************
+])
+
+    fi
+
+    CONF_SINGLE_MULTIPLE_VMS="___SINGLE_VM"
+    CONF_SINGLE_MULTIPLE_THREADED_VMS="___SINGLE_THREADED_VMS"
+    CONF_MAX_PROCESSORS=1
+
+  fi
+
+fi
+
+AC_SUBST(CONF_THREAD_SYSTEM)
+AC_SUBST(CONF_THREAD_LOCAL_STORAGE_CLASS)
+
+# Check availability of WIN32 CONDITION_VARIABLE type.
+
+CONF_HAVE_CONDITION_VARIABLE="___DONT_HAVE_CONDITION_VARIABLE"
+
+if test "$OS_WIN32" = yes; then
+
+  AC_CHECK_TYPE([CONDITION_VARIABLE],
+                [CONF_HAVE_CONDITION_VARIABLE="___HAVE_CONDITION_VARIABLE"],
+                [],
+                [#include <windows.h>])
+
+fi
+
+AC_SUBST(CONF_HAVE_CONDITION_VARIABLE)
+
+###############################################################################
+#
+# Check for pthread_setaffinity_np if using posix threads.
+
+if test "$FOUND_THREAD_SYSTEM" = posix; then
+
+  AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+    [#include <pthread.h>],
+    [cpu_set_t cpuset;
+     CPU_ZERO (&cpuset);
+     CPU_SET (0, &cpuset);
+     pthread_setaffinity_np (pthread_self (), sizeof (cpu_set_t), &cpuset);])],
+    AC_DEFINE([HAVE_PTHREAD_SETAFFINITY_NP],[1],[Define if pthread_setaffinity_np is supported]))
+
+fi
+
+###############################################################################
+#
+# OpenSSL flags
+
+if test "$ENABLE_OPENSSL" = yes; then
+
+  case "$target_os" in
+    darwin*) # macOS ships an old version of the OpenSSL library, so it should
+             # be installed with "brew install openssl" or another means and
+             # set the OPENSSL_DIR environment variable to prefix where installed.
+             if test "${OPENSSL_DIR+set}" != set; then
+               OPENSSL_DIR="/usr/local/opt/openssl@1.1"
+             fi
+             if test "$ENABLE_OPENSSL_STATIC_LINK" = yes; then
+               LIBS="$LIBS $OPENSSL_DIR/lib/libssl.a $OPENSSL_DIR/lib/libcrypto.a"
+             else
+               LIBS="$LIBS -L$OPENSSL_DIR/lib -lssl -lcrypto"
+             fi
+             CFLAGS="$CFLAGS -Wno-deprecated-declarations -I\"$OPENSSL_DIR/include\""
+             ;;
+    mingw* | msys*)
+             # Search in typical locations
+             CFLAGS="$CFLAGS -I\"/C/OpenSSL-x64/include\" -I\"/c/OpenSSL/include\" -I\"/usr/local/include\""
+             LIBS="$LIBS -L\"/C/OpenSSL-x64/lib\" -L\"/c/OpenSSL/lib\" -L\"/usr/local/lib/\" -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32 -mconsole"
+             ;;
+         *)
+             LIBS="$LIBS -L/usr/local/opt/openssl/lib -lssl -lcrypto"
+             ;;
+  esac
+
+fi
+
+
+###############################################################################
+#
+# Check for possible presence of C compiler bugs.
+
+# For details see the messages printed at the end of the configure script.
+
+if test "$C_COMP_GNUC" = yes; then
+
+  AC_COMPUTE_INT(C_COMP_GNUC_VERSION,[__GNUC__*100000+__GNUC_MINOR__*1000+__GNUC_PATCHLEVEL__])
+
+fi
+
+if test "$C_COMP_CLANG" = yes; then
+
+  AC_COMPUTE_INT(C_COMP_CLANG_VERSION,[__clang_major__*100000+__clang_minor__*1000+__clang_patchlevel__])
+
+  if test "$C_COMP_CLANG_VERSION" -ge 1100000; then
+    OMIT_FRAME_POINTER_POSSIBLE_BUG=yes
+  fi
+
+else
+  if test "$C_COMP_GNUC" = yes; then
+
+    if test "$C_COMP_GNUC_VERSION" -ge 402000 -a "$C_COMP_GNUC_VERSION" -lt 404000 -a "$ENABLE_SINGLE_HOST" = yes; then
+      GNU_GCC_MOVE_LOOP_INVARIANTS_POSSIBLE_BUG=yes
+    fi
+
+    if test "$C_COMP_GNUC_VERSION" -lt 405000 -a "$C_COMP_LLVM" = yes; then
+      LLVM_GCC_LABEL_VALUES_POSSIBLE_BUG=yes
+    fi
+
+    case "$target_os" in
+      darwin*) # strangely this bug only appears on Mac OS
+        if test "$C_COMP_GNUC_VERSION" -ge 600000 -a "$DASH_fno_ipa_ra" != "" -a "$ENABLE_SHARED" = yes -a "$ENABLE_C_OPT" != no; then
+          GNU_GCC_IPA_RA_POSSIBLE_BUG=yes
+        fi
+        ;;
+    esac
+
+  fi
+fi
+
+
+###############################################################################
+#
+# Check which command line options are supported by $C_COMPILER.
+
+if test "$C_COMP_GNUC" = yes; then
+
+  ########## Using gcc...
+
+  # Determine if GNU gcc or LLVM gcc is being used.
+
+  if test "$C_COMP_CLANG" = yes -o "$ENABLE_GNU_GCC_SPECIFIC_OPTIONS" != yes; then
+
+    # clang does not support these options:
+    DASH_fschedule_insns2=""
+    DASH_fno_keep_inline_dllexport=""
+    #DASH_fpermissive=""
+
+    DASH_fexpensive_optimizations=""
+    DASH_fipa_ra=""
+    DASH_fno_ipa_ra=""
+    DASH_fmove_loop_invariants=""
+    DASH_fno_move_loop_invariants=""
+    DASH_fgcse=""
+    DASH_fno_gcse=""
+    DASH_DASH_param_max_gcse_memory=""
+    DASH_foptimize_sibling_calls=""
+
+    DASH_mieee=""
+    DASH_mieee_with_inexact=""
+    DASH_mpc64=""
+
+  else
+
+    # optimization options:
+    AC_CHECK_C_COMPILER_OPT(-fschedule-insns2,DASH_fschedule_insns2)
+    AC_CHECK_C_COMPILER_OPT(-fno-keep-inline-dllexport,DASH_fno_keep_inline_dllexport)
+    #AC_CHECK_C_COMPILER_OPT(-fpermissive,DASH_fpermissive)
+
+    AC_CHECK_C_COMPILER_OPT(-fexpensive-optimizations,DASH_fexpensive_optimizations)
+    AC_CHECK_C_COMPILER_OPT(-fipa-ra,DASH_fipa_ra)
+    AC_CHECK_C_COMPILER_OPT(-fno-ipa-ra,DASH_fno_ipa_ra)
+    AC_CHECK_C_COMPILER_OPT(-fmove-loop-invariants,DASH_fmove_loop_invariants)
+    AC_CHECK_C_COMPILER_OPT(-fno-move-loop-invariants,DASH_fno_move_loop_invariants)
+    AC_CHECK_C_COMPILER_OPT(-fgcse,DASH_fgcse)
+    AC_CHECK_C_COMPILER_OPT(-fno-gcse,DASH_fno_gcse)
+    AC_CHECK_C_COMPILER_OPT(--param max-gcse-memory=400000,DASH_DASH_param_max_gcse_memory) # 400 MB to do GCSE is a reasonable limit
+    AC_CHECK_C_COMPILER_OPT(-foptimize-sibling-calls,DASH_foptimize_sibling_calls)
+
+    # machine specific options:
+    AC_CHECK_C_COMPILER_OPT(-mieee,DASH_mieee)
+    AC_CHECK_C_COMPILER_OPT(-mieee-with-inexact,DASH_mieee_with_inexact)
+    AC_CHECK_C_COMPILER_OPT(-mpc64,DASH_mpc64)
+
+  fi
+
+  if test "$DASH_fexpensive_optimizations" != ""; then
+    # turn off expensive optimizations when module is beyond normal limit
+    CONF_GNUC_HOST_FUNCTION_ATTRIBUTES_UNOPTIMIZED_MODULE="__attribute__ ((optimize (\"no-expensive-optimizations\")))"
+  fi
+
+  # preprocessor options:
+  AC_CHECK_C_COMPILER_OPT(-no-cpp-precomp,DASH_no_cpp_precomp)
+
+  # debugging options:
+  AC_CHECK_C_COMPILER_OPT(-Wall,DASH_Wall)
+  AC_CHECK_C_COMPILER_OPT(-W,DASH_W)
+  AC_CHECK_C_COMPILER_OPT(-Wno-unused,DASH_Wno_unused)
+  AC_CHECK_C_COMPILER_OPT(-Wno-write-strings,DASH_Wno_write_strings)
+  AC_CHECK_C_COMPILER_OPT(-Wdisabled-optimization,DASH_Wdisabled_optimization)
+  AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+  # profiling options:
+  AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+  AC_CHECK_C_COMPILER_OPT(-pg,DASH_pg)
+  AC_CHECK_C_COMPILER_OPT(-ftest-coverage,DASH_ftest_coverage)
+  AC_CHECK_C_COMPILER_OPT(-fprofile-arcs,DASH_fprofile_arcs)
+  AC_CHECK_C_COMPILER_OPT(-fbranch-probabilities,DASH_fbranch_probabilities)
+
+  # optimization options:
+  AC_CHECK_C_COMPILER_OPT(-O1,DASH_O1)
+  AC_CHECK_C_COMPILER_OPT(-O2,DASH_O2)
+  AC_CHECK_C_COMPILER_OPT(-O3,DASH_O3)
+  AC_CHECK_C_COMPILER_OPT(-Ofast,DASH_Ofast)
+  AC_CHECK_C_COMPILER_OPT(-fno-math-errno,DASH_fno_math_errno)
+  AC_CHECK_C_COMPILER_OPT(-fno-trapping-math,DASH_fno_trapping_math)
+  AC_CHECK_C_COMPILER_OPT(-fno-strict-aliasing,DASH_fno_strict_aliasing)
+  AC_CHECK_C_COMPILER_OPT(-fwrapv,DASH_fwrapv)
+  AC_CHECK_C_COMPILER_OPT(-ftrapv,DASH_ftrapv)
+  AC_CHECK_C_COMPILER_OPT(-fomit-frame-pointer,DASH_fomit_frame_pointer)
+
+  # machine architecture option:
+  if test "$ENABLE_MARCH" != "" -a "$ENABLE_MARCH" != "no_enable_march"; then
+    AC_CHECK_C_COMPILER_OPT(-march=$ENABLE_MARCH,DASH_march)
+  fi
+
+  FLAGS_OPT_LO="$DASH_O1"
+
+  if test "$DASH_O3" != ""; then
+    FLAGS_OPT_HI="$DASH_O3"
+  else
+    if test "$DASH_O2" != ""; then
+      FLAGS_OPT_HI="$DASH_O2"
+    else
+      FLAGS_OPT_HI="$DASH_O1"
+    fi
+  fi
+
+  FLAGS_OPT="$FLAGS_OPT_LO"
+  FLAGS_OPT="$FLAGS_OPT$DASH_fexpensive_optimizations"
+  FLAGS_OPT="$FLAGS_OPT$DASH_fno_gcse"
+  FLAGS_OPT="$FLAGS_OPT$DASH_DASH_param_max_gcse_memory"
+
+  FLAGS_OPT_RTS="$FLAGS_OPT_HI"
+
+  case "$ENABLE_C_OPT" in
+
+     yes) FLAGS_OPT="$FLAGS_OPT_HI"
+          ;;
+
+      no) ;;
+
+       *) FLAGS_OPT=" $ENABLE_C_OPT"
+          ;;
+
+  esac
+  case "$ENABLE_C_OPT_RTS" in
+
+     yes) ;;
+
+      no) FLAGS_OPT_RTS="$FLAGS_OPT_LO"
+          ;;
+
+       *) FLAGS_OPT_RTS=" $ENABLE_C_OPT_RTS"
+          ;;
+
+  esac
+
+# It isn't clear these are useful:
+#  AC_CHECK_C_COMPILER_OPT(-fexpensive-optimizations,DASH_fexpensive_optimizations)
+#  AC_CHECK_C_COMPILER_OPT(-fforce-addr,DASH_fforce_addr)
+#  AC_CHECK_C_COMPILER_OPT(-fpeephole2,DASH_fpeephole2)
+#  AC_CHECK_C_COMPILER_OPT(-falign-jumps,DASH_falign_jumps)
+#  AC_CHECK_C_COMPILER_OPT(-falign-functions,DASH_falign_functions)
+#  AC_CHECK_C_COMPILER_OPT(-fno-function-cse,DASH_fno_function_cse)
+#  AC_CHECK_C_COMPILER_OPT(-ftree-copyrename,DASH_ftree_copyrename)
+#  AC_CHECK_C_COMPILER_OPT(-ftree-fre,DASH_ftree_fre)
+#  AC_CHECK_C_COMPILER_OPT(-ftree-dce,DASH_ftree_dce)
+#  AC_CHECK_C_COMPILER_OPT(-fschedule-interblock,DASH_fschedule_interblock)
+#  AC_CHECK_C_COMPILER_OPT(-fregmove,DASH_fregmove)
+#  AC_CHECK_C_COMPILER_OPT(-fgcse-las,DASH_fgcse_las)
+#  AC_CHECK_C_COMPILER_OPT(-freorder-functions,DASH_freorder_functions)
+#  AC_CHECK_C_COMPILER_OPT(-fcaller-saves,DASH_fcaller_saves)
+#  AC_CHECK_C_COMPILER_OPT(-fno-if-conversion2,DASH_fno_if_conversion2)
+#  AC_CHECK_C_COMPILER_OPT(-fcse-skip-blocks,DASH_fcse_skip_blocks)
+#  AC_CHECK_C_COMPILER_OPT(-funit-at-a-time,DASH_funit_at_a_time)
+#  AC_CHECK_C_COMPILER_OPT(-finline-functions,DASH_finline_functions)
+
+  if test "$ENABLE_GCC_OPTS" = yes; then
+    AC_CHECK_C_COMPILER_OPT(-fmodulo-sched,DASH_fmodulo_sched)
+    AC_CHECK_C_COMPILER_OPT(-freschedule-modulo-scheduled-loops,DASH_freschedule_modulo_scheduled_loops)
+
+  fi
+
+  # code generation options:
+  case "$target_os" in
+
+     mingw* | msys* | cygwin*)
+             # no special code generation options needed by MinGW and cygwin
+             ;;
+
+          *) # check for code generation options for other systems
+             AC_CHECK_C_COMPILER_OPT(-fPIC,DASH_fPIC)
+             AC_CHECK_C_COMPILER_OPT(-fpic,DASH_fpic)
+             ;;
+  esac
+  AC_CHECK_C_COMPILER_OPT(-fno-common,DASH_fno_common)
+
+  # linking options:
+  case "$target_os" in
+
+     mingw* | msys* | cygwin* | solaris* | hpux*)
+             # check for special options needed by MinGW, cygwin, Solaris, HP-UX
+             AC_CHECK_C_COMPILER_OPT(-shared,DASH_shared,$DASH_fPIC$DASH_fpic)
+             ;;
+
+    darwin*) # check for special options added by Apple
+             AC_CHECK_C_COMPILER_OPT(-dynamiclib,DASH_dynamiclib)
+             AC_CHECK_C_COMPILER_OPT(-bundle,DASH_bundle)
+
+             # The following linking option appears to be no longer needed.
+             # See https://github.com/gambit/gambit/issues/685 .
+             #AC_CHECK_C_COMPILER_OPT(-flat_namespace -undefined suppress,DASH_flat_namespace_undefined_suppress)
+             ;;
+
+          *) # for other systems
+             AC_CHECK_C_COMPILER_OPT(-rdynamic,DASH_rdynamic)
+             AC_CHECK_C_COMPILER_OPT(-shared,DASH_shared,$DASH_fPIC$DASH_fpic)
+             ;;
+  esac
+
+  # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+  case "$target_os" in
+    darwin*) # avoid the default C preprocessor which is setup for Objective-C
+             FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_no_cpp_precomp"
+             ;;
+  esac
+
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_Wno_unused"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_Wno_write_strings"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_Wdisabled_optimization"
+
+  if test "$ENABLE_PROFILE" = yes; then
+    if test "x$DASH_pg" != x; then
+      FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_pg"
+    else
+      FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+    fi
+  fi
+
+  if test "$ENABLE_DEBUG" = yes; then
+
+    if test "$ENABLE_C_OPT" = no; then
+      FLAGS_OPT=""
+    fi
+
+    if test "$ENABLE_C_OPT_RTS" = yes; then
+      FLAGS_OPT_RTS=""
+    fi
+
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g$DASH_ftrapv"
+
+  else
+    # TODO: remove the use of -fwrapv once runtime system is cleaned up
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fwrapv"
+  fi
+
+  if test "$ENABLE_GNU_GCC_NO_STRICT_ALIASING" = yes; then
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_strict_aliasing"
+  fi
+
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_trapping_math"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_math_errno"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fschedule_insns2"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_keep_inline_dllexport"
+
+#  if test "$ENABLE_CPLUSPLUS" = yes; then
+#    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fpermissive"
+#  fi
+
+# It isn't clear these are useful:
+#  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_trapping_math$DASH_fno_strict_aliasing$DASH_fwrapv$DASH_ftrapv$DASH_fexpensive_optimizations$DASH_fforce_addr$DASH_fpeephole2$DASH_falign_jumps$DASH_falign_functions$DASH_fno_function_cse$DASH_ftree_copyrename$DASH_ftree_fre$DASH_ftree_dce$DASH_fschedule_interblock$DASH_fregmove$DASH_fgcse_las$DASH_freorder_functions$DASH_fcaller_saves$DASH_fno_if_conversion2$DASH_fcse_skip_blocks$DASH_funit_at_a_time$DASH_finline_functions"
+
+  if test "$ENABLE_GCC_OPTS" = yes; then
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fmodulo_sched"
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_freschedule_modulo_scheduled_loops"
+  fi
+
+   FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_foptimize_sibling_calls"
+
+  if test "$OMIT_FRAME_POINTER_POSSIBLE_BUG" != yes; then
+    case "$target_os" in
+
+       mingw* | msys*)
+               # MinGW's setjmp seems to need the frame pointer
+               ;;
+
+            *) # other systems are fine as far as I can tell
+               if test "$ENABLE_DEBUG" != yes -a "$ENABLE_PROFILE" != yes; then
+                 FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fomit_frame_pointer"
+               fi
+               ;;
+    esac
+  fi
+
+  if test "$GNU_GCC_IPA_RA_POSSIBLE_BUG" = yes; then
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_ipa_ra"
+  else
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fipa_ra"
+  fi
+
+  if test "$GNU_GCC_MOVE_LOOP_INVARIANTS_POSSIBLE_BUG" = yes; then
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_move_loop_invariants"
+  else
+    FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fmove_loop_invariants"
+  fi
+
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_march"
+
+  if test "$ENABLE_FEEDBACK1" = yes -o "$ENABLE_COVERAGE" = yes; then
+    AC_DEFINE([___DONT_UNLOAD_DYN_CODE],[],[Disable unloading of dynamically loaded code])
+    FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_fprofile_arcs"
+    if test "$ENABLE_COVERAGE" = yes; then
+      FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_ftest_coverage"
+    fi
+  fi
+
+  if test "$ENABLE_FEEDBACK2" = yes; then
+    AC_DEFINE([___DONT_UNLOAD_DYN_CODE],[],[Disable unloading of dynamically loaded code])
+    FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_fbranch_probabilities"
+  fi
+
+  if test "$ENABLE_PIC" != no; then
+    if test "x$DASH_fPIC" != x; then
+      FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fPIC"
+    else
+      FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fpic"
+    fi
+  fi
+
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fno_common"
+
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_mieee"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_mieee_with_inexact"
+  FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_mpc64"
+
+  case "$target_os" in
+
+    darwin*) # check for special options added by Apple
+             FLAGS_DYN="$FLAGS_DYN$DASH_bundle"
+             FLAGS_LIB="$FLAGS_LIB$DASH_dynamiclib -install_name \$(libdir)/\$(LIBRARY)\$(LIB_VERSION_SUFFIX)"
+
+             # See comment above about these linking options.
+             #FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_flat_namespace_undefined_suppress"
+             ;;
+
+          *) # for other systems
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_rdynamic"
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_shared"
+             FLAGS_EXE="$FLAGS_EXE$DASH_rdynamic"
+             ;;
+  esac
+
+else if test "$C_COMP_VISUALC" = yes; then
+
+  ########## Microsoft Visual C++ compiler
+
+  FLAGS_OPT_LO="-Oityb1"
+  FLAGS_OPT_HI="-Oityb2"
+
+  FLAGS_OPT="$FLAGS_OPT_LO"
+  FLAGS_OPT_RTS="$FLAGS_OPT_HI"
+
+  case "$ENABLE_C_OPT" in
+
+     yes) FLAGS_OPT="$FLAGS_OPT_HI"
+          ;;
+
+      no) ;;
+
+       *) FLAGS_OPT=" $ENABLE_C_OPT"
+          ;;
+
+  esac
+  case "$ENABLE_C_OPT_RTS" in
+
+     yes) ;;
+
+      no) FLAGS_OPT_RTS="$FLAGS_OPT_LO"
+          ;;
+
+       *) FLAGS_OPT_RTS=" $ENABLE_C_OPT_RTS"
+          ;;
+
+  esac
+
+  FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE -nologo -MT -D_CRT_SECURE_NO_DEPRECATE"
+  FLAGS_DYN="$FLAGS_DYN -LD"
+
+#else if test "$C_COMP_WATCOMC" = yes; then
+#else if test "$C_COMP_BORLANDC" = yes; then
+
+else
+
+  ########## Need to guess the C compiler from the OS...
+
+  case "$target_os" in
+
+   solaris*) ########## Probably using the Sun Workshop C/C++ compiler...
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # profiling options:
+             AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-xO2,DASH_xO2)
+
+             # code generation options:
+             AC_CHECK_C_COMPILER_OPT(-KPIC,DASH_KPIC)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-G,DASH_G)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_PROFILE" = yes; then
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_xO2"
+             fi
+
+             if test "$ENABLE_PIC" != no; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_KPIC"
+             fi
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_G"
+             ;;
+
+       osf*) ########## Probably using the Compaq Tru64 UNIX C/C++ compiler...
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # profiling options:
+             AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-O2,DASH_O2)
+
+             # code generation options:
+             AC_CHECK_C_COMPILER_OPT(-ieee,DASH_ieee)
+             AC_CHECK_C_COMPILER_OPT(-call_shared,DASH_call_shared)
+             #AC_CHECK_C_COMPILER_OPT(-taso,DASH_taso)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-shared,DASH_shared)
+             AC_CHECK_C_COMPILER_OPT(-expect_unresolved,DASH_expect_unresolved)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_PROFILE" = yes; then
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_O2"
+             fi
+
+             FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_ieee$DASH_call_shared"
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_shared$DASH_expect_unresolved"
+             ;;
+
+      irix*) ########## Probably using the MIPSpro C/C++ compiler...
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-fullwarn,DASH_fullwarn)
+             AC_CHECK_C_COMPILER_OPT([-woff 1110,1174,1209,1552,3201],DASH_woff_1110_1174_1209_1552_3201)
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-O1,DASH_O1)
+             AC_CHECK_C_COMPILER_OPT(-OPT:Olimit=0,DASH_OPT_Olimit_0)
+
+             # code generation options:
+             #AC_CHECK_C_COMPILER_OPT(-KPIC,DASH_KPIC)
+             #AC_CHECK_C_COMPILER_OPT(-non_shared,DASH_non_shared)
+             AC_CHECK_C_COMPILER_OPT(-TENV:large_GOT,DASH_TENV_large_GOT)
+             AC_CHECK_C_COMPILER_OPT(-OPT:IEEE_comparisons=ON,DASH_OPT_IEEE_comparisons_ON)
+             AC_CHECK_C_COMPILER_OPT(-OPT:IEEE_NaN_inf=ON,DASH_OPT_IEEE_NaN_inf_ON)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-shared,DASH_shared)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_fullwarn$DASH_woff_1110_1174_1209_1552_3201"
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_O1$DASH_OPT_Olimit_0"
+             fi
+
+             FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_TENV_large_GOT$DASH_OPT_IEEE_comparisons_ON$DASH_OPT_IEEE_NaN_inf_ON"
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_shared"
+             ;;
+
+      hpux*) ########## Probably using the HP-UX compiler...
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # profiling options:
+             AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-O1,DASH_O1)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-b,DASH_b)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_PROFILE" = yes; then
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_O1"
+             fi
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_b"
+             ;;
+
+       aix*) ########## Probably using the AIX xlC compiler...
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # profiling options:
+             AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-O1,DASH_O1)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-G,DASH_G)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_PROFILE" = yes; then
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_O1"
+             fi
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_G"
+             ;;
+
+          *) ########## Unsupported operating system
+
+             AC_MSG_NOTICE([
+*********************************************************************
+***                                                               ***
+*** The GCC compiler is not being used and the operating system   ***
+*** is not one that has been tested with the Gambit system.       ***
+*** The configure script will use certain compiler options that   ***
+*** may not be correct or sufficient for compiling the system.    ***
+*** Please report success or failure to gambit@iro.umontreal.ca.  ***
+*** This will help us support this operating system in the        ***
+*** future.                                                       ***
+***                                                               ***
+*********************************************************************
+])
+
+             # debugging options:
+             AC_CHECK_C_COMPILER_OPT(-g,DASH_g)
+
+             # profiling options:
+             AC_CHECK_C_COMPILER_OPT(-p,DASH_p)
+
+             # optimization options:
+             AC_CHECK_C_COMPILER_OPT(-O1,DASH_O1)
+
+             # linking options:
+             AC_CHECK_C_COMPILER_OPT(-shared,DASH_shared)
+
+             # determine which flags to add to CFLAGS, CXXFLAGS and LDFLAGS
+
+             if test "$ENABLE_DEBUG" = yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_g"
+             fi
+
+             if test "$ENABLE_PROFILE" = yes; then
+               FLAGS_OBJ_DYN_LIB_EXE="$FLAGS_OBJ_DYN_LIB_EXE$DASH_p"
+             fi
+
+             if test "$ENABLE_DEBUG" != yes; then
+               FLAGS_OBJ_DYN="$FLAGS_OBJ_DYN$DASH_O1"
+             fi
+
+             FLAGS_DYN_LIB="$FLAGS_DYN_LIB$DASH_shared"
+             ;;
+  esac
+
+fi
+fi
+
+FLAGS_OBJ="$FLAGS_OBJ $FLAGS_OBJ_DYN $FLAGS_OBJ_DYN_LIB_EXE"
+FLAGS_DYN="$FLAGS_DYN $FLAGS_OBJ_DYN $FLAGS_OBJ_DYN_LIB_EXE $FLAGS_DYN_LIB"
+FLAGS_LIB="$FLAGS_LIB $FLAGS_OBJ_DYN_LIB_EXE $FLAGS_DYN_LIB"
+#FLAGS_EXE="$FLAGS_EXE $FLAGS_OBJ_DYN_LIB_EXE"
+FLAGS_EXE="$FLAGS_OBJ $FLAGS_EXE"
+
+DEFS_OBJ="$DEFS_OBJ_DYN_LIB_EXE $DEFS_OBJ"
+DEFS_DYN="$DEFS_OBJ_DYN_LIB_EXE $DEFS_DYN"
+DEFS_LIB="$DEFS_OBJ_DYN_LIB_EXE $DEFS_LIB"
+DEFS_EXE="$DEFS_OBJ_DYN_LIB_EXE $DEFS_EXE"
+
+###############################################################################
+#
+# Determine if the current binding of CFLAGS, CXXFLAGS and LDFLAGS
+# must be captured in the gambuild-C script (this is the default
+# behavior).
+
+if test "$ENABLE_CPLUSPLUS" = yes; then
+  CORCXXFLAGS="$CXXFLAGS"
+else
+  CORCXXFLAGS="$CFLAGS"
+fi
+
+CORCXXFLAGS_GAMBUILD="$CORCXXFLAGS"
+LDFLAGS_GAMBUILD="$LDFLAGS"
+
+AC_ARG_ENABLE(corcxxflags-gambuild,
+              AS_HELP_STRING([--enable-corcxxflags-gambuild=FLAGS],
+                             [C compiler flags gambuild-C script will use instead of current CFLAGS/CXXFLAGS]),
+              CORCXXFLAGS_GAMBUILD="$enableval")
+
+AC_ARG_ENABLE(ldflags-gambuild,
+              AS_HELP_STRING([--enable-ldflags-gambuild=FLAGS],
+                             [C linker flags gambuild-C script will use instead of current LDFLAGS]),
+              LDFLAGS_GAMBUILD="$enableval")
+
+FLAGS_OBJ_GAMBUILD="\${{CORCXXFLAGS_GAMBUILD}} $FLAGS_OBJ"
+FLAGS_DYN_GAMBUILD="\${{LDFLAGS_GAMBUILD}} \${{CORCXXFLAGS_GAMBUILD}} $FLAGS_DYN"
+FLAGS_LIB_GAMBUILD="\${{LDFLAGS_GAMBUILD}} \${{CORCXXFLAGS_GAMBUILD}} $FLAGS_LIB"
+FLAGS_EXE_GAMBUILD="\${{LDFLAGS_GAMBUILD}} $FLAGS_OBJ_GAMBUILD $FLAGS_EXE"
+
+FLAGS_OBJ="$CORCXXFLAGS $FLAGS_OBJ"
+FLAGS_DYN="$LDFLAGS $CORCXXFLAGS $FLAGS_DYN"
+FLAGS_LIB="$LDFLAGS $CORCXXFLAGS $FLAGS_LIB"
+FLAGS_EXE="$LDFLAGS $FLAGS_OBJ $FLAGS_EXE"
+
+FLAGS_OPT_GAMBUILD="$FLAGS_OPT"
+FLAGS_OPT_RTS_GAMBUILD="$FLAGS_OPT_RTS"
+
+DEFS_OBJ_GAMBUILD="$DEFS_OBJ"
+DEFS_DYN_GAMBUILD="$DEFS_DYN"
+DEFS_LIB_GAMBUILD="$DEFS_LIB"
+DEFS_EXE_GAMBUILD="$DEFS_EXE"
+
+AC_SUBST(FLAGS_OBJ)
+AC_SUBST(FLAGS_DYN)
+AC_SUBST(FLAGS_LIB)
+AC_SUBST(FLAGS_EXE)
+AC_SUBST(FLAGS_OPT)
+AC_SUBST(FLAGS_OPT_RTS)
+AC_SUBST(DEFS_OBJ)
+AC_SUBST(DEFS_DYN)
+AC_SUBST(DEFS_LIB)
+AC_SUBST(DEFS_EXE)
+AC_SUBST(CORCXXFLAGS_GAMBUILD)
+AC_SUBST(LDFLAGS_GAMBUILD)
+AC_SUBST(FLAGS_OBJ_GAMBUILD)
+AC_SUBST(FLAGS_DYN_GAMBUILD)
+AC_SUBST(FLAGS_LIB_GAMBUILD)
+AC_SUBST(FLAGS_EXE_GAMBUILD)
+AC_SUBST(FLAGS_OPT_GAMBUILD)
+AC_SUBST(FLAGS_OPT_RTS_GAMBUILD)
+AC_SUBST(DEFS_OBJ_GAMBUILD)
+AC_SUBST(DEFS_DYN_GAMBUILD)
+AC_SUBST(DEFS_LIB_GAMBUILD)
+AC_SUBST(DEFS_EXE_GAMBUILD)
+
+AC_SUBST(FLAGS_OBJ_MF)
+AC_SUBST(FLAGS_DYN_MF)
+AC_SUBST(FLAGS_LIB_MF)
+AC_SUBST(FLAGS_EXE_MF)
+AC_SUBST(FLAGS_OPT_MF)
+AC_SUBST(FLAGS_OPT_RTS_MF)
+AC_SUBST(DEFS_OBJ_MF)
+AC_SUBST(DEFS_DYN_MF)
+AC_SUBST(DEFS_LIB_MF)
+AC_SUBST(DEFS_EXE_MF)
+AC_SUBST(CORCXXFLAGS_GAMBUILD_MF)
+AC_SUBST(LDFLAGS_GAMBUILD_MF)
+AC_SUBST(FLAGS_OBJ_GAMBUILD_MF)
+AC_SUBST(FLAGS_DYN_GAMBUILD_MF)
+AC_SUBST(FLAGS_LIB_GAMBUILD_MF)
+AC_SUBST(FLAGS_EXE_GAMBUILD_MF)
+AC_SUBST(FLAGS_OPT_GAMBUILD_MF)
+AC_SUBST(FLAGS_OPT_RTS_GAMBUILD_MF)
+AC_SUBST(DEFS_OBJ_GAMBUILD_MF)
+AC_SUBST(DEFS_DYN_GAMBUILD_MF)
+AC_SUBST(DEFS_LIB_GAMBUILD_MF)
+AC_SUBST(DEFS_EXE_GAMBUILD_MF)
+
+AC_SUBST(FLAGS_OBJ_SH)
+AC_SUBST(FLAGS_DYN_SH)
+AC_SUBST(FLAGS_LIB_SH)
+AC_SUBST(FLAGS_EXE_SH)
+AC_SUBST(FLAGS_OPT_SH)
+AC_SUBST(FLAGS_OPT_RTS_SH)
+AC_SUBST(DEFS_OBJ_SH)
+AC_SUBST(DEFS_DYN_SH)
+AC_SUBST(DEFS_LIB_SH)
+AC_SUBST(DEFS_EXE_SH)
+AC_SUBST(CORCXXFLAGS_GAMBUILD_SH)
+AC_SUBST(LDFLAGS_GAMBUILD_SH)
+AC_SUBST(FLAGS_OBJ_GAMBUILD_SH)
+AC_SUBST(FLAGS_DYN_GAMBUILD_SH)
+AC_SUBST(FLAGS_LIB_GAMBUILD_SH)
+AC_SUBST(FLAGS_EXE_GAMBUILD_SH)
+AC_SUBST(FLAGS_OPT_GAMBUILD_SH)
+AC_SUBST(FLAGS_OPT_RTS_GAMBUILD_SH)
+AC_SUBST(DEFS_OBJ_GAMBUILD_SH)
+AC_SUBST(DEFS_DYN_GAMBUILD_SH)
+AC_SUBST(DEFS_LIB_GAMBUILD_SH)
+AC_SUBST(DEFS_EXE_GAMBUILD_SH)
+
+AC_SUBST(FLAGS_OBJ_BAT)
+AC_SUBST(FLAGS_DYN_BAT)
+AC_SUBST(FLAGS_LIB_BAT)
+AC_SUBST(FLAGS_EXE_BAT)
+AC_SUBST(FLAGS_OPT_BAT)
+AC_SUBST(FLAGS_OPT_RTS_BAT)
+AC_SUBST(DEFS_OBJ_BAT)
+AC_SUBST(DEFS_DYN_BAT)
+AC_SUBST(DEFS_LIB_BAT)
+AC_SUBST(DEFS_EXE_BAT)
+AC_SUBST(CORCXXFLAGS_GAMBUILD_BAT)
+AC_SUBST(LDFLAGS_GAMBUILD_BAT)
+AC_SUBST(FLAGS_OBJ_GAMBUILD_BAT)
+AC_SUBST(FLAGS_DYN_GAMBUILD_BAT)
+AC_SUBST(FLAGS_LIB_GAMBUILD_BAT)
+AC_SUBST(FLAGS_EXE_GAMBUILD_BAT)
+AC_SUBST(FLAGS_OPT_GAMBUILD_BAT)
+AC_SUBST(FLAGS_OPT_RTS_GAMBUILD_BAT)
+AC_SUBST(DEFS_OBJ_GAMBUILD_BAT)
+AC_SUBST(DEFS_DYN_GAMBUILD_BAT)
+AC_SUBST(DEFS_LIB_GAMBUILD_BAT)
+AC_SUBST(DEFS_EXE_GAMBUILD_BAT)
+
+###############################################################################
+
+AC_SUBST(RTLIBSUBSYS)
+
+###############################################################################
+
+AC_PATH_XTRA
+
+
+#AC_SYS_INTERPRETER
+#AC_SYS_LARGEFILE
+#AC_SYS_POSIX_TERMIOS
+
+AC_PROG_LN_S
+AC_PROG_RANLIB
+
+AN_MAKEVAR([AR], [AC_PROG_AR])
+AN_PROGRAM([ar], [AC_PROG_AR])
+AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL([AR], [ar], [ar])])
+AC_PROG_AR
+
+RC="git"
+GIT="git"
+HG="hg"
+
+exe="$EXEEXT"
+obj=".$OBJEXT"
+
+if test "$exe" = ".exe"; then
+  bat=".bat"
+else
+  bat=""
+fi
+
+LIB_VERSION_SUFFIX=""
+LIB_MAJOR_VERSION_SUFFIX=""
+
+AC_SUBST(LIB_VERSION_SUFFIX)
+AC_SUBST(LIB_MAJOR_VERSION_SUFFIX)
+
+if test "$ENABLE_SHARED" = yes; then
+
+  case "$target_os" in
+
+     mingw* | cygwin*)
+             LIB_PREFIX="lib"
+             LIB_EXTENSION=".dll"
+             SETDLPATH="PATH=\"\$(rootfromhere)/lib:\$(rootfromhere)/gsi:\$(rootfromhere)/gsc:\${PATH}\""
+             SETDLPATHBOOT="PATH=\"\$(rootfromhere):\${PATH}\""
+             ;;
+
+    darwin*) LIB_PREFIX="lib"
+             LIB_EXTENSION=".dylib"
+             SETDLPATH="DYLD_LIBRARY_PATH=\$(rootfromhere)/lib:\$(rootfromhere)/gsi:\$(rootfromhere)/gsc:\${DYLD_LIBRARY_PATH}"
+             SETDLPATHBOOT="DYLD_LIBRARY_PATH=\$(rootfromhere):\${DYLD_LIBRARY_PATH}"
+             ;;
+
+      hpux*) LIB_PREFIX="lib"
+             LIB_EXTENSION=".so"
+             SETDLPATH="SHLIB_PATH=\$(rootfromhere)/lib:\$(rootfromhere)/gsi:\$(rootfromhere)/gsc:\${SHLIB_PATH}"
+             SETDLPATHBOOT="SHLIB_PATH=\$(rootfromhere):\${SHLIB_PATH}"
+             ;;
+
+       aix*) LIB_PREFIX="lib"
+             LIB_EXTENSION=".so"
+             SETDLPATH="LIBPATH=\$(rootfromhere)/lib:\$(rootfromhere)/gsi:\$(rootfromhere)/gsc:\${LIBPATH}"
+             SETDLPATHBOOT="LIBPATH=\$(rootfromhere):\${LIBPATH}"
+             ;;
+
+          *) LIB_PREFIX="lib"
+             LIB_EXTENSION=".so"
+             SETDLPATH="LD_LIBRARY_PATH=\$(rootfromhere)/lib:\$(rootfromhere)/gsi:\$(rootfromhere)/gsc:\${LD_LIBRARY_PATH}"
+             SETDLPATHBOOT="LD_LIBRARY_PATH=\$(rootfromhere):\${LD_LIBRARY_PATH}"
+
+             if test "$ENABLE_VERSIONED_SHARED_LIBS" = yes; then
+               LIB_VERSION_SUFFIX=".`echo $PACKAGE_VERSION | sed -e 's/v//g'`"
+               LIB_MAJOR_VERSION_SUFFIX=".`echo $PACKAGE_VERSION | sed -e 's/v//g' -e 's/\\.[[^.]]*\\.[[^.]]*//g'`"
+             fi
+
+             FLAGS_LIB="$FLAGS_LIB -Wl,-soname,\$(LIBRARY)\$(LIB_MAJOR_VERSION_SUFFIX)"
+             ;;
+  esac
+
+  MAKE_LIBRARY='$(C_COMPILER) $(FLAGS_LIB) -o $(LIBRARY)$(LIB_VERSION_SUFFIX) $(LIBRARY_OBJECTS) $(MAKE_LIBRARY_LIBS) $(LIBS)'
+  MAKE_LIBRARY_FOR_INSTALL='$(C_COMPILER) $(FLAGS_LIB) -o $(LIBRARY)$(LIB_VERSION_SUFFIX) $(LIBRARY_OBJECTS) $(MAKE_LIBRARY_FOR_INSTALL_LIBS) $(LIBS)'
+  FIXLIB=':'
+  LINK_FOR_INSTALL='$(C_COMPILER) $(FLAGS_EXE) $(EXECUTABLE_OBJECTS) $(LINK_FOR_INSTALL_LIBS) $(LIBS) -o $(EXECUTABLE)'
+
+else
+
+  SETDLPATH=""
+  SETDLPATHBOOT=""
+
+  if test "$C_COMP_VISUALC" = yes; then
+
+    ########## Microsoft Visual C++ compiler
+
+    LIB_PREFIX="lib"
+    LIB_EXTENSION=".lib"
+    MAKE_LIBRARY='lib.exe -out:$(LIBRARY)$(LIB_VERSION_SUFFIX) $(LIBRARY_OBJECTS)'
+    MAKE_LIBRARY_FOR_INSTALL=':'
+    FIXLIB=':'
+    LINK_FOR_INSTALL=':'
+
+#  else if test "$C_COMP_WATCOMC" = yes; then
+#  else if test "$C_COMP_BORLANDC" = yes; then
+
+  else
+
+    ########## Other C compiler
+
+    LIB_PREFIX="lib"
+    LIB_EXTENSION=".a"
+    MAKE_LIBRARY='$(AR) rc $(LIBRARY)$(LIB_VERSION_SUFFIX) $(LIBRARY_OBJECTS) && $(RANLIB) $(LIBRARY)$(LIB_VERSION_SUFFIX)'
+    MAKE_LIBRARY_FOR_INSTALL=':'
+    FIXLIB='$(RANLIB)'
+    LINK_FOR_INSTALL=':'
+
+  fi
+
+fi
+
+GAMBITLIB="gambit$LIB_SUFFIX"
+GAMBITGSCLIB="gambitgsc$LIB_SUFFIX"
+GAMBITGSILIB="gambitgsi$LIB_SUFFIX"
+
+if test "yes" = yes; then
+
+  GAMBITLIB_LOC=""
+  GAMBITLIB_LINK="\"\${GAMBITDIR_LIB}/$LIB_PREFIX$GAMBITLIB$LIB_EXTENSION$LIB_VERSION_SUFFIX\""
+
+  GAMBITGSILIB_LOC=""
+  GAMBITGSILIB_LINK="\"\${GAMBITDIR_LIB_GSI}/$LIB_PREFIX$GAMBITGSILIB$LIB_EXTENSION$LIB_VERSION_SUFFIX\" \"\${GAMBITDIR_LIB}/$LIB_PREFIX$GAMBITLIB$LIB_EXTENSION$LIB_VERSION_SUFFIX\""
+
+  GAMBITGSCLIB_LOC=""
+  GAMBITGSCLIB_LINK="\"\${GAMBITDIR_LIB_GSC}/$LIB_PREFIX$GAMBITGSCLIB$LIB_EXTENSION$LIB_VERSION_SUFFIX\" \"\${GAMBITDIR_LIB}/$LIB_PREFIX$GAMBITLIB$LIB_EXTENSION$LIB_VERSION_SUFFIX\""
+
+else
+
+  GAMBITLIB_LOC="-L\"\${GAMBITDIR_LIB}\""
+  GAMBITLIB_LINK="-l$GAMBITLIB"
+
+  GAMBITGSILIB_LOC="-L\"\${GAMBITDIR_LIB_GSI}\" -L\"\${GAMBITDIR_LIB}\""
+  GAMBITGSILIB_LINK="-l$GAMBITGSILIB -l$GAMBITLIB"
+
+  GAMBITGSCLIB_LOC="-L\"\${GAMBITDIR_LIB_GSC}\" -L\"\${GAMBITDIR_LIB}\""
+  GAMBITGSCLIB_LINK="-l$GAMBITGSCLIB -l$GAMBITLIB"
+
+fi
+
+if test "$C_COMP_VISUALC" = yes; then
+
+  ########## Microsoft Visual C++ compiler
+
+  BUILD_OBJ_RTS="\${C_COMPILER} \${FLAGS_OPT_RTS} \${FLAGS_OBJ} \${DEFS_OBJ} -I\"\${GAMBITDIR_INCLUDE}\" -c -Fo\"\${BUILD_OBJ_OUTPUT_FILENAME_PARAM}\" \${BUILD_OBJ_CC_OPTIONS_PARAM} \${BUILD_OBJ_INPUT_FILENAMES_PARAM}"
+
+  BUILD_OBJ="\${C_COMPILER} \${FLAGS_OPT} \${FLAGS_OBJ} \${DEFS_OBJ} -I\"\${GAMBITDIR_INCLUDE}\" -c -Fo\"\${BUILD_OBJ_OUTPUT_FILENAME_PARAM}\" \${BUILD_OBJ_CC_OPTIONS_PARAM} \${BUILD_OBJ_INPUT_FILENAMES_PARAM}"
+
+  BUILD_DYN="\${C_COMPILER} \${FLAGS_OPT} \${FLAGS_DYN} \${DEFS_DYN} -I\"\${GAMBITDIR_INCLUDE}\" -Fe\"\${BUILD_DYN_OUTPUT_FILENAME_PARAM}\" \${BUILD_DYN_CC_OPTIONS_PARAM} \${BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM} \${BUILD_DYN_INPUT_FILENAMES_PARAM} \${BUILD_DYN_LD_OPTIONS_PARAM}"
+
+  BUILD_LIB="echo BUILD_LIB not yet implemented"
+
+  if test "$ac_cv_sizeof_voidp" = 8; then
+    # 64 bit environment
+    SUBSYS_MIN_REQ_VERSION="5.02"
+  else
+    # 32 bit environment
+    SUBSYS_MIN_REQ_VERSION="5.01"
+  fi
+
+  BUILD_EXE="\${C_COMPILER} \${FLAGS_EXE} \${DEFS_EXE} -I\"\${GAMBITDIR_INCLUDE}\" ${GAMBITLIB_LOC} -Fe\"\${BUILD_EXE_OUTPUT_FILENAME_PARAM}\" \${BUILD_EXE_CC_OPTIONS_PARAM} \${BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM} \${BUILD_EXE_INPUT_FILENAMES_PARAM} ${GAMBITLIB_LINK} \${LIBS} \${BUILD_EXE_LD_OPTIONS_PARAM} -link -subsystem:console,${SUBSYS_MIN_REQ_VERSION} -entry:WinMainCRTStartup"
+
+else
+
+  BUILD_OBJ_RTS="\${C_COMPILER} \${FLAGS_OPT_RTS} \${FLAGS_OBJ} \${DEFS_OBJ} -I\"\${GAMBITDIR_INCLUDE}\" -c -o \${BUILD_OBJ_OUTPUT_FILENAME_PARAM} \${BUILD_OBJ_CC_OPTIONS_PARAM} \${BUILD_OBJ_INPUT_FILENAMES_PARAM}"
+
+  BUILD_OBJ="\${C_COMPILER} \${FLAGS_OPT} \${FLAGS_OBJ} \${DEFS_OBJ} -I\"\${GAMBITDIR_INCLUDE}\" -c -o \${BUILD_OBJ_OUTPUT_FILENAME_PARAM} \${BUILD_OBJ_CC_OPTIONS_PARAM} \${BUILD_OBJ_INPUT_FILENAMES_PARAM}"
+
+  BUILD_DYN="\${C_COMPILER} \${FLAGS_OPT} \${FLAGS_DYN} \${DEFS_DYN} -I\"\${GAMBITDIR_INCLUDE}\" -o \${BUILD_DYN_OUTPUT_FILENAME_PARAM} \${BUILD_DYN_CC_OPTIONS_PARAM} \${BUILD_DYN_LD_OPTIONS_PRELUDE_PARAM} \${BUILD_DYN_INPUT_FILENAMES_PARAM} \${BUILD_DYN_LD_OPTIONS_PARAM}"
+
+  BUILD_LIB="echo BUILD_LIB not yet implemented"
+
+  BUILD_EXE="\${C_COMPILER} \${FLAGS_EXE} \${DEFS_EXE} -I\"\${GAMBITDIR_INCLUDE}\" ${GAMBITLIB_LOC} -o \${BUILD_EXE_OUTPUT_FILENAME_PARAM} \${BUILD_EXE_CC_OPTIONS_PARAM} \${BUILD_EXE_LD_OPTIONS_PRELUDE_PARAM} \${BUILD_EXE_INPUT_FILENAMES_PARAM} ${GAMBITLIB_LINK} \${LIBS} \${BUILD_EXE_LD_OPTIONS_PARAM}"
+
+fi
+
+BUILD_OBJ_RTS_GAMBUILD="$BUILD_OBJ_RTS"
+BUILD_OBJ_GAMBUILD="$BUILD_OBJ"
+BUILD_DYN_GAMBUILD="$BUILD_DYN"
+BUILD_LIB_GAMBUILD="$BUILD_LIB"
+BUILD_EXE_GAMBUILD="$BUILD_EXE"
+
+# The following code for making installed libraries may benefit from
+# a rewrite so that it reuses the "BUILD_XXX" command infrastructure.
+
+if test "$ENABLE_ABSOLUTE_SHARED_LIBS" = yes; then
+
+  MAKE_LIBRARY_FOR_INSTALL_LIBS='$$t_libdir/$(LIB_PREFIX)$(GAMBITLIB)$(LIB_EXTENSION)$(LIB_VERSION_SUFFIX)'
+  LINK_FOR_INSTALL_GSI_LIBS='$$t_libdir/$(LIB_PREFIX)$(GAMBITGSILIB)$(LIB_EXTENSION)$(LIB_VERSION_SUFFIX) $$t_libdir/$(LIB_PREFIX)$(GAMBITLIB)$(LIB_EXTENSION)$(LIB_VERSION_SUFFIX)'
+  LINK_FOR_INSTALL_GSC_LIBS='$$t_libdir/$(LIB_PREFIX)$(GAMBITGSCLIB)$(LIB_EXTENSION)$(LIB_VERSION_SUFFIX) $$t_libdir/$(LIB_PREFIX)$(GAMBITLIB)$(LIB_EXTENSION)$(LIB_VERSION_SUFFIX)'
+
+else
+
+  MAKE_LIBRARY_FOR_INSTALL_LIBS='-L$(rootfromhere)/lib -l$(GAMBITLIB)'
+  LINK_FOR_INSTALL_GSI_LIBS='-L. -L$(rootfromhere)/lib -l$(GAMBITGSILIB) -l$(GAMBITLIB)'
+  LINK_FOR_INSTALL_GSC_LIBS='-L. -L$(rootfromhere)/lib -l$(GAMBITGSCLIB) -l$(GAMBITLIB)'
+
+fi
+
+###############################################################################
+#
+# Determine what prefix and suffix are added to function names by the
+# C compiler or linker.
+
+case "$target_os" in
+
+   mingw* | msys* | cygwin*)
+           # empty prefix and suffix
+           ;;
+
+        *) # for other systems
+
+           ac_link_obj_file='$C_COMPILER $FLAGS_DYN $DEFS_DYN -Iinclude -o conftest.o1 conftest.$ac_ext >&5'
+
+           rm -f conftest.$ac_ext conftest.o1 conftest1.sed
+
+           cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#define ___VERSION 400000
+#define ___MODULE_NAME " GAMBITCHECKMODULEPREFIXSUFFIX"
+#define ___LINKER_ID ____20_GAMBITCHECKMODULEPREFIXSUFFIX
+#define ___MH_PROC ___H__20_GAMBITCHECKMODULEPREFIXSUFFIX
+#define ___SCRIPT_LINE 0
+#define ___MAX_CHR 0x10ffff
+#define ___VOIDSTAR_WIDTH ___LONG_WIDTH
+#include "gambit.h.in"
+
+___BEGIN_MOD1
+___END_MOD1
+___BEGIN_MOD2
+___END_MOD2
+_ACEOF
+
+           if { (eval echo "$as_me:$LINENO: \"$ac_link_obj_file\"") >&5
+             (eval $ac_link_obj_file) 2>&5
+             ac_status=$?
+             echo "$as_me:$LINENO: \$? = $ac_status" >&5
+             (exit $ac_status); }; then
+
+             cat >conftest1.sed <<_ACEOF
+/^.* \([[a-zA-Z0-9_$]]*\)____20_GAMBITCHECKMODULEPREFIXSUFFIX\([[a-zA-Z0-9_$]]*\)$/s//#define ___IMPORTED_ID_PREFIX "\1"\\
+#define ___IMPORTED_ID_SUFFIX "\2"/p
+_ACEOF
+
+             # The nm program will extract the symbols in the object file
+             # conftest.o1.  The following option is used:
+             #   -g    shows the external symbols only (to avoid confusion with
+             #         internal symbols generated by the compiler)
+             nm -g conftest.o1 | sed -n -f conftest1.sed | sed -n -e "1,2p" >>confdefs.h
+
+           fi
+           ;;
+esac
+
+###############################################################################
+#
+# Determine where the installation directories are located.
+
+if test "$prefix" = NONE; then
+  prefix="${ac_default_prefix}"
+fi
+
+if test "$ENABLE_MULTIPLE_VERSIONS" = yes; then
+  prefix="${prefix}/$PACKAGE_VERSION"
+fi
+
+if test "$bindir" = "\${exec_prefix}/bin"; then
+  bindir="\${prefix}/bin"
+fi
+
+if test "$includedir" = "\${prefix}/include"; then
+  includedir="\${prefix}/include"
+fi
+
+if test "$libdir" = "\${exec_prefix}/lib"; then
+  libdir="\${prefix}/lib"
+fi
+
+if test "$docdir" = "\${datarootdir}/doc/\${PACKAGE_TARNAME}"; then
+  docdir="\${prefix}/doc"
+fi
+
+if test "$infodir" = "\${datarootdir}/info"; then
+  infodir="\${prefix}/info"
+fi
+
+if test "$datadir" = "\${datarootdir}"; then
+  datadir="\${prefix}/share"
+fi
+
+if test "$ENABLE_GAMBITDIR" != ""; then
+
+  GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR=\"\\\"`echo \"$ENABLE_GAMBITDIR\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+
+else
+
+  GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR=\"\\\"`echo \"$prefix\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+
+  if test "$ENABLE_SYMLINKS" != yes; then
+
+    if test "$bindir" != "\${prefix}/bin"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_BIN=\"\\\"`echo \"$bindir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+    if test "$includedir" != "\${prefix}/include"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_INCLUDE=\"\\\"`echo \"$includedir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+    if test "$libdir" != "\${prefix}/lib"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_LIB=\"\\\"`echo \"$libdir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+    if test "$docdir" != "\${prefix}/doc"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_DOC=\"\\\"`echo \"$docdir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+    if test "$infodir" != "\${prefix}/info"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_INFO=\"\\\"`echo \"$infodir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+    if test "$datadir" != "\${prefix}/share"; then
+      GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_SHARE=\"\\\"`echo \"$datadir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+    fi
+
+  fi
+fi
+
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_USERLIB=\"\\\"`echo \"$userlibdir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___GAMBITDIR_INSTLIB=\"\\\"`echo \"$instlibdir\" | sed -e \"s|/|$PATH_SEP|g\"`\\\"\""
+
+emacsdir="\${datadir}/emacs/site-lisp"
+
+OBJ_EXTENSION="$obj"
+EXE_EXTENSION="$exe"
+BAT_EXTENSION="$bat"
+
+CONFIGURE_COMMAND="$0$ac_configure_args"
+AC_SUBST(CONFIGURE_COMMAND)
+
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___SYS_TYPE_CPU=\"\\\"$target_cpu\\\"\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___SYS_TYPE_VENDOR=\"\\\"$target_vendor\\\"\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___SYS_TYPE_OS=\"\\\"$target_os\\\"\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___CONFIGURE_COMMAND=\"\\\"`echo "$CONFIGURE_COMMAND" | sed -e s/\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/g -e s/\\\\\\\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"/g`\"\\\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___OBJ_EXTENSION=\"\\\"$OBJ_EXTENSION\\\"\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___EXE_EXTENSION=\"\\\"$EXE_EXTENSION\\\"\""
+GAMBITLIB_DEFS="$GAMBITLIB_DEFS -D___BAT_EXTENSION=\"\\\"$BAT_EXTENSION\\\"\""
+
+###############################################################################
+
+# Escape strings before substitution.
+
+ESC_MF="sed -e s/\\\\\\\$/\\\$\\\$/g"
+ESC_SH="sed -e s/\\\\/\\\\\\\\/g -e s/\\\"/\\\\\\\"/g -e s/\$(\([[^)]]*\))/\\\\\$(\1)/g -e s/\${\([[^{]][[^}]]*\)}/\\\\\${\1}/g -e s/\${{\([[^}]]*\)}}/\${\1}/g -e s/^/\"/ -e s/$/\"/"
+ESC_ECHO="sed -e s/\\\\/\\\\\\\\\\\\\\\\/g -e s/\\\"/\\\\\\\"/g -e s/^/\"/ -e s/$/\"/"
+ESC_BAT="sed -e s/\$(\([[^)]]*\))/\$(\1)/g -e s/\${\([[^{]][[^}]]*\)}/%%\1%%/g -e s/\${{\([[^}]]*\)}}/%\1%/g"
+ESC_ECHO_BAT="sed -e s/\$(\([[^)]]*\))/\$(\1)/g -e s/\${\([[^{]][[^}]]*\)}/%%\1%%/g -e s/\${{\([[^}]]*\)}}/%\1%/g"
+
+C_COMPILER_MF=`echo "$C_COMPILER" | $ESC_MF`
+C_PREPROC_MF=`echo "$C_PREPROC" | $ESC_MF`
+PKG_CONFIG_MF=`echo "$PKG_CONFIG" | $ESC_MF`
+
+FLAGS_OBJ_MF=`echo "$FLAGS_OBJ" | $ESC_MF`
+FLAGS_DYN_MF=`echo "$FLAGS_DYN" | $ESC_MF`
+FLAGS_LIB_MF=`echo "$FLAGS_LIB" | $ESC_MF`
+FLAGS_EXE_MF=`echo "$FLAGS_EXE" | $ESC_MF`
+
+FLAGS_OPT_MF=`echo "$FLAGS_OPT" | $ESC_MF`
+FLAGS_OPT_RTS_MF=`echo "$FLAGS_OPT_RTS" | $ESC_MF`
+
+DEFS_OBJ_MF=`echo "$DEFS_OBJ" | $ESC_MF`
+DEFS_DYN_MF=`echo "$DEFS_DYN" | $ESC_MF`
+DEFS_LIB_MF=`echo "$DEFS_LIB" | $ESC_MF`
+DEFS_EXE_MF=`echo "$DEFS_EXE" | $ESC_MF`
+
+BUILD_OBJ_RTS_MF=`echo "$BUILD_OBJ_RTS" | $ESC_MF`
+BUILD_OBJ_MF=`echo "$BUILD_OBJ" | $ESC_MF`
+BUILD_DYN_MF=`echo "$BUILD_DYN" | $ESC_MF`
+BUILD_LIB_MF=`echo "$BUILD_LIB" | $ESC_MF`
+BUILD_EXE_MF=`echo "$BUILD_EXE" | $ESC_MF`
+
+CORCXXFLAGS_GAMBUILD_MF=`echo "$CORCXXFLAGS_GAMBUILD" | $ESC_MF`
+LDFLAGS_GAMBUILD_MF=`echo "$LDFLAGS_GAMBUILD" | $ESC_MF`
+
+FLAGS_OBJ_GAMBUILD_MF=`echo "$FLAGS_OBJ_GAMBUILD" | $ESC_MF`
+FLAGS_DYN_GAMBUILD_MF=`echo "$FLAGS_DYN_GAMBUILD" | $ESC_MF`
+FLAGS_LIB_GAMBUILD_MF=`echo "$FLAGS_LIB_GAMBUILD" | $ESC_MF`
+FLAGS_EXE_GAMBUILD_MF=`echo "$FLAGS_EXE_GAMBUILD" | $ESC_MF`
+
+FLAGS_OPT_GAMBUILD_MF=`echo "$FLAGS_OPT_GAMBUILD" | $ESC_MF`
+FLAGS_OPT_RTS_GAMBUILD_MF=`echo "$FLAGS_OPT_RTS_GAMBUILD" | $ESC_MF`
+
+DEFS_OBJ_GAMBUILD_MF=`echo "$DEFS_OBJ_GAMBUILD" | $ESC_MF`
+DEFS_DYN_GAMBUILD_MF=`echo "$DEFS_DYN_GAMBUILD" | $ESC_MF`
+DEFS_LIB_GAMBUILD_MF=`echo "$DEFS_LIB_GAMBUILD" | $ESC_MF`
+DEFS_EXE_GAMBUILD_MF=`echo "$DEFS_EXE_GAMBUILD" | $ESC_MF`
+
+BUILD_OBJ_RTS_GAMBUILD_MF=`echo "$BUILD_OBJ_RTS_GAMBUILD" | $ESC_MF`
+BUILD_OBJ_GAMBUILD_MF=`echo "$BUILD_OBJ_GAMBUILD" | $ESC_MF`
+BUILD_DYN_GAMBUILD_MF=`echo "$BUILD_DYN_GAMBUILD" | $ESC_MF`
+BUILD_LIB_GAMBUILD_MF=`echo "$BUILD_LIB_GAMBUILD" | $ESC_MF`
+BUILD_EXE_GAMBUILD_MF=`echo "$BUILD_EXE_GAMBUILD" | $ESC_MF`
+
+DEFS_MF=`echo "$DEFS" | $ESC_MF`
+LIBS_MF=`echo "$LIBS" | $ESC_MF`
+GAMBITLIB_DEFS_MF=`echo "$GAMBITLIB_DEFS" | $ESC_MF`
+GAMBITLIB_MF=`echo "$GAMBITLIB" | $ESC_MF`
+GAMBITGSCLIB_MF=`echo "$GAMBITGSCLIB" | $ESC_MF`
+GAMBITGSILIB_MF=`echo "$GAMBITGSILIB" | $ESC_MF`
+LIB_PREFIX_MF=`echo "$LIB_PREFIX" | $ESC_MF`
+LIB_EXTENSION_MF=`echo "$LIB_EXTENSION" | $ESC_MF`
+OBJ_EXTENSION_MF=`echo "$OBJ_EXTENSION" | $ESC_MF`
+EXE_EXTENSION_MF=`echo "$EXE_EXTENSION" | $ESC_MF`
+BAT_EXTENSION_MF=`echo "$BAT_EXTENSION" | $ESC_MF`
+ALL_BUILD_FEATURES_MF=`echo "$ALL_BUILD_FEATURES" | $ESC_MF`
+BUILD_FEATURE_C_COMP_MF=`echo "$BUILD_FEATURE_C_COMP" | $ESC_MF`
+
+C_COMPILER_SH=`echo "$C_COMPILER" | $ESC_SH`
+C_PREPROC_SH=`echo "$C_PREPROC" | $ESC_SH`
+PKG_CONFIG_SH=`echo "$PKG_CONFIG" | $ESC_SH`
+
+FLAGS_OBJ_SH=`echo "$FLAGS_OBJ" | $ESC_SH`
+FLAGS_DYN_SH=`echo "$FLAGS_DYN" | $ESC_SH`
+FLAGS_LIB_SH=`echo "$FLAGS_LIB" | $ESC_SH`
+FLAGS_EXE_SH=`echo "$FLAGS_EXE" | $ESC_SH`
+
+FLAGS_OPT_SH=`echo "$FLAGS_OPT" | $ESC_SH`
+FLAGS_OPT_RTS_SH=`echo "$FLAGS_OPT_RTS" | $ESC_SH`
+
+DEFS_OBJ_SH=`echo "$DEFS_OBJ" | $ESC_SH`
+DEFS_DYN_SH=`echo "$DEFS_DYN" | $ESC_SH`
+DEFS_LIB_SH=`echo "$DEFS_LIB" | $ESC_SH`
+DEFS_EXE_SH=`echo "$DEFS_EXE" | $ESC_SH`
+
+BUILD_OBJ_RTS_SH=`echo "$BUILD_OBJ_RTS" | $ESC_SH`
+BUILD_OBJ_SH=`echo "$BUILD_OBJ" | $ESC_SH`
+BUILD_DYN_SH=`echo "$BUILD_DYN" | $ESC_SH`
+BUILD_LIB_SH=`echo "$BUILD_LIB" | $ESC_SH`
+BUILD_EXE_SH=`echo "$BUILD_EXE" | $ESC_SH`
+
+CORCXXFLAGS_GAMBUILD_SH=`echo "$CORCXXFLAGS_GAMBUILD" | $ESC_SH`
+LDFLAGS_GAMBUILD_SH=`echo "$LDFLAGS_GAMBUILD" | $ESC_SH`
+
+FLAGS_OBJ_GAMBUILD_SH=`echo "$FLAGS_OBJ_GAMBUILD" | $ESC_SH`
+FLAGS_DYN_GAMBUILD_SH=`echo "$FLAGS_DYN_GAMBUILD" | $ESC_SH`
+FLAGS_LIB_GAMBUILD_SH=`echo "$FLAGS_LIB_GAMBUILD" | $ESC_SH`
+FLAGS_EXE_GAMBUILD_SH=`echo "$FLAGS_EXE_GAMBUILD" | $ESC_SH`
+
+FLAGS_OPT_GAMBUILD_SH=`echo "$FLAGS_OPT_GAMBUILD" | $ESC_SH`
+FLAGS_OPT_RTS_GAMBUILD_SH=`echo "$FLAGS_OPT_RTS_GAMBUILD" | $ESC_SH`
+
+DEFS_OBJ_GAMBUILD_SH=`echo "$DEFS_OBJ_GAMBUILD" | $ESC_SH`
+DEFS_DYN_GAMBUILD_SH=`echo "$DEFS_DYN_GAMBUILD" | $ESC_SH`
+DEFS_LIB_GAMBUILD_SH=`echo "$DEFS_LIB_GAMBUILD" | $ESC_SH`
+DEFS_EXE_GAMBUILD_SH=`echo "$DEFS_EXE_GAMBUILD" | $ESC_SH`
+
+BUILD_OBJ_RTS_GAMBUILD_SH=`echo "$BUILD_OBJ_RTS_GAMBUILD" | $ESC_SH`
+BUILD_OBJ_GAMBUILD_SH=`echo "$BUILD_OBJ_GAMBUILD" | $ESC_SH`
+BUILD_DYN_GAMBUILD_SH=`echo "$BUILD_DYN_GAMBUILD" | $ESC_SH`
+BUILD_LIB_GAMBUILD_SH=`echo "$BUILD_LIB_GAMBUILD" | $ESC_SH`
+BUILD_EXE_GAMBUILD_SH=`echo "$BUILD_EXE_GAMBUILD" | $ESC_SH`
+
+DEFS_SH=`echo "$DEFS" | $ESC_SH`
+LIBS_SH=`echo "$LIBS" | $ESC_SH`
+GAMBITLIB_DEFS_SH=`echo "$GAMBITLIB_DEFS" | $ESC_SH`
+GAMBITLIB_SH=`echo "$GAMBITLIB" | $ESC_SH`
+GAMBITGSCLIB_SH=`echo "$GAMBITGSCLIB" | $ESC_SH`
+GAMBITGSILIB_SH=`echo "$GAMBITGSILIB" | $ESC_SH`
+LIB_PREFIX_SH=`echo "$LIB_PREFIX" | $ESC_SH`
+LIB_EXTENSION_SH=`echo "$LIB_EXTENSION" | $ESC_SH`
+OBJ_EXTENSION_SH=`echo "$OBJ_EXTENSION" | $ESC_SH`
+EXE_EXTENSION_SH=`echo "$EXE_EXTENSION" | $ESC_SH`
+BAT_EXTENSION_SH=`echo "$BAT_EXTENSION" | $ESC_SH`
+ALL_BUILD_FEATURES_SH=`echo "$ALL_BUILD_FEATURES" | $ESC_SH`
+BUILD_FEATURE_C_COMP_SH=`echo "$BUILD_FEATURE_C_COMP" | $ESC_SH`
+
+C_COMPILER_BAT=`echo "$C_COMPILER" | $ESC_BAT`
+C_PREPROC_BAT=`echo "$C_PREPROC" | $ESC_BAT`
+PKG_CONFIG_BAT=`echo "$PKG_CONFIG" | $ESC_BAT`
+
+FLAGS_OBJ_BAT=`echo "$FLAGS_OBJ" | $ESC_BAT`
+FLAGS_DYN_BAT=`echo "$FLAGS_DYN" | $ESC_BAT`
+FLAGS_LIB_BAT=`echo "$FLAGS_LIB" | $ESC_BAT`
+FLAGS_EXE_BAT=`echo "$FLAGS_EXE" | $ESC_BAT`
+
+FLAGS_OPT_BAT=`echo "$FLAGS_OPT" | $ESC_BAT`
+FLAGS_OPT_RTS_BAT=`echo "$FLAGS_OPT_RTS" | $ESC_BAT`
+
+DEFS_OBJ_BAT=`echo "$DEFS_OBJ" | $ESC_BAT`
+DEFS_DYN_BAT=`echo "$DEFS_DYN" | $ESC_BAT`
+DEFS_LIB_BAT=`echo "$DEFS_LIB" | $ESC_BAT`
+DEFS_EXE_BAT=`echo "$DEFS_EXE" | $ESC_BAT`
+
+BUILD_OBJ_RTS_BAT=`echo "$BUILD_OBJ_RTS" | $ESC_BAT`
+BUILD_OBJ_BAT=`echo "$BUILD_OBJ" | $ESC_BAT`
+BUILD_DYN_BAT=`echo "$BUILD_DYN" | $ESC_BAT`
+BUILD_LIB_BAT=`echo "$BUILD_LIB" | $ESC_BAT`
+BUILD_EXE_BAT=`echo "$BUILD_EXE" | $ESC_BAT`
+
+CORCXXFLAGS_GAMBUILD_BAT=`echo "$CORCXXFLAGS_GAMBUILD" | $ESC_BAT`
+LDFLAGS_GAMBUILD_BAT=`echo "$LDFLAGS_GAMBUILD" | $ESC_BAT`
+
+FLAGS_OBJ_GAMBUILD_BAT=`echo "$FLAGS_OBJ_GAMBUILD" | $ESC_BAT`
+FLAGS_DYN_GAMBUILD_BAT=`echo "$FLAGS_DYN_GAMBUILD" | $ESC_BAT`
+FLAGS_LIB_GAMBUILD_BAT=`echo "$FLAGS_LIB_GAMBUILD" | $ESC_BAT`
+FLAGS_EXE_GAMBUILD_BAT=`echo "$FLAGS_EXE_GAMBUILD" | $ESC_BAT`
+
+FLAGS_OPT_GAMBUILD_BAT=`echo "$FLAGS_OPT_GAMBUILD" | $ESC_BAT`
+FLAGS_OPT_RTS_GAMBUILD_BAT=`echo "$FLAGS_OPT_RTS_GAMBUILD" | $ESC_BAT`
+
+DEFS_OBJ_GAMBUILD_BAT=`echo "$DEFS_OBJ_GAMBUILD" | $ESC_BAT`
+DEFS_DYN_GAMBUILD_BAT=`echo "$DEFS_DYN_GAMBUILD" | $ESC_BAT`
+DEFS_LIB_GAMBUILD_BAT=`echo "$DEFS_LIB_GAMBUILD" | $ESC_BAT`
+DEFS_EXE_GAMBUILD_BAT=`echo "$DEFS_EXE_GAMBUILD" | $ESC_BAT`
+
+BUILD_OBJ_RTS_GAMBUILD_BAT=`echo "$BUILD_OBJ_RTS_GAMBUILD" | $ESC_BAT`
+BUILD_OBJ_GAMBUILD_BAT=`echo "$BUILD_OBJ_GAMBUILD" | $ESC_BAT`
+BUILD_DYN_GAMBUILD_BAT=`echo "$BUILD_DYN_GAMBUILD" | $ESC_BAT`
+BUILD_LIB_GAMBUILD_BAT=`echo "$BUILD_LIB_GAMBUILD" | $ESC_BAT`
+BUILD_EXE_GAMBUILD_BAT=`echo "$BUILD_EXE_GAMBUILD" | $ESC_BAT`
+
+DEFS_BAT=`echo "$DEFS" | $ESC_BAT`
+LIBS_BAT=`echo "$LIBS" | $ESC_BAT`
+GAMBITLIB_DEFS_BAT=`echo "$GAMBITLIB_DEFS" | $ESC_BAT`
+GAMBITLIB_BAT=`echo "$GAMBITLIB" | $ESC_BAT`
+GAMBITGSCLIB_BAT=`echo "$GAMBITGSCLIB" | $ESC_BAT`
+GAMBITGSILIB_BAT=`echo "$GAMBITGSILIB" | $ESC_BAT`
+LIB_PREFIX_BAT=`echo "$LIB_PREFIX" | $ESC_BAT`
+LIB_EXTENSION_BAT=`echo "$LIB_EXTENSION" | $ESC_BAT`
+OBJ_EXTENSION_BAT=`echo "$OBJ_EXTENSION" | $ESC_BAT`
+EXE_EXTENSION_BAT=`echo "$EXE_EXTENSION" | $ESC_BAT`
+BAT_EXTENSION_BAT=`echo "$BAT_EXTENSION" | $ESC_BAT`
+ALL_BUILD_FEATURES_BAT=`echo "$ALL_BUILD_FEATURES" | $ESC_BAT`
+BUILD_FEATURE_C_COMP_BAT=`echo "$BUILD_FEATURE_C_COMP" | $ESC_BAT`
+
+BUILD_OBJ_RTS_ECHO=`echo "$BUILD_OBJ_RTS" | $ESC_ECHO`
+BUILD_OBJ_ECHO=`echo "$BUILD_OBJ" | $ESC_ECHO`
+BUILD_DYN_ECHO=`echo "$BUILD_DYN" | $ESC_ECHO`
+BUILD_LIB_ECHO=`echo "$BUILD_LIB" | $ESC_ECHO`
+BUILD_EXE_ECHO=`echo "$BUILD_EXE" | $ESC_ECHO`
+
+BUILD_OBJ_RTS_ECHO_BAT=`echo "$BUILD_OBJ_RTS" | $ESC_ECHO_BAT`
+BUILD_OBJ_ECHO_BAT=`echo "$BUILD_OBJ" | $ESC_ECHO_BAT`
+BUILD_DYN_ECHO_BAT=`echo "$BUILD_DYN" | $ESC_ECHO_BAT`
+BUILD_LIB_ECHO_BAT=`echo "$BUILD_LIB" | $ESC_ECHO_BAT`
+BUILD_EXE_ECHO_BAT=`echo "$BUILD_EXE" | $ESC_ECHO_BAT`
+
+###############################################################################
+
+if test "$srcdir" = "."; then
+  srcdirpfx=""
+else
+  srcdirpfx="\$(srcdir)/"
+fi
+
+INSTALL='$(rootfromhere)/install-sh -c'
+INSTALL_DATA='$(rootfromhere)/install-sh -c -m 644'
+INSTALL_LIB='$(rootfromhere)/install-sh -c -m 644'
+INSTALL_PROGRAM='$(rootfromhere)/install-sh -c -m 755'
+
+AC_SUBST(srcdirpfx)
+AC_SUBST(exe)
+AC_SUBST(obj)
+AC_SUBST(bat)
+AC_SUBST(SETDLPATH)
+AC_SUBST(SETDLPATHBOOT)
+
+AC_SUBST(BUILD_OBJ_RTS)
+AC_SUBST(BUILD_OBJ)
+AC_SUBST(BUILD_DYN)
+AC_SUBST(BUILD_LIB)
+AC_SUBST(BUILD_EXE)
+
+AC_SUBST(BUILD_OBJ_RTS_GAMBUILD)
+AC_SUBST(BUILD_OBJ_GAMBUILD)
+AC_SUBST(BUILD_DYN_GAMBUILD)
+AC_SUBST(BUILD_LIB_GAMBUILD)
+AC_SUBST(BUILD_EXE_GAMBUILD)
+
+AC_SUBST(DEFS)
+AC_SUBST(LIBS)
+AC_SUBST(GAMBITLIB_DEFS)
+AC_SUBST(GAMBITLIB)
+AC_SUBST(GAMBITGSCLIB)
+AC_SUBST(GAMBITGSILIB)
+AC_SUBST(LIB_PREFIX)
+AC_SUBST(LIB_EXTENSION)
+AC_SUBST(OBJ_EXTENSION)
+AC_SUBST(EXE_EXTENSION)
+AC_SUBST(BAT_EXTENSION)
+AC_SUBST(ALL_BUILD_FEATURES)
+AC_SUBST(BUILD_FEATURE_C_COMP)
+
+AC_SUBST(BUILD_OBJ_RTS_MF)
+AC_SUBST(BUILD_OBJ_MF)
+AC_SUBST(BUILD_DYN_MF)
+AC_SUBST(BUILD_LIB_MF)
+AC_SUBST(BUILD_EXE_MF)
+
+AC_SUBST(BUILD_OBJ_RTS_GAMBUILD_MF)
+AC_SUBST(BUILD_OBJ_GAMBUILD_MF)
+AC_SUBST(BUILD_DYN_GAMBUILD_MF)
+AC_SUBST(BUILD_LIB_GAMBUILD_MF)
+AC_SUBST(BUILD_EXE_GAMBUILD_MF)
+
+AC_SUBST(DEFS_MF)
+AC_SUBST(LIBS_MF)
+AC_SUBST(GAMBITLIB_DEFS_MF)
+AC_SUBST(GAMBITLIB_MF)
+AC_SUBST(GAMBITGSCLIB_MF)
+AC_SUBST(GAMBITGSILIB_MF)
+AC_SUBST(LIB_PREFIX_MF)
+AC_SUBST(LIB_EXTENSION_MF)
+AC_SUBST(OBJ_EXTENSION_MF)
+AC_SUBST(EXE_EXTENSION_MF)
+AC_SUBST(BAT_EXTENSION_MF)
+AC_SUBST(ALL_BUILD_FEATURES_MF)
+AC_SUBST(BUILD_FEATURE_C_COMP_MF)
+
+AC_SUBST(BUILD_OBJ_RTS_SH)
+AC_SUBST(BUILD_OBJ_SH)
+AC_SUBST(BUILD_DYN_SH)
+AC_SUBST(BUILD_LIB_SH)
+AC_SUBST(BUILD_EXE_SH)
+
+AC_SUBST(BUILD_OBJ_RTS_GAMBUILD_SH)
+AC_SUBST(BUILD_OBJ_GAMBUILD_SH)
+AC_SUBST(BUILD_DYN_GAMBUILD_SH)
+AC_SUBST(BUILD_LIB_GAMBUILD_SH)
+AC_SUBST(BUILD_EXE_GAMBUILD_SH)
+
+AC_SUBST(DEFS_SH)
+AC_SUBST(LIBS_SH)
+AC_SUBST(GAMBITLIB_DEFS_SH)
+AC_SUBST(GAMBITLIB_SH)
+AC_SUBST(GAMBITGSCLIB_SH)
+AC_SUBST(GAMBITGSILIB_SH)
+AC_SUBST(LIB_PREFIX_SH)
+AC_SUBST(LIB_EXTENSION_SH)
+AC_SUBST(OBJ_EXTENSION_SH)
+AC_SUBST(EXE_EXTENSION_SH)
+AC_SUBST(BAT_EXTENSION_SH)
+AC_SUBST(ALL_BUILD_FEATURES_SH)
+AC_SUBST(BUILD_FEATURE_C_COMP_SH)
+
+AC_SUBST(BUILD_OBJ_RTS_BAT)
+AC_SUBST(BUILD_OBJ_BAT)
+AC_SUBST(BUILD_DYN_BAT)
+AC_SUBST(BUILD_LIB_BAT)
+AC_SUBST(BUILD_EXE_BAT)
+
+AC_SUBST(BUILD_OBJ_RTS_GAMBUILD_BAT)
+AC_SUBST(BUILD_OBJ_GAMBUILD_BAT)
+AC_SUBST(BUILD_DYN_GAMBUILD_BAT)
+AC_SUBST(BUILD_LIB_GAMBUILD_BAT)
+AC_SUBST(BUILD_EXE_GAMBUILD_BAT)
+
+AC_SUBST(DEFS_BAT)
+AC_SUBST(LIBS_BAT)
+AC_SUBST(GAMBITLIB_DEFS_BAT)
+AC_SUBST(GAMBITLIB_BAT)
+AC_SUBST(GAMBITGSCLIB_BAT)
+AC_SUBST(GAMBITGSILIB_BAT)
+AC_SUBST(LIB_PREFIX_BAT)
+AC_SUBST(LIB_EXTENSION_BAT)
+AC_SUBST(OBJ_EXTENSION_BAT)
+AC_SUBST(EXE_EXTENSION_BAT)
+AC_SUBST(BAT_EXTENSION_BAT)
+AC_SUBST(ALL_BUILD_FEATURES_BAT)
+AC_SUBST(BUILD_FEATURE_C_COMP_BAT)
+
+AC_SUBST(BUILD_OBJ_RTS_ECHO)
+AC_SUBST(BUILD_OBJ_ECHO)
+AC_SUBST(BUILD_DYN_ECHO)
+AC_SUBST(BUILD_LIB_ECHO)
+AC_SUBST(BUILD_EXE_ECHO)
+
+AC_SUBST(BUILD_OBJ_RTS_ECHO_BAT)
+AC_SUBST(BUILD_OBJ_ECHO_BAT)
+AC_SUBST(BUILD_DYN_ECHO_BAT)
+AC_SUBST(BUILD_LIB_ECHO_BAT)
+AC_SUBST(BUILD_EXE_ECHO_BAT)
+
+AC_SUBST(MAKE_LIBRARY)
+AC_SUBST(MAKE_LIBRARY_FOR_INSTALL)
+AC_SUBST(MAKE_LIBRARY_FOR_INSTALL_LIBS)
+AC_SUBST(LINK)
+AC_SUBST(LINK_FOR_INSTALL)
+AC_SUBST(LINK_FOR_INSTALL_GSI_LIBS)
+AC_SUBST(LINK_FOR_INSTALL_GSC_LIBS)
+AC_SUBST(INSTALL)
+AC_SUBST(INSTALL_DATA)
+AC_SUBST(INSTALL_LIB)
+AC_SUBST(INSTALL_PROGRAM)
+AC_SUBST(LN_S)
+AC_SUBST(RANLIB)
+AC_SUBST(AR)
+AC_SUBST(RC)
+AC_SUBST(GIT)
+AC_SUBST(HG)
+AC_SUBST(FIXLIB)
+
+AC_SUBST(X_FLAGS)
+AC_SUBST(X_LIBS)
+
+AC_SUBST(ENABLE_SYMLINKS)
+AC_SUBST(ENABLE_INTERPRETER_NAME)
+AC_SUBST(ENABLE_COMPILER_NAME)
+AC_SUBST(ENABLE_MULTIPLE_VERSIONS)
+AC_SUBST(ENABLE_SHARED)
+AC_SUBST(ENABLE_ABSOLUTE_SHARED_LIBS)
+AC_SUBST(ENABLE_VERSIONED_SHARED_LIBS)
+AC_SUBST(emacsdir)
+AC_SUBST(HELP_BROWSER)
+AC_SUBST(COMPILATION_OPTIONS)
+AC_SUBST(RTLIB_COND_EXPAND_FEATURES)
+AC_SUBST(BUILD_TARGETS)
+
+AC_PROG_MAKE_SET
+
+AC_CONFIG_FILES( \
+makefile \
+include/makefile \
+include/gambit.h \
+lib/makefile \
+lib/module-common.mk \
+$RTLIBMAKEFILES \
+gsi/makefile \
+gsc/makefile \
+bin/makefile \
+bin/gambvcs.unix \
+bin/gambvcs.bat.windows \
+bin/gambuild-C.unix \
+bin/gambuild-C.bat.windows \
+bin/gambuild-js.unix \
+bin/gambuild-js.bat.windows \
+bin/gambuild-python.unix \
+bin/gambuild-python.bat.windows \
+bin/gambuild-ruby.unix \
+bin/gambuild-ruby.bat.windows \
+bin/gambuild-php.unix \
+bin/gambuild-php.bat.windows \
+bin/gambuild-java.unix \
+bin/gambuild-java.bat.windows \
+bin/gambuild-x86.unix \
+bin/gambuild-x86.bat.windows \
+bin/gambuild-x86-64.unix \
+bin/gambuild-x86-64.bat.windows \
+bin/gambuild-arm.unix \
+bin/gambuild-arm.bat.windows \
+bin/gambuild-riscv-32.unix \
+bin/gambuild-riscv-32.bat.windows \
+bin/gambuild-riscv-64.unix \
+bin/gambuild-riscv-64.bat.windows \
+bin/gambdoc.unix \
+bin/gambdoc.bat.windows \
+misc/makefile \
+doc/makefile \
+tests/makefile \
+examples/makefile \
+examples/distr-comp/makefile \
+examples/pi/makefile \
+examples/ring/makefile \
+examples/web-repl/makefile \
+examples/web-server/makefile \
+examples/tcltk/makefile \
+examples/Xlib-simple/makefile \
+examples/pthread/makefile \
+examples/misc/makefile \
+bench/makefile \
+contrib/makefile \
+contrib/GambitREPL/makefile \
+contrib/try/makefile \
+contrib/xactlog/makefile \
+prebuilt/makefile \
+prebuilt/macosx/makefile \
+prebuilt/macosx/build-phase2 \
+prebuilt/windows/makefile \
+prebuilt/windows/build-phase2 \
+githooks/makefile \
+)
+AC_OUTPUT
+
+if test "$ENABLE_MARCH" = "no_enable_march"; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The option "--enable-march=<arch>" was not specified to the        ***
+*** configure script.  The Gambit system will compile correctly but    ***
+*** typically the executables will be less optimized than when         ***
+*** "--enable-march=native" is specified.  On the other hand the build ***
+*** with "--enable-march=native" will require that the executables be  ***
+*** run on machine architectures compatible with the architecture      ***
+*** being used for the build, so this should be avoided for prebuilt   ***
+*** executables meant to run on a variety of machines.  To avoid this  ***
+*** warning you can use an empty string for <arch>.                    ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if test "$ENABLE_DYNAMIC_CLIB" != yes; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The option "--enable-dynamic-clib" was not specified to the        ***
+*** configure script.  The Gambit system will compile correctly but    ***
+*** typically dynamically compiled modules will be less optimized than ***
+*** when "--enable-dynamic-clib" is specified.  This option may not    ***
+*** work on some operating systems.                                    ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if test "$ENABLE_SINGLE_HOST" != yes; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The option "--enable-single-host" was not specified to the         ***
+*** configure script.  The Gambit system will compile correctly but    ***
+*** typically the executables will run considerably slower than when   ***
+*** "--enable-single-host" is specified.  On the other hand the build  ***
+*** with "--enable-single-host" is typically slower and requires lots  ***
+*** of RAM memory (>= 1 GB).  If you are willing to wait for the       ***
+*** longer build, try the configure option "--enable-single-host".     ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if test "$ENABLE_SINGLE_HOST" = yes -a "$C_COMP_LLVM" = yes; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The option "--enable-single-host" was specified to the configure   ***
+*** script and a LLVM C compiler is being used (clang or LLVM GCC).    ***
+*** This combination is not recommended as the build may require a     ***
+*** lot of memory and a very long time (over 30 minutes on a fairly    ***
+*** fast machine with clang 3.0).  Configuring with GNU GCC will give  ***
+*** a faster build (1 min on the same machine with GNU GCC 4.2.1) and  ***
+*** the executable will be faster.                                     ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if test "$ENABLE_SINGLE_HOST" != yes -a "$C_COMP_CLANG" = yes; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The clang compiler is being used.  Please be aware that the build  ***
+*** may take a very long time (over 30 minutes on a fairly fast        ***
+*** machine with clang 3.0).  Configuring with GNU GCC will give a     ***
+*** faster build (1 min on the same machine with GNU GCC 4.2.1) and    ***
+*** the executable will be faster.                                     ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if echo " $CFLAGS $CXXFLAGS $FLAGS_OPT " | grep -e " -O[[^ ]]*[[23456789]] " > /dev/null; then
+  AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The setting of CFLAGS, CXXFLAGS and/or the --enable-c-opt is       ***
+*** selecting a C compiler optimization level >= -O2 .  This           ***
+*** typically causes run time performance that is *less* than when     ***
+*** using the default -O1 optimization level.  You may want to try it  ***
+*** both ways and use whichever yields the best performance.           ***
+***                                                                    ***
+**************************************************************************
+])
+fi
+
+if test "$C_COMP_GNUC" = yes; then
+
+  if test "$GNU_GCC_MOVE_LOOP_INVARIANTS_POSSIBLE_BUG" = yes; then
+    AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The GCC compiler that is being used has problems compiling Gambit  ***
+*** generated code when the normal set of C compiler optimizations are ***
+*** enabled and the configure flag "--enable-single-host" is           ***
+*** specified.  It can take over 20 GB of virtual memory to            ***
+*** compile some files.  For this reason the GCC compiler optimization ***
+*** which performs loop invariant code motion has been disabled by     ***
+*** adding the GCC command line option "-fno-move-loop-invariants".    ***
+*** This greatly reduces compile time space requirements and it has a  ***
+*** small impact on overall run time performance, but for some tight   ***
+*** loops the effect is larger.  If you want to avoid this problem     ***
+*** then upgrade your version of GCC to 4.4 (or above hopefully) or    ***
+*** downgrade to a version prior to 4.2 .                              ***
+***                                                                    ***
+**************************************************************************
+])
+  fi
+
+  if test "$LLVM_GCC_LABEL_VALUES_POSSIBLE_BUG" = yes; then
+
+    AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The LLVM GCC compiler that is being used may have a bug in the     ***
+*** compilation of label values (i.e. &&label).  This bug was          ***
+*** discovered when compiling Gambit with Xcode on Mac OS X (see bug   ***
+*** ID# 9956714).  For this reason the use of computed gotos in the    ***
+*** generated code has been disabled.  This greatly reduces the run    ***
+*** time performance.  The system runs 5 times slower than when it is  ***
+*** compiled with GNU GCC.  It is highly recommended that you use      ***
+*** another C compiler if possible.                                    ***
+***                                                                    ***
+**************************************************************************
+])
+  fi
+
+
+  if test "$GNU_GCC_IPA_RA_POSSIBLE_BUG" = yes ; then
+
+    AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The GNU GCC compiler that is being used may show a bug while       ***
+*** compiling Gambit with --enable-shared and --enable-c-opt >= -O2.   ***
+*** For this reason, the optimization -fipa-ra has been disabled.      ***
+***                                                                    ***
+**************************************************************************
+])
+  fi
+
+
+
+#  if test "$ENABLE_GCC_OPTS" != yes; then
+#    AC_MSG_NOTICE([
+#**************************************************************************
+#*** The GCC compiler is being used but the option "--enable-gcc-opts"  ***
+#*** was not specified to the configure script.  The Gambit system      ***
+#*** will compile correctly but the code generated by the GCC compiler  ***
+#*** will be suboptimal and the executables will run slightly slower    ***
+#*** than if "--enable-gcc-opts" is specified.  On the other hand the   ***
+#*** build process will be faster and require less memory.  If you have ***
+#*** lots of RAM memory (>= 2 Gbytes) and you are willing to wait for   ***
+#*** the longer build try the configure option "--enable-gcc-opts".     ***
+#**************************************************************************
+#])
+#  fi
+
+  if test "$C_COMP_LLVM" != yes -a "x$DASH_foptimize_sibling_calls" != "x" -a "$ENABLE_TRUST_C_TCO" != yes; then
+
+    AC_MSG_NOTICE([
+**************************************************************************
+***                                                                    ***
+*** The GNU GCC compiler that is being used supports the command line  ***
+*** option "-foptimize-sibling-calls" so it probably supports TCO      ***
+*** sufficiently well to allow the use of the "--enable-trust-c-tco"   ***
+*** configure option, which was not specified to the configure script. ***
+*** The Gambit system will compile correctly but the executables may   ***
+*** run slower than when "--enable-trust-c-tco" is specified.  One way ***
+*** to check if "--enable-trust-c-tco" works is to try that option and ***
+*** then see if there is a segmentation violation (stack overflow)     ***
+*** when the system is built with a "make".  If the build completes    ***
+*** without error, specifically the last phase of the "make" that      ***
+*** builds the modules, then it is very likely that C TCO can be       ***
+*** trusted.                                                           ***
+***                                                                    ***
+**************************************************************************
+])
+  fi
+
+
+fi
+
+case "$target_os" in
+
+  darwin*)
+    if test "$ENABLE_POLL" = yes; then
+      AC_MSG_NOTICE([
+****************************************************************************
+***                                                                      ***
+*** The target OS is macOS and the option "--enable-poll" was specified. ***
+*** This combination has caused issues in the past because some versions ***
+*** of macOS have a bug that causes "poll" on ttys and named pipes to    ***
+*** misbehave, causing a busy wait loop consuming 100% CPU when waiting  ***
+*** on those devices (including waiting for input at the REPL).  The     ***
+*** issue seems to have been fixed in recent versions of macOS (tested   ***
+*** on macOS 11.6, Big Sur).  Nevertheless, for portability to not so    ***
+*** recent version of macOS it may be best to avoid using the option     ***
+*** "--enable-poll".  For more information, please see:                  ***
+***   https://github.com/gambit/gambit/issues/403                        ***
+***   https://stackoverflow.com/questions/591826                         ***
+***                                                                      ***
+****************************************************************************
+])
+    fi
+
+esac
+
+if false; then
+
+if test "$ENABLE_MULTIPLE_VMS" != no -o "$ENABLE_MULTIPLE_THREADED_VMS" != no; then
+
+  AC_MSG_NOTICE([
+*********************************************************************
+***                                                               ***
+*** The option --enable-multiple-vms or the option                ***
+*** --enable-multiple-threaded-vms (or both) have been specified. ***
+*** This enables support for parallel execution of Scheme code.   ***
+***                                                               ***
+*** This is a feature that is considered experimental and of beta ***
+*** quality currently. You are encouraged to report any issues    ***
+*** encountered at https://github.com/gambit/gambit/issues .      ***
+***                                                               ***
+*********************************************************************
+])
+
+else
+
+  AC_MSG_NOTICE([
+*********************************************************************
+***                                                               ***
+*** Neither of the options --enable-multiple-vms and              ***
+*** --enable-multiple-threaded-vms have been specified. This      ***
+*** means that support for parallel execution of Scheme code is   ***
+*** disabled. In the future, support for parallel execution will  ***
+*** be the default. If you wish to contribute to the testing of   ***
+*** this feature, please activate one of those options. Note that ***
+*** this is a feature that is considered experimental and of beta ***
+*** quality currently. You are encouraged to report any issues    ***
+*** encountered at https://github.com/gambit/gambit/issues .      ***
+***                                                               ***
+*********************************************************************
+])
+
+fi
+
+fi

@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# This shell script can be used to install the GNU gcc compiler on a
+# unix based computer.  The GNU gcc compiler is usually better at
+# compiling C code produced by the Gambit Scheme compiler than the
+# clang (LLVM) compiler.  This is particularly useful on OS X because
+# clang is the C compiler that is provided with recent versions of
+# Apple's Xcode.
+
+# After executing:
+#
+#    ./install-gnu-gcc
+#
+# you should add this line to your ~/.profile and ~/.bashrc files:
+#
+#    export PATH=/usr/local/gcc-8.1.0/bin:$PATH
+
+# NOTE: If you're using tar from a package manager (Fink, Homebrew, etc.),
+# make sure that the xz package is installed so that tar can uncompress and
+# extract the downloaded sources in .tar.xz format.
+
+GCCVERSION=8.1.0
+GMPVERSION=6.1.2
+MPFRVERSION=4.0.1
+MPCVERSION=1.1.0
+ISLVERSION=0.18
+
+PREFIX=/usr/local/gcc-$GCCVERSION
+MAKE="make -j 8"
+
+# Download & install the latest GCC and prerequisites
+
+mkdir temp-gcc
+cd temp-gcc
+
+command -v wget >/dev/null 2>&1 || { echo >&2 "This script requires wget but it's not installed.  Aborting."; exit 1; }
+
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-$GCCVERSION/gcc-$GCCVERSION.tar.xz
+wget ftp://ftp.gnu.org/gnu/gmp/gmp-$GMPVERSION.tar.xz
+wget ftp://ftp.gnu.org/gnu/mpfr/mpfr-$MPFRVERSION.tar.xz
+wget ftp://ftp.gnu.org/gnu/mpc/mpc-$MPCVERSION.tar.gz
+
+tar xf gcc-$GCCVERSION.tar.xz
+tar xf gmp-$GMPVERSION.tar.xz
+tar xf mpfr-$MPFRVERSION.tar.xz
+tar xf mpc-$MPCVERSION.tar.gz
+
+ln -s ../gmp-$GMPVERSION   gcc-$GCCVERSION/gmp
+ln -s ../mpfr-$MPFRVERSION gcc-$GCCVERSION/mpfr
+ln -s ../mpc-$MPCVERSION   gcc-$GCCVERSION/mpc
+
+# The following package is not absolutely necessary, but it enables
+# the certain loop optimizations in gcc.
+
+wget ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-$ISLVERSION.tar.bz2
+
+tar xf isl-$ISLVERSION.tar.bz2
+
+ln -s ../isl-$ISLVERSION   gcc-$GCCVERSION/isl
+
+# Do the actual build
+
+mkdir build-dir
+cd build-dir
+../gcc-$GCCVERSION/configure --prefix=$PREFIX 
+$MAKE 
+
+sudo mkdir -p $PREFIX
+sudo make install
+
+cd ../..
+
+echo "*** To get rid of temporary files created during the build process,"
+echo "*** you should enter the command:"
+echo "***"
+echo "***      rm -rf temp-gcc"
+
+#rm -rf temp-gcc

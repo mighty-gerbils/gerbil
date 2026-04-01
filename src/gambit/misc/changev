@@ -1,0 +1,24 @@
+#! /bin/sh
+
+# Utility to change the version of Gambit attached to all the source files.
+
+OLDVERSION=$1
+NEWVERSION=$2
+
+if [ $OLDVERSION -ge 400000 ]
+then
+  if [ $NEWVERSION -ge 400000 ]
+  then
+
+    misc/changev1 $OLDVERSION $NEWVERSION lib/main.c lib/setup.c lib/mem.c lib/os_setup.c lib/os_base.c lib/os_thread.c lib/os_time.c lib/os_shell.c lib/os_files.c lib/os_dyn.c lib/os_tty.c lib/os_io.c lib/c_intf.c lib/actlog.c lib/setup.h lib/mem.h lib/os.h lib/os_setup.h lib/os_base.h lib/os_time.h lib/os_shell.h lib/os_files.h lib/os_dyn.h lib/os_thread.h lib/os_tty.h lib/os_io.h lib/c_intf.h lib/actlog.h
+    misc/changev1 $OLDVERSION $NEWVERSION lib/_*.scm gsi/_*.scm gsc/_*.scm
+    misc/changev1 $OLDVERSION $NEWVERSION tests/*.ok tests/client.c
+    misc/changev1 $OLDVERSION $NEWVERSION doc/gambit.txi
+    misc/changev1 $OLDVERSION $NEWVERSION configure.ac
+    misc/changev1 $OLDVERSION $NEWVERSION misc/build-gambit-iOS
+    misc/changev1 $OLDVERSION $NEWVERSION examples/pthread/pthread.c
+    misc/changev1 $OLDVERSION $NEWVERSION contrib/GambitREPL/ViewController.m
+    misc/changev1 $OLDVERSION $NEWVERSION include/gambit.h.in include/stamp-release.h
+
+  fi
+fi

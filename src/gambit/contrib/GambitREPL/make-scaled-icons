@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# To create icons for GambitREPL and NotEmacs, the recipe is (do this
+# for both GambitREPL and NotEmacs):
+#
+# % open GambitREPL-icon-unscaled.key
+#       then in File menu, select Export To > Images... and select Format: PNG
+# % ./make-scaled-icons
+
+scale_icon()
+{
+  convert $1-icon-unscaled/$1-icon-unscaled.001.png -crop 1024x1024 -resize $2x$2 -alpha remove $1-$2.png
+  mv $1-$2-0.png $1-$2.png
+  rm $1-$2-1.png
+}
+
+scale_icons()
+{
+  scale_icon $1 29
+  scale_icon $1 40
+  scale_icon $1 57
+  scale_icon $1 72
+  scale_icon $1 76
+  scale_icon $1 87
+  scale_icon $1 120
+  scale_icon $1 152
+  scale_icon $1 180
+  scale_icon $1 512
+  scale_icon $1 1024
+}
+
+scale_icons GambitREPL
+scale_icons NotEmacs

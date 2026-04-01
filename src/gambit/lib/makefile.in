@@ -1,0 +1,654 @@
+# makefile for Gambit library.
+
+# Copyright (c) 1994-2024 by Marc Feeley, All Rights Reserved.
+
+herefromroot = lib
+rootfromhere = ..
+SUBDIRS1 = _define-library
+SUBDIRS2 = @RTLIBSUBSYS@ \
+_irregex _base64 _csv _digest _geiser _git _hamt _http _json _match _pkg _six \
+_tar _test _uri _zlib gambit scheme termite srfi
+SUBDIRS = $(SUBDIRS1) $(SUBDIRS2)
+
+PACKAGE_SHORTNAME = @PACKAGE_SHORTNAME@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+PACKAGE_STRING = @PACKAGE_STRING@
+PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+
+@SET_MAKE@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+srcdirpfx = @srcdirpfx@
+
+C_COMPILER = @C_COMPILER_MF@
+C_PREPROC = @C_PREPROC_MF@
+FLAGS_OBJ = @FLAGS_OBJ_MF@
+FLAGS_DYN = @FLAGS_DYN_MF@
+FLAGS_LIB = @FLAGS_LIB_MF@
+FLAGS_EXE = @FLAGS_EXE_MF@
+FLAGS_OPT = @FLAGS_OPT_MF@
+FLAGS_OPT_RTS = @FLAGS_OPT_RTS_MF@
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+GAMBITLIB_DEFS = @GAMBITLIB_DEFS_MF@
+LIB_PREFIX = @LIB_PREFIX@
+LIB_VERSION_SUFFIX = @LIB_VERSION_SUFFIX@
+LIB_MAJOR_VERSION_SUFFIX = @LIB_MAJOR_VERSION_SUFFIX@
+
+BUILD_TARGETS = @BUILD_TARGETS@
+
+LIB_EXTENSION = @LIB_EXTENSION@
+GAMBITLIB = @GAMBITLIB@
+GAMBITGSCLIB = @GAMBITGSCLIB@
+GAMBITGSILIB = @GAMBITGSILIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_LIB = @INSTALL_LIB@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+LN_S = @LN_S@
+RANLIB = @RANLIB@
+AR = @AR@
+RC = @RC@
+GIT = @GIT@
+HG = @HG@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+bindir = @bindir@
+docdir = @docdir@
+infodir = @infodir@
+emacsdir = @emacsdir@
+libexecdir = @libexecdir@
+datarootdir = @datarootdir@
+datadir = @datadir@
+htmldir = @htmldir@
+dvidir = @dvidir@
+pdfdir = @pdfdir@
+psdir = @psdir@
+localedir = @localedir@
+mandir = @mandir@
+
+.SUFFIXES:
+.SUFFIXES: .scm .c @obj@
+
+.PHONY: $(SUBDIRS)
+
+GAMBIT_LIB_C = _$(GAMBITLIB).c
+GAMBIT_LIB_O = _$(GAMBITLIB)@obj@
+
+NORMAL_C = main.c setup.c mem.c os_setup.c os_base.c os_thread.c os_time.c os_shell.c os_files.c os_dyn.c os_tty.c os_io.c c_intf.c actlog.c
+NORMAL_CPP =
+NORMAL_H = setup.h mem.h os.h os_setup.h os_base.h os_thread.h os_time.h os_shell.h os_files.h os_dyn.h os_tty.h os_io.h c_intf.h actlog.h dead.h
+NORMAL_O = main@obj@ setup@obj@ mem@obj@ c_intf@obj@ actlog@obj@ os_setup@obj@ os_base@obj@ os_thread@obj@ os_time@obj@ os_shell@obj@ os_files@obj@ os_dyn@obj@ os_tty@obj@ os_io@obj@
+NORMAL_O_PLUS = +main@obj@ +setup@obj@ +mem@obj@ +c_intf@obj@ +actlog@obj@ +os_setup@obj@ +os_base@obj@ +os_thread@obj@ +os_time@obj@ +os_shell@obj@ +os_files@obj@ +os_dyn@obj@ +os_tty@obj@ +os_io@obj@
+NORMAL_O_COMMA = main@obj@,setup@obj@,mem@obj@,c_intf@obj@,actlog@obj@,os_setup@obj@,os_base@obj@,os_thread@obj@,os_time@obj@,os_shell@obj@,os_files@obj@,os_dyn@obj@,os_tty@obj@,os_io@obj@
+NORMAL_SOURCES = $(NORMAL_C) $(NORMAL_CPP) $(NORMAL_H)
+
+HEADERS_SCM = "_kernel\#.scm" "_system\#.scm" "_num\#.scm" "_std\#.scm" \
+"_eval\#.scm" "_module\#.scm" "_io\#.scm" "_nonstd\#.scm" "_thread\#.scm" \
+"_repl\#.scm" "_gambit\#.scm" "gambit\#.scm" \
+"r7rs\#.scm" "r5rs\#.scm" "r4rs\#.scm" "_optional\#.scm" "_fifo\#.scm" \
+_define-syntax.scm _syntax-boot.scm _syntax-case-xform-boot.scm \
+_syntax-case-xform.scm _syntax-common.scm _syntax-pattern.scm \
+_syntax-rules-xform.scm _syntax-template.scm \
+_syntax-xform-boot.scm _syntax-xform.scm \
+_syntax.scm _with-syntax-boot.scm
+MODULES = _kernel _system _num _std \
+_eval _module _io _nonstd _thread _repl
+MODULES_SCM = _kernel.scm _system.scm _num.scm _std.scm \
+_eval.scm _module.scm _io.scm _nonstd.scm _thread.scm _repl.scm
+MODULES_C = _kernel.c _system.c _num.c _std.c \
+_eval.c _module.c _io.c _nonstd.c _thread.c _repl.c
+MODULES_O = _kernel@obj@ _system@obj@ _num@obj@ _std@obj@ \
+_eval@obj@ _module@obj@ _io@obj@ _nonstd@obj@ _thread@obj@ _repl@obj@
+MODULES_O_PLUS = +_kernel@obj@ +_system@obj@ +_num@obj@ +_std@obj@ \
++_eval@obj@ +_module@obj@ +_io@obj@ +_nonstd@obj@ +_thread@obj@ +_repl@obj@
+MODULES_O_COMMA = _kernel@obj@,_system@obj@,_num@obj@,_std@obj@,\
++_eval@obj@,+_module@obj@,_io@obj@,_nonstd@obj@,_thread@obj@,_repl@obj@
+NORMAL_O_IN_COMPILE_ORDER = main@obj@ os_tty@obj@ c_intf@obj@ actlog@obj@ \
+os_io@obj@ setup@obj@ mem@obj@ os_files@obj@ os_setup@obj@ os_base@obj@ \
+os_thread@obj@ os_time@obj@ os_shell@obj@ os_dyn@obj@
+MODULES_O_IN_COMPILE_ORDER = _io@obj@ _num@obj@ _std@obj@ \
+_repl@obj@ _eval@obj@ _nonstd@obj@ _kernel@obj@ _thread@obj@ _system@obj@ \
+_module@obj@
+MODULES_C_IN_COMPILE_ORDER = _io.c _num.c _std.c \
+_repl.c _eval.c _nonstd.c _kernel.c _thread.c _system.c \
+_module.c
+
+UNIVLIB = $(rootfromhere)/gsc/_t-univ-*.scm $(rootfromhere)/gsc/_univadt.scm
+
+LIBRARIES_SCM = $(HEADERS_SCM) syntax-case.scm
+
+LIBRARY = $(LIB_PREFIX)$(GAMBITLIB)$(LIB_EXTENSION)
+LIBRARY_OBJECTS = $(NORMAL_O) $(MODULES_O) $(GAMBIT_LIB_O)
+LIBRARY_OBJECTS_PLUS = $(NORMAL_O_PLUS) $(MODULES_O_PLUS) +$(GAMBIT_LIB_O)
+LIBRARY_OBJECTS_COMMA = $(NORMAL_O_COMMA),$(MODULES_O_COMMA),$(GAMBIT_LIB_O)
+LIBRARY_OBJECTS_IN_COMPILE_ORDER = \
+$(MODULES_O_IN_COMPILE_ORDER) $(NORMAL_O_IN_COMPILE_ORDER) $(GAMBIT_LIB_O)
+
+LIBRARIES = $(LIBRARY)$(LIB_VERSION_SUFFIX)
+
+LIBRARY_LIBS =
+
+OBJECTS = $(LIBRARY_OBJECTS)
+
+RCFILES = makefile.in module-common.mk.in header.scm $(MODULES_SCM) sys.scm \
+$(LIBRARIES_SCM) $(NORMAL_SOURCES) check___P check___P.st \
+psyntax69c.pp psyntax69c.ss psyntax73.pp psyntax73.ss \
+syntax-case-build syntax-case-expand-file \
+syntax-case-postlude.scm syntax-case-prelude.scm _univlib.scm
+
+GAMBIT_LIB_java = _$(GAMBITLIB).java
+GAMBIT_LIB_js = _$(GAMBITLIB).js
+GAMBIT_LIB_php = _$(GAMBITLIB).php
+GAMBIT_LIB_python = _$(GAMBITLIB).py
+GAMBIT_LIB_ruby = _$(GAMBITLIB).rb
+GAMBIT_LIB_go = _$(GAMBITLIB).go
+
+GAMBIT_LIBS_UNIV = $(GAMBIT_LIB_java) $(GAMBIT_LIB_js) $(GAMBIT_LIB_php) $(GAMBIT_LIB_python) $(GAMBIT_LIB_ruby) $(GAMBIT_LIB_go)
+
+GAMBIT_LIBS = $(GAMBIT_LIB_C)
+
+GENDISTFILES = $(MODULES_C) $(GAMBIT_LIB_C)
+
+DISTFILES = $(RCFILES) $(GENDISTFILES)
+
+INSTFILES_LIB_DATA = $(LIBRARIES_SCM) $(GAMBIT_LIBS)
+
+GAMBITDIR_INCLUDE = $(rootfromhere)/include
+GAMBITDIR_LIB = $(rootfromhere)/lib
+GAMBITDIR_LIB_GSI = $(rootfromhere)/gsi
+GAMBITDIR_LIB_GSC = $(rootfromhere)/gsc
+
+BUILD_OBJ_OUTPUT_FILENAME_PARAM = $*@obj@
+BUILD_OBJ_CC_OPTIONS_PARAM =  -I$(srcdir) $(DEFS) $(GAMBITLIB_DEFS) -D___PRIMAL
+BUILD_OBJ_INPUT_FILENAMES_PARAM = $(srcdirpfx)$*.c
+
+PRELUDE_OPT = -prelude "@RTLIB_COND_EXPAND_FEATURES@(\#\#include\"$(srcdirpfx)../lib/header.scm\")"
+
+all: core
+
+core:
+
+core-pre: $(LIBRARY) $(GAMBIT_LIBS)
+
+core-post:
+	$(MAKE) deselect-gen-for-commit-post-nonrec
+
+.scm.c:
+	@SETDLPATHBOOT@ $(rootfromhere)/gsc-boot -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -c @COMPILATION_OPTIONS@ $(PRELUDE_OPT) $(srcdirpfx)$*.scm
+
+phase1: $(MODULES_C_IN_COMPILE_ORDER) $(GAMBIT_LIB_C)
+
+phase2:
+
+phase3: core
+
+phase4:
+
+$(LIBRARY): $(LIBRARY_OBJECTS_IN_COMPILE_ORDER)
+	rm -f "$(LIBRARY)$(LIB_VERSION_SUFFIX)" "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)" "$(LIBRARY)"
+	@MAKE_LIBRARY@
+	if test "$(LIB_VERSION_SUFFIX)" != ""; then \
+	  $(LN_S) "$(LIBRARY)$(LIB_VERSION_SUFFIX)" "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)"; \
+	  $(LN_S) "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)" "$(LIBRARY)"; \
+	fi
+
+univ-libs: $(UNIVLIB) $(MODULES_SCM)
+	@for target in $(BUILD_TARGETS); do \
+	  if test "$$target" != "C"; then \
+	    $(MAKE) GAMBIT_LIB_$$target; \
+	  fi; \
+	done
+
+GAMBIT_LIB_C: $(GAMBIT_LIB_C)
+
+$(GAMBIT_LIB_C): $(MODULES_C)
+	@SETDLPATHBOOT@ $(rootfromhere)/gsc-boot -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -warnings -link -flat -o $@ -preload $(MODULES_C)
+
+GAMBIT_LIB_java: $(GAMBIT_LIB_java)
+
+$(GAMBIT_LIB_java): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target java @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+GAMBIT_LIB_js: $(GAMBIT_LIB_js)
+
+$(GAMBIT_LIB_js): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target js @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -label-namespace "" -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+GAMBIT_LIB_php: $(GAMBIT_LIB_php)
+
+$(GAMBIT_LIB_php): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target php @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+GAMBIT_LIB_python: $(GAMBIT_LIB_python)
+
+$(GAMBIT_LIB_python): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target python @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+GAMBIT_LIB_ruby: $(GAMBIT_LIB_ruby)
+
+$(GAMBIT_LIB_ruby): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target ruby @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+GAMBIT_LIB_go: $(GAMBIT_LIB_go)
+
+$(GAMBIT_LIB_go): $(UNIVLIB) $(MODULES_SCM)
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -target go @COMPILATION_OPTIONS@ $(PRELUDE_OPT) -c -o $@ $(srcdirpfx)$(rootfromhere)/lib/_univlib.scm
+
+$(GAMBIT_LIB_java) $(GAMBIT_LIB_js) $(GAMBIT_LIB_php) $(GAMBIT_LIB_python) $(GAMBIT_LIB_ruby) $(GAMBIT_LIB_go): \
+$(srcdirpfx)$(rootfromhere)/lib/_univlib.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_kernel.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_system.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_num.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_std.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_eval.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_module.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_io.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_nonstd.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_thread.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_repl.scm
+
+$(GAMBIT_LIB_java) $(GAMBIT_LIB_js) $(GAMBIT_LIB_php) $(GAMBIT_LIB_python) $(GAMBIT_LIB_ruby) $(GAMBIT_LIB_go) $(MODULES_C): \
+$(srcdirpfx)$(rootfromhere)/lib/header.scm \
+$(srcdirpfx)$(rootfromhere)/lib/gambit\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_gambit\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_kernel\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_system\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_num\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_std\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_eval\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_module\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_io\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_nonstd\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_thread\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_repl\#.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_define-syntax.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-boot.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-case-xform-boot.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-case-xform.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-common.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-pattern.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-rules-xform.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-template.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-xform-boot.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax-xform.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_syntax.scm \
+$(srcdirpfx)$(rootfromhere)/lib/_with-syntax-boot.scm
+
+$(MODULES_O) $(NORMAL_O): $(srcdirpfx)$(rootfromhere)/include/gambit.h
+
+_kernel@obj@: _kernel.c $(srcdirpfx)$(rootfromhere)/include/stamp.h os.h os_setup.h os_base.h os_time.h os_shell.h os_files.h os_dyn.h os_tty.h os_io.h setup.h mem.h c_intf.h
+	@BUILD_OBJ@ -D___LIBRARY
+
+_system.c: gambit/char/char\#.scm gambit/char/CaseFolding.txt gambit/char/PropList.txt gambit/char/SpecialCasing.txt gambit/char/UnicodeData.txt
+
+_system@obj@: _system.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_num.c: gambit/random/random.scm gambit/random/random\#.scm
+
+_num@obj@: _num.c mem.h
+	@BUILD_OBJ@ -D___LIBRARY
+
+_std.c: gambit/boolean/boolean.scm gambit/boolean/boolean\#.scm gambit/symkey/symkey.scm gambit/symkey/symkey\#.scm gambit/list/list.scm gambit/list/list\#.scm gambit/vector/vector.scm gambit/vector/vector\#.scm gambit/string/string.scm gambit/string/string\#.scm gambit/procedure/procedure.scm gambit/procedure/procedure\#.scm gambit/promise/promise.scm gambit/promise/promise\#.scm gambit/parameter/parameter.scm gambit/parameter/parameter\#.scm gambit/char/char.scm gambit/char/char\#.scm gambit/char/CaseFolding.txt gambit/char/PropList.txt gambit/char/SpecialCasing.txt gambit/char/UnicodeData.txt
+_std@obj@: _std.c os.h
+	@BUILD_OBJ@ -D___LIBRARY
+
+_eval@obj@: _eval.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_module@obj@: _module.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_io@obj@: _io.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_nonstd.c: gambit/env-vars/env-vars.scm gambit/env-vars/env-vars\#.scm gambit/process/process.scm gambit/process/process\#.scm
+_nonstd@obj@: _nonstd.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_thread@obj@: _thread.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+_repl@obj@: _repl.c
+	@BUILD_OBJ@ -D___LIBRARY
+
+$(GAMBIT_LIB_O): $(GAMBIT_LIB_C)
+	@BUILD_OBJ@ -D___LIBRARY
+
+main@obj@: main.c os.h os_setup.h os_base.h os_shell.h setup.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+setup@obj@: setup.c os.h os_setup.h os_base.h os_files.h os_dyn.h os_thread.h setup.h mem.h c_intf.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+mem@obj@: mem.c os.h os_setup.h os_base.h os_time.h setup.h mem.h c_intf.h actlog.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+c_intf@obj@: c_intf.c os.h os_base.h os_dyn.h setup.h mem.h c_intf.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+actlog@obj@: actlog.c os.h os_base.h os_time.h actlog.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_setup@obj@: os_setup.c os.h os_setup.h os_thread.h os_base.h os_time.h os_shell.h os_files.h os_dyn.h os_tty.h os_io.h setup.h mem.h c_intf.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_base@obj@: os_base.c os.h os_base.h setup.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_thread@obj@: os_thread.c os.h os_base.h os_thread.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_time@obj@: os_time.c os.h os_thread.h os_base.h os_time.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_shell@obj@: os_shell.c os.h os_setup.h os_base.h os_shell.h os_files.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_files@obj@: os_files.c os.h os_base.h os_shell.h os_files.h setup.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_dyn@obj@: os_dyn.c os.h os_base.h os_shell.h os_files.h os_dyn.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_tty@obj@: os_tty.c os.h os_setup.h os_thread.h os_base.h os_tty.h os_shell.h os_io.h mem.h c_intf.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+os_io@obj@: os_io.c os.h os_setup.h os_base.h os_io.h os_tty.h os_shell.h os_files.h setup.h c_intf.h
+	@BUILD_OBJ_RTS@ -D___LIBRARY
+
+bootstrap-pre:
+
+bootstrap-post:
+	if test "@ENABLE_SHARED@" = "yes"; then \
+	  cp $(LIBRARY)$(LIB_VERSION_SUFFIX) $(rootfromhere)/$(LIBRARY)$(LIB_VERSION_SUFFIX); \
+	  if test "$(LIB_VERSION_SUFFIX)" != ""; then \
+	    cd $(rootfromhere); \
+	    $(LN_S) "$(LIBRARY)$(LIB_VERSION_SUFFIX)" "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)"; \
+	    $(LN_S) "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)" "$(LIBRARY)"; \
+	  fi \
+	fi
+
+modules-pre:
+
+modules-post:
+
+install-pre:
+
+install-post-comp-sc: core
+	@echo "*** Compiling ~~lib/syntax-case.scm (this may take a while)"
+	rm -f syntax-case.o*
+	@SETDLPATH@ $(srcdirpfx)$(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -warnings syntax-case
+
+install-post: core
+	c_libdir="$(DESTDIR)$(prefix)/$(herefromroot)"; \
+	i_libdir="$(DESTDIR)$(libdir)`echo $(herefromroot)/ | sed -e s:^lib:: -e s:/\\$$::`"; \
+	t_libdir="$$i_libdir"; \
+	$(srcdirpfx)$(rootfromhere)/mkidirs "$$i_libdir"; \
+	if test "@ENABLE_SYMLINKS@" = "yes"; then \
+	  $(srcdirpfx)$(rootfromhere)/mkidirs "$$c_libdir"; \
+	  t_libdir="$$c_libdir"; \
+	fi; \
+	for file in $(INSTFILES_LIB_DATA); do \
+	  $(INSTALL_DATA) "$$file" "$$t_libdir/$$file"; \
+	done; \
+	for file in $(GAMBIT_LIBS_UNIV); do \
+	  if test -e "$$file"; then \
+	    $(INSTALL_DATA) "$$file" "$$t_libdir/$$file"; \
+	  fi; \
+	done; \
+	for file in $(LIBRARIES); do \
+	  $(INSTALL_LIB) "$$file" "$$t_libdir/$$file"; \
+	  @FIXLIB@ "$$t_libdir/$$file"; \
+	done; \
+	if test "$(LIB_VERSION_SUFFIX)" != ""; then \
+	  (cd "$$t_libdir" && $(LN_S) "$(LIBRARY)$(LIB_VERSION_SUFFIX)" "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)" && $(LN_S) "$(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX)" "$(LIBRARY)"); \
+	fi; \
+	if test "$$t_libdir" != "$$i_libdir"; then \
+	  r_libdir=`$(rootfromhere)/relpath "$$t_libdir" "$$i_libdir" @ENABLE_MULTIPLE_VERSIONS@`; \
+	  for file in $(INSTFILES_LIB_DATA) $(LIBRARIES); do \
+	    (cd "$$i_libdir" && $(LN_S) "$$r_libdir$$file" "$$file"); \
+	  done; \
+	  for file in $(GAMBIT_LIBS_UNIV); do \
+	    if test -e "$$file"; then \
+	      (cd "$$i_libdir" && $(LN_S) "$$r_libdir$$file" "$$file"); \
+	    fi; \
+	  done; \
+	fi
+
+uninstall-pre:
+
+uninstall-post:
+	c_libdir="$(DESTDIR)$(prefix)/$(herefromroot)"; \
+	i_libdir="$(DESTDIR)$(libdir)`echo $(herefromroot)/ | sed -e s:^lib:: -e s:/\\$$::`"; \
+	t_libdir="$$i_libdir"; \
+	if test "@ENABLE_SYMLINKS@" = "yes"; then \
+	  t_libdir="$$c_libdir"; \
+	fi; \
+	for file in $(INSTFILES_LIB_DATA) $(LIBRARIES) $(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX) $(LIBRARY); do \
+	  rm -f "$$t_libdir/$$file"; \
+	done; \
+	if test "$$t_libdir" != "$$i_libdir"; then \
+	  for file in $(INSTFILES_LIB_DATA) $(LIBRARIES) $(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX) $(LIBRARY); do \
+	    rm -f "$$i_libdir/$$file"; \
+	  done; \
+	fi; \
+	rmdir "$$t_libdir" 2> /dev/null; \
+	if test "$$t_libdir" != "$$i_libdir"; then \
+	  rmdir "$$i_libdir" 2> /dev/null; \
+	fi
+
+select-gen-for-commit-pre:
+
+select-gen-for-commit-post select-gen-for-commit-post-nonrec:
+	if [ -e $(rootfromhere)/.git ]; then $(RC) update-index --no-skip-worktree $(MODULES_C) $(GAMBIT_LIB_C); fi
+
+deselect-gen-for-commit-pre:
+
+deselect-gen-for-commit-post deselect-gen-for-commit-post-nonrec:
+	if [ -e $(rootfromhere)/.git ]; then $(RC) update-index --skip-worktree $(MODULES_C) $(GAMBIT_LIB_C); fi
+
+mostlyclean-pre:
+
+mostlyclean-post mostlyclean-post-nonrec:
+	rm -f $(OBJECTS) $(LIBRARY)$(LIB_VERSION_SUFFIX) $(LIBRARY)$(LIB_MAJOR_VERSION_SUFFIX) $(LIBRARY)
+
+clean-pre: mostlyclean-pre
+
+clean-post clean-post-nonrec: mostlyclean-post-nonrec
+	rm -f *.da *.bb *.bbg *.gcov *.gcno *.gcda $(GAMBIT_LIBS_UNIV)
+
+distclean-pre: clean-pre
+
+distclean-post distclean-post-nonrec: clean-post-nonrec
+
+bootclean-pre: distclean-pre
+
+bootclean-post bootclean-post-nonrec: distclean-post-nonrec
+	rm -f $(MODULES_C) $(GAMBIT_LIB_C)
+
+realclean-pre: bootclean-pre
+
+realclean-post realclean-post-nonrec: bootclean-post-nonrec
+	rm -f makefile
+
+rc-setup-pre:
+	$(RC) add $(RCFILES) $(GENDISTFILES)
+
+rc-setup-post:
+
+dist-pre dist-devel-pre:
+	mkdir $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	chmod 777 $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	@echo "  Copying distribution files:"
+	@for file in $(DISTFILES); do \
+	  echo "    $(herefromroot)/$$file"; \
+	  ln $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot) 2> /dev/null \
+	    || cp -p $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot); \
+	done
+	@echo "    $(herefromroot)/guide"
+	(cd $(srcdir) ; COPYFILE_DISABLE=1 tar cf - guide) | (cd $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot) ; tar xf -)
+
+dist-post dist-devel-post:
+
+core-recursive:
+	@if test -n "@RTLIBSUBSYS@"; then \
+	  for subdir in ""@RTLIBSUBSYS@; do \
+	    (cd $$subdir && $(MAKE) core) || exit 1; \
+	  done \
+	fi
+
+bootstrap-recursive install-recursive uninstall-recursive select-gen-for-commit-recursive deselect-gen-for-commit-recursive mostlyclean-recursive clean-recursive distclean-recursive bootclean-recursive realclean-recursive rc-setup-recursive dist-recursive dist-devel-recursive:
+	@if test -n "$(SUBDIRS)"; then \
+	  for subdir in ""$(SUBDIRS); do \
+	    target=`echo $@ | sed 's/-recursive//'`; \
+	    echo making $$target in $$subdir; \
+	    (cd $$subdir && $(MAKE) $$target) || exit 1; \
+	  done \
+	fi
+
+modules-recursive: $(SUBDIRS1)
+	@$(MAKE) univ-libs $(SUBDIRS2)
+
+fake_target:
+
+$(SUBDIRS): fake_target
+	@(cd $@ && $(MAKE) modules) || exit 1
+
+core: core-post
+
+core-post: core-recursive
+
+core-recursive: core-pre
+
+bootstrap: bootstrap-post
+
+bootstrap-post: bootstrap-recursive
+
+bootstrap-recursive: bootstrap-pre
+
+clean-modules: clean-modules-pre
+	@for subdir in $(SUBDIRS); do \
+	  (cd $$subdir && $(MAKE) $@); \
+	done; \
+	for file in $(GAMBIT_LIBS_UNIV); do \
+	  if test -e "$$file"; then \
+	    rm -f "$$file"; \
+	  fi; \
+	done
+
+clean-modules-pre:
+
+list-modules: list-modules-pre
+	@for subdir in $(SUBDIRS); do \
+	  (cd $$subdir && $(MAKE) $@); \
+	done
+
+list-modules-pre:
+
+test-modules-all: test-modules-all-pre
+	@for subdir in $(SUBDIRS); do \
+	  (cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
+
+test-modules-all-pre:
+
+test-modules: test-modules-pre
+	@for subdir in $(SUBDIRS); do \
+	  (cd $$subdir && $(MAKE) $@) || exit 1; \
+	done
+
+test-modules-pre:
+
+modules: modules-post
+
+modules-post: modules-recursive
+
+modules-recursive: modules-pre
+
+install: install-post
+
+install-post: install-recursive
+
+install-recursive: install-pre
+
+uninstall: uninstall-post
+
+uninstall-post: uninstall-recursive
+
+uninstall-recursive: uninstall-pre
+
+select-gen-for-commit: select-gen-for-commit-post
+
+select-gen-for-commit-post: select-gen-for-commit-recursive
+
+select-gen-for-commit-post-nonrec select-gen-for-commit-recursive: select-gen-for-commit-pre
+
+deselect-gen-for-commit: deselect-gen-for-commit-post
+
+deselect-gen-for-commit-post: deselect-gen-for-commit-recursive
+
+deselect-gen-for-commit-post-nonrec deselect-gen-for-commit-recursive: deselect-gen-for-commit-pre
+
+mostlyclean: mostlyclean-post
+
+mostlyclean-post: mostlyclean-recursive
+
+mostlyclean-post-nonrec mostlyclean-recursive: mostlyclean-pre
+
+clean: clean-post
+
+clean-post: clean-recursive
+
+clean-post-nonrec clean-recursive: clean-pre
+
+distclean: distclean-post
+
+distclean-post: distclean-recursive
+
+distclean-post-nonrec distclean-recursive: distclean-pre
+
+bootclean: bootclean-post
+
+bootclean-post: bootclean-recursive
+
+bootclean-post-nonrec bootclean-recursive: bootclean-pre
+
+realclean: realclean-post
+
+realclean-post: realclean-recursive
+
+realclean-post-nonrec realclean-recursive: realclean-pre
+
+rc-setup: rc-setup-post
+
+rc-setup-post: rc-setup-recursive
+
+rc-setup-recursive: rc-setup-pre
+
+dist: dist-post
+
+dist-post: dist-recursive
+
+dist-recursive: dist-pre
+
+dist-devel: dist-devel-post
+
+dist-devel-post: dist-devel-recursive
+
+dist-devel-recursive: dist-devel-pre
+
+makefile: makefile.in $(rootfromhere)/config.status
+	cd $(rootfromhere) && CONFIG_FILES=$(herefromroot)/$@ CONFIG_HEADERS= ./config.status
+
+# Tell versions [3.59,3.63) of GNU make not to export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

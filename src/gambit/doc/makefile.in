@@ -1,0 +1,408 @@
+# makefile for Gambit documentation.
+
+# Copyright (c) 1994-2021 by Marc Feeley, All Rights Reserved.
+
+herefromroot = doc
+rootfromhere = ..
+SUBDIRS =
+
+PACKAGE_SHORTNAME = @PACKAGE_SHORTNAME@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+PACKAGE_STRING = @PACKAGE_STRING@
+PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+
+@SET_MAKE@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+srcdirpfx = @srcdirpfx@
+
+C_COMPILER = @C_COMPILER_MF@
+C_PREPROC = @C_PREPROC_MF@
+FLAGS_OBJ = @FLAGS_OBJ_MF@
+FLAGS_DYN = @FLAGS_DYN_MF@
+FLAGS_LIB = @FLAGS_LIB_MF@
+FLAGS_EXE = @FLAGS_EXE_MF@
+FLAGS_OPT = @FLAGS_OPT_MF@
+FLAGS_OPT_RTS = @FLAGS_OPT_RTS_MF@
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+GAMBITLIB_DEFS = @GAMBITLIB_DEFS_MF@
+LIB_PREFIX = @LIB_PREFIX@
+LIB_VERSION_SUFFIX = @LIB_VERSION_SUFFIX@
+LIB_MAJOR_VERSION_SUFFIX = @LIB_MAJOR_VERSION_SUFFIX@
+
+LIB_EXTENSION = @LIB_EXTENSION@
+GAMBITLIB = @GAMBITLIB@
+GAMBITGSCLIB = @GAMBITGSCLIB@
+GAMBITGSILIB = @GAMBITGSILIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_LIB = @INSTALL_LIB@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+LN_S = @LN_S@
+RANLIB = @RANLIB@
+AR = @AR@
+RC = @RC@
+GIT = @GIT@
+HG = @HG@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+bindir = @bindir@
+docdir = @docdir@
+infodir = @infodir@
+emacsdir = @emacsdir@
+libexecdir = @libexecdir@
+datarootdir = @datarootdir@
+datadir = @datadir@
+htmldir = @htmldir@
+dvidir = @dvidir@
+pdfdir = @pdfdir@
+psdir = @psdir@
+localedir = @localedir@
+mandir = @mandir@
+
+MAKEINFO = makeinfo
+TEXI2DVI = texi2dvi
+TEXI2HTML = ./texi2html
+PDF2PS = pdf2ps
+
+.SUFFIXES:
+
+RCFILES = makefile.in \
+gambit.txi texinfo.tex texi2html \
+checkdoc.scm gambini.scm square.scm bench.scm \
+m1.c m2.scm m3.scm m4.scm m5.scm m6.scm m7.scm x.c x.h h.scm w.six \
+test1.scm test2.scm test3.scm gsi.1
+
+GENDISTFILES = stamp.vti version.txi \
+gambit.pdf gambit*.html gambit.txt \
+gambit.info
+
+DISTFILES = $(RCFILES) $(GENDISTFILES)
+
+INSTFILES_DOC = gambit.pdf gambit*.html gambit.tsv gambit.txt
+INSTFILES_INFO = gambit.info
+INSTFILES_MAN = gsi.1
+
+all: core
+
+core:
+
+core-pre:
+
+core-post:
+
+doc: info pdf html txt ps
+
+info: gambit.info
+
+pdf: gambit.pdf
+
+ps: gambit.ps
+
+html: gambit.html gambit.tsv
+
+txt: gambit.txt
+
+gambit.info: gambit.txi version.txi
+	(cd $(srcdir) && $(MAKEINFO) --no-split gambit.txi) || (echo "*** $@ could not be built (perhaps $(MAKEINFO) is not installed?)" > $@)
+
+gambit.ps: gambit.pdf
+	(cd $(srcdir) && $(PDF2PS) gambit.pdf) || (echo "*** $@ could not be built (perhaps $(PDF2PS) is not installed?)" > $@)
+
+gambit.pdf: gambit.txi version.txi
+	(cd $(srcdir) && cd $(srcdir) && $(TEXI2DVI) -p gambit.txi) || (echo "*** $@ could not be built (perhaps $(TEXI2DVI) is not installed?)" > $@)
+
+gambit.html gambit.tsv: gambit.txi
+	(cd $(srcdir) && $(TEXI2HTML) --idx-sum --def-table gambit.txi) || (echo "*** $@ could not be built (perhaps $(TEXI2HTML) is not installed?)" > $@)
+
+gambit.txt: gambit.txi
+	(cd $(srcdir) && $(MAKEINFO) --no-split --no-headers --output gambit.txt gambit.txi) || (echo "*** $@ could not be built (perhaps $(MAKEINFO) is not installed?)" > $@)
+
+version.txi: stamp.vti
+
+stamp.vti: gambit.txi $(rootfromhere)/configure.ac
+	# we need this mess because "date" and "stat"
+	# don't behave the same on Linux and BSD
+	st_mtime="`stat -s gambit.txi | sed -e 's/.*st_mtime=//g' -e 's/ .*//g'`"; \
+	if [ "$$st_mtime" = "" ]; then \
+	  mtime="`date -r gambit.txi '+%B %d, %Y'`"; \
+	else \
+	  mtime="`date -r $$st_mtime '+%B %d, %Y'`"; \
+	fi; \
+	echo "@set EDITION $(PACKAGE_VERSION)" > version.tmp; \
+	echo "@set UPDATED $$mtime" >> version.tmp; \
+	echo "@set VERSION $(PACKAGE_VERSION)" >> version.tmp
+	if cmp -s version.tmp $(srcdirpfx)version.txi; then rm -f version.tmp; \
+	else mv version.tmp $(srcdirpfx)version.txi; fi
+	date > $(srcdirpfx)stamp.vti
+
+checkdoc:
+	rm -f *.o[0123456789]* fifo
+	rm -rf newdir
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ checkdoc.scm
+	diff gambit.txi gambit.txi-correct
+
+bootstrap-pre:
+
+bootstrap-post:
+
+install-pre:
+
+install-post: core doc
+	c_docdir="$(DESTDIR)$(prefix)/doc"; \
+	i_docdir="$(DESTDIR)$(docdir)"; \
+	t_docdir="$$i_docdir"; \
+	c_infodir="$(DESTDIR)$(prefix)/info"; \
+	i_infodir="$(DESTDIR)$(infodir)"; \
+	t_infodir="$$i_infodir"; \
+	c_mandir="$(DESTDIR)$(prefix)/doc/man/man1"; \
+	i_mandir="$(DESTDIR)$(mandir)/man1"; \
+	t_mandir="$$i_mandir"; \
+	$(srcdirpfx)$(rootfromhere)/mkidirs "$$i_docdir" "$$i_infodir" "$$i_mandir"; \
+	if test "@ENABLE_SYMLINKS@" = "yes"; then \
+	  $(srcdirpfx)$(rootfromhere)/mkidirs "$$c_docdir" "$$c_infodir" "$$c_mandir"; \
+	  t_docdir="$$c_docdir"; \
+	  t_infodir="$$c_infodir"; \
+	  t_mandir="$$c_mandir"; \
+	fi; \
+	for file in $(INSTFILES_DOC); do \
+	  $(INSTALL_DATA) "$(srcdirpfx)$$file" "$$t_docdir/$$file"; \
+	done; \
+	for file in $(INSTFILES_INFO); do \
+	  $(INSTALL_DATA) "$(srcdirpfx)$$file" "$$t_infodir/$$file"; \
+	done; \
+	for file in $(INSTFILES_MAN); do \
+	  $(INSTALL_DATA) "$(srcdirpfx)$$file" "$$t_mandir/$$file"; \
+	done; \
+	if test "@bat@" = ""; then \
+	  if test "$$t_docdir" != "$$i_docdir"; then \
+	    r_docdir=`$(rootfromhere)/relpath "$$t_docdir" "$$i_docdir" @ENABLE_MULTIPLE_VERSIONS@`; \
+	    for file in $(INSTFILES_DOC); do \
+	      (cd "$$i_docdir" && $(LN_S) "$$r_docdir$$file" "$$file"); \
+	    done; \
+	  fi; \
+	  if test "$$t_infodir" != "$$i_infodir"; then \
+	    r_infodir=`$(rootfromhere)/relpath "$$t_infodir" "$$i_infodir" @ENABLE_MULTIPLE_VERSIONS@`; \
+	    for file in $(INSTFILES_INFO); do \
+	      (cd "$$i_infodir" && $(LN_S) "$$r_infodir$$file" "$$file"); \
+	    done; \
+	  fi; \
+	  if test "$$t_mandir" != "$$i_mandir"; then \
+	    r_mandir=`$(rootfromhere)/relpath "$$t_mandir" "$$i_mandir" @ENABLE_MULTIPLE_VERSIONS@`; \
+	    for file in $(INSTFILES_MAN); do \
+	      (cd "$$i_mandir" && $(LN_S) "$$r_mandir$$file" "$$file"); \
+	    done; \
+	  fi; \
+	fi
+
+uninstall-pre:
+
+uninstall-post:
+	c_docdir="$(DESTDIR)$(prefix)/doc"; \
+	i_docdir="$(DESTDIR)$(docdir)"; \
+	t_docdir="$$i_docdir"; \
+	c_infodir="$(DESTDIR)$(prefix)/info"; \
+	i_infodir="$(DESTDIR)$(infodir)"; \
+	t_infodir="$$i_infodir"; \
+	c_mandir="$(DESTDIR)$(prefix)/doc/man/man1"; \
+	i_mandir="$(DESTDIR)$(mandir)/man1"; \
+	t_mandir="$$i_mandir"; \
+	if test "@ENABLE_SYMLINKS@" = "yes"; then \
+	  t_docdir="$$c_docdir"; \
+	  t_infodir="$$c_infodir"; \
+	  t_mandir="$$c_mandir"; \
+	fi; \
+	for file in $(INSTFILES_DOC); do \
+	  rm -f "$$t_docdir/$$file"; \
+	done; \
+	for file in $(INSTFILES_INFO); do \
+	  rm -f "$$t_infodir/$$file"; \
+	done; \
+	for file in $(INSTFILES_MAN); do \
+	  rm -f "$$t_mandir/$$file"; \
+	done; \
+	if test "$$t_docdir" != "$$i_docdir"; then \
+	  for file in $(INSTFILES_DOC); do \
+	    rm -f "$$i_docdir/$$file"; \
+	  done; \
+	fi; \
+	if test "$$t_infodir" != "$$i_infodir"; then \
+	  for file in $(INSTFILES_INFO); do \
+	    rm -f "$$i_infodir/$$file"; \
+	  done; \
+	fi; \
+	if test "$$t_mandir" != "$$i_mandir"; then \
+	  for file in $(INSTFILES_MAN); do \
+	    rm -f "$$i_mandir/$$file"; \
+	  done; \
+	fi; \
+	rmdir "$$t_docdir" 2> /dev/null; \
+	if test "$$t_docdir" != "$$i_docdir"; then \
+	  rmdir "$$i_docdir" 2> /dev/null; \
+	fi; \
+	rmdir "$$t_infodir" 2> /dev/null; \
+	if test "$$t_infodir" != "$$i_infodir"; then \
+	  rmdir $$i_infodir 2> /dev/null; \
+	fi; \
+	rmdir "$$t_mandir" 2> /dev/null; \
+	if test "$$t_mandir" != "$$i_mandir"; then \
+	  rmdir "$$i_mandir" 2> /dev/null; \
+	fi
+
+select-gen-for-commit-pre:
+
+select-gen-for-commit-post select-gen-for-commit-post-nonrec:
+
+deselect-gen-for-commit-pre:
+
+deselect-gen-for-commit-post deselect-gen-for-commit-post-nonrec:
+
+mostlyclean-pre:
+
+mostlyclean-post mostlyclean-post-nonrec:
+
+clean-pre: mostlyclean-pre
+
+clean-post clean-post-nonrec: mostlyclean-post-nonrec
+	rm -f *.aux *.cp *.cps *.dvi *.fn *.fns *.ky *.log *.pg \
+	  *.toc *.tp *.tsv *.vr *.cm *.fl *.op *.tmp
+
+distclean-pre: clean-pre
+
+distclean-post distclean-post-nonrec: clean-post-nonrec
+
+bootclean-pre: distclean-pre
+
+bootclean-post bootclean-post-nonrec: distclean-post-nonrec
+	rm -f stamp.vti version.txi \
+	  gambit.ps gambit.pdf gambit*.html gambit.txt gambit.info*
+
+realclean-pre: bootclean-pre
+
+realclean-post realclean-post-nonrec: bootclean-post-nonrec
+	rm -f makefile
+
+rc-setup-pre:
+	$(RC) add $(RCFILES)
+
+rc-setup-post:
+
+dist-pre dist-devel-pre:
+	mkdir $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	chmod 777 $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	@echo "  Copying distribution files:"
+	@for file in $(DISTFILES); do \
+	  echo "    $(herefromroot)/$$file"; \
+	  ln $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot) 2> /dev/null \
+	    || cp -p $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot); \
+	done
+
+dist-post dist-devel-post:
+
+core-recursive bootstrap-recursive install-recursive uninstall-recursive select-gen-for-commit-recursive deselect-gen-for-commit-recursive mostlyclean-recursive clean-recursive distclean-recursive bootclean-recursive realclean-recursive rc-setup-recursive dist-recursive dist-devel-recursive:
+	@if test -n "$(SUBDIRS)"; then \
+	  for subdir in ""$(SUBDIRS); do \
+	    target=`echo $@ | sed 's/-recursive//'`; \
+	    echo making $$target in $$subdir; \
+	    (cd $$subdir && $(MAKE) $$target) || exit 1; \
+	  done \
+	fi
+
+core: core-post
+
+core-post: core-recursive
+
+core-recursive: core-pre
+
+bootstrap: bootstrap-post
+
+bootstrap-post: bootstrap-recursive
+
+bootstrap-recursive: bootstrap-pre
+
+install: install-post
+
+install-post: install-recursive
+
+install-recursive: install-pre
+
+uninstall: uninstall-post
+
+uninstall-post: uninstall-recursive
+
+uninstall-recursive: uninstall-pre
+
+select-gen-for-commit: select-gen-for-commit-post
+
+select-gen-for-commit-post: select-gen-for-commit-recursive
+
+select-gen-for-commit-post-nonrec select-gen-for-commit-recursive: select-gen-for-commit-pre
+
+deselect-gen-for-commit: deselect-gen-for-commit-post
+
+deselect-gen-for-commit-post: deselect-gen-for-commit-recursive
+
+deselect-gen-for-commit-post-nonrec deselect-gen-for-commit-recursive: deselect-gen-for-commit-pre
+
+mostlyclean: mostlyclean-post
+
+mostlyclean-post: mostlyclean-recursive
+
+mostlyclean-post-nonrec mostlyclean-recursive: mostlyclean-pre
+
+clean: clean-post
+
+clean-post: clean-recursive
+
+clean-post-nonrec clean-recursive: clean-pre
+
+distclean: distclean-post
+
+distclean-post: distclean-recursive
+
+distclean-post-nonrec distclean-recursive: distclean-pre
+
+bootclean: bootclean-post
+
+bootclean-post: bootclean-recursive
+
+bootclean-post-nonrec bootclean-recursive: bootclean-pre
+
+realclean: realclean-post
+
+realclean-post: realclean-recursive
+
+realclean-post-nonrec realclean-recursive: realclean-pre
+
+rc-setup: rc-setup-post
+
+rc-setup-post: rc-setup-recursive
+
+rc-setup-recursive: rc-setup-pre
+
+dist: dist-post
+
+dist-post: dist-recursive
+
+dist-recursive: dist-pre
+
+dist-devel: dist-devel-post
+
+dist-devel-post: dist-devel-recursive
+
+dist-devel-recursive: dist-devel-pre
+
+makefile: makefile.in $(rootfromhere)/config.status
+	cd $(rootfromhere) && CONFIG_FILES=$(herefromroot)/$@ CONFIG_HEADERS= ./config.status
+
+# Tell versions [3.59,3.63) of GNU make not to export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

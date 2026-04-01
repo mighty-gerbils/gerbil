@@ -1,0 +1,30 @@
+(include "#.scm")
+
+(check-eqv? (##fl*  0.25  0.75)  0.1875)
+(check-eqv? (##fl*  0.25 -0.25) -0.0625)
+(check-eqv? (##fl*  0.25 -0.75) -0.1875)
+(check-eqv? (##fl* -0.25  0.75) -0.1875)
+
+(check-eqv? (##fl*) 1.0)
+(check-eqv? (##fl* 0.25) 0.25)
+(check-eqv? (##fl* 0.25 2.0) 0.5)
+(check-eqv? (##fl* 0.25 2.0 0.5) 0.25)
+(check-eqv? (##fl* 0.25 2.0 0.5 0.75) 0.1875)
+
+(check-eqv? (fl*  0.25  0.75)  0.1875)
+(check-eqv? (fl*  0.25 -0.25) -0.0625)
+(check-eqv? (fl*  0.25 -0.75) -0.1875)
+(check-eqv? (fl* -0.25  0.75) -0.1875)
+
+(check-eqv? (fl*) 1.0)
+(check-eqv? (fl* 0.25) 0.25)
+(check-eqv? (fl* 0.25 2.0) 0.5)
+(check-eqv? (fl* 0.25 2.0 0.5) 0.25)
+(check-eqv? (fl* 0.25 2.0 0.5 0.75) 0.1875)
+
+(check-tail-exn type-exception? (lambda () (fl* 1)))
+(check-tail-exn type-exception? (lambda () (fl* 1 4.2)))
+(check-tail-exn type-exception? (lambda () (fl* 0.5 9)))
+(check-tail-exn type-exception? (lambda () (fl* 9 0.5 4.2)))
+(check-tail-exn type-exception? (lambda () (fl* 0.5 9 4.2)))
+(check-tail-exn type-exception? (lambda () (fl* 0.5 4.2 9)))

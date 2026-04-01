@@ -1,0 +1,101 @@
+#! /bin/sh
+
+# Copyright (c) 1994-2021 by Marc Feeley, All Rights Reserved.
+
+herefromroot="prebuilt/macosx"
+rootfromhere="../.."
+
+if [ "`id -un`" != "root" ] ; then
+  echo "You must execute this script as root!"
+  echo "Try executing the command:"
+  echo "  sudo $0"
+  exit 1
+fi
+
+export INSTALL_PREFIX="/Library/Gambit"
+
+cd "`dirname $0`"
+
+for VARIANT in intel64; do
+
+  cd "$rootfromhere"
+
+  case "$VARIANT" in
+      intel64) CONFIG_ARCH="-arch x86_64 -m64"
+               CONFIG_BUILD="--build=x86_64-apple-darwin13.0.2"
+               RUN_TESTS=1
+               ;;
+      intel32) CONFIG_ARCH="-arch i386"
+               CONFIG_BUILD="--build=i386-apple-darwin13.0.2"
+               RUN_TESTS=1
+               ;;
+           G3) CONFIG_ARCH="-arch ppc750"
+               CONFIG_BUILD="--build=powerpc-apple-darwin9"
+               RUN_TESTS=0
+               ;;
+           G4) CONFIG_ARCH="-arch ppc7400"
+               CONFIG_BUILD="--build=powerpc-apple-darwin9"
+               RUN_TESTS=0
+               ;;
+           G5) CONFIG_ARCH="-arch ppc970 -m64"
+               CONFIG_BUILD="--build=powerpc-apple-darwin9"
+               RUN_TESTS=0
+               ;;
+    universal) CONFIG_ARCH="-arch i386 -arch ppc750"
+               CONFIG_BUILD=""
+               RUN_TESTS=1
+               ;;
+  esac
+
+  #SYSROOT="/Developer/SDKs/MacOSX10.6.sdk"
+  #SYSROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk"
+  #SYSROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk"
+
+  #CFLAGS="-isysroot $SYSROOT $CONFIG_ARCH" LDFLAGS="-mmacosx-version-min=10.6 -Wl,-syslibroot,$SYSROOT $CONFIG_ARCH" ./configure "$CONFIG_BUILD" --prefix="$INSTALL_PREFIX" --enable-multiple-versions --enable-symlinks --enable-single-host CC="gcc"
+
+  # use GNU gcc and hide options for compatibility with LLVM gcc
+
+  SYSROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk"
+  #GCCDIR="/usr/local/Cellar/gcc/8.3.0_2/lib/gcc/8/gcc/x86_64-apple-darwin18/8.3.0"
+  GCCDIR="/usr/local/Cellar/gcc/9.2.0_3/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0"
+
+  rm -f `pwd`/gcc
+  cat <<EOF > gcc
+#!/bin/sh
+exec gcc-9 -nostdinc --sysroot=$SYSROOT -isystem $SYSROOT/usr/include -I $GCCDIR/include -fschedule-insns2 -fno-trapping-math -fwrapv -fmodulo-sched -freschedule-modulo-scheduled-loops -static-libgcc -D___DONT_USE_builtin_clrsb "\$@"
+EOF
+  chmod +x gcc
+  export PATH="`pwd`:$PATH"
+
+  CFLAGS="$CONFIG_ARCH -mmacosx-version-min=10.12" LDFLAGS="$CONFIG_ARCH" ./configure "$CONFIG_BUILD" --prefix="$INSTALL_PREFIX" --enable-multiple-versions --enable-symlinks --enable-single-host --disable-gnu-gcc-specific-options --enable-march= --enable-openssl ENABLE_OPENSSL_STATIC_LINK=yes CC="gcc"
+
+  cd "$herefromroot"
+
+  chmod +x build-phase2
+
+  ./build-phase2 "$VARIANT" "$RUN_TESTS" > build-phase2.out
+
+  cat build-phase2.out
+
+  SUCCESS=0
+
+  if fgrep "************ TESTS SUCCESSFUL" build-phase2.out > /dev/null; then
+    SUCCESS=1
+  else
+    if fgrep "************ TESTS SKIPPED" build-phase2.out > /dev/null; then
+      SUCCESS=1
+    fi
+  fi
+
+  rm -f build-phase2.out
+
+  if [ "$SUCCESS" == "1" ] ; then
+    echo "************ BUILD SUCCESSFUL ($VARIANT variant)"
+  else
+    echo "************ BUILD FAILED ($VARIANT variant)"
+    exit 1
+  fi
+
+done
+
+echo "************ macosx BUILD SUCCESSFUL"

@@ -1,0 +1,98 @@
+#! /bin/sh
+
+# Copyright (c) 1994-2021 by Marc Feeley, All Rights Reserved.
+
+herefromroot="prebuilt/windows"
+rootfromhere="../.."
+
+#if [ "`id -un`" != "Administrator" ] ; then
+#  echo "You must execute this script as Administrator!"
+#  exit 1
+#fi
+
+PFDIR="/Program Files (x86)"
+
+VCDIR="$PFDIR/Microsoft Visual Studio 12.0/VC"
+WKDIR="$PFDIR/Windows Kits/8.1"
+
+MSYS="/msys"
+
+ADDPATHMINGW32="/c/mingw32/bin:"
+ADDPATHMINGW64="/c/mingw64/bin:"
+
+ADDPATHVC32="/c$VCDIR/bin:"
+ADDPATHVC64="/c$VCDIR/bin/x86_amd64:"
+
+COMMONPATH="/c$MSYS/bin:"
+
+export INSTALL_PREFIX="C:/Gambit/././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././././."
+
+cd "`dirname $0`"
+
+for VARIANT in mingw32 mingw64 visualc32 visualc64; do
+
+  cd "$rootfromhere"
+
+  case "$VARIANT" in
+    mingw32) CONFIG_CC="gcc -m32 -static-libgcc"
+             RUN_TESTS=1
+             ADDPATH="$COMMONPATH$ADDPATHMINGW32"
+             ;;
+    mingw64) CONFIG_CC="gcc -m64 -static-libgcc"
+             RUN_TESTS=1
+             ADDPATH="$COMMONPATH$ADDPATHMINGW64"
+             ;;
+  visualc32) CONFIG_CC="cl.exe"
+             RUN_TESTS=1
+             ADDPATH="$COMMONPATH$ADDPATHVC32"
+             export LIB="C:$WKDIR/Lib/winv6.3/um/x86;C:$VCDIR/lib"
+             export INCLUDE="C:$WKDIR/Include/um;C:$WKDIR/Include/shared;C:$VCDIR/include"
+             ;;
+  visualc64) CONFIG_CC="cl.exe"
+             RUN_TESTS=1
+             ADDPATH="$COMMONPATH$ADDPATHVC64$ADDPATHVC32"
+             export LIB="C:$WKDIR/Lib/winv6.3/um/x64;C:$VCDIR/lib/amd64"
+             export INCLUDE="C:$WKDIR/Include/um;C:$WKDIR/Include/shared;C:$VCDIR/include"
+             ;;
+  esac
+
+  echo "export PATH=\"$ADDPATH\$PATH\";./configure --prefix=\"$INSTALL_PREFIX\" --enable-multiple-versions --enable-symlinks --enable-single-host --enable-march= CC=\"$CONFIG_CC\"" > build-cmds
+
+  cat build-cmds
+
+  "c:$MSYS/bin/sh" build-cmds
+
+  cd "$herefromroot"
+
+  chmod +x build-phase2
+
+  echo "export PATH=\"$ADDPATH\$PATH\";./build-phase2 \"$VARIANT\" \"$RUN_TESTS\" > build-phase2.out" > build-cmds
+
+  cat build-cmds
+
+  "c:$MSYS/bin/sh" build-cmds
+
+  cat build-phase2.out
+
+  SUCCESS=0
+
+  if fgrep "************ TESTS SUCCESSFUL" build-phase2.out > /dev/null; then
+    SUCCESS=1
+  else
+    if fgrep "************ TESTS SKIPPED" build-phase2.out > /dev/null; then
+      SUCCESS=1
+    fi
+  fi
+
+  rm -f build-phase2.out
+
+  if [ "$SUCCESS" == "1" ] ; then
+    echo "************ BUILD SUCCESSFUL ($VARIANT variant)"
+  else
+    echo "************ BUILD FAILED ($VARIANT variant)"
+    exit 1
+  fi
+
+done
+
+echo "************ windows BUILD SUCCESSFUL"

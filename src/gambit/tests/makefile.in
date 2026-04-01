@@ -1,0 +1,403 @@
+# makefile for regression tests.
+
+# Copyright (c) 1994-2023 by Marc Feeley, All Rights Reserved.
+
+herefromroot = tests
+rootfromhere = ..
+SUBDIRS =
+
+PACKAGE_SHORTNAME = @PACKAGE_SHORTNAME@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+PACKAGE_STRING = @PACKAGE_STRING@
+PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
+
+@SET_MAKE@
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+srcdirpfx = @srcdirpfx@
+
+C_COMPILER = @C_COMPILER_MF@
+C_PREPROC = @C_PREPROC_MF@
+FLAGS_OBJ = @FLAGS_OBJ_MF@
+FLAGS_DYN = @FLAGS_DYN_MF@
+FLAGS_LIB = @FLAGS_LIB_MF@
+FLAGS_EXE = @FLAGS_EXE_MF@
+FLAGS_OPT = @FLAGS_OPT_MF@
+FLAGS_OPT_RTS = @FLAGS_OPT_RTS_MF@
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+GAMBITLIB_DEFS = @GAMBITLIB_DEFS_MF@
+LIB_PREFIX = @LIB_PREFIX@
+LIB_VERSION_SUFFIX = @LIB_VERSION_SUFFIX@
+LIB_MAJOR_VERSION_SUFFIX = @LIB_MAJOR_VERSION_SUFFIX@
+
+LIB_EXTENSION = @LIB_EXTENSION@
+GAMBITLIB = @GAMBITLIB@
+GAMBITGSCLIB = @GAMBITGSCLIB@
+GAMBITGSILIB = @GAMBITGSILIB@
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_LIB = @INSTALL_LIB@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+LN_S = @LN_S@
+RANLIB = @RANLIB@
+AR = @AR@
+RC = @RC@
+GIT = @GIT@
+HG = @HG@
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+bindir = @bindir@
+docdir = @docdir@
+infodir = @infodir@
+emacsdir = @emacsdir@
+libexecdir = @libexecdir@
+datarootdir = @datarootdir@
+datadir = @datadir@
+htmldir = @htmldir@
+dvidir = @dvidir@
+pdfdir = @pdfdir@
+psdir = @psdir@
+localedir = @localedir@
+mandir = @mandir@
+
+.SUFFIXES:
+
+RCFILES = makefile.in \
+debug.scm error.scm r4rstest.scm mix.scm mem.scm client.c server.scm server.h \
+test1.ok test2.ok test3.ok test4.ok test5.ok test6.ok test7.ok \
+test8.ok test9.ok test10.scm input run-unit-tests.scm
+
+GENDISTFILES =
+
+DISTFILES = $(RCFILES) $(GENDISTFILES)
+
+GAMBITDIR_INCLUDE = $(srcdirpfx)$(rootfromhere)/include
+GAMBITDIR_LIB = $(srcdirpfx)$(rootfromhere)/lib
+GAMBITDIR_LIB_GSI = $(srcdirpfx)$(rootfromhere)/gsi
+GAMBITDIR_LIB_GSC = $(srcdirpfx)$(rootfromhere)/gsc
+
+all: core
+
+core:
+
+core-pre:
+
+core-post:
+	@if [ ! -f debug.scm ]; then \
+	  cp $(srcdirpfx)debug.scm .; \
+	  touch debug.rm; \
+	  cp $(srcdirpfx)error.scm .; \
+	  touch error.rm; \
+	  cp $(srcdirpfx)r4rstest.scm .; \
+	  touch r4rstest.rm; \
+	  cp $(srcdirpfx)mix.scm .; \
+	  touch mix.rm; \
+	  cp $(srcdirpfx)mem.scm .; \
+	  touch mem.rm; \
+	  cp $(srcdirpfx)server.scm .; \
+	  touch server.rm; \
+	fi
+
+.NOTPARALLEL:
+
+check: core test1 test2 test3 test4 test5 test6 test7 test8 test9 test10 test11
+	@echo "============ ALL TESTS SUCCESSFUL"
+	rm -f mem.c mem_.c mem@obj@ mem.o1 mem_@obj@ mem@exe@ \
+	  mix.c mix_.c mix@obj@ mix_@obj@ mix@exe@ \
+	  server.c server_.c server@obj@ server_@obj@ client@obj@ \
+	  client@exe@ so_locations *.out tmp*
+
+test1:
+	@echo "------------ TEST 1 (debugging support)"
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f debug.scm > test1.out
+	diff $(srcdirpfx)test1.ok test1.out && rm -f test1.out
+
+test2:
+	@echo "------------ TEST 2 (error handling)"
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:m1,h6000,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f error.scm < error.scm > test2.out
+	diff $(srcdirpfx)test2.ok test2.out && rm -f test2.out
+
+test3:
+	@echo "------------ TEST 3 (interpreter and library functions)"
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:r4rs,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -e '(begin (load "r4rstest.scm") (test-cont) (test-sc4) (test-delay) (exit))' > test3.out
+	diff $(srcdirpfx)test3.ok test3.out && rm -f test3.out tmp*
+
+test4:
+	@echo "------------ TEST 4 (interpreter running an application)"
+	rm -f mix@obj@
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f mix.scm > test4.out
+	diff $(srcdirpfx)test4.ok test4.out && rm -f test4.out
+
+test5:
+	@echo "------------ TEST 5 (compiler generating C code)"
+	rm -f mix.c
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -c -nb-gvm-regs 5 -nb-arg-regs 3 mix.scm
+	diff $(srcdirpfx)test5.ok mix.c
+
+test6:
+	@echo "------------ TEST 6 (link and execute the code generated)"
+	rm -f mix_.c mix@obj@ mix_@obj@ mix@exe@
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -c mix.scm
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -warnings -o mix@exe@ -exe mix.c
+	@SETDLPATH@ ./mix@exe@ -:m5000 > test6.out
+	diff $(srcdirpfx)test6.ok test6.out && \
+	  rm -f test6.out mix.c mix_.c mix@obj@ mix_@obj@ mix@exe@
+
+test7:
+	@echo "------------ TEST 7 (memory management and C-interface)"
+	rm -f mem.c mem_.c mem@obj@ mem_@obj@ mem@exe@
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -warnings -o mem@exe@ -exe mem.scm
+	@SETDLPATH@ ./mem@exe@ -:m1,h5000,p1 > test7.out
+	diff $(srcdirpfx)test7.ok test7.out && \
+	  rm -f test7.out mem.c mem_.c mem@obj@ mem_@obj@ mem@exe@
+
+test8:
+	@echo "------------ TEST 8 (use C-interface to implement a Scheme server)"
+	rm -f server.c server_.c server@obj@ server_@obj@ \
+	  client@obj@ client@exe@
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -warnings -exe -cc-options "-D___LIBRARY" -o client@exe@ client.c server.scm
+	@SETDLPATH@ ./client@exe@ > test8.out
+	diff -w $(srcdirpfx)test8.ok test8.out && \
+	  rm -f test8.out client@exe@
+
+test9: test7
+	@echo "------------ TEST 9 (dynamic compilation and loading of a module)"
+	rm -rf mem@obj@ mem.o*
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -warnings mem.scm
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:m1,h5000,p1 -f mem.o1 > test9.out
+	diff $(srcdirpfx)test9.ok test9.out && rm -f test9.out mem@obj@ mem.o1
+
+test10:
+	@echo "------------ TEST 10 (consistency of runtime library exports)"
+	rm -rf mem@obj@ mem.o*
+	@SETDLPATH@ $(rootfromhere)/gsc/gsc@exe@ -:~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f -i test10.scm
+
+test11:
+	@echo "------------ TEST 11 (run unit tests)"
+	$(MAKE) ut
+
+ut ut-C:
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm
+
+ut-js:
+	(cd ../lib; make _gambit.js)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -js -gsc
+
+ut-python:
+	(cd ../lib; make _gambit.py)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -python -gsc
+
+ut-ruby:
+	(cd ../lib; make _gambit.rb)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -ruby -gsc
+
+ut-php:
+	(cd ../lib; make _gambit.php)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -php -gsc
+
+ut-java:
+	(cd ../lib; make _gambit.java)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -java -gsc
+
+st st-C:
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -e '(pretty-print (list processor-count: (##current-vm-processor-count) cpu-count: (##cpu-count)))'
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -gsc-dbg
+
+st-js:
+	(cd ../lib; make _gambit.js)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -js -gsc
+
+st-python:
+	(cd ../lib; make _gambit.py)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -python -gsc
+
+st-ruby:
+	(cd ../lib; make _gambit.rb)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -ruby -gsc
+
+st-php:
+	(cd ../lib; make _gambit.php)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -php -gsc
+
+st-java:
+	(cd ../lib; make _gambit.java)
+	@SETDLPATH@ $(rootfromhere)/gsi/gsi@exe@ -:tl,~~bin=$(srcdirpfx)$(rootfromhere)/bin,~~lib=$(srcdirpfx)$(rootfromhere)/lib,~~include=$(srcdirpfx)$(rootfromhere)/include -f ./run-unit-tests.scm -stress -java -gsc
+
+bootstrap-pre:
+
+bootstrap-post:
+
+install-pre:
+
+install-post: core
+
+uninstall-pre:
+
+uninstall-post:
+
+select-gen-for-commit-pre:
+
+select-gen-for-commit-post select-gen-for-commit-post-nonrec:
+
+deselect-gen-for-commit-pre:
+
+deselect-gen-for-commit-post deselect-gen-for-commit-post-nonrec:
+
+mostlyclean-pre:
+
+mostlyclean-post mostlyclean-post-nonrec:
+	rm -f mem.c mem_.c mem@obj@ mem.o1 mem_@obj@ mem mem.exe \
+	  mix.c mix_.c mix@obj@ mix_@obj@ mix mix.exe \
+	  server.c server_.c server@obj@ server_@obj@ client@obj@ client \
+	  client.exe gambit.h so_locations *.out tmp*
+
+clean-pre: mostlyclean-pre
+
+clean-post clean-post-nonrec: mostlyclean-post-nonrec
+	test ! -f debug.rm || rm -f debug.rm debug.scm
+	test ! -f error.rm || rm -f error.rm error.scm
+	test ! -f r4rstest.rm || rm -f r4rstest.rm r4rstest.scm
+	test ! -f mix.rm || rm -f mix.rm mix.scm
+	test ! -f mem.rm || rm -f mem.rm mem.scm
+	test ! -f server.rm || rm -f server.rm server.scm
+	rm -f *.da *.bb *.bbg *.gcov *.gcno *.gcda
+
+distclean-pre: clean-pre
+
+distclean-post distclean-post-nonrec: clean-post-nonrec
+
+bootclean-pre: distclean-pre
+
+bootclean-post bootclean-post-nonrec: distclean-post-nonrec
+
+realclean-pre: bootclean-pre
+
+realclean-post realclean-post-nonrec: bootclean-post-nonrec
+	rm -f makefile
+
+rc-setup-pre:
+	$(RC) add $(RCFILES)
+
+rc-setup-post:
+
+dist-pre dist-devel-pre:
+	mkdir $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	chmod 777 $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot)
+	@echo "  Copying distribution files:"
+	@for file in $(DISTFILES); do \
+	  echo "    $(herefromroot)/$$file"; \
+	  ln $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot) 2> /dev/null \
+	    || cp -p $(srcdirpfx)$$file $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot); \
+	done
+	@echo "    $(herefromroot)/unit-tests"
+	(cd $(srcdir) ; COPYFILE_DISABLE=1 tar cf - `$(RC) ls-tree -r HEAD --name-only unit-tests`) | (cd $(rootfromhere)/$(PACKAGE_TARNAME)/$(herefromroot) ; tar xf -)
+
+dist-post dist-devel-post:
+
+core-recursive bootstrap-recursive install-recursive uninstall-recursive select-gen-for-commit-recursive deselect-gen-for-commit-recursive mostlyclean-recursive clean-recursive distclean-recursive bootclean-recursive realclean-recursive rc-setup-recursive dist-recursive dist-devel-recursive:
+	@if test -n "$(SUBDIRS)"; then \
+	  for subdir in ""$(SUBDIRS); do \
+	    target=`echo $@ | sed 's/-recursive//'`; \
+	    echo making $$target in $$subdir; \
+	    (cd $$subdir && $(MAKE) $$target) || exit 1; \
+	  done \
+	fi
+
+core: core-post
+
+core-post: core-recursive
+
+core-recursive: core-pre
+
+bootstrap: bootstrap-post
+
+bootstrap-post: bootstrap-recursive
+
+bootstrap-recursive: bootstrap-pre
+
+install: install-post
+
+install-post: install-recursive
+
+install-recursive: install-pre
+
+uninstall: uninstall-post
+
+uninstall-post: uninstall-recursive
+
+uninstall-recursive: uninstall-pre
+
+select-gen-for-commit: select-gen-for-commit-post
+
+select-gen-for-commit-post: select-gen-for-commit-recursive
+
+select-gen-for-commit-post-nonrec select-gen-for-commit-recursive: select-gen-for-commit-pre
+
+deselect-gen-for-commit: deselect-gen-for-commit-post
+
+deselect-gen-for-commit-post: deselect-gen-for-commit-recursive
+
+deselect-gen-for-commit-post-nonrec deselect-gen-for-commit-recursive: deselect-gen-for-commit-pre
+
+mostlyclean: mostlyclean-post
+
+mostlyclean-post: mostlyclean-recursive
+
+mostlyclean-post-nonrec mostlyclean-recursive: mostlyclean-pre
+
+clean: clean-post
+
+clean-post: clean-recursive
+
+clean-post-nonrec clean-recursive: clean-pre
+
+distclean: distclean-post
+
+distclean-post: distclean-recursive
+
+distclean-post-nonrec distclean-recursive: distclean-pre
+
+bootclean: bootclean-post
+
+bootclean-post: bootclean-recursive
+
+bootclean-post-nonrec bootclean-recursive: bootclean-pre
+
+realclean: realclean-post
+
+realclean-post: realclean-recursive
+
+realclean-post-nonrec realclean-recursive: realclean-pre
+
+rc-setup: rc-setup-post
+
+rc-setup-post: rc-setup-recursive
+
+rc-setup-recursive: rc-setup-pre
+
+dist: dist-post
+
+dist-post: dist-recursive
+
+dist-recursive: dist-pre
+
+dist-devel: dist-devel-post
+
+dist-devel-post: dist-devel-recursive
+
+dist-devel-recursive: dist-devel-pre
+
+makefile: makefile.in $(rootfromhere)/config.status
+	cd $(rootfromhere) && CONFIG_FILES=$(herefromroot)/$@ CONFIG_HEADERS= ./config.status
+
+# Tell versions [3.59,3.63) of GNU make not to export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

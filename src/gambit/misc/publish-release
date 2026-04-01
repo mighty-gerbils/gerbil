@@ -1,0 +1,22 @@
+#! /bin/sh
+
+# Usage: publish-release <version> <sources-tgz> <sources-tgz-devel> <prebuilt>...
+
+VERSION="$1"
+shift
+TGZ="$1"
+shift
+TGZ_DEVEL="$1"
+shift
+PREBUILT="$*"
+
+echo "These files will be published for version $VERSION:"
+echo "  ==> $TGZ"
+echo "  ==> $TGZ_DEVEL"
+for file in $PREBUILT; do
+  echo "  ==> $file"
+done
+echo "You will have to enter the Gambit web site password to confirm the operation."
+echo ""
+
+tar cf - $TGZ $TGZ_DEVEL $PREBUILT | ssh -o PreferredAuthentications=keyboard-interactive,password gambit@arcade.iro.umontreal.ca "rm -rf release-$VERSION;mkdir release-$VERSION;(cd release-$VERSION && tar xvf -);bin/publish-release $VERSION $TGZ $TGZ_DEVEL $PREBUILT;rm -rf release-$VERSION"
