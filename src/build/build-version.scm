@@ -2,7 +2,7 @@
         (path-expand "gerbil/runtime/version.ss" (getenv "GERBIL_SOURCE")))
        (git-version
         (or
-         (getenv "GERBIL_VERSION_STRING")
+         (getenv "GERBIL_VERSION_STRING" #f)
          (with-exception-catcher
           (lambda (e) (display-exception e) #f)
           (lambda ()
@@ -16,7 +16,7 @@
               (and (zero? status)
                    (string? version) ;; (not (eof-object? version))
                    version))))
-         (getenv "GERBIL_VERSION")))
+         (getenv "GERBIL_VERSION" #f)))
        (gerbil-version-text
         (and git-version
              (string-append "(def (gerbil-version-string) \"" git-version "\")\n"))))
