@@ -228,7 +228,7 @@ typedef struct point {
   int y;
 } coords;
 
-// Consider an inconsistant codebase, where functions may type their
+// Consider an inconsistent codebase, where functions may type their
 // parameters and return values with both `struct point` and the
 // typedef alias `coords`.
 
