@@ -51,6 +51,7 @@ module.exports = {
                   children: [
                       '',
                       'sugar',
+		      'ide/swank',
                       'source',
                       'stxparam',
                       'stxutil',

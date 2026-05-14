@@ -169,6 +169,21 @@
     "srfi/160/c64"
     "srfi/160/c128"
     "srfi/212"
+    "ide/swank/api"
+    "ide/swank/message"
+    "ide/swank/context"
+    "ide/swank/autodoc"
+    (gxc: "ide/swank/debug" ,@(include-gambit-sharp))
+    "ide/swank/inspect"
+    "ide/swank/repl"
+    "ide/swank/presentation"
+    "ide/swank/top"
+    "ide/swank/eval"
+    "ide/swank/restart"
+    "ide/swank/completions"
+    "ide/swank/handlers"
+    "ide/swank/server"
+    "ide/swank"
     ;; :std/mime
     "mime/struct"
     (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))

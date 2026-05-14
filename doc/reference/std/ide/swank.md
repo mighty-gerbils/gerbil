@@ -1,0 +1,110 @@
+# SLIME and Swank: Graphical REPL
+
+SLIME, the Superior Lisp Interaction Mode for Emacs, is an Emacs mode for developing Lisp applications. &#x2013; <https://en.wikipedia.org/wiki/SLIME>
+
+SLIME uses a backend called Swank that is loaded into Lisp to turn Emacs into a featured REPL along with an IDE for lisp use.
+
+
+# Running the Swank Server
+
+If you already know SLIME and have it setup then all that's needed is to run a server and `M-x slime-connect` to it from emacs.
+
+
+## At the command line: gerbil swank AKA gxswank
+
+```sh
+gerbil swank --help
+gxswank: The Gerbil Swank Daemon
+
+Usage: gxwank [option ...]
+
+Options
+ -g --global-env                  use the user global env even in local package context
+ -a --address <host>              The IP or hostname to listen on [default: localhost]
+ -p --port <port>                 The port number on which the Swank server listens for connections [default: 4005]
+ -d --dont-close <dont-close>     Close the acceptor on client disconnect if anything but true [default: true]
+ -h --help                        display help
+```
+
+
+## From the REPL: swank#create-server
+
+```sh
+$ gerbil
+Gerbil v0.19-178-gec4ff997 on Gambit v4.9.6-208-g2686dd61
+> (import (prefix-in :std/ide/swank swank-))
+> (def swank-port (+ 10000 (random-integer 55535)))
+> (swank-create-server port: swank-port)
+#<thread #20>
+> Running Swank Server on localhost:45657
+```
+
+
+# The `create-server` function
+
+
+# Minimal Emacs setup
+
+There are some developers that (****gasp****) don't use Emacs as their primary go to application. Having said that even without using the editor portion the REPL itself is useful and continues to grow into a wonderful interface to Gerbil.
+
+If you already use emacs it may be as simple as adding the following to your init file.
+
+```emacs-lisp
+(use-package slime
+  :hook ((gerbil-mode . slime-mode)))
+
+(defun gerbil-slime-init-function (file encoding)
+  (format "(begin (import (prefix-in :std/ide/swank swank-))
+  (let ((port (+ 10000 (random-integer 55535))))
+    (swank-create-server port: port)
+    (with-output-to-file %S (cut write port))))\n\n"
+       file))
+
+(cl-defun gerbil-slime-start
+    (&key (program "/opt/gerbil/current/bin/gerbil") program-args
+        directory
+        (coding-system slime-net-coding-system)
+        (init 'gerbil-slime-init-function)
+        (name 'gerbil)
+        (buffer "*inferior-gerbil*")
+        init-function
+        env)
+  "Start a Gerbil process and connect to it.
+This function is intended for programmatic use if `gerbil-slime' is not
+flexible enough.
+
+PROGRAM and PROGRAM-ARGS are the filename and argument strings
+  for the subprocess.
+INIT is a function that should return a string to load and start
+  Swank. The function will be called with the PORT-FILENAME and ENCODING as
+  arguments.  INIT defaults to `gerbil-slime-init-command'.
+CODING-SYSTEM a symbol for the coding system. The default is
+  slime-net-coding-system
+ENV environment variables for the subprocess (see `process-environment').
+INIT-FUNCTION function to call right after the connection is established.
+BUFFER the name of the buffer to use for the subprocess.
+NAME a symbol to describe the Lisp implementation
+DIRECTORY change to this directory before starting the process.
+"
+  (let ((args (list :program program :program-args program-args :buffer buffer
+                    :coding-system coding-system :init init :name name
+                    :init-function init-function :env env)))
+    (slime-check-coding-system coding-system)
+    (when (slime-bytecode-stale-p)
+      (slime-urge-bytecode-recompile))
+    (let ((proc (slime-maybe-start-lisp program program-args env
+                                        directory buffer)))
+      (slime-inferior-connect proc args)
+      (pop-to-buffer (process-buffer proc)))))
+
+(defun gerbil-slime (&optional command coding-system)
+  "Start an inferior^_superior Lisp and connect to its Swank server."
+  (interactive)
+  (slime-setup)
+  (gerbil-slime-start))
+
+
+
+```
+
+Or you could [download it](https://slime.common-lisp.dev/doc/html/Getting-started.html#Getting-started) and put it in your `load-path`.
