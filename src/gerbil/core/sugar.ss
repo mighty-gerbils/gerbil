@@ -63,9 +63,10 @@ package: gerbil/core
   (defrules let ()
     ((_ id ((var arg) ... . rest) body ...)
      (identifier? #'id)
-     ((letrec-values (((id) (lambda% (var ... . rest) body ...)))
-        id)
-      arg ...))
+     (begin-annotation @loop
+       ((letrec-values (((id) (lambda% (var ... . rest) body ...)))
+          id)
+        arg ...)))
     ((_ hd body ...)
      (~let let-values hd body ...)))
 
@@ -1103,6 +1104,15 @@ package: gerbil/core
     ((_ id expr)
      (identifier? #'id)
      (define-syntax id expr)))
+
+  (defsyntax (defsyntax-case stx)
+    (syntax-case stx ()
+      ((_ name (lit ...) clause ...)
+       (with-syntax (($stx (syntax-local-introduce 'stx)))
+         #'(defsyntax name
+             (lambda ($stx)
+               (syntax-case $stx (lit ...)
+                 clause ...)))))))
 
   (defsyntax (definline stx)
     (syntax-case stx ()

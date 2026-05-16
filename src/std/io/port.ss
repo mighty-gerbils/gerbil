@@ -1,9 +1,5 @@
-(import
-  :gerbil/gambit
-  :std/sugar
-  :std/error
-  ./interface)
-
+(import :std/error
+        ./interface)
 (export make-raw-input-port raw-input-port?
         make-raw-output-port raw-output-port?
         make-raw-binary-input-port raw-binary-input-port?

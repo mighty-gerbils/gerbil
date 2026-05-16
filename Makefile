@@ -20,12 +20,29 @@ stage1:
 stdlib:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
 
+tools:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh tools
+
+rebootstrap:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env ./bootstrap.sh
+
+repl:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env gxi
+
+bash:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env bash
+
 check:
 	./build.sh env gxtest ./...
 
-mostly-clean:
-	rm -rf build/lib/gerbil
+stdlib-clean:
 	rm -rf build/lib/std
+
+tools-clean:
+	rm -rf build/lib/gerbil/tools
+
+mostly-clean: stdlib-clean tools-clean
+	rm -rf build/lib/gerbil
 	rm -rf build/lib/static
 
 boot-clean: mostly-clean
@@ -36,4 +53,9 @@ clean:
 	rm -rf bootstrap
 	cd src/gambit && make clean
 
-.PHONY: all build install check clean mostly-clean
+real-clean:
+	rm -rf build
+	rm -rf bootstrap
+	cd src/gambit && make real-clean
+
+.PHONY: all build install boot stage0 stage1 stdlib tools rebootstrap repl bash check stdlib-clean tools-clean mostly-clean boot-clean clean real-clean

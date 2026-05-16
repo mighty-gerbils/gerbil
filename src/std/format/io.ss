@@ -26,7 +26,7 @@
              (writer.write-method self env))
            interface: ObjectWriter)))))
 
-(defwriter-ext (print writer obj (env : FormatEnv))
+(defwriter-ext (println writer obj (env : FormatEnv))
   (do-write (wr 0)
     (writer.format obj env)
     (writer.write-newline)

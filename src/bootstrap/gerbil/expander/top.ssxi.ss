@@ -153,6 +153,21 @@ package: gerbil/expander
              origin:
              gerbil/expander/top)))
   (declare-type
+   gx#core-bind-runtime-properties!
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/top)))
+  (declare-type
    gx#core-expand-define-syntax%
    (@lambda 1
             #f
@@ -631,51 +646,6 @@ package: gerbil/expander
              gerbil/expander/top)))
   (declare-type
    gx#macro-expand-extern
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
-   gx#macro-expand-define-values
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
-   gx#macro-expand-define-syntax
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
-             origin:
-             gerbil/expander/top)))
-  (declare-type
-   gx#macro-expand-define-alias
    (@lambda 1
             #f
             signature:

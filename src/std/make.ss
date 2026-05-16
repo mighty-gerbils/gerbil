@@ -5,15 +5,14 @@
 
 (import :gerbil/compiler
         :gerbil/expander
-        ./misc/completion
-        ./misc/channel
-        ./misc/barrier
-        ./misc/path
-        ./misc/list
-        ./srfi/1
-        ./iter
-        ./sugar)
-
+        :std/sync/completion
+        :std/sync/channel
+        :std/sync/barrier
+        :std/list/list
+        :std/list/list-builder
+        :std/list/plist
+        :std/string/path
+        :std/iter)
 (export make
         make-clean
         shell-config
@@ -55,10 +54,9 @@ TODO:
 (def __output-mx (make-mutex))
 
 (def (message . lst)
-  (with-lock __output-mx
-    (lambda ()
-      (apply displayln lst)
-      (force-outputs))))
+  (do-with-lock __output-mx
+    (apply displayln lst)
+    (force-outputs)))
 
 (def (prefix/ prefix path)
   (if prefix
@@ -380,15 +378,12 @@ TODO:
   (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
   (def settings (apply make-settings keywords))
 
-  (for-each
-    (lambda (spec)
-      (for-each
-        (lambda (f)
-          (when (file-exists? f)
-            (displayln "... remove " f)
-            (delete-file-or-directory f)))
-        (spec-outputs spec settings)))
-    buildspec))
+  (for* ((spec buildspec)
+         (f    (spec-outputs spec settings)))
+    (when (file-exists? f)
+      (displayln "... remove " f)
+      (delete-file-or-directory f))))
+
 
 ;; Normalize-buildspec : buildspec -> buildspec
 ;; Groups the gsc: and static-include: and copy: specs inside the immediately following ssi:

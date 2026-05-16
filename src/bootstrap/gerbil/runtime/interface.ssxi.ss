@@ -249,6 +249,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/interface)))
   (declare-type
+   ____prototype-table-get
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/interface)))
+  (declare-type
    __prototype-table-get
    (@lambda 2
             #f
@@ -264,8 +279,8 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   ____prototype-table-get
-   (@lambda 2
+   ____prototype-table-set!
+   (@lambda 3
             #f
             signature:
             (return:
@@ -291,21 +306,6 @@ package: gerbil/runtime
              (t::t t::t t::t)
              unchecked:
              ____prototype-table-set!
-             origin:
-             gerbil/runtime/interface)))
-  (declare-type
-   ____prototype-table-set!
-   (@lambda 3
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/interface)))
   (declare-type
@@ -414,21 +414,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/interface)))
   (declare-type
-   with-prototype
-   (@lambda 4
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             (interface-descriptor::t t::t procedure::t procedure::t)
-             unchecked:
-             __with-prototype
-             origin:
-             gerbil/runtime/interface)))
-  (declare-type
    __with-prototype
    (@lambda 4
             #f
@@ -441,5 +426,20 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/interface)))
+  (declare-type
+   with-prototype
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (interface-descriptor::t t::t procedure::t procedure::t)
+             unchecked:
+             __with-prototype
              origin:
              gerbil/runtime/interface))))

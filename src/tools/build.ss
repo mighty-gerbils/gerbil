@@ -4,7 +4,8 @@
 
 ;; v0.19 staging
 (defbuild-script
-  '("gxtest"
+  '("env"
+    "gxtest"
     )
   libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
   bindir: (path-expand "bin" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
@@ -12,11 +13,11 @@
 
 
 #;(defbuild-script
-  '("env"
+  '(
     "gxprof"
     "gxtags"
     "gxpkg"
-    "gxtest"
+
     "gxensemble/opt"
     "gxensemble/util"
     "gxensemble/cmd"

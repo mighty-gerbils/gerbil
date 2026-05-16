@@ -216,6 +216,40 @@ package: gerbil/core
                 (else r)))))
        (cons begin: (foldl fold-e [] exports))))))
 
+(defsyntax-for-export (except-from-out stx)
+  (syntax-case stx ()
+    ((_ in filter-out ...)
+     (let (filtered (make-hash-table))
+       (def (fold-out out r)
+         (cond
+          ((module-export? out)
+           (cons out r))
+          ((export-set? out)
+           (foldl fold-out r (export-set-exports out)))
+          (else r)))
+
+       (for-each
+         (lambda (src)
+           (let* ((exports
+                   (if (identifier? src)
+                     (let (mod (syntax-local-value src))
+                       (unless (module-context? mod)
+                         (raise-syntax-error #f "not a module context" src))
+                       (module-context-export mod))
+                     (core-expand-export-source src)))
+                  (exports (foldl fold-out [] exports)))
+             (for-each (lambda (out) (hash-put! filtered (module-export-name out) #t))
+                       exports)))
+         #'(filter-out ...))
+
+       (let* ((exports (core-expand-export-source #'in))
+              (exports (foldl fold-out []
+                              exports))
+              (exports (filter (lambda (out)
+                                 (not (hash-get filtered (module-export-name out))))
+                               exports)))
+         (cons begin: exports))))))
+
 (begin-syntax
   (def (module-export-rename out rename)
     (make-module-export (module-export-context out)

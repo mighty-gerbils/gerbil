@@ -2,73 +2,64 @@
 ;;; © vyzo
 ;;; datagram sockets
 (import :std/error
+        :std/os/error
         :std/os/socket
-        :std/os/fd
-        :std/net/address
+        :std/os/sockaddr
+        :std/net/address/types
         ./types
         ./basic)
 (export #t)
 
-(def (datagram-socket-recvfrom dsock peer output output-start output-end flags)
-  (using (dsock :- datagram-socket)
-    (with-basic-socket-read-lock dsock
-      (let ((sock dsock.sock)
-            (sockaddr (make-socket-address dsock.domain)))
-        (let lp ()
-          (when dsock.closed?
-            (raise-io-closed datagram-socket-recvfrom "socket is closed"))
-          (let (read (socket-recvfrom sock output sockaddr output-start output-end flags))
-            (cond
-             (read
-              (box-set! peer (socket-address->address sockaddr))
-              read)
-             ((basic-socket-wait-io! dsock (fd-io-in sock) dsock.timeo-in)
-              (lp))
-             (else
-              (raise-timeout datagram-socket-recvfrom "receive timeout")))))))))
+(def (datagram-socket-recvfrom (sock         : datagram-socket)
+                               (peer         : :box)
+                               (output       : :u8vector)
+                               (output-start : :fixnum)
+                               (output-end   : :fixnum)
+                               (flags        : :fixnum))
+  => :fixnum
+  (do-with-read-lock sock.lock
+    (let (sa (socket-device-sockaddr sock.dev))
+      (begin0
+          (let loop ()
+            => :fixnum
+            (let (rd (socket-device-recvfrom sock.dev output output-start output-end flags sa))
+              (if (fx< rd 0)
+                (errno-case wr
+                  ((EWOULDBLOCK EAGAIN)
+                   (if (__basic-socket-wait-input! sock)
+                     (loop)
+                     (raise-timeout datagram-socket-recvfrom "recv timeout")))
+                  (else
+                   (raise-os-error datagram-socket-recvfrom rd)))
+                (let (addr (sockaddr->address sa))
+                  (box-set! peer addr)
+                  rd))))
+        (sockaddr-discard! sa)))))
 
-(def (datagram-socket-sendto dsock peer input input-start input-end flags)
-  (using (dsock :- datagram-socket)
-    (let (sockaddr (socket-address peer))
-      (with-basic-socket-read-lock dsock
-        (when dsock.closed?
-          (raise-io-error datagram-socket-sendto "socket is closed"))
-        (socket-sendto dsock.sock input sockaddr input-start input-end flags)))))
+(def (datagram-socket-sendto (sock        : datagram-socket)
+                             (peer        : Address)
+                             (input       : :u8vector)
+                             (input-start : :fixnum)
+                             (input-end   : :fixnum)
+                             (flags       : :fixnum))
+  => :fixnum
+  (do-with-read-lock sock.lock
+    (let (sa (socket-device-address->sockaddr sock.dev peer))
+      (begin0
+          (let loop ()
+            => :fixnum
+            (let (wr (socket-device-sendto sock.dev output output-start output-end flags addr))
+              (if (fx< wr 0)
+                (raise-os-error datagram-socket-sendto wr)
+                wr)))
+        (sockaddr-discard! sa))))
 
-(def (datagram-socket-connect dsock peer)
-  (using (dsock :- datagram-socket)
-    (let* ((address (resolve-address peer))
-           (sockaddr (socket-address address)))
-      (with-basic-socket-write-lock dsock
-        (when dsock.closed?
-          (raise-io-closed datagram-socket-connect "socket is closed"))
-        (socket-connect dsock.sock sockaddr)
-        (set! dsock.raddr address)
-        (void)))))
-
-(def (datagram-socket-recv dsock output output-start output-end flags)
-  (using (dsock :- datagram-socket)
-    (with-basic-socket-read-lock dsock
-      (unless dsock.raddr
-        (raise-io-error datagram-socket-recv "socket is not connected"))
-      (let (sock dsock.sock)
-        (let lp ()
-          (when dsock.closed?
-            (raise-io-closed datagram-socket-recv "socket is closed"))
-          (let (read (socket-recv sock output output-start output-end flags))
-            (cond
-             (read)
-             ((basic-socket-wait-io! dsock (fd-io-in sock) dsock.timeo-in)
-
-              (lp))
-             (else
-              (raise-timeout datagram-socket-recvfrom "receive timeout")))))))))
-
-(def (datagram-socket-send dsock input input-start input-end flags)
-  (using (dsock :- datagram-socket)
-    (with-basic-socket-read-lock dsock
-      (when dsock.closed?
-        (raise-io-closed datagram-socket-sendto "socket is closed"))
-      (unless dsock.raddr
-        (raise-io-error datagram-socket-recv "socket is not connected"))
-      (socket-send dsock.sock input input-start input-end flags))))
+(def (datagram-socket-connect (sock : datagram-socket)
+                              (peer : Address))
+  => :void
+  (do-with-write-lock sock.lock
+    (let (sa (address->sockaddr sock.dev peer))
+      (let (errno (socket-device-connect sock.dev sa))
+        (when (fx< errno 0)
+          (raise-os-error datagram-socket-connect errno)))
+      (sockaddr-dscard! sa))))

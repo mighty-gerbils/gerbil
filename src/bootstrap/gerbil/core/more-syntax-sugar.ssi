@@ -6,6 +6,7 @@ namespace: gerbil/core/more-syntax-sugar
           :gerbil/core/runtime
           :gerbil/core/expander
           :gerbil/core/sugar
+          :gerbil/core/more-sugar
           (phi: 1 :gerbil/core/runtime)
           (phi: 1 :gerbil/core/expander)
           (phi: 1 :gerbil/core/sugar))
@@ -22,9 +23,6 @@ namespace: gerbil/core/more-syntax-sugar
          (%#define-syntax
           with-identifier
           |gerbil/core/more-syntax-sugar[:0:]#with-identifier|)
-         (%#define-syntax
-          defsyntax-case
-          |gerbil/core/more-syntax-sugar[:0:]#defsyntax-case|)
          (%#define-syntax
           quasisyntax
           |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|))

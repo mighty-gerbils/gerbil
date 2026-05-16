@@ -1545,7 +1545,6 @@ namespace: gerbil/core/runtime
                     (values-count values-count)
                     (values-ref values-ref)
                     (values->list values->list)
-                    (cons* cons*)
                     (foldl foldl)
                     (foldr foldr)
                     (andmap andmap)

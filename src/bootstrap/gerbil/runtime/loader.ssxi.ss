@@ -51,6 +51,21 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/loader)))
   (declare-type
+   __set-load-path!
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/loader)))
+  (declare-type
    set-load-path!
    (@lambda 1
             #f
@@ -66,7 +81,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/loader)))
   (declare-type
-   __set-load-path!
+   __load-module
    (@lambda 1
             #f
             signature:
@@ -96,7 +111,7 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/loader)))
   (declare-type
-   __load-module
+   __reload-module!
    (@lambda 1
             #f
             signature:
@@ -123,21 +138,6 @@ package: gerbil/runtime
              (string::t)
              unchecked:
              __reload-module!
-             origin:
-             gerbil/runtime/loader)))
-  (declare-type
-   __reload-module!
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             t::t
-             effect:
-             #f
-             arguments:
-             #f
-             unchecked:
-             #f
              origin:
              gerbil/runtime/loader)))
   (declare-type
@@ -171,21 +171,6 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/loader)))
   (declare-type
-   module-load-order
-   (@lambda 1
-            #f
-            signature:
-            (return:
-             integer::t
-             effect:
-             #f
-             arguments:
-             (string::t)
-             unchecked:
-             __module-load-order
-             origin:
-             gerbil/runtime/loader)))
-  (declare-type
    __module-load-order
    (@lambda 1
             #f
@@ -198,5 +183,20 @@ package: gerbil/runtime
              #f
              unchecked:
              #f
+             origin:
+             gerbil/runtime/loader)))
+  (declare-type
+   module-load-order
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             integer::t
+             effect:
+             #f
+             arguments:
+             (string::t)
+             unchecked:
+             __module-load-order
              origin:
              gerbil/runtime/loader))))

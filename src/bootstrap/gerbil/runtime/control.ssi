@@ -7,10 +7,19 @@ namespace: #f
           :gerbil/runtime/util
           :gerbil/runtime/table)
          (%#export #t)
-         (%#define-runtime make-promise make-promise)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/control~1")))
+                  (%#define-syntax @make-promise |[:0:]#@make-promise|))
          (%#define-runtime __make-promise __make-promise)
-         (%#define-runtime make-atomic-promise make-atomic-promise)
+         (%#define-runtime make-promise make-promise macro: @make-promise)
+         (%#define-syntax @make-atomic-promise |[:0:]#@make-atomic-promise|)
          (%#define-runtime __make-atomic-promise __make-atomic-promise)
+         (%#define-runtime
+          make-atomic-promise
+          make-atomic-promise
+          macro:
+          @make-atomic-promise)
          (%#begin (%#define-runtime
                    call-with-parameters__0
                    call-with-parameters__0)
@@ -21,8 +30,13 @@ namespace: #f
                    call-with-parameters__2
                    call-with-parameters__2)
                   (%#define-runtime call-with-parameters call-with-parameters))
-         (%#define-runtime with-unwind-protect with-unwind-protect)
+         (%#define-syntax @with-unwind-protect |[:0:]#@with-unwind-protect|)
          (%#define-runtime __with-unwind-protect __with-unwind-protect)
+         (%#define-runtime
+          with-unwind-protect
+          with-unwind-protect
+          macro:
+          @with-unwind-protect)
          (%#define-runtime keyword-dispatch keyword-dispatch)
          (%#define-runtime keyword-rest keyword-rest))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/control~0"))

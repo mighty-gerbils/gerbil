@@ -1,82 +1,43 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; time related OS provided functionality
-(import :std/foreign
+(import :std/ffi
         ./error)
-(export current-time-coarse current-time-precise)
+(export #t)
 
-;; Note: POSIX requires that time_t is an integer; POSIX.1-2024 requires
-;;       that it is at least 64 bit long
-;; But we don't know the exact sizes, it is system dependent.
-;; Also note tv_usec/tv_nsec fields are long, which means annoyance when it
-;; comes to determining  the exact size and layout of the record.
-;; Also note that we don't want to be generating foreign objects, as those are
-;; reference counted and handled by the bump allocator and moving gc, so they
-;; can cause fragmentation... let's avoid this, getting the current time is a
-;; very frequent operation, that goes throught he VDSO.
-(def (current-time-coarse) => :pair
-  (let (result (make-timestruct))
-    (check-os-error (_gettimeofday result)
-      (current-time-coarse))
-    (time-from-timestruct result)))
+(def (current-system-time-coarse) => timeval
+  (let (tv (make-timeval))
+    (do-syscall (__gettimeofday rv))
+    tv))
 
-(def (current-time-precise) => :pair
-  (let (result (make-timestruct))
-    (check-os-error (_clock_gettime CLOCK_REALTIME result)
-      (current-time-precise))
-    (time-from-timestruct result)))
+(def (current-system-time-precise) => timespec
+  (let (ts (make-timespec))
+    (do-syscall (__clock_getrealtime ts))
+    ts))
 
-(def (make-timestruct)
-  (make-u8vector sizeof-timestruct))
+(C-ffi-macrology)
+(C-include "<errno.h>"
+           "<time.h>"
+           "<sys/time.h>")
 
-(def (time-from-timestruct tm) => :pair
-  (cons (timestruct-sec tm)
-        (timestruct-subsec tm)))
+(def-C-struct timespec
+  ((sec  ts_sec  :u64)
+   (usec ts_nsec :long)))
 
-(begin-ffi (_gettimeofday _gettimeofday _clock_gettime _clock_gettime CLOCK_REALTIME
-            sizeof-timestruct timestruct-sec timestruct-subsec)
-  (c-declare #<<END-C
-#include <time.h>
-#include <sys/time.h>
+(def-C-struct timeval
+  ((sec  ts_sec  :u64)
+   (usec ts_usec :long)))
 
-static int64_t ffi_time_timestruct_sec(___SCMOBJ res)
-{
- struct timespec *tm = (struct timespec*)U8_DATA(res);
- return tm->tv_sec;
-}
+(def-C-syscall (__gettimeofday (result :- timeval))
+  "gettimeofday(___arg1, NULL)")
 
-static long ffi_time_timestruct_subsec(___SCMOBJ res)
-{
- struct timespec *tm = (struct timespec*)U8_DATA(res);
- return tm->tv_nsec;
-}
+(def-C-syscall (__clock_getrealtime (result :- timespec))
+  "clock_gettime(CLOCK_REALTIME, ___arg1)")
 
-static int ffi_time_gettimeofday(___SCMOBJ res)
-{
- return gettimeofday((struct timeval*)U8_DATA(res), NULL);
-}
+;; (def-C-code (__gettimeofday (result :- :u8vector))
+;;   => :fixnum
+;;   "___TRAP_ERRNO(gettimeofday(___U8VECTOR_AS (struct timeval* ___ARG1), NULL))")
 
-static int ffi_time_clock_gettime(int clockid, ___SCMOBJ res)
-{
-  return clock_gettime(clockid, (struct timespec*)U8_DATA(res));
-}
-END-C
-)
-
-  (define-const CLOCK_REALTIME)
-
-  (define sizeof-timestruct
-    ((c-lambda () size_t "sizeof(struct timespec);")))
-
-  (define-c-lambda timestruct-sec (scheme-object) int64
-    "ffi_time_timestruct_sec")
-  (define-c-lambda timestruct-sec (scheme-object) long
-    "ffi_time_timestruct_subsec")
-
-  (define-c-lambda __gettimeofday (scheme-object) int
-    "ffi_time_gettimeofday")
-  (define-c-lambda __clock_gettime (int scheme-object) int
-    "ffi_time_clock_gettime")
-
-  (define-with-errno _gettimeofday __gettimeofday (result))
-  (define-with-errno _clock_getttime __clock_gettime (clockid result)))
+;; (def-C-code (__clock_getrealtime (result :- :uvector))
+;;   => :fixnum
+;;   "___TRAP_ERRNO(clock_gettime(CLOCK_REALTIME., ___U8VECTOR_AS (struct timespec*,___ARG1)))")

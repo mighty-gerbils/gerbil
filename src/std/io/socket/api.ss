@@ -1,16 +1,21 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; socket api
-(import :std/net/address
+(import :std/interface
         :std/error
         :std/os/error
+        :std/os/device
         :std/os/socket
-        :std/net/address
-        :std/misc/rwlock
+        :std/os/sockopt
+        :std/net/address/types
+        :std/net/address/resolver
+        :std/sync/rwlock
+        :std/time/timeout
         ../interface
         ./types
         ./socket
         ./basic
+        ./client
         ./stream
         ./server
         ./datagram)
@@ -18,159 +23,186 @@
         tcp-listen
         unix-connect
         unix-listen
-        udp-socket
-        udp-multicast-socket
-        inaddr-any4
-        inaddr-any6
-        localhost4
-        localhost6
+        stream-connect
+        stream-listen
+        ;; TODO UDP
+        ;; udp-socket
+        ;; udp-multicast-socket
         (rename: default-listen-sockopts default-server-sockopts)
         (rename: default-backlog default-server-backlog))
 
 (def default-listen-sockopts
   [SO_REUSEADDR])
-
 (def default-backlog 10)
 
-(def (address-domain addr)
-  (with ([host . _ ] addr)
-    (ip-address-domain host)))
+(def (tcp-connect (addr  : InetAddress)
+                  (timeo : IOTimeout := !NoTimeout))
+  => StreamSocket
+  (let (sock (connect addr SOCK_STREAM IPPROTO_TCP timeo))
+    (with-error-device-close
+     (socket-device-setsockopt IPPROTO_TCP TCP_NODELAY 1))
+    (using (stream-sock (make-stream-socket sock) : stream-socket)
+      (set! stream-sock.remote addr)
+      (StreamSocket stream-sock))))
 
-(def (ip-address-domain host)
-  (case (u8vector-length host)
-    ((4) AF_INET)
-    ((6) AF_INET6)
-    (else
-     (BUG 'ip-address-domain "unknown address domain" host))))
+(def (tcp-listen (addr : InetAddress)
+                 backlog:  (backlog  : :fixnum := default-backlog)
+                 sockopts: (sockopts : :list   := default-listen-sockopts))
+  => ServerSocket
+  (let (sock (listen addr SOCK_STREAM IPPROTO_TCP backlog sockopts))
+    (using (server-sock (make-basic-server-socket sock) : basic-server-socket)
+      (set! server-sock.local addr)
+      (ServerSocket server-sock))))
 
-(def (tcp-connect address (timeo #f))
-  (let* ((address (resolve-address address))
-         (domain (address-domain address))
-         (sock (connect address timeo)))
-    (with-error-close sock
-      (socket-setsockopt sock IPPROTO_TCP TCP_NODELAY 1))
-    (StreamSocket (make-stream-socket sock domain #f #f #f #f (make-rwlock 'socket) #f 0))))
+(def (unix-connect (addr  : UnixAddress)
+                   (timeo : IOTimeout := !NoTimeout))
+  => StreamSocket
+  (let (sock (connect addr SOCK_STREAM 0 timeo))
+    (using (stream-sock (make-stream-socket sock) : stream-socket)
+      (set! stream-sock.remote addr)
+      (StreamSocket stream-sock))))
 
-(def (tcp-listen address
-                 backlog: (backlog default-backlog)
-                 sockopts: (sockopts default-listen-sockopts))
-  (let* ((address (inet-address address))
-         (domain (address-domain address))
-         (sock (listen address backlog sockopts)))
-    (ServerSocket (make-basic-server-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
+(def (unix-listen (addr : UnixAddress)
+                  backlog:  (backlog  : :fixnum := default-backlog)
+                  sockopts: (sockopts : :list   := default-listen-sockopts))
+  => ServerSocket
+  (let (sock (listen addr SOCK_STREAM 0 backlog sockopts))
+    (using (server-sock (make-basic-server-socket sock) : basic-server-socket)
+      (set! server-sock.local addr)
+      (ServerSocket server-sock))))
 
-(def (unix-connect path (timeo #f))
-  (unless (string? path)
-    (raise-bad-argument unix-connect "string" path))
-  (let (sock (connect path timeo))
-    (StreamSocket (make-stream-socket sock AF_UNIX #f #f #f #f (make-rwlock 'socket) #f 0))))
+(def (stream-connect (addr : Address) (timeo : IOTimeout := !NoTimeout))
+  => StreamSocket
+  (using (addr (resolve-address->endpoint addr) :- EndpointAddress)
+    (case addr.domain
+      ((IP4 IP6)
+       (__tcp-connect addr timeo))
+      ((UNIX)
+       (__unix-connect addr timeo))
+      (else
+       (raise-bad-argument stream-connect "unknown endpoint address" address: addr)))))
 
-(def (unix-listen path
-                  backlog: (backlog default-backlog)
-                  sockopts: (sockopts default-listen-sockopts))
-  (unless (string? path)
-    (raise-bad-argument unix-listen "expected string" path))
-  (let (sock (listen path backlog sockopts))
-    (ServerSocket (make-basic-server-socket sock AF_UNIX #f #f #f #f (make-rwlock 'socket) #f))))
+(def (stream-listen (addr : Address)
+                    backlog:  (backlog  : :fixnum := default-backlog)
+                    sockopts: (sockopts : :list   := default-listen-sockopts))
+  => ServerSocket
+  (using (addr (resolve-address->endpoint addr) :- EndpointAddress)
+    (case addr.domain
+      ((IP IP6)
+       (__tcp-listen addr backlog sockopts))
+      ((UNIX)
+       (__unix-listen addr backlog sockopts))
+      (else
+       (raise-bad-argument stream-listen "unknown endpoint address" address: addr)))))
 
-(def (udp-socket (address #f))
-  (let* ((address (and address (inet-address address)))
-         (domain (if address (address-domain address) AF_INET))
-         (sock (udp-new domain)))
-    (when address
-      (udp-bind sock address))
-    (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
+;;;; XXX
+;;;; TODO UDP
+;; (def (udp-socket (address #f))
+;;   (let* ((address (and address (inet-address address)))
+;;          (domain (if address (address-domain address) AF_INET))
+;;          (sock (udp-new domain)))
+;;     (when address
+;;       (udp-bind sock address))
+;;     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
 
-(def (udp-multicast-socket group-ip-address local-address (ifindex 0))
-  (let* ((group-ip-address (ip-address group-ip-address))
-         (local-address (inet-address local-address))
-         (domain (ip-address-domain group-ip-address))
-         (_ (unless (fx= domain (address-domain local-address))
-              (raise-bad-argument udp-multicast-socket "address: domain mismatch" group-ip-address local-address)))
-         (sock (udp-new-multicast domain group-ip-address local-address ifindex)))
-    (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
+;; (def (udp-multicast-socket group-ip-address local-address (ifindex 0))
+;;   (let* ((group-ip-address (ip-address group-ip-address))
+;;          (local-address (inet-address local-address))
+;;          (domain (ip-address-domain group-ip-address))
+;;          (_ (unless (fx= domain (address-domain local-address))
+;;               (raise-bad-argument udp-multicast-socket "address: domain mismatch" group-ip-address local-address)))
+;;          (sock (udp-new-multicast domain group-ip-address local-address ifindex)))
+;;     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
+
 
 ;;; Interface
 ;; basic-socket Socket implementation
 (defmethod {domain basic-socket}
-  &basic-socket-domain
+  (lambda (self)
+    self.dev.domain)
   interface: Socket)
 (defmethod {address basic-socket}
-  basic-socket-local-address
+  __basic-socket-local-address
   interface: Socket)
 (defmethod {peer-address basic-socket}
-  basic-socket-peer-address
+  __basic-socket-peer-address
   interface: Socket)
 (defmethod {getsockopt basic-socket}
-  basic-socket-getsockopt
+  __basic-socket-getsockopt
   interface: Socket)
 (defmethod {setsockopt basic-socket}
-  basic-socket-setsockopt
+  __basic-socket-setsockopt
   interface: Socket)
 (defmethod {set-input-timeout! basic-socket}
-  &basic-socket-timeo-in-set!
+  __basic-socket-set-input-timeout!
   interface: Socket)
 (defmethod {set-output-timeout! basic-socket}
-  &basic-socket-timeo-out-set!
+  __basic-socket-set-output-timeout!
   interface: Socket)
 (defmethod {close basic-socket}
-  basic-socket-close
+  __basic-socket-close
   interface: Closer)
 
+(@implement Socket basic-socket)
+
+(defmethod {recv basic-client-socket}
+  __client-socket-recv
+  interface: ClientSocket)
+(defmethod {send basic-client-socket}
+  __client-socket-send
+  interface: ClientSocket)
+
+(@implement ClientSocket basic-client-socket)
+
 ;; stream-socket StreamSocket implementation
-(defmethod {recv stream-socket}
-  stream-socket-recv
-  interface: StreamSocket)
-(defmethod {send stream-socket}
-  stream-socket-send
-  interface: StreamSocket)
 (defmethod {reader stream-socket}
-  stream-socket-get-reader
+  __stream-socket-get-reader
   interface: StreamSocket)
 (defmethod {writer stream-socket}
-  stream-socket-get-writer
+  __stream-socket-get-writer
   interface: StreamSocket)
 (defmethod {shutdown stream-socket}
-  stream-socket-shutdown
+  __stream-socket-shutdown
   interface: StreamSocket)
-(defmethod {close stream-socket}
-  stream-socket-close
-  interface: Closer)
+
+(@implement StreamSocket stream-socket)
 
 ;; stream-socket-reader Reader implementation
 (defmethod {read stream-socket-reader}
-  stream-socket-read
+  __stream-socket-read
   interface: Reader)
 (defmethod {close stream-socket-reader}
-  stream-socket-close-reader
+  __stream-socket-close-reader
   interface: Closer)
+
+(@implement Reader stream-socket-reader)
 
 ;; stream-socket-writer Writer implementation
 (defmethod {write stream-socket-writer}
-  stream-socket-write
+  __stream-socket-write
   interface: Writer)
 (defmethod {close stream-socket-writer}
-  stream-socket-close-writer
+  __stream-socket-close-writer
   interface: Closer)
+
+(@implement Writer stream-socket-writer)
 
 ;; basic-server-socket ServerSocket implementation
 (defmethod {accept basic-server-socket}
-  server-socket-accept
+  __server-socket-accept
   interface: ServerSocket)
+
+(@implement ServerSocket basic-server-socket)
 
 ;; datagram-socket DatagramSocket implementation
 (defmethod {recvfrom datagram-socket}
-  datagram-socket-recvfrom
+  __datagram-socket-recvfrom
   interface: DatagramSocket)
 (defmethod {sendto datagram-socket}
-  datagram-socket-sendto
+  __datagram-socket-sendto
   interface: DatagramSocket)
 (defmethod {connect datagram-socket}
-  datagram-socket-connect
+  __datagram-socket-connect
   interface: DatagramSocket)
-(defmethod {recv datagram-socket}
-  datagram-socket-recv
-  interface: DatagramSocket)
-(defmethod {send datagram-socket}
-  datagram-socket-send
-  interface: DatagramSocket)
+
+(@implement DatagramSocket datagram-socket)

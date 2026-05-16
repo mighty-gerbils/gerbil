@@ -1,1 +1,1 @@
-(package: std)
+(package: std prelude: :gerbil/base)

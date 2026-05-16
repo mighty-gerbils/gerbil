@@ -10,18 +10,37 @@ namespace: #f
          (%#export #t)
          (%#define-runtime __system_thread-group __system_thread-group)
          (%#define-runtime system-thread-group system-thread-group)
-         (%#define-runtime make-system-thread make-system-thread)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/thread~1")))
+                  (%#define-syntax
+                   @make-system-thread
+                   |[:0:]#@make-system-thread|))
          (%#define-runtime __make-system-thread __make-system-thread)
-         (%#define-runtime system-thread! system-thread!)
+         (%#define-runtime
+          make-system-thread
+          make-system-thread
+          macro:
+          @make-system-thread)
+         (%#define-syntax @system-thread! |[:0:]#@system-thread!|)
          (%#define-runtime __system-thread! __system-thread!)
-         (%#define-runtime system-actor! system-actor!)
+         (%#define-runtime
+          system-thread!
+          system-thread!
+          macro:
+          @system-thread!)
+         (%#define-syntax @system-actor! |[:0:]#@system-actor!|)
          (%#define-runtime __system-actor! __system-actor!)
-         (%#define-runtime spawn spawn)
+         (%#define-runtime system-actor! system-actor! macro: @system-actor!)
+         (%#define-syntax @spawn |[:0:]#@spawn|)
          (%#define-runtime __spawn __spawn)
-         (%#define-runtime spawn/name spawn/name)
+         (%#define-runtime spawn spawn macro: @spawn)
+         (%#define-syntax @spawn/name |[:0:]#@spawn/name|)
          (%#define-runtime __spawn/name __spawn/name)
-         (%#define-runtime spawn/group spawn/group)
+         (%#define-runtime spawn/name spawn/name macro: @spawn/name)
+         (%#define-syntax @spawn/group |[:0:]#@spawn/group|)
          (%#define-runtime __spawn/group __spawn/group)
+         (%#define-runtime spawn/group spawn/group macro: @spawn/group)
          (%#define-runtime spawn-actor spawn-actor)
          (%#begin (%#define-runtime spawn-thread__% spawn-thread__%)
                   (%#begin (%#define-runtime spawn-thread__0 spawn-thread__0)
@@ -50,26 +69,31 @@ namespace: #f
          (%#define-runtime
           unhandled-actor-exception-hook
           unhandled-actor-exception-hook)
-         (%#define-runtime
-          unhandled-actor-exception-hook-set!
-          unhandled-actor-exception-hook-set!)
+         (%#define-syntax
+          @unhandled-actor-exception-hook-set!
+          |[:0:]#@unhandled-actor-exception-hook-set!|)
          (%#define-runtime
           __unhandled-actor-exception-hook-set!
           __unhandled-actor-exception-hook-set!)
+         (%#define-runtime
+          unhandled-actor-exception-hook-set!
+          unhandled-actor-exception-hook-set!
+          macro:
+          @unhandled-actor-exception-hook-set!)
          (%#define-runtime current-thread-group current-thread-group)
-         (%#define-runtime with-lock with-lock)
+         (%#define-syntax @with-lock |[:0:]#@with-lock|)
          (%#define-runtime __with-lock __with-lock)
-         (%#define-runtime with-dynamic-lock with-dynamic-lock)
+         (%#define-runtime with-lock with-lock macro: @with-lock)
+         (%#define-syntax @with-dynamic-lock |[:0:]#@with-dynamic-lock|)
          (%#define-runtime __with-dynamic-lock __with-dynamic-lock)
-         (%#begin (%#define-runtime
-                   with-exception-stack-trace__%
-                   with-exception-stack-trace__%)
-                  (%#begin (%#define-runtime
-                            with-exception-stack-trace__0
-                            with-exception-stack-trace__0)
-                           (%#define-runtime
-                            with-exception-stack-trace
-                            with-exception-stack-trace)))
+         (%#define-runtime
+          with-dynamic-lock
+          with-dynamic-lock
+          macro:
+          @with-dynamic-lock)
+         (%#define-syntax
+          @with-exception-stack-trace
+          |[:0:]#@with-exception-stack-trace|)
          (%#begin (%#define-runtime
                    __with-exception-stack-trace__%
                    __with-exception-stack-trace__%)
@@ -79,6 +103,17 @@ namespace: #f
                            (%#define-runtime
                             __with-exception-stack-trace
                             __with-exception-stack-trace)))
+         (%#begin (%#define-runtime
+                   with-exception-stack-trace__%
+                   with-exception-stack-trace__%)
+                  (%#begin (%#define-runtime
+                            with-exception-stack-trace__0
+                            with-exception-stack-trace__0)
+                           (%#define-runtime
+                            with-exception-stack-trace
+                            with-exception-stack-trace
+                            macro:
+                            @with-exception-stack-trace)))
          (%#begin (%#define-runtime dump-stack-trace!__% dump-stack-trace!__%)
                   (%#begin (%#define-runtime
                             dump-stack-trace!__0

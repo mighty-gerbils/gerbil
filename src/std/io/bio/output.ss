@@ -1,92 +1,98 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffered output
-(import :std/error
-        :std/sugar
-        ../interface
-        ./types)
+(import ../interface
+        ./types
+        ./buffer
+        ./cache)
 (export #t)
 (declare (not safe))
 
-(defrule (bio-output-advance! output whi)
+(defrule (__bio-output-advance! output whi)
   (using (bio output :- output-buffer)
     (set! bio.whi whi)))
 
-(defrule (bio-output-consume! output)
+(defrule (__bio-output-consume! output)
   (using (bio output :- output-buffer)
     (set! bio.whi 0)))
 
-(defrule (bio-output-drain! output buf whi)
-  (using (bio output :- output-buffer)
-    (&Writer-write bio.writer buf 0 whi)
-    (bio-output-consume! bio)))
+(defrules __bio-write ()
+  ((_ output-buffer input input-start input-end
+      ___drain
+      ___write
+      ___retry)
+   (using (bio output-buffer :- basic-output-buffer)
+     (let* ((output-want (fx- input-end input-start))
+            (whi bio.whi)
+            (whi+want (fx+ whi output-want))
+            (buf bio.buf)
+            (buflen (u8vector-length buf)))
+       (cond
+        ((fx<= whi+want buflen)
+         ;; have space in buffer
+         (subu8vector-move! input input-start input-end buf whi)
+         (__bio-output-advance! bio whi+want)
+         output-want)
+        ;; not enough space
+        ((fx> whi 0)
+         ;; have some in the buffer, drain it and recurse
+         (__drain! bio buf whi)
+         (__retry bio input input-start input-end))
+        ;; empty buffer
+        ((fx>= output-want buflen)
+         ;; large write, do it unbuffered
+         (__write input input-start input-end))
+        (else
+         ;; fits in buffer, copy it
+         (subu8vector-move! input input-start input-end buf 0)
+         (__bio-output-advance! bio output-want)
+         output-want)))))
+  ((_ output-buffer input input-start input-end)
+   (__bio-write output-buffer input input-start input-end
+                __bio-output-buffer-drain!
+                __bio-output-buffer-write
+                __bio-output-buffer-write)))
 
-(def (bio-write-bytes bio input input-start input-end)
-  (using (bio :- output-buffer)
-    (let* ((output-want (fx- input-end input-start))
-           (whi bio.whi)
-           (whi+want (fx+ whi output-want))
-           (buf bio.buf)
-           (buflen (u8vector-length buf)))
-      (cond
-       ((fx<= whi+want buflen)
-        ;; have space in buffer
-        (subu8vector-move! input input-start input-end buf whi)
-        (bio-output-advance! bio whi+want)
-        output-want)
-       ;; not enough space
-       ((fx> whi 0)
-        ;; have some in the buffer, drain it and recurse
-        (bio-output-drain! bio buf whi)
-        (bio-write-bytes bio input input-start input-end))
-       ;; empty buffer
-       ((fx>= output-want buflen)
-        ;; large write, do it unbuffered
-        (&Writer-write bio.writer input input-start input-end))
-       (else
-        ;; fits in buffer, copy it
-        (subu8vector-move! input input-start input-end buf 0)
-        (bio-output-advance! bio output-want)
-        output-want)))))
+(defrules __bio-write-u8 ()
+  ((_ output-buffer u8 __drain! __retry)
+   (using (bio output-buffer :- basic-output-buffer)
+     (let* ((whi bio.whi)
+            (buf bio.buf)
+            (buflen (u8vector-length buf)))
+       (if (fx< whi buflen)
+         (let (whi+1 (fx+ whi 1))
+           (u8vector-set! buf whi u8)
+           (__bio-output-advance! bio whi+1)
+           1)
+         ;; full buffer
+         (begin
+           (__drain! bio buf whi)
+           (__retry bio u8))))))
+  ((_ output-buffer u8)
+   (__bio-write-u8 __bio-output-buffer-drain! __bio-output-buffer-write-u8)))
 
-(def (bio-write-u8 bio u8)
-  (using (bio :- output-buffer)
-    (let* ((whi bio.whi)
-           (buf bio.buf)
-           (buflen (u8vector-length buf)))
-      (if (fx< whi buflen)
-        (let (whi+1 (fx+ whi 1))
-          (u8vector-set! buf whi u8)
-          (bio-output-advance! bio whi+1)
-          1)
-        ;; full buffer
-        (begin
-          (bio-output-drain! bio buf whi)
-          (bio-write-u8 bio u8))))))
+(defrules __bio-flush-output ()
+  ((_ output-buffer __drain!)
+   (using (bio output-buffer :- basic-output-buffer)
+     (let* ((whi bio.whi)
+            (buf bio.buf))
+       (when (fx> whi 0)
+         (__drain! bio buf whi)
+         (void)))))
+  ((_ output-buffer)
+   (__bio-flush-output output-buffer __bio-output-buffer-drain!)))
 
-(def (bio-flush-output bio)
-  (using (bio :- output-buffer)
-    (let* ((whi bio.whi)
-           (buf bio.buf))
-      (when (fx> whi 0)
-        (bio-output-drain! bio buf whi)
-        (void)))))
-
-(def (bio-reset-output! bio writer close?)
-  (using (bio :- output-buffer)
-    (let (writer (Writer writer))
-      (when close?
-        (bio-close-output bio))
-      (bio-output-consume! bio)
-      (set! bio.writer writer)
-      (set! bio.closed? #f)
-      (void))))
-
-(def (bio-close-output bio)
-  (using (bio :- output-buffer)
-    (def exn #f)
-    (unless bio.closed?
-      (set! bio.closed? #t)
-      (with-catch (lambda (e) (set! exn e)) (cut bio-flush-output bio))
-      (&Writer-close bio.writer)
-      (when exn (raise exn)))))
+(defrules __bio-close-output ()
+  ((_ output-buffer __close __drain!)
+   (using (bio output-buffer :- basic-output-buffer)
+     (let (exn #f)
+       (unless bio.closed?
+         (set! bio.closed? #t)
+         (with-catch (lambda (e) (set! exn e)) (cut __drain! bio bio.buf bio.whi))
+         (when bio.owned?
+           (__buffer_cache.put! bio.buf))
+         (set! bio.buf #f)
+         (__close bio)
+         (when exn (raise exn))))))
+  ((_ output-buffer)
+   (__bio-close-output __bio-output-buffer-close __bio-output-buffer-drain!)))

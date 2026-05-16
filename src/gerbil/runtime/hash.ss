@@ -552,7 +552,7 @@ namespace: #f
   => :fixnum
   (h.length))
 
-(defhash-method (hash-ref h key (default (macro-absent-obj)))
+(defhash-method (hash-ref h key (default absent-obj))
   (let (result (h.ref key default))
     (if (eq? result (macro-absent-obj))
       (raise-unbound-key-error 'hash-ref "unknown hash key" hash: h key: key)

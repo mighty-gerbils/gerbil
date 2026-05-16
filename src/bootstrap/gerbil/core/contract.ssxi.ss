@@ -17,7 +17,9 @@ package: gerbil/core
             instance-predicate
             instance-satisfies-predicate
             implementation-methods
-            unchecked-implementation-methods)
+            unchecked-implementation-methods
+            implementation-macros
+            unchecked-implementation-macros)
            (id name
                type-descriptor
                namespace
@@ -30,7 +32,9 @@ package: gerbil/core
                instance-predicate
                instance-satisfies-predicate
                implementation-methods
-               unchecked-implementation-methods)
+               unchecked-implementation-methods
+               implementation-macros
+               unchecked-implementation-macros)
            #f
            #f
            #f
@@ -117,6 +121,18 @@ package: gerbil/core
     unchecked-implementation-methods
     #t))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-implementation-macros
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    implementation-macros
+    #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-macros
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    unchecked-implementation-macros
+    #t))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-id
    (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t id #t))
   (declare-type
@@ -193,6 +209,18 @@ package: gerbil/core
    (@mutator
     gerbil/core/contract~InterfaceInfo#interface-info::t
     unchecked-implementation-methods
+    #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-implementation-macros-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    implementation-macros
+    #t))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-unchecked-implementation-macros-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    unchecked-implementation-macros
     #t))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-id-set!
@@ -273,6 +301,18 @@ package: gerbil/core
     unchecked-implementation-methods
     #f))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-implementation-macros
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    implementation-macros
+    #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-macros
+   (@accessor
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    unchecked-implementation-macros
+    #f))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-id
    (@accessor gerbil/core/contract~InterfaceInfo#interface-info::t id #f))
   (declare-type
@@ -351,6 +391,18 @@ package: gerbil/core
     unchecked-implementation-methods
     #f))
   (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-implementation-macros-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    implementation-macros
+    #f))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#&interface-info-unchecked-implementation-macros-set!
+   (@mutator
+    gerbil/core/contract~InterfaceInfo#interface-info::t
+    unchecked-implementation-macros
+    #f))
+  (declare-type
    gerbil/core/contract~InterfaceInfo#&interface-info-id-set!
    (@mutator gerbil/core/contract~InterfaceInfo#interface-info::t id #f))
   (declare-type
@@ -405,6 +457,21 @@ package: gerbil/core
              gerbil/core/contract~InterfaceInfo)))
   (declare-type
    gerbil/core/contract~InterfaceInfo#interface-info-method-signature
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/contract~InterfaceInfo)))
+  (declare-type
+   gerbil/core/contract~InterfaceInfo#interface-info-method-offset
    (@lambda 2
             #f
             signature:

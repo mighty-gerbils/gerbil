@@ -135,10 +135,18 @@ namespace: #f
                    __raise-contract-violation-error
                    __raise-contract-violation-error))
          (%#define-runtime contract-violation-error? contract-violation-error?)
-         (%#define-runtime with-exception-handler with-exception-handler)
+         (%#define-syntax
+          @with-exception-handler
+          |[:0:]#@with-exception-handler|)
          (%#define-runtime __with-exception-handler __with-exception-handler)
-         (%#define-runtime with-catch with-catch)
+         (%#define-runtime
+          with-exception-handler
+          with-exception-handler
+          macro:
+          @with-exception-handler)
+         (%#define-syntax @with-catch |[:0:]#@with-catch|)
          (%#define-runtime __with-catch __with-catch)
+         (%#define-runtime with-catch with-catch macro: @with-catch)
          (%#define-runtime with-exception-catcher with-exception-catcher)
          (%#define-runtime wrap-runtime-exception wrap-runtime-exception)
          (%#define-runtime exception? exception?)
