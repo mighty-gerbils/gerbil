@@ -24,4 +24,19 @@ package: gerbil/runtime
     c4-linearize__%))
   (declare-type
    c4-linearize
-   (@kw-lambda (get-name: struct: get-precedence-list: eq:) c4-linearize__@)))
+   (@kw-lambda (get-name: struct: get-precedence-list: eq:) c4-linearize__@))
+  (declare-type
+   c4-compute-class-slots
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/c3))))

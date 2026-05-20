@@ -1,307 +1,307 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gxc[1]#_g233527_|
+  (define |gxc[1]#_g236764_|
     (##structure
      gx#syntax-quote::t
      '::identity
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233529_|
+  (define |gxc[1]#_g236766_|
     (##structure
      gx#syntax-quote::t
      '::generate-method-specializers::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233531_|
+  (define |gxc[1]#_g236768_|
     (##structure
      gx#syntax-quote::t
      'make-::generate-method-specializers
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233533_|
+  (define |gxc[1]#_g236770_|
     (##structure
      gx#syntax-quote::t
      '::generate-method-specializers?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233535_|
+  (define |gxc[1]#_g236772_|
     (##structure
      gx#syntax-quote::t
      '::false
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233537_|
+  (define |gxc[1]#_g236774_|
     (##structure
      gx#syntax-quote::t
      '::extract-receiver::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233539_|
+  (define |gxc[1]#_g236776_|
     (##structure
      gx#syntax-quote::t
      'make-::extract-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233541_|
+  (define |gxc[1]#_g236778_|
     (##structure
      gx#syntax-quote::t
      '::extract-receiver?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233543_|
+  (define |gxc[1]#_g236780_|
     (##structure
      gx#syntax-quote::t
      '::void
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233545_|
+  (define |gxc[1]#_g236782_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233547_|
+  (define |gxc[1]#_g236784_|
     (##structure
      gx#syntax-quote::t
      'make-::collect-object-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233549_|
+  (define |gxc[1]#_g236786_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233551_|
+  (define |gxc[1]#_g236788_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233552_|
+  (define |gxc[1]#_g236789_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233553_|
+  (define |gxc[1]#_g236790_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233555_|
+  (define |gxc[1]#_g236792_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233556_|
+  (define |gxc[1]#_g236793_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233557_|
+  (define |gxc[1]#_g236794_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233559_|
+  (define |gxc[1]#_g236796_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233560_|
+  (define |gxc[1]#_g236797_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233561_|
+  (define |gxc[1]#_g236798_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233563_|
+  (define |gxc[1]#_g236800_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233564_|
+  (define |gxc[1]#_g236801_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233565_|
+  (define |gxc[1]#_g236802_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233567_|
+  (define |gxc[1]#_g236804_|
     (##structure
      gx#syntax-quote::t
      '::basic-xform-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233569_|
+  (define |gxc[1]#_g236806_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233571_|
+  (define |gxc[1]#_g236808_|
     (##structure
      gx#syntax-quote::t
      'make-::subst-object-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233573_|
+  (define |gxc[1]#_g236810_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233575_|
+  (define |gxc[1]#_g236812_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233576_|
+  (define |gxc[1]#_g236813_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-klass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233577_|
+  (define |gxc[1]#_g236814_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233578_|
+  (define |gxc[1]#_g236815_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233580_|
+  (define |gxc[1]#_g236817_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233581_|
+  (define |gxc[1]#_g236818_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-klass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233582_|
+  (define |gxc[1]#_g236819_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233583_|
+  (define |gxc[1]#_g236820_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233585_|
+  (define |gxc[1]#_g236822_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233586_|
+  (define |gxc[1]#_g236823_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-klass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233587_|
+  (define |gxc[1]#_g236824_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233588_|
+  (define |gxc[1]#_g236825_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233590_|
+  (define |gxc[1]#_g236827_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233591_|
+  (define |gxc[1]#_g236828_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-klass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233592_|
+  (define |gxc[1]#_g236829_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g233593_|
+  (define |gxc[1]#_g236830_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-slots-set!
@@ -310,7 +310,7 @@
      '()))
   (begin
     (define |gxc[:0:]#::generate-method-specializers|
-      (let ((__obj233332
+      (let ((__obj236569
              (let ()
                (declare (not safe))
                (##structure
@@ -335,77 +335,79 @@
                 '#f
                 '#f
                 '#f
+                '#f
+                '#f
                 '#f))))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233332
+           __obj236569
            'gxc#::generate-method-specializers::t
-           '1
+           '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233332
+           __obj236569
            '::generate-method-specializers
-           '2
+           '3
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '5 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '6 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '7 '#f '#f))
-        (let ((__tmp233526 (cons |gxc[1]#_g233527_| '())))
+          (##unchecked-structure-set! __obj236569 '() '8 '#f '#f))
+        (let ((__tmp236763 (cons |gxc[1]#_g236764_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 __tmp233526 '4 '#f '#f))
+          (##unchecked-structure-set! __obj236569 __tmp236763 '5 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '#f '8 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '#f '9 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '#t '9 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '#t '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '#f '11 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '#f '12 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '#f '12 '#f '#f))
-        (let ((__tmp233528 |gxc[1]#_g233529_|))
+          (##unchecked-structure-set! __obj236569 '#f '13 '#f '#f))
+        (let ((__tmp236765 |gxc[1]#_g236766_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 __tmp233528 '3 '#f '#f))
-        (let ((__tmp233530 |gxc[1]#_g233531_|))
+          (##unchecked-structure-set! __obj236569 __tmp236765 '4 '#f '#f))
+        (let ((__tmp236767 |gxc[1]#_g236768_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 __tmp233530 '13 '#f '#f))
-        (let ((__tmp233532 |gxc[1]#_g233533_|))
+          (##unchecked-structure-set! __obj236569 __tmp236767 '14 '#f '#f))
+        (let ((__tmp236769 |gxc[1]#_g236770_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 __tmp233532 '14 '#f '#f))
+          (##unchecked-structure-set! __obj236569 __tmp236769 '15 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '15 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '16 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '16 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '17 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '17 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '18 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '20 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj236569 '() '22 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233332 '() '20 '#f '#f))
-        __obj233332))
+          (##unchecked-structure-set! __obj236569 '() '21 '#f '#f))
+        __obj236569))
     (define |gxc[:0:]#::extract-receiver|
-      (let ((__obj233334
+      (let ((__obj236571
              (let ()
                (declare (not safe))
                (##structure
@@ -430,77 +432,79 @@
                 '#f
                 '#f
                 '#f
+                '#f
+                '#f
                 '#f))))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233334
+           __obj236571
            'gxc#::extract-receiver::t
-           '1
+           '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233334
+           __obj236571
            '::extract-receiver
-           '2
+           '3
            '#f
            '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '5 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '6 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '7 '#f '#f))
-        (let ((__tmp233534 (cons |gxc[1]#_g233535_| '())))
+          (##unchecked-structure-set! __obj236571 '() '8 '#f '#f))
+        (let ((__tmp236771 (cons |gxc[1]#_g236772_| '())))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 __tmp233534 '4 '#f '#f))
+          (##unchecked-structure-set! __obj236571 __tmp236771 '5 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '#f '8 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '#f '9 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '#t '9 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '#t '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '#f '11 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '#f '12 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '#f '12 '#f '#f))
-        (let ((__tmp233536 |gxc[1]#_g233537_|))
+          (##unchecked-structure-set! __obj236571 '#f '13 '#f '#f))
+        (let ((__tmp236773 |gxc[1]#_g236774_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 __tmp233536 '3 '#f '#f))
-        (let ((__tmp233538 |gxc[1]#_g233539_|))
+          (##unchecked-structure-set! __obj236571 __tmp236773 '4 '#f '#f))
+        (let ((__tmp236775 |gxc[1]#_g236776_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 __tmp233538 '13 '#f '#f))
-        (let ((__tmp233540 |gxc[1]#_g233541_|))
+          (##unchecked-structure-set! __obj236571 __tmp236775 '14 '#f '#f))
+        (let ((__tmp236777 |gxc[1]#_g236778_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 __tmp233540 '14 '#f '#f))
+          (##unchecked-structure-set! __obj236571 __tmp236777 '15 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '15 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '16 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '16 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '17 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '17 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '18 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '18 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '20 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj236571 '() '22 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233334 '() '20 '#f '#f))
-        __obj233334))
+          (##unchecked-structure-set! __obj236571 '() '21 '#f '#f))
+        __obj236571))
     (define |gxc[:0:]#::collect-object-refs|
-      (let ((__obj233336
+      (let ((__obj236573
              (let ()
                (declare (not safe))
                (##structure
@@ -525,99 +529,101 @@
                 '#f
                 '#f
                 '#f
+                '#f
+                '#f
                 '#f))))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233336
+           __obj236573
            'gxc#::collect-object-refs::t
-           '1
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj233336
-           '::collect-object-refs
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233336
-           '(receiver methods slots)
-           '5
+           __obj236573
+           '::collect-object-refs
+           '3
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233336
+           __obj236573
            '(receiver methods slots)
-           '7
+           '6
            '#f
            '#f))
-        (let ((__tmp233542 (cons |gxc[1]#_g233543_| '())))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233542 '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '#f '8 '#f '#f))
+          (##unchecked-structure-set!
+           __obj236573
+           '(receiver methods slots)
+           '8
+           '#f
+           '#f))
+        (let ((__tmp236779 (cons |gxc[1]#_g236780_| '())))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236779 '5 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '#t '9 '#f '#f))
+          (##unchecked-structure-set! __obj236573 '#f '9 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '#f '11 '#f '#f))
+          (##unchecked-structure-set! __obj236573 '#t '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '#f '12 '#f '#f))
-        (let ((__tmp233544 |gxc[1]#_g233545_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233544 '3 '#f '#f))
-        (let ((__tmp233546 |gxc[1]#_g233547_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233546 '13 '#f '#f))
-        (let ((__tmp233548 |gxc[1]#_g233549_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233548 '14 '#f '#f))
-        (let ((__tmp233550
-               (cons (cons 'receiver |gxc[1]#_g233551_|)
-                     (cons (cons 'methods |gxc[1]#_g233552_|)
-                           (cons (cons 'slots |gxc[1]#_g233553_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233550 '15 '#f '#f))
-        (let ((__tmp233554
-               (cons (cons 'receiver |gxc[1]#_g233555_|)
-                     (cons (cons 'methods |gxc[1]#_g233556_|)
-                           (cons (cons 'slots |gxc[1]#_g233557_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233554 '16 '#f '#f))
-        (let ((__tmp233558
-               (cons (cons 'receiver |gxc[1]#_g233559_|)
-                     (cons (cons 'methods |gxc[1]#_g233560_|)
-                           (cons (cons 'slots |gxc[1]#_g233561_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233558 '17 '#f '#f))
-        (let ((__tmp233562
-               (cons (cons 'receiver |gxc[1]#_g233563_|)
-                     (cons (cons 'methods |gxc[1]#_g233564_|)
-                           (cons (cons 'slots |gxc[1]#_g233565_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233336 __tmp233562 '18 '#f '#f))
+          (##unchecked-structure-set! __obj236573 '#f '12 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj236573 '#f '13 '#f '#f))
+        (let ((__tmp236781 |gxc[1]#_g236782_|))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236781 '4 '#f '#f))
+        (let ((__tmp236783 |gxc[1]#_g236784_|))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236783 '14 '#f '#f))
+        (let ((__tmp236785 |gxc[1]#_g236786_|))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236785 '15 '#f '#f))
+        (let ((__tmp236787
+               (cons (cons 'receiver |gxc[1]#_g236788_|)
+                     (cons (cons 'methods |gxc[1]#_g236789_|)
+                           (cons (cons 'slots |gxc[1]#_g236790_|) '())))))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236787 '16 '#f '#f))
+        (let ((__tmp236791
+               (cons (cons 'receiver |gxc[1]#_g236792_|)
+                     (cons (cons 'methods |gxc[1]#_g236793_|)
+                           (cons (cons 'slots |gxc[1]#_g236794_|) '())))))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236791 '17 '#f '#f))
+        (let ((__tmp236795
+               (cons (cons 'receiver |gxc[1]#_g236796_|)
+                     (cons (cons 'methods |gxc[1]#_g236797_|)
+                           (cons (cons 'slots |gxc[1]#_g236798_|) '())))))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236795 '18 '#f '#f))
+        (let ((__tmp236799
+               (cons (cons 'receiver |gxc[1]#_g236800_|)
+                     (cons (cons 'methods |gxc[1]#_g236801_|)
+                           (cons (cons 'slots |gxc[1]#_g236802_|) '())))))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 __tmp236799 '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj236573 '() '20 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233336 '() '20 '#f '#f))
-        __obj233336))
+          (##unchecked-structure-set! __obj236573 '() '22 '#f '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236573 '() '21 '#f '#f))
+        __obj236573))
     (define |gxc[:0:]#::subst-object-refs|
-      (let ((__obj233338
+      (let ((__obj236575
              (let ()
                (declare (not safe))
                (##structure
@@ -642,102 +648,104 @@
                 '#f
                 '#f
                 '#f
+                '#f
+                '#f
                 '#f))))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233338
+           __obj236575
            'gxc#::subst-object-refs::t
-           '1
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj233338
-           '::subst-object-refs
            '2
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233338
-           '(receiver klass methods slots)
-           '5
+           __obj236575
+           '::subst-object-refs
+           '3
            '#f
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj233338
+           __obj236575
            '(receiver klass methods slots)
-           '7
+           '6
            '#f
            '#f))
-        (let ((__tmp233566 (cons |gxc[1]#_g233567_| '())))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233566 '4 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '#f '8 '#f '#f))
+          (##unchecked-structure-set!
+           __obj236575
+           '(receiver klass methods slots)
+           '8
+           '#f
+           '#f))
+        (let ((__tmp236803 (cons |gxc[1]#_g236804_| '())))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236575 __tmp236803 '5 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '#t '9 '#f '#f))
+          (##unchecked-structure-set! __obj236575 '#f '9 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '#f '11 '#f '#f))
+          (##unchecked-structure-set! __obj236575 '#t '10 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '#f '12 '#f '#f))
-        (let ((__tmp233568 |gxc[1]#_g233569_|))
+          (##unchecked-structure-set! __obj236575 '#f '12 '#f '#f))
+        (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233568 '3 '#f '#f))
-        (let ((__tmp233570 |gxc[1]#_g233571_|))
+          (##unchecked-structure-set! __obj236575 '#f '13 '#f '#f))
+        (let ((__tmp236805 |gxc[1]#_g236806_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233570 '13 '#f '#f))
-        (let ((__tmp233572 |gxc[1]#_g233573_|))
+          (##unchecked-structure-set! __obj236575 __tmp236805 '4 '#f '#f))
+        (let ((__tmp236807 |gxc[1]#_g236808_|))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233572 '14 '#f '#f))
-        (let ((__tmp233574
-               (cons (cons 'receiver |gxc[1]#_g233575_|)
-                     (cons (cons 'klass |gxc[1]#_g233576_|)
-                           (cons (cons 'methods |gxc[1]#_g233577_|)
-                                 (cons (cons 'slots |gxc[1]#_g233578_|)
+          (##unchecked-structure-set! __obj236575 __tmp236807 '14 '#f '#f))
+        (let ((__tmp236809 |gxc[1]#_g236810_|))
+          (declare (not safe))
+          (##unchecked-structure-set! __obj236575 __tmp236809 '15 '#f '#f))
+        (let ((__tmp236811
+               (cons (cons 'receiver |gxc[1]#_g236812_|)
+                     (cons (cons 'klass |gxc[1]#_g236813_|)
+                           (cons (cons 'methods |gxc[1]#_g236814_|)
+                                 (cons (cons 'slots |gxc[1]#_g236815_|)
                                        '()))))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233574 '15 '#f '#f))
-        (let ((__tmp233579
-               (cons (cons 'receiver |gxc[1]#_g233580_|)
-                     (cons (cons 'klass |gxc[1]#_g233581_|)
-                           (cons (cons 'methods |gxc[1]#_g233582_|)
-                                 (cons (cons 'slots |gxc[1]#_g233583_|)
+          (##unchecked-structure-set! __obj236575 __tmp236811 '16 '#f '#f))
+        (let ((__tmp236816
+               (cons (cons 'receiver |gxc[1]#_g236817_|)
+                     (cons (cons 'klass |gxc[1]#_g236818_|)
+                           (cons (cons 'methods |gxc[1]#_g236819_|)
+                                 (cons (cons 'slots |gxc[1]#_g236820_|)
                                        '()))))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233579 '16 '#f '#f))
-        (let ((__tmp233584
-               (cons (cons 'receiver |gxc[1]#_g233585_|)
-                     (cons (cons 'klass |gxc[1]#_g233586_|)
-                           (cons (cons 'methods |gxc[1]#_g233587_|)
-                                 (cons (cons 'slots |gxc[1]#_g233588_|)
+          (##unchecked-structure-set! __obj236575 __tmp236816 '17 '#f '#f))
+        (let ((__tmp236821
+               (cons (cons 'receiver |gxc[1]#_g236822_|)
+                     (cons (cons 'klass |gxc[1]#_g236823_|)
+                           (cons (cons 'methods |gxc[1]#_g236824_|)
+                                 (cons (cons 'slots |gxc[1]#_g236825_|)
                                        '()))))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233584 '17 '#f '#f))
-        (let ((__tmp233589
-               (cons (cons 'receiver |gxc[1]#_g233590_|)
-                     (cons (cons 'klass |gxc[1]#_g233591_|)
-                           (cons (cons 'methods |gxc[1]#_g233592_|)
-                                 (cons (cons 'slots |gxc[1]#_g233593_|)
+          (##unchecked-structure-set! __obj236575 __tmp236821 '18 '#f '#f))
+        (let ((__tmp236826
+               (cons (cons 'receiver |gxc[1]#_g236827_|)
+                     (cons (cons 'klass |gxc[1]#_g236828_|)
+                           (cons (cons 'methods |gxc[1]#_g236829_|)
+                                 (cons (cons 'slots |gxc[1]#_g236830_|)
                                        '()))))))
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 __tmp233589 '18 '#f '#f))
+          (##unchecked-structure-set! __obj236575 __tmp236826 '19 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '() '19 '#f '#f))
+          (##unchecked-structure-set! __obj236575 '() '20 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '() '21 '#f '#f))
+          (##unchecked-structure-set! __obj236575 '() '22 '#f '#f))
         (let ()
           (declare (not safe))
-          (##unchecked-structure-set! __obj233338 '() '20 '#f '#f))
-        __obj233338))))
+          (##unchecked-structure-set! __obj236575 '() '21 '#f '#f))
+        __obj236575))))

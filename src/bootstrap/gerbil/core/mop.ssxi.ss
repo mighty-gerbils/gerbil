@@ -108,10 +108,50 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#&!runtime-type-descriptor-set!
    (@mutator gerbil/core/mop~MOP-2#runtime-type-info::t type-descriptor #f))
   (declare-class
+   gerbil/core/mop~MOP-2#meta-object::t
+   (@class gerbil.core#meta-object::t
+           ()
+           (object::t t::t)
+           (methods)
+           (methods)
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#meta-object::t
+   (optimizer-resolve-class
+    '(typedecl gerbil/core/mop~MOP-2#meta-object::t)
+    'class::t))
+  (declare-type
+   gerbil/core/mop~MOP-2#meta-object?
+   (@predicate gerbil/core/mop~MOP-2#meta-object::t))
+  (declare-type
+   gerbil/core/mop~MOP-2#make-meta-object
+   (@constructor gerbil/core/mop~MOP-2#meta-object::t))
+  (declare-type
+   gerbil/core/mop~MOP-2#meta-object-methods
+   (@accessor gerbil/core/mop~MOP-2#meta-object::t methods #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#meta-object-methods-set!
+   (@mutator gerbil/core/mop~MOP-2#meta-object::t methods #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#&meta-object-methods
+   (@accessor gerbil/core/mop~MOP-2#meta-object::t methods #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&meta-object-methods-set!
+   (@mutator gerbil/core/mop~MOP-2#meta-object::t methods #f))
+  (declare-class
    gerbil/core/mop~MOP-2#class-type-info::t
    (@class gerbil.core#class-type-info::t
-           (gerbil/core/mop~MOP-2#runtime-type-info::t)
-           (gerbil/core/mop~MOP-2#runtime-type-info::t object::t t::t)
+           (gerbil/core/mop~MOP-2#runtime-type-info::t
+            gerbil/core/mop~MOP-2#meta-object::t)
+           (gerbil/core/mop~MOP-2#runtime-type-info::t
+            gerbil/core/mop~MOP-2#meta-object::t
+            object::t
+            t::t)
            (super slots
                   precedence-list
                   ordered-slots
@@ -128,27 +168,30 @@ package: gerbil/core
                   unchecked-mutators
                   slot-types
                   slot-defaults
-                  slot-contracts)
-           (id name
-               type-descriptor
-               super
-               slots
-               precedence-list
-               ordered-slots
-               struct?
-               final?
-               system?
-               metaclass
-               constructor-method
-               constructor
-               predicate
-               accessors
-               mutators
-               unchecked-accessors
-               unchecked-mutators
-               slot-types
-               slot-defaults
-               slot-contracts)
+                  slot-contracts
+                  slot-offsets)
+           (methods id
+                    name
+                    type-descriptor
+                    super
+                    slots
+                    precedence-list
+                    ordered-slots
+                    struct?
+                    final?
+                    system?
+                    metaclass
+                    constructor-method
+                    constructor
+                    predicate
+                    accessors
+                    mutators
+                    unchecked-accessors
+                    unchecked-mutators
+                    slot-types
+                    slot-defaults
+                    slot-contracts
+                    slot-offsets)
            #f
            #f
            #f
@@ -221,6 +264,9 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#!class-type-slot-contracts
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #t))
   (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-offsets
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-offsets #t))
+  (declare-type
    gerbil/core/mop~MOP-2#!class-type-id
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t id #t))
   (declare-type
@@ -229,6 +275,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-descriptor
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t type-descriptor #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-methods
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t methods #t))
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-super-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t super #t))
@@ -284,6 +333,9 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#!class-type-slot-contracts-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #t))
   (declare-type
+   gerbil/core/mop~MOP-2#!class-type-slot-offsets-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-offsets #t))
+  (declare-type
    gerbil/core/mop~MOP-2#!class-type-id-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t id #t))
   (declare-type
@@ -292,6 +344,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#!class-type-descriptor-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t type-descriptor #t))
+  (declare-type
+   gerbil/core/mop~MOP-2#!class-type-methods-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t methods #t))
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-super
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t super #f))
@@ -347,6 +402,9 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#&!class-type-slot-contracts
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #f))
   (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-offsets
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t slot-offsets #f))
+  (declare-type
    gerbil/core/mop~MOP-2#&!class-type-id
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t id #f))
   (declare-type
@@ -355,6 +413,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-descriptor
    (@accessor gerbil/core/mop~MOP-2#class-type-info::t type-descriptor #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-methods
+   (@accessor gerbil/core/mop~MOP-2#class-type-info::t methods #f))
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-super-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t super #f))
@@ -410,6 +471,9 @@ package: gerbil/core
    gerbil/core/mop~MOP-2#&!class-type-slot-contracts-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-contracts #f))
   (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-slot-offsets-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t slot-offsets #f))
+  (declare-type
    gerbil/core/mop~MOP-2#&!class-type-id-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t id #f))
   (declare-type
@@ -418,6 +482,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#&!class-type-descriptor-set!
    (@mutator gerbil/core/mop~MOP-2#class-type-info::t type-descriptor #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#&!class-type-methods-set!
+   (@mutator gerbil/core/mop~MOP-2#class-type-info::t methods #f))
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander
    (@lambda 2
@@ -580,4 +647,49 @@ package: gerbil/core
              unchecked:
              #f
              origin:
-             gerbil/core/mop~MOP-4))))
+             gerbil/core/mop~MOP-4)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#generate-simple-system-class|
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#generate-system-class-with-fields|
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5)))
+  (declare-type
+   |gerbil/core/mop~MOP-5[1]#emit-system-class|
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/core/mop~MOP-5))))

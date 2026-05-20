@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; serialization macro
 (import :gerbil/runtime/mop
-        ./scan)
+        ./scan
+	./scanner)
 (export #t)
 
 (defrules do-write ()
@@ -16,11 +17,16 @@
 (defsyntax (@serialize stx)
   (syntax-case stx ()
     ((_ obj senv do-object do-anchor do-reference)
-     (with-syntax ((env (genident '$env #'senv)))
+     (with-identifiers ((env             '$env)
+                        (env.written     #'env #'env ".written")
+                        (env.scanned     #'env #'env ".scanned")
+                        (env.scanned.ref #'env #'env ".scanned.ref")
+                        (env.cycles      #'env #'env ".cycles")
+                        (env.cycles.ref  #'env #'env ".cycles.ref")
+                        (env.compress?   #'env #'env ".compress?"))
        #'(using (env senv :- ScanEnv)
            (defrule (has-cycle? obj)
-             (and env.allow-cycles?
-                  (hash-get env.cycles obj)))
+             (env.cycles.ref obj #f))
            (cond
             ((or (not env) (immediate? obj))
              (do-object obj))
@@ -30,7 +36,7 @@
                      (do-reference id)
                      (do-object obj))))
             ((has-cycle? obj)
-             => (lambda ((id :- :fixunum)) => :fixnum
+             => (lambda ((id :- :fixnum)) => :fixnum
                    (hash-put! env.written obj id)
                    (do-anchor obj id)))
             ((hash-get env.scanned obj)
@@ -43,7 +49,7 @@
                        (if (fx> count 1)
                          (do-anchor obj id)
                          (do-object obj)))
-                     (using (id :- :fixnum)
+                     (using (id e :- :fixnum)
                        (hash-put! env.written obj id)
                        (do-object obj)))))
             (else
@@ -55,8 +61,8 @@
                     ((has-cycle? obj)
                      (do-anchor obj id))
                     (env.compress?
-                     (using ((e     (hash-get env.scanned obj) :- :pair)
-                             (count (cdr e)                    :- :fixnum))
+                     (using ((e     (env.scanned.ref obj #f) :- :pair)
+                             (count (cdr e)                  :- :fixnum))
                        (if (fx> count 1)
                          (do-anchor obj id)
                          (do-object obj))))

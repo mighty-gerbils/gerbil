@@ -52,11 +52,19 @@ namespace: gxc
                        (cons ann (current-annotation-optimizer))))
          (case ann
            ((@match)
-            (verbose "Optimizing match expansion")
-            (optimize-match #'expr))
+            (cond
+             ((memq '@no-optimize-match (current-annotation-optimizer))
+              (compile-e #'expr))
+             (else
+              (verbose "Optimizing match expansion")
+              (optimize-match #'expr))))
            ((@syntax-case)
-            (verbose "Optimizing syntax-case expansion")
-            (optimize-syntax-case #'expr))
+            (cond
+             ((memq '@no-optimize-syntax-case (current-annotation-optimizer))
+              (compile-e #'expr))
+             (else
+              (verbose "Optimizing syntax-case expansion")
+              (optimize-syntax-case #'expr))))
            (else
             (compile-e #'expr))))))
      (_ (xform-begin-annotation% self stx))))

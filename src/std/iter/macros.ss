@@ -105,7 +105,7 @@
   ((_ dispatch (in-list lst))
    (for-each dispatch lst))
   ((_ dispatch (in-vector vec))
-   (vector-for-each dispatch lst))
+   (vector-for-each dispatch vec))
   ((_ dispatch (in-hash hash))
    (hash-for-each
     (lambda (k v) (dispatch (cons k v)))

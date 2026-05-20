@@ -5,23 +5,24 @@
 (export #t)
 
 (defstruct basic-buffer
-  ((buf     :- :u8vector)
-   (closed? :- :boolean)
-   (owned?  :- :boolean)))
+  ((buf     :- :u8vector)  ;; the current buffer
+   (closed? :- :boolean)   ;; is the buffer closed?
+   (cached? :- :boolean))) ;; is the buffer owned by the buffer cache?
 
 ;; basic-input-buffer
-;; - buf is the buffer itself, as a u8vector
 ;; - rlo is the read cursor (where the user reads)
 ;; - rhi is the write cursor (where the reader pumps)
 (defstruct (basic-input-buffer basic-buffer)
   ((rlo     :- :fixnum)
    (rhi     :- :fixnum)))
 
+;; basic-output-buffer
+;; - whi is the writer cursor
 (defstruct (basic-output-buffer basic-buffer)
   ((whi     :- :fixnum)))
 
 ;; memory buffers
-(defstruct (memory-input-buffer basic-input-buffer)()
+(defstruct (memory-input-buffer basic-input-buffer) ()
   final: #t)
 
 (defstruct (memory-output-buffer basic-output-buffer) ()
@@ -56,4 +57,18 @@
    (remaining :- :integer)
    (limit     :- :integer)
    (closed?   :- :boolean))
+  final: #t)
+
+;; port buffers
+(defstruct basic-port-buffer
+  ((port    :- :port)
+   (closed? :- :boolean)))
+
+(defstruct (port-input-buffer basic-port-buffer)
+  ((putback :- :u8vector)
+   (rlo     :- :fixnum)
+   (rhi     :- :fixnum))
+  final: #t)
+
+(defstruct (port-output-buffer basic-port-buffer) ()
   final: #t)

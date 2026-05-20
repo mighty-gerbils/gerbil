@@ -340,6 +340,12 @@ namespace: gxc
                                   ['%#ref $obj]]]
                   stx)))))))))))
 
+(defmethod {check-arguments !accessor}
+  (lambda (self ctx stx args)
+    (if self.checked?
+      (!procedure::check-arguments self ctx stx args)
+      #t)))
+
 (defmethod {optimize-call !accessor}
   (lambda (self ctx stx args)
     (let (arguments-ok? {self.check-arguments ctx stx args})

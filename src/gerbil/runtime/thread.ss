@@ -182,6 +182,9 @@ namespace: #f
       (display-continuation-backtrace cont out))
     (##write-string (get-output-string out) error-port)))
 
+(def (thread-dead? (thread : :thread)) => :boolean
+  (not (macro-thread-end-condvar thread)))
+
 ;; actor thread type
 (extern
   actor-thread? construct-actor-thread
@@ -191,7 +194,7 @@ namespace: #f
 (begin-foreign
   (define-type-of-thread actor-thread
     constructor: construct-actor-thread
-    id: gerbil#actor::t
+    id: actor::t
     state
     locals
     nonce))

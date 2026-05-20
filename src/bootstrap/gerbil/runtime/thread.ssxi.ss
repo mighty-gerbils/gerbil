@@ -750,4 +750,34 @@ package: gerbil/runtime
       unchecked:
       #f
       origin:
-      gerbil/runtime/thread)))))
+      gerbil/runtime/thread))))
+  (declare-type
+   __thread-dead?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/thread)))
+  (declare-type
+   thread-dead?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             boolean::t
+             effect:
+             #f
+             arguments:
+             (thread::t)
+             unchecked:
+             __thread-dead?
+             origin:
+             gerbil/runtime/thread))))

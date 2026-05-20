@@ -79,7 +79,7 @@ namespace: #f
 ;; immediate hash-table class; reifies the raw-table type
 (def hash-table::t
   (begin-annotation
-      (@mop.class gerbil#hash-table::t              ; type-id
+      (@mop.class hash-table::t                     ; type-id
                   (object::t)                       ; super
                   (table count free hash test seed) ; slots
                   #f                                ; constructor
@@ -107,7 +107,7 @@ namespace: #f
               (struct: . #t))))
       (##structure
        class::t                      ; type
-       'gerbil#hash-table::t         ; type-id
+       'hash-table::t                ; type-id
        'hash-table                   ; type-name
        flags                         ; type-flags
        __table::t                    ; type-super
@@ -125,7 +125,7 @@ namespace: #f
 ;; immediate gc-hash-table class; reifies the gc-table type
 (def gc-hash-table::t
   (begin-annotation
-      (@mop.class gerbil#gc-hash-table::t ; type-id
+      (@mop.class gc-hash-table::t        ; type-id
                   (object::t)             ; super
                   (gcht immediate)        ; slots
                   #f                      ; constructor
@@ -153,8 +153,8 @@ namespace: #f
               (struct: . #t))))
       (##structure
        class::t                         ; type
-       'gerbil#gc-hash-table::t         ; type-id
-       'hash-table                      ; type-name
+       'gc-hash-table::t                ; type-id
+       'gc-hash-table                   ; type-name
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields
@@ -179,24 +179,24 @@ namespace: #f
 ;; specializer types
 (defstruct-type eq-hash-table::t (hash-table::t)
   make-eq-hash-table eq-hash-table?
-  id: gerbil#eq-hash-table
-  name: hash-table)
+  id: eq-hash-table::t
+  name: eq-hash-table)
 (defstruct-type eqv-hash-table::t (hash-table::t)
   make-eqv-hash-table eqv-hash-table?
-  id: gerbil#eqv-hash-table
-  name: hash-table)
+  id: eqv-hash-table::t
+  name: eqv-hash-table)
 (defstruct-type symbol-hash-table::t (hash-table::t)
   make-symbol-hash-table symbol-hash-table?
-  id: gerbil#symbol-hash-table
-  name: hash-table)
+  id: symbol-hash-table::t
+  name: symbol-hash-table)
 (defstruct-type string-hash-table::t (hash-table::t)
   make-string-hash-table string-hash-table?
-  id: gerbil#string-hash-table
-  name: hash-table)
+  id: string-hash-table::t
+  name: string-hash-table)
 (defstruct-type immediate-hash-table::t (hash-table::t)
   make-immediate-hash-table immediate-hash-table?
-  id: gerbil#immediate-hash-table::t
-  name: hash-table)
+  id: immediate-hash-table::t
+  name: immediate-hash-table)
 
 (bind-method! hash-table::t 'HashTable::ref raw-table-ref)
 (bind-method! hash-table::t 'HashTable::set! raw-table-set!)

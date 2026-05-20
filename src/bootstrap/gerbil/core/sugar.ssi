@@ -130,9 +130,6 @@ namespace: gerbil/core/sugar
                     defsyntax-case
                     |gerbil/core/sugar~Sugar-3[:0:]#defsyntax-case|)
                    (%#define-syntax
-                    definline
-                    |gerbil/core/sugar~Sugar-3[:0:]#definline|)
-                   (%#define-syntax
                     defconst
                     |gerbil/core/sugar~Sugar-3[:0:]#defconst|)))
          (%#import (in: #f Sugar-1) (in: #f Sugar-2) (in: #f Sugar-3)))

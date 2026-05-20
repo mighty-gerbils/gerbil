@@ -451,13 +451,23 @@ package: gerbil/core
     ((_ ((head . rest) . args) body ...)
      (def (head . rest)
        (lambda args body ...)))
+    ((_ (id . args) macro: macro body ...)
+     (and (identifier? #'id) (identifier? #'macro))
+     (define-values (id)
+       (lambda args body ...)
+       macro: macro))
     ((_ (id . args) body ...)
      (identifier? #'id)
      (define-values (id)
        (lambda args body ...)))
     ((_ id expr)
      (identifier? #'id)
-     (define-values (id) expr)))
+     (define-values (id) expr))
+    ((_ id expr macro: macro)
+     (and (identifier? #'id)
+          (identifier? #'macro))
+     (define-values (id) expr
+       macro: macro)))
 
   (defrules def* ()
     ((_ id clauses ...)
@@ -1113,25 +1123,6 @@ package: gerbil/core
              (lambda ($stx)
                (syntax-case $stx (lit ...)
                  clause ...)))))))
-
-  (defsyntax (definline stx)
-    (syntax-case stx ()
-      ((_ (id arg ...) body ...)
-       (and (identifier? #'id)
-            (identifier-list? #'(arg ...)))
-       (with-syntax* ((impl (stx-identifier #'id #'id "__impl"))
-                      ((xarg ...) (gentemps #'(arg ...)))
-                      (defstx
-                        (syntax/loc stx
-                          (defrules id ()
-                            ((_ xarg ...)
-                             ((lambda (arg ...) body ...) xarg ...))
-                            (ref (identifier? #'ref) impl))))
-                      (defimpl
-                        (syntax/loc stx
-                          (def (impl arg ...) body ...))))
-         (syntax/loc stx
-           (begin defimpl defstx))))))
 
   (defrules defconst (quote)
     ((_ id (quote expr))

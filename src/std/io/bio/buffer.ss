@@ -6,7 +6,7 @@
 (export #t)
 
 (defcall-interface-method Reader read
-  (__bio-input-buffer-read obj output output-start output-end input-need))
+  (__bio-input-buffer-read obj output start end need))
 
 (defcall-interface-method PeekableReader read-u8
   (__bio-input-buffer-read-u8 obj))
@@ -23,9 +23,8 @@
 (defcall-interface-method BufferedReader available
   (__bio-input-buffer-available obj))
 
-
 (defcall-interface-method Writer write
-  (__bio-output-buffer-write obj input input-start input-end))
+  (__bio-output-buffer-write obj input start end))
 
 (defcall-interface-method BufferedWriter write-u8
   (__bio-output-buffer-write-u8 obj u8))
@@ -34,7 +33,7 @@
   (__bio-output-buffer-flush obj))
 
 (interface (InputBuffer Closer)
-  (fill! (buf : :uvector) (rhi : :fixnum) (need : :fixnum))
+  (fill! (buf : :u8vector) (rhi : :fixnum) (need : :fixnum))
   => :void)
 
 (defcall-interface-method InputBuffer fill!
@@ -44,11 +43,18 @@
   (__bio-input-buffer-close obj))
 
 (interface (OutputBuffer Closer)
-  (drain! (buf : :uvector) (whi : :fixnum))
+  (drain! (buf : :u8vector) (whi : :fixnum))
   => :void)
 
-(defcall-interface-method OuputBuffer drain!
+(defcall-interface-method OutputBuffer drain!
   (__bio-output-buffer-drain! obj buf whi))
 
 (defcall-interface-method OutputBuffer close
   (__bio-output-buffer-close obj))
+
+(interface DetachableBuffer
+  (detach!)
+  => :void)
+
+(defcall-interface-method DetachableBuffer detach!
+  (__bio-output-buffer-detach! obj))

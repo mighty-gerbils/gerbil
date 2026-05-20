@@ -10,6 +10,7 @@
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
   (displayln " -target                     the compilation output target: C or js; defaults to C")
+  (displayln " -l,--lang <lang>            set prelude language")
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")
   (displayln " -full-program-optimization  perform full program optimization")
@@ -40,6 +41,7 @@
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
+  (def lang 'gerbil/base)
 
   (def (add-gsc-option! opt)
     (set! gsc-options
@@ -138,7 +140,7 @@
             (else
              (gxc-print-usage!)
              (exit 1))))
-	 (("-prelude")
+	     (("-prelude")
           (match rest
             ([opt . rest]
              (add-gsc-option! ["-prelude" opt])
@@ -178,13 +180,21 @@
             (else
              (gxc-print-usage!)
              (exit 1))))
+         (("-l" "--lang")
+          (match rest
+            ([lang-opt . rest]
+             (set! lang lang-opt)
+             (lp rest))
+            (else
+             (gxc-print-usage!)
+             (exit 1))))
          (else
           (if (and (not (string-empty? arg))
                    (eq? (string-ref arg 0) #\-))
             (error "Unexpected option" arg)
-            (values compile-exe (make-opts) (cons arg rest))))))
+            (values compile-exe lang (make-opts) (cons arg rest))))))
       (else
-       (values compile-exe (make-opts) rest)))))
+       (values compile-exe lang (make-opts) rest)))))
 
 (def (gxc-compile-exe file opts)
   (compile-module file [invoke-gsc: #f opts ...])
@@ -194,7 +204,9 @@
   (compile-module file opts))
 
 (def (gxc-main . args)
-  (let ((values compile-exe? opts files) (gxc-parse-args args))
+  (let ((values compile-exe? lang opts files)
+        (gxc-parse-args args))
+    (set-lang! lang)
     (if compile-exe?
       (let lp ((rest files))
         (match rest

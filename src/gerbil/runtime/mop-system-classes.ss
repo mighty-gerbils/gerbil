@@ -87,10 +87,14 @@ namespace: #f
 (defsystem-class void::t void (atom::t) ((acyclic: . #t)))
 (defsystem-class unbound::t unbound (atom::t) ((acyclic: . #t)))
 (defsystem-class unbound2::t unbound2 (atom::t) ((acyclic: . #t)))
+(defsystem-class unused::t unused (atom::t) ((acyclic: . #t)))
+(defsystem-class deleted::t deleted (atom::t) ((acyclic: . #t)))
+(defsystem-class absent::t absent (atom::t) ((acyclic: . #t)))
 (defsystem-class dssl-token::t dssl-token (atom::t) ((acyclic: . #t)))
 (defsystem-class optional::t optional (dssl-token::t) ((acyclic: . #t)))
 (defsystem-class rest::t rest (dssl-token::t) ((acyclic: . #t)))
 (defsystem-class key::t key (dssl-token::t) ((acyclic: . #t)))
+(defsystem-class unknown::t unknown (atom::t) ((acyclic: . #t)))
 
 ;; numbers
 (defsystem-class number::t number (builtin::t) ((acyclic: . #t)))
@@ -130,9 +134,11 @@ namespace: #f
 (defsystem-class f32vector::t f32vector (hvector::t) ((acyclic: . #t)))
 (defsystem-class f64vector::t f64vector (hvector::t) ((acyclic: . #t)))
 
+(defsystem-class hunk::t hunk (subtyped::t))
+(defsystem-class values::t values (hunk::t sequence::t))
+(defsystem-class box::t box (hunk::t))
+
 ;; special
-(defsystem-class values::t values (sequence::t))
-(defsystem-class box::t box (subtyped::t))
 (defsystem-class frame::t frame (subtyped::t))
 (defsystem-class continuation::t continuation (subtyped::t))
 (defsystem-class promise::t promise (subtyped::t))
@@ -198,32 +204,39 @@ namespace: #f
        (not (class-type? (##structure-type obj)))))
 
 (defpred (atom? obj) :- :atom
-  (and (immediate? obj)
-       (not (char? obj))
-       (not (fixnum? obj))
-       (not (flonum? obj))))
+  (and (##special? obj)
+       (##fx< (##type-cast obj 0) 0)))
 
-(defpred (special? obj) :- :special
+(defpred (special-object? obj) :- :special
   (##special? obj))
 
-(defpred (unbound? obj) :- :unbound
+(defpred (unbound-object? obj) :- :unbound
   (eq? obj #!unbound))
 
-(defpred (unbound2? obj) :- :unbound2
+(defpred (unbound2-object? obj) :- :unbound2
   (eq? obj #!unbound2))
+
+(defpred (unused-object? obj) :- :unused
+  (eq? obj (macro-unused-obj)))
+
+(defpred (deleted-object? obj) :- :deleted
+  (eq? obj (macro-deleted-obj)))
+
+(defpred (absent-object? obj) :- :absent
+  (eq? obj (macro-absent-obj)))
 
 (defpred (ddsl-token? obj) :- :dssl-token
   (or (eq? obj #!key)
       (eq? obj #!optional)
       (eq? obj #!rest)))
 
-(defpred (ddsl-key? obj) :- :dssl-key
+(defpred (dssl-key? obj) :- :dssl-key
   (eq? obj #!key))
 
-(defpred (ddsl-optional? obj) :- :dssl-optional
+(defpred (dssl-optional? obj) :- :dssl-optional
   (eq? obj #!optional))
 
-(defpred (ddsl-rest? obj) :- :dssl-key
+(defpred (dssl-rest? obj) :- :dssl-key
   (eq? obj #!rest))
 
 (defpred (stflonum? obj) :- :stflonum
@@ -232,53 +245,79 @@ namespace: #f
 (defpred (haflonum? obj) :- :haflonum
   (and (flonum? obj) (##mem-allocated? obj)))
 
+(defrule (subtype-property-vector t ...)
+  (let (vec (make-vector 32 #f))
+    (vector-set! vec t #t) ...
+    vec))
+
+(def __subtyped-class-sequence
+  (subtype-property-vector
+   (macro-subtype-boxvalues)
+   (macro-subtype-vector)
+   (macro-subtype-string)
+   (macro-subtype-s8vector)
+   (macro-subtype-u8vector)
+   (macro-subtype-s16vector)
+   (macro-subtype-u16vector)
+   (macro-subtype-s32vector)
+   (macro-subtype-u32vector)
+   (macro-subtype-f32vector)
+   (macro-subtype-s64vector)
+   (macro-subtype-u64vector)
+   (macro-subtype-f64vector)))
+
 (defpred (sequence? obj) :- :sequence
-  (or (vector? obj)
-      (string? obj)
-      (hvector? obj)))
+  (and (##subtyped? obj)
+       (##vector-ref __subtyped-class-sequence (##subtype obj))))
+
+(def __subtyped-class-hvector
+  (subtype-property-vector
+   (macro-subtype-s8vector)
+   (macro-subtype-u8vector)
+   (macro-subtype-s16vector)
+   (macro-subtype-u16vector)
+   (macro-subtype-s32vector)
+   (macro-subtype-u32vector)
+   (macro-subtype-f32vector)
+   (macro-subtype-s64vector)
+   (macro-subtype-u64vector)
+   (macro-subtype-f64vector)))
 
 (defpred (hvector? obj) :- :hvector
-  ;; TODO optimize this
-  (or (u8vector? obj)
-      (s8vector? obj)
-      (u16vector? obj)
-      (s16vector? obj)
-      (u32vector? obj)
-      (s32vector? obj)
-      (u64vector? obj)
-      (s64vector? obj)
-      (f32vector? obj)
-      (f64vector? obj)))
+  (and (##subtyped? obj)
+       (##vector-ref __subtyped-class-hvector (##subtype obj))))
 
 (defpred (weak? obj) :- :weak
   (and (##subtyped? obj)
        (eq? (##subtype obj) (macro-subtype-weak))))
 
-(defpred (object-port? obj) :- :object-port
+(defpred (object-port? obj)      :- :object-port
   (##structure-instance-of? obj (##type-id (macro-type-object-port))))
-(defpred (character-port? obj) :- :character-port
+(defpred (character-port? obj)   :- :character-port
   (##structure-instance-of? obj (##type-id (macro-type-character-port))))
-(defpred (device-port? obj) :- :device-port
+(defpred (byte-port? obj) :-     :byte-port
+  (##structure-instance-of? obj (##type-id (macro-type-byte-port))))
+(defpred (device-port? obj)      :- :device-port
   (##structure-instance-of? obj (##type-id (macro-type-device-port))))
-(defpred (vector-port? obj) :- :vector-port
+(defpred (vector-port? obj)      :- :vector-port
   (##structure-instance-of? obj (##type-id (macro-type-vector-port))))
-(defpred (string-port? obj) :- :string-port
+(defpred (string-port? obj)      :- :string-port
   (##structure-instance-of? obj (##type-id (macro-type-string-port))))
-(defpred (u8vector-port? obj) :- :u8vector-port
+(defpred (u8vector-port? obj)    :- :u8vector-port
   (##structure-instance-of? obj (##type-id (macro-type-u8vector-port))))
-(defpred (raw-device-port? obj) :- :raw-device-port
+(defpred (raw-device-port? obj)  :- :raw-device-port
   (##structure-instance-of? obj (##type-id (macro-type-raw-device-port))))
-(defpred (tcp-server-port? obj) :- :tcp-server-port
+(defpred (tcp-server-port? obj)  :- :tcp-server-port
   (##structure-instance-of? obj (##type-id (macro-type-tcp-server-port))))
-(defpred (udp-port? obj) :- :udp-port
+(defpred (udp-port? obj)         :- :udp-port
   (##structure-instance-of? obj (##type-id (macro-type-udp-port))))
-(defpred (directory-port? obj) :- :directory-port
+(defpred (directory-port? obj)   :- :directory-port
   (##structure-instance-of? obj (##type-id (macro-type-directory-port))))
 (defpred (event-queue-port? obj) :- :event-queue-port
   (##structure-instance-of? obj (##type-id (macro-type-event-queue-port))))
-(defpred (readenv? obj) :- :readenv
+(defpred (readenv? obj)          :- :readenv
   (##structure-instance-of? obj (##type-id (macro-type-readenv))))
-(defpred (writeenv? obj) :- :writeenv
+(defpred (writeenv? obj)         :- :writeenv
   (##structure-instance-of? obj (##type-id (macro-type-writeenv))))
-(defpred (vm? obj) :- :vm
+(defpred (vm? obj)               :- :vm
   (##structure-instance-of? obj (##type-id (macro-type-vm))))

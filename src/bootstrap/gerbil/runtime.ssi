@@ -10,6 +10,7 @@ namespace: #f
           :gerbil/runtime/system
           :gerbil/runtime/c3
           :gerbil/runtime/mop
+          :gerbil/runtime/mop-system-classes
           :gerbil/runtime/error
           :gerbil/runtime/interface
           :gerbil/runtime/hash
@@ -26,6 +27,7 @@ namespace: #f
           (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/c3)
           (import: :gerbil/runtime/mop)
+          (import: :gerbil/runtime/mop-system-classes)
           (import: :gerbil/runtime/error)
           (import: :gerbil/runtime/interface)
           (import: :gerbil/runtime/hash)

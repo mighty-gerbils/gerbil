@@ -1178,11 +1178,11 @@ package: gerbil/compiler
       gerbil/compiler/optimize-base))))
   (declare-type
    gxc#compute-class-fields
-   (@lambda 4
+   (@lambda 3
             #f
             signature:
             (return:
-             list::t
+             t::t
              effect:
              #f
              arguments:

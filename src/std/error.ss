@@ -56,7 +56,7 @@
      (identifier-list? #'(Class Mixin ...))
      (with-syntax ((defpredicate-alias
                      (if (stx-e #'predicate-alias)
-                       (with-syntax ((Class? (stx-identifier #'Class #'Class "?")))
+                       (with-identifier (Class? #'Class #'Class "?")
                          #'(def predicate-alias Class?))
                        #'(begin))))
        #'(begin

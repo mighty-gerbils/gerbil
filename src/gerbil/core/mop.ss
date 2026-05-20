@@ -8,8 +8,10 @@ package: gerbil/core
 (import "runtime" "sugar"
         (phi: +1 "runtime" "expander" "sugar"))
 (export  #t
-         (import: MOP-1 MOP-4 MOP-5)
-         (phi: +1 (import: MOP-1 MOP-2 MOP-3 MOP-4 MOP-5)))
+         (import: MOP-1 MOP-4
+                  MOP-system-classes)
+         (phi: +1 (import: MOP-1 MOP-2 MOP-3 MOP-4
+                           MOP-system-classes)))
 
 (module MOP-1
   (export #t (phi: +1 module-type-id make-class-type-id))
@@ -197,8 +199,16 @@ package: gerbil/core
       ;; the runtime identifier of the class's type descriptor
       !runtime-type-descriptor !runtime-type-descriptor-set!)))
 
+  (defclass-type meta-object::t ()
+    make-meta-object
+    meta-object?
+    id: gerbil.core#meta-object::t
+    name: meta-object
+    slots:
+    ((methods meta-object-methods meta-object-methods-set!)))
+
   ;; class meta type; expansion time class reflection.
-  (defclass-type class-type-info::t (runtime-type-info::t)
+  (defclass-type class-type-info::t (runtime-type-info::t meta-object::t)
     make-class-type-info
     class-type-info?
     id: gerbil.core#class-type-info::t
@@ -213,7 +223,9 @@ package: gerbil/core
       !class-type-name !class-type-name-set!)
      (type-descriptor ;; Identifier
       ;; the runtime identifier of the class's type descriptor
-      !class-type-descriptor !class-type-descriptor-set!))
+      !class-type-descriptor !class-type-descriptor-set!)
+     (methods
+      !class-type-methods !class-type-methods-set!))
     slots:
     ((super ;; ListOf Identifier
       ;; the class's super list; identifiers point to class-type-infos
@@ -266,7 +278,9 @@ package: gerbil/core
      (slot-defaults ;; Maybe AListOf Symbol -> syntax
       !class-type-slot-defaults !class-type-slot-defaults-set!)
      (slot-contracts ;; Maybe AListOf Symbol -> syntax
-      !class-type-slot-contracts !class-type-slot-contracts-set!)))
+      !class-type-slot-contracts !class-type-slot-contracts-set!)
+     (slot-offsets   ;; Maybe AList Symbol fixnum
+      !class-type-slot-offsets !class-type-slot-offsets-set!)))
 
   (def (class-type-info::apply-macro-expander self stx)
     (syntax-case stx ()
@@ -324,11 +338,29 @@ package: gerbil/core
       ['name :: (quote-syntax &!runtime-type-name-set!)]
       ['type-descriptor :: (quote-syntax &!runtime-type-descriptor-set!)]]))
 
+  (defsyntax meta-object
+    (make-class-type-info
+     id: 'gerbil.core#meta-object::t
+     name: 'meta-object
+     super: []
+     slots: '(methods)
+     type-descriptor: (quote-syntax meta-object::t)
+     constructor: (quote-syntax make-meta-object)
+     predicate: (quote-syntax meta-object?)
+     accessors:
+     [['methods :: (quote-syntax meta-object-methods)]]
+     mutators:
+     [['methods :: (quote-syntax meta-object-methods-set!)]]
+     unchecked-accessors:
+     [['methods :: (quote-syntax &meta-object-methods)]]
+     unchecked-mutators:
+     [['methods :: (quote-syntax &meta-object-methods-set!)]]))
+
   (defsyntax class-type-info
     (make-class-type-info
      id: 'gerbil.core#class-type-info::t
      name: 'class-type-info
-     super: [(quote-syntax runtime-type-info)]
+     super: [(quote-syntax runtime-type-info) (quote-syntax meta-object)]
      slots: '(super slots
                     precedence-list
                     ordered-slots
@@ -338,11 +370,8 @@ package: gerbil/core
                     constructor predicate
                     accessors mutators
                     unchecked-accessors unchecked-mutators
-                    slot-types slot-defaults slot-contracts)
-     struct?: #f
-     final?: #f
-     system?: #f
-     constructor-method: #f
+                    slot-types slot-defaults slot-contracts
+                    slot-offsets)
      type-descriptor: (quote-syntax class-type-info::t)
      constructor: (quote-syntax make-class-type-info)
      predicate: (quote-syntax class-type-info?)
@@ -367,7 +396,9 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators)]
       ['slot-types :: (quote-syntax !class-type-slot-types)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults)]
-      ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts)]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset)]
+      ['methods :: (quote-syntax !class-type-methods)]]
      mutators:
      [['id :: (quote-syntax !class-type-id-set!)]
       ['name :: (quote-syntax !class-type-name-set!)]
@@ -389,7 +420,9 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators-set!)]
       ['slot-types :: (quote-syntax !class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax !class-type-slot-defaults-set!)]
-      ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]]
+      ['slot-contracts :: (quote-syntax !class-type-slot-contracts-set!)]
+      ['slot-offset :: (quote-syntax !class-type-slot-offset-set!)]
+      ['methods :: (quote-syntax !class-type-methods-set!)]]
      unchecked-accessors:
      [['id :: (quote-syntax &!class-type-id)]
       ['name :: (quote-syntax &!class-type-name)]
@@ -411,7 +444,9 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators)]
       ['slot-types :: (quote-syntax &!class-type-slot-types)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults)]
-      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]]
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts)]
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset)]
+      ['methods :: (quote-syntax &!class-type-methods)]]
      unchecked-mutators:
      [['id :: (quote-syntax &!class-type-id-set!)]
       ['name :: (quote-syntax &!class-type-name-set!)]
@@ -433,7 +468,9 @@ package: gerbil/core
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]
       ['slot-types :: (quote-syntax &!class-type-slot-types-set!)]
       ['slot-defaults :: (quote-syntax &!class-type-slot-defaults-set!)]
-      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]])))
+      ['slot-contracts :: (quote-syntax &!class-type-slot-contracts-set!)]
+      ['slot-offset :: (quote-syntax &!class-type-slot-offset-set!)]
+      ['methods :: (quote-syntax &!class-type-methods-set!)]])))
 
 (module MOP-4
   (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))
@@ -768,25 +805,85 @@ package: gerbil/core
 (module MOP-5
   (import (phi: +1 MOP-2))
   (export #t)
+
+  (begin-syntax
+    (def (generate-simple-system-class stx klass)
+      (emit-system-class stx klass [] []))
+
+    (def (generate-system-class-with-fields stx klass fields)
+      (let* ((fields
+              ;; type fields can shadow each other, they are not slots
+              ;; so we transform the field name to be relative to the
+              ;; current class
+              (let loop ((rest fields) (normalized []))
+                (if (pair? rest)
+                  (let ((field (car rest))
+                        (rest  (cdr rest)))
+                    (if (memq field rest)
+                      (cond
+                       ((agetq field normalized)
+                        => (lambda (previous)
+                             (let (normalized-field (make-symbol "super-" previous))
+                               (loop rest
+                                     (cons (cons field normalized-field)
+                                           normalized)))))
+                       (else
+                        (let (normalized-field (make-symbol "super-" field))
+                          (loop rest
+                                (cons (cons field normalized-field)
+                                      normalized)))))
+                      (loop rest
+                            (cons (cons field field)
+                                  normalized))))
+                  (foldl (lambda (n r) (cons (cdr n) r))
+                         [] normalized))))
+             (field-offsets
+              (iota (length fields) 1)))
+        (emit-system-class stx klass fields field-offsets)))
+
+    (def (emit-system-class stx klass fields field-offsets )
+      (with-syntax ((type-id            (class-type-id klass))
+                    (type-name          (class-type-name klass))
+                    ((field ...)        fields)
+                    ((field-offset ...) field-offsets)
+                    ((_ id type (super ...) predicate)
+                     stx))
+        (syntax/loc stx
+          (defsyntax id
+            (make-class-type-info
+             id:                  'type-id
+             name:                'type-name
+             super:               [(quote-syntax super) ...]
+             slots:               []
+             system?:             #t
+             type-descriptor:     (quote-syntax type)
+             predicate:           (quote-syntax predicate)
+             accessors:           []
+             mutators:            []
+             unchecked-accessors: []
+             unchecked-mutators:  []
+             slot-offsets:        [['field :: field-offset] ...]))))))
+
   (defsyntax (defsystem-class-info stx)
     (syntax-case stx ()
       ((_ id type (super ...) predicate)
-       (let (klass (eval-syntax #'type))
-         (with-syntax ((type-id (class-type-id klass))
-                       (type-name (class-type-name klass)))
-           #'(defsyntax id
-               (make-class-type-info
-                id: 'type-id
-                name: 'type-name
-                super: [(quote-syntax super) ...]
-                slots: []
-                system?: #t
-                type-descriptor: (quote-syntax type)
-                predicate: (quote-syntax predicate)
-                accessors: []
-                mutators: []
-                unchecked-accessors: []
-                unchecked-mutators: [])))))))
+       (and (identifier? #'id)
+            (identifier? #'type)
+            (andmap identifier? #'(super ...))
+            (identifier? #'predicate))
+       (let* ((klass (eval-syntax #'type))
+              (props (class-type-properties klass)))
+         (cond
+          ((agetq system-type: props)
+           => (lambda (type)
+                (let (fields (type-field-list type))
+                  (generate-system-class-with-fields stx klass fields))))
+          (else
+           (generate-simple-system-class stx klass))))))))
+
+(module MOP-system-classes
+  (import MOP-5 (phi: +1 MOP-2))
+  (export #t)
 
   ;; the root
   (defsystem-class-info :t t::t () true)
@@ -847,7 +944,7 @@ package: gerbil/core
   (defsystem-class-info :structure structure::t (:subtyped) builtin-structure?)
   (defsystem-class-info :immediate immediate::t (:builtin) immediate?)
 
-  (defsystem-class-info :special special::t (:immediate) special?)
+  (defsystem-class-info :special special::t (:immediate) special-object?)
   (defsystem-class-info :atom atom::t (:special) atom?)
   (defsystem-class-info :char char::t (:immediate) char?)
   (defsystem-class-info :boolean boolean::t (:immediate) boolean?)
@@ -855,8 +952,11 @@ package: gerbil/core
   (defsystem-class-info :false false::t (:boolean :atom) not)
   (defsystem-class-info :eof eof::t (:atom) eof-object?)
   (defsystem-class-info :void void::t (:atom) void?)
-  (defsystem-class-info :unbound unbound::t (:atom) unbound?)
-  (defsystem-class-info :unbound2 unbound2::t (:atom) unbound2?)
+  (defsystem-class-info :unbound unbound::t (:atom) unbound-object?)
+  (defsystem-class-info :unbound2 unbound2::t (:atom) unbound2-object?)
+  (defsystem-class-info :unused unused::t (:atom) unused-object?)
+  (defsystem-class-info :deleted deleted::t (:atom) deleted-object?)
+  (defsystem-class-info :absent absent::t (:atom) absent-object?)
   (defsystem-class-info :dssl-token dssl-token::t (:atom) dssl-token?)
   (defsystem-class-info :dssl-optional optional::t (:dssl-token) dssl-optional?)
   (defsystem-class-info :dssl-rest rest::t (:dssl-token) dssl-rest?)
@@ -895,9 +995,9 @@ package: gerbil/core
   (defsystem-class-info :s64vector s64vector::t (:hvector) s64vector?)
   (defsystem-class-info :f32vector f32vector::t (:hvector) f32vector?)
   (defsystem-class-info :f64vector f64vector::t (:hvector) f64vector?)
-
   (defsystem-class-info :values values::t (:sequence) ##values?)
-  (defsystem-class-info :box box::t (:subtyped) box?)
+  (defsystem-class-info :box box::t (:values) box?)
+
   (defsystem-class-info :frame frame::t (:subtyped) ##frame?)
   (defsystem-class-info :continuation continuation::t (:subtyped) continuation?)
   (defsystem-class-info :promise promise::t (:subtyped) promise?)
@@ -935,4 +1035,7 @@ package: gerbil/core
   (defsystem-class-info :socket-info socket-info::t (:subtyped) socket-info?)
   (defsystem-class-info :address-info address-info::t (:subtyped) address-info?))
 
-(import MOP-1 MOP-4 MOP-5 (phi: +1 MOP-1 MOP-2 MOP-3 MOP-4 MOP-5))
+(import MOP-1 MOP-4
+        MOP-system-classes
+        (phi: +1 MOP-1 MOP-2 MOP-3 MOP-4
+              MOP-system-classes))

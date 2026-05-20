@@ -243,6 +243,21 @@ package: gerbil/compiler
              origin:
              gerbil/compiler/optimize-call)))
   (declare-type
+   gxc#!accessor::check-arguments
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (t::t t::t t::t t::t)
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-call)))
+  (declare-type
    gxc#!accessor::optimize-call
    (@lambda 4
             #f

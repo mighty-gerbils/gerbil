@@ -47,60 +47,66 @@
 
     "text/pregexp"
 
+    "cache"
+    "sync/rwlock"
+    "sync/spinlock"
+    "net/address/types"
+    
+    "io/interface/base"
+    "io/interface/bio"
+    "io/interface/socket"
+    "io/interface"
+    "io/bio/types"
+    "io/bio/buffer"
+    "io/bio/macros"
+    "io/bio/cache"
+    "io/bio/input"
+    "io/bio/output"
+    "io/bio/reader"
+    "io/bio/writer"
+    "io/bio/delimited"
+    "io/bio/memory"
+    "io/bio/srcsnk"
+    "io/bio/port"
+    ;;"io/bio/message"
+    "io/bio/api"
+
+    "serde/scan"
+    "serde/serialize"
+    ;;"serde/opaque"
+    "serde/interned"
+    "serde/scanner"
+
+    "ffi"
+    "format/ascii"
+    "format/format-string"
+    "format/env"
+    "format/ioutil"
+    "format/io"
+    "format/writer"
+    "format/format"
+    "format/api"
+
     ;; TODO
 
-    ;; "ffi"
-    ;; "object"
-
-
-
-    ;; "list/alist"
-    ;; "list/walist"
-
-
-
-    ;; "struct/queue"
-
-
-
-
-    ;; "sync/wrlock"
-
-    ;; "time/time"
-    ;; "time/timeout"
     ;; "time/format"
 
-    ;; "net/address/address"
+
     ;; "net/address/format"
 
     ;; "io"
-    ;; "io/interface"
+
     ;; "io/api"
     ;; "io/dummy"
     ;; "io/delimited"
     ;; "io/file"
     ;; "io/util"
     ;; "io/port"
-    ;; "io/bio/types"
-    ;; "io/bio/input"
     ;; "io/bio/delimited"
-    ;; "io/bio/output"
     ;; "io/bio/chunked"
     ;; "io/bio/inline"
     ;; "io/bio/util"
     ;; "io/bio/api"
-    ;; "io/strio/types"
-    ;; "io/strio/packed"
-    ;; "io/strio/reader"
-    ;; "io/strio/writer"
-    ;; "io/strio/utf8"
-    ;; "io/strio/chunked"
-    ;; "io/strio/input"
-    ;; "io/strio/output"
-    ;; "io/strio/inline"
-    ;; "io/strio/delimited"
-    ;; "io/strio/util"
-    ;; "io/strio/api"
     ;; "io/socket/types"
     ;; "io/socket/basic"
     ;; "io/socket/stream"

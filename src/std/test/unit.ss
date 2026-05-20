@@ -86,11 +86,27 @@
 (defrule (do-check-output ctx expr output)
   (do-check! ctx expr
     (let ((expected-output (: output :string))
-          (capture (open-output-string)))
+          (capture (open-output-u8vector)))
       (parameterize ((current-output-port capture))
         expr)
-      (let (captured-output (get-output-string capture))
+      (let (captured-output
+	    (utf8->string
+	     (get-output-u8vector capture)))
         (unless (string=? captured-output expected-output)
+          (raise-test-error ctx "output does not match expectation"
+                            test: 'expr
+                            result: captured-output
+                            expectation: expected-output))))))
+
+(defrule (do-check-output-u8vector ctx expr output)
+  (do-check! ctx expr
+    (let ((expected-output (: output :u8vector))
+          (capture (open-output-u8vector)))
+      (parameterize ((current-output-port capture))
+        expr)
+      (let (captured-output
+	    (get-output-u8vector capture))
+        (unless (u8vector=? captured-output expected-output)
           (raise-test-error ctx "output does not match expectation"
                             test: 'expr
                             result: captured-output

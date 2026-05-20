@@ -195,6 +195,54 @@ package: gerbil/runtime
    unbound2::t
    (optimizer-resolve-class '(typedecl unbound2::t) 'class::t))
   (declare-class
+   unused::t
+   (@class unused
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unused::t
+   (optimizer-resolve-class '(typedecl unused::t) 'class::t))
+  (declare-class
+   deleted::t
+   (@class deleted
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   deleted::t
+   (optimizer-resolve-class '(typedecl deleted::t) 'class::t))
+  (declare-class
+   absent::t
+   (@class absent
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   absent::t
+   (optimizer-resolve-class '(typedecl absent::t) 'class::t))
+  (declare-class
    dssl-token::t
    (@class dssl-token
            (atom::t)
@@ -256,6 +304,22 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type key::t (optimizer-resolve-class '(typedecl key::t) 'class::t))
+  (declare-class
+   unknown::t
+   (@class unknown
+           (atom::t)
+           (atom::t special::t immediate::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   unknown::t
+   (optimizer-resolve-class '(typedecl unknown::t) 'class::t))
   (declare-class
    number::t
    (@class number (builtin::t) (builtin::t t::t) () () #f #f #f #f #f #f))
@@ -717,10 +781,26 @@ package: gerbil/runtime
    f64vector::t
    (optimizer-resolve-class '(typedecl f64vector::t) 'class::t))
   (declare-class
+   hunk::t
+   (@class hunk
+           (subtyped::t)
+           (subtyped::t builtin::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   hunk::t
+   (optimizer-resolve-class '(typedecl hunk::t) 'class::t))
+  (declare-class
    values::t
    (@class values
-           (sequence::t)
-           (sequence::t subtyped::t builtin::t t::t)
+           (hunk::t sequence::t)
+           (hunk::t sequence::t subtyped::t builtin::t t::t)
            ()
            ()
            #f
@@ -735,8 +815,8 @@ package: gerbil/runtime
   (declare-class
    box::t
    (@class box
-           (subtyped::t)
-           (subtyped::t builtin::t t::t)
+           (hunk::t)
+           (hunk::t subtyped::t builtin::t t::t)
            ()
            ()
            #f
@@ -1318,20 +1398,30 @@ package: gerbil/runtime
   (declare-type builtin-subtyped? (@primitive-predicate subtyped::t))
   (declare-type builtin-structure? (@primitive-predicate structure::t))
   (declare-type atom? (@primitive-predicate atom::t))
-  (declare-type special? (@primitive-predicate special::t))
-  (declare-type unbound? (@primitive-predicate unbound::t))
-  (declare-type unbound2? (@primitive-predicate unbound2::t))
+  (declare-type special-object? (@primitive-predicate special::t))
+  (declare-type unbound-object? (@primitive-predicate unbound::t))
+  (declare-type unbound2-object? (@primitive-predicate unbound2::t))
+  (declare-type unused-object? (@primitive-predicate unused::t))
+  (declare-type deleted-object? (@primitive-predicate deleted::t))
+  (declare-type absent-object? (@primitive-predicate absent::t))
   (declare-type ddsl-token? (@primitive-predicate dssl-token::t))
-  (declare-type ddsl-key? (@primitive-predicate key::t))
-  (declare-type ddsl-optional? (@primitive-predicate optional::t))
-  (declare-type ddsl-rest? (@primitive-predicate key::t))
+  (declare-type dssl-key? (@primitive-predicate key::t))
+  (declare-type dssl-optional? (@primitive-predicate optional::t))
+  (declare-type dssl-rest? (@primitive-predicate key::t))
   (declare-type stflonum? (@primitive-predicate stflonum::t))
   (declare-type haflonum? (@primitive-predicate haflonum::t))
+  (declare-type
+   __subtyped-class-sequence
+   (optimizer-resolve-class '(typedecl __subtyped-class-sequence) 'vector::t))
   (declare-type sequence? (@primitive-predicate sequence::t))
+  (declare-type
+   __subtyped-class-hvector
+   (optimizer-resolve-class '(typedecl __subtyped-class-hvector) 'vector::t))
   (declare-type hvector? (@primitive-predicate hvector::t))
   (declare-type weak? (@primitive-predicate weak::t))
   (declare-type object-port? (@primitive-predicate object-port::t))
   (declare-type character-port? (@primitive-predicate character-port::t))
+  (declare-type byte-port? (@primitive-predicate byte-port::t))
   (declare-type device-port? (@primitive-predicate device-port::t))
   (declare-type vector-port? (@primitive-predicate vector-port::t))
   (declare-type string-port? (@primitive-predicate string-port::t))

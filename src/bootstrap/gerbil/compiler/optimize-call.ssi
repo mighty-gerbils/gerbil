@@ -57,6 +57,9 @@ namespace: gxc
          (%#define-runtime
           !constructor::optimize-call
           gxc#!constructor::optimize-call)
+         (%#define-runtime
+          !accessor::check-arguments
+          gxc#!accessor::check-arguments)
          (%#begin (%#define-runtime
                    !accessor::optimize-call
                    gxc#!accessor::optimize-call)

@@ -1,11 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffered input
-(import :std/interface
+(import :std/error
         ../interface
         ./types
         ./buffer
-        ./cache)
+        ./cache
+        ./macros)
 (export #t)
 
 (defrule (__bio-input-advance! input-buffer new-rlo rhi)
@@ -66,12 +67,12 @@
                      (fx- input-need have)
                      0)
                    0))
-                (read (__bio-read-bytes bio output output-start output-end input-need)))
+                (read (__read bio output output-start output-end input-need)))
            (fx+ have read)))
         ;; empty buffer (rlo=rhi=0)
         ((or (fx>= input-need (u8vector-length buf)) fx>= input-want (u8vector-length buf))
          ;; needed/wanted bytes exceed buffer size, read unbuffered
-         (__read output output-start output-end input-need))
+         (__read bio output output-start output-end input-need))
         (else
          (let (read (__fill! bio buf 0 input-need))
            (if (fx> read 0)
@@ -122,7 +123,7 @@
 
 (def (bio-put-back (bio : basic-input-buffer) previous-input)
   => :void
-  (__check-buffer-open! bio)
+  (__check-buffer-open! bio-put-back bio)
   (if (fixnum? previous-input)
     (__bio-put-back-one bio previous-input)
     (__bio-put-back-many bio previous-input)))
@@ -163,7 +164,7 @@
       (set! bio.rhi 1)
       (void)))))
 
-(def (bio-put-back-many (bio : basic-input-buffer) previous-input)
+(def (bio-put-back-many (bio : basic-input-buffer) (previous-input : :list))
   => :void
   (def (put-back! buf rlo previous-input)
     (let loop ((rest previous-input) (i rlo))
@@ -267,27 +268,21 @@
                  (cond
                   ((fx= skip 0) (void))
                   ((fx<= skip buflen)
-                   (__read buf 0 skip skip)
+                   (__read bio buf 0 skip skip)
                    (void))
                   (else
-                   (__read buf 0 buflen buflen)
+                   (__read bio buf 0 buflen buflen)
                    (loop (fx- skip buflen))))))))))))
   ((_ input-buffer count)
    (__bio-skip-input input-buffer count __bio-input-buffer-read)))
-
-(def (bio-delimit-input (bio : basic-input-buffer)
-                        (limit :~ nonnegative-integer? :- :integer))
-  => BufferedReader
-  (__check-buffer-open! bio)
-  (BufferedReader (make-delimited-input-buffer bio limit limit)))
 
 (defrules __bio-close-input ()
   ((_ input-buffer __close)
    (using (bio input-buffer :- basic-input-buffer)
      (unless bio.closed?
        (set! bio.closed? #t)
-       (when bio.owned?
-         (__buffer_cache.put! bio.buf))
+       (when bio.cached?
+         (buffer-cache.put! bio.buf))
        (set! bio.buf #f)
        (__close bio))))
   ((_ input-buffer)
@@ -295,5 +290,13 @@
 
 (def (bio-input-available (bio : basic-input-buffer))
   => :fixnum
-  (__check-buffer-open! bio)
+  (__check-buffer-open! bio-input-available bio)
   (fx- bio.rhi bio.rlo))
+
+(defmethod {put-back basic-input-buffer}
+  __bio-put-back
+  interface: BufferedReader)
+
+(defmethod {available basic-input-buffer}
+  __bio-input-available
+  interface: BufferedReader)

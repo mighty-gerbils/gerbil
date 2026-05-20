@@ -4,23 +4,24 @@
 (import ../interface
         ./types
         ./buffer
-        ./cache)
+        ./cache
+        ./macros)
 (export #t)
 (declare (not safe))
 
 (defrule (__bio-output-advance! output whi)
-  (using (bio output :- output-buffer)
+  (using (bio output :- basic-output-buffer)
     (set! bio.whi whi)))
 
 (defrule (__bio-output-consume! output)
-  (using (bio output :- output-buffer)
+  (using (bio output :- basic-output-buffer)
     (set! bio.whi 0)))
 
 (defrules __bio-write ()
   ((_ output-buffer input input-start input-end
-      ___drain
-      ___write
-      ___retry)
+      __drain!
+      __write
+      __retry)
    (using (bio output-buffer :- basic-output-buffer)
      (let* ((output-want (fx- input-end input-start))
             (whi bio.whi)
@@ -41,7 +42,7 @@
         ;; empty buffer
         ((fx>= output-want buflen)
          ;; large write, do it unbuffered
-         (__write input input-start input-end))
+         (__write bio input input-start input-end))
         (else
          ;; fits in buffer, copy it
          (subu8vector-move! input input-start input-end buf 0)
@@ -89,8 +90,8 @@
        (unless bio.closed?
          (set! bio.closed? #t)
          (with-catch (lambda (e) (set! exn e)) (cut __drain! bio bio.buf bio.whi))
-         (when bio.owned?
-           (__buffer_cache.put! bio.buf))
+         (when bio.cached?
+           (buffer-cache.put! bio.buf))
          (set! bio.buf #f)
          (__close bio)
          (when exn (raise exn))))))

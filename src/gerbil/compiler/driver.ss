@@ -119,7 +119,6 @@ namespace: gxc
     (when optimize
       (with-driver-mutex (optimizer-info-init!)))
     (parameterize ((current-compile-output-dir outdir)
-                   (current-compilation-target target)
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
@@ -131,6 +130,7 @@ namespace: gxc
                    (current-compile-context `((compile-module ,srcpath)))
                    (current-compile-identifiers (make-bound-identifier-table))
                    (current-compile-parallel parallel?)
+                   (current-compilation-target target)
                    (current-expander-compiling? #t))
       (verbose "compile " srcpath)
       (compile-top-module (with-driver-mutex (import-module srcpath))))))

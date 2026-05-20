@@ -1,37 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; buffered reader extension methods
+;;; buffered writer extension methods
 (import :std/error
         ../interface
         ./types
-        ./macros
         ./buffer
-        ./input
-        ./cache)
+        ./cache
+        ./macros
+        ./output)
 (export #t)
 (declare (not safe))
-
-(defwriter-ext (write-u16 writer (uint : :fixnum))
-  (writer.write-uint uint 2))
-(defwriter-ext (write-s16 writer (int  : :fixnum))
-  (writer.write-sint int 2))
-(defwriter-ext (write-u32 writer (uint : :integer))
-  (writer.write-uint uint 4))
-(defwriter-ext (write-s32 writer (int  : :integer))
-  (writer.write-sint int 4))
-(defwriter-ext (write-u64 writer (int  : :integer))
-  (writer.write-uint int 8))
-(defwriter-ext (write-s64 writer (int  : :integer))
-  (writer.write-sint int 8))
-
-(defwriter-ext (write-uint writer (uint : :integer) (len : :fixnum))
-  (if (is-output-buffer-instance? writer)
-    (using (bio (&interface-instance-object writer) :- basic-output-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= len (u8vector-length bio.buf))
-        (__bio-write-uint bio uint len)
-        (__bio-write-uint-generic writer uint len)))
-    (__bio-write-uint-generic writer uint len)))
 
 (def (bio-write-uint (bio : basic-output-buffer) (uint : :integer) (len : :fixnum))
   => :fixnum
@@ -68,26 +46,37 @@
         (loop (fx+ i 1) (fx- shift 8)))
       len)))
 
-(defwriter-ext (write-sint writer (int : :integer) (len : :fixnum))
-  (writer.write-uint (complement-output int len) len))
+(defwriter-ext (write-uint writer (uint : :integer) (len : :fixnum))
+  (if (is-output-buffer-instance? writer)
+    (using (bio (&interface-instance-object writer) :- basic-output-buffer)
+      (__check-buffer-open! write-uint bio)
+      (if (fx<= len (u8vector-length bio.buf))
+        (__bio-write-uint bio uint len)
+        (__bio-write-uint-generic writer uint len)))
+    (__bio-write-uint-generic writer uint len)))
 
 (def (complement-output (int : :integer) (len : :fixnum))
   => :integer
   (if (< int 0)
     (let (bits (fxarithmetic-shift-left len 3))
-      (+ (__expt-cache-get bits) int))
+      (+ (expt-cache.get bits) int))
     int))
 
-(defwriter-ext (write-varuint writer (uint : :integer) (max-bits 64 : :fixnum))
-  (when (fx> (integer-length uint) max-bits)
-    (raise-io-error write-varuint "varuint max bits exceeded"))
-  (if (is-output-buffer-instance? writer)
-    (using (bio (&interface-instance-object reader) :- basic-output-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= (fx/ max-bits 8) (u8vector-length bio.buf))
-        (__bio-write-varuint bio uint max-bits)
-        (__bio-write-varuint-generic writer uint max-bits)))
-    (__bio-write-varuint-generic writer uint max-bits)))
+(defwriter-ext (write-sint writer (int : :integer) (len : :fixnum))
+  (writer.write-uint (complement-output int len) len))
+
+(defwriter-ext (write-u16 writer (uint : :fixnum))
+  (writer.write-uint uint 2))
+(defwriter-ext (write-s16 writer (int  : :fixnum))
+  (writer.write-sint int 2))
+(defwriter-ext (write-u32 writer (uint : :integer))
+  (writer.write-uint uint 4))
+(defwriter-ext (write-s32 writer (int  : :integer))
+  (writer.write-sint int 4))
+(defwriter-ext (write-u64 writer (int  : :integer))
+  (writer.write-uint int 8))
+(defwriter-ext (write-s64 writer (int  : :integer))
+  (writer.write-sint int 8))
 
 (def (bio-write-varuint (bio : basic-output-buffer) (uint : :integer) (max-bits : :fixnum))
   => :fixnum
@@ -103,13 +92,14 @@
             (loop (fx+ whi 1) (arithmetic-shift uint -7) (fx+ wrote 1)))
           (begin
             (u8vector-set! buf whi uint)
-            (__bio-output-advance bio whi)
+            (let (whi (fx+ whi 1))
+              (__bio-output-advance! bio whi))
             (fx+ wrote 1))))
        (else
         (__bio-output-buffer-drain! bio buf whi)
         (loop bio.whi uint wrote))))))
 
-(def (bio-write-varuint-generic (writer : Writer) (uint : :integer) (max-bits : :fixnum))
+(def (bio-write-varuint-generic (writer : BufferedWriter) (uint : :integer) (max-bits : :fixnum))
   => :fixnum
   (let loop ((uint uint :- :integer) (wrote 0 :- :fixnum))
     => :fixnum
@@ -120,6 +110,17 @@
       (begin
         (writer.write-u8 uint)
         (fx+ wrote 1)))))
+
+(defwriter-ext (write-varuint writer (uint : :integer) (max-bits 64 : :fixnum))
+  (when (fx> (integer-length uint) max-bits)
+    (raise-io-error write-varuint "varuint max bits exceeded"))
+  (if (is-output-buffer-instance? writer)
+    (using (bio (&interface-instance-object writer) :- basic-output-buffer)
+      (__check-buffer-open! write-varuint bio)
+      (if (fx<= (fx/ max-bits 8) (u8vector-length bio.buf))
+        (__bio-write-varuint bio uint max-bits)
+        (__bio-write-varuint-generic writer uint max-bits)))
+    (__bio-write-varuint-generic writer uint max-bits)))
 
 (defwriter-ext (write-varint writer (int : :integer) (max-bits 64 : :fixnum))
   (let* ((signed (< int 0))
@@ -135,16 +136,7 @@
             uint)))
     (writer.write-varuint uint max-bits)))
 
-(defwriter-ext (write-char-utf8 writer (char : :char))
-  (if (is-output-buffer-instance? writer)
-    (using (bio (&interface-instance-object reader) :- basic-input-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= 4 (u8vector-length bio.buf))
-        (__bio-write-char-utf8 bio char)
-        (__bio-write-char-utf8-generic writer char)))
-    (__bio-write-char-utf8-generic writer char)))
-
-(def (bio-write-char-utf8 (bio : basic-output-buffer) (char : char))
+(def (bio-write-char-utf8 (bio : basic-output-buffer) (char : :char))
   => :fixnum
   (let (c (char->integer char))
     (let* ((buf bio.buf)
@@ -159,7 +151,7 @@
                 (__bio-output-advance! bio whi)
                 1))
             (begin
-              (__bio-output-drain! bio buf whi)
+              (__bio-output-buffer-drain! bio buf whi)
               (again bio.whi))))
          ((fx<= c #x7ff)
           (let (whi+1 (fx+ whi 1))
@@ -172,7 +164,7 @@
                   (__bio-output-advance! bio whi)
                   2))
               (begin
-              (__bio-output-drain! bio buf whi)
+              (__bio-output-buffer-drain! bio buf whi)
               (again bio.whi)))))
          ((##fx<= c #xffff)
           (let ((whi+1 (fx+ whi 1))
@@ -188,7 +180,7 @@
                   (__bio-output-advance! bio whi)
                   3))
               (begin
-              (__bio-output-drain! bio buf whi)
+              (__bio-output-buffer-drain! bio buf whi)
               (again bio.whi)))))
          (else                          ; max char is #x10ffff
           (let ((whi+1 (fx+ whi 1))
@@ -207,10 +199,10 @@
                   (__bio-output-advance! bio whi)
                   4))
               (begin
-              (__bio-output-drain! bio buf whi)
+              (__bio-output-buffer-drain! bio buf whi)
               (again bio.whi))))))))))
 
-(def (bio-write-char-utf8-generic (writer : Writer) (char : :char))
+(def (bio-write-char-utf8-generic (writer : BufferedWriter) (char : :char))
   => :fixnum
   (let (c (char->integer char))
     (cond
@@ -241,29 +233,21 @@
         (writer.write-u8 b4)
         4)))))
 
-(defwriter-ext (write-string-utf8 writer
-                                  (str   : :string)
-                                  (start 0
-                                         :~ (in-range? 0 (string-length str))
-                                         :- :fixnum)
-                                  (end   (string-length str)
-                                         :~ (in-range-inclusive? start (string-length str))
-                                         : :fixnum))
-  => :fixnum
+(defwriter-ext (write-char-utf8 writer (char : :char))
   (if (is-output-buffer-instance? writer)
-    (using (bio (&interface-instance-object writer) :- basic-output-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= len (u8vector-length bio.buf))
-        (__bio-write-string-utf8 bio str start end)
-        (__bio-write-string-utf8-generic writer str start end)))
-    (__bio-write-string-utf8-generic writer str start end)))
+    (using (bio (&interface-instance-object writer) :- basic-input-buffer)
+      (__check-buffer-open! write-char-utf8 bio)
+      (if (fx<= 4 (u8vector-length bio.buf))
+        (__bio-write-char-utf8 bio char)
+        (__bio-write-char-utf8-generic writer char)))
+    (__bio-write-char-utf8-generic writer char)))
 
 (defrule (__bio-output-write-string output str start end __write-char)
   (let loop ((i start :- :fixnum) (result 0 :- :fixnum))
     => :fixnum
     (if (fx< i end)
       (let (wrote (__write-char output (string-ref str i)))
-        (lp (fx+ i 1) (fx+ result wrote)))
+        (loop (fx+ i 1) (fx+ result wrote)))
       result)))
 
 (def (bio-write-string-utf8 (bio   : basic-input-buffer)
@@ -273,24 +257,29 @@
   => :fixnum
   (__bio-output-write-string bio str start end __bio-write-char-utf8))
 
-(def (bio-write-string-utf8-generic (writer : Writer)
+(def (bio-write-string-utf8-generic (writer : BufferedWriter)
                                     (str    : :string)
                                     (start  : :fixnum)
                                     (end    : :fixnum))
   => :fixnum
-  (__bio-output-write-string bio str start end __bio-write-char-utf8-generic))
+  (__bio-output-write-string writer str start end __bio-write-char-utf8-generic))
 
-(defwriter-ext (write-line-utf8 writer (str : :string) (separator #\newline : :t))
+(defwriter-ext (write-string-utf8 writer
+                                  (str   : :string)
+                                  (start 0
+                                         :~ (in-range? 0 (string-length str))
+                                         :- :fixnum)
+                                  (end   (string-length str)
+                                         :~ (in-range-inclusive? start (string-length str))
+                                         : :fixnum))
   (if (is-output-buffer-instance? writer)
     (using (bio (&interface-instance-object writer) :- basic-output-buffer)
-      (__check-buffer-open! bio)
-      (if (fx<= len (u8vector-length bio.buf))
-        (__bio-write-line-utf8 bio str start separator)
-        (__bio-write-line-utf8-generic writer str separator)))
-    (__bio-write-line-utf8-generic writer str separator)))
+      (__check-buffer-open! write-string-utf8 bio)
+      (__bio-write-string-utf8 bio str start end))
+    (__bio-write-string-utf8-generic writer str start end)))
 
 (defrule (__bio-output-write-line output str separator __write-string __write-char)
-  (let (result (__write-string output str))
+  (let (result (__write-string output str 0 (string-length str)))
     (if (char? separator)
       (let (wrote (__write-char output separator))
         (fx+ result wrote))
@@ -299,14 +288,21 @@
         (match rest
           ([char . rest]
            (using (char : :char)
-             (let (wrote (__write-char char))
-               (lp rest (fx+ result wrote)))))
+             (let (wrote (__write-char output char))
+               (loop rest (fx+ result wrote)))))
           (else result))))))
 
 (def (bio-write-line-utf8 (bio : basic-output-buffer) (str : :string) (separator #\newline : :t))
   => :fixnum
   (__bio-output-write-line bio str separator __bio-write-string-utf8 __bio-write-char-utf8))
 
-(def (bio-write-line-utf8-generic (writer : Writer) (str : :string) (separator #\newline : :t))
+(def (bio-write-line-utf8-generic (writer : BufferedWriter) (str : :string) (separator #\newline : :t))
   => :fixnum
   (__bio-output-write-line writer str separator __bio-write-string-utf8-generic __bio-write-char-utf8-generic))
+
+(defwriter-ext (write-line-utf8 writer (str : :string) (separator #\newline : :t))
+  (if (is-output-buffer-instance? writer)
+    (using (bio (&interface-instance-object writer) :- basic-output-buffer)
+      (__check-buffer-open! write-line-utf8 bio)
+      (__bio-write-line-utf8 bio str separator))
+    (__bio-write-line-utf8-generic writer str separator)))

@@ -18,13 +18,13 @@ namespace: #f
                'raw-table    ; name
                26 ; flags: extensible | concrete | nongenerative
                #f ; super
-               '#(table 5 #f
-                        count 5 #f
-                        free 5 #f
-                        hash 5 #f
-                        test 5 #f
-                        seed 5 #f
-                        lock 5 #f)))
+               '#(table 1 #f
+                        count 0 #f
+                        free 0 #f
+                        hash 0 #f
+                        test 0 #f
+                        seed 0 #f
+                        lock 0 #f)))
 
 (def (raw-table? obj)
   (and (##structure? obj)
@@ -239,19 +239,8 @@ namespace: #f
             (##type-cast obj 0)))
     (fxand h (macro-max-fixnum32))))
 
-(cond-expand
-  (gerbil-smp
-   (def __eq-hash-lock (__make-inline-lock))
-   (def (__eq-hash obj)
-     (declare (not interrupts-enabled))
-     (__lock-inline! __eq-hash-lock)
-     (let (h (__object->eq-hash obj))
-       (__unlock-inline! __eq-hash-lock)
-       h)))
-  (else
-   (def (__eq-hash obj)
-     (declare (not interrupts-enabled))
-     (__object->eq-hash obj))))
+(def (__eq-hash obj)
+  (__object->eq-hash obj))
 
 (def (eqv-hash obj)
   (define (combine a b)
@@ -668,11 +657,14 @@ namespace: #f
 
 (def (__object->eq-hash obj)
   (declare (not interrupts-enabled))
-  (__do-inline-lock! __object-eq-hash-lock
-    (let (val (gc-table-ref __object-eq-hash obj #f))
-      (if val
-        val
-        (let (h (fxand __object-eq-hash  (macro-max-fixnum32)))
-          (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
-          (gc-table-set! __object-eq-hash obj h)
-          h)))))
+  (let (val (gc-table-ref __object-eq-hash obj #f))
+    (if val
+      val
+      (__do-inline-lock! __object-eq-hash-lock
+        (let (val (gc-table-ref __object-eq-hash obj #f))
+          (if val
+            val
+            (let (h (fxand __object-eq-hash  (macro-max-fixnum32)))
+              (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
+              (gc-table-set! __object-eq-hash obj h)
+              h)))))))

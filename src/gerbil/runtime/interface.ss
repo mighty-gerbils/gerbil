@@ -23,11 +23,10 @@ namespace: #f
 
 ;; base type for all interface instances
 (defstruct interface-instance (object)
-  id: gerbil#interface-instance::t)
+  print: (object))
 
 ;; interface meta descriptor
 (defstruct interface-descriptor (type methods index)
-  id: gerbil#interface-descriptor::t
   final: #t
   print: (type index)
   constructor: :init!)
@@ -47,7 +46,6 @@ namespace: #f
     (set! self.index (__get-next-interface-index))))
 
 (defstruct prototype-table (lock table)
-  id: gerbil#prototype-table::t
   final: #t
   constructor: :init!)
 
@@ -58,14 +56,12 @@ namespace: #f
 
 (def (__prototype-table-get (prototable :- prototype-table)
                             (descriptor :- interface-descriptor))
-  (declare (not safe))
-  (let ((lock  prototable.lock)
+  (declare (not safe) (not interrupts-enabled))
+  (let ((tab  prototable.table)
         (index descriptor.index))
-    (__do-inline-lock! lock
-      (let (tab prototable.table)
-        (if (fx< index (vector-length tab))
-          (vector-ref tab index)
-          #f)))))
+    (if (fx< index (vector-length tab))
+      (vector-ref tab index)
+      #f)))
 
 (def (__prototype-table-set! (prototable :- prototype-table)
                              (descriptor :- interface-descriptor)
@@ -77,11 +73,13 @@ namespace: #f
       (let (tab prototable.table)
         (if (fx< index (vector-length tab))
           (vector-set! tab index prototype)
-          (let* ((new-size __next-interface-index)
-                 (new-tab (make-vector new-size #f)))
-            (subvector-move! tab 0 (vector-length tab) new-tab 0)
-            (vector-set! new-tab index prototype)
-            (set! prototable.table new-tab)))))))
+          (let (new-size __next-interface-index)
+            (if (fx< index new-size)
+              (let (new-tab (make-vector new-size #f))
+                (subvector-move! tab 0 (vector-length tab) new-tab 0)
+                (vector-set! new-tab index prototype)
+                (set! prototable.table new-tab))
+              (error "interface index out of range" interface: descriptor index: index max-index: new-size))))))))
 
 (def (interface-subclass? klass)
   (alet (super (##type-super klass))
@@ -170,18 +168,21 @@ namespace: #f
           ;; we don't want to try the cast everytime as this would be
           ;; prohibitively slow; instead we mark the failure in the interface's
           ;; prototype table
-          (let (tab (class-type-interface-table obj-klass))
-            (cond
-             ((__prototype-table-get tab descriptor)
-              => (lambda (prototype)
-                   (if (void? prototype)
-                     (loop (&interface-instance-object obj))
-                     (do-instance descriptor prototype obj))))
-             ((try-create-prototype descriptor klass obj-klass)
-              => (lambda (prototype)
-                   (do-instance descriptor prototype obj)))
-             (else
-              (loop (&interface-instance-object obj))))))
+	  (let loop-interface ((iface-klass obj-klass))
+	    (if iface-klass
+              (let (tab (class-type-interface-table iface-klass))
+		(cond
+		 ((__prototype-table-get tab descriptor)
+		  => (lambda (prototype)
+                       (if (void? prototype)
+			 (loop-interface (##type-super iface-klass))
+			 (do-instance descriptor prototype obj))))
+		 ((try-create-prototype descriptor klass iface-klass)
+		  => (lambda (prototype)
+                       (do-instance descriptor prototype obj)))
+		 (else
+		  (loop-interface (##type-super iface-klass)))))
+	      (loop (&interface-instance-object obj)))))
          (else
           (let (tab (class-type-interface-table obj-klass))
             (cond

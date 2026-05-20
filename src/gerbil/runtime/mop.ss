@@ -272,9 +272,9 @@ namespace: #f
       (when (##fx< j field-info-length)
         (let* ((slot (##vector-ref slot-vector i))
                (flags
-                (if transparent? 0
-                    (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 0 1)
-                             (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 0 4)))))
+                (if transparent? 5
+                    (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 1 0)
+                             (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 4 0)))))
           (vector-set! field-info j slot)
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
@@ -287,14 +287,34 @@ namespace: #f
                         precedence-list slot-vector slot-table properties constructor methods)
          :class)
       ;; this we know is a class
-      (:- (##structure class::t
-                       ;; gambit type fields
-                       type-id type-name type-flags type-super field-info
-                       ;; gerbil class fields
-                       precedence-list slot-vector slot-table properties constructor methods
-                       ;; specializer/interface tables
-                       #f #f)
-          :class))))
+      (let (klass
+	    (:- (##structure class::t
+			     ;; gambit type fields
+			     type-id type-name type-flags type-super field-info
+			     ;; gerbil class fields
+			     precedence-list slot-vector slot-table properties constructor methods
+			     ;; specializer/interface tables
+			     #f #f)
+		:class))
+	;; track the subclass in super properties
+	(for-each
+	  (lambda (super)
+	    (cond
+	     ((&class-type-properties super)
+	      => (lambda (props)
+		   (cond
+		    ((assq subclasses: props)
+		     => (lambda (subclasses)
+			  (set-cdr! subclasses
+				    (cons klass (cdr subclasses)))))
+		    (else
+		     (set! (&class-type-properties super)
+		       (cons [subclasses: klass] props))))))
+	     (else
+	      (set! (&class-type-properties super)
+		[[subclasses: klass]]))))
+	  (agetq direct-supers: properties []))
+	klass))))
 
 ;;; class type utilities
 (defsyntax (defrefset stx)
@@ -342,6 +362,46 @@ namespace: #f
   (specializer    12)
   (interface      13))
 
+(def (type-field-list type) => :list
+  (def (fields->list (fields :- :vector)) => :list
+    (let (fields-len (vector-length fields))
+      (let loop ((i 0 :- :fixnum) (r [] :- :list))
+        => :list
+        (if (fx< i fields-len)
+          (loop (fx+ i 3)
+                (cons (vector-ref fields i) r))
+          (reverse! r)))))
+  (let loop ((type type))
+    => :list
+    (cond
+     ((##type? type)
+      (cond
+       ((eq? type ##type-type)
+        [])
+       ((##type-super type)
+        => (lambda (super)
+             => :list
+             (append (loop super) (fields->list (##type-fields type)))))
+       (else
+        (fields->list (##type-fields type)))))
+     (else []))))
+
+(def (class-type-field-list (klass : :class)) => :list
+  (def (get-fields! klass type)
+    (let (fields (type-field-list type))
+      (set! (class-type-properties klass)
+        (cons (cons fields: fields)
+              (class-type-properties klass)))
+      fields))
+  (let (props (class-type-properties klass))
+    (:- (cond
+         ((agetq fields: props))
+         ((agetq system-type: props)
+          => (cut get-fields! klass <>))
+         (else
+          (get-fields! klass klass)))
+        :list)))
+
 (def (class-type-slot-list (klass : :class)) => :list
   (vector->list (class-type-slot-vector klass) 1))
 (def (class-type-field-count (klass : :class)) => :fixnum
@@ -368,11 +428,11 @@ namespace: #f
   (def (get-printable-slot-alist type)
     (let* ((fields (get-field-vector type))
            (count  (vector-length fields)))
-      (let loop ((i 3) (offset 1) (r []))
+      (let loop ((i 0) (offset 1) (r []))
         (if (fx< i count)
           (let ((slot-name  (vector-ref fields i))
                 (slot-flags (vector-ref fields (fx+ i 1)))
-                (next-i      (fx+ i 2)))
+                (next-i      (fx+ i 3)))
             (if (fx= (fxand slot-flags 1) 0) ;; printable flag
               (loop next-i
                     (fx+ offset 1)
@@ -468,27 +528,11 @@ namespace: #f
 ;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
 ;;   -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
 (def (compute-class-slots class-precedence-list direct-slots)
-  (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
-         (slot-table (make-symbolic-table #f 0))
-         (r-slots '(__class))
-         (process-slot
-          (lambda (slot)
-            (unless (symbol? slot)
-              (error "invalid slot name" slot))
-            (when (eq? (symbolic-table-ref slot-table slot absent-value)
-                       absent-value);; ignore if already registered as a slot
-              (symbolic-table-set! slot-table slot next-slot)
-              (symbolic-table-set! slot-table (symbol->keyword slot) next-slot)
-              (set! r-slots (cons slot r-slots))
-              (set! next-slot (##fx+ next-slot 1)))))
-         (process-slots (cut for-each process-slot <>)))
-    (for-each (lambda (mixin)
-                (process-slots
-                 (agetq direct-slots: (&class-type-properties mixin) [])))
-              (reverse class-precedence-list))
-    (process-slots direct-slots)
-    (let (slot-vector (list->vector (reverse r-slots)))
-      (values slot-vector slot-table))))
+  (c4-compute-class-slots class-precedence-list direct-slots
+    (lambda (mixin)
+      (agetq direct-slots: (&class-type-properties mixin) []))
+    (lambda (slot-list slot-table)
+      (values (list->vector slot-list) slot-table))))
 
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
@@ -1018,11 +1062,35 @@ namespace: #f
   (mixin-find-method (class-type-precedence-list klass) obj id))
 
 (def (bind-method! klass (id : :symbol) (proc : :procedure) (rebind? #f))
+  (def (flush-caches! klass)
+    (when (&class-type-specializer klass)
+      (set! (&class-type-specializer klass) #f)
+      (when (class-type-sealed? klass)
+	(##unchecked-structure-set! klass (##fxand (##fxnot class-type-flag-sealed) (##type-flags klass))
+				    3 class::t bind-method!)))
+    ;; NOTE: we don't drop interface tables to avoid clobbering
+    ;;       existing implements declarations, except when
+    ;;       rebinding (to support repl development)
+    (when (and rebind? (&class-type-interface klass))
+      (set! (&class-type-interface klass) #f))
+    
+    ;; subclasses also need to be flushed
+    (cond
+     ((&class-type-properties klass)
+      => (lambda (props)
+	   (cond
+	    ((agetq subclasses: props)
+	     =>
+	     (lambda (subclasses)
+	       (for-each flush-caches! subclasses))))))))
+    
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
       (begin
         (symbolic-table-set! ht id proc)
+	;; drop specializers tables and unseal
+	(flush-caches! klass)
         (void))))
 
   (cond
@@ -1257,9 +1325,73 @@ END-C
          (else
           (error "unexpected tag width" tb)))))
 
-   (def __class
-     (let* ((len (##vector-length __type))
-            (cv (##make-vector len #f)))
+   (def __primitive-class
+     (make-vector (vector-length __type) #f))
+
+   (def __boxvalues-class
+     (make-vector 2 #f))
+
+   (def __subtype-class
+     (make-vector 32 #f))
+
+   (def __char-class #f)
+
+   (def __special-class
+     (make-vector 16 #f))
+
+   (defrule (@primclass i klass-expr)
+     (cond
+      ((##vector-ref __primitive-class i))
+      (else
+       (let (klass klass-expr)
+         (##vector-set! __primitive-class i klass)
+         klass))))
+
+   (defrule (@boxvalues obj box-klass-espr values-klass-espr)
+     (if (fx= (##values-length obj) 1)
+       (cond
+        ((##vector-ref __boxvalues-class 0))
+        (else
+         (let (klass box-klass-espr)
+           (##vector-set! __boxvalues-class 0 klass)
+           klass)))
+       (cond
+        ((##vector-ref __boxvalues-class 1))
+        (else
+         (let (klass values-klass-espr)
+           (##vector-set! __boxvalues-class 1 klass)
+           klass)))))
+
+   (defrule (@subclass st klass-expr)
+     (cond
+      ((##vector-ref __subtype-class st))
+      (else
+       (let (klass klass-expr)
+         (##vector-set! __subtype-class st klass)
+         klass))))
+
+   (defrule (@special obj char-klass-expr special-klass-expr)
+     (let (x (##type-cast obj 0))
+       (if (fx> x 0)
+         ;; char
+         (cond
+          (__char-class)
+          (else
+           (let (klass char-klass-expr)
+             (set! __char-class klass)
+             klass)))
+         ;; atom
+         (let (t (fx- x))
+           (cond
+            ((##vector-ref __special-class t))
+            (else
+             (let (klass special-klass-expr)
+               (##vector-set! __special-class t klass)
+               klass)))))))
+
+   (def __class-of
+     (let* ((len (vector-length __type))
+            (cv  (make-vector len #f)))
        (let loop ((i 0))
          (if (##fx< i len)
            (let* ((t (##vector-ref __type i))
@@ -1269,9 +1401,8 @@ END-C
                      (lambda (obj) (error "object type is undefined" obj)))
                     ((memq t '(fixnum flonum stflonum haflonum pair vector))
                      (lambda (obj)
-                       ;; TODO cache to avoid hash table lookup
                        (declare (not interrupts-enabled) (not safe))
-                       (__system-class t)))
+                       (@primclass i (__system-class t))))
                     ((eq? t 'subtyped)
                      (lambda (obj)
                        (declare (not interrupts-enabled) (not safe))
@@ -1283,33 +1414,45 @@ END-C
                                klass
                                (__shadow-class klass))))
                           ((##fx= st (macro-subtype-boxvalues)) ; box or values?
-                           (if (fx= (##values-length obj) 1)
-                             ;; TODO cache to avoid hash table lookup
-                             (__system-class 'box)
-                             (__system-class 'values)))
-                          ((##vector-ref __subtype-id st)
-                           ;; TODO cache to avoid hash table lookup
-                           => __system-class)
+                           (@boxvalues
+                            obj
+                            (__system-class 'box)
+                            (__system-class 'values)))
                           (else
-                           (error "unknown class" subtype: st object: obj))))))
+                           (@subclass
+                            st
+                            (cond
+                             ((##vector-ref __subtype-id st)
+                              => (lambda (subtype-t)
+                                   (@subclass st (__system-class subtype-t))))
+                             (else
+                              (error "unknown class" object: obj subtype: st)))))))))
                     ((eq? t 'special)
                      (lambda (obj)
                        ;; TODO optimize this to void the cond
                        (declare (not interrupts-enabled) (not safe))
-                       (cond
-                        ((char? obj)          (__system-class 'char))
-                        ((eq? obj '())        (__system-class 'null))
-                        ((eq? obj #f)         (__system-class 'boolean))
-                        ((eq? obj #t)         (__system-class 'boolean))
-                        ((eq? obj #!void)     (__system-class 'void))
-                        ((eq? obj #!eof)      (__system-class 'eof))
-                        ((eq? obj #!unbound)  (__system-class 'unbound))
-                        ((eq? obj #!unbound2) (__system-class 'unbound2))
-                        ((eq? obj #!optional) (__system-class 'optional))
-                        ((eq? obj #!rest)     (__system-class 'rest))
-                        ((eq? obj #!key)      (__system-class 'key))
-                        (else
-                         (__system-class 'special)))))
+                       (@special
+                        obj
+                        (__system-class 'char)
+                        (cond
+                         ((eq? obj '())        (__system-class 'null))
+                         ((eq? obj #f)         (__system-class 'false))
+                         ((eq? obj #t)         (__system-class 'true))
+                         ((eq? obj #!void)     (__system-class 'void))
+                         ((eq? obj #!eof)      (__system-class 'eof))
+                         ((eq? obj #!unbound)  (__system-class 'unbound))
+                         ((eq? obj #!unbound2) (__system-class 'unbound2))
+                         ((eq? obj #!optional) (__system-class 'optional))
+                         ((eq? obj #!rest)     (__system-class 'rest))
+                         ((eq? obj #!key)      (__system-class 'key))
+                         ((eq? obj (macro-unused-obj))
+                          (__system-class 'unused))
+                         ((eq? obj (macro-deleted-obj))
+                          (__system-class 'deleted))
+                         ((eq? obj (macro-absent-obj))
+                          (__system-class 'absent))
+                         (else
+                          (__system-class 'unknown))))))
                     (else
                      (error "unexpected object type" t)))))
              (##vector-set! cv i f)
@@ -1329,7 +1472,7 @@ END-C
        (not safe)
        (not interrupts-enabled))
      (:- (let* ((t (##type obj))
-                (f (##vector-ref __class t)))
+                (f (##vector-ref __class-of t)))
            (f obj))
          :class))
 

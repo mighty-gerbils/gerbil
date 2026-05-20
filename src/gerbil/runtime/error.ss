@@ -191,7 +191,7 @@ namespace: #f
 (def (fix-port-width! port)
   (when (macro-character-port? port)
     (let (old-width (macro-character-port-output-width port))
-      (macro-character-port-output-width-set! port (lambda (port) 256))
+      (macro-character-port-output-width-set! port (lambda (port) 512))
       old-width)))
 
 (def (reset-port-width! port old-width)

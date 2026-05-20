@@ -69,7 +69,8 @@ TODO:
    libdir-prefix parallelize
    full-program-optimization
    build-release
-   build-optimized)
+   build-optimized
+   target)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
@@ -78,6 +79,7 @@ TODO:
       prefix: (prefix_ #f) force: (force? #f)
       optimize: (optimize #t) debug: (debug_ #f)
       static: (_ignore-static #t)
+      target: (target 'C)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #t)
       full-program-optimization: (full-program-optimization #f)
@@ -108,7 +110,8 @@ TODO:
       libdir-prefix parallelize
       full-program-optimization
       build-release
-      build-optimized)))
+      build-optimized
+      target)))
 
 (def (gerbil-build-cores (cpu-count-spec #t))
   ;; TODO: for the default (catch) case, use something like
@@ -202,145 +205,146 @@ TODO:
     (execute-pending-compile-jobs!)))
 
 (def (make-build buildspec-in settings)
-  (def buildspec (normalize-buildspec buildspec-in))
-  ;; mutex for imports
-  (def import-mx (make-mutex 'import))
-  ;; mute for dependency timestamps (mauling of load-path)
-  (def dependency-mx (make-mutex 'dependency))
-  ;; table of module id -> completion, indicating completion of a build
-  (def completions (make-hash-table-eq))
-  ;; table of in tree module timestamps
-  (def timestamps (make-hash-table-eq))
-  ;; the build coordinator barrier
-  (def build-barrier
-    (make-barrier (length buildspec)))
-  ;; channel of compilation work ready to be performed
-  (def workch (make-channel))
-  ;; the build workers
-  (def build-worker-count
-    (max 1 (settings-parallelize settings)))
-  ;; import with mutex
-  (def (import/mx mod)
-    (with-lock import-mx (cut import-module mod #f #f)))
-  ;; spec module id
-  (def (module-id spec)
-    (let* ((file (spec-file spec settings))
-           (ext (path-extension file)))
-      (case ext
-        ((".ss" ".ssi")
-         (expander-context-id (import/mx file)))
-        (else
-         (string->symbol file)))))
+  (parameterize ((current-compilation-target (settings-target settings)))
+    (def buildspec (normalize-buildspec buildspec-in))
+    ;; mutex for imports
+    (def import-mx (make-mutex 'import))
+    ;; mute for dependency timestamps (mauling of load-path)
+    (def dependency-mx (make-mutex 'dependency))
+    ;; table of module id -> completion, indicating completion of a build
+    (def completions (make-hash-table-eq))
+    ;; table of in tree module timestamps
+    (def timestamps (make-hash-table-eq))
+    ;; the build coordinator barrier
+    (def build-barrier
+      (make-barrier (length buildspec)))
+    ;; channel of compilation work ready to be performed
+    (def workch (make-channel))
+    ;; the build workers
+    (def build-worker-count
+      (max 1 (settings-parallelize settings)))
+    ;; import with mutex
+    (def (import/mx mod)
+      (with-lock import-mx (cut import-module mod #f #f)))
+    ;; spec module id
+    (def (module-id spec)
+      (let* ((file (spec-file spec settings))
+             (ext (path-extension file)))
+        (case ext
+          ((".ss" ".ssi")
+           (expander-context-id (import/mx file)))
+          (else
+           (string->symbol file)))))
 
-  ;; does the spec need building?
-  (def (build? spec)
-    (let ((inputs (spec-inputs spec settings))
-          (outputs (spec-outputs spec settings)))
-      (or (ormap (lambda (f) (not (file-exists? f)))
-                 outputs)
-          (ormap
-           (lambda (input)
-             (ormap (cut file-newer? input <>)
-                    outputs))
-           inputs))))
-  ;; does the spec needs building because of newer dependencies?
-  (def (build-dependent? spec mod)
-    (def outputs (spec-outputs spec settings))
-    (def (newer? in)
+    ;; does the spec need building?
+    (def (build? spec)
+      (let ((inputs (spec-inputs spec settings))
+            (outputs (spec-outputs spec settings)))
+        (or (ormap (lambda (f) (not (file-exists? f)))
+                   outputs)
+            (ormap
+             (lambda (input)
+               (ormap (cut file-newer? input <>)
+                      outputs))
+             inputs))))
+    ;; does the spec needs building because of newer dependencies?
+    (def (build-dependent? spec mod)
+      (def outputs (spec-outputs spec settings))
+      (def (newer? in)
+        (cond
+         ((or (module-context? in) (prelude-context? in))
+          (let* ((id (expander-context-id in))
+                 (ts (and id (with-catch false (lambda () (dependency-timestamp id))))))
+            (and id
+                 (if ts
+                   (ormap (lambda (output) (> ts (file-timestamp output))) outputs)
+                   #t))))
+         ((module-import? in)   (newer? (module-import-source in)))
+         ((module-export? in)   (newer? (module-export-context in)))
+         ((import-set? in)      (newer? (import-set-source in)))
+         (error "unexpected import" in)))
+      (ormap newer? (module-context-import mod)))
+
+    (def (dependency-timestamp id)
+      (with-lock dependency-mx
+                 (lambda ()
+                   ;; drop the srcdir from the load path and then get the library timestamp
+                   (let (current-load-path (load-path))
+                     (dynamic-wind
+                         (lambda ()
+                           (set-load-path!
+                            (cons (settings-libdir settings)
+                                  (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
+                                          current-load-path))))
+                         (lambda () (library-timestamp id))
+                         (lambda () (set-load-path! current-load-path)))))))
+
+    ;; the build worker itself
+    (def (build-worker)
+      (try
+       (for (spec workch)
+         (build spec settings)
+         (completion-post! (hash-ref completions (module-id spec)) 'done))
+       (catch (e)
+         (barrier-error! build-barrier e)
+         (raise e))))
+
+    ;; the build coordinator
+    (def (build-coordinator spec)
+      (let* ((file (spec-file spec settings))
+             (mod (import/mx file)))
+        (for (in (module-context-import mod))
+          (consider in))
+        (if (or (build? spec)
+                (build-dependent? spec mod))
+          ;; it needs to be built, put it to the work channel
+          (channel-put workch spec)
+          ;; no need to build, unblock dependents
+          (completion-post! (hash-ref completions (module-id spec)) 'done))
+        ;; clear the barrrier
+        (barrier-post! build-barrier)))
+
+    (def (consider in)
       (cond
-       ((or (module-context? in) (prelude-context? in))
-        (let* ((id (expander-context-id in))
-               (ts (and id (with-catch false (lambda () (dependency-timestamp id))))))
-          (and id
-               (if ts
-                 (ormap (lambda (output) (> ts (file-timestamp output))) outputs)
-                 #t))))
-       ((module-import? in)   (newer? (module-import-source in)))
-       ((module-export? in)   (newer? (module-export-context in)))
-       ((import-set? in)      (newer? (import-set-source in)))
-       (error "unexpected import" in)))
-    (ormap newer? (module-context-import mod)))
+       ((module-context? in)  (wait-for in))
+       ((prelude-context? in) (wait-for in))
+       ((module-import? in)   (consider (module-import-source in)))
+       ((module-export? in)   (consider (module-export-context in)))
+       ((import-set? in)      (consider (import-set-source in)))
+       (else
+        (error "unexpected import" in))))
 
-  (def (dependency-timestamp id)
-    (with-lock dependency-mx
-      (lambda ()
-        ;; drop the srcdir from the load path and then get the library timestamp
-        (let (current-load-path (load-path))
-          (dynamic-wind
-              (lambda ()
-                (set-load-path!
-                 (cons (settings-libdir settings)
-                       (filter (lambda (p) (not (equal? p (settings-srcdir settings))))
-                               current-load-path))))
-              (lambda () (library-timestamp id))
-              (lambda () (set-load-path! current-load-path)))))))
+    (def (wait-for ctx)
+      (alet* ((id (expander-context-id ctx)) ; :<root> prelude has no id
+              (completion (hash-get completions id))) ; outside deps not in the table
+        (completion-wait! completion)))
 
-  ;; the build worker itself
-  (def (build-worker)
-    (try
-     (for (spec workch)
-       (build spec settings)
-       (completion-post! (hash-ref completions (module-id spec)) 'done))
-     (catch (e)
-       (barrier-error! build-barrier e)
-       (raise e))))
+    ;; prepare the build
+    (create-directory* (settings-bindir settings))
+    (create-directory* (settings-libdir settings))
+    (create-directory* (path-expand "static" (settings-libdir settings)))
 
-  ;; the build coordinator
-  (def (build-coordinator spec)
-    (let* ((file (spec-file spec settings))
-           (mod (import/mx file)))
-      (for (in (module-context-import mod))
-        (consider in))
-      (if (or (build? spec)
-              (build-dependent? spec mod))
-        ;; it needs to be built, put it to the work channel
-        (channel-put workch spec)
-        ;; no need to build, unblock dependents
-        (completion-post! (hash-ref completions (module-id spec)) 'done))
-      ;; clear the barrrier
-      (barrier-post! build-barrier)))
+    ;; prepare the completion table
+    (for (spec buildspec)
+      (let ((file (spec-file spec settings))
+            (id (module-id spec)))
+        (hash-put! completions id (make-completion `(build ,id)))
+        (hash-put! timestamps id (file-timestamp file))))
 
-  (def (consider in)
-    (cond
-     ((module-context? in)  (wait-for in))
-     ((prelude-context? in) (wait-for in))
-     ((module-import? in)   (consider (module-import-source in)))
-     ((module-export? in)   (consider (module-export-context in)))
-     ((import-set? in)      (consider (import-set-source in)))
-     (else
-      (error "unexpected import" in))))
+    ;; spawn a thread for each spec that waits for the dependency completions
+    ;; and pushes to the work channel if necessary.
+    (for (spec buildspec)
+      (spawn/name `(build ,(spec-file spec settings)) build-coordinator spec))
 
-  (def (wait-for ctx)
-    (alet* ((id (expander-context-id ctx)) ; :<root> prelude has no id
-            (completion (hash-get completions id))) ; outside deps not in the table
-      (completion-wait! completion)))
-
-  ;; prepare the build
-  (create-directory* (settings-bindir settings))
-  (create-directory* (settings-libdir settings))
-  (create-directory* (path-expand "static" (settings-libdir settings)))
-
-  ;; prepare the completion table
-  (for (spec buildspec)
-    (let ((file (spec-file spec settings))
-          (id (module-id spec)))
-      (hash-put! completions id (make-completion `(build ,id)))
-      (hash-put! timestamps id (file-timestamp file))))
-
-  ;; spawn a thread for each spec that waits for the dependency completions
-  ;; and pushes to the work channel if necessary.
-  (for (spec buildspec)
-    (spawn/name `(build ,(spec-file spec settings)) build-coordinator spec))
-
-  ;; spawn the workers and wait
-  (let (workers (map (lambda (i) (spawn/name `(worker ,i) build-worker))
-                     (iota build-worker-count)))
-    ;; wait for the coordinators to complete
-    (barrier-wait! build-barrier)
-    ;; close the channel (no more work)
-    (channel-close workch)
-    ;; and wait for the workers to complete
-    (for-each thread-join! workers)))
+    ;; spawn the workers and wait
+    (let (workers (map (lambda (i) (spawn/name `(worker ,i) build-worker))
+                       (iota build-worker-count)))
+      ;; wait for the coordinators to complete
+      (barrier-wait! build-barrier)
+      ;; close the channel (no more work)
+      (channel-close workch)
+      ;; and wait for the workers to complete
+      (for-each thread-join! workers))))
 
 (def __timestamps (make-hash-table))
 (def __timestamps-mx (make-mutex))
@@ -502,6 +506,7 @@ TODO:
   (def srcpath (source-path mod ".ss" settings))
   (let (gxc-opts
         [invoke-gsc: invoke-gsc?
+         target: (settings-target settings)
          keep-scm: (not invoke-gsc?)
          output-dir: (settings-libdir settings)
          optimize: (settings-optimize settings)
