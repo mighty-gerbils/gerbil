@@ -178,6 +178,29 @@ package: gerbil/core
              #'(begin-annotation (@type klass)
                  (cast-it expr))))
           (else
+           (raise-syntax-error #f "not a class type or interface" stx #'type)))))
+      ((_ expr runtime: type)
+       (identifier? #'type)
+       (let (meta (resolve-type stx #'type))
+         (cond
+          ((class-type-info? meta)
+           (with-syntax ((klass (!class-type-descriptor meta))
+                         (predicate (!class-type-predicate meta)))
+             (if (memq (!class-type-id meta)
+                       ;; everything is t, void we don't need to check.
+                       '(t void))
+               #'(begin-annotation (@type klass) expr)
+               #'(begin-annotation (@type klass)
+                 (let (val expr)
+                   (if (predicate val)
+                     val
+                     (runtime-contract-violation! expr (predicate val) val)))))))
+          ((interface-info? meta)
+           (with-syntax ((klass (!runtime-type-descriptor meta))
+                         (cast-it (resolve-type->identifier stx #'type)))
+             #'(begin-annotation (@type klass)
+                 (cast-it expr))))
+          (else
            (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
 
   ;; OrFalse type assertion; #f is allowed (the null pointer, oh boy)
@@ -258,6 +281,25 @@ package: gerbil/core
                         => (lambda (locat)
                              (call-with-output-string ""
                                (cut ##display-locat locat #t <>))))
+                       (else
+                        (expander-context-id (core-context-top))))))
+         #'(begin-annotation (@contract-violation src-ctx contract-expr value)
+	     (abort!
+              (raise-contract-violation-error
+               "contract violation"
+               context: 'src-ctx contract: 'contract-expr value: value)))))))
+
+  (defsyntax (runtime-contract-violation! stx)
+    (syntax-case stx ()
+      ((macro ctx contract-expr value)
+       (with-syntax ((src-ctx
+                      (cond
+                       ((or (stx-source #'ctx)
+                            (stx-source stx)
+                            (stx-source #'macro))
+                        => (lambda (locat)
+                             (call-with-output-string ""
+			       (cut ##display-locat locat #t <>))))
                        (else
                         (expander-context-id (core-context-top))))))
          #'(abort!

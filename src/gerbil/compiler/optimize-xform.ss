@@ -58,6 +58,14 @@ namespace: gxc
   (%#ref   expression-subst*-ref%)
   (%#set!  expression-subst*-setq%))
 
+(defcompile-method (apply-inline-subst subst: subst)
+  (::inline-subst ::basic-xform-expression)
+  (subst)
+  final:
+  (%#begin xform-begin%)
+  (%#ref   inline-subst-ref%)
+  (%#set!  inline-subst-setq%))
+
 ;; method to find expressions
 (defcompile-method #f (::find-expression ::false-expression) ()
   (%#begin                   find-body%)
@@ -152,6 +160,30 @@ namespace: gxc
        (xform-wrap-source
         ['%#set! new-xid new-expr]
         stx)))))
+
+
+;;; apply-inline-subst
+(def (inline-subst-ref% self stx)
+  (ast-case stx ()
+    ((_ xid)
+     (cond
+      ((find (lambda (sub) (free-identifier=? #'xid (car sub)))
+             (@ self subst))
+       => (lambda (sub)
+            (xform-wrap-source
+	     (cdr sub)
+	     stx)))
+      (else stx)))))
+
+(def (inline-subst-setq% self stx)
+  (ast-case stx ()
+    ((_ xid expr)
+     (if (find (lambda (sub) (free-identifier=? #'xid (car sub)))
+	       (@ self subst))
+       (raise-compile-error "mutating inline substitution" stx #'xid)
+       (xform-wrap-source
+	['%#set! #'xid (compile-e self #'expr)]
+	stx)))))
 
 ;;; apply-collect-runtime-refs
 (def (collect-runtime-refs-ref% self stx)

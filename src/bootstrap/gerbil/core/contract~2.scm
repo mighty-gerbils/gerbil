@@ -84,20 +84,20 @@
                        _%t49900%_))
                     (_%loop49897%_
                      (gx#syntax-local-value
-                      (let ((__obj100640 _%t49900%_))
+                      (let ((__obj101082 _%t49900%_))
                         (if (let ()
                               (declare (not safe))
                               (##structure-direct-instance-of?
-                               __obj100640
+                               __obj101082
                                'gerbil/core/contract~TypeReference#type-reference::t))
                             (let ()
                               (declare (not safe))
                               (##unchecked-structure-ref
-                               __obj100640
+                               __obj101082
                                '1
                                '#f
                                '#f))
-                            (unchecked-slot-ref __obj100640 'identifier)))
+                            (unchecked-slot-ref __obj101082 'identifier)))
                       false))
                     (if (not _%t49900%_)
                         (gx#raise-syntax-error
@@ -134,21 +134,21 @@
                        |gerbil/core/contract~TypeReference[1]#type-reference::t|
                        _%t49878%_))
                     (let ((_%id49886%_
-                           (let ((__obj100641 _%t49878%_))
+                           (let ((__obj101083 _%t49878%_))
                              (if (let ()
                                    (declare (not safe))
                                    (##structure-direct-instance-of?
-                                    __obj100641
+                                    __obj101083
                                     'gerbil/core/contract~TypeReference#type-reference::t))
                                  (let ()
                                    (declare (not safe))
                                    (##unchecked-structure-ref
-                                    __obj100641
+                                    __obj101083
                                     '1
                                     '#f
                                     '#f))
                                  (unchecked-slot-ref
-                                  __obj100641
+                                  __obj101083
                                   'identifier)))))
                       (_%loop49873%_
                        _%id49886%_
@@ -176,31 +176,31 @@
               (class-instance?
                gerbil/core/mop~MOP-2#class-type-info::t
                _%t49860%_))
-            (let ((__obj100643 _%t49860%_))
+            (let ((__obj101085 _%t49860%_))
               (if (let ()
                     (declare (not safe))
                     (##structure-direct-instance-of?
-                     __obj100643
+                     __obj101085
                      'gerbil.core#class-type-info::t))
                   (let ()
                     (declare (not safe))
-                    (##unchecked-structure-ref __obj100643 '4 '#f '#f))
-                  (unchecked-slot-ref __obj100643 'type-descriptor)))
+                    (##unchecked-structure-ref __obj101085 '4 '#f '#f))
+                  (unchecked-slot-ref __obj101085 'type-descriptor)))
             (if (let ()
                   (declare (not safe))
                   (class-instance?
                    gerbil/core/contract~InterfaceInfo#interface-info::t
                    _%t49860%_))
-                (let ((__obj100642 _%t49860%_))
+                (let ((__obj101084 _%t49860%_))
                   (if (let ()
                         (declare (not safe))
                         (##structure-direct-instance-of?
-                         __obj100642
+                         __obj101084
                          'gerbil.core#runtime-type-info::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj100642 '3 '#f '#f))
-                      (unchecked-slot-ref __obj100642 'type-descriptor)))
+                        (##unchecked-structure-ref __obj101084 '3 '#f '#f))
+                      (unchecked-slot-ref __obj101084 'type-descriptor)))
                 (gx#raise-syntax-error
                  '#f
                  '"unexpected type; expected class, interface or type reference"
@@ -250,33 +250,28 @@
                                                (declare (not safe))
                                                (##cdr _%e4994949984%_))))
                                         (if (gx#stx-null? _%tl4995149991%_)
-                                            ((lambda (_%g4994149994%_
-                                                      _%g4994249996%_)
-                                               (if (and (gx#identifier?
-                                                         _%g4994249996%_)
-                                                        (gx#identifier?
-                                                         _%g4994149994%_))
-                                                   (cons (gx#datum->syntax
-                                                          '#f
-                                                          'defsyntax)
-                                                         (cons _%g4994249996%_
-                                                               (cons (cons (gx#datum->syntax
+                                            (if (and (gx#identifier?
+                                                      _%hd4994749978%_)
+                                                     (gx#identifier?
+                                                      _%hd4995049988%_))
+                                                (cons (gx#datum->syntax
+                                                       '#f
+                                                       'defsyntax)
+                                                      (cons _%hd4994749978%_
+                                                            (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                    '#f
-                                    'make-type-reference)
-                                   (cons 'identifier:
-                                         (cons (cons (gx#datum->syntax
-                                                      '#f
-                                                      'quote-syntax)
-                                                     (cons _%g4994149994%_
-                                                           '()))
-                                               '())))
-                             '())))
+                                 '#f
+                                 'make-type-reference)
+                                (cons 'identifier:
+                                      (cons (cons (gx#datum->syntax
+                                                   '#f
+                                                   'quote-syntax)
+                                                  (cons _%hd4995049988%_ '()))
+                                            '())))
+                          '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (_%g4993949957%_
-                                                    _%g4994049961%_)))
-                                             _%hd4995049988%_
-                                             _%hd4994749978%_)
+                                                (_%g4993949957%_
+                                                 _%g4994049961%_))
                                             (_%g4993949957%_
                                              _%g4994049961%_))))
                                     (_%g4993949957%_ _%g4994049961%_))))

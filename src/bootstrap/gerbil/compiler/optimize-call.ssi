@@ -53,6 +53,7 @@ namespace: gxc
           expression-no-side-effects?
           gxc#expression-no-side-effects?)
          (%#define-runtime expression-type? gxc#expression-type?)
+         (%#define-runtime incompatible-type? gxc#incompatible-type?)
          (%#define-runtime check-expression-type! gxc#check-expression-type!)
          (%#define-runtime
           !constructor::optimize-call
@@ -87,5 +88,8 @@ namespace: gxc
           apply-check-return-type-begin-annotation%
           gxc#apply-check-return-type-begin-annotation%)
          (%#define-runtime check-return-type! gxc#check-return-type!)
-         (%#define-runtime optimize-if% gxc#optimize-if%))
+         (%#define-runtime optimize-if% gxc#optimize-if%)
+         (%#define-runtime
+          check-contract-violation!
+          gxc#check-contract-violation!))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-call~0"))

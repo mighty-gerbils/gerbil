@@ -998,16 +998,12 @@
                     _%lp-tl4706647113%_
                     (cons _%lp-hd4706547110%_ _%body4706747104%_))))
                (let ((_%body4706847116%_ (reverse _%body4706747104%_)))
-                 ((lambda (_%g4705647119%_)
-                    (cons 'phi:
-                          (cons '1
-                                (foldr (lambda (_%g4713447137%_
-                                                _%g4713547140%_)
-                                         (cons _%g4713447137%_
-                                               _%g4713547140%_))
-                                       '()
-                                       _%g4705647119%_))))
-                  _%body4706847116%_))))))
+                 (cons 'phi:
+                       (cons '1
+                             (foldr (lambda (_%g4713447137%_ _%g4713547140%_)
+                                      (cons _%g4713447137%_ _%g4713547140%_))
+                                    '()
+                                    _%body4706847116%_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_%loop4706347097%_
                                           _%target4706047091%_
@@ -1082,16 +1078,12 @@
                     _%lp-tl4716347210%_
                     (cons _%lp-hd4716247207%_ _%body4716447201%_))))
                (let ((_%body4716547213%_ (reverse _%body4716447201%_)))
-                 ((lambda (_%g4715347216%_)
-                    (cons 'phi:
-                          (cons '-1
-                                (foldr (lambda (_%g4723147234%_
-                                                _%g4723247237%_)
-                                         (cons _%g4723147234%_
-                                               _%g4723247237%_))
-                                       '()
-                                       _%g4715347216%_))))
-                  _%body4716547213%_))))))
+                 (cons 'phi:
+                       (cons '-1
+                             (foldr (lambda (_%g4723147234%_ _%g4723247237%_)
+                                      (cons _%g4723147234%_ _%g4723247237%_))
+                                    '()
+                                    _%body4716547213%_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_%loop4716047194%_
                                           _%target4715747188%_
@@ -1177,64 +1169,60 @@
                             _%lp-tl4726447321%_
                             (cons _%lp-hd4726347318%_ _%id4726547312%_))))
                        (let ((_%id4726647324%_ (reverse _%id4726547312%_)))
-                         ((lambda (_%g4725047327%_ _%g4725147329%_)
-                            (if (gx#identifier-list?
-                                 (foldr (lambda (_%g4734647349%_
-                                                 _%g4734747352%_)
-                                          (cons _%g4734647349%_
-                                                _%g4734747352%_))
-                                        '()
-                                        _%g4725047327%_))
-                                (let* ((_%keys47363%_
-                                        (gx#stx-map
-                                         gx#core-identifier-key
-                                         (foldr (lambda (_%g4735447357%_
-                                                         _%g4735547360%_)
-                                                  (cons _%g4735447357%_
-                                                        _%g4735547360%_))
-                                                '()
-                                                _%g4725047327%_)))
-                                       (_%keytab47374%_
-                                        (let ((_%ht47366%_ (make-hash-table)))
-                                          (for-each
-                                           (lambda (_%g4736847370%_)
-                                             (hash-put!
-                                              _%ht47366%_
-                                              _%g4736847370%_
-                                              '#t))
-                                           _%keys47363%_)
-                                          _%ht47366%_))
-                                       (_%imports47377%_
-                                        (gx#core-expand-import-source
-                                         _%g4725147329%_))
-                                       (_%fold-e47393%_
-                                        (letrec ((_%fold-e47380%_
-                                                  (lambda (_%in47383%_
-                                                           _%r47385%_)
-                                                    (if (gx#module-import?
-                                                         _%in47383%_)
-                                                        (if (hash-get
-                                                             _%keytab47374%_
-                                                             (gx#module-import-name
-                                                              _%in47383%_))
-                                                            (cons _%in47383%_
+                         (if (gx#identifier-list?
+                              (foldr (lambda (_%g4734647349%_ _%g4734747352%_)
+                                       (cons _%g4734647349%_ _%g4734747352%_))
+                                     '()
+                                     _%id4726647324%_))
+                             (let* ((_%keys47363%_
+                                     (gx#stx-map
+                                      gx#core-identifier-key
+                                      (foldr (lambda (_%g4735447357%_
+                                                      _%g4735547360%_)
+                                               (cons _%g4735447357%_
+                                                     _%g4735547360%_))
+                                             '()
+                                             _%id4726647324%_)))
+                                    (_%keytab47374%_
+                                     (let ((_%ht47366%_ (make-hash-table)))
+                                       (for-each
+                                        (lambda (_%g4736847370%_)
+                                          (hash-put!
+                                           _%ht47366%_
+                                           _%g4736847370%_
+                                           '#t))
+                                        _%keys47363%_)
+                                       _%ht47366%_))
+                                    (_%imports47377%_
+                                     (gx#core-expand-import-source
+                                      _%hd4725647293%_))
+                                    (_%fold-e47393%_
+                                     (letrec ((_%fold-e47380%_
+                                               (lambda (_%in47383%_ _%r47385%_)
+                                                 (if (gx#module-import?
+                                                      _%in47383%_)
+                                                     (if (hash-get
+                                                          _%keytab47374%_
+                                                          (gx#module-import-name
+                                                           _%in47383%_))
+                                                         (cons _%in47383%_
+                                                               _%r47385%_)
+                                                         _%r47385%_)
+                                                     (if (gx#import-set?
+                                                          _%in47383%_)
+                                                         (foldl _%fold-e47380%_
+                                                                _%r47385%_
+                                                                (gx#import-set-imports
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _%r47385%_)
-                    _%r47385%_)
-                (if (gx#import-set? _%in47383%_)
-                    (foldl _%fold-e47380%_
-                           _%r47385%_
-                           (gx#import-set-imports _%in47383%_))
-                    _%r47385%_)))))
+                         _%in47383%_))
+                 _%r47385%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _%fold-e47380%_)))
-                                  (cons 'begin:
-                                        (foldl _%fold-e47393%_
-                                               '()
-                                               _%imports47377%_)))
-                                (_%g4724847272%_ _%g4724947276%_)))
-                          _%id4726647324%_
-                          _%hd4725647293%_))))))
+                                       _%fold-e47380%_)))
+                               (cons 'begin:
+                                     (foldl _%fold-e47393%_
+                                            '()
+                                            _%imports47377%_)))
+                             (_%g4724847272%_ _%g4724947276%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4726147305%_
                                                   _%target4725847299%_
@@ -1322,64 +1310,60 @@
                             _%lp-tl4742247479%_
                             (cons _%lp-hd4742147476%_ _%id4742347470%_))))
                        (let ((_%id4742447482%_ (reverse _%id4742347470%_)))
-                         ((lambda (_%g4740847485%_ _%g4740947487%_)
-                            (if (gx#identifier-list?
-                                 (foldr (lambda (_%g4750447507%_
-                                                 _%g4750547510%_)
-                                          (cons _%g4750447507%_
-                                                _%g4750547510%_))
-                                        '()
-                                        _%g4740847485%_))
-                                (let* ((_%keys47521%_
-                                        (gx#stx-map
-                                         gx#core-identifier-key
-                                         (foldr (lambda (_%g4751247515%_
-                                                         _%g4751347518%_)
-                                                  (cons _%g4751247515%_
-                                                        _%g4751347518%_))
-                                                '()
-                                                _%g4740847485%_)))
-                                       (_%keytab47532%_
-                                        (let ((_%ht47524%_ (make-hash-table)))
-                                          (for-each
-                                           (lambda (_%g4752647528%_)
-                                             (hash-put!
-                                              _%ht47524%_
-                                              _%g4752647528%_
-                                              '#t))
-                                           _%keys47521%_)
-                                          _%ht47524%_))
-                                       (_%imports47535%_
-                                        (gx#core-expand-import-source
-                                         _%g4740947487%_))
-                                       (_%fold-e47551%_
-                                        (letrec ((_%fold-e47538%_
-                                                  (lambda (_%in47541%_
-                                                           _%r47543%_)
-                                                    (if (gx#module-import?
-                                                         _%in47541%_)
-                                                        (if (hash-get
-                                                             _%keytab47532%_
-                                                             (gx#module-import-name
-                                                              _%in47541%_))
-                                                            _%r47543%_
-                                                            (cons _%in47541%_
+                         (if (gx#identifier-list?
+                              (foldr (lambda (_%g4750447507%_ _%g4750547510%_)
+                                       (cons _%g4750447507%_ _%g4750547510%_))
+                                     '()
+                                     _%id4742447482%_))
+                             (let* ((_%keys47521%_
+                                     (gx#stx-map
+                                      gx#core-identifier-key
+                                      (foldr (lambda (_%g4751247515%_
+                                                      _%g4751347518%_)
+                                               (cons _%g4751247515%_
+                                                     _%g4751347518%_))
+                                             '()
+                                             _%id4742447482%_)))
+                                    (_%keytab47532%_
+                                     (let ((_%ht47524%_ (make-hash-table)))
+                                       (for-each
+                                        (lambda (_%g4752647528%_)
+                                          (hash-put!
+                                           _%ht47524%_
+                                           _%g4752647528%_
+                                           '#t))
+                                        _%keys47521%_)
+                                       _%ht47524%_))
+                                    (_%imports47535%_
+                                     (gx#core-expand-import-source
+                                      _%hd4741447451%_))
+                                    (_%fold-e47551%_
+                                     (letrec ((_%fold-e47538%_
+                                               (lambda (_%in47541%_ _%r47543%_)
+                                                 (if (gx#module-import?
+                                                      _%in47541%_)
+                                                     (if (hash-get
+                                                          _%keytab47532%_
+                                                          (gx#module-import-name
+                                                           _%in47541%_))
+                                                         _%r47543%_
+                                                         (cons _%in47541%_
+                                                               _%r47543%_))
+                                                     (if (gx#import-set?
+                                                          _%in47541%_)
+                                                         (foldl _%fold-e47538%_
+                                                                _%r47543%_
+                                                                (gx#import-set-imports
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _%r47543%_))
-                (if (gx#import-set? _%in47541%_)
-                    (foldl _%fold-e47538%_
-                           _%r47543%_
-                           (gx#import-set-imports _%in47541%_))
-                    (cons _%in47541%_ _%r47543%_))))))
+                         _%in47541%_))
+                 (cons _%in47541%_ _%r47543%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _%fold-e47538%_)))
-                                  (cons 'begin:
-                                        (foldl _%fold-e47551%_
-                                               '()
-                                               _%imports47535%_)))
-                                (_%g4740647430%_ _%g4740747434%_)))
-                          _%id4742447482%_
-                          _%hd4741447451%_))))))
+                                       _%fold-e47538%_)))
+                               (cons 'begin:
+                                     (foldl _%fold-e47551%_
+                                            '()
+                                            _%imports47535%_)))
+                             (_%g4740647430%_ _%g4740747434%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4741947463%_
                                                   _%target4741647457%_
@@ -1524,102 +1508,103 @@
                        (let ((_%new-id4763547721%_
                               (reverse _%new-id4763347688%_))
                              (_%id4763647723%_ (reverse _%id4763447689%_)))
-                         ((lambda (_%g4761747725%_
-                                   _%g4761847727%_
-                                   _%g4761947728%_)
-                            (if (and (gx#identifier-list?
-                                      (foldr (lambda (_%g4774647749%_
-                                                      _%g4774747752%_)
-                                               (cons _%g4774647749%_
-                                                     _%g4774747752%_))
+                         (if (and (gx#identifier-list?
+                                   (foldr (lambda (_%g4774647749%_
+                                                   _%g4774747752%_)
+                                            (cons _%g4774647749%_
+                                                  _%g4774747752%_))
+                                          '()
+                                          _%id4763647723%_))
+                                  (gx#identifier-list?
+                                   (foldr (lambda (_%g4775447757%_
+                                                   _%g4775547760%_)
+                                            (cons _%g4775447757%_
+                                                  _%g4775547760%_))
+                                          '()
+                                          _%new-id4763547721%_)))
+                             (let* ((_%keytab47763%_ (make-hash-table))
+                                    (_%found47766%_ (make-hash-table))
+                                    (_%_47789%_
+                                     (for-each
+                                      (lambda (_%id47769%_ _%new-id47771%_)
+                                        (hash-put!
+                                         _%keytab47763%_
+                                         (gx#core-identifier-key _%id47769%_)
+                                         (gx#core-identifier-key
+                                          _%new-id47771%_)))
+                                      (foldr (lambda (_%g4777247775%_
+                                                      _%g4777347778%_)
+                                               (cons _%g4777247775%_
+                                                     _%g4777347778%_))
                                              '()
-                                             _%g4761847727%_))
-                                     (gx#identifier-list?
-                                      (foldr (lambda (_%g4775447757%_
-                                                      _%g4775547760%_)
-                                               (cons _%g4775447757%_
-                                                     _%g4775547760%_))
+                                             _%id4763647723%_)
+                                      (foldr (lambda (_%g4778047783%_
+                                                      _%g4778147786%_)
+                                               (cons _%g4778047783%_
+                                                     _%g4778147786%_))
                                              '()
-                                             _%g4761747725%_)))
-                                (let* ((_%keytab47763%_ (make-hash-table))
-                                       (_%found47766%_ (make-hash-table))
-                                       (_%_47789%_
-                                        (for-each
-                                         (lambda (_%id47769%_ _%new-id47771%_)
-                                           (hash-put!
-                                            _%keytab47763%_
-                                            (gx#core-identifier-key
-                                             _%id47769%_)
-                                            (gx#core-identifier-key
-                                             _%new-id47771%_)))
-                                         (foldr (lambda (_%g4777247775%_
-                                                         _%g4777347778%_)
-                                                  (cons _%g4777247775%_
-                                                        _%g4777347778%_))
-                                                '()
-                                                _%g4761847727%_)
-                                         (foldr (lambda (_%g4778047783%_
-                                                         _%g4778147786%_)
-                                                  (cons _%g4778047783%_
-                                                        _%g4778147786%_))
-                                                '()
-                                                _%g4761747725%_)))
-                                       (_%imports47792%_
-                                        (gx#core-expand-import-source
-                                         _%g4761947728%_))
-                                       (_%fold-e47820%_
-                                        (letrec ((_%fold-e47795%_
-                                                  (lambda (_%in47798%_
-                                                           _%r47800%_)
-                                                    (if (gx#module-import?
-                                                         _%in47798%_)
-                                                        (let* ((_%name47804%_
-                                                                (gx#module-import-name
+                                             _%new-id4763547721%_)))
+                                    (_%imports47792%_
+                                     (gx#core-expand-import-source
+                                      _%hd4762447669%_))
+                                    (_%fold-e47820%_
+                                     (letrec ((_%fold-e47795%_
+                                               (lambda (_%in47798%_ _%r47800%_)
+                                                 (if (gx#module-import?
+                                                      _%in47798%_)
+                                                     (let* ((_%name47804%_
+                                                             (gx#module-import-name
+                                                              _%in47798%_))
+                                                            (_%$e47807%_
+                                                             (hash-get
+                                                              _%keytab47763%_
+                                                              _%name47804%_)))
+                                                       (if _%$e47807%_
+                                                           (let ()
+                                                             (hash-put!
+                                                              _%found47766%_
+                                                              _%name47804%_
+                                                              '#t)
+                                                             (cons (|gerbil/core/module-sugar[1]#module-import-rename|
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            _%in47798%_
+                            _%$e47807%_)
+                           _%r47800%_))
+                   (cons _%in47798%_ _%r47800%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (if (gx#import-set?
+                                                          _%in47798%_)
+                                                         (foldl _%fold-e47795%_
+                                                                _%r47800%_
+                                                                (gx#import-set-imports
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _%in47798%_))
-                       (_%$e47807%_ (hash-get _%keytab47763%_ _%name47804%_)))
-                  (if _%$e47807%_
-                      ((lambda (_%rename47811%_)
-                         (hash-put! _%found47766%_ _%name47804%_ '#t)
-                         (cons (|gerbil/core/module-sugar[1]#module-import-rename|
-                                _%in47798%_
-                                _%rename47811%_)
-                               _%r47800%_))
-                       _%$e47807%_)
-                      (cons _%in47798%_ _%r47800%_)))
-                (if (gx#import-set? _%in47798%_)
-                    (foldl _%fold-e47795%_
-                           _%r47800%_
-                           (gx#import-set-imports _%in47798%_))
-                    (cons _%in47798%_ _%r47800%_))))))
+                 (cons _%in47798%_ _%r47800%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _%fold-e47795%_))
-                                       (_%new-imports47823%_
-                                        (foldl _%fold-e47820%_
-                                               '()
-                                               _%imports47792%_)))
-                                  (for-each
-                                   (lambda (_%id47828%_)
-                                     (if (hash-get
-                                          _%found47766%_
-                                          (gx#core-identifier-key _%id47828%_))
-                                         '#!void
-                                         (gx#raise-syntax-error
-                                          '#f
-                                          '"bad syntax; identifier is not in the import set"
-                                          _%stx47612%_
-                                          _%id47828%_)))
-                                   (foldr (lambda (_%g4783047833%_
-                                                   _%g4783147836%_)
-                                            (cons _%g4783047833%_
-                                                  _%g4783147836%_))
-                                          '()
-                                          _%g4761847727%_))
-                                  (cons 'begin: _%new-imports47823%_))
-                                (_%g4761547648%_ _%g4761647652%_)))
-                          _%new-id4763547721%_
-                          _%id4763647723%_
-                          _%hd4762447669%_))))))
+                                       _%fold-e47795%_))
+                                    (_%new-imports47823%_
+                                     (foldl _%fold-e47820%_
+                                            '()
+                                            _%imports47792%_)))
+                               (for-each
+                                (lambda (_%id47828%_)
+                                  (if (hash-get
+                                       _%found47766%_
+                                       (gx#core-identifier-key _%id47828%_))
+                                      '#!void
+                                      (gx#raise-syntax-error
+                                       '#f
+                                       '"bad syntax; identifier is not in the import set"
+                                       _%stx47612%_
+                                       _%id47828%_)))
+                                (foldr (lambda (_%g4783047833%_
+                                                _%g4783147836%_)
+                                         (cons _%g4783047833%_
+                                               _%g4783147836%_))
+                                       '()
+                                       _%id4763647723%_))
+                               (cons 'begin: _%new-imports47823%_))
+                             (_%g4761547648%_ _%g4761647652%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4762947681%_
                                                   _%target4762647675%_
@@ -1675,45 +1660,43 @@
                                                 (declare (not safe))
                                                 (##cdr _%e4785747892%_))))
                                          (if (gx#stx-null? _%tl4785947899%_)
-                                             ((lambda (_%g4784947902%_
-                                                       _%g4785047904%_)
-                                                (if (gx#identifier?
-                                                     _%g4784947902%_)
-                                                    (let* ((_%pre47920%_
-                                                            (gx#stx-e
-                                                             _%g4784947902%_))
-                                                           (_%imports47923%_
-                                                            (gx#core-expand-import-source
-                                                             _%g4785047904%_))
-                                                           (_%rename-e47929%_
-                                                            (lambda (_%name47926%_)
-                                                              (|gerbil/core/module-sugar[1]#prefix-identifier-key|
-                                                               _%name47926%_
-                                                               _%pre47920%_)))
-                                                           (_%fold-e47945%_
-                                                            (letrec ((_%fold-e47932%_
+                                             (if (gx#identifier?
+                                                  _%hd4785847896%_)
+                                                 (let* ((_%pre47920%_
+                                                         (gx#stx-e
+                                                          _%hd4785847896%_))
+                                                        (_%imports47923%_
+                                                         (gx#core-expand-import-source
+                                                          _%hd4785547886%_))
+                                                        (_%rename-e47929%_
+                                                         (lambda (_%name47926%_)
+                                                           (|gerbil/core/module-sugar[1]#prefix-identifier-key|
+                                                            _%name47926%_
+                                                            _%pre47920%_)))
+                                                        (_%fold-e47945%_
+                                                         (letrec ((_%fold-e47932%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (lambda (_%in47935%_ _%r47937%_)
-                                (if (gx#module-import? _%in47935%_)
-                                    (cons (|gerbil/core/module-sugar[1]#module-import-rename|
-                                           _%in47935%_
-                                           (_%rename-e47929%_
-                                            (gx#module-import-name
-                                             _%in47935%_)))
-                                          _%r47937%_)
-                                    (if (gx#import-set? _%in47935%_)
-                                        (foldl _%fold-e47932%_
-                                               _%r47937%_
-                                               (gx#import-set-imports
-                                                _%in47935%_))
-                                        (cons _%in47935%_ _%r47937%_))))))
-                      _%fold-e47932%_)))
-              (cons 'begin: (foldl _%fold-e47945%_ '() _%imports47923%_)))
+                           (lambda (_%in47935%_ _%r47937%_)
+                             (if (gx#module-import? _%in47935%_)
+                                 (cons (|gerbil/core/module-sugar[1]#module-import-rename|
+                                        _%in47935%_
+                                        (_%rename-e47929%_
+                                         (gx#module-import-name _%in47935%_)))
+                                       _%r47937%_)
+                                 (if (gx#import-set? _%in47935%_)
+                                     (foldl _%fold-e47932%_
+                                            _%r47937%_
+                                            (gx#import-set-imports
+                                             _%in47935%_))
+                                     (cons _%in47935%_ _%r47937%_))))))
+                   _%fold-e47932%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g4784747865%_
-                                                     _%g4784847869%_)))
-                                              _%hd4785847896%_
-                                              _%hd4785547886%_)
+                                                   (cons 'begin:
+                                                         (foldl _%fold-e47945%_
+                                                                '()
+                                                                _%imports47923%_)))
+                                                 (_%g4784747865%_
+                                                  _%g4784847869%_))
                                              (_%g4784747865%_
                                               _%g4784847869%_))))
                                      (_%g4784747865%_ _%g4784847869%_))))
@@ -1938,21 +1921,18 @@
                               _%lp-tl4797748034%_
                               (cons _%lp-hd4797648031%_ _%mod4797848025%_))))
                          (let ((_%mod4797948037%_ (reverse _%mod4797848025%_)))
-                           ((lambda (_%g4796348040%_ _%g4796448042%_)
-                              (cons 'begin:
-                                    (_%flatten47957%_
-                                     (map (lambda (_%g4806048062%_)
-                                            (_%expand-path47959%_
-                                             _%g4796448042%_
-                                             _%g4806048062%_))
-                                          (foldr (lambda (_%g4806548068%_
-                                                          _%g4806648071%_)
-                                                   (cons _%g4806548068%_
-                                                         _%g4806648071%_))
-                                                 '()
-                                                 _%g4796348040%_)))))
-                            _%mod4797948037%_
-                            _%hd4796948006%_))))))
+                           (cons 'begin:
+                                 (_%flatten47957%_
+                                  (map (lambda (_%g4806048062%_)
+                                         (_%expand-path47959%_
+                                          _%hd4796948006%_
+                                          _%g4806048062%_))
+                                       (foldr (lambda (_%g4806548068%_
+                                                       _%g4806648071%_)
+                                                (cons _%g4806548068%_
+                                                      _%g4806648071%_))
+                                              '()
+                                              _%mod4797948037%_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (_%loop4797448018%_
                                                     _%target4797148012%_
@@ -2040,64 +2020,61 @@
                             _%lp-tl4824248299%_
                             (cons _%lp-hd4824148296%_ _%id4824348290%_))))
                        (let ((_%id4824448302%_ (reverse _%id4824348290%_)))
-                         ((lambda (_%g4822848305%_ _%g4822948307%_)
-                            (if (gx#identifier-list?
-                                 (foldr (lambda (_%g4832448327%_
-                                                 _%g4832548330%_)
-                                          (cons _%g4832448327%_
-                                                _%g4832548330%_))
-                                        '()
-                                        _%g4822848305%_))
-                                (let* ((_%keys48341%_
-                                        (gx#stx-map
-                                         gx#core-identifier-key
-                                         (foldr (lambda (_%g4833248335%_
-                                                         _%g4833348338%_)
-                                                  (cons _%g4833248335%_
-                                                        _%g4833348338%_))
-                                                '()
-                                                _%g4822848305%_)))
-                                       (_%keytab48352%_
-                                        (let ((_%ht48344%_ (make-hash-table)))
-                                          (for-each
-                                           (lambda (_%g4834648348%_)
-                                             (hash-put!
-                                              _%ht48344%_
-                                              _%g4834648348%_
-                                              '#t))
-                                           _%keys48341%_)
-                                          _%ht48344%_))
-                                       (_%exports48355%_
-                                        (gx#core-expand-export-source
-                                         _%g4822948307%_))
-                                       (_%fold-e48371%_
-                                        (letrec ((_%fold-e48358%_
-                                                  (lambda (_%out48361%_
-                                                           _%r48363%_)
-                                                    (if (gx#module-export?
-                                                         _%out48361%_)
-                                                        (if (hash-get
-                                                             _%keytab48352%_
-                                                             (gx#module-export-name
-                                                              _%out48361%_))
-                                                            _%r48363%_
-                                                            (cons _%out48361%_
+                         (if (gx#identifier-list?
+                              (foldr (lambda (_%g4832448327%_ _%g4832548330%_)
+                                       (cons _%g4832448327%_ _%g4832548330%_))
+                                     '()
+                                     _%id4824448302%_))
+                             (let* ((_%keys48341%_
+                                     (gx#stx-map
+                                      gx#core-identifier-key
+                                      (foldr (lambda (_%g4833248335%_
+                                                      _%g4833348338%_)
+                                               (cons _%g4833248335%_
+                                                     _%g4833348338%_))
+                                             '()
+                                             _%id4824448302%_)))
+                                    (_%keytab48352%_
+                                     (let ((_%ht48344%_ (make-hash-table)))
+                                       (for-each
+                                        (lambda (_%g4834648348%_)
+                                          (hash-put!
+                                           _%ht48344%_
+                                           _%g4834648348%_
+                                           '#t))
+                                        _%keys48341%_)
+                                       _%ht48344%_))
+                                    (_%exports48355%_
+                                     (gx#core-expand-export-source
+                                      _%hd4823448271%_))
+                                    (_%fold-e48371%_
+                                     (letrec ((_%fold-e48358%_
+                                               (lambda (_%out48361%_
+                                                        _%r48363%_)
+                                                 (if (gx#module-export?
+                                                      _%out48361%_)
+                                                     (if (hash-get
+                                                          _%keytab48352%_
+                                                          (gx#module-export-name
+                                                           _%out48361%_))
+                                                         _%r48363%_
+                                                         (cons _%out48361%_
+                                                               _%r48363%_))
+                                                     (if (gx#export-set?
+                                                          _%out48361%_)
+                                                         (foldl _%fold-e48358%_
+                                                                _%r48363%_
+                                                                (gx#export-set-exports
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _%r48363%_))
-                (if (gx#export-set? _%out48361%_)
-                    (foldl _%fold-e48358%_
-                           _%r48363%_
-                           (gx#export-set-exports _%out48361%_))
-                    _%r48363%_)))))
+                         _%out48361%_))
+                 _%r48363%_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _%fold-e48358%_)))
-                                  (cons 'begin:
-                                        (foldl _%fold-e48371%_
-                                               '()
-                                               _%exports48355%_)))
-                                (_%g4822648250%_ _%g4822748254%_)))
-                          _%id4824448302%_
-                          _%hd4823448271%_))))))
+                                       _%fold-e48358%_)))
+                               (cons 'begin:
+                                     (foldl _%fold-e48371%_
+                                            '()
+                                            _%exports48355%_)))
+                             (_%g4822648250%_ _%g4822748254%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4823948283%_
                                                   _%target4823648277%_
@@ -2185,72 +2162,67 @@
                             _%lp-tl4840048457%_
                             (cons _%lp-hd4839948454%_
                                   _%filter-out4840148448%_))))
-                       (let ((_%filter-out4840248460%_
-                              (reverse _%filter-out4840148448%_)))
-                         ((lambda (_%g4838648463%_ _%g4838748465%_)
-                            (let ((_%filtered48483%_ (make-hash-table)))
-                              (letrec ((_%fold-out48486%_
-                                        (lambda (_%out48528%_ _%r48530%_)
-                                          (if (gx#module-export? _%out48528%_)
-                                              (cons _%out48528%_ _%r48530%_)
-                                              (if (gx#export-set? _%out48528%_)
-                                                  (foldl _%fold-out48486%_
-                                                         _%r48530%_
-                                                         (gx#export-set-exports
-                                                          _%out48528%_))
-                                                  _%r48530%_)))))
+                       (let* ((_%filter-out4840248460%_
+                               (reverse _%filter-out4840148448%_))
+                              (_%filtered48483%_ (make-hash-table)))
+                         (letrec ((_%fold-out48486%_
+                                   (lambda (_%out48528%_ _%r48530%_)
+                                     (if (gx#module-export? _%out48528%_)
+                                         (cons _%out48528%_ _%r48530%_)
+                                         (if (gx#export-set? _%out48528%_)
+                                             (foldl _%fold-out48486%_
+                                                    _%r48530%_
+                                                    (gx#export-set-exports
+                                                     _%out48528%_))
+                                             _%r48530%_)))))
+                           (for-each
+                            (lambda (_%src48489%_)
+                              (let* ((_%exports48495%_
+                                      (if (gx#identifier? _%src48489%_)
+                                          (let ((_%mod48492%_
+                                                 (gx#syntax-local-value
+                                                  _%src48489%_)))
+                                            (if (gx#module-context?
+                                                 _%mod48492%_)
+                                                '#!void
+                                                (gx#raise-syntax-error
+                                                 '#f
+                                                 '"not a module context"
+                                                 _%src48489%_))
+                                            (gx#module-context-export
+                                             _%mod48492%_))
+                                          (gx#core-expand-export-source
+                                           _%src48489%_)))
+                                     (_%exports48498%_
+                                      (foldl _%fold-out48486%_
+                                             '()
+                                             _%exports48495%_)))
                                 (for-each
-                                 (lambda (_%src48489%_)
-                                   (let* ((_%exports48495%_
-                                           (if (gx#identifier? _%src48489%_)
-                                               (let ((_%mod48492%_
-                                                      (gx#syntax-local-value
-                                                       _%src48489%_)))
-                                                 (if (gx#module-context?
-                                                      _%mod48492%_)
-                                                     '#!void
-                                                     (gx#raise-syntax-error
-                                                      '#f
-                                                      '"not a module context"
-                                                      _%src48489%_))
-                                                 (gx#module-context-export
-                                                  _%mod48492%_))
-                                               (gx#core-expand-export-source
-                                                _%src48489%_)))
-                                          (_%exports48498%_
-                                           (foldl _%fold-out48486%_
-                                                  '()
-                                                  _%exports48495%_)))
-                                     (for-each
-                                      (lambda (_%out48503%_)
-                                        (hash-put!
-                                         _%filtered48483%_
-                                         (gx#module-export-name _%out48503%_)
-                                         '#t))
-                                      _%exports48498%_)))
-                                 (foldr (lambda (_%g4850548508%_
-                                                 _%g4850648511%_)
-                                          (cons _%g4850548508%_
-                                                _%g4850648511%_))
-                                        '()
-                                        _%g4838648463%_))
-                                (let* ((_%exports48514%_
-                                        (gx#core-expand-export-source
-                                         _%g4838748465%_))
-                                       (_%exports48517%_
-                                        (foldl _%fold-out48486%_
-                                               '()
-                                               _%exports48514%_))
-                                       (_%exports48523%_
-                                        (filter (lambda (_%out48520%_)
-                                                  (not (hash-get
-                                                        _%filtered48483%_
-                                                        (gx#module-export-name
-                                                         _%out48520%_))))
-                                                _%exports48517%_)))
-                                  (cons 'begin: _%exports48523%_)))))
-                          _%filter-out4840248460%_
-                          _%hd4839248429%_))))))
+                                 (lambda (_%out48503%_)
+                                   (hash-put!
+                                    _%filtered48483%_
+                                    (gx#module-export-name _%out48503%_)
+                                    '#t))
+                                 _%exports48498%_)))
+                            (foldr (lambda (_%g4850548508%_ _%g4850648511%_)
+                                     (cons _%g4850548508%_ _%g4850648511%_))
+                                   '()
+                                   _%filter-out4840248460%_))
+                           (let* ((_%exports48514%_
+                                   (gx#core-expand-export-source
+                                    _%hd4839248429%_))
+                                  (_%exports48517%_
+                                   (foldl _%fold-out48486%_
+                                          '()
+                                          _%exports48514%_))
+                                  (_%exports48523%_
+                                   (filter (lambda (_%out48520%_)
+                                             (not (hash-get
+                                                   _%filtered48483%_
+                                                   (gx#module-export-name
+                                                    _%out48520%_))))
+                                           _%exports48517%_)))
+                             (cons 'begin: _%exports48523%_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4839748441%_
                                                   _%target4839448435%_
@@ -2379,102 +2351,104 @@
                        (let ((_%new-id4857048656%_
                               (reverse _%new-id4856848623%_))
                              (_%id4857148658%_ (reverse _%id4856948624%_)))
-                         ((lambda (_%g4855248660%_
-                                   _%g4855348662%_
-                                   _%g4855448663%_)
-                            (if (and (gx#identifier-list?
-                                      (foldr (lambda (_%g4868148684%_
-                                                      _%g4868248687%_)
-                                               (cons _%g4868148684%_
-                                                     _%g4868248687%_))
+                         (if (and (gx#identifier-list?
+                                   (foldr (lambda (_%g4868148684%_
+                                                   _%g4868248687%_)
+                                            (cons _%g4868148684%_
+                                                  _%g4868248687%_))
+                                          '()
+                                          _%id4857148658%_))
+                                  (gx#identifier-list?
+                                   (foldr (lambda (_%g4868948692%_
+                                                   _%g4869048695%_)
+                                            (cons _%g4868948692%_
+                                                  _%g4869048695%_))
+                                          '()
+                                          _%new-id4857048656%_)))
+                             (let* ((_%keytab48698%_ (make-hash-table))
+                                    (_%found48701%_ (make-hash-table))
+                                    (_%_48724%_
+                                     (for-each
+                                      (lambda (_%id48704%_ _%new-id48706%_)
+                                        (hash-put!
+                                         _%keytab48698%_
+                                         (gx#core-identifier-key _%id48704%_)
+                                         (gx#core-identifier-key
+                                          _%new-id48706%_)))
+                                      (foldr (lambda (_%g4870748710%_
+                                                      _%g4870848713%_)
+                                               (cons _%g4870748710%_
+                                                     _%g4870848713%_))
                                              '()
-                                             _%g4855348662%_))
-                                     (gx#identifier-list?
-                                      (foldr (lambda (_%g4868948692%_
-                                                      _%g4869048695%_)
-                                               (cons _%g4868948692%_
-                                                     _%g4869048695%_))
+                                             _%id4857148658%_)
+                                      (foldr (lambda (_%g4871548718%_
+                                                      _%g4871648721%_)
+                                               (cons _%g4871548718%_
+                                                     _%g4871648721%_))
                                              '()
-                                             _%g4855248660%_)))
-                                (let* ((_%keytab48698%_ (make-hash-table))
-                                       (_%found48701%_ (make-hash-table))
-                                       (_%_48724%_
-                                        (for-each
-                                         (lambda (_%id48704%_ _%new-id48706%_)
-                                           (hash-put!
-                                            _%keytab48698%_
-                                            (gx#core-identifier-key
-                                             _%id48704%_)
-                                            (gx#core-identifier-key
-                                             _%new-id48706%_)))
-                                         (foldr (lambda (_%g4870748710%_
-                                                         _%g4870848713%_)
-                                                  (cons _%g4870748710%_
-                                                        _%g4870848713%_))
-                                                '()
-                                                _%g4855348662%_)
-                                         (foldr (lambda (_%g4871548718%_
-                                                         _%g4871648721%_)
-                                                  (cons _%g4871548718%_
-                                                        _%g4871648721%_))
-                                                '()
-                                                _%g4855248660%_)))
-                                       (_%exports48727%_
-                                        (gx#core-expand-export-source
-                                         _%g4855448663%_))
-                                       (_%fold-e48755%_
-                                        (letrec ((_%fold-e48730%_
-                                                  (lambda (_%out48733%_
-                                                           _%r48735%_)
-                                                    (if (gx#module-export?
-                                                         _%out48733%_)
-                                                        (let* ((_%name48739%_
-                                                                (gx#module-export-name
+                                             _%new-id4857048656%_)))
+                                    (_%exports48727%_
+                                     (gx#core-expand-export-source
+                                      _%hd4855948604%_))
+                                    (_%fold-e48755%_
+                                     (letrec ((_%fold-e48730%_
+                                               (lambda (_%out48733%_
+                                                        _%r48735%_)
+                                                 (if (gx#module-export?
+                                                      _%out48733%_)
+                                                     (let* ((_%name48739%_
+                                                             (gx#module-export-name
+                                                              _%out48733%_))
+                                                            (_%$e48742%_
+                                                             (hash-get
+                                                              _%keytab48698%_
+                                                              _%name48739%_)))
+                                                       (if _%$e48742%_
+                                                           (let ()
+                                                             (hash-put!
+                                                              _%found48701%_
+                                                              _%name48739%_
+                                                              '#t)
+                                                             (cons (|gerbil/core/module-sugar[1]#module-export-rename|
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            _%out48733%_
+                            _%$e48742%_)
+                           _%r48735%_))
+                   (cons _%out48733%_ _%r48735%_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (if (gx#export-set?
+                                                          _%out48733%_)
+                                                         (foldl _%fold-e48730%_
+                                                                _%r48735%_
+                                                                (gx#export-set-exports
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _%out48733%_))
-                       (_%$e48742%_ (hash-get _%keytab48698%_ _%name48739%_)))
-                  (if _%$e48742%_
-                      ((lambda (_%rename48746%_)
-                         (hash-put! _%found48701%_ _%name48739%_ '#t)
-                         (cons (|gerbil/core/module-sugar[1]#module-export-rename|
-                                _%out48733%_
-                                _%rename48746%_)
-                               _%r48735%_))
-                       _%$e48742%_)
-                      (cons _%out48733%_ _%r48735%_)))
-                (if (gx#export-set? _%out48733%_)
-                    (foldl _%fold-e48730%_
-                           _%r48735%_
-                           (gx#export-set-exports _%out48733%_))
-                    (cons _%out48733%_ _%r48735%_))))))
+                 (cons _%out48733%_ _%r48735%_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _%fold-e48730%_))
-                                       (_%new-exports48758%_
-                                        (foldl _%fold-e48755%_
-                                               '()
-                                               _%exports48727%_)))
-                                  (for-each
-                                   (lambda (_%id48763%_)
-                                     (if (hash-get
-                                          _%found48701%_
-                                          (gx#core-identifier-key _%id48763%_))
-                                         '#!void
-                                         (gx#raise-syntax-error
-                                          '#f
-                                          '"bad syntax; identifier is not in the export set"
-                                          _%stx48547%_
-                                          _%id48763%_)))
-                                   (foldr (lambda (_%g4876548768%_
-                                                   _%g4876648771%_)
-                                            (cons _%g4876548768%_
-                                                  _%g4876648771%_))
-                                          '()
-                                          _%g4855348662%_))
-                                  (cons 'begin: _%new-exports48758%_))
-                                (_%g4855048583%_ _%g4855148587%_)))
-                          _%new-id4857048656%_
-                          _%id4857148658%_
-                          _%hd4855948604%_))))))
+                                       _%fold-e48730%_))
+                                    (_%new-exports48758%_
+                                     (foldl _%fold-e48755%_
+                                            '()
+                                            _%exports48727%_)))
+                               (for-each
+                                (lambda (_%id48763%_)
+                                  (if (hash-get
+                                       _%found48701%_
+                                       (gx#core-identifier-key _%id48763%_))
+                                      '#!void
+                                      (gx#raise-syntax-error
+                                       '#f
+                                       '"bad syntax; identifier is not in the export set"
+                                       _%stx48547%_
+                                       _%id48763%_)))
+                                (foldr (lambda (_%g4876548768%_
+                                                _%g4876648771%_)
+                                         (cons _%g4876548768%_
+                                               _%g4876648771%_))
+                                       '()
+                                       _%id4857148658%_))
+                               (cons 'begin: _%new-exports48758%_))
+                             (_%g4855048583%_ _%g4855148587%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_%loop4856448616%_
                                                   _%target4856148610%_
@@ -2530,45 +2504,43 @@
                                                 (declare (not safe))
                                                 (##cdr _%e4879248827%_))))
                                          (if (gx#stx-null? _%tl4879448834%_)
-                                             ((lambda (_%g4878448837%_
-                                                       _%g4878548839%_)
-                                                (if (gx#identifier?
-                                                     _%g4878448837%_)
-                                                    (let* ((_%pre48855%_
-                                                            (gx#stx-e
-                                                             _%g4878448837%_))
-                                                           (_%exports48858%_
-                                                            (gx#core-expand-export-source
-                                                             _%g4878548839%_))
-                                                           (_%rename-e48864%_
-                                                            (lambda (_%name48861%_)
-                                                              (|gerbil/core/module-sugar[1]#prefix-identifier-key|
-                                                               _%name48861%_
-                                                               _%pre48855%_)))
-                                                           (_%fold-e48880%_
-                                                            (letrec ((_%fold-e48867%_
+                                             (if (gx#identifier?
+                                                  _%hd4879348831%_)
+                                                 (let* ((_%pre48855%_
+                                                         (gx#stx-e
+                                                          _%hd4879348831%_))
+                                                        (_%exports48858%_
+                                                         (gx#core-expand-export-source
+                                                          _%hd4879048821%_))
+                                                        (_%rename-e48864%_
+                                                         (lambda (_%name48861%_)
+                                                           (|gerbil/core/module-sugar[1]#prefix-identifier-key|
+                                                            _%name48861%_
+                                                            _%pre48855%_)))
+                                                        (_%fold-e48880%_
+                                                         (letrec ((_%fold-e48867%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (lambda (_%out48870%_ _%r48872%_)
-                                (if (gx#module-export? _%out48870%_)
-                                    (cons (|gerbil/core/module-sugar[1]#module-export-rename|
-                                           _%out48870%_
-                                           (_%rename-e48864%_
-                                            (gx#module-export-name
-                                             _%out48870%_)))
-                                          _%r48872%_)
-                                    (if (gx#export-set? _%out48870%_)
-                                        (foldl _%fold-e48867%_
-                                               _%r48872%_
-                                               (gx#export-set-exports
-                                                _%out48870%_))
-                                        (cons _%out48870%_ _%r48872%_))))))
-                      _%fold-e48867%_)))
-              (cons 'begin: (foldl _%fold-e48880%_ '() _%exports48858%_)))
+                           (lambda (_%out48870%_ _%r48872%_)
+                             (if (gx#module-export? _%out48870%_)
+                                 (cons (|gerbil/core/module-sugar[1]#module-export-rename|
+                                        _%out48870%_
+                                        (_%rename-e48864%_
+                                         (gx#module-export-name _%out48870%_)))
+                                       _%r48872%_)
+                                 (if (gx#export-set? _%out48870%_)
+                                     (foldl _%fold-e48867%_
+                                            _%r48872%_
+                                            (gx#export-set-exports
+                                             _%out48870%_))
+                                     (cons _%out48870%_ _%r48872%_))))))
+                   _%fold-e48867%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g4878248800%_
-                                                     _%g4878348804%_)))
-                                              _%hd4879348831%_
-                                              _%hd4879048821%_)
+                                                   (cons 'begin:
+                                                         (foldl _%fold-e48880%_
+                                                                '()
+                                                                _%exports48858%_)))
+                                                 (_%g4878248800%_
+                                                  _%g4878348804%_))
                                              (_%g4878248800%_
                                               _%g4878348804%_))))
                                      (_%g4878248800%_ _%g4878348804%_))))

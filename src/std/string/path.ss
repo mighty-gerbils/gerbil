@@ -40,7 +40,7 @@
           ((< ls lb) #f) ;; NB: this in particular concludes that /foo is not subpath of /foo/ ?
           ((> ls lb) (and (or (sep? base-path (- lb 1)) (sep? maybe-subpath lb))
                           (string-prefix? base-path maybe-subpath)
-                          (let ((pos (string-index maybe-subpath (lambda (x) (not (eqv? x #\/))) lb)))
+                          (let ((pos (string-index maybe-subpath #\/ lb)))
                             (if pos (substring maybe-subpath pos ls) ""))))
           (else (and (equal? base-path maybe-subpath) ""))))))
 

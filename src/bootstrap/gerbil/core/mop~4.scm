@@ -23,17 +23,13 @@
                           (let ((_%$e26929%_
                                  (agetq _%field26925%_ _%normalized26923%_)))
                             (if _%$e26929%_
-                                ((lambda (_%previous26933%_)
-                                   (let ((_%normalized-field26936%_
-                                          (make-symbol
-                                           '"super-"
-                                           _%previous26933%_)))
-                                     (_%loop26918%_
-                                      _%rest26927%_
-                                      (cons (cons _%field26925%_
-                                                  _%normalized-field26936%_)
-                                            _%normalized26923%_))))
-                                 _%$e26929%_)
+                                (let ((_%normalized-field26936%_
+                                       (make-symbol '"super-" _%$e26929%_)))
+                                  (_%loop26918%_
+                                   _%rest26927%_
+                                   (cons (cons _%field26925%_
+                                               _%normalized-field26936%_)
+                                         _%normalized26923%_)))
                                 (let ((_%normalized-field26941%_
                                        (make-symbol '"super-" _%field26925%_)))
                                   (_%loop26918%_
@@ -345,116 +341,96 @@
                                        (##cdr _%e2663226821%_))))
                                 (if (gx#stx-null? _%tl2663426828%_)
                                     (if (gx#stx-null? _%tl2661026750%_)
-                                        ((lambda (_%g2657026831%_
-                                                  _%g2657126833%_
-                                                  _%g2657226834%_
-                                                  _%g2657326835%_
-                                                  _%g2657426836%_
-                                                  _%g2657526837%_
-                                                  _%g2657626838%_
-                                                  _%g2657726839%_)
-                                           (gx#stx-wrap-source
-                                            (cons (gx#datum->syntax
-                                                   '#f
-                                                   'defsyntax)
-                                                  (cons _%g2657326835%_
-                                                        (cons (cons (gx#datum->syntax
+                                        (gx#stx-wrap-source
+                                         (cons (gx#datum->syntax
+                                                '#f
+                                                'defsyntax)
+                                               (cons _%hd2661526767%_
+                                                     (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'make-class-type-info)
-                            (cons 'id:
-                                  (cons (cons (gx#datum->syntax '#f 'quote)
-                                              (cons _%g2657726839%_ '()))
-                                        (cons 'name:
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'quote)
-                                                          (cons _%g2657626838%_
-                                                                '()))
-                                                    (cons 'super:
-                                                          (cons (cons (gx#datum->syntax
+                          '#f
+                          'make-class-type-info)
+                         (cons 'id:
+                               (cons (cons (gx#datum->syntax '#f 'quote)
+                                           (cons _%hd2657926651%_ '()))
+                                     (cons 'name:
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'quote)
+                                                       (cons _%hd2658226661%_
+                                                             '()))
+                                                 (cons 'super:
+                                                       (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               '@list)
-                              (foldr (lambda (_%g2688926895%_ _%g2689026898%_)
-                                       (cons (cons (gx#datum->syntax
-                                                    '#f
-                                                    'quote-syntax)
-                                                   (cons _%g2688926895%_ '()))
-                                             _%g2689026898%_))
-                                     '()
-                                     _%g2657126833%_))
-                        (cons 'slots:
-                              (cons (cons (gx#datum->syntax '#f '@list) '())
-                                    (cons 'system?:
-                                          (cons '#t
-                                                (cons 'type-descriptor:
-                                                      (cons (cons (gx#datum->syntax
+                            '#f
+                            '@list)
+                           (foldr (lambda (_%g2688926895%_ _%g2689026898%_)
+                                    (cons (cons (gx#datum->syntax
+                                                 '#f
+                                                 'quote-syntax)
+                                                (cons _%g2688926895%_ '()))
+                                          _%g2689026898%_))
+                                  '()
+                                  _%super2663126818%_))
+                     (cons 'slots:
+                           (cons (cons (gx#datum->syntax '#f '@list) '())
+                                 (cons 'system?:
+                                       (cons '#t
+                                             (cons 'type-descriptor:
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'quote-syntax)
+                                                               (cons _%hd2661826777%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'quote-syntax)
-                          (cons _%g2657226834%_ '()))
-                    (cons 'predicate:
-                          (cons (cons (gx#datum->syntax '#f 'quote-syntax)
-                                      (cons _%g2657026831%_ '()))
-                                (cons 'accessors:
-                                      (cons (cons (gx#datum->syntax '#f '@list)
-                                                  '())
-                                            (cons 'mutators:
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               '@list)
-                                                              '())
-                                                        (cons 'unchecked-accessors:
-                                                              (cons (cons (gx#datum->syntax
+                             '()))
+                 (cons 'predicate:
+                       (cons (cons (gx#datum->syntax '#f 'quote-syntax)
+                                   (cons _%hd2663326825%_ '()))
+                             (cons 'accessors:
+                                   (cons (cons (gx#datum->syntax '#f '@list)
+                                               '())
+                                         (cons 'mutators:
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            '@list)
+                                                           '())
+                                                     (cons 'unchecked-accessors:
+                                                           (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '#f
-                                   '@list)
-                                  '())
-                            (cons 'unchecked-mutators:
-                                  (cons (cons (gx#datum->syntax '#f '@list)
-                                              '())
-                                        (cons 'slot-offsets:
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           '@list)
-                                                          (begin
-                                                            (gx#syntax-check-splice-targets
-                                                             _%g2657426836%_
-                                                             _%g2657526837%_)
-                                                            (foldr (lambda (_%g2689126901%_
+                                '#f
+                                '@list)
+                               '())
+                         (cons 'unchecked-mutators:
+                               (cons (cons (gx#datum->syntax '#f '@list) '())
+                                     (cons 'slot-offsets:
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        '@list)
+                                                       (begin
+                                                         (gx#syntax-check-splice-targets
+                                                          _%field-offset2660726740%_
+                                                          _%field2659526702%_)
+                                                         (foldr (lambda (_%g2689126901%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                    _%g2689226904%_
-                                    _%g2689326906%_)
-                             (cons (cons (gx#datum->syntax '#f '@list)
-                                         (cons (cons (gx#datum->syntax
-                                                      '#f
-                                                      'quote)
-                                                     (cons _%g2689226904%_
-                                                           '()))
-                                               (cons '::
-                                                     (cons _%g2689126901%_
-                                                           '()))))
-                                   _%g2689326906%_))
-                           '()
-                           _%g2657426836%_
-                           _%g2657526837%_)))
+                                 _%g2689226904%_
+                                 _%g2689326906%_)
+                          (cons (cons (gx#datum->syntax '#f '@list)
+                                      (cons (cons (gx#datum->syntax '#f 'quote)
+                                                  (cons _%g2689226904%_ '()))
+                                            (cons '::
+                                                  (cons _%g2689126901%_ '()))))
+                                _%g2689326906%_))
+                        '()
+                        _%field-offset2660726740%_
+                        _%field2659526702%_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '())))))))))))))))))))))))))
+                                                 '())))))))))))))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                      '())))
+                   '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (gx#stx-source _%stx26562%_)))
-                                         _%hd2663326825%_
-                                         _%super2663126818%_
-                                         _%hd2661826777%_
-                                         _%hd2661526767%_
-                                         _%field-offset2660726740%_
-                                         _%field2659526702%_
-                                         _%hd2658226661%_
-                                         _%hd2657926651%_)
+                                         (gx#stx-source _%stx26562%_))
                                         (_%g2656826640%_ _%g2656926644%_))
                                     (_%g2656826640%_ _%g2656926644%_))))
                             (_%g2656826640%_ _%g2656926644%_)))))))
@@ -603,44 +579,31 @@
                                                        (##cdr _%e2699327076%_))))
                                                 (if (gx#stx-null?
                                                      _%tl2699527083%_)
-                                                    ((lambda (_%g2696827086%_
-                                                              _%g2696927088%_
-                                                              _%g2697027089%_
-                                                              _%g2697127090%_)
-                                                       (if (and (gx#identifier?
+                                                    (if (and (gx#identifier?
+                                                              _%hd2697627022%_)
+                                                             (gx#identifier?
+                                                              _%hd2697927032%_)
+                                                             (andmap gx#identifier?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _%g2697127090%_)
-                        (gx#identifier? _%g2697027089%_)
-                        (andmap gx#identifier?
-                                (foldr (lambda (_%g2711527118%_
-                                                _%g2711627121%_)
-                                         (cons _%g2711527118%_
-                                               _%g2711627121%_))
-                                       '()
-                                       _%g2696927088%_))
-                        (gx#identifier? _%g2696827086%_))
-                   (let* ((_%klass27124%_ (gx#eval-syntax _%g2697027089%_))
-                          (_%props27127%_
-                           (class-type-properties _%klass27124%_))
-                          (_%$e27132%_ (agetq 'system-type: _%props27127%_)))
-                     (if _%$e27132%_
-                         ((lambda (_%type27136%_)
-                            (let ((_%fields27139%_
-                                   (type-field-list _%type27136%_)))
-                              (|gerbil/core/mop~MOP-5[1]#generate-system-class-with-fields|
-                               _%stx26963%_
-                               _%klass27124%_
-                               _%fields27139%_)))
-                          _%$e27132%_)
-                         (|gerbil/core/mop~MOP-5[1]#generate-simple-system-class|
-                          _%stx26963%_
-                          _%klass27124%_)))
-                   (_%g2696627001%_ _%g2696727005%_)))
+                             (foldr (lambda (_%g2711527118%_ _%g2711627121%_)
+                                      (cons _%g2711527118%_ _%g2711627121%_))
+                                    '()
+                                    _%super2699227073%_))
+                     (gx#identifier? _%hd2699427080%_))
+                (let* ((_%klass27124%_ (gx#eval-syntax _%hd2697927032%_))
+                       (_%props27127%_ (class-type-properties _%klass27124%_))
+                       (_%$e27132%_ (agetq 'system-type: _%props27127%_)))
+                  (if _%$e27132%_
+                      (let ((_%fields27139%_ (type-field-list _%$e27132%_)))
+                        (|gerbil/core/mop~MOP-5[1]#generate-system-class-with-fields|
+                         _%stx26963%_
+                         _%klass27124%_
+                         _%fields27139%_))
+                      (|gerbil/core/mop~MOP-5[1]#generate-simple-system-class|
+                       _%stx26963%_
+                       _%klass27124%_)))
+                (_%g2696627001%_ _%g2696727005%_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _%hd2699427080%_
-                                                     _%super2699227073%_
-                                                     _%hd2697927032%_
-                                                     _%hd2697627022%_)
                                                     (_%g2696627001%_
                                                      _%g2696727005%_))))
                                             (_%g2696627001%_

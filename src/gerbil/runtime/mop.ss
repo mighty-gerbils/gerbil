@@ -285,7 +285,7 @@ namespace: #f
                         type-id type-name type-flags type-super field-info
                         ;; gerbil class fields
                         precedence-list slot-vector slot-table properties constructor methods)
-         :class)
+	 runtime: :class)
       ;; this we know is a class
       (let (klass
 	    (:- (##structure class::t

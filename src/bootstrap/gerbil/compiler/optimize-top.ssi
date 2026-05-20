@@ -11,6 +11,7 @@ namespace: gxc
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)
+         (%#define-runtime mutable-binding? gxc#mutable-binding?)
          (%#define-runtime
           ::collect-top-level-type-info::t
           gxc#::collect-top-level-type-info::t)

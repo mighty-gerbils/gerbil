@@ -177,6 +177,62 @@ package: gerbil/compiler
    gxc#apply-expression-subst*
    (@kw-lambda (subst:) gxc#apply-expression-subst*__@))
   (declare-class
+   gxc#::inline-subst::t
+   (@class gxc#::inline-subst::t
+           (gxc#::basic-xform-expression::t)
+           (gxc#::basic-xform-expression::t object::t t::t)
+           (subst)
+           (subst)
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::inline-subst::t
+   (optimizer-resolve-class '(typedecl gxc#::inline-subst::t) 'class::t))
+  (declare-type gxc#::inline-subst? (@predicate gxc#::inline-subst::t))
+  (declare-type gxc#make-::inline-subst (@constructor gxc#::inline-subst::t))
+  (declare-type
+   gxc#::inline-subst-subst
+   (@accessor gxc#::inline-subst::t subst #t))
+  (declare-type
+   gxc#::inline-subst-subst-set!
+   (@mutator gxc#::inline-subst::t subst #t))
+  (declare-type
+   gxc#&::inline-subst-subst
+   (@accessor gxc#::inline-subst::t subst #f))
+  (declare-type
+   gxc#&::inline-subst-subst-set!
+   (@mutator gxc#::inline-subst::t subst #f))
+  (declare-type
+   gxc#::inline-subst-bind-methods!
+   (optimizer-resolve-class
+    '(typedecl gxc#::inline-subst-bind-methods!)
+    'promise::t))
+  (declare-type
+   gxc#apply-inline-subst__%
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#apply-inline-subst__@
+   (@kw-lambda-dispatch (subst:) gxc#apply-inline-subst__%))
+  (declare-type
+   gxc#apply-inline-subst
+   (@kw-lambda (subst:) gxc#apply-inline-subst__@))
+  (declare-class
    gxc#::find-expression::t
    (@class gxc#::find-expression::t
            (gxc#::false-expression::t)
@@ -381,6 +437,36 @@ package: gerbil/compiler
              gerbil/compiler/optimize-xform)))
   (declare-type
    gxc#expression-subst*-setq%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#inline-subst-ref%
+   (@lambda 2
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-xform)))
+  (declare-type
+   gxc#inline-subst-setq%
    (@lambda 2
             #f
             signature:

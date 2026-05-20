@@ -2,6 +2,21 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
 (begin
+  (declare-type
+   gxc#mutable-binding?
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/compiler/optimize-top)))
   (declare-class
    gxc#::collect-top-level-type-info::t
    (@class gxc#::collect-top-level-type-info::t

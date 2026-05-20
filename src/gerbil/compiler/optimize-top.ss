@@ -14,6 +14,10 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
+(def (mutable-binding? id)
+  (let (sym (identifier-symbol id))
+    (hash-get (current-compile-mutators) sym)))
+
 ;; method to collect top level type information; types for top level bindings
 (defcompile-method (apply-collect-top-level-type-info)
   (::collect-top-level-type-info ::void)

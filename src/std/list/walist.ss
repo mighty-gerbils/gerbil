@@ -45,15 +45,15 @@
   waremove
   waremove!)
 
-(defclass AList ()
+(defstruct AList ()
   transparent: #t)
 
-(defstruct ConcreteAList ((alist :- :list))
+(defstruct (ConcreteAList AList) ((alist :- :list))
   transparent: #t)
 
-(defstruct (PureAList AList ConcreteAList) ()
+(defstruct (PureAList ConcreteAList AList) ()
   transparent: #t)
-(defstruct (MutAList AList ConcreteAList) ()
+(defstruct (MutAList ConcreteAList AList) ()
   transparent: #t)
 
 (defstruct (WAList PureAList) ()

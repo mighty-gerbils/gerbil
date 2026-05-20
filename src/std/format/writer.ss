@@ -219,16 +219,23 @@
   ((_ klass)
    #'(defspecial-object-writer klass klass)))
 
-(defspecial-object-writer special unknown)
 (defspecial-object-writer eof)
 (defspecial-object-writer void)
 (defspecial-object-writer unbound)
 (defspecial-object-writer unbound2)
 (defspecial-object-writer deleted)
 (defspecial-object-writer absent)
-(defspecial-object-writer dssl-optional optional)
-(defspecial-object-writer dssl-rest rest)
-(defspecial-object-writer dssl-key key)
+
+(defobject-writer :special (format-special writer atom env)
+  (cond
+   ((dssl-key? atom)
+    (do-write-special writer key))
+   ((dssl-rest? atom)
+    (do-write-special writer rest))
+   ((dssl-optional? atom)
+    (do-write-special writer optional))
+   (else
+    (do-write-special writer unknown))))
 
 (defsyntax-case do-write-integer ()
   ((_ writer int env write-method)
@@ -318,7 +325,7 @@
                  (format-int int)))
              (format-int int)))))))
 
-(def (format-integer-length (int : :integer) (alphabet : :u8vector) (gits : :fixnum) (sign? : :fixnum))
+(def (format-integer-length (int : :integer) (alphabet : :u8vector) (gits : :fixnum) (sign? : :boolean))
   => :fixnum
   (let* ((base  (u8vector-length alphabet))
          (width (exact (ceiling (log int base))))

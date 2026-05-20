@@ -1,15 +1,15 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~InterfaceInfo::timestamp 1779274761)
+  (define gerbil/core/contract~InterfaceInfo::timestamp 1779289629)
   (begin
-    (define gerbil/core/contract~InterfaceInfo#_g100723_
+    (define gerbil/core/contract~InterfaceInfo#_g101169_
       (##structure
        gx#syntax-quote::t
        'cast
        #f
        (gx#current-expander-context)
        '()))
-    (define gerbil/core/contract~InterfaceInfo#_g100724_
+    (define gerbil/core/contract~InterfaceInfo#_g101170_
       (##structure
        gx#syntax-quote::t
        'immediate-instance-of?
@@ -332,197 +332,196 @@
                                          (declare (not safe))
                                          (##cdr _%e4966049680%_))))
                                   (if (gx#stx-null? _%tl4966249685%_)
-                                      ((lambda (_%g4965549688%_
-                                                _%g4965649689%_)
-                                         (lambda (_%self49703%_ _%stx49704%_)
-                                           (let* ((_%__stx9396793968%_
-                                                   _%stx49704%_)
-                                                  (_%g4970749720%_
-                                                   (lambda ()
-                                                     (gx#raise-syntax-error
-                                                      '#f
-                                                      '"Bad syntax; invalid match target"
-                                                      _%__stx9396793968%_))))
-                                             (let ((_%__kont9396993970%_
-                                                    (lambda (_%g4970949778%_)
-                                                      (let* ((_%g4978949803%_
-                                                              (lambda (_%g4979049800%_)
-                                                                (gx#raise-syntax-error
+                                      (lambda (_%self49703%_ _%stx49704%_)
+                                        (let* ((_%__stx9434794348%_
+                                                _%stx49704%_)
+                                               (_%g4970749720%_
+                                                (lambda ()
+                                                  (gx#raise-syntax-error
+                                                   '#f
+                                                   '"Bad syntax; invalid match target"
+                                                   _%__stx9434794348%_))))
+                                          (let ((_%__kont9434994350%_
+                                                 (lambda (_%g4970949778%_)
+                                                   (let* ((_%g4978949803%_
+                                                           (lambda (_%g4979049800%_)
+                                                             (gx#raise-syntax-error
+                                                              '#f
+                                                              '"Bad syntax; invalid match target"
+                                                              _%g4979049800%_)))
+                                                          (_%g4978849839%_
+                                                           (lambda (_%g4979049806%_)
+                                                             (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         '"Bad syntax; invalid match target"
-                         _%g4979049800%_)))
-                     (_%g4978849839%_
-                      (lambda (_%g4979049806%_)
-                        (if (gx#stx-pair? _%g4979049806%_)
-                            (let ((_%e4979349808%_
-                                   (gx#syntax-e _%g4979049806%_)))
-                              (let ((_%hd4979449811%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e4979349808%_)))
-                                    (_%tl4979549813%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e4979349808%_))))
-                                (if (gx#stx-pair? _%tl4979549813%_)
-                                    (let ((_%e4979649816%_
-                                           (gx#syntax-e _%tl4979549813%_)))
-                                      (let ((_%hd4979749819%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e4979649816%_)))
-                                            (_%tl4979849821%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e4979649816%_))))
-                                        (if (gx#stx-null? _%tl4979849821%_)
-                                            ((lambda (_%g4979149824%_
-                                                      _%g4979249825%_)
-                                               (cons (gx#datum->syntax
-                                                      '#f
-                                                      'let)
+                          _%g4979049806%_)
+                         (let ((_%e4979349808%_ (gx#syntax-e _%g4979049806%_)))
+                           (let ((_%hd4979449811%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##car _%e4979349808%_)))
+                                 (_%tl4979549813%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##cdr _%e4979349808%_))))
+                             (if (gx#stx-pair? _%tl4979549813%_)
+                                 (let ((_%e4979649816%_
+                                        (gx#syntax-e _%tl4979549813%_)))
+                                   (let ((_%hd4979749819%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (##car _%e4979649816%_)))
+                                         (_%tl4979849821%_
+                                          (let ()
+                                            (declare (not safe))
+                                            (##cdr _%e4979649816%_))))
+                                     (if (gx#stx-null? _%tl4979849821%_)
+                                         (cons (gx#datum->syntax '#f 'let)
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            '$obj)
+                                                           (cons _%g4970949778%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '#f
-                          '$obj)
-                         (cons _%g4970949778%_ '()))
-                   (cons (cons (gx#datum->syntax '#f 'begin-annotation)
-                               (cons (cons (gx#datum->syntax '#f '@type)
-                                           (cons _%g4979249825%_ '()))
-                                     (cons (cons (gx#datum->syntax '#f 'if)
-                                                 (cons (cons _%g4965549688%_
-                                                             (cons _%g4979249825%_
+                          'begin-annotation)
+                         (cons (cons (gx#datum->syntax '#f '@type)
+                                     (cons _%hd4979449811%_ '()))
+                               (cons (cons (gx#datum->syntax '#f 'if)
+                                           (cons (cons _%hd4966149683%_
+                                                       (cons _%hd4979449811%_
+                                                             (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons (gx#datum->syntax '#f '$obj) '())))
-               (cons (gx#datum->syntax '#f '$obj)
-                     (cons (cons _%g4965649689%_
-                                 (cons _%g4979149824%_
-                                       (cons (gx#datum->syntax '#f '$obj)
-                                             '())))
-                           '()))))
+                            '#f
+                            '$obj)
+                           '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           '())))
-                         '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             _%hd4979749819%_
-                                             _%hd4979449811%_)
-                                            (_%g4978949803%_
-                                             _%g4979049806%_))))
-                                    (_%g4978949803%_ _%g4979049806%_))))
-                            (_%g4978949803%_ _%g4979049806%_)))))
-                (_%g4978849839%_
-                 (list (let ((__obj100633 _%self49703%_))
-                         (if (let ()
-                               (declare (not safe))
-                               (##structure-direct-instance-of?
-                                __obj100633
-                                'gerbil.core#runtime-type-info::t))
-                             (let ()
-                               (declare (not safe))
-                               (##unchecked-structure-ref
-                                __obj100633
-                                '3
-                                '#f
-                                '#f))
-                             (class-slot-ref
-                              gerbil/core/mop~MOP-2#runtime-type-info::t
-                              __obj100633
-                              'type-descriptor)))
-                       (let ((__obj100634 _%self49703%_))
-                         (if (let ()
-                               (declare (not safe))
-                               (##structure-direct-instance-of?
-                                __obj100634
-                                'gerbil/core/contract~InterfaceInfo#interface-info::t))
-                             (let ()
-                               (declare (not safe))
-                               (##unchecked-structure-ref
-                                __obj100634
-                                '8
-                                '#f
-                                '#f))
-                             (class-slot-ref
-                              gerbil/core/contract~InterfaceInfo#interface-info::t
-                              __obj100634
-                              'interface-descriptor))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (_%__kont9397193972%_
-                                                    (lambda ()
-                                                      (let* ((_%g4972749734%_
-                                                              (lambda (_%g4972849731%_)
-                                                                (gx#raise-syntax-error
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        '$obj)
+                                                       (cons (cons _%hd4965849675%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         '"Bad syntax; invalid match target"
-                         _%g4972849731%_)))
-                     (_%g4972649754%_
-                      (lambda (_%g4972849737%_)
-                        ((lambda (_%g4972949739%_) _%g4972949739%_)
-                         _%g4972849737%_))))
-                (_%g4972649754%_
-                 (let ((__obj100635 _%self49703%_))
-                   (if (let ()
-                         (declare (not safe))
-                         (##structure-direct-instance-of?
-                          __obj100635
-                          'gerbil/core/contract~InterfaceInfo#interface-info::t))
-                       (let ()
-                         (declare (not safe))
-                         (##unchecked-structure-ref __obj100635 '8 '#f '#f))
-                       (class-slot-ref
-                        gerbil/core/contract~InterfaceInfo#interface-info::t
-                        __obj100635
-                        'interface-descriptor))))))))
+                           (cons _%hd4979749819%_
+                                 (cons (gx#datum->syntax '#f '$obj) '())))
+                     '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (let ((_%g4970649757%_
-                                                      (lambda ()
-                                                        (if (gx#identifier?
-                                                             _%stx49704%_)
-                                                            (_%__kont9397193972%_)
+                                     '())))
+                   '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         (_%g4978949803%_ _%g4979049806%_))))
+                                 (_%g4978949803%_ _%g4979049806%_))))
+                         (_%g4978949803%_ _%g4979049806%_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%g4978849839%_
+                                                      (list (let ((__obj101075
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _%self49703%_))
+                      (if (let ()
+                            (declare (not safe))
+                            (##structure-direct-instance-of?
+                             __obj101075
+                             'gerbil.core#runtime-type-info::t))
+                          (let ()
+                            (declare (not safe))
+                            (##unchecked-structure-ref __obj101075 '3 '#f '#f))
+                          (class-slot-ref
+                           gerbil/core/mop~MOP-2#runtime-type-info::t
+                           __obj101075
+                           'type-descriptor)))
+                    (let ((__obj101076 _%self49703%_))
+                      (if (let ()
+                            (declare (not safe))
+                            (##structure-direct-instance-of?
+                             __obj101076
+                             'gerbil/core/contract~InterfaceInfo#interface-info::t))
+                          (let ()
+                            (declare (not safe))
+                            (##unchecked-structure-ref __obj101076 '8 '#f '#f))
+                          (class-slot-ref
+                           gerbil/core/contract~InterfaceInfo#interface-info::t
+                           __obj101076
+                           'interface-descriptor))))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (_%__kont9435194352%_
+                                                 (lambda ()
+                                                   (let* ((_%g4972749734%_
+                                                           (lambda (_%g4972849731%_)
+                                                             (gx#raise-syntax-error
+                                                              '#f
+                                                              '"Bad syntax; invalid match target"
+                                                              _%g4972849731%_)))
+                                                          (_%g4972649754%_
+                                                           (lambda (_%g4972849737%_)
+                                                             _%g4972849737%_)))
+                                                     (_%g4972649754%_
+                                                      (let ((__obj101077
+                                                             _%self49703%_))
+                                                        (if (let ()
+                                                              (declare
+                                                                (not safe))
+                                                              (##structure-direct-instance-of?
+                                                               __obj101077
+                                                               'gerbil/core/contract~InterfaceInfo#interface-info::t))
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (_%g4970749720%_))))))
-                                                 (if (gx#stx-pair?
-                                                      _%__stx9396793968%_)
-                                                     (let ((_%e4971049762%_
-                                                            (gx#syntax-e
-                                                             _%__stx9396793968%_)))
-                                                       (let ((_%tl4971249767%_
-                                                              (let ()
-                                                                (declare
+                                                              (##unchecked-structure-ref
+                                                               __obj101077
+                                                               '8
+                                                               '#f
+                                                               '#f))
+                                                            (class-slot-ref
+                                                             gerbil/core/contract~InterfaceInfo#interface-info::t
+                                                             __obj101077
+                                                             'interface-descriptor))))))))
+                                            (let ((_%g4970649757%_
+                                                   (lambda ()
+                                                     (if (gx#identifier?
+                                                          _%stx49704%_)
+                                                         (_%__kont9435194352%_)
+                                                         (_%g4970749720%_)))))
+                                              (if (gx#stx-pair?
+                                                   _%__stx9434794348%_)
+                                                  (let ((_%e4971049762%_
+                                                         (gx#syntax-e
+                                                          _%__stx9434794348%_)))
+                                                    (let ((_%tl4971249767%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##cdr _%e4971049762%_)))
+                                                          (_%hd4971149765%_
+                                                           (let ()
+                                                             (declare
+                                                               (not safe))
+                                                             (##car _%e4971049762%_))))
+                                                      (if (gx#stx-pair?
+                                                           _%tl4971249767%_)
+                                                          (let ((_%e4971349770%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (not safe))
-                        (##cdr _%e4971049762%_)))
-                     (_%hd4971149765%_
-                      (let () (declare (not safe)) (##car _%e4971049762%_))))
-                 (if (gx#stx-pair? _%tl4971249767%_)
-                     (let ((_%e4971349770%_ (gx#syntax-e _%tl4971249767%_)))
-                       (let ((_%tl4971549775%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%e4971349770%_)))
-                             (_%hd4971449773%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%e4971349770%_))))
-                         (if (gx#stx-null? _%tl4971549775%_)
-                             (_%__kont9396993970%_ _%hd4971449773%_)
-                             (let () (declare (not safe)) (_%g4970649757%_)))))
-                     (let () (declare (not safe)) (_%g4970649757%_)))))
+                         (gx#syntax-e _%tl4971249767%_)))
+                    (let ((_%tl4971549775%_
+                           (let ()
+                             (declare (not safe))
+                             (##cdr _%e4971349770%_)))
+                          (_%hd4971449773%_
+                           (let ()
+                             (declare (not safe))
+                             (##car _%e4971349770%_))))
+                      (if (gx#stx-null? _%tl4971549775%_)
+                          (_%__kont9434994350%_ _%hd4971449773%_)
+                          (_%g4970649757%_))))
+                  (_%g4970649757%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (_%g4970649757%_))))))))
-                                       _%hd4966149683%_
-                                       _%hd4965849675%_)
+                                                  (_%g4970649757%_))))))
                                       (_%g4965349667%_ _%g4965449670%_))))
                               (_%g4965349667%_ _%g4965449670%_))))
                       (_%g4965349667%_ _%g4965449670%_)))))
           (_%g4965249845%_
-           (list gerbil/core/contract~InterfaceInfo#_g100723_
-                 gerbil/core/contract~InterfaceInfo#_g100724_))))
+           (list gerbil/core/contract~InterfaceInfo#_g101169_
+                 gerbil/core/contract~InterfaceInfo#_g101170_))))
       (bind-method!
        gerbil/core/contract~InterfaceInfo#interface-info::t
        'apply-macro-expander
@@ -531,22 +530,22 @@
       (define gerbil/core/contract~InterfaceInfo#interface-identifier->precedence-list
         (lambda (_%id49529%_)
           (cons _%id49529%_
-                (let ((__obj100636 (gx#syntax-local-value _%id49529%_)))
+                (let ((__obj101078 (gx#syntax-local-value _%id49529%_)))
                   (if (let ()
                         (declare (not safe))
                         (##structure-direct-instance-of?
-                         __obj100636
+                         __obj101078
                          'gerbil/core/contract~InterfaceInfo#interface-info::t))
                       (let ()
                         (declare (not safe))
-                        (##unchecked-structure-ref __obj100636 '7 '#f '#f))
+                        (##unchecked-structure-ref __obj101078 '7 '#f '#f))
                       (class-slot-ref
                        gerbil/core/contract~InterfaceInfo#interface-info::t
-                       __obj100636
+                       __obj101078
                        'interface-precedence-list))))))
       (define gerbil/core/contract~InterfaceInfo#interface-mixin->precedence-list
         (lambda (_%lst49524%_)
-          (let ((_g100725_
+          (let ((_g101171_
                  (c4-linearize
                   '()
                   _%lst49524%_
@@ -557,40 +556,40 @@
                   'eq:
                   gx#free-identifier=?)))
             (begin
-              (let ((_g100726_
+              (let ((_g101172_
                      (let ()
                        (declare (not safe))
-                       (if (##values? _g100725_)
-                           (##values-length _g100725_)
+                       (if (##values? _g101171_)
+                           (##values-length _g101171_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g100726_ 2)))
-                    (error "Context expects 2 values" _g100726_)))
+                (if (not (let () (declare (not safe)) (##fx= _g101172_ 2)))
+                    (error "Context expects 2 values" _g101172_)))
               (let ((_%linearized49526%_
-                     (let () (declare (not safe)) (##values-ref _g100725_ 0)))
+                     (let () (declare (not safe)) (##values-ref _g101171_ 0)))
                     (_%_49527%_
-                     (let () (declare (not safe)) (##values-ref _g100725_ 1))))
+                     (let () (declare (not safe)) (##values-ref _g101171_ 1))))
                 _%linearized49526%_)))))
       (define gerbil/core/contract~InterfaceInfo#interface-info-method-signature
         (lambda (_%info49514%_ _%method49515%_)
           (let ((_%sig4951649520%_
                  (find (lambda (_%sig49518%_)
                          (eq? _%method49515%_ (car _%sig49518%_)))
-                       (let ((__obj100637 _%info49514%_))
+                       (let ((__obj101079 _%info49514%_))
                          (if (let ()
                                (declare (not safe))
                                (##structure-direct-instance-of?
-                                __obj100637
+                                __obj101079
                                 'gerbil/core/contract~InterfaceInfo#interface-info::t))
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                __obj100637
+                                __obj101079
                                 '6
                                 '#f
                                 '#f))
                              (class-slot-ref
                               gerbil/core/contract~InterfaceInfo#interface-info::t
-                              __obj100637
+                              __obj101079
                               'interface-methods))))))
             (if _%sig4951649520%_
                 (let ((_%sig49522%_ _%sig4951649520%_)) (cdr _%sig49522%_))
@@ -598,18 +597,18 @@
       (define gerbil/core/contract~InterfaceInfo#interface-info-method-offset
         (lambda (_%info49471%_ _%method49472%_)
           (let ((_%methods49474%_
-                 (let ((__obj100638 _%info49471%_))
+                 (let ((__obj101080 _%info49471%_))
                    (if (let ()
                          (declare (not safe))
                          (##structure-direct-instance-of?
-                          __obj100638
+                          __obj101080
                           'gerbil/core/contract~InterfaceInfo#interface-info::t))
                        (let ()
                          (declare (not safe))
-                         (##unchecked-structure-ref __obj100638 '6 '#f '#f))
+                         (##unchecked-structure-ref __obj101080 '6 '#f '#f))
                        (class-slot-ref
                         gerbil/core/contract~InterfaceInfo#interface-info::t
-                        __obj100638
+                        __obj101080
                         'interface-methods)))))
             (let _%loop49476%_ ((_%rest49478%_ _%methods49474%_)
                                 (_%index49479%_ '2))
@@ -660,15 +659,15 @@
              _%stx49464%_
              _%is?49466%_))))
       (define gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?
-        (lambda _g100727_
-          (let ((_g100728_ (let () (declare (not safe)) (##length _g100727_))))
-            (cond ((let () (declare (not safe)) (##fx= _g100728_ 1))
+        (lambda _g101173_
+          (let ((_g101174_ (let () (declare (not safe)) (##length _g101173_))))
+            (cond ((let () (declare (not safe)) (##fx= _g101174_ 1))
                    (apply gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__0
-                          _g100727_))
-                  ((let () (declare (not safe)) (##fx= _g100728_ 2))
+                          _g101173_))
+                  ((let () (declare (not safe)) (##fx= _g101174_ 2))
                    (apply gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?__%
-                          _g100727_))
+                          _g101173_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gerbil/core/contract~InterfaceInfo#syntax-local-interface-info?
-                    _g100727_)))))))))
+                    _g101173_)))))))))

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop~MOP-2::timestamp 1779274752)
+  (define gerbil/core/mop~MOP-2::timestamp 1779289618)
   (begin
     (define gerbil/core/mop~MOP-2#runtime-type-info::t
       (make-class-type
@@ -549,42 +549,36 @@
                     (_%loop2254722575%_
                      _%lp-tl2255022587%_
                      (cons _%lp-hd2254922585%_ _%arg2255122580%_))))
-                (let ((_%arg2255222590%_ (reverse _%arg2255122580%_)))
-                  ((lambda (_%g2254022592%_)
-                     (let ((_%$e22606%_
-                            (let ((__obj27423 _%self22535%_))
-                              (if (let ()
-                                    (declare (not safe))
-                                    (##structure-direct-instance-of?
-                                     __obj27423
-                                     'gerbil.core#class-type-info::t))
-                                  (let ()
-                                    (declare (not safe))
-                                    (##unchecked-structure-ref
-                                     __obj27423
-                                     '14
-                                     '#f
-                                     '#f))
-                                  (class-slot-ref
-                                   gerbil/core/mop~MOP-2#class-type-info::t
-                                   __obj27423
-                                   'constructor)))))
-                       (if _%$e22606%_
-                           ((lambda (_%make22609%_)
-                              (cons _%make22609%_
-                                    (foldr (lambda (_%g2261022613%_
-                                                    _%g2261122615%_)
-                                             (cons _%g2261022613%_
-                                                   _%g2261122615%_))
-                                           '()
-                                           _%g2254022592%_)))
-                            _%$e22606%_)
-                           (gx#raise-syntax-error
-                            '#f
-                            '"no constructor defined for class"
-                            _%stx22536%_
-                            _%self22535%_))))
-                   _%arg2255222590%_))))))
+                (let* ((_%arg2255222590%_ (reverse _%arg2255122580%_))
+                       (_%$e22606%_
+                        (let ((__obj27423 _%self22535%_))
+                          (if (let ()
+                                (declare (not safe))
+                                (##structure-direct-instance-of?
+                                 __obj27423
+                                 'gerbil.core#class-type-info::t))
+                              (let ()
+                                (declare (not safe))
+                                (##unchecked-structure-ref
+                                 __obj27423
+                                 '14
+                                 '#f
+                                 '#f))
+                              (class-slot-ref
+                               gerbil/core/mop~MOP-2#class-type-info::t
+                               __obj27423
+                               'constructor)))))
+                  (if _%$e22606%_
+                      (cons _%$e22606%_
+                            (foldr (lambda (_%g2261022613%_ _%g2261122615%_)
+                                     (cons _%g2261022613%_ _%g2261122615%_))
+                                   '()
+                                   _%arg2255222590%_))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"no constructor defined for class"
+                       _%stx22536%_
+                       _%self22535%_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (_%loop2254722575%_
                                            _%target2254422570%_
