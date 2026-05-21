@@ -275,6 +275,25 @@ build_doc () {
    node_modules/vuepress/cli.js dev)
 }
 
+tangle_file () {
+    ## drewc has made some literate README.org's where the test file
+    ## it tangled literately from that file. For now it's emacs, and
+    ## manual. Soon will be gerbil, and automagic.
+    echo "Tangling $1"
+    emacs --batch --eval "(progn (require 'ob-tangle) (print (org-babel-tangle-file \"$1\")))"
+}
+
+tangle_files () {
+    if [ "$#" -eq 0 ]; then
+	tangle_file ./std/crypto/README.org
+    else
+	for f in "$@"
+	do
+	   tangle_file $f
+	done
+    fi
+}
+
 #===============================================================================
 ## main
 build_gerbil() {
@@ -335,6 +354,9 @@ else
          ;;
        "doc")
          build_doc || die
+         ;;
+       "tangle") 
+         shift; tangle_files "$@" || die
          ;;
        "env")
            $*
