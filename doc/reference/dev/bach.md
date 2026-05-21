@@ -36,7 +36,6 @@ Here we give an overview of all commands and tools supported by Bach.
 
 The Gerbil universal binary has the following usage:
 ```shell
-$ gerbil help
 Usage: gerbil [option ...] arguments ...
 
 Options:
@@ -52,12 +51,13 @@ Commands:
   build                            build a gerbil package (gxpkg build)
   deps                             manage dependencies for a package (gxpkg deps)
   clean                            clean build artifactacts for a package (gxpkg clean)
-  env                              eval a shell expression in the local package environment (gxpkg env)
+  env                              eval a shell command in the local package environment (gxpkg env)
   pkg                              invoke the gerbil package manager (gxpkg)
   test                             run tests (gxtest)
   tags                             create emacs tags (gxtags)
   prof                             profile a dynamic executable module (gxprof)
   ensemble                         invoke the gerbil actor ensemble manager (gxensemble)
+  httpd                            invoke the gerbil httpd (gxhttpd)
   interactive                      invoke the gerbil interpreter (gxi)
   compile                          invoke the gerbil compiler (gxc)
   help <cmd>                       display help for a tool command
@@ -199,7 +199,9 @@ gxtest: run Gerbil tests in the command line
 Usage: gxtest [option ...] <args> ...
 
 Options:
+ -g --global-env                  use the user global env even in local package context
  -v                               run in verbose mode where all test execution progress is displayed in stdout.
+ -q --quiet                       run in in quiet mode where only errors are displayed
  -r --run <run>                   only run test suites whose name matches a given regex [default: #f]
  -D  <features>                   define one or more conditional expansion feature (comma separated) for enabling tests that require external services [default: #f]
  -h --help                        display help
@@ -211,13 +213,15 @@ Arguments:
 ### `gerbil tags`
 ```shell
 $ gerbil help tags
-gxtags: generate emacs tags for Gerbil code
+gxtags: generate emacs/vim tags for Gerbil code
 
 Usage: gxtags [option ...] <input> ...
 
 Options:
+ -g --global-env                  use the user global env even in local package context
  -a                               append to existing tag file
  -o  <output>                     explicit name of file for tag table [default: TAGS]
+ -t --tag-format <format>         TAGS index format; emacs or vim; uses the GERBIL_TAGS_FORMAT environment variable, with default value of emacs if it is not set [default: emacs]
  -h --help                        display help
 
 Arguments:
@@ -232,6 +236,7 @@ gxprof: The Gerbil profiler
 Usage: gxprof [option ...] [<module>] <module-args> ...
 
 Options:
+ -g --global-env                  use the user global env even in local package context
  -o --output <output>             gxprof output file [default: gxprof.out]
  --heartbeat  <heartbeat>         heartbeat interval for sampling, in seconds [default: .001]
  -k --ignore-kernel-frames        ignore kernel functions in the analysis
@@ -247,20 +252,46 @@ Arguments:
 $ gerbil help ensemble
 gxensemble: the Gerbil Actor Ensemble Manager
 
-Usage: gxensemble  <command> command-arg ...
+Usage: gxensemble [option ...] <command> command-arg ...
+
+Options:
+ -g --global-env                  use the user global env even in local package context
+ -G --gerbil-path <gerbil-path>   specifies the GERBIL_PATH for ensemble operations [default: #f]
 
 Commands:
- run                              run a server in the ensemble
+ supervisor                       runs the ensemble supervisor
  registry                         runs the ensemble registry
+ run                              run a server in the ensemble
+ env                              ensemble environment operations
+ control                          ensemble supervisory control operations
  load                             loads code in a running server
  eval                             evals code in a running server
  repl                             provides a repl for a running server
  ping                             pings a server or actor in the server
  lookup                           looks up a server by id or role
- list                             list server state
- shutdown                         shuts down an actor, server, or the entire ensemble including the registry
+ shutdown                         shuts down an actor, server, or the entire ensemble
  admin                            ensemble administrative operations
+ list                             list server state
  ca                               ensemble CA operations
  package                          package ensemble state to ship an actor server environment
+ config                           configure the ensemble
+ help                             display help; help <command> for command help
+```
+
+### `gerbil httpd`
+```shell
+$ gerbil help httpd
+gxhttpd: The Gerbil HTTP Daemon
+
+Usage: gxhttpd [option ...] <command> command-arg ...
+
+Options:
+ -g --global-env                  use the user global env even in local package context
+ -G --gerbil-path <gerbil-path>   specifies the GERBIL_PATH for ensemble operations [default: #f]
+
+Commands:
+ server                           runs a single httpd server
+ ensemble                         runs a supervised httpd server ensemble
+ config                           edit httpd server or ensemble configuration
  help                             display help; help <command> for command help
 ```
