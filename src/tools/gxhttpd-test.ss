@@ -21,7 +21,7 @@
   (invoke "gerbil" ["build"] directory: test-directory)
   (invoke "gerbil" ["httpd" "config"
                     "--root" "content"
-                    "--listen" (object->string '("127.0.0.1:8080"))
+                    "--listen" (object->string '("127.0.0.1:65480"))
                     "--handlers" (object->string '(("/handler" . :test/site/handler)))
                     "--enable-servlets"]
           directory: test-directory)
@@ -43,22 +43,22 @@
 (def gxhttpd-server-test
   (test-suite "httpd"
     (test-case "/"
-      (let (req (http-get "http://127.0.0.1:8080/"))
+      (let (req (http-get "http://127.0.0.1:65480/"))
         (check (request-status req) => 200)
         (check (request-text req) => (read-file-string (path-expand "content/index.html" test-directory)))))
     (test-case "/index.html"
-      (let (req (http-get "http://127.0.0.1:8080/index.html"))
+      (let (req (http-get "http://127.0.0.1:65480/index.html"))
         (check (request-status req) => 200)
         (check (request-text req) => (read-file-string (path-expand "content/index.html" test-directory)))))
     (test-case "/handler"
-      (let (req (http-get "http://127.0.0.1:8080/handler"))
+      (let (req (http-get "http://127.0.0.1:65480/handler"))
         (check (request-status req) => 200)
         (check (request-text req) => "hello! I am a dynamic handler and my state is initialized\n")))
     (test-case "/servlets/hello.ss"
-      (let (req (http-get "http://127.0.0.1:8080/servlets/hello.ss"))
+      (let (req (http-get "http://127.0.0.1:65480/servlets/hello.ss"))
         (check (request-status req) => 200)
         (check (request-text req) => "hello! I am a servlet and my state is initialized\n")))
     (test-case "/does-not-exist"
-      (let (req (http-get "http://127.0.0.1:8080/does-not-exist"))
+      (let (req (http-get "http://127.0.0.1:65480/does-not-exist"))
         (check (request-status req) => 404)
         (request-close req)))))
