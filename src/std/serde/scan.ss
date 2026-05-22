@@ -10,7 +10,8 @@
    (cycles        :- HashTable)
    (next          :- :fixnum)
    (allow-cycles? :- :boolean)
-   (compress?     :- :boolean))
+   (compress?     :- :boolean)
+   (all-slots?    :- :boolean))
   constructor: :init!
   final: #t)
 
@@ -18,13 +19,14 @@
   (scan! (env : ScanEnv) (path : :list)) => :void)
 
 (defmethod {:init! ScanEnv}
-  (lambda (self allow-cycles? compress?)
+  (lambda (self allow-cycles? compress? all-slots?)
     (set! self.written (make-hash-table-eq))
     (set! self.scanned (make-hash-table-eq))
     (set! self.cycles (make-hash-table-eq))
     (set! self.next 0)
     (set! self.allow-cycles? allow-cycles?)
-    (set! self.compress? compress?)))
+    (set! self.compress? compress?)
+    (set! self.all-slots? all-slots?)))
 
 (def (reset-scan-env! (env : ScanEnv))
   (env.written.clear!)

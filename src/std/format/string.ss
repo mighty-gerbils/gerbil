@@ -19,7 +19,7 @@
                               env:    (env : FormatEnv := (format-env)))
   (let (env (format-environment))
     (using (writer (open-buffered-writer #f buffer-size) :- BufferedWriter)
-      (writer.format obj env)
+      (writer.format-write obj env)
       (get-buffer-output-string-utf8 writer))))
 
 (defwriter-ext (format-to-string writer obj (env : FormatEnv))

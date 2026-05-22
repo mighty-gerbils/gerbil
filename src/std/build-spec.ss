@@ -51,7 +51,7 @@
     "sync/rwlock"
     "sync/spinlock"
     "net/address/types"
-    
+
     "io/interface/base"
     "io/interface/bio"
     "io/interface/socket"
@@ -71,19 +71,21 @@
     ;;"io/bio/message"
     "io/bio/api"
 
+    "serde/interface"
     "serde/scan"
+    "serde/scanner"
     "serde/serialize"
     ;;"serde/opaque"
     "serde/interned"
-    "serde/scanner"
 
     "ffi"
+
     "format/ascii"
     "format/format-string"
     "format/env"
     "format/ioutil"
-    "format/io"
     "format/writer"
+    "format/io"
     "format/format"
     "format/api"
 

@@ -267,6 +267,10 @@ namespace: gxc
    ((eq? (!type-id type) 't)
     #f)					; happy!
 
+   ;; #f needs to be special cased as it is the bottom object
+   ((eq? (!type-id type) 'false)
+    #f)
+
    (else
     (let (expr-type (apply-basic-expression-type expr))
       (cond
@@ -768,7 +772,7 @@ namespace: gxc
                                                (current-compile-path-type))))
                            (compile-e self #'K))))
                       (E (delay (compile-e self #'E))))
-                 (ast-case test (#%quote)
+                 (ast-case test (%#quote)
                    ((%#quote val)
                     (if (stx-e #'val)
                       (force K)

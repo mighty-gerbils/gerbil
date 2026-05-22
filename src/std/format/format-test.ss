@@ -258,7 +258,7 @@
       (check
        (format '"%s" a)
        =>
-       "#{(A std/format/format-test#A::t) b: #{(B std/format/format-test#B::t)}}")
+       "#{std/format/format-test#A::t b: #{std/format/format-test#B::t}}")
       (def c (A b: #f))
       (set! (A-b c) c)
       (check
@@ -268,21 +268,21 @@
       (check
        (format '"%s" c)
        =>
-       "#0=#{(A std/format/format-test#A::t) b: #0#}"))
+       "#0=#{std/format/format-test#A::t b: #0#}"))
     (test-case "format interface instances"
       (def a (A))
       (def c (C a))
       (check
        (format '"%s" c)
        =>
-       "#{(C std/format/format-test#C::t) #{(A std/format/format-test#A::t) b: #f}}"))
+       "#{std/format/format-test#C::t #{std/format/format-test#A::t b: #f}}"))
     (test-case "format hashes"
       (check
        (format '"%a" (make-hash-1-2))
        => "#{HashTable #{hash-table ((a . 1) (b . 2))}}")
       (check
        (format '"%s" (make-hash-1-2))
-       => "#{(HashTable gerbil/runtime/hash#HashTable::t) #{(hash-table hash-table::t) ((a . 1) (b . 2))}}"))))
+       => "#{gerbil/runtime/hash#HashTable::t #{hash-table::t ((a . 1) (b . 2))}}"))))
 
 (def print-test
   (test-suite "printing"

@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; format env
 (import :std/error
-        :std/serde/scan
+	:std/serde/scan
+        :std/serde/interface
         ./ascii)
 (export #t)
 
@@ -71,15 +72,15 @@
    ;; max sequence elements to display
    (max-elements     :- :fixnum)
    ;; char ascii name set
-   (char-ascii-names :- :fixnum))
+   (char-ascii-names :- :fixnum)
+   ;; allow class serialization?
+   (allow-class?     :- :procedure))
   constructor: :init!
   transparent: #t
   final: #t)
 
 (defstruct FormatEnv
-  ((scan         :- ScanEnv)  ; cycle handling policy (optional)
-   (opt          :- FormatOpt))
-  constructor: :init!
+  ((opt  :- FormatOpt))
   final: #t)
 
 (defmethod {:init! FormatOpt}
@@ -91,8 +92,9 @@
            precision:          (precision          :~ (format-optional-fixnum?)    := #f)
            flonum-conversion:  (flonum-conversion  :~ (format-flonum-conversion?)  := #\g)
            integer-conversion: (integer-conversion :~ (format-integer-conversion?) := #\d)
-           max-elements:       (max-elements      :~ (format-optional-fixnum?)     := #f)
-           char-ascii-names:   (char-ascii-names  :~ (format-char-ascii-names?)    := FORMAT-CHAR-SCHEME-NAMES))
+           max-elements:       (max-elements       :~ (format-optional-fixnum?)     := #f)
+           char-ascii-names:   (char-ascii-names   :~ (format-char-ascii-names?)    := FORMAT-CHAR-SCHEME-NAMES)
+	   allow-class?:        (allow-class?      :  :procedure := (lambda (klass) #t)))
     (set! self.cycles cycles)
     (set! self.compress compress)
     (set! self.style style)
@@ -102,7 +104,8 @@
     (__set-flonum-conversion! self flonum-conversion)
     (__set-integer-conversion! self integer-conversion)
     (set! self.max-elements max-elements)
-    (set! self.char-ascii-names char-ascii-names)))
+    (set! self.char-ascii-names char-ascii-names)
+    (set! self.allow-class? allow-class?)))
 
 (def (__set-flonum-conversion! (opt :- FormatOpt) (conversion :- :char))
   (set! opt.flonum-repr (char->integer conversion)))
@@ -197,24 +200,40 @@
     flonum-conversion:  #\g
     integer-conversion: #\d
     max-elements:       #f
-    char-ascii-names:   FORMAT-CHAR-SCHEME-NAMES)))
+    char-ascii-names:   FORMAT-CHAR-SCHEME-NAMES
+    allow-class?:       (lambda (klass) #t))))
 
 (def (format-options (opt (current-format-opt))) => FormatOpt
   (: (or opt (force __default-format-opt)) FormatOpt))
 
-(def (format-environment (opt : FormatOpt := (format-options))) => FormatEnv
-  (FormatEnv scan: #f opt: opt))
+(def (format-environment (opt : FormatOpt := (format-options))) => WriteEnv
+  (WriteEnv
+   (let* ((compress?
+           (do-format-compress FormatEnv:::init! opt #f #t))
+          (scan?
+           (or compress?
+               (do-format-cycles FormatEnv:::init! opt #f #t #t)))
+          (allow-cycles?
+           (do-format-cycles FormatEnv:::init! opt #f #f #t)))
+     (and scan?
+	  (ScanEnv allow-cycles? compress? (fx= opt.style FORMAT-DEBUG))))
+   (WriteTraits (FormatEnv opt))
+   opt.allow-class?))
 
 (defsyntax-case @derive-format-env ()
   ((_ env (slot value setf!) ...)
    (and (identifier? #'env)
         (andmap identifier? #'(slot ...)))
-   (with-identifiers ((env.opt  #'env #'env ".opt")
+   (with-identifiers ((fenv 'fenv)
+		      (fenv.opt #'fenv #'fenv ".opt")
                       (env.scan #'env #'env ".scan")
-                      (xopt '$xopt))
-     #'(using (xopt (struct-copy env.opt) :- FormatOpt)
+		      (env.methods #'env #'env ".methods")
+                      (xopt '$xopt)
+		      (xopt.allow-class? #'xopt #'xopt ".allow-class?"))
+     #'(using ((fenv (interface-instance-object env.methods) : FormatEnv)
+	       (xopt (struct-copy fenv.opt) :- FormatOpt))
          (setf! xopt value) ...
-         (FormatEnv scan: env.scan opt: xopt)))))
+	 (WriteEnv env.scan (WriteTraits (FormatEnv xopt)) xopt.allow-class?)))))
 
 (defsyntax-case @format-env ()
   ((_ env (slot value) ...)
@@ -257,10 +276,8 @@
      #'(@derive-format-env env (slot safe-value set-it!) ...)))
   ((_ (slot value) ...)
    (andmap stx-keyword? #'(slot ...))
-   (with-identifiers ((env     '$senv)
-                      (env.opt #'env #'env ".opt"))
-     #'(let (env (new-instance FormatEnv::t))
-         (set! env.opt (format-options))
+   (with-identifier (env     '$senv)
+     #'(let (env (FormatEnv (format-options)))
          (@format-env env (slot value) ...)))))
 
 (def (format-flag-set flag flags)
@@ -269,21 +286,3 @@
       flags
       (cons flag flags))
     [flag]))
-
-(defmethod {:init! FormatEnv}
-  (lambda (self scan: (scan :? ScanEnv) opt: (opt : FormatOpt))
-      (if scan
-        (set! self.scan scan)
-        (let* ((compress?
-                (do-format-compress FormatEnv:::init! opt
-                                    #f #t))
-               (scan?
-                (or compress?
-                    (do-format-cycles FormatEnv:::init! opt
-                                      #f #t #t)))
-               (allow-cycles?
-                (do-format-cycles FormatEnv:::init! opt
-                                  #f #f #t)))
-          (when scan?
-            (set! self.scan (ScanEnv allow-cycles? compress?)))))
-      (set! self.opt opt)))

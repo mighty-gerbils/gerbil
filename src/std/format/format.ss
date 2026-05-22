@@ -5,20 +5,21 @@
         :std/io/interface
         :std/io/bio/api
         :std/io/bio/buffer
+	:std/serde/interface
+	:std/serde/serialize
         ./format-string
         ./env
         ./ioutil
-        ./io
-        ./writer)
+        ./io)
 (export #t)
 
 (defstruct Formater
   ((fmt   :- :string)
-   (env   :- FormatEnv))
+   (env   :- WriteEnv))
   final: #t)
 
 (def (make-formater (fmt                       :  :string)
-                    (env  (format-environment) :  FormatEnv))
+                    (env  (format-environment) :  WriteEnv))
   => Formater
   (Formater fmt env))
 
@@ -62,7 +63,7 @@
                                   (flags: flags)
                                   (width: width)
                                   (integer-conversion: how)))
-             (fx+ result (writer.format-integer (: arg :integer) env)))))
+             (fx+ result (writer.write-integer (: arg :integer) env)))))
         (fold-float
          (lambda (arg how flags width precision result)
            (let (env (@format-env fmt.env
@@ -70,14 +71,14 @@
                                   (width: width)
                                   (precision: precision)
                                   (flonum-conversion: how)))
-             (fx+ result (writer.format-flonum (: arg :flonum) env)))))
+             (fx+ result (writer.write-flonum (: arg :flonum) env)))))
         (fold-object
          (lambda (arg how result)
            (fx+ result
                 (case how
-                  ((#\a) (writer.display arg fmt.env))
-                  ((#\s) (writer.format  arg fmt.env))
-                  ((#\q) (writer.debug   arg fmt.env))
+                  ((#\a) (format-display writer arg fmt.env))
+                  ((#\s) (format-write   writer arg fmt.env))
+                  ((#\q) (format-debug   writer arg fmt.env))
                   (else
                    (raise-bad-argument format "object format specifier: %a, %s, or %q" how))))))
         (error!

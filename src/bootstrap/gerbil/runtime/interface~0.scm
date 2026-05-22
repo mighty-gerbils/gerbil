@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/interface::timestamp 1779289637)
+  (define gerbil/runtime/interface::timestamp 1779435579)
   (begin
     (define CastError::t
       (let ((__tmp146351 (list Error::t)))

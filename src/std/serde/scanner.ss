@@ -16,16 +16,25 @@
 (defscanner :builtin (self env path)
   #!void)
 
-(def (scan-object-slots klass obj env path)
+(def (scan-object-slots klass obj (env : ScanEnv) (path : :list))
   (let (len (##structure-length obj))
     (when (fx> len 1)
-      (let (slots (class-type-field-list klass))
-        (let loop ((rest slots) (offset 1 :- :fixnum))
-	  => :void ;; TODO BUG this should be unnecessary
-	  (unless (null? rest)
-	    (scan-object! (##structure-ref obj offset klass #f)
-			  env path)
-	    (loop (##cdr rest) (fx1+ offset))))))))
+      (if env.all-slots?
+	(let (slots (class-type-field-list klass))
+          (let loop ((rest slots) (offset 1 :- :fixnum))
+	    => :void ;; TODO BUG this should be unnecessary
+	    (unless (null? rest)
+	      (scan-object! (##structure-ref obj offset klass #f)
+			    env path)
+	      (loop (##cdr rest) (fx1+ offset)))))
+	(let (slots (class-type-printable-slots klass))
+	  (let loop ((rest slots))
+	    (match rest
+	      ([[_ . offset] . rest]
+	       (scan-object! (##structure-ref obj offset klass #f)
+			     env path)
+	       (loop rest))
+	      (else (void)))))))))
 
 (defscanner class (self env path)
   (scan-object! (##type-id self) env path))

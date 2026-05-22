@@ -47,11 +47,8 @@
 
   (def (fold-format-ops-for-stx stx writer env ops)
     (with-identifiers ((writer.write-char     writer writer ".write-char-utf8")
-                       (writer.format-integer writer writer ".format-integer")
-                       (writer.format-flonum  writer writer ".format-flonum")
-                       (writer.display        writer writer ".display")
-                       (writer.format         writer writer ".format")
-                       (writer.debug          writer writer ".debug")
+                       (writer.write-integer writer writer ".write-integer")
+                       (writer.write-flonum  writer writer ".write-flonum")
 		       ($env                  'env))
       (let loop ((rest ops) (result []))
 	(match rest
@@ -67,7 +64,7 @@
 						(flags: flags)
 						(width: width)
 						(integer-conversion: how)))
-			  (writer.format-integer (: arg :integer) $env))
+			  (writer.write-integer (: arg :integer) $env))
 		      result)))
 	     (['float arg how flags width precision result]
 	      (with-syntax ((env env) (arg arg) (how how) (flags flags) (width width) (precision precision))
@@ -76,20 +73,20 @@
 						(width: width)
 						(precision: precision)
 						(flonum-conversion: how)))
-			  (writer.format-flonum (: arg :flonum) $env))
+			  (writer.write-flonum (: arg :flonum) $env))
 		      result)))
 	     (['object arg how]
-	      (with-syntax ((env env) (arg arg))
+	      (with-syntax ((writer writer) (env env) (arg arg))
 		(cons (case how
-			((#\a) #'(writer.display arg env))
-			((#\s) #'(writer.format  arg env))
-			((#\q) #'(writer.debug   arg env))
+			((#\a) #'(format-display writer arg env))
+			((#\s) #'(format-write writer arg env))
+			((#\q) #'(format-debug writer arg env))
 			(else
 			 (raise-syntax-error #f "object format specifier: %a, %s, or %q" stx how #'arg)))
 		      result)))
 	     (else
 	      (raise-syntax-error #f "unexpected format operation" stx op))))
-	  (else result)))))) 
+	  (else result))))))
 
 (defsyntax-case format ()
   ((_ fmt-string arg ...)
