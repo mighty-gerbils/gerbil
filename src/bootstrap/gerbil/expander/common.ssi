@@ -21,5 +21,6 @@ namespace: gx
                   (%#define-syntax AST |gx[:0:]#AST|))
          (%#define-syntax check-procedure |gx[:0:]#check-procedure|)
          (%#define-syntax core-syntax-case |gx[:0:]#core-syntax-case|)
-         (%#define-runtime __DEBUG-EXPANDER gx#__DEBUG-EXPANDER))
+         (%#define-runtime __DEBUG-EXPANDER gx#__DEBUG-EXPANDER)
+         (%#define-runtime __DEBUG-VERBOSE gx#__DEBUG-VERBOSE))
 (%#call (%#ref load-module) (%#quote "gerbil/expander/common~0"))

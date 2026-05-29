@@ -179,23 +179,18 @@ namespace: #f
 ;; specializer types
 (defstruct-type eq-hash-table::t (hash-table::t)
   make-eq-hash-table eq-hash-table?
-  id: eq-hash-table::t
   name: eq-hash-table)
 (defstruct-type eqv-hash-table::t (hash-table::t)
   make-eqv-hash-table eqv-hash-table?
-  id: eqv-hash-table::t
   name: eqv-hash-table)
 (defstruct-type symbol-hash-table::t (hash-table::t)
   make-symbol-hash-table symbol-hash-table?
-  id: symbol-hash-table::t
   name: symbol-hash-table)
 (defstruct-type string-hash-table::t (hash-table::t)
   make-string-hash-table string-hash-table?
-  id: string-hash-table::t
   name: string-hash-table)
 (defstruct-type immediate-hash-table::t (hash-table::t)
   make-immediate-hash-table immediate-hash-table?
-  id: immediate-hash-table::t
   name: immediate-hash-table)
 
 (bind-method! hash-table::t 'HashTable::ref raw-table-ref)

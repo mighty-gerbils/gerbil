@@ -4,17 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-class
    Exception::t
-   (@class gerbil/runtime/error#Exception::t
-           ()
-           (object::t t::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f
-           #f))
+   (@class Exception::t () (object::t t::t) () () #f #f #f #f #f #f))
   (declare-type
    Exception::t
    (optimizer-resolve-class '(typedecl Exception::t) 'class::t))
@@ -22,7 +12,7 @@ package: gerbil/runtime
   (declare-type make-Exception (@constructor Exception::t))
   (declare-class
    StackTrace::t
-   (@class gerbil/runtime/error#StackTrace::t
+   (@class StackTrace::t
            ()
            (object::t t::t)
            (continuation)
@@ -52,7 +42,7 @@ package: gerbil/runtime
    (@mutator StackTrace::t continuation #f))
   (declare-class
    Error::t
-   (@class gerbil/runtime/error#Error::t
+   (@class Error::t
            (StackTrace::t Exception::t)
            (StackTrace::t Exception::t object::t t::t)
            (message irritants where)
@@ -87,7 +77,7 @@ package: gerbil/runtime
   (declare-type &Error-continuation-set! (@mutator Error::t continuation #f))
   (declare-class
    ContractViolation::t
-   (@class gerbil/runtime/error#ContractViolation::t
+   (@class ContractViolation::t
            (Error::t)
            (Error::t StackTrace::t Exception::t object::t t::t)
            ()
@@ -153,7 +143,7 @@ package: gerbil/runtime
    (@mutator ContractViolation::t continuation #f))
   (declare-class
    RuntimeException::t
-   (@class gerbil/runtime/error#RuntimeException::t
+   (@class RuntimeException::t
            (StackTrace::t Exception::t)
            (StackTrace::t Exception::t object::t t::t)
            (exception)

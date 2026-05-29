@@ -2,15 +2,15 @@
 ;;; © vyzo
 ;;; format serializer
 (import :std/error
-	:std/interface
-	:std/io/interface
-	:std/io/bio/api
-	:std/io/bio/cache
-	:std/serde/interface
+        :std/interface
+        :std/io/interface
+        :std/io/bio/api
+        :std/io/bio/cache
+        :std/serde/interface
         :std/serde/serialize
-	:std/iter
+        :std/iter
         ./env
-	./ascii
+        ./ascii
         ./ioutil)
 (export #t)
 
@@ -47,14 +47,14 @@
                    (buffer-write-digits buf i opt.precision)
                    i))
               (i (cond
-		  (opt.width
+                  (opt.width
                    (u8vector-set! buf i (@char->int #\.))
                    (buffer-write-digits buf (fx+ i 1) opt.width))
-		  ((and (flinteger? num) (not (memq #\# opt.flags)))
-		   (u8vector-set! buf i (@char->int #\#))
-		   (u8vector-set! buf (fx+ i 1) (@char->int #\.))
-		   (buffer-write-digits buf (fx+ i 2) 0))
-		  (else i))))
+                  ((and (flinteger? num) (not (memq #\# opt.flags)))
+                   (u8vector-set! buf i (@char->int #\#))
+                   (u8vector-set! buf (fx+ i 1) (@char->int #\.))
+                   (buffer-write-digits buf (fx+ i 2) 0))
+                  (else i))))
          (u8vector-set! buf i opt.flonum-repr)
          (u8vector-set! buf (fx+ i 1) 0)
          buf)))
@@ -110,238 +110,226 @@
 (def (hvector-prefix (v : :hvector)) => :u8vector
   (let (st (##subtype v))
     (:- (##vector-ref __hvector-prefixes (fx- st (##subtype '#s8())))
-	:u8vector)))
+        :u8vector)))
 
 (implement WriteTraits FormatEnv
   (write-delimiter
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-space)))
   (write-field-delimiter
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-space)))
   (write-pair-delimiter
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-dot)))
   (write-anchor-begin
-   (lambda (self writer id env)
+   (lambda (self writer id ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-fixnum-decimal id)
        (writer.write-equal)
        wr)))
   (write-anchor-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      0))
   (write-reference
-   (lambda (self writer id env)
+   (lambda (self writer id ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-fixnum-decimal id)
        (writer.write-sharp)
        wr)))
   (write-object-begin
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-lbrace)
        wr)))
   (write-object-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-rbrace)))
   (write-list-begin
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (do-write (wr 0)
        (writer.write-lparen)
        wr)))
   (write-list-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-rparen)))
   (write-class
-   (lambda (self writer klass env)
+   (lambda (self writer klass ctx)
      (do-format-style format-class self.opt
        (writer.write-symbol/quote klass.id)
        (writer.write-symbol/quote klass.name))))
   (write-slot
-   (lambda (self writer slot env)
+   (lambda (self writer slot ctx)
      (writer.write-symbol/quote slot)
      (writer.write-colon)))
   (write-char
-   (lambda (self writer char env)
+   (lambda (self writer char ctx)
      (do-format-style format-char self.opt
        (do-write (wr 0)
-	 (writer.write-sharp)
-	 (writer.write-backslash)
-	 (let (aint (char->integer char))
+         (writer.write-sharp)
+         (writer.write-backslash)
+         (let (aint (char->integer char))
            (try-ascii-special-char aint
-	     (lambda ((asci :- ascii-special-char-info)) => :fixnum
-		(if asci.char-esc?
-		  (do-format-char-ascii-names format-char self.opt
-		    (if asci.char-scm-name
-		      (writer.write-symbol/raw asci.char-scm-name)
-		      (writer.write-char-utf8 char))
-		    (if asci.char-std-name
-		      (writer.write-symbol/raw asci.char-std-name)
-		      (writer.write-char-utf8 char)))
-		  (writer.write-char-utf8 char)))
-	     (writer.write-char-utf8 char)))
-	 wr)
+             (lambda ((asci :- ascii-special-char-info)) => :fixnum
+                (if asci.char-esc?
+                  (do-format-char-ascii-names format-char self.opt
+                    (if asci.char-scm-name
+                      (writer.write-symbol/raw asci.char-scm-name)
+                      (writer.write-char-utf8 char))
+                    (if asci.char-std-name
+                      (writer.write-symbol/raw asci.char-std-name)
+                      (writer.write-char-utf8 char)))
+                  (writer.write-char-utf8 char)))
+             (writer.write-char-utf8 char)))
+         wr)
        (writer.write-char-utf8 char))))
   (write-boolean
-   (lambda (self writer bool env)
+   (lambda (self writer bool ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-u8 (if bool (@char->int #\t) (@char->int #\f)))
        wr)))
   (write-special
-   (lambda (self writer atom env)
+   (lambda (self writer atom ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-bang)
        (let (sym
-	     (cond
-	      ((void? atom)            'void)
-	      ((eof-object? atom)      'eof)
-	      ((unbound-object? atom)  'unbound)
-	      ((unbound2-object? atom) 'unbound2)
-	      ((unused-object? atom)   'unused)
-	      ((deleted-object? atom)  'deleted)
-	      ((absent-object? atom)   'absent)
-	      ((dssl-key? atom)        'key)
-	      ((dssl-optional? atom)   'optional)
-	      ((dssl-rest? atom)       'rest)
-	      (else                    'unknown)))
-	 (writer.write-interned-symbol sym))
+             (cond
+              ((void? atom)            'void)
+              ((eof-object? atom)      'eof)
+              ((unbound-object? atom)  'unbound)
+              ((unbound2-object? atom) 'unbound2)
+              ((unused-object? atom)   'unused)
+              ((deleted-object? atom)  'deleted)
+              ((absent-object? atom)   'absent)
+              ((dssl-key? atom)        'key)
+              ((dssl-optional? atom)   'optional)
+              ((dssl-rest? atom)       'rest)
+              (else                    'unknown)))
+         (writer.write-interned-symbol sym))
        wr)))
   (write-integer
-   (lambda (self writer int env)
+   (lambda (self writer int ctx)
      (if (fixnum? int)
        (do-write-integer writer int self.opt write-fixnum)
        (do-write-integer writer int self.opt write-bignum))))
   (write-flonum
-   (lambda (self writer num env)
+   (lambda (self writer num ctx)
      (cond
       ((##flfinite? num)
        ;; not nan or infinity
        (writer.format-float num self.opt))
       ((##flinfinite? num)
        (if (##flnegative? num)
-	 (writer.write (@string->utf8 "-inf.0"))
-	 (writer.write (@string->utf8 "+inf.0"))))
-      (else			  ; nan, has no sign (always positive)
+         (writer.write (@string->utf8 "-inf.0"))
+         (writer.write (@string->utf8 "+inf.0"))))
+      (else                       ; nan, has no sign (always positive)
        (writer.write (@string->utf8 "+nan.0"))))))
   (write-ratnum
-   (lambda (self writer num env)
+   (lambda (self writer num ctx)
      (do-write (wr 0)
-       (writer.write-integer (##ratnum-numerator num) env)
+       (writer.write-integer (##ratnum-numerator num) ctx)
        (writer.write-slash)
-       (writer.write-integer (##ratnum-denominator num) env)
+       (writer.write-integer (##ratnum-denominator num) ctx)
        wr)))
   (write-cpxnum
-   (lambda (self writer num env)
+   (lambda (self writer num ctx)
      (let ((real (##cpxnum-real num))
-	   (imag (##cpxnum-imag num)))
+           (imag (##cpxnum-imag num)))
        (do-write (wr 0)
-	 (if (zero? real)
+         (if (zero? real)
            0
-           (writer.serialize real env))
-	 (cond
-	  ((= imag 1)
-	   (do-write (wr 0)
-	     (writer.write-u8 (@char->int #\+))
-	     (writer.write-u8 (@char->int #\i))
-	     wr))
-	  ((= imag -1)
-	   (do-write (wr 0)
-	     (writer.write-u8 (@char->int #\-))
-	     (writer.write-u8 (@char->int #\i))
-	     wr))
-	  (else
-	   (let (env (@format-env env (flags: (format-flag-set #\+ self.opt.flags))))
+           (writer.serialize real ctx))
+         (cond
+          ((= imag 1)
+           (do-write (wr 0)
+             (writer.write-u8 (@char->int #\+))
+             (writer.write-u8 (@char->int #\i))
+             wr))
+          ((= imag -1)
+           (do-write (wr 0)
+             (writer.write-u8 (@char->int #\-))
+             (writer.write-u8 (@char->int #\i))
+             wr))
+          (else
+           (let (ctx (@format-env ctx (flags: (format-flag-set #\+ self.opt.flags))))
 
 	     (do-write (wr 0)
-	       (writer.serialize imag env)
+	       (writer.serialize imag ctx)
 	       (writer.write-u8 (@char->int #\i))
 	       wr))))
 	 wr))))
   (write-symbol
-   (lambda (self writer sym env)
+   (lambda (self writer sym ctx)
      (do-format-style format-symbol self.opt
        (writer.write-symbol/quote sym)
        (writer.write-symbol/raw sym))))
   (write-keyword
-   (lambda (self writer key env)
+   (lambda (self writer key ctx)
      (do-format-style format-keyword self.opt
        (writer.write-keyword/quote key)
        (writer.write-keyword/raw key))))
   (write-string
-   (lambda (self writer str env)
+   (lambda (self writer str ctx)
      (do-format-style format-string self.opt
        (writer.write-string/quote str)
        (writer.write-string-utf8 str))))
   (write-vector-begin
-   (lambda (self writer v env)
+   (lambda (self writer v ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-lparen)
        wr)))
   (write-vector-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-rparen)))
   (write-hvector-begin
-   (lambda (self writer v env)
+   (lambda (self writer v ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write (hvector-prefix v))
        (writer.write-lparen)
        wr)))
   (write-hvector-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-rparen)))
   (write-values-begin
-   (lambda (self writer v env)
+   (lambda (self writer v ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-lbracket)
        wr)))
   (write-values-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (writer.write-rbracket)))
   (write-box-begin
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      (do-write (wr 0)
        (writer.write-sharp)
        (writer.write-ampersand)
        wr)))
   (write-box-end
-   (lambda (self writer env)
+   (lambda (self writer ctx)
      0))
   (write-hash-table
-   (lambda (self writer ht env)
+   (lambda (self writer ht ctx)
      (do-write (wr 0)
-       (env.methods.write-object-begin writer env)
-       (writer.write-object-type (object-class ht) env)
-       (env.methods.write-delimiter writer env)
-       (env.methods.write-object-begin writer env)
-       (writer.write-object-type (class-of (interface-instance-object ht)) env)
-       (env.methods.write-delimiter writer env)
-       (env.methods.write-list-begin writer env)
-       (let (wr-body 0)
-	 (ht.for-each
-	  (lambda (k v)
-            (do-write (wr 0)
-	      (if (fx> wr-body 0)
-		(env.methods.write-delimiter writer env)
-		0)
-              (env.methods.write-list-begin writer env)
-              (writer.serialize k env)
-	      (env.methods.write-delimiter writer env)
-              (env.methods.write-pair-delimiter writer env)
-	      (env.methods.write-delimiter writer env)
-              (writer.serialize v env)
-              (env.methods.write-list-end writer env)
-              (set! wr-body (fx+ wr-body wr)))))
-	 wr-body)
-       (env.methods.write-list-end writer env)
-       (env.methods.write-object-end writer env)
-       (env.methods.write-object-end writer env)
+       (writer.write-sharp)
+       (writer.write-lbrace)
+       (writer.write-object-type (object-class ht) ctx)
+       (writer.write-space)
+       (writer.write-keyword/quote object:)
+       (writer.write-space)
+       (writer.write-sharp)
+       (writer.write-char-utf8 #\:)
+       (writer.write-lbrace)
+       (writer.write-symbol/quote (##type-id (class-of (&interface-instance-object ht))))
+       (writer.write-space)
+       (writer.write-list (hash->list ht) ctx)
+       (writer.write-rbrace)
+       (writer.write-rbrace)
        wr))))

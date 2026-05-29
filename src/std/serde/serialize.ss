@@ -17,52 +17,52 @@
      end)))
 
 (defsyntax-case @serialize ()
-  ((_ obj senv do-object do-anchor do-reference)
-   (with-identifiers ((env             '$env)
-                      (env.written     #'env #'env ".written")
-                      (env.scanned     #'env #'env ".scanned")
-                      (env.scanned.ref #'env #'env ".scanned.ref")
-                      (env.cycles      #'env #'env ".cycles")
-                      (env.cycles.ref  #'env #'env ".cycles.ref")
-                      (env.compress?   #'env #'env ".compress?"))
-     #'(using (env senv :- ScanEnv)
+  ((_ obj sctx do-object do-anchor do-reference)
+   (with-identifiers ((ctx             '$ctx)
+                      (ctx.written     #'ctx #'ctx ".written")
+                      (ctx.scanned     #'ctx #'ctx ".scanned")
+                      (ctx.scanned.ref #'ctx #'ctx ".scanned.ref")
+                      (ctx.cycles      #'ctx #'ctx ".cycles")
+                      (ctx.cycles.ref  #'ctx #'ctx ".cycles.ref")
+                      (ctx.compress?   #'ctx #'ctx ".compress?"))
+     #'(using (ctx sctx :- ScanContext)
          (defrule (has-cycle? obj)
-           (env.cycles.ref obj #f))
+           (ctx.cycles.ref obj #f))
          (cond
-          ((or (not env) (immediate? obj))
+          ((or (not ctx) (immediate? obj))
            (do-object obj))
-          ((hash-get env.written obj)
+          ((hash-get ctx.written obj)
            => (lambda ((id :- :fixnum)) => :fixnum
-                 (if (or env.compress? (has-cycle? obj))
+                 (if (or ctx.compress? (has-cycle? obj))
                    (do-reference id)
                    (do-object obj))))
           ((has-cycle? obj)
            => (lambda ((id :- :fixnum)) => :fixnum
-                 (hash-put! env.written obj id)
+                 (hash-put! ctx.written obj id)
                  (do-anchor obj id)))
-          ((hash-get env.scanned obj)
+          ((hash-get ctx.scanned obj)
            => (lambda (e) => :fixnum
-                 (if env.compress?
+                 (if ctx.compress?
                    (using ((e             :- :pair)
                            (id    (car e) :- :fixnum)
                            (count (cdr e) :- :fixnum))
-                     (hash-put! env.written obj id)
+                     (hash-put! ctx.written obj id)
                      (if (fx> count 1)
                        (do-anchor obj id)
                        (do-object obj)))
                    (using (id e :- :fixnum)
-                     (hash-put! env.written obj id)
+                     (hash-put! ctx.written obj id)
                      (do-object obj)))))
           (else
-           (let (id (scan-object! obj env))
+           (let (id (scan-object! obj ctx))
              (if (fx> id 0)
                (begin
-                 (hash-put! env.written obj id)
+                 (hash-put! ctx.written obj id)
                  (cond
                   ((has-cycle? obj)
                    (do-anchor obj id))
-                  (env.compress?
-                   (using ((e     (env.scanned.ref obj #f) :- :pair)
+                  (ctx.compress?
+                   (using ((e     (ctx.scanned.ref obj #f) :- :pair)
                            (count (cdr e)                  :- :fixnum))
                      (if (fx> count 1)
                        (do-anchor obj id)
@@ -72,83 +72,82 @@
                (do-object obj)))))))))
 
 (defsyntax-case @serialize! ()
-  ((_ writer obj env rule)
+  ((_ writer obj ctx rule)
    (with-identifiers ((do-object    'do-object)
 		      (do-anchor    'do-anchor)
 		      (do-reference 'do-reference)
-		      (env.scan
-		       #'env #'env ".scan")
-		      (env.methods.write-anchor-begin
-		       #'env #'env ".methods.write-anchor-begin")
-		      (env.methods.write-anchor-end
-		       #'env #'env ".methods.write-anchor-end")
-		      (env.methods.write-reference
-		       #'env #'env ".methods.write-reference"))
+		      (ctx.scan
+		       #'ctx #'ctx ".scan")
+		      (ctx.methods.write-anchor-begin
+		       #'ctx #'ctx ".methods.write-anchor-begin")
+		      (ctx.methods.write-anchor-end
+		       #'ctx #'ctx ".methods.write-anchor-end")
+		      (ctx.methods.write-reference
+		       #'ctx #'ctx ".methods.write-reference"))
      #'(let ()
 	 (defrule (do-object obj)
 	   rule)
 	 (defrule (do-anchor obj id)
 	   (do-write (wr 0)
-	     (env.methods.write-anchor-begin writer id env)
+	     (ctx.methods.write-anchor-begin writer id ctx)
 	     (do-object obj)
-	     (env.methods.write-anchor-end writer env)
+	     (ctx.methods.write-anchor-end writer ctx)
 	     wr))
 	 (defrule (do-reference id)
-	   (env.methods.write-reference writer id env))
+	   (ctx.methods.write-reference writer id ctx))
 
-	 (@serialize obj env.scan do-object do-anchor do-reference)))))
+	 (@serialize obj ctx.scan do-object do-anchor do-reference)))))
 
-(defwriter-ext (serialize-raw writer obj (env : WriteEnv))
-  (__object-write obj writer env))
+(defwriter-ext (serialize-raw writer obj (ctx : WriteContext))
+  (__object-write obj writer ctx))
 
-(defwriter-ext (serialize writer obj (env : WriteEnv))
-  (@serialize! writer obj env (writer.serialize-raw obj env)))
+(defwriter-ext (serialize writer obj (ctx : WriteContext))
+  (@serialize! writer obj ctx (writer.serialize-raw obj ctx)))
 
 ;; standard classes
-(defwriter-ext (write-object-type writer (klass : class) (env : WriteEnv))
-  (if (env.allow-class? klass)
-    (@serialize! writer klass env
-      (env.methods.write-class writer klass env))
-    (runtime-contract-violation! serialize (env.allow-class? klass) klass)))
+(defwriter-ext (write-object-type writer (klass : class) (ctx : WriteContext))
+  (if (ctx.allow-class? klass)
+    (@serialize! writer klass ctx
+      (ctx.methods.write-class writer klass ctx))
+    (runtime-contract-violation! serialize (ctx.allow-class? klass) klass)))
 
-(defobject-writer class (write-class writer klass env)
-  (@serialize! writer klass env
+(defobject-writer class (write-class writer klass ctx)
+  (@serialize! writer klass ctx
     (do-write (wr 0)
-      (env.methods.write-object-begin writer env)
-      (writer.write-object-type (class-type klass) env)
-      (env.methods.write-delimiter writer env)
-      (writer.write-object-type klass env)
-      (env.methods.write-object-end writer env)
+      (ctx.methods.write-object-begin writer ctx)
+      (writer.write-object-type (class-type klass) ctx)
+      (writer.write-field 'id (##type-id klass) ctx)
+      (ctx.methods.write-object-end writer ctx)
       wr)))
 
 ;; standard objects
-(defwriter-ext (write-field writer (slot : :symbol) (obj : :t) (env : WriteEnv))
+(defwriter-ext (write-field writer (slot : :symbol) (obj : :t) (ctx : WriteContext))
   (defrule (do-object slot)
-    (env.methods.write-slot writer slot env))
+    (ctx.methods.write-slot writer slot ctx))
   (defrule (do-anchor slot id)
     (do-write (wr 0)
-      (env.methods.write-anchor-begin writer id env)
+      (ctx.methods.write-anchor-begin writer id ctx)
       (do-object slot)
-      (env.methods.write-anchor-end writer env)
+      (ctx.methods.write-anchor-end writer ctx)
       wr))
   (defrule (do-reference id)
-    (env.methods.write-reference writer id env))
+    (ctx.methods.write-reference writer id ctx))
 
   (do-write (wr 0)
-    (env.methods.write-delimiter writer env)
-    (@serialize slot env.scan
+    (ctx.methods.write-delimiter writer ctx)
+    (@serialize slot ctx.scan
       do-object do-anchor do-reference)
-    (env.methods.write-field-delimiter writer env)
-    (writer.serialize obj env)
+    (ctx.methods.write-field-delimiter writer ctx)
+    (writer.serialize obj ctx)
     wr))
 
-(defwriter-ext (write-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (env : WriteEnv))
-  (writer.write-field slot (unchecked-field-ref obj offset) env))
+(defwriter-ext (write-slot writer (obj : :object) (slot : :symbol) (offset : :fixnum) (ctx : WriteContext))
+  (writer.write-field slot (unchecked-field-ref obj offset) ctx))
 
-(defwriter-ext (write-object-slots writer obj (klass : class) (env : WriteEnv))
+(defwriter-ext (write-object-slots writer obj (klass : class) (ctx : WriteContext))
   (let (len (##structure-length obj))
     (if (fx> len 1)
-      (if env.scan.all-slots?
+      (if ctx.scan.all-slots?
         (let (slots (class-type-field-list klass))
           (let loop ((rest slots) (offset 1 :- :fixnum) (wr 0 :- :fixnum))
             => :fixnum
@@ -156,7 +155,7 @@
               ([slot . rest]
                (using (slot :- :symbol)
                  (do-write (wr wr)
-                   (writer.write-slot obj slot offset env)
+                   (writer.write-slot obj slot offset ctx)
                    (loop rest (fx+ offset 1) wr))))
               (else wr))))
 	(let (slots (class-type-printable-slots klass))
@@ -169,100 +168,101 @@
                        (slot   (car spec) :- :symbol)
                        (offset (cdr spec) :- :fixnum))
 		 (do-write (wr wr)
-                   (writer.write-slot obj slot offset env)
+                   (writer.write-slot obj slot offset ctx)
                    (loop rest wr))))
               (else wr)))))
       0)))
 
-(defwriter-ext (write-object-raw writer obj (klass : class) (env : WriteEnv))
+(defwriter-ext (write-object-raw writer obj (klass : class) (ctx : WriteContext))
   (do-write (wr 0)
-    (env.methods.write-object-begin writer env)
-    (writer.write-object-type klass env)
-    (writer.write-object-slots obj klass env)
-    (env.methods.write-object-end writer env)
+    (ctx.methods.write-object-begin writer ctx)
+    (writer.write-object-type klass ctx)
+    (writer.write-object-slots obj klass ctx)
+    (ctx.methods.write-object-end writer ctx)
     wr))
 
-(defobject-writer :object (write-object writer obj env)
+(defobject-writer :object (write-object writer obj ctx)
   (let (klass (object-class obj))
-    (@serialize! writer obj env
-      (writer.write-object-raw obj klass env))))
+    (@serialize! writer obj ctx
+      (writer.write-object-raw obj klass ctx))))
 
-(defwriter-ext (write-interface-instance-raw writer (inst : interface-instance) (env : WriteEnv))
+(defwriter-ext (write-interface-instance-raw writer (inst : interface-instance) (ctx : WriteContext))
   (do-write (wr 0)
-    (env.methods.write-object-begin writer env)
-    (writer.write-object-type (object-class inst) env)
-    (env.methods.write-delimiter writer env)
-    (writer.serialize inst.object env)
-    (env.methods.write-object-end writer env)
+    (ctx.methods.write-object-begin writer ctx)
+    (writer.write-object-type (object-class inst) ctx)
+    (writer.write-field 'object inst.object ctx)
+    (ctx.methods.write-object-end writer ctx)
     wr))
 
-(defobject-writer interface-instance (write-interface-instance writer inst env)
-  (@serialize! writer inst env
-    (writer.write-interface-instance-raw inst env)))
+(defobject-writer interface-instance (write-interface-instance writer inst ctx)
+  (@serialize! writer inst ctx
+    (writer.write-interface-instance-raw inst ctx)))
 
-(defobject-writer HashTable (write-hash-table writer ht env)
-  (@serialize! writer ht env
-    (env.methods.write-hash-table writer ht env)))
+;; hash tables are special cased to accomodate their central
+;; semantics in most serialization protocols.
+(defobject-writer HashTable (write-hash-table writer ht ctx)
+  (@serialize! writer ht ctx
+    (ctx.methods.write-hash-table writer ht ctx)))
 
 ;; builtin objects
-(defobject-writer :builtin (write-builtin-object writer obj env)
+(defobject-writer :builtin (write-builtin-object writer obj ctx)
   (let (klass (class-of obj))
-    (@serialize! writer obj env
+    (@serialize! writer obj ctx
       (do-write (wr 0)
-	(env.methods.write-object-begin writer env)
-	(writer.write-object-type klass env)
-	(env.methods.write-object-end writer env)
+	(ctx.methods.write-object-begin writer ctx)
+	(writer.write-object-type klass ctx)
+	(ctx.methods.write-object-end writer ctx)
 	wr))))
 
-(defobject-writer :char (write-char writer char env)
-  (env.methods.write-char writer char env))
+(defobject-writer :char (write-char writer char ctx)
+  (ctx.methods.write-char writer char ctx))
 
-(defobject-writer :boolean (write-boolean writer bool env)
-  (env.methods.write-boolean writer bool env))
+(defobject-writer :boolean (write-boolean writer bool ctx)
+  (ctx.methods.write-boolean writer bool ctx))
 
-(defobject-writer :special (write-special writer atom env)
-  (env.methods.write-special writer atom env))
+(defobject-writer :special (write-special writer atom ctx)
+  (ctx.methods.write-special writer atom ctx))
 
-(defobject-writer :integer (write-integer writer int env)
-  (@serialize! writer int env
-    (env.methods.write-integer writer int env)))
+(defobject-writer :integer (write-integer writer int ctx)
+  (@serialize! writer int ctx
+    (ctx.methods.write-integer writer int ctx)))
 
-(defobject-writer :flonum (write-flonum writer num env)
-  (@serialize! writer num env
-    (env.methods.write-flonum writer num env)))
+(defobject-writer :flonum (write-flonum writer num ctx)
+  (@serialize! writer num ctx
+    (ctx.methods.write-flonum writer num ctx)))
 
-(defobject-writer :ratnum (write-ratnum writer num env)
-  (@serialize! writer num env
-    (env.methods.write-ratnum writer num env)))
+(defobject-writer :ratnum (write-ratnum writer num ctx)
+  (@serialize! writer num ctx
+    (ctx.methods.write-ratnum writer num ctx)))
 
-(defobject-writer :cpxnum (write-cpxnum writer num env)
-  (@serialize! writer num env
-    (env.methods.write-cpxnum writer num env)))
+(defobject-writer :cpxnum (write-cpxnum writer num ctx)
+  (@serialize! writer num ctx
+    (ctx.methods.write-cpxnum writer num ctx)))
 
-(defobject-writer :symbol (write-symbol writer sym env)
-  (@serialize! writer sym env
-    (env.methods.write-symbol writer sym env)))
+(defobject-writer :symbol (write-symbol writer sym ctx)
+  (@serialize! writer sym ctx
+    (ctx.methods.write-symbol writer sym ctx)))
 
-(defobject-writer :keyword (write-keyword writer sym env)
-  (@serialize! writer sym env
-    (env.methods.write-keyword writer sym env)))
+(defobject-writer :keyword (write-keyword writer sym ctx)
+  (@serialize! writer sym ctx
+    (ctx.methods.write-keyword writer sym ctx)))
 
 (defsyntax-case do-serialize-list ()
-  ((_ (writer env) body rest ...)
+  ((_ (writer ctx) body rest ...)
    (with-syntax ((do-serialize           (syntax-local-introduce 'do-serialize))
                  (do-serialize-raw       (syntax-local-introduce 'do-serialize-raw))
                  (do-serialize-anchor    (syntax-local-introduce 'do-serialize-anchor))
                  (do-serialize-reference (syntax-local-introduce 'do-serialize-reference)))
-     (with-identifiers ((env.methods.write-delimiter
-			 #'env #'env ".methods.write-delimiter")
-			(env.methods.write-pair-delimiter
-			 #'env #'env ".methods.write-pair-delimiter")
-			(env.methods.write-anchor-begin
-			 #'env #'env ".methods.write-anchor-begin")
-			(env.methods.write-anchor-end
-			 #'env #'env ".methods.write-anchor-end")
-			(env.methods.write-reference
-			 #'env #'env ".methods.write-reference")
+     (with-identifiers ((ctx.methods.write-delimiter
+			 #'ctx #'ctx ".methods.write-delimiter")
+			(ctx.methods.write-pair-delimiter
+			 #'ctx #'ctx ".methods.write-pair-delimiter")
+			(ctx.methods.write-anchor-begin
+			 #'ctx #'ctx ".methods.write-anchor-begin")
+			(ctx.methods.write-anchor-end
+			 #'ctx #'ctx ".methods.write-anchor-end")
+			(ctx.methods.write-reference
+			 #'ctx #'ctx ".methods.write-reference")
                         (writer.serialize
 			 #'writer #'writer ".serialize")
                         (writer.serialize-raw
@@ -270,34 +270,34 @@
        #'(let ()
            (defrule (do-serialize obj wr)
              (do-write (wr wr)
-               (env.methods.write-delimiter writer env)
-               (writer.serialize obj env)
+               (ctx.methods.write-delimiter writer ctx)
+               (writer.serialize obj ctx)
                wr))
 
            (defrule (do-serialize-raw obj wr)
              (do-write (wr wr)
-               (env.methods.write-delimiter writer env)
-               (writer.serialize-raw obj env)
+               (ctx.methods.write-delimiter writer ctx)
+               (writer.serialize-raw obj ctx)
                wr))
 
            (defrule (do-serialize-anchor obj id wr)
              (do-write (wr wr)
-	       (env.methods.write-delimiter writer env)
-               (env.methods.write-anchor-begin writer id env)
-               (writer.serialize-raw obj env)
-	       (env.methods.write-anchor-end writer env)
+	       (ctx.methods.write-delimiter writer ctx)
+               (ctx.methods.write-anchor-begin writer id ctx)
+               (writer.serialize-raw obj ctx)
+	       (ctx.methods.write-anchor-end writer ctx)
                wr))
 
            (defrule (do-serialize-reference id wr)
              (do-write (wr wr)
-               (env.methods.write-delimiter writer env)
-               (env.methods.write-reference writer id env)
+               (ctx.methods.write-delimiter writer ctx)
+               (ctx.methods.write-reference writer id ctx)
                wr))
 
            body rest ...)))))
 
-(defobject-writer :list (format-list writer lst env)
-  (do-serialize-list (writer env)
+(defobject-writer :list (write-list writer lst ctx)
+  (do-serialize-list (writer ctx)
     (def (loop rest (wr :- :fixnum))
       => :fixnum
 
@@ -309,15 +309,15 @@
 
       (defrule (do-tail wr continue)
         (do-write (wr wr)
-          (env.methods.write-delimiter writer env)
-          (env.methods.write-pair-delimiter writer env)
+          (ctx.methods.write-delimiter writer ctx)
+          (ctx.methods.write-pair-delimiter writer ctx)
           continue
-          (env.methods.write-list-end writer env)
+          (ctx.methods.write-list-end writer ctx)
           wr))
 
       (cond
        ((pair? rest)
-        (@serialize rest env.scan
+        (@serialize rest ctx.scan
                     (lambda (obj) => :fixnum
                        (do-loop obj))
                     (lambda (obj id) => :fixnum
@@ -328,11 +328,11 @@
                          (do-serialize-reference id wr)))))
        ((null? rest)
         (do-write (wr wr)
-	  (env.methods.write-list-end writer env)
+	  (ctx.methods.write-list-end writer ctx)
           wr))
        (else
         (do-tail wr
-          (@serialize rest env.scan
+          (@serialize rest ctx.scan
                       (lambda (obj) => :fixnum
                          (do-serialize-raw obj wr))
                       (lambda (obj id) => :fixnum
@@ -341,249 +341,197 @@
                          (do-serialize-reference id wr)))))))
 
     (if (pair? lst)
-      (@serialize lst env.scan
+      (@serialize lst ctx.scan
                   (lambda (obj) => :fixnum
 		     (do-write (wr 0)
-		       (env.methods.write-list-begin writer env)
-		       (writer.serialize-raw (car obj) env)
+		       (ctx.methods.write-list-begin writer ctx)
+		       (writer.serialize-raw (car obj) ctx)
 		       (loop (cdr obj) 0)
 		       wr))
                   (lambda (obj id) => :fixnum
 		     (do-write (wr 0)
-		       (env.methods.write-anchor-begin writer id env)
-		       (env.methods.write-list-begin writer env)
-		       (writer.serialize-raw (car obj) env)
+		       (ctx.methods.write-anchor-begin writer id ctx)
+		       (ctx.methods.write-list-begin writer ctx)
+		       (writer.serialize-raw (car obj) ctx)
 		       (loop (cdr obj) 0)
-		       (env.methods.write-anchor-end writer env)
+		       (ctx.methods.write-anchor-end writer ctx)
 		       wr))
                   (lambda (id) => :fixnum
-		     (env.methods.write-reference writer id env)))
+		     (ctx.methods.write-reference writer id ctx)))
       (do-write (wr 0)
-	(env.methods.write-list-begin writer env)
-	(env.methods.write-list-end writer env)
+	(ctx.methods.write-list-begin writer ctx)
+	(ctx.methods.write-list-end writer ctx)
 	wr))))
 
-(defobject-writer :string (write-string writer str env)
-  (@serialize! writer str env
-    (env.methods.write-string writer str env)))
+(defobject-writer :string (write-string writer str ctx)
+  (@serialize! writer str ctx
+    (ctx.methods.write-string writer str ctx)))
 
 (defsyntax-case do-write-vector ()
-  ((_ writer v env write-begin write-end v-length v-ref)
+  ((_ writer v ctx write-begin write-end v-length v-ref)
    (with-identifiers ((writer.serialize
 		       #'writer #'writer ".serialize")
-		      (env.methods.write-begin
-		       #'env #'env ".methods." #'write-begin)
-		      (env.methods.write-end
-		       #'env #'env ".methods." #'write-end)
-		      (env.methods.write-delimiter
-		       #'env #'env ".methods.write-delimiter"))
+		      (ctx.methods.write-begin
+		       #'ctx #'ctx ".methods." #'write-begin)
+		      (ctx.methods.write-end
+		       #'ctx #'ctx ".methods." #'write-end)
+		      (ctx.methods.write-delimiter
+		       #'ctx #'ctx ".methods.write-delimiter"))
      #'(do-write (wr 0)
-         (env.methods.write-begin writer v env)
+         (ctx.methods.write-begin writer v ctx)
          (let* ((len   (:- (v-length v) :fixnum))
                 (len-1 (fx- len 1)))
            (let loop ((i 0 :- :fixnum) (wr wr :- :fixnum)) => :fixnum
                 (cond
                  ((fx< i len-1)
                   (do-write (wr wr)
-                    (writer.serialize (v-ref v i) env)
-                    (env.methods.write-delimiter writer env)
+                    (writer.serialize (v-ref v i) ctx)
+                    (ctx.methods.write-delimiter writer ctx)
                     (loop (fx+ i 1) wr)))
                  ((fx< i len)
-		  (writer.serialize (v-ref v i) env))
+		  (writer.serialize (v-ref v i) ctx))
                  (else 0))))
-	 (env.methods.write-end writer env)
+	 (ctx.methods.write-end writer ctx)
          wr))))
 
-(defobject-writer :vector (write-vector writer v env)
-  (@serialize! writer v env
-    (do-write-vector writer v env
+(defobject-writer :vector (write-vector writer v ctx)
+  (@serialize! writer v ctx
+    (do-write-vector writer v ctx
                      write-vector-begin
 		     write-vector-end
                      ##vector-length
                      ##vector-ref)))
 
-(defobject-writer :values (write-values writer v env)
-  (@serialize! writer v env
-    (do-write-vector writer v env
+(defobject-writer :values (write-values writer v ctx)
+  (@serialize! writer v ctx
+    (do-write-vector writer v ctx
                      write-values-begin
 		     write-values-end
                      ##values-length
                      ##values-ref)))
 
 (defsyntax-case do-write-hvector ()
-  ((_ writer v env v-length v-ref write-method)
-   (with-identifiers ((env.methods.write-method
-		       #'env #'env ".methods." #'write-method)
-		      (env.methods.write-begin
-		       #'env #'env ".methods.write-hvector-begin")
-		      (env.methods.write-end
-		       #'env #'env ".methods.write-hvector-end")
-		      (env.methods.write-delimiter
-		       #'env #'env ".methods.write-delimiter"))
+  ((_ writer v ctx v-length v-ref write-method)
+   (with-identifiers ((ctx.methods.write-method
+		       #'ctx #'ctx ".methods." #'write-method)
+		      (ctx.methods.write-begin
+		       #'ctx #'ctx ".methods.write-hvector-begin")
+		      (ctx.methods.write-end
+		       #'ctx #'ctx ".methods.write-hvector-end")
+		      (ctx.methods.write-delimiter
+		       #'ctx #'ctx ".methods.write-delimiter"))
      #'(do-write (wr 0)
-         (env.methods.write-begin writer v env)
+         (ctx.methods.write-begin writer v ctx)
          (let* ((len   (:- (v-length v) :fixnum))
                 (len-1 (fx- len 1)))
            (let loop ((i 0 :- :fixnum) (wr wr :- :fixnum)) => :fixnum
                 (cond
                  ((fx< i len-1)
                   (do-write (wr wr)
-                    (env.methods.write-method writer (v-ref v i) env)
-                    (env.methods.write-delimiter writer env)
+                    (ctx.methods.write-method writer (v-ref v i) ctx)
+                    (ctx.methods.write-delimiter writer ctx)
                     (loop (fx+ i 1) wr)))
                  ((fx< i len)
-		  (env.methods.write-method writer (v-ref v i) env))
+		  (ctx.methods.write-method writer (v-ref v i) ctx))
                  (else 0))))
-	 (env.methods.write-end writer env)
+	 (ctx.methods.write-end writer ctx)
          wr))))
 
-(defobject-writer :u8vector (write-u8vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :u8vector (write-u8vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##u8vector-length
                    ##u8vector-ref
                    write-integer))
 
-(defobject-writer :u16vector (write-u16vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :u16vector (write-u16vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##u16vector-length
                    ##u16vector-ref
                    write-integer))
 
-(defobject-writer :u32vector (write-u32vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :u32vector (write-u32vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##u32vector-length
                    ##u32vector-ref
                    write-integer))
 
-(defobject-writer :u64vector (write-u64vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :u64vector (write-u64vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##u64vector-length
                    ##u64vector-ref
                    write-integer))
 
-(defobject-writer :s8vector (write-s8vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :s8vector (write-s8vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##s8vector-length
                    ##s8vector-ref
                    write-integer))
 
-(defobject-writer :s16vector (write-s16vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :s16vector (write-s16vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##s16vector-length
                    ##s16vector-ref
                    write-integer))
 
-(defobject-writer :s32vector (write-s32vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :s32vector (write-s32vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##s32vector-length
                    ##s32vector-ref
                    write-integer))
 
-(defobject-writer :s64vector (write-s64vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :s64vector (write-s64vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##s64vector-length
                    ##s64vector-ref
                    write-integer))
 
-(defobject-writer :f32vector (write-f32vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :f32vector (write-f32vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##f32vector-length
                    ##f32vector-ref
                    write-flonum))
 
-(defobject-writer :f64vector (write-f64vector writer v env)
-  (do-write-hvector writer v env
+(defobject-writer :f64vector (write-f64vector writer v ctx)
+  (do-write-hvector writer v ctx
                    ##f64vector-length
                    ##f64vector-ref
                    write-flonum))
 
-(defobject-writer :box (write-box writer v env)
-  (@serialize! writer v env
+(defobject-writer :box (write-box writer v ctx)
+  (@serialize! writer v ctx
     (do-write (wr 0)
-      (env.methods.write-box-begin writer env)
-      (writer.serialize (unbox v) env)
-      (env.methods.write-box-end writer env)
+      (ctx.methods.write-box-begin writer ctx)
+      (writer.serialize (unbox v) ctx)
+      (ctx.methods.write-box-end writer ctx)
       wr)))
 
-(defobject-writer :promise (write-promise writer v env)
-  (@serialize! writer v env
-    (writer.serialize (force v) env)))
+(defobject-writer :promise (write-promise writer v ctx)
+  (@serialize! writer v ctx
+    (writer.serialize (force v) ctx)))
 
-;; this is to dump stack traces effectively
-(defwriter-ext (write-continuation-raw writer (cont : :continuation) (env : WriteEnv))
-  (do-write (wr 0)
-    (env.methods.write-object-begin writer env)
-    (writer.write-object-type continuation::t env)
-    (env.methods.write-delimiter writer env)
-    (env.methods.write-list-begin writer env)
-    (let loop ((cont  (##continuation-first-frame cont #f))
-               (last   #f)
-               (depth  0)
-               (space? #f)
-               (wr     0 :- :fixnum))
-      => :fixnum
-      (cond
-       (cont
-        (let (creator (##continuation-creator cont))
-          (if (and creator (eq? last creator))
-            (loop (##continuation-next-frame cont #f)
-                  last
-                  (fx+ depth 1)
-                  space?
-                  wr)
-            (do-write (wr wr)
-              (if space?
-                (env.methods.write-delimiter writer env)
-                0)
-              (cond
-               ((and creator (##procedure-name creator))
-                => (lambda (name)
-                     => :fixnum
-                     (writer.serialize name env)))
-               (else
-                (env.methods.write-symbol writer '? env)))
-              (loop (##continuation-next-frame cont #f)
-                    creator
-                    (fx+ depth 1)
-                    #t
-                    wr)))))
-       (cont
-        (do-write (wr wr)
-          (if space?
-            (env.methods.write-delimiter writer env)
-            0)
-          (env.methods.write-symbol writer '... env)
-          wr))
-       (else wr)))
-    (env.methods.write-list-end writer env)
-    (env.methods.write-object-end writer env)
-    wr))
-
-(defobject-writer :continuation (write-continuation writer cont env)
-  (@serialize! writer cont env
-    (writer.write-continuation-raw cont env)))
-
-(defobject-writer :procedure (write-procedure writer proc env)
-  (@serialize! writer proc env
+(defobject-writer :procedure (write-procedure writer proc ctx)
+  (@serialize! writer proc ctx
     (do-write (wr 0)
-      (env.methods.write-object-begin writer env)
-      (writer.write-object-type procedure::t env)
-      (env.methods.write-delimiter writer env)
-      (writer.serialize (##procedure-name proc) env)
-      (env.methods.write-object-end writer env)
+      (ctx.methods.write-object-begin writer ctx)
+      (writer.write-object-type procedure::t ctx)
+      (let (name (##procedure-name proc))
+	(if name
+	  (writer.write-field 'name name ctx)
+	  0))
+      (ctx.methods.write-object-end writer ctx)
       wr)))
 
-(defobject-writer :foreign (write-foreign writer obj env)
-  (@serialize! writer obj env
+(defobject-writer :foreign (write-foreign writer obj ctx)
+  (@serialize! writer obj ctx
   (do-write (wr 0)
-    (env.methods.write-object-begin writer env)
-    (writer.write-object-type foreign::t env)
-    (env.methods.write-delimiter writer env)
-    (writer.serialize (##foreign-tags obj) env)
-    (env.methods.write-object-end writer env)
+    (ctx.methods.write-object-begin writer ctx)
+    (writer.write-object-type foreign::t ctx)
+    (ctx.methods.write-delimiter writer ctx)
+    (writer.serialize (##foreign-tags obj) ctx)
+    (ctx.methods.write-object-end writer ctx)
     wr)))
 
-(defobject-writer :structure (write-structure writer obj env)
+(defobject-writer :structure (write-structure writer obj ctx)
   (let (klass (class-of obj))
-    (@serialize! writer obj env
-      (writer.write-object-raw obj klass env))))
+    (@serialize! writer obj ctx
+      (writer.write-object-raw obj klass ctx))))

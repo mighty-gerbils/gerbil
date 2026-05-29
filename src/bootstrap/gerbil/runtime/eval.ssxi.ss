@@ -4,17 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-class
    __syntax::t
-   (@class gerbil/runtime/eval#__syntax::t
-           ()
-           (object::t t::t)
-           (e id)
-           (e id)
-           #f
-           #t
-           #f
-           #f
-           #f
-           #f))
+   (@class __syntax::t () (object::t t::t) (e id) (e id) #f #t #f #f #f #f))
   (declare-type
    __syntax::t
    (optimizer-resolve-class '(typedecl __syntax::t) 'class::t))
@@ -30,7 +20,7 @@ package: gerbil/runtime
   (declare-type &__syntax-id-set! (@mutator __syntax::t id #f))
   (declare-class
    __core-form::t
-   (@class gerbil/runtime/eval#__core-form::t
+   (@class __core-form::t
            (__syntax::t)
            (__syntax::t object::t t::t)
            ()
@@ -56,7 +46,7 @@ package: gerbil/runtime
   (declare-type &__core-form-id-set! (@mutator __core-form::t id #f))
   (declare-class
    __core-expression::t
-   (@class gerbil/runtime/eval#__core-expression::t
+   (@class __core-expression::t
            (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()
@@ -86,7 +76,7 @@ package: gerbil/runtime
    (@mutator __core-expression::t id #f))
   (declare-class
    __core-special-form::t
-   (@class gerbil/runtime/eval#__core-special-form::t
+   (@class __core-special-form::t
            (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()

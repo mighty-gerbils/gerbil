@@ -46,10 +46,13 @@ namespace: gx
   print: (id))
 
 (defstruct (root-context expander-context) ())
-(defstruct (phi-context  expander-context) (super up down))
+(defstruct (phi-context  expander-context) (super up down)
+  print: ())
 (defstruct (top-context phi-context) ())
-(defstruct (module-context top-context) (ns path import export e code))
-(defstruct (prelude-context top-context) (path import e))
+(defstruct (module-context top-context) (ns path import export e code)
+  print: ())
+(defstruct (prelude-context top-context) (path import e)
+  print: ())
 (defstruct (local-context phi-context) ())
 
 (defmethod {:init! phi-context}
@@ -62,7 +65,7 @@ namespace: gx
 
 ;; bindings
 (defstruct binding (id key phi properties)
-  transparent: #t
+  print: (id)
   constructor: :init!)
 
 (defmethod {:init! binding}
@@ -73,15 +76,12 @@ namespace: gx
 
 ;; runtime bindings
 (defstruct (runtime-binding binding) (type macro)
-  transparent: #t)
-(defstruct (local-binding runtime-binding) ()
-  transparent: #t)
-(defstruct (top-binding runtime-binding) ()
-  transparent: #t)
+  print: ())
+(defstruct (local-binding runtime-binding) ())
+(defstruct (top-binding runtime-binding) ())
 (defstruct (module-binding top-binding) (context)
-  transparent: #t)
-(defstruct (extern-binding top-binding) ()
-  transparent: #t)
+  print: ())
+(defstruct (extern-binding top-binding) ())
 
 (defmethod {:init! runtime-binding}
   binding:::init!)
@@ -98,11 +98,11 @@ namespace: gx
 
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
-  final: #t transparent: #t)
+  final: #t print: ())
 (defstruct (import-binding binding) (e context weak?)
-  final: #t transparent: #t)
+  final: #t print: ())
 (defstruct (alias-binding binding) (e)
-  final: #t transparent: #t)
+  final: #t print: (e))
 
 (defmethod {:init! syntax-binding}
   (lambda (self id key phi e)
@@ -120,10 +120,12 @@ namespace: gx
     (set! self.e e)))
 
 ;; expanders [syntax-binding-e]
-(defstruct expander (e))
+(defstruct expander (e)
+  print: ())
 
 ;; core syntax
-(defstruct (core-expander expander) (id compile-top))
+(defstruct (core-expander expander) (id compile-top)
+  print: (id))
 ;; expressions
 (defstruct (expression-form core-expander) ())
 ;; special forms
@@ -143,8 +145,10 @@ namespace: gx
 (defstruct (rename-macro-expander macro-expander) ())
 
 ;; user macros  -- [phi displaced] mark algebra
-(defstruct (user-expander macro-expander) (context phi))
-(defstruct expander-mark (subst context phi trace))
+(defstruct (user-expander macro-expander) (context phi)
+  print: ())
+(defstruct expander-mark (subst context phi trace)
+  print: ())
 
 ;; syntax errors
 (extern namespace: #f make-syntax-error)
@@ -449,6 +453,10 @@ namespace: gx
 
 (defmethod {apply-macro-expander top-special-form}
   (lambda (self stx (top? top-context?))
+    (when (and __DEBUG-EXPANDER __DEBUG-VERBOSE)
+      (displayln "@expand " (syntax->datum stx))
+      (force-output))
+
     (if (top? (current-expander-context))
       (core-expander::apply-macro-expander self stx)
       (raise-syntax-error #f "Bad syntax; illegal context" stx))))
@@ -465,10 +473,10 @@ namespace: gx
          (core-cons id body))))))
 
 (def (core-apply-user-expander self stx (method 'apply-macro-expander))
-  ;; expander debugging support
   (when __DEBUG-EXPANDER
     (displayln "@expand " (syntax->datum stx))
     (force-output))
+
   (with ((user-expander K ctx phi) self)
     (core-apply-user-macro K stx ctx phi method)))
 
@@ -605,6 +613,10 @@ namespace: gx
           (else
            (gensubst subst id)))))
       (else key)))
+
+  (when (and __DEBUG-EXPANDER __DEBUG-VERBOSE)
+    (displayln "@bind " key)
+    (force-output))
 
   (core-context-bind! (core-context-shift ctx phi)
                       (subst! key) val

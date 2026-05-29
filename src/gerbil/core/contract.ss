@@ -1808,6 +1808,10 @@ package: gerbil/core
                       ((defmethod-impl ...)
                        (map (make-method-defs #'name)
                             #'(method ...)))
+                      (defdescriptor
+                        #'(def descriptor
+                            (begin-annotation (@interface klass-quoted (method-name ...))
+                              (make-interface-descriptor klass '(method-name-spec ...))))) ; constructor (none)
                       (defklass
                         #'(def klass
                             (begin-annotation (@mop.class klass-type-id
@@ -1818,12 +1822,10 @@ package: gerbil/core
                                                'name          ; name
                                                [interface-instance::t] ; super
                                                '(method-name ...) ; direct slots
-                                               '((final: . #t) (struct: . #t)) ; plist
-                                               #f)))) ; constructor (none)
-                      (defdescriptor
-                        #'(def descriptor
-                            (begin-annotation (@interface klass-quoted (method-name ...))
-                              (make-interface-descriptor klass '(method-name-spec ...)))))
+					       '((final: . #t) (struct: . #t)) ; plist
+                                               #f))))
+		      (putdesc
+		       #'(class-type-properties-put! klass interface-descriptor: descriptor))
                       (defmake
                         #'(def (make obj)
                             (begin-annotation (@type.signature return: klass-quoted
@@ -1867,7 +1869,7 @@ package: gerbil/core
                              unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]
                              implementation-macros: [(quote-syntax macro-impl-name) ...]
                              unchecked-implementation-macros: [(quote-syntax unchecked-macro-impl-name) ...]))))
-         #'(begin defklass defdescriptor defmake deftry-make defpred defpred-instance definfo
+         #'(begin defklass defdescriptor putdesc defmake deftry-make defpred defpred-instance definfo
                   defmethod-impl ...)))))
 
   ;; syntax for defining interface (extension) methods
@@ -3377,9 +3379,10 @@ package: gerbil/core
                             []))
                        ((values properties)
                         (let* ((properties
-                                (if (stx-e (stx-getq transparent: body))
-                                  [[transparent: . #t]]
-                                  []))
+				(cond
+				 ((stx-getq transparent: body)
+				  => (lambda (ts) [[transparent: ::  (stx-e ts)]]))
+				 (else [])))
                                (properties
                                 (cond
                                  ((stx-e (stx-getq print: body))

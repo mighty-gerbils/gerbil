@@ -119,7 +119,7 @@
            (set! opt.integer-alphabet alphabet)
            (set! opt.integer-gits     width))))
    (else
-     (raise-contract-violation set-integer-conversion! "integer base" base: base))))
+    (raise-contract-violation set-integer-conversion! "integer base" base: base))))
 
 (def __integer-conversions
   [[#\b #\b __alphabet-binary  1]
@@ -133,27 +133,27 @@
 (defsyntax-case do-format-option ()
   ((_ where opt slot option ...)
    (with-identifier (opt.slot #'opt #'opt "." #'slot)
-     (with-syntax
-         (((clause ...)
-           (map (lambda (option)
-                  (syntax-case option ()
-                    ((format-option expr)
-                     (identifier? #'format-option)
-                     #'((fx= opt.slot format-option)
-                        expr))
-                    (((format-option ...) expr)
-                     (andmap identifier? #'(format-option ...))
-                     #'((or (fx= opt.slot format-option) ...)
-                        expr))))
-                #'(option ...)))
-          (contract-string
-           (string-append "format." (symbol->string (stx-e #'slot))))
-          (slot-key (symbol->keyword (stx-e #'elot))))
-         #'(cond
-            clause ...
-            (else
-             (raise-contract-violation where contract-string
-                                       slot-key opt.slot)))))))
+                    (with-syntax
+                        (((clause ...)
+                          (map (lambda (option)
+                                 (syntax-case option ()
+                                   ((format-option expr)
+                                    (identifier? #'format-option)
+                                    #'((fx= opt.slot format-option)
+                                       expr))
+                                   (((format-option ...) expr)
+                                    (andmap identifier? #'(format-option ...))
+                                    #'((or (fx= opt.slot format-option) ...)
+                                       expr))))
+                               #'(option ...)))
+                         (contract-string
+                          (string-append "format." (symbol->string (stx-e #'slot))))
+                         (slot-key (symbol->keyword (stx-e #'elot))))
+                      #'(cond
+                         clause ...
+                         (else
+                          (raise-contract-violation where contract-string
+                                                    slot-key opt.slot)))))))
 
 (defrules do-format-style ()
   ((_ where opt do-format-write do-format-display do-format-debug)
@@ -206,8 +206,8 @@
 (def (format-options (opt (current-format-opt))) => FormatOpt
   (: (or opt (force __default-format-opt)) FormatOpt))
 
-(def (format-environment (opt : FormatOpt := (format-options))) => WriteEnv
-  (WriteEnv
+(def (format-context (opt : FormatOpt := (format-options))) => WriteContext
+  (WriteContext
    (let* ((compress?
            (do-format-compress FormatEnv:::init! opt #f #t))
           (scan?
@@ -216,7 +216,7 @@
           (allow-cycles?
            (do-format-cycles FormatEnv:::init! opt #f #f #t)))
      (and scan?
-	  (ScanEnv allow-cycles? compress? (fx= opt.style FORMAT-DEBUG))))
+	  (ScanContext allow-cycles? compress? (fx= opt.style FORMAT-DEBUG))))
    (WriteTraits (FormatEnv opt))
    opt.allow-class?))
 
@@ -233,7 +233,7 @@
      #'(using ((fenv (interface-instance-object env.methods) : FormatEnv)
 	       (xopt (struct-copy fenv.opt) :- FormatOpt))
          (setf! xopt value) ...
-	 (WriteEnv env.scan (WriteTraits (FormatEnv xopt)) xopt.allow-class?)))))
+	 (WriteContext env.scan (WriteTraits (FormatEnv xopt)) xopt.allow-class?)))))
 
 (defsyntax-case @format-env ()
   ((_ env (slot value) ...)
@@ -277,8 +277,8 @@
   ((_ (slot value) ...)
    (andmap stx-keyword? #'(slot ...))
    (with-identifier (env     '$senv)
-     #'(let (env (FormatEnv (format-options)))
-         (@format-env env (slot value) ...)))))
+                    #'(let (env (FormatEnv (format-options)))
+                        (@format-env env (slot value) ...)))))
 
 (def (format-flag-set flag flags)
   (if flags
@@ -286,3 +286,40 @@
       flags
       (cons flag flags))
     [flag]))
+
+;; reader environment
+(defclass ReaderOpt
+  ((bracket    :- :symbol)		; macro symbol for [] or #f
+   (brace      :- :symbol)		; macro symbol for {} or #f
+   (quote      :- :symbol)		; macro symbol for ' or #f
+   (quasiquote :- :symbol)		; macro symbol for ` or #f
+   (unquote    :- :symbol)		; macro symbol for , or #f
+   (unquote-splicing :- :symbol)		; macro symbol for ,@ or #f
+   (syntax      :- :symbol)		; macro symbol for #' or #f
+   (quasisyntax :- :symbol)		; macro symbol for #` or #f
+   (unsyntax    :- :symbol)		; macro symbol for #, or #f
+   (unsyntax-splicing :- :symbol)		; macro symbol for #,@ or #f
+   )
+  final: #t)
+
+(defclass ReaderEnv
+  ((ctx       :- ReadContext)
+   (opt       :- ReaderOpt)
+   (sharp     :- :vector))
+  transparent: #f
+  final: #t)
+
+(defsyntax-case @derive-reader-env ()
+  ((_ env (slot val) ...)
+   (with-identifiers ((xenv '$env)
+		      (xopt '$opt)
+		      (env.opt #'env #'env "." #'opt)
+		      (xenv.opt #'xenv #'xenv "." #'opt))
+     (with-syntax (((xopt.slot ...)
+		    (map (lambda (slot) (stx-identifier #'xopt #'xopt "." slot))
+			 #'(slot ...))))
+       #'(using ((xenv (##structure-copy env) :- ReaderEnv)
+	         (xopt (##structure-copy env.opt) :- ReaderOpt))
+	   (set! xenv.opt xopt)
+	   (set! xopt.slot (:? val :symbol)) ...
+	   xenv)))))

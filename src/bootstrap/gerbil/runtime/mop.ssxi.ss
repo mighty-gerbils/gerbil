@@ -626,6 +626,41 @@ package: gerbil/runtime
              origin:
              gerbil/runtime/mop)))
   (declare-type
+   __class-type-properties-lock
+   (optimizer-resolve-class
+    '(typedecl __class-type-properties-lock)
+    'vector::t))
+  (declare-type
+   __class-type-properties-put!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
+   class-type-properties-put!
+   (@lambda 3
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             (class::t keyword::t t::t)
+             unchecked:
+             __class-type-properties-put!
+             origin:
+             gerbil/runtime/mop)))
+  (declare-type
    __class-type-printable-slots
    (@lambda 1
             #f

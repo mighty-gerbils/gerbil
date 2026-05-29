@@ -13,9 +13,9 @@ namespace: gx
 (def __module-pkg-cache (make-hash-table))
 
 (defstruct module-import (source name phi weak?)
-  final: #t print: #t)
+  final: #t print: (name))
 (defstruct module-export (context key phi name weak?)
-  final: #t transparent: #t)
+  final: #t print: (name))
 
 (defstruct import-set (source phi imports)
   final: #t print: (source phi))
@@ -67,7 +67,7 @@ namespace: gx
 
 (def (import-export-expander-init! self e)
   (struct-instance-init! self
-      e (current-expander-context) (fx1- (current-expander-phi))))
+                         e (current-expander-context) (fx1- (current-expander-phi))))
 
 (defmethod {:init! import-expander}
   import-export-expander-init!)
@@ -295,7 +295,7 @@ namespace: gx
               => (lambda (xport)
                    (let (proc
                          (with-catch void
-                           (cut eval-syntax (binding-id (core-resolve-module-export xport)))))
+                                     (cut eval-syntax (binding-id (core-resolve-module-export xport)))))
                      (if (procedure? proc) proc
                          (raise-syntax-error #f
                            "Illegal #lang prelude; read-module-body is not a procedure"
@@ -523,11 +523,11 @@ namespace: gx
 
 (def (core-bound-prelude? stx)
   (core-bound-identifier? stx
-    (cut expander-binding? <> prelude-context?)))
+                          (cut expander-binding? <> prelude-context?)))
 
 (def (core-bound-module? stx)
   (core-bound-identifier? stx
-    (cut expander-binding? <> module-context?)))
+                          (cut expander-binding? <> module-context?)))
 
 (def (core-bound-module-prelude? stx)
   (def (module-prelude? e)
@@ -535,18 +535,18 @@ namespace: gx
         (prelude-context? e)))
 
   (core-bound-identifier? stx
-    (cut expander-binding? <> module-prelude?)))
+                          (cut expander-binding? <> module-prelude?)))
 
 (def (core-bind-import! in
                         (ctx (current-expander-context))
                         (force-weak? #f))
   (with ((module-import source key phi weak?) in)
     (core-bind! key
-      (let (e (core-resolve-module-export source))
-        (make-import-binding (&binding-id e) key phi
-                             e (&module-export-context source)
-                             (or force-weak? weak?)))
-      core-context-rebind? phi ctx)))
+                (let (e (core-resolve-module-export source))
+                  (make-import-binding (&binding-id e) key phi
+                                       e (&module-export-context source)
+                                       (or force-weak? weak?)))
+                core-context-rebind? phi ctx)))
 
 (def (core-bind-weak-import! in (ctx (current-expander-context)))
   (core-bind-import! in ctx #t))
@@ -644,12 +644,31 @@ namespace: gx
 
 (def (core-expand-module-body body)
   (def (expand-special hd K rest r)
-    (core-syntax-case hd (%#define-values %#export)
+    (core-syntax-case hd (%#define-values
+			  %#bind-runtime-properties!
+			  %#export)
+      ((%#define-values hd-bind expr . props)
+       (and (core-bind-values? hd-bind)
+	    (stx-list? props)
+	    (not (stx-null? props)))
+       (begin
+	 (core-bind-values! hd-bind)
+	 (K (cons (core-cons '%#bind-runtime-properties!
+		             [hd-bind props])
+		  rest)
+	    (cons (core-cons '%#define-values
+		             [hd-bind expr])
+		  r))))
       ((%#define-values hd-bind expr)
        (core-bind-values? hd-bind)
        (begin
          (core-bind-values! hd-bind)
          (K rest (cons hd r))))
+      ;; TODO generalize for multi-value properties
+      ((%#bind-runtime-properties! (id) props)
+       (let (bind (resolve-identifier id))
+	 (core-bind-runtime-properties! bind props)
+	 (K rest r)))
       ((%#export . _)
        (K rest (cons hd r)))
       (else
@@ -665,8 +684,8 @@ namespace: gx
                 (cons
                  (core-quote-syntax
                   (core-list '%#define-values
-                    (core-quote-bind-values hd-bind)
-                    (core-expand-expression expr))
+                             (core-quote-bind-values hd-bind)
+                             (core-expand-expression expr))
                   (stx-source hd))
                  body)))
            ((%#export . _)
@@ -761,8 +780,8 @@ namespace: gx
                     (current-expander-phi)))
       (K rest
          (cons (make-import-set ctx dphi
-                 (map (cut core-module-export->import <> #f dphi)
-                      (&module-context-export ctx)))
+                                (map (cut core-module-export->import <> #f dphi)
+                                     (&module-context-export ctx)))
                r))))
 
   (def (import-submodule hd K rest r)
@@ -805,13 +824,13 @@ namespace: gx
                          (name (core-identifier-key name)))
                      (cond
                       ((hash-get exports (cons src-phi src-name))
-                     => (lambda (out)
-                          (cons (core-module-export->import
-                                 out name (fx- phi src-phi))
-                                r)))
-                    (else
-                     (raise-syntax-error #f "Bad syntax; no matching export"
-                                         stx hd)))))))
+                       => (lambda (out)
+                            (cons (core-module-export->import
+                                   out name (fx- phi src-phi))
+                                  r)))
+                      (else
+                       (raise-syntax-error #f "Bad syntax; no matching export"
+                                           stx hd)))))))
               r specs))))))
 
   (def (import-spec-source spath)
@@ -999,10 +1018,10 @@ namespace: gx
            (foldl (lambda (in r) (cons (import->export in) r))
                   r imports)
            r))
-      (else r)))
+        (else r)))
 
     (cons (make-export-set src current-phi
-            (foldl fold-e [] (&module-context-import current-ctx)))
+                           (foldl fold-e [] (&module-context-import current-ctx)))
           r))
 
   (def (export! rbody)
@@ -1061,6 +1080,6 @@ namespace: gx
                          (phi (current-expander-phi))
                          (ctx (current-expander-context)))
   (core-bind-syntax! id
-    ((if private? make-private-feature-expander make-feature-expander)
-     (stx-e id))
-    private? phi ctx))
+                     ((if private? make-private-feature-expander make-feature-expander)
+                      (stx-e id))
+                     private? phi ctx))

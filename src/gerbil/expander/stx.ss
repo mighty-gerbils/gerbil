@@ -13,13 +13,16 @@ namespace: gx
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 (defstruct (syntax-wrap AST) (mark)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 (defstruct (syntax-quote AST) (context marks)
   name:  syntax
-  final: #t)
+  final: #t
+  print: ())
 
 ;; primitive operations
 (def (identifier? stx)

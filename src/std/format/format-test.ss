@@ -212,6 +212,12 @@
       (check
        (format '"%a" '#(a b c))
        => "#(a b c)")
+      (let (x (vector #f 'b 'c))
+	(vector-set! x 0 x)
+	(check
+	 (format '"%a" x)
+	 =>
+	 "#0=#(#0# b c)"))
       (check
        (format '"%a" (values 'a 'b 'c))
        => "#[a b c]")
@@ -275,14 +281,14 @@
       (check
        (format '"%s" c)
        =>
-       "#{std/format/format-test#C::t #{std/format/format-test#A::t b: #f}}"))
+       "#{std/format/format-test#C::t object: #{std/format/format-test#A::t b: #f}}"))
     (test-case "format hashes"
       (check
        (format '"%a" (make-hash-1-2))
-       => "#{HashTable #{hash-table ((a . 1) (b . 2))}}")
+       => "#{HashTable object: #:{hash-table::t ((b . 2) (a . 1))}}")
       (check
        (format '"%s" (make-hash-1-2))
-       => "#{gerbil/runtime/hash#HashTable::t #{hash-table::t ((a . 1) (b . 2))}}"))))
+       => "#{HashTable::t object: #:{hash-table::t ((b . 2) (a . 1))}}"))))
 
 (def print-test
   (test-suite "printing"

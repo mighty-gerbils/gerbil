@@ -214,6 +214,20 @@ namespace: #f
           class-type-seal!
           macro:
           @class-type-seal!)
+         (%#define-runtime
+          __class-type-properties-lock
+          __class-type-properties-lock)
+         (%#define-syntax
+          @class-type-properties-put!
+          |[:0:]#@class-type-properties-put!|)
+         (%#define-runtime
+          __class-type-properties-put!
+          __class-type-properties-put!)
+         (%#define-runtime
+          class-type-properties-put!
+          class-type-properties-put!
+          macro:
+          @class-type-properties-put!)
          (%#define-syntax
           @class-type-printable-slots
           |[:0:]#@class-type-printable-slots|)

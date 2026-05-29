@@ -173,7 +173,8 @@ namespace: #f
 ;;; ASTs
 (defstruct AST (e source)
   id:   gerbil#AST::t ;; FIXME
-  name: syntax)
+  name: syntax
+  print: (e))
 
 (define (__AST-e stx)
   (if (AST? stx)

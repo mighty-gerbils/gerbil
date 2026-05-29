@@ -1562,6 +1562,7 @@ package: gerbil/core
     class-type-slot-vector
     class-type-slot-table
     class-type-properties
+    class-type-properties-put!
     class-type-constructor
     class-type-methods
     &class-type-id

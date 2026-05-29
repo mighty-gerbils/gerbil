@@ -5,84 +5,83 @@
 	./scan)
 (export #t)
 
-(defrule (defscanner klass (self env path) body ...)
+(defrule (defscanner klass (self ctx path) body ...)
   (begin
     (defmethod {scan! klass}
-      (lambda (self env path)
+      (lambda (self ctx path)
 	body ...)
       interface: ObjectScanner)
     (@implement ObjectScanner klass)))
 
-(defscanner :builtin (self env path)
+(defscanner :builtin (self ctx path)
   #!void)
 
-(def (scan-object-slots klass obj (env : ScanEnv) (path : :list))
+(def (scan-object-slots klass obj (ctx : ScanContext) (path : :list))
   (let (len (##structure-length obj))
     (when (fx> len 1)
-      (if env.all-slots?
+      (if ctx.all-slots?
 	(let (slots (class-type-field-list klass))
           (let loop ((rest slots) (offset 1 :- :fixnum))
 	    => :void ;; TODO BUG this should be unnecessary
 	    (unless (null? rest)
 	      (scan-object! (##structure-ref obj offset klass #f)
-			    env path)
+			    ctx path)
 	      (loop (##cdr rest) (fx1+ offset)))))
 	(let (slots (class-type-printable-slots klass))
 	  (let loop ((rest slots))
 	    (match rest
 	      ([[_ . offset] . rest]
 	       (scan-object! (##structure-ref obj offset klass #f)
-			     env path)
+			     ctx path)
 	       (loop rest))
 	      (else (void)))))))))
 
-(defscanner class (self env path)
-  (scan-object! (##type-id self) env path))
+(defscanner class (self ctx path)
+  (scan-object! (##type-id self) ctx path))
 
-(defscanner :object (self env path)
+(defscanner :object (self ctx path)
   (let (klass (object-class self))0
-    (scan-object! klass env path)
-    (scan-object-slots klass self env path)))
+    (scan-object! klass ctx path)
+    (scan-object-slots klass self ctx path)))
 
-(defscanner interface-instance (self env path)
-  (scan-object! (object-class self) env path)
-  (scan-object! self.object env path))
+(defscanner interface-instance (self ctx path)
+  (scan-object! (object-class self) ctx path)
+  (scan-object! self.object ctx path))
 
-(defscanner HashTable (self env path)
+(defscanner HashTable (self ctx path)
   (self.for-each
    (lambda (k v)
-     (scan-object! k env path)
-     (scan-object! v env path))))
+     (scan-object! k ctx path)
+     (scan-object! v ctx path))))
 
-(defscanner :structure (self env path)
+(defscanner :structure (self ctx path)
   (let (klass (class-of self))
-    (scan-object! klass env path)
-    (scan-object-slots klass self env path)))
+    (scan-object! klass ctx path)
+    (scan-object-slots klass self ctx path)))
 
-(defscanner :pair (self env path)
-  (scan-object! (car self) env path)
-  (scan-object! (cdr self) env path))
+(defscanner :pair (self ctx path)
+  (scan-object! (car self) ctx path)
+  (scan-object! (cdr self) ctx path))
 
-(defrule (do-scan-vector v env path len ref)
+(defrule (do-scan-vector v ctx path len ref)
   (let (size (len v))
     (let loop ((i 0 :- :fixnum))
       (when (fx< i size)
-	(scan-object! (ref v i) env path)
+	(scan-object! (ref v i) ctx path)
 	(loop (fx1+ i))))))
 
-(defscanner :vector (self env path)
-  (do-scan-vector self env path
+(defscanner :vector (self ctx path)
+  (do-scan-vector self ctx path
 		  ##vector-length
 		  ##vector-ref))
 
-(defscanner :values (self env path)
-  (do-scan-vector self env path
+(defscanner :values (self ctx path)
+  (do-scan-vector self ctx path
 		  ##values-length
 		  ##values-ref))
 
-(defscanner :box (self env path)
-  (scan-object! (unbox self) env path))
+(defscanner :box (self ctx path)
+  (scan-object! (unbox self) ctx path))
 
-(defscanner :promise (self env path)
-  (scan-object! (force self) env path))
-
+(defscanner :promise (self ctx path)
+  (scan-object! (force self) ctx path))

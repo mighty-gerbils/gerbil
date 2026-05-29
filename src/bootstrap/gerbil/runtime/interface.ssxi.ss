@@ -4,7 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-class
    CastError::t
-   (@class gerbil/runtime/interface#CastError::t
+   (@class CastError::t
            (Error::t)
            (Error::t StackTrace::t Exception::t object::t t::t)
            ()
@@ -77,7 +77,7 @@ package: gerbil/runtime
   (declare-type interface-cast-error? (@predicate CastError::t))
   (declare-class
    interface-instance::t
-   (@class gerbil/runtime/interface#interface-instance::t
+   (@class interface-instance::t
            ()
            (object::t t::t)
            (object)
@@ -107,7 +107,7 @@ package: gerbil/runtime
    (@mutator interface-instance::t object #f))
   (declare-class
    interface-descriptor::t
-   (@class gerbil/runtime/interface#interface-descriptor::t
+   (@class interface-descriptor::t
            ()
            (object::t t::t)
            (type methods index)
@@ -201,7 +201,7 @@ package: gerbil/runtime
              gerbil/runtime/interface)))
   (declare-class
    prototype-table::t
-   (@class gerbil/runtime/interface#prototype-table::t
+   (@class prototype-table::t
            ()
            (object::t t::t)
            (lock table)

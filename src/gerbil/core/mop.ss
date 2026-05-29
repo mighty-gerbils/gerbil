@@ -22,8 +22,7 @@ package: gerbil/core
        ((module-context-ns (current-expander-context))
         => (lambda (ns) (stx-identifier type-t ns "#" type-t "::t")))
        (else
-        (let (mid (expander-context-id (current-expander-context)))
-          (stx-identifier type-t mid "#" type-t "::t")))))
+        (stx-identifier type-t type-t "::t"))))
 
     (def (make-class-type-id type-t)
       (if (module-context? (current-expander-context))
@@ -185,7 +184,7 @@ package: gerbil/core
   (defclass-type runtime-type-info::t ()
     make-runtime-type-info
     runtime-type-info?
-    id: gerbil.core#runtime-type-info::t
+    id: gerbil/core#runtime-type-info::t
     name: runtime-type-info
     properties: '((print: name))
     slots:
@@ -202,7 +201,7 @@ package: gerbil/core
   (defclass-type meta-object::t ()
     make-meta-object
     meta-object?
-    id: gerbil.core#meta-object::t
+    id: gerbil/core#meta-object::t
     name: meta-object
     slots:
     ((methods meta-object-methods meta-object-methods-set!)))
@@ -211,7 +210,7 @@ package: gerbil/core
   (defclass-type class-type-info::t (runtime-type-info::t meta-object::t)
     make-class-type-info
     class-type-info?
-    id: gerbil.core#class-type-info::t
+    id: gerbil/core#class-type-info::t
     name: class-type-info
     properties: '((print: name))
     mixin:
@@ -314,7 +313,7 @@ package: gerbil/core
   ;; meta-circular
   (defsyntax runtime-type-info
     (make-class-type-info
-     id: 'gerbil.core#runtime-type-info::t
+     id: 'gerbil/core#runtime-type-info::t
      name: 'runtime-type-info
      super: []
      slots: '(id name type-descriptor)
@@ -340,7 +339,7 @@ package: gerbil/core
 
   (defsyntax meta-object
     (make-class-type-info
-     id: 'gerbil.core#meta-object::t
+     id: 'gerbil/core#meta-object::t
      name: 'meta-object
      super: []
      slots: '(methods)
@@ -358,7 +357,7 @@ package: gerbil/core
 
   (defsyntax class-type-info
     (make-class-type-info
-     id: 'gerbil.core#class-type-info::t
+     id: 'gerbil/core#class-type-info::t
      name: 'class-type-info
      super: [(quote-syntax runtime-type-info) (quote-syntax meta-object)]
      slots: '(super slots
@@ -572,9 +571,10 @@ package: gerbil/core
                           []))
                      ((values properties)
                       (let* ((properties
-                              (if (stx-e (stx-getq transparent: body))
-                                [[transparent: . #t]]
-                                []))
+				(cond
+				 ((stx-getq transparent: body)
+				  => (lambda (ts) [[transparent: ::  (stx-e ts)]]))
+				 (else [])))
                              (properties
                               (cond
                                ((stx-e (stx-getq print: body))

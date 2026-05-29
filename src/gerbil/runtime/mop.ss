@@ -228,11 +228,24 @@ namespace: #f
               precedence-list)
     ht)
 
-  (let* ((transparent? (agetq transparent: properties))
-         (all-slots-printable? (or transparent? (eq? #t (agetq print: properties))))
-         (printable (and (not all-slots-printable?) (make-props! print:)))
-         (all-slots-equalable? (or transparent? (eq? #t (agetq equal: properties))))
-         (equalable (and (not all-slots-equalable?) (make-props! equal:)))
+  (def (has-no-alist-override? key alist)
+    (cond
+     ((agetq key alist) => (cut eq? <> #t))
+     (else #t)))
+
+  (let* ((transparent?
+	  (agetq transparent: properties
+                 (if type-super
+                   (not (type-opaque? type-super))
+                   #t)))
+         (all-slots-printable?
+          (and transparent? (has-no-alist-override? print: properties)))
+         (printable
+          (and (not all-slots-printable?) (make-props! print:)))
+         (all-slots-equalable?
+          (and transparent? (has-no-alist-override? equal: properties)))
+         (equalable
+	  (and (not all-slots-equalable?) (make-props! equal:)))
          (first-new-field
           (if (class-type? type-super)
             (##vector-length (class-type-slot-vector type-super))
@@ -247,9 +260,7 @@ namespace: #f
               (error "metaclass is not a class type" class: type-id metaclass: metaclass))
             metaclass))
          (system? (agetq system: properties))
-         (opaque?
-          (and (not (or transparent? (agetq equal: properties)))
-               (or (not type-super) (type-opaque? type-super))))
+         (opaque? (not transparent?))
          (acyclic? (agetq acyclic: properties))
          (type-flags
           (##fxior type-flag-id type-flag-concrete
@@ -272,9 +283,8 @@ namespace: #f
       (when (##fx< j field-info-length)
         (let* ((slot (##vector-ref slot-vector i))
                (flags
-                (if transparent? 5
-                    (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 1 0)
-                             (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 4 0)))))
+                (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 0 1)
+                         (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 0 4))))
           (vector-set! field-info j slot)
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
@@ -299,20 +309,16 @@ namespace: #f
 	;; track the subclass in super properties
 	(for-each
 	  (lambda (super)
-	    (cond
-	     ((&class-type-properties super)
-	      => (lambda (props)
-		   (cond
-		    ((assq subclasses: props)
-		     => (lambda (subclasses)
-			  (set-cdr! subclasses
-				    (cons klass (cdr subclasses)))))
-		    (else
-		     (set! (&class-type-properties super)
-		       (cons [subclasses: klass] props))))))
-	     (else
-	      (set! (&class-type-properties super)
-		[[subclasses: klass]]))))
+	    (__do-inline-lock! __class-type-properties-lock
+			       (let (props (&class-type-properties super))
+				 (cond
+				  ((assq subclasses: props)
+				   => (lambda (subclasses)
+					(set-cdr! subclasses
+						  (cons klass (cdr subclasses)))))
+				  (else
+				   (set! (&class-type-properties super)
+				     (cons [subclasses: klass] props)))))))
 	  (agetq direct-supers: properties []))
 	klass))))
 
@@ -412,6 +418,16 @@ namespace: #f
                               3 class::t class-type-seal!)
   (void))
 
+;; TODO this should be per class lock; ok for now, but not SMP scalable
+(def __class-type-properties-lock (__make-inline-lock))
+
+(def (class-type-properties-put! (klass : :class) (key : :keyword) val)
+  (__do-inline-lock! __class-type-properties-lock
+    (let (props (&class-type-properties klass))
+      (unless (assq key props)
+	(set! (&class-type-properties klass)
+	  (cons (cons key val) props))))))
+
 ;; extract an alist of (symbol . index) for the printable slots of a class descriptor,
 ;; sorted by increasing index.
 (def (class-type-printable-slots (klass : :class)) => :list
@@ -436,17 +452,15 @@ namespace: #f
             (if (fx= (fxand slot-flags 1) 0) ;; printable flag
               (loop next-i
                     (fx+ offset 1)
-                    r)
+                    (cons (cons slot-name offset) r))
               (loop next-i
                     (fx+ offset 1)
-                    (cons (cons slot-name offset) r))))
+                    r)))
           (reverse! r)))))
 
   (def (get-printable-slots! klass type)
     (let (printable (get-printable-slot-alist type))
-      (set! (class-type-properties klass)
-        (cons (cons printable-slots: printable)
-              (class-type-properties klass)))
+      (class-type-properties-put! klass printable-slots: printable)
       printable))
 
   (let (props (class-type-properties klass))
@@ -1073,7 +1087,7 @@ namespace: #f
     ;;       rebinding (to support repl development)
     (when (and rebind? (&class-type-interface klass))
       (set! (&class-type-interface klass) #f))
-    
+
     ;; subclasses also need to be flushed
     (cond
      ((&class-type-properties klass)
@@ -1083,7 +1097,7 @@ namespace: #f
 	     =>
 	     (lambda (subclasses)
 	       (for-each flush-caches! subclasses))))))))
-    
+
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)

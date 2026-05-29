@@ -123,7 +123,11 @@ namespace: gx
     (%#set!             expr:    ,core-expand-setq%
                         ,core-compile-top-setq%)
     (%#expression       expr:    ,core-expand-expression%
-                        #f)))
+                        #f)
+    ;; binding properties
+    (%#bind-runtime-properties!
+     special: ,core-expand-bind-runtime-properties%
+     #f)))
 
 (def *core-macro-expanders*
   `((begin            => %#begin)

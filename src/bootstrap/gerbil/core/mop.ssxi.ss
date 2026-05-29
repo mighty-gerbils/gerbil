@@ -49,7 +49,7 @@ package: gerbil/core
              gerbil/core/mop~MOP-1)))
   (declare-class
    gerbil/core/mop~MOP-2#runtime-type-info::t
-   (@class gerbil.core#runtime-type-info::t
+   (@class gerbil/core#runtime-type-info::t
            ()
            (object::t t::t)
            (id name type-descriptor)
@@ -109,7 +109,7 @@ package: gerbil/core
    (@mutator gerbil/core/mop~MOP-2#runtime-type-info::t type-descriptor #f))
   (declare-class
    gerbil/core/mop~MOP-2#meta-object::t
-   (@class gerbil.core#meta-object::t
+   (@class gerbil/core#meta-object::t
            ()
            (object::t t::t)
            (methods)
@@ -145,7 +145,7 @@ package: gerbil/core
    (@mutator gerbil/core/mop~MOP-2#meta-object::t methods #f))
   (declare-class
    gerbil/core/mop~MOP-2#class-type-info::t
-   (@class gerbil.core#class-type-info::t
+   (@class gerbil/core#class-type-info::t
            (gerbil/core/mop~MOP-2#runtime-type-info::t
             gerbil/core/mop~MOP-2#meta-object::t)
            (gerbil/core/mop~MOP-2#runtime-type-info::t

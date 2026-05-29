@@ -269,6 +269,12 @@ build_stdlib () {
   (cd std && gxi ./build.ss) || die
 }
 
+debug_stdlib () {
+  pushd std
+  gdb gxi ./build.ss
+  popd
+}
+
 build_libgerbil () {
   feedback_low "Building libgerbil"
   gxi ./build/build-libgerbil.ss || die
@@ -362,6 +368,9 @@ else
          ;;
        "stdlib")
          build_stdlib || die
+         ;;
+       "stdlib-debug")
+         debug_stdlib || die
          ;;
        "libgerbil")
          build_libgerbil || die

@@ -4,7 +4,7 @@
 (import :std/interface)
 (export #t)
 
-(defstruct ScanEnv
+(defstruct ScanContext
   ((written       :- HashTable)
    (scanned       :- HashTable)
    (cycles        :- HashTable)
@@ -16,9 +16,9 @@
   final: #t)
 
 (interface ObjectScanner
-  (scan! (env : ScanEnv) (path : :list)) => :void)
+  (scan! (ctx : ScanContext) (path : :list)) => :void)
 
-(defmethod {:init! ScanEnv}
+(defmethod {:init! ScanContext}
   (lambda (self allow-cycles? compress? all-slots?)
     (set! self.written (make-hash-table-eq))
     (set! self.scanned (make-hash-table-eq))
@@ -28,50 +28,50 @@
     (set! self.compress? compress?)
     (set! self.all-slots? all-slots?)))
 
-(def (reset-scan-env! (env : ScanEnv))
-  (env.written.clear!)
-  (env.scanned.clear!)
-  (env.cycles.clear!)
-  (set! env.next 1))
+(def (reset-scan-ctx! (ctx : ScanContext))
+  (ctx.written.clear!)
+  (ctx.scanned.clear!)
+  (ctx.cycles.clear!)
+  (set! ctx.next 1))
 
-(def (scan-object! obj (env : ScanEnv) (path [] : :list)) => :fixnum
+(def (scan-object! obj (ctx : ScanContext) (path [] : :list)) => :fixnum
   (cond
-   ((or (and env.compress? (immediate? obj))
+   ((or (and ctx.compress? (immediate? obj))
 	(acyclic-object? obj))
     -1)
-   ((hash-get env.scanned obj)
+   ((hash-get ctx.scanned obj)
     => (lambda (e) => :fixnum
-          (if env.compress?
+          (if ctx.compress?
             (using ((e             :- :pair)
                     (id    (car e) :- :fixnum)
                     (count (cdr e) :- :fixnum))
               (set! (cdr e) (fx1+ count))
-              (unless (env.cycles.ref obj #f)
+              (unless (ctx.cycles.ref obj #f)
                 (when (memq obj path)
-                  (if env.allow-cycles?
-                    (env.cycles.set! obj id)
+                  (if ctx.allow-cycles?
+                    (ctx.cycles.set! obj id)
                     (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
               id)
             (using (id e :- :fixnum)
-              (unless (env.cycles.ref obj #f)
+              (unless (ctx.cycles.ref obj #f)
                 (when (memq obj path)
                   ;; it's a cycle
-                  (if env.allow-cycles?
-                    (env.cycles.set! obj id)
+                  (if ctx.allow-cycles?
+                    (ctx.cycles.set! obj id)
                     (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
               id))))
      (else
-      (let (id env.next)
-        (set! env.next (fx1+ id))
-        (hash-put! env.scanned obj (if env.compress? (cons id 1) id))
-        (apply-object-scanner obj env (cons obj path))
+      (let (id ctx.next)
+        (set! ctx.next (fx1+ id))
+        (hash-put! ctx.scanned obj (if ctx.compress? (cons id 1) id))
+        (apply-object-scanner obj ctx (cons obj path))
         id))))
 
-(def (apply-object-scanner obj (env : ScanEnv) (path : :list)) => :void
-  (__object-scan! obj env path))
+(def (apply-object-scanner obj (ctx : ScanContext) (path : :list)) => :void
+  (__object-scan! obj ctx path))
 
 (defcall-interface-method ObjectScanner scan!
-  (__object-scan! obj env path))
+  (__object-scan! obj ctx path))
 
 (def (acyclic-object? obj)
   (or (immediate? obj)

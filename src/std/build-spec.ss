@@ -71,10 +71,12 @@
     ;;"io/bio/message"
     "io/bio/api"
 
+    "hash-table"
     "serde/interface"
     "serde/scan"
     "serde/scanner"
     "serde/serialize"
+    "serde/deserialize"
     ;;"serde/opaque"
     "serde/interned"
 
@@ -85,9 +87,11 @@
     "format/env"
     "format/ioutil"
     "format/writer"
+    (gxc: "format/reader" ,@(include-gambit-sharp))
     "format/io"
     "format/format"
     "format/api"
+    "format/reader-test-support"
 
     ;; TODO
 

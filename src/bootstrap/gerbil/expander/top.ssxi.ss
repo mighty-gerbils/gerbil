@@ -153,6 +153,21 @@ package: gerbil/expander
              origin:
              gerbil/expander/top)))
   (declare-type
+   gx#core-expand-bind-runtime-properties%
+   (@lambda 1
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/expander/top)))
+  (declare-type
    gx#core-bind-runtime-properties!
    (@lambda 2
             #f

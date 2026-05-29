@@ -131,3 +131,7 @@ namespace: gx
 (def __DEBUG-EXPANDER
   (and (string? __DEBUG)
        (string-contains __DEBUG "expansion")))
+
+(def __DEBUG-VERBOSE
+  (and (string? __DEBUG)
+       (string-contains __DEBUG "verbose")))

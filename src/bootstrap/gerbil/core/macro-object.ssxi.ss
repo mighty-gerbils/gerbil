@@ -4,7 +4,7 @@ package: gerbil/core
 (begin
   (declare-class
    gerbil/core/macro-object#macro-object::t
-   (@class gerbil.core#macro-object::t
+   (@class gerbil/core#macro-object::t
            ()
            (object::t t::t)
            (macro)

@@ -4,7 +4,7 @@ package: gerbil/runtime
 (begin
   (declare-class
    SyntaxError::t
-   (@class gerbil/runtime/syntax#SyntaxError::t
+   (@class SyntaxError::t
            (Exception::t StackTrace::t)
            (Exception::t StackTrace::t object::t t::t)
            (message irritants where context phi marks)

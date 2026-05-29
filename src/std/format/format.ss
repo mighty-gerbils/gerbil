@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; formaters
+;;; formatters
 (import :std/error
         :std/io/interface
         :std/io/bio/api
@@ -13,46 +13,46 @@
         ./io)
 (export #t)
 
-(defstruct Formater
+(defstruct Formatter
   ((fmt   :- :string)
-   (env   :- WriteEnv))
+   (env   :- WriteContext))
   final: #t)
 
-(def (make-formater (fmt                       :  :string)
-                    (env  (format-environment) :  WriteEnv))
-  => Formater
-  (Formater fmt env))
+(def (make-formatter (fmt                   :  :string)
+                    (ctx  (format-context) :  WriteContext))
+  => Formatter
+  (Formatter fmt ctx))
 
-(def (apply-formater (fmt : Formater) . args)
+(def (apply-formatter (fmt : Formatter) . args)
   => :string
   (let* ((writer (open-buffered-writer #f very-small-buffer-size))
          (folder (make-folder-for-writer fmt writer)))
-    (formater-fold folder fmt.fmt args)
+    (formatter-fold folder fmt.fmt args)
     (get-memory-output-string-utf8 writer)))
 
-(def (apply-formater-to-output (fmt : Formater) output . args)
+(def (apply-formatter-to-output (fmt : Formatter) output . args)
   => :fixnum
   (cond
    ((try-BufferedWriter output)
     => (lambda ((writer :- BufferedWriter))
          => :fixnum
          (let (folder (make-folder-for-writer fmt writer))
-           (formater-fold folder fmt.fmt args))))
+           (formatter-fold folder fmt.fmt args))))
    (else
     (let* ((writer (open-buffered-writer output very-small-buffer-size))
            (folder (make-folder-for-writer fmt writer)))
       (begin0
-          (formater-fold folder fmt.fmt args)
+          (formatter-fold folder fmt.fmt args)
         (__bio-output-buffer-detach! writer))))))
 
-(def (formater-fold (folder : FormatFolder)
+(def (formatter-fold (folder : FormatFolder)
 		    (fmt    : :string)
                     (args   : :list))
   => :fixnum
   (: (fold-format-string folder fmt 0 args)
      :fixnum))
 
-(def (make-folder-for-writer (fmt : Formater) (writer : BufferedWriter)) => FormatFolder
+(def (make-folder-for-writer (fmt : Formatter) (writer : BufferedWriter)) => FormatFolder
   (let ((fold-char
          (lambda ((char   :- :char)
              (result :- :fixnum))

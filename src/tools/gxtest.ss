@@ -59,7 +59,7 @@
   (let* ((files   (collect-files args))
          (allow   (if filter
                     (let (rx (pregexp filter))
-                      (lambda (sym) (pregexp-match rx (symbol->string sym))))
+                      (lambda (sym) (pregexp-match rx (if (symbol? sym) (symbol->string sym) sym))))
                     (lambda (sym) #t)))
          (harness (prepare-harness files allow verbosity))
          (result  (test-run! harness)))

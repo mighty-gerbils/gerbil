@@ -29,7 +29,7 @@
          interface: Interface)
        ...
        (@implement Interface klass)))
-   ((_ (Interface (klass (method proc) ...) ...) ...)
+  ((_ (Interface (klass (method proc) ...) ...) ...)
    (and (andmap syntax-local-interface-info? #'(Interface ...))
         (andmap (cut andmap syntax-local-runtime-type-info? <>)
                 #'((klass ...) ...)))
@@ -40,20 +40,24 @@
            (syntax-case rest ()
              (((Interface . klass-method-procs) . rest)
               (loop #'rest
-                     (foldl
-                       (lambda (klass-method-procs methods)
-                         (with-syntax (((klass . method-procs) klass-method-procs))
-                           (foldl
-                             (lambda (method-proc methods)
-                               (with-syntax (((method proc) method-proc))
-                                 (cons #'(defmethod {method klass}
-                                           proc
-                                           interface: Interface)
-                                       methods)))
-                             methods #'method-procs)))
-                       methods #'klass-method-procs)))
+                    (foldl
+                      (lambda (klass-method-procs methods)
+                        (with-syntax (((klass . method-procs) klass-method-procs))
+                          (foldl
+                            (lambda (method-proc methods)
+                              (with-syntax (((method proc) method-proc))
+                                (cons #'(defmethod {method klass}
+                                          proc
+                                          interface: Interface)
+                                      methods)))
+                            methods #'method-procs)))
+                      methods #'klass-method-procs)))
              (_ (reverse! methods))))))
-     #'(begin methods ... (@implement Interface klass ...) ...))))
+     #'(begin methods ... (@implement Interface klass ...) ...)))
+  ((_ Interface (klass (method proc) ...) ...)
+   (and (syntax-local-interface-info? #'Interface)
+	(andmap syntax-local-runtime-type-info? #'(klass ...)))
+   #'(implement (Interface (klass (method proc) ...) ...))))
 
 (defsyntax-case @interface-descriptor ()
   ((_ Interface)
@@ -181,3 +185,17 @@
                 (@interface-method-offset Interface method)
                 arg ...))
         Type))))
+
+;; A "class interface" is a meta interface that applies on the class,
+;; meaning methods are invoked with a nil/#f receiver (the prototype
+;; has none).
+;; which in Gerbil's object system means "just grab the prototype"...
+;; USE WITH CARE.
+(def (class-interface-prototype (klass          : class)
+				(descriptor     : interface-descriptor)
+				(instance-class : class))
+  (let (tab (class-type-interface-table klass))
+    (cond
+     ((__prototype-table-get tab descriptor))
+     (else
+      (create-prototype descriptor instance-class klass)))))

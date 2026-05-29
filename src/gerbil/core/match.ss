@@ -16,7 +16,7 @@ package: gerbil/core
 
 (begin-syntax
   (defclass (match-macro macro-object) ()
-    id: gerbil.core#match-macro::t)
+    id: gerbil/core#match-macro::t)
 
   (def (syntax-local-match-macro? stx)
     (and (identifier? stx)
