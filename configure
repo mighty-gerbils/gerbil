@@ -80,7 +80,7 @@ std_disable_feature() {
 package_out_of_tree() {
     local pkg="$1"
     echo "*** ERROR package ${pkg} has been moved out of the master Gerbil tree"
-    echo "It is now available as an external package: github.com/mighty-gerbils/gerbil-${pkg}"
+    echo "It is now available as an external package: git.cons.io/mighty-gerbils/gerbil-${pkg}"
 }
 
 readonly gerbil_targets=""

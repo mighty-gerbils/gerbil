@@ -14,7 +14,7 @@ Gerbil provides two options for web server programming:
 
 ## A Simple Embedded Web Server
 
-The [embedded server](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default to localhost:8080
+The [embedded server](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default to localhost:8080
 and handles 3 request URLs:
 - `/` which greets the requestor
 - `/echo` which echoes back the body of the request
@@ -23,8 +23,8 @@ and handles 3 request URLs:
 
 ### Preliminaries
 
-The source code for the embedded web server tutorial is available at [src/tutorial/httpd](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd).
-You can build the code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd/build.ss):
+The source code for the embedded web server tutorial is available at [src/tutorial/httpd](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd).
+You can build the code using the [build script](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd/build.ss):
 ```
 $ cd gerbil/src/tutorial/httpd
 $ gerbil build
@@ -273,7 +273,7 @@ For dynamic programming the server provides two options:
 
 ### A simple site
 
-So let's create a simple site for the purposes of this tutorial; the code is in [src/tutorial/advanced-ensemble/site](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble/site).
+So let's create a simple site for the purposes of this tutorial; the code is in [src/tutorial/advanced-ensemble/site](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble/site).
 
 So here is the site layout:
 ```

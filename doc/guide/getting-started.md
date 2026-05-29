@@ -14,7 +14,7 @@ variable; in fact you should not set this unless you have special
 requirements.
 :::
 
-* Clone the repo from [github](https://github.com/mighty-gerbils/gerbil)
+* Clone the repo from [git.cons.io](https://git.cons.io/mighty-gerbils/gerbil)
 
 * Install dependencies
 
@@ -120,7 +120,7 @@ Usage: gxpkg new [command-option ...]
 Command Options:
  -p --package <package>           The package prefix for your project; defaults to the current username [default: vyzo]
  -n --name <name>                 The package name; defaults to the current directory name [default: hello-world]
- -l --link <link>                 Optionally link this package with a public package name; for example: github.com/your-user/your-package [default: #f]
+ -l --link <link>                 Optionally link this package with a public package name; for example: git.cons.io/your-user/your-package [default: #f]
 
 $ gerbil new -n hello
 
@@ -405,28 +405,28 @@ Here are some examples:
 ```shell
 # Search for packages
 $ gerbil pkg search
-github.com/mighty-gerbils/gerbil-crypto: Cryptography beyond OpenSSL
-github.com/mighty-gerbils/gerbil-ethereum: Ethereum support
-github.com/mighty-gerbils/gerbil-persist: Data persistence layer
-github.com/mighty-gerbils/gerbil-leveldb: LevelDB bindings
-github.com/mighty-gerbils/gerbil-libxml: libxml2 bindings
-github.com/mighty-gerbils/gerbil-libyaml: Libyaml bindings
-github.com/mighty-gerbils/gerbil-lmdb: LMDB bindings
-github.com/mighty-gerbils/gerbil-mysql: MySQL database driver
-github.com/mighty-gerbils/gerbil-poo: Prototype Object Orientation system
-github.com/mighty-gerbils/gerbil-utils: Various utilities
+git.cons.io/mighty-gerbils/gerbil-crypto: Cryptography beyond OpenSSL
+git.cons.io/mighty-gerbils/gerbil-ethereum: Ethereum support
+git.cons.io/mighty-gerbils/gerbil-persist: Data persistence layer
+git.cons.io/mighty-gerbils/gerbil-leveldb: LevelDB bindings
+git.cons.io/mighty-gerbils/gerbil-libxml: libxml2 bindings
+git.cons.io/mighty-gerbils/gerbil-libyaml: Libyaml bindings
+git.cons.io/mighty-gerbils/gerbil-lmdb: LMDB bindings
+git.cons.io/mighty-gerbils/gerbil-mysql: MySQL database driver
+git.cons.io/mighty-gerbils/gerbil-poo: Prototype Object Orientation system
+git.cons.io/mighty-gerbils/gerbil-utils: Various utilities
 
 # Search with keywords
 $ gerbil pkg search xml
-github.com/mighty-gerbils/gerbil-libxml: libxml2 bindings
+git.cons.io/mighty-gerbils/gerbil-libxml: libxml2 bindings
 ```
 
 - Add dependencies to your project:
 ```shell
-$ gerbil deps -a -i github.com/mighty-gerbils/gerbil-libxml
-... cloning github.com/mighty-gerbils/gerbil-libxml
+$ gerbil deps -a -i git.cons.io/mighty-gerbils/gerbil-libxml
+... cloning git.cons.io/mighty-gerbils/gerbil-libxml
 ... pulling
-... build github.com/mighty-gerbils/gerbil-libxml
+... build git.cons.io/mighty-gerbils/gerbil-libxml
 ... compile foreign xml/_libxml
 ... copy ssi xml/_libxml
 ... compile loader xml/_libxml
@@ -437,7 +437,7 @@ $ gerbil deps -a -i github.com/mighty-gerbils/gerbil-libxml
 - List your project's dependencies:
 ```shell
 $ gerbil deps
-github.com/mighty-gerbils/gerbil-libxml
+git.cons.io/mighty-gerbils/gerbil-libxml
 ```
 
 ## Where to go from here

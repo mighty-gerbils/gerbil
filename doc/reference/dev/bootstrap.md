@@ -153,8 +153,8 @@ peek into the deep past to understand the evolution of Gerbil.
 
 The build process can be summarized in the following steps:
 1. `configure` configures the system and creates `build-env.sh`.
-2. `make` invokes the [top level build script](https://github.com/mighty-gerbils/gerbil/blob/master/build.sh)
-3. `build.sh` sources `build-env.sh` and dispatches to the [worker build script](https://github.com/mighty-gerbils/gerbil/blob/master/src/build.sh).
+2. `make` invokes the [top level build script](https://git.cons.io/mighty-gerbils/gerbil/blob/master/build.sh)
+3. `build.sh` sources `build-env.sh` and dispatches to the [worker build script](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/build.sh).
 4. The worker `build.sh` sets up the build environment and proceeds in stages:
    1. the build directory structure is prepared
    2. Gambit is bootstrapped and built.

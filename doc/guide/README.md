@@ -1,21 +1,20 @@
 # Installation
 
 ## Source Code
-The source code for Gerbil is hosted on [Github](https://github.com/mighty-gerbils/gerbil),
-with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
+The source code for Gerbil is hosted on [Github](https://git.cons.io/mighty-gerbils/gerbil),
+with the latest release available in [releases](https://git.cons.io/mighty-gerbils/gerbil/releases).
 
 For the latest Gerbil, you can clone the repository:
 ```bash
-$ git clone https://github.com/mighty-gerbils/gerbil.git
+$ git clone https://git.cons.io/mighty-gerbils/gerbil.git
 ```
 
 ## Dependencies
 
-The latest Gerbil release (v0.17) requires the separate installation of Gambit v4.9.4
-or later; it also supports the previous Gambit release, v4.9.3.
-Older versions of Gambit, starting with v4.9.1 may also work, but we haven't tested.
+The latest Gerbil release (v0.18.2) includes its own copy of Gambit (v4.9.7-6-g64f4d369).
 
-Starting with the v0.18 release cycle, there is no external dependency on Gambit any more; it is integrated in Gerbil as a git submodule
+Starting with the v0.18.2 release cycle, there is no external dependency on Gambit any more;
+it is integrated in Gerbil as a git subtree.
 
 The core system has no outside depencies, but the standard
 library has some mostly optional dependencies. The only hard dependency
@@ -80,9 +79,9 @@ features are available.
 
 ## Installation using Binary Release Packages
 
-If you want to install the latest release (v0.18.1), you can also use
+If you want to install the latest release (v0.18.2), you can also use
 the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS.
-They are available in the [v0.18.1 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18.1) page.
+They are available in the [v0.18.2 release](https://git.cons.io/mighty-gerbils/gerbil/releases/tag/v0.18.2) page.
 
 ## Installation on MacOS
 
@@ -95,7 +94,7 @@ brew install mighty-gerbils/gerbil/gerbil-scheme
 Feel free to check out the [MacOS Details](./macos.md) .
 
 **Note** Currently, this is not yet upstreamed. The brew recipe will
-be updated for v0.18.1 once the release is ready and available by
+be updated for v0.18.2 once the release is ready and available by
 default for all homebrew users.
 
 ## Skip the Install, Get Started on Docker
@@ -117,14 +116,15 @@ To get a bash shell where you can compile programs:
 docker run -it gerbil/gerbil:$(uname -m) bash
 ```
 
-Or you can build your own container using the [Dockerfile](https://github.com/mighty-gerbils/gerbil/blob/master/docker/Dockerfile).
-See the [Docker Gulde](docker.md) for additional information.
+Or you can build your own container using the [Dockerfile](https://git.cons.io/mighty-gerbils/gerbil/blob/master/docker/Dockerfile).
+See the [Docker Guide](docker.md) for additional information.
 
 ## Using Nix and/or Docker
 
 You can install Gerbil using Nix. See [nix.md](nix.md) for more details.
 
 There are also Docker containers based on Nix, with some gerbil libraries also installed,
-at `mukn/glow:devel` or `ghcr.io/glow-lang/glow:devel` with many libraries installed.
+at `mukn/glow:devel` or `ghcr.io/glow-lang/glow:devel` with many libraries installed
+(2026 update: not kept very up-to-date these days; ask if interested).
 
-See the `scripts` directory of [Gerbil Clan](https://github.com/fare/gerbil-utils) for details.
+See the `scripts` directory of [Gerbil Clan](https://git.cons.io/mighty-gerbils/gerbil-utils) for details.

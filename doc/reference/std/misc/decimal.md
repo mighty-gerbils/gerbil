@@ -20,7 +20,7 @@ regular floating point parsing and printing will drop decimals.
 Acknowledgements: The code was written with
 inspiration from two Common Lisp libraries,
 QUUX (see the [snapshot at QITAB](https://qitab.common-lisp.dev/) and
-[wu-decimal](https://github.com/Wukix/wu-decimal),
+[wu-decimal](https://git.cons.io/Wukix/wu-decimal),
 with its own design and implementation improvements.
 
 ## decimal?

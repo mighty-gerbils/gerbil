@@ -2,20 +2,20 @@ class GerbilScheme < Formula
   # This .rb file is tangled (AKA generated) from README.org
   desc "Opinionated dialect of Scheme designed for Systems Programming"
   homepage "https://cons.io"
-  url "https://github.com/mighty-gerbils/gerbil.git",
-      using: :git, revision: "92b1a2f642d6ebbcd3bd223ccc0af7ec0d9a42ad"
-  version "0.18.1"
+  url "https://git.cons.io/mighty-gerbils/gerbil.git",
+      using: :git, revision: "07c8481588a8b07dbf05832687817cd398902ac0"
+  version "0.18.2"
   license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
   # revision 3
-  head "https://github.com/mighty-gerbils/gerbil.git", using: :git, branch: "master"
+  head "https://git.cons.io/mighty-gerbils/gerbil.git", using: :git, branch: "master"
 
-  bottle do
-    root_url "https://github.com/mighty-gerbils/homebrew-gerbil/releases/download/gerbil-scheme-0.18.1"
-    sha256 arm64_sonoma: "58175d28302fde3403f454ecec5ffa76edd9c452d3f97d0060f39300c7ef3aae"
-    sha256 ventura:      "0c432f016e9c0e0ec0324f655a63fd3a90633fc9f77b18a693125b49c08a9fee"
-    sha256 monterey:     "f2a1d37c331248b88762ece4a0c0b57b2c6efdd2012be69cb526352b64df594f"
-    sha256 x86_64_linux: "748cd86ebcba934e24aeafef7b5ee0b0b5b94ee24823a6e3cbb13f17aae6ed11"
-  end
+  #bottle do
+  #  root_url "https://github.com/mighty-gerbils/homebrew-gerbil/releases/tag/gerbil-scheme-0.18.1_1"
+  #  sha256 arm64_sonoma: "58175d28302fde3403f454ecec5ffa76edd9c452d3f97d0060f39300c7ef3aae"
+  #  sha256 ventura:      "0c432f016e9c0e0ec0324f655a63fd3a90633fc9f77b18a693125b49c08a9fee"
+  #  sha256 monterey:     "f2a1d37c331248b88762ece4a0c0b57b2c6efdd2012be69cb526352b64df594f"
+  #  sha256 x86_64_linux: "748cd86ebcba934e24aeafef7b5ee0b0b5b94ee24823a6e3cbb13f17aae6ed11"
+  #end
 
   depends_on "coreutils" => :build
   depends_on "pkg-config" => :build

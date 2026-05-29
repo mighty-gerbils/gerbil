@@ -8,7 +8,7 @@ The `:std/db/postgresql` library provides a driver for a PostgreSQL database.
 ```
 :::
 
-Have a look at [the postgresql-test.ss file](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/db/postgresql-test.ss)
+Have a look at [the postgresql-test.ss file](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/std/db/postgresql-test.ss)
 to see more of how it is used with the `:std/db/dbi`.
 
 ## postgresql-connect

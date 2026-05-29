@@ -5,10 +5,10 @@ it will guarantee you that Gerbil is correctly built, in a deterministic way,
 on top of an appropriate Gambit properly built with all the correct options.
 
 Satisfactory Nix recipes for Gerbil were initially merged in
-[nixpkgs](https://github.com/NixOS/nixpkgs) starting in September 2017,
+[nixpkgs](https://git.cons.io/NixOS/nixpkgs) starting in September 2017,
 and propagated to other branches from there.
 Updates have been upstreamed regularly, but if you care for the latest recipe,
-see this [nixpkgs fork](http://github.com/MuKnIO/nixpkgs), branch `devel`
+see this [nixpkgs fork](http://git.cons.io/MuKnIO/nixpkgs), branch `devel`
 (beware, it is often rebased).
 
 Assuming your `NIX_PATH` contains an entry `nixpkgs=/path/to/nixpkgs` which
@@ -39,5 +39,5 @@ for your Gerbil libraries, with `gerbil-utils` as an example.
 
 To use `gxc` interactively from the command-line outside a `nix-shell`,
 you may use the script `gerbil-nix-env.sh` from the
-[Gerbil Clan](https://github.com/mighty-gerbils/gerbil-utils),
+[Gerbil Clan](https://git.cons.io/mighty-gerbils/gerbil-utils),
 the free software collection of utilities.

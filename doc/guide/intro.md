@@ -1344,7 +1344,7 @@ The prelude context on the other hand, is an ordinary module that
 exports any number of bindings that form the language of the module.
 
 When a prelude is not specified, the default prelude is the Gerbil
-[core prelude](https://github.com/mighty-gerbils/gerbil/tree/master/src/gerbil/prelude/core.ss).
+[core prelude](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/gerbil/prelude/core.ss).
 Any module however can designate a different prelude with the `prelude:`
 module directive, which allows us to design custom languages.
 
@@ -2033,10 +2033,10 @@ The library supports parsing and querying with Oleg's SXML/SSAX/SXPath and
 provides additional facilities for processing SXML.
 
 If you want to use `libxml2` library for parsing real world HTML,
-you can install the [gerbil-libxml](https://github.com/mighty-gerbils/gerbil-libxml)
+you can install the [gerbil-libxml](https://git.cons.io/mighty-gerbils/gerbil-libxml)
 with
 ```shell
-$ gerbil pkg install github.com/mighty-gerbils/gerbil-libxml
+$ gerbil pkg install git.cons.io/mighty-gerbils/gerbil-libxml
 ```
 
 For example, here is a parse of the bing front page without scripts,
@@ -2156,9 +2156,9 @@ Gerbil includes builtin support for SQL databases (SQLite, PostgreSQL) in the
 standard library.
 
 We also provide external packages with drivers for
-[MySQL](https://github.com/mighty-gerbils/gerbil-mysql) and key-value
-stores ([LevelDB](https://github.com/mighty-gerbils/gerbil-leveldb),
-[LMDB](https://github.com/mighty-gerbils/gerbil-leveldb)).
+[MySQL](https://git.cons.io/mighty-gerbils/gerbil-mysql) and key-value
+stores ([LevelDB](https://git.cons.io/mighty-gerbils/gerbil-leveldb),
+[LMDB](https://git.cons.io/mighty-gerbils/gerbil-leveldb)).
 
 #### SQL Databases
 
@@ -2213,16 +2213,16 @@ And we are done, we can close our database connection:
 
 #### Key-Value Stores
 
-The [gerbil-leveldb](https://github.com/mighty-gerbils/gerbil-leveldb) package provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
-while the [gerbil-lmdb](https://github.com/mighty-gerbils/gerbil-lmdb) package provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
+The [gerbil-leveldb](https://git.cons.io/mighty-gerbils/gerbil-leveldb) package provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
+while the [gerbil-lmdb](https://git.cons.io/mighty-gerbils/gerbil-lmdb) package provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 
 You can install these packages using the `gerbil pkg` tool:
 ```shell
 # To install the leveldb driver
-$ gerbil pkg install github.com/mighty-gerbils/gerbil-leveldb
+$ gerbil pkg install git.cons.io/mighty-gerbils/gerbil-leveldb
 
 # To install the lmdb driver
-$ gerbil pkg install github.com/mighty-gerbils/gerbil-lmdb
+$ gerbil pkg install git.cons.io/mighty-gerbils/gerbil-lmdb
 ```
 
 For example, here we use the LevelDB package for some simple operations:

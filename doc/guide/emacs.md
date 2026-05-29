@@ -3,7 +3,7 @@
 The natural home for Gerbil development is Emacs, the ultimate parenthesis manipulation machine.
 
 ## Standard Emacs Setup
-Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil-mode.el](https://github.com/mighty-gerbils/gerbil/blob/master/etc/gerbil-mode.el).
+Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil-mode.el](https://git.cons.io/mighty-gerbils/gerbil/blob/master/etc/gerbil-mode.el).
 See below for additional functionality provided by gerbil-mode.
 
 You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and adding this to your `.emacs`:
@@ -34,7 +34,7 @@ default in `$GERBIL_INSTAL_PREFIX/share/emacs/site-lisp` when installing gerbil.
 
 ## Doom Emacs Setup
 
-Gerbil is easy to setup in [Doom Emacs](https://github.com/doomemacs/doomemacs). Open Doom Emacs.
+Gerbil is easy to setup in [Doom Emacs](https://git.cons.io/doomemacs/doomemacs). Open Doom Emacs.
 Ensure you are at the Doom Emacs splash creeen.
 Type `SPC f P` and choose `packages.el`. This will open the Doom Emacs package configuration file.
 
@@ -48,7 +48,7 @@ To add Gambit and Gerbil modes, go to the bottom of `package.el` and add the fol
    :branch "master"))
 
 (package! gerbil-mode :recipe
-  (:host github
+  (:host "git.cons.io"
    :repo "mighty-gerbils/gerbil"
    :files ("etc/gerbil-mode.el")
    :branch "master"))
@@ -163,16 +163,16 @@ build.ss script discovered by walking up the directory hierarchy.
 
 ## SLIME Integration
 
-There is preliminary support for SLIME using ecraven's [r7rs-swank](https://github.com/ecraven/r7rs-swank).
+There is preliminary support for SLIME using ecraven's [r7rs-swank](https://git.cons.io/ecraven/r7rs-swank).
 
-See drewc's [guide](https://gist.github.com/drewc/5f260537b7914a2b999c8a539fb48098) for how to set it up.
+See drewc's [guide](https://gist.git.cons.io/drewc/5f260537b7914a2b999c8a539fb48098) for how to set it up.
 
 Note that this is being phased out as we plan to implement a Gerbil
 LSP server for the next Gerbil release (v0.19).
 
 ## Use-Package Example Configuration
 
-Example [use-package](https://github.com/jwiegley/use-package)
+Example [use-package](https://git.cons.io/jwiegley/use-package)
 definition to get you hacking in no time. All you have to do is to
 have`gxi`in your path and copy the code snippet below into your Emacs
 config.
@@ -250,8 +250,8 @@ For more information read `C-h f gerbil-mode`.
 If you don't have `prog-mode` or `scheme-mode` configured yet, consider adding the following modes:
 
 * [LineNumbers](https://www.emacswiki.org/emacs/LineNumbers) - Displays line numbers in a buffer.
-* [RainbowDelimiters](https://github.com/Fanael/rainbow-delimiters) - Highlights delimiters such as parentheses, brackets, or braces according to their depth.
-* [Paredit](http://paredit.org/) or [Smartparens](https://github.com/Fuco1/smartparens) - Modes for dealing with parenthesis pairs in a structured way.
+* [RainbowDelimiters](https://git.cons.io/Fanael/rainbow-delimiters) - Highlights delimiters such as parentheses, brackets, or braces according to their depth.
+* [Paredit](http://paredit.org/) or [Smartparens](https://git.cons.io/Fuco1/smartparens) - Modes for dealing with parenthesis pairs in a structured way.
 * [ShowParenMode](https://www.emacswiki.org/emacs/ShowParenMode) - Highlights matching parentheses.
 
 Note that `rainbow-delimiters`, `paredit`, and `smartparens` need to be installed first.

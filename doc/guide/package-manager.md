@@ -3,7 +3,7 @@
 Gerbil comes with a command line package manager, invoked with `gerbil pkg` or just `gxpkg`.
 
 The package manager allows you to install and manage packages
-distributed through github, gitlab, or bitbucket.
+distributed through git servers such as git.cons.io, github, gitlab, or bitbucket.
 
 ::: tip usage
 ```
@@ -34,18 +34,18 @@ Any supported public provider git repo can serve a Gerbil package, provided that
 
 You can use `:std/build-script` to get a template script definition from the package build-spec.
 
-See [gerbil-utils](https://github.com/mighty-gerbils/gerbil-utils) for an example package.
+See [gerbil-utils](https://git.cons.io/mighty-gerbils/gerbil-utils) for an example package.
 
 ## Examples
 
 - To install fare's gerbil-utils package:
 ```shell
-$ gerbil pkg install github.com/mighty-gerbils/gerbil-utils
+$ gerbil pkg install git.cons.io/mighty-gerbils/gerbil-utils
 ```
 
 - To link a local development package (here vyzo's gerbil-aws package):
 ```shell
-$ gerbil pkg link github.com/vyzo/gerbil-aws gerbil-aws
+$ gerbil pkg link git.cons.io/vyzo/gerbil-aws gerbil-aws
 ```
 
 - To list all installed (or linked) packages:
@@ -60,7 +60,7 @@ $ gerbil pkg update all
 
 - To rebuild a package and its transitive dependencies:
 ```shell
-gerbil pkg build github.com/mighty-gerbils/gerbil-utils
+gerbil pkg build git.cons.io/mighty-gerbils/gerbil-utils
 ```
 
 - To rebuild all packages:
@@ -84,7 +84,7 @@ fact users are encouraged to create their own directories for their
 packages and share them with each other.
 
 By default, the [Mighty Gerbils
-directory](https://github.com/mighty-gerbils/gerbil-directory) is
+directory](https://git.cons.io/mighty-gerbils/gerbil-directory) is
 searched, as these are packaged developed and maintained by the Gerbil
 Core Team.
 

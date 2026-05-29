@@ -72,7 +72,7 @@ handlers in the server content.
 ### Using a Standalone httpd
 Here we walk through an example www project and how to serve it with `gerbil httpd server`.
 
-First, let's compile our site's code -- see [src/tutorial/advanced-ensemble](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble) for the code.
+First, let's compile our site's code -- see [src/tutorial/advanced-ensemble](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble) for the code.
 ```
 1$ pushd site/project
 1$ gerbil build
@@ -384,7 +384,7 @@ In this tutorial, we build an ensemble with 3 hosts: 2 hosts serving
 http requests with a (local) httpd ensemble each, and another host
 acting as a load balancer using the example `rlb` program.
 
-See [src/tutorial/advanced-ensemble/rlb](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble/rlb) for the `rlb` code.
+See [src/tutorial/advanced-ensemble/rlb](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/advanced-ensemble/rlb) for the `rlb` code.
 
 ::: tip Note
 The IP addresses shown here were 3 linode servers, configured just for demonstration

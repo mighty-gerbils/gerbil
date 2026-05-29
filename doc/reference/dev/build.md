@@ -154,7 +154,7 @@ state the problem so that you can understand what follows:
 So let's start over again: this time we'll build a primitive web
 scrapper: it is a command line tool that takes a URL, makes an http
 request and parses the html output using `parse-html` from the
-[gerbil-libxml](https://github.com/mighty-gerbils/gerbil-libxml)
+[gerbil-libxml](https://git.cons.io/mighty-gerbils/gerbil-libxml)
 package.
 
 First, let's create the project:
@@ -178,10 +178,10 @@ total 8
 
 Now let's add our dependency:
 ```shell
-$ gerbil deps -a -i github.com/mighty-gerbils/gerbil-libxml
-... cloning github.com/mighty-gerbils/gerbil-libxml
+$ gerbil deps -a -i git.cons.io/mighty-gerbils/gerbil-libxml
+... cloning git.cons.io/mighty-gerbils/gerbil-libxml
 ... pulling
-... build github.com/mighty-gerbils/gerbil-libxml
+... build git.cons.io/mighty-gerbils/gerbil-libxml
 ... compile foreign xml/_libxml
 ... copy ssi xml/_libxml
 ... compile loader xml/_libxml
@@ -362,19 +362,19 @@ total 64
 
 .gerbil/pkg:
 total 8
-drwxr-xr-x 3 vyzo vyzo 4096 Sep 24 11:34 github.com
+drwxr-xr-x 3 vyzo vyzo 4096 Sep 24 11:34 git.cons.io
 -rw-rw-r-- 1 vyzo vyzo 3599 Sep 24 11:34 TAGS
 
-.gerbil/pkg/github.com:
+.gerbil/pkg/git.cons.io:
 total 4
 drwxr-xr-x 3 vyzo vyzo 4096 Sep 24 11:34 mighty-gerbils
 
-.gerbil/pkg/github.com/mighty-gerbils:
+.gerbil/pkg/git.cons.io/mighty-gerbils:
 total 8
 drwxrwxr-x 4 vyzo vyzo 4096 Sep 24 11:34 gerbil-libxml
 -rw-rw-r-- 1 vyzo vyzo  131 Sep 24 11:34 gerbil-libxml.manifest
 
-.gerbil/pkg/github.com/mighty-gerbils/gerbil-libxml:
+.gerbil/pkg/git.cons.io/mighty-gerbils/gerbil-libxml:
 total 64
 -rw-rw-r-- 1 vyzo vyzo   362 Sep 24 11:34 build-deps
 -rwxrwxr-x 1 vyzo vyzo   306 Sep 24 11:34 build.ss
@@ -385,7 +385,7 @@ total 64
 -rw-rw-r-- 1 vyzo vyzo  3535 Sep 24 11:34 README.md
 drwxrwxr-x 2 vyzo vyzo  4096 Sep 24 11:34 xml
 
-.gerbil/pkg/github.com/mighty-gerbils/gerbil-libxml/xml:
+.gerbil/pkg/git.cons.io/mighty-gerbils/gerbil-libxml/xml:
 total 28
 -rw-rw-r-- 1 vyzo vyzo 12419 Sep 24 11:34 _libxml.scm
 -rw-rw-r-- 1 vyzo vyzo  6351 Sep 24 11:34 libxml.ss
@@ -411,7 +411,7 @@ $ cat manifest.ss
      '(("scrape-it" . "unknown")
        ("Gerbil" . "0.17.0-309-g5ebf1095")
        ("Gambit" . "v4.9.5-40-g24201248")
-       ("github.com/mighty-gerbils/gerbil-libxml" . "b08e5d8")))
+       ("git.cons.io/mighty-gerbils/gerbil-libxml" . "b08e5d8")))
 ```
 
 This file provides exact versioning for all parts of the project
@@ -480,7 +480,7 @@ $ cat manifest.ss
      '(("scrape-it" . "0ba7240")
        ("Gerbil" . "0.17.0-309-g5ebf1095")
        ("Gambit" . "v4.9.5-40-g24201248")
-       ("github.com/mighty-gerbils/gerbil-libxml" . "b08e5d8")))
+       ("git.cons.io/mighty-gerbils/gerbil-libxml" . "b08e5d8")))
 ```
 
 We can integrate the version manifest into our program's cli so that
@@ -553,7 +553,7 @@ $ gerbil env scraper -v
 (("scrape-it" . "0ba7240")
  ("Gerbil" . "0.17.0-309-g5ebf1095")
  ("Gambit" . "v4.9.5-40-g24201248")
- ("github.com/mighty-gerbils/gerbil-libxml" . "b08e5d8"))
+ ("git.cons.io/mighty-gerbils/gerbil-libxml" . "b08e5d8"))
 ```
 
 ### Semantic Versioning

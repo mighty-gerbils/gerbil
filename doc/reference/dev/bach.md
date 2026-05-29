@@ -124,7 +124,7 @@ Usage: gxpkg new [command-option ...]
 Command Options:
  -p --package <package>           the package prefix for your project; defaults to the current username [default: vyzo]
  -n --name <name>                 the package name; defaults to the current directory name [default: gerbil]
- -l --link <link>                 link this package with a public package name; for example: github.com/your-user/your-package [default: #f]
+ -l --link <link>                 link this package with a public package name; for example: git.cons.io/your-user/your-package [default: #f]
 ```
 
 ### `gerbil build`

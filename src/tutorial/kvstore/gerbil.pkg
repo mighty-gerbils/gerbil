@@ -1,1 +1,1 @@
-(package: tutorial/kvstore depend: ("github.com/mighty-gerbils/gerbil-lmdb"))
+(package: tutorial/kvstore depend: ("git.cons.io/mighty-gerbils/gerbil-lmdb"))

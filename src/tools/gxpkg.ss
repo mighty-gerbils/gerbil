@@ -817,7 +817,7 @@
       (display-pkgs matches))))
 
 (def +mighty-gerbils-pkg-directory+
-  "github.com/mighty-gerbils/gerbil-directory")
+  "git.cons.io/mighty-gerbils/gerbil-directory")
 
 (def (pkg-directory-url dir)
   (cond

@@ -19,8 +19,8 @@ macro from the [:std/contract](/reference/std/contract.md) module.
 
 ## Preliminaries
 
-The source code for the tutorial is available at [src/tutorial/proxy](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy).
-You can build the programs using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy/build.ss):
+The source code for the tutorial is available at [src/tutorial/proxy](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy).
+You can build the programs using the [build script](https://git.cons.io/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy/build.ss):
 ```
 $ cd gerbil/src/tutorial/proxy
 $ gerbil build
@@ -29,7 +29,7 @@ $ gerbil build
 
 ## A Transparent TCP Proxy
 
-The first variant of the [transparent proxy](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy1.ss) listens to a local port and
+The first variant of the [transparent proxy](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy1.ss) listens to a local port and
 proxies all incoming connections to a specified remote server.
 It is implemented using low level [raw socket devices](/reference/std/os/socket.md).
 
@@ -168,7 +168,7 @@ Vary: Accept-Encoding
 
 ## Transparent TCP Proxy with stdio
 
-This is the [second take](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
+This is the [second take](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
 using the [Standard IO](../reference/stdio.md) API.
 
 You'll notice that it is half the code and you don't have to do any
@@ -237,7 +237,7 @@ HTTP/1.0 200 OK
 
 ## Transparent TCP Proxy with stdio and the using macro
 
-This is the [third and final installment](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy3.ss) on the transparent proxy, this time written
+This is the [third and final installment](https://git.cons.io/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy3.ss) on the transparent proxy, this time written
 using stdio and the all powerful `using` macro from [:std/contract](/reference/std/contract.md).
 
 This allows you to attach annotations and contracts on variables and

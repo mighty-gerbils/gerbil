@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mighty-gerbils/gerbil.git"
+    "url": "git+https://git.cons.io/mighty-gerbils/gerbil.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mighty-gerbils/gerbil/issues"
+    "url": "https://git.cons.io/mighty-gerbils/gerbil/issues"
   },
-  "homepage": "https://github.com/mighty-gerbils/gerbil#readme",
+  "homepage": "https://git.cons.io/mighty-gerbils/gerbil#readme",
   "dependencies": {
     "vuepress": "^1.1.0"
   },
