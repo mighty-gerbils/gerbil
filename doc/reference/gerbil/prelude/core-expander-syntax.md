@@ -108,10 +108,51 @@ Include the contents of path, wrapped with a `begin`.
  (and feature ...)            ; boolean and of `feature ...`
  (or feature ...)             ; boolean or of `feature ...`
  (not feature)                ; negation of feature
- id                           ; satisfied if `id` is bound as an identifier
+ id                           ; satisfied if `id` is bound as a feature identifier OR as a module
+ ,expr                        ; satisfied if `expr` evaluates to true at expand-time
+ (defined id ...)             ; satisfied if every `id` is bound as a regular identifier
 ```
 
-Conditionally expands the body for the first satisfied feature. Must appear at top scope.
+Conditionally expands the body for the first satisfied feature
+as if by `(begin body ...)`.
+
+Gerbil provides a few extensions compared to the feature defined in
+[SRFI-0](https://srfi.schemers.org/srfi-0/srfi-0.html).
+
+First, in SRFI-0, `cond-expand` can only appear in a top-level form;
+Gerbil supports `cond-expand` anywhere an expression is allowed.
+
+Second, an arbitrary expand-time expression `expr` can be provided as
+`(unquote expr)` (or equivalently `,expr`), satisfying the condition
+if it evaluates to a true boolean.
+
+Third, a list of identifiers can be specified with `(defined id ...)`,
+the condition being satisfied if every specified identifier is bound.
+
+Fourth, a specified identifier may be satisfied if bound as a feature,
+but also if bound as a module (as defined with the `(module ...)` special form).
+BEWARE, though that in a future release we may refactor this behavior and
+instead add separate syntax to check for such locally bound modules,
+for globally imported or available modules, etc.
+We recommend you use `,expr` syntax and contact the implementers
+if you rely on such syntax.
+
+Otherwise, the form is processed as in SRFI-0:
+
+  * An identifier specifies a condition satisfied if the identifier is bound in
+    a special feature identifier namespace.
+    You can query available features with `(features)`.
+
+  * The boolean combinator `(and feature ...)` is satisfied if
+    every specified feature is satisfied.
+
+  * The boolean combinator `(or feature ...)` is satisfied if
+    any specified feature is satisfied.
+
+  * The boolean combinator `(not feature)` is satisfied
+    if the specified feature is not satisfied.
+
+  * A last clause `else` is always satisfied.
 
 ### provide
 ``` scheme
