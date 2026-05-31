@@ -7,10 +7,10 @@
 	:std/interface
 	:std/serde/interface
 	:std/serde/deserialize
+        :std/serde/serde-test-support
 	./api
 	./io
-	./reader
-        ./reader-test-support)
+	./reader)
 (export reader-test reader-dag-test reader-default-test)
 
 (def reader-test
@@ -139,18 +139,18 @@
       (let ()
 	(def b (B x: 2))
 	(def a (A b: b))
-	(let (obj (read-object-from-string "#{std/format/reader-test-support#A::t b: #{std/format/reader-test-support#B::t}}" (reader-environment)))
+	(let (obj (read-object-from-string "#{std/serde/serde-test-support#A::t b: #{std/serde/serde-test-support#B::t}}" (reader-environment)))
 	  (check obj ? A?)
 	  (check (A-b obj) ? B?)
 	  (check (B-x (A-b obj)) => 2)))
       (let ()
 	(def c (A b: #f))
 	(set! (A-b c) c)
-	(let (obj (read-object-from-string "#0=#{std/format/reader-test-support#A::t b: #0#}" (reader-environment)))
+	(let (obj (read-object-from-string "#0=#{std/serde/serde-test-support#A::t b: #0#}" (reader-environment)))
 	  (check obj ? A?)
 	  (check (A-b obj) => obj))))
     (test-case "read interface instances"
-      (let (obj (read-object-from-string "#{std/format/reader-test-support#C::t object: #{std/format/reader-test-support#A::t b: 1}}" (reader-environment)))
+      (let (obj (read-object-from-string "#{std/serde/serde-test-support#C::t object: #{std/serde/serde-test-support#A::t b: 1}}" (reader-environment)))
 	(check obj ? C?)
 	(check (C-foo! obj) => 1)))
     (test-case "read hashes"
@@ -287,15 +287,15 @@
       (let ()
 	(def b (B x: 2))
 	(def a (A b: b))
-	(check-exception (read-object-from-string "#{std/format/reader-test-support#A::t b: #{std/format/reader-test-support#B::t}}" (reader-environment dag: #t))
+	(check-exception (read-object-from-string "#{std/serde/serde-test-support#A::t b: #{std/serde/serde-test-support#B::t}}" (reader-environment dag: #t))
 			 ContractViolation?))
       (let ()
 	(def c (A b: #f))
 	(set! (A-b c) c)
-	(check-exception (read-object-from-string "#0=#{std/format/reader-test-support#A::t b: #0#}" (reader-environment dag: #t))
+	(check-exception (read-object-from-string "#0=#{std/serde/serde-test-support#A::t b: #0#}" (reader-environment dag: #t))
 			 ContractViolation?))
     (test-case "read interface instances"
-      (let (obj (read-object-from-string "#{std/format/reader-test-support#C::t object: #{std/format/reader-test-support#A::t b: 1}}" (reader-environment dag: #t)))
+      (let (obj (read-object-from-string "#{std/serde/serde-test-support#C::t object: #{std/serde/serde-test-support#A::t b: 1}}" (reader-environment dag: #t)))
 	(check obj ? C?)
 	(check (C-foo! obj) => 1)))
     (test-case "read hashes"

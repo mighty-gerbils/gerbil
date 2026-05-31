@@ -364,7 +364,7 @@
                          (reader : BufferedReader)
                          (env    : ReaderEnv)
                          (anchor : Anchor))
-  (let (ranchor (env.ctx.methods.anchor! index anchor env.ctx))
+  (let (ranchor (env.ctx.methods.anchor! index env.ctx))
     (anchor.set! (parse reader env ranchor))))
 
 (def (sharp-index->fixnum (sk : :list))

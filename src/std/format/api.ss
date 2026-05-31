@@ -59,34 +59,38 @@
 	   (match op
 	     (['char arg]
 	      (with-syntax ((arg arg))
-		(cons #'(writer.write-char arg)
-		      result)))
+		(loop rest
+                      (cons #'(writer.write-char arg)
+		            result))))
 	     (['int arg how flags width]
 	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width))
-		(cons #'(let ($ctx (@format-env ctx
-						(flags: flags)
-						(width: width)
-						(integer-conversion: how)))
-			  (writer.write-integer (: arg :integer) $ctx))
-		      result)))
+		(loop rest
+                      (cons #'(let ($ctx (@format-env ctx
+						      (flags: flags)
+						      (width: width)
+						      (integer-conversion: how)))
+			        (writer.write-integer (: arg :integer) $ctx))
+		            result))))
 	     (['float arg how flags width precision result]
 	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (precision precision))
-		(cons #'(let ($ctx (@format-env ctx
-						(flags: flags)
-						(width: width)
-						(precision: precision)
-						(flonum-conversion: how)))
-			  (writer.write-flonum (: arg :flonum) $ctx))
-		      result)))
+		(loop rest
+                      (cons #'(let ($ctx (@format-env ctx
+						      (flags: flags)
+						      (width: width)
+						      (precision: precision)
+						      (flonum-conversion: how)))
+			        (writer.write-flonum (: arg :flonum) $ctx))
+		            result))))
 	     (['object arg how]
 	      (with-syntax ((writer writer) (ctx ctx) (arg arg))
-		(cons (case how
-			((#\a) #'(format-display writer arg ctx))
-			((#\s) #'(format-write writer arg ctx))
-			((#\q) #'(format-debug writer arg ctx))
-			(else
-			 (raise-syntax-error #f "object format specifier: %a, %s, or %q" stx how #'arg)))
-		      result)))
+		(loop rest
+                      (cons (case how
+			      ((#\a) #'(format-display writer arg ctx))
+			      ((#\s) #'(format-write writer arg ctx))
+			      ((#\q) #'(format-debug writer arg ctx))
+			      (else
+			       (raise-syntax-error #f "object format specifier: %a, %s, or %q" stx how #'arg)))
+		            result))))
 	     (else
 	      (raise-syntax-error #f "unexpected format operation" stx op))))
 	  (else result))))))

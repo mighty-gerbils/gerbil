@@ -2,8 +2,11 @@
 ;;; © vyzo
 ;;; reader test compiled support
 (import :std/interface
-	:std/serde/interface
-	:std/serde/deserialize)
+	./interface
+        ./scan
+        ./scanner
+        ./serialize
+        ./deserialize)
 (export #t)
 
 (defclass A (b)

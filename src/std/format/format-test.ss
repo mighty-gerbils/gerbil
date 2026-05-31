@@ -4,6 +4,7 @@
 (import :std/test
         :std/error
         :std/iter
+        :std/serde/serde-test-support
 	./api
 	./io)
 (export format-test print-test macro-test)
@@ -13,16 +14,6 @@
     (hash-put! ht 'a 1)
     (hash-put! ht 'b 2)
     ht))
-
-(defclass A (b)
-  transparent: #t)
-(defclass B (x)
-  transparent: #f)
-
-(interface C
-  (foo!))
-
-(defmethod {foo! A} void)
 
 (def format-test
   (test-suite "formating"
@@ -264,7 +255,7 @@
       (check
        (format '"%s" a)
        =>
-       "#{std/format/format-test#A::t b: #{std/format/format-test#B::t}}")
+       "#{std/serde/serde-test-support#A::t b: #{std/serde/serde-test-support#B::t}}")
       (def c (A b: #f))
       (set! (A-b c) c)
       (check
@@ -274,14 +265,14 @@
       (check
        (format '"%s" c)
        =>
-       "#0=#{std/format/format-test#A::t b: #0#}"))
+       "#0=#{std/serde/serde-test-support#A::t b: #0#}"))
     (test-case "format interface instances"
       (def a (A))
       (def c (C a))
       (check
        (format '"%s" c)
        =>
-       "#{std/format/format-test#C::t object: #{std/format/format-test#A::t b: #f}}"))
+       "#{std/serde/serde-test-support#C::t object: #{std/serde/serde-test-support#A::t b: #f}}"))
     (test-case "format hashes"
       (check
        (format '"%a" (make-hash-1-2))

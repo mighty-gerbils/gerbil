@@ -16,60 +16,45 @@
           (wr (fx+ wr rest)) ...)
      end)))
 
-(defsyntax-case @serialize ()
-  ((_ obj sctx do-object do-anchor do-reference)
-   (with-identifiers ((ctx             '$ctx)
-                      (ctx.written     #'ctx #'ctx ".written")
-                      (ctx.scanned     #'ctx #'ctx ".scanned")
-                      (ctx.scanned.ref #'ctx #'ctx ".scanned.ref")
-                      (ctx.cycles      #'ctx #'ctx ".cycles")
-                      (ctx.cycles.ref  #'ctx #'ctx ".cycles.ref")
-                      (ctx.compress?   #'ctx #'ctx ".compress?"))
-     #'(using (ctx sctx :- ScanContext)
-         (defrule (has-cycle? obj)
-           (ctx.cycles.ref obj #f))
-         (cond
-          ((or (not ctx) (immediate? obj))
-           (do-object obj))
-          ((hash-get ctx.written obj)
-           => (lambda ((id :- :fixnum)) => :fixnum
-                 (if (or ctx.compress? (has-cycle? obj))
-                   (do-reference id)
-                   (do-object obj))))
-          ((has-cycle? obj)
-           => (lambda ((id :- :fixnum)) => :fixnum
-                 (hash-put! ctx.written obj id)
-                 (do-anchor obj id)))
-          ((hash-get ctx.scanned obj)
-           => (lambda (e) => :fixnum
-                 (if ctx.compress?
-                   (using ((e             :- :pair)
-                           (id    (car e) :- :fixnum)
-                           (count (cdr e) :- :fixnum))
-                     (hash-put! ctx.written obj id)
-                     (if (fx> count 1)
-                       (do-anchor obj id)
-                       (do-object obj)))
-                   (using (id e :- :fixnum)
-                     (hash-put! ctx.written obj id)
-                     (do-object obj)))))
-          (else
-           (let (id (scan-object! obj ctx))
-             (if (fx> id 0)
-               (begin
-                 (hash-put! ctx.written obj id)
-                 (cond
-                  ((has-cycle? obj)
-                   (do-anchor obj id))
-                  (ctx.compress?
-                   (using ((e     (ctx.scanned.ref obj #f) :- :pair)
-                           (count (cdr e)                  :- :fixnum))
-                     (if (fx> count 1)
-                       (do-anchor obj id)
-                       (do-object obj))))
-                  (else
-                   (do-object obj))))
-               (do-object obj)))))))))
+(def (do-serialize! obj (ctx : ScanContext) (do-object : :procedure) (do-anchor : :procedure) (do-reference : :procedure))
+  => :fixnum
+  (defrule (do-anchor! obj id)
+    (begin
+      (ctx.written.set! obj id)
+      (do-anchor obj id)))
+
+  (defrule (do-object! obj)
+    (cond
+     ((ctx.cycles.ref obj #f)
+      => (lambda (id)
+           (do-anchor! obj id)))
+     (else
+      (do-object obj))))
+
+  (: (let again ()
+       (cond
+        ((or (immediate? obj)
+             (not ctx))
+         (do-object obj))
+        ((ctx.written.ref obj #f)
+         => (cut do-reference <>))
+        ((ctx.scanned.ref obj #f)
+         => (lambda (e)
+              (if ctx.compress?
+                (using ((e             :- :pair)
+                        (id    (car e) :- :fixnum)
+                        (count (cdr e) :- :fixnum))
+                  (if (fx> count 1)
+                    (do-anchor! obj id)
+                    (do-object! obj)))
+                (using (id e :- :fixnum)
+                  (do-object! obj)))))
+        (else
+         (let (id (scan-object! obj ctx))
+           (if (fx< id 0)
+             (do-object obj)
+             (again))))))
+      :fixnum))
 
 (defsyntax-case @serialize! ()
   ((_ writer obj ctx rule)
@@ -85,24 +70,21 @@
 		      (ctx.methods.write-reference
 		       #'ctx #'ctx ".methods.write-reference"))
      #'(let ()
-	 (defrule (do-object obj)
+	 (def (do-object obj)
 	   rule)
-	 (defrule (do-anchor obj id)
+	 (def (do-anchor obj id)
 	   (do-write (wr 0)
 	     (ctx.methods.write-anchor-begin writer id ctx)
 	     (do-object obj)
 	     (ctx.methods.write-anchor-end writer ctx)
 	     wr))
-	 (defrule (do-reference id)
+	 (def (do-reference id)
 	   (ctx.methods.write-reference writer id ctx))
 
-	 (@serialize obj ctx.scan do-object do-anchor do-reference)))))
-
-(defwriter-ext (serialize-raw writer obj (ctx : WriteContext))
-  (__object-write obj writer ctx))
+	 (do-serialize! obj ctx.scan do-object do-anchor do-reference)))))
 
 (defwriter-ext (serialize writer obj (ctx : WriteContext))
-  (@serialize! writer obj ctx (writer.serialize-raw obj ctx)))
+  (__object-write obj writer ctx))
 
 ;; standard classes
 (defwriter-ext (write-object-type writer (klass : class) (ctx : WriteContext))
@@ -122,20 +104,20 @@
 
 ;; standard objects
 (defwriter-ext (write-field writer (slot : :symbol) (obj : :t) (ctx : WriteContext))
-  (defrule (do-object slot)
+  (def (do-object slot)
     (ctx.methods.write-slot writer slot ctx))
-  (defrule (do-anchor slot id)
+  (def (do-anchor slot id)
     (do-write (wr 0)
       (ctx.methods.write-anchor-begin writer id ctx)
       (do-object slot)
       (ctx.methods.write-anchor-end writer ctx)
       wr))
-  (defrule (do-reference id)
+  (def (do-reference id)
     (ctx.methods.write-reference writer id ctx))
 
   (do-write (wr 0)
     (ctx.methods.write-delimiter writer ctx)
-    (@serialize slot ctx.scan
+    (do-serialize! slot ctx.scan
       do-object do-anchor do-reference)
     (ctx.methods.write-field-delimiter writer ctx)
     (writer.serialize obj ctx)
@@ -250,7 +232,6 @@
 (defsyntax-case do-serialize-list ()
   ((_ (writer ctx) body rest ...)
    (with-syntax ((do-serialize           (syntax-local-introduce 'do-serialize))
-                 (do-serialize-raw       (syntax-local-introduce 'do-serialize-raw))
                  (do-serialize-anchor    (syntax-local-introduce 'do-serialize-anchor))
                  (do-serialize-reference (syntax-local-introduce 'do-serialize-reference)))
      (with-identifiers ((ctx.methods.write-delimiter
@@ -264,31 +245,23 @@
 			(ctx.methods.write-reference
 			 #'ctx #'ctx ".methods.write-reference")
                         (writer.serialize
-			 #'writer #'writer ".serialize")
-                        (writer.serialize-raw
-			 #'writer #'writer ".serialize-raw"))
+			 #'writer #'writer ".serialize"))
        #'(let ()
-           (defrule (do-serialize obj wr)
+           (def (do-serialize obj wr)
              (do-write (wr wr)
                (ctx.methods.write-delimiter writer ctx)
                (writer.serialize obj ctx)
                wr))
 
-           (defrule (do-serialize-raw obj wr)
-             (do-write (wr wr)
-               (ctx.methods.write-delimiter writer ctx)
-               (writer.serialize-raw obj ctx)
-               wr))
-
-           (defrule (do-serialize-anchor obj id wr)
+           (def (do-serialize-anchor obj id wr)
              (do-write (wr wr)
 	       (ctx.methods.write-delimiter writer ctx)
                (ctx.methods.write-anchor-begin writer id ctx)
-               (writer.serialize-raw obj ctx)
+               (writer.serialize obj ctx)
 	       (ctx.methods.write-anchor-end writer ctx)
                wr))
 
-           (defrule (do-serialize-reference id wr)
+           (def (do-serialize-reference id wr)
              (do-write (wr wr)
                (ctx.methods.write-delimiter writer ctx)
                (ctx.methods.write-reference writer id ctx)
@@ -304,7 +277,7 @@
       (defrule (do-loop obj)
         (with ([hd . tl] obj)
           (do-write (wr wr)
-            (do-serialize-raw hd wr)
+            (do-serialize hd wr)
             (loop tl wr))))
 
       (defrule (do-tail wr continue)
@@ -317,7 +290,7 @@
 
       (cond
        ((pair? rest)
-        (@serialize rest ctx.scan
+        (do-serialize! rest ctx.scan
                     (lambda (obj) => :fixnum
                        (do-loop obj))
                     (lambda (obj id) => :fixnum
@@ -332,27 +305,27 @@
           wr))
        (else
         (do-tail wr
-          (@serialize rest ctx.scan
+          (do-serialize! rest ctx.scan
                       (lambda (obj) => :fixnum
-                         (do-serialize-raw obj wr))
+                         (do-serialize obj wr))
                       (lambda (obj id) => :fixnum
                          (do-serialize-anchor obj id wr))
                       (lambda (id) => :fixnum
                          (do-serialize-reference id wr)))))))
 
     (if (pair? lst)
-      (@serialize lst ctx.scan
+      (do-serialize! lst ctx.scan
                   (lambda (obj) => :fixnum
 		     (do-write (wr 0)
 		       (ctx.methods.write-list-begin writer ctx)
-		       (writer.serialize-raw (car obj) ctx)
+		       (writer.serialize (car obj) ctx)
 		       (loop (cdr obj) 0)
 		       wr))
                   (lambda (obj id) => :fixnum
 		     (do-write (wr 0)
 		       (ctx.methods.write-anchor-begin writer id ctx)
 		       (ctx.methods.write-list-begin writer ctx)
-		       (writer.serialize-raw (car obj) ctx)
+		       (writer.serialize (car obj) ctx)
 		       (loop (cdr obj) 0)
 		       (ctx.methods.write-anchor-end writer ctx)
 		       wr))
@@ -523,13 +496,13 @@
 
 (defobject-writer :foreign (write-foreign writer obj ctx)
   (@serialize! writer obj ctx
-  (do-write (wr 0)
-    (ctx.methods.write-object-begin writer ctx)
-    (writer.write-object-type foreign::t ctx)
-    (ctx.methods.write-delimiter writer ctx)
-    (writer.serialize (##foreign-tags obj) ctx)
-    (ctx.methods.write-object-end writer ctx)
-    wr)))
+    (do-write (wr 0)
+      (ctx.methods.write-object-begin writer ctx)
+      (writer.write-object-type foreign::t ctx)
+      (ctx.methods.write-delimiter writer ctx)
+      (writer.serialize (##foreign-tags obj) ctx)
+      (ctx.methods.write-object-end writer ctx)
+      wr)))
 
 (defobject-writer :structure (write-structure writer obj ctx)
   (let (klass (class-of obj))

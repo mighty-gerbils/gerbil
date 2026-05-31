@@ -16,6 +16,7 @@
     "list/walist"
 
     "string/path"
+    "string/utf8"
 
     "iter/interface"
     "iter/iterators"
@@ -73,12 +74,16 @@
 
     "hash-table"
     "serde/interface"
+    "serde/util"
     "serde/scan"
     "serde/scanner"
     "serde/serialize"
     "serde/deserialize"
-    ;;"serde/opaque"
     "serde/interned"
+    "serde/binary"
+    "serde/marshal"
+    (gxc: "serde/unmarshal" ,@(include-gambit-sharp))
+    "serde/serde-test-support"
 
     "ffi"
 
@@ -91,7 +96,6 @@
     "format/io"
     "format/format"
     "format/api"
-    "format/reader-test-support"
 
     ;; TODO
 

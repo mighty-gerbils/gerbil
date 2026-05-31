@@ -19,7 +19,13 @@
     (string-append "double " arg " = ___F64UNBOX(" raw-arg ")"))
 
   (defmethod-for-meta :fixnum (expand-ffi-c-wrap self code)
-    (string-append "___FIX(" code ")")))
+    (string-append "___FIX(" code ")"))
+
+  (defmethod-for-meta :flonum (expand-ffi-c-wrap self code)
+    (string-append "___F64BOX(" code ")"))
+
+  (defmethod-for-meta :void (expand-ffi-c-wrap self code)
+    (string-append "({" code "; ___VOID;})")))
 
 (import (for-syntax FFIMethods))
 

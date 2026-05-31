@@ -202,9 +202,6 @@
 ;; Anchor represents an under construction
 ;; (potentially) cyclic object.
 (interface Anchor
-  ;; the anchor's path
-  (path) => :list
-
   ;; progressive object construction
   (cons! (klass : class) hint)
   => ObjectBuilder
@@ -237,7 +234,7 @@
 ;; complex objects from a serde stream
 (interface ReadTraits
   ;; creates a new (potentially) cyclic object anchor
-  (anchor! (index : :fixnum) (anchor : Anchor) (ctx : ReadContext))
+  (anchor! (index : :fixnum) (ctx : ReadContext))
   => Anchor
   ;; resolves an anchor reference; it must be present in the dictionary
   (reference (index : :fixnum) (ctx : ReadContext))
@@ -253,7 +250,7 @@
 (interface ObjectDeserializer
   ;; deserialize! is called after the serde stream has been parsed.
   ;; the method if responsible for resolving anchors inside the object
-  (resolve! (ctx : Readcontext)) => :void
+  (resolve! (ctx : ReadContext)) => :void
 
   ;; validate! is called after the serde stream has been fully deserialized
   ;; to validate and reconstruct missing state

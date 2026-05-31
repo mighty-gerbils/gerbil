@@ -11,6 +11,24 @@
 (export #t)
 (declare (not safe))
 
+(cond-expand
+  (,(compilation-target? C)
+   (import :std/ffi)
+   (C-ffi-macrology)
+
+   (def-C (__float32-bytes! (buf   :- :u8vector)
+                            (float :- :flonum))
+     => :void
+     "*(float*)___arg1 = (float)___arg2")
+
+   (def-C (__float64-bytes! (buf   :- :u8vector)
+                            (float :- :flonum))
+     => :void
+     "*(double*)___arg1 = ___arg2"))
+  (else
+   (syntax-error "unsupported target")))
+
+
 (def (bio-write-uint (bio : basic-output-buffer) (uint : :integer) (len : :fixnum))
   => :fixnum
   (let* ((buf bio.buf)
@@ -65,6 +83,8 @@
 (defwriter-ext (write-sint writer (int : :integer) (len : :fixnum))
   (writer.write-uint (complement-output int len) len))
 
+(defwriter-ext (write-s8 writer (int : :fixnum))
+  (writer.write-sint int 1))
 (defwriter-ext (write-u16 writer (uint : :fixnum))
   (writer.write-uint uint 2))
 (defwriter-ext (write-s16 writer (int  : :fixnum))
@@ -77,6 +97,18 @@
   (writer.write-uint int 8))
 (defwriter-ext (write-s64 writer (int  : :integer))
   (writer.write-sint int 8))
+
+(defwriter-ext (write-f32 writer (float  : :flonum))
+  (let (buf (buffer-cache.get 4))
+    (__float32-bytes! buf float)
+    (begin0 (writer.write buf)
+      (buffer-cache.put! buf))))
+
+(defwriter-ext (write-f64 writer (float  : :flonum))
+  (let (buf (buffer-cache.get 8))
+    (__float64-bytes! buf float)
+    (begin0 (writer.write buf)
+      (buffer-cache.put! buf))))
 
 (def (bio-write-varuint (bio : basic-output-buffer) (uint : :integer) (max-bits : :fixnum))
   => :fixnum

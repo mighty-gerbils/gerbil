@@ -163,8 +163,10 @@
        (writer.write-symbol/quote klass.name))))
   (write-slot
    (lambda (self writer slot ctx)
-     (writer.write-symbol/quote slot)
-     (writer.write-colon)))
+     (do-write (wr 0)
+       (writer.write-symbol/quote slot)
+       (writer.write-colon)
+       wr)))
   (write-char
    (lambda (self writer char ctx)
      (do-format-style format-char self.opt

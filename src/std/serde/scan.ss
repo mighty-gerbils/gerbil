@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; serialization scanner
-(import :std/interface)
+(import :std/interface
+        :std/error)
 (export #t)
 
 (defstruct ScanContext
@@ -32,7 +33,7 @@
   (ctx.written.clear!)
   (ctx.scanned.clear!)
   (ctx.cycles.clear!)
-  (set! ctx.next 1))
+  (set! ctx.next 0))
 
 (def (scan-object! obj (ctx : ScanContext) (path [] : :list)) => :fixnum
   (cond
@@ -50,7 +51,7 @@
                 (when (memq obj path)
                   (if ctx.allow-cycles?
                     (ctx.cycles.set! obj id)
-                    (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
+                    (raise-contract-violation scan-object! "acyclic object" (class-of obj)))))
               id)
             (using (id e :- :fixnum)
               (unless (ctx.cycles.ref obj #f)
@@ -58,7 +59,7 @@
                   ;; it's a cycle
                   (if ctx.allow-cycles?
                     (ctx.cycles.set! obj id)
-                    (raise-contract-violation-error scan-object! "acyclic object" (class-of obj)))))
+                    (raise-contract-violation scan-object! "acyclic object" (class-of obj)))))
               id))))
      (else
       (let (id ctx.next)

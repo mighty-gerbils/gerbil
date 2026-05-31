@@ -6,12 +6,13 @@
 	:std/hash-table
 	:std/io/interface
         :std/io/bio/api
-	./interface)
+	./interface
+        ./util)
 (export #t)
 
 (defstruct BasicAnchor
   ((this        :- Anchor)
-   (path        :- :list)
+   (index       :- :fixnum)
    (object      :- :t)
    (has-object? :- :boolean)
    (resolved?   :- :boolean)
@@ -26,8 +27,6 @@
 
 (implement Anchor
   (BasicAnchor
-   (path
-    (lambda (self) self.path))
    (cons!
     (lambda (self klass hint)
       (when self.has-object?
@@ -44,7 +43,7 @@
 	 (set! self.object obj)
 	 (set! self.has-object? #t)
 	 (when self.dict
-	   (self.dict.set! (car self.path) self))
+	   (self.dict.set! self.index self))
 	 self.this))
    (temporary
     (lambda (self)
@@ -101,12 +100,12 @@
 (implement ReadTraits
   (Deserializer
    (anchor!
-    (lambda (self index anchor ctx)
+    (lambda (self index ctx)
       (if (ctx.dict.ref index #f)
 	(runtime-contract-violation! ReaderTraits::anchor!
 				     (not (ctx.dict.ref index #f))
 				     index)
-	(let (anchor (extend-anchor anchor index #f))
+	(let (anchor (new-anchor index #f))
 	  (ctx.dict.set! index anchor)
 	  anchor))))
    (reference
@@ -139,12 +138,12 @@
 				       name)))))))
   (DAGDeserializer
    (anchor!
-    (lambda (self index anchor ctx)
+    (lambda (self index ctx)
       (if (ctx.dict.ref index #f)
 	(runtime-contract-violation! ReaderTraits::anchor!
 				     (not (ctx.dict.ref index #f))
 				     index)
-	(extend-anchor anchor index ctx.dict))))))
+	(new-anchor index ctx.dict))))))
 
 (defstruct BasicBuilder (object (anchor :- Anchor))
   constructor: :init!
@@ -445,48 +444,24 @@
 ;; anchor instances
 (def (top-anchor)
   => Anchor
-  (using (top (TopAnchor #f [] #!void #f #f #f) : TopAnchor)
+  (using (top (TopAnchor #f -1 #!void #f #f #f) : TopAnchor)
     (let (inst (Anchor top))
       (set! top.this inst)
       inst)))
 
-(def (extend-anchor (anchor : Anchor) (index : :fixnum) (dict :- HashTable))
+(def (new-anchor (index : :fixnum) (dict :- HashTable))
   => Anchor
-  (using (ext (BasicAnchor #f (cons index (anchor.path)) #!void #f #f dict) : BasicAnchor)
+  (using (ext (BasicAnchor #f index #!void #f #f dict) : BasicAnchor)
     (let (inst (Anchor ext))
       (set! ext.this inst)
       inst)))
 
 (def (temp-anchor (from : BasicAnchor))
   => Anchor
-  (using (temp (TempAnchor #f from.path #!void #f #f #f) : TempAnchor)
+  (using (temp (TempAnchor #f from.index #!void #f #f #f) : TempAnchor)
     (let (inst (Anchor temp))
       (set! temp.this inst)
       inst)))
-
-;; class loader
-(def (load-class (name : :string))
-  => class
-  (def (reference-it)
-    ;; NOTE there is no way to reference a global
-    ;;      with a string; the class is the only
-    ;;      place to implement this by using module
-    ;;      meta-data.
-    (try (##global-var-ref (string->symbol name))
-	 (catch (e)
-	   (runtime-contract-violation! load-class (global-ref name) e))))
-
-  ;; get namespace to find the appropriate module; if empty, it is builtin
-  (let (klass
-	(cond
-	 ((string-index name #\#)
-	  => (lambda (idx)
-	       (let (namespace (substring name 0 idx))
-		 (load-module namespace)
-		 (reference-it))))
-	 (else
-	  (reference-it))))
-    (: klass class)))
 
 ;; object constructors
 (def (object-builder-for-class (klass : class)

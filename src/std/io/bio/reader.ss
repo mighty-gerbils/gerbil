@@ -11,6 +11,20 @@
 (export #t)
 (declare (not safe))
 
+(cond-expand
+  (,(compilation-target? C)
+   (import :std/ffi)
+   (C-ffi-macrology)
+
+   (def-C (__bytes->float32 (buf :- :u8vector))
+     => :flonum
+     "({double r = *(float*)___arg1; r;})")
+   (def-C (__bytes->float64 (buf :- :u8vector))
+     => :flonum
+     "({double r = *(double*)___arg1; r;})"))
+  (else
+   (syntax-error "unsupported target")))
+
 (defreader-ext (read-u8! reader)
   => :fixnum
   (let (u8 (reader.read-u8))
@@ -72,6 +86,9 @@
   (let (uint (reader.read-uint len))
     (complement-input uint len)))
 
+(defreader-ext (read-s8 reader)
+  => :fixnum
+  (:- (reader.read-sint 1) :fixnum))
 (defreader-ext (read-u16 reader)
   => :fixnum
   (:- (reader.read-uint 2) :fixnum))
@@ -90,6 +107,22 @@
 (defreader-ext (read-s64 reader)
   => :integer
   (reader.read-sint 8))
+
+(defreader-ext (read-f32 reader)
+  => :flonum
+  (let* ((buf (buffer-cache.get 4))
+         (_   (reader.read buf 0 4 4))
+         (flo (__bytes->float32 buf)))
+    (buffer-cache.put! buf)
+    flo))
+
+(defreader-ext (read-f64 reader)
+  => :flonum
+  (let* ((buf (buffer-cache.get 8))
+         (_   (reader.read buf 0 8 8))
+         (flo (__bytes->float64 buf)))
+    (buffer-cache.put! buf)
+    flo))
 
 (def (bio-read-varuint (bio : basic-input-buffer) (max-bits : :fixnum))
   => :integer
