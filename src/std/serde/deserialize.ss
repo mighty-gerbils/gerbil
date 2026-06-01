@@ -73,7 +73,7 @@
 	self.object)
        (else
 	(set! self.object (resolve! self.object ctx))
-	(validate! self.object [])
+	(validate! self.object (hash-eq))
 	(set! self.resolved? #t)
 	self.object)))))
   (TempAnchor
@@ -333,12 +333,12 @@
 	(v-set! vec i (resolve! (v-ref vec i) ctx))
 	(loop (fx+ i 1))))))
 
-(defrule (do-vector-validate vec path start
+(defrule (do-vector-validate vec seen start
 			     v-len v-ref)
   (let (len (v-len vec))
     (let loop ((i start :- :fixnum))
       (when (fx< i len)
-	(validate! (v-ref vec i) path)
+	(validate! (v-ref vec i) seen)
 	(loop (fx+ i 1))))))
 
 (implement ObjectDeserializer
@@ -351,8 +351,8 @@
       (set! self.object (resolve! self.object ctx))
       self))
    (validate!
-    (lambda (self path)
-      (validate! self.object path))))
+    (lambda (self seen)
+      (validate! self.object seen))))
   (HashTable
    (resolve!
     (lambda (self ctx)
@@ -360,11 +360,11 @@
        (lambda (k v)
 	 (self.set! (resolve! k ctx) (resolve! v ctx))))))
    (validate!
-    (lambda (self path)
+    (lambda (self seen)
       (self.for-each
        (lambda (k v)
-	 (validate! k path)
-	 (validate! v path))))))
+	 (validate! k seen)
+	 (validate! v seen))))))
   ;; builtins
   (:pair
    (resolve!
@@ -372,9 +372,9 @@
       (set! (car self) (resolve! (car self) ctx))
       (set! (cdr self) (resolve! (cdr self) ctx))))
    (validate!
-    (lambda (self path)
-      (validate! (car self) path)
-      (validate! (cdr self) path))))
+    (lambda (self seen)
+      (validate! (car self) seen)
+      (validate! (cdr self) seen))))
   (:vector
    (resolve!
     (lambda (self ctx)
@@ -383,8 +383,8 @@
 			 ##vector-ref
 			 ##vector-set!)))
    (validate!
-    (lambda (self path)
-      (do-vector-validate self path 0
+    (lambda (self seen)
+      (do-vector-validate self seen 0
 			  ##vector-length
 			  ##vector-ref))))
   (:values
@@ -395,8 +395,8 @@
 			 ##values-ref
 			 ##values-set!)))
    (validate!
-    (lambda (self path)
-      (do-vector-validate self path 0
+    (lambda (self seen)
+      (do-vector-validate self seen 0
 			  ##values-length
 			  ##values-ref))))
   (:box
@@ -404,8 +404,8 @@
     (lambda (self ctx)
       (set! (box self) (resolve! (unbox self) ctx))))
    (validate!
-    (lambda (self path)
-      (validate! (unbox self) path))))
+    (lambda (self seen)
+      (validate! (unbox self) seen))))
   (:structure
    (resolve!
     (lambda (self ctx)
@@ -414,8 +414,8 @@
 			 unchecked-field-ref
 			 unchecked-field-set!)))
    (validate!
-    (lambda (self path)
-      (do-vector-validate self path 1
+    (lambda (self seen)
+      (do-vector-validate self seen 1
 			  ##structure-length
 			  unchecked-field-ref))))
 
@@ -481,7 +481,7 @@
   :- :void)
 
 (defcall-interface-method ObjectDeserializer validate!
-  (__object-validate! obj path)
+  (__object-validate! obj seen)
   :- :void)
 
 ;; deserializer implementation should call these
@@ -493,9 +493,10 @@
       (__object-resolve! obj ctx)
       obj)))
 
-(def (validate! obj (path : :list))
-  (unless (memq obj path)
-    (__object-validate! obj (cons obj path))))
+(def (validate! obj (seen : HashTable))
+  (unless (seen.ref obj #f)
+    (seen.set! obj #t)
+    (__object-validate! obj seen)))
 
 (def (resolve-object-slots! (obj : :object) (ctx : ReadContext))
   (let* ((klass (object-class obj))
@@ -510,8 +511,8 @@
 	   (loop rest)))
         (else #!void)))))
 
-(def (validate-object-slots! (obj : :object) (path : :list))
-  (do-vector-validate obj path 1
+(def (validate-object-slots! (obj : :object) (seen : HashTable))
+  (do-vector-validate obj seen 1
 		      ##structure-length
 		      unchecked-field-ref))
 

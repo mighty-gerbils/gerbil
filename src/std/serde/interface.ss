@@ -254,7 +254,7 @@
 
   ;; validate! is called after the serde stream has been fully deserialized
   ;; to validate and reconstruct missing state
-  (validate! (path : :list)) => :void)
+  (validate! (seen : HashTable)) => :void)
 
 (deferror-class (ParseError IOError) () parse-error?)
 
