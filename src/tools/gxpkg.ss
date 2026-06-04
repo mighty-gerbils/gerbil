@@ -16,6 +16,7 @@
 ;;;   retag
 ;;;   search kw ...
 ;;; Packages:
+;;;   git.cons.io/user/package   -- cons.io gitea based packages
 ;;;   github.com/user/package    -- github based packages
 ;;;   gitlab.com/user/package    -- gitlab based packages
 ;;;   bitbucket.org/user/package -- bitbucket based packages
@@ -45,10 +46,15 @@
         pkg-retag
         pkg-plist pkg-dependents pkg-dependents*)
 
+;; TODO: have a generic version command, and a DSL to describe the API
+;; with all of both CLI, REPL, JSON-RPC and Gerbil actor variants.
+
 (def (main . args)
   (def force-flag
     (flag 'force "-f" "--force"
       help: "force the action"))
+  (def version-cmd
+    (command 'version help: "print version"))
   (def install-cmd
     (command 'install help: "install one or more packages"
       global-env-flag
@@ -91,7 +97,7 @@
       (option 'name "-n" "--name"
         help: "the package name; defaults to the current directory name")
       (option 'link "-l" "--link"
-        help: "link this package with a public package name; for example: github.com/your-user/your-package")))
+        help: "link this package with a public package name; for example: git.cons.io/your-user/your-package")))
   (def deps-cmd
     (command 'deps help: "manage dependencies for the current project"
       (flag 'add "-a" "--add"
@@ -129,7 +135,7 @@
       (flag 'remove "-r" "--remove"
         help: "remove a directory from the list")
       (rest-arguments 'directories
-        help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a github repo of the form github.com/some-org/some-repo")))
+        help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a git.cons.io, github.com or gitlab.com repo of the form git.cons.io/some-org/some-repo")))
 
   (def env-cmd
     (command 'env help: "execute a command within the local package context"
@@ -152,11 +158,14 @@
     retag-cmd
     search-cmd
     dir-cmd
-    env-cmd))
+    env-cmd
+    version-cmd))
 
 (def (gxpkg-main cmd opt)
   (let-hash opt
     (case cmd
+      ((version)
+       (displayln "gxpkg " (gerbil-version-string)))
       ((new)
        (pkg-new .package .name .link))
       ((build)
@@ -438,16 +447,18 @@
                 (delete-file tagf)))
             #t)))))
 
+(def (valid-package-provider? pkg)
+  ;; Before: a whitelist of hosts. What should we do now?
+  #;(ormap (cut string-prefix? <> pkg)
+           '("git.cons.io/" "github.com/" "gitlab.com/" "bitbucket.org/"))
+  #t)
+
 (def (pkg-update pkg)
   (cond
    ((equal? pkg "all")
     (fold-pkgs (pkg-list) pkg-update))
-   ((or (string-prefix? "github.com/" pkg)
-        (string-prefix? "gitlab.com/" pkg)
-        (string-prefix? "bitbucket.org/" pkg))
-    (pkg-update-git pkg))
    (else
-    (error "Unknown package provider" pkg))))
+    (pkg-update-git pkg))))
 
 (def (pkg-update-git pkg)
   (let* ((root (pkg-root-dir))
@@ -459,13 +470,8 @@
          (pkg-fetch-git pkg tag))))
 
 (def (pkg-fetch pkg tag)
-  (cond
-   ((or (string-prefix? "github.com/" pkg)
-        (string-prefix? "gitlab.com/" pkg)
-        (string-prefix? "bitbucket.org/" pkg))
-    (pkg-fetch-git pkg tag))
-   (else
-    (error "Unknown package provider" pkg))))
+  ;; TODO: Insert any package name validation or support for "all"
+  (pkg-fetch-git pkg tag))
 
 (def (pkg-fetch-git pkg tag)
   (let* ((root (pkg-root-dir))
@@ -823,6 +829,8 @@
   (cond
    ((string-prefix? "https://" dir)
     dir)
+   ((string-prefix? "git.cons.io/" dir)
+    (string-append "https://" dir "/raw/branch/main/package-list"))
    ((string-prefix? "github.com/" dir)
     (let (repo (substring dir (string-index dir #\/) (string-length dir)))
       (string-append "https://raw.githubusercontent.com" repo "/main/package-list")))
