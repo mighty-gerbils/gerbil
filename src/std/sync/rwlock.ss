@@ -104,20 +104,26 @@
 (defrules do-with-read-lock ()
   ((_ rw expr)
    (do-with-rwlock rw expr rwlock-read-lock! rwlock-read-unlock!))
-  ((_ rw expr rest ...)
-   (do-with-read-lock rw (begin expr rest ...))))
+  ((_ rw expr ~ type)
+   (and (identifier? #'~)
+        (member #'~ '(: :-) free-identifier=?))
+   (~ (do-with-rwlock rw expr rwlock-read-lock! rwlock-read-unlock!)
+      type)))
 
 (defrules do-with-write-lock ()
   ((_ rw expr)
    (do-with-rwlock rw expr rwlock-write-lock! rwlock-write-unlock!))
-  ((_ rw expr rest ...)
-   (do-with-write-lock rw (begin expr rest ...))))
+  ((_ rw expr ~ type)
+   (and (identifier? #'~)
+        (member #'~ '(: :-) free-identifier=?))
+   (~ (do-with-rwlock rw expr rwlock-write-lock! rwlock-write-unlock!)
+      type)))
 
 (def (with-read-lock (rw : RWLock) (proc : :procedure))
   (do-with-read-lock rw (proc)))
 
 (def (with-write-lock (rw : RWLock) (proc : :procedure))
-  (do-with-write-lock rw (proc) rwlock-write-lock! rwlock-write-unlock!))
+  (do-with-write-lock rw (proc)))
 
 ;; methods for the Locker interface
 (implement Locker RWLock

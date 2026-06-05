@@ -1,29 +1,46 @@
 (import :std/test
         :std/error
-        ./address)
+        :std/string/stringer
+        ./types
+        ./parser
+        ./stringer
+        ./resolver)
 
-(export address-test)
+(export ip-address-test
+        address-test)
+
+(def (maybe-make-IP4Address o)
+  (if (IP4Address? o) o (IP4Address o)))
+
+(def (maybe-make-IP6Address o)
+  (if (IP6Address? o) o (IP6Address o)))
 
 (def (test-ip4<->string str ip)
-  (test-ip<->string str ip string->ip4-address ip4-address->string))
+  (test-ip<->string str ip string->ip4-address ip4-address->string
+                    maybe-make-IP4Address))
 
 (def (test-ip6<->string str ip)
-  (test-ip<->string str ip string->ip6-address ip6-address->string))
+  (test-ip<->string str ip string->ip6-address ip6-address->string
+                    maybe-make-IP6Address))
 
 (def (test-ip6<-string str ip)
-  (test-ip<-string str ip string->ip6-address))
+  (test-ip<-string str ip string->ip6-address
+                   maybe-make-IP6Address))
 
-(def (test-ip<->string str ip to-ip to-string)
-  (test-ip<-string str ip to-ip)
-  (test-ip->string str ip to-string))
+(def (test-ip<->string str ip to-ip to-str make)
+  (test-ip<-string str ip to-ip make)
+  (test-ip->string str ip to-str make))
 
-(def (test-ip<-string str ip to-ip)
-  (check (to-ip str) => ip))
+(def (test-ip<-string str ip to-ip make)
+  (check (to-ip str) => (make ip)))
 
-(def (test-ip->string str ip to-string)
-  (check (to-string ip) => str))
+(def (test-ip->string str ip to-str make)
+  (check (to-str (make ip)) => str))
 
-(def address-test
+(def (test-address<->string str)
+  (check (address->string (string->address str)) => str))
+
+(def ip-address-test
   (test-suite "IP address to string conversion"
     (test-case "IPv4"
       (test-ip4<->string "0.0.0.0" inaddr-any4)
@@ -42,9 +59,7 @@
        (string->ip4-address "192.168.1")
        contract-violation-error?))
     (test-case "IPv6"
-      (test-ip6<-string "0:0:0:0:0:0:0:0" inaddr-any6)
       (test-ip6<->string "::" inaddr-any6)
-      (test-ip6<-string "0:0:0:0:0:0:0:1" localhost6)
       (test-ip6<->string "::1" localhost6)
       (test-ip6<->string "f::1"
                          #u8(0 15 0 0 0 0 0 0 0 0 0 0 0 0 0 1))
@@ -88,3 +103,19 @@
       (check-exception
        (string->ip6-address "0:0:0:0::0:0:0:0:0")
        contract-violation-error?))))
+
+(def address-test
+  (test-suite "address to string round trip conversion"
+    (test-case "ip4"
+      (test-address<->string "ip4:127.0.0.1"))
+    (test-case "ip6"
+      (test-address<->string "ip6:::1"))
+    (test-case "inet4"
+      (test-address<->string "inet4:127.0.0.1:8080"))
+    (test-case "inet6"
+      (test-address<->string "inet6:::1:8080"))
+    (test-case "unix"
+      (test-address<->string "unix:/tmp/a/b/c"))
+    (test-case "dns"
+      (test-address<->string "dns:localhost:8080")
+      (test-address<->string "dns:www.google.com:80"))))

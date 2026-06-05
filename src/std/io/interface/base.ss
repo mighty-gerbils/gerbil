@@ -16,7 +16,7 @@
   ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
   (seek (position : :integer)
         (whence   : :fixnum))
-  => :void)
+  => :integer)
 
 ;; generic binary IO
 (interface (Reader Closer)

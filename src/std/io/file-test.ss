@@ -2,12 +2,11 @@
 ;;; © vyzo
 ;;; file io test
 (import :std/test
-        :std/text/utf8
-        :std/misc/ports
-        :std/os/temporaries
+        :std/os/file
         ./interface
+        ./bio/api
         ./file
-        ./bio/api)
+        ./tempfile)
 (export file-io-test)
 
 (def text "the quick brown fox jumped over the fence")
@@ -39,9 +38,9 @@
                 (brd (open-buffered-reader rd)))
            (let lp ((i 0))
              (when (fx< i text-length)
-               (check (BufferedReader-read-char brd)  => (string-ref text i))
+               (check (BufferedReader-read-char-utf8 brd)  => (string-ref text i))
                (lp (fx+ i 1))))
-           (check (BufferedReader-read-char brd) ? eof-object?)
+           (check (BufferedReader-read-char-utf8 brd) ? eof-object?)
            (BufferedReader-close brd)))))
 
     (test-case "file writer"
@@ -71,20 +70,20 @@
           (let* ((wr (open-file-writer tmp))
                  (re (open-file-reader tmp))
                  (buf (make-u8vector 3)))
-            (Seeker-seek wr 8)
+            (Seeker-seek wr 8 SEEK_SET)
             (check (Writer-write wr #u8(1 123 255)) => 3)
             (Reader-read re buf)
             (check buf => #u8(0 0 0))
-            (Seeker-seek re 8)
+            (Seeker-seek re 8 SEEK_SET)
             (Reader-read re buf)
             (check buf => #u8(1 123 255))
-            (Seeker-seek wr -1 'current)
+            (Seeker-seek wr -1 SEEK_CUR)
             (Writer-write wr #u8(55))
-            (Seeker-seek re 8)
+            (Seeker-seek re 8 SEEK_SET)
             (Reader-read re buf)
             (check buf => #u8(1 123 55))
-            (Seeker-seek re -3 'current)
-            (Seeker-seek wr -2 'current)
+            (Seeker-seek re -3 SEEK_CUR)
+            (Seeker-seek wr -2 SEEK_CUR)
             (Writer-write wr #u8(6))
             (Reader-read re buf)
             (check buf => #u8(1 6 55))))))))

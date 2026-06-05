@@ -76,9 +76,6 @@
 (def (open-output-length-writer) => Writer
   (Writer (dummy-output-count 0)))
 
-(def (open-output-length-buffered-writer) => BufferedWriter
-  (BufferedWriter (dummy-output-count 0)))
-
 (def (get-io-count (inst : interface-instance)) => :integer
   (using (iobj inst.object : io-count)
     iobj.count))

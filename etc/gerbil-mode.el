@@ -289,6 +289,9 @@
                 with-struct
                 with-class
                 with-contract
+                with-identifier
+                with-identifiers
+                do-write
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -297,11 +300,13 @@
                  )
               'scheme-indent-function 2)
   (gerbil-put '(def defvalues extern
-                defalias defsyntax defrule defrules defrules*
-                defstruct defclass defgeneric defmethod defmessage deftype
-                definline definline*
-                define-values define-syntaxes
+                    defalias defsyntax defsyntax-case
+                    defrule defrules
+                defstruct defclass deftype defmethod interface
+                definline
+                define-values-syntaxes
                 defcall-actor
+                defcall-interface-method
                 implement
                 )
               'scheme-indent-function 'defun)

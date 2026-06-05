@@ -14,9 +14,11 @@
     "list/alist"
     "list/plist"
     "list/walist"
+    "list/random"
 
     "string/path"
     "string/utf8"
+    "string/stringer"
 
     "iter/interface"
     "iter/iterators"
@@ -33,6 +35,7 @@
 
     "time/time"
     "time/timeout"
+    "time/precise"
 
     "make"
     "build-script"
@@ -51,7 +54,23 @@
     "cache"
     "sync/rwlock"
     "sync/spinlock"
+
     "net/address/types"
+    "net/address/parser"
+    "net/address/stringer"
+    "net/address/resolver"
+    "net/address/api"
+    "net/address"
+
+    "ffi"
+    "os/error"
+    (gxc: "os/device" ,@(include-gambit-sharp))
+    (gxc: "os/file" "-cc-options" "-D_LARGEFILE64_SOURCE")
+    "os/fcntl"
+    "os/time"
+    "os/sockaddr"
+    (gxc: "os/socket" "-cc-options" "-D _GNU_SOURCE")
+    "os/sockopt"
 
     "io/interface/base"
     "io/interface/bio"
@@ -71,6 +90,21 @@
     "io/bio/port"
     ;;"io/bio/message"
     "io/bio/api"
+    "io/file"
+    "io/tempfile"
+    "io/util"
+    "io/counter"
+    "io/delimited"
+    "io/dummy"
+    "io/socket/types"
+    "io/socket/sockaddr"
+    "io/socket/socket"
+    "io/socket/basic"
+    "io/socket/client"
+    "io/socket/stream"
+    "io/socket/server"
+    "io/socket/datagram"
+    "io/socket/api"
 
     "hash-table"
     "serde/interface"
@@ -84,8 +118,6 @@
     "serde/marshal"
     (gxc: "serde/unmarshal" ,@(include-gambit-sharp))
     "serde/serde-test-support"
-
-    "ffi"
 
     "format/ascii"
     "format/format-string"

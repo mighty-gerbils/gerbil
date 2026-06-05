@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; socket IO interfaces
-(import :std/time/timeout
+(import :std/os/sockopt
+        :std/time/timeout
         :std/net/address/types
         ./base)
 (export #t)
@@ -14,13 +15,11 @@
   ;; the socket's peer address, a NullAddress if not connected
   (peer-address) => Address
   ;; getsockopt syscall
-  (getsockopt (level  :  :fixnum)
-              (option :  :fixnum))
+  (getsockopt (opt : SockOpt))
   => :t
   ;; setsockopt syscall
-  (setsockopt (level  :  :fixnum)
-              (option :  :fixnum)
-              (value  :  :t))
+  (setsockopt (opt : SockOpt)
+              (arg  :  :t))
   => :void
   ;; input timeout
   (set-input-timeout! (timeo : IOTimeout))

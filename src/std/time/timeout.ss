@@ -12,36 +12,31 @@
 (def !NoTimeout (IOTimeout #f))
 
 (interface AbsTimeout
-  (abs-timeout) => :t ;; (Maybe :time)
+  (abs-timeout) => :t ;; (Maybe :flonum)
   )
 
 (defcall-interface-method AbsTimeout abs-timeout
   (__abs-timeout obj))
 
-(implement AbsTimeout IOTimeout
-  (abs-timeout
-   (lambda (self)
-     (cond
-      (self.t => (cut __abs-timeout <>))
-      (else #f)))))
-
-(implement AbsTimeout InexactTime
-  (abs-timeout
-   (lambda (self)
-     (seconds->time self.time))))
-
-(implement AbsTimeout :flonum
-  (abs-timeout
-   (lambda (self)
-     (seconds->time (fl+ self (##current-time-point))))))
-
-(implement AbsTimeout :real
-  (abs-timeout
-   (lambda (self)
-     (seconds->time (fl+ (inexact self) (##current-time-point)) ))))
-
-(implement AbsTimeout :time
-  (abs-timeout identity))
+(implement AbsTimeout
+  (IOTimeout
+   (abs-timeout
+    (lambda (self)
+      (cond
+       (self.t => (cut __abs-timeout <>))
+       (else #f)))))
+  (InexactTime
+   (abs-timeout identity))
+  (:flonum
+   (abs-timeout
+    (lambda (self)
+      (fl+ self (##current-time-point)))))
+  (:real
+   (abs-timeout
+    (lambda (self)
+      (fl+ (inexact self) (##current-time-point)) )))
+  (:time
+   (abs-timeout time->seconds)))
 
 (def (timeout? obj)
   (or (not obj)
@@ -56,6 +51,6 @@
   (if timeo
     (let (timeo (__abs-timeout timeo))
       (if timeo
-        (: timeo :time)
+        (: timeo :flonum)
         (no-timeout)))
     (no-timeout)))

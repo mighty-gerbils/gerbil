@@ -9,7 +9,8 @@
         ./delimited
         ./file
         ./util
-        ./port)
+        ./port
+        ./tempfile)
 (export
   (import: ./interface
            ./bio/api
@@ -19,4 +20,5 @@
            ./delimited
            ./file
            ./util
-           ./port))
+           ./port
+           ./tempfile))

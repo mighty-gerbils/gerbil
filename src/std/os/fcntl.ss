@@ -3,33 +3,33 @@
 ;;; OS File Control(import :std/ffi
 (import :std/ffi
         ./error
-        ./device
-        ./fcntl)
+        ./device)
 (export #t)
 
 (def (fcntl-getfl (fd : :fixnum))
   => :fixnum
-  (do-syscall (___fcntl1 fd F_GETFL)))
+  (do-syscall (__fcntl1 fd F_GETFL)))
 
 (def (fcntl-setfl! (fd : :fixnum) (flags : :fixnum))
   => :void
-  (let* ((current (fcntl-getfl fd flags))
+  (let* ((current (fcntl-getfl fd))
          (flags   (fxior flags current)))
     (do-syscall (__fcntl2 fd F_SETFL flags))))
 
 (def (fcntl-getfd (fd : :fixnum))
   => :fixnum
-  (do-syscall (___fcntl1 fd F_GETFD)))
+  (do-syscall (__fcntl1 fd F_GETFD)))
 
 (def (fcntl-setfd! (fd : :fixnum) (flags : :fixnum))
-  = :void
-  (let* ((current (fcntl-getfd fd flags))
+  => :void
+  (let* ((current (fcntl-getfd fd))
          (flags   (fxior flags current)))
     (do-syscall (__fcntl2 fd F_SETFD flags))))
 
 (C-ffi-macrology)
 (C-include  "<unistd.h>"
-            "<fcntl.h>")
+            "<fcntl.h>"
+            "<errno.h>")
 
 (def-C-syscall (__fcntl1 (fd  :- :fixnum)
                          (cmd :- :fixnum))
@@ -40,19 +40,7 @@
                          (arg :- :fixnum))
   "fcntl(___arg1, ___arg2, ___arg3)")
 
-;; (def-C-code (__fcntl1 (fd  :- :fixnum)
-;;                       (cmd :- :fixnum))
-;;   => :fixnum
-;;   "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2)))")
-
-;; (def-C-code (__fcntl2 (fd  :- :fixnum)
-;;                       (cmd :- :fixnum)
-;;                       (arg :- :fixnum))
-;;   => :fixnum
-;;   "___TRAP_ERRNO(fcntl(___INT(___ARG1), ___INT(___ARG2), ___INT(___ARG3)))")
-
-
-(def-C-const
+(def-C-const*
   F_GETFL
   F_SETFL
   F_GETFD

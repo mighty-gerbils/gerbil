@@ -7,8 +7,10 @@
         :std/os/sockaddr
         :std/os/sockopt
         :std/net/address/types
+        :std/time/timeout
         :std/sync/rwlock
-        ./types)
+        ./types
+        ./sockaddr)
 (export #t)
 
 ;; PRECONDITION: caller holds read lock
@@ -52,22 +54,22 @@
         (set! sock.remote addr)
         addr)))))
 
-(def (basic-socket-getsockopt (sock : basic-socket) (level : :fixnum) (opt : :fixnum))
+(def (basic-socket-getsockopt (sock : basic-socket) (opt : SockOpt))
   (do-with-read-lock sock.lock
-    (socket-device-getsockopt sock.dev level opt)))
+    (socket-device-getsockopt sock.dev opt)))
 
-(def (basic-socket-setsockopt (sock : basic-socket) (level : :fixnum) (opt : :fixnum) val)
+(def (basic-socket-setsockopt (sock : basic-socket) (opt : SockOpt) val)
   (do-with-write-lock sock.lock
-    (socket-device-setsockopt sock.dev level opt val)))
+    (socket-device-setsockopt sock.dev opt val)))
 
 (def (basic-socket-set-input-timeout! (sock : basic-socket) (timeo : IOTimeout))
   (do-with-write-lock sock.lock
-    (do-check-device-input sock.dev
+    (do-check-device-input basic-socket-set-input-timeout! sock.dev
       (set! sock.timeo-in timeo))))
 
 (def (basic-socket-set-output-timeout! (sock : basic-socket) (timeo : IOTimeout))
   (do-with-write-lock sock.lock
-    (do-check-device-output sock.dev
+    (do-check-device-output basic-socket-set-output-timeout! sock.dev
       (set! sock.timeo-out timeo))))
 
 (def (basic-socket-close (sock : basic-socket))

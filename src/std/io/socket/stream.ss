@@ -44,8 +44,8 @@
           (if (fx> input-need result)
             (raise-premature-end-of-input stream-socket-read input-need)
             result))
-         ((fx> rd input-need)
-          (fx+ result read))
+         ((fx>= rd input-need)
+          (fx+ result rd))
          (else
           (loop (fx+ output-start rd) (fx- input-need rd) (fx+ result rd)))))
       result)))
@@ -56,7 +56,7 @@
 
 ;; stream socket writer
 (def (stream-socket-write (writer      : stream-socket-writer)
-                          (input       : :fixnum)
+                          (input       : :u8vector)
                           (input-start : :fixnum)
                           (input-end   : :fixnum))
   => :fixnum
@@ -65,7 +65,7 @@
     => :fixnum
     (if (fx< input-start input-end)
       (let (wr (client-socket-send writer.sock input input-start input-end 0))
-        (loop (fx+ input-start wrote) (fx+ result wrote)))
+        (loop (fx+ input-start wr) (fx+ result wr)))
       result)))
 
 (def (stream-socket-close-writer (writer : stream-socket-writer))

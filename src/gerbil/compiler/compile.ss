@@ -147,6 +147,7 @@ namespace: gxc
   (%#define-values           generate-runtime-empty)
   (%#define-syntax           generate-runtime-empty)
   (%#define-alias            generate-runtime-empty)
+  (%#define-runtime          generate-runtime-empty)
   (%#declare                 generate-runtime-empty)
   (%#lambda                       generate-runtime-empty)
   (%#case-lambda                  generate-runtime-empty)
@@ -251,6 +252,7 @@ namespace: gxc
   (%#define-values  generate-meta-define-values%)
   (%#define-syntax  generate-meta-define-syntax%)
   (%#define-alias   generate-meta-define-alias%)
+  (%#define-runtime generate-meta-define-runtime%)
   (%#begin-foreign  void-method)
   (%#declare        void-method))
 
@@ -1432,6 +1434,14 @@ namespace: gxc
   (ast-case stx ()
     ((_ (id eid) ...)
      ['%#extern (map generate1 #'(id ...) #'(eid ...)) ...])))
+
+(def (generate-meta-define-runtime% self stx)
+  (ast-case stx ()
+    ((_ id eid)
+     (let ((ident (generate-runtime-identifier #'id))
+           (eid   (stx-e #'eid))
+           (props (runtime-identifier-properties #'id)))
+      ['%#define-runtime ident eid props ...]))))
 
 (def (generate-meta-define-values% self stx)
   (def (generate1 id)

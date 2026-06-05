@@ -9,7 +9,7 @@
         ./basic)
 (export #t)
 
-(def (socket-client-recv (sock         : basic-client-socket)
+(def (client-socket-recv (sock         : basic-client-socket)
                          (output       : :u8vector)
                          (output-start : :fixnum)
                          (output-end   : :fixnum)
@@ -23,13 +23,13 @@
             ((EWOULDBLOCK EAGAIN)
              (if (__basic-socket-wait-input! sock)
                (loop)
-               (raise-timeout stream-socket-recv "recv timeout")))
+               (raise-timeout client-socket-recv "recv timeout")))
             (else
-             (raise-os-error stream-socket-recv rd)))
+             (raise-os-error client-socket-recv rd)))
           rd)))))
 
-(def (socket-client-send (sock        : basic-client-socket)
-                         (input       : :uvector)
+(def (client-socket-send (sock        : basic-client-socket)
+                         (input       : :u8vector)
                          (input-start : :fixnum)
                          (input-end   : :fixnum)
                          (flags       : :fixnum))
@@ -42,7 +42,7 @@
             ((EWOULDBLOCK EAGAIN)
              (if (__basic-socket-wait-output! sock)
                (loop)
-               (raise-timeout stream-socket-recv "recv timeout")))
+               (raise-timeout client-socket-send "send timeout")))
             (else
-             (raise-os-error stream-socket-recv rd)))
+             (raise-os-error client-socket-send wr)))
           wr)))))

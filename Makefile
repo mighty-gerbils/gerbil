@@ -20,6 +20,9 @@ stage1:
 stdlib:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
 
+libgerbil:
+	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh libgerbil
+
 tools:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh tools
 

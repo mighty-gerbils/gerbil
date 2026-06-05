@@ -2,37 +2,35 @@
 ;;; © vyzo
 ;;; delimited readers
 (import :std/error
+        :std/interface
         ./interface)
 (export (rename: open-delimited-reader delimited-reader))
 (declare (not safe))
 
 (defstruct delimited-reader ((reader    :- Reader)
-                             (remaining :- :fixnum))
+                             (remaining :- :integer))
   final: #t )
 
 (def (open-delimited-reader (reader : Reader)
-                            (limit :~ nonnegative-fixnum? :- :fixnum))
+                            (limit :~ nonnegative-integer? :- :integer))
   => Reader
   (Reader (make-delimited-reader reader limit)))
 
 (defmethod {read delimited-reader}
-  (lambda (self (output       :- :u8vector)
-           (output-start :- :fixnum)
-           (output-end   :- :fixnum)
-           (input-need   :- :fixnum))
+  (lambda (self output start end need)
     (let (remaining self.remaining)
       (cond
-       ((fx> input-need remaining)
-        (raise-io-error read "input limit exceeded" input-need remaining))
-       ((fx= remaining 0) 0)
+       ((> need remaining)
+        (raise-io-error read "input limit exceeded" need: need remaining: remaining))
+       ((= remaining 0) 0)
        (else
-        (let* ((want (fx- output-end output-start))
-               (output-end
-                (if (fx> want remaining)
-                  (fx+ output-start remaining)
-                  output-end))
-               (read (self.reader.read output output-start output-end input-need)))
-          (set! self.remaining (fx- remaining read))
+        (let* ((want (fx- end start))
+               (end
+                (if (> want remaining)
+                  (fx+ start remaining)
+                  end))
+               (read (self.reader.read output start end need)))
+          (set! self.remaining (- remaining read))
           read)))))
   interface: Reader)
 
@@ -40,3 +38,6 @@
   (lambda (self)
     (self.reader.close))
   interface: Closer)
+
+(@implement Closer delimited-reader)
+(@implement Reader delimited-reader)

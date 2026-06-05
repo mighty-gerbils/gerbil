@@ -168,6 +168,7 @@ namespace: gxc
   (%#define-values  void-method)
   (%#define-syntax  void-method)
   (%#define-alias   void-method)
+  (%#define-runtime void-method)
   (%#declare        void-method))
 
 (defcompile-method #f (::void ::void-special-form ::void-expression) ())
@@ -207,6 +208,7 @@ namespace: gxc
   (%#define-values  false-method)
   (%#define-syntax  false-method)
   (%#define-alias   false-method)
+  (%#define-runtime false-method)
   (%#declare        false-method))
 
 (defcompile-method #f (::false ::false-special-form ::false-expression) ())
@@ -246,6 +248,7 @@ namespace: gxc
   (%#define-values  identity-method)
   (%#define-syntax  identity-method)
   (%#define-alias   identity-method)
+  (%#define-runtime identity-method)
   (%#declare        identity-method))
 
 (defcompile-method #f (::identity ::identity-special-form ::identity-expression) ())

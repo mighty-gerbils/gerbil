@@ -293,9 +293,8 @@ namespace: gx
 
 (def (genident (e 'g) (src #f))
   (datum->syntax (and (identifier? src) src)
-    (string->symbol
-     (symbol->string
-      (gensym (let (e (stx-e e)) (if (symbol? e) e 'g)))))
+    (make-symbol "$%"
+                 (gensym (let (e (stx-e e)) (if (symbol? e) e 'g))))
     src))
 
 (def (gentemps stx-lst)

@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; OS Devices
-(import :std/ffi
+(import :std/error
+        :std/ffi
         :std/time/timeout
         ./error)
 (export #t)
@@ -34,15 +35,15 @@
                         (fd        :- :fixnum)
                         (direction :- :fixnum))
   => :raw-device-port
-  (def (fail)
-    (##fail-check-settings 1 __open-raw-device direction id fd))
   (: (##make-psettings
-      direction '() '() fail
+      direction '() '()
+      (lambda ()
+        (##fail-check-settings 1 __open-raw-device direction id fd))
       (lambda (psettings)
         (let (device
               (##os-device-open-raw-from-fd fd (##psettings->device-flags psettings)))
           (if (##fixnum? device)
-            (##raise-os-exception #f device open-raw-device direction id fd)
+            (##raise-os-exception #f device __open-raw-device direction id fd)
             (##make-raw-device-port direction device id [id fd] fd)))))
      :raw-device-port))
 
@@ -51,7 +52,7 @@
    (identifier? #'dev)
    (with-identifier (dev.dir #'dev #'dev ".dir")
      #'(if (fx= dev.dir 0)
-         (raise-io-closed where "OS device closed")
+         (raise-io-closed where "device closed")
          expr)))
   ((_ where dev expr rest ...)
    #'(do-check-device-open where dev (begin expr rest ...))))
@@ -98,14 +99,14 @@
   => :void
   (unless (fx= (fxand dev.dir direction) 0)
     (set! dev.dir
-      (fxand dev.dir (fxnot how)))
+      (fxand dev.dir (fxnot direction)))
     (when (fx= dev.dir 0)
       (unwind-protect
         (close-port dev.raw)
         (set! dev.raw #f)))))
 
-(defrule (with-error-device-close sock body rest ...)
-  (with-error (device-close body)
+(defrule (with-error-device-close dev body rest ...)
+  (with-error (device-close dev)
     body rest ...))
 
 (def (device-closed? (dev : OSDevice))
@@ -115,17 +116,15 @@
 (def (device-wait-input! (dev : OSDevice) (timeo : IOTimeout))
   (do-check-device-input device-wait-input! dev
     (let (ioc (macro-raw-device-port-rdevice-condvar dev.raw))
-      (##wait-for-io! ioc (__device-timeout timeo)))))
+      (##wait-for-io! ioc (device-timeout timeo)))))
 
 (def (device-wait-output! (dev : OSDevice) (timeo : IOTimeout))
   (do-check-device-output device-wait-output! dev
     (let (ioc (macro-raw-device-port-wdevice-condvar dev.raw))
-      (##wait-for-io! ioc (__device-timeout timeo)))))
+      (##wait-for-io! ioc (device-timeout timeo)))))
 
-(def (__device-timout timeo)
-  (if timeo
-    (timeout->abs-timeout->seconds timeo)
-    #t))
+(def (device-timeout (timeo : IOTimeout))
+  (timeout->abs-timeout timeo #t))
 
 (def (__close-fd (fd :- :fixnum))
   => :fixnum
@@ -139,33 +138,13 @@
                        (buf   :- :u8vector)
                        (start :- :fixnum)
                        (count :- :fixnum))
-  "read(___arg1, (void*)(___arg2 + ___arg3 ), ___arg4)")
+  "read(___arg1, (void*)(___arg2 + ___arg3), ___arg4)")
 
-(def-C (__write (fd    :- :fixnum)
-                (buf   :- :u8vector)
-                (start :- :fixnum)
-                (count :- :fixnum))
-  => :fixnum
+(def-C-syscall (__write (fd    :- :fixnum)
+                        (buf   :- :u8vector)
+                        (start :- :fixnum)
+                        (count :- :fixnum))
   "write(___arg1, (void*)(___arg2 + ___arg3), ___arg4)")
 
-(def-C (__close (fd    :- :fixnum))
-  => :fixnum
+(def-C-syscall (__close (fd    :- :fixnum))
   "close(___arg1)")
-
-#;(def-C-code (__read (fd    :- :fixnum)
-                    (buf   :- :u8vector)
-                    (start :- :fixnum)
-                    (count :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(read(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
-
-#;(def-C-code (__write (fd    :- :u)
-                     (buf   :- :u8vector)
-                     (start :- :fixnum)
-                     (count :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(write(___INT(___ARG1), __U8VECTOR_AS(void*, ___ARG2) + ___INT(___ARG3), ___INT(___ARG4)))")
-
-#;(def-C-code (__close (fd    :- :fixnum))
-  => :fixnum
-  "___TRAP_ERRNO(close(___INT(___ARG1)))")

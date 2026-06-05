@@ -3,6 +3,7 @@
 ;;; socket types
 (import :std/os/socket
         :std/time/timeout
+        :std/net/address
         :std/sync/rwlock)
 (export #t)
 
@@ -14,6 +15,8 @@
    (timeo-out   :- IOTimeout)
    (local       :? Address)
    (remote      :? Address))
+  transparent: #f
+  print: (dev)
   constructor: :init!)
 
 (defstruct (basic-client-socket basic-socket) ())

@@ -7,7 +7,7 @@
 
 (def (current-system-time-coarse) => timeval
   (let (tv (make-timeval))
-    (do-syscall (__gettimeofday rv))
+    (do-syscall (__gettimeofday tv))
     tv))
 
 (def (current-system-time-precise) => timespec
@@ -20,24 +20,43 @@
            "<time.h>"
            "<sys/time.h>")
 
-(def-C-struct timespec
-  ((sec  ts_sec  :u64)
-   (usec ts_nsec :long)))
+(def-C-struct timespec)
+(def-C-struct timeval)
 
-(def-C-struct timeval
-  ((sec  ts_sec  :u64)
-   (usec ts_usec :long)))
+(def (timespec-tv_sec (ts : timespec))
+  => :integer
+  (___timespec-tv_sec ts.body))
+
+(def-C-lambda (___timespec-tv_sec (ts : scheme-object))
+  => int64
+  "___result = ___U8VECTOR_AS(struct timespec*,___ARG1)->tv_sec;")
+
+(def (timespec-tv_nsec (ts : timespec))
+  => :integer
+  (___timespec-tv_nsec ts.body))
+
+(def-C-lambda (___timespec-tv_nsec (ts : scheme-object))
+  => long
+  "___result = ___U8VECTOR_AS(struct timespec*,___ARG1)->tv_nsec;")
+
+(def (timeval-tv_sec (tv : timeval))
+  => :integer
+  (___timeval-tv_sec tv.body))
+
+(def-C-lambda (___timeval-tv_sec (tv : scheme-object))
+  => int64
+  "___result = ___U8VECTOR_AS(struct timeval*,___ARG1)->tv_sec;")
+
+(def (timeval-tv_usec (tv : timeval))
+  => :integer
+  (___timeval-tv_usec tv.body))
+
+(def-C-lambda (___timeval-tv_usec (tv : scheme-object))
+  => long
+  "___result = ___U8VECTOR_AS(struct timeval*,___ARG1)->tv_usec;")
 
 (def-C-syscall (__gettimeofday (result :- timeval))
   "gettimeofday(___arg1, NULL)")
 
 (def-C-syscall (__clock_getrealtime (result :- timespec))
   "clock_gettime(CLOCK_REALTIME, ___arg1)")
-
-;; (def-C-code (__gettimeofday (result :- :u8vector))
-;;   => :fixnum
-;;   "___TRAP_ERRNO(gettimeofday(___U8VECTOR_AS (struct timeval* ___ARG1), NULL))")
-
-;; (def-C-code (__clock_getrealtime (result :- :uvector))
-;;   => :fixnum
-;;   "___TRAP_ERRNO(clock_gettime(CLOCK_REALTIME., ___U8VECTOR_AS (struct timespec*,___ARG1)))")
