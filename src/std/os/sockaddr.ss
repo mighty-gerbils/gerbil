@@ -8,6 +8,7 @@
 (C-ffi-macrology)
 (C-include "<sys/types.h>"
            "<sys/socket.h>"
+           "<string.h>"
            "<netinet/in.h>"
            "<netinet/ip.h>"
            "<netinet/tcp.h>"
