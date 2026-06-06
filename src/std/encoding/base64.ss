@@ -1,9 +1,19 @@
+;;; -*- Gerbil -*-
+;;; © feeley
+;;; © mikael more
+;;; © vyzo
+;;; base64 encoding; the codec was written by Marc Feeley.
+(export (rename: base64-string->u8vector base64-decode)
+        (rename: u8vector->base64-string base64-encode)
+        base64-substring->u8vector
+        subu8vector->base64-string)
+
 ;;
 ;; U8vector <-> Base64-encoded string coding module
 ;;
 ;; Copyright (C) 2005-2007 by Marc Feeley, All Rights Reserved.
 ;; Copyright (C) 2012 Mikael More
-;; Copyright (C) 2016 vyzo at hackzen.org
+;; Copyright (C) 2016,2026 vyzo
 ;;
 ;; ## Base64 coding support notes
 ;; * Support for urlsafe coding
@@ -44,104 +54,99 @@
 ;;             If there'd be any need for it, the decoder can be made to accept both urlsafe and ordinary
 ;;             coding instead of either.
 ;; 2016-01-28: [vyzo] namespaced for gerbil, comment cosmetics for emacs indendation whims.
+;; 2026-05-05: [vyzo] ported and modernized for gerbil v0.19
 ;;
-;;
-;; ## TODO
-;;  * There's a variant of base64 encoding called "URL base64 encoding", where + and some
-;;    other char is replaced by something else. May be a nice idea for us to support it.
 
-(declare (standard-bindings)
-         (extended-bindings)
-         (block)
-         (safe)
-         (fixnum)
-         ; (not interrupts-enabled)
-         )
-
-;;==============================================================================
+(declare (fixnum))
 
 ;; Representation of fifos.
 
-(define-macro (macro-make-fifo)
-  `(let ((fifo (##cons '() '())))
-     (macro-fifo-tail-set! fifo fifo)
-     fifo))
+(defrule (macro-make-fifo)
+  (let ((fifo (cons '() '())))
+    (macro-fifo-tail-set! fifo fifo)
+    fifo))
 
-(define-macro (macro-fifo-next fifo)        `(##cdr ,fifo))
-(define-macro (macro-fifo-next-set! fifo x) `(##set-cdr! ,fifo ,x))
-(define-macro (macro-fifo-tail fifo)        `(##car ,fifo))
-(define-macro (macro-fifo-tail-set! fifo x) `(##set-car! ,fifo ,x))
-(define-macro (macro-fifo-elem fifo)        `(##car ,fifo))
-(define-macro (macro-fifo-elem-set! fifo x) `(##set-car! ,fifo ,x))
+(defrule (macro-fifo-next fifo)
+  (##cdr fifo))
+(defrule (macro-fifo-next-set! fifo x)
+  (##set-cdr! fifo x))
+(defrule (macro-fifo-tail fifo)
+  (##car fifo))
+(defrule (macro-fifo-tail-set! fifo x)
+  (##set-car! fifo x))
+(defrule (macro-fifo-elem fifo)
+  (##car fifo))
+(defrule (macro-fifo-elem-set! fifo x)
+  (##set-car! fifo x))
 
-(define-macro (macro-fifo->list fifo)
-  `(macro-fifo-next ,fifo))
+(defrule (macro-fifo->list fifo)
+  (macro-fifo-next fifo))
 
-(define-macro (macro-fifo-remove-all! fifo)
-  `(let ((fifo ,fifo))
+(defrule (macro-fifo-remove-all! fifo)
+  (let ((fifo fifo))
 
-     (##declare (not interrupts-enabled))
+     (declare (not interrupts-enabled))
 
      (let ((head (macro-fifo-next fifo)))
        (macro-fifo-tail-set! fifo fifo)
        (macro-fifo-next-set! fifo '())
        head)))
 
-(define-macro (macro-fifo-remove-head! fifo)
-  `(let ((fifo ,fifo))
+(defrule (macro-fifo-remove-head! fifo)
+  (let ((fifo fifo))
 
-     (##declare (not interrupts-enabled))
+     (declare (not interrupts-enabled))
 
      (let ((head (macro-fifo-next fifo)))
-       (if (##pair? head)
+       (if (pair? head)
          (let ((next (macro-fifo-next head)))
-           (if (##null? next)
+           (if (null? next)
              (macro-fifo-tail-set! fifo fifo))
            (macro-fifo-next-set! fifo next)
            (macro-fifo-next-set! head '())))
        head)))
 
-(define-macro (macro-fifo-insert-at-tail! fifo elem)
-  `(let ((fifo ,fifo) (elem ,elem))
-     (let ((x (##cons elem '())))
+(defrule (macro-fifo-insert-at-tail! fifo elem)
+  (let ((fifo fifo) (elem elem))
+     (let ((x (cons elem '())))
 
-       (##declare (not interrupts-enabled))
+       (declare (not interrupts-enabled))
 
        (let ((tail (macro-fifo-tail fifo)))
          (macro-fifo-next-set! tail x)
          (macro-fifo-tail-set! fifo x)
-         (##void)))))
+         (void)))))
 
-(define-macro (macro-fifo-insert-at-head! fifo elem)
-  `(let ((fifo ,fifo) (elem ,elem))
-     (let ((x (##cons elem '())))
+(defrule (macro-fifo-insert-at-head! fifo elem)
+  (let ((fifo fifo) (elem elem))
+     (let ((x (cons elem '())))
 
-       (##declare (not interrupts-enabled))
+       (declare (not interrupts-enabled))
 
-       ;; To obtain an atomic update of the fifo, we must force a
+       ;; To obtain an atomic update of the fifo we must force a
        ;; garbage-collection to occur right away if needed by the
-       ;; ##cons, so that any finalization that might mutate this fifo
+       ;; cons so that any finalization that might mutate this fifo
        ;; will be done before updating the fifo.
 
        (##check-heap-limit)
 
        (let ((head (macro-fifo-next fifo)))
-         (if (##null? head)
+         (if (null? head)
            (macro-fifo-tail-set! fifo x))
          (macro-fifo-next-set! fifo x)
          (macro-fifo-next-set! x head)
-         (##void)))))
+         (void)))))
 
-(define-macro (macro-fifo-advance-to-tail! fifo)
-  `(let ((fifo ,fifo))
+(defrule (macro-fifo-advance-to-tail! fifo)
+  (let ((fifo fifo))
      ;; It is assumed that the fifo contains at least one element
      ;; (i.e. the fifo's tail does not change).
      (let ((new-head (macro-fifo-tail fifo)))
        (macro-fifo-next-set! fifo new-head)
        (macro-fifo-elem new-head))))
 
-(define-macro (macro-fifo-advance! fifo)
-  `(let ((fifo ,fifo))
+(defrule (macro-fifo-advance! fifo)
+  (let ((fifo fifo))
      ;; It is assumed that the fifo contains at least two elements
      ;; (i.e. the fifo's tail does not change).
      (let* ((head (macro-fifo-next fifo))
@@ -149,41 +154,41 @@
        (macro-fifo-next-set! fifo new-head)
        (macro-fifo-elem new-head))))
 
-(define-macro (fifo->u8vector fifo start end)
-  `(##fifo->u8vector ,fifo ,start ,end))
+(defrule (fifo->u8vector fifo start end)
+  (##fifo->u8vector fifo start end))
 
-(define-macro (u8vector-shrink! u8vect len)
-  `(##u8vector-shrink! ,u8vect ,len))
+(defrule (u8vector-shrink! u8vect len)
+  (##u8vector-shrink! u8vect len))
 
-(define-macro (fifo->string fifo start end)
-  `(##fifo->string ,fifo ,start ,end))
+(defrule (fifo->string fifo start end)
+  (##fifo->string fifo start end))
 
-(define-macro (string-shrink! str len)
-  `(##string-shrink! ,str ,len))
+(defrule (string-shrink! str len)
+  (##string-shrink! str len))
 
-;;==============================================================================
-(##namespace ("std/text/base64#"
-              base64-string->u8vector
-              base64-substring->u8vector
-              u8vector->base64-string
-              subu8vector->base64-string
-              ))
 
-(define base64-string->u8vector
-  (lambda (str #!key (nopadding-ok? #t) (urlsafe? #f))
-    (base64-substring->u8vector str 0 (string-length str) nopadding-ok?: nopadding-ok? urlsafe?: urlsafe?)))
+(def (base64-string->u8vector (str   : :string)
+                              no-padding: (nopadding-ok? #f)
+                              urlsafe:    (urlsafe? #f))
+  => :u8vector
+  (base64-substring->u8vector str 0 (string-length str)
+                              no-padding: nopadding-ok?
+                              urlsafe:    urlsafe?))
 
-(define base64-substring->u8vector
-  (lambda (str start end #!key (nopadding-ok? #t) (urlsafe? #f))
+(def (base64-substring->u8vector (str   : :string)
+                                 (start : :fixnum)
+                                 (end   : :fixnum)
+                                 no-padding: (nopadding-ok? #f)
+                                 urlsafe:    (urlsafe? #f))
+  => :u8vector
 
     (define padding-required? (not nopadding-ok?))
 
     (define index-62-char (if urlsafe? #\- #\+))
     (define index-63-char (if urlsafe? #\_ #\/))
 
-    (define err
-      (lambda (str-location code-location)
-        (error "base64 decoding error" str-location code-location)))
+    (defrule (err str-location code-location)
+      (error "base64 decoding error" str-location code-location))
 
     (define chunk-len 64) ; must be a power of 2
 
@@ -302,14 +307,25 @@
                                 (loop1 (+ i 1)))))))
                 (if (char=? c0 #\=)
                     (err i '@f)
-                    (loop0 (+ i 1)))))))))
+                    (loop0 (+ i 1))))))))
 
-(define u8vector->base64-string
-  (lambda (u8vect #!key (width 0) (padding? #t) (urlsafe? #f))
-    (subu8vector->base64-string u8vect 0 (u8vector-length u8vect) width: width padding?: padding? urlsafe?: urlsafe?)))
+(def (u8vector->base64-string (u8vect : :u8vector)
+                              width:   (width 0)
+                              padding: (padding? #t)
+                              urlsafe: (urlsafe? #f))
+  => :string
+  (subu8vector->base64-string u8vect 0 (u8vector-length u8vect)
+                              width: width
+                              padding: padding?
+                              urlsafe: urlsafe?))
 
-(define subu8vector->base64-string
-  (lambda (u8vect start end #!key (width 0) (padding? #t) (urlsafe? #f))
+(def (subu8vector->base64-string (u8vect : :u8vector)
+                                 (start  : :fixnum)
+                                 (end    : :fixnum)
+                                 width:   (width 0)
+                                 padding: (padding? #t)
+                                 urlsafe: (urlsafe? #f))
+  => :string
 
     (define index-62-char (if urlsafe? #\- #\+))
     (define index-63-char (if urlsafe? #\_ #\/))
@@ -423,6 +439,4 @@
                            (x3
                             64))
                        (out x3 (out x2 (out x1 (out x0 n))))))))
-            (get-output-string))))))
-
-;;==============================================================================
+            (get-output-string)))))

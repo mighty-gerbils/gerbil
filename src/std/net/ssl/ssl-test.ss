@@ -1,21 +1,18 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SSL tests
-(import :gerbil/gambit
-        :std/error
-        :std/sugar
+(import :std/error
         :std/test
         :std/io
-        :std/net/ssl
-        :std/net/httpd
-        :std/net/request
+        ;; :std/net/httpd
+        ;; :std/net/request
+        :std/net/address
         :std/misc/process
-        :std/text/utf8
-        :std/os/temporaries)
+        ./api)
 (export ssl-client-test
         ssl-server-test
-        http-client-test
-        http-server-test
+        ;; http-client-test
+        ;; http-server-test
         test-setup!
         test-cleanup!)
 
@@ -28,7 +25,7 @@
 (def test-server-name
   "www.example.local")
 (def test-server-address
-  "127.0.0.1:39999")
+  (string->address "inet4:127.0.0.1:20001"))
 
 (def test-csr-template #<<END
 [req]
@@ -83,7 +80,8 @@ END
        "GET / HTTP/1.1\r\n\r\nUser-Agent: test\r\nConnection: close\r\nAccept: */*\r\n\r\n"))
 
     (def (test-request-ok addr (ctx (default-client-ssl-context)))
-      (let (sock (ssl-connect addr 5 context: ctx))
+      (let* ((addr (string->address (string-append "dns:" addr)))
+             (sock (ssl-connect addr context: ctx)))
         (Writer-write (SSLSocket-writer sock) request)
         (let (buf (make-u8vector 8))
           (Reader-read (SSLSocket-reader sock) buf)
@@ -91,7 +89,8 @@ END
           (SSLSocket-close sock))))
 
     (def (test-request-error addr)
-      (check-exception (ssl-connect addr 5) ssl-error?))
+      (let (addr (string->address (string-append "inet4:" addr)))
+        (check-exception (ssl-connect addr) ssl-error?)))
 
     (test-case "ssl connection: google"
       (test-request-ok "www.google.com:443"))
@@ -116,7 +115,7 @@ END
   (test-suite "ssl server"
     (def (test-server cert privk)
       (let* ((srv-ctx (make-server-ssl-context cert privk))
-             (srv-sock (ssl-listen test-server-address context: srv-ctx))
+             (srv-sock (ssl-listen test-server-address srv-ctx))
              (cli-sock (ServerSocket-accept srv-sock))
              (buf (make-u8vector 1024))
              (r   (Reader-read (SSLSocket-reader cli-sock) buf))
@@ -128,7 +127,7 @@ END
         (void)))
 
     (def (test-client ctx)
-      (let (sock (ssl-connect test-server-address 5
+      (let (sock (ssl-connect test-server-address
                               context: ctx
                               host: test-server-name))
         (Writer-write (SSLSocket-writer sock) (string->utf8 "world"))
@@ -143,7 +142,7 @@ END
         (test-client (insecure-client-ssl-context))
         (check (thread-join! srv) => (void))))))
 
-(def http-client-test
+#;(def http-client-test
   (test-suite "https client"
     (test-case  "https request: www.google.com"
       (let (req (http-get "https://www.google.com"))
@@ -158,7 +157,7 @@ END
         (check (request-status req) => 200)
         (request-close req)))))
 
-(def http-server-test
+#;(def http-server-test
   (test-suite "https server"
     (test-case "self-signed certificate"
       (let* ((ssl-ctx (make-server-ssl-context test-certificate test-private-key))

@@ -19,44 +19,60 @@
   ((_ Interface)
    #'(begin)))
 
+(begin-syntax
+  (def (check-interface! stx Interface)
+    (unless (syntax-local-interface-info? Interface)
+      (raise-syntax-error #f "not defined as an interface" stx Interface)))
+  (def (check-type-info! stx klass)
+    (unless (syntax-local-runtime-type-info? klass)
+      (raise-syntax-error #f "not defined as a metatype" stx klass))))
+
 (defsyntax-case implement ()
   ((_ Interface klass (method proc) ...)
-   (and (syntax-local-interface-info? #'Interface)
-        (syntax-local-runtime-type-info? #'klass))
-   #'(begin
+   (and (identifier? #'Interface)
+        (identifier? #'klass))
+   (begin
+     (check-interface! stx #'Interface)
+     (check-type-info! stx #'klass)
+     #'(begin
        (defmethod {method klass}
          proc
          interface: Interface)
        ...
-       (@implement Interface klass)))
+       (@implement Interface klass))))
   ((_ (Interface (klass (method proc) ...) ...) ...)
-   (and (andmap syntax-local-interface-info? #'(Interface ...))
-        (andmap (cut andmap syntax-local-runtime-type-info? <>)
+   (and (andmap identifier? #'(Interface ...))
+        (andmap (cut andmap identifier? <>)
                 #'((klass ...) ...)))
-   (with-syntax
-       (((methods ...)
-         (let loop ((rest #'((Interface (klass (method proc) ...) ...) ...))
-                    (methods []))
-           (syntax-case rest ()
-             (((Interface . klass-method-procs) . rest)
-              (loop #'rest
-                    (foldl
-                      (lambda (klass-method-procs methods)
-                        (with-syntax (((klass . method-procs) klass-method-procs))
-                          (foldl
-                            (lambda (method-proc methods)
-                              (with-syntax (((method proc) method-proc))
-                                (cons #'(defmethod {method klass}
-                                          proc
-                                          interface: Interface)
-                                      methods)))
-                            methods #'method-procs)))
-                      methods #'klass-method-procs)))
-             (_ (reverse! methods))))))
-     #'(begin methods ... (@implement Interface klass ...) ...)))
+   (begin
+     (for-each (cut check-interface! stx <>)
+               #'(Interface ...))
+     (for-each (cut for-each (cut check-type-info! stx <>) <>)
+               #'((klass ...) ...))
+     (with-syntax
+         (((methods ...)
+           (let loop ((rest #'((Interface (klass (method proc) ...) ...) ...))
+                      (methods []))
+             (syntax-case rest ()
+               (((Interface . klass-method-procs) . rest)
+                (loop #'rest
+                      (foldl
+                        (lambda (klass-method-procs methods)
+                          (with-syntax (((klass . method-procs) klass-method-procs))
+                            (foldl
+                              (lambda (method-proc methods)
+                                (with-syntax (((method proc) method-proc))
+                                  (cons #'(defmethod {method klass}
+                                            proc
+                                            interface: Interface)
+                                        methods)))
+                              methods #'method-procs)))
+                        methods #'klass-method-procs)))
+               (_ (reverse! methods))))))
+       #'(begin methods ... (@implement Interface klass ...) ...))))
   ((_ Interface (klass (method proc) ...) ...)
-   (and (syntax-local-interface-info? #'Interface)
-	(andmap syntax-local-runtime-type-info? #'(klass ...)))
+   (and (identifier? #'Interface)
+	(andmap identifier? #'(klass ...)))
    #'(implement (Interface (klass (method proc) ...) ...))))
 
 (defsyntax-case @interface-descriptor ()

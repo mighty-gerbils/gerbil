@@ -21,4 +21,4 @@
         localhost6
         string->address
         address->string
-        resolve->endpoint)
+        resolve->endpoint resolve->host)

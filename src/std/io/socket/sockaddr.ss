@@ -4,7 +4,7 @@
 (import :std/error
         :std/os/socket
         :std/os/sockaddr
-        :std/net/address)
+        :std/net/address/types)
 (export #t)
 
 (def (address->socket-domain (addr : Address))

@@ -26,7 +26,10 @@
         stream-connect
         stream-listen
         udp-socket
-        udp-multicast-socket)
+        udp-multicast-socket
+        default-connect-timeout
+        default-listen-backlog
+        default-listen-sockopts)
 
 (def default-listen-sockopts
   [[SOL_SOCKET.SO_REUSEADDR . 1]])

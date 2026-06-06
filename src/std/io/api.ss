@@ -9,7 +9,6 @@
         ./delimited
         ./file
         ./util
-        ./port
         ./tempfile)
 (export
   (import: ./interface
@@ -20,5 +19,4 @@
            ./delimited
            ./file
            ./util
-           ./port
            ./tempfile))

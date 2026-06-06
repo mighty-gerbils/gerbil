@@ -4,7 +4,9 @@
 (import :std/interface
         :std/error
         :std/list/random
-        ./types)
+        :std/string/stringer
+        ./types
+        ./stringer)
 (export #t)
 
 (deferror-class ResolverError ())
@@ -15,9 +17,16 @@
 (interface EndpointAddressResolver
   (resolve) =>  EndpointAddress)
 
+(interface HostAddressResolver
+  (resolve) =>  :string)
+
 (defcall-interface-method EndpointAddressResolver resolve
   (resolve->endpoint addr)
   :- EndpointAddress)
+
+(defcall-interface-method HostAddressResolver resolve
+  (resolve->host addr)
+  :- :string)
 
 (implement EndpointAddressResolver
   (InetAddress
@@ -41,6 +50,16 @@
             (raise-resolver-error DNSAddress::resolve "no inet addresses" host: self.host))
           (set! self.resolved resolved)
           (:- (list-random-ref resolved) EndpointAddress)))))))
+
+(implement HostAddressResolver
+  (InetAddress
+   (resolve
+    (lambda (self)
+      ;; TODO maybe getnameinfo but ip address tls certs are a thing
+      (to-string self.net))))
+  (DNSAddress
+   (resolve
+    (lambda (self) self.host))))
 
 (def (u8vector->ip-address (ip : :u8vector))
   => IPAddress

@@ -4,6 +4,8 @@
 (import :std/os/device
         :std/os/file
         :std/os/fcntl
+        :std/crypto/random
+        :std/encoding/base64
         ./file)
 (export current-temporary-directory
         make-temporary-file-name
@@ -15,69 +17,60 @@
 (def current-temporary-directory
   (make-parameter (getenv "TMPDIR" "/tmp")))
 
-(def (call-with-temporary-file-name (base : :string)
-                                    (proc : :procedure))
+(def (call-with-temporary-file-name (prefix : :string)
+                                    (proc   : :procedure)
+                                    suffix: (suffix : :string := ""))
   => :string
-  (let (tmp (make-temporary-file-name base))
+  (let (tmp (make-temporary-file-name prefix suffix: suffix))
     (unwind-protect
       (proc tmp)
       (clear-temporary-file! tmp))))
 
-(def (call-with-temporary-file (base : :string)
-                               (proc : :procedure))
-  => :string
-  (let* ((tmp (make-temporary-file-name base))
-         (io  (open-input-output-file-io tmp (fxior O_RDWR O_CREAT) #o600)))
-    (unwind-protect
-      (proc io)
-      (device-close (input-output-file-io-dev io) DIRECTION-INOUT)
-      (clear-temporary-file! tmp))))
+(def default-temporary-file-flags
+  (fxior O_RDWR O_CREAT O_EXCL))
 
-(def (call-with-temporary-directory (base : :string)
-                                    (proc : :procedure))
+(def (call-with-temporary-file (prefix : :string)
+                               (proc   : :procedure)
+                               suffix: (suffix : :string := "")
+                               flags:  (flags  : :fixnum := default-temporary-file-flags))
   => :string
-  (let (tmp (make-temporary-file-name base))
-    (create-directory tmp)
-    (unwind-protect
-      (proc tmp)
-      (clear-temporary-file! tmp))))
+  (call-with-temporary-file-name
+   prefix
+   (lambda (tmp)
+     (using (io (open-input-output-file-io tmp flags #o600)
+                : input-output-file-io)
+       (unwind-protect
+         (proc io)
+         (device-close io.dev DIRECTION-INOUT))))
+   suffix: suffix))
 
-(def __tempfiles-mx
-  (make-mutex 'tempfile))
-(def __tempfiles
-  (make-hash-table-string))
-
-(def (make-temporary-file-name (name : :string))
+(def (call-with-temporary-directory (prefix : :string)
+                                    (proc   : :procedure)
+                                    suffix: (suffix : :string := ""))
   => :string
-  (: (with-lock __tempfiles-mx
-       (lambda ()
-         (let again ()
-           (let* ((tmp (make-random-name name))
-                  (tmp (string-append tmp "." (number->string (##current-time-point)))))
-             (if (file-exists? tmp)
-               (again)
-               (begin
-                 (hash-put! __tempfiles tmp #t)
-                 tmp))))))
-     :string))
+  (call-with-temporary-file-name
+   prefix
+   (lambda (tmp)
+     (create-directory tmp)
+     (proc tmp))
+   suffix: suffix))
+
+(def (make-temporary-file-name (prefix : :string)
+                               suffix: (suffix : :string := ""))
+  => :string
+  (let (tmp (make-random-name prefix suffix: suffix))
+    (path-expand tmp (current-temporary-directory))))
 
 (def (clear-temporary-file! (name : :string))
   => :void
-  (with-lock __tempfiles-mx
-    (lambda ()
-      (when (hash-get __tempfiles name)
-        (hash-remove! __tempfiles name)
-        (when (file-exists? name)
-          (delete-file-or-directory name #t))))))
+  (when (file-exists? name)
+    (delete-file-or-directory name #t)))
 
-(def (make-random-name (name : :string))
+(def (make-random-name (prefix : :string)
+                       suffix: (suffix : :string := ""))
   => :string
-  (let (base (string-append (path-expand name (current-temporary-directory)) "."))
-    (let loop ((i 0 :- :fixnum) (chars [])) => :string
-      (if (fx< i 8)
-        (let (char (string-ref +chars+ (random-integer (string-length +chars+))))
-          (loop (fx+ i 1) (cons char chars)))
-        (string-append base (list->string (reverse! chars)))))))
-
-(def +chars+
-  "abcdefgehijklmnopqrstuvwxyzABCDEFGEHIJKLMNOPQRSTUVWXYZ")
+  (let* ((bytes   (random-bytes 16))
+         (encoded (base64-encode bytes
+                                 padding: #f
+                                 urlsafe: #t)))
+    (string-append prefix encoded suffix)))

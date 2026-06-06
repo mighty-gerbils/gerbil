@@ -105,6 +105,8 @@
     "io/socket/server"
     "io/socket/datagram"
     "io/socket/api"
+    "io/api"
+    "io"
 
     "hash-table"
     "serde/interface"
@@ -129,45 +131,39 @@
     "format/format"
     "format/api"
 
+    (gxc: "crypto/libcrypto"
+          "-cc-options" ,(append-options (cppflags "libcrypto" "") "-Wno-discarded-qualifiers" "-Wno-deprecated-declarations" "-Wno-implicit-function-declaration")
+          "-ld-options" ,(ldflags "libcrypto" "-lcrypto"))
+    "crypto/error"
+    "crypto/random"
+
+    ,(cond-expand
+      (darwin
+       `(gxc: "net/ssl/libssl"
+	      "-cc-options" ,(append-options (cppflags "libssl" "") "-Wno-discarded-qualifiers")
+	      "-ld-options" ,(apply append-options
+			               (ldflags "libssl" "-lssl")
+			               (ldflags "libcrypto" "-lcrypto")
+                           (if (enable-shared?)
+                             [(string-append "-L" (gerbil-libdir)) "-lgambit"]
+                             []))))
+      (else
+       `(gxc: "net/ssl/libssl"
+	      "-ld-options" ,(ldflags "libssl" "-lssl"))))
+    "net/ssl/error"
+    "net/ssl/interface"
+    "net/ssl/socket"
+    "net/ssl/client"
+    "net/ssl/server"
+    "net/ssl/api"
+    "net/ssl"
+
+    "encoding/base64"
+
+    "misc/process"
+    "misc/ports"
+
     ;; TODO
-
-    ;; "time/format"
-
-
-    ;; "net/address/format"
-
-    ;; "io"
-
-    ;; "io/api"
-    ;; "io/dummy"
-    ;; "io/delimited"
-    ;; "io/file"
-    ;; "io/util"
-    ;; "io/port"
-    ;; "io/bio/delimited"
-    ;; "io/bio/chunked"
-    ;; "io/bio/inline"
-    ;; "io/bio/util"
-    ;; "io/bio/api"
-    ;; "io/socket/types"
-    ;; "io/socket/basic"
-    ;; "io/socket/stream"
-    ;; "io/socket/server"
-    ;; "io/socket/datagram"
-    ;; "io/socket/socket"
-    ;; "io/socket/api"
-
-    ;; "serde/scan"
-    ;; "serde/scanner"
-    ;; "serde/serialize"
-    ;; "serde/opaque"
-
-    ;; "format/env"
-    ;; "format/ioutil"
-    ;; "format/io"
-    ;; "format/writer"
-    ;; "format/reader"
-    ;; "format/string"
 
     ;; "encoding/json/env"
     ;; "encoding/json/io"
@@ -186,14 +182,6 @@
     ;; "log/rotate"
     ;; "log/compress"
 
-    ;; "cli/getopt"
-
-    ;; "os/error"
-    ;; "os/time"
-    ;; "os/device"
-    ;; "os/file"
-    ;; "os/fcntl"
-    ;; "os/socket"
     ))
 
 #;(def (build-spec . _)
@@ -368,25 +356,7 @@
         '())
     ;; :std/net
     "net/address"
-    ,(cond-expand
-      (darwin
-       `(gxc: "net/ssl/libssl"
-	      "-cc-options" ,(cppflags "libssl" "")
-	      "-ld-options" ,(apply append-options
-			               (ldflags "libssl" "-lssl")
-			               (ldflags "libcrypto" "-lcrypto")
-                           (if (enable-shared?)
-                             [(string-append "-L" (gerbil-libdir)) "-lgambit"]
-                             []))))
-      (else `(gxc: "net/ssl/libssl"
-		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
-    "net/ssl/error"
-    "net/ssl/interface"
-    "net/ssl/socket"
-    "net/ssl/client"
-    "net/ssl/server"
-    "net/ssl/api"
-    "net/ssl"
+
     "net/uri"
     "net/request"
     "net/json-rpc"

@@ -3,7 +3,8 @@
 ;;; ffi macrology
 ;;; Note: this will eventually replace :std/foreign
 (require ,(compilation-target? C))
-(import (for-syntax :gerbil/expander))
+(import (for-syntax :gerbil/expander)
+        :std/error)
 (export #t)
 
 (module C-struct
@@ -53,6 +54,16 @@
 
 (import (for-syntax FFIMethods))
 
+(deferror-class AllocationError () foreign-allocation-error?)
+(defraise/context (raise-allocation-error where irritants ...)
+  (PrematureEndOfInput "foreign memory allocation failure" irritants: [irritants ...]))
+
+(defrule (check-pointer where expr)
+  (let (ptr expr)
+    (if ptr
+      (:- ptr :foreign)
+      (raise-allocation-error where 'expr))))
+
 (defrule (C-ffi-macrology)
   (begin-foreign
     (c-declare
@@ -61,6 +72,16 @@
 #define ___GERBIL_FFI_MACROLOGY
 #define ___U8VECTOR_AS(t, arg) ___CAST(t, ___BODY_AS (arg, ___tSUBTYPED))
 #define ___TRAP_ERRNO(expr) ({int _r = expr; (_r<0) ? (-errno) : _r;})
+
+#define U8_DATA(o) ___U8VECTOR_AS(__uint8_t*, o)
+#define U8_LEN(o)  ___U8VECTORSIZE(o)
+
+#include <stdlib.h>
+static ___SCMOBJ ffi_free (void *ptr)
+{
+ free (ptr);
+ return ___FIX (___NO_ERR);
+}
 #endif
 END-C
 )))
@@ -88,7 +109,19 @@ END-C
                       ([code . rest]
                        (let (prev (loop rest))
                          (string-append prev "\n"  (stx-e code))))))))
-     #'(begin-foreign (c-declare code-string))32)))
+     #'(begin-foreign (c-declare code-string)))))
+
+(defsyntax-case C-initialize ()
+  ((_ code rest ...)
+   (andmap stx-string? #'(code rest ...))
+   (with-syntax ((code-string
+                  (let loop ((rest #'(code rest ...)))
+                    (match rest
+                      ([code] (stx-e code))
+                      ([code . rest]
+                       (let (prev (loop rest))
+                         (string-append prev "\n"  (stx-e code))))))))
+     #'(begin-foreign (c-initialize code-string))32)))
 
 (defsyntax-case def-C (=>)
   ((_ (proc (arg ~ type) ...) => return code)
@@ -138,12 +171,12 @@ END-C
          code-string))))
 
 (defsyntax-case def-C-lambda (: =>)
-  ((_ (name (arg : arg-type) ...) => return-type impl)
+  ((_ (name (arg : arg-type) ...) => return-type c-impl)
    (and (identifier? #'name)
         (andmap identifier? #'(arg ...))
         (andmap identifier? #'(arg-type ...))
         (identifier? #'return-type)
-        (stx-string? #'impl))
+        (stx-string? #'c-impl))
    (with-syntax ((full-name
                   (stx-identifier #'name
                                   (or (core-context-namespace)
@@ -155,7 +188,24 @@ END-C
        (begin-foreign
          (define full-name
            (c-lambda (arg-type ...) return-type
-              impl)))))))
+                c-impl))))))
+  ((_ (name (arg : arg-type) ...) => return-type)
+   (identifier? #'name)
+   (with-syntax ((c-impl (symbol->string (stx-e #'name))))
+     #'(def-C-lambda (name (arg : arg-type) ...) => return-type c-impl)))
+  ((_ name (arg-type ...) return-type c-impl)
+   (and (identifier? #'name)
+        (andmap identifier? #'(arg-type ...))
+        (identifier? #'return-type)
+        (stx-string? #'c-impl))
+   (with-syntax (((arg ...) (gentemps #'(arg-type ...))))
+     #'(def-C-lambda (name (arg : arg-type) ...) => return-type c-impl)))
+  ((_ name (arg-type ...) return-type)
+   (and (identifier? #'name)
+        (andmap identifier? #'(arg-type ...))
+        (identifier? #'return-type))
+   (with-syntax ((c-impl (symbol->string (stx-e #'name))))
+     #'(def-C-lambda (name (arg : arg-type) ...) => return-type c-impl))))
 
 (defsyntax-case def-C-struct ()
   ((_ name)
@@ -224,6 +274,50 @@ END-C
                      "#endif\n"
                      ");")))
        #'(def const (##c-code c-code))))))
+
+(defsyntax-case def-C-type ()
+  ((_ name c-type)
+   (and (identifier? #'name)
+        (stx-string? #'c-type))
+   #'(begin-foreign (c-define-type name c-type)))
+  ((_ name)
+   (identifier? #'name)
+   (with-syntax ((c-type (symbol->string (stx-e #'name))))
+     #'(def-C-type name c-type))))
+
+(defsyntax-case def-C-type/pointer ()
+  ((_ name c-type release: c-release)
+   (and (identifier? #'name)
+        (stx-string? #'c-type)
+        (or (stx-string? #'c-release)
+            (not (stx-e #'c-release))))
+   (with-identifiers ((name* #'name #'name "*")
+                      (name? #'name #'name "?"))
+     (with-syntax (((release ...)
+                    (if (stx-e #'c-release)
+                      #'(c-release)
+                      [])))
+       #'(begin
+           (def (name? o)
+             (and (foreign? o)
+                  (memq 'name* (foreign-tags o))))
+           (begin-foreign
+             (c-define-type name c-type)
+             (c-define-type name* (pointer name (name*) release ...)))))))
+  ((_ name c-type)
+   (and (identifier? #'name)
+        (stx-string? #'c-type))
+   #'(def-C-type/pointer name c-type release: #f))
+  ((_ name release: c-release)
+   (and (identifier? #'name)
+        (or (stx-string? #'c-release)
+            (not (stx-e #'c-release))))
+   (with-syntax ((c-type (symbol->string (stx-e #'name))))
+     #'(def-C-type/pointer name c-type release: c-release)))
+  ((_ name)
+   (identifier? #'name)
+   (with-syntax ((c-type (symbol->string (stx-e #'name))))
+     #'(def-C-type/pointer name c-type release: #f))))
 
 (def (string->c-string (str : :string))
   => :u8vector

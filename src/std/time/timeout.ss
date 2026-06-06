@@ -26,7 +26,7 @@
        (self.t => (cut __abs-timeout <>))
        (else #f)))))
   (InexactTime
-   (abs-timeout identity))
+   (abs-timeout &InexactTime-time))
   (:flonum
    (abs-timeout
     (lambda (self)
@@ -41,6 +41,13 @@
 (def (timeout? obj)
   (or (not obj)
       (is-AbsTimeout? obj)))
+
+(def (timeout->deadline timeo)
+  => IOTimeout
+  (cond
+   ((__abs-timeout timeo)
+    => (lambda (t) (IOTimeout (InexactTime t))))
+   (else !NoTimeout)))
 
 (def (timeout->abs-timeout timeo (none #!void))
   (defrule (no-timeout)

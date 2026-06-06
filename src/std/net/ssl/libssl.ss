@@ -2,41 +2,28 @@
 ;;; © vyzo
 ;;; libssl FFI
 (export #t)
-(import :std/foreign
+(import :std/ffi
         (runtime: :std/crypto/libcrypto))
 
-(begin-ffi (SSL_new
-            SSL_connect
-            SSL_accept
-            SSL_read
-            SSL_write
-            SSL_shutdown
-            SSL_set_host
-            SSL_set_fd
-            SSL_get_peer_certificate
-            SSL_ERROR_WANT_READ
-            SSL_ERROR_WANT_WRITE
-            X509_read
-            X509_get_subject_name
-            X509_get_san_uris
-            make-client-ssl-context
-            make-client-ssl-context/v
-            make-insecure-client-ssl-context
-            make-server-ssl-context
-            make-server-ssl-context/v
-            make-actor-tls-context
-            TLS1_VERSION
-            TLS1_1_VERSION
-            TLS1_2_VERSION
-            TLS1_3_VERSION)
+(def SSL_ERROR_WANT_READ  #\r)
+(def SSL_ERROR_WANT_WRITE #\w)
 
-  (c-declare #<<END-C
-#include <openssl/ssl.h>
-#include <openssl/conf.h>
-#include <openssl/err.h>
-#include <openssl/bio.h>
+(def (make-client-ssl-context (min-protocol-version TLS1_2_VERSION))
+  (make-client-ssl-context/v min-protocol-version))
 
-#include <openssl/x509v3.h>
+(def (make-server-ssl-context cert-path key-path
+                              (min-protocol-version TLS1_2_VERSION))
+  (make-server-ssl-context/v cert-path key-path min-protocol-version))
+
+
+(C-ffi-macrology)
+(C-include "<openssl/ssl.h>"
+           "<openssl/conf.h>"
+           "<openssl/err.h>"
+           "<openssl/bio.h>"
+           "<openssl/x509v3.h>")
+
+(C-declare #<<END-C
 static int ffi_sk_GENERAL_NAME_num(const STACK_OF(GENERAL_NAME) *sk)
 {
   return OPENSSL_sk_num((const OPENSSL_STACK *)sk);
@@ -54,7 +41,6 @@ static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
  SSL_CTX_free((SSL_CTX*) ptr);
  return ___FIX (___NO_ERR);
 }
-
 
 static ___SCMOBJ ffi_release_SSL (void *ptr)
 {
@@ -267,7 +253,84 @@ static int ffi_ssl_verify_actor(int preverify, X509_STORE_CTX *ctx)
  return X509_verify_cert(ctx);
 }
 
-static X509 *ffi_X509_read(const char *path);
+
+__thread char openssl_x509_name_buf[16384];
+static char *ffi_X509_get_subject_name(X509 *cert)
+{
+ X509_NAME *name = X509_get_subject_name(cert);
+ if (!name) {
+  return NULL;
+ }
+
+ int r = X509_NAME_get_text_by_NID(name, NID_commonName, openssl_x509_name_buf, sizeof(openssl_x509_name_buf));
+ if (r <= 0) {
+  return NULL;
+ }
+
+ return openssl_x509_name_buf;
+}
+
+static char *ffi_X509_get_san_uris(X509 *cert)
+{
+ int cursor = 0;
+
+ STACK_OF(GENERAL_NAME) *san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
+ if (san_names == NULL) {
+  return NULL;
+ }
+
+ int count = ffi_sk_GENERAL_NAME_num(san_names);
+ for (int i = 0;
+          i < count;
+          i++) {
+  const GENERAL_NAME *name = ffi_sk_GENERAL_NAME_value(san_names, i);
+  if (name->type == GEN_URI) {
+   int len = ASN1_STRING_length(name->d.uniformResourceIdentifier);
+   if (cursor + len < sizeof(openssl_x509_name_buf) - 2) {
+    const char *uri = ASN1_STRING_get0_data(name->d.uniformResourceIdentifier);
+    memcpy(openssl_x509_name_buf + cursor, uri, len);
+    cursor += len;
+    openssl_x509_name_buf[cursor] = ',';
+    cursor++;
+   } else {
+    openssl_x509_name_buf[cursor] = 0;
+    return  openssl_x509_name_buf;
+   }
+  }
+ }
+
+ if (!cursor) {
+  return NULL;
+ }
+
+ openssl_x509_name_buf[cursor] = 0;
+ return openssl_x509_name_buf;
+}
+
+static X509 *ffi_X509_read(const char *path)
+{
+ BIO *bp = BIO_new(BIO_s_file());
+ if (!bp) {
+  return NULL;
+ }
+
+ int r = BIO_read_filename(bp, path);
+ if (r <= 0) {
+  ERR_print_errors_fp(stderr);
+  return NULL;
+ }
+
+ X509 *x509 = PEM_read_bio_X509(bp, NULL, 0, NULL);
+ if (!x509) {
+  ERR_print_errors_fp(stderr);
+  BIO_free(bp);
+  return NULL;
+ }
+
+ BIO_free(bp);
+ return x509;
+}
+
 static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const char *ca_path, const char *cert_chain_path, const char *privk_path)
 {
  int r;
@@ -338,135 +401,41 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const
  return ctx;
 }
 
-__thread char openssl_x509_name_buf[16384];
-static char *ffi_X509_get_subject_name(X509 *cert)
-{
- X509_NAME *name = X509_get_subject_name(cert);
- if (!name) {
-  return NULL;
- }
-
- int r = X509_NAME_get_text_by_NID(name, NID_commonName, openssl_x509_name_buf, sizeof(openssl_x509_name_buf));
- if (r <= 0) {
-  return NULL;
- }
-
- return openssl_x509_name_buf;
-}
-
-static char *ffi_X509_get_san_uris(X509 *cert)
-{
- int cursor = 0;
-
- STACK_OF(GENERAL_NAME) *san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
- if (san_names == NULL) {
-  return NULL;
- }
-
- int count = ffi_sk_GENERAL_NAME_num(san_names);
- for (int i = 0; i < count; i++) {
-  const GENERAL_NAME *name = ffi_sk_GENERAL_NAME_value(san_names, i);
-  if (name->type == GEN_URI) {
-   int len = ASN1_STRING_length(name->d.uniformResourceIdentifier);
-   if (cursor + len < sizeof(openssl_x509_name_buf) - 2) {
-    const char *uri = ASN1_STRING_get0_data(name->d.uniformResourceIdentifier);
-    memcpy(openssl_x509_name_buf + cursor, uri, len);
-    cursor += len;
-    openssl_x509_name_buf[cursor] = ',';
-    cursor++;
-   } else {
-    openssl_x509_name_buf[cursor] = 0;
-    return  openssl_x509_name_buf;
-   }
-  }
- }
-
- if (!cursor) {
-  return NULL;
- }
-
- openssl_x509_name_buf[cursor] = 0;
- return openssl_x509_name_buf;
-}
-
-static X509 *ffi_X509_read(const char *path)
-{
- BIO *bp = BIO_new(BIO_s_file());
- if (!bp) {
-  return NULL;
- }
-
- int r = BIO_read_filename(bp, path);
- if (r <= 0) {
-  ERR_print_errors_fp(stderr);
-  return NULL;
- }
-
- X509 *x509 = PEM_read_bio_X509(bp, NULL, 0, NULL);
- if (!x509) {
-  ERR_print_errors_fp(stderr);
-  BIO_free(bp);
-  return NULL;
- }
-
- BIO_free(bp);
- return x509;
-}
-
 END-C
 )
 
-  (c-initialize #<<END-C
-#if (OPENSSL_VERSION_MAJOR < 1) || ((OPENSSL_VERSION_MAJOR == 1) && (OPENSSL_VERSION_MINOR == 0))
-OPENSSL_init_crypto(0, NULL);
-#endif
+(C-initialize #<<END-C
 ffi_ssl_gerbil_data_index = SSL_get_ex_new_index(0, "gerbil data", NULL, NULL, NULL);
 END-C
 )
 
-  (define SSL_ERROR_WANT_READ #\r)
-  (define SSL_ERROR_WANT_WRITE #\w)
+(def-C-const*
+  TLS1_VERSION
+  TLS1_1_VERSION
+  TLS1_2_VERSION
+  TLS1_3_VERSION)
 
-  (c-define-type SSL_METHOD "SSL_METHOD")
-  (c-define-type SSL_METHOD* (pointer SSL_METHOD (SSL_METHOD*)))
+(def-C-type/pointer SSL_METHOD)
+(def-C-type/pointer SSL_CTX release: "ffi_release_SSL_CTX")
+(def-C-type/pointer SSL     release: "ffi_release_SSL")
+(def-C-type/pointer X509    release: "ffi_release_X509")
 
-  (c-define-type SSL_CTX "SSL_CTX")
-  (c-define-type SSL_CTX* (pointer SSL_CTX (SSL_CTX*) "ffi_release_SSL_CTX"))
+(def-C-lambda SSL_new (SSL_CTX*) SSL* "ffi_ssl_new")
+(def-C-lambda SSL_connect (SSL*) scheme-object "ffi_ssl_connect")
+(def-C-lambda SSL_accept (SSL*) scheme-object "ffi_ssl_accept")
+(def-C-lambda SSL_read (SSL* scheme-object int int) scheme-object "ffi_ssl_read")
+(def-C-lambda SSL_write (SSL* scheme-object int int) scheme-object "ffi_ssl_write")
+(def-C-lambda SSL_shutdown (SSL*) scheme-object "ffi_ssl_shutdown")
 
-  (c-define-type SSL "SSL")
-  (c-define-type SSL* (pointer SSL (SSL*) "ffi_release_SSL"))
+(def-C-lambda SSL_set_host (SSL* char-string) scheme-object "ffi_ssl_set_host")
+(def-C-lambda SSL_set_fd (SSL* int) scheme-object "ffi_ssl_set_fd")
+(def-C-lambda SSL_get_peer_certificate (SSL*) X509*)
 
-  (c-define-type X509 "X509")
-  (c-define-type X509* (pointer X509 (X509*) "ffi_release_X509"))
+(def-C-lambda make-client-ssl-context/v (int) SSL_CTX* "ffi_client_ssl_ctx")
+(def-C-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
+(def-C-lambda make-server-ssl-context/v (char-string char-string int) SSL_CTX* "ffi_server_ssl_ctx")
+(def-C-lambda make-actor-tls-context (char-string char-string char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
 
-  (define-c-lambda SSL_new (SSL_CTX*) SSL* "ffi_ssl_new")
-  (define-c-lambda SSL_connect (SSL*) scheme-object "ffi_ssl_connect")
-  (define-c-lambda SSL_accept (SSL*) scheme-object "ffi_ssl_accept")
-  (define-c-lambda SSL_read (SSL* scheme-object int int) scheme-object "ffi_ssl_read")
-  (define-c-lambda SSL_write (SSL* scheme-object int int) scheme-object "ffi_ssl_write")
-  (define-c-lambda SSL_shutdown (SSL*) scheme-object "ffi_ssl_shutdown")
-
-  (define-c-lambda SSL_set_host (SSL* char-string) scheme-object "ffi_ssl_set_host")
-  (define-c-lambda SSL_set_fd (SSL* int) scheme-object "ffi_ssl_set_fd")
-  (define-c-lambda SSL_get_peer_certificate (SSL*) X509*)
-
-  (define-const TLS1_VERSION)
-  (define-const TLS1_1_VERSION)
-  (define-const TLS1_2_VERSION)
-  (define-const TLS1_3_VERSION)
-
-  (define (make-client-ssl-context #!optional (min-protocol-version TLS1_2_VERSION))
-    (make-client-ssl-context/v min-protocol-version))
-
-  (define (make-server-ssl-context cert-path key-path
-                                   #!optional (min-protocol-version TLS1_2_VERSION))
-    (make-server-ssl-context/v cert-path key-path min-protocol-version))
-
-  (define-c-lambda make-client-ssl-context/v (int) SSL_CTX* "ffi_client_ssl_ctx")
-  (define-c-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
-  (define-c-lambda make-server-ssl-context/v (char-string char-string int) SSL_CTX* "ffi_server_ssl_ctx")
-  (define-c-lambda make-actor-tls-context (char-string char-string char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
-
-  (define-c-lambda X509_get_subject_name (X509*) char-string "ffi_X509_get_subject_name")
-  (define-c-lambda X509_get_san_uris (X509*) char-string "ffi_X509_get_san_uris")
-  (define-c-lambda X509_read (char-string) X509* "ffi_X509_read"))
+(def-C-lambda X509_get_subject_name (X509*) char-string "ffi_X509_get_subject_name")
+(def-C-lambda X509_get_san_uris (X509*) char-string "ffi_X509_get_san_uris")
+(def-C-lambda X509_read (char-string) X509* "ffi_X509_read")

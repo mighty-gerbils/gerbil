@@ -17,11 +17,6 @@
      (set! (OSError-errno err) errno)
      (raise err))))
 
-(deferror-class AllocationError () foreign-allocation-error?)
-
-(defraise/context (raise-allocation-error where expr)
-  (AllocationError "error allocating memory" irritants: [expr]))
-
 (defsyntax-case check-os-error ()
   ((_ (prim arg ...) errno: get-errno)
    (with-syntax (((val ...) (gentemps #'(arg ...))))
