@@ -5,13 +5,13 @@
         :std/test
         :std/io
         ;; :std/net/httpd
-        ;; :std/net/request
+        :std/net/request
         :std/net/address
         :std/misc/process
         ./api)
 (export ssl-client-test
         ssl-server-test
-        ;; http-client-test
+        http-client-test
         ;; http-server-test
         test-setup!
         test-cleanup!)
@@ -142,7 +142,7 @@ END
         (test-client (insecure-client-ssl-context))
         (check (thread-join! srv) => (void))))))
 
-#;(def http-client-test
+(def http-client-test
   (test-suite "https client"
     (test-case  "https request: www.google.com"
       (let (req (http-get "https://www.google.com"))

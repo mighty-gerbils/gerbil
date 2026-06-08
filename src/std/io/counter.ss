@@ -20,12 +20,9 @@
   ((_ self expr)
    (with-identifier (self.count #'self #'self ".count")
      #'(let (count expr)
+         (declare (mostly-fixnum))
          (set! self.count
-           (let (current self.count)
-             (if (fixnum? current)
-               (or (##fx+? current count)
-                   (##bingum.+ current (##fixnum->bignum count)))
-               (##bignum.+ current (##fixnum->bignum count)))))
+           (+ self.count count))
          count))))
 
 (defmethod {read input-count}

@@ -8,6 +8,7 @@
     "interactive"
     "error"
     "interface"
+    "deprecation"
 
     "list/list-builder"
     "list/list"
@@ -162,6 +163,23 @@
 
     "misc/process"
     "misc/ports"
+
+    ,@(if config-enable-zlib
+        `((gxc: "encoding/zlib"
+                "-cc-options" ,(cppflags "zlib" "")
+                "-ld-options" ,(ldflags "zlib" "-lz")))
+        '())
+
+    "net/uri"
+    "net/url"
+    "net/http/common/ioutil"
+    "net/http/common/chunked"
+    "net/http/client/request"
+    "net/http/client/methods"
+    "net/http/client/util"
+    "net/http/client/api"
+    "net/http/client"
+    "net/request"
 
     ;; TODO
 

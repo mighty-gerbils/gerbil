@@ -8,7 +8,7 @@
 
 (def ip4-address-rx
   (pregexp "^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$"))
-(def dns-host-check-rx
+(def dns-host-rx
   (pregexp "^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$"))
 
 (def (string->ip4-address (addr : :string))
@@ -227,7 +227,7 @@
            (cond
             ((not (inet-port? port))
              (raise-bad-argument string->inet-address "bad port" addr port))
-            ((pregexp-match dns-host-check-rx host)
+            ((pregexp-match dns-host-rx host)
              (DNSAddress host port))
             (else
              (raise-bad-argument string->inet-address "bad host" addr host))))))

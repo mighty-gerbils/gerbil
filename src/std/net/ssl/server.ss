@@ -23,6 +23,7 @@
                  (ctx   :~ SSL_CTX? :- :foreign)
                  backlog:  (backlog  : :fixnum := default-listen-backlog)
                  sockopts: (sockopts : :list := default-listen-sockopts))
+  => ServerSocket
   (let* ((srvsock (tcp-listen addr backlog: backlog sockopts: sockopts))
          (sslsock (__ssl-socket-from-server-socket
                    (&interface-instance-object srvsock)
@@ -32,16 +33,12 @@
 (implement ServerSocket ssl-server-socket
   (accept
    (lambda (self)
-     (using (clisock (server-socket-accept self) : StreamSocket)
-       (:- (try
-            (ssl-server-upgrade clisock self.ctx)
-            (catch (e)
-              (clisock.close)
-              (raise e)))
-           StreamSocket)))))
+     (let (clisock (server-socket-accept self))
+       (ssl-server-upgrade clisock self.ctx)))))
 
 (def (ssl-server-upgrade (clisock : StreamSocket)
                          (ctx      :~ SSL_CTX? :- :foreign))
+  => StreamSocket
   (let* ((deadline (timeout->deadline default-connect-timeout))
          (ssl (check-pointer ssl-server-upgrade (SSL_new ctx))))
     (using (sslsock (__ssl-socket-from-stream-socket
@@ -55,6 +52,7 @@
        (ssl-server-handshake sslsock)
        (catch (e)
          (foreign-release! ssl)
+         (clisock.close)
          (raise e)))
       (set! sslsock.timeo-in #f)
       (set! sslsock.timeo-out #f)

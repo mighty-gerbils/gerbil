@@ -21,18 +21,16 @@
                   timeout: (timeo   : IOTimeout := default-connect-timeout)
                   context: (context :~ SSL_CTX? :- :foreign := (default-client-ssl-context))
                   host:    (host    : :string := (resolve->host addr)))
+  => StreamSocket
   (let* ((deadline (timeout->deadline timeo))
          (sock (tcp-connect (resolve->endpoint addr) deadline)))
-    (try
-     (ssl-client-upgrade sock timeout: deadline context: context host: host)
-     (catch (e)
-       (StreamSocket-close sock)
-       (raise e)))))
+    (ssl-client-upgrade sock timeout: deadline context: context host: host)))
 
 (def (ssl-client-upgrade (ssock : StreamSocket)
                          timeout: (timeo : IOTimeout := default-connect-timeout)
-                         context: (ctx    :~ SSL_CTX? :- :foreign := (default-client-ssl-context))
+                         context: (ctx   :~ SSL_CTX? :- :foreign := (default-client-ssl-context))
                          host:    (host  : :string))
+  => StreamSocket
   (let* ((deadline (timeout->deadline timeo))
          (ssl (check-pointer ssl-client-upgrade (SSL_new ctx))))
     (using (sslsock (__ssl-socket-from-stream-socket
@@ -47,6 +45,7 @@
        (ssl-client-handshake sslsock)
        (catch (e)
          (foreign-release! ssl)
+         (ssock.close)
          (raise e)))
       (set! sslsock.timeo-in #f)
       (set! sslsock.timeo-out #f)

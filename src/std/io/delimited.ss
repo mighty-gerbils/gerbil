@@ -3,18 +3,26 @@
 ;;; delimited readers
 (import :std/error
         :std/interface
-        ./interface)
-(export (rename: open-delimited-reader delimited-reader))
+        ./interface
+        ./bio/types
+        ./bio/delimited)
+(export delimit-reader
+        delimit-buffered-reader)
 (declare (not safe))
 
 (defstruct delimited-reader ((reader    :- Reader)
                              (remaining :- :integer))
-  final: #t )
+  final: #t)
 
-(def (open-delimited-reader (reader : Reader)
-                            (limit :~ nonnegative-integer? :- :integer))
+(def (delimit-reader (reader : Reader)
+                     (limit :~ nonnegative-integer? :- :integer))
   => Reader
   (Reader (make-delimited-reader reader limit)))
+
+(def (delimit-buffered-reader (reader : :t)
+                              (limit :~ nonnegative-integer? :- :integer))
+  => BufferedReader
+  (BufferedReader (make-delimited-input-buffer reader limit limit #f)))
 
 (defmethod {read delimited-reader}
   (lambda (self output start end need)

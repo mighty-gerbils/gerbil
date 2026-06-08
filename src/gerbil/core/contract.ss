@@ -2181,8 +2181,10 @@ package: gerbil/core
              ([id . required-rest]
               (match args-rest
                 ([arg . args-rest]
-                 (let (bindings (cons [id arg] bindings))
-                   (loop required-rest args-rest bindings)))
+                 (if (and (stx-keyword? arg) (not (null? keywords)))
+                   (raise-syntax-error #f "keyword argument instead of positional argument" stx arg id)
+                   (let (bindings (cons [id arg] bindings))
+                     (loop required-rest args-rest bindings))))
                 (else
                  (raise-syntax-error #f "missing required argument" stx id))))
              (else
@@ -2192,9 +2194,14 @@ package: gerbil/core
                   ;; we have more optionals
                   ([next . rest]
                    (match args-rest
-                     ([arg . args-rest]
-                      (let (bindings (cons [(car next) arg] bindings))
-                        (loop args-rest rest bindings)))
+                     ([arg . args-rest*]
+                      (if (stx-keyword? arg)
+                        ;; keyword arguments start
+                        (let (bindings (fold cons bindings optional-rest))
+                          (implode-keywords bindings args-rest))
+                        ;; an optional argument
+                        (let (bindings (cons [(car next) arg] bindings))
+                          (loop args-rest* rest bindings))))
                      (else
                       ;; no more call arguments
                       (let (bindings (fold cons bindings optional-rest))

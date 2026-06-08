@@ -22,4 +22,6 @@
   (:symbol
    (to-string symbol->string))
   (:keyword
-   (to-string keyword->string)))
+   (to-string keyword->string))
+  (:number
+   (to-string number->string)))

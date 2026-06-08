@@ -26,13 +26,17 @@
         raise-bad-argument
         (rename: raise-bug BUG)
         is-it-bug?
+        (rename: raise-todo TODO)
+        is-it-todo?
         with-exception-stack-trace
         dump-stack-trace?
         dump-stack-trace!
         exit-with-error
         exit-on-error?
         call-with-exit-on-error
-        with-exit-on-error)
+        with-exit-on-error
+        ignore-errors
+        report-errors)
 
 ;; utility macro for definint error classes
 (defsyntax (deferror-class stx)
@@ -161,6 +165,12 @@
 
 (defraise/context (raise-bug where message irritants ...)
   (BUG (string-append "BUG: " message) irritants: [irritants ...]))
+
+;; it's not implemented yet
+(deferror-class TODO () is-it-todo?)
+
+(defraise/context (raise-todo where irritants ...)
+  (TODO (string-append "TODO: " (symbol->string 'where)) irritants: [irritants ...]))
 
 ;; runtime exceptions
 (defrules export-runtime-exceptions ()
@@ -388,3 +398,19 @@
 
 (defrules with-exit-on-error ()
   ((_ body ...) (call-with-exit-on-error (lambda () body ...))))
+
+(defrules ignore-errors (=>)
+  ((_ => value expr rest ...)
+   (with-catch (lambda (e) value) (lambda () expr rest ...)))
+  ((_ expr rest ...)
+   (ignore-errors => #!void expr rest ...)))
+
+(defrules report-errors (=>)
+  ((_ => value expr rest ...)
+   (with-catch
+    (lambda (e)
+      (display-exception e (current-error-port))
+      value)
+    (lambda () expr rest ...)))
+  ((_ expr rest ...)
+   (report-errors => #!void expr rest ...)))

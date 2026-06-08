@@ -49,7 +49,7 @@
   final: #t)
 
 ;; delimited input buffered readers
-;; - in is an input-buffer or another delimited-input-buffer
+;; - in is an implementation of BufferedReader
 ;; - reamining is the number of bytes that remain to be read
 ;; - limit is the input limit
 (defstruct delimited-input-buffer

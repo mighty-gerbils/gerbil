@@ -389,7 +389,10 @@ else
          ;;
        "env")
            exec "$@"
-         ;;
+        ;;
+       "test")
+           exec gerbil "$@"
+        ;;
        *)
          feedback_err "Unknown command."
          feedback_err \

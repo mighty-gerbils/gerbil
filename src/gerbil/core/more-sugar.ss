@@ -194,6 +194,12 @@ package: gerbil/core
      (with-syntax ((e (string->bytes (stx-e #'str))))
        #'(quote e)))))
 
+(defsyntax (@eval stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((result (eval-syntax+1 #'expr)))
+       #'(quote result)))))
+
 (defsyntax (eval-when-compile stx)
   (syntax-case stx ()
     ((_ expr)
