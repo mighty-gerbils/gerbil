@@ -285,60 +285,58 @@ namespace: #f
          (%#define-runtime is-hash-table? is-hash-table?)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#define-runtime
-          _%locked-hash-table::HashTable::ref150109%_
-          _%locked-hash-table::HashTable::ref150108%_)
+          _%locked-hash-table::HashTable::ref130152%_
+          _%locked-hash-table::HashTable::ref130151%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::set!150111%_
-          _%locked-hash-table::HashTable::set!150110%_)
+          _%locked-hash-table::HashTable::set!130154%_
+          _%locked-hash-table::HashTable::set!130153%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::update!150113%_
-          _%locked-hash-table::HashTable::update!150112%_)
+          _%locked-hash-table::HashTable::update!130156%_
+          _%locked-hash-table::HashTable::update!130155%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::delete!150115%_
-          _%locked-hash-table::HashTable::delete!150114%_)
+          _%locked-hash-table::HashTable::delete!130158%_
+          _%locked-hash-table::HashTable::delete!130157%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::for-each150117%_
-          _%locked-hash-table::HashTable::for-each150116%_)
+          _%locked-hash-table::HashTable::for-each130160%_
+          _%locked-hash-table::HashTable::for-each130159%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::length150119%_
-          _%locked-hash-table::HashTable::length150118%_)
+          _%locked-hash-table::HashTable::length130162%_
+          _%locked-hash-table::HashTable::length130161%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::copy150121%_
-          _%locked-hash-table::HashTable::copy150120%_)
+          _%locked-hash-table::HashTable::copy130164%_
+          _%locked-hash-table::HashTable::copy130163%_)
          (%#define-runtime
-          _%locked-hash-table::HashTable::clear!150123%_
-          _%locked-hash-table::HashTable::clear!150122%_)
+          _%locked-hash-table::HashTable::clear!130166%_
+          _%locked-hash-table::HashTable::clear!130165%_)
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
          (%#define-runtime
-          _%checked-hash-table::HashTable::ref150334%_
-          _%checked-hash-table::HashTable::ref150333%_)
+          _%checked-hash-table::HashTable::ref130377%_
+          _%checked-hash-table::HashTable::ref130376%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::set!150336%_
-          _%checked-hash-table::HashTable::set!150335%_)
+          _%checked-hash-table::HashTable::set!130379%_
+          _%checked-hash-table::HashTable::set!130378%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::update!150338%_
-          _%checked-hash-table::HashTable::update!150337%_)
+          _%checked-hash-table::HashTable::update!130381%_
+          _%checked-hash-table::HashTable::update!130380%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::delete!150340%_
-          _%checked-hash-table::HashTable::delete!150339%_)
+          _%checked-hash-table::HashTable::delete!130383%_
+          _%checked-hash-table::HashTable::delete!130382%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::for-each150342%_
-          _%checked-hash-table::HashTable::for-each150341%_)
+          _%checked-hash-table::HashTable::for-each130385%_
+          _%checked-hash-table::HashTable::for-each130384%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::length150344%_
-          _%checked-hash-table::HashTable::length150343%_)
+          _%checked-hash-table::HashTable::length130387%_
+          _%checked-hash-table::HashTable::length130386%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::copy150346%_
-          _%checked-hash-table::HashTable::copy150345%_)
+          _%checked-hash-table::HashTable::copy130389%_
+          _%checked-hash-table::HashTable::copy130388%_)
          (%#define-runtime
-          _%checked-hash-table::HashTable::clear!150348%_
-          _%checked-hash-table::HashTable::clear!150347%_)
+          _%checked-hash-table::HashTable::clear!130391%_
+          _%checked-hash-table::HashTable::clear!130390%_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
-         (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
-                  (%#define-runtime make-hash-table__@ make-hash-table__@)
-                  (%#define-runtime make-hash-table make-hash-table))
+         (%#define-runtime make-hash-table make-hash-table)
          (%#define-runtime make-hash-table-eq make-hash-table-eq)
          (%#define-runtime make-hash-table-eqv make-hash-table-eqv)
          (%#define-runtime make-hash-table-symbolic make-hash-table-symbolic)
@@ -369,16 +367,8 @@ namespace: #f
          (%#define-runtime __hash-length __hash-length)
          (%#define-runtime hash-length hash-length macro: @hash-length)
          (%#define-syntax @hash-ref |[:0:]#@hash-ref|)
-         (%#begin (%#define-runtime __hash-ref__% __hash-ref__%)
-                  (%#begin (%#define-runtime __hash-ref__0 __hash-ref__0)
-                           (%#define-runtime __hash-ref __hash-ref)))
-         (%#begin (%#define-runtime hash-ref__% hash-ref__%)
-                  (%#begin (%#define-runtime hash-ref__0 hash-ref__0)
-                           (%#define-runtime
-                            hash-ref
-                            hash-ref
-                            macro:
-                            @hash-ref)))
+         (%#define-runtime __hash-ref __hash-ref)
+         (%#define-runtime hash-ref hash-ref macro: @hash-ref)
          (%#define-syntax @hash-get |[:0:]#@hash-get|)
          (%#define-runtime __hash-get __hash-get)
          (%#define-runtime hash-get hash-get macro: @hash-get)
@@ -386,18 +376,8 @@ namespace: #f
          (%#define-runtime __hash-put! __hash-put!)
          (%#define-runtime hash-put! hash-put! macro: @hash-put!)
          (%#define-syntax @hash-update! |[:0:]#@hash-update!|)
-         (%#begin (%#define-runtime __hash-update!__% __hash-update!__%)
-                  (%#begin (%#define-runtime
-                            __hash-update!__0
-                            __hash-update!__0)
-                           (%#define-runtime __hash-update! __hash-update!)))
-         (%#begin (%#define-runtime hash-update!__% hash-update!__%)
-                  (%#begin (%#define-runtime hash-update!__0 hash-update!__0)
-                           (%#define-runtime
-                            hash-update!
-                            hash-update!
-                            macro:
-                            @hash-update!)))
+         (%#define-runtime __hash-update! __hash-update!)
+         (%#define-runtime hash-update! hash-update! macro: @hash-update!)
          (%#define-syntax @hash-remove! |[:0:]#@hash-remove!|)
          (%#define-runtime __hash-remove! __hash-remove!)
          (%#define-runtime hash-remove! hash-remove! macro: @hash-remove!)
@@ -420,16 +400,8 @@ namespace: #f
          (%#define-runtime __hash-fold __hash-fold)
          (%#define-runtime hash-fold hash-fold macro: @hash-fold)
          (%#define-syntax @hash-find |[:0:]#@hash-find|)
-         (%#begin (%#define-runtime __hash-find__% __hash-find__%)
-                  (%#begin (%#define-runtime __hash-find__0 __hash-find__0)
-                           (%#define-runtime __hash-find __hash-find)))
-         (%#begin (%#define-runtime hash-find__% hash-find__%)
-                  (%#begin (%#define-runtime hash-find__0 hash-find__0)
-                           (%#define-runtime
-                            hash-find
-                            hash-find
-                            macro:
-                            @hash-find)))
+         (%#define-runtime __hash-find __hash-find)
+         (%#define-runtime hash-find hash-find macro: @hash-find)
          (%#define-syntax @hash-keys |[:0:]#@hash-keys|)
          (%#define-runtime __hash-keys __hash-keys)
          (%#define-runtime hash-keys hash-keys macro: @hash-keys)

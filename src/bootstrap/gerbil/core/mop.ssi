@@ -399,24 +399,12 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     class-type-info::apply-macro-expander
                     gerbil/core/mop~MOP-2#class-type-info::apply-macro-expander)
-                   (%#begin (%#define-runtime
-                             syntax-local-runtime-type-info?__%
-                             gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__%)
-                            (%#begin (%#define-runtime
-                                      syntax-local-runtime-type-info?__0
-                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?__0)
-                                     (%#define-runtime
-                                      syntax-local-runtime-type-info?
-                                      gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?)))
-                   (%#begin (%#define-runtime
-                             syntax-local-class-type-info?__%
-                             gerbil/core/mop~MOP-2#syntax-local-class-type-info?__%)
-                            (%#begin (%#define-runtime
-                                      syntax-local-class-type-info?__0
-                                      gerbil/core/mop~MOP-2#syntax-local-class-type-info?__0)
-                                     (%#define-runtime
-                                      syntax-local-class-type-info?
-                                      gerbil/core/mop~MOP-2#syntax-local-class-type-info?))))
+                   (%#define-runtime
+                    syntax-local-runtime-type-info?
+                    gerbil/core/mop~MOP-2#syntax-local-runtime-type-info?)
+                   (%#define-runtime
+                    syntax-local-class-type-info?
+                    gerbil/core/mop~MOP-2#syntax-local-class-type-info?))
           (%#call (%#ref load-module) (%#quote "gerbil/core/mop~MOP-2~0")))
          (%#module
           MOP-3

@@ -61,15 +61,9 @@ namespace: gx
          (%#define-runtime
           core-compile-top-case-lambda%
           gx#core-compile-top-case-lambda%)
-         (%#begin (%#define-runtime
-                   core-compile-top-let-values%__%
-                   gx#core-compile-top-let-values%__%)
-                  (%#begin (%#define-runtime
-                            core-compile-top-let-values%__0
-                            gx#core-compile-top-let-values%__0)
-                           (%#define-runtime
-                            core-compile-top-let-values%
-                            gx#core-compile-top-let-values%)))
+         (%#define-runtime
+          core-compile-top-let-values%
+          gx#core-compile-top-let-values%)
          (%#define-runtime
           core-compile-top-letrec-values%
           gx#core-compile-top-letrec-values%)

@@ -1064,13 +1064,15 @@ namespace: gxc
 
   (def (opt-lambda-dispatch-name id)
     (let (str (symbol->string id))
-      (if (string-prefix? "opt-lambda" str)
+      (if (or (string-prefix? "opt-lambda" str)
+              (string-prefix? "$%opt-lambda" str))
         "%"
         id)))
 
   (def (kw-lambda-dispatch-name id name)
     (let (str (symbol->string id))
-      (if (string-prefix? "kw-lambda" str)
+      (if (or (string-prefix? "kw-lambda" str)
+              (string-prefix? "$%kw-lambda" str))
         name
         id)))
 

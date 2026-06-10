@@ -100,6 +100,7 @@ namespace: gerbil/core/more-sugar
           ~hash-table
           |gerbil/core/more-sugar[:0:]#~hash-table|)
          (%#define-syntax @bytes |gerbil/core/more-sugar[:0:]#@bytes|)
+         (%#define-syntax @eval |gerbil/core/more-sugar[:0:]#@eval|)
          (%#define-syntax
           eval-when-compile
           |gerbil/core/more-sugar[:0:]#eval-when-compile|))

@@ -50,15 +50,7 @@ namespace: gxc
          (%#define-runtime
           ::expression-subst-bind-methods!
           gxc#::expression-subst-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-expression-subst__%
-                   gxc#apply-expression-subst__%)
-                  (%#define-runtime
-                   apply-expression-subst__@
-                   gxc#apply-expression-subst__@)
-                  (%#define-runtime
-                   apply-expression-subst
-                   gxc#apply-expression-subst))
+         (%#define-runtime apply-expression-subst gxc#apply-expression-subst)
          (%#define-runtime ::expression-subst*::t gxc#::expression-subst*::t)
          (%#define-runtime ::expression-subst*? gxc#::expression-subst*?)
          (%#define-runtime
@@ -80,15 +72,7 @@ namespace: gxc
          (%#define-runtime
           ::expression-subst*-bind-methods!
           gxc#::expression-subst*-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-expression-subst*__%
-                   gxc#apply-expression-subst*__%)
-                  (%#define-runtime
-                   apply-expression-subst*__@
-                   gxc#apply-expression-subst*__@)
-                  (%#define-runtime
-                   apply-expression-subst*
-                   gxc#apply-expression-subst*))
+         (%#define-runtime apply-expression-subst* gxc#apply-expression-subst*)
          (%#define-runtime ::inline-subst::t gxc#::inline-subst::t)
          (%#define-runtime ::inline-subst? gxc#::inline-subst?)
          (%#define-runtime make-::inline-subst gxc#make-::inline-subst)
@@ -104,13 +88,7 @@ namespace: gxc
          (%#define-runtime
           ::inline-subst-bind-methods!
           gxc#::inline-subst-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-inline-subst__%
-                   gxc#apply-inline-subst__%)
-                  (%#define-runtime
-                   apply-inline-subst__@
-                   gxc#apply-inline-subst__@)
-                  (%#define-runtime apply-inline-subst gxc#apply-inline-subst))
+         (%#define-runtime apply-inline-subst gxc#apply-inline-subst)
          (%#define-runtime ::find-expression::t gxc#::find-expression::t)
          (%#define-runtime ::find-expression? gxc#::find-expression?)
          (%#define-runtime make-::find-expression gxc#make-::find-expression)
@@ -133,15 +111,7 @@ namespace: gxc
          (%#define-runtime
           ::find-var-refs-bind-methods!
           gxc#::find-var-refs-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-find-var-refs__%
-                   gxc#apply-find-var-refs__%)
-                  (%#define-runtime
-                   apply-find-var-refs__@
-                   gxc#apply-find-var-refs__@)
-                  (%#define-runtime
-                   apply-find-var-refs
-                   gxc#apply-find-var-refs))
+         (%#define-runtime apply-find-var-refs gxc#apply-find-var-refs)
          (%#define-runtime
           ::collect-runtime-refs::t
           gxc#::collect-runtime-refs::t)
@@ -167,15 +137,9 @@ namespace: gxc
          (%#define-runtime
           ::collect-runtime-refs-bind-methods!
           gxc#::collect-runtime-refs-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-collect-runtime-refs__%
-                   gxc#apply-collect-runtime-refs__%)
-                  (%#define-runtime
-                   apply-collect-runtime-refs__@
-                   gxc#apply-collect-runtime-refs__@)
-                  (%#define-runtime
-                   apply-collect-runtime-refs
-                   gxc#apply-collect-runtime-refs))
+         (%#define-runtime
+          apply-collect-runtime-refs
+          gxc#apply-collect-runtime-refs)
          (%#define-runtime collect-mutators-setq% gxc#collect-mutators-setq%)
          (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
          (%#define-runtime expression-subst*-ref% gxc#expression-subst*-ref%)

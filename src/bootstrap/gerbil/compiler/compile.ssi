@@ -38,13 +38,7 @@ namespace: gxc
          (%#define-runtime
           ::lift-modules-bind-methods!
           gxc#::lift-modules-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-lift-modules__%
-                   gxc#apply-lift-modules__%)
-                  (%#define-runtime
-                   apply-lift-modules__@
-                   gxc#apply-lift-modules__@)
-                  (%#define-runtime apply-lift-modules gxc#apply-lift-modules))
+         (%#define-runtime apply-lift-modules gxc#apply-lift-modules)
          (%#define-runtime ::find-runtime-code::t gxc#::find-runtime-code::t)
          (%#define-runtime ::find-runtime-code? gxc#::find-runtime-code?)
          (%#define-runtime
@@ -155,15 +149,9 @@ namespace: gxc
          (%#define-runtime
           ::collect-expression-refs-bind-methods!
           gxc#::collect-expression-refs-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-collect-expression-refs__%
-                   gxc#apply-collect-expression-refs__%)
-                  (%#define-runtime
-                   apply-collect-expression-refs__@
-                   gxc#apply-collect-expression-refs__@)
-                  (%#define-runtime
-                   apply-collect-expression-refs
-                   gxc#apply-collect-expression-refs))
+         (%#define-runtime
+          apply-collect-expression-refs
+          gxc#apply-collect-expression-refs)
          (%#define-runtime ::generate-meta::t gxc#::generate-meta::t)
          (%#define-runtime ::generate-meta? gxc#::generate-meta?)
          (%#define-runtime make-::generate-meta gxc#make-::generate-meta)
@@ -179,15 +167,7 @@ namespace: gxc
          (%#define-runtime
           ::generate-meta-bind-methods!
           gxc#::generate-meta-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-generate-meta__%
-                   gxc#apply-generate-meta__%)
-                  (%#define-runtime
-                   apply-generate-meta__@
-                   gxc#apply-generate-meta__@)
-                  (%#define-runtime
-                   apply-generate-meta
-                   gxc#apply-generate-meta))
+         (%#define-runtime apply-generate-meta gxc#apply-generate-meta)
          (%#define-runtime ::generate-meta-phi::t gxc#::generate-meta-phi::t)
          (%#define-runtime ::generate-meta-phi? gxc#::generate-meta-phi?)
          (%#define-runtime
@@ -209,15 +189,7 @@ namespace: gxc
          (%#define-runtime
           ::generate-meta-phi-bind-methods!
           gxc#::generate-meta-phi-bind-methods!)
-         (%#begin (%#define-runtime
-                   apply-generate-meta-phi__%
-                   gxc#apply-generate-meta-phi__%)
-                  (%#define-runtime
-                   apply-generate-meta-phi__@
-                   gxc#apply-generate-meta-phi__@)
-                  (%#define-runtime
-                   apply-generate-meta-phi
-                   gxc#apply-generate-meta-phi))
+         (%#define-runtime apply-generate-meta-phi gxc#apply-generate-meta-phi)
          (%#define-runtime
           collect-bindings-define-values%
           gxc#collect-bindings-define-values%)
@@ -273,27 +245,15 @@ namespace: gxc
          (%#define-runtime
           generate-runtime-case-lambda%
           gxc#generate-runtime-case-lambda%)
-         (%#begin (%#define-runtime
-                   generate-runtime-let-values%__%
-                   gxc#generate-runtime-let-values%__%)
-                  (%#begin (%#define-runtime
-                            generate-runtime-let-values%__0
-                            gxc#generate-runtime-let-values%__0)
-                           (%#define-runtime
-                            generate-runtime-let-values%
-                            gxc#generate-runtime-let-values%)))
+         (%#define-runtime
+          generate-runtime-let-values%
+          gxc#generate-runtime-let-values%)
          (%#define-runtime
           generate-runtime-let-values-bind
           gxc#generate-runtime-let-values-bind)
-         (%#begin (%#define-runtime
-                   generate-runtime-letrec-values%__%
-                   gxc#generate-runtime-letrec-values%__%)
-                  (%#begin (%#define-runtime
-                            generate-runtime-letrec-values%__0
-                            gxc#generate-runtime-letrec-values%__0)
-                           (%#define-runtime
-                            generate-runtime-letrec-values%
-                            gxc#generate-runtime-letrec-values%)))
+         (%#define-runtime
+          generate-runtime-letrec-values%
+          gxc#generate-runtime-letrec-values%)
          (%#define-runtime
           generate-runtime-letrec*-values%
           gxc#generate-runtime-letrec*-values%)
@@ -357,6 +317,9 @@ namespace: gxc
          (%#define-runtime generate-meta-export% gxc#generate-meta-export%)
          (%#define-runtime generate-meta-provide% gxc#generate-meta-provide%)
          (%#define-runtime generate-meta-extern% gxc#generate-meta-extern%)
+         (%#define-runtime
+          generate-meta-define-runtime%
+          gxc#generate-meta-define-runtime%)
          (%#define-runtime
           generate-meta-define-values%
           gxc#generate-meta-define-values%)

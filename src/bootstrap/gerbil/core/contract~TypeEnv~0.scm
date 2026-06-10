@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/contract~TypeEnv::timestamp 1779967236)
+  (define gerbil/core/contract~TypeEnv::timestamp 1781119024)
   (begin
     (define gerbil/core/contract~TypeEnv#type-env::t
       (make-class-type
@@ -13,10 +13,10 @@
     (define gerbil/core/contract~TypeEnv#type-env?
       (make-class-predicate gerbil/core/contract~TypeEnv#type-env::t))
     (define gerbil/core/contract~TypeEnv#make-type-env
-      (lambda _%$args52008%_
+      (lambda _%$args45148%_
         (apply make-instance
                gerbil/core/contract~TypeEnv#type-env::t
-               _%$args52008%_)))
+               _%$args45148%_)))
     (define gerbil/core/contract~TypeEnv#type-env-var
       (make-class-slot-accessor gerbil/core/contract~TypeEnv#type-env::t 'var))
     (define gerbil/core/contract~TypeEnv#type-env-type
@@ -79,22 +79,15 @@
       (lambda ()
         (gx#syntax-local-value (gx#syntax-local-introduce '@@type) false)))
     (define gerbil/core/contract~TypeEnv#type-env-lookup
-      (lambda (_%var51998%_)
-        (let _%loop52000%_ ((_%te52002%_
+      (lambda (_%var45138%_)
+        (let _%loop45140%_ ((_%te45142%_
                              (gerbil/core/contract~TypeEnv#current-type-env)))
-          (if (not _%te52002%_)
+          (if (not _%te45142%_)
               '#f
               (if (gx#free-identifier=?
-                   _%var51998%_
-                   (##direct-structure-ref
-                    _%te52002%_
-                    '1
-                    gerbil/core/contract~TypeEnv#type-env::t
-                    '#f))
-                  _%te52002%_
-                  (_%loop52000%_
-                   (##direct-structure-ref
-                    _%te52002%_
-                    '4
-                    gerbil/core/contract~TypeEnv#type-env::t
-                    '#f)))))))))
+                   _%var45138%_
+                   (gerbil/core/contract~TypeEnv#type-env-var _%te45142%_))
+                  _%te45142%_
+                  (_%loop45140%_
+                   (gerbil/core/contract~TypeEnv#type-env-super
+                    _%te45142%_)))))))))

@@ -1,37 +1,49 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/repl::timestamp 1779967242)
+  (define gerbil/runtime/repl::timestamp 1781119045)
   (define replx
     (lambda ()
-      (letrec ((_%write-reason171038%_
-                (lambda (_%exn171076%_)
-                  (lambda (_%cont171078%_ _%port171079%_)
+      (letrec ((_%write-reason149114%_
+                (lambda (_%exn149152%_)
+                  (lambda (_%cont149154%_ _%port149155%_)
                     (let ()
                       (declare (not safe))
                       (##display-exception-in-context
-                       _%exn171076%_
-                       _%cont171078%_
-                       _%port171079%_))
+                       _%exn149152%_
+                       _%cont149154%_
+                       _%port149155%_))
                     '#f))))
-        (let* ((_%handler171044%_
-                (lambda (_%exn171040%_)
-                  (let ((__tmp171080
-                         (lambda (_%cont171042%_)
-                           (let ((__tmp171081
-                                  (_%write-reason171038%_ _%exn171040%_)))
+        (let* ((_%handler149120%_
+                (lambda (_%exn149116%_)
+                  (let ((__tmp149156
+                         (lambda (_%cont149118%_)
+                           (let ((__tmp149157
+                                  (_%write-reason149114%_ _%exn149116%_)))
                              (declare (not safe))
                              (##repl-within
-                              _%cont171042%_
-                              __tmp171081
-                              _%exn171040%_)))))
+                              _%cont149118%_
+                              __tmp149157
+                              _%exn149116%_)))))
                     (declare (not safe))
-                    (##continuation-capture __tmp171080))))
-               (_%thunk171047%_ ##repl)
-               (_%handler171052%_ _%handler171044%_))
-          (if (procedure? _%thunk171047%_)
-              (let ((_%thunk171066%_ _%thunk171047%_))
-                (declare (not safe))
-                (__with-exception-handler _%handler171052%_ _%thunk171066%_))
+                    (##continuation-capture __tmp149156))))
+               (_%thunk149123%_ ##repl))
+          (if (procedure? _%handler149120%_)
+              (let ((_%handler149128%_ _%handler149120%_))
+                (if (procedure? _%thunk149123%_)
+                    (let ((_%thunk149142%_ _%thunk149123%_))
+                      (__with-exception-handler
+                       _%handler149128%_
+                       _%thunk149142%_))
+                    (begin
+                      (raise-contract-violation-error
+                       '"contract violation"
+                       'context:
+                       'gerbil/runtime/repl
+                       'contract:
+                       'procedure?
+                       'value:
+                       _%thunk149123%_)
+                      (void))))
               (begin
                 (raise-contract-violation-error
                  '"contract violation"
@@ -40,5 +52,5 @@
                  'contract:
                  'procedure?
                  'value:
-                 _%thunk171047%_)
-                '#!void)))))))
+                 _%handler149120%_)
+                (void))))))))

@@ -99,24 +99,12 @@ namespace: gxc
          (%#define-runtime
           generate-runtime-binding-id*
           gxc#generate-runtime-binding-id*)
-         (%#begin (%#define-runtime
-                   generate-runtime-temporary__%
-                   gxc#generate-runtime-temporary__%)
-                  (%#begin (%#define-runtime
-                            generate-runtime-temporary__0
-                            gxc#generate-runtime-temporary__0)
-                           (%#define-runtime
-                            generate-runtime-temporary
-                            gxc#generate-runtime-temporary)))
-         (%#begin (%#define-runtime
-                   generate-runtime-gensym-reference__%
-                   gxc#generate-runtime-gensym-reference__%)
-                  (%#begin (%#define-runtime
-                            generate-runtime-gensym-reference__0
-                            gxc#generate-runtime-gensym-reference__0)
-                           (%#define-runtime
-                            generate-runtime-gensym-reference
-                            gxc#generate-runtime-gensym-reference)))
+         (%#define-runtime
+          generate-runtime-temporary
+          gxc#generate-runtime-temporary)
+         (%#define-runtime
+          generate-runtime-gensym-reference
+          gxc#generate-runtime-gensym-reference)
          (%#define-runtime
           generate-runtime-identifier
           gxc#generate-runtime-identifier)
@@ -132,15 +120,7 @@ namespace: gxc
          (%#define-runtime __available-cores gxc#__available-cores)
          (%#define-runtime __jobs-mx gxc#__jobs-mx)
          (%#define-runtime __jobs-cv gxc#__jobs-cv)
-         (%#begin (%#define-runtime
-                   add-compile-job!__%
-                   gxc#add-compile-job!__%)
-                  (%#begin (%#define-runtime
-                            add-compile-job!__0
-                            gxc#add-compile-job!__0)
-                           (%#define-runtime
-                            add-compile-job!
-                            gxc#add-compile-job!)))
+         (%#define-runtime add-compile-job! gxc#add-compile-job!)
          (%#define-runtime pending-compile-jobs gxc#pending-compile-jobs)
          (%#define-runtime
           execute-pending-compile-jobs!

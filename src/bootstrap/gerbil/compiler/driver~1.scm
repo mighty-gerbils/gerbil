@@ -1,70 +1,52 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (define |gxc[:0:]#with-driver-mutex|
-  (lambda (_%$stx261394%_)
-    (let* ((_%g261398261412%_
-            (lambda (_%g261399261408%_)
-              (let ()
-                (declare (not safe))
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g261399261408%_))))
-           (_%g261397261454%_
-            (lambda (_%g261399261416%_)
-              (if (let ()
-                    (declare (not safe))
-                    (gx#stx-pair? _%g261399261416%_))
-                  (let ((_%e261401261419%_
-                         (let ()
-                           (declare (not safe))
-                           (gx#syntax-e _%g261399261416%_))))
-                    (let ((_%hd261402261423%_
+  (lambda (_%$stx226812%_)
+    (let* ((_%$%g226816226830%_
+            (lambda (_%$%g226817226826%_)
+              (gx#raise-syntax-error
+               '#f
+               '"Bad syntax; invalid match target"
+               _%$%g226817226826%_)))
+           (_%$%g226815226872%_
+            (lambda (_%$%g226817226834%_)
+              (if (gx#stx-pair? _%$%g226817226834%_)
+                  (let ((_%$%e226819226837%_
+                         (gx#syntax-e _%$%g226817226834%_)))
+                    (let ((_%$%hd226820226841%_
                            (let ()
                              (declare (not safe))
-                             (##car _%e261401261419%_)))
-                          (_%tl261403261426%_
+                             (##car _%$%e226819226837%_)))
+                          (_%$%tl226821226844%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%e261401261419%_))))
-                      (if (let ()
-                            (declare (not safe))
-                            (gx#stx-pair? _%tl261403261426%_))
-                          (let ((_%e261404261429%_
-                                 (let ()
-                                   (declare (not safe))
-                                   (gx#syntax-e _%tl261403261426%_))))
-                            (let ((_%hd261405261433%_
+                             (##cdr _%$%e226819226837%_))))
+                      (if (gx#stx-pair? _%$%tl226821226844%_)
+                          (let ((_%$%e226822226847%_
+                                 (gx#syntax-e _%$%tl226821226844%_)))
+                            (let ((_%$%hd226823226851%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%e261404261429%_)))
-                                  (_%tl261406261436%_
+                                     (##car _%$%e226822226847%_)))
+                                  (_%$%tl226824226854%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%e261404261429%_))))
-                              (if (let ()
-                                    (declare (not safe))
-                                    (gx#stx-null? _%tl261406261436%_))
-                                  (cons (let ()
-                                          (declare (not safe))
-                                          (gx#datum->syntax__0 '#f 'with-lock))
-                                        (cons (let ()
-                                                (declare (not safe))
-                                                (gx#datum->syntax__0
-                                                 '#f
-                                                 '+driver-mutex+))
-                                              (cons (cons (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (gx#datum->syntax__0
-                                                             '#f
-                                                             'lambda))
-                                                          (cons '()
-                                                                (cons _%hd261405261433%_
+                                     (##cdr _%$%e226822226847%_))))
+                              (if (gx#stx-null? _%$%tl226824226854%_)
+                                  ((lambda (_%$%g226818226857%_)
+                                     (cons (gx#datum->syntax '#f 'with-lock)
+                                           (cons (gx#datum->syntax
+                                                  '#f
+                                                  '+driver-mutex+)
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'lambda)
+                                                             (cons '()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              '())))
+                           (cons _%$%g226818226857%_ '())))
+               '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '())))
-                                  (_%g261398261412%_ _%g261399261416%_))))
-                          (_%g261398261412%_ _%g261399261416%_))))
-                  (_%g261398261412%_ _%g261399261416%_)))))
-      (_%g261397261454%_ _%$stx261394%_))))
+                                   _%$%hd226823226851%_)
+                                  (_%$%g226816226830%_ _%$%g226817226834%_))))
+                          (_%$%g226816226830%_ _%$%g226817226834%_))))
+                  (_%$%g226816226830%_ _%$%g226817226834%_)))))
+      (_%$%g226815226872%_ _%$stx226812%_))))

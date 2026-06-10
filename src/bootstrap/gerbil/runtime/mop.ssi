@@ -315,11 +315,7 @@ namespace: #f
           make-class-slot-unchecked-mutator
           macro:
           @make-class-slot-unchecked-mutator)
-         (%#begin (%#define-runtime not-an-instance__% not-an-instance__%)
-                  (%#begin (%#define-runtime
-                            not-an-instance__0
-                            not-an-instance__0)
-                           (%#define-runtime not-an-instance not-an-instance)))
+         (%#define-runtime not-an-instance not-an-instance)
          (%#define-runtime make-final-slot-accessor make-final-slot-accessor)
          (%#define-runtime make-final-slot-mutator make-final-slot-mutator)
          (%#define-runtime make-struct-slot-accessor make-struct-slot-accessor)
@@ -376,27 +372,11 @@ namespace: #f
          (%#define-syntax __slot-e |[:0:]#__slot-e|)
          (%#define-runtime __slot-error __slot-error)
          (%#define-syntax @slot-ref |[:0:]#@slot-ref|)
-         (%#begin (%#define-runtime __slot-ref__% __slot-ref__%)
-                  (%#begin (%#define-runtime __slot-ref__0 __slot-ref__0)
-                           (%#define-runtime __slot-ref __slot-ref)))
-         (%#begin (%#define-runtime slot-ref__% slot-ref__%)
-                  (%#begin (%#define-runtime slot-ref__0 slot-ref__0)
-                           (%#define-runtime
-                            slot-ref
-                            slot-ref
-                            macro:
-                            @slot-ref)))
+         (%#define-runtime __slot-ref __slot-ref)
+         (%#define-runtime slot-ref slot-ref macro: @slot-ref)
          (%#define-syntax @slot-set! |[:0:]#@slot-set!|)
-         (%#begin (%#define-runtime __slot-set!__% __slot-set!__%)
-                  (%#begin (%#define-runtime __slot-set!__0 __slot-set!__0)
-                           (%#define-runtime __slot-set! __slot-set!)))
-         (%#begin (%#define-runtime slot-set!__% slot-set!__%)
-                  (%#begin (%#define-runtime slot-set!__0 slot-set!__0)
-                           (%#define-runtime
-                            slot-set!
-                            slot-set!
-                            macro:
-                            @slot-set!)))
+         (%#define-runtime __slot-set! __slot-set!)
+         (%#define-runtime slot-set! slot-set! macro: @slot-set!)
          (%#define-syntax @subclass? |[:0:]#@subclass?|)
          (%#define-runtime __subclass? __subclass?)
          (%#define-runtime subclass? subclass? macro: @subclass?)
@@ -527,42 +507,14 @@ namespace: #f
           macro:
           @mixin-method-ref)
          (%#define-syntax @bind-method! |[:0:]#@bind-method!|)
-         (%#begin (%#define-runtime __bind-method!__% __bind-method!__%)
-                  (%#begin (%#define-runtime
-                            __bind-method!__0
-                            __bind-method!__0)
-                           (%#define-runtime __bind-method! __bind-method!)))
-         (%#begin (%#define-runtime bind-method!__% bind-method!__%)
-                  (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
-                           (%#define-runtime
-                            bind-method!
-                            bind-method!
-                            macro:
-                            @bind-method!)))
-         (%#begin (%#define-runtime
-                   make-method-specializer-table__%
-                   make-method-specializer-table__%)
-                  (%#begin (%#define-runtime
-                            make-method-specializer-table__0
-                            make-method-specializer-table__0)
-                           (%#define-runtime
-                            make-method-specializer-table__1
-                            make-method-specializer-table__1)
-                           (%#define-runtime
-                            make-method-specializer-table
-                            make-method-specializer-table)))
-         (%#begin (%#define-runtime
-                   make-method-specializer-table/lock__%
-                   make-method-specializer-table/lock__%)
-                  (%#begin (%#define-runtime
-                            make-method-specializer-table/lock__0
-                            make-method-specializer-table/lock__0)
-                           (%#define-runtime
-                            make-method-specializer-table/lock__1
-                            make-method-specializer-table/lock__1)
-                           (%#define-runtime
-                            make-method-specializer-table/lock
-                            make-method-specializer-table/lock)))
+         (%#define-runtime __bind-method! __bind-method!)
+         (%#define-runtime bind-method! bind-method! macro: @bind-method!)
+         (%#define-runtime
+          make-method-specializer-table
+          make-method-specializer-table)
+         (%#define-runtime
+          make-method-specializer-table/lock
+          make-method-specializer-table/lock)
          (%#define-runtime
           method-specializer-table-ref
           method-specializer-table-ref)
@@ -622,11 +574,7 @@ namespace: #f
           @call-next-method)
          (%#define-runtime __shadow-classes __shadow-classes)
          (%#define-runtime __shadow-classes-lock __shadow-classes-lock)
-         (%#begin (%#define-runtime __shadow-class__% __shadow-class__%)
-                  (%#begin (%#define-runtime
-                            __shadow-class__0
-                            __shadow-class__0)
-                           (%#define-runtime __shadow-class __shadow-class)))
+         (%#define-runtime __shadow-class __shadow-class)
          (%#define-runtime __type __type)
          (%#define-runtime __primitive-class __primitive-class)
          (%#define-runtime __boxvalues-class __boxvalues-class)

@@ -39,16 +39,8 @@ namespace: gxc
          (%#define-runtime include-source gxc#include-source)
          (%#define-runtime gerbil-runtime-modules gxc#gerbil-runtime-modules)
          (%#define-runtime delete-directory* gxc#delete-directory*)
-         (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)
-                  (%#begin (%#define-runtime
-                            compile-module__0
-                            gxc#compile-module__0)
-                           (%#define-runtime
-                            compile-module
-                            gxc#compile-module)))
-         (%#begin (%#define-runtime compile-exe__% gxc#compile-exe__%)
-                  (%#begin (%#define-runtime compile-exe__0 gxc#compile-exe__0)
-                           (%#define-runtime compile-exe gxc#compile-exe)))
+         (%#define-runtime compile-module gxc#compile-module)
+         (%#define-runtime compile-exe gxc#compile-exe)
          (%#define-runtime
           compile-executable-module
           gxc#compile-executable-module)
@@ -73,46 +65,10 @@ namespace: gxc
          (%#define-runtime generate-meta-code gxc#generate-meta-code)
          (%#define-runtime generate-runtime-phi gxc#generate-runtime-phi)
          (%#define-runtime lift-nested-modules gxc#lift-nested-modules)
-         (%#begin (%#define-runtime
-                   compile-scm-file__%
-                   gxc#compile-scm-file__%)
-                  (%#begin (%#define-runtime
-                            compile-scm-file__0
-                            gxc#compile-scm-file__0)
-                           (%#define-runtime
-                            compile-scm-file
-                            gxc#compile-scm-file)))
-         (%#begin (%#define-runtime
-                   gsc-link-options__%
-                   gxc#gsc-link-options__%)
-                  (%#begin (%#define-runtime
-                            gsc-link-options__0
-                            gxc#gsc-link-options__0)
-                           (%#define-runtime
-                            gsc-link-options
-                            gxc#gsc-link-options)))
-         (%#begin (%#begin (%#define-runtime
-                            gsc-cc-options__%__%
-                            gxc#gsc-cc-options__%__%)
-                           (%#begin (%#define-runtime
-                                     gsc-cc-options__%__0
-                                     gxc#gsc-cc-options__%__0)
-                                    (%#define-runtime
-                                     gsc-cc-options__%
-                                     gxc#gsc-cc-options__%)))
-                  (%#define-runtime gsc-cc-options__@ gxc#gsc-cc-options__@)
-                  (%#define-runtime gsc-cc-options gxc#gsc-cc-options))
-         (%#begin (%#begin (%#define-runtime
-                            gsc-ld-options__%__%
-                            gxc#gsc-ld-options__%__%)
-                           (%#begin (%#define-runtime
-                                     gsc-ld-options__%__0
-                                     gxc#gsc-ld-options__%__0)
-                                    (%#define-runtime
-                                     gsc-ld-options__%
-                                     gxc#gsc-ld-options__%)))
-                  (%#define-runtime gsc-ld-options__@ gxc#gsc-ld-options__@)
-                  (%#define-runtime gsc-ld-options gxc#gsc-ld-options))
+         (%#define-runtime compile-scm-file gxc#compile-scm-file)
+         (%#define-runtime gsc-link-options gxc#gsc-link-options)
+         (%#define-runtime gsc-cc-options gxc#gsc-cc-options)
+         (%#define-runtime gsc-ld-options gxc#gsc-ld-options)
          (%#define-runtime
           gsc-static-include-options
           gxc#gsc-static-include-options)
@@ -126,7 +82,5 @@ namespace: gxc
          (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
          (%#define-runtime static-module-name gxc#static-module-name)
          (%#define-runtime gerbil-enable-shared? gxc#gerbil-enable-shared?)
-         (%#begin (%#define-runtime invoke__% gxc#invoke__%)
-                  (%#define-runtime invoke__@ gxc#invoke__@)
-                  (%#define-runtime invoke gxc#invoke)))
+         (%#define-runtime invoke gxc#invoke))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/driver~0"))

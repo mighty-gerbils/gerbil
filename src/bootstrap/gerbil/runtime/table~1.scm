@@ -1,304 +1,300 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |[:0:]#do-raw-table-lock|
-    (lambda (_%$stx115888%_)
-      (let* ((_%g115892115910%_
-              (lambda (_%g115893115906%_)
+    (lambda (_%$stx99578%_)
+      (let* ((_%$%g9958299600%_
+              (lambda (_%$%g9958399596%_)
                 (gx#raise-syntax-error
                  '#f
                  '"Bad syntax; invalid match target"
-                 _%g115893115906%_)))
-             (_%g115891115966%_
-              (lambda (_%g115893115914%_)
-                (if (gx#stx-pair? _%g115893115914%_)
-                    (let ((_%e115896115917%_ (gx#syntax-e _%g115893115914%_)))
-                      (let ((_%hd115897115921%_
+                 _%$%g9958399596%_)))
+             (_%$%g9958199656%_
+              (lambda (_%$%g9958399604%_)
+                (if (gx#stx-pair? _%$%g9958399604%_)
+                    (let ((_%$%e9958699607%_ (gx#syntax-e _%$%g9958399604%_)))
+                      (let ((_%$%hd9958799611%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e115896115917%_)))
-                            (_%tl115898115924%_
+                               (##car _%$%e9958699607%_)))
+                            (_%$%tl9958899614%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e115896115917%_))))
-                        (if (gx#stx-pair? _%tl115898115924%_)
-                            (let ((_%e115899115927%_
-                                   (gx#syntax-e _%tl115898115924%_)))
-                              (let ((_%hd115900115931%_
+                               (##cdr _%$%e9958699607%_))))
+                        (if (gx#stx-pair? _%$%tl9958899614%_)
+                            (let ((_%$%e9958999617%_
+                                   (gx#syntax-e _%$%tl9958899614%_)))
+                              (let ((_%$%hd9959099621%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e115899115927%_)))
-                                    (_%tl115901115934%_
+                                       (##car _%$%e9958999617%_)))
+                                    (_%$%tl9959199624%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e115899115927%_))))
-                                (if (gx#stx-pair? _%tl115901115934%_)
-                                    (let ((_%e115902115937%_
-                                           (gx#syntax-e _%tl115901115934%_)))
-                                      (let ((_%hd115903115941%_
+                                       (##cdr _%$%e9958999617%_))))
+                                (if (gx#stx-pair? _%$%tl9959199624%_)
+                                    (let ((_%$%e9959299627%_
+                                           (gx#syntax-e _%$%tl9959199624%_)))
+                                      (let ((_%$%hd9959399631%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e115902115937%_)))
-                                            (_%tl115904115944%_
+                                               (##car _%$%e9959299627%_)))
+                                            (_%$%tl9959499634%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e115902115937%_))))
-                                        (if (gx#stx-null? _%tl115904115944%_)
-                                            (cons (gx#datum->syntax '#f 'let)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'lock)
-                                                              (cons (cons (gx#datum->syntax
+                                               (##cdr _%$%e9959299627%_))))
+                                        (if (gx#stx-null? _%$%tl9959499634%_)
+                                            ((lambda (_%$%g9958499637%_
+                                                      _%$%g9958599639%_)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'let)
+                                                     (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '#f
-                                   '&raw-table-lock)
-                                  (cons _%hd115900115931%_ '()))
-                            '()))
-                (cons (cons (gx#datum->syntax '#f '__do-inline-lock!)
-                            (cons (gx#datum->syntax '#f 'lock)
-                                  (cons _%hd115903115941%_ '())))
-                      '())))
+                          '#f
+                          'lock)
+                         (cons (cons (gx#datum->syntax '#f '&raw-table-lock)
+                                     (cons _%$%g9958599639%_ '()))
+                               '()))
+                   (cons (cons (gx#datum->syntax '#f '__do-inline-lock!)
+                               (cons (gx#datum->syntax '#f 'lock)
+                                     (cons _%$%g9958499637%_ '())))
+                         '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (_%g115892115910%_
-                                             _%g115893115914%_))))
-                                    (_%g115892115910%_ _%g115893115914%_))))
-                            (_%g115892115910%_ _%g115893115914%_))))
-                    (_%g115892115910%_ _%g115893115914%_)))))
-        (_%g115891115966%_ _%$stx115888%_))))
+                                             _%$%hd9959399631%_
+                                             _%$%hd9959099621%_)
+                                            (_%$%g9958299600%_
+                                             _%$%g9958399604%_))))
+                                    (_%$%g9958299600%_ _%$%g9958399604%_))))
+                            (_%$%g9958299600%_ _%$%g9958399604%_))))
+                    (_%$%g9958299600%_ _%$%g9958399604%_)))))
+        (_%$%g9958199656%_ _%$stx99578%_))))
   (define |[:0:]#deftable|
-    (lambda (_%stx115970%_)
-      (let* ((_%g115973115995%_
-              (lambda (_%g115974115991%_)
+    (lambda (_%stx99660%_)
+      (let* ((_%$%g9966399685%_
+              (lambda (_%$%g9966499681%_)
                 (gx#raise-syntax-error
                  '#f
                  '"Bad syntax; invalid match target"
-                 _%g115974115991%_)))
-             (_%g115972116308%_
-              (lambda (_%g115974115999%_)
-                (if (gx#stx-pair? _%g115974115999%_)
-                    (let ((_%e115978116002%_ (gx#syntax-e _%g115974115999%_)))
-                      (let ((_%hd115979116006%_
+                 _%$%g9966499681%_)))
+             (_%$%g9966299998%_
+              (lambda (_%$%g9966499689%_)
+                (if (gx#stx-pair? _%$%g9966499689%_)
+                    (let ((_%$%e9966899692%_ (gx#syntax-e _%$%g9966499689%_)))
+                      (let ((_%$%hd9966999696%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e115978116002%_)))
-                            (_%tl115980116009%_
+                               (##car _%$%e9966899692%_)))
+                            (_%$%tl9967099699%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e115978116002%_))))
-                        (if (gx#stx-pair? _%tl115980116009%_)
-                            (let ((_%e115981116012%_
-                                   (gx#syntax-e _%tl115980116009%_)))
-                              (let ((_%hd115982116016%_
+                               (##cdr _%$%e9966899692%_))))
+                        (if (gx#stx-pair? _%$%tl9967099699%_)
+                            (let ((_%$%e9967199702%_
+                                   (gx#syntax-e _%$%tl9967099699%_)))
+                              (let ((_%$%hd9967299706%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e115981116012%_)))
-                                    (_%tl115983116019%_
+                                       (##car _%$%e9967199702%_)))
+                                    (_%$%tl9967399709%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e115981116012%_))))
-                                (if (gx#stx-pair? _%tl115983116019%_)
-                                    (let ((_%e115984116022%_
-                                           (gx#syntax-e _%tl115983116019%_)))
-                                      (let ((_%hd115985116026%_
+                                       (##cdr _%$%e9967199702%_))))
+                                (if (gx#stx-pair? _%$%tl9967399709%_)
+                                    (let ((_%$%e9967499712%_
+                                           (gx#syntax-e _%$%tl9967399709%_)))
+                                      (let ((_%$%hd9967599716%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e115984116022%_)))
-                                            (_%tl115986116029%_
+                                               (##car _%$%e9967499712%_)))
+                                            (_%$%tl9967699719%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e115984116022%_))))
-                                        (if (gx#stx-pair? _%tl115986116029%_)
-                                            (let ((_%e115987116032%_
+                                               (##cdr _%$%e9967499712%_))))
+                                        (if (gx#stx-pair? _%$%tl9967699719%_)
+                                            (let ((_%$%e9967799722%_
                                                    (gx#syntax-e
-                                                    _%tl115986116029%_)))
-                                              (let ((_%hd115988116036%_
+                                                    _%$%tl9967699719%_)))
+                                              (let ((_%$%hd9967899726%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _%e115987116032%_)))
-                                                    (_%tl115989116039%_
+                                                       (##car _%$%e9967799722%_)))
+                                                    (_%$%tl9967999729%_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _%e115987116032%_))))
+                                                       (##cdr _%$%e9967799722%_))))
                                                 (if (gx#stx-null?
-                                                     _%tl115989116039%_)
-                                                    (let* ((_%g116064116119%_
-                                                            (lambda (_%g116065116115%_)
-                                                              (gx#raise-syntax-error
-                                                               '#f
-                                                               '"Bad syntax; invalid match target"
-                                                               _%g116065116115%_)))
-                                                           (_%g116063116304%_
-                                                            (lambda (_%g116065116123%_)
-                                                              (if (gx#stx-pair?
+                                                     _%$%tl9967999729%_)
+                                                    ((lambda (_%$%g9966599732%_
+                                                              _%$%g9966699734%_
+                                                              _%$%g9966799735%_)
+                                                       (let* ((_%$%g9975499809%_
+                                                               (lambda (_%$%g9975599805%_)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _%g116065116123%_)
-                          (let ((_%e116078116126%_
-                                 (gx#syntax-e _%g116065116123%_)))
-                            (let ((_%hd116079116130%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##car _%e116078116126%_)))
-                                  (_%tl116080116133%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##cdr _%e116078116126%_))))
-                              (if (gx#stx-pair? _%tl116080116133%_)
-                                  (let ((_%e116081116136%_
-                                         (gx#syntax-e _%tl116080116133%_)))
-                                    (let ((_%hd116082116140%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e116081116136%_)))
-                                          (_%tl116083116143%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e116081116136%_))))
-                                      (if (gx#stx-pair? _%tl116083116143%_)
-                                          (let ((_%e116084116146%_
-                                                 (gx#syntax-e
-                                                  _%tl116083116143%_)))
-                                            (let ((_%hd116085116150%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##car _%e116084116146%_)))
-                                                  (_%tl116086116153%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##cdr _%e116084116146%_))))
-                                              (if (gx#stx-pair?
-                                                   _%tl116086116153%_)
-                                                  (let ((_%e116087116156%_
-                                                         (gx#syntax-e
-                                                          _%tl116086116153%_)))
-                                                    (let ((_%hd116088116160%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (##car _%e116087116156%_)))
-                                                          (_%tl116089116163%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (##cdr _%e116087116156%_))))
-                                                      (if (gx#stx-pair?
-                                                           _%tl116089116163%_)
-                                                          (let ((_%e116090116166%_
+                         (gx#raise-syntax-error
+                          '#f
+                          '"Bad syntax; invalid match target"
+                          _%$%g9975599805%_)))
+                      (_%$%g9975399994%_
+                       (lambda (_%$%g9975599813%_)
+                         (if (gx#stx-pair? _%$%g9975599813%_)
+                             (let ((_%$%e9976899816%_
+                                    (gx#syntax-e _%$%g9975599813%_)))
+                               (let ((_%$%hd9976999820%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##car _%$%e9976899816%_)))
+                                     (_%$%tl9977099823%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##cdr _%$%e9976899816%_))))
+                                 (if (gx#stx-pair? _%$%tl9977099823%_)
+                                     (let ((_%$%e9977199826%_
+                                            (gx#syntax-e _%$%tl9977099823%_)))
+                                       (let ((_%$%hd9977299830%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##car _%$%e9977199826%_)))
+                                             (_%$%tl9977399833%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##cdr _%$%e9977199826%_))))
+                                         (if (gx#stx-pair? _%$%tl9977399833%_)
+                                             (let ((_%$%e9977499836%_
+                                                    (gx#syntax-e
+                                                     _%$%tl9977399833%_)))
+                                               (let ((_%$%hd9977599840%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##car _%$%e9977499836%_)))
+                                                     (_%$%tl9977699843%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##cdr _%$%e9977499836%_))))
+                                                 (if (gx#stx-pair?
+                                                      _%$%tl9977699843%_)
+                                                     (let ((_%$%e9977799846%_
+                                                            (gx#syntax-e
+                                                             _%$%tl9977699843%_)))
+                                                       (let ((_%$%hd9977899850%_
+                                                              (let ()
+                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-e _%tl116089116163%_)))
-                    (let ((_%hd116091116170%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e116090116166%_)))
-                          (_%tl116092116173%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e116090116166%_))))
-                      (if (gx#stx-pair? _%tl116092116173%_)
-                          (let ((_%e116093116176%_
-                                 (gx#syntax-e _%tl116092116173%_)))
-                            (let ((_%hd116094116180%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##car _%e116093116176%_)))
-                                  (_%tl116095116183%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##cdr _%e116093116176%_))))
-                              (if (gx#stx-pair? _%tl116095116183%_)
-                                  (let ((_%e116096116186%_
-                                         (gx#syntax-e _%tl116095116183%_)))
-                                    (let ((_%hd116097116190%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e116096116186%_)))
-                                          (_%tl116098116193%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e116096116186%_))))
-                                      (if (gx#stx-pair? _%tl116098116193%_)
-                                          (let ((_%e116099116196%_
-                                                 (gx#syntax-e
-                                                  _%tl116098116193%_)))
-                                            (let ((_%hd116100116200%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##car _%e116099116196%_)))
-                                                  (_%tl116101116203%_
-                                                   (let ()
-                                                     (declare (not safe))
-                                                     (##cdr _%e116099116196%_))))
-                                              (if (gx#stx-pair?
-                                                   _%tl116101116203%_)
-                                                  (let ((_%e116102116206%_
-                                                         (gx#syntax-e
-                                                          _%tl116101116203%_)))
-                                                    (let ((_%hd116103116210%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (##car _%e116102116206%_)))
-                                                          (_%tl116104116213%_
-                                                           (let ()
-                                                             (declare
-                                                               (not safe))
-                                                             (##cdr _%e116102116206%_))))
-                                                      (if (gx#stx-pair?
-                                                           _%tl116104116213%_)
-                                                          (let ((_%e116105116216%_
+                          (not safe))
+                        (##car _%$%e9977799846%_)))
+                     (_%$%tl9977999853%_
+                      (let () (declare (not safe)) (##cdr _%$%e9977799846%_))))
+                 (if (gx#stx-pair? _%$%tl9977999853%_)
+                     (let ((_%$%e9978099856%_
+                            (gx#syntax-e _%$%tl9977999853%_)))
+                       (let ((_%$%hd9978199860%_
+                              (let ()
+                                (declare (not safe))
+                                (##car _%$%e9978099856%_)))
+                             (_%$%tl9978299863%_
+                              (let ()
+                                (declare (not safe))
+                                (##cdr _%$%e9978099856%_))))
+                         (if (gx#stx-pair? _%$%tl9978299863%_)
+                             (let ((_%$%e9978399866%_
+                                    (gx#syntax-e _%$%tl9978299863%_)))
+                               (let ((_%$%hd9978499870%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##car _%$%e9978399866%_)))
+                                     (_%$%tl9978599873%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##cdr _%$%e9978399866%_))))
+                                 (if (gx#stx-pair? _%$%tl9978599873%_)
+                                     (let ((_%$%e9978699876%_
+                                            (gx#syntax-e _%$%tl9978599873%_)))
+                                       (let ((_%$%hd9978799880%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##car _%$%e9978699876%_)))
+                                             (_%$%tl9978899883%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##cdr _%$%e9978699876%_))))
+                                         (if (gx#stx-pair? _%$%tl9978899883%_)
+                                             (let ((_%$%e9978999886%_
+                                                    (gx#syntax-e
+                                                     _%$%tl9978899883%_)))
+                                               (let ((_%$%hd9979099890%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##car _%$%e9978999886%_)))
+                                                     (_%$%tl9979199893%_
+                                                      (let ()
+                                                        (declare (not safe))
+                                                        (##cdr _%$%e9978999886%_))))
+                                                 (if (gx#stx-pair?
+                                                      _%$%tl9979199893%_)
+                                                     (let ((_%$%e9979299896%_
+                                                            (gx#syntax-e
+                                                             _%$%tl9979199893%_)))
+                                                       (let ((_%$%hd9979399900%_
+                                                              (let ()
+                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-e _%tl116104116213%_)))
-                    (let ((_%hd116106116220%_
-                           (let ()
-                             (declare (not safe))
-                             (##car _%e116105116216%_)))
-                          (_%tl116107116223%_
-                           (let ()
-                             (declare (not safe))
-                             (##cdr _%e116105116216%_))))
-                      (if (gx#stx-pair? _%tl116107116223%_)
-                          (let ((_%e116108116226%_
-                                 (gx#syntax-e _%tl116107116223%_)))
-                            (let ((_%hd116109116230%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##car _%e116108116226%_)))
-                                  (_%tl116110116233%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##cdr _%e116108116226%_))))
-                              (if (gx#stx-pair? _%tl116110116233%_)
-                                  (let ((_%e116111116236%_
-                                         (gx#syntax-e _%tl116110116233%_)))
-                                    (let ((_%hd116112116240%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##car _%e116111116236%_)))
-                                          (_%tl116113116243%_
-                                           (let ()
-                                             (declare (not safe))
-                                             (##cdr _%e116111116236%_))))
-                                      (if (gx#stx-null? _%tl116113116243%_)
-                                          (cons (gx#datum->syntax '#f 'begin)
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'def)
-                                                            (cons (cons _%hd116079116130%_
+                          (not safe))
+                        (##car _%$%e9979299896%_)))
+                     (_%$%tl9979499903%_
+                      (let () (declare (not safe)) (##cdr _%$%e9979299896%_))))
+                 (if (gx#stx-pair? _%$%tl9979499903%_)
+                     (let ((_%$%e9979599906%_
+                            (gx#syntax-e _%$%tl9979499903%_)))
+                       (let ((_%$%hd9979699910%_
+                              (let ()
+                                (declare (not safe))
+                                (##car _%$%e9979599906%_)))
+                             (_%$%tl9979799913%_
+                              (let ()
+                                (declare (not safe))
+                                (##cdr _%$%e9979599906%_))))
+                         (if (gx#stx-pair? _%$%tl9979799913%_)
+                             (let ((_%$%e9979899916%_
+                                    (gx#syntax-e _%$%tl9979799913%_)))
+                               (let ((_%$%hd9979999920%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##car _%$%e9979899916%_)))
+                                     (_%$%tl9980099923%_
+                                      (let ()
+                                        (declare (not safe))
+                                        (##cdr _%$%e9979899916%_))))
+                                 (if (gx#stx-pair? _%$%tl9980099923%_)
+                                     (let ((_%$%e9980199926%_
+                                            (gx#syntax-e _%$%tl9980099923%_)))
+                                       (let ((_%$%hd9980299930%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##car _%$%e9980199926%_)))
+                                             (_%$%tl9980399933%_
+                                              (let ()
+                                                (declare (not safe))
+                                                (##cdr _%$%e9980199926%_))))
+                                         (if (gx#stx-null? _%$%tl9980399933%_)
+                                             ((lambda (_%$%g9975699936%_
+                                                       _%$%g9975799938%_
+                                                       _%$%g9975899939%_
+                                                       _%$%g9975999940%_
+                                                       _%$%g9976099941%_
+                                                       _%$%g9976199942%_
+                                                       _%$%g9976299943%_
+                                                       _%$%g9976399944%_
+                                                       _%$%g9976499945%_
+                                                       _%$%g9976599946%_
+                                                       _%$%g9976699947%_
+                                                       _%$%g9976799948%_)
+                                                (cons (gx#datum->syntax
+                                                       '#f
+                                                       'begin)
+                                                      (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                (cons (cons (gx#datum->syntax '#f 'size-hint)
-                                            (cons '#f '()))
-                                      (cons (cons (gx#datum->syntax '#f 'seed)
-                                                  (cons '0 '()))
-                                            '())))
-                          (cons (cons (gx#datum->syntax '#f 'make-raw-table)
-                                      (cons (gx#datum->syntax '#f 'size-hint)
-                                            (cons _%hd115985116026%_
-                                                  (cons _%hd115988116036%_
-                                                        (cons (gx#datum->syntax
-                                                               '#f
-                                                               'seed)
-                                                              '())))))
-                                '())))
-              (cons (cons (gx#datum->syntax '#f 'def)
-                          (cons (cons _%hd116082116140%_
+                           '#f
+                           'def)
+                          (cons (cons _%$%g9976799948%_
                                       (cons (cons (gx#datum->syntax
                                                    '#f
                                                    'size-hint)
@@ -310,12 +306,12 @@
                                                   '())))
                                 (cons (cons (gx#datum->syntax
                                              '#f
-                                             'make-raw-table/lock)
+                                             'make-raw-table)
                                             (cons (gx#datum->syntax
                                                    '#f
                                                    'size-hint)
-                                                  (cons _%hd115985116026%_
-                                                        (cons _%hd115988116036%_
+                                                  (cons _%$%g9966699734%_
+                                                        (cons _%$%g9966599732%_
                                                               (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '#f
@@ -324,52 +320,30 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                       '())))
                     (cons (cons (gx#datum->syntax '#f 'def)
-                                (cons (cons _%hd116085116150%_
-                                            (cons (gx#datum->syntax '#f 'tab)
+                                (cons (cons _%$%g9976699947%_
+                                            (cons (cons (gx#datum->syntax
+                                                         '#f
+                                                         'size-hint)
+                                                        (cons '#f '()))
+                                                  (cons (cons (gx#datum->syntax
+                                                               '#f
+                                                               'seed)
+                                                              (cons '0 '()))
+                                                        '())))
+                                      (cons (cons (gx#datum->syntax
+                                                   '#f
+                                                   'make-raw-table/lock)
                                                   (cons (gx#datum->syntax
                                                          '#f
-                                                         'key)
-                                                        (cons (gx#datum->syntax
-                                                               '#f
-                                                               'default)
-                                                              '()))))
-                                      (cons (cons (gx#datum->syntax '#f 'let)
-                                                  (cons (cons (cons (gx#datum->syntax
+                                                         'size-hint)
+                                                        (cons _%$%g9966699734%_
+                                                              (cons _%$%g9966599732%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'table)
-                            (cons (cons (gx#datum->syntax
-                                         '#f
-                                         '&raw-table-table)
-                                        (cons (gx#datum->syntax '#f 'tab) '()))
-                                  '()))
-                      (cons (cons (gx#datum->syntax '#f 'seed)
-                                  (cons (cons (gx#datum->syntax
-                                               '#f
-                                               '&raw-table-seed)
-                                              (cons (gx#datum->syntax '#f 'tab)
-                                                    '()))
-                                        '()))
-                            '()))
-                (cons (cons (gx#datum->syntax '#f '__table-ref)
-                            (cons (gx#datum->syntax '#f 'table)
-                                  (cons (gx#datum->syntax '#f 'seed)
-                                        (cons _%hd115985116026%_
-                                              (cons _%hd115988116036%_
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'key)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'default)
-                        '())))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                      '())))
+                            (cons (gx#datum->syntax '#f 'seed) '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             '())))
                           (cons (cons (gx#datum->syntax '#f 'def)
-                                      (cons (cons _%hd116088116160%_
+                                      (cons (cons _%$%g9976599946%_
                                                   (cons (gx#datum->syntax
                                                          '#f
                                                          'tab)
@@ -384,23 +358,43 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (cons (cons (gx#datum->syntax
                                                          '#f
-                                                         'do-raw-table-lock)
-                                                        (cons (gx#datum->syntax
-                                                               '#f
-                                                               'tab)
-                                                              (cons (cons _%hd116085116150%_
+                                                         'let)
+                                                        (cons (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                  (cons (gx#datum->syntax '#f 'tab)
-                                        (cons (gx#datum->syntax '#f 'key)
-                                              (cons (gx#datum->syntax
+                                   '#f
+                                   'table)
+                                  (cons (cons (gx#datum->syntax
+                                               '#f
+                                               '&raw-table-table)
+                                              (cons (gx#datum->syntax '#f 'tab)
+                                                    '()))
+                                        '()))
+                            (cons (cons (gx#datum->syntax '#f 'seed)
+                                        (cons (cons (gx#datum->syntax
                                                      '#f
-                                                     'default)
-                                                    '()))))
+                                                     '&raw-table-seed)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'tab)
+                                                          '()))
+                                              '()))
+                                  '()))
+                      (cons (cons (gx#datum->syntax '#f '__table-ref)
+                                  (cons (gx#datum->syntax '#f 'table)
+                                        (cons (gx#datum->syntax '#f 'seed)
+                                              (cons _%$%g9966699734%_
+                                                    (cons _%$%g9966599732%_
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'key)
+                        (cons (gx#datum->syntax '#f 'default) '())))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                             '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   '())))
                                 (cons (cons (gx#datum->syntax '#f 'def)
-                                            (cons (cons _%hd116091116170%_
+                                            (cons (cons _%$%g9976499945%_
                                                         (cons (gx#datum->syntax
                                                                '#f
                                                                'tab)
@@ -408,27 +402,38 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '#f
                              'key)
-                            (cons (gx#datum->syntax '#f 'value) '()))))
+                            (cons (gx#datum->syntax '#f 'default) '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (cons (cons (gx#datum->syntax
                                                                '#f
-                                                               'let)
-                                                              (cons (cons (cons (gx#datum->syntax
+                                                               'do-raw-table-lock)
+                                                              (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                         '#f
-                                         'table)
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     '&raw-table-table)
+                             '#f
+                             'tab)
+                            (cons (cons _%$%g9976599946%_
+                                        (cons (gx#datum->syntax '#f 'tab)
+                                              (cons (gx#datum->syntax '#f 'key)
                                                     (cons (gx#datum->syntax
                                                            '#f
-                                                           'tab)
-                                                          '()))
-                                              '()))
-                                  (cons (cons (gx#datum->syntax '#f 'seed)
+                                                           'default)
+                                                          '()))))
+                                  '())))
+                '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      (cons (cons (gx#datum->syntax '#f 'def)
+                                                  (cons (cons _%$%g9976399944%_
+                                                              (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             '#f
+                             'tab)
+                            (cons (gx#datum->syntax '#f 'key)
+                                  (cons (gx#datum->syntax '#f 'value) '()))))
+                (cons (cons (gx#datum->syntax '#f 'let)
+                            (cons (cons (cons (gx#datum->syntax '#f 'table)
                                               (cons (cons (gx#datum->syntax
                                                            '#f
-                                                           '&raw-table-seed)
+                                                           '&raw-table-table)
                                                           (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '#f
@@ -436,57 +441,31 @@
                         '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     '()))
-                                        '()))
-                            (cons (cons (gx#datum->syntax '#f '__table-set!)
-                                        (cons (gx#datum->syntax '#f 'table)
-                                              (cons (gx#datum->syntax
+                                        (cons (cons (gx#datum->syntax
                                                      '#f
                                                      'seed)
-                                                    (cons _%hd115985116026%_
-                                                          (cons _%hd115988116036%_
-                                                                (cons (gx#datum->syntax
+                                                    (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'key)
-                              (cons (gx#datum->syntax '#f 'value)
-                                    (cons (cons (gx#datum->syntax '#f 'lambda)
-                                                (cons '()
-                                                      (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'set!)
-                          (cons (cons (gx#datum->syntax '#f '&raw-table-free)
-                                      (cons (gx#datum->syntax '#f 'tab) '()))
-                                (cons (cons (gx#datum->syntax '#f 'fx-)
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         '&raw-table-free)
-                                                        (cons (gx#datum->syntax
-                                                               '#f
-                                                               'tab)
-                                                              '()))
-                                                  (cons '1 '())))
-                                      '())))
-                    (cons (cons (gx#datum->syntax '#f 'set!)
-                                (cons (cons (gx#datum->syntax
-                                             '#f
-                                             '&raw-table-count)
-                                            (cons (gx#datum->syntax '#f 'tab)
-                                                  '()))
-                                      (cons (cons (gx#datum->syntax '#f 'fx+)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               '&raw-table-count)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'tab)
-                            '()))
-                (cons '1 '())))
+                         '#f
+                         '&raw-table-seed)
+                        (cons (gx#datum->syntax '#f 'tab) '()))
+                  '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            '())))
-                          '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                              '()))
+                                  (cons (cons (gx#datum->syntax
+                                               '#f
+                                               '__table-set!)
+                                              (cons (gx#datum->syntax
+                                                     '#f
+                                                     'table)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'seed)
+                                                          (cons _%$%g9966699734%_
+                                                                (cons _%$%g9966599732%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              (cons (gx#datum->syntax '#f 'key)
+                                    (cons (gx#datum->syntax '#f 'value)
                                           (cons (cons (gx#datum->syntax
                                                        '#f
                                                        'lambda)
@@ -497,153 +476,10 @@
                                  'set!)
                                 (cons (cons (gx#datum->syntax
                                              '#f
-                                             '&raw-table-count)
+                                             '&raw-table-free)
                                             (cons (gx#datum->syntax '#f 'tab)
                                                   '()))
-                                      (cons (cons (gx#datum->syntax '#f 'fx+)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               '&raw-table-count)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'tab)
-                            '()))
-                (cons '1 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            '())))
-                          '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                '())))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                  '())))
-                '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      (cons (cons (gx#datum->syntax '#f 'def)
-                                                  (cons (cons _%hd116094116180%_
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'tab)
-                            (cons (gx#datum->syntax '#f 'key)
-                                  (cons (gx#datum->syntax '#f 'value) '()))))
-                (cons (cons (gx#datum->syntax '#f 'when)
-                            (cons (cons (gx#datum->syntax '#f 'fx<)
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     '&raw-table-free)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'tab)
-                                                          '()))
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'fxquotient)
-                                                          (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'vector-length)
-                              (cons (cons (gx#datum->syntax
-                                           '#f
-                                           '&raw-table-table)
-                                          (cons (gx#datum->syntax '#f 'tab)
-                                                '()))
-                                    '()))
-                        (cons '4 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '())))
-                                  (cons (cons (gx#datum->syntax
-                                               '#f
-                                               '__raw-table-rehash!)
-                                              (cons (gx#datum->syntax '#f 'tab)
-                                                    '()))
-                                        '())))
-                      (cons (cons _%hd116091116170%_
-                                  (cons (gx#datum->syntax '#f 'tab)
-                                        (cons (gx#datum->syntax '#f 'key)
-                                              (cons (gx#datum->syntax
-                                                     '#f
-                                                     'value)
-                                                    '()))))
-                            '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'def)
-                                                        (cons (cons _%hd116097116190%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons (gx#datum->syntax '#f 'tab)
-                                  (cons (gx#datum->syntax '#f 'key)
-                                        (cons (gx#datum->syntax '#f 'value)
-                                              '()))))
-                      (cons (cons (gx#datum->syntax '#f 'do-raw-table-lock)
-                                  (cons (gx#datum->syntax '#f 'tab)
-                                        (cons (cons _%hd116094116180%_
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'tab)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'key)
-                        (cons (gx#datum->syntax '#f 'value) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '())))
-                            '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'def)
-                                                              (cons (cons _%hd116100116200%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                  (cons (gx#datum->syntax '#f 'tab)
-                                        (cons (gx#datum->syntax '#f 'key)
-                                              (cons _%hd116103116210%_
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'default)
-                                                          '())))))
-                            (cons (cons (gx#datum->syntax '#f 'let)
-                                        (cons (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'table)
-                                                          (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               '&raw-table-table)
-                              (cons (gx#datum->syntax '#f 'tab) '()))
-                        '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'seed)
-                        (cons (cons (gx#datum->syntax '#f '&raw-table-seed)
-                                    (cons (gx#datum->syntax '#f 'tab) '()))
-                              '()))
-                  '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           '__table-update!)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'table)
-                        (cons (gx#datum->syntax '#f 'seed)
-                              (cons _%hd115985116026%_
-                                    (cons _%hd115988116036%_
-                                          (cons (gx#datum->syntax '#f 'key)
-                                                (cons _%hd116103116210%_
-                                                      (cons (gx#datum->syntax
-                                                             '#f
-                                                             'default)
-                                                            (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '#f
-                                 'lambda)
-                                (cons '()
-                                      (cons (cons (gx#datum->syntax '#f 'set!)
+                                      (cons (cons (gx#datum->syntax '#f 'fx-)
                                                   (cons (cons (gx#datum->syntax
                                                                '#f
                                                                '&raw-table-free)
@@ -652,160 +488,86 @@
                              '#f
                              'tab)
                             '()))
-                (cons (cons (gx#datum->syntax '#f 'fx-)
-                            (cons (cons (gx#datum->syntax '#f '&raw-table-free)
-                                        (cons (gx#datum->syntax '#f 'tab) '()))
-                                  (cons '1 '())))
+                (cons '1 '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                            '())))
+                          (cons (cons (gx#datum->syntax '#f 'set!)
+                                      (cons (cons (gx#datum->syntax
+                                                   '#f
+                                                   '&raw-table-count)
+                                                  (cons (gx#datum->syntax
+                                                         '#f
+                                                         'tab)
+                                                        '()))
+                                            (cons (cons (gx#datum->syntax
+                                                         '#f
+                                                         'fx+)
+                                                        (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             '#f
+                             '&raw-table-count)
+                            (cons (gx#datum->syntax '#f 'tab) '()))
+                      (cons '1 '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  '())))
+                                '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (cons (cons (gx#datum->syntax
+                                                             '#f
+                                                             'lambda)
+                                                            (cons '()
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (cons (cons (gx#datum->syntax '#f 'set!)
+                                      (cons (cons (gx#datum->syntax
+                                                   '#f
+                                                   '&raw-table-count)
+                                                  (cons (gx#datum->syntax
+                                                         '#f
+                                                         'tab)
+                                                        '()))
+                                            (cons (cons (gx#datum->syntax
+                                                         '#f
+                                                         'fx+)
+                                                        (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             '#f
+                             '&raw-table-count)
+                            (cons (gx#datum->syntax '#f 'tab) '()))
+                      (cons '1 '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  '())))
+                                '())))
+              '())))))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                        '())))
                       '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (cons (cons (gx#datum->syntax
                                                          '#f
-                                                         'set!)
-                                                        (cons (cons (gx#datum->syntax
+                                                         'def)
+                                                        (cons (cons _%$%g9976299943%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             '&raw-table-count)
-                            (cons (gx#datum->syntax '#f 'tab) '()))
-                      (cons (cons (gx#datum->syntax '#f 'fx+)
-                                  (cons (cons (gx#datum->syntax
-                                               '#f
-                                               '&raw-table-count)
-                                              (cons (gx#datum->syntax '#f 'tab)
-                                                    '()))
-                                        (cons '1 '())))
-                            '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  '()))))
-                          (cons (cons (gx#datum->syntax '#f 'lambda)
-                                      (cons '()
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'set!)
-                                                        (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             '&raw-table-count)
-                            (cons (gx#datum->syntax '#f 'tab) '()))
-                      (cons (cons (gx#datum->syntax '#f 'fx+)
-                                  (cons (cons (gx#datum->syntax
-                                               '#f
-                                               '&raw-table-count)
-                                              (cons (gx#datum->syntax '#f 'tab)
-                                                    '()))
-                                        (cons '1 '())))
-                            '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  '())))
-                                '()))))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '())))
-                                  '())))
-                (cons (cons (gx#datum->syntax '#f 'def)
-                            (cons (cons _%hd116103116210%_
-                                        (cons (gx#datum->syntax '#f 'tab)
-                                              (cons (gx#datum->syntax '#f 'key)
-                                                    (cons _%hd116103116210%_
+                            (cons (gx#datum->syntax '#f 'tab)
+                                  (cons (gx#datum->syntax '#f 'key)
+                                        (cons (gx#datum->syntax '#f 'value)
+                                              '()))))
+                      (cons (cons (gx#datum->syntax '#f 'when)
+                                  (cons (cons (gx#datum->syntax '#f 'fx<)
+                                              (cons (cons (gx#datum->syntax
+                                                           '#f
+                                                           '&raw-table-free)
                                                           (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '#f
-                         'default)
-                        '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                  (cons (cons (gx#datum->syntax '#f 'when)
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'fx<)
-                                                          (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               '&raw-table-free)
-                              (cons (gx#datum->syntax '#f 'tab) '()))
-                        (cons (cons (gx#datum->syntax '#f 'fxquotient)
-                                    (cons (cons (gx#datum->syntax
-                                                 '#f
-                                                 'vector-length)
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             '&raw-table-table)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'tab)
-                          '()))
-              '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (cons '4 '())))
-                              '())))
+                         'tab)
+                        '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '#f
-                         '__raw-table-rehash!)
-                        (cons (gx#datum->syntax '#f 'tab) '()))
-                  '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        (cons (cons _%hd116100116200%_
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'tab)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'key)
-                        (cons _%hd116103116210%_
-                              (cons (gx#datum->syntax '#f 'default) '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '()))))
-                      (cons (cons (gx#datum->syntax '#f 'def)
-                                  (cons (cons _%hd116106116220%_
-                                              (cons (gx#datum->syntax '#f 'tab)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'key)
-                                                          (cons _%hd116103116210%_
-                                                                (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'default)
-                              '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'do-raw-table-lock)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'tab)
-                                                          (cons (cons _%hd116103116210%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (cons (gx#datum->syntax '#f 'tab)
-                                    (cons (gx#datum->syntax '#f 'key)
-                                          (cons _%hd116103116210%_
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'default)
-                                                      '())))))
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '())))
-                            (cons (cons (gx#datum->syntax '#f 'def)
-                                        (cons (cons _%hd116109116230%_
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'tab)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'key)
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'let)
-                                                          (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                     '#f
-                                     'table)
+                         'fxquotient)
+                        (cons (cons (gx#datum->syntax '#f 'vector-length)
                                     (cons (cons (gx#datum->syntax
                                                  '#f
                                                  '&raw-table-table)
@@ -814,25 +576,95 @@
                                                        'tab)
                                                       '()))
                                           '()))
-                              (cons (cons (gx#datum->syntax '#f 'seed)
-                                          (cons (cons (gx#datum->syntax
-                                                       '#f
-                                                       '&raw-table-seed)
-                                                      (cons (gx#datum->syntax
-                                                             '#f
-                                                             'tab)
-                                                            '()))
+                              (cons '4 '())))
+                  '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                        (cons (cons (gx#datum->syntax
+                                                     '#f
+                                                     '__raw-table-rehash!)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'tab)
+                                                          '()))
+                                              '())))
+                            (cons (cons _%$%g9976399944%_
+                                        (cons (gx#datum->syntax '#f 'tab)
+                                              (cons (gx#datum->syntax '#f 'key)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'value)
+                                                          '()))))
+                                  '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (cons (cons (gx#datum->syntax
+                                                               '#f
+                                                               'def)
+                                                              (cons (cons _%$%g9976199942%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                  (cons (gx#datum->syntax '#f 'tab)
+                                        (cons (gx#datum->syntax '#f 'key)
+                                              (cons (gx#datum->syntax
+                                                     '#f
+                                                     'value)
+                                                    '()))))
+                            (cons (cons (gx#datum->syntax
+                                         '#f
+                                         'do-raw-table-lock)
+                                        (cons (gx#datum->syntax '#f 'tab)
+                                              (cons (cons _%$%g9976299943%_
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'tab)
+                        (cons (gx#datum->syntax '#f 'key)
+                              (cons (gx#datum->syntax '#f 'value) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    '())))
+                                  '())))
+                (cons (cons (gx#datum->syntax '#f 'def)
+                            (cons (cons _%$%g9976099941%_
+                                        (cons (gx#datum->syntax '#f 'tab)
+                                              (cons (gx#datum->syntax '#f 'key)
+                                                    (cons _%$%g9975999940%_
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'default)
+                        '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                  (cons (cons (gx#datum->syntax '#f 'let)
+                                              (cons (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'table)
+                        (cons (cons (gx#datum->syntax '#f '&raw-table-table)
+                                    (cons (gx#datum->syntax '#f 'tab) '()))
+                              '()))
+                  (cons (cons (gx#datum->syntax '#f 'seed)
+                              (cons (cons (gx#datum->syntax
+                                           '#f
+                                           '&raw-table-seed)
+                                          (cons (gx#datum->syntax '#f 'tab)
                                                 '()))
                                     '()))
-                        (cons (cons (gx#datum->syntax '#f '__table-del!)
-                                    (cons (gx#datum->syntax '#f 'table)
-                                          (cons (gx#datum->syntax '#f 'seed)
-                                                (cons _%hd115985116026%_
-                                                      (cons _%hd115988116036%_
+                        '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         '__table-update!)
+                        (cons (gx#datum->syntax '#f 'table)
+                              (cons (gx#datum->syntax '#f 'seed)
+                                    (cons _%$%g9966699734%_
+                                          (cons _%$%g9966599732%_
+                                                (cons (gx#datum->syntax
+                                                       '#f
+                                                       'key)
+                                                      (cons _%$%g9975999940%_
                                                             (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '#f
-                           'key)
+                           'default)
                           (cons (cons (gx#datum->syntax '#f 'lambda)
                                       (cons '()
                                             (cons (cons (gx#datum->syntax
@@ -841,25 +673,146 @@
                                                         (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '#f
-                             '&raw-table-count)
+                             '&raw-table-free)
                             (cons (gx#datum->syntax '#f 'tab) '()))
                       (cons (cons (gx#datum->syntax '#f 'fx-)
                                   (cons (cons (gx#datum->syntax
                                                '#f
-                                               '&raw-table-count)
+                                               '&raw-table-free)
                                               (cons (gx#datum->syntax '#f 'tab)
                                                     '()))
                                         (cons '1 '())))
                             '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  '())))
-                                '())))))))
+                                                  (cons (cons (gx#datum->syntax
+                                                               '#f
+                                                               'set!)
+                                                              (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                   '#f
+                                   '&raw-table-count)
+                                  (cons (gx#datum->syntax '#f 'tab) '()))
+                            (cons (cons (gx#datum->syntax '#f 'fx+)
+                                        (cons (cons (gx#datum->syntax
+                                                     '#f
+                                                     '&raw-table-count)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'tab)
+                                                          '()))
+                                              (cons '1 '())))
+                                  '())))
+                '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                (cons (cons (gx#datum->syntax '#f 'lambda)
+                                            (cons '()
+                                                  (cons (cons (gx#datum->syntax
+                                                               '#f
+                                                               'set!)
+                                                              (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                   '#f
+                                   '&raw-table-count)
+                                  (cons (gx#datum->syntax '#f 'tab) '()))
+                            (cons (cons (gx#datum->syntax '#f 'fx+)
+                                        (cons (cons (gx#datum->syntax
+                                                     '#f
+                                                     '&raw-table-count)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'tab)
+                                                          '()))
+                                              (cons '1 '())))
+                                  '())))
+                '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      '()))))))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                  '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                        '())))
+                      (cons (cons (gx#datum->syntax '#f 'def)
+                                  (cons (cons _%$%g9975999940%_
+                                              (cons (gx#datum->syntax '#f 'tab)
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'key)
+                                                          (cons _%$%g9975999940%_
+                                                                (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               '#f
+                               'default)
+                              '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                        (cons (cons (gx#datum->syntax
+                                                     '#f
+                                                     'when)
+                                                    (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'fx<)
+                        (cons (cons (gx#datum->syntax '#f '&raw-table-free)
+                                    (cons (gx#datum->syntax '#f 'tab) '()))
+                              (cons (cons (gx#datum->syntax '#f 'fxquotient)
+                                          (cons (cons (gx#datum->syntax
+                                                       '#f
+                                                       'vector-length)
+                                                      (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           '#f
+                           '&raw-table-table)
+                          (cons (gx#datum->syntax '#f 'tab) '()))
+                    '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                (cons '4 '())))
+                                    '())))
+                  (cons (cons (gx#datum->syntax '#f '__raw-table-rehash!)
+                              (cons (gx#datum->syntax '#f 'tab) '()))
+                        '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                              (cons (cons _%$%g9976099941%_
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'tab)
+                        (cons (gx#datum->syntax '#f 'key)
+                              (cons _%$%g9975999940%_
+                                    (cons (gx#datum->syntax '#f 'default)
+                                          '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    '()))))
+                            (cons (cons (gx#datum->syntax '#f 'def)
+                                        (cons (cons _%$%g9975899939%_
+                                                    (cons (gx#datum->syntax
+                                                           '#f
+                                                           'tab)
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'key)
+                        (cons _%$%g9975999940%_
+                              (cons (gx#datum->syntax '#f 'default) '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                              (cons (cons (gx#datum->syntax
+                                                           '#f
+                                                           'do-raw-table-lock)
+                                                          (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'tab)
+                        (cons (cons _%$%g9975999940%_
+                                    (cons (gx#datum->syntax '#f 'tab)
+                                          (cons (gx#datum->syntax '#f 'key)
+                                                (cons _%$%g9975999940%_
+                                                      (cons (gx#datum->syntax
+                                                             '#f
+                                                             'default)
+                                                            '())))))
                               '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     '())))
                                   (cons (cons (gx#datum->syntax '#f 'def)
-                                              (cons (cons _%hd116112116240%_
+                                              (cons (cons _%$%g9975799938%_
                                                           (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '#f
@@ -869,1519 +822,1715 @@
                                                     (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '#f
-                         'do-raw-table-lock)
-                        (cons (gx#datum->syntax '#f 'tab)
-                              (cons (cons _%hd116109116230%_
-                                          (cons (gx#datum->syntax '#f 'tab)
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'key)
-                                                      '())))
-                                    '())))
-                  '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        '())))))))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (_%g116064116119%_
-                                           _%g116065116123%_))))
-                                  (_%g116064116119%_ _%g116065116123%_))))
-                          (_%g116064116119%_ _%g116065116123%_))))
-                  (_%g116064116119%_ _%g116065116123%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%g116064116119%_
-                                                   _%g116065116123%_))))
-                                          (_%g116064116119%_
-                                           _%g116065116123%_))))
-                                  (_%g116064116119%_ _%g116065116123%_))))
-                          (_%g116064116119%_ _%g116065116123%_))))
-                  (_%g116064116119%_ _%g116065116123%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_%g116064116119%_
-                                                   _%g116065116123%_))))
-                                          (_%g116064116119%_
-                                           _%g116065116123%_))))
-                                  (_%g116064116119%_ _%g116065116123%_))))
-                          (_%g116064116119%_ _%g116065116123%_)))))
-              (_%g116063116304%_
-               (list (gx#stx-identifier
-                      _%hd115982116016%_
-                      '"make-"
-                      _%hd115982116016%_)
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      '"make-"
-                      _%hd115982116016%_
-                      '"/lock")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-ref")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-ref/lock")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      '"__"
-                      _%hd115982116016%_
-                      '"-set!")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-set!")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-set!/lock")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      '"__"
-                      _%hd115982116016%_
-                      '"-update!")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-update!")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-update!/lock")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-delete!")
-                     (gx#stx-identifier
-                      _%hd115982116016%_
-                      _%hd115982116016%_
-                      '"-delete!/lock"))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g115973115995%_
-                                                     _%g115974115999%_))))
-                                            (_%g115973115995%_
-                                             _%g115974115999%_))))
-                                    (_%g115973115995%_ _%g115974115999%_))))
-                            (_%g115973115995%_ _%g115974115999%_))))
-                    (_%g115973115995%_ _%g115974115999%_)))))
-        (_%g115972116308%_ _%stx115970%_))))
-  (define |[:0:]#probe-step|
-    (lambda (_%$stx116312%_)
-      (let* ((_%g116316116338%_
-              (lambda (_%g116317116334%_)
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g116317116334%_)))
-             (_%g116315116407%_
-              (lambda (_%g116317116342%_)
-                (if (gx#stx-pair? _%g116317116342%_)
-                    (let ((_%e116321116345%_ (gx#syntax-e _%g116317116342%_)))
-                      (let ((_%hd116322116349%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116321116345%_)))
-                            (_%tl116323116352%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116321116345%_))))
-                        (if (gx#stx-pair? _%tl116323116352%_)
-                            (let ((_%e116324116355%_
-                                   (gx#syntax-e _%tl116323116352%_)))
-                              (let ((_%hd116325116359%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116324116355%_)))
-                                    (_%tl116326116362%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116324116355%_))))
-                                (if (gx#stx-pair? _%tl116326116362%_)
-                                    (let ((_%e116327116365%_
-                                           (gx#syntax-e _%tl116326116362%_)))
-                                      (let ((_%hd116328116369%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116327116365%_)))
-                                            (_%tl116329116372%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116327116365%_))))
-                                        (if (gx#stx-pair? _%tl116329116372%_)
-                                            (let ((_%e116330116375%_
-                                                   (gx#syntax-e
-                                                    _%tl116329116372%_)))
-                                              (let ((_%hd116331116379%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116330116375%_)))
-                                                    (_%tl116332116382%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116330116375%_))))
-                                                (if (gx#stx-null?
-                                                     _%tl116332116382%_)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'let)
-                                                          (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'next-probe)
-                              (cons (cons (gx#datum->syntax '#f 'fx+)
-                                          (cons _%hd116325116359%_
-                                                (cons _%hd116328116369%_
-                                                      (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'fx*)
-                          (cons _%hd116328116369%_
-                                (cons _%hd116328116369%_ '())))
-                    '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                    '()))
-                        (cons (cons (gx#datum->syntax '#f 'fxmodulo)
-                                    (cons (gx#datum->syntax '#f 'next-probe)
-                                          (cons _%hd116331116379%_ '())))
-                              '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116316116338%_
-                                                     _%g116317116342%_))))
-                                            (_%g116316116338%_
-                                             _%g116317116342%_))))
-                                    (_%g116316116338%_ _%g116317116342%_))))
-                            (_%g116316116338%_ _%g116317116342%_))))
-                    (_%g116316116338%_ _%g116317116342%_)))))
-        (_%g116315116407%_ _%$stx116312%_))))
-  (define |[:0:]#__table-ref|
-    (lambda (_%$stx116411%_)
-      (let* ((_%g116415116449%_
-              (lambda (_%g116416116445%_)
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g116416116445%_)))
-             (_%g116414116560%_
-              (lambda (_%g116416116453%_)
-                (if (gx#stx-pair? _%g116416116453%_)
-                    (let ((_%e116423116456%_ (gx#syntax-e _%g116416116453%_)))
-                      (let ((_%hd116424116460%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116423116456%_)))
-                            (_%tl116425116463%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116423116456%_))))
-                        (if (gx#stx-pair? _%tl116425116463%_)
-                            (let ((_%e116426116466%_
-                                   (gx#syntax-e _%tl116425116463%_)))
-                              (let ((_%hd116427116470%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116426116466%_)))
-                                    (_%tl116428116473%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116426116466%_))))
-                                (if (gx#stx-pair? _%tl116428116473%_)
-                                    (let ((_%e116429116476%_
-                                           (gx#syntax-e _%tl116428116473%_)))
-                                      (let ((_%hd116430116480%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116429116476%_)))
-                                            (_%tl116431116483%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116429116476%_))))
-                                        (if (gx#stx-pair? _%tl116431116483%_)
-                                            (let ((_%e116432116486%_
-                                                   (gx#syntax-e
-                                                    _%tl116431116483%_)))
-                                              (let ((_%hd116433116490%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116432116486%_)))
-                                                    (_%tl116434116493%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116432116486%_))))
-                                                (if (gx#stx-pair?
-                                                     _%tl116434116493%_)
-                                                    (let ((_%e116435116496%_
-                                                           (gx#syntax-e
-                                                            _%tl116434116493%_)))
-                                                      (let ((_%hd116436116500%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e116435116496%_)))
-                    (_%tl116437116503%_
-                     (let () (declare (not safe)) (##cdr _%e116435116496%_))))
-                (if (gx#stx-pair? _%tl116437116503%_)
-                    (let ((_%e116438116506%_ (gx#syntax-e _%tl116437116503%_)))
-                      (let ((_%hd116439116510%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116438116506%_)))
-                            (_%tl116440116513%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116438116506%_))))
-                        (if (gx#stx-pair? _%tl116440116513%_)
-                            (let ((_%e116441116516%_
-                                   (gx#syntax-e _%tl116440116513%_)))
-                              (let ((_%hd116442116520%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116441116516%_)))
-                                    (_%tl116443116523%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116441116516%_))))
-                                (if (gx#stx-null? _%tl116443116523%_)
-                                    (cons (gx#datum->syntax '#f 'let*)
-                                          (cons (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'h)
-                                                            (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '#f
-                                 'fxxor)
-                                (cons (cons _%hd116433116490%_
-                                            (cons _%hd116439116510%_ '()))
-                                      (cons _%hd116430116480%_ '())))
-                          '()))
-              (cons (cons (gx#datum->syntax '#f 'size)
-                          (cons (cons (gx#datum->syntax '#f 'vector-length)
-                                      (cons _%hd116427116470%_ '()))
-                                '()))
-                    (cons (cons (gx#datum->syntax '#f 'entries)
-                                (cons (cons (gx#datum->syntax '#f 'fxquotient)
-                                            (cons (gx#datum->syntax '#f 'size)
-                                                  (cons '2 '())))
-                                      '()))
-                          (cons (cons (gx#datum->syntax '#f 'start)
-                                      (cons (cons (gx#datum->syntax
-                                                   '#f
-                                                   'fxarithmetic-shift-left)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'fxmodulo)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'h)
-                            (cons (gx#datum->syntax '#f 'entries) '())))
-                (cons '1 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            '()))
-                                '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'let)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'loop)
-                          (cons (cons (cons (gx#datum->syntax '#f 'probe)
-                                            (cons (gx#datum->syntax '#f 'start)
-                                                  '()))
-                                      (cons (cons (gx#datum->syntax '#f 'i)
-                                                  (cons '1 '()))
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'deleted)
-                                                        (cons '#f '()))
-                                                  '())))
-                                (cons (cons (gx#datum->syntax '#f 'let)
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'k)
-                                                        (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'vector-ref)
-                            (cons _%hd116427116470%_
-                                  (cons (gx#datum->syntax '#f 'probe) '())))
-                      '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'cond)
-                                                              (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                         '#f
-                                         'eq?)
-                                        (cons (gx#datum->syntax '#f 'k)
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'macro-unused-obj)
-                                                          '())
-                                                    '())))
-                                  (cons _%hd116442116520%_ '()))
-                            (cons (cons (cons (gx#datum->syntax '#f 'eq?)
-                                              (cons (gx#datum->syntax '#f 'k)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'macro-deleted-obj)
-                        '())
-                  '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'loop)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'probe-step)
-                        (cons (gx#datum->syntax '#f 'start)
-                              (cons (gx#datum->syntax '#f 'i)
-                                    (cons (gx#datum->syntax '#f 'size) '()))))
-                  (cons (cons (gx#datum->syntax '#f 'fx+)
-                              (cons (gx#datum->syntax '#f 'i) (cons '1 '())))
-                        (cons (cons (gx#datum->syntax '#f 'or)
-                                    (cons (gx#datum->syntax '#f 'deleted)
-                                          (cons (gx#datum->syntax '#f 'probe)
-                                                '())))
-                              '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '()))
-                                  (cons (cons (cons _%hd116436116500%_
-                                                    (cons _%hd116439116510%_
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'k)
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'vector-ref)
-                                                          (cons _%hd116427116470%_
-                                                                (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                     '#f
-                                     'fx+)
-                                    (cons (gx#datum->syntax '#f 'probe)
-                                          (cons '1 '())))
-                              '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '()))
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'else)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'loop)
-                        (cons (cons (gx#datum->syntax '#f 'probe-step)
-                                    (cons (gx#datum->syntax '#f 'start)
-                                          (cons (gx#datum->syntax '#f 'i)
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'size)
-                                                      '()))))
-                              (cons (cons (gx#datum->syntax '#f 'fx+)
-                                          (cons (gx#datum->syntax '#f 'i)
-                                                (cons '1 '())))
-                                    (cons (gx#datum->syntax '#f 'deleted)
-                                          '()))))
-                  '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '())))))
-                '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      '()))))
-              '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                    (_%g116415116449%_ _%g116416116453%_))))
-                            (_%g116415116449%_ _%g116416116453%_))))
-                    (_%g116415116449%_ _%g116416116453%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116415116449%_
-                                                     _%g116416116453%_))))
-                                            (_%g116415116449%_
-                                             _%g116416116453%_))))
-                                    (_%g116415116449%_ _%g116416116453%_))))
-                            (_%g116415116449%_ _%g116416116453%_))))
-                    (_%g116415116449%_ _%g116416116453%_)))))
-        (_%g116414116560%_ _%$stx116411%_))))
-  (define |[:0:]#__table-set!|
-    (lambda (_%$stx116564%_)
-      (let* ((_%g116568116610%_
-              (lambda (_%g116569116606%_)
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g116569116606%_)))
-             (_%g116567116749%_
-              (lambda (_%g116569116614%_)
-                (if (gx#stx-pair? _%g116569116614%_)
-                    (let ((_%e116578116617%_ (gx#syntax-e _%g116569116614%_)))
-                      (let ((_%hd116579116621%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116578116617%_)))
-                            (_%tl116580116624%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116578116617%_))))
-                        (if (gx#stx-pair? _%tl116580116624%_)
-                            (let ((_%e116581116627%_
-                                   (gx#syntax-e _%tl116580116624%_)))
-                              (let ((_%hd116582116631%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116581116627%_)))
-                                    (_%tl116583116634%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116581116627%_))))
-                                (if (gx#stx-pair? _%tl116583116634%_)
-                                    (let ((_%e116584116637%_
-                                           (gx#syntax-e _%tl116583116634%_)))
-                                      (let ((_%hd116585116641%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116584116637%_)))
-                                            (_%tl116586116644%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116584116637%_))))
-                                        (if (gx#stx-pair? _%tl116586116644%_)
-                                            (let ((_%e116587116647%_
-                                                   (gx#syntax-e
-                                                    _%tl116586116644%_)))
-                                              (let ((_%hd116588116651%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116587116647%_)))
-                                                    (_%tl116589116654%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116587116647%_))))
-                                                (if (gx#stx-pair?
-                                                     _%tl116589116654%_)
-                                                    (let ((_%e116590116657%_
-                                                           (gx#syntax-e
-                                                            _%tl116589116654%_)))
-                                                      (let ((_%hd116591116661%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e116590116657%_)))
-                    (_%tl116592116664%_
-                     (let () (declare (not safe)) (##cdr _%e116590116657%_))))
-                (if (gx#stx-pair? _%tl116592116664%_)
-                    (let ((_%e116593116667%_ (gx#syntax-e _%tl116592116664%_)))
-                      (let ((_%hd116594116671%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116593116667%_)))
-                            (_%tl116595116674%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116593116667%_))))
-                        (if (gx#stx-pair? _%tl116595116674%_)
-                            (let ((_%e116596116677%_
-                                   (gx#syntax-e _%tl116595116674%_)))
-                              (let ((_%hd116597116681%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116596116677%_)))
-                                    (_%tl116598116684%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116596116677%_))))
-                                (if (gx#stx-pair? _%tl116598116684%_)
-                                    (let ((_%e116599116687%_
-                                           (gx#syntax-e _%tl116598116684%_)))
-                                      (let ((_%hd116600116691%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116599116687%_)))
-                                            (_%tl116601116694%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116599116687%_))))
-                                        (if (gx#stx-pair? _%tl116601116694%_)
-                                            (let ((_%e116602116697%_
-                                                   (gx#syntax-e
-                                                    _%tl116601116694%_)))
-                                              (let ((_%hd116603116701%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116602116697%_)))
-                                                    (_%tl116604116704%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116602116697%_))))
-                                                (if (gx#stx-null?
-                                                     _%tl116604116704%_)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'let*)
-                                                          (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                     '#f
-                                     'h)
-                                    (cons (cons (gx#datum->syntax '#f 'fxxor)
-                                                (cons (cons _%hd116588116651%_
-                                                            (cons _%hd116594116671%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          '()))
-              (cons _%hd116585116641%_ '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          '()))
-                              (cons (cons (gx#datum->syntax '#f 'size)
+                         'let)
+                        (cons (cons (cons (gx#datum->syntax '#f 'table)
                                           (cons (cons (gx#datum->syntax
                                                        '#f
-                                                       'vector-length)
-                                                      (cons _%hd116582116631%_
+                                                       '&raw-table-table)
+                                                      (cons (gx#datum->syntax
+                                                             '#f
+                                                             'tab)
                                                             '()))
                                                 '()))
-                                    (cons (cons (gx#datum->syntax '#f 'entries)
+                                    (cons (cons (gx#datum->syntax '#f 'seed)
                                                 (cons (cons (gx#datum->syntax
                                                              '#f
-                                                             'fxquotient)
+                                                             '&raw-table-seed)
                                                             (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '#f
-                           'size)
-                          (cons '2 '())))
+                           'tab)
+                          '()))
               '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (cons (cons (gx#datum->syntax
+                                          '()))
+                              (cons (cons (gx#datum->syntax '#f '__table-del!)
+                                          (cons (gx#datum->syntax '#f 'table)
+                                                (cons (gx#datum->syntax
                                                        '#f
-                                                       'start)
-                                                      (cons (cons (gx#datum->syntax
+                                                       'seed)
+                                                      (cons _%$%g9966699734%_
+                                                            (cons _%$%g9966599732%_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'fxarithmetic-shift-left)
-                          (cons (cons (gx#datum->syntax '#f 'fxmodulo)
-                                      (cons (gx#datum->syntax '#f 'h)
-                                            (cons (gx#datum->syntax
-                                                   '#f
-                                                   'entries)
-                                                  '())))
-                                (cons '1 '())))
-                    '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                '()))))
-                        (cons (cons (gx#datum->syntax '#f 'let)
-                                    (cons (gx#datum->syntax '#f 'loop)
-                                          (cons (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'probe)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'start)
-                          '()))
-              (cons (cons (gx#datum->syntax '#f 'i) (cons '1 '()))
-                    (cons (cons (gx#datum->syntax '#f 'deleted) (cons '#f '()))
-                          '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'let)
-                                                            (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '#f
-                                 'k)
-                                (cons (cons (gx#datum->syntax '#f 'vector-ref)
-                                            (cons _%hd116582116631%_
-                                                  (cons (gx#datum->syntax
-                                                         '#f
-                                                         'probe)
-                                                        '())))
-                                      '()))
-                          (cons (cons (gx#datum->syntax '#f 'cond)
-                                      (cons (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'eq?)
-                                                        (cons (gx#datum->syntax
+                          (cons (gx#datum->syntax '#f 'key)
+                                (cons (cons (gx#datum->syntax '#f 'lambda)
+                                            (cons '()
+                                                  (cons (cons (gx#datum->syntax
                                                                '#f
-                                                               'k)
+                                                               'set!)
                                                               (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                    '#f
-                                   'macro-unused-obj)
-                                  '())
-                            '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'if)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'deleted)
-                            (cons (cons (gx#datum->syntax '#f 'begin)
+                                   '&raw-table-count)
+                                  (cons (gx#datum->syntax '#f 'tab) '()))
+                            (cons (cons (gx#datum->syntax '#f 'fx-)
                                         (cons (cons (gx#datum->syntax
                                                      '#f
-                                                     'vector-set!)
-                                                    (cons _%hd116582116631%_
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'deleted)
-                        (cons _%hd116594116671%_ '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
+                                                     '&raw-table-count)
+                                                    (cons (gx#datum->syntax
                                                            '#f
-                                                           'vector-set!)
-                                                          (cons _%hd116582116631%_
-                                                                (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                     '#f
-                                     'fx+)
-                                    (cons (gx#datum->syntax '#f 'deleted)
-                                          (cons '1 '())))
-                              (cons _%hd116597116681%_ '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (cons _%hd116603116701%_
-                                                                '())
-                                                          '()))))
-                                  (cons (cons (gx#datum->syntax '#f 'begin)
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'vector-set!)
-                                                          (cons _%hd116582116631%_
-                                                                (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'probe)
-                              (cons _%hd116594116671%_ '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'vector-set!)
-                        (cons _%hd116582116631%_
-                              (cons (cons (gx#datum->syntax '#f 'fx+)
-                                          (cons (gx#datum->syntax '#f 'probe)
-                                                (cons '1 '())))
-                                    (cons _%hd116597116681%_ '()))))
-                  (cons (cons _%hd116600116691%_ '()) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        '()))))
-                '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (cons (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'eq?)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'k)
-                            (cons (cons (gx#datum->syntax
-                                         '#f
-                                         'macro-deleted-obj)
-                                        '())
+                                                           'tab)
+                                                          '()))
+                                              (cons '1 '())))
                                   '())))
-                (cons (cons (gx#datum->syntax '#f 'loop)
-                            (cons (cons (gx#datum->syntax '#f 'probe-step)
-                                        (cons (gx#datum->syntax '#f 'start)
-                                              (cons (gx#datum->syntax '#f 'i)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'size)
-                                                          '()))))
-                                  (cons (cons (gx#datum->syntax '#f 'fx+)
-                                              (cons (gx#datum->syntax '#f 'i)
-                                                    (cons '1 '())))
-                                        (cons (cons (gx#datum->syntax '#f 'or)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'deleted)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'probe)
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '()))))
-                      '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (cons _%hd116591116661%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons _%hd116594116671%_
-                                  (cons (gx#datum->syntax '#f 'k) '())))
-                      (cons (cons (gx#datum->syntax '#f 'vector-set!)
-                                  (cons _%hd116582116631%_
-                                        (cons (gx#datum->syntax '#f 'probe)
-                                              (cons _%hd116594116671%_ '()))))
-                            (cons (cons (gx#datum->syntax '#f 'vector-set!)
-                                        (cons _%hd116582116631%_
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'fx+)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'probe)
-                        (cons '1 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons _%hd116597116681%_
-                                                          '()))))
-                                  '())))
-                (cons (cons (gx#datum->syntax '#f 'else)
-                            (cons (cons (gx#datum->syntax '#f 'loop)
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'probe-step)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'start)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'i)
-                        (cons (gx#datum->syntax '#f 'size) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'fx+)
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'i)
-                        (cons '1 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'deleted)
-                                                          '()))))
-                                  '()))
-                      '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                '())))
-              '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                              '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116568116610%_
-                                                     _%g116569116614%_))))
-                                            (_%g116568116610%_
-                                             _%g116569116614%_))))
-                                    (_%g116568116610%_ _%g116569116614%_))))
-                            (_%g116568116610%_ _%g116569116614%_))))
-                    (_%g116568116610%_ _%g116569116614%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116568116610%_
-                                                     _%g116569116614%_))))
-                                            (_%g116568116610%_
-                                             _%g116569116614%_))))
-                                    (_%g116568116610%_ _%g116569116614%_))))
-                            (_%g116568116610%_ _%g116569116614%_))))
-                    (_%g116568116610%_ _%g116569116614%_)))))
-        (_%g116567116749%_ _%$stx116564%_))))
-  (define |[:0:]#__table-update!|
-    (lambda (_%$stx116753%_)
-      (let* ((_%g116757116803%_
-              (lambda (_%g116758116799%_)
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g116758116799%_)))
-             (_%g116756116956%_
-              (lambda (_%g116758116807%_)
-                (if (gx#stx-pair? _%g116758116807%_)
-                    (let ((_%e116768116810%_ (gx#syntax-e _%g116758116807%_)))
-                      (let ((_%hd116769116814%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116768116810%_)))
-                            (_%tl116770116817%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116768116810%_))))
-                        (if (gx#stx-pair? _%tl116770116817%_)
-                            (let ((_%e116771116820%_
-                                   (gx#syntax-e _%tl116770116817%_)))
-                              (let ((_%hd116772116824%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116771116820%_)))
-                                    (_%tl116773116827%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116771116820%_))))
-                                (if (gx#stx-pair? _%tl116773116827%_)
-                                    (let ((_%e116774116830%_
-                                           (gx#syntax-e _%tl116773116827%_)))
-                                      (let ((_%hd116775116834%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116774116830%_)))
-                                            (_%tl116776116837%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116774116830%_))))
-                                        (if (gx#stx-pair? _%tl116776116837%_)
-                                            (let ((_%e116777116840%_
-                                                   (gx#syntax-e
-                                                    _%tl116776116837%_)))
-                                              (let ((_%hd116778116844%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116777116840%_)))
-                                                    (_%tl116779116847%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116777116840%_))))
-                                                (if (gx#stx-pair?
-                                                     _%tl116779116847%_)
-                                                    (let ((_%e116780116850%_
-                                                           (gx#syntax-e
-                                                            _%tl116779116847%_)))
-                                                      (let ((_%hd116781116854%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e116780116850%_)))
-                    (_%tl116782116857%_
-                     (let () (declare (not safe)) (##cdr _%e116780116850%_))))
-                (if (gx#stx-pair? _%tl116782116857%_)
-                    (let ((_%e116783116860%_ (gx#syntax-e _%tl116782116857%_)))
-                      (let ((_%hd116784116864%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116783116860%_)))
-                            (_%tl116785116867%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116783116860%_))))
-                        (if (gx#stx-pair? _%tl116785116867%_)
-                            (let ((_%e116786116870%_
-                                   (gx#syntax-e _%tl116785116867%_)))
-                              (let ((_%hd116787116874%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116786116870%_)))
-                                    (_%tl116788116877%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116786116870%_))))
-                                (if (gx#stx-pair? _%tl116788116877%_)
-                                    (let ((_%e116789116880%_
-                                           (gx#syntax-e _%tl116788116877%_)))
-                                      (let ((_%hd116790116884%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116789116880%_)))
-                                            (_%tl116791116887%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116789116880%_))))
-                                        (if (gx#stx-pair? _%tl116791116887%_)
-                                            (let ((_%e116792116890%_
-                                                   (gx#syntax-e
-                                                    _%tl116791116887%_)))
-                                              (let ((_%hd116793116894%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116792116890%_)))
-                                                    (_%tl116794116897%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116792116890%_))))
-                                                (if (gx#stx-pair?
-                                                     _%tl116794116897%_)
-                                                    (let ((_%e116795116900%_
-                                                           (gx#syntax-e
-                                                            _%tl116794116897%_)))
-                                                      (let ((_%hd116796116904%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e116795116900%_)))
-                    (_%tl116797116907%_
-                     (let () (declare (not safe)) (##cdr _%e116795116900%_))))
-                (if (gx#stx-null? _%tl116797116907%_)
-                    (cons (gx#datum->syntax '#f 'let*)
-                          (cons (cons (cons (gx#datum->syntax '#f 'h)
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'fxxor)
-                                                        (cons (cons _%hd116778116844%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons _%hd116784116864%_ '()))
-                      (cons _%hd116775116834%_ '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  '()))
-                                      (cons (cons (gx#datum->syntax '#f 'size)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'vector-length)
-                                                              (cons _%hd116772116824%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '()))
-                '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'entries)
-                                                        (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'fxquotient)
-                            (cons (gx#datum->syntax '#f 'size) (cons '2 '())))
-                      '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'start)
-                                                              (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   '#f
-                                   'fxarithmetic-shift-left)
-                                  (cons (cons (gx#datum->syntax '#f 'fxmodulo)
-                                              (cons (gx#datum->syntax '#f 'h)
-                                                    (cons (gx#datum->syntax
-                                                           '#f
-                                                           'entries)
-                                                          '())))
-                                        (cons '1 '())))
-                            '()))
-                '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                (cons (cons (gx#datum->syntax '#f 'let)
-                                            (cons (gx#datum->syntax '#f 'loop)
-                                                  (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'probe)
-                            (cons (gx#datum->syntax '#f 'start) '()))
-                      (cons (cons (gx#datum->syntax '#f 'i) (cons '1 '()))
-                            (cons (cons (gx#datum->syntax '#f 'deleted)
-                                        (cons '#f '()))
-                                  '())))
-                (cons (cons (gx#datum->syntax '#f 'let)
-                            (cons (cons (gx#datum->syntax '#f 'k)
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'vector-ref)
-                                                    (cons _%hd116772116824%_
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'probe)
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '()))
-                                  (cons (cons (gx#datum->syntax '#f 'cond)
-                                              (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'eq?)
-                        (cons (gx#datum->syntax '#f 'k)
-                              (cons (cons (gx#datum->syntax
-                                           '#f
-                                           'macro-unused-obj)
-                                          '())
-                                    '())))
-                  (cons (cons (gx#datum->syntax '#f 'if)
-                              (cons (gx#datum->syntax '#f 'deleted)
-                                    (cons (cons (gx#datum->syntax '#f 'begin)
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'vector-set!)
-                                                            (cons _%hd116772116824%_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons (gx#datum->syntax '#f 'deleted)
-                                (cons _%hd116784116864%_ '()))))
-              (cons (cons (gx#datum->syntax '#f 'vector-set!)
-                          (cons _%hd116772116824%_
-                                (cons (cons (gx#datum->syntax '#f 'fx+)
-                                            (cons (gx#datum->syntax
-                                                   '#f
-                                                   'deleted)
-                                                  (cons '1 '())))
-                                      (cons (cons _%hd116787116874%_
-                                                  (cons _%hd116790116884%_
-                                                        '()))
-                                            '()))))
-                    (cons (cons _%hd116796116904%_ '()) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (cons (cons (gx#datum->syntax
-                                                       '#f
-                                                       'begin)
-                                                      (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'vector-set!)
-                          (cons _%hd116772116824%_
-                                (cons (gx#datum->syntax '#f 'probe)
-                                      (cons _%hd116784116864%_ '()))))
-                    (cons (cons (gx#datum->syntax '#f 'vector-set!)
-                                (cons _%hd116772116824%_
-                                      (cons (cons (gx#datum->syntax '#f 'fx+)
-                                                  (cons (gx#datum->syntax
-                                                         '#f
-                                                         'probe)
-                                                        (cons '1 '())))
-                                            (cons (cons _%hd116787116874%_
-                                                        (cons _%hd116790116884%_
-                                                              '()))
-                                                  '()))))
-                          (cons (cons _%hd116793116894%_ '()) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                '()))))
-                        '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               '#f
-                               'eq?)
-                              (cons (gx#datum->syntax '#f 'k)
-                                    (cons (cons (gx#datum->syntax
-                                                 '#f
-                                                 'macro-deleted-obj)
-                                                '())
-                                          '())))
-                        (cons (cons (gx#datum->syntax '#f 'loop)
-                                    (cons (cons (gx#datum->syntax
-                                                 '#f
-                                                 'probe-step)
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'start)
-                                                      (cons (gx#datum->syntax
-                                                             '#f
-                                                             'i)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'size)
-                          '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (cons (cons (gx#datum->syntax
-                                                       '#f
-                                                       'fx+)
-                                                      (cons (gx#datum->syntax
-                                                             '#f
-                                                             'i)
-                                                            (cons '1 '())))
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'or)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'deleted)
-                          (cons (gx#datum->syntax '#f 'probe) '())))
-              '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                              '()))
-                  (cons (cons (cons _%hd116781116854%_
-                                    (cons _%hd116784116864%_
-                                          (cons (gx#datum->syntax '#f 'k)
-                                                '())))
-                              (cons (cons (gx#datum->syntax '#f 'vector-set!)
-                                          (cons _%hd116772116824%_
-                                                (cons (gx#datum->syntax
-                                                       '#f
-                                                       'probe)
-                                                      (cons _%hd116784116864%_
-                                                            '()))))
-                                    (cons (cons (gx#datum->syntax
-                                                 '#f
-                                                 'vector-set!)
-                                                (cons _%hd116772116824%_
-                                                      (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'fx+)
-                          (cons (gx#datum->syntax '#f 'probe) (cons '1 '())))
-                    (cons (cons _%hd116787116874%_
-                                (cons (cons (gx#datum->syntax '#f 'vector-ref)
-                                            (cons _%hd116772116824%_
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'fx+)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'probe)
-                            (cons '1 '())))
                 '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      '()))
-                          '()))))
+                                      '())))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          '())))
-                        (cons (cons (gx#datum->syntax '#f 'else)
-                                    (cons (cons (gx#datum->syntax '#f 'loop)
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'probe-step)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'start)
-                          (cons (gx#datum->syntax '#f 'i)
-                                (cons (gx#datum->syntax '#f 'size) '()))))
-              (cons (cons (gx#datum->syntax '#f 'fx+)
-                          (cons (gx#datum->syntax '#f 'i) (cons '1 '())))
-                    (cons (gx#datum->syntax '#f 'deleted) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          '()))
-                              '())))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        '())))
-                      '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      '())))
-                    (_%g116757116803%_ _%g116758116807%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116757116803%_
-                                                     _%g116758116807%_))))
-                                            (_%g116757116803%_
-                                             _%g116758116807%_))))
-                                    (_%g116757116803%_ _%g116758116807%_))))
-                            (_%g116757116803%_ _%g116758116807%_))))
-                    (_%g116757116803%_ _%g116758116807%_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116757116803%_
-                                                     _%g116758116807%_))))
-                                            (_%g116757116803%_
-                                             _%g116758116807%_))))
-                                    (_%g116757116803%_ _%g116758116807%_))))
-                            (_%g116757116803%_ _%g116758116807%_))))
-                    (_%g116757116803%_ _%g116758116807%_)))))
-        (_%g116756116956%_ _%$stx116753%_))))
-  (define |[:0:]#__table-del!|
-    (lambda (_%$stx116960%_)
-      (let* ((_%g116964116998%_
-              (lambda (_%g116965116994%_)
-                (gx#raise-syntax-error
-                 '#f
-                 '"Bad syntax; invalid match target"
-                 _%g116965116994%_)))
-             (_%g116963117109%_
-              (lambda (_%g116965117002%_)
-                (if (gx#stx-pair? _%g116965117002%_)
-                    (let ((_%e116972117005%_ (gx#syntax-e _%g116965117002%_)))
-                      (let ((_%hd116973117009%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116972117005%_)))
-                            (_%tl116974117012%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116972117005%_))))
-                        (if (gx#stx-pair? _%tl116974117012%_)
-                            (let ((_%e116975117015%_
-                                   (gx#syntax-e _%tl116974117012%_)))
-                              (let ((_%hd116976117019%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116975117015%_)))
-                                    (_%tl116977117022%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116975117015%_))))
-                                (if (gx#stx-pair? _%tl116977117022%_)
-                                    (let ((_%e116978117025%_
-                                           (gx#syntax-e _%tl116977117022%_)))
-                                      (let ((_%hd116979117029%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##car _%e116978117025%_)))
-                                            (_%tl116980117032%_
-                                             (let ()
-                                               (declare (not safe))
-                                               (##cdr _%e116978117025%_))))
-                                        (if (gx#stx-pair? _%tl116980117032%_)
-                                            (let ((_%e116981117035%_
-                                                   (gx#syntax-e
-                                                    _%tl116980117032%_)))
-                                              (let ((_%hd116982117039%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##car _%e116981117035%_)))
-                                                    (_%tl116983117042%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%e116981117035%_))))
-                                                (if (gx#stx-pair?
-                                                     _%tl116983117042%_)
-                                                    (let ((_%e116984117045%_
-                                                           (gx#syntax-e
-                                                            _%tl116983117042%_)))
-                                                      (let ((_%hd116985117049%_
-                                                             (let ()
-                                                               (declare
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (not safe))
-                       (##car _%e116984117045%_)))
-                    (_%tl116986117052%_
-                     (let () (declare (not safe)) (##cdr _%e116984117045%_))))
-                (if (gx#stx-pair? _%tl116986117052%_)
-                    (let ((_%e116987117055%_ (gx#syntax-e _%tl116986117052%_)))
-                      (let ((_%hd116988117059%_
-                             (let ()
-                               (declare (not safe))
-                               (##car _%e116987117055%_)))
-                            (_%tl116989117062%_
-                             (let ()
-                               (declare (not safe))
-                               (##cdr _%e116987117055%_))))
-                        (if (gx#stx-pair? _%tl116989117062%_)
-                            (let ((_%e116990117065%_
-                                   (gx#syntax-e _%tl116989117062%_)))
-                              (let ((_%hd116991117069%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##car _%e116990117065%_)))
-                                    (_%tl116992117072%_
-                                     (let ()
-                                       (declare (not safe))
-                                       (##cdr _%e116990117065%_))))
-                                (if (gx#stx-null? _%tl116992117072%_)
-                                    (cons (gx#datum->syntax '#f 'let*)
-                                          (cons (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'h)
-                                                            (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                 '#f
-                                 'fxxor)
-                                (cons (cons _%hd116982117039%_
-                                            (cons _%hd116988117059%_ '()))
-                                      (cons _%hd116979117029%_ '())))
-                          '()))
-              (cons (cons (gx#datum->syntax '#f 'size)
-                          (cons (cons (gx#datum->syntax '#f 'vector-length)
-                                      (cons _%hd116976117019%_ '()))
-                                '()))
-                    (cons (cons (gx#datum->syntax '#f 'entries)
-                                (cons (cons (gx#datum->syntax '#f 'fxquotient)
-                                            (cons (gx#datum->syntax '#f 'size)
-                                                  (cons '2 '())))
-                                      '()))
-                          (cons (cons (gx#datum->syntax '#f 'start)
-                                      (cons (cons (gx#datum->syntax
-                                                   '#f
-                                                   'fxarithmetic-shift-left)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'fxmodulo)
-                                                              (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'h)
-                            (cons (gx#datum->syntax '#f 'entries) '())))
-                (cons '1 '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            '()))
-                                '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (cons (cons (gx#datum->syntax
-                                                             '#f
-                                                             'let)
-                                                            (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '#f
-                           'loop)
-                          (cons (cons (cons (gx#datum->syntax '#f 'probe)
-                                            (cons (gx#datum->syntax '#f 'start)
-                                                  '()))
-                                      (cons (cons (gx#datum->syntax '#f 'i)
-                                                  (cons '1 '()))
-                                            '()))
-                                (cons (cons (gx#datum->syntax '#f 'let)
-                                            (cons (cons (gx#datum->syntax
-                                                         '#f
-                                                         'k)
-                                                        (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             '#f
-                             'vector-ref)
-                            (cons _%hd116976117019%_
-                                  (cons (gx#datum->syntax '#f 'probe) '())))
-                      '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               'cond)
-                                                              (cons (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                         '#f
-                                         'eq?)
-                                        (cons (gx#datum->syntax '#f 'k)
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'macro-unused-obj)
-                                                          '())
-                                                    '())))
-                                  (cons (cons (gx#datum->syntax '#f 'void) '())
-                                        '()))
-                            (cons (cons (cons (gx#datum->syntax '#f 'eq?)
-                                              (cons (gx#datum->syntax '#f 'k)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'macro-deleted-obj)
-                        '())
+                                    '())))
                   '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'loop)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'probe-step)
-                        (cons (gx#datum->syntax '#f 'start)
-                              (cons (gx#datum->syntax '#f 'i)
-                                    (cons (gx#datum->syntax '#f 'size) '()))))
-                  (cons (cons (gx#datum->syntax '#f 'fx+)
-                              (cons (gx#datum->syntax '#f 'i) (cons '1 '())))
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '()))
-                                  (cons (cons (cons _%hd116985117049%_
-                                                    (cons _%hd116988117059%_
-                                                          (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'k)
-                        '())))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'vector-set!)
-                                                          (cons _%hd116976117019%_
+                                        (cons (cons (gx#datum->syntax '#f 'def)
+                                                    (cons (cons _%$%g9975699936%_
                                                                 (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                '#f
-                               'probe)
-                              (cons (cons (gx#datum->syntax
-                                           '#f
-                                           'macro-deleted-obj)
-                                          '())
-                                    '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'vector-set!)
-                        (cons _%hd116976117019%_
-                              (cons (cons (gx#datum->syntax '#f 'fx+)
-                                          (cons (gx#datum->syntax '#f 'probe)
-                                                (cons '1 '())))
-                                    (cons (cons (gx#datum->syntax
-                                                 '#f
-                                                 'macro-absent-obj)
-                                                '())
-                                          '()))))
-                  (cons (cons _%hd116991117069%_ '()) '()))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        (cons (cons (gx#datum->syntax
-                                                     '#f
-                                                     'else)
-                                                    (cons (cons (gx#datum->syntax
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         '#f
-                         'loop)
-                        (cons (cons (gx#datum->syntax '#f 'probe-step)
-                                    (cons (gx#datum->syntax '#f 'start)
-                                          (cons (gx#datum->syntax '#f 'i)
+                               'tab)
+                              (cons (gx#datum->syntax '#f 'key) '())))
+                  (cons (cons (gx#datum->syntax '#f 'do-raw-table-lock)
+                              (cons (gx#datum->syntax '#f 'tab)
+                                    (cons (cons _%$%g9975799938%_
                                                 (cons (gx#datum->syntax
                                                        '#f
-                                                       'size)
-                                                      '()))))
-                              (cons (cons (gx#datum->syntax '#f 'fx+)
-                                          (cons (gx#datum->syntax '#f 'i)
-                                                (cons '1 '())))
-                                    '())))
-                  '()))
+                                                       'tab)
+                                                      (cons (gx#datum->syntax
+                                                             '#f
+                                                             'key)
+                                                            '())))
+                                          '())))
+                        '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              '())))))
-                '())))
+                                              '()))))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      '()))))
-              '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                    (_%g116964116998%_ _%g116965117002%_))))
-                            (_%g116964116998%_ _%g116965117002%_))))
-                    (_%g116964116998%_ _%g116965117002%_))))
+                                              _%$%hd9980299930%_
+                                              _%$%hd9979999920%_
+                                              _%$%hd9979699910%_
+                                              _%$%hd9979399900%_
+                                              _%$%hd9979099890%_
+                                              _%$%hd9978799880%_
+                                              _%$%hd9978499870%_
+                                              _%$%hd9978199860%_
+                                              _%$%hd9977899850%_
+                                              _%$%hd9977599840%_
+                                              _%$%hd9977299830%_
+                                              _%$%hd9976999820%_)
+                                             (_%$%g9975499809%_
+                                              _%$%g9975599813%_))))
+                                     (_%$%g9975499809%_ _%$%g9975599813%_))))
+                             (_%$%g9975499809%_ _%$%g9975599813%_))))
+                     (_%$%g9975499809%_ _%$%g9975599813%_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_%g116964116998%_
-                                                     _%g116965117002%_))))
-                                            (_%g116964116998%_
-                                             _%g116965117002%_))))
-                                    (_%g116964116998%_ _%g116965117002%_))))
-                            (_%g116964116998%_ _%g116965117002%_))))
-                    (_%g116964116998%_ _%g116965117002%_)))))
-        (_%g116963117109%_ _%$stx116960%_))))
-  (define |[:0:]#do-gc-table-lock|
-    (lambda (_%$stx117113%_)
-      (let* ((_%g117117117135%_
-              (lambda (_%g117118117131%_)
+                                                     (_%$%g9975499809%_
+                                                      _%$%g9975599813%_))))
+                                             (_%$%g9975499809%_
+                                              _%$%g9975599813%_))))
+                                     (_%$%g9975499809%_ _%$%g9975599813%_))))
+                             (_%$%g9975499809%_ _%$%g9975599813%_))))
+                     (_%$%g9975499809%_ _%$%g9975599813%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_%$%g9975499809%_
+                                                      _%$%g9975599813%_))))
+                                             (_%$%g9975499809%_
+                                              _%$%g9975599813%_))))
+                                     (_%$%g9975499809%_ _%$%g9975599813%_))))
+                             (_%$%g9975499809%_ _%$%g9975599813%_)))))
+                 (_%$%g9975399994%_
+                  (list (gx#stx-identifier
+                         _%$%g9966799735%_
+                         '"make-"
+                         _%$%g9966799735%_)
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         '"make-"
+                         _%$%g9966799735%_
+                         '"/lock")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-ref")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-ref/lock")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         '"__"
+                         _%$%g9966799735%_
+                         '"-set!")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-set!")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-set!/lock")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         '"__"
+                         _%$%g9966799735%_
+                         '"-update!")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-update!")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-update!/lock")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-delete!")
+                        (gx#stx-identifier
+                         _%$%g9966799735%_
+                         _%$%g9966799735%_
+                         '"-delete!/lock")))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     _%$%hd9967899726%_
+                                                     _%$%hd9967599716%_
+                                                     _%$%hd9967299706%_)
+                                                    (_%$%g9966399685%_
+                                                     _%$%g9966499689%_))))
+                                            (_%$%g9966399685%_
+                                             _%$%g9966499689%_))))
+                                    (_%$%g9966399685%_ _%$%g9966499689%_))))
+                            (_%$%g9966399685%_ _%$%g9966499689%_))))
+                    (_%$%g9966399685%_ _%$%g9966499689%_)))))
+        (_%$%g9966299998%_ _%stx99660%_))))
+  (define |[:0:]#probe-step|
+    (lambda (_%$stx100002%_)
+      (let* ((_%$%g100006100028%_
+              (lambda (_%$%g100007100024%_)
                 (gx#raise-syntax-error
                  '#f
                  '"Bad syntax; invalid match target"
-                 _%g117118117131%_)))
-             (_%g117116117190%_
-              (lambda (_%g117118117139%_)
-                (if (gx#stx-pair? _%g117118117139%_)
-                    (let ((_%e117121117142%_ (gx#syntax-e _%g117118117139%_)))
-                      (let ((_%hd117122117146%_
+                 _%$%g100007100024%_)))
+             (_%$%g100005100097%_
+              (lambda (_%$%g100007100032%_)
+                (if (gx#stx-pair? _%$%g100007100032%_)
+                    (let ((_%$%e100011100035%_
+                           (gx#syntax-e _%$%g100007100032%_)))
+                      (let ((_%$%hd100012100039%_
                              (let ()
                                (declare (not safe))
-                               (##car _%e117121117142%_)))
-                            (_%tl117123117149%_
+                               (##car _%$%e100011100035%_)))
+                            (_%$%tl100013100042%_
                              (let ()
                                (declare (not safe))
-                               (##cdr _%e117121117142%_))))
-                        (if (gx#stx-pair? _%tl117123117149%_)
-                            (let ((_%e117124117152%_
-                                   (gx#syntax-e _%tl117123117149%_)))
-                              (let ((_%hd117125117156%_
+                               (##cdr _%$%e100011100035%_))))
+                        (if (gx#stx-pair? _%$%tl100013100042%_)
+                            (let ((_%$%e100014100045%_
+                                   (gx#syntax-e _%$%tl100013100042%_)))
+                              (let ((_%$%hd100015100049%_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _%e117124117152%_)))
-                                    (_%tl117126117159%_
+                                       (##car _%$%e100014100045%_)))
+                                    (_%$%tl100016100052%_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _%e117124117152%_))))
-                                (if (gx#stx-pair? _%tl117126117159%_)
-                                    (let ((_%e117127117162%_
-                                           (gx#syntax-e _%tl117126117159%_)))
-                                      (let ((_%hd117128117166%_
+                                       (##cdr _%$%e100014100045%_))))
+                                (if (gx#stx-pair? _%$%tl100016100052%_)
+                                    (let ((_%$%e100017100055%_
+                                           (gx#syntax-e _%$%tl100016100052%_)))
+                                      (let ((_%$%hd100018100059%_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _%e117127117162%_)))
-                                            (_%tl117129117169%_
+                                               (##car _%$%e100017100055%_)))
+                                            (_%$%tl100019100062%_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _%e117127117162%_))))
-                                        (if (gx#stx-null? _%tl117129117169%_)
-                                            (cons (gx#datum->syntax
-                                                   '#f
-                                                   '__do-inline-lock!)
-                                                  (cons (cons (gx#datum->syntax
-                                                               '#f
-                                                               '&gc-table-lock)
-                                                              (cons _%hd117125117156%_
+                                               (##cdr _%$%e100017100055%_))))
+                                        (if (gx#stx-pair? _%$%tl100019100062%_)
+                                            (let ((_%$%e100020100065%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100019100062%_)))
+                                              (let ((_%$%hd100021100069%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100020100065%_)))
+                                                    (_%$%tl100022100072%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100020100065%_))))
+                                                (if (gx#stx-null?
+                                                     _%$%tl100022100072%_)
+                                                    ((lambda (_%$%g100008100075%_
+                                                              _%$%g100009100077%_
+                                                              _%$%g100010100078%_)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'let)
+                                                             (cons (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            '()))
-                (cons _%hd117128117166%_ '())))
+                                  '#f
+                                  'next-probe)
+                                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                                             (cons _%$%g100010100078%_
+                                                   (cons _%$%g100009100077%_
+                                                         (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'fx*)
+                             (cons _%$%g100009100077%_
+                                   (cons _%$%g100009100077%_ '())))
+                       '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (_%g117117117135%_
-                                             _%g117118117139%_))))
-                                    (_%g117117117135%_ _%g117118117139%_))))
-                            (_%g117117117135%_ _%g117118117139%_))))
-                    (_%g117117117135%_ _%g117118117139%_)))))
-        (_%g117116117190%_ _%$stx117113%_)))))
+                                       '()))
+                           (cons (cons (gx#datum->syntax '#f 'fxmodulo)
+                                       (cons (gx#datum->syntax '#f 'next-probe)
+                                             (cons _%$%g100008100075%_ '())))
+                                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     _%$%hd100021100069%_
+                                                     _%$%hd100018100059%_
+                                                     _%$%hd100015100049%_)
+                                                    (_%$%g100006100028%_
+                                                     _%$%g100007100032%_))))
+                                            (_%$%g100006100028%_
+                                             _%$%g100007100032%_))))
+                                    (_%$%g100006100028%_
+                                     _%$%g100007100032%_))))
+                            (_%$%g100006100028%_ _%$%g100007100032%_))))
+                    (_%$%g100006100028%_ _%$%g100007100032%_)))))
+        (_%$%g100005100097%_ _%$stx100002%_))))
+  (define |[:0:]#__table-ref|
+    (lambda (_%$stx100101%_)
+      (let* ((_%$%g100105100139%_
+              (lambda (_%$%g100106100135%_)
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _%$%g100106100135%_)))
+             (_%$%g100104100250%_
+              (lambda (_%$%g100106100143%_)
+                (if (gx#stx-pair? _%$%g100106100143%_)
+                    (let ((_%$%e100113100146%_
+                           (gx#syntax-e _%$%g100106100143%_)))
+                      (let ((_%$%hd100114100150%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100113100146%_)))
+                            (_%$%tl100115100153%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100113100146%_))))
+                        (if (gx#stx-pair? _%$%tl100115100153%_)
+                            (let ((_%$%e100116100156%_
+                                   (gx#syntax-e _%$%tl100115100153%_)))
+                              (let ((_%$%hd100117100160%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100116100156%_)))
+                                    (_%$%tl100118100163%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100116100156%_))))
+                                (if (gx#stx-pair? _%$%tl100118100163%_)
+                                    (let ((_%$%e100119100166%_
+                                           (gx#syntax-e _%$%tl100118100163%_)))
+                                      (let ((_%$%hd100120100170%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100119100166%_)))
+                                            (_%$%tl100121100173%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100119100166%_))))
+                                        (if (gx#stx-pair? _%$%tl100121100173%_)
+                                            (let ((_%$%e100122100176%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100121100173%_)))
+                                              (let ((_%$%hd100123100180%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100122100176%_)))
+                                                    (_%$%tl100124100183%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100122100176%_))))
+                                                (if (gx#stx-pair?
+                                                     _%$%tl100124100183%_)
+                                                    (let ((_%$%e100125100186%_
+                                                           (gx#syntax-e
+                                                            _%$%tl100124100183%_)))
+                                                      (let ((_%$%hd100126100190%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%$%e100125100186%_)))
+                    (_%$%tl100127100193%_
+                     (let ()
+                       (declare (not safe))
+                       (##cdr _%$%e100125100186%_))))
+                (if (gx#stx-pair? _%$%tl100127100193%_)
+                    (let ((_%$%e100128100196%_
+                           (gx#syntax-e _%$%tl100127100193%_)))
+                      (let ((_%$%hd100129100200%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100128100196%_)))
+                            (_%$%tl100130100203%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100128100196%_))))
+                        (if (gx#stx-pair? _%$%tl100130100203%_)
+                            (let ((_%$%e100131100206%_
+                                   (gx#syntax-e _%$%tl100130100203%_)))
+                              (let ((_%$%hd100132100210%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100131100206%_)))
+                                    (_%$%tl100133100213%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100131100206%_))))
+                                (if (gx#stx-null? _%$%tl100133100213%_)
+                                    ((lambda (_%$%g100107100216%_
+                                              _%$%g100108100218%_
+                                              _%$%g100109100219%_
+                                              _%$%g100110100220%_
+                                              _%$%g100111100221%_
+                                              _%$%g100112100222%_)
+                                       (cons (gx#datum->syntax '#f 'let*)
+                                             (cons (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'h)
+                                                               (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                    '#f
+                                    'fxxor)
+                                   (cons (cons _%$%g100110100220%_
+                                               (cons _%$%g100108100218%_ '()))
+                                         (cons _%$%g100111100221%_ '())))
+                             '()))
+                 (cons (cons (gx#datum->syntax '#f 'size)
+                             (cons (cons (gx#datum->syntax '#f 'vector-length)
+                                         (cons _%$%g100112100222%_ '()))
+                                   '()))
+                       (cons (cons (gx#datum->syntax '#f 'entries)
+                                   (cons (cons (gx#datum->syntax
+                                                '#f
+                                                'fxquotient)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'size)
+                                                     (cons '2 '())))
+                                         '()))
+                             (cons (cons (gx#datum->syntax '#f 'start)
+                                         (cons (cons (gx#datum->syntax
+                                                      '#f
+                                                      'fxarithmetic-shift-left)
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'fxmodulo)
+                         (cons (gx#datum->syntax '#f 'h)
+                               (cons (gx#datum->syntax '#f 'entries) '())))
+                   (cons '1 '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               '()))
+                                   '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'let)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'loop)
+                             (cons (cons (cons (gx#datum->syntax '#f 'probe)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'start)
+                                                     '()))
+                                         (cons (cons (gx#datum->syntax '#f 'i)
+                                                     (cons '1 '()))
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'deleted)
+                                                           (cons '#f '()))
+                                                     '())))
+                                   (cons (cons (gx#datum->syntax '#f 'let)
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'k)
+                                                           (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                '#f
+                                'vector-ref)
+                               (cons _%$%g100112100222%_
+                                     (cons (gx#datum->syntax '#f 'probe) '())))
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'cond)
+                         (cons (cons (cons (gx#datum->syntax '#f 'eq?)
+                                           (cons (gx#datum->syntax '#f 'k)
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'macro-unused-obj)
+                                                             '())
+                                                       '())))
+                                     (cons _%$%g100107100216%_ '()))
+                               (cons (cons (cons (gx#datum->syntax '#f 'eq?)
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        'k)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'macro-deleted-obj)
+                           '())
+                     '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'loop)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'probe-step)
+                           (cons (gx#datum->syntax '#f 'start)
+                                 (cons (gx#datum->syntax '#f 'i)
+                                       (cons (gx#datum->syntax '#f 'size)
+                                             '()))))
+                     (cons (cons (gx#datum->syntax '#f 'fx+)
+                                 (cons (gx#datum->syntax '#f 'i)
+                                       (cons '1 '())))
+                           (cons (cons (gx#datum->syntax '#f 'or)
+                                       (cons (gx#datum->syntax '#f 'deleted)
+                                             (cons (gx#datum->syntax
+                                                    '#f
+                                                    'probe)
+                                                   '())))
+                                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '()))
+                                     (cons (cons (cons _%$%g100109100219%_
+                                                       (cons _%$%g100108100218%_
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'k)
+                           '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'vector-ref)
+                                                             (cons _%$%g100112100222%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (cons (gx#datum->syntax '#f 'fx+)
+                                       (cons (gx#datum->syntax '#f 'probe)
+                                             (cons '1 '())))
+                                 '())))
+               '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'else)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'loop)
+                           (cons (cons (gx#datum->syntax '#f 'probe-step)
+                                       (cons (gx#datum->syntax '#f 'start)
+                                             (cons (gx#datum->syntax '#f 'i)
+                                                   (cons (gx#datum->syntax
+                                                          '#f
+                                                          'size)
+                                                         '()))))
+                                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                                             (cons (gx#datum->syntax '#f 'i)
+                                                   (cons '1 '())))
+                                       (cons (gx#datum->syntax '#f 'deleted)
+                                             '()))))
+                     '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '())))))
+                   '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         '()))))
+                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     _%$%hd100132100210%_
+                                     _%$%hd100129100200%_
+                                     _%$%hd100126100190%_
+                                     _%$%hd100123100180%_
+                                     _%$%hd100120100170%_
+                                     _%$%hd100117100160%_)
+                                    (_%$%g100105100139%_
+                                     _%$%g100106100143%_))))
+                            (_%$%g100105100139%_ _%$%g100106100143%_))))
+                    (_%$%g100105100139%_ _%$%g100106100143%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%$%g100105100139%_
+                                                     _%$%g100106100143%_))))
+                                            (_%$%g100105100139%_
+                                             _%$%g100106100143%_))))
+                                    (_%$%g100105100139%_
+                                     _%$%g100106100143%_))))
+                            (_%$%g100105100139%_ _%$%g100106100143%_))))
+                    (_%$%g100105100139%_ _%$%g100106100143%_)))))
+        (_%$%g100104100250%_ _%$stx100101%_))))
+  (define |[:0:]#__table-set!|
+    (lambda (_%$stx100254%_)
+      (let* ((_%$%g100258100300%_
+              (lambda (_%$%g100259100296%_)
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _%$%g100259100296%_)))
+             (_%$%g100257100439%_
+              (lambda (_%$%g100259100304%_)
+                (if (gx#stx-pair? _%$%g100259100304%_)
+                    (let ((_%$%e100268100307%_
+                           (gx#syntax-e _%$%g100259100304%_)))
+                      (let ((_%$%hd100269100311%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100268100307%_)))
+                            (_%$%tl100270100314%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100268100307%_))))
+                        (if (gx#stx-pair? _%$%tl100270100314%_)
+                            (let ((_%$%e100271100317%_
+                                   (gx#syntax-e _%$%tl100270100314%_)))
+                              (let ((_%$%hd100272100321%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100271100317%_)))
+                                    (_%$%tl100273100324%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100271100317%_))))
+                                (if (gx#stx-pair? _%$%tl100273100324%_)
+                                    (let ((_%$%e100274100327%_
+                                           (gx#syntax-e _%$%tl100273100324%_)))
+                                      (let ((_%$%hd100275100331%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100274100327%_)))
+                                            (_%$%tl100276100334%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100274100327%_))))
+                                        (if (gx#stx-pair? _%$%tl100276100334%_)
+                                            (let ((_%$%e100277100337%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100276100334%_)))
+                                              (let ((_%$%hd100278100341%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100277100337%_)))
+                                                    (_%$%tl100279100344%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100277100337%_))))
+                                                (if (gx#stx-pair?
+                                                     _%$%tl100279100344%_)
+                                                    (let ((_%$%e100280100347%_
+                                                           (gx#syntax-e
+                                                            _%$%tl100279100344%_)))
+                                                      (let ((_%$%hd100281100351%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%$%e100280100347%_)))
+                    (_%$%tl100282100354%_
+                     (let ()
+                       (declare (not safe))
+                       (##cdr _%$%e100280100347%_))))
+                (if (gx#stx-pair? _%$%tl100282100354%_)
+                    (let ((_%$%e100283100357%_
+                           (gx#syntax-e _%$%tl100282100354%_)))
+                      (let ((_%$%hd100284100361%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100283100357%_)))
+                            (_%$%tl100285100364%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100283100357%_))))
+                        (if (gx#stx-pair? _%$%tl100285100364%_)
+                            (let ((_%$%e100286100367%_
+                                   (gx#syntax-e _%$%tl100285100364%_)))
+                              (let ((_%$%hd100287100371%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100286100367%_)))
+                                    (_%$%tl100288100374%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100286100367%_))))
+                                (if (gx#stx-pair? _%$%tl100288100374%_)
+                                    (let ((_%$%e100289100377%_
+                                           (gx#syntax-e _%$%tl100288100374%_)))
+                                      (let ((_%$%hd100290100381%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100289100377%_)))
+                                            (_%$%tl100291100384%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100289100377%_))))
+                                        (if (gx#stx-pair? _%$%tl100291100384%_)
+                                            (let ((_%$%e100292100387%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100291100384%_)))
+                                              (let ((_%$%hd100293100391%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100292100387%_)))
+                                                    (_%$%tl100294100394%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100292100387%_))))
+                                                (if (gx#stx-null?
+                                                     _%$%tl100294100394%_)
+                                                    ((lambda (_%$%g100260100397%_
+                                                              _%$%g100261100399%_
+                                                              _%$%g100262100400%_
+                                                              _%$%g100263100401%_
+                                                              _%$%g100264100402%_
+                                                              _%$%g100265100403%_
+                                                              _%$%g100266100404%_
+                                                              _%$%g100267100405%_)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'let*)
+                                                             (cons (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                        '#f
+                                        'h)
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'fxxor)
+                                                   (cons (cons _%$%g100265100403%_
+                                                               (cons _%$%g100263100401%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             '()))
+                 (cons _%$%g100266100404%_ '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             '()))
+                                 (cons (cons (gx#datum->syntax '#f 'size)
+                                             (cons (cons (gx#datum->syntax
+                                                          '#f
+                                                          'vector-length)
+                                                         (cons _%$%g100267100405%_
+                                                               '()))
+                                                   '()))
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'entries)
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'fxquotient)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'size)
+                             (cons '2 '())))
+                 '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             (cons (cons (gx#datum->syntax
+                                                          '#f
+                                                          'start)
+                                                         (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'fxarithmetic-shift-left)
+                             (cons (cons (gx#datum->syntax '#f 'fxmodulo)
+                                         (cons (gx#datum->syntax '#f 'h)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'entries)
+                                                     '())))
+                                   (cons '1 '())))
+                       '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   '()))))
+                           (cons (cons (gx#datum->syntax '#f 'let)
+                                       (cons (gx#datum->syntax '#f 'loop)
+                                             (cons (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'probe)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'start)
+                             '()))
+                 (cons (cons (gx#datum->syntax '#f 'i) (cons '1 '()))
+                       (cons (cons (gx#datum->syntax '#f 'deleted)
+                                   (cons '#f '()))
+                             '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'let)
+                                                               (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                    '#f
+                                    'k)
+                                   (cons (cons (gx#datum->syntax
+                                                '#f
+                                                'vector-ref)
+                                               (cons _%$%g100267100405%_
+                                                     (cons (gx#datum->syntax
+                                                            '#f
+                                                            'probe)
+                                                           '())))
+                                         '()))
+                             (cons (cons (gx#datum->syntax '#f 'cond)
+                                         (cons (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'eq?)
+                                                           (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'k)
+                         (cons (cons (gx#datum->syntax '#f 'macro-unused-obj)
+                                     '())
+                               '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'if)
+                         (cons (gx#datum->syntax '#f 'deleted)
+                               (cons (cons (gx#datum->syntax '#f 'begin)
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'vector-set!)
+                                                       (cons _%$%g100267100405%_
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'deleted)
+                           (cons _%$%g100263100401%_ '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'vector-set!)
+                                                             (cons _%$%g100267100405%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (cons (gx#datum->syntax '#f 'fx+)
+                                       (cons (gx#datum->syntax '#f 'deleted)
+                                             (cons '1 '())))
+                                 (cons _%$%g100262100400%_ '()))))
+               (cons (cons _%$%g100260100397%_ '()) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     (cons (cons (gx#datum->syntax '#f 'begin)
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'vector-set!)
+                                                             (cons _%$%g100267100405%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (gx#datum->syntax '#f 'probe)
+                                 (cons _%$%g100263100401%_ '()))))
+               (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                           (cons _%$%g100267100405%_
+                                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                                             (cons (gx#datum->syntax
+                                                    '#f
+                                                    'probe)
+                                                   (cons '1 '())))
+                                       (cons _%$%g100262100400%_ '()))))
+                     (cons (cons _%$%g100261100399%_ '()) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           '()))))
+                   '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (cons (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'eq?)
+                         (cons (gx#datum->syntax '#f 'k)
+                               (cons (cons (gx#datum->syntax
+                                            '#f
+                                            'macro-deleted-obj)
+                                           '())
+                                     '())))
+                   (cons (cons (gx#datum->syntax '#f 'loop)
+                               (cons (cons (gx#datum->syntax '#f 'probe-step)
+                                           (cons (gx#datum->syntax '#f 'start)
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        'i)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'size)
+                                                             '()))))
+                                     (cons (cons (gx#datum->syntax '#f 'fx+)
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        'i)
+                                                       (cons '1 '())))
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'or)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'deleted)
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'probe)
+                           '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '()))))
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons (cons (cons _%$%g100264100402%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               (cons _%$%g100263100401%_
+                                     (cons (gx#datum->syntax '#f 'k) '())))
+                         (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                                     (cons _%$%g100267100405%_
+                                           (cons (gx#datum->syntax '#f 'probe)
+                                                 (cons _%$%g100263100401%_
+                                                       '()))))
+                               (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                                           (cons _%$%g100267100405%_
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'fx+)
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'probe)
+                           (cons '1 '())))
+               (cons _%$%g100262100400%_ '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     '())))
+                   (cons (cons (gx#datum->syntax '#f 'else)
+                               (cons (cons (gx#datum->syntax '#f 'loop)
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'probe-step)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'start)
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'i)
+                           (cons (gx#datum->syntax '#f 'size) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'fx+)
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'i)
+                           (cons '1 '())))
+               (cons (gx#datum->syntax '#f 'deleted) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     '()))
+                         '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                   '())))
+                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     _%$%hd100293100391%_
+                                                     _%$%hd100290100381%_
+                                                     _%$%hd100287100371%_
+                                                     _%$%hd100284100361%_
+                                                     _%$%hd100281100351%_
+                                                     _%$%hd100278100341%_
+                                                     _%$%hd100275100331%_
+                                                     _%$%hd100272100321%_)
+                                                    (_%$%g100258100300%_
+                                                     _%$%g100259100304%_))))
+                                            (_%$%g100258100300%_
+                                             _%$%g100259100304%_))))
+                                    (_%$%g100258100300%_
+                                     _%$%g100259100304%_))))
+                            (_%$%g100258100300%_ _%$%g100259100304%_))))
+                    (_%$%g100258100300%_ _%$%g100259100304%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%$%g100258100300%_
+                                                     _%$%g100259100304%_))))
+                                            (_%$%g100258100300%_
+                                             _%$%g100259100304%_))))
+                                    (_%$%g100258100300%_
+                                     _%$%g100259100304%_))))
+                            (_%$%g100258100300%_ _%$%g100259100304%_))))
+                    (_%$%g100258100300%_ _%$%g100259100304%_)))))
+        (_%$%g100257100439%_ _%$stx100254%_))))
+  (define |[:0:]#__table-update!|
+    (lambda (_%$stx100443%_)
+      (let* ((_%$%g100447100493%_
+              (lambda (_%$%g100448100489%_)
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _%$%g100448100489%_)))
+             (_%$%g100446100646%_
+              (lambda (_%$%g100448100497%_)
+                (if (gx#stx-pair? _%$%g100448100497%_)
+                    (let ((_%$%e100458100500%_
+                           (gx#syntax-e _%$%g100448100497%_)))
+                      (let ((_%$%hd100459100504%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100458100500%_)))
+                            (_%$%tl100460100507%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100458100500%_))))
+                        (if (gx#stx-pair? _%$%tl100460100507%_)
+                            (let ((_%$%e100461100510%_
+                                   (gx#syntax-e _%$%tl100460100507%_)))
+                              (let ((_%$%hd100462100514%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100461100510%_)))
+                                    (_%$%tl100463100517%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100461100510%_))))
+                                (if (gx#stx-pair? _%$%tl100463100517%_)
+                                    (let ((_%$%e100464100520%_
+                                           (gx#syntax-e _%$%tl100463100517%_)))
+                                      (let ((_%$%hd100465100524%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100464100520%_)))
+                                            (_%$%tl100466100527%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100464100520%_))))
+                                        (if (gx#stx-pair? _%$%tl100466100527%_)
+                                            (let ((_%$%e100467100530%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100466100527%_)))
+                                              (let ((_%$%hd100468100534%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100467100530%_)))
+                                                    (_%$%tl100469100537%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100467100530%_))))
+                                                (if (gx#stx-pair?
+                                                     _%$%tl100469100537%_)
+                                                    (let ((_%$%e100470100540%_
+                                                           (gx#syntax-e
+                                                            _%$%tl100469100537%_)))
+                                                      (let ((_%$%hd100471100544%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%$%e100470100540%_)))
+                    (_%$%tl100472100547%_
+                     (let ()
+                       (declare (not safe))
+                       (##cdr _%$%e100470100540%_))))
+                (if (gx#stx-pair? _%$%tl100472100547%_)
+                    (let ((_%$%e100473100550%_
+                           (gx#syntax-e _%$%tl100472100547%_)))
+                      (let ((_%$%hd100474100554%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100473100550%_)))
+                            (_%$%tl100475100557%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100473100550%_))))
+                        (if (gx#stx-pair? _%$%tl100475100557%_)
+                            (let ((_%$%e100476100560%_
+                                   (gx#syntax-e _%$%tl100475100557%_)))
+                              (let ((_%$%hd100477100564%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100476100560%_)))
+                                    (_%$%tl100478100567%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100476100560%_))))
+                                (if (gx#stx-pair? _%$%tl100478100567%_)
+                                    (let ((_%$%e100479100570%_
+                                           (gx#syntax-e _%$%tl100478100567%_)))
+                                      (let ((_%$%hd100480100574%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100479100570%_)))
+                                            (_%$%tl100481100577%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100479100570%_))))
+                                        (if (gx#stx-pair? _%$%tl100481100577%_)
+                                            (let ((_%$%e100482100580%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100481100577%_)))
+                                              (let ((_%$%hd100483100584%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100482100580%_)))
+                                                    (_%$%tl100484100587%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100482100580%_))))
+                                                (if (gx#stx-pair?
+                                                     _%$%tl100484100587%_)
+                                                    (let ((_%$%e100485100590%_
+                                                           (gx#syntax-e
+                                                            _%$%tl100484100587%_)))
+                                                      (let ((_%$%hd100486100594%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%$%e100485100590%_)))
+                    (_%$%tl100487100597%_
+                     (let ()
+                       (declare (not safe))
+                       (##cdr _%$%e100485100590%_))))
+                (if (gx#stx-null? _%$%tl100487100597%_)
+                    ((lambda (_%$%g100449100600%_
+                              _%$%g100450100602%_
+                              _%$%g100451100603%_
+                              _%$%g100452100604%_
+                              _%$%g100453100605%_
+                              _%$%g100454100606%_
+                              _%$%g100455100607%_
+                              _%$%g100456100608%_
+                              _%$%g100457100609%_)
+                       (cons (gx#datum->syntax '#f 'let*)
+                             (cons (cons (cons (gx#datum->syntax '#f 'h)
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'fxxor)
+                                                           (cons (cons _%$%g100455100607%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               (cons _%$%g100453100605%_ '()))
+                         (cons _%$%g100456100608%_ '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     '()))
+                                         (cons (cons (gx#datum->syntax
+                                                      '#f
+                                                      'size)
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'vector-length)
+                         (cons _%$%g100457100609%_ '()))
+                   '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'entries)
+                                                           (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                '#f
+                                'fxquotient)
+                               (cons (gx#datum->syntax '#f 'size)
+                                     (cons '2 '())))
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'start)
+                         (cons (cons (gx#datum->syntax
+                                      '#f
+                                      'fxarithmetic-shift-left)
+                                     (cons (cons (gx#datum->syntax
+                                                  '#f
+                                                  'fxmodulo)
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        'h)
+                                                       (cons (gx#datum->syntax
+                                                              '#f
+                                                              'entries)
+                                                             '())))
+                                           (cons '1 '())))
+                               '()))
+                   '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                   (cons (cons (gx#datum->syntax '#f 'let)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'loop)
+                                                     (cons (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                '#f
+                                'probe)
+                               (cons (gx#datum->syntax '#f 'start) '()))
+                         (cons (cons (gx#datum->syntax '#f 'i) (cons '1 '()))
+                               (cons (cons (gx#datum->syntax '#f 'deleted)
+                                           (cons '#f '()))
+                                     '())))
+                   (cons (cons (gx#datum->syntax '#f 'let)
+                               (cons (cons (gx#datum->syntax '#f 'k)
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'vector-ref)
+                                                       (cons _%$%g100457100609%_
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'probe)
+                           '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '()))
+                                     (cons (cons (gx#datum->syntax '#f 'cond)
+                                                 (cons (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'eq?)
+                           (cons (gx#datum->syntax '#f 'k)
+                                 (cons (cons (gx#datum->syntax
+                                              '#f
+                                              'macro-unused-obj)
+                                             '())
+                                       '())))
+                     (cons (cons (gx#datum->syntax '#f 'if)
+                                 (cons (gx#datum->syntax '#f 'deleted)
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'begin)
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'vector-set!)
+                                                               (cons _%$%g100457100609%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             (cons (gx#datum->syntax '#f 'deleted)
+                                   (cons _%$%g100453100605%_ '()))))
+                 (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                             (cons _%$%g100457100609%_
+                                   (cons (cons (gx#datum->syntax '#f 'fx+)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'deleted)
+                                                     (cons '1 '())))
+                                         (cons (cons _%$%g100452100604%_
+                                                     (cons _%$%g100451100603%_
+                                                           '()))
+                                               '()))))
+                       (cons (cons _%$%g100449100600%_ '()) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             (cons (cons (gx#datum->syntax
+                                                          '#f
+                                                          'begin)
+                                                         (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'vector-set!)
+                             (cons _%$%g100457100609%_
+                                   (cons (gx#datum->syntax '#f 'probe)
+                                         (cons _%$%g100453100605%_ '()))))
+                       (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                                   (cons _%$%g100457100609%_
+                                         (cons (cons (gx#datum->syntax
+                                                      '#f
+                                                      'fx+)
+                                                     (cons (gx#datum->syntax
+                                                            '#f
+                                                            'probe)
+                                                           (cons '1 '())))
+                                               (cons (cons _%$%g100452100604%_
+                                                           (cons _%$%g100451100603%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     '()))))
+                             (cons (cons _%$%g100450100602%_ '()) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   '()))))
+                           '()))
+               (cons (cons (cons (gx#datum->syntax '#f 'eq?)
+                                 (cons (gx#datum->syntax '#f 'k)
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'macro-deleted-obj)
+                                                   '())
+                                             '())))
+                           (cons (cons (gx#datum->syntax '#f 'loop)
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'probe-step)
+                                                   (cons (gx#datum->syntax
+                                                          '#f
+                                                          'start)
+                                                         (cons (gx#datum->syntax
+                                                                '#f
+                                                                'i)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'size)
+                             '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             (cons (cons (gx#datum->syntax
+                                                          '#f
+                                                          'fx+)
+                                                         (cons (gx#datum->syntax
+                                                                '#f
+                                                                'i)
+                                                               (cons '1 '())))
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'or)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'deleted)
+                             (cons (gx#datum->syntax '#f 'probe) '())))
+                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                 '()))
+                     (cons (cons (cons _%$%g100454100606%_
+                                       (cons _%$%g100453100605%_
+                                             (cons (gx#datum->syntax '#f 'k)
+                                                   '())))
+                                 (cons (cons (gx#datum->syntax
+                                              '#f
+                                              'vector-set!)
+                                             (cons _%$%g100457100609%_
+                                                   (cons (gx#datum->syntax
+                                                          '#f
+                                                          'probe)
+                                                         (cons _%$%g100453100605%_
+                                                               '()))))
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'vector-set!)
+                                                   (cons _%$%g100457100609%_
+                                                         (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'fx+)
+                             (cons (gx#datum->syntax '#f 'probe)
+                                   (cons '1 '())))
+                       (cons (cons _%$%g100452100604%_
+                                   (cons (cons (gx#datum->syntax
+                                                '#f
+                                                'vector-ref)
+                                               (cons _%$%g100457100609%_
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'fx+)
+                         (cons (gx#datum->syntax '#f 'probe) (cons '1 '())))
+                   '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         '()))
+                             '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             '())))
+                           (cons (cons (gx#datum->syntax '#f 'else)
+                                       (cons (cons (gx#datum->syntax '#f 'loop)
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'probe-step)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'start)
+                             (cons (gx#datum->syntax '#f 'i)
+                                   (cons (gx#datum->syntax '#f 'size) '()))))
+                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                             (cons (gx#datum->syntax '#f 'i) (cons '1 '())))
+                       (cons (gx#datum->syntax '#f 'deleted) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             '()))
+                                 '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           '())))
+                         '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         '()))))
+                     _%$%hd100486100594%_
+                     _%$%hd100483100584%_
+                     _%$%hd100480100574%_
+                     _%$%hd100477100564%_
+                     _%$%hd100474100554%_
+                     _%$%hd100471100544%_
+                     _%$%hd100468100534%_
+                     _%$%hd100465100524%_
+                     _%$%hd100462100514%_)
+                    (_%$%g100447100493%_ _%$%g100448100497%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%$%g100447100493%_
+                                                     _%$%g100448100497%_))))
+                                            (_%$%g100447100493%_
+                                             _%$%g100448100497%_))))
+                                    (_%$%g100447100493%_
+                                     _%$%g100448100497%_))))
+                            (_%$%g100447100493%_ _%$%g100448100497%_))))
+                    (_%$%g100447100493%_ _%$%g100448100497%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%$%g100447100493%_
+                                                     _%$%g100448100497%_))))
+                                            (_%$%g100447100493%_
+                                             _%$%g100448100497%_))))
+                                    (_%$%g100447100493%_
+                                     _%$%g100448100497%_))))
+                            (_%$%g100447100493%_ _%$%g100448100497%_))))
+                    (_%$%g100447100493%_ _%$%g100448100497%_)))))
+        (_%$%g100446100646%_ _%$stx100443%_))))
+  (define |[:0:]#__table-del!|
+    (lambda (_%$stx100650%_)
+      (let* ((_%$%g100654100688%_
+              (lambda (_%$%g100655100684%_)
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _%$%g100655100684%_)))
+             (_%$%g100653100799%_
+              (lambda (_%$%g100655100692%_)
+                (if (gx#stx-pair? _%$%g100655100692%_)
+                    (let ((_%$%e100662100695%_
+                           (gx#syntax-e _%$%g100655100692%_)))
+                      (let ((_%$%hd100663100699%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100662100695%_)))
+                            (_%$%tl100664100702%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100662100695%_))))
+                        (if (gx#stx-pair? _%$%tl100664100702%_)
+                            (let ((_%$%e100665100705%_
+                                   (gx#syntax-e _%$%tl100664100702%_)))
+                              (let ((_%$%hd100666100709%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100665100705%_)))
+                                    (_%$%tl100667100712%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100665100705%_))))
+                                (if (gx#stx-pair? _%$%tl100667100712%_)
+                                    (let ((_%$%e100668100715%_
+                                           (gx#syntax-e _%$%tl100667100712%_)))
+                                      (let ((_%$%hd100669100719%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100668100715%_)))
+                                            (_%$%tl100670100722%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100668100715%_))))
+                                        (if (gx#stx-pair? _%$%tl100670100722%_)
+                                            (let ((_%$%e100671100725%_
+                                                   (gx#syntax-e
+                                                    _%$%tl100670100722%_)))
+                                              (let ((_%$%hd100672100729%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##car _%$%e100671100725%_)))
+                                                    (_%$%tl100673100732%_
+                                                     (let ()
+                                                       (declare (not safe))
+                                                       (##cdr _%$%e100671100725%_))))
+                                                (if (gx#stx-pair?
+                                                     _%$%tl100673100732%_)
+                                                    (let ((_%$%e100674100735%_
+                                                           (gx#syntax-e
+                                                            _%$%tl100673100732%_)))
+                                                      (let ((_%$%hd100675100739%_
+                                                             (let ()
+                                                               (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (not safe))
+                       (##car _%$%e100674100735%_)))
+                    (_%$%tl100676100742%_
+                     (let ()
+                       (declare (not safe))
+                       (##cdr _%$%e100674100735%_))))
+                (if (gx#stx-pair? _%$%tl100676100742%_)
+                    (let ((_%$%e100677100745%_
+                           (gx#syntax-e _%$%tl100676100742%_)))
+                      (let ((_%$%hd100678100749%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100677100745%_)))
+                            (_%$%tl100679100752%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100677100745%_))))
+                        (if (gx#stx-pair? _%$%tl100679100752%_)
+                            (let ((_%$%e100680100755%_
+                                   (gx#syntax-e _%$%tl100679100752%_)))
+                              (let ((_%$%hd100681100759%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100680100755%_)))
+                                    (_%$%tl100682100762%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100680100755%_))))
+                                (if (gx#stx-null? _%$%tl100682100762%_)
+                                    ((lambda (_%$%g100656100765%_
+                                              _%$%g100657100767%_
+                                              _%$%g100658100768%_
+                                              _%$%g100659100769%_
+                                              _%$%g100660100770%_
+                                              _%$%g100661100771%_)
+                                       (cons (gx#datum->syntax '#f 'let*)
+                                             (cons (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'h)
+                                                               (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                    '#f
+                                    'fxxor)
+                                   (cons (cons _%$%g100659100769%_
+                                               (cons _%$%g100657100767%_ '()))
+                                         (cons _%$%g100660100770%_ '())))
+                             '()))
+                 (cons (cons (gx#datum->syntax '#f 'size)
+                             (cons (cons (gx#datum->syntax '#f 'vector-length)
+                                         (cons _%$%g100661100771%_ '()))
+                                   '()))
+                       (cons (cons (gx#datum->syntax '#f 'entries)
+                                   (cons (cons (gx#datum->syntax
+                                                '#f
+                                                'fxquotient)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'size)
+                                                     (cons '2 '())))
+                                         '()))
+                             (cons (cons (gx#datum->syntax '#f 'start)
+                                         (cons (cons (gx#datum->syntax
+                                                      '#f
+                                                      'fxarithmetic-shift-left)
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'fxmodulo)
+                         (cons (gx#datum->syntax '#f 'h)
+                               (cons (gx#datum->syntax '#f 'entries) '())))
+                   (cons '1 '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               '()))
+                                   '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (cons (cons (gx#datum->syntax
+                                                                '#f
+                                                                'let)
+                                                               (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              '#f
+                              'loop)
+                             (cons (cons (cons (gx#datum->syntax '#f 'probe)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      'start)
+                                                     '()))
+                                         (cons (cons (gx#datum->syntax '#f 'i)
+                                                     (cons '1 '()))
+                                               '()))
+                                   (cons (cons (gx#datum->syntax '#f 'let)
+                                               (cons (cons (gx#datum->syntax
+                                                            '#f
+                                                            'k)
+                                                           (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                '#f
+                                'vector-ref)
+                               (cons _%$%g100661100771%_
+                                     (cons (gx#datum->syntax '#f 'probe) '())))
+                         '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          'cond)
+                         (cons (cons (cons (gx#datum->syntax '#f 'eq?)
+                                           (cons (gx#datum->syntax '#f 'k)
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'macro-unused-obj)
+                                                             '())
+                                                       '())))
+                                     (cons (cons (gx#datum->syntax '#f 'void)
+                                                 '())
+                                           '()))
+                               (cons (cons (cons (gx#datum->syntax '#f 'eq?)
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        'k)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'macro-deleted-obj)
+                           '())
+                     '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'loop)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'probe-step)
+                           (cons (gx#datum->syntax '#f 'start)
+                                 (cons (gx#datum->syntax '#f 'i)
+                                       (cons (gx#datum->syntax '#f 'size)
+                                             '()))))
+                     (cons (cons (gx#datum->syntax '#f 'fx+)
+                                 (cons (gx#datum->syntax '#f 'i)
+                                       (cons '1 '())))
+                           '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '()))
+                                     (cons (cons (cons _%$%g100658100768%_
+                                                       (cons _%$%g100657100767%_
+                                                             (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'k)
+                           '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (cons (cons (gx#datum->syntax
+                                                              '#f
+                                                              'vector-set!)
+                                                             (cons _%$%g100661100771%_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons (gx#datum->syntax '#f 'probe)
+                                 (cons (cons (gx#datum->syntax
+                                              '#f
+                                              'macro-deleted-obj)
+                                             '())
+                                       '()))))
+               (cons (cons (gx#datum->syntax '#f 'vector-set!)
+                           (cons _%$%g100661100771%_
+                                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                                             (cons (gx#datum->syntax
+                                                    '#f
+                                                    'probe)
+                                                   (cons '1 '())))
+                                       (cons (cons (gx#datum->syntax
+                                                    '#f
+                                                    'macro-absent-obj)
+                                                   '())
+                                             '()))))
+                     (cons (cons _%$%g100656100765%_ '()) '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (cons (cons (gx#datum->syntax
+                                                        '#f
+                                                        'else)
+                                                       (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            '#f
+                            'loop)
+                           (cons (cons (gx#datum->syntax '#f 'probe-step)
+                                       (cons (gx#datum->syntax '#f 'start)
+                                             (cons (gx#datum->syntax '#f 'i)
+                                                   (cons (gx#datum->syntax
+                                                          '#f
+                                                          'size)
+                                                         '()))))
+                                 (cons (cons (gx#datum->syntax '#f 'fx+)
+                                             (cons (gx#datum->syntax '#f 'i)
+                                                   (cons '1 '())))
+                                       '())))
+                     '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 '())))))
+                   '())))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                         '()))))
+                 '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     _%$%hd100681100759%_
+                                     _%$%hd100678100749%_
+                                     _%$%hd100675100739%_
+                                     _%$%hd100672100729%_
+                                     _%$%hd100669100719%_
+                                     _%$%hd100666100709%_)
+                                    (_%$%g100654100688%_
+                                     _%$%g100655100692%_))))
+                            (_%$%g100654100688%_ _%$%g100655100692%_))))
+                    (_%$%g100654100688%_ _%$%g100655100692%_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_%$%g100654100688%_
+                                                     _%$%g100655100692%_))))
+                                            (_%$%g100654100688%_
+                                             _%$%g100655100692%_))))
+                                    (_%$%g100654100688%_
+                                     _%$%g100655100692%_))))
+                            (_%$%g100654100688%_ _%$%g100655100692%_))))
+                    (_%$%g100654100688%_ _%$%g100655100692%_)))))
+        (_%$%g100653100799%_ _%$stx100650%_))))
+  (define |[:0:]#do-gc-table-lock|
+    (lambda (_%$stx100803%_)
+      (let* ((_%$%g100807100825%_
+              (lambda (_%$%g100808100821%_)
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _%$%g100808100821%_)))
+             (_%$%g100806100880%_
+              (lambda (_%$%g100808100829%_)
+                (if (gx#stx-pair? _%$%g100808100829%_)
+                    (let ((_%$%e100811100832%_
+                           (gx#syntax-e _%$%g100808100829%_)))
+                      (let ((_%$%hd100812100836%_
+                             (let ()
+                               (declare (not safe))
+                               (##car _%$%e100811100832%_)))
+                            (_%$%tl100813100839%_
+                             (let ()
+                               (declare (not safe))
+                               (##cdr _%$%e100811100832%_))))
+                        (if (gx#stx-pair? _%$%tl100813100839%_)
+                            (let ((_%$%e100814100842%_
+                                   (gx#syntax-e _%$%tl100813100839%_)))
+                              (let ((_%$%hd100815100846%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##car _%$%e100814100842%_)))
+                                    (_%$%tl100816100849%_
+                                     (let ()
+                                       (declare (not safe))
+                                       (##cdr _%$%e100814100842%_))))
+                                (if (gx#stx-pair? _%$%tl100816100849%_)
+                                    (let ((_%$%e100817100852%_
+                                           (gx#syntax-e _%$%tl100816100849%_)))
+                                      (let ((_%$%hd100818100856%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##car _%$%e100817100852%_)))
+                                            (_%$%tl100819100859%_
+                                             (let ()
+                                               (declare (not safe))
+                                               (##cdr _%$%e100817100852%_))))
+                                        (if (gx#stx-null? _%$%tl100819100859%_)
+                                            ((lambda (_%$%g100809100862%_
+                                                      _%$%g100810100864%_)
+                                               (cons (gx#datum->syntax
+                                                      '#f
+                                                      '__do-inline-lock!)
+                                                     (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          '#f
+                          '&gc-table-lock)
+                         (cons _%$%g100810100864%_ '()))
+                   (cons _%$%g100809100862%_ '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                             _%$%hd100818100856%_
+                                             _%$%hd100815100846%_)
+                                            (_%$%g100807100825%_
+                                             _%$%g100808100829%_))))
+                                    (_%$%g100807100825%_
+                                     _%$%g100808100829%_))))
+                            (_%$%g100807100825%_ _%$%g100808100829%_))))
+                    (_%$%g100807100825%_ _%$%g100808100829%_)))))
+        (_%$%g100806100880%_ _%$stx100803%_)))))

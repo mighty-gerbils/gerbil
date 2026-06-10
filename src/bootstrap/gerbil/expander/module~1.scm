@@ -1,839 +1,839 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gx[1]#_g187881_|
+  (define |gx[1]#_g165274_|
     (##structure
      gx#syntax-quote::t
      'module-import::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187883_|
+  (define |gx[1]#_g165275_|
     (##structure
      gx#syntax-quote::t
      'make-module-import
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187885_|
+  (define |gx[1]#_g165276_|
     (##structure
      gx#syntax-quote::t
      'module-import?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187887_|
+  (define |gx[1]#_g165277_|
     (##structure
      gx#syntax-quote::t
      'module-import-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187888_|
+  (define |gx[1]#_g165278_|
     (##structure
      gx#syntax-quote::t
      'module-import-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187889_|
+  (define |gx[1]#_g165279_|
     (##structure
      gx#syntax-quote::t
      'module-import-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187890_|
+  (define |gx[1]#_g165280_|
     (##structure
      gx#syntax-quote::t
      'module-import-weak?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187892_|
+  (define |gx[1]#_g165281_|
     (##structure
      gx#syntax-quote::t
      'module-import-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187893_|
+  (define |gx[1]#_g165282_|
     (##structure
      gx#syntax-quote::t
      'module-import-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187894_|
+  (define |gx[1]#_g165283_|
     (##structure
      gx#syntax-quote::t
      'module-import-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187895_|
+  (define |gx[1]#_g165284_|
     (##structure
      gx#syntax-quote::t
      'module-import-weak?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187897_|
+  (define |gx[1]#_g165285_|
     (##structure
      gx#syntax-quote::t
      '&module-import-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187898_|
+  (define |gx[1]#_g165286_|
     (##structure
      gx#syntax-quote::t
      '&module-import-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187899_|
+  (define |gx[1]#_g165287_|
     (##structure
      gx#syntax-quote::t
      '&module-import-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187900_|
+  (define |gx[1]#_g165288_|
     (##structure
      gx#syntax-quote::t
      '&module-import-weak?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187902_|
+  (define |gx[1]#_g165289_|
     (##structure
      gx#syntax-quote::t
      '&module-import-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187903_|
+  (define |gx[1]#_g165290_|
     (##structure
      gx#syntax-quote::t
      '&module-import-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187904_|
+  (define |gx[1]#_g165291_|
     (##structure
      gx#syntax-quote::t
      '&module-import-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187905_|
+  (define |gx[1]#_g165292_|
     (##structure
      gx#syntax-quote::t
      '&module-import-weak?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187907_|
+  (define |gx[1]#_g165293_|
     (##structure
      gx#syntax-quote::t
      'module-export::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187909_|
+  (define |gx[1]#_g165294_|
     (##structure
      gx#syntax-quote::t
      'make-module-export
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187911_|
+  (define |gx[1]#_g165295_|
     (##structure
      gx#syntax-quote::t
      'module-export?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187913_|
+  (define |gx[1]#_g165296_|
     (##structure
      gx#syntax-quote::t
      'module-export-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187914_|
+  (define |gx[1]#_g165297_|
     (##structure
      gx#syntax-quote::t
      'module-export-key
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187915_|
+  (define |gx[1]#_g165298_|
     (##structure
      gx#syntax-quote::t
      'module-export-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187916_|
+  (define |gx[1]#_g165299_|
     (##structure
      gx#syntax-quote::t
      'module-export-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187917_|
+  (define |gx[1]#_g165300_|
     (##structure
      gx#syntax-quote::t
      'module-export-weak?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187919_|
+  (define |gx[1]#_g165301_|
     (##structure
      gx#syntax-quote::t
      'module-export-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187920_|
+  (define |gx[1]#_g165302_|
     (##structure
      gx#syntax-quote::t
      'module-export-key-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187921_|
+  (define |gx[1]#_g165303_|
     (##structure
      gx#syntax-quote::t
      'module-export-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187922_|
+  (define |gx[1]#_g165304_|
     (##structure
      gx#syntax-quote::t
      'module-export-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187923_|
+  (define |gx[1]#_g165305_|
     (##structure
      gx#syntax-quote::t
      'module-export-weak?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187925_|
+  (define |gx[1]#_g165306_|
     (##structure
      gx#syntax-quote::t
      '&module-export-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187926_|
+  (define |gx[1]#_g165307_|
     (##structure
      gx#syntax-quote::t
      '&module-export-key
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187927_|
+  (define |gx[1]#_g165308_|
     (##structure
      gx#syntax-quote::t
      '&module-export-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187928_|
+  (define |gx[1]#_g165309_|
     (##structure
      gx#syntax-quote::t
      '&module-export-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187929_|
+  (define |gx[1]#_g165310_|
     (##structure
      gx#syntax-quote::t
      '&module-export-weak?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187931_|
+  (define |gx[1]#_g165311_|
     (##structure
      gx#syntax-quote::t
      '&module-export-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187932_|
+  (define |gx[1]#_g165312_|
     (##structure
      gx#syntax-quote::t
      '&module-export-key-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187933_|
+  (define |gx[1]#_g165313_|
     (##structure
      gx#syntax-quote::t
      '&module-export-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187934_|
+  (define |gx[1]#_g165314_|
     (##structure
      gx#syntax-quote::t
      '&module-export-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187935_|
+  (define |gx[1]#_g165315_|
     (##structure
      gx#syntax-quote::t
      '&module-export-weak?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187937_|
+  (define |gx[1]#_g165316_|
     (##structure
      gx#syntax-quote::t
      'import-set::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187939_|
+  (define |gx[1]#_g165317_|
     (##structure
      gx#syntax-quote::t
      'make-import-set
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187941_|
+  (define |gx[1]#_g165318_|
     (##structure
      gx#syntax-quote::t
      'import-set?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187943_|
+  (define |gx[1]#_g165319_|
     (##structure
      gx#syntax-quote::t
      'import-set-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187944_|
+  (define |gx[1]#_g165320_|
     (##structure
      gx#syntax-quote::t
      'import-set-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187945_|
+  (define |gx[1]#_g165321_|
     (##structure
      gx#syntax-quote::t
      'import-set-imports
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187947_|
+  (define |gx[1]#_g165322_|
     (##structure
      gx#syntax-quote::t
      'import-set-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187948_|
+  (define |gx[1]#_g165323_|
     (##structure
      gx#syntax-quote::t
      'import-set-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187949_|
+  (define |gx[1]#_g165324_|
     (##structure
      gx#syntax-quote::t
      'import-set-imports-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187951_|
+  (define |gx[1]#_g165325_|
     (##structure
      gx#syntax-quote::t
      '&import-set-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187952_|
+  (define |gx[1]#_g165326_|
     (##structure
      gx#syntax-quote::t
      '&import-set-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187953_|
+  (define |gx[1]#_g165327_|
     (##structure
      gx#syntax-quote::t
      '&import-set-imports
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187955_|
+  (define |gx[1]#_g165328_|
     (##structure
      gx#syntax-quote::t
      '&import-set-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187956_|
+  (define |gx[1]#_g165329_|
     (##structure
      gx#syntax-quote::t
      '&import-set-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187957_|
+  (define |gx[1]#_g165330_|
     (##structure
      gx#syntax-quote::t
      '&import-set-imports-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187959_|
+  (define |gx[1]#_g165331_|
     (##structure
      gx#syntax-quote::t
      'export-set::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187961_|
+  (define |gx[1]#_g165332_|
     (##structure
      gx#syntax-quote::t
      'make-export-set
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187963_|
+  (define |gx[1]#_g165333_|
     (##structure
      gx#syntax-quote::t
      'export-set?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187965_|
+  (define |gx[1]#_g165334_|
     (##structure
      gx#syntax-quote::t
      'export-set-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187966_|
+  (define |gx[1]#_g165335_|
     (##structure
      gx#syntax-quote::t
      'export-set-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187967_|
+  (define |gx[1]#_g165336_|
     (##structure
      gx#syntax-quote::t
      'export-set-exports
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187969_|
+  (define |gx[1]#_g165337_|
     (##structure
      gx#syntax-quote::t
      'export-set-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187970_|
+  (define |gx[1]#_g165338_|
     (##structure
      gx#syntax-quote::t
      'export-set-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187971_|
+  (define |gx[1]#_g165339_|
     (##structure
      gx#syntax-quote::t
      'export-set-exports-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187973_|
+  (define |gx[1]#_g165340_|
     (##structure
      gx#syntax-quote::t
      '&export-set-source
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187974_|
+  (define |gx[1]#_g165341_|
     (##structure
      gx#syntax-quote::t
      '&export-set-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187975_|
+  (define |gx[1]#_g165342_|
     (##structure
      gx#syntax-quote::t
      '&export-set-exports
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187977_|
+  (define |gx[1]#_g165343_|
     (##structure
      gx#syntax-quote::t
      '&export-set-source-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187978_|
+  (define |gx[1]#_g165344_|
     (##structure
      gx#syntax-quote::t
      '&export-set-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187979_|
+  (define |gx[1]#_g165345_|
     (##structure
      gx#syntax-quote::t
      '&export-set-exports-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187981_|
+  (define |gx[1]#_g165346_|
     (##structure
      gx#syntax-quote::t
      'user-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187983_|
+  (define |gx[1]#_g165347_|
     (##structure
      gx#syntax-quote::t
      'import-expander::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187985_|
+  (define |gx[1]#_g165348_|
     (##structure
      gx#syntax-quote::t
      'make-import-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187987_|
+  (define |gx[1]#_g165349_|
     (##structure
      gx#syntax-quote::t
      'import-expander?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187989_|
+  (define |gx[1]#_g165350_|
     (##structure
      gx#syntax-quote::t
      'import-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187990_|
+  (define |gx[1]#_g165351_|
     (##structure
      gx#syntax-quote::t
      'import-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187991_|
+  (define |gx[1]#_g165352_|
     (##structure
      gx#syntax-quote::t
      'import-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187993_|
+  (define |gx[1]#_g165353_|
     (##structure
      gx#syntax-quote::t
      'import-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187994_|
+  (define |gx[1]#_g165354_|
     (##structure
      gx#syntax-quote::t
      'import-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187995_|
+  (define |gx[1]#_g165355_|
     (##structure
      gx#syntax-quote::t
      'import-expander-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187997_|
+  (define |gx[1]#_g165356_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187998_|
+  (define |gx[1]#_g165357_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g187999_|
+  (define |gx[1]#_g165358_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188001_|
+  (define |gx[1]#_g165359_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188002_|
+  (define |gx[1]#_g165360_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188003_|
+  (define |gx[1]#_g165361_|
     (##structure
      gx#syntax-quote::t
      '&import-expander-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188006_|
+  (define |gx[1]#_g165362_|
     (##structure
      gx#syntax-quote::t
      'export-expander::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188008_|
+  (define |gx[1]#_g165363_|
     (##structure
      gx#syntax-quote::t
      'make-export-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188010_|
+  (define |gx[1]#_g165364_|
     (##structure
      gx#syntax-quote::t
      'export-expander?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188012_|
+  (define |gx[1]#_g165365_|
     (##structure
      gx#syntax-quote::t
      'export-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188013_|
+  (define |gx[1]#_g165366_|
     (##structure
      gx#syntax-quote::t
      'export-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188014_|
+  (define |gx[1]#_g165367_|
     (##structure
      gx#syntax-quote::t
      'export-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188016_|
+  (define |gx[1]#_g165368_|
     (##structure
      gx#syntax-quote::t
      'export-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188017_|
+  (define |gx[1]#_g165369_|
     (##structure
      gx#syntax-quote::t
      'export-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188018_|
+  (define |gx[1]#_g165370_|
     (##structure
      gx#syntax-quote::t
      'export-expander-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188020_|
+  (define |gx[1]#_g165371_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188021_|
+  (define |gx[1]#_g165372_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188022_|
+  (define |gx[1]#_g165373_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188024_|
+  (define |gx[1]#_g165374_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188025_|
+  (define |gx[1]#_g165375_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188026_|
+  (define |gx[1]#_g165376_|
     (##structure
      gx#syntax-quote::t
      '&export-expander-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188028_|
+  (define |gx[1]#_g165377_|
     (##structure
      gx#syntax-quote::t
      'import-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188029_|
+  (define |gx[1]#_g165378_|
     (##structure
      gx#syntax-quote::t
      'export-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188031_|
+  (define |gx[1]#_g165379_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188033_|
+  (define |gx[1]#_g165380_|
     (##structure
      gx#syntax-quote::t
      'make-import-export-expander
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188035_|
+  (define |gx[1]#_g165381_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188037_|
+  (define |gx[1]#_g165382_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188038_|
+  (define |gx[1]#_g165383_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188039_|
+  (define |gx[1]#_g165384_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188041_|
+  (define |gx[1]#_g165385_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188042_|
+  (define |gx[1]#_g165386_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188043_|
+  (define |gx[1]#_g165387_|
     (##structure
      gx#syntax-quote::t
      'import-export-expander-e-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188045_|
+  (define |gx[1]#_g165388_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188046_|
+  (define |gx[1]#_g165389_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188047_|
+  (define |gx[1]#_g165390_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-e
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188049_|
+  (define |gx[1]#_g165391_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188050_|
+  (define |gx[1]#_g165392_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g188051_|
+  (define |gx[1]#_g165393_|
     (##structure
      gx#syntax-quote::t
      '&import-export-expander-e-set!
@@ -842,796 +842,350 @@
      '()))
   (begin
     (define |gx[:0:]#module-import|
-      (let ((__obj187834
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187834
-           'gx#module-import::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 'module-import '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187834
-           '(source name phi weak?)
-           '6
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187834
-           '(source name phi weak?)
-           '8
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '() '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '#t '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '#t '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '#f '13 '#f '#f))
-        (let ((__tmp187880 |gx[1]#_g187881_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187880 '4 '#f '#f))
-        (let ((__tmp187882 |gx[1]#_g187883_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187882 '14 '#f '#f))
-        (let ((__tmp187884 |gx[1]#_g187885_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187884 '15 '#f '#f))
-        (let ((__tmp187886
-               (cons (cons 'source |gx[1]#_g187887_|)
-                     (cons (cons 'name |gx[1]#_g187888_|)
-                           (cons (cons 'phi |gx[1]#_g187889_|)
-                                 (cons (cons 'weak? |gx[1]#_g187890_|)
-                                       '()))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187886 '16 '#f '#f))
-        (let ((__tmp187891
-               (cons (cons 'source |gx[1]#_g187892_|)
-                     (cons (cons 'name |gx[1]#_g187893_|)
-                           (cons (cons 'phi |gx[1]#_g187894_|)
-                                 (cons (cons 'weak? |gx[1]#_g187895_|)
-                                       '()))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187891 '17 '#f '#f))
-        (let ((__tmp187896
-               (cons (cons 'source |gx[1]#_g187897_|)
-                     (cons (cons 'name |gx[1]#_g187898_|)
-                           (cons (cons 'phi |gx[1]#_g187899_|)
-                                 (cons (cons 'weak? |gx[1]#_g187900_|)
-                                       '()))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187896 '18 '#f '#f))
-        (let ((__tmp187901
-               (cons (cons 'source |gx[1]#_g187902_|)
-                     (cons (cons 'name |gx[1]#_g187903_|)
-                           (cons (cons 'phi |gx[1]#_g187904_|)
-                                 (cons (cons 'weak? |gx[1]#_g187905_|)
-                                       '()))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 __tmp187901 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187834 '() '21 '#f '#f))
-        __obj187834))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#module-import::t
+       'name:
+       'module-import
+       'slots:
+       '(source name phi weak?)
+       'ordered-slots:
+       '(source name phi weak?)
+       'super:
+       '()
+       'struct?:
+       '#t
+       'final?:
+       '#t
+       'metaclass:
+       '#f
+       'constructor-method:
+       '#f
+       'type-descriptor:
+       |gx[1]#_g165274_|
+       'constructor:
+       |gx[1]#_g165275_|
+       'predicate:
+       |gx[1]#_g165276_|
+       'accessors:
+       (cons (cons 'source |gx[1]#_g165277_|)
+             (cons (cons 'name |gx[1]#_g165278_|)
+                   (cons (cons 'phi |gx[1]#_g165279_|)
+                         (cons (cons 'weak? |gx[1]#_g165280_|) '()))))
+       'mutators:
+       (cons (cons 'source |gx[1]#_g165281_|)
+             (cons (cons 'name |gx[1]#_g165282_|)
+                   (cons (cons 'phi |gx[1]#_g165283_|)
+                         (cons (cons 'weak? |gx[1]#_g165284_|) '()))))
+       'unchecked-accessors:
+       (cons (cons 'source |gx[1]#_g165285_|)
+             (cons (cons 'name |gx[1]#_g165286_|)
+                   (cons (cons 'phi |gx[1]#_g165287_|)
+                         (cons (cons 'weak? |gx[1]#_g165288_|) '()))))
+       'unchecked-mutators:
+       (cons (cons 'source |gx[1]#_g165289_|)
+             (cons (cons 'name |gx[1]#_g165290_|)
+                   (cons (cons 'phi |gx[1]#_g165291_|)
+                         (cons (cons 'weak? |gx[1]#_g165292_|) '()))))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#module-export|
-      (let ((__obj187835
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187835
-           'gx#module-export::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 'module-export '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187835
-           '(context key phi name weak?)
-           '6
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187835
-           '(context key phi name weak?)
-           '8
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '() '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '#t '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '#t '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '#f '13 '#f '#f))
-        (let ((__tmp187906 |gx[1]#_g187907_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187906 '4 '#f '#f))
-        (let ((__tmp187908 |gx[1]#_g187909_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187908 '14 '#f '#f))
-        (let ((__tmp187910 |gx[1]#_g187911_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187910 '15 '#f '#f))
-        (let ((__tmp187912
-               (cons (cons 'context |gx[1]#_g187913_|)
-                     (cons (cons 'key |gx[1]#_g187914_|)
-                           (cons (cons 'phi |gx[1]#_g187915_|)
-                                 (cons (cons 'name |gx[1]#_g187916_|)
-                                       (cons (cons 'weak? |gx[1]#_g187917_|)
-                                             '())))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187912 '16 '#f '#f))
-        (let ((__tmp187918
-               (cons (cons 'context |gx[1]#_g187919_|)
-                     (cons (cons 'key |gx[1]#_g187920_|)
-                           (cons (cons 'phi |gx[1]#_g187921_|)
-                                 (cons (cons 'name |gx[1]#_g187922_|)
-                                       (cons (cons 'weak? |gx[1]#_g187923_|)
-                                             '())))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187918 '17 '#f '#f))
-        (let ((__tmp187924
-               (cons (cons 'context |gx[1]#_g187925_|)
-                     (cons (cons 'key |gx[1]#_g187926_|)
-                           (cons (cons 'phi |gx[1]#_g187927_|)
-                                 (cons (cons 'name |gx[1]#_g187928_|)
-                                       (cons (cons 'weak? |gx[1]#_g187929_|)
-                                             '())))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187924 '18 '#f '#f))
-        (let ((__tmp187930
-               (cons (cons 'context |gx[1]#_g187931_|)
-                     (cons (cons 'key |gx[1]#_g187932_|)
-                           (cons (cons 'phi |gx[1]#_g187933_|)
-                                 (cons (cons 'name |gx[1]#_g187934_|)
-                                       (cons (cons 'weak? |gx[1]#_g187935_|)
-                                             '())))))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 __tmp187930 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187835 '() '21 '#f '#f))
-        __obj187835))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#module-export::t
+       'name:
+       'module-export
+       'slots:
+       '(context key phi name weak?)
+       'ordered-slots:
+       '(context key phi name weak?)
+       'super:
+       '()
+       'struct?:
+       '#t
+       'final?:
+       '#t
+       'metaclass:
+       '#f
+       'constructor-method:
+       '#f
+       'type-descriptor:
+       |gx[1]#_g165293_|
+       'constructor:
+       |gx[1]#_g165294_|
+       'predicate:
+       |gx[1]#_g165295_|
+       'accessors:
+       (cons (cons 'context |gx[1]#_g165296_|)
+             (cons (cons 'key |gx[1]#_g165297_|)
+                   (cons (cons 'phi |gx[1]#_g165298_|)
+                         (cons (cons 'name |gx[1]#_g165299_|)
+                               (cons (cons 'weak? |gx[1]#_g165300_|) '())))))
+       'mutators:
+       (cons (cons 'context |gx[1]#_g165301_|)
+             (cons (cons 'key |gx[1]#_g165302_|)
+                   (cons (cons 'phi |gx[1]#_g165303_|)
+                         (cons (cons 'name |gx[1]#_g165304_|)
+                               (cons (cons 'weak? |gx[1]#_g165305_|) '())))))
+       'unchecked-accessors:
+       (cons (cons 'context |gx[1]#_g165306_|)
+             (cons (cons 'key |gx[1]#_g165307_|)
+                   (cons (cons 'phi |gx[1]#_g165308_|)
+                         (cons (cons 'name |gx[1]#_g165309_|)
+                               (cons (cons 'weak? |gx[1]#_g165310_|) '())))))
+       'unchecked-mutators:
+       (cons (cons 'context |gx[1]#_g165311_|)
+             (cons (cons 'key |gx[1]#_g165312_|)
+                   (cons (cons 'phi |gx[1]#_g165313_|)
+                         (cons (cons 'name |gx[1]#_g165314_|)
+                               (cons (cons 'weak? |gx[1]#_g165315_|) '())))))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#import-set|
-      (let ((__obj187836
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187836
-           'gx#import-set::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 'import-set '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187836
-           '(source phi imports)
-           '6
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187836
-           '(source phi imports)
-           '8
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '() '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '#t '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '#t '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '#f '13 '#f '#f))
-        (let ((__tmp187936 |gx[1]#_g187937_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187936 '4 '#f '#f))
-        (let ((__tmp187938 |gx[1]#_g187939_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187938 '14 '#f '#f))
-        (let ((__tmp187940 |gx[1]#_g187941_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187940 '15 '#f '#f))
-        (let ((__tmp187942
-               (cons (cons 'source |gx[1]#_g187943_|)
-                     (cons (cons 'phi |gx[1]#_g187944_|)
-                           (cons (cons 'imports |gx[1]#_g187945_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187942 '16 '#f '#f))
-        (let ((__tmp187946
-               (cons (cons 'source |gx[1]#_g187947_|)
-                     (cons (cons 'phi |gx[1]#_g187948_|)
-                           (cons (cons 'imports |gx[1]#_g187949_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187946 '17 '#f '#f))
-        (let ((__tmp187950
-               (cons (cons 'source |gx[1]#_g187951_|)
-                     (cons (cons 'phi |gx[1]#_g187952_|)
-                           (cons (cons 'imports |gx[1]#_g187953_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187950 '18 '#f '#f))
-        (let ((__tmp187954
-               (cons (cons 'source |gx[1]#_g187955_|)
-                     (cons (cons 'phi |gx[1]#_g187956_|)
-                           (cons (cons 'imports |gx[1]#_g187957_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 __tmp187954 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187836 '() '21 '#f '#f))
-        __obj187836))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#import-set::t
+       'name:
+       'import-set
+       'slots:
+       '(source phi imports)
+       'ordered-slots:
+       '(source phi imports)
+       'super:
+       '()
+       'struct?:
+       '#t
+       'final?:
+       '#t
+       'metaclass:
+       '#f
+       'constructor-method:
+       '#f
+       'type-descriptor:
+       |gx[1]#_g165316_|
+       'constructor:
+       |gx[1]#_g165317_|
+       'predicate:
+       |gx[1]#_g165318_|
+       'accessors:
+       (cons (cons 'source |gx[1]#_g165319_|)
+             (cons (cons 'phi |gx[1]#_g165320_|)
+                   (cons (cons 'imports |gx[1]#_g165321_|) '())))
+       'mutators:
+       (cons (cons 'source |gx[1]#_g165322_|)
+             (cons (cons 'phi |gx[1]#_g165323_|)
+                   (cons (cons 'imports |gx[1]#_g165324_|) '())))
+       'unchecked-accessors:
+       (cons (cons 'source |gx[1]#_g165325_|)
+             (cons (cons 'phi |gx[1]#_g165326_|)
+                   (cons (cons 'imports |gx[1]#_g165327_|) '())))
+       'unchecked-mutators:
+       (cons (cons 'source |gx[1]#_g165328_|)
+             (cons (cons 'phi |gx[1]#_g165329_|)
+                   (cons (cons 'imports |gx[1]#_g165330_|) '())))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#export-set|
-      (let ((__obj187837
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187837
-           'gx#export-set::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 'export-set '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187837
-           '(source phi exports)
-           '6
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187837
-           '(source phi exports)
-           '8
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '() '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '#t '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '#t '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '#f '13 '#f '#f))
-        (let ((__tmp187958 |gx[1]#_g187959_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187958 '4 '#f '#f))
-        (let ((__tmp187960 |gx[1]#_g187961_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187960 '14 '#f '#f))
-        (let ((__tmp187962 |gx[1]#_g187963_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187962 '15 '#f '#f))
-        (let ((__tmp187964
-               (cons (cons 'source |gx[1]#_g187965_|)
-                     (cons (cons 'phi |gx[1]#_g187966_|)
-                           (cons (cons 'exports |gx[1]#_g187967_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187964 '16 '#f '#f))
-        (let ((__tmp187968
-               (cons (cons 'source |gx[1]#_g187969_|)
-                     (cons (cons 'phi |gx[1]#_g187970_|)
-                           (cons (cons 'exports |gx[1]#_g187971_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187968 '17 '#f '#f))
-        (let ((__tmp187972
-               (cons (cons 'source |gx[1]#_g187973_|)
-                     (cons (cons 'phi |gx[1]#_g187974_|)
-                           (cons (cons 'exports |gx[1]#_g187975_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187972 '18 '#f '#f))
-        (let ((__tmp187976
-               (cons (cons 'source |gx[1]#_g187977_|)
-                     (cons (cons 'phi |gx[1]#_g187978_|)
-                           (cons (cons 'exports |gx[1]#_g187979_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 __tmp187976 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187837 '() '21 '#f '#f))
-        __obj187837))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#export-set::t
+       'name:
+       'export-set
+       'slots:
+       '(source phi exports)
+       'ordered-slots:
+       '(source phi exports)
+       'super:
+       '()
+       'struct?:
+       '#t
+       'final?:
+       '#t
+       'metaclass:
+       '#f
+       'constructor-method:
+       '#f
+       'type-descriptor:
+       |gx[1]#_g165331_|
+       'constructor:
+       |gx[1]#_g165332_|
+       'predicate:
+       |gx[1]#_g165333_|
+       'accessors:
+       (cons (cons 'source |gx[1]#_g165334_|)
+             (cons (cons 'phi |gx[1]#_g165335_|)
+                   (cons (cons 'exports |gx[1]#_g165336_|) '())))
+       'mutators:
+       (cons (cons 'source |gx[1]#_g165337_|)
+             (cons (cons 'phi |gx[1]#_g165338_|)
+                   (cons (cons 'exports |gx[1]#_g165339_|) '())))
+       'unchecked-accessors:
+       (cons (cons 'source |gx[1]#_g165340_|)
+             (cons (cons 'phi |gx[1]#_g165341_|)
+                   (cons (cons 'exports |gx[1]#_g165342_|) '())))
+       'unchecked-mutators:
+       (cons (cons 'source |gx[1]#_g165343_|)
+             (cons (cons 'phi |gx[1]#_g165344_|)
+                   (cons (cons 'exports |gx[1]#_g165345_|) '())))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#import-expander|
-      (let ((__obj187838
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187838
-           'gx#import-expander::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 'import-expander '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '() '6 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '(e context phi) '8 '#f '#f))
-        (let ((__tmp187980 (cons |gx[1]#_g187981_| '())))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187980 '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '#f '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '#f '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 ':init! '13 '#f '#f))
-        (let ((__tmp187982 |gx[1]#_g187983_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187982 '4 '#f '#f))
-        (let ((__tmp187984 |gx[1]#_g187985_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187984 '14 '#f '#f))
-        (let ((__tmp187986 |gx[1]#_g187987_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187986 '15 '#f '#f))
-        (let ((__tmp187988
-               (cons (cons 'context |gx[1]#_g187989_|)
-                     (cons (cons 'phi |gx[1]#_g187990_|)
-                           (cons (cons 'e |gx[1]#_g187991_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187988 '16 '#f '#f))
-        (let ((__tmp187992
-               (cons (cons 'context |gx[1]#_g187993_|)
-                     (cons (cons 'phi |gx[1]#_g187994_|)
-                           (cons (cons 'e |gx[1]#_g187995_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187992 '17 '#f '#f))
-        (let ((__tmp187996
-               (cons (cons 'context |gx[1]#_g187997_|)
-                     (cons (cons 'phi |gx[1]#_g187998_|)
-                           (cons (cons 'e |gx[1]#_g187999_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp187996 '18 '#f '#f))
-        (let ((__tmp188000
-               (cons (cons 'context |gx[1]#_g188001_|)
-                     (cons (cons 'phi |gx[1]#_g188002_|)
-                           (cons (cons 'e |gx[1]#_g188003_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 __tmp188000 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187838 '() '21 '#f '#f))
-        __obj187838))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#import-expander::t
+       'name:
+       'import-expander
+       'slots:
+       '()
+       'ordered-slots:
+       '(e context phi)
+       'super:
+       (cons |gx[1]#_g165346_| '())
+       'struct?:
+       '#f
+       'final?:
+       '#f
+       'metaclass:
+       '#f
+       'constructor-method:
+       ':init!
+       'type-descriptor:
+       |gx[1]#_g165347_|
+       'constructor:
+       |gx[1]#_g165348_|
+       'predicate:
+       |gx[1]#_g165349_|
+       'accessors:
+       (cons (cons 'context |gx[1]#_g165350_|)
+             (cons (cons 'phi |gx[1]#_g165351_|)
+                   (cons (cons 'e |gx[1]#_g165352_|) '())))
+       'mutators:
+       (cons (cons 'context |gx[1]#_g165353_|)
+             (cons (cons 'phi |gx[1]#_g165354_|)
+                   (cons (cons 'e |gx[1]#_g165355_|) '())))
+       'unchecked-accessors:
+       (cons (cons 'context |gx[1]#_g165356_|)
+             (cons (cons 'phi |gx[1]#_g165357_|)
+                   (cons (cons 'e |gx[1]#_g165358_|) '())))
+       'unchecked-mutators:
+       (cons (cons 'context |gx[1]#_g165359_|)
+             (cons (cons 'phi |gx[1]#_g165360_|)
+                   (cons (cons 'e |gx[1]#_g165361_|) '())))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#export-expander|
-      (let ((__obj187839
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187839
-           'gx#export-expander::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 'export-expander '3 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '() '6 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '(e context phi) '8 '#f '#f))
-        (let ((__tmp188004 (cons |gx[1]#_g187981_| '())))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188004 '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '#f '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '#f '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 ':init! '13 '#f '#f))
-        (let ((__tmp188005 |gx[1]#_g188006_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188005 '4 '#f '#f))
-        (let ((__tmp188007 |gx[1]#_g188008_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188007 '14 '#f '#f))
-        (let ((__tmp188009 |gx[1]#_g188010_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188009 '15 '#f '#f))
-        (let ((__tmp188011
-               (cons (cons 'context |gx[1]#_g188012_|)
-                     (cons (cons 'phi |gx[1]#_g188013_|)
-                           (cons (cons 'e |gx[1]#_g188014_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188011 '16 '#f '#f))
-        (let ((__tmp188015
-               (cons (cons 'context |gx[1]#_g188016_|)
-                     (cons (cons 'phi |gx[1]#_g188017_|)
-                           (cons (cons 'e |gx[1]#_g188018_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188015 '17 '#f '#f))
-        (let ((__tmp188019
-               (cons (cons 'context |gx[1]#_g188020_|)
-                     (cons (cons 'phi |gx[1]#_g188021_|)
-                           (cons (cons 'e |gx[1]#_g188022_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188019 '18 '#f '#f))
-        (let ((__tmp188023
-               (cons (cons 'context |gx[1]#_g188024_|)
-                     (cons (cons 'phi |gx[1]#_g188025_|)
-                           (cons (cons 'e |gx[1]#_g188026_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 __tmp188023 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187839 '() '21 '#f '#f))
-        __obj187839))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#export-expander::t
+       'name:
+       'export-expander
+       'slots:
+       '()
+       'ordered-slots:
+       '(e context phi)
+       'super:
+       (cons |gx[1]#_g165346_| '())
+       'struct?:
+       '#f
+       'final?:
+       '#f
+       'metaclass:
+       '#f
+       'constructor-method:
+       ':init!
+       'type-descriptor:
+       |gx[1]#_g165362_|
+       'constructor:
+       |gx[1]#_g165363_|
+       'predicate:
+       |gx[1]#_g165364_|
+       'accessors:
+       (cons (cons 'context |gx[1]#_g165365_|)
+             (cons (cons 'phi |gx[1]#_g165366_|)
+                   (cons (cons 'e |gx[1]#_g165367_|) '())))
+       'mutators:
+       (cons (cons 'context |gx[1]#_g165368_|)
+             (cons (cons 'phi |gx[1]#_g165369_|)
+                   (cons (cons 'e |gx[1]#_g165370_|) '())))
+       'unchecked-accessors:
+       (cons (cons 'context |gx[1]#_g165371_|)
+             (cons (cons 'phi |gx[1]#_g165372_|)
+                   (cons (cons 'e |gx[1]#_g165373_|) '())))
+       'unchecked-mutators:
+       (cons (cons 'context |gx[1]#_g165374_|)
+             (cons (cons 'phi |gx[1]#_g165375_|)
+                   (cons (cons 'e |gx[1]#_g165376_|) '())))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))
     (define |gx[:0:]#import-export-expander|
-      (let ((__obj187840
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop~MOP-2#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187840
-           'gx#import-export-expander::t
-           '2
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj187840
-           'import-export-expander
-           '3
-           '#f
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '() '6 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '(e context phi) '8 '#f '#f))
-        (let ((__tmp188027
-               (cons |gx[1]#_g188028_| (cons |gx[1]#_g188029_| '()))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188027 '5 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '#f '9 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '#f '10 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '#f '12 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 ':init! '13 '#f '#f))
-        (let ((__tmp188030 |gx[1]#_g188031_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188030 '4 '#f '#f))
-        (let ((__tmp188032 |gx[1]#_g188033_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188032 '14 '#f '#f))
-        (let ((__tmp188034 |gx[1]#_g188035_|))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188034 '15 '#f '#f))
-        (let ((__tmp188036
-               (cons (cons 'context |gx[1]#_g188037_|)
-                     (cons (cons 'phi |gx[1]#_g188038_|)
-                           (cons (cons 'e |gx[1]#_g188039_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188036 '16 '#f '#f))
-        (let ((__tmp188040
-               (cons (cons 'context |gx[1]#_g188041_|)
-                     (cons (cons 'phi |gx[1]#_g188042_|)
-                           (cons (cons 'e |gx[1]#_g188043_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188040 '17 '#f '#f))
-        (let ((__tmp188044
-               (cons (cons 'context |gx[1]#_g188045_|)
-                     (cons (cons 'phi |gx[1]#_g188046_|)
-                           (cons (cons 'e |gx[1]#_g188047_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188044 '18 '#f '#f))
-        (let ((__tmp188048
-               (cons (cons 'context |gx[1]#_g188049_|)
-                     (cons (cons 'phi |gx[1]#_g188050_|)
-                           (cons (cons 'e |gx[1]#_g188051_|) '())))))
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 __tmp188048 '19 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '() '20 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '() '22 '#f '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set! __obj187840 '() '21 '#f '#f))
-        __obj187840))))
+      (gerbil/core/mop~MOP-2#make-class-type-info
+       'id:
+       'gx#import-export-expander::t
+       'name:
+       'import-export-expander
+       'slots:
+       '()
+       'ordered-slots:
+       '(e context phi)
+       'super:
+       (cons |gx[1]#_g165377_| (cons |gx[1]#_g165378_| '()))
+       'struct?:
+       '#f
+       'final?:
+       '#f
+       'metaclass:
+       '#f
+       'constructor-method:
+       ':init!
+       'type-descriptor:
+       |gx[1]#_g165379_|
+       'constructor:
+       |gx[1]#_g165380_|
+       'predicate:
+       |gx[1]#_g165381_|
+       'accessors:
+       (cons (cons 'context |gx[1]#_g165382_|)
+             (cons (cons 'phi |gx[1]#_g165383_|)
+                   (cons (cons 'e |gx[1]#_g165384_|) '())))
+       'mutators:
+       (cons (cons 'context |gx[1]#_g165385_|)
+             (cons (cons 'phi |gx[1]#_g165386_|)
+                   (cons (cons 'e |gx[1]#_g165387_|) '())))
+       'unchecked-accessors:
+       (cons (cons 'context |gx[1]#_g165388_|)
+             (cons (cons 'phi |gx[1]#_g165389_|)
+                   (cons (cons 'e |gx[1]#_g165390_|) '())))
+       'unchecked-mutators:
+       (cons (cons 'context |gx[1]#_g165391_|)
+             (cons (cons 'phi |gx[1]#_g165392_|)
+                   (cons (cons 'e |gx[1]#_g165393_|) '())))
+       'slot-types:
+       '()
+       'slot-contracts:
+       '()
+       'slot-defaults:
+       '()))))

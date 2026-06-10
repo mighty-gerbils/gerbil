@@ -185,24 +185,12 @@ namespace: gxc
          (%#define-runtime
           collect-type-lambda-formals-tail
           gxc#collect-type-lambda-formals-tail)
-         (%#begin (%#define-runtime
-                   collect-type-let-values%__%
-                   gxc#collect-type-let-values%__%)
-                  (%#begin (%#define-runtime
-                            collect-type-let-values%__0
-                            gxc#collect-type-let-values%__0)
-                           (%#define-runtime
-                            collect-type-let-values%
-                            gxc#collect-type-let-values%)))
-         (%#begin (%#define-runtime
-                   collect-type-letrec-values%__%
-                   gxc#collect-type-letrec-values%__%)
-                  (%#begin (%#define-runtime
-                            collect-type-letrec-values%__0
-                            gxc#collect-type-letrec-values%__0)
-                           (%#define-runtime
-                            collect-type-letrec-values%
-                            gxc#collect-type-letrec-values%)))
+         (%#define-runtime
+          collect-type-let-values%
+          gxc#collect-type-let-values%)
+         (%#define-runtime
+          collect-type-letrec-values%
+          gxc#collect-type-letrec-values%)
          (%#define-runtime
           collect-top-level-type-let-values%
           gxc#collect-top-level-type-let-values%)
@@ -336,15 +324,9 @@ namespace: gxc
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
          (%#define-runtime kw-lambda-expr? gxc#kw-lambda-expr?)
-         (%#begin (%#define-runtime
-                   lift-case-lambda-clauses__%
-                   gxc#lift-case-lambda-clauses__%)
-                  (%#begin (%#define-runtime
-                            lift-case-lambda-clauses__0
-                            gxc#lift-case-lambda-clauses__0)
-                           (%#define-runtime
-                            lift-case-lambda-clauses
-                            gxc#lift-case-lambda-clauses)))
+         (%#define-runtime
+          lift-case-lambda-clauses
+          gxc#lift-case-lambda-clauses)
          (%#define-runtime
           lift-top-lambda-define-values%
           gxc#lift-top-lambda-define-values%)
