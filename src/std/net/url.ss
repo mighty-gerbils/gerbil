@@ -24,14 +24,14 @@
   constructor: :init!)
 
 (def url-rx
-  (pregexp "^(:?([a-z]+)://)?([^/]+)(:?(/[^?#]*)(:?[?]([^#]+))?(:?#.*)?)?$"))
+  (pregexp "^(?:([a-z]+(?=://))://)?([a-zA-Z0-9][^/?#:]*(?::[0-9]+)?)(/(?:[^/?#][^?#]*)?)?(?:[?]([^#]+))?(?:#.*)?$"))
 (def url-path-rx
-  (pregexp "^([^?#]*)(:?[?]([^#]+))?(:?#.*)?$"))
+  (pregexp "^([^?#]*)(?:[?]([^#]*))?(?:#.*)?$"))
 
 (defmethod {:init! URL}
   (lambda (self (str : :string))
     (match (pregexp-match url-rx str)
-      ([_ _ proto host _ path _ query _]
+      ([_ proto host path query]
        (set! self.proto (or proto "https"))
        (set! self.host host)
        (let (address (url-host->address host self.proto))
@@ -41,9 +41,9 @@
        (set! self.query query)
        (set! self.string
          (if query
-           (string-append self.proto "//" self.host self.path
+           (string-append self.proto "://" self.host self.path
                           "?" query)
-           (string-append self.proto "//" self.host self.path))))
+           (string-append self.proto "://" self.host self.path))))
       (else
        (raise-bad-argument URL "malformed url" str)))))
 
@@ -54,13 +54,12 @@
     (URL str)
     (using (url (##structure-copy rel) :- URL)
       (def (update! (path :- :string) (query :- :string))
+        (set! url.path path)
+        (set! url.query query)
         (set! url.string
           (if query
-            (string-append url.proto "//" url.host url.path
-                           "?" query)
-            (string-append url.proto "//" url.host url.path)))
-        (set! url.path path)
-        (set! url.query query))
+            (string-append url.proto "://" url.host url.path "?" query)
+            (string-append url.proto "://" url.host url.path))))
 
       (cond
        ((string-empty? str)
@@ -123,7 +122,7 @@
 (def (split-url-path (str : :string))
   => :values
   (match (pregexp-match url-path-rx str)
-    ([_ path _ query _]
+    ([_ path query]
      (values path query))
     (else
      (raise-bad-argument split-url-path "bad url path" str))))
@@ -135,11 +134,11 @@
       (begin
         (set! url.query #f)
         (set! url.string
-          (string-append url.proto "//" url.host url.path)))
+          (string-append url.proto "://" url.host url.path)))
       (let* ((query (form-url-encode params))
              (string
               (string-append
-               url.proto "//" url.host url.path
+               url.proto "://" url.host url.path
                "?" query)))
         (set! url.query query)
         (set! url.string string)))
