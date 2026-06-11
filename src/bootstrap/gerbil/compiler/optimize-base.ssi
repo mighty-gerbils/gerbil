@@ -590,7 +590,9 @@ namespace: gxc
           |gxc[:0:]#!primitive-case-lambda|)
          (%#define-runtime !abort:::init! gxc#!abort:::init!)
          (%#define-runtime !class-meta:::init! gxc#!class-meta:::init!)
-         (%#define-runtime !class:::init! gxc#!class:::init!)
+         (%#begin (%#define-runtime !class:::init!__0 gxc#!class:::init!__0)
+                  (%#define-runtime !class:::init!__1 gxc#!class:::init!__1)
+                  (%#define-runtime !class:::init! gxc#!class:::init!))
          (%#define-runtime compute-class-fields gxc#compute-class-fields)
          (%#define-runtime
           !class-slot->field-offset
@@ -601,8 +603,18 @@ namespace: gxc
          (%#define-runtime !constructor:::init! gxc#!constructor:::init!)
          (%#define-runtime !accessor:::init! gxc#!accessor:::init!)
          (%#define-runtime !mutator:::init! gxc#!mutator:::init!)
-         (%#define-runtime !lambda:::init! gxc#!lambda:::init!)
-         (%#define-runtime !case-lambda:::init! gxc#!case-lambda:::init!)
+         (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
+                  (%#define-runtime !lambda:::init!__@ gxc#!lambda:::init!__@)
+                  (%#define-runtime !lambda:::init! gxc#!lambda:::init!))
+         (%#begin (%#define-runtime
+                   !case-lambda:::init!__%
+                   gxc#!case-lambda:::init!__%)
+                  (%#define-runtime
+                   !case-lambda:::init!__@
+                   gxc#!case-lambda:::init!__@)
+                  (%#define-runtime
+                   !case-lambda:::init!
+                   gxc#!case-lambda:::init!))
          (%#define-runtime !kw-lambda:::init! gxc#!kw-lambda:::init!)
          (%#define-runtime
           !kw-lambda-primary:::init!
@@ -622,7 +634,15 @@ namespace: gxc
          (%#define-runtime !class-subclass? gxc#!class-subclass?)
          (%#define-runtime !interface-instance? gxc#!interface-instance?)
          (%#define-runtime !procedure-origin gxc#!procedure-origin)
-         (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
+         (%#begin (%#define-runtime
+                   optimizer-declare-type!__%
+                   gxc#optimizer-declare-type!__%)
+                  (%#begin (%#define-runtime
+                            optimizer-declare-type!__0
+                            gxc#optimizer-declare-type!__0)
+                           (%#define-runtime
+                            optimizer-declare-type!
+                            gxc#optimizer-declare-type!)))
          (%#define-runtime
           optimizer-declare-class!
           gxc#optimizer-declare-class!)
@@ -630,9 +650,15 @@ namespace: gxc
           optimizer-declare-builtin-class!
           gxc#optimizer-declare-builtin-class!)
          (%#define-runtime optimizer-clear-type! gxc#optimizer-clear-type!)
-         (%#define-runtime
-          optimizer-declare-method!
-          gxc#optimizer-declare-method!)
+         (%#begin (%#define-runtime
+                   optimizer-declare-method!__%
+                   gxc#optimizer-declare-method!__%)
+                  (%#begin (%#define-runtime
+                            optimizer-declare-method!__0
+                            gxc#optimizer-declare-method!__0)
+                           (%#define-runtime
+                            optimizer-declare-method!
+                            gxc#optimizer-declare-method!)))
          (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
          (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
          (%#define-runtime optimizer-lookup-class gxc#optimizer-lookup-class)

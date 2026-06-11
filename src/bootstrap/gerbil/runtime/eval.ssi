@@ -76,13 +76,33 @@ namespace: #f
          (%#define-runtime __current-compiler __current-compiler)
          (%#define-runtime __current-path __current-path)
          (%#define-runtime __core-resolve __core-resolve)
-         (%#define-runtime __core-bound-id? __core-bound-id?)
-         (%#define-runtime __core-bind-syntax! __core-bind-syntax!)
-         (%#define-runtime __SRC __SRC)
+         (%#begin (%#define-runtime __core-bound-id?__% __core-bound-id?__%)
+                  (%#begin (%#define-runtime
+                            __core-bound-id?__0
+                            __core-bound-id?__0)
+                           (%#define-runtime
+                            __core-bound-id?
+                            __core-bound-id?)))
+         (%#begin (%#define-runtime
+                   __core-bind-syntax!__%
+                   __core-bind-syntax!__%)
+                  (%#begin (%#define-runtime
+                            __core-bind-syntax!__0
+                            __core-bind-syntax!__0)
+                           (%#define-runtime
+                            __core-bind-syntax!
+                            __core-bind-syntax!)))
+         (%#begin (%#define-runtime __SRC__% __SRC__%)
+                  (%#begin (%#define-runtime __SRC__0 __SRC__0)
+                           (%#define-runtime __SRC __SRC)))
          (%#define-runtime __locat __locat)
          (%#define-runtime __check-values __check-values)
          (%#define-runtime __compile __compile)
-         (%#define-runtime __compile-error __compile-error)
+         (%#begin (%#define-runtime __compile-error__% __compile-error__%)
+                  (%#begin (%#define-runtime
+                            __compile-error__0
+                            __compile-error__0)
+                           (%#define-runtime __compile-error __compile-error)))
          (%#define-runtime __compile-ignore% __compile-ignore%)
          (%#define-runtime __compile-begin% __compile-begin%)
          (%#define-runtime __compile-begin-foreign% __compile-begin-foreign%)

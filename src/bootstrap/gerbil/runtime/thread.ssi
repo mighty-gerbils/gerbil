@@ -42,9 +42,18 @@ namespace: #f
          (%#define-runtime __spawn/group __spawn/group)
          (%#define-runtime spawn/group spawn/group macro: @spawn/group)
          (%#define-runtime spawn-actor spawn-actor)
-         (%#define-runtime spawn-thread spawn-thread)
+         (%#begin (%#define-runtime spawn-thread__% spawn-thread__%)
+                  (%#begin (%#define-runtime spawn-thread__0 spawn-thread__0)
+                           (%#define-runtime spawn-thread__1 spawn-thread__1)
+                           (%#define-runtime spawn-thread spawn-thread)))
          (%#define-runtime thread-main thread-main)
-         (%#define-runtime thread-local-ref thread-local-ref)
+         (%#begin (%#define-runtime thread-local-ref__% thread-local-ref__%)
+                  (%#begin (%#define-runtime
+                            thread-local-ref__0
+                            thread-local-ref__0)
+                           (%#define-runtime
+                            thread-local-ref
+                            thread-local-ref)))
          (%#define-runtime thread-local-get thread-local-get)
          (%#define-runtime thread-local-set! thread-local-set!)
          (%#define-runtime thread-local-delete! thread-local-delete!)
@@ -85,15 +94,33 @@ namespace: #f
          (%#define-syntax
           @with-exception-stack-trace
           |[:0:]#@with-exception-stack-trace|)
-         (%#define-runtime
-          __with-exception-stack-trace
-          __with-exception-stack-trace)
-         (%#define-runtime
-          with-exception-stack-trace
-          with-exception-stack-trace
-          macro:
-          @with-exception-stack-trace)
-         (%#define-runtime dump-stack-trace! dump-stack-trace!)
+         (%#begin (%#define-runtime
+                   __with-exception-stack-trace__%
+                   __with-exception-stack-trace__%)
+                  (%#begin (%#define-runtime
+                            __with-exception-stack-trace__0
+                            __with-exception-stack-trace__0)
+                           (%#define-runtime
+                            __with-exception-stack-trace
+                            __with-exception-stack-trace)))
+         (%#begin (%#define-runtime
+                   with-exception-stack-trace__%
+                   with-exception-stack-trace__%)
+                  (%#begin (%#define-runtime
+                            with-exception-stack-trace__0
+                            with-exception-stack-trace__0)
+                           (%#define-runtime
+                            with-exception-stack-trace
+                            with-exception-stack-trace
+                            macro:
+                            @with-exception-stack-trace)))
+         (%#begin (%#define-runtime dump-stack-trace!__% dump-stack-trace!__%)
+                  (%#begin (%#define-runtime
+                            dump-stack-trace!__0
+                            dump-stack-trace!__0)
+                           (%#define-runtime
+                            dump-stack-trace!
+                            dump-stack-trace!)))
          (%#define-syntax @thread-dead? |[:0:]#@thread-dead?|)
          (%#define-runtime __thread-dead? __thread-dead?)
          (%#define-runtime thread-dead? thread-dead? macro: @thread-dead?)

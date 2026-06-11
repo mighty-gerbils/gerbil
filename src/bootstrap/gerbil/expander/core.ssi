@@ -289,8 +289,24 @@ namespace: gx
           &local-context-table-set!
           gx#&local-context-table-set!)
          (%#define-syntax local-context |gx[:0:]#local-context|)
-         (%#define-runtime phi-context:::init! gx#phi-context:::init!)
-         (%#define-runtime local-context:::init! gx#local-context:::init!)
+         (%#begin (%#define-runtime
+                   phi-context:::init!__%
+                   gx#phi-context:::init!__%)
+                  (%#begin (%#define-runtime
+                            phi-context:::init!__0
+                            gx#phi-context:::init!__0)
+                           (%#define-runtime
+                            phi-context:::init!
+                            gx#phi-context:::init!)))
+         (%#begin (%#define-runtime
+                   local-context:::init!__%
+                   gx#local-context:::init!__%)
+                  (%#begin (%#define-runtime
+                            local-context:::init!__0
+                            gx#local-context:::init!__0)
+                           (%#define-runtime
+                            local-context:::init!
+                            gx#local-context:::init!)))
          (%#define-runtime binding::t gx#binding::t)
          (%#define-runtime binding? gx#binding?)
          (%#define-runtime make-binding gx#make-binding)
@@ -974,26 +990,65 @@ namespace: gx
          (%#define-syntax expander-mark |gx[:0:]#expander-mark|)
          (%#extern (make-syntax-error make-syntax-error))
          (%#define-runtime raise-syntax-error gx#raise-syntax-error)
-         (%#define-runtime eval-syntax gx#eval-syntax)
-         (%#define-runtime eval-syntax+1 gx#eval-syntax+1)
+         (%#begin (%#define-runtime eval-syntax__% gx#eval-syntax__%)
+                  (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)
+                           (%#define-runtime eval-syntax gx#eval-syntax)))
+         (%#begin (%#define-runtime eval-syntax+1__% gx#eval-syntax+1__%)
+                  (%#begin (%#define-runtime
+                            eval-syntax+1__0
+                            gx#eval-syntax+1__0)
+                           (%#define-runtime eval-syntax+1 gx#eval-syntax+1)))
          (%#define-runtime eval-expression+1 gx#eval-expression+1)
          (%#define-runtime eval-syntax* gx#eval-syntax*)
-         (%#define-runtime core-expand gx#core-expand)
+         (%#begin (%#define-runtime core-expand__% gx#core-expand__%)
+                  (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)
+                           (%#define-runtime core-expand gx#core-expand)))
          (%#define-runtime core-expand-top gx#core-expand-top)
          (%#define-runtime core-expand-expression gx#core-expand-expression)
          (%#define-runtime
           core-expand-expression+1
           gx#core-expand-expression+1)
-         (%#define-runtime core-expand* gx#core-expand*)
+         (%#begin (%#define-runtime core-expand*__% gx#core-expand*__%)
+                  (%#begin (%#define-runtime
+                            core-expand*__0
+                            gx#core-expand*__0)
+                           (%#define-runtime core-expand* gx#core-expand*)))
          (%#define-runtime core-expand1 gx#core-expand1)
          (%#define-runtime core-expand-head gx#core-expand-head)
-         (%#define-runtime core-expand-block gx#core-expand-block)
+         (%#begin (%#define-runtime
+                   core-expand-block__%
+                   gx#core-expand-block__%)
+                  (%#begin (%#define-runtime
+                            core-expand-block__0
+                            gx#core-expand-block__0)
+                           (%#define-runtime
+                            core-expand-block__1
+                            gx#core-expand-block__1)
+                           (%#define-runtime
+                            core-expand-block
+                            gx#core-expand-block)))
          (%#define-runtime core-expand-block* gx#core-expand-block*)
          (%#define-runtime
           core-expand-cond-expand%
           gx#core-expand-cond-expand%)
-         (%#define-runtime core-expand-include% gx#core-expand-include%)
-         (%#define-runtime core-apply-expander gx#core-apply-expander)
+         (%#begin (%#define-runtime
+                   core-expand-include%__%
+                   gx#core-expand-include%__%)
+                  (%#begin (%#define-runtime
+                            core-expand-include%__0
+                            gx#core-expand-include%__0)
+                           (%#define-runtime
+                            core-expand-include%
+                            gx#core-expand-include%)))
+         (%#begin (%#define-runtime
+                   core-apply-expander__%
+                   gx#core-apply-expander__%)
+                  (%#begin (%#define-runtime
+                            core-apply-expander__0
+                            gx#core-apply-expander__0)
+                           (%#define-runtime
+                            core-apply-expander
+                            gx#core-apply-expander)))
          (%#define-runtime
           expander::apply-macro-expander
           gx#expander::apply-macro-expander)
@@ -1003,27 +1058,77 @@ namespace: gx
          (%#define-runtime
           core-expander::apply-macro-expander
           gx#core-expander::apply-macro-expander)
-         (%#define-runtime
-          top-special-form::apply-macro-expander
-          gx#top-special-form::apply-macro-expander)
+         (%#begin (%#define-runtime
+                   top-special-form::apply-macro-expander__%
+                   gx#top-special-form::apply-macro-expander__%)
+                  (%#begin (%#define-runtime
+                            top-special-form::apply-macro-expander__0
+                            gx#top-special-form::apply-macro-expander__0)
+                           (%#define-runtime
+                            top-special-form::apply-macro-expander
+                            gx#top-special-form::apply-macro-expander)))
          (%#define-runtime
           module-special-form::apply-macro-expander
           gx#module-special-form::apply-macro-expander)
          (%#define-runtime
           rename-macro-expander::apply-macro-expander
           gx#rename-macro-expander::apply-macro-expander)
-         (%#define-runtime
-          core-apply-user-expander
-          gx#core-apply-user-expander)
+         (%#begin (%#define-runtime
+                   core-apply-user-expander__%
+                   gx#core-apply-user-expander__%)
+                  (%#begin (%#define-runtime
+                            core-apply-user-expander__0
+                            gx#core-apply-user-expander__0)
+                           (%#define-runtime
+                            core-apply-user-expander
+                            gx#core-apply-user-expander)))
          (%#define-runtime core-apply-user-macro gx#core-apply-user-macro)
          (%#define-runtime
           user-expander::apply-macro-expander
           gx#user-expander::apply-macro-expander)
-         (%#define-runtime resolve-identifier gx#resolve-identifier)
-         (%#define-runtime bind-identifier! gx#bind-identifier!)
-         (%#define-runtime core-resolve-identifier gx#core-resolve-identifier)
+         (%#begin (%#define-runtime
+                   resolve-identifier__%
+                   gx#resolve-identifier__%)
+                  (%#begin (%#define-runtime
+                            resolve-identifier__0
+                            gx#resolve-identifier__0)
+                           (%#define-runtime
+                            resolve-identifier__1
+                            gx#resolve-identifier__1)
+                           (%#define-runtime
+                            resolve-identifier
+                            gx#resolve-identifier)))
+         (%#begin (%#define-runtime bind-identifier!__% gx#bind-identifier!__%)
+                  (%#begin (%#define-runtime
+                            bind-identifier!__0
+                            gx#bind-identifier!__0)
+                           (%#define-runtime
+                            bind-identifier!__1
+                            gx#bind-identifier!__1)
+                           (%#define-runtime
+                            bind-identifier!__2
+                            gx#bind-identifier!__2)
+                           (%#define-runtime
+                            bind-identifier!
+                            gx#bind-identifier!)))
+         (%#begin (%#define-runtime
+                   core-resolve-identifier__%
+                   gx#core-resolve-identifier__%)
+                  (%#begin (%#define-runtime
+                            core-resolve-identifier__0
+                            gx#core-resolve-identifier__0)
+                           (%#define-runtime
+                            core-resolve-identifier__1
+                            gx#core-resolve-identifier__1)
+                           (%#define-runtime
+                            core-resolve-identifier
+                            gx#core-resolve-identifier)))
          (%#define-runtime core-resolve-binding gx#core-resolve-binding)
-         (%#define-runtime core-bind! gx#core-bind!)
+         (%#begin (%#define-runtime core-bind!__% gx#core-bind!__%)
+                  (%#begin (%#define-runtime core-bind!__0 gx#core-bind!__0)
+                           (%#define-runtime core-bind!__1 gx#core-bind!__1)
+                           (%#define-runtime core-bind!__2 gx#core-bind!__2)
+                           (%#define-runtime core-bind! gx#core-bind!)))
          (%#define-runtime core-identifier-key gx#core-identifier-key)
          (%#define-runtime &phi-context? gx#&phi-context?)
          (%#define-runtime core-context-shift gx#core-context-shift)
@@ -1031,11 +1136,52 @@ namespace: gx
          (%#define-runtime core-context-put! gx#core-context-put!)
          (%#define-runtime core-context-resolve gx#core-context-resolve)
          (%#define-runtime core-context-bind! gx#core-context-bind!)
-         (%#define-runtime core-context-top gx#core-context-top)
-         (%#define-runtime core-context-root gx#core-context-root)
-         (%#define-runtime core-context-rebind? gx#core-context-rebind?)
-         (%#define-runtime core-context-namespace gx#core-context-namespace)
-         (%#define-runtime expander-binding? gx#expander-binding?)
+         (%#begin (%#define-runtime core-context-top__% gx#core-context-top__%)
+                  (%#begin (%#define-runtime
+                            core-context-top__0
+                            gx#core-context-top__0)
+                           (%#define-runtime
+                            core-context-top__1
+                            gx#core-context-top__1)
+                           (%#define-runtime
+                            core-context-top
+                            gx#core-context-top)))
+         (%#begin (%#define-runtime
+                   core-context-root__%
+                   gx#core-context-root__%)
+                  (%#begin (%#define-runtime
+                            core-context-root__0
+                            gx#core-context-root__0)
+                           (%#define-runtime
+                            core-context-root
+                            gx#core-context-root)))
+         (%#begin (%#define-runtime
+                   core-context-rebind?__%
+                   gx#core-context-rebind?__%)
+                  (%#begin (%#define-runtime
+                            core-context-rebind?__0
+                            gx#core-context-rebind?__0)
+                           (%#define-runtime
+                            core-context-rebind?
+                            gx#core-context-rebind?)))
+         (%#begin (%#define-runtime
+                   core-context-namespace__%
+                   gx#core-context-namespace__%)
+                  (%#begin (%#define-runtime
+                            core-context-namespace__0
+                            gx#core-context-namespace__0)
+                           (%#define-runtime
+                            core-context-namespace
+                            gx#core-context-namespace)))
+         (%#begin (%#define-runtime
+                   expander-binding?__%
+                   gx#expander-binding?__%)
+                  (%#begin (%#define-runtime
+                            expander-binding?__0
+                            gx#expander-binding?__0)
+                           (%#define-runtime
+                            expander-binding?
+                            gx#expander-binding?)))
          (%#define-runtime core-expander-binding? gx#core-expander-binding?)
          (%#define-runtime
           expression-form-binding?
@@ -1048,20 +1194,72 @@ namespace: gx
          (%#define-runtime
           private-feature-binding?
           gx#private-feature-binding?)
-         (%#define-runtime core-bound-identifier? gx#core-bound-identifier?)
+         (%#begin (%#define-runtime
+                   core-bound-identifier?__%
+                   gx#core-bound-identifier?__%)
+                  (%#begin (%#define-runtime
+                            core-bound-identifier?__0
+                            gx#core-bound-identifier?__0)
+                           (%#define-runtime
+                            core-bound-identifier?
+                            gx#core-bound-identifier?)))
          (%#define-runtime core-identifier=? gx#core-identifier=?)
          (%#define-runtime core-extern-symbol? gx#core-extern-symbol?)
-         (%#define-runtime core-quote-syntax gx#core-quote-syntax)
+         (%#begin (%#define-runtime
+                   core-quote-syntax__%
+                   gx#core-quote-syntax__%)
+                  (%#begin (%#define-runtime
+                            core-quote-syntax__0
+                            gx#core-quote-syntax__0)
+                           (%#define-runtime
+                            core-quote-syntax__1
+                            gx#core-quote-syntax__1)
+                           (%#define-runtime
+                            core-quote-syntax__2
+                            gx#core-quote-syntax__2)
+                           (%#define-runtime
+                            core-quote-syntax
+                            gx#core-quote-syntax)))
          (%#define-runtime core-cons gx#core-cons)
          (%#define-runtime core-list gx#core-list)
          (%#define-runtime core-cons* gx#core-cons*)
-         (%#define-runtime core-resolve-path gx#core-resolve-path)
-         (%#define-runtime core-deserialize-mark gx#core-deserialize-mark)
+         (%#begin (%#define-runtime
+                   core-resolve-path__%
+                   gx#core-resolve-path__%)
+                  (%#begin (%#define-runtime
+                            core-resolve-path__0
+                            gx#core-resolve-path__0)
+                           (%#define-runtime
+                            core-resolve-path
+                            gx#core-resolve-path)))
+         (%#begin (%#define-runtime
+                   core-deserialize-mark__%
+                   gx#core-deserialize-mark__%)
+                  (%#begin (%#define-runtime
+                            core-deserialize-mark__0
+                            gx#core-deserialize-mark__0)
+                           (%#define-runtime
+                            core-deserialize-mark
+                            gx#core-deserialize-mark)))
          (%#define-runtime syntax-local-rewrap gx#syntax-local-rewrap)
          (%#define-runtime syntax-local-unwrap gx#syntax-local-unwrap)
          (%#define-runtime syntax-local-introduce gx#syntax-local-introduce)
          (%#define-runtime syntax-local-temp gx#syntax-local-temp)
-         (%#define-runtime syntax-local-e gx#syntax-local-e)
-         (%#define-runtime syntax-local-value gx#syntax-local-value)
+         (%#begin (%#define-runtime syntax-local-e__% gx#syntax-local-e__%)
+                  (%#begin (%#define-runtime
+                            syntax-local-e__0
+                            gx#syntax-local-e__0)
+                           (%#define-runtime
+                            syntax-local-e
+                            gx#syntax-local-e)))
+         (%#begin (%#define-runtime
+                   syntax-local-value__%
+                   gx#syntax-local-value__%)
+                  (%#begin (%#define-runtime
+                            syntax-local-value__0
+                            gx#syntax-local-value__0)
+                           (%#define-runtime
+                            syntax-local-value
+                            gx#syntax-local-value)))
          (%#define-runtime raise-syntax-ref-error gx#raise-syntax-ref-error))
 (%#call (%#ref load-module) (%#quote "gerbil/expander/core~0"))

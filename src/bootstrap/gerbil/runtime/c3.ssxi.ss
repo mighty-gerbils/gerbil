@@ -1,0 +1,42 @@
+prelude: :gerbil/compiler/ssxi
+package: gerbil/runtime
+
+(begin
+  (declare-type
+   c4-linearize__%
+   (@lambda 7
+            #f
+            signature:
+            (return:
+             values::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/c3)))
+  (declare-type
+   c4-linearize__@
+   (@kw-lambda-dispatch
+    (get-precedence-list: struct: eq: get-name:)
+    c4-linearize__%))
+  (declare-type
+   c4-linearize
+   (@kw-lambda (get-name: struct: get-precedence-list: eq:) c4-linearize__@))
+  (declare-type
+   c4-compute-class-slots
+   (@lambda 4
+            #f
+            signature:
+            (return:
+             t::t
+             effect:
+             #f
+             arguments:
+             #f
+             unchecked:
+             #f
+             origin:
+             gerbil/runtime/c3))))

@@ -50,9 +50,15 @@ namespace: gerbil/core/match
           (%#define-runtime
            syntax-local-match-macro?
            |gerbil/core/match[1]#syntax-local-match-macro?|)
-          (%#define-runtime
-           parse-match-pattern
-           |gerbil/core/match[1]#parse-match-pattern|)
+          (%#begin (%#define-runtime
+                    parse-match-pattern__%
+                    |gerbil/core/match[1]#parse-match-pattern__%|)
+                   (%#begin (%#define-runtime
+                             parse-match-pattern__0
+                             |gerbil/core/match[1]#parse-match-pattern__0|)
+                            (%#define-runtime
+                             parse-match-pattern
+                             |gerbil/core/match[1]#parse-match-pattern|)))
           (%#define-runtime
            match-pattern?
            |gerbil/core/match[1]#match-pattern?|)

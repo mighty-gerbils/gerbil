@@ -36,7 +36,10 @@ namespace: gerbil/core/macro-object
                   (%#define-syntax
                    macro-object
                    |gerbil/core/macro-object[:0:]#macro-object|))
-         (%#define-runtime
-          macro-object::apply-macro-expander
-          gerbil/core/macro-object#macro-object::apply-macro-expander))
+         (%#begin (%#define-runtime
+                   macro-object::apply-macro-expander
+                   gerbil/core/macro-object#macro-object::apply-macro-expander)
+                  (%#define-runtime
+                   macro-object::apply-macro-expander::specialize
+                   gerbil/core/macro-object#macro-object::apply-macro-expander::specialize)))
 (%#call (%#ref load-module) (%#quote "gerbil/core/macro-object~0"))

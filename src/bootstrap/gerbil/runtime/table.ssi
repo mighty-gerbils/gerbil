@@ -22,8 +22,23 @@ namespace: #f
          (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
          (%#define-runtime &raw-table-lock-set! &raw-table-lock-set!)
          (%#define-runtime raw-table-size-hint->size raw-table-size-hint->size)
-         (%#define-runtime make-raw-table make-raw-table)
-         (%#define-runtime make-raw-table/lock make-raw-table/lock)
+         (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
+                  (%#begin (%#define-runtime
+                            make-raw-table__0
+                            make-raw-table__0)
+                           (%#define-runtime
+                            make-raw-table__1
+                            make-raw-table__1)
+                           (%#define-runtime make-raw-table make-raw-table)))
+         (%#begin (%#define-runtime
+                   make-raw-table/lock__%
+                   make-raw-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-raw-table/lock__0
+                            make-raw-table/lock__0)
+                           (%#define-runtime
+                            make-raw-table/lock
+                            make-raw-table/lock)))
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/table~1")))
@@ -58,8 +73,22 @@ namespace: #f
          (%#define-runtime string-hash string-hash)
          (%#define-runtime immediate-hash immediate-hash)
          (%#define-syntax deftable |[:0:]#deftable|)
-         (%#define-runtime make-eq-table make-eq-table)
-         (%#define-runtime make-eq-table/lock make-eq-table/lock)
+         (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
+                  (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
+                           (%#define-runtime make-eq-table__1 make-eq-table__1)
+                           (%#define-runtime make-eq-table make-eq-table)))
+         (%#begin (%#define-runtime
+                   make-eq-table/lock__%
+                   make-eq-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-eq-table/lock__0
+                            make-eq-table/lock__0)
+                           (%#define-runtime
+                            make-eq-table/lock__1
+                            make-eq-table/lock__1)
+                           (%#define-runtime
+                            make-eq-table/lock
+                            make-eq-table/lock)))
          (%#define-runtime eq-table-ref eq-table-ref)
          (%#define-runtime eq-table-ref/lock eq-table-ref/lock)
          (%#define-runtime __eq-table-set! __eq-table-set!)
@@ -70,8 +99,26 @@ namespace: #f
          (%#define-runtime eq-table-update!/lock eq-table-update!/lock)
          (%#define-runtime eq-table-delete! eq-table-delete!)
          (%#define-runtime eq-table-delete!/lock eq-table-delete!/lock)
-         (%#define-runtime make-eqv-table make-eqv-table)
-         (%#define-runtime make-eqv-table/lock make-eqv-table/lock)
+         (%#begin (%#define-runtime make-eqv-table__% make-eqv-table__%)
+                  (%#begin (%#define-runtime
+                            make-eqv-table__0
+                            make-eqv-table__0)
+                           (%#define-runtime
+                            make-eqv-table__1
+                            make-eqv-table__1)
+                           (%#define-runtime make-eqv-table make-eqv-table)))
+         (%#begin (%#define-runtime
+                   make-eqv-table/lock__%
+                   make-eqv-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-eqv-table/lock__0
+                            make-eqv-table/lock__0)
+                           (%#define-runtime
+                            make-eqv-table/lock__1
+                            make-eqv-table/lock__1)
+                           (%#define-runtime
+                            make-eqv-table/lock
+                            make-eqv-table/lock)))
          (%#define-runtime eqv-table-ref eqv-table-ref)
          (%#define-runtime eqv-table-ref/lock eqv-table-ref/lock)
          (%#define-runtime __eqv-table-set! __eqv-table-set!)
@@ -82,8 +129,30 @@ namespace: #f
          (%#define-runtime eqv-table-update!/lock eqv-table-update!/lock)
          (%#define-runtime eqv-table-delete! eqv-table-delete!)
          (%#define-runtime eqv-table-delete!/lock eqv-table-delete!/lock)
-         (%#define-runtime make-symbolic-table make-symbolic-table)
-         (%#define-runtime make-symbolic-table/lock make-symbolic-table/lock)
+         (%#begin (%#define-runtime
+                   make-symbolic-table__%
+                   make-symbolic-table__%)
+                  (%#begin (%#define-runtime
+                            make-symbolic-table__0
+                            make-symbolic-table__0)
+                           (%#define-runtime
+                            make-symbolic-table__1
+                            make-symbolic-table__1)
+                           (%#define-runtime
+                            make-symbolic-table
+                            make-symbolic-table)))
+         (%#begin (%#define-runtime
+                   make-symbolic-table/lock__%
+                   make-symbolic-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-symbolic-table/lock__0
+                            make-symbolic-table/lock__0)
+                           (%#define-runtime
+                            make-symbolic-table/lock__1
+                            make-symbolic-table/lock__1)
+                           (%#define-runtime
+                            make-symbolic-table/lock
+                            make-symbolic-table/lock)))
          (%#define-runtime symbolic-table-ref symbolic-table-ref)
          (%#define-runtime symbolic-table-ref/lock symbolic-table-ref/lock)
          (%#define-runtime __symbolic-table-set! __symbolic-table-set!)
@@ -98,8 +167,28 @@ namespace: #f
          (%#define-runtime
           symbolic-table-delete!/lock
           symbolic-table-delete!/lock)
-         (%#define-runtime make-string-table make-string-table)
-         (%#define-runtime make-string-table/lock make-string-table/lock)
+         (%#begin (%#define-runtime make-string-table__% make-string-table__%)
+                  (%#begin (%#define-runtime
+                            make-string-table__0
+                            make-string-table__0)
+                           (%#define-runtime
+                            make-string-table__1
+                            make-string-table__1)
+                           (%#define-runtime
+                            make-string-table
+                            make-string-table)))
+         (%#begin (%#define-runtime
+                   make-string-table/lock__%
+                   make-string-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-string-table/lock__0
+                            make-string-table/lock__0)
+                           (%#define-runtime
+                            make-string-table/lock__1
+                            make-string-table/lock__1)
+                           (%#define-runtime
+                            make-string-table/lock
+                            make-string-table/lock)))
          (%#define-runtime string-table-ref string-table-ref)
          (%#define-runtime string-table-ref/lock string-table-ref/lock)
          (%#define-runtime __string-table-set! __string-table-set!)
@@ -110,8 +199,30 @@ namespace: #f
          (%#define-runtime string-table-update!/lock string-table-update!/lock)
          (%#define-runtime string-table-delete! string-table-delete!)
          (%#define-runtime string-table-delete!/lock string-table-delete!/lock)
-         (%#define-runtime make-immediate-table make-immediate-table)
-         (%#define-runtime make-immediate-table/lock make-immediate-table/lock)
+         (%#begin (%#define-runtime
+                   make-immediate-table__%
+                   make-immediate-table__%)
+                  (%#begin (%#define-runtime
+                            make-immediate-table__0
+                            make-immediate-table__0)
+                           (%#define-runtime
+                            make-immediate-table__1
+                            make-immediate-table__1)
+                           (%#define-runtime
+                            make-immediate-table
+                            make-immediate-table)))
+         (%#begin (%#define-runtime
+                   make-immediate-table/lock__%
+                   make-immediate-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-immediate-table/lock__0
+                            make-immediate-table/lock__0)
+                           (%#define-runtime
+                            make-immediate-table/lock__1
+                            make-immediate-table/lock__1)
+                           (%#define-runtime
+                            make-immediate-table/lock
+                            make-immediate-table/lock)))
          (%#define-runtime immediate-table-ref immediate-table-ref)
          (%#define-runtime immediate-table-ref/lock immediate-table-ref/lock)
          (%#define-runtime __immediate-table-set! __immediate-table-set!)
@@ -141,8 +252,23 @@ namespace: #f
          (%#define-runtime &gc-table-gcht-set! &gc-table-gcht-set!)
          (%#define-runtime &gc-table-immediate-set! &gc-table-immediate-set!)
          (%#define-runtime &gc-table-lock-set! &gc-table-lock-set!)
-         (%#define-runtime make-gc-table make-gc-table)
-         (%#define-runtime make-gc-table/lock make-gc-table/lock)
+         (%#begin (%#define-runtime make-gc-table__% make-gc-table__%)
+                  (%#begin (%#define-runtime make-gc-table__0 make-gc-table__0)
+                           (%#define-runtime make-gc-table__1 make-gc-table__1)
+                           (%#define-runtime make-gc-table__2 make-gc-table__2)
+                           (%#define-runtime make-gc-table make-gc-table)))
+         (%#begin (%#define-runtime
+                   make-gc-table/lock__%
+                   make-gc-table/lock__%)
+                  (%#begin (%#define-runtime
+                            make-gc-table/lock__0
+                            make-gc-table/lock__0)
+                           (%#define-runtime
+                            make-gc-table/lock__1
+                            make-gc-table/lock__1)
+                           (%#define-runtime
+                            make-gc-table/lock
+                            make-gc-table/lock)))
          (%#define-syntax do-gc-table-lock |[:0:]#do-gc-table-lock|)
          (%#define-runtime __gc-table-immediate __gc-table-immediate)
          (%#define-runtime __gc-table-new __gc-table-new)

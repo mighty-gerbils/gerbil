@@ -69,7 +69,15 @@ namespace: gxc
          (%#define-runtime
           ::push-match-vars-bind-methods!
           gxc#::push-match-vars-bind-methods!)
-         (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
+         (%#begin (%#define-runtime
+                   apply-push-match-vars__%
+                   gxc#apply-push-match-vars__%)
+                  (%#define-runtime
+                   apply-push-match-vars__@
+                   gxc#apply-push-match-vars__@)
+                  (%#define-runtime
+                   apply-push-match-vars
+                   gxc#apply-push-match-vars))
          (%#define-runtime
           current-annotation-optimizer
           gxc#current-annotation-optimizer)

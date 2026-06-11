@@ -1,39 +1,55 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1781119030)
+  (define gerbil/runtime/util::timestamp 1781138344)
   (begin
     (define raise-contract-violation-error error)
     (set! raise-contract-violation-error raise-contract-violation-error)
     (define displayln
-      (lambda _%args99252%_
-        (let () (for-each display _%args99252%_) (newline))))
-    (define display* (lambda _%args99249%_ (for-each display _%args99249%_)))
+      (lambda _%args112929%_
+        (let ()
+          (let () (declare (not safe)) (##for-each display _%args112929%_))
+          (newline))))
+    (define display*
+      (lambda _%args112926%_
+        (let () (declare (not safe)) (##for-each display _%args112926%_))))
     (define __file-newer?
-      (lambda (_%file199040%_ _%file299041%_)
-        (let* ((_%file199044%_ _%file199040%_) (_%file299052%_ _%file299041%_))
-          (letrec ((_%__modification-time99196%_
-                    (lambda (_%file99237%_)
-                      (let ((_%file99240%_ _%file99237%_))
-                        (time->seconds
-                         (file-info-last-modification-time
-                          (file-info _%file99240%_ '#t))))))
-                   (_%modification-time99197%_
-                    (lambda (_%file99225%_)
-                      (let ((_%file99228%_ _%file99225%_))
-                        (_%__modification-time99196%_ _%file99228%_)))))
-            (fl> (let* ((_%file99199%_ _%file199044%_)
-                        (_%file99203%_ _%file99199%_))
-                   (_%__modification-time99196%_ _%file99203%_))
-                 (let* ((_%file99212%_ _%file299052%_)
-                        (_%file99216%_ _%file99212%_))
-                   (_%__modification-time99196%_ _%file99216%_)))))))
+      (lambda (_%file1112717%_ _%file2112718%_)
+        (let* ((_%file1112721%_ _%file1112717%_)
+               (_%file2112729%_ _%file2112718%_))
+          (letrec ((_%__modification-time112873%_
+                    (lambda (_%file112914%_)
+                      (let* ((_%file112917%_ _%file112914%_)
+                             (__tmp115705
+                              (let ((__tmp115706
+                                     (let ()
+                                       (declare (not safe))
+                                       (##file-info _%file112917%_ '#t))))
+                                (declare (not safe))
+                                (##file-info-last-modification-time
+                                 __tmp115706))))
+                        (declare (not safe))
+                        (##time->seconds __tmp115705))))
+                   (_%modification-time112874%_
+                    (lambda (_%file112902%_)
+                      (let ((_%file112905%_ _%file112902%_))
+                        (_%__modification-time112873%_ _%file112905%_)))))
+            (let ((__tmp115708
+                   (let* ((_%file112876%_ _%file1112721%_)
+                          (_%file112880%_ _%file112876%_))
+                     (_%__modification-time112873%_ _%file112880%_)))
+                  (__tmp115707
+                   (let* ((_%file112889%_ _%file2112729%_)
+                          (_%file112893%_ _%file112889%_))
+                     (_%__modification-time112873%_ _%file112893%_))))
+              (declare (not safe))
+              (##fl> __tmp115708 __tmp115707))))))
     (define file-newer?
-      (lambda (_%file199015%_ _%file299016%_)
-        (if (string? _%file199015%_)
-            (let ((_%file199020%_ _%file199015%_))
-              (if (string? _%file299016%_)
-                  (let ((_%file299030%_ _%file299016%_))
-                    (__file-newer? _%file199020%_ _%file299030%_))
+      (lambda (_%file1112692%_ _%file2112693%_)
+        (if (string? _%file1112692%_)
+            (let ((_%file1112697%_ _%file1112692%_))
+              (if (string? _%file2112693%_)
+                  (let ((_%file2112707%_ _%file2112693%_))
+                    (__file-newer? _%file1112697%_ _%file2112707%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -42,8 +58,8 @@
                      'contract:
                      'string?
                      'value:
-                     _%file299016%_)
-                    (void))))
+                     _%file2112693%_)
+                    '#!void)))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -52,339 +68,332 @@
                'contract:
                'string?
                'value:
-               _%file199015%_)
-              (void)))))
-    (define __create-directory*
-      (let ((_%$%opt-lambda9873399005%_
-             (lambda (_%dir98735%_ _%perms98736%_)
-               (let* ((_%dir98739%_ _%dir98735%_)
-                      (_%perms98747%_ _%perms98736%_))
-                 (letrec ((_%__create198891%_
-                           (lambda (_%path98990%_)
-                             (let ((_%path98993%_ _%path98990%_))
-                               (if (file-exists? _%path98993%_)
-                                   (if (eq? (file-type _%path98993%_)
-                                            'directory)
-                                       '#!void
-                                       (error '"Path component is not a directory"
-                                              _%path98993%_))
-                                   (if _%perms98747%_
-                                       (create-directory
-                                        (cons 'path:
-                                              (cons _%path98993%_
-                                                    (cons 'permissions:
-                                                          (cons _%perms98747%_
-                                                                '())))))
-                                       (create-directory _%path98993%_))))))
-                          (_%create198892%_
-                           (lambda (_%path98978%_)
-                             (let ((_%path98981%_ _%path98978%_))
-                               (_%__create198891%_ _%path98981%_)))))
-                   (if (file-exists? _%dir98739%_)
-                       '#!void
-                       (let _%lp98894%_ ((_%start98896%_ '0))
-                         (let ((_%$e98943%_
-                                (let* ((_%str98898%_ _%dir98739%_)
-                                       (_%char98901%_ '#\/)
-                                       (_%start98904%_ _%start98896%_))
-                                  (if (string? _%str98898%_)
-                                      (let ((_%str98909%_ _%str98898%_))
-                                        (if (char? _%char98901%_)
-                                            (let ((_%char98923%_
-                                                   _%char98901%_))
-                                              (if (nonnegative-fixnum?
-                                                   _%start98904%_)
-                                                  (let ((_%start98933%_
-                                                         _%start98904%_))
-                                                    (__string-index
-                                                     _%str98909%_
-                                                     _%char98923%_
-                                                     _%start98933%_))
-                                                  (begin
-                                                    (raise-contract-violation-error
-                                                     '"contract violation"
-                                                     'context:
-                                                     'gerbil/runtime/util
-                                                     'contract:
-                                                     'nonnegative-fixnum?
-                                                     'value:
-                                                     _%start98904%_)
-                                                    (void))))
-                                            (begin
-                                              (raise-contract-violation-error
-                                               '"contract violation"
-                                               'context:
-                                               'gerbil/runtime/util
-                                               'contract:
-                                               'char?
-                                               'value:
-                                               _%char98901%_)
-                                              (void))))
-                                      (begin
-                                        (raise-contract-violation-error
-                                         '"contract violation"
-                                         'context:
-                                         'gerbil/runtime/util
-                                         'contract:
-                                         'string?
-                                         'value:
-                                         _%str98898%_)
-                                        (void))))))
-                           (if _%$e98943%_
-                               ((lambda (_%x98946%_)
-                                  (if (fx> _%x98946%_ '0)
-                                      (let* ((_%path98948%_
-                                              (substring
-                                               _%dir98739%_
-                                               '0
-                                               _%x98946%_))
-                                             (_%path98952%_ _%path98948%_))
-                                        (_%__create198891%_ _%path98952%_))
-                                      '#!void)
-                                  (_%lp98894%_ (fx+ _%x98946%_ '1)))
-                                _%$e98943%_)
-                               (let* ((_%path98964%_ _%dir98739%_)
-                                      (_%path98968%_ _%path98964%_))
-                                 (_%__create198891%_ _%path98968%_))))))
-                   (void))))))
-        (lambda _g99254_
-          (let ((_g99255_ (let () (declare (not safe)) (##length _g99254_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99255_ 1))
-                   (apply (lambda (_%dir99008%_)
-                            (let ((_%perms99010%_ '493))
-                              (_%$%opt-lambda9873399005%_
-                               _%dir99008%_
-                               _%perms99010%_)))
-                          _g99254_))
-                  ((let () (declare (not safe)) (##fx= _g99255_ 2))
-                   (apply _%$%opt-lambda9873399005%_ _g99254_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __create-directory*
-                    _g99254_)))))))
-    (define create-directory*
-      (let ((_%$%opt-lambda9869798724%_
-             (lambda (_%dir98699%_ _%perms98700%_)
-               (if (string? _%dir98699%_)
-                   (let ((_%dir98704%_ _%dir98699%_))
-                     (if (fixnum? _%perms98700%_)
-                         (let ((_%perms98714%_ _%perms98700%_))
-                           (__create-directory* _%dir98704%_ _%perms98714%_))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@86.26-86.31"
-                            'contract:
-                            'fixnum?
-                            'value:
-                            _%perms98700%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@85.26-85.29"
-                      'contract:
-                      'string?
-                      'value:
-                      _%dir98699%_)
-                     (void))))))
-        (lambda _g99256_
-          (let ((_g99257_ (let () (declare (not safe)) (##length _g99256_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99257_ 1))
-                   (apply (lambda (_%dir98727%_)
-                            (let ((_%perms98729%_ '493))
-                              (_%$%opt-lambda9869798724%_
-                               _%dir98727%_
-                               _%perms98729%_)))
-                          _g99256_))
-                  ((let () (declare (not safe)) (##fx= _g99257_ 2))
-                   (apply _%$%opt-lambda9869798724%_ _g99256_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    create-directory*
-                    _g99256_)))))))
-    (define __move-file
-      (let ((_%$%opt-lambda9864098686%_
-             (lambda (_%src98642%_ _%dest98643%_ _%replace?98644%_)
-               (let* ((_%src98647%_ _%src98642%_)
-                      (_%dest98655%_ _%dest98643%_)
-                      (_%replace?98663%_ _%replace?98644%_))
-                 (letrec ((_%force-move-it98672%_
-                           (lambda ()
-                             (let ((_%tmp98678%_
-                                    (if _%replace?98663%_
-                                        (if (file-exists? _%dest98655%_)
-                                            (string-append
-                                             _%dest98655%_
-                                             '"."
-                                             (number->string
-                                              (let ()
-                                                (declare (not safe))
-                                                (##current-time-point))))
-                                            '#f)
-                                        '#f)))
-                               (if _%tmp98678%_
-                                   (rename-file _%dest98655%_ _%tmp98678%_)
-                                   '#!void)
-                               (with-exception-catcher
-                                (lambda (_%e98680%_)
-                                  (if _%tmp98678%_
-                                      (rename-file
-                                       _%tmp98678%_
-                                       _%dest98655%_
-                                       '#t)
-                                      '#!void)
-                                  (raise _%e98680%_))
-                                (lambda ()
-                                  (let ((_%fi98683%_
-                                         (file-info _%src98647%_ '#f)))
-                                    (if (eq? (file-info-type _%fi98683%_)
-                                             'symbolic-link)
-                                        (create-symbolic-link
-                                         (path-normalize _%src98647%_)
-                                         _%dest98655%_)
-                                        (copy-file
-                                         _%src98647%_
-                                         _%dest98655%_)))
-                                  (delete-file _%src98647%_)
-                                  (if _%tmp98678%_
-                                      (with-exception-catcher
-                                       void
-                                       (lambda () (delete-file _%tmp98678%_)))
-                                      '#!void)))))))
-                   (with-exception-catcher
-                    (lambda (_%e98674%_)
-                      (if (file-exists? _%src98647%_)
-                          (_%force-move-it98672%_)
-                          (raise _%e98674%_)))
-                    (lambda ()
-                      (rename-file
-                       _%src98647%_
-                       _%dest98655%_
-                       _%replace?98663%_)))
-                   (void))))))
-        (lambda _g99258_
-          (let ((_g99259_ (let () (declare (not safe)) (##length _g99258_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99259_ 2))
-                   (apply (lambda (_%src98689%_ _%dest98690%_)
-                            (let ((_%replace?98692%_ '#t))
-                              (_%$%opt-lambda9864098686%_
-                               _%src98689%_
-                               _%dest98690%_
-                               _%replace?98692%_)))
-                          _g99258_))
-                  ((let () (declare (not safe)) (##fx= _g99259_ 3))
-                   (apply _%$%opt-lambda9864098686%_ _g99258_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __move-file
-                    _g99258_)))))))
-    (define move-file
-      (let ((_%$%opt-lambda9859198629%_
-             (lambda (_%src98593%_ _%dest98594%_ _%replace?98595%_)
-               (if (string? _%src98593%_)
-                   (let ((_%src98599%_ _%src98593%_))
-                     (if (string? _%dest98594%_)
-                         (let ((_%dest98609%_ _%dest98594%_))
-                           (if (boolean? _%replace?98595%_)
-                               (let ((_%replace?98619%_ _%replace?98595%_))
-                                 (__move-file
-                                  _%src98599%_
-                                  _%dest98609%_
-                                  _%replace?98619%_))
+               _%file1112692%_)
+              '#!void))))
+    (define __create-directory*__%
+      (lambda (_%dir112412%_ _%perms112413%_)
+        (let* ((_%dir112416%_ _%dir112412%_) (_%perms112424%_ _%perms112413%_))
+          (letrec ((_%__create1112568%_
+                    (lambda (_%path112667%_)
+                      (let ((_%path112670%_ _%path112667%_))
+                        (if (let ()
+                              (declare (not safe))
+                              (##file-exists? _%path112670%_))
+                            (if (eq? (file-type _%path112670%_) 'directory)
+                                '#!void
+                                (error '"Path component is not a directory"
+                                       _%path112670%_))
+                            (if _%perms112424%_
+                                (create-directory
+                                 (cons 'path:
+                                       (cons _%path112670%_
+                                             (cons 'permissions:
+                                                   (cons _%perms112424%_
+                                                         '())))))
+                                (create-directory _%path112670%_))))))
+                   (_%create1112569%_
+                    (lambda (_%path112655%_)
+                      (let ((_%path112658%_ _%path112655%_))
+                        (_%__create1112568%_ _%path112658%_)))))
+            (if (let () (declare (not safe)) (##file-exists? _%dir112416%_))
+                '#!void
+                (let _%lp112571%_ ((_%start112573%_ '0))
+                  (let ((_%$e112620%_
+                         (let* ((_%str112575%_ _%dir112416%_)
+                                (_%char112578%_ '#\/)
+                                (_%start112581%_ _%start112573%_)
+                                (_%str112586%_ _%str112575%_)
+                                (_%char112600%_ _%char112578%_))
+                           (if (nonnegative-fixnum? _%start112581%_)
+                               (let ((_%start112610%_ _%start112581%_))
+                                 (__string-index__%
+                                  _%str112586%_
+                                  _%char112600%_
+                                  _%start112610%_))
                                (begin
                                  (raise-contract-violation-error
                                   '"contract violation"
                                   'context:
-                                  '"\"gerbil/runtime/util.ss\"@110.51-110.59"
+                                  'gerbil/runtime/util
                                   'contract:
-                                  'boolean?
+                                  'nonnegative-fixnum?
                                   'value:
-                                  _%replace?98595%_)
-                                 (void))))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@110.34-110.38"
-                            'contract:
-                            'string?
-                            'value:
-                            _%dest98594%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@110.18-110.21"
-                      'contract:
-                      'string?
-                      'value:
-                      _%src98593%_)
-                     (void))))))
-        (lambda _g99260_
-          (let ((_g99261_ (let () (declare (not safe)) (##length _g99260_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99261_ 2))
-                   (apply (lambda (_%src98632%_ _%dest98633%_)
-                            (let ((_%replace?98635%_ '#t))
-                              (_%$%opt-lambda9859198629%_
-                               _%src98632%_
-                               _%dest98633%_
-                               _%replace?98635%_)))
-                          _g99260_))
-                  ((let () (declare (not safe)) (##fx= _g99261_ 3))
-                   (apply _%$%opt-lambda9859198629%_ _g99260_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    move-file
-                    _g99260_)))))))
+                                  _%start112581%_)
+                                 '#!void)))))
+                    (if _%$e112620%_
+                        (let ()
+                          (if (let ()
+                                (declare (not safe))
+                                (##fx> _%$e112620%_ '0))
+                              (let* ((_%path112625%_
+                                      (substring
+                                       _%dir112416%_
+                                       '0
+                                       _%$e112620%_))
+                                     (_%path112629%_ _%path112625%_))
+                                (_%__create1112568%_ _%path112629%_))
+                              '#!void)
+                          (_%lp112571%_
+                           (let ()
+                             (declare (not safe))
+                             (##fx+ _%$e112620%_ '1))))
+                        (let* ((_%path112641%_ _%dir112416%_)
+                               (_%path112645%_ _%path112641%_))
+                          (_%__create1112568%_ _%path112645%_))))))
+            '#!void))))
+    (define __create-directory*__0
+      (lambda (_%dir112685%_)
+        (let ((_%perms112687%_ '493))
+          (__create-directory*__% _%dir112685%_ _%perms112687%_))))
+    (define __create-directory*
+      (lambda _g115709_
+        (let ((_g115710_ (let () (declare (not safe)) (##length _g115709_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115710_ 1))
+                 (apply __create-directory*__0 _g115709_))
+                ((let () (declare (not safe)) (##fx= _g115710_ 2))
+                 (apply __create-directory*__% _g115709_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __create-directory*
+                  _g115709_))))))
+    (define create-directory*__%
+      (lambda (_%dir112376%_ _%perms112377%_)
+        (if (string? _%dir112376%_)
+            (let ((_%dir112381%_ _%dir112376%_))
+              (if (fixnum? _%perms112377%_)
+                  (let ((_%perms112391%_ _%perms112377%_))
+                    (__create-directory*__% _%dir112381%_ _%perms112391%_))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@86.26-86.31"
+                     'contract:
+                     'fixnum?
+                     'value:
+                     _%perms112377%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@85.26-85.29"
+               'contract:
+               'string?
+               'value:
+               _%dir112376%_)
+              '#!void))))
+    (define create-directory*__0
+      (lambda (_%dir112404%_)
+        (let ((_%perms112406%_ '493))
+          (create-directory*__% _%dir112404%_ _%perms112406%_))))
+    (define create-directory*
+      (lambda _g115711_
+        (let ((_g115712_ (let () (declare (not safe)) (##length _g115711_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115712_ 1))
+                 (apply create-directory*__0 _g115711_))
+                ((let () (declare (not safe)) (##fx= _g115712_ 2))
+                 (apply create-directory*__% _g115711_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  create-directory*
+                  _g115711_))))))
+    (define __move-file__%
+      (lambda (_%src112319%_ _%dest112320%_ _%replace?112321%_)
+        (let* ((_%src112324%_ _%src112319%_)
+               (_%dest112332%_ _%dest112320%_)
+               (_%replace?112340%_ _%replace?112321%_))
+          (letrec ((_%force-move-it112349%_
+                    (lambda ()
+                      (let ((_%tmp112355%_
+                             (if _%replace?112340%_
+                                 (if (let ()
+                                       (declare (not safe))
+                                       (##file-exists? _%dest112332%_))
+                                     (let ((__tmp115713
+                                            (number->string
+                                             (let ()
+                                               (declare (not safe))
+                                               (##current-time-point)))))
+                                       (declare (not safe))
+                                       (##string-append
+                                        _%dest112332%_
+                                        '"."
+                                        __tmp115713))
+                                     '#f)
+                                 '#f)))
+                        (if _%tmp112355%_
+                            (rename-file _%dest112332%_ _%tmp112355%_)
+                            '#!void)
+                        (with-exception-catcher
+                         (lambda (_%e112357%_)
+                           (if _%tmp112355%_
+                               (rename-file _%tmp112355%_ _%dest112332%_ '#t)
+                               '#!void)
+                           (raise _%e112357%_))
+                         (lambda ()
+                           (let ((_%fi112360%_
+                                  (let ()
+                                    (declare (not safe))
+                                    (##file-info _%src112324%_ '#f))))
+                             (if (eq? (let ()
+                                        (declare (not safe))
+                                        (##file-info-type _%fi112360%_))
+                                      'symbolic-link)
+                                 (let ((__tmp115714
+                                        (path-normalize _%src112324%_)))
+                                   (declare (not safe))
+                                   (##create-symbolic-link
+                                    __tmp115714
+                                    _%dest112332%_))
+                                 (let ()
+                                   (declare (not safe))
+                                   (##copy-file
+                                    _%src112324%_
+                                    _%dest112332%_))))
+                           (let ()
+                             (declare (not safe))
+                             (##delete-file _%src112324%_))
+                           (if _%tmp112355%_
+                               (with-exception-catcher
+                                void
+                                (lambda () (delete-file _%tmp112355%_)))
+                               '#!void)))))))
+            (with-exception-catcher
+             (lambda (_%e112351%_)
+               (if (let () (declare (not safe)) (##file-exists? _%src112324%_))
+                   (_%force-move-it112349%_)
+                   (raise _%e112351%_)))
+             (lambda ()
+               (let ()
+                 (declare (not safe))
+                 (##rename-file
+                  _%src112324%_
+                  _%dest112332%_
+                  _%replace?112340%_))))
+            '#!void))))
+    (define __move-file__0
+      (lambda (_%src112366%_ _%dest112367%_)
+        (let ((_%replace?112369%_ '#t))
+          (__move-file__% _%src112366%_ _%dest112367%_ _%replace?112369%_))))
+    (define __move-file
+      (lambda _g115715_
+        (let ((_g115716_ (let () (declare (not safe)) (##length _g115715_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115716_ 2))
+                 (apply __move-file__0 _g115715_))
+                ((let () (declare (not safe)) (##fx= _g115716_ 3))
+                 (apply __move-file__% _g115715_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __move-file
+                  _g115715_))))))
+    (define move-file__%
+      (lambda (_%src112270%_ _%dest112271%_ _%replace?112272%_)
+        (if (string? _%src112270%_)
+            (let ((_%src112276%_ _%src112270%_))
+              (if (string? _%dest112271%_)
+                  (let ((_%dest112286%_ _%dest112271%_))
+                    (if (boolean? _%replace?112272%_)
+                        (let ((_%replace?112296%_ _%replace?112272%_))
+                          (__move-file__%
+                           _%src112276%_
+                           _%dest112286%_
+                           _%replace?112296%_))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/util.ss\"@110.51-110.59"
+                           'contract:
+                           'boolean?
+                           'value:
+                           _%replace?112272%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@110.34-110.38"
+                     'contract:
+                     'string?
+                     'value:
+                     _%dest112271%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@110.18-110.21"
+               'contract:
+               'string?
+               'value:
+               _%src112270%_)
+              '#!void))))
+    (define move-file__0
+      (lambda (_%src112309%_ _%dest112310%_)
+        (let ((_%replace?112312%_ '#t))
+          (move-file__% _%src112309%_ _%dest112310%_ _%replace?112312%_))))
+    (define move-file
+      (lambda _g115717_
+        (let ((_g115718_ (let () (declare (not safe)) (##length _g115717_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115718_ 2))
+                 (apply move-file__0 _g115717_))
+                ((let () (declare (not safe)) (##fx= _g115718_ 3))
+                 (apply move-file__% _g115717_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  move-file
+                  _g115717_))))))
     (define absent-obj (let () (declare (not safe)) (##absent-object)))
     (define absent-value '#(#!void))
-    (define true (lambda _%ignore98589%_ '#t))
-    (define true? (lambda (_%obj98586%_) (eq? _%obj98586%_ '#t)))
-    (define false (lambda _%ignore98583%_ '#f))
-    (define void (lambda _%ignore98580%_ '#!void))
-    (define void? (lambda (_%obj98577%_) (eq? _%obj98577%_ '#!void)))
+    (define true (lambda _%ignore112266%_ '#t))
+    (define true? (lambda (_%obj112263%_) (eq? _%obj112263%_ '#t)))
+    (define false (lambda _%ignore112260%_ '#f))
+    (define void (lambda _%ignore112257%_ '#!void))
+    (define void? (lambda (_%obj112254%_) (eq? _%obj112254%_ '#!void)))
     (define dssl-object?
-      (lambda (_%obj98574%_)
-        (if (memq _%obj98574%_ '(#!key #!rest #!optional)) '#t '#f)))
-    (define dssl-key-object? (lambda (_%obj98571%_) (eq? _%obj98571%_ '#!key)))
+      (lambda (_%obj112251%_)
+        (if (let ()
+              (declare (not safe))
+              (##memq _%obj112251%_ '(#!key #!rest #!optional)))
+            '#t
+            '#f)))
+    (define dssl-key-object?
+      (lambda (_%obj112248%_) (eq? _%obj112248%_ '#!key)))
     (define dssl-rest-object?
-      (lambda (_%obj98568%_) (eq? _%obj98568%_ '#!rest)))
+      (lambda (_%obj112245%_) (eq? _%obj112245%_ '#!rest)))
     (define dssl-optional-object?
-      (lambda (_%obj98565%_) (eq? _%obj98565%_ '#!optional)))
+      (lambda (_%obj112242%_) (eq? _%obj112242%_ '#!optional)))
     (define immediate?
-      (lambda (_%obj98562%_)
-        (not (let () (declare (not safe)) (##mem-allocated? _%obj98562%_)))))
+      (lambda (_%obj112239%_)
+        (not (let () (declare (not safe)) (##mem-allocated? _%obj112239%_)))))
     (define nonnegative-fixnum?
-      (lambda (_%obj98559%_)
-        (if (fixnum? _%obj98559%_)
-            (let () (declare (not safe)) (##fx>= _%obj98559%_ '0))
+      (lambda (_%obj112236%_)
+        (if (fixnum? _%obj112236%_)
+            (let () (declare (not safe)) (##fx>= _%obj112236%_ '0))
             '#f)))
     (define pair-or-null?
-      (lambda (_%obj98553%_)
-        (let ((_%$e98556%_ (pair? _%obj98553%_)))
-          (if _%$e98556%_ _%$e98556%_ (null? _%obj98553%_)))))
+      (lambda (_%obj112230%_)
+        (let ((_%$e112233%_ (pair? _%obj112230%_)))
+          (if _%$e112233%_ _%$e112233%_ (null? _%obj112230%_)))))
     (define values-count
-      (lambda (_%obj98550%_)
-        (if (let () (declare (not safe)) (##values? _%obj98550%_))
-            (let () (declare (not safe)) (##values-length _%obj98550%_))
+      (lambda (_%obj112227%_)
+        (if (let () (declare (not safe)) (##values? _%obj112227%_))
+            (let () (declare (not safe)) (##values-length _%obj112227%_))
             '1)))
     (define __values-ref
-      (lambda (_%obj98537%_ _%k98538%_)
-        (let ((_%k98541%_ _%k98538%_))
-          (if (let () (declare (not safe)) (##values? _%obj98537%_))
+      (lambda (_%obj112214%_ _%k112215%_)
+        (let ((_%k112218%_ _%k112215%_))
+          (if (let () (declare (not safe)) (##values? _%obj112214%_))
               (let ()
                 (declare (not safe))
-                (##values-ref _%obj98537%_ _%k98541%_))
-              _%obj98537%_))))
+                (##values-ref _%obj112214%_ _%k112218%_))
+              _%obj112214%_))))
     (define values-ref
-      (lambda (_%obj98522%_ _%k98523%_)
-        (if (fixnum? _%k98523%_)
-            (let ((_%k98527%_ _%k98523%_))
-              (__values-ref _%obj98522%_ _%k98527%_))
+      (lambda (_%obj112199%_ _%k112200%_)
+        (if (fixnum? _%k112200%_)
+            (let ((_%k112204%_ _%k112200%_))
+              (__values-ref _%obj112199%_ _%k112204%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -393,50 +402,45 @@
                'contract:
                'fixnum?
                'value:
-               _%k98523%_)
-              (void)))))
+               _%k112200%_)
+              '#!void))))
     (define values->list
-      (lambda (_%obj98519%_)
-        (if (let () (declare (not safe)) (##values? _%obj98519%_))
-            (let () (declare (not safe)) (##values->list _%obj98519%_))
-            (list _%obj98519%_))))
+      (lambda (_%obj112196%_)
+        (if (let () (declare (not safe)) (##values? _%obj112196%_))
+            (let () (declare (not safe)) (##values->list _%obj112196%_))
+            (list _%obj112196%_))))
     (define __foldl1
-      (lambda (_%f98467%_ _%iv98468%_ _%lst98469%_)
-        (let ((_%f98472%_ _%f98467%_))
-          (let _%lp98481%_ ((_%rest98483%_ _%lst98469%_)
-                            (_%r98484%_ _%iv98468%_))
-            (let* ((_%$%rest9848598493%_ _%rest98483%_)
-                   (_%$%E9848898497%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9848598493%_
-                             '([x . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9848798501%_ (lambda () _%r98484%_))
-                   (_%$%K9848998507%_
-                    (lambda (_%rest98504%_ _%x98505%_)
-                      (_%lp98481%_
-                       _%rest98504%_
-                       (_%f98472%_ _%x98505%_ _%r98484%_)))))
-              (if (pair? _%$%rest9848598493%_)
-                  (let ((_%$%hd9849098510%_
+      (lambda (_%f112144%_ _%iv112145%_ _%lst112146%_)
+        (let ((_%f112149%_ _%f112144%_))
+          (let _%lp112158%_ ((_%rest112160%_ _%lst112146%_)
+                             (_%r112161%_ _%iv112145%_))
+            (let* ((_%$%rest112162112170%_ _%rest112160%_)
+                   (_%$%else112164112178%_ (lambda () _%r112161%_))
+                   (_%$%K112166112184%_
+                    (lambda (_%rest112181%_ _%x112182%_)
+                      (_%lp112158%_
+                       _%rest112181%_
+                       (let ()
+                         (declare (not safe))
+                         (_%f112149%_ _%x112182%_ _%r112161%_))))))
+              (if (pair? _%$%rest112162112170%_)
+                  (let ((_%$%hd112167112187%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9848598493%_)))
-                        (_%$%tl9849198512%_
+                           (##car _%$%rest112162112170%_)))
+                        (_%$%tl112168112189%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9848598493%_))))
-                    (let* ((_%x98515%_ _%$%hd9849098510%_)
-                           (_%rest98517%_ _%$%tl9849198512%_))
-                      (_%$%K9848998507%_ _%rest98517%_ _%x98515%_)))
-                  (_%$%else9848798501%_)))))))
+                           (##cdr _%$%rest112162112170%_))))
+                    (let* ((_%x112192%_ _%$%hd112167112187%_)
+                           (_%rest112194%_ _%$%tl112168112189%_))
+                      (_%$%K112166112184%_ _%rest112194%_ _%x112192%_)))
+                  (_%$%else112164112178%_)))))))
     (define foldl1
-      (lambda (_%f98451%_ _%iv98452%_ _%lst98453%_)
-        (if (procedure? _%f98451%_)
-            (let ((_%f98457%_ _%f98451%_))
-              (__foldl1 _%f98457%_ _%iv98452%_ _%lst98453%_))
+      (lambda (_%f112128%_ _%iv112129%_ _%lst112130%_)
+        (if (procedure? _%f112128%_)
+            (let ((_%f112134%_ _%f112128%_))
+              (__foldl1 _%f112134%_ _%iv112129%_ _%lst112130%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -445,76 +449,68 @@
                'contract:
                'procedure?
                'value:
-               _%f98451%_)
-              (void)))))
+               _%f112128%_)
+              '#!void))))
     (define __foldl2
-      (lambda (_%f98364%_ _%iv98365%_ _%lst198366%_ _%lst298367%_)
-        (let ((_%f98370%_ _%f98364%_))
-          (let _%lp98379%_ ((_%rest198381%_ _%lst198366%_)
-                            (_%rest298382%_ _%lst298367%_)
-                            (_%r98383%_ _%iv98365%_))
-            (let* ((_%$%rest19838498392%_ _%rest198381%_)
-                   (_%$%E9838798396%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest19838498392%_
-                             '([x1 . rest1])
-                             'else)
-                      (void)))
-                   (_%$%else9838698400%_ (lambda () _%r98383%_))
-                   (_%$%K9838898439%_
-                    (lambda (_%rest198403%_ _%x198404%_)
-                      (let* ((_%$%rest29840598413%_ _%rest298382%_)
-                             (_%$%E9840898417%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest29840598413%_
-                                       '([x2 . rest2])
-                                       'else)
-                                (void)))
-                             (_%$%else9840798421%_ (lambda () _%r98383%_))
-                             (_%$%K9840998427%_
-                              (lambda (_%rest298424%_ _%x298425%_)
-                                (_%lp98379%_
-                                 _%rest198403%_
-                                 _%rest298424%_
-                                 (_%f98370%_
-                                  _%x198404%_
-                                  _%x298425%_
-                                  _%r98383%_)))))
-                        (if (pair? _%$%rest29840598413%_)
-                            (let ((_%$%hd9841098430%_
+      (lambda (_%f112041%_ _%iv112042%_ _%lst1112043%_ _%lst2112044%_)
+        (let ((_%f112047%_ _%f112041%_))
+          (let _%lp112056%_ ((_%rest1112058%_ _%lst1112043%_)
+                             (_%rest2112059%_ _%lst2112044%_)
+                             (_%r112060%_ _%iv112042%_))
+            (let* ((_%$%rest1112061112069%_ _%rest1112058%_)
+                   (_%$%else112063112077%_ (lambda () _%r112060%_))
+                   (_%$%K112065112116%_
+                    (lambda (_%rest1112080%_ _%x1112081%_)
+                      (let* ((_%$%rest2112082112090%_ _%rest2112059%_)
+                             (_%$%else112084112098%_ (lambda () _%r112060%_))
+                             (_%$%K112086112104%_
+                              (lambda (_%rest2112101%_ _%x2112102%_)
+                                (_%lp112056%_
+                                 _%rest1112080%_
+                                 _%rest2112101%_
+                                 (let ()
+                                   (declare (not safe))
+                                   (_%f112047%_
+                                    _%x1112081%_
+                                    _%x2112102%_
+                                    _%r112060%_))))))
+                        (if (pair? _%$%rest2112082112090%_)
+                            (let ((_%$%hd112087112107%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest29840598413%_)))
-                                  (_%$%tl9841198432%_
+                                     (##car _%$%rest2112082112090%_)))
+                                  (_%$%tl112088112109%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest29840598413%_))))
-                              (let* ((_%x298435%_ _%$%hd9841098430%_)
-                                     (_%rest298437%_ _%$%tl9841198432%_))
-                                (_%$%K9840998427%_
-                                 _%rest298437%_
-                                 _%x298435%_)))
-                            (_%$%else9840798421%_))))))
-              (if (pair? _%$%rest19838498392%_)
-                  (let ((_%$%hd9838998442%_
+                                     (##cdr _%$%rest2112082112090%_))))
+                              (let* ((_%x2112112%_ _%$%hd112087112107%_)
+                                     (_%rest2112114%_ _%$%tl112088112109%_))
+                                (_%$%K112086112104%_
+                                 _%rest2112114%_
+                                 _%x2112112%_)))
+                            (_%$%else112084112098%_))))))
+              (if (pair? _%$%rest1112061112069%_)
+                  (let ((_%$%hd112066112119%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest19838498392%_)))
-                        (_%$%tl9839098444%_
+                           (##car _%$%rest1112061112069%_)))
+                        (_%$%tl112067112121%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest19838498392%_))))
-                    (let* ((_%x198447%_ _%$%hd9838998442%_)
-                           (_%rest198449%_ _%$%tl9839098444%_))
-                      (_%$%K9838898439%_ _%rest198449%_ _%x198447%_)))
-                  (_%$%else9838698400%_)))))))
+                           (##cdr _%$%rest1112061112069%_))))
+                    (let* ((_%x1112124%_ _%$%hd112066112119%_)
+                           (_%rest1112126%_ _%$%tl112067112121%_))
+                      (_%$%K112065112116%_ _%rest1112126%_ _%x1112124%_)))
+                  (_%$%else112063112077%_)))))))
     (define foldl2
-      (lambda (_%f98347%_ _%iv98348%_ _%lst198349%_ _%lst298350%_)
-        (if (procedure? _%f98347%_)
-            (let ((_%f98354%_ _%f98347%_))
-              (__foldl2 _%f98354%_ _%iv98348%_ _%lst198349%_ _%lst298350%_))
+      (lambda (_%f112024%_ _%iv112025%_ _%lst1112026%_ _%lst2112027%_)
+        (if (procedure? _%f112024%_)
+            (let ((_%f112031%_ _%f112024%_))
+              (__foldl2
+               _%f112031%_
+               _%iv112025%_
+               _%lst1112026%_
+               _%lst2112027%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -523,113 +519,90 @@
                'contract:
                'procedure?
                'value:
-               _%f98347%_)
-              (void)))))
+               _%f112024%_)
+              '#!void))))
+    (define foldl__0
+      (lambda (_%f111957%_ _%iv111958%_ _%lst111959%_)
+        (let* ((_%f111961%_ _%f111957%_)
+               (_%iv111964%_ _%iv111958%_)
+               (_%lst111967%_ _%lst111959%_))
+          (if (procedure? _%f111961%_)
+              (let ((_%f111972%_ _%f111961%_))
+                (__foldl1 _%f111972%_ _%iv111964%_ _%lst111967%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111961%_)
+                '#!void)))))
+    (define foldl__1
+      (lambda (_%f111985%_ _%iv111986%_ _%lst1111987%_ _%lst2111988%_)
+        (let* ((_%f111990%_ _%f111985%_)
+               (_%iv111993%_ _%iv111986%_)
+               (_%lst1111996%_ _%lst1111987%_)
+               (_%lst2111999%_ _%lst2111988%_))
+          (if (procedure? _%f111990%_)
+              (let ((_%f112004%_ _%f111990%_))
+                (__foldl2
+                 _%f112004%_
+                 _%iv111993%_
+                 _%lst1111996%_
+                 _%lst2111999%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111990%_)
+                '#!void)))))
     (define foldl
-      (lambda _g99262_
-        (let ((_g99263_ (let () (declare (not safe)) (##length _g99262_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99263_ 3))
-                 (apply (lambda (_%f98280%_ _%iv98281%_ _%lst98282%_)
-                          (let* ((_%f98284%_ _%f98280%_)
-                                 (_%iv98287%_ _%iv98281%_)
-                                 (_%lst98290%_ _%lst98282%_))
-                            (if (procedure? _%f98284%_)
-                                (let ((_%f98295%_ _%f98284%_))
-                                  (__foldl1
-                                   _%f98295%_
-                                   _%iv98287%_
-                                   _%lst98290%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f98284%_)
-                                  (void)))))
-                        _g99262_))
-                ((let () (declare (not safe)) (##fx= _g99263_ 4))
-                 (apply (lambda (_%f98308%_
-                                 _%iv98309%_
-                                 _%lst198310%_
-                                 _%lst298311%_)
-                          (let* ((_%f98313%_ _%f98308%_)
-                                 (_%iv98316%_ _%iv98309%_)
-                                 (_%lst198319%_ _%lst198310%_)
-                                 (_%lst298322%_ _%lst298311%_))
-                            (if (procedure? _%f98313%_)
-                                (let ((_%f98327%_ _%f98313%_))
-                                  (__foldl2
-                                   _%f98327%_
-                                   _%iv98316%_
-                                   _%lst198319%_
-                                   _%lst298322%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f98313%_)
-                                  (void)))))
-                        _g99262_))
-                ((let () (declare (not safe)) (##fx>= _g99263_ 4))
-                 (apply foldl* _g99262_))
+      (lambda _g115719_
+        (let ((_g115720_ (let () (declare (not safe)) (##length _g115719_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115720_ 3))
+                 (apply foldl__0 _g115719_))
+                ((let () (declare (not safe)) (##fx= _g115720_ 4))
+                 (apply foldl__1 _g115719_))
+                ((let () (declare (not safe)) (##fx>= _g115720_ 4))
+                 (apply foldl* _g115719_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   foldl
-                  _g99262_))))))
+                  _g115719_))))))
     (define __foldl*
-      (lambda (_%f98211%_ _%iv98212%_ . _%rest98213%_)
-        (let ((_%f98216%_ _%f98211%_))
-          (let _%recur98225%_ ((_%iv98227%_ _%iv98212%_)
-                               (_%rest98228%_ _%rest98213%_))
-            (if (let* ((_%f98230%_ pair?) (_%lst98233%_ _%rest98228%_))
-                  (if (procedure? _%f98230%_)
-                      (let ((_%f98238%_ _%f98230%_))
-                        (__andmap1 _%f98238%_ _%lst98233%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%f98230%_)
-                        (void))))
-                (_%recur98225%_
-                 (apply _%f98216%_
-                        (let* ((_%f98257%_
-                                (lambda (_%xs98254%_ _%r98255%_)
-                                  (cons (car _%xs98254%_) _%r98255%_)))
-                               (_%iv98260%_ (list _%iv98227%_))
-                               (_%lst98263%_ _%rest98228%_))
-                          (if (procedure? _%f98257%_)
-                              (let ((_%f98268%_ _%f98257%_))
-                                (__foldr1 _%f98268%_ _%iv98260%_ _%lst98263%_))
-                              (begin
-                                (raise-contract-violation-error
-                                 '"contract violation"
-                                 'context:
-                                 'gerbil/runtime/util
-                                 'contract:
-                                 'procedure?
-                                 'value:
-                                 _%f98257%_)
-                                (void)))))
-                 (map cdr _%rest98228%_))
-                _%iv98227%_)))))
+      (lambda (_%f111888%_ _%iv111889%_ . _%rest111890%_)
+        (let ((_%f111893%_ _%f111888%_))
+          (let _%recur111902%_ ((_%iv111904%_ _%iv111889%_)
+                                (_%rest111905%_ _%rest111890%_))
+            (if (let* ((_%f111907%_ pair?)
+                       (_%lst111910%_ _%rest111905%_)
+                       (_%f111915%_ _%f111907%_))
+                  (__andmap1 _%f111915%_ _%lst111910%_))
+                (_%recur111902%_
+                 (let ((__tmp115721
+                        (let* ((_%f111934%_
+                                (lambda (_%xs111931%_ _%r111932%_)
+                                  (cons (car _%xs111931%_) _%r111932%_)))
+                               (_%iv111937%_ (list _%iv111904%_))
+                               (_%lst111940%_ _%rest111905%_)
+                               (_%f111945%_ _%f111934%_))
+                          (__foldr1 _%f111945%_ _%iv111937%_ _%lst111940%_))))
+                   (declare (not safe))
+                   (##apply _%f111893%_ __tmp115721))
+                 (map cdr _%rest111905%_))
+                _%iv111904%_)))))
     (define foldl*
-      (lambda (_%f98195%_ _%iv98196%_ . _%rest98197%_)
-        (if (procedure? _%f98195%_)
-            (let ((_%f98201%_ _%f98195%_))
+      (lambda (_%f111872%_ _%iv111873%_ . _%rest111874%_)
+        (if (procedure? _%f111872%_)
+            (let ((_%f111878%_ _%f111872%_))
               (declare (not safe))
-              (##apply __foldl* _%f98201%_ _%iv98196%_ _%rest98197%_))
+              (##apply __foldl* _%f111878%_ _%iv111873%_ _%rest111874%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -638,42 +611,37 @@
                'contract:
                'procedure?
                'value:
-               _%f98195%_)
-              (void)))))
+               _%f111872%_)
+              '#!void))))
     (define __foldr1
-      (lambda (_%f98144%_ _%iv98145%_ _%lst98146%_)
-        (let ((_%f98149%_ _%f98144%_))
-          (let _%recur98158%_ ((_%rest98160%_ _%lst98146%_))
-            (let* ((_%$%rest9816198169%_ _%rest98160%_)
-                   (_%$%E9816498173%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9816198169%_
-                             '([x . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9816398177%_ (lambda () _%iv98145%_))
-                   (_%$%K9816598183%_
-                    (lambda (_%rest98180%_ _%x98181%_)
-                      (_%f98149%_ _%x98181%_ (_%recur98158%_ _%rest98180%_)))))
-              (if (pair? _%$%rest9816198169%_)
-                  (let ((_%$%hd9816698186%_
+      (lambda (_%f111821%_ _%iv111822%_ _%lst111823%_)
+        (let ((_%f111826%_ _%f111821%_))
+          (let _%recur111835%_ ((_%rest111837%_ _%lst111823%_))
+            (let* ((_%$%rest111838111846%_ _%rest111837%_)
+                   (_%$%else111840111854%_ (lambda () _%iv111822%_))
+                   (_%$%K111842111860%_
+                    (lambda (_%rest111857%_ _%x111858%_)
+                      (let ((__tmp115722 (_%recur111835%_ _%rest111857%_)))
+                        (declare (not safe))
+                        (_%f111826%_ _%x111858%_ __tmp115722)))))
+              (if (pair? _%$%rest111838111846%_)
+                  (let ((_%$%hd111843111863%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9816198169%_)))
-                        (_%$%tl9816798188%_
+                           (##car _%$%rest111838111846%_)))
+                        (_%$%tl111844111865%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9816198169%_))))
-                    (let* ((_%x98191%_ _%$%hd9816698186%_)
-                           (_%rest98193%_ _%$%tl9816798188%_))
-                      (_%$%K9816598183%_ _%rest98193%_ _%x98191%_)))
-                  (_%$%else9816398177%_)))))))
+                           (##cdr _%$%rest111838111846%_))))
+                    (let* ((_%x111868%_ _%$%hd111843111863%_)
+                           (_%rest111870%_ _%$%tl111844111865%_))
+                      (_%$%K111842111860%_ _%rest111870%_ _%x111868%_)))
+                  (_%$%else111840111854%_)))))))
     (define foldr1
-      (lambda (_%f98128%_ _%iv98129%_ _%lst98130%_)
-        (if (procedure? _%f98128%_)
-            (let ((_%f98134%_ _%f98128%_))
-              (__foldr1 _%f98134%_ _%iv98129%_ _%lst98130%_))
+      (lambda (_%f111805%_ _%iv111806%_ _%lst111807%_)
+        (if (procedure? _%f111805%_)
+            (let ((_%f111811%_ _%f111805%_))
+              (__foldr1 _%f111811%_ _%iv111806%_ _%lst111807%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -682,74 +650,67 @@
                'contract:
                'procedure?
                'value:
-               _%f98128%_)
-              (void)))))
+               _%f111805%_)
+              '#!void))))
     (define __foldr2
-      (lambda (_%f98042%_ _%iv98043%_ _%lst198044%_ _%lst298045%_)
-        (let ((_%f98048%_ _%f98042%_))
-          (let _%recur98057%_ ((_%rest198059%_ _%lst198044%_)
-                               (_%rest298060%_ _%lst298045%_))
-            (let* ((_%$%rest19806198069%_ _%rest198059%_)
-                   (_%$%E9806498073%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest19806198069%_
-                             '([x1 . rest1])
-                             'else)
-                      (void)))
-                   (_%$%else9806398077%_ (lambda () _%iv98043%_))
-                   (_%$%K9806598116%_
-                    (lambda (_%rest198080%_ _%x198081%_)
-                      (let* ((_%$%rest29808298090%_ _%rest298060%_)
-                             (_%$%E9808598094%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest29808298090%_
-                                       '([x2 . rest2])
-                                       'else)
-                                (void)))
-                             (_%$%else9808498098%_ (lambda () _%iv98043%_))
-                             (_%$%K9808698104%_
-                              (lambda (_%rest298101%_ _%x298102%_)
-                                (_%f98048%_
-                                 _%x198081%_
-                                 _%x298102%_
-                                 (_%recur98057%_
-                                  _%rest198080%_
-                                  _%rest298101%_)))))
-                        (if (pair? _%$%rest29808298090%_)
-                            (let ((_%$%hd9808798107%_
+      (lambda (_%f111719%_ _%iv111720%_ _%lst1111721%_ _%lst2111722%_)
+        (let ((_%f111725%_ _%f111719%_))
+          (let _%recur111734%_ ((_%rest1111736%_ _%lst1111721%_)
+                                (_%rest2111737%_ _%lst2111722%_))
+            (let* ((_%$%rest1111738111746%_ _%rest1111736%_)
+                   (_%$%else111740111754%_ (lambda () _%iv111720%_))
+                   (_%$%K111742111793%_
+                    (lambda (_%rest1111757%_ _%x1111758%_)
+                      (let* ((_%$%rest2111759111767%_ _%rest2111737%_)
+                             (_%$%else111761111775%_ (lambda () _%iv111720%_))
+                             (_%$%K111763111781%_
+                              (lambda (_%rest2111778%_ _%x2111779%_)
+                                (let ((__tmp115723
+                                       (_%recur111734%_
+                                        _%rest1111757%_
+                                        _%rest2111778%_)))
+                                  (declare (not safe))
+                                  (_%f111725%_
+                                   _%x1111758%_
+                                   _%x2111779%_
+                                   __tmp115723)))))
+                        (if (pair? _%$%rest2111759111767%_)
+                            (let ((_%$%hd111764111784%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest29808298090%_)))
-                                  (_%$%tl9808898109%_
+                                     (##car _%$%rest2111759111767%_)))
+                                  (_%$%tl111765111786%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest29808298090%_))))
-                              (let* ((_%x298112%_ _%$%hd9808798107%_)
-                                     (_%rest298114%_ _%$%tl9808898109%_))
-                                (_%$%K9808698104%_
-                                 _%rest298114%_
-                                 _%x298112%_)))
-                            (_%$%else9808498098%_))))))
-              (if (pair? _%$%rest19806198069%_)
-                  (let ((_%$%hd9806698119%_
+                                     (##cdr _%$%rest2111759111767%_))))
+                              (let* ((_%x2111789%_ _%$%hd111764111784%_)
+                                     (_%rest2111791%_ _%$%tl111765111786%_))
+                                (_%$%K111763111781%_
+                                 _%rest2111791%_
+                                 _%x2111789%_)))
+                            (_%$%else111761111775%_))))))
+              (if (pair? _%$%rest1111738111746%_)
+                  (let ((_%$%hd111743111796%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest19806198069%_)))
-                        (_%$%tl9806798121%_
+                           (##car _%$%rest1111738111746%_)))
+                        (_%$%tl111744111798%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest19806198069%_))))
-                    (let* ((_%x198124%_ _%$%hd9806698119%_)
-                           (_%rest198126%_ _%$%tl9806798121%_))
-                      (_%$%K9806598116%_ _%rest198126%_ _%x198124%_)))
-                  (_%$%else9806398077%_)))))))
+                           (##cdr _%$%rest1111738111746%_))))
+                    (let* ((_%x1111801%_ _%$%hd111743111796%_)
+                           (_%rest1111803%_ _%$%tl111744111798%_))
+                      (_%$%K111742111793%_ _%rest1111803%_ _%x1111801%_)))
+                  (_%$%else111740111754%_)))))))
     (define foldr2
-      (lambda (_%f98025%_ _%iv98026%_ _%lst198027%_ _%lst298028%_)
-        (if (procedure? _%f98025%_)
-            (let ((_%f98032%_ _%f98025%_))
-              (__foldr2 _%f98032%_ _%iv98026%_ _%lst198027%_ _%lst298028%_))
+      (lambda (_%f111702%_ _%iv111703%_ _%lst1111704%_ _%lst2111705%_)
+        (if (procedure? _%f111702%_)
+            (let ((_%f111709%_ _%f111702%_))
+              (__foldr2
+               _%f111709%_
+               _%iv111703%_
+               _%lst1111704%_
+               _%lst2111705%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -758,111 +719,89 @@
                'contract:
                'procedure?
                'value:
-               _%f98025%_)
-              (void)))))
+               _%f111702%_)
+              '#!void))))
+    (define foldr__0
+      (lambda (_%f111635%_ _%iv111636%_ _%lst111637%_)
+        (let* ((_%f111639%_ _%f111635%_)
+               (_%iv111642%_ _%iv111636%_)
+               (_%lst111645%_ _%lst111637%_))
+          (if (procedure? _%f111639%_)
+              (let ((_%f111650%_ _%f111639%_))
+                (__foldr1 _%f111650%_ _%iv111642%_ _%lst111645%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111639%_)
+                '#!void)))))
+    (define foldr__1
+      (lambda (_%f111663%_ _%iv111664%_ _%lst1111665%_ _%lst2111666%_)
+        (let* ((_%f111668%_ _%f111663%_)
+               (_%iv111671%_ _%iv111664%_)
+               (_%lst1111674%_ _%lst1111665%_)
+               (_%lst2111677%_ _%lst2111666%_))
+          (if (procedure? _%f111668%_)
+              (let ((_%f111682%_ _%f111668%_))
+                (__foldr2
+                 _%f111682%_
+                 _%iv111671%_
+                 _%lst1111674%_
+                 _%lst2111677%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111668%_)
+                '#!void)))))
     (define foldr
-      (lambda _g99264_
-        (let ((_g99265_ (let () (declare (not safe)) (##length _g99264_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99265_ 3))
-                 (apply (lambda (_%f97958%_ _%iv97959%_ _%lst97960%_)
-                          (let* ((_%f97962%_ _%f97958%_)
-                                 (_%iv97965%_ _%iv97959%_)
-                                 (_%lst97968%_ _%lst97960%_))
-                            (if (procedure? _%f97962%_)
-                                (let ((_%f97973%_ _%f97962%_))
-                                  (__foldr1
-                                   _%f97973%_
-                                   _%iv97965%_
-                                   _%lst97968%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97962%_)
-                                  (void)))))
-                        _g99264_))
-                ((let () (declare (not safe)) (##fx= _g99265_ 4))
-                 (apply (lambda (_%f97986%_
-                                 _%iv97987%_
-                                 _%lst197988%_
-                                 _%lst297989%_)
-                          (let* ((_%f97991%_ _%f97986%_)
-                                 (_%iv97994%_ _%iv97987%_)
-                                 (_%lst197997%_ _%lst197988%_)
-                                 (_%lst298000%_ _%lst297989%_))
-                            (if (procedure? _%f97991%_)
-                                (let ((_%f98005%_ _%f97991%_))
-                                  (__foldr2
-                                   _%f98005%_
-                                   _%iv97994%_
-                                   _%lst197997%_
-                                   _%lst298000%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97991%_)
-                                  (void)))))
-                        _g99264_))
-                ((let () (declare (not safe)) (##fx>= _g99265_ 4))
-                 (apply foldr* _g99264_))
+      (lambda _g115724_
+        (let ((_g115725_ (let () (declare (not safe)) (##length _g115724_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115725_ 3))
+                 (apply foldr__0 _g115724_))
+                ((let () (declare (not safe)) (##fx= _g115725_ 4))
+                 (apply foldr__1 _g115724_))
+                ((let () (declare (not safe)) (##fx>= _g115725_ 4))
+                 (apply foldr* _g115724_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   foldr
-                  _g99264_))))))
+                  _g115724_))))))
     (define __foldr*
-      (lambda (_%f97890%_ _%iv97891%_ . _%rest97892%_)
-        (let ((_%f97895%_ _%f97890%_))
-          (let _%recur97904%_ ((_%rest97906%_ _%rest97892%_))
-            (if (let* ((_%f97908%_ pair?) (_%lst97911%_ _%rest97906%_))
-                  (if (procedure? _%f97908%_)
-                      (let ((_%f97916%_ _%f97908%_))
-                        (__andmap1 _%f97916%_ _%lst97911%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%f97908%_)
-                        (void))))
-                (apply _%f97895%_
-                       (let* ((_%f97935%_
-                               (lambda (_%xs97932%_ _%r97933%_)
-                                 (cons (car _%xs97932%_) _%r97933%_)))
-                              (_%iv97938%_
-                               (list (_%recur97904%_ (map cdr _%rest97906%_))))
-                              (_%lst97941%_ _%rest97906%_))
-                         (if (procedure? _%f97935%_)
-                             (let ((_%f97946%_ _%f97935%_))
-                               (__foldr1 _%f97946%_ _%iv97938%_ _%lst97941%_))
-                             (begin
-                               (raise-contract-violation-error
-                                '"contract violation"
-                                'context:
-                                'gerbil/runtime/util
-                                'contract:
-                                'procedure?
-                                'value:
-                                _%f97935%_)
-                               (void)))))
-                _%iv97891%_)))))
+      (lambda (_%f111567%_ _%iv111568%_ . _%rest111569%_)
+        (let ((_%f111572%_ _%f111567%_))
+          (let _%recur111581%_ ((_%rest111583%_ _%rest111569%_))
+            (if (let* ((_%f111585%_ pair?)
+                       (_%lst111588%_ _%rest111583%_)
+                       (_%f111593%_ _%f111585%_))
+                  (__andmap1 _%f111593%_ _%lst111588%_))
+                (let ((__tmp115726
+                       (let* ((_%f111612%_
+                               (lambda (_%xs111609%_ _%r111610%_)
+                                 (cons (car _%xs111609%_) _%r111610%_)))
+                              (_%iv111615%_
+                               (list (_%recur111581%_
+                                      (map cdr _%rest111583%_))))
+                              (_%lst111618%_ _%rest111583%_)
+                              (_%f111623%_ _%f111612%_))
+                         (__foldr1 _%f111623%_ _%iv111615%_ _%lst111618%_))))
+                  (declare (not safe))
+                  (##apply _%f111572%_ __tmp115726))
+                _%iv111568%_)))))
     (define foldr*
-      (lambda (_%f97874%_ _%iv97875%_ . _%rest97876%_)
-        (if (procedure? _%f97874%_)
-            (let ((_%f97880%_ _%f97874%_))
+      (lambda (_%f111551%_ _%iv111552%_ . _%rest111553%_)
+        (if (procedure? _%f111551%_)
+            (let ((_%f111557%_ _%f111551%_))
               (declare (not safe))
-              (##apply __foldr* _%f97880%_ _%iv97875%_ _%rest97876%_))
+              (##apply __foldr* _%f111557%_ _%iv111552%_ _%rest111553%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -871,157 +810,142 @@
                'contract:
                'procedure?
                'value:
-               _%f97874%_)
-              (void)))))
+               _%f111551%_)
+              '#!void))))
     (define remove-nulls!
-      (lambda (_%l97761%_)
-        (let* ((_%$%l9776297775%_ _%l97761%_)
-               (_%$%E9776697779%_
+      (lambda (_%l111438%_)
+        (let* ((_%$%l111439111452%_ _%l111438%_)
+               (_%$%E111443111456%_
                 (lambda ()
                   (error '"No clause matching"
-                         _%$%l9776297775%_
+                         _%$%l111439111452%_
                          '([[] . r])
                          '([_ . r])
                          '(_))
-                  (void)))
-               (_%$%try-match9776597787%_
-                (lambda ()
-                  (let ((_%$%K9776797784%_ (lambda () _%l97761%_)))
-                    (_%$%K9776797784%_))))
-               (_%$%try-match9776497859%_
-                (lambda ()
-                  (let ((_%$%K9776897851%_
-                         (lambda (_%r97791%_)
-                           (let _%loop97793%_ ((_%l97795%_ _%l97761%_)
-                                               (_%r97796%_ _%r97791%_))
-                             (let* ((_%$%r9779797810%_ _%r97796%_)
-                                    (_%$%E9780197814%_
-                                     (lambda ()
-                                       (error '"No clause matching"
-                                              _%$%r9779797810%_
-                                              '([[] . rr])
-                                              '([_ . rr])
-                                              '(_))
-                                       (void)))
-                                    (_%$%try-match9780097822%_
-                                     (lambda ()
-                                       (let ((_%$%K9780297819%_
-                                              (lambda () (void))))
-                                         (_%$%K9780297819%_))))
-                                    (_%$%try-match9779997836%_
-                                     (lambda ()
-                                       (let ((_%$%K9780397828%_
-                                              (lambda (_%rr97826%_)
-                                                (_%loop97793%_
-                                                 _%r97796%_
-                                                 _%rr97826%_))))
-                                         (if (pair? _%$%r9779797810%_)
-                                             (let* ((_%$%tl9780597831%_
-                                                     (let ()
-                                                       (declare (not safe))
-                                                       (##cdr _%$%r9779797810%_)))
-                                                    (_%rr97834%_
-                                                     _%$%tl9780597831%_))
-                                               (_%$%K9780397828%_ _%rr97834%_))
-                                             (_%$%try-match9780097822%_)))))
-                                    (_%$%K9780697841%_
-                                     (lambda (_%rr97839%_)
-                                       (set-cdr!
-                                        _%l97795%_
-                                        (remove-nulls! _%rr97839%_)))))
-                               (if (pair? _%$%r9779797810%_)
-                                   (let ((_%$%hd9780797844%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##car _%$%r9779797810%_)))
-                                         (_%$%tl9780897846%_
-                                          (let ()
-                                            (declare (not safe))
-                                            (##cdr _%$%r9779797810%_))))
-                                     (if (null? _%$%hd9780797844%_)
-                                         (let ((_%rr97849%_
-                                                _%$%tl9780897846%_))
-                                           (_%$%K9780697841%_ _%rr97849%_))
-                                         (_%$%try-match9779997836%_)))
-                                   (_%$%try-match9779997836%_))))
-                           _%l97761%_)))
-                    (if (pair? _%$%l9776297775%_)
-                        (let* ((_%$%tl9777097854%_
-                                (let ()
+                  '#!void)))
+          (let ((_%$%K111448111541%_
+                 (lambda (_%r111539%_) (remove-nulls! _%r111539%_)))
+                (_%$%K111445111528%_
+                 (lambda (_%r111468%_)
+                   (let _%loop111470%_ ((_%l111472%_ _%l111438%_)
+                                        (_%r111473%_ _%r111468%_))
+                     (let* ((_%$%r111474111487%_ _%r111473%_)
+                            (_%$%E111478111491%_
+                             (lambda ()
+                               (error '"No clause matching"
+                                      _%$%r111474111487%_
+                                      '([[] . rr])
+                                      '([_ . rr])
+                                      '(_))
+                               '#!void)))
+                       (let ((_%$%K111483111518%_
+                              (lambda (_%rr111516%_)
+                                (let ((__tmp115728 _%l111472%_)
+                                      (__tmp115727
+                                       (remove-nulls! _%rr111516%_)))
                                   (declare (not safe))
-                                  (##cdr _%$%l9776297775%_)))
-                               (_%r97857%_ _%$%tl9777097854%_))
-                          (_%$%K9776897851%_ _%r97857%_))
-                        (_%$%try-match9776597787%_)))))
-               (_%$%K9777197864%_
-                (lambda (_%r97862%_) (remove-nulls! _%r97862%_))))
-          (if (pair? _%$%l9776297775%_)
-              (let ((_%$%hd9777297867%_
-                     (let () (declare (not safe)) (##car _%$%l9776297775%_)))
-                    (_%$%tl9777397869%_
-                     (let () (declare (not safe)) (##cdr _%$%l9776297775%_))))
-                (if (null? _%$%hd9777297867%_)
-                    (let ((_%r97872%_ _%$%tl9777397869%_))
-                      (_%$%K9777197864%_ _%r97872%_))
-                    (_%$%try-match9776497859%_)))
-              (_%$%try-match9776497859%_)))))
+                                  (##set-cdr! __tmp115728 __tmp115727))))
+                             (_%$%K111480111505%_
+                              (lambda (_%rr111503%_)
+                                (_%loop111470%_ _%r111473%_ _%rr111503%_)))
+                             (_%$%K111479111496%_ (lambda () '#!void)))
+                         (if (pair? _%$%r111474111487%_)
+                             (let ((_%$%tl111485111523%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##cdr _%$%r111474111487%_)))
+                                   (_%$%hd111484111521%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%$%r111474111487%_))))
+                               (if (null? _%$%hd111484111521%_)
+                                   (let ((_%rr111526%_ _%$%tl111485111523%_))
+                                     (_%$%K111483111518%_ _%rr111526%_))
+                                   (let ((_%rr111511%_ _%$%tl111485111523%_))
+                                     (_%$%K111480111505%_ _%rr111511%_))))
+                             '#!void))))
+                   _%l111438%_))
+                (_%$%K111444111461%_ (lambda () _%l111438%_)))
+            (if (pair? _%$%l111439111452%_)
+                (let ((_%$%tl111450111546%_
+                       (let ()
+                         (declare (not safe))
+                         (##cdr _%$%l111439111452%_)))
+                      (_%$%hd111449111544%_
+                       (let ()
+                         (declare (not safe))
+                         (##car _%$%l111439111452%_))))
+                  (if (null? _%$%hd111449111544%_)
+                      (let ((_%r111549%_ _%$%tl111450111546%_))
+                        (remove-nulls! _%r111549%_))
+                      (let ((_%r111534%_ _%$%tl111450111546%_))
+                        (_%$%K111445111528%_ _%r111534%_))))
+                (_%$%K111444111461%_))))))
     (define append1!
-      (lambda (_%l97746%_ _%x97747%_)
-        (let ((_%l297750%_ (cons _%x97747%_ '())))
-          (if (pair? _%l97746%_)
-              (let ((_%l97752%_ _%l97746%_))
-                (set-cdr!
-                 (let () (declare (not safe)) (##last-pair _%l97752%_))
-                 _%l297750%_)
-                _%l97752%_)
-              _%l297750%_))))
+      (lambda (_%l111423%_ _%x111424%_)
+        (let ((_%l2111427%_ (cons _%x111424%_ '())))
+          (if (pair? _%l111423%_)
+              (let ((_%l111429%_ _%l111423%_))
+                (let ((__tmp115729
+                       (let ()
+                         (declare (not safe))
+                         (##last-pair _%l111429%_))))
+                  (declare (not safe))
+                  (##set-cdr! __tmp115729 _%l2111427%_))
+                _%l111429%_)
+              _%l2111427%_))))
     (define __append-reverse-until
-      (lambda (_%pred97688%_ _%rhead97689%_ _%tail97690%_)
-        (let ((_%pred97693%_ _%pred97688%_))
-          (let _%loop97702%_ ((_%rhead97704%_ _%rhead97689%_)
-                              (_%tail97705%_ _%tail97690%_))
-            (let* ((_%$%rhead9770797716%_ _%rhead97704%_)
-                   (_%$%E9771097720%_
+      (lambda (_%pred111365%_ _%rhead111366%_ _%tail111367%_)
+        (let ((_%pred111370%_ _%pred111365%_))
+          (let _%loop111379%_ ((_%rhead111381%_ _%rhead111366%_)
+                               (_%tail111382%_ _%tail111367%_))
+            (let* ((_%$%rhead111384111393%_ _%rhead111381%_)
+                   (_%$%E111387111397%_
                     (lambda ()
                       (error '"No clause matching"
-                             _%$%rhead9770797716%_
+                             _%$%rhead111384111393%_
                              '([])
                              '([a :: r]))
-                      (void)))
-                   (_%$%try-match9770997739%_
-                    (lambda ()
-                      (let ((_%$%K9771197727%_
-                             (lambda (_%r97724%_ _%a97725%_)
-                               (if (_%pred97693%_ _%a97725%_)
-                                   (values _%rhead97704%_ _%tail97705%_)
-                                   (_%loop97702%_
-                                    _%r97724%_
-                                    (cons _%a97725%_ _%tail97705%_))))))
-                        (if (pair? _%$%rhead9770797716%_)
-                            (let ((_%$%hd9771297730%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##car _%$%rhead9770797716%_)))
-                                  (_%$%tl9771397732%_
-                                   (let ()
-                                     (declare (not safe))
-                                     (##cdr _%$%rhead9770797716%_))))
-                              (let* ((_%a97735%_ _%$%hd9771297730%_)
-                                     (_%r97737%_ _%$%tl9771397732%_))
-                                (_%$%K9771197727%_ _%r97737%_ _%a97735%_)))
-                            (_%$%E9771097720%_)))))
-                   (_%$%K9771497743%_ (lambda () (values '() _%tail97705%_))))
-              (if (null? _%$%rhead9770797716%_)
-                  (_%$%K9771497743%_)
-                  (_%$%try-match9770997739%_)))))))
+                      '#!void)))
+              (let ((_%$%K111391111420%_
+                     (lambda () (values '() _%tail111382%_)))
+                    (_%$%K111388111404%_
+                     (lambda (_%r111401%_ _%a111402%_)
+                       (if (let ()
+                             (declare (not safe))
+                             (_%pred111370%_ _%a111402%_))
+                           (values _%rhead111381%_ _%tail111382%_)
+                           (_%loop111379%_
+                            _%r111401%_
+                            (cons _%a111402%_ _%tail111382%_))))))
+                (let ((_%$%try-match111386111416%_
+                       (lambda ()
+                         (if (pair? _%$%rhead111384111393%_)
+                             (let ((_%$%tl111390111409%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##cdr _%$%rhead111384111393%_)))
+                                   (_%$%hd111389111407%_
+                                    (let ()
+                                      (declare (not safe))
+                                      (##car _%$%rhead111384111393%_))))
+                               (let ((_%a111412%_ _%$%hd111389111407%_)
+                                     (_%r111414%_ _%$%tl111390111409%_))
+                                 (_%$%K111388111404%_
+                                  _%r111414%_
+                                  _%a111412%_)))
+                             (_%$%E111387111397%_)))))
+                  (if (null? _%$%rhead111384111393%_)
+                      (_%$%K111391111420%_)
+                      (_%$%try-match111386111416%_)))))))))
     (define append-reverse-until
-      (lambda (_%pred97672%_ _%rhead97673%_ _%tail97674%_)
-        (if (procedure? _%pred97672%_)
-            (let ((_%pred97678%_ _%pred97672%_))
+      (lambda (_%pred111349%_ _%rhead111350%_ _%tail111351%_)
+        (if (procedure? _%pred111349%_)
+            (let ((_%pred111355%_ _%pred111349%_))
               (__append-reverse-until
-               _%pred97678%_
-               _%rhead97673%_
-               _%tail97674%_))
+               _%pred111355%_
+               _%rhead111350%_
+               _%tail111351%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1030,43 +954,39 @@
                'contract:
                'procedure?
                'value:
-               _%pred97672%_)
-              (void)))))
+               _%pred111349%_)
+              '#!void))))
     (define __andmap1
-      (lambda (_%f97621%_ _%lst97622%_)
-        (let ((_%f97625%_ _%f97621%_))
-          (let _%lp97634%_ ((_%rest97636%_ _%lst97622%_))
-            (let* ((_%$%rest9763897646%_ _%rest97636%_)
-                   (_%$%E9764197650%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9763897646%_
-                             '([x . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9764097654%_ (lambda () '#t))
-                   (_%$%K9764297660%_
-                    (lambda (_%rest97657%_ _%x97658%_)
-                      (if (_%f97625%_ _%x97658%_)
-                          (_%lp97634%_ _%rest97657%_)
+      (lambda (_%f111298%_ _%lst111299%_)
+        (let ((_%f111302%_ _%f111298%_))
+          (let _%lp111311%_ ((_%rest111313%_ _%lst111299%_))
+            (let* ((_%$%rest111315111323%_ _%rest111313%_)
+                   (_%$%else111317111331%_ (lambda () '#t))
+                   (_%$%K111319111337%_
+                    (lambda (_%rest111334%_ _%x111335%_)
+                      (if (let ()
+                            (declare (not safe))
+                            (_%f111302%_ _%x111335%_))
+                          (_%lp111311%_ _%rest111334%_)
                           '#f))))
-              (if (pair? _%$%rest9763897646%_)
-                  (let ((_%$%hd9764397663%_
+              (if (pair? _%$%rest111315111323%_)
+                  (let ((_%$%hd111320111340%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9763897646%_)))
-                        (_%$%tl9764497665%_
+                           (##car _%$%rest111315111323%_)))
+                        (_%$%tl111321111342%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9763897646%_))))
-                    (let* ((_%x97668%_ _%$%hd9764397663%_)
-                           (_%rest97670%_ _%$%tl9764497665%_))
-                      (_%$%K9764297660%_ _%rest97670%_ _%x97668%_)))
-                  (_%$%else9764097654%_)))))))
+                           (##cdr _%$%rest111315111323%_))))
+                    (let* ((_%x111345%_ _%$%hd111320111340%_)
+                           (_%rest111347%_ _%$%tl111321111342%_))
+                      (_%$%K111319111337%_ _%rest111347%_ _%x111345%_)))
+                  (_%$%else111317111331%_)))))))
     (define andmap1
-      (lambda (_%f97606%_ _%lst97607%_)
-        (if (procedure? _%f97606%_)
-            (let ((_%f97611%_ _%f97606%_)) (__andmap1 _%f97611%_ _%lst97607%_))
+      (lambda (_%f111283%_ _%lst111284%_)
+        (if (procedure? _%f111283%_)
+            (let ((_%f111288%_ _%f111283%_))
+              (__andmap1 _%f111288%_ _%lst111284%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1075,71 +995,61 @@
                'contract:
                'procedure?
                'value:
-               _%f97606%_)
-              (void)))))
+               _%f111283%_)
+              '#!void))))
     (define __andmap2
-      (lambda (_%f97520%_ _%lst197521%_ _%lst297522%_)
-        (let ((_%f97525%_ _%f97520%_))
-          (let _%lp97534%_ ((_%rest197536%_ _%lst197521%_)
-                            (_%rest297537%_ _%lst297522%_))
-            (let* ((_%$%rest19753997547%_ _%rest197536%_)
-                   (_%$%E9754297551%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest19753997547%_
-                             '([x1 . rest1])
-                             'else)
-                      (void)))
-                   (_%$%else9754197555%_ (lambda () '#t))
-                   (_%$%K9754397594%_
-                    (lambda (_%rest197558%_ _%x197559%_)
-                      (let* ((_%$%rest29756097568%_ _%rest297537%_)
-                             (_%$%E9756397572%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest29756097568%_
-                                       '([x2 . rest2])
-                                       'else)
-                                (void)))
-                             (_%$%else9756297576%_ (lambda () '#t))
-                             (_%$%K9756497582%_
-                              (lambda (_%rest297579%_ _%x297580%_)
-                                (if (_%f97525%_ _%x197559%_ _%x297580%_)
-                                    (_%lp97534%_ _%rest197558%_ _%rest297579%_)
+      (lambda (_%f111197%_ _%lst1111198%_ _%lst2111199%_)
+        (let ((_%f111202%_ _%f111197%_))
+          (let _%lp111211%_ ((_%rest1111213%_ _%lst1111198%_)
+                             (_%rest2111214%_ _%lst2111199%_))
+            (let* ((_%$%rest1111216111224%_ _%rest1111213%_)
+                   (_%$%else111218111232%_ (lambda () '#t))
+                   (_%$%K111220111271%_
+                    (lambda (_%rest1111235%_ _%x1111236%_)
+                      (let* ((_%$%rest2111237111245%_ _%rest2111214%_)
+                             (_%$%else111239111253%_ (lambda () '#t))
+                             (_%$%K111241111259%_
+                              (lambda (_%rest2111256%_ _%x2111257%_)
+                                (if (let ()
+                                      (declare (not safe))
+                                      (_%f111202%_ _%x1111236%_ _%x2111257%_))
+                                    (_%lp111211%_
+                                     _%rest1111235%_
+                                     _%rest2111256%_)
                                     '#f))))
-                        (if (pair? _%$%rest29756097568%_)
-                            (let ((_%$%hd9756597585%_
+                        (if (pair? _%$%rest2111237111245%_)
+                            (let ((_%$%hd111242111262%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest29756097568%_)))
-                                  (_%$%tl9756697587%_
+                                     (##car _%$%rest2111237111245%_)))
+                                  (_%$%tl111243111264%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest29756097568%_))))
-                              (let* ((_%x297590%_ _%$%hd9756597585%_)
-                                     (_%rest297592%_ _%$%tl9756697587%_))
-                                (_%$%K9756497582%_
-                                 _%rest297592%_
-                                 _%x297590%_)))
-                            (_%$%else9756297576%_))))))
-              (if (pair? _%$%rest19753997547%_)
-                  (let ((_%$%hd9754497597%_
+                                     (##cdr _%$%rest2111237111245%_))))
+                              (let* ((_%x2111267%_ _%$%hd111242111262%_)
+                                     (_%rest2111269%_ _%$%tl111243111264%_))
+                                (_%$%K111241111259%_
+                                 _%rest2111269%_
+                                 _%x2111267%_)))
+                            (_%$%else111239111253%_))))))
+              (if (pair? _%$%rest1111216111224%_)
+                  (let ((_%$%hd111221111274%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest19753997547%_)))
-                        (_%$%tl9754597599%_
+                           (##car _%$%rest1111216111224%_)))
+                        (_%$%tl111222111276%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest19753997547%_))))
-                    (let* ((_%x197602%_ _%$%hd9754497597%_)
-                           (_%rest197604%_ _%$%tl9754597599%_))
-                      (_%$%K9754397594%_ _%rest197604%_ _%x197602%_)))
-                  (_%$%else9754197555%_)))))))
+                           (##cdr _%$%rest1111216111224%_))))
+                    (let* ((_%x1111279%_ _%$%hd111221111274%_)
+                           (_%rest1111281%_ _%$%tl111222111276%_))
+                      (_%$%K111220111271%_ _%rest1111281%_ _%x1111279%_)))
+                  (_%$%else111218111232%_)))))))
     (define andmap2
-      (lambda (_%f97504%_ _%lst197505%_ _%lst297506%_)
-        (if (procedure? _%f97504%_)
-            (let ((_%f97510%_ _%f97504%_))
-              (__andmap2 _%f97510%_ _%lst197505%_ _%lst297506%_))
+      (lambda (_%f111181%_ _%lst1111182%_ _%lst2111183%_)
+        (if (procedure? _%f111181%_)
+            (let ((_%f111187%_ _%f111181%_))
+              (__andmap2 _%f111187%_ _%lst1111182%_ _%lst2111183%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1148,85 +1058,75 @@
                'contract:
                'procedure?
                'value:
-               _%f97504%_)
-              (void)))))
+               _%f111181%_)
+              '#!void))))
+    (define andmap__0
+      (lambda (_%f111125%_ _%lst111126%_)
+        (let* ((_%f111128%_ _%f111125%_) (_%lst111131%_ _%lst111126%_))
+          (if (procedure? _%f111128%_)
+              (let ((_%f111136%_ _%f111128%_))
+                (__andmap1 _%f111136%_ _%lst111131%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111128%_)
+                '#!void)))))
+    (define andmap__1
+      (lambda (_%f111148%_ _%lst1111149%_ _%lst2111150%_)
+        (let* ((_%f111152%_ _%f111148%_)
+               (_%lst1111155%_ _%lst1111149%_)
+               (_%lst2111158%_ _%lst2111150%_))
+          (if (procedure? _%f111152%_)
+              (let ((_%f111163%_ _%f111152%_))
+                (__andmap2 _%f111163%_ _%lst1111155%_ _%lst2111158%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f111152%_)
+                '#!void)))))
     (define andmap
-      (lambda _g99266_
-        (let ((_g99267_ (let () (declare (not safe)) (##length _g99266_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99267_ 2))
-                 (apply (lambda (_%f97448%_ _%lst97449%_)
-                          (let* ((_%f97451%_ _%f97448%_)
-                                 (_%lst97454%_ _%lst97449%_))
-                            (if (procedure? _%f97451%_)
-                                (let ((_%f97459%_ _%f97451%_))
-                                  (__andmap1 _%f97459%_ _%lst97454%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97451%_)
-                                  (void)))))
-                        _g99266_))
-                ((let () (declare (not safe)) (##fx= _g99267_ 3))
-                 (apply (lambda (_%f97471%_ _%lst197472%_ _%lst297473%_)
-                          (let* ((_%f97475%_ _%f97471%_)
-                                 (_%lst197478%_ _%lst197472%_)
-                                 (_%lst297481%_ _%lst297473%_))
-                            (if (procedure? _%f97475%_)
-                                (let ((_%f97486%_ _%f97475%_))
-                                  (__andmap2
-                                   _%f97486%_
-                                   _%lst197478%_
-                                   _%lst297481%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97475%_)
-                                  (void)))))
-                        _g99266_))
-                ((let () (declare (not safe)) (##fx>= _g99267_ 3))
-                 (apply andmap* _g99266_))
+      (lambda _g115730_
+        (let ((_g115731_ (let () (declare (not safe)) (##length _g115730_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115731_ 2))
+                 (apply andmap__0 _g115730_))
+                ((let () (declare (not safe)) (##fx= _g115731_ 3))
+                 (apply andmap__1 _g115730_))
+                ((let () (declare (not safe)) (##fx>= _g115731_ 3))
+                 (apply andmap* _g115730_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   andmap
-                  _g99266_))))))
+                  _g115730_))))))
     (define __andmap*
-      (lambda (_%f97405%_ . _%rest97406%_)
-        (let ((_%f97409%_ _%f97405%_))
-          (let _%recur97418%_ ((_%rest97420%_ _%rest97406%_))
-            (if (let* ((_%f97423%_ pair?) (_%lst97426%_ _%rest97420%_))
-                  (if (procedure? _%f97423%_)
-                      (let ((_%f97431%_ _%f97423%_))
-                        (__andmap1 _%f97431%_ _%lst97426%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%f97423%_)
-                        (void))))
-                (if (apply _%f97409%_ (map car _%rest97420%_))
-                    (_%recur97418%_ (map cdr _%rest97420%_))
+      (lambda (_%f111082%_ . _%rest111083%_)
+        (let ((_%f111086%_ _%f111082%_))
+          (let _%recur111095%_ ((_%rest111097%_ _%rest111083%_))
+            (if (let* ((_%f111100%_ pair?)
+                       (_%lst111103%_ _%rest111097%_)
+                       (_%f111108%_ _%f111100%_))
+                  (__andmap1 _%f111108%_ _%lst111103%_))
+                (if (let ((__tmp115732 (map car _%rest111097%_)))
+                      (declare (not safe))
+                      (##apply _%f111086%_ __tmp115732))
+                    (_%recur111095%_ (map cdr _%rest111097%_))
                     '#f)
                 '#t)))))
     (define andmap*
-      (lambda (_%f97390%_ . _%rest97391%_)
-        (if (procedure? _%f97390%_)
-            (let ((_%f97395%_ _%f97390%_))
+      (lambda (_%f111067%_ . _%rest111068%_)
+        (if (procedure? _%f111067%_)
+            (let ((_%f111072%_ _%f111067%_))
               (declare (not safe))
-              (##apply __andmap* _%f97395%_ _%rest97391%_))
+              (##apply __andmap* _%f111072%_ _%rest111068%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1235,44 +1135,41 @@
                'contract:
                'procedure?
                'value:
-               _%f97390%_)
-              (void)))))
+               _%f111067%_)
+              '#!void))))
     (define __ormap1
-      (lambda (_%f97337%_ _%lst97338%_)
-        (let ((_%f97341%_ _%f97337%_))
-          (let _%lp97350%_ ((_%rest97352%_ _%lst97338%_))
-            (let* ((_%$%rest9735397361%_ _%rest97352%_)
-                   (_%$%E9735697365%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9735397361%_
-                             '([x . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9735597369%_ (lambda () '#f))
-                   (_%$%K9735797378%_
-                    (lambda (_%rest97372%_ _%x97373%_)
-                      (let ((_%$e97375%_ (_%f97341%_ _%x97373%_)))
-                        (if _%$e97375%_
-                            _%$e97375%_
-                            (_%lp97350%_ _%rest97372%_))))))
-              (if (pair? _%$%rest9735397361%_)
-                  (let ((_%$%hd9735897381%_
+      (lambda (_%f111014%_ _%lst111015%_)
+        (let ((_%f111018%_ _%f111014%_))
+          (let _%lp111027%_ ((_%rest111029%_ _%lst111015%_))
+            (let* ((_%$%rest111030111038%_ _%rest111029%_)
+                   (_%$%else111032111046%_ (lambda () '#f))
+                   (_%$%K111034111055%_
+                    (lambda (_%rest111049%_ _%x111050%_)
+                      (let ((_%$e111052%_
+                             (let ()
+                               (declare (not safe))
+                               (_%f111018%_ _%x111050%_))))
+                        (if _%$e111052%_
+                            _%$e111052%_
+                            (_%lp111027%_ _%rest111049%_))))))
+              (if (pair? _%$%rest111030111038%_)
+                  (let ((_%$%hd111035111058%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9735397361%_)))
-                        (_%$%tl9735997383%_
+                           (##car _%$%rest111030111038%_)))
+                        (_%$%tl111036111060%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9735397361%_))))
-                    (let* ((_%x97386%_ _%$%hd9735897381%_)
-                           (_%rest97388%_ _%$%tl9735997383%_))
-                      (_%$%K9735797378%_ _%rest97388%_ _%x97386%_)))
-                  (_%$%else9735597369%_)))))))
+                           (##cdr _%$%rest111030111038%_))))
+                    (let* ((_%x111063%_ _%$%hd111035111058%_)
+                           (_%rest111065%_ _%$%tl111036111060%_))
+                      (_%$%K111034111055%_ _%rest111065%_ _%x111063%_)))
+                  (_%$%else111032111046%_)))))))
     (define ormap1
-      (lambda (_%f97322%_ _%lst97323%_)
-        (if (procedure? _%f97322%_)
-            (let ((_%f97327%_ _%f97322%_)) (__ormap1 _%f97327%_ _%lst97323%_))
+      (lambda (_%f110999%_ _%lst111000%_)
+        (if (procedure? _%f110999%_)
+            (let ((_%f111004%_ _%f110999%_))
+              (__ormap1 _%f111004%_ _%lst111000%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1281,75 +1178,65 @@
                'contract:
                'procedure?
                'value:
-               _%f97322%_)
-              (void)))))
+               _%f110999%_)
+              '#!void))))
     (define __ormap2
-      (lambda (_%f97234%_ _%lst197235%_ _%lst297236%_)
-        (let ((_%f97239%_ _%f97234%_))
-          (let _%lp97248%_ ((_%rest197250%_ _%lst197235%_)
-                            (_%rest297251%_ _%lst297236%_))
-            (let* ((_%$%rest19725297260%_ _%rest197250%_)
-                   (_%$%E9725597264%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest19725297260%_
-                             '([x1 . rest1])
-                             'else)
-                      (void)))
-                   (_%$%else9725497268%_ (lambda () '#f))
-                   (_%$%K9725697310%_
-                    (lambda (_%rest197271%_ _%x197272%_)
-                      (let* ((_%$%rest29727397281%_ _%rest297251%_)
-                             (_%$%E9727697285%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest29727397281%_
-                                       '([x2 . rest2])
-                                       'else)
-                                (void)))
-                             (_%$%else9727597289%_ (lambda () '#f))
-                             (_%$%K9727797298%_
-                              (lambda (_%rest297292%_ _%x297293%_)
-                                (let ((_%$e97295%_
-                                       (_%f97239%_ _%x197272%_ _%x297293%_)))
-                                  (if _%$e97295%_
-                                      _%$e97295%_
-                                      (_%lp97248%_
-                                       _%rest197271%_
-                                       _%rest297292%_))))))
-                        (if (pair? _%$%rest29727397281%_)
-                            (let ((_%$%hd9727897301%_
+      (lambda (_%f110911%_ _%lst1110912%_ _%lst2110913%_)
+        (let ((_%f110916%_ _%f110911%_))
+          (let _%lp110925%_ ((_%rest1110927%_ _%lst1110912%_)
+                             (_%rest2110928%_ _%lst2110913%_))
+            (let* ((_%$%rest1110929110937%_ _%rest1110927%_)
+                   (_%$%else110931110945%_ (lambda () '#f))
+                   (_%$%K110933110987%_
+                    (lambda (_%rest1110948%_ _%x1110949%_)
+                      (let* ((_%$%rest2110950110958%_ _%rest2110928%_)
+                             (_%$%else110952110966%_ (lambda () '#f))
+                             (_%$%K110954110975%_
+                              (lambda (_%rest2110969%_ _%x2110970%_)
+                                (let ((_%$e110972%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (_%f110916%_
+                                          _%x1110949%_
+                                          _%x2110970%_))))
+                                  (if _%$e110972%_
+                                      _%$e110972%_
+                                      (_%lp110925%_
+                                       _%rest1110948%_
+                                       _%rest2110969%_))))))
+                        (if (pair? _%$%rest2110950110958%_)
+                            (let ((_%$%hd110955110978%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest29727397281%_)))
-                                  (_%$%tl9727997303%_
+                                     (##car _%$%rest2110950110958%_)))
+                                  (_%$%tl110956110980%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest29727397281%_))))
-                              (let* ((_%x297306%_ _%$%hd9727897301%_)
-                                     (_%rest297308%_ _%$%tl9727997303%_))
-                                (_%$%K9727797298%_
-                                 _%rest297308%_
-                                 _%x297306%_)))
-                            (_%$%else9727597289%_))))))
-              (if (pair? _%$%rest19725297260%_)
-                  (let ((_%$%hd9725797313%_
+                                     (##cdr _%$%rest2110950110958%_))))
+                              (let* ((_%x2110983%_ _%$%hd110955110978%_)
+                                     (_%rest2110985%_ _%$%tl110956110980%_))
+                                (_%$%K110954110975%_
+                                 _%rest2110985%_
+                                 _%x2110983%_)))
+                            (_%$%else110952110966%_))))))
+              (if (pair? _%$%rest1110929110937%_)
+                  (let ((_%$%hd110934110990%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest19725297260%_)))
-                        (_%$%tl9725897315%_
+                           (##car _%$%rest1110929110937%_)))
+                        (_%$%tl110935110992%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest19725297260%_))))
-                    (let* ((_%x197318%_ _%$%hd9725797313%_)
-                           (_%rest197320%_ _%$%tl9725897315%_))
-                      (_%$%K9725697310%_ _%rest197320%_ _%x197318%_)))
-                  (_%$%else9725497268%_)))))))
+                           (##cdr _%$%rest1110929110937%_))))
+                    (let* ((_%x1110995%_ _%$%hd110934110990%_)
+                           (_%rest1110997%_ _%$%tl110935110992%_))
+                      (_%$%K110933110987%_ _%rest1110997%_ _%x1110995%_)))
+                  (_%$%else110931110945%_)))))))
     (define ormap2
-      (lambda (_%f97218%_ _%lst197219%_ _%lst297220%_)
-        (if (procedure? _%f97218%_)
-            (let ((_%f97224%_ _%f97218%_))
-              (__ormap2 _%f97224%_ _%lst197219%_ _%lst297220%_))
+      (lambda (_%f110895%_ _%lst1110896%_ _%lst2110897%_)
+        (if (procedure? _%f110895%_)
+            (let ((_%f110901%_ _%f110895%_))
+              (__ormap2 _%f110901%_ _%lst1110896%_ _%lst2110897%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1358,86 +1245,77 @@
                'contract:
                'procedure?
                'value:
-               _%f97218%_)
-              (void)))))
+               _%f110895%_)
+              '#!void))))
+    (define ormap__0
+      (lambda (_%f110839%_ _%lst110840%_)
+        (let* ((_%f110842%_ _%f110839%_) (_%lst110845%_ _%lst110840%_))
+          (if (procedure? _%f110842%_)
+              (let ((_%f110850%_ _%f110842%_))
+                (__ormap1 _%f110850%_ _%lst110845%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f110842%_)
+                '#!void)))))
+    (define ormap__1
+      (lambda (_%f110862%_ _%lst1110863%_ _%lst2110864%_)
+        (let* ((_%f110866%_ _%f110862%_)
+               (_%lst1110869%_ _%lst1110863%_)
+               (_%lst2110872%_ _%lst2110864%_))
+          (if (procedure? _%f110866%_)
+              (let ((_%f110877%_ _%f110866%_))
+                (__ormap2 _%f110877%_ _%lst1110869%_ _%lst2110872%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f110866%_)
+                '#!void)))))
     (define ormap
-      (lambda _g99268_
-        (let ((_g99269_ (let () (declare (not safe)) (##length _g99268_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99269_ 2))
-                 (apply (lambda (_%f97162%_ _%lst97163%_)
-                          (let* ((_%f97165%_ _%f97162%_)
-                                 (_%lst97168%_ _%lst97163%_))
-                            (if (procedure? _%f97165%_)
-                                (let ((_%f97173%_ _%f97165%_))
-                                  (__ormap1 _%f97173%_ _%lst97168%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97165%_)
-                                  (void)))))
-                        _g99268_))
-                ((let () (declare (not safe)) (##fx= _g99269_ 3))
-                 (apply (lambda (_%f97185%_ _%lst197186%_ _%lst297187%_)
-                          (let* ((_%f97189%_ _%f97185%_)
-                                 (_%lst197192%_ _%lst197186%_)
-                                 (_%lst297195%_ _%lst297187%_))
-                            (if (procedure? _%f97189%_)
-                                (let ((_%f97200%_ _%f97189%_))
-                                  (__ormap2
-                                   _%f97200%_
-                                   _%lst197192%_
-                                   _%lst297195%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f97189%_)
-                                  (void)))))
-                        _g99268_))
-                ((let () (declare (not safe)) (##fx>= _g99269_ 3))
-                 (apply ormap* _g99268_))
+      (lambda _g115733_
+        (let ((_g115734_ (let () (declare (not safe)) (##length _g115733_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115734_ 2))
+                 (apply ormap__0 _g115733_))
+                ((let () (declare (not safe)) (##fx= _g115734_ 3))
+                 (apply ormap__1 _g115733_))
+                ((let () (declare (not safe)) (##fx>= _g115734_ 3))
+                 (apply ormap* _g115733_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   ormap
-                  _g99268_))))))
+                  _g115733_))))))
     (define __ormap*
-      (lambda (_%f97118%_ . _%rest97119%_)
-        (let ((_%f97122%_ _%f97118%_))
-          (let _%recur97131%_ ((_%rest97133%_ _%rest97119%_))
-            (if (let* ((_%f97135%_ pair?) (_%lst97138%_ _%rest97133%_))
-                  (if (procedure? _%f97135%_)
-                      (let ((_%f97143%_ _%f97135%_))
-                        (__andmap1 _%f97143%_ _%lst97138%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%f97135%_)
-                        (void))))
-                (let ((_%$e97159%_ (apply _%f97122%_ (map car _%rest97133%_))))
-                  (if _%$e97159%_
-                      _%$e97159%_
-                      (_%recur97131%_ (map cdr _%rest97133%_))))
+      (lambda (_%f110795%_ . _%rest110796%_)
+        (let ((_%f110799%_ _%f110795%_))
+          (let _%recur110808%_ ((_%rest110810%_ _%rest110796%_))
+            (if (let* ((_%f110812%_ pair?)
+                       (_%lst110815%_ _%rest110810%_)
+                       (_%f110820%_ _%f110812%_))
+                  (__andmap1 _%f110820%_ _%lst110815%_))
+                (let ((_%$e110836%_
+                       (let ((__tmp115735 (map car _%rest110810%_)))
+                         (declare (not safe))
+                         (##apply _%f110799%_ __tmp115735))))
+                  (if _%$e110836%_
+                      _%$e110836%_
+                      (_%recur110808%_ (map cdr _%rest110810%_))))
                 '#f)))))
     (define ormap*
-      (lambda (_%f97103%_ . _%rest97104%_)
-        (if (procedure? _%f97103%_)
-            (let ((_%f97108%_ _%f97103%_))
+      (lambda (_%f110780%_ . _%rest110781%_)
+        (if (procedure? _%f110780%_)
+            (let ((_%f110785%_ _%f110780%_))
               (declare (not safe))
-              (##apply __ormap* _%f97108%_ _%rest97104%_))
+              (##apply __ormap* _%f110785%_ _%rest110781%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1446,48 +1324,42 @@
                'contract:
                'procedure?
                'value:
-               _%f97103%_)
-              (void)))))
+               _%f110780%_)
+              '#!void))))
     (define __filter-map1
-      (lambda (_%f97046%_ _%lst97047%_)
-        (let ((_%f97050%_ _%f97046%_))
-          (let _%recur97059%_ ((_%rest97061%_ _%lst97047%_))
-            (let* ((_%$%rest9706397071%_ _%rest97061%_)
-                   (_%$%E9706697075%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9706397071%_
-                             '([x . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9706597079%_ (lambda () '()))
-                   (_%$%K9706797091%_
-                    (lambda (_%rest97082%_ _%x97083%_)
-                      (let ((_%$e97085%_ (_%f97050%_ _%x97083%_)))
-                        (if _%$e97085%_
-                            ((lambda (_%r97088%_)
-                               (cons _%r97088%_
-                                     (_%recur97059%_ _%rest97082%_)))
-                             _%$e97085%_)
-                            (_%recur97059%_ _%rest97082%_))))))
-              (if (pair? _%$%rest9706397071%_)
-                  (let ((_%$%hd9706897094%_
+      (lambda (_%f110723%_ _%lst110724%_)
+        (let ((_%f110727%_ _%f110723%_))
+          (let _%recur110736%_ ((_%rest110738%_ _%lst110724%_))
+            (let* ((_%$%rest110740110748%_ _%rest110738%_)
+                   (_%$%else110742110756%_ (lambda () '()))
+                   (_%$%K110744110768%_
+                    (lambda (_%rest110759%_ _%x110760%_)
+                      (let ((_%$e110762%_
+                             (let ()
+                               (declare (not safe))
+                               (_%f110727%_ _%x110760%_))))
+                        (if _%$e110762%_
+                            (cons _%$e110762%_
+                                  (_%recur110736%_ _%rest110759%_))
+                            (_%recur110736%_ _%rest110759%_))))))
+              (if (pair? _%$%rest110740110748%_)
+                  (let ((_%$%hd110745110771%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9706397071%_)))
-                        (_%$%tl9706997096%_
+                           (##car _%$%rest110740110748%_)))
+                        (_%$%tl110746110773%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9706397071%_))))
-                    (let* ((_%x97099%_ _%$%hd9706897094%_)
-                           (_%rest97101%_ _%$%tl9706997096%_))
-                      (_%$%K9706797091%_ _%rest97101%_ _%x97099%_)))
-                  (_%$%else9706597079%_)))))))
+                           (##cdr _%$%rest110740110748%_))))
+                    (let* ((_%x110776%_ _%$%hd110745110771%_)
+                           (_%rest110778%_ _%$%tl110746110773%_))
+                      (_%$%K110744110768%_ _%rest110778%_ _%x110776%_)))
+                  (_%$%else110742110756%_)))))))
     (define filter-map1
-      (lambda (_%f97031%_ _%lst97032%_)
-        (if (procedure? _%f97031%_)
-            (let ((_%f97036%_ _%f97031%_))
-              (__filter-map1 _%f97036%_ _%lst97032%_))
+      (lambda (_%f110708%_ _%lst110709%_)
+        (if (procedure? _%f110708%_)
+            (let ((_%f110713%_ _%f110708%_))
+              (__filter-map1 _%f110713%_ _%lst110709%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1496,80 +1368,68 @@
                'contract:
                'procedure?
                'value:
-               _%f97031%_)
-              (void)))))
+               _%f110708%_)
+              '#!void))))
     (define __filter-map2
-      (lambda (_%f96939%_ _%lst196940%_ _%lst296941%_)
-        (let ((_%f96944%_ _%f96939%_))
-          (let _%recur96953%_ ((_%rest196955%_ _%lst196940%_)
-                               (_%rest296956%_ _%lst296941%_))
-            (let* ((_%$%rest19695896966%_ _%rest196955%_)
-                   (_%$%E9696196970%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest19695896966%_
-                             '([x1 . rest1])
-                             'else)
-                      (void)))
-                   (_%$%else9696096974%_ (lambda () '()))
-                   (_%$%K9696297019%_
-                    (lambda (_%rest196977%_ _%x196978%_)
-                      (let* ((_%$%rest29697996987%_ _%rest296956%_)
-                             (_%$%E9698296991%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest29697996987%_
-                                       '([x2 . rest2])
-                                       'else)
-                                (void)))
-                             (_%$%else9698196995%_ (lambda () '()))
-                             (_%$%K9698397007%_
-                              (lambda (_%rest296998%_ _%x296999%_)
-                                (let ((_%$e97001%_
-                                       (_%f96944%_ _%x196978%_ _%x296999%_)))
-                                  (if _%$e97001%_
-                                      ((lambda (_%r97004%_)
-                                         (cons _%r97004%_
-                                               (_%recur96953%_
-                                                _%rest196977%_
-                                                _%rest296998%_)))
-                                       _%$e97001%_)
-                                      (_%recur96953%_
-                                       _%rest196977%_
-                                       _%rest296998%_))))))
-                        (if (pair? _%$%rest29697996987%_)
-                            (let ((_%$%hd9698497010%_
+      (lambda (_%f110616%_ _%lst1110617%_ _%lst2110618%_)
+        (let ((_%f110621%_ _%f110616%_))
+          (let _%recur110630%_ ((_%rest1110632%_ _%lst1110617%_)
+                                (_%rest2110633%_ _%lst2110618%_))
+            (let* ((_%$%rest1110635110643%_ _%rest1110632%_)
+                   (_%$%else110637110651%_ (lambda () '()))
+                   (_%$%K110639110696%_
+                    (lambda (_%rest1110654%_ _%x1110655%_)
+                      (let* ((_%$%rest2110656110664%_ _%rest2110633%_)
+                             (_%$%else110658110672%_ (lambda () '()))
+                             (_%$%K110660110684%_
+                              (lambda (_%rest2110675%_ _%x2110676%_)
+                                (let ((_%$e110678%_
+                                       (let ()
+                                         (declare (not safe))
+                                         (_%f110621%_
+                                          _%x1110655%_
+                                          _%x2110676%_))))
+                                  (if _%$e110678%_
+                                      (cons _%$e110678%_
+                                            (_%recur110630%_
+                                             _%rest1110654%_
+                                             _%rest2110675%_))
+                                      (_%recur110630%_
+                                       _%rest1110654%_
+                                       _%rest2110675%_))))))
+                        (if (pair? _%$%rest2110656110664%_)
+                            (let ((_%$%hd110661110687%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest29697996987%_)))
-                                  (_%$%tl9698597012%_
+                                     (##car _%$%rest2110656110664%_)))
+                                  (_%$%tl110662110689%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest29697996987%_))))
-                              (let* ((_%x297015%_ _%$%hd9698497010%_)
-                                     (_%rest297017%_ _%$%tl9698597012%_))
-                                (_%$%K9698397007%_
-                                 _%rest297017%_
-                                 _%x297015%_)))
-                            (_%$%else9698196995%_))))))
-              (if (pair? _%$%rest19695896966%_)
-                  (let ((_%$%hd9696397022%_
+                                     (##cdr _%$%rest2110656110664%_))))
+                              (let* ((_%x2110692%_ _%$%hd110661110687%_)
+                                     (_%rest2110694%_ _%$%tl110662110689%_))
+                                (_%$%K110660110684%_
+                                 _%rest2110694%_
+                                 _%x2110692%_)))
+                            (_%$%else110658110672%_))))))
+              (if (pair? _%$%rest1110635110643%_)
+                  (let ((_%$%hd110640110699%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest19695896966%_)))
-                        (_%$%tl9696497024%_
+                           (##car _%$%rest1110635110643%_)))
+                        (_%$%tl110641110701%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest19695896966%_))))
-                    (let* ((_%x197027%_ _%$%hd9696397022%_)
-                           (_%rest197029%_ _%$%tl9696497024%_))
-                      (_%$%K9696297019%_ _%rest197029%_ _%x197027%_)))
-                  (_%$%else9696096974%_)))))))
+                           (##cdr _%$%rest1110635110643%_))))
+                    (let* ((_%x1110704%_ _%$%hd110640110699%_)
+                           (_%rest1110706%_ _%$%tl110641110701%_))
+                      (_%$%K110639110696%_ _%rest1110706%_ _%x1110704%_)))
+                  (_%$%else110637110651%_)))))))
     (define filter-map2
-      (lambda (_%f96923%_ _%lst196924%_ _%lst296925%_)
-        (if (procedure? _%f96923%_)
-            (let ((_%f96929%_ _%f96923%_))
-              (__filter-map2 _%f96929%_ _%lst196924%_ _%lst296925%_))
+      (lambda (_%f110600%_ _%lst1110601%_ _%lst2110602%_)
+        (if (procedure? _%f110600%_)
+            (let ((_%f110606%_ _%f110600%_))
+              (__filter-map2 _%f110606%_ _%lst1110601%_ _%lst2110602%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1578,89 +1438,78 @@
                'contract:
                'procedure?
                'value:
-               _%f96923%_)
-              (void)))))
+               _%f110600%_)
+              '#!void))))
+    (define filter-map__0
+      (lambda (_%f110544%_ _%lst110545%_)
+        (let* ((_%f110547%_ _%f110544%_) (_%lst110550%_ _%lst110545%_))
+          (if (procedure? _%f110547%_)
+              (let ((_%f110555%_ _%f110547%_))
+                (__filter-map1 _%f110555%_ _%lst110550%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f110547%_)
+                '#!void)))))
+    (define filter-map__1
+      (lambda (_%f110567%_ _%lst1110568%_ _%lst2110569%_)
+        (let* ((_%f110571%_ _%f110567%_)
+               (_%lst1110574%_ _%lst1110568%_)
+               (_%lst2110577%_ _%lst2110569%_))
+          (if (procedure? _%f110571%_)
+              (let ((_%f110582%_ _%f110571%_))
+                (__filter-map2 _%f110582%_ _%lst1110574%_ _%lst2110577%_))
+              (begin
+                (raise-contract-violation-error
+                 '"contract violation"
+                 'context:
+                 'gerbil/runtime/util
+                 'contract:
+                 'procedure?
+                 'value:
+                 _%f110571%_)
+                '#!void)))))
     (define filter-map
-      (lambda _g99270_
-        (let ((_g99271_ (let () (declare (not safe)) (##length _g99270_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99271_ 2))
-                 (apply (lambda (_%f96867%_ _%lst96868%_)
-                          (let* ((_%f96870%_ _%f96867%_)
-                                 (_%lst96873%_ _%lst96868%_))
-                            (if (procedure? _%f96870%_)
-                                (let ((_%f96878%_ _%f96870%_))
-                                  (__filter-map1 _%f96878%_ _%lst96873%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f96870%_)
-                                  (void)))))
-                        _g99270_))
-                ((let () (declare (not safe)) (##fx= _g99271_ 3))
-                 (apply (lambda (_%f96890%_ _%lst196891%_ _%lst296892%_)
-                          (let* ((_%f96894%_ _%f96890%_)
-                                 (_%lst196897%_ _%lst196891%_)
-                                 (_%lst296900%_ _%lst296892%_))
-                            (if (procedure? _%f96894%_)
-                                (let ((_%f96905%_ _%f96894%_))
-                                  (__filter-map2
-                                   _%f96905%_
-                                   _%lst196897%_
-                                   _%lst296900%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f96894%_)
-                                  (void)))))
-                        _g99270_))
-                ((let () (declare (not safe)) (##fx>= _g99271_ 3))
-                 (apply filter-map* _g99270_))
+      (lambda _g115736_
+        (let ((_g115737_ (let () (declare (not safe)) (##length _g115736_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115737_ 2))
+                 (apply filter-map__0 _g115736_))
+                ((let () (declare (not safe)) (##fx= _g115737_ 3))
+                 (apply filter-map__1 _g115736_))
+                ((let () (declare (not safe)) (##fx>= _g115737_ 3))
+                 (apply filter-map* _g115736_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   filter-map
-                  _g99270_))))))
+                  _g115736_))))))
     (define __filter-map*
-      (lambda (_%f96818%_ . _%rest96819%_)
-        (let ((_%f96822%_ _%f96818%_))
-          (let _%recur96831%_ ((_%rest96833%_ _%rest96819%_))
-            (if (let* ((_%f96836%_ pair?) (_%lst96839%_ _%rest96833%_))
-                  (if (procedure? _%f96836%_)
-                      (let ((_%f96844%_ _%f96836%_))
-                        (__andmap1 _%f96844%_ _%lst96839%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%f96836%_)
-                        (void))))
-                (let ((_%$e96861%_ (apply _%f96822%_ (map car _%rest96833%_))))
-                  (if _%$e96861%_
-                      ((lambda (_%r96864%_)
-                         (cons _%r96864%_
-                               (_%recur96831%_ (map cdr _%rest96833%_))))
-                       _%$e96861%_)
-                      (_%recur96831%_ (map cdr _%rest96833%_))))
+      (lambda (_%f110495%_ . _%rest110496%_)
+        (let ((_%f110499%_ _%f110495%_))
+          (let _%recur110508%_ ((_%rest110510%_ _%rest110496%_))
+            (if (let* ((_%f110513%_ pair?)
+                       (_%lst110516%_ _%rest110510%_)
+                       (_%f110521%_ _%f110513%_))
+                  (__andmap1 _%f110521%_ _%lst110516%_))
+                (let ((_%$e110538%_
+                       (let ((__tmp115738 (map car _%rest110510%_)))
+                         (declare (not safe))
+                         (##apply _%f110499%_ __tmp115738))))
+                  (if _%$e110538%_
+                      (cons _%$e110538%_
+                            (_%recur110508%_ (map cdr _%rest110510%_)))
+                      (_%recur110508%_ (map cdr _%rest110510%_))))
                 '())))))
     (define filter-map*
-      (lambda (_%f96803%_ . _%rest96804%_)
-        (if (procedure? _%f96803%_)
-            (let ((_%f96808%_ _%f96803%_))
+      (lambda (_%f110480%_ . _%rest110481%_)
+        (if (procedure? _%f110480%_)
+            (let ((_%f110485%_ _%f110480%_))
               (declare (not safe))
-              (##apply __filter-map* _%f96808%_ _%rest96804%_))
+              (##apply __filter-map* _%f110485%_ _%rest110481%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1669,317 +1518,273 @@
                'contract:
                'procedure?
                'value:
-               _%f96803%_)
-              (void)))))
+               _%f110480%_)
+              '#!void))))
+    (define agetq__%
+      (lambda (_%key110456%_ _%lst110458%_ _%default110460%_)
+        (let ((_%$e110463%_
+               (if (pair? _%lst110458%_)
+                   (assq _%key110456%_ _%lst110458%_)
+                   '#f)))
+          (if _%$e110463%_
+              (cdr _%$e110463%_)
+              (if (procedure? _%default110460%_)
+                  (_%default110460%_ _%key110456%_)
+                  _%default110460%_)))))
+    (define agetq__0
+      (lambda (_%key110471%_ _%lst110472%_)
+        (let ((_%default110474%_ '#f))
+          (agetq__% _%key110471%_ _%lst110472%_ _%default110474%_))))
     (define agetq
-      (let ((_%$%opt-lambda9677796791%_
-             (lambda (_%key96779%_ _%lst96781%_ _%default96783%_)
-               (let ((_%$e96786%_
-                      (if (pair? _%lst96781%_)
-                          (assq _%key96779%_ _%lst96781%_)
-                          '#f)))
-                 (if _%$e96786%_
-                     (cdr _%$e96786%_)
-                     (if (procedure? _%default96783%_)
-                         (_%default96783%_ _%key96779%_)
-                         _%default96783%_))))))
-        (lambda _g99272_
-          (let ((_g99273_ (let () (declare (not safe)) (##length _g99272_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99273_ 2))
-                   (apply (lambda (_%key96794%_ _%lst96795%_)
-                            (let ((_%default96797%_ '#f))
-                              (_%$%opt-lambda9677796791%_
-                               _%key96794%_
-                               _%lst96795%_
-                               _%default96797%_)))
-                          _g99272_))
-                  ((let () (declare (not safe)) (##fx= _g99273_ 3))
-                   (apply _%$%opt-lambda9677796791%_ _g99272_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    agetq
-                    _g99272_)))))))
+      (lambda _g115739_
+        (let ((_g115740_ (let () (declare (not safe)) (##length _g115739_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115740_ 2))
+                 (apply agetq__0 _g115739_))
+                ((let () (declare (not safe)) (##fx= _g115740_ 3))
+                 (apply agetq__% _g115739_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  agetq
+                  _g115739_))))))
+    (define agetv__%
+      (lambda (_%key110431%_ _%lst110433%_ _%default110435%_)
+        (let ((_%$e110438%_
+               (if (pair? _%lst110433%_)
+                   (assv _%key110431%_ _%lst110433%_)
+                   '#f)))
+          (if _%$e110438%_
+              (cdr _%$e110438%_)
+              (if (procedure? _%default110435%_)
+                  (_%default110435%_ _%key110431%_)
+                  _%default110435%_)))))
+    (define agetv__0
+      (lambda (_%key110446%_ _%lst110447%_)
+        (let ((_%default110449%_ '#f))
+          (agetv__% _%key110446%_ _%lst110447%_ _%default110449%_))))
     (define agetv
-      (let ((_%$%opt-lambda9675296766%_
-             (lambda (_%key96754%_ _%lst96756%_ _%default96758%_)
-               (let ((_%$e96761%_
-                      (if (pair? _%lst96756%_)
-                          (assv _%key96754%_ _%lst96756%_)
-                          '#f)))
-                 (if _%$e96761%_
-                     (cdr _%$e96761%_)
-                     (if (procedure? _%default96758%_)
-                         (_%default96758%_ _%key96754%_)
-                         _%default96758%_))))))
-        (lambda _g99274_
-          (let ((_g99275_ (let () (declare (not safe)) (##length _g99274_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99275_ 2))
-                   (apply (lambda (_%key96769%_ _%lst96770%_)
-                            (let ((_%default96772%_ '#f))
-                              (_%$%opt-lambda9675296766%_
-                               _%key96769%_
-                               _%lst96770%_
-                               _%default96772%_)))
-                          _g99274_))
-                  ((let () (declare (not safe)) (##fx= _g99275_ 3))
-                   (apply _%$%opt-lambda9675296766%_ _g99274_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    agetv
-                    _g99274_)))))))
+      (lambda _g115741_
+        (let ((_g115742_ (let () (declare (not safe)) (##length _g115741_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115742_ 2))
+                 (apply agetv__0 _g115741_))
+                ((let () (declare (not safe)) (##fx= _g115742_ 3))
+                 (apply agetv__% _g115741_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  agetv
+                  _g115741_))))))
+    (define aget__%
+      (lambda (_%key110406%_ _%lst110408%_ _%default110410%_)
+        (let ((_%$e110413%_
+               (if (pair? _%lst110408%_)
+                   (assoc _%key110406%_ _%lst110408%_)
+                   '#f)))
+          (if _%$e110413%_
+              (cdr _%$e110413%_)
+              (if (procedure? _%default110410%_)
+                  (_%default110410%_ _%key110406%_)
+                  _%default110410%_)))))
+    (define aget__0
+      (lambda (_%key110421%_ _%lst110422%_)
+        (let ((_%default110424%_ '#f))
+          (aget__% _%key110421%_ _%lst110422%_ _%default110424%_))))
     (define aget
-      (let ((_%$%opt-lambda9672796741%_
-             (lambda (_%key96729%_ _%lst96731%_ _%default96733%_)
-               (let ((_%$e96736%_
-                      (if (pair? _%lst96731%_)
-                          (assoc _%key96729%_ _%lst96731%_)
-                          '#f)))
-                 (if _%$e96736%_
-                     (cdr _%$e96736%_)
-                     (if (procedure? _%default96733%_)
-                         (_%default96733%_ _%key96729%_)
-                         _%default96733%_))))))
-        (lambda _g99276_
-          (let ((_g99277_ (let () (declare (not safe)) (##length _g99276_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99277_ 2))
-                   (apply (lambda (_%key96744%_ _%lst96745%_)
-                            (let ((_%default96747%_ '#f))
-                              (_%$%opt-lambda9672796741%_
-                               _%key96744%_
-                               _%lst96745%_
-                               _%default96747%_)))
-                          _g99276_))
-                  ((let () (declare (not safe)) (##fx= _g99277_ 3))
-                   (apply _%$%opt-lambda9672796741%_ _g99276_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    aget
-                    _g99276_)))))))
+      (lambda _g115743_
+        (let ((_g115744_ (let () (declare (not safe)) (##length _g115743_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115744_ 2))
+                 (apply aget__0 _g115743_))
+                ((let () (declare (not safe)) (##fx= _g115744_ 3))
+                 (apply aget__% _g115743_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  aget
+                  _g115743_))))))
     (define assgetq agetq)
     (define assgetv agetv)
     (define assget aget)
+    (define pgetq__%
+      (lambda (_%key110335%_ _%lst110337%_ _%default110339%_)
+        (let _%lp110342%_ ((_%rest110345%_ _%lst110337%_))
+          (let* ((_%$%rest110347110357%_ _%rest110345%_)
+                 (_%$%else110349110365%_
+                  (lambda ()
+                    (if (procedure? _%default110339%_)
+                        (_%default110339%_ _%key110335%_)
+                        _%default110339%_)))
+                 (_%$%K110351110374%_
+                  (lambda (_%rest110368%_ _%v110369%_ _%k110371%_)
+                    (if (eq? _%k110371%_ _%key110335%_)
+                        _%v110369%_
+                        (_%lp110342%_ _%rest110368%_)))))
+            (if (pair? _%$%rest110347110357%_)
+                (let ((_%$%hd110352110377%_
+                       (let ()
+                         (declare (not safe))
+                         (##car _%$%rest110347110357%_)))
+                      (_%$%tl110353110379%_
+                       (let ()
+                         (declare (not safe))
+                         (##cdr _%$%rest110347110357%_))))
+                  (let ((_%k110382%_ _%$%hd110352110377%_))
+                    (if (pair? _%$%tl110353110379%_)
+                        (let ((_%$%hd110354110384%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##car _%$%tl110353110379%_)))
+                              (_%$%tl110355110386%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##cdr _%$%tl110353110379%_))))
+                          (let* ((_%v110389%_ _%$%hd110354110384%_)
+                                 (_%rest110391%_ _%$%tl110355110386%_))
+                            (_%$%K110351110374%_
+                             _%rest110391%_
+                             _%v110389%_
+                             _%k110382%_)))
+                        (_%$%else110349110365%_))))
+                (_%$%else110349110365%_))))))
+    (define pgetq__0
+      (lambda (_%key110396%_ _%lst110397%_)
+        (let ((_%default110399%_ '#f))
+          (pgetq__% _%key110396%_ _%lst110397%_ _%default110399%_))))
     (define pgetq
-      (let ((_%$%opt-lambda9665696716%_
-             (lambda (_%key96658%_ _%lst96660%_ _%default96662%_)
-               (let _%lp96665%_ ((_%rest96668%_ _%lst96660%_))
-                 (let* ((_%$%rest9667096680%_ _%rest96668%_)
-                        (_%$%E9667396684%_
-                         (lambda ()
-                           (error '"No clause matching"
-                                  _%$%rest9667096680%_
-                                  '([k v . rest])
-                                  'else)
-                           (void)))
-                        (_%$%else9667296688%_
-                         (lambda ()
-                           (if (procedure? _%default96662%_)
-                               (_%default96662%_ _%key96658%_)
-                               _%default96662%_)))
-                        (_%$%K9667496697%_
-                         (lambda (_%rest96691%_ _%v96692%_ _%k96694%_)
-                           (if (eq? _%k96694%_ _%key96658%_)
-                               _%v96692%_
-                               (_%lp96665%_ _%rest96691%_)))))
-                   (if (pair? _%$%rest9667096680%_)
-                       (let ((_%$%hd9667596700%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%$%rest9667096680%_)))
-                             (_%$%tl9667696702%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%$%rest9667096680%_))))
-                         (let ((_%k96705%_ _%$%hd9667596700%_))
-                           (if (pair? _%$%tl9667696702%_)
-                               (let ((_%$%hd9667796707%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%$%tl9667696702%_)))
-                                     (_%$%tl9667896709%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%$%tl9667696702%_))))
-                                 (let* ((_%v96712%_ _%$%hd9667796707%_)
-                                        (_%rest96714%_ _%$%tl9667896709%_))
-                                   (_%$%K9667496697%_
-                                    _%rest96714%_
-                                    _%v96712%_
-                                    _%k96705%_)))
-                               (_%$%else9667296688%_))))
-                       (_%$%else9667296688%_)))))))
-        (lambda _g99278_
-          (let ((_g99279_ (let () (declare (not safe)) (##length _g99278_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99279_ 2))
-                   (apply (lambda (_%key96719%_ _%lst96720%_)
-                            (let ((_%default96722%_ '#f))
-                              (_%$%opt-lambda9665696716%_
-                               _%key96719%_
-                               _%lst96720%_
-                               _%default96722%_)))
-                          _g99278_))
-                  ((let () (declare (not safe)) (##fx= _g99279_ 3))
-                   (apply _%$%opt-lambda9665696716%_ _g99278_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    pgetq
-                    _g99278_)))))))
+      (lambda _g115745_
+        (let ((_g115746_ (let () (declare (not safe)) (##length _g115745_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115746_ 2))
+                 (apply pgetq__0 _g115745_))
+                ((let () (declare (not safe)) (##fx= _g115746_ 3))
+                 (apply pgetq__% _g115745_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  pgetq
+                  _g115745_))))))
+    (define pgetv__%
+      (lambda (_%key110264%_ _%lst110266%_ _%default110268%_)
+        (let _%lp110271%_ ((_%rest110274%_ _%lst110266%_))
+          (let* ((_%$%rest110276110286%_ _%rest110274%_)
+                 (_%$%else110278110294%_
+                  (lambda ()
+                    (if (procedure? _%default110268%_)
+                        (_%default110268%_ _%key110264%_)
+                        _%default110268%_)))
+                 (_%$%K110280110303%_
+                  (lambda (_%rest110297%_ _%v110298%_ _%k110300%_)
+                    (if (eqv? _%k110300%_ _%key110264%_)
+                        _%v110298%_
+                        (_%lp110271%_ _%rest110297%_)))))
+            (if (pair? _%$%rest110276110286%_)
+                (let ((_%$%hd110281110306%_
+                       (let ()
+                         (declare (not safe))
+                         (##car _%$%rest110276110286%_)))
+                      (_%$%tl110282110308%_
+                       (let ()
+                         (declare (not safe))
+                         (##cdr _%$%rest110276110286%_))))
+                  (let ((_%k110311%_ _%$%hd110281110306%_))
+                    (if (pair? _%$%tl110282110308%_)
+                        (let ((_%$%hd110283110313%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##car _%$%tl110282110308%_)))
+                              (_%$%tl110284110315%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##cdr _%$%tl110282110308%_))))
+                          (let* ((_%v110318%_ _%$%hd110283110313%_)
+                                 (_%rest110320%_ _%$%tl110284110315%_))
+                            (_%$%K110280110303%_
+                             _%rest110320%_
+                             _%v110318%_
+                             _%k110311%_)))
+                        (_%$%else110278110294%_))))
+                (_%$%else110278110294%_))))))
+    (define pgetv__0
+      (lambda (_%key110325%_ _%lst110326%_)
+        (let ((_%default110328%_ '#f))
+          (pgetv__% _%key110325%_ _%lst110326%_ _%default110328%_))))
     (define pgetv
-      (let ((_%$%opt-lambda9658596645%_
-             (lambda (_%key96587%_ _%lst96589%_ _%default96591%_)
-               (let _%lp96594%_ ((_%rest96597%_ _%lst96589%_))
-                 (let* ((_%$%rest9659996609%_ _%rest96597%_)
-                        (_%$%E9660296613%_
-                         (lambda ()
-                           (error '"No clause matching"
-                                  _%$%rest9659996609%_
-                                  '([k v . rest])
-                                  'else)
-                           (void)))
-                        (_%$%else9660196617%_
-                         (lambda ()
-                           (if (procedure? _%default96591%_)
-                               (_%default96591%_ _%key96587%_)
-                               _%default96591%_)))
-                        (_%$%K9660396626%_
-                         (lambda (_%rest96620%_ _%v96621%_ _%k96623%_)
-                           (if (eqv? _%k96623%_ _%key96587%_)
-                               _%v96621%_
-                               (_%lp96594%_ _%rest96620%_)))))
-                   (if (pair? _%$%rest9659996609%_)
-                       (let ((_%$%hd9660496629%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%$%rest9659996609%_)))
-                             (_%$%tl9660596631%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%$%rest9659996609%_))))
-                         (let ((_%k96634%_ _%$%hd9660496629%_))
-                           (if (pair? _%$%tl9660596631%_)
-                               (let ((_%$%hd9660696636%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%$%tl9660596631%_)))
-                                     (_%$%tl9660796638%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%$%tl9660596631%_))))
-                                 (let* ((_%v96641%_ _%$%hd9660696636%_)
-                                        (_%rest96643%_ _%$%tl9660796638%_))
-                                   (_%$%K9660396626%_
-                                    _%rest96643%_
-                                    _%v96641%_
-                                    _%k96634%_)))
-                               (_%$%else9660196617%_))))
-                       (_%$%else9660196617%_)))))))
-        (lambda _g99280_
-          (let ((_g99281_ (let () (declare (not safe)) (##length _g99280_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99281_ 2))
-                   (apply (lambda (_%key96648%_ _%lst96649%_)
-                            (let ((_%default96651%_ '#f))
-                              (_%$%opt-lambda9658596645%_
-                               _%key96648%_
-                               _%lst96649%_
-                               _%default96651%_)))
-                          _g99280_))
-                  ((let () (declare (not safe)) (##fx= _g99281_ 3))
-                   (apply _%$%opt-lambda9658596645%_ _g99280_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    pgetv
-                    _g99280_)))))))
+      (lambda _g115747_
+        (let ((_g115748_ (let () (declare (not safe)) (##length _g115747_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115748_ 2))
+                 (apply pgetv__0 _g115747_))
+                ((let () (declare (not safe)) (##fx= _g115748_ 3))
+                 (apply pgetv__% _g115747_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  pgetv
+                  _g115747_))))))
+    (define pget__%
+      (lambda (_%key110193%_ _%lst110195%_ _%default110197%_)
+        (let _%lp110200%_ ((_%rest110203%_ _%lst110195%_))
+          (let* ((_%$%rest110205110215%_ _%rest110203%_)
+                 (_%$%else110207110223%_
+                  (lambda ()
+                    (if (procedure? _%default110197%_)
+                        (_%default110197%_ _%key110193%_)
+                        _%default110197%_)))
+                 (_%$%K110209110232%_
+                  (lambda (_%rest110226%_ _%v110227%_ _%k110229%_)
+                    (if (equal? _%k110229%_ _%key110193%_)
+                        _%v110227%_
+                        (_%lp110200%_ _%rest110226%_)))))
+            (if (pair? _%$%rest110205110215%_)
+                (let ((_%$%hd110210110235%_
+                       (let ()
+                         (declare (not safe))
+                         (##car _%$%rest110205110215%_)))
+                      (_%$%tl110211110237%_
+                       (let ()
+                         (declare (not safe))
+                         (##cdr _%$%rest110205110215%_))))
+                  (let ((_%k110240%_ _%$%hd110210110235%_))
+                    (if (pair? _%$%tl110211110237%_)
+                        (let ((_%$%hd110212110242%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##car _%$%tl110211110237%_)))
+                              (_%$%tl110213110244%_
+                               (let ()
+                                 (declare (not safe))
+                                 (##cdr _%$%tl110211110237%_))))
+                          (let* ((_%v110247%_ _%$%hd110212110242%_)
+                                 (_%rest110249%_ _%$%tl110213110244%_))
+                            (_%$%K110209110232%_
+                             _%rest110249%_
+                             _%v110247%_
+                             _%k110240%_)))
+                        (_%$%else110207110223%_))))
+                (_%$%else110207110223%_))))))
+    (define pget__0
+      (lambda (_%key110254%_ _%lst110255%_)
+        (let ((_%default110257%_ '#f))
+          (pget__% _%key110254%_ _%lst110255%_ _%default110257%_))))
     (define pget
-      (let ((_%$%opt-lambda9651496574%_
-             (lambda (_%key96516%_ _%lst96518%_ _%default96520%_)
-               (let _%lp96523%_ ((_%rest96526%_ _%lst96518%_))
-                 (let* ((_%$%rest9652896538%_ _%rest96526%_)
-                        (_%$%E9653196542%_
-                         (lambda ()
-                           (error '"No clause matching"
-                                  _%$%rest9652896538%_
-                                  '([k v . rest])
-                                  'else)
-                           (void)))
-                        (_%$%else9653096546%_
-                         (lambda ()
-                           (if (procedure? _%default96520%_)
-                               (_%default96520%_ _%key96516%_)
-                               _%default96520%_)))
-                        (_%$%K9653296555%_
-                         (lambda (_%rest96549%_ _%v96550%_ _%k96552%_)
-                           (if (equal? _%k96552%_ _%key96516%_)
-                               _%v96550%_
-                               (_%lp96523%_ _%rest96549%_)))))
-                   (if (pair? _%$%rest9652896538%_)
-                       (let ((_%$%hd9653396558%_
-                              (let ()
-                                (declare (not safe))
-                                (##car _%$%rest9652896538%_)))
-                             (_%$%tl9653496560%_
-                              (let ()
-                                (declare (not safe))
-                                (##cdr _%$%rest9652896538%_))))
-                         (let ((_%k96563%_ _%$%hd9653396558%_))
-                           (if (pair? _%$%tl9653496560%_)
-                               (let ((_%$%hd9653596565%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##car _%$%tl9653496560%_)))
-                                     (_%$%tl9653696567%_
-                                      (let ()
-                                        (declare (not safe))
-                                        (##cdr _%$%tl9653496560%_))))
-                                 (let* ((_%v96570%_ _%$%hd9653596565%_)
-                                        (_%rest96572%_ _%$%tl9653696567%_))
-                                   (_%$%K9653296555%_
-                                    _%rest96572%_
-                                    _%v96570%_
-                                    _%k96563%_)))
-                               (_%$%else9653096546%_))))
-                       (_%$%else9653096546%_)))))))
-        (lambda _g99282_
-          (let ((_g99283_ (let () (declare (not safe)) (##length _g99282_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99283_ 2))
-                   (apply (lambda (_%key96577%_ _%lst96578%_)
-                            (let ((_%default96580%_ '#f))
-                              (_%$%opt-lambda9651496574%_
-                               _%key96577%_
-                               _%lst96578%_
-                               _%default96580%_)))
-                          _g99282_))
-                  ((let () (declare (not safe)) (##fx= _g99283_ 3))
-                   (apply _%$%opt-lambda9651496574%_ _g99282_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    pget
-                    _g99282_)))))))
+      (lambda _g115749_
+        (let ((_g115750_ (let () (declare (not safe)) (##length _g115749_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115750_ 2))
+                 (apply pget__0 _g115749_))
+                ((let () (declare (not safe)) (##fx= _g115750_ 3))
+                 (apply pget__% _g115749_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  pget
+                  _g115749_))))))
     (define __find
-      (lambda (_%pred96476%_ _%lst96477%_)
-        (let* ((_%pred96480%_ _%pred96476%_)
-               (_%$e96511%_
-                (let* ((_%proc96489%_ _%pred96480%_)
-                       (_%lst96492%_ _%lst96477%_))
-                  (if (procedure? _%proc96489%_)
-                      (let ((_%proc96497%_ _%proc96489%_))
-                        (__memf _%proc96497%_ _%lst96492%_))
-                      (begin
-                        (raise-contract-violation-error
-                         '"contract violation"
-                         'context:
-                         'gerbil/runtime/util
-                         'contract:
-                         'procedure?
-                         'value:
-                         _%proc96489%_)
-                        (void))))))
-          (if _%$e96511%_
-              (let () (declare (not safe)) (##car _%$e96511%_))
+      (lambda (_%pred110153%_ _%lst110154%_)
+        (let* ((_%pred110157%_ _%pred110153%_)
+               (_%$e110188%_
+                (let* ((_%proc110166%_ _%pred110157%_)
+                       (_%lst110169%_ _%lst110154%_)
+                       (_%proc110174%_ _%proc110166%_))
+                  (__memf _%proc110174%_ _%lst110169%_))))
+          (if _%$e110188%_
+              (let () (declare (not safe)) (##car _%$e110188%_))
               '#f))))
     (define find
-      (lambda (_%pred96461%_ _%lst96462%_)
-        (if (procedure? _%pred96461%_)
-            (let ((_%pred96466%_ _%pred96461%_))
-              (__find _%pred96466%_ _%lst96462%_))
+      (lambda (_%pred110138%_ _%lst110139%_)
+        (if (procedure? _%pred110138%_)
+            (let ((_%pred110143%_ _%pred110138%_))
+              (__find _%pred110143%_ _%lst110139%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -1988,44 +1793,39 @@
                'contract:
                'procedure?
                'value:
-               _%pred96461%_)
-              (void)))))
+               _%pred110138%_)
+              '#!void))))
     (define __memf
-      (lambda (_%proc96411%_ _%lst96412%_)
-        (let ((_%proc96415%_ _%proc96411%_))
-          (let _%lp96424%_ ((_%rest96426%_ _%lst96412%_))
-            (let* ((_%$%rest9642796435%_ _%rest96426%_)
-                   (_%$%E9643096439%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9642796435%_
-                             '([hd . tl])
-                             'else)
-                      (void)))
-                   (_%$%else9642996443%_ (lambda () '#f))
-                   (_%$%K9643196449%_
-                    (lambda (_%tl96446%_ _%hd96447%_)
-                      (if (_%proc96415%_ _%hd96447%_)
-                          _%rest96426%_
-                          (_%lp96424%_ _%tl96446%_)))))
-              (if (pair? _%$%rest9642796435%_)
-                  (let ((_%$%hd9643296452%_
+      (lambda (_%proc110088%_ _%lst110089%_)
+        (let ((_%proc110092%_ _%proc110088%_))
+          (let _%lp110101%_ ((_%rest110103%_ _%lst110089%_))
+            (let* ((_%$%rest110104110112%_ _%rest110103%_)
+                   (_%$%else110106110120%_ (lambda () '#f))
+                   (_%$%K110108110126%_
+                    (lambda (_%tl110123%_ _%hd110124%_)
+                      (if (let ()
+                            (declare (not safe))
+                            (_%proc110092%_ _%hd110124%_))
+                          _%rest110103%_
+                          (_%lp110101%_ _%tl110123%_)))))
+              (if (pair? _%$%rest110104110112%_)
+                  (let ((_%$%hd110109110129%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9642796435%_)))
-                        (_%$%tl9643396454%_
+                           (##car _%$%rest110104110112%_)))
+                        (_%$%tl110110110131%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9642796435%_))))
-                    (let* ((_%hd96457%_ _%$%hd9643296452%_)
-                           (_%tl96459%_ _%$%tl9643396454%_))
-                      (_%$%K9643196449%_ _%tl96459%_ _%hd96457%_)))
-                  (_%$%else9642996443%_)))))))
+                           (##cdr _%$%rest110104110112%_))))
+                    (let* ((_%hd110134%_ _%$%hd110109110129%_)
+                           (_%tl110136%_ _%$%tl110110110131%_))
+                      (_%$%K110108110126%_ _%tl110136%_ _%hd110134%_)))
+                  (_%$%else110106110120%_)))))))
     (define memf
-      (lambda (_%proc96396%_ _%lst96397%_)
-        (if (procedure? _%proc96396%_)
-            (let ((_%proc96401%_ _%proc96396%_))
-              (__memf _%proc96401%_ _%lst96397%_))
+      (lambda (_%proc110073%_ _%lst110074%_)
+        (if (procedure? _%proc110073%_)
+            (let ((_%proc110078%_ _%proc110073%_))
+              (__memf _%proc110078%_ _%lst110074%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2034,205 +1834,132 @@
                'contract:
                'procedure?
                'value:
-               _%proc96396%_)
-              (void)))))
+               _%proc110073%_)
+              '#!void))))
     (define remove1
-      (lambda (_%el96319%_ _%lst96321%_)
-        (let _%lp96324%_ ((_%rest96327%_ _%lst96321%_) (_%r96329%_ '()))
-          (let* ((_%$%rest9633196339%_ _%rest96327%_)
-                 (_%$%E9633496343%_
-                  (lambda ()
-                    (error '"No clause matching"
-                           _%$%rest9633196339%_
-                           '([hd . rest])
-                           'else)
-                    (void)))
-                 (_%$%else9633396347%_ (lambda () _%lst96321%_))
-                 (_%$%K9633596384%_
-                  (lambda (_%rest96350%_ _%hd96351%_)
-                    (if (equal? _%el96319%_ _%hd96351%_)
-                        (let* ((_%f96354%_ cons)
-                               (_%iv96357%_ _%rest96350%_)
-                               (_%lst96360%_ _%r96329%_))
-                          (if (procedure? _%f96354%_)
-                              (let ((_%f96365%_ _%f96354%_))
-                                (__foldl1 _%f96365%_ _%iv96357%_ _%lst96360%_))
-                              (begin
-                                (raise-contract-violation-error
-                                 '"contract violation"
-                                 'context:
-                                 'gerbil/runtime/util
-                                 'contract:
-                                 'procedure?
-                                 'value:
-                                 _%f96354%_)
-                                (void))))
-                        (_%lp96324%_
-                         _%rest96350%_
-                         (cons _%hd96351%_ _%r96329%_))))))
-            (if (pair? _%$%rest9633196339%_)
-                (let ((_%$%hd9633696387%_
+      (lambda (_%el109996%_ _%lst109998%_)
+        (let _%lp110001%_ ((_%rest110004%_ _%lst109998%_) (_%r110006%_ '()))
+          (let* ((_%$%rest110008110016%_ _%rest110004%_)
+                 (_%$%else110010110024%_ (lambda () _%lst109998%_))
+                 (_%$%K110012110061%_
+                  (lambda (_%rest110027%_ _%hd110028%_)
+                    (if (equal? _%el109996%_ _%hd110028%_)
+                        (let* ((_%f110031%_ cons)
+                               (_%iv110034%_ _%rest110027%_)
+                               (_%lst110037%_ _%r110006%_)
+                               (_%f110042%_ _%f110031%_))
+                          (__foldl1 _%f110042%_ _%iv110034%_ _%lst110037%_))
+                        (_%lp110001%_
+                         _%rest110027%_
+                         (cons _%hd110028%_ _%r110006%_))))))
+            (if (pair? _%$%rest110008110016%_)
+                (let ((_%$%hd110013110064%_
                        (let ()
                          (declare (not safe))
-                         (##car _%$%rest9633196339%_)))
-                      (_%$%tl9633796389%_
+                         (##car _%$%rest110008110016%_)))
+                      (_%$%tl110014110066%_
                        (let ()
                          (declare (not safe))
-                         (##cdr _%$%rest9633196339%_))))
-                  (let* ((_%hd96392%_ _%$%hd9633696387%_)
-                         (_%rest96394%_ _%$%tl9633796389%_))
-                    (_%$%K9633596384%_ _%rest96394%_ _%hd96392%_)))
-                (_%$%else9633396347%_))))))
+                         (##cdr _%$%rest110008110016%_))))
+                  (let* ((_%hd110069%_ _%$%hd110013110064%_)
+                         (_%rest110071%_ _%$%tl110014110066%_))
+                    (_%$%K110012110061%_ _%rest110071%_ _%hd110069%_)))
+                (_%$%else110010110024%_))))))
     (define remv1
-      (lambda (_%el96242%_ _%lst96244%_)
-        (let _%lp96247%_ ((_%rest96250%_ _%lst96244%_) (_%r96252%_ '()))
-          (let* ((_%$%rest9625496262%_ _%rest96250%_)
-                 (_%$%E9625796266%_
-                  (lambda ()
-                    (error '"No clause matching"
-                           _%$%rest9625496262%_
-                           '([hd . rest])
-                           'else)
-                    (void)))
-                 (_%$%else9625696270%_ (lambda () _%lst96244%_))
-                 (_%$%K9625896307%_
-                  (lambda (_%rest96273%_ _%hd96274%_)
-                    (if (eqv? _%el96242%_ _%hd96274%_)
-                        (let* ((_%f96277%_ cons)
-                               (_%iv96280%_ _%rest96273%_)
-                               (_%lst96283%_ _%r96252%_))
-                          (if (procedure? _%f96277%_)
-                              (let ((_%f96288%_ _%f96277%_))
-                                (__foldl1 _%f96288%_ _%iv96280%_ _%lst96283%_))
-                              (begin
-                                (raise-contract-violation-error
-                                 '"contract violation"
-                                 'context:
-                                 'gerbil/runtime/util
-                                 'contract:
-                                 'procedure?
-                                 'value:
-                                 _%f96277%_)
-                                (void))))
-                        (_%lp96247%_
-                         _%rest96273%_
-                         (cons _%hd96274%_ _%r96252%_))))))
-            (if (pair? _%$%rest9625496262%_)
-                (let ((_%$%hd9625996310%_
+      (lambda (_%el109919%_ _%lst109921%_)
+        (let _%lp109924%_ ((_%rest109927%_ _%lst109921%_) (_%r109929%_ '()))
+          (let* ((_%$%rest109931109939%_ _%rest109927%_)
+                 (_%$%else109933109947%_ (lambda () _%lst109921%_))
+                 (_%$%K109935109984%_
+                  (lambda (_%rest109950%_ _%hd109951%_)
+                    (if (eqv? _%el109919%_ _%hd109951%_)
+                        (let* ((_%f109954%_ cons)
+                               (_%iv109957%_ _%rest109950%_)
+                               (_%lst109960%_ _%r109929%_)
+                               (_%f109965%_ _%f109954%_))
+                          (__foldl1 _%f109965%_ _%iv109957%_ _%lst109960%_))
+                        (_%lp109924%_
+                         _%rest109950%_
+                         (cons _%hd109951%_ _%r109929%_))))))
+            (if (pair? _%$%rest109931109939%_)
+                (let ((_%$%hd109936109987%_
                        (let ()
                          (declare (not safe))
-                         (##car _%$%rest9625496262%_)))
-                      (_%$%tl9626096312%_
+                         (##car _%$%rest109931109939%_)))
+                      (_%$%tl109937109989%_
                        (let ()
                          (declare (not safe))
-                         (##cdr _%$%rest9625496262%_))))
-                  (let* ((_%hd96315%_ _%$%hd9625996310%_)
-                         (_%rest96317%_ _%$%tl9626096312%_))
-                    (_%$%K9625896307%_ _%rest96317%_ _%hd96315%_)))
-                (_%$%else9625696270%_))))))
+                         (##cdr _%$%rest109931109939%_))))
+                  (let* ((_%hd109992%_ _%$%hd109936109987%_)
+                         (_%rest109994%_ _%$%tl109937109989%_))
+                    (_%$%K109935109984%_ _%rest109994%_ _%hd109992%_)))
+                (_%$%else109933109947%_))))))
     (define remq1
-      (lambda (_%el96165%_ _%lst96167%_)
-        (let _%lp96170%_ ((_%rest96173%_ _%lst96167%_) (_%r96175%_ '()))
-          (let* ((_%$%rest9617796185%_ _%rest96173%_)
-                 (_%$%E9618096189%_
-                  (lambda ()
-                    (error '"No clause matching"
-                           _%$%rest9617796185%_
-                           '([hd . rest])
-                           'else)
-                    (void)))
-                 (_%$%else9617996193%_ (lambda () _%lst96167%_))
-                 (_%$%K9618196230%_
-                  (lambda (_%rest96196%_ _%hd96197%_)
-                    (if (eq? _%el96165%_ _%hd96197%_)
-                        (let* ((_%f96200%_ cons)
-                               (_%iv96203%_ _%rest96196%_)
-                               (_%lst96206%_ _%r96175%_))
-                          (if (procedure? _%f96200%_)
-                              (let ((_%f96211%_ _%f96200%_))
-                                (__foldl1 _%f96211%_ _%iv96203%_ _%lst96206%_))
-                              (begin
-                                (raise-contract-violation-error
-                                 '"contract violation"
-                                 'context:
-                                 'gerbil/runtime/util
-                                 'contract:
-                                 'procedure?
-                                 'value:
-                                 _%f96200%_)
-                                (void))))
-                        (_%lp96170%_
-                         _%rest96196%_
-                         (cons _%hd96197%_ _%r96175%_))))))
-            (if (pair? _%$%rest9617796185%_)
-                (let ((_%$%hd9618296233%_
+      (lambda (_%el109842%_ _%lst109844%_)
+        (let _%lp109847%_ ((_%rest109850%_ _%lst109844%_) (_%r109852%_ '()))
+          (let* ((_%$%rest109854109862%_ _%rest109850%_)
+                 (_%$%else109856109870%_ (lambda () _%lst109844%_))
+                 (_%$%K109858109907%_
+                  (lambda (_%rest109873%_ _%hd109874%_)
+                    (if (eq? _%el109842%_ _%hd109874%_)
+                        (let* ((_%f109877%_ cons)
+                               (_%iv109880%_ _%rest109873%_)
+                               (_%lst109883%_ _%r109852%_)
+                               (_%f109888%_ _%f109877%_))
+                          (__foldl1 _%f109888%_ _%iv109880%_ _%lst109883%_))
+                        (_%lp109847%_
+                         _%rest109873%_
+                         (cons _%hd109874%_ _%r109852%_))))))
+            (if (pair? _%$%rest109854109862%_)
+                (let ((_%$%hd109859109910%_
                        (let ()
                          (declare (not safe))
-                         (##car _%$%rest9617796185%_)))
-                      (_%$%tl9618396235%_
+                         (##car _%$%rest109854109862%_)))
+                      (_%$%tl109860109912%_
                        (let ()
                          (declare (not safe))
-                         (##cdr _%$%rest9617796185%_))))
-                  (let* ((_%hd96238%_ _%$%hd9618296233%_)
-                         (_%rest96240%_ _%$%tl9618396235%_))
-                    (_%$%K9618196230%_ _%rest96240%_ _%hd96238%_)))
-                (_%$%else9617996193%_))))))
+                         (##cdr _%$%rest109854109862%_))))
+                  (let* ((_%hd109915%_ _%$%hd109859109910%_)
+                         (_%rest109917%_ _%$%tl109860109912%_))
+                    (_%$%K109858109907%_ _%rest109917%_ _%hd109915%_)))
+                (_%$%else109856109870%_))))))
     (define __remf
-      (lambda (_%proc96082%_ _%lst96083%_)
-        (let ((_%proc96086%_ _%proc96082%_))
-          (let _%lp96095%_ ((_%rest96097%_ _%lst96083%_) (_%r96098%_ '()))
-            (let* ((_%$%rest9609996107%_ _%rest96097%_)
-                   (_%$%E9610296111%_
-                    (lambda ()
-                      (error '"No clause matching"
-                             _%$%rest9609996107%_
-                             '([hd . rest])
-                             'else)
-                      (void)))
-                   (_%$%else9610196115%_ (lambda () _%lst96083%_))
-                   (_%$%K9610396153%_
-                    (lambda (_%rest96118%_ _%hd96119%_)
-                      (if (_%proc96086%_ _%hd96119%_)
-                          (let* ((_%f96121%_ cons)
-                                 (_%iv96124%_ _%rest96118%_)
-                                 (_%lst96127%_ _%r96098%_))
-                            (if (procedure? _%f96121%_)
-                                (let ((_%f96132%_ _%f96121%_))
-                                  (__foldl1
-                                   _%f96132%_
-                                   _%iv96124%_
-                                   _%lst96127%_))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'procedure?
-                                   'value:
-                                   _%f96121%_)
-                                  (void))))
-                          (_%lp96095%_
-                           _%rest96118%_
-                           (cons _%hd96119%_ _%r96098%_))))))
-              (if (pair? _%$%rest9609996107%_)
-                  (let ((_%$%hd9610496156%_
+      (lambda (_%proc109759%_ _%lst109760%_)
+        (let ((_%proc109763%_ _%proc109759%_))
+          (let _%lp109772%_ ((_%rest109774%_ _%lst109760%_) (_%r109775%_ '()))
+            (let* ((_%$%rest109776109784%_ _%rest109774%_)
+                   (_%$%else109778109792%_ (lambda () _%lst109760%_))
+                   (_%$%K109780109830%_
+                    (lambda (_%rest109795%_ _%hd109796%_)
+                      (if (let ()
+                            (declare (not safe))
+                            (_%proc109763%_ _%hd109796%_))
+                          (let* ((_%f109798%_ cons)
+                                 (_%iv109801%_ _%rest109795%_)
+                                 (_%lst109804%_ _%r109775%_)
+                                 (_%f109809%_ _%f109798%_))
+                            (__foldl1 _%f109809%_ _%iv109801%_ _%lst109804%_))
+                          (_%lp109772%_
+                           _%rest109795%_
+                           (cons _%hd109796%_ _%r109775%_))))))
+              (if (pair? _%$%rest109776109784%_)
+                  (let ((_%$%hd109781109833%_
                          (let ()
                            (declare (not safe))
-                           (##car _%$%rest9609996107%_)))
-                        (_%$%tl9610596158%_
+                           (##car _%$%rest109776109784%_)))
+                        (_%$%tl109782109835%_
                          (let ()
                            (declare (not safe))
-                           (##cdr _%$%rest9609996107%_))))
-                    (let* ((_%hd96161%_ _%$%hd9610496156%_)
-                           (_%rest96163%_ _%$%tl9610596158%_))
-                      (_%$%K9610396153%_ _%rest96163%_ _%hd96161%_)))
-                  (_%$%else9610196115%_)))))))
+                           (##cdr _%$%rest109776109784%_))))
+                    (let* ((_%hd109838%_ _%$%hd109781109833%_)
+                           (_%rest109840%_ _%$%tl109782109835%_))
+                      (_%$%K109780109830%_ _%rest109840%_ _%hd109838%_)))
+                  (_%$%else109778109792%_)))))))
     (define remf
-      (lambda (_%proc96067%_ _%lst96068%_)
-        (if (procedure? _%proc96067%_)
-            (let ((_%proc96072%_ _%proc96067%_))
-              (__remf _%proc96072%_ _%lst96068%_))
+      (lambda (_%proc109744%_ _%lst109745%_)
+        (if (procedure? _%proc109744%_)
+            (let ((_%proc109749%_ _%proc109744%_))
+              (__remf _%proc109749%_ _%lst109745%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2241,14 +1968,15 @@
                'contract:
                'procedure?
                'value:
-               _%proc96067%_)
-              (void)))))
+               _%proc109744%_)
+              '#!void))))
     (define __1+
-      (lambda (_%x96055%_) (let ((_%x96058%_ _%x96055%_)) (+ _%x96058%_ '1))))
+      (lambda (_%x109732%_)
+        (let ((_%x109735%_ _%x109732%_)) (+ _%x109735%_ '1))))
     (define 1+
-      (lambda (_%x96041%_)
-        (if (number? _%x96041%_)
-            (let ((_%x96045%_ _%x96041%_)) (__1+ _%x96045%_))
+      (lambda (_%x109718%_)
+        (if (number? _%x109718%_)
+            (let ((_%x109722%_ _%x109718%_)) (__1+ _%x109722%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2257,14 +1985,15 @@
                'contract:
                'number?
                'value:
-               _%x96041%_)
-              (void)))))
+               _%x109718%_)
+              '#!void))))
     (define __1-
-      (lambda (_%x96029%_) (let ((_%x96032%_ _%x96029%_)) (- _%x96032%_ '1))))
+      (lambda (_%x109706%_)
+        (let ((_%x109709%_ _%x109706%_)) (- _%x109709%_ '1))))
     (define 1-
-      (lambda (_%x96015%_)
-        (if (number? _%x96015%_)
-            (let ((_%x96019%_ _%x96015%_)) (__1- _%x96019%_))
+      (lambda (_%x109692%_)
+        (if (number? _%x109692%_)
+            (let ((_%x109696%_ _%x109692%_)) (__1- _%x109696%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2273,15 +2002,17 @@
                'contract:
                'number?
                'value:
-               _%x96015%_)
-              (void)))))
+               _%x109692%_)
+              '#!void))))
     (define __fx1+
-      (lambda (_%x96003%_)
-        (let ((_%x96006%_ _%x96003%_)) (fx+ _%x96006%_ '1))))
+      (lambda (_%x109680%_)
+        (let ((_%x109683%_ _%x109680%_))
+          (declare (not safe))
+          (##fx+ _%x109683%_ '1))))
     (define fx1+
-      (lambda (_%x95989%_)
-        (if (fixnum? _%x95989%_)
-            (let ((_%x95993%_ _%x95989%_)) (__fx1+ _%x95993%_))
+      (lambda (_%x109666%_)
+        (if (fixnum? _%x109666%_)
+            (let ((_%x109670%_ _%x109666%_)) (__fx1+ _%x109670%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2290,15 +2021,17 @@
                'contract:
                'fixnum?
                'value:
-               _%x95989%_)
-              (void)))))
+               _%x109666%_)
+              '#!void))))
     (define __fx1-
-      (lambda (_%x95977%_)
-        (let ((_%x95980%_ _%x95977%_)) (fx- _%x95980%_ '1))))
+      (lambda (_%x109654%_)
+        (let ((_%x109657%_ _%x109654%_))
+          (declare (not safe))
+          (##fx- _%x109657%_ '1))))
     (define fx1-
-      (lambda (_%x95963%_)
-        (if (fixnum? _%x95963%_)
-            (let ((_%x95967%_ _%x95963%_)) (__fx1- _%x95967%_))
+      (lambda (_%x109640%_)
+        (if (fixnum? _%x109640%_)
+            (let ((_%x109644%_ _%x109640%_)) (__fx1- _%x109644%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2307,53 +2040,54 @@
                'contract:
                'fixnum?
                'value:
-               _%x95963%_)
-              (void)))))
+               _%x109640%_)
+              '#!void))))
     (define fxshift fxarithmetic-shift)
     (define fx/ fxquotient)
     (define fx% fxremainder)
     (define fx>=0?
-      (lambda (_%x95960%_)
-        (if (fixnum? _%x95960%_)
-            (let () (declare (not safe)) (##fx>= _%x95960%_ '0))
+      (lambda (_%x109637%_)
+        (if (fixnum? _%x109637%_)
+            (let () (declare (not safe)) (##fx>= _%x109637%_ '0))
             '#f)))
     (define fx>0?
-      (lambda (_%x95957%_)
-        (if (fixnum? _%x95957%_)
-            (let () (declare (not safe)) (##fx> _%x95957%_ '0))
+      (lambda (_%x109634%_)
+        (if (fixnum? _%x109634%_)
+            (let () (declare (not safe)) (##fx> _%x109634%_ '0))
             '#f)))
     (define fx=0?
-      (lambda (_%x95954%_)
-        (let () (declare (not safe)) (##fx= _%x95954%_ '0))))
+      (lambda (_%x109631%_)
+        (let () (declare (not safe)) (##fx= _%x109631%_ '0))))
     (define fx<0?
-      (lambda (_%x95951%_)
-        (if (fixnum? _%x95951%_)
-            (let () (declare (not safe)) (##fx< _%x95951%_ '0))
+      (lambda (_%x109628%_)
+        (if (fixnum? _%x109628%_)
+            (let () (declare (not safe)) (##fx< _%x109628%_ '0))
             '#f)))
     (define fx<=0?
-      (lambda (_%x95948%_)
-        (if (fixnum? _%x95948%_)
-            (let () (declare (not safe)) (##fx<= _%x95948%_ '0))
+      (lambda (_%x109625%_)
+        (if (fixnum? _%x109625%_)
+            (let () (declare (not safe)) (##fx<= _%x109625%_ '0))
             '#f)))
     (define interned-symbol?
-      (lambda (_%x95945%_)
-        (if (symbol? _%x95945%_) (not (uninterned-symbol? _%x95945%_)) '#f)))
+      (lambda (_%x109622%_)
+        (if (symbol? _%x109622%_) (not (uninterned-symbol? _%x109622%_)) '#f)))
     (define __display-as-string
-      (lambda (_%x95839%_ _%port95840%_)
-        (let ((_%port95843%_ _%port95840%_))
-          (if (or (string? _%x95839%_)
-                  (symbol? _%x95839%_)
-                  (keyword? _%x95839%_)
-                  (number? _%x95839%_)
-                  (char? _%x95839%_))
-              (display _%x95839%_ _%port95843%_)
-              (if (pair? _%x95839%_)
+      (lambda (_%x109516%_ _%port109517%_)
+        (let ((_%port109520%_ _%port109517%_))
+          (if (or (string? _%x109516%_)
+                  (symbol? _%x109516%_)
+                  (keyword? _%x109516%_)
+                  (number? _%x109516%_)
+                  (char? _%x109516%_))
+              (display _%x109516%_ _%port109520%_)
+              (if (pair? _%x109516%_)
                   (let ()
-                    (let* ((_%x95866%_ (car _%x95839%_))
-                           (_%port95869%_ _%port95843%_))
-                      (if (output-port? _%port95869%_)
-                          (let ((_%port95874%_ _%port95869%_))
-                            (__display-as-string _%x95866%_ _%port95874%_))
+                    (let* ((_%x109543%_
+                            (let () (declare (not safe)) (##car _%x109516%_)))
+                           (_%port109546%_ _%port109520%_))
+                      (if (output-port? _%port109546%_)
+                          (let ((_%port109551%_ _%port109546%_))
+                            (__display-as-string _%x109543%_ _%port109551%_))
                           (begin
                             (raise-contract-violation-error
                              '"contract violation"
@@ -2362,13 +2096,14 @@
                              'contract:
                              'output-port?
                              'value:
-                             _%port95869%_)
-                            (void))))
-                    (let* ((_%x95889%_ (cdr _%x95839%_))
-                           (_%port95892%_ _%port95843%_))
-                      (if (output-port? _%port95892%_)
-                          (let ((_%port95897%_ _%port95892%_))
-                            (__display-as-string _%x95889%_ _%port95897%_))
+                             _%port109546%_)
+                            '#!void)))
+                    (let* ((_%x109566%_
+                            (let () (declare (not safe)) (##cdr _%x109516%_)))
+                           (_%port109569%_ _%port109520%_))
+                      (if (output-port? _%port109569%_)
+                          (let ((_%port109574%_ _%port109569%_))
+                            (__display-as-string _%x109566%_ _%port109574%_))
                           (begin
                             (raise-contract-violation-error
                              '"contract violation"
@@ -2377,18 +2112,18 @@
                              'contract:
                              'output-port?
                              'value:
-                             _%port95892%_)
-                            (void)))))
-                  (if (vector? _%x95839%_)
+                             _%port109569%_)
+                            '#!void))))
+                  (if (vector? _%x109516%_)
                       (vector-for-each
-                       (lambda (_%$%g9590895910%_)
-                         (let* ((_%x95913%_ _%$%g9590895910%_)
-                                (_%port95916%_ _%port95843%_))
-                           (if (output-port? _%port95916%_)
-                               (let ((_%port95921%_ _%port95916%_))
+                       (lambda (_%$%g109585109587%_)
+                         (let* ((_%x109590%_ _%$%g109585109587%_)
+                                (_%port109593%_ _%port109520%_))
+                           (if (output-port? _%port109593%_)
+                               (let ((_%port109598%_ _%port109593%_))
                                  (__display-as-string
-                                  _%x95913%_
-                                  _%port95921%_))
+                                  _%x109590%_
+                                  _%port109598%_))
                                (begin
                                  (raise-contract-violation-error
                                   '"contract violation"
@@ -2397,22 +2132,22 @@
                                   'contract:
                                   'output-port?
                                   'value:
-                                  _%port95916%_)
-                                 (void)))))
-                       _%x95839%_)
-                      (if (or (null? _%x95839%_)
-                              (void? _%x95839%_)
-                              (eof-object? _%x95839%_)
-                              (boolean? _%x95839%_))
-                          (void)
+                                  _%port109593%_)
+                                 '#!void))))
+                       _%x109516%_)
+                      (if (or (null? _%x109516%_)
+                              (eq? _%x109516%_ '#!void)
+                              (eof-object? _%x109516%_)
+                              (boolean? _%x109516%_))
+                          '#!void
                           (let ()
-                            (error '"cannot convert as string" _%x95839%_)
-                            (void)))))))))
+                            (error '"cannot convert as string" _%x109516%_)
+                            '#!void))))))))
     (define display-as-string
-      (lambda (_%x95824%_ _%port95825%_)
-        (if (output-port? _%port95825%_)
-            (let ((_%port95829%_ _%port95825%_))
-              (__display-as-string _%x95824%_ _%port95829%_))
+      (lambda (_%x109501%_ _%port109502%_)
+        (if (output-port? _%port109502%_)
+            (let ((_%port109506%_ _%port109502%_))
+              (__display-as-string _%x109501%_ _%port109506%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2421,119 +2156,163 @@
                'contract:
                'output-port?
                'value:
-               _%port95825%_)
-              (void)))))
+               _%port109502%_)
+              '#!void))))
+    (define as-string__0
+      (lambda (_%x109441%_)
+        (if (string? _%x109441%_)
+            _%x109441%_
+            (if (symbol? _%x109441%_)
+                (let () (declare (not safe)) (##symbol->string _%x109441%_))
+                (if (keyword? _%x109441%_)
+                    (let ()
+                      (declare (not safe))
+                      (##keyword->string _%x109441%_))
+                    (if (number? _%x109441%_)
+                        (let ()
+                          (declare (not safe))
+                          (##number->string _%x109441%_))
+                        (call-with-output-string
+                         '()
+                         (lambda (_%$%g109447109449%_)
+                           (let* ((_%x109452%_ _%x109441%_)
+                                  (_%port109455%_ _%$%g109447109449%_))
+                             (if (output-port? _%port109455%_)
+                                 (let ((_%port109460%_ _%port109455%_))
+                                   (__display-as-string
+                                    _%x109452%_
+                                    _%port109460%_))
+                                 (begin
+                                   (raise-contract-violation-error
+                                    '"contract violation"
+                                    'context:
+                                    'gerbil/runtime/util
+                                    'contract:
+                                    'output-port?
+                                    'value:
+                                    _%port109455%_)
+                                   '#!void)))))))))))
+    (define as-string__1
+      (lambda _%args109474%_
+        (call-with-output-string
+         '()
+         (lambda (_%$%g109475109477%_)
+           (let* ((_%x109480%_ _%args109474%_)
+                  (_%port109483%_ _%$%g109475109477%_))
+             (if (output-port? _%port109483%_)
+                 (let ((_%port109488%_ _%port109483%_))
+                   (__display-as-string _%x109480%_ _%port109488%_))
+                 (begin
+                   (raise-contract-violation-error
+                    '"contract violation"
+                    'context:
+                    'gerbil/runtime/util
+                    'contract:
+                    'output-port?
+                    'value:
+                    _%port109483%_)
+                   '#!void)))))))
     (define as-string
-      (lambda _g99284_
-        (let ((_g99285_ (let () (declare (not safe)) (##length _g99284_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99285_ 1))
-                 (apply (lambda (_%x95764%_)
-                          (if (string? _%x95764%_)
-                              _%x95764%_
-                              (if (symbol? _%x95764%_)
-                                  (symbol->string _%x95764%_)
-                                  (if (keyword? _%x95764%_)
-                                      (keyword->string _%x95764%_)
-                                      (if (number? _%x95764%_)
-                                          (number->string _%x95764%_)
-                                          (call-with-output-string
-                                           '()
-                                           (lambda (_%$%g9577095772%_)
-                                             (let* ((_%x95775%_ _%x95764%_)
-                                                    (_%port95778%_
-                                                     _%$%g9577095772%_))
-                                               (if (output-port? _%port95778%_)
-                                                   (let ((_%port95783%_
-                                                          _%port95778%_))
-                                                     (__display-as-string
-                                                      _%x95775%_
-                                                      _%port95783%_))
-                                                   (begin
-                                                     (raise-contract-violation-error
-                                                      '"contract violation"
-                                                      'context:
-                                                      'gerbil/runtime/util
-                                                      'contract:
-                                                      'output-port?
-                                                      'value:
-                                                      _%port95778%_)
-                                                     (void)))))))))))
-                        _g99284_))
+      (lambda _g115751_
+        (let ((_g115752_ (let () (declare (not safe)) (##length _g115751_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115752_ 1))
+                 (apply as-string__0 _g115751_))
                 (#t
-                 (apply (lambda _%args95797%_
-                          (call-with-output-string
-                           '()
-                           (lambda (_%$%g9579895800%_)
-                             (let* ((_%x95803%_ _%args95797%_)
-                                    (_%port95806%_ _%$%g9579895800%_))
-                               (if (output-port? _%port95806%_)
-                                   (let ((_%port95811%_ _%port95806%_))
-                                     (__display-as-string
-                                      _%x95803%_
-                                      _%port95811%_))
-                                   (begin
-                                     (raise-contract-violation-error
-                                      '"contract violation"
-                                      'context:
-                                      'gerbil/runtime/util
-                                      'contract:
-                                      'output-port?
-                                      'value:
-                                      _%port95806%_)
-                                     (void)))))))
-                        _g99284_))
+                 (apply (lambda _%args109474%_
+                          (let ()
+                            (declare (not safe))
+                            (##apply as-string__1 _%args109474%_)))
+                        _g115751_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   as-string
-                  _g99284_))))))
+                  _g115751_))))))
+    (define make-symbol__0
+      (lambda (_%x109437%_)
+        (if (interned-symbol? _%x109437%_)
+            _%x109437%_
+            (let ((__tmp115753 (as-string__0 _%x109437%_)))
+              (declare (not safe))
+              (##string->symbol __tmp115753)))))
+    (define make-symbol__1
+      (lambda _%args109439%_
+        (let ((__tmp115754
+               (let ()
+                 (declare (not safe))
+                 (##apply as-string _%args109439%_))))
+          (declare (not safe))
+          (##string->symbol __tmp115754))))
     (define make-symbol
-      (lambda _g99286_
-        (let ((_g99287_ (let () (declare (not safe)) (##length _g99286_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99287_ 1))
-                 (apply (lambda (_%x95760%_)
-                          (if (interned-symbol? _%x95760%_)
-                              _%x95760%_
-                              (string->symbol (as-string _%x95760%_))))
-                        _g99286_))
+      (lambda _g115755_
+        (let ((_g115756_ (let () (declare (not safe)) (##length _g115755_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115756_ 1))
+                 (apply make-symbol__0 _g115755_))
                 (#t
-                 (apply (lambda _%args95762%_
-                          (string->symbol (apply as-string _%args95762%_)))
-                        _g99286_))
+                 (apply (lambda _%args109439%_
+                          (let ()
+                            (declare (not safe))
+                            (##apply make-symbol__1 _%args109439%_)))
+                        _g115755_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-symbol
-                  _g99286_))))))
+                  _g115755_))))))
+    (define make-keyword__0
+      (lambda (_%x109433%_)
+        (if (interned-keyword? _%x109433%_)
+            _%x109433%_
+            (let ((__tmp115757 (as-string__0 _%x109433%_)))
+              (declare (not safe))
+              (##string->keyword __tmp115757)))))
+    (define make-keyword__1
+      (lambda _%args109435%_
+        (let ((__tmp115758
+               (let ()
+                 (declare (not safe))
+                 (##apply as-string _%args109435%_))))
+          (declare (not safe))
+          (##string->keyword __tmp115758))))
     (define make-keyword
-      (lambda _g99288_
-        (let ((_g99289_ (let () (declare (not safe)) (##length _g99288_))))
-          (cond ((let () (declare (not safe)) (##fx= _g99289_ 1))
-                 (apply (lambda (_%x95756%_)
-                          (if (interned-keyword? _%x95756%_)
-                              _%x95756%_
-                              (string->keyword (as-string _%x95756%_))))
-                        _g99288_))
+      (lambda _g115759_
+        (let ((_g115760_ (let () (declare (not safe)) (##length _g115759_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115760_ 1))
+                 (apply make-keyword__0 _g115759_))
                 (#t
-                 (apply (lambda _%args95758%_
-                          (string->keyword (apply as-string _%args95758%_)))
-                        _g99288_))
+                 (apply (lambda _%args109435%_
+                          (let ()
+                            (declare (not safe))
+                            (##apply make-keyword__1 _%args109435%_)))
+                        _g115759_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-keyword
-                  _g99288_))))))
+                  _g115759_))))))
     (define interned-keyword?
-      (lambda (_%x95753%_)
-        (if (keyword? _%x95753%_) (not (uninterned-keyword? _%x95753%_)) '#f)))
+      (lambda (_%x109430%_)
+        (if (keyword? _%x109430%_)
+            (not (uninterned-keyword? _%x109430%_))
+            '#f)))
     (define __symbol->keyword
-      (lambda (_%sym95741%_)
-        (let ((_%sym95744%_ _%sym95741%_))
-          (if (uninterned-symbol? _%sym95744%_)
-              (string->uninterned-keyword (symbol->string _%sym95744%_))
-              (string->keyword (symbol->string _%sym95744%_))))))
+      (lambda (_%sym109418%_)
+        (let ((_%sym109421%_ _%sym109418%_))
+          (if (uninterned-symbol? _%sym109421%_)
+              (let ((__tmp115761
+                     (let ()
+                       (declare (not safe))
+                       (##symbol->string _%sym109421%_))))
+                (declare (not safe))
+                (##string->uninterned-keyword __tmp115761))
+              (let ((__tmp115762
+                     (let ()
+                       (declare (not safe))
+                       (##symbol->string _%sym109421%_))))
+                (declare (not safe))
+                (##string->keyword __tmp115762))))))
     (define symbol->keyword
-      (lambda (_%sym95727%_)
-        (if (symbol? _%sym95727%_)
-            (let ((_%sym95731%_ _%sym95727%_))
-              (__symbol->keyword _%sym95731%_))
+      (lambda (_%sym109404%_)
+        (if (symbol? _%sym109404%_)
+            (let ((_%sym109408%_ _%sym109404%_))
+              (__symbol->keyword _%sym109408%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2542,19 +2321,29 @@
                'contract:
                'symbol?
                'value:
-               _%sym95727%_)
-              (void)))))
+               _%sym109404%_)
+              '#!void))))
     (define __keyword->symbol
-      (lambda (_%sym95715%_)
-        (let ((_%sym95718%_ _%sym95715%_))
-          (if (uninterned-keyword? _%sym95718%_)
-              (string->uninterned-symbol (keyword->string _%sym95718%_))
-              (string->symbol (keyword->string _%sym95718%_))))))
+      (lambda (_%sym109392%_)
+        (let ((_%sym109395%_ _%sym109392%_))
+          (if (uninterned-keyword? _%sym109395%_)
+              (let ((__tmp115763
+                     (let ()
+                       (declare (not safe))
+                       (##keyword->string _%sym109395%_))))
+                (declare (not safe))
+                (##string->uninterned-symbol __tmp115763))
+              (let ((__tmp115764
+                     (let ()
+                       (declare (not safe))
+                       (##keyword->string _%sym109395%_))))
+                (declare (not safe))
+                (##string->symbol __tmp115764))))))
     (define keyword->symbol
-      (lambda (_%sym95701%_)
-        (if (keyword? _%sym95701%_)
-            (let ((_%sym95705%_ _%sym95701%_))
-              (__keyword->symbol _%sym95705%_))
+      (lambda (_%sym109378%_)
+        (if (keyword? _%sym109378%_)
+            (let ((_%sym109382%_ _%sym109378%_))
+              (__keyword->symbol _%sym109382%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2563,301 +2352,299 @@
                'contract:
                'keyword?
                'value:
-               _%sym95701%_)
-              (void)))))
+               _%sym109378%_)
+              '#!void))))
+    (define __bytes->string__%
+      (lambda (_%bstr109338%_ _%enc109339%_)
+        (let* ((_%bstr109342%_ _%bstr109338%_) (_%enc109350%_ _%enc109339%_))
+          (if (eq? _%enc109350%_ 'UTF-8)
+              (let () (declare (not safe)) (##utf8->string _%bstr109342%_))
+              (let* ((_%in109359%_
+                      (open-input-u8vector
+                       (cons 'char-encoding:
+                             (cons _%enc109350%_
+                                   (cons 'init: (cons _%bstr109342%_ '()))))))
+                     (_%len109361%_
+                      (let ()
+                        (declare (not safe))
+                        (##u8vector-length _%bstr109342%_)))
+                     (_%out109363%_
+                      (let ()
+                        (declare (not safe))
+                        (##make-string _%len109361%_)))
+                     (_%n109365%_
+                      (read-substring
+                       _%out109363%_
+                       '0
+                       _%len109361%_
+                       _%in109359%_)))
+                (string-shrink! _%out109363%_ _%n109365%_)
+                _%out109363%_)))))
+    (define __bytes->string__0
+      (lambda (_%bstr109371%_)
+        (let ((_%enc109373%_ 'UTF-8))
+          (__bytes->string__% _%bstr109371%_ _%enc109373%_))))
     (define __bytes->string
-      (let ((_%$%opt-lambda9565995691%_
-             (lambda (_%bstr95661%_ _%enc95662%_)
-               (let* ((_%bstr95665%_ _%bstr95661%_)
-                      (_%enc95673%_ _%enc95662%_))
-                 (if (eq? _%enc95673%_ 'UTF-8)
-                     (utf8->string _%bstr95665%_)
-                     (let* ((_%in95682%_
-                             (open-input-u8vector
-                              (cons 'char-encoding:
-                                    (cons _%enc95673%_
-                                          (cons 'init:
-                                                (cons _%bstr95665%_ '()))))))
-                            (_%len95684%_ (u8vector-length _%bstr95665%_))
-                            (_%out95686%_ (make-string _%len95684%_))
-                            (_%n95688%_
-                             (read-substring
-                              _%out95686%_
-                              '0
-                              _%len95684%_
-                              _%in95682%_)))
-                       (string-shrink! _%out95686%_ _%n95688%_)
-                       _%out95686%_))))))
-        (lambda _g99290_
-          (let ((_g99291_ (let () (declare (not safe)) (##length _g99290_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99291_ 1))
-                   (apply (lambda (_%bstr95694%_)
-                            (let ((_%enc95696%_ 'UTF-8))
-                              (_%$%opt-lambda9565995691%_
-                               _%bstr95694%_
-                               _%enc95696%_)))
-                          _g99290_))
-                  ((let () (declare (not safe)) (##fx= _g99291_ 2))
-                   (apply _%$%opt-lambda9565995691%_ _g99290_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __bytes->string
-                    _g99290_)))))))
+      (lambda _g115765_
+        (let ((_g115766_ (let () (declare (not safe)) (##length _g115765_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115766_ 1))
+                 (apply __bytes->string__0 _g115765_))
+                ((let () (declare (not safe)) (##fx= _g115766_ 2))
+                 (apply __bytes->string__% _g115765_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __bytes->string
+                  _g115765_))))))
+    (define bytes->string__%
+      (lambda (_%bstr109302%_ _%enc109303%_)
+        (if (u8vector? _%bstr109302%_)
+            (let ((_%bstr109307%_ _%bstr109302%_))
+              (if (symbol? _%enc109303%_)
+                  (let ((_%enc109317%_ _%enc109303%_))
+                    (__bytes->string__% _%bstr109307%_ _%enc109317%_))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@673.25-673.28"
+                     'contract:
+                     'symbol?
+                     'value:
+                     _%enc109303%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@672.22-672.26"
+               'contract:
+               'u8vector?
+               'value:
+               _%bstr109302%_)
+              '#!void))))
+    (define bytes->string__0
+      (lambda (_%bstr109330%_)
+        (let ((_%enc109332%_ 'UTF-8))
+          (bytes->string__% _%bstr109330%_ _%enc109332%_))))
     (define bytes->string
-      (let ((_%$%opt-lambda9562395650%_
-             (lambda (_%bstr95625%_ _%enc95626%_)
-               (if (u8vector? _%bstr95625%_)
-                   (let ((_%bstr95630%_ _%bstr95625%_))
-                     (if (symbol? _%enc95626%_)
-                         (let ((_%enc95640%_ _%enc95626%_))
-                           (__bytes->string _%bstr95630%_ _%enc95640%_))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@673.25-673.28"
-                            'contract:
-                            'symbol?
-                            'value:
-                            _%enc95626%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@672.22-672.26"
-                      'contract:
-                      'u8vector?
-                      'value:
-                      _%bstr95625%_)
-                     (void))))))
-        (lambda _g99292_
-          (let ((_g99293_ (let () (declare (not safe)) (##length _g99292_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99293_ 1))
-                   (apply (lambda (_%bstr95653%_)
-                            (let ((_%enc95655%_ 'UTF-8))
-                              (_%$%opt-lambda9562395650%_
-                               _%bstr95653%_
-                               _%enc95655%_)))
-                          _g99292_))
-                  ((let () (declare (not safe)) (##fx= _g99293_ 2))
-                   (apply _%$%opt-lambda9562395650%_ _g99292_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    bytes->string
-                    _g99292_)))))))
+      (lambda _g115767_
+        (let ((_g115768_ (let () (declare (not safe)) (##length _g115767_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115768_ 1))
+                 (apply bytes->string__0 _g115767_))
+                ((let () (declare (not safe)) (##fx= _g115768_ 2))
+                 (apply bytes->string__% _g115767_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  bytes->string
+                  _g115767_))))))
+    (define __string->bytes__%
+      (lambda (_%str109220%_ _%enc109221%_)
+        (let* ((_%str109224%_ _%str109220%_) (_%enc109232%_ _%enc109221%_))
+          (if (eq? _%enc109232%_ 'UTF-8)
+              (let () (declare (not safe)) (##string->utf8 _%str109224%_))
+              (let* ((_%str109241%_ _%str109224%_)
+                     (_%start109244%_ '0)
+                     (_%end109247%_
+                      (let ()
+                        (declare (not safe))
+                        (##string-length _%str109224%_)))
+                     (_%enc109250%_ _%enc109232%_)
+                     (_%str109255%_ _%str109241%_))
+                (if (nonnegative-fixnum? _%start109244%_)
+                    (let ((_%start109271%_ _%start109244%_))
+                      (if (nonnegative-fixnum? _%end109247%_)
+                          (let ((_%end109281%_ _%end109247%_))
+                            (__substring->bytes__%
+                             _%str109255%_
+                             _%start109271%_
+                             _%end109281%_
+                             _%enc109250%_))
+                          (begin
+                            (raise-contract-violation-error
+                             '"contract violation"
+                             'context:
+                             'gerbil/runtime/util
+                             'contract:
+                             'nonnegative-fixnum?
+                             'value:
+                             _%end109247%_)
+                            '#!void)))
+                    (begin
+                      (raise-contract-violation-error
+                       '"contract violation"
+                       'context:
+                       'gerbil/runtime/util
+                       'contract:
+                       'nonnegative-fixnum?
+                       'value:
+                       _%start109244%_)
+                      '#!void)))))))
+    (define __string->bytes__0
+      (lambda (_%str109294%_)
+        (let ((_%enc109296%_ 'UTF-8))
+          (__string->bytes__% _%str109294%_ _%enc109296%_))))
     (define __string->bytes
-      (let ((_%$%opt-lambda9554195614%_
-             (lambda (_%str95543%_ _%enc95544%_)
-               (let* ((_%str95547%_ _%str95543%_) (_%enc95555%_ _%enc95544%_))
-                 (if (eq? _%enc95555%_ 'UTF-8)
-                     (string->utf8 _%str95547%_)
-                     (let* ((_%str95564%_ _%str95547%_)
-                            (_%start95567%_ '0)
-                            (_%end95570%_ (string-length _%str95547%_))
-                            (_%enc95573%_ _%enc95555%_))
-                       (if (string? _%str95564%_)
-                           (let ((_%str95578%_ _%str95564%_))
-                             (if (nonnegative-fixnum? _%start95567%_)
-                                 (let ((_%start95594%_ _%start95567%_))
-                                   (if (nonnegative-fixnum? _%end95570%_)
-                                       (let ((_%end95604%_ _%end95570%_))
-                                         (__substring->bytes
-                                          _%str95578%_
-                                          _%start95594%_
-                                          _%end95604%_
-                                          _%enc95573%_))
-                                       (begin
-                                         (raise-contract-violation-error
-                                          '"contract violation"
-                                          'context:
-                                          'gerbil/runtime/util
-                                          'contract:
-                                          'nonnegative-fixnum?
-                                          'value:
-                                          _%end95570%_)
-                                         (void))))
-                                 (begin
-                                   (raise-contract-violation-error
-                                    '"contract violation"
-                                    'context:
-                                    'gerbil/runtime/util
-                                    'contract:
-                                    'nonnegative-fixnum?
-                                    'value:
-                                    _%start95567%_)
-                                   (void))))
-                           (begin
-                             (raise-contract-violation-error
-                              '"contract violation"
-                              'context:
-                              'gerbil/runtime/util
-                              'contract:
-                              'string?
-                              'value:
-                              _%str95564%_)
-                             (void)))))))))
-        (lambda _g99294_
-          (let ((_g99295_ (let () (declare (not safe)) (##length _g99294_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99295_ 1))
-                   (apply (lambda (_%str95617%_)
-                            (let ((_%enc95619%_ 'UTF-8))
-                              (_%$%opt-lambda9554195614%_
-                               _%str95617%_
-                               _%enc95619%_)))
-                          _g99294_))
-                  ((let () (declare (not safe)) (##fx= _g99295_ 2))
-                   (apply _%$%opt-lambda9554195614%_ _g99294_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __string->bytes
-                    _g99294_)))))))
+      (lambda _g115769_
+        (let ((_g115770_ (let () (declare (not safe)) (##length _g115769_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115770_ 1))
+                 (apply __string->bytes__0 _g115769_))
+                ((let () (declare (not safe)) (##fx= _g115770_ 2))
+                 (apply __string->bytes__% _g115769_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __string->bytes
+                  _g115769_))))))
+    (define string->bytes__%
+      (lambda (_%str109184%_ _%enc109185%_)
+        (if (string? _%str109184%_)
+            (let ((_%str109189%_ _%str109184%_))
+              (if (symbol? _%enc109185%_)
+                  (let ((_%enc109199%_ _%enc109185%_))
+                    (__string->bytes__% _%str109189%_ _%enc109199%_))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@685.25-685.28"
+                     'contract:
+                     'symbol?
+                     'value:
+                     _%enc109185%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@684.22-684.25"
+               'contract:
+               'string?
+               'value:
+               _%str109184%_)
+              '#!void))))
+    (define string->bytes__0
+      (lambda (_%str109212%_)
+        (let ((_%enc109214%_ 'UTF-8))
+          (string->bytes__% _%str109212%_ _%enc109214%_))))
     (define string->bytes
-      (let ((_%$%opt-lambda9550595532%_
-             (lambda (_%str95507%_ _%enc95508%_)
-               (if (string? _%str95507%_)
-                   (let ((_%str95512%_ _%str95507%_))
-                     (if (symbol? _%enc95508%_)
-                         (let ((_%enc95522%_ _%enc95508%_))
-                           (__string->bytes _%str95512%_ _%enc95522%_))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@685.25-685.28"
-                            'contract:
-                            'symbol?
-                            'value:
-                            _%enc95508%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@684.22-684.25"
-                      'contract:
-                      'string?
-                      'value:
-                      _%str95507%_)
-                     (void))))))
-        (lambda _g99296_
-          (let ((_g99297_ (let () (declare (not safe)) (##length _g99296_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99297_ 1))
-                   (apply (lambda (_%str95535%_)
-                            (let ((_%enc95537%_ 'UTF-8))
-                              (_%$%opt-lambda9550595532%_
-                               _%str95535%_
-                               _%enc95537%_)))
-                          _g99296_))
-                  ((let () (declare (not safe)) (##fx= _g99297_ 2))
-                   (apply _%$%opt-lambda9550595532%_ _g99296_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    string->bytes
-                    _g99296_)))))))
+      (lambda _g115771_
+        (let ((_g115772_ (let () (declare (not safe)) (##length _g115771_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115772_ 1))
+                 (apply string->bytes__0 _g115771_))
+                ((let () (declare (not safe)) (##fx= _g115772_ 2))
+                 (apply string->bytes__% _g115771_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  string->bytes
+                  _g115771_))))))
+    (define __substring->bytes__%
+      (lambda (_%str109136%_ _%start109137%_ _%end109138%_ _%enc109139%_)
+        (let* ((_%str109142%_ _%str109136%_)
+               (_%start109150%_ _%start109137%_)
+               (_%end109158%_ _%end109138%_))
+          (if (eq? _%enc109139%_ 'UTF-8)
+              (string->utf8 _%str109142%_ _%start109150%_ _%end109158%_)
+              (let ((_%out109167%_
+                     (open-output-u8vector
+                      (cons 'char-encoding: (cons _%enc109139%_ '())))))
+                (write-substring
+                 _%str109142%_
+                 _%start109150%_
+                 _%end109158%_
+                 _%out109167%_)
+                (get-output-u8vector _%out109167%_))))))
+    (define __substring->bytes__0
+      (lambda (_%str109172%_ _%start109173%_ _%end109174%_)
+        (let ((_%enc109176%_ 'UTF-8))
+          (__substring->bytes__%
+           _%str109172%_
+           _%start109173%_
+           _%end109174%_
+           _%enc109176%_))))
     (define __substring->bytes
-      (let ((_%$%opt-lambda9545795492%_
-             (lambda (_%str95459%_ _%start95460%_ _%end95461%_ _%enc95462%_)
-               (let* ((_%str95465%_ _%str95459%_)
-                      (_%start95473%_ _%start95460%_)
-                      (_%end95481%_ _%end95461%_))
-                 (if (eq? _%enc95462%_ 'UTF-8)
-                     (string->utf8 _%str95465%_ _%start95473%_ _%end95481%_)
-                     (let ((_%out95490%_
-                            (open-output-u8vector
-                             (cons 'char-encoding: (cons _%enc95462%_ '())))))
-                       (write-substring
-                        _%str95465%_
-                        _%start95473%_
-                        _%end95481%_
-                        _%out95490%_)
-                       (get-output-u8vector _%out95490%_)))))))
-        (lambda _g99298_
-          (let ((_g99299_ (let () (declare (not safe)) (##length _g99298_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99299_ 3))
-                   (apply (lambda (_%str95495%_ _%start95496%_ _%end95497%_)
-                            (let ((_%enc95499%_ 'UTF-8))
-                              (_%$%opt-lambda9545795492%_
-                               _%str95495%_
-                               _%start95496%_
-                               _%end95497%_
-                               _%enc95499%_)))
-                          _g99298_))
-                  ((let () (declare (not safe)) (##fx= _g99299_ 4))
-                   (apply _%$%opt-lambda9545795492%_ _g99298_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __substring->bytes
-                    _g99298_)))))))
+      (lambda _g115773_
+        (let ((_g115774_ (let () (declare (not safe)) (##length _g115773_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115774_ 3))
+                 (apply __substring->bytes__0 _g115773_))
+                ((let () (declare (not safe)) (##fx= _g115774_ 4))
+                 (apply __substring->bytes__% _g115773_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __substring->bytes
+                  _g115773_))))))
+    (define substring->bytes__%
+      (lambda (_%str109084%_ _%start109085%_ _%end109086%_ _%enc109087%_)
+        (if (string? _%str109084%_)
+            (let ((_%str109091%_ _%str109084%_))
+              (if (nonnegative-fixnum? _%start109085%_)
+                  (let ((_%start109101%_ _%start109085%_))
+                    (if (nonnegative-fixnum? _%end109086%_)
+                        (let ((_%end109111%_ _%end109086%_))
+                          (__substring->bytes__%
+                           _%str109091%_
+                           _%start109101%_
+                           _%end109111%_
+                           _%enc109087%_))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/util.ss\"@693.25-693.28"
+                           'contract:
+                           'nonnegative-fixnum?
+                           'value:
+                           _%end109086%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@692.25-692.30"
+                     'contract:
+                     'nonnegative-fixnum?
+                     'value:
+                     _%start109085%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@691.25-691.28"
+               'contract:
+               'string?
+               'value:
+               _%str109084%_)
+              '#!void))))
+    (define substring->bytes__0
+      (lambda (_%str109124%_ _%start109125%_ _%end109126%_)
+        (let ((_%enc109128%_ 'UTF-8))
+          (substring->bytes__%
+           _%str109124%_
+           _%start109125%_
+           _%end109126%_
+           _%enc109128%_))))
     (define substring->bytes
-      (let ((_%$%opt-lambda9540595444%_
-             (lambda (_%str95407%_ _%start95408%_ _%end95409%_ _%enc95410%_)
-               (if (string? _%str95407%_)
-                   (let ((_%str95414%_ _%str95407%_))
-                     (if (nonnegative-fixnum? _%start95408%_)
-                         (let ((_%start95424%_ _%start95408%_))
-                           (if (nonnegative-fixnum? _%end95409%_)
-                               (let ((_%end95434%_ _%end95409%_))
-                                 (__substring->bytes
-                                  _%str95414%_
-                                  _%start95424%_
-                                  _%end95434%_
-                                  _%enc95410%_))
-                               (begin
-                                 (raise-contract-violation-error
-                                  '"contract violation"
-                                  'context:
-                                  '"\"gerbil/runtime/util.ss\"@693.25-693.28"
-                                  'contract:
-                                  'nonnegative-fixnum?
-                                  'value:
-                                  _%end95409%_)
-                                 (void))))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@692.25-692.30"
-                            'contract:
-                            'nonnegative-fixnum?
-                            'value:
-                            _%start95408%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@691.25-691.28"
-                      'contract:
-                      'string?
-                      'value:
-                      _%str95407%_)
-                     (void))))))
-        (lambda _g99300_
-          (let ((_g99301_ (let () (declare (not safe)) (##length _g99300_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99301_ 3))
-                   (apply (lambda (_%str95447%_ _%start95448%_ _%end95449%_)
-                            (let ((_%enc95451%_ 'UTF-8))
-                              (_%$%opt-lambda9540595444%_
-                               _%str95447%_
-                               _%start95448%_
-                               _%end95449%_
-                               _%enc95451%_)))
-                          _g99300_))
-                  ((let () (declare (not safe)) (##fx= _g99301_ 4))
-                   (apply _%$%opt-lambda9540595444%_ _g99300_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    substring->bytes
-                    _g99300_)))))))
+      (lambda _g115775_
+        (let ((_g115776_ (let () (declare (not safe)) (##length _g115775_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115776_ 3))
+                 (apply substring->bytes__0 _g115775_))
+                ((let () (declare (not safe)) (##fx= _g115776_ 4))
+                 (apply substring->bytes__% _g115775_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  substring->bytes
+                  _g115775_))))))
     (define __string-empty?
-      (lambda (_%str95394%_)
-        (let ((_%str95397%_ _%str95394%_))
-          (fxzero? (string-length _%str95397%_)))))
+      (lambda (_%str109071%_)
+        (let* ((_%str109074%_ _%str109071%_)
+               (__tmp115777
+                (let () (declare (not safe)) (##string-length _%str109074%_))))
+          (declare (not safe))
+          (##fxzero? __tmp115777))))
     (define string-empty?
-      (lambda (_%str95380%_)
-        (if (string? _%str95380%_)
-            (let ((_%str95384%_ _%str95380%_)) (__string-empty? _%str95384%_))
+      (lambda (_%str109057%_)
+        (if (string? _%str109057%_)
+            (let ((_%str109061%_ _%str109057%_))
+              (__string-empty? _%str109061%_))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -2866,264 +2653,242 @@
                'contract:
                'string?
                'value:
-               _%str95380%_)
-              (void)))))
+               _%str109057%_)
+              '#!void))))
+    (define __string-index__%
+      (lambda (_%str108997%_ _%char108998%_ _%start108999%_)
+        (let* ((_%str109002%_ _%str108997%_)
+               (_%char109010%_ _%char108998%_)
+               (_%start109018%_ _%start108999%_)
+               (_%len109027%_
+                (let () (declare (not safe)) (##string-length _%str109002%_))))
+          (let _%lp109029%_ ((_%k109031%_ _%start109018%_))
+            (let ((_%k109033%_ _%k109031%_))
+              (if (let ()
+                    (declare (not safe))
+                    (##fx< _%k109033%_ _%len109027%_))
+                  (if (eq? _%char109010%_
+                           (let ()
+                             (declare (not safe))
+                             (##string-ref _%str109002%_ _%k109033%_)))
+                      _%k109033%_
+                      (_%lp109029%_
+                       (let () (declare (not safe)) (##fx+ _%k109033%_ '1))))
+                  '#f))))))
+    (define __string-index__0
+      (lambda (_%str109048%_ _%char109049%_)
+        (let ((_%start109051%_ '0))
+          (__string-index__% _%str109048%_ _%char109049%_ _%start109051%_))))
     (define __string-index
-      (let ((_%$%opt-lambda9531895368%_
-             (lambda (_%str95320%_ _%char95321%_ _%start95322%_)
-               (let* ((_%str95325%_ _%str95320%_)
-                      (_%char95333%_ _%char95321%_)
-                      (_%start95341%_ _%start95322%_)
-                      (_%len95350%_ (string-length _%str95325%_)))
-                 (let _%lp95352%_ ((_%k95354%_ _%start95341%_))
-                   (let ((_%k95356%_ _%k95354%_))
-                     (if (fx< _%k95356%_ _%len95350%_)
-                         (if (eq? _%char95333%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (##string-ref _%str95325%_ _%k95356%_)))
-                             _%k95356%_
-                             (_%lp95352%_ (fx+ _%k95356%_ '1)))
-                         '#f)))))))
-        (lambda _g99302_
-          (let ((_g99303_ (let () (declare (not safe)) (##length _g99302_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99303_ 2))
-                   (apply (lambda (_%str95371%_ _%char95372%_)
-                            (let ((_%start95374%_ '0))
-                              (_%$%opt-lambda9531895368%_
-                               _%str95371%_
-                               _%char95372%_
-                               _%start95374%_)))
-                          _g99302_))
-                  ((let () (declare (not safe)) (##fx= _g99303_ 3))
-                   (apply _%$%opt-lambda9531895368%_ _g99302_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __string-index
-                    _g99302_)))))))
+      (lambda _g115778_
+        (let ((_g115779_ (let () (declare (not safe)) (##length _g115778_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115779_ 2))
+                 (apply __string-index__0 _g115778_))
+                ((let () (declare (not safe)) (##fx= _g115779_ 3))
+                 (apply __string-index__% _g115778_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __string-index
+                  _g115778_))))))
+    (define string-index__%
+      (lambda (_%str108948%_ _%char108949%_ _%start108950%_)
+        (if (string? _%str108948%_)
+            (let ((_%str108954%_ _%str108948%_))
+              (if (char? _%char108949%_)
+                  (let ((_%char108964%_ _%char108949%_))
+                    (if (nonnegative-fixnum? _%start108950%_)
+                        (let ((_%start108974%_ _%start108950%_))
+                          (__string-index__%
+                           _%str108954%_
+                           _%char108964%_
+                           _%start108974%_))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/util.ss\"@708.21-708.26"
+                           'contract:
+                           'nonnegative-fixnum?
+                           'value:
+                           _%start108950%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@707.21-707.25"
+                     'contract:
+                     'char?
+                     'value:
+                     _%char108949%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@706.21-706.24"
+               'contract:
+               'string?
+               'value:
+               _%str108948%_)
+              '#!void))))
+    (define string-index__0
+      (lambda (_%str108987%_ _%char108988%_)
+        (let ((_%start108990%_ '0))
+          (string-index__% _%str108987%_ _%char108988%_ _%start108990%_))))
     (define string-index
-      (let ((_%$%opt-lambda9526995307%_
-             (lambda (_%str95271%_ _%char95272%_ _%start95273%_)
-               (if (string? _%str95271%_)
-                   (let ((_%str95277%_ _%str95271%_))
-                     (if (char? _%char95272%_)
-                         (let ((_%char95287%_ _%char95272%_))
-                           (if (nonnegative-fixnum? _%start95273%_)
-                               (let ((_%start95297%_ _%start95273%_))
-                                 (__string-index
-                                  _%str95277%_
-                                  _%char95287%_
-                                  _%start95297%_))
-                               (begin
-                                 (raise-contract-violation-error
-                                  '"contract violation"
-                                  'context:
-                                  '"\"gerbil/runtime/util.ss\"@708.21-708.26"
-                                  'contract:
-                                  'nonnegative-fixnum?
-                                  'value:
-                                  _%start95273%_)
-                                 (void))))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@707.21-707.25"
-                            'contract:
-                            'char?
-                            'value:
-                            _%char95272%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@706.21-706.24"
-                      'contract:
-                      'string?
-                      'value:
-                      _%str95271%_)
-                     (void))))))
-        (lambda _g99304_
-          (let ((_g99305_ (let () (declare (not safe)) (##length _g99304_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99305_ 2))
-                   (apply (lambda (_%str95310%_ _%char95311%_)
-                            (let ((_%start95313%_ '0))
-                              (_%$%opt-lambda9526995307%_
-                               _%str95310%_
-                               _%char95311%_
-                               _%start95313%_)))
-                          _g99304_))
-                  ((let () (declare (not safe)) (##fx= _g99305_ 3))
-                   (apply _%$%opt-lambda9526995307%_ _g99304_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    string-index
-                    _g99304_)))))))
+      (lambda _g115780_
+        (let ((_g115781_ (let () (declare (not safe)) (##length _g115780_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115781_ 2))
+                 (apply string-index__0 _g115780_))
+                ((let () (declare (not safe)) (##fx= _g115781_ 3))
+                 (apply string-index__% _g115780_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  string-index
+                  _g115780_))))))
+    (define __string-rindex__%
+      (lambda (_%str108890%_ _%char108891%_ _%start108892%_)
+        (let* ((_%str108895%_ _%str108890%_)
+               (_%char108903%_ _%char108891%_)
+               (_%len108912%_
+                (let () (declare (not safe)) (##string-length _%str108895%_)))
+               (_%start108914%_
+                (if (fixnum? _%start108892%_)
+                    _%start108892%_
+                    (let () (declare (not safe)) (##fx- _%len108912%_ '1)))))
+          (let _%lp108917%_ ((_%k108919%_ _%start108914%_))
+            (let ((_%k108921%_ _%k108919%_))
+              (if (let () (declare (not safe)) (##fx>= _%k108921%_ '0))
+                  (if (eq? _%char108903%_
+                           (let ()
+                             (declare (not safe))
+                             (##string-ref _%str108895%_ _%k108921%_)))
+                      _%k108921%_
+                      (_%lp108917%_
+                       (let () (declare (not safe)) (##fx- _%k108921%_ '1))))
+                  '#f))))))
+    (define __string-rindex__0
+      (lambda (_%str108938%_ _%char108939%_)
+        (let ((_%start108941%_ '#f))
+          (__string-rindex__% _%str108938%_ _%char108939%_ _%start108941%_))))
     (define __string-rindex
-      (let ((_%$%opt-lambda9521195258%_
-             (lambda (_%str95213%_ _%char95214%_ _%start95215%_)
-               (let* ((_%str95218%_ _%str95213%_)
-                      (_%char95226%_ _%char95214%_)
-                      (_%len95235%_ (string-length _%str95218%_))
-                      (_%start95237%_
-                       (if (fixnum? _%start95215%_)
-                           _%start95215%_
-                           (fx- _%len95235%_ '1))))
-                 (let _%lp95240%_ ((_%k95242%_ _%start95237%_))
-                   (let ((_%k95244%_ _%k95242%_))
-                     (if (fx>= _%k95244%_ '0)
-                         (if (eq? _%char95226%_
-                                  (let ()
-                                    (declare (not safe))
-                                    (##string-ref _%str95218%_ _%k95244%_)))
-                             _%k95244%_
-                             (_%lp95240%_ (fx- _%k95244%_ '1)))
-                         '#f)))))))
-        (lambda _g99306_
-          (let ((_g99307_ (let () (declare (not safe)) (##length _g99306_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99307_ 2))
-                   (apply (lambda (_%str95261%_ _%char95262%_)
-                            (let ((_%start95264%_ '#f))
-                              (_%$%opt-lambda9521195258%_
-                               _%str95261%_
-                               _%char95262%_
-                               _%start95264%_)))
-                          _g99306_))
-                  ((let () (declare (not safe)) (##fx= _g99307_ 3))
-                   (apply _%$%opt-lambda9521195258%_ _g99306_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __string-rindex
-                    _g99306_)))))))
+      (lambda _g115782_
+        (let ((_g115783_ (let () (declare (not safe)) (##length _g115782_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115783_ 2))
+                 (apply __string-rindex__0 _g115782_))
+                ((let () (declare (not safe)) (##fx= _g115783_ 3))
+                 (apply __string-rindex__% _g115782_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __string-rindex
+                  _g115782_))))))
+    (define string-rindex__%
+      (lambda (_%str108851%_ _%char108852%_ _%start108853%_)
+        (if (string? _%str108851%_)
+            (let ((_%str108857%_ _%str108851%_))
+              (if (char? _%char108852%_)
+                  (let ((_%char108867%_ _%char108852%_))
+                    (__string-rindex__%
+                     _%str108857%_
+                     _%char108867%_
+                     _%start108853%_))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@718.25-718.29"
+                     'contract:
+                     'char?
+                     'value:
+                     _%char108852%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@717.22-717.25"
+               'contract:
+               'string?
+               'value:
+               _%str108851%_)
+              '#!void))))
+    (define string-rindex__0
+      (lambda (_%str108880%_ _%char108881%_)
+        (let ((_%start108883%_ '#f))
+          (string-rindex__% _%str108880%_ _%char108881%_ _%start108883%_))))
     (define string-rindex
-      (let ((_%$%opt-lambda9517295200%_
-             (lambda (_%str95174%_ _%char95175%_ _%start95176%_)
-               (if (string? _%str95174%_)
-                   (let ((_%str95180%_ _%str95174%_))
-                     (if (char? _%char95175%_)
-                         (let ((_%char95190%_ _%char95175%_))
-                           (__string-rindex
-                            _%str95180%_
-                            _%char95190%_
-                            _%start95176%_))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@718.25-718.29"
-                            'contract:
-                            'char?
-                            'value:
-                            _%char95175%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@717.22-717.25"
-                      'contract:
-                      'string?
-                      'value:
-                      _%str95174%_)
-                     (void))))))
-        (lambda _g99308_
-          (let ((_g99309_ (let () (declare (not safe)) (##length _g99308_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99309_ 2))
-                   (apply (lambda (_%str95203%_ _%char95204%_)
-                            (let ((_%start95206%_ '#f))
-                              (_%$%opt-lambda9517295200%_
-                               _%str95203%_
-                               _%char95204%_
-                               _%start95206%_)))
-                          _g99308_))
-                  ((let () (declare (not safe)) (##fx= _g99309_ 3))
-                   (apply _%$%opt-lambda9517295200%_ _g99308_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    string-rindex
-                    _g99308_)))))))
+      (lambda _g115784_
+        (let ((_g115785_ (let () (declare (not safe)) (##length _g115784_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115785_ 2))
+                 (apply string-rindex__0 _g115784_))
+                ((let () (declare (not safe)) (##fx= _g115785_ 3))
+                 (apply string-rindex__% _g115784_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  string-rindex
+                  _g115784_))))))
     (define __string-split
-      (lambda (_%str95071%_ _%char95072%_)
-        (let* ((_%str95075%_ _%str95071%_)
-               (_%char95083%_ _%char95072%_)
-               (_%len95092%_ (string-length _%str95075%_)))
-          (let _%lp95094%_ ((_%start95096%_ '0) (_%r95097%_ '()))
-            (let* ((_%start95100%_ _%start95096%_)
-                   (_%$e95158%_
-                    (let* ((_%str95113%_ _%str95075%_)
-                           (_%char95116%_ _%char95083%_)
-                           (_%start95119%_ _%start95100%_))
-                      (if (string? _%str95113%_)
-                          (let ((_%str95124%_ _%str95113%_))
-                            (if (char? _%char95116%_)
-                                (let ((_%char95138%_ _%char95116%_))
-                                  (if (nonnegative-fixnum? _%start95119%_)
-                                      (let ((_%start95148%_ _%start95119%_))
-                                        (__string-index
-                                         _%str95124%_
-                                         _%char95138%_
-                                         _%start95148%_))
-                                      (begin
-                                        (raise-contract-violation-error
-                                         '"contract violation"
-                                         'context:
-                                         'gerbil/runtime/util
-                                         'contract:
-                                         'nonnegative-fixnum?
-                                         'value:
-                                         _%start95119%_)
-                                        (void))))
-                                (begin
-                                  (raise-contract-violation-error
-                                   '"contract violation"
-                                   'context:
-                                   'gerbil/runtime/util
-                                   'contract:
-                                   'char?
-                                   'value:
-                                   _%char95116%_)
-                                  (void))))
+      (lambda (_%str108748%_ _%char108749%_)
+        (let* ((_%str108752%_ _%str108748%_)
+               (_%char108760%_ _%char108749%_)
+               (_%len108769%_
+                (let () (declare (not safe)) (##string-length _%str108752%_))))
+          (let _%lp108771%_ ((_%start108773%_ '0) (_%r108774%_ '()))
+            (let* ((_%start108777%_ _%start108773%_)
+                   (_%$e108835%_
+                    (let* ((_%str108790%_ _%str108752%_)
+                           (_%char108793%_ _%char108760%_)
+                           (_%start108796%_ _%start108777%_)
+                           (_%str108801%_ _%str108790%_)
+                           (_%char108815%_ _%char108793%_))
+                      (if (nonnegative-fixnum? _%start108796%_)
+                          (let ((_%start108825%_ _%start108796%_))
+                            (__string-index__%
+                             _%str108801%_
+                             _%char108815%_
+                             _%start108825%_))
                           (begin
                             (raise-contract-violation-error
                              '"contract violation"
                              'context:
                              'gerbil/runtime/util
                              'contract:
-                             'string?
+                             'nonnegative-fixnum?
                              'value:
-                             _%str95113%_)
-                            (void))))))
-              (if _%$e95158%_
-                  ((lambda (_%end95161%_)
-                     (let ((_%end95163%_ _%end95161%_))
-                       (_%lp95094%_
-                        (fx+ _%end95163%_ '1)
-                        (cons (let ()
-                                (declare (not safe))
-                                (##substring
-                                 _%str95075%_
-                                 _%start95100%_
-                                 _%end95163%_))
-                              _%r95097%_))))
-                   _%$e95158%_)
-                  (if (fx< _%start95100%_ _%len95092%_)
-                      (foldl cons
-                             (list (let ()
-                                     (declare (not safe))
-                                     (##substring
-                                      _%str95075%_
-                                      _%start95100%_
-                                      _%len95092%_)))
-                             _%r95097%_)
-                      (reverse! _%r95097%_))))))))
+                             _%start108796%_)
+                            '#!void)))))
+              (if _%$e108835%_
+                  (let ((_%end108840%_ _%$e108835%_))
+                    (_%lp108771%_
+                     (let () (declare (not safe)) (##fx+ _%end108840%_ '1))
+                     (cons (let ()
+                             (declare (not safe))
+                             (##substring
+                              _%str108752%_
+                              _%start108777%_
+                              _%end108840%_))
+                           _%r108774%_)))
+                  (if (let ()
+                        (declare (not safe))
+                        (##fx< _%start108777%_ _%len108769%_))
+                      (foldl__0
+                       cons
+                       (list (let ()
+                               (declare (not safe))
+                               (##substring
+                                _%str108752%_
+                                _%start108777%_
+                                _%len108769%_)))
+                       _%r108774%_)
+                      (reverse! _%r108774%_))))))))
     (define string-split
-      (lambda (_%str95046%_ _%char95047%_)
-        (if (string? _%str95046%_)
-            (let ((_%str95051%_ _%str95046%_))
-              (if (char? _%char95047%_)
-                  (let ((_%char95061%_ _%char95047%_))
-                    (__string-split _%str95051%_ _%char95061%_))
+      (lambda (_%str108723%_ _%char108724%_)
+        (if (string? _%str108723%_)
+            (let ((_%str108728%_ _%str108723%_))
+              (if (char? _%char108724%_)
+                  (let ((_%char108738%_ _%char108724%_))
+                    (__string-split _%str108728%_ _%char108738%_))
                   (begin
                     (raise-contract-violation-error
                      '"contract violation"
@@ -3132,8 +2897,8 @@
                      'contract:
                      'char?
                      'value:
-                     _%char95047%_)
-                    (void))))
+                     _%char108724%_)
+                    '#!void)))
             (begin
               (raise-contract-violation-error
                '"contract violation"
@@ -3142,437 +2907,455 @@
                'contract:
                'string?
                'value:
-               _%str95046%_)
-              (void)))))
+               _%str108723%_)
+              '#!void))))
     (define string-join
-      (lambda (_%strs94896%_ _%join94897%_)
-        (letrec ((_%join-length94900%_
-                  (lambda (_%strs94984%_ _%jlen94985%_)
-                    (let _%lp94987%_ ((_%rest94989%_ _%strs94984%_)
-                                      (_%len94990%_ '0))
-                      (let* ((_%len94992%_ _%len94990%_)
-                             (_%$%rest9500095008%_ _%rest94989%_)
-                             (_%$%E9500395012%_
-                              (lambda ()
-                                (error '"No clause matching"
-                                       _%$%rest9500095008%_
-                                       '([hd . rest])
-                                       'else)
-                                (void)))
-                             (_%$%else9500295016%_ (lambda () '0))
-                             (_%$%K9500495034%_
-                              (lambda (_%rest95019%_ _%hd95020%_)
-                                (if (string? _%hd95020%_)
-                                    (let ((_%hd95022%_ _%hd95020%_))
-                                      (if (pair? _%rest95019%_)
-                                          (_%lp94987%_
-                                           _%rest95019%_
-                                           (fx+ (string-length _%hd95022%_)
-                                                _%jlen94985%_
-                                                _%len94992%_))
-                                          (fx+ (string-length _%hd95022%_)
-                                               _%len94992%_)))
-                                    (error '"expected string" _%hd95020%_)))))
-                        (if (pair? _%$%rest9500095008%_)
-                            (let ((_%$%hd9500595037%_
+      (lambda (_%strs108573%_ _%join108574%_)
+        (letrec ((_%join-length108577%_
+                  (lambda (_%strs108661%_ _%jlen108662%_)
+                    (let _%lp108664%_ ((_%rest108666%_ _%strs108661%_)
+                                       (_%len108667%_ '0))
+                      (let* ((_%len108669%_ _%len108667%_)
+                             (_%$%rest108677108685%_ _%rest108666%_)
+                             (_%$%else108679108693%_ (lambda () '0))
+                             (_%$%K108681108711%_
+                              (lambda (_%rest108696%_ _%hd108697%_)
+                                (if (string? _%hd108697%_)
+                                    (let ((_%hd108699%_ _%hd108697%_))
+                                      (if (pair? _%rest108696%_)
+                                          (_%lp108664%_
+                                           _%rest108696%_
+                                           (fx+ (let ()
+                                                  (declare (not safe))
+                                                  (##string-length
+                                                   _%hd108699%_))
+                                                _%jlen108662%_
+                                                _%len108669%_))
+                                          (let ((__tmp115786
+                                                 (let ()
+                                                   (declare (not safe))
+                                                   (##string-length
+                                                    _%hd108699%_))))
+                                            (declare (not safe))
+                                            (##fx+ __tmp115786
+                                                   _%len108669%_))))
+                                    (error '"expected string" _%hd108697%_)))))
+                        (if (pair? _%$%rest108677108685%_)
+                            (let ((_%$%hd108682108714%_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _%$%rest9500095008%_)))
-                                  (_%$%tl9500695039%_
+                                     (##car _%$%rest108677108685%_)))
+                                  (_%$%tl108683108716%_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _%$%rest9500095008%_))))
-                              (let* ((_%hd95042%_ _%$%hd9500595037%_)
-                                     (_%rest95044%_ _%$%tl9500695039%_))
-                                (_%$%K9500495034%_ _%rest95044%_ _%hd95042%_)))
-                            (_%$%else9500295016%_)))))))
-          (let* ((_%join94905%_
-                  (if (char? _%join94897%_)
-                      (string _%join94897%_)
-                      (if (string? _%join94897%_)
-                          _%join94897%_
-                          (error '"expected string or char" _%join94897%_))))
-                 (_%jlen94907%_ (string-length _%join94905%_))
-                 (_%olen94909%_
-                  (_%join-length94900%_ _%strs94896%_ _%jlen94907%_))
-                 (_%ostr94911%_ (make-string _%olen94909%_)))
-            (let _%lp94914%_ ((_%rest94916%_ _%strs94896%_) (_%k94917%_ '0))
-              (let* ((_%k94920%_ _%k94917%_)
-                     (_%$%rest9493694944%_ _%rest94916%_)
-                     (_%$%E9493994948%_
-                      (lambda ()
-                        (error '"No clause matching"
-                               _%$%rest9493694944%_
-                               '([hd . rest])
-                               'else)
-                        (void)))
-                     (_%$%else9493894952%_ (lambda () '""))
-                     (_%$%K9494094972%_
-                      (lambda (_%rest94955%_ _%hd94956%_)
-                        (let* ((_%hd94958%_ _%hd94956%_)
-                               (_%hdlen94970%_ (string-length _%hd94958%_)))
-                          (if (pair? _%rest94955%_)
+                                     (##cdr _%$%rest108677108685%_))))
+                              (let* ((_%hd108719%_ _%$%hd108682108714%_)
+                                     (_%rest108721%_ _%$%tl108683108716%_))
+                                (_%$%K108681108711%_
+                                 _%rest108721%_
+                                 _%hd108719%_)))
+                            (_%$%else108679108693%_)))))))
+          (let* ((_%join108582%_
+                  (if (char? _%join108574%_)
+                      (let () (declare (not safe)) (##string _%join108574%_))
+                      (if (string? _%join108574%_)
+                          _%join108574%_
+                          (error '"expected string or char" _%join108574%_))))
+                 (_%jlen108584%_
+                  (let ()
+                    (declare (not safe))
+                    (##string-length _%join108582%_)))
+                 (_%olen108586%_
+                  (_%join-length108577%_ _%strs108573%_ _%jlen108584%_))
+                 (_%ostr108588%_
+                  (let ()
+                    (declare (not safe))
+                    (##make-string _%olen108586%_))))
+            (let _%lp108591%_ ((_%rest108593%_ _%strs108573%_)
+                               (_%k108594%_ '0))
+              (let* ((_%k108597%_ _%k108594%_)
+                     (_%$%rest108613108621%_ _%rest108593%_)
+                     (_%$%else108615108629%_ (lambda () '""))
+                     (_%$%K108617108649%_
+                      (lambda (_%rest108632%_ _%hd108633%_)
+                        (let* ((_%hd108635%_ _%hd108633%_)
+                               (_%hdlen108647%_
+                                (let ()
+                                  (declare (not safe))
+                                  (##string-length _%hd108635%_))))
+                          (if (pair? _%rest108632%_)
                               (begin
                                 (let ()
                                   (declare (not safe))
                                   (##substring-move!
-                                   _%hd94958%_
+                                   _%hd108635%_
                                    '0
-                                   _%hdlen94970%_
-                                   _%ostr94911%_
-                                   _%k94920%_))
-                                (let ((__tmp99310
+                                   _%hdlen108647%_
+                                   _%ostr108588%_
+                                   _%k108597%_))
+                                (let ((__tmp115787
                                        (let ()
                                          (declare (not safe))
-                                         (##fx+ _%k94920%_ _%hdlen94970%_))))
+                                         (##fx+ _%k108597%_ _%hdlen108647%_))))
                                   (declare (not safe))
                                   (##substring-move!
-                                   _%join94905%_
+                                   _%join108582%_
                                    '0
-                                   _%jlen94907%_
-                                   _%ostr94911%_
-                                   __tmp99310))
-                                (_%lp94914%_
-                                 _%rest94955%_
-                                 (fx+ _%k94920%_
-                                      _%hdlen94970%_
-                                      _%jlen94907%_)))
+                                   _%jlen108584%_
+                                   _%ostr108588%_
+                                   __tmp115787))
+                                (_%lp108591%_
+                                 _%rest108632%_
+                                 (let ()
+                                   (declare (not safe))
+                                   (##fx+ _%k108597%_
+                                          _%hdlen108647%_
+                                          _%jlen108584%_))))
                               (begin
                                 (let ()
                                   (declare (not safe))
                                   (##substring-move!
-                                   _%hd94958%_
+                                   _%hd108635%_
                                    '0
-                                   _%hdlen94970%_
-                                   _%ostr94911%_
-                                   _%k94920%_))
-                                _%ostr94911%_))))))
-                (if (pair? _%$%rest9493694944%_)
-                    (let ((_%$%hd9494194975%_
+                                   _%hdlen108647%_
+                                   _%ostr108588%_
+                                   _%k108597%_))
+                                _%ostr108588%_))))))
+                (if (pair? _%$%rest108613108621%_)
+                    (let ((_%$%hd108618108652%_
                            (let ()
                              (declare (not safe))
-                             (##car _%$%rest9493694944%_)))
-                          (_%$%tl9494294977%_
+                             (##car _%$%rest108613108621%_)))
+                          (_%$%tl108619108654%_
                            (let ()
                              (declare (not safe))
-                             (##cdr _%$%rest9493694944%_))))
-                      (let* ((_%hd94980%_ _%$%hd9494194975%_)
-                             (_%rest94982%_ _%$%tl9494294977%_))
-                        (_%$%K9494094972%_ _%rest94982%_ _%hd94980%_)))
-                    (_%$%else9493894952%_))))))))
+                             (##cdr _%$%rest108613108621%_))))
+                      (let* ((_%hd108657%_ _%$%hd108618108652%_)
+                             (_%rest108659%_ _%$%tl108619108654%_))
+                        (_%$%K108617108649%_ _%rest108659%_ _%hd108657%_)))
+                    (_%$%else108615108629%_))))))))
+    (define __read-u8vector__%
+      (lambda (_%bytes108513%_ _%port108514%_ _%start108515%_ _%end108516%_)
+        (let* ((_%bytes108519%_ _%bytes108513%_)
+               (_%port108527%_ _%port108514%_)
+               (_%start108535%_ _%start108515%_)
+               (_%end108543%_ _%end108516%_))
+          (declare (not safe))
+          (##read-subu8vector
+           _%bytes108519%_
+           _%start108535%_
+           _%end108543%_
+           _%port108527%_))))
+    (define __read-u8vector__0
+      (lambda (_%bytes108555%_ _%port108556%_)
+        (let* ((_%start108558%_ '0)
+               (_%end108560%_ (u8vector-length _%bytes108555%_)))
+          (__read-u8vector__%
+           _%bytes108555%_
+           _%port108556%_
+           _%start108558%_
+           _%end108560%_))))
+    (define __read-u8vector__1
+      (lambda (_%bytes108562%_ _%port108563%_ _%start108564%_)
+        (let ((_%end108566%_ (u8vector-length _%bytes108562%_)))
+          (__read-u8vector__%
+           _%bytes108562%_
+           _%port108563%_
+           _%start108564%_
+           _%end108566%_))))
     (define __read-u8vector
-      (let ((_%$%opt-lambda9483494875%_
-             (lambda (_%bytes94836%_ _%port94837%_ _%start94838%_ _%end94839%_)
-               (let* ((_%bytes94842%_ _%bytes94836%_)
-                      (_%port94850%_ _%port94837%_)
-                      (_%start94858%_ _%start94838%_)
-                      (_%end94866%_ _%end94839%_))
-                 (declare (not safe))
-                 (##read-subu8vector
-                  _%bytes94842%_
-                  _%start94858%_
-                  _%end94866%_
-                  _%port94850%_)))))
-        (lambda _g99311_
-          (let ((_g99312_ (let () (declare (not safe)) (##length _g99311_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99312_ 2))
-                   (apply (lambda (_%bytes94878%_ _%port94879%_)
-                            (let* ((_%start94881%_ '0)
-                                   (_%end94883%_
-                                    (u8vector-length _%bytes94878%_)))
-                              (_%$%opt-lambda9483494875%_
-                               _%bytes94878%_
-                               _%port94879%_
-                               _%start94881%_
-                               _%end94883%_)))
-                          _g99311_))
-                  ((let () (declare (not safe)) (##fx= _g99312_ 3))
-                   (apply (lambda (_%bytes94885%_ _%port94886%_ _%start94887%_)
-                            (let ((_%end94889%_
-                                   (u8vector-length _%bytes94885%_)))
-                              (_%$%opt-lambda9483494875%_
-                               _%bytes94885%_
-                               _%port94886%_
-                               _%start94887%_
-                               _%end94889%_)))
-                          _g99311_))
-                  ((let () (declare (not safe)) (##fx= _g99312_ 4))
-                   (apply _%$%opt-lambda9483494875%_ _g99311_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __read-u8vector
-                    _g99311_)))))))
+      (lambda _g115788_
+        (let ((_g115789_ (let () (declare (not safe)) (##length _g115788_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115789_ 2))
+                 (apply __read-u8vector__0 _g115788_))
+                ((let () (declare (not safe)) (##fx= _g115789_ 3))
+                 (apply __read-u8vector__1 _g115788_))
+                ((let () (declare (not safe)) (##fx= _g115789_ 4))
+                 (apply __read-u8vector__% _g115788_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __read-u8vector
+                  _g115788_))))))
+    (define read-u8vector__%
+      (lambda (_%bytes108438%_ _%port108439%_ _%start108440%_ _%end108441%_)
+        (if (u8vector? _%bytes108438%_)
+            (let ((_%bytes108445%_ _%bytes108438%_))
+              (if (input-port? _%port108439%_)
+                  (let ((_%port108455%_ _%port108439%_))
+                    (if (and (fixnum? _%start108440%_)
+                             (let ()
+                               (declare (not safe))
+                               (##fx>= _%start108440%_ '0))
+                             (let ((__tmp115790
+                                    (let ()
+                                      (declare (not safe))
+                                      (##u8vector-length _%bytes108445%_))))
+                               (declare (not safe))
+                               (##fx< _%start108440%_ __tmp115790)))
+                        (let ((_%start108468%_ _%start108440%_))
+                          (if (and (fixnum? _%end108441%_)
+                                   (let ((__tmp115791
+                                          (let ()
+                                            (declare (not safe))
+                                            (##u8vector-length
+                                             _%bytes108445%_))))
+                                     (declare (not safe))
+                                     (##fx<= _%start108468%_
+                                             _%end108441%_
+                                             __tmp115791)))
+                              (let ((_%end108481%_ _%end108441%_))
+                                (__read-u8vector__%
+                                 _%bytes108445%_
+                                 _%port108455%_
+                                 _%start108468%_
+                                 _%end108481%_))
+                              (begin
+                                (raise-contract-violation-error
+                                 '"contract violation"
+                                 'context:
+                                 '"\"gerbil/runtime/util.ss\"@796.22-796.25"
+                                 'contract:
+                                 '(in-range-inclusive?
+                                   start
+                                   (u8vector-length bytes))
+                                 'value:
+                                 _%end108441%_)
+                                '#!void)))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/util.ss\"@794.22-794.27"
+                           'contract:
+                           '(in-range? 0 (u8vector-length bytes))
+                           'value:
+                           _%start108440%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@793.22-793.26"
+                     'contract:
+                     'input-port?
+                     'value:
+                     _%port108439%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@792.22-792.27"
+               'contract:
+               'u8vector?
+               'value:
+               _%bytes108438%_)
+              '#!void))))
+    (define read-u8vector__0
+      (lambda (_%bytes108494%_ _%port108495%_)
+        (let* ((_%start108497%_ '0)
+               (_%end108499%_ (u8vector-length _%bytes108494%_)))
+          (read-u8vector__%
+           _%bytes108494%_
+           _%port108495%_
+           _%start108497%_
+           _%end108499%_))))
+    (define read-u8vector__1
+      (lambda (_%bytes108501%_ _%port108502%_ _%start108503%_)
+        (let ((_%end108505%_ (u8vector-length _%bytes108501%_)))
+          (read-u8vector__%
+           _%bytes108501%_
+           _%port108502%_
+           _%start108503%_
+           _%end108505%_))))
     (define read-u8vector
-      (let ((_%$%opt-lambda9475994814%_
-             (lambda (_%bytes94761%_ _%port94762%_ _%start94763%_ _%end94764%_)
-               (if (u8vector? _%bytes94761%_)
-                   (let ((_%bytes94768%_ _%bytes94761%_))
-                     (if (input-port? _%port94762%_)
-                         (let ((_%port94778%_ _%port94762%_))
-                           (if ((lambda (_%o94787%_)
-                                  (and (fixnum? _%o94787%_)
-                                       (fx>= _%o94787%_ '0)
-                                       (fx< _%o94787%_
-                                            (u8vector-length _%bytes94768%_))))
-                                _%start94763%_)
-                               (let ((_%start94791%_ _%start94763%_))
-                                 (if ((lambda (_%o94800%_)
-                                        (and (fixnum? _%o94800%_)
-                                             (fx<= _%start94791%_
-                                                   _%o94800%_
-                                                   (u8vector-length
-                                                    _%bytes94768%_))))
-                                      _%end94764%_)
-                                     (let ((_%end94804%_ _%end94764%_))
-                                       (__read-u8vector
-                                        _%bytes94768%_
-                                        _%port94778%_
-                                        _%start94791%_
-                                        _%end94804%_))
-                                     (begin
-                                       (raise-contract-violation-error
-                                        '"contract violation"
-                                        'context:
-                                        '"\"gerbil/runtime/util.ss\"@796.22-796.25"
-                                        'contract:
-                                        '(in-range-inclusive?
-                                          start
-                                          (u8vector-length bytes))
-                                        'value:
-                                        _%end94764%_)
-                                       (void))))
-                               (begin
-                                 (raise-contract-violation-error
-                                  '"contract violation"
-                                  'context:
-                                  '"\"gerbil/runtime/util.ss\"@794.22-794.27"
-                                  'contract:
-                                  '(in-range? 0 (u8vector-length bytes))
-                                  'value:
-                                  _%start94763%_)
-                                 (void))))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@793.22-793.26"
-                            'contract:
-                            'input-port?
-                            'value:
-                            _%port94762%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@792.22-792.27"
-                      'contract:
-                      'u8vector?
-                      'value:
-                      _%bytes94761%_)
-                     (void))))))
-        (lambda _g99313_
-          (let ((_g99314_ (let () (declare (not safe)) (##length _g99313_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99314_ 2))
-                   (apply (lambda (_%bytes94817%_ _%port94818%_)
-                            (let* ((_%start94820%_ '0)
-                                   (_%end94822%_
-                                    (u8vector-length _%bytes94817%_)))
-                              (_%$%opt-lambda9475994814%_
-                               _%bytes94817%_
-                               _%port94818%_
-                               _%start94820%_
-                               _%end94822%_)))
-                          _g99313_))
-                  ((let () (declare (not safe)) (##fx= _g99314_ 3))
-                   (apply (lambda (_%bytes94824%_ _%port94825%_ _%start94826%_)
-                            (let ((_%end94828%_
-                                   (u8vector-length _%bytes94824%_)))
-                              (_%$%opt-lambda9475994814%_
-                               _%bytes94824%_
-                               _%port94825%_
-                               _%start94826%_
-                               _%end94828%_)))
-                          _g99313_))
-                  ((let () (declare (not safe)) (##fx= _g99314_ 4))
-                   (apply _%$%opt-lambda9475994814%_ _g99313_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    read-u8vector
-                    _g99313_)))))))
+      (lambda _g115792_
+        (let ((_g115793_ (let () (declare (not safe)) (##length _g115792_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115793_ 2))
+                 (apply read-u8vector__0 _g115792_))
+                ((let () (declare (not safe)) (##fx= _g115793_ 3))
+                 (apply read-u8vector__1 _g115792_))
+                ((let () (declare (not safe)) (##fx= _g115793_ 4))
+                 (apply read-u8vector__% _g115792_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  read-u8vector
+                  _g115792_))))))
+    (define __write-u8vector__%
+      (lambda (_%bytes108377%_ _%port108378%_ _%start108379%_ _%end108380%_)
+        (let* ((_%bytes108383%_ _%bytes108377%_)
+               (_%port108391%_ _%port108378%_)
+               (_%start108399%_ _%start108379%_)
+               (_%end108407%_ _%end108380%_))
+          (declare (not safe))
+          (##write-subu8vector
+           _%bytes108383%_
+           _%start108399%_
+           _%end108407%_
+           _%port108391%_))))
+    (define __write-u8vector__0
+      (lambda (_%bytes108419%_ _%port108420%_)
+        (let* ((_%start108422%_ '0)
+               (_%end108424%_ (u8vector-length _%bytes108419%_)))
+          (__write-u8vector__%
+           _%bytes108419%_
+           _%port108420%_
+           _%start108422%_
+           _%end108424%_))))
+    (define __write-u8vector__1
+      (lambda (_%bytes108426%_ _%port108427%_ _%start108428%_)
+        (let ((_%end108430%_ (u8vector-length _%bytes108426%_)))
+          (__write-u8vector__%
+           _%bytes108426%_
+           _%port108427%_
+           _%start108428%_
+           _%end108430%_))))
     (define __write-u8vector
-      (let ((_%$%opt-lambda9469894739%_
-             (lambda (_%bytes94700%_ _%port94701%_ _%start94702%_ _%end94703%_)
-               (let* ((_%bytes94706%_ _%bytes94700%_)
-                      (_%port94714%_ _%port94701%_)
-                      (_%start94722%_ _%start94702%_)
-                      (_%end94730%_ _%end94703%_))
-                 (declare (not safe))
-                 (##write-subu8vector
-                  _%bytes94706%_
-                  _%start94722%_
-                  _%end94730%_
-                  _%port94714%_)))))
-        (lambda _g99315_
-          (let ((_g99316_ (let () (declare (not safe)) (##length _g99315_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99316_ 2))
-                   (apply (lambda (_%bytes94742%_ _%port94743%_)
-                            (let* ((_%start94745%_ '0)
-                                   (_%end94747%_
-                                    (u8vector-length _%bytes94742%_)))
-                              (_%$%opt-lambda9469894739%_
-                               _%bytes94742%_
-                               _%port94743%_
-                               _%start94745%_
-                               _%end94747%_)))
-                          _g99315_))
-                  ((let () (declare (not safe)) (##fx= _g99316_ 3))
-                   (apply (lambda (_%bytes94749%_ _%port94750%_ _%start94751%_)
-                            (let ((_%end94753%_
-                                   (u8vector-length _%bytes94749%_)))
-                              (_%$%opt-lambda9469894739%_
-                               _%bytes94749%_
-                               _%port94750%_
-                               _%start94751%_
-                               _%end94753%_)))
-                          _g99315_))
-                  ((let () (declare (not safe)) (##fx= _g99316_ 4))
-                   (apply _%$%opt-lambda9469894739%_ _g99315_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    __write-u8vector
-                    _g99315_)))))))
+      (lambda _g115794_
+        (let ((_g115795_ (let () (declare (not safe)) (##length _g115794_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115795_ 2))
+                 (apply __write-u8vector__0 _g115794_))
+                ((let () (declare (not safe)) (##fx= _g115795_ 3))
+                 (apply __write-u8vector__1 _g115794_))
+                ((let () (declare (not safe)) (##fx= _g115795_ 4))
+                 (apply __write-u8vector__% _g115794_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  __write-u8vector
+                  _g115794_))))))
+    (define write-u8vector__%
+      (lambda (_%bytes108307%_ _%port108308%_ _%start108309%_ _%end108310%_)
+        (if (u8vector? _%bytes108307%_)
+            (let ((_%bytes108314%_ _%bytes108307%_))
+              (if (output-port? _%port108308%_)
+                  (let* ((_%port108324%_ _%port108308%_)
+                         (_%start108333%_ _%start108309%_))
+                    (if (and (fixnum? _%end108310%_)
+                             (let ((__tmp115796
+                                    (let ()
+                                      (declare (not safe))
+                                      (##u8vector-length _%bytes108314%_))))
+                               (declare (not safe))
+                               (##fx<= _%start108333%_
+                                       _%end108310%_
+                                       __tmp115796)))
+                        (let ((_%end108345%_ _%end108310%_))
+                          (__write-u8vector__%
+                           _%bytes108314%_
+                           _%port108324%_
+                           _%start108333%_
+                           _%end108345%_))
+                        (begin
+                          (raise-contract-violation-error
+                           '"contract violation"
+                           'context:
+                           '"\"gerbil/runtime/util.ss\"@805.23-805.26"
+                           'contract:
+                           '(in-range-inclusive? start (u8vector-length bytes))
+                           'value:
+                           _%end108310%_)
+                          '#!void)))
+                  (begin
+                    (raise-contract-violation-error
+                     '"contract violation"
+                     'context:
+                     '"\"gerbil/runtime/util.ss\"@803.23-803.27"
+                     'contract:
+                     'output-port?
+                     'value:
+                     _%port108308%_)
+                    '#!void)))
+            (begin
+              (raise-contract-violation-error
+               '"contract violation"
+               'context:
+               '"\"gerbil/runtime/util.ss\"@802.23-802.28"
+               'contract:
+               'u8vector?
+               'value:
+               _%bytes108307%_)
+              '#!void))))
+    (define write-u8vector__0
+      (lambda (_%bytes108358%_ _%port108359%_)
+        (let* ((_%start108361%_ '0)
+               (_%end108363%_ (u8vector-length _%bytes108358%_)))
+          (write-u8vector__%
+           _%bytes108358%_
+           _%port108359%_
+           _%start108361%_
+           _%end108363%_))))
+    (define write-u8vector__1
+      (lambda (_%bytes108365%_ _%port108366%_ _%start108367%_)
+        (let ((_%end108369%_ (u8vector-length _%bytes108365%_)))
+          (write-u8vector__%
+           _%bytes108365%_
+           _%port108366%_
+           _%start108367%_
+           _%end108369%_))))
     (define write-u8vector
-      (let ((_%$%opt-lambda9462894678%_
-             (lambda (_%bytes94630%_ _%port94631%_ _%start94632%_ _%end94633%_)
-               (if (u8vector? _%bytes94630%_)
-                   (let ((_%bytes94637%_ _%bytes94630%_))
-                     (if (output-port? _%port94631%_)
-                         (let* ((_%port94647%_ _%port94631%_)
-                                (_%start94656%_ _%start94632%_))
-                           (if ((lambda (_%o94664%_)
-                                  (and (fixnum? _%o94664%_)
-                                       (fx<= _%start94656%_
-                                             _%o94664%_
-                                             (u8vector-length
-                                              _%bytes94637%_))))
-                                _%end94633%_)
-                               (let ((_%end94668%_ _%end94633%_))
-                                 (__write-u8vector
-                                  _%bytes94637%_
-                                  _%port94647%_
-                                  _%start94656%_
-                                  _%end94668%_))
-                               (begin
-                                 (raise-contract-violation-error
-                                  '"contract violation"
-                                  'context:
-                                  '"\"gerbil/runtime/util.ss\"@805.23-805.26"
-                                  'contract:
-                                  '(in-range-inclusive?
-                                    start
-                                    (u8vector-length bytes))
-                                  'value:
-                                  _%end94633%_)
-                                 (void))))
-                         (begin
-                           (raise-contract-violation-error
-                            '"contract violation"
-                            'context:
-                            '"\"gerbil/runtime/util.ss\"@803.23-803.27"
-                            'contract:
-                            'output-port?
-                            'value:
-                            _%port94631%_)
-                           (void))))
-                   (begin
-                     (raise-contract-violation-error
-                      '"contract violation"
-                      'context:
-                      '"\"gerbil/runtime/util.ss\"@802.23-802.28"
-                      'contract:
-                      'u8vector?
-                      'value:
-                      _%bytes94630%_)
-                     (void))))))
-        (lambda _g99317_
-          (let ((_g99318_ (let () (declare (not safe)) (##length _g99317_))))
-            (cond ((let () (declare (not safe)) (##fx= _g99318_ 2))
-                   (apply (lambda (_%bytes94681%_ _%port94682%_)
-                            (let* ((_%start94684%_ '0)
-                                   (_%end94686%_
-                                    (u8vector-length _%bytes94681%_)))
-                              (_%$%opt-lambda9462894678%_
-                               _%bytes94681%_
-                               _%port94682%_
-                               _%start94684%_
-                               _%end94686%_)))
-                          _g99317_))
-                  ((let () (declare (not safe)) (##fx= _g99318_ 3))
-                   (apply (lambda (_%bytes94688%_ _%port94689%_ _%start94690%_)
-                            (let ((_%end94692%_
-                                   (u8vector-length _%bytes94688%_)))
-                              (_%$%opt-lambda9462894678%_
-                               _%bytes94688%_
-                               _%port94689%_
-                               _%start94690%_
-                               _%end94692%_)))
-                          _g99317_))
-                  ((let () (declare (not safe)) (##fx= _g99318_ 4))
-                   (apply _%$%opt-lambda9462894678%_ _g99317_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    write-u8vector
-                    _g99317_)))))))
+      (lambda _g115797_
+        (let ((_g115798_ (let () (declare (not safe)) (##length _g115797_))))
+          (cond ((let () (declare (not safe)) (##fx= _g115798_ 2))
+                 (apply write-u8vector__0 _g115797_))
+                ((let () (declare (not safe)) (##fx= _g115798_ 3))
+                 (apply write-u8vector__1 _g115797_))
+                ((let () (declare (not safe)) (##fx= _g115798_ 4))
+                 (apply write-u8vector__% _g115797_))
+                (else
+                 (##raise-wrong-number-of-arguments-exception
+                  write-u8vector
+                  _g115797_))))))
     (define DBG-printer (make-parameter write))
     (define DBG-helper
-      (lambda (_%tag94598%_
-               _%dbg-exprs94599%_
-               _%dbg-thunks94600%_
-               _%expr94601%_
-               _%thunk94602%_)
-        (letrec ((_%o94604%_ (current-output-port))
-                 (_%e94605%_ (current-error-port))
-                 (_%p94606%_ (DBG-printer))
-                 (_%f94607%_
+      (lambda (_%tag108275%_
+               _%dbg-exprs108276%_
+               _%dbg-thunks108277%_
+               _%expr108278%_
+               _%thunk108279%_)
+        (letrec ((_%o108281%_ (current-output-port))
+                 (_%e108282%_ (current-error-port))
+                 (_%p108283%_ (let () (declare (not safe)) (DBG-printer)))
+                 (_%f108284%_
                   (lambda ()
-                    (force-output _%o94604%_)
-                    (force-output _%e94605%_)))
-                 (_%d94608%_
-                  (lambda (_%x94615%_) (display _%x94615%_ _%e94605%_)))
-                 (_%w94609%_
-                  (lambda (_%x94617%_) (_%p94606%_ _%x94617%_ _%e94605%_)))
-                 (_%n94610%_ (lambda () (newline _%e94605%_)))
-                 (_%v94611%_
-                  (lambda (_%l94620%_)
+                    (force-output _%o108281%_)
+                    (force-output _%e108282%_)))
+                 (_%d108285%_
+                  (lambda (_%x108292%_) (display _%x108292%_ _%e108282%_)))
+                 (_%w108286%_
+                  (lambda (_%x108294%_) (_%p108283%_ _%x108294%_ _%e108282%_)))
+                 (_%n108287%_ (lambda () (newline _%e108282%_)))
+                 (_%v108288%_
+                  (lambda (_%l108297%_)
                     (for-each
-                     (lambda (_%x94622%_)
-                       (_%d94608%_ '" ")
-                       (_%w94609%_ _%x94622%_))
-                     _%l94620%_)
-                    (_%n94610%_)))
-                 (_%x94612%_
-                  (lambda (_%expr94624%_ _%thunk94625%_)
-                    (_%f94607%_)
-                    (_%d94608%_ '"  ")
-                    (_%w94609%_ _%expr94624%_)
-                    (_%d94608%_ '" =>")
+                     (lambda (_%x108299%_)
+                       (_%d108285%_ '" ")
+                       (_%w108286%_ _%x108299%_))
+                     _%l108297%_)
+                    (_%n108287%_)))
+                 (_%x108289%_
+                  (lambda (_%expr108301%_ _%thunk108302%_)
+                    (_%f108284%_)
+                    (_%d108285%_ '"  ")
+                    (_%w108286%_ _%expr108301%_)
+                    (_%d108285%_ '" =>")
                     (call-with-values
-                     _%thunk94625%_
-                     (lambda _%x94627%_
-                       (_%v94611%_ _%x94627%_)
-                       (_%f94607%_)
-                       (apply values _%x94627%_))))))
-          (if _%tag94598%_
+                     _%thunk108302%_
+                     (lambda _%x108304%_
+                       (_%v108288%_ _%x108304%_)
+                       (_%f108284%_)
+                       (let ()
+                         (declare (not safe))
+                         (##apply values _%x108304%_)))))))
+          (if _%tag108275%_
               (begin
-                (if (void? _%tag94598%_)
+                (if (eq? _%tag108275%_ '#!void)
                     '#!void
                     (begin
-                      (_%f94607%_)
-                      (_%d94608%_ _%tag94598%_)
-                      (_%n94610%_)))
-                (for-each _%x94612%_ _%dbg-exprs94599%_ _%dbg-thunks94600%_)
-                (if _%thunk94602%_
-                    (_%x94612%_ _%expr94601%_ _%thunk94602%_)
-                    (void)))
-              (if _%thunk94602%_ (_%thunk94602%_) (void))))))))
+                      (_%f108284%_)
+                      (_%d108285%_ _%tag108275%_)
+                      (_%n108287%_)))
+                (for-each _%x108289%_ _%dbg-exprs108276%_ _%dbg-thunks108277%_)
+                (if _%thunk108279%_
+                    (_%x108289%_ _%expr108278%_ _%thunk108279%_)
+                    '#!void))
+              (if _%thunk108279%_ (_%thunk108279%_) '#!void)))))))

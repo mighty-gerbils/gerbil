@@ -20,7 +20,16 @@ namespace: #f
           make-atomic-promise
           macro:
           @make-atomic-promise)
-         (%#define-runtime call-with-parameters call-with-parameters)
+         (%#begin (%#define-runtime
+                   call-with-parameters__0
+                   call-with-parameters__0)
+                  (%#define-runtime
+                   call-with-parameters__1
+                   call-with-parameters__1)
+                  (%#define-runtime
+                   call-with-parameters__2
+                   call-with-parameters__2)
+                  (%#define-runtime call-with-parameters call-with-parameters))
          (%#define-syntax @with-unwind-protect |[:0:]#@with-unwind-protect|)
          (%#define-runtime __with-unwind-protect __with-unwind-protect)
          (%#define-runtime

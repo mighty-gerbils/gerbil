@@ -90,9 +90,15 @@ namespace: gxc
          (%#define-runtime
           ::collect-object-refs-bind-methods!
           gxc#::collect-object-refs-bind-methods!)
-         (%#define-runtime
-          apply-collect-object-refs
-          gxc#apply-collect-object-refs)
+         (%#begin (%#define-runtime
+                   apply-collect-object-refs__%
+                   gxc#apply-collect-object-refs__%)
+                  (%#define-runtime
+                   apply-collect-object-refs__@
+                   gxc#apply-collect-object-refs__@)
+                  (%#define-runtime
+                   apply-collect-object-refs
+                   gxc#apply-collect-object-refs))
          (%#define-runtime ::subst-object-refs::t gxc#::subst-object-refs::t)
          (%#define-runtime ::subst-object-refs? gxc#::subst-object-refs?)
          (%#define-runtime
@@ -150,7 +156,15 @@ namespace: gxc
          (%#define-runtime
           ::subst-object-refs-bind-methods!
           gxc#::subst-object-refs-bind-methods!)
-         (%#define-runtime apply-subst-object-refs gxc#apply-subst-object-refs)
+         (%#begin (%#define-runtime
+                   apply-subst-object-refs__%
+                   gxc#apply-subst-object-refs__%)
+                  (%#define-runtime
+                   apply-subst-object-refs__@
+                   gxc#apply-subst-object-refs__@)
+                  (%#define-runtime
+                   apply-subst-object-refs
+                   gxc#apply-subst-object-refs))
          (%#define-runtime
           generate-method-specializers-define-values%
           gxc#generate-method-specializers-define-values%)
