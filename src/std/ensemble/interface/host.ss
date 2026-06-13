@@ -70,10 +70,10 @@
   (path)
   => :string
 
-  (proto)
+  (peer-path)
   => :string
 
-  (peer)
+  (proto)
   => :string
 
   (reader)
@@ -91,9 +91,18 @@
   => :void
   )
 
+(interface Resolver
+  ;; resolve a path to a list of addresses
+  (resolve (path : string))
+  => :list
+  )
+
 (interface Host
   (path)
   => :string
+
+  (resolver)
+  => Resolver
 
   (actor-context)
   => ActorContext
