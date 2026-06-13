@@ -24,13 +24,15 @@
                     irritants ...))))
 
 (defsyntax-case with-libcrypto-error ()
-  ((_ where (prim arg ...))
+  ((_ where (prim arg ...) success?)
    (with-syntax ((($arg ...) (gentemps #'(arg ...))))
      #'(let (($arg arg) ...)
          (declare (not interrupts-enabled)
                   (mostly-fixnum))
          (##check-heap-limit)
          (let (result (prim $arg ...))
-           (if (positive? result)
+           (if (success? result)
              result
-             (raise-libcrypto-error where 'prim $arg ...)))))))
+             (raise-libcrypto-error where 'prim $arg ...))))))
+  ((_ where primop)
+   #'(with-libcrypto-error where primop positive?)))

@@ -4,20 +4,23 @@
 
 (import :std/test
         :std/iter
-        :std/sugar
-        :std/text/hex
-        :std/crypto/digest
-        :std/crypto/libcrypto)
-(export digest-test main)
+        :std/encoding/hex
+        ./digest)
+(export digest-test)
 
-(defrule (test-digest-vectors fun (msg dig) ...)
-  (when fun (check-equal? (hex-encode (fun msg)) dig) ...))
+(defsyntax-case test-digest-vectors ()
+  ((_ fun (msg dig) ...)
+   (with-identifier (available? #'fun "Digest::" #'fun "-available?")
+     #'(when (available?)
+         (check-equal? (hex-encode (fun (string->utf8 msg))) dig)
+         ...))))
+
 (defrule (test-vectors (fun vectors ...) ...)
   (begin (test-digest-vectors fun vectors ...) ...))
 
 ;; TODO: add a lot more test vectors?
 (def digest-test
-  (test-suite "test :std/crypto/digest"
+  (test-suite "digest"
     (test-case "test digest vectors"
       (test-vectors
        (sha1
@@ -57,11 +60,3 @@
        (blake2b512 ;; from https://tools.ietf.org/html/rfc7693
         ("abc" "ba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923"))
        ))))
-
-
-;; For the purpose of testing: gxc -exe -static digest-test.ss
-(def (main . _)
-  (set-test-verbose! #f)
-  (run-tests! digest-test)
-  (test-report-summary!)
-  (exit (case (test-result) ((OK) 0) (else 1))))

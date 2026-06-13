@@ -301,23 +301,36 @@ END-C
 (def-C-lambda EVP_DigestFinal (EVP_MD_CTX* scheme-object) int "ffi_EVP_DigestFinal")
 (def-C-lambda EVP_MD_CTX_copy (EVP_MD_CTX* EVP_MD_CTX*) int "EVP_MD_CTX_copy_ex")
 
-;;(def-C-lambda EVP_md5 () EVP_MD* guard: "!defined(OPENSSL_NO_MD5)")
+(defsyntax-case def-C-thunk/guard ()
+  ((_ name return guard)
+   (let ((name-str (symbol->string (stx-e #'name)))
+         (guard-str (stx-e #'guard)))
+     (with-syntax ((c-code
+                    (string-append "\n"
+                                   "#if " guard-str "\n"
+                                   "___result = " name-str "();\n"
+                                   "#else \n"
+                                   "___result = NULL;\n"
+                                   "#endif\n")))
+       #'(def-C-lambda name () return c-code)))))
+
+(def-C-thunk/guard EVP_md5 EVP_MD* "!defined(OPENSSL_NO_MD5)")
 (def-C-lambda EVP_sha1 () EVP_MD*)
 (def-C-lambda EVP_sha224 () EVP_MD*)
 (def-C-lambda EVP_sha256 () EVP_MD*)
 (def-C-lambda EVP_sha384 () EVP_MD*)
 (def-C-lambda EVP_sha512 () EVP_MD*)
-;;(def-C-lambda EVP_ripemd160 () EVP_MD* guard: "!defined(OPENSSL_NO_RMD160)")
-;;(def-C-lambda EVP_whirlpool () EVP_MD* guard: "!defined(OPENSSL_NO_WHIRLPOOL)")
-;;(def-C-lambda EVP_blake2b512 () EVP_MD* guard: "!defined(OPENSSL_NO_BLAKE2)")
-;;(def-C-lambda EVP_blake2s256 () EVP_MD* guard: "!defined(OPENSSL_NO_BLAKE2)")
+(def-C-thunk/guard EVP_ripemd160 EVP_MD* "!defined(OPENSSL_NO_RMD160)")
+(def-C-thunk/guard EVP_whirlpool EVP_MD* "!defined(OPENSSL_NO_WHIRLPOOL)")
+(def-C-thunk/guard EVP_blake2b512 EVP_MD* "!defined(OPENSSL_NO_BLAKE2)")
+(def-C-thunk/guard EVP_blake2s256 EVP_MD* "!defined(OPENSSL_NO_BLAKE2)")
 (def-C-lambda EVP_sha3_224 () EVP_MD*)
 (def-C-lambda EVP_sha3_256 () EVP_MD*)
 (def-C-lambda EVP_sha3_384 () EVP_MD*)
 (def-C-lambda EVP_sha3_512 () EVP_MD*)
 (def-C-lambda EVP_shake128 () EVP_MD*)
 (def-C-lambda EVP_shake256 () EVP_MD*)
-;;(def-C-lambda EVP_keccak256 () EVP_MD* guard: "0") ;; still not available as of 3.0.10
+(def-C-thunk/guard EVP_keccak256 EVP_MD* "0") ;; still not available as of 3.0.10
 
 (def-C-lambda EVP_MD_type (EVP_MD*) int)
 (def-C-lambda EVP_MD_pkey_type (EVP_MD*) int)

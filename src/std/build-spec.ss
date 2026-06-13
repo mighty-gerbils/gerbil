@@ -139,6 +139,11 @@
           "-ld-options" ,(ldflags "libcrypto" "-lcrypto"))
     "crypto/error"
     "crypto/random"
+    "crypto/digest"
+    "crypto/cipher"
+    "crypto/pkey"
+    "crypto/kdf"
+    "crypto/hmac"
 
     ,(cond-expand
       (darwin
@@ -162,6 +167,7 @@
     "net/ssl"
 
     "encoding/base64"
+    "encoding/hex"
 
     "misc/process"
     "misc/ports"
