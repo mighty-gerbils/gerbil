@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble ucan envelopes
+;;; ensemble ucan interfaces
 (import :std/crypto/pkey)
 (export #t)
 
@@ -14,10 +14,9 @@
    (issuer     :  :string)     ; the issuing principal did
    (subject    :  :string)     ; the recipient did or * for any recipient.
    (method     :  :string)     ; the method capability granted
-   (begin      :? :integer)    ; token validity begin time in UNIX seconds
-   (expire     :? :integer)    ; token expiration time in UNIX seconds
-   (depth      :? :fixnum)     ; the maximum depth in the token chain
-   (chain      :? @Token)      ; the next token in the chain
+   (nbf        :  :integer)    ; token validity begin time in UNIX seconds; 0 means no begin validity
+   (expire     :  :integer)    ; token expiration time in UNIX seconds; 0 means no expiration
+   (chain      :? @Token)      ; the next token in the chain, if any
    (nonce      :- :u8vector)   ; the token nonce
    (signature  :- :u8vector))  ; the token signature by the principal
   final: #t)
@@ -25,23 +24,29 @@
 (interface CapabilityContext
   ;; key management
 
-  ;; add a private key to the context, so that it can be used
+  ;; add a principal private key to the context, so that it can be used
   ;; for signing
-  ;; returns the did of the key
-  (add-private-key! (priv : PrivKey))
+  ;; returns the did of the principal
+  (add-principal! (priv : PrivKey))
   => :string
+
+  ;; lists the principal dids
+  (list-principals)
+  => :list
 
   ;; returns the public key associated with a did
   ;; the keys may be cached in order to avoid repeatedly
   ;; caching
-  (get-public-key (did : :string))
+  (public-key (did : :string))
   => PubKey
 
   ;; token management
 
   ;; signs a token, provided the principal is one of
-  ;; of the private keys in the context
-  (sign-token! (token : Token))
+  ;; of the private keys in the context.
+  ;; the token is remembered until it expires in order to
+  ;; be able to revoke it later
+  (sign! (token : Token))
   => :void
 
   ;; verifies a token
@@ -50,21 +55,39 @@
   ;; - capabilities in the chain can only be narrowed
   ;; - the token must be anchored either at a root anchor
   ;;   or extend a trust anchor in the chain
-  (verify-token (token : Token))
+  (verify (token : Token))
   => @VerificationResult
+
+  ;; list issued unexpired tokens that have been remembered
+  (list-tokens (filter : :procedure))
+  => :list
 
   ;; trust management
 
-  ;; adds a trust anchor token.
-  (add-trust-anchor! (token : Token))
+  ;; adds an output trust anchor for rooting output tokens
+  (add-output-anchor! (token : Token))
   => :void
 
-  ;; removes a trust anchor
-  (remove-trust-anchor! (token : Token))
+  ;; remove an output trust anchor
+  (remove-output-anchor! (token : Token))
   => :void
 
-  ;; lists the trust anchors
-  (list-trust-anchors)
+  ;; list output trust anchors
+  (list-output-anchors (filter : :procedure))
+  => :list
+
+  ;; adds an input trust anchor for rooting input tokens
+  ;; the token is remembered until it expires or for duration if specified
+  (add-input-anchor! (token : Token)
+                     (duration :? :fixnum := #f))
+  => :void
+
+  ;; removes an input trust anchor
+  (remove-input-anchor! (token : Token))
+  => :void
+
+  ;; lists the input trust anchors
+  (list-input-anchors (filter : :procedure))
   => :list
 
   ;; adds a root anchor.
@@ -72,15 +95,15 @@
   ;; of a valid token.
   ;; Note: this be should be used only for fully trusted entities,
   ;; like the owner of an actor.
-  (add-root-anchor (did : :string))
+  (add-root! (did : :string))
   => :void
 
   ;; removes a root anchor
-  (remove-root-anchor! (did : :string))
+  (remove-root! (did : :string))
   => :void
 
   ;; lists existing root anchors.
-  (list-root-anchors)
+  (list-roots)
   => :list
   )
 
@@ -94,6 +117,7 @@
 (defstruct VerificationResult ())
 (defstruct (VerificationOK VerificationResult) ())
 (defstruct (VerificationError VerificationResult)
-  ((reason : :string)))
+  ((reason : :string)
+   (detail : :t)))
 
 (def !OK (VerificationOK))

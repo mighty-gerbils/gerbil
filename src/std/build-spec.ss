@@ -239,6 +239,9 @@
     "ensemble/interface/host"
     "ensemble/interface"
 
+    "ensemble/ucan/cap"
+    "ensemble/ucan/ext"
+
     ))
 
 #;(def (build-spec . _)

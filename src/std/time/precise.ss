@@ -29,19 +29,19 @@
 (def (current-time-precise) => PreciseTime
   (PreciseTime (current-system-time-precise)))
 
-(def (CoarseTime-seconds (t : CoarseTime))
+(definline (CoarseTime-seconds (t : CoarseTime))
   => :integer
   (timeval-tv_sec t.time))
 
-(def (CoarseTime-useconds (t : CoarseTime))
+(definline (CoarseTime-useconds (t : CoarseTime))
   => :integer
   (timeval-tv_usec t.time))
 
-(def (PreciseTime-seconds (t : PreciseTime))
+(definline (PreciseTime-seconds (t : PreciseTime))
   => :integer
   (timespec-tv_sec t.time))
 
-(def (PreciseTime-nseconds (t : PreciseTime))
+(definline (PreciseTime-nseconds (t : PreciseTime))
   => :integer
   (timespec-tv_nsec t.time))
 
