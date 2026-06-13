@@ -3,7 +3,6 @@
 ;;; ensemble host interface
 (import :std/io
         :std/net/address
-        :std/crypto/pkey
         ./ucan
         ./actor)
 (export #t)
@@ -108,12 +107,13 @@
 ;; the network abstraction
 (interface Network
   ;; resolve a path to a list of addresses
-  (resolve (path : string))
+  (resolve (path : :string))
   => :list
 
   ;; connect to a peer in address
   ;; returns the peer
-  (connect! (peer :? :string) (addr : Address))
+  (connect! (peer :? :string)
+            (addr :  Address))
   => :string
 
   ;; current network peers
@@ -139,7 +139,7 @@
 
   ;; leave a broadcast group
   (leave! (group : :string))
-  => void
+  => :void
 
   ;; the current broadcast groups
   (groups)

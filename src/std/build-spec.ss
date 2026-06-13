@@ -233,6 +233,12 @@
           "db/sqlite")
         '())
     "db"
+
+    "ensemble/interface/ucan"
+    "ensemble/interface/actor"
+    "ensemble/interface/host"
+    "ensemble/interface"
+
     ))
 
 #;(def (build-spec . _)

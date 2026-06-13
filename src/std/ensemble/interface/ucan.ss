@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble ucan envelopes
+(import :std/crypto/pkey)
 (export #t)
 
 (deftype @Token Token)
@@ -55,11 +56,11 @@
   ;; trust management
 
   ;; adds a trust anchor token.
-  (add-trust-anchor! (token : token))
+  (add-trust-anchor! (token : Token))
   => :void
 
   ;; removes a trust anchor
-  (remove-trust-anchor! (token : token))
+  (remove-trust-anchor! (token : Token))
   => :void
 
   ;; lists the trust anchors
