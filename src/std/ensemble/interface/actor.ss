@@ -6,13 +6,14 @@
 
 (defstruct Actor
   ((identity : :string)   ; the DID of the actor
-   (path     : :string))  ; the path of the actor in the ensemble space
+   (host     : :string)   ; the path of the host in the ensemble space
+   (path     : :string))  ; the path of the actor in the actor space
   final: #t)
 
 (defstruct Message
   ((source    : Actor)       ; source actor
    (recipient : Actor)       ; recipient actor
-   (auth      : Token)       ; UCAN authorization of the message
+   (auth      : :list)       ; UCAN authorization tokens for the message
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
    (epxire    : :integer)    ; expiration of the message in UNIX seconds
@@ -23,7 +24,7 @@
 
 (defstruct BroadcastMessage
   ((source    : Actor)       ; source actor
-   (auth      : Token)       ; UCAN authorization of the message
+   (auth      : :list)       ; UCAN authorization tokens for the message
    (group     : :string)     ; destination group
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
