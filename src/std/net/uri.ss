@@ -104,33 +104,34 @@
       (cond
        ((hash-get hex-bytes char))
        (else
-        (raise-bad-argument uri-decode "uri encoded string: unexecpted character" str char)))))
+        (raise-bad-argument uri-decode "uri encoded string: unexpected character" str char)))))
 
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8))
-         (pct  (char->integer #\%)))
-    (with-output-to-string ""
-      (lambda ()
-        (let loop ((i 0 :- :fixnum))
-          (when (fx< i len)
-            (let (next (##u8vector-ref utf8 i))
-              (cond
-               ((and encoding (vector-ref encoding next))
-                => (lambda (char)
-                     (write-char char)
-                     (loop (fx+ i 1))))
-               ((eq? next pct)
-                (let (i (fx+ i 1))
-                  (if (fx< (fx+ i 1) len)
-                    (let ((hi (##u8vector-ref utf8 i))
-                          (lo (##u8vector-ref utf8 (fx+ i 1))))
-                      (write-u8 (fxior (fxarithmetic-shift (hex-byte hi) 4)
-                                       (hex-byte lo)))
-                      (loop (fx+ i 2)))
-                    (raise-bad-argument uri-decode "uri encoded string: malformed compoent" str i))))
-               (else
-                (write-u8 next)
-                (loop (fx+ i 1)))))))))))
+         (pct  (char->integer #\%))
+         (utf8 (with-output-to-u8vector
+                (lambda ()
+                  (let loop ((i 0 :- :fixnum))
+                    (when (fx< i len)
+                      (let (next (##u8vector-ref utf8 i))
+                        (cond
+                         ((and encoding (vector-ref encoding next))
+                          => (lambda (char)
+                               (write-u8 (char->integer char))
+                               (loop (fx+ i 1))))
+                         ((eq? next pct)
+                          (let (i (fx+ i 1))
+                            (if (fx< (fx+ i 1) len)
+                              (let ((hi (##u8vector-ref utf8 i))
+                                    (lo (##u8vector-ref utf8 (fx+ i 1))))
+                                (write-u8 (fxior (fxarithmetic-shift (hex-byte hi) 4)
+                                                 (hex-byte lo)))
+                                (loop (fx+ i 2)))
+                              (raise-bad-argument uri-decode "uri encoded string: malformed component" str i))))
+                         (else
+                          (write-u8 next)
+                          (loop (fx+ i 1)))))))))))
+    (utf8->string utf8)))
 
 (def uri-space-decoding
   (make-uri-encoding-table "" '((#\+ . #\space))))
@@ -141,12 +142,14 @@
   (filter-map
    (lambda (part)
      (and (not (string-empty? part))
-          (match (string-split part #\=)
-            ([key val]
-             (cons (uri-decode key uri-space-decoding)
-                   (uri-decode val uri-space-decoding)))
-            ([key]
-             (cons (uri-decode key uri-space-decoding) #f))
-            (else
-             (raise-bad-argument form-url-decode "form url encoded string: malformed component" str part)))))
+          (let (idx (string-index part #\=))
+            (if idx
+              ;; Split at '='. "key=" returns "" instead of #f to follow
+              ;; web standards and prevent JSON/Struct type errors later.
+              (let ((key (substring part 0 idx))
+                    (val (substring part (fx+ idx 1) (string-length part))))
+                (cons (uri-decode key uri-space-decoding)
+                      (uri-decode val uri-space-decoding)))
+              ;; No '=', it is a boolean flag (returns #f).
+              (cons (uri-decode part uri-space-decoding) #f)))))
    (string-split str #\&)))
