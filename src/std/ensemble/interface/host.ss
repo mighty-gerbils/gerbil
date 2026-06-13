@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; ensemble host interface
 (import :std/io
+        :std/net/address
         :std/crypto/pkey
         ./ucan
         ./actor)
@@ -91,9 +92,22 @@
   => :void
   )
 
-(interface Resolver
+(interface Network
   ;; resolve a path to a list of addresses
   (resolve (path : string))
+  => :list
+
+  ;; connect to an address
+  ;; returns the path of the peer host
+  (connect! (addr : Address))
+  => :string
+
+  ;; listen to an address
+  (listen! (addr : Address))
+  => :void
+
+  ;; retrieve the host's listening addresses
+  (addresses)
   => :list
   )
 
@@ -101,8 +115,8 @@
   (path)
   => :string
 
-  (resolver)
-  => Resolver
+  (network)
+  => Network
 
   (actor-context)
   => ActorContext
