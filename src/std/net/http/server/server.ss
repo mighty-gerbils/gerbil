@@ -207,7 +207,8 @@
               (read-headers! reader (box self.cfg.max-headers)))
              (request
               (new-request method target proto headers
-                           sock reader))
+                           sock reader
+                           (Logger self.cfg.log)))
              (response
               (rec response
                 (new-response-handler

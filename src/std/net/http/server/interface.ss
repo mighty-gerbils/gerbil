@@ -15,7 +15,8 @@
    (method  :- :string)
    (headers :- :list)
    (body    :- BufferedReader)
-   (client  :- Address))
+   (client  :- Address)
+   (log     :- Logger))
   final: #t)
 
 ;; RequestContext encapsulates connection network state

@@ -5,6 +5,7 @@
         :std/interface
         :std/io
         :std/io/bio/buffer
+        :std/log
         :std/net/url
         :std/net/ssl
         :std/net/address
@@ -22,7 +23,8 @@
                   (proto  : :string)
                   (headers : :list)
                   (sock    : StreamSocket)
-                  (reader  : BufferedReader))
+                  (reader  : BufferedReader)
+                  (log     : Logger))
   => Request
   (let* ((url
           (if (string-contains target "://")
@@ -48,7 +50,8 @@
            (else
             (open-buffered-reader '#u8())))))
     (Request url proto method headers body-reader
-             (sock.peer-address))))
+             (sock.peer-address)
+             log)))
 
 (defstruct response-handler
   ((ctx              :- RequestContext)
