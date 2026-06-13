@@ -63,14 +63,14 @@
      (writer.flush)
      ;; read request head
      (let* (((values status status-line)
-             (read-status-line! reader))
+             (read-status-line! reader (box max-status-line-length)))
             (headers
-             (read-headers! reader))
+             (read-headers! reader (box max-headers-length)))
             (content-length
              (aget "Content-Length" headers))
             (reader
              (if content-length
-               (reader.delimit (string->number content-length))
+               (reader.delimit (: (string->number content-length) :integer))
                reader))
             (transfer-encoding
              (aget "Transfer-Encoding" headers))
@@ -172,7 +172,8 @@
   => :void
   (write-header! writer "Host" url.host)
   (write-headers! writer __std-headers)
-  (write-header! writer "Content-Length" (number->string (u8vector-length body)))
+  (when (fx> (u8vector-length body) 0)
+    (write-header! writer "Content-Length" (number->string (u8vector-length body))))
   (write-headers! writer user))
 
 (def (__request-write-body! (writer :- BufferedWriter)

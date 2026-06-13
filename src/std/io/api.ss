@@ -7,6 +7,7 @@
         ./dummy
         ./counter
         ./delimited
+        ./detachable
         ./file
         ./util
         ./tempfile)
@@ -17,6 +18,7 @@
            ./dummy
            ./counter
            ./delimited
+           ./detachable
            ./file
            ./util
            ./tempfile))

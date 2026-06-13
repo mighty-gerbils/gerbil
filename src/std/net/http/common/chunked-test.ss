@@ -24,7 +24,7 @@
              ? fixnum?)
       (check (Writer-write chunked-writer (string->utf8 "fox."))
              ? fixnum?)
-      (__bio-output-buffer-detach! chunked-writer)
+      (buffer-detach! chunked-writer)
 
       (check (get-memory-output-string-utf8 mem-writer)
              => "4\r\nthe \r\n6\r\nquick \r\n6\r\nbrown \r\n4\r\nfox.\r\n0\r\n"))

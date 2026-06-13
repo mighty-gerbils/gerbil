@@ -57,4 +57,4 @@
   => :void)
 
 (defcall-interface-method DetachableBuffer detach!
-  (__bio-output-buffer-detach! obj))
+  (buffer-detach! obj))

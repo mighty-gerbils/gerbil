@@ -145,6 +145,10 @@
 
 ;;; Interface
 (implement
+  (Closer
+   (basic-socket
+    (close
+     __basic-socket-close)))
   (Socket
    (basic-socket
     (domain
@@ -161,9 +165,7 @@
     (set-input-timeout!
      __basic-socket-set-input-timeout!)
     (set-output-timeout!
-     __basic-socket-set-output-timeout!)
-    (close
-     __basic-socket-close)))
+     __basic-socket-set-output-timeout!)))
   (ClientSocket
    (basic-client-socket
     (recv

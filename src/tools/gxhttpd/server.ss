@@ -2,16 +2,11 @@
 ;;; © vyzo
 ;;; The Gerbil HTTP Daemon
 (import :gerbil/expander
-        :std/config
-        :std/net/address
-        :std/net/httpd
-        :std/mime/types
+        :std/net/http/server
         :std/iter
-        :std/misc/ports
-        :std/hash-table
-        :std/logger
-        (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
-        (only-in :std/srfi/13 string-contains))
+        :std/log
+        :std/os/sockopt
+        ./config)
 (export #t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -20,33 +15,22 @@
 (def current-http-server-config
   (make-parameter #f))
 
-(def (run-server! cfg)
-    (let* ((sockopts [SO_REUSEADDR SO_REUSEPORT])
-           (mux (make-mux cfg))
-           (request-logger (get-request-logger cfg))
-           (addresses (config-get! cfg listen:))
-           (max-token-length (: (config-get cfg max-token-length: 1024) :fixnum)))
-    (set-httpd-max-token-length! max-token-length)
+(def (run-server! (cfg : Config))
+    (let* ((sockopts [[SOL_SOCKET.SO_REUSEADDR . 1] [SOL_SOCKET.SO_REUSEPORT . 1]])
+           (mux (new-mux cfg))
+           (addresses cfg.listen))
     (parameterize ((current-http-server-config cfg))
-              (let (srv (apply start-http-server!
-                          mux: mux
-                          sockopts: sockopts
-                          request-logger: request-logger
-                          addresses))
-                (thread-join! srv)))))
+      (using (srv (new-http-server
+                   (ServerConfig
+                    mux: (new-mux cfg)
+                    log: (new-log-rotate-sink cfg.log)
+                    listen: cfg.listen))
+                  : Server)
+        (srv.start!)
+        (thread-sleep! +inf.0)))))
 
-(def (get-request-logger cfg)
-  (alet (path
-         (cond
-          ((config-get cfg request-log:))
-          ((current-log-directory)
-           => (lambda (logdir)
-                (path-expand "httpd/request.log" logdir)))
-          (else #f)))
-    (make-request-logger path)))
-
-(def (make-mux cfg)
-  (Mux (make-dynamic-mux cfg)))
+(def (new-mux cfg)
+  (ServerMux (make-dynamic-mux cfg)))
 
 (defstruct dynamic-mux ((root :- :string)
                         (handlers :- HashTable)
@@ -57,60 +41,61 @@
                         (cache-max-size :- :fixnum))
   constructor: :init! final: #t)
 
-(defstruct cache-entry ((handler :- :procedure)
+(defstruct cache-entry ((handler :- RequestHandler)
                         (expire :- :flonum)
                         (preserve? :- :procedure))
   final: #t)
 
 (defmethod {:init! dynamic-mux}
-  (lambda (self cfg)
-    (let ((root (: (config-get! cfg root:) :string))
-          (handlers (: (config-get cfg handlers: []) :list))
-          (servlets? (: (config-get cfg enable-servlets:) :boolean)))
-      (set! self.root root)
-      (set! self.cache (make-hash-table-string))
-      (set! self.cache-ttl (: (inexact (config-get cfg cache-ttl: 120)) :real))
-      (set! self.cache-max-size (: (config-get cfg cache-max-size: 16384) :fixnum))
-      (set! self.handlers (make-hash-table-string))
-      (when servlets?
-        (set! self.servlets (make-hash-table-string))
-        (set! self.mx (make-mutex 'mux-loader)))
-      (for ([path . handler-module] handlers)
-        (let* ((ctx (import-module handler-module #f #t))
-               (init! (find-runtime-symbol ctx 'handler-init!))
-               (handle-request (find-runtime-symbol ctx 'handle-request)))
-          (unless handle-request
+  (lambda (self (cfg : Config))
+    (set! self.root cfg.root)
+    (set! self.cache (make-hash-table-string))
+    (set! self.cache-ttl (inexact cfg.cache-ttl))
+    (set! self.cache-max-size cfg.cache-max-size)
+    (set! self.handlers (make-hash-table-string))
+    (when cfg.enable-servlets
+      (set! self.servlets (make-hash-table-string))
+      (set! self.mx (make-mutex 'mux-loader)))
+    (for ([path . handler-module] cfg.handlers)
+      (let* ((ctx (import-module handler-module #f #t))
+             (init! (find-runtime-symbol ctx 'handler-init!))
+             (request-handler (find-runtime-symbol ctx 'request-handler)))
+          (unless request-handler
             (error "handler module does not export handle-request procedure"
               module: handler-module))
           (when init!
             ((: (eval init!) :procedure) cfg))
-          (hash-put! self.handlers path (: (eval handle-request) :procedure)))))))
+          (hash-put! self.handlers path
+                     (: ((: (eval request-handler) :procedure))
+                        RequestHandler))))))
 
-(defmethod {get-handler dynamic-mux}
-  (lambda (self host (path :- :string))
+(defmethod {request-handler dynamic-mux}
+  (lambda (self req)
     ;; flush the cache if it gets too big
     (when (fx> (hash-length self.cache) self.cache-max-size)
       (set! self.cache (make-hash-table-string)))
-    (cond
-     ((hash-get self.cache path)
-      => (lambda (cache-entry)
-           (let (now (##current-time-point))
-             (cond
-              ((fl< now (&cache-entry-expire cache-entry))
-               (&cache-entry-handler cache-entry))
-              (((&cache-entry-preserve? cache-entry))
-               (set! (&cache-entry-expire cache-entry)
-                 (fl+ now self.cache-ttl))
-               (&cache-entry-handler cache-entry))
-              (else
-               {self.__get-handler path})))))
-     (else
-      {self.__get-handler path}))))
+    (: (cond
+        ((hash-get self.cache req.url.path)
+         => (lambda (cache-entry)
+              (let (now (##current-time-point))
+                (cond
+                 ((fl< now (&cache-entry-expire cache-entry))
+                  (&cache-entry-handler cache-entry))
+                 (((&cache-entry-preserve? cache-entry))
+                  (set! (&cache-entry-expire cache-entry)
+                    (fl+ now self.cache-ttl))
+                  (&cache-entry-handler cache-entry))
+                 (else
+                  {self.__get-handler req.url.path})))))
+        (else
+         {self.__get-handler req.url.path}))
+       RequestHandler))
+  interface: ServerMux)
 
 (defmethod {__get-handler dynamic-mux}
   (lambda (self (path :- :string))
     (defrule (not-found-cache-entry expire)
-      (cache-entry not-found-handler expire (lambda () #f)))
+      (cache-entry Not-Found-handler expire (lambda () #f)))
 
     (defrule (file-cache-entry file-path expire created handler)
       (let (preserve?
@@ -144,17 +129,7 @@
       (hash-put! self.cache path entry)
       (&cache-entry-handler entry))))
 
-(defmethod {put-handler! dynamic-mux}
-  (lambda (self host (path :- :string) (handler :- :procedure))
-    (hash-put! self.handlers path handler)))
-
-(def (not-found-handler req res)
-  (http-response-write-condition res Not-Found))
-
-(def (forbidden-handler req res)
-  (http-response-write-condition res Forbidden))
-
-(defstruct servlet ((handler   :- :procedure)
+(defstruct servlet ((handler   :- RequestHandler)
                     (path      :- :string)
                     (timestamp :- :flonum))
   final: #t)
@@ -164,13 +139,15 @@
     (let* ((load-time (time->seconds (current-time)))
            (ctx (with-lock mx (cut import-module file-path reload? #t)))
            (init! (find-runtime-symbol ctx 'handler-init!))
-           (handle-request (find-runtime-symbol ctx 'handle-request)))
-      (unless handle-request
-        (error "servlet does not export handle-request" file-path))
+           (request-handler (find-runtime-symbol ctx 'request-handler)))
+      (unless request-handler
+        (error "servlet does not export request-handler" file-path))
       (when init!
         ((eval init!) (current-http-server-config)))
-      (let* ((handle-request (: (eval handle-request) :procedure))
-             (srv (servlet handle-request file-path load-time)))
+      (let* ((request-handler
+              (: ((: (eval request-handler) :procedure))
+                 RequestHandler))
+             (srv (servlet request-handler file-path load-time)))
         (hash-put! servlet-tab file-path srv)
         srv)))
 
@@ -189,49 +166,20 @@
     (servlet-handler (load-servlet! file-path #f)))))
 
 (def (file-handler path)
-  => :procedure
+  => RequestHandler
   (let (info (file-info path #t))
     (if (eq? (file-info-type info) 'directory)
       (let (index-html-path (path-expand "index.html" path))
         (if (file-exists? index-html-path)
           (serve-file index-html-path (file-info index-html-path #t))
-          forbidden-handler))
+          Forbidden-handler))
       (serve-file path info))))
 
 (def max-file-cache-size 32768) ; size of i/o buffer for http-response-file
 
 (def (serve-file path info)
-  => :procedure
-  (let* ((content-type (path-extension->mime-type-name path))
-         (headers
-          [(if content-type
-             ["Content-Type" :: content-type]
-             ["Content-Type" :: "application/octet-stream"])
-           ["Last-Modified" :: (number->string (exact (floor (time->seconds (file-info-last-modification-time info)))))]
-           ["Content-Length" :: (number->string (file-info-size info))]]))
-
-    (if (fx<= (file-info-size info) max-file-cache-size)
-      ;; cache the content
-      (let (buf (read-file-u8vector path))
-        (lambda (req res)
-          (using (req :- http-request)
-            (case req.method
-              ((GET)
-               (http-response-write res 200 headers buf))
-              ((HEAD)
-               (http-response-write res 200 headers #f))
-              (else
-               (http-response-write-condition res Forbidden))))))
-      ;; don't cache
-      (lambda (req res)
-        (using (req :- http-request)
-          (case req.method
-            ((GET)
-             (http-response-file res headers path))
-            ((HEAD)
-             (http-response-write res 200 headers #f))
-            (else
-             (http-response-write-condition res Forbidden))))))))
+  => RequestHandler
+  (new-caching-file-handler path))
 
 (def (find-handler tab server-path)
   (let loop ((path server-path))

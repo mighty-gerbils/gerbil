@@ -2,9 +2,11 @@
 ;;; © vyzo
 ;;; The Gerbil HTTP Daemon
 ;;;
-(import :std/cli/getopt
-        :std/config)
+(import :std/cli/getopt)
 (export #t)
+
+(def (string->object str)
+  (call-with-input-string str read))
 
 (def server-config-option
   (option 'config "-c" "--config"
@@ -73,12 +75,12 @@
 
 (def config-httpd-max-token-length-option
   (option 'max-token-length "--max-token-length"
-    value: string->integer
+    value: string->number
     help: "specify the httpd max token length"))
 
 (def config-ensemble-workers-option
   (option 'workers "-n" "--workers"
-    value: string->integer
+    value: string->number
     help: "specify the preloaded number of httpd workers in the ensemble"))
 
 (def config-ensemble-domain-option

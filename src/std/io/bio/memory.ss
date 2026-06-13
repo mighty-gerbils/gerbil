@@ -145,4 +145,6 @@
     (close void)))
   (DetachableBuffer
    (memory-output-buffer
+    (detach! void))
+   (memory-input-buffer
     (detach! void))))

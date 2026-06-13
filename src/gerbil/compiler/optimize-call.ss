@@ -199,7 +199,7 @@ namespace: gxc
             (if (or (expression-no-side-effects? object)
                     (expression-no-side-effects? #'expr))
               ['%#quote #t]
-              ['%#begin object #t])
+              ['%#begin object '(%#quote #t)])
             stx))
 	  (incompatible?
 	   ['%#quote #f])
@@ -223,7 +223,7 @@ namespace: gxc
               (if (or (expression-no-side-effects? object)
                       (expression-no-side-effects? #'expr))
                 ['%#quote #t]
-                ['%#begin object #t])
+                ['%#begin object '(%#quote #t)])
               stx))
 	    (incompatible?
 	     ['%#quote #f])

@@ -43,7 +43,7 @@
            (folder (make-folder-for-writer fmt writer)))
       (begin0
           (formatter-fold folder fmt.fmt args)
-        (__bio-output-buffer-detach! writer))))))
+        (buffer-detach! writer))))))
 
 (def (formatter-fold (folder : FormatFolder)
 		    (fmt    : :string)
@@ -59,19 +59,21 @@
            (fx+ result (writer.write-char-utf8 char))))
         (fold-int
          (lambda (arg how flags width result)
-           (let (env (@format-env fmt.env
-                                  (flags: flags)
-                                  (width: width)
-                                  (integer-conversion: how)))
-             (fx+ result (writer.write-integer (: arg :integer) env)))))
+           (using (ctx (@format-env fmt.env
+                                    (flags: flags)
+                                    (width: width)
+                                    (integer-conversion: how))
+                       : WriteContext)
+             (fx+ result (ctx.methods.write-integer writer (: arg :integer) ctx)))))
         (fold-float
          (lambda (arg how flags width precision result)
-           (let (env (@format-env fmt.env
-                                  (flags: flags)
-                                  (width: width)
-                                  (precision: precision)
-                                  (flonum-conversion: how)))
-             (fx+ result (writer.write-flonum (: arg :flonum) env)))))
+           (using (ctx (@format-env fmt.env
+                                    (flags: flags)
+                                    (width: width)
+                                    (precision: precision)
+                                    (flonum-conversion: how))
+                       : WriteContext)
+             (fx+ result (ctx.methods.write-flonum writer (: arg :flonum) ctx)))))
         (fold-object
          (lambda (arg how result)
            (fx+ result

@@ -14,7 +14,6 @@
         ./format
         ./reader
 	(for-syntax ./format-string))
-
 (export #t)
 
 (begin-syntax
@@ -49,10 +48,15 @@
       (fold-format-string folder fmt [] args)))
 
   (def (fold-format-ops-for-stx stx writer ctx ops)
-    (with-identifiers ((writer.write-char    writer writer ".write-char-utf8")
-                       (writer.write-integer writer writer ".write-integer")
-                       (writer.write-flonum  writer writer ".write-flonum")
-		       ($ctx                  'ctx))
+    (with-identifiers ((writer.write-char
+                        writer writer ".write-char-utf8")
+        	       ($ctx `ctx)
+                       ($ctx.methods.write-integer
+                        #'$ctx #'$ctx ".methods.write-integer")
+                       ($ctx.methods.write-flonum
+                        #'$ctx #'$ctx ".methods.write-flonum")
+                       )
+
       (let loop ((rest ops) (result []))
 	(match rest
 	  ([op . rest]
@@ -63,23 +67,25 @@
                       (cons #'(writer.write-char arg)
 		            result))))
 	     (['int arg how flags width]
-	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width))
+	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (writer writer))
 		(loop rest
-                      (cons #'(let ($ctx (@format-env ctx
-						      (flags: flags)
-						      (width: width)
-						      (integer-conversion: how)))
-			        (writer.write-integer (: arg :integer) $ctx))
+                      (cons #'(using ($ctx (@format-env ctx
+						        (flags: flags)
+						        (width: width)
+						        (integer-conversion: how))
+                                           : WriteContext)
+			        ($ctx.methods.write-integer writer (: arg :integer) $ctx))
 		            result))))
 	     (['float arg how flags width precision result]
-	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (precision precision))
+	      (with-syntax ((ctx ctx) (arg arg) (how how) (flags flags) (width width) (precision precision) (writer writer))
 		(loop rest
-                      (cons #'(let ($ctx (@format-env ctx
-						      (flags: flags)
-						      (width: width)
-						      (precision: precision)
-						      (flonum-conversion: how)))
-			        (writer.write-flonum (: arg :flonum) $ctx))
+                      (cons #'(using ($ctx (@format-env ctx
+						        (flags: flags)
+						        (width: width)
+						        (precision: precision)
+						        (flonum-conversion: how))
+                                           : WriteContext)
+			        ($ctx.methods.write-flonum writer (: arg :flonum) $ctx))
 		            result))))
 	     (['object arg how]
 	      (with-syntax ((writer writer) (ctx ctx) (arg arg))
@@ -139,7 +145,7 @@
                             :- BufferedWriter)
                (begin0
                    (do-write (wr 0) op ... wr)
-                 (__bio-output-buffer-detach! writer)))))))))
+                 (buffer-detach! writer)))))))))
   ((_ output fmt-string arg ...)
    #'(apply-formatter-to-output
       (make-formatter fmt-string)
@@ -155,6 +161,10 @@
 
 (defrule (eprintf fmt-string arg ...)
   (fprintf (current-error-port) fmt-string arg ...))
+
+;; writer
+(def (write-object (writer : BufferedWriter) obj (ctx (format-context) : WriteContext))
+  (format-write writer obj ctx))
 
 ;; reader
 (def (read-object (reader : BufferedReader) (env (reader-environment) : ReaderEnv))

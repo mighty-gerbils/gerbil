@@ -1,5 +1,5 @@
-(import :std/srfi/13
-	    (for-syntax :std/misc/ports :std/srfi/13 :std/pregexp))
+(import (for-syntax :std/string/misc
+                    :std/text/pregexp))
 (export #t)
 
 ;;* Mime Types
@@ -35,7 +35,7 @@
 	(apply make name exts)))
 
 
-    (map maker (filter tylin? (read-file-lines path))))
+    (map maker (filter tylin? (read-file-string-list path))))
 
   (syntax-case stx ()
     ((macro filename rest ...)

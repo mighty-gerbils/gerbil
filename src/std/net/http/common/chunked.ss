@@ -16,14 +16,12 @@
    (remaining :- :integer)       ; bytes remaining in current chunk
    (first     :- :boolean)       ; if its the first chunk, no leading \r\n
    (last      :- :boolean))      ; if its the last chunk
-  transparent: #f
-  final: #t)
+  transparent: #f)
 
 (defstruct chunked-writer
   ((writer :- BufferedWriter)
    (last   :- :boolean))
-  transparent: #f
-  final: #f)
+  transparent: #f)
 
 (def (open-chunked-reader (reader : BufferedReader))
   => Reader
@@ -76,6 +74,16 @@
         (read-next-chunk! self)
         (loop start need read))))))
 
+(def (chunked-reader-detach! (self : chunked-reader))
+  (let loop ()
+    (unless self.last
+      (when (> self.remaining 0)
+        (self.reader.skip self.remaining)
+        (set! self.remaining 0))
+      (read-next-chunk! self)
+      (loop)))
+  (set! self.reader #f))
+
 (def (chunked-writer-write (self   : chunked-writer)
                            (buffer : :u8vector)
                            (start  : :fixnum)
@@ -90,7 +98,6 @@
       (self.writer.flush)
       (fx- end start))
     0))
-
 
 (def (chunked-writer-close (self : chunked-writer))
   => :void
@@ -114,7 +121,7 @@
      (lambda (self)
        (self.reader.close))))
    (chunked-writer
-    (close __chunked-writer-write)))
+    (close __chunked-writer-close)))
   (Reader
    (chunked-reader
     (read __chunked-reader-read)))
@@ -122,6 +129,8 @@
    (chunked-writer
     (write __chunked-writer-write)))
   (DetachableBuffer
+   (chunked-reader
+    (detach! __chunked-reader-detach!))
    (chunked-writer
     (detach! __chunked-writer-detach!))))
 

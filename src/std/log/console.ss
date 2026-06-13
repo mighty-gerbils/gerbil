@@ -1,42 +1,45 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; console logging
-(import ./interface
+(import :std/interface
+        :std/io
+        ./interface
         ./level
         ./format)
-(export #t)
+(export console-log-sink)
 
 (def __console
   (delay-atomic
    (LogSink
     (PortLogSink
-     'system/console
+     "/system/console"
      (default-log-level)
-     ##console-port
-     record->string
-     (lambda (record) #t)))))
+     ##console-port))))
 
 (def (console-log-sink) => LogSink
   (:- (force __console)
       LogSink))
 
 (defstruct (PortLogSink BasicLogger)
-  ((port   :- :port)
-   (format :- :procedure)
-   (accept :- :procedure)))
+  ((writer :- BufferedWriter))
+  constructor: :init!)
 
-(defmethod {start! PortLogSink}
-  void
-  interface: LogSink)
+(defmethod {:init! PortLogSink}
+  (lambda (self (name  : :string)
+           (level : :fixnum)
+           (port  :~ output-port?))
+    (set! self.name name)
+    (set! self.level level)
+    (set! self.writer (open-buffered-writer port))))
 
-(defmethod {stop! PortLogSink}
-  void
-  interface: LogSink)
-
-(defmethod {log PortLogSink}
-  (lambda (self record)
-    (when (self.accept record)
-      (write-string (self.format record) self.port)
-      (newline self.port)
-      (force-output self.port)))
-  interface: Logger)
+(implement
+  (Logger
+   (PortLogSink
+    (log
+     (lambda (self record)
+       (format-log-line self.writer record)
+       (self.writer.flush)))))
+  (LogSink
+   (PortLogSink
+    (start! void)
+    (stop! void))))

@@ -7,7 +7,11 @@
 (defstruct !SysLogMsg ())
 (defstruct (!STOP !SysLogMsg) (how) final: #t)
 (defstruct (!UPDATE !SysLogMsg) ())
-(defstruct (!UPDATE:add-sink !UPDATE) ((sink :- LogSink)) final: #t)
-(defstruct (!UPDATE:set-system-level !UPDATE) ((level :- :fixnum)) final: #t)
+(defstruct (!UPDATE:add-sink !UPDATE)
+  ((sink :- LogSink))
+  final: #t)
+(defstruct (!UPDATE:set-system-level !UPDATE)
+  ((level :- :fixnum))
+  final: #t)
 
 (def !STOP! (!STOP 'shutdown))

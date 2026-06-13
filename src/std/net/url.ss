@@ -4,7 +4,10 @@
 (export (struct-out URL)
         URL-relative
         URL-with-query
-        as-url)
+        URL-from-components
+        as-url
+        url-rx
+        url-path-rx)
 (import :std/error
         :std/net/address
         :std/net/address/parser
@@ -117,7 +120,9 @@
 (def __default-ports
   ;; TODO more from IANA, as needed
   (hash ("http"  80)
-        ("https" 443)))
+        ("https" 443)
+        ("ws"    80)
+        ("wss"   443)))
 
 (def (split-url-path (str : :string))
   => :values
@@ -151,3 +156,24 @@
    ((string? x) (URL x))
    (else
     (raise-bad-argument to-url "URL or string" x))))
+
+(def (URL-from-components (proto   : :string)
+                          (host    : :string)
+                          (target  : :string)
+                          (address :? Address := #f))
+  => URL
+  (using (url (new-instance URL::t) :- URL)
+    (set! url.proto proto)
+    (set! url.host  host)
+    (let (address (or address (url-host->address url.host url.proto)))
+      (set! url.address address))
+    (let ((values path query)
+          (split-url-path target))
+      (set! url.path path)
+      (set! url.query query))
+    (set! url.string
+      (if url.query
+        (string-append url.proto "://" url.host url.path
+                       "?" url.query)
+        (string-append url.proto "://" url.host url.path)))
+    url))

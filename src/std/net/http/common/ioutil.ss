@@ -7,8 +7,9 @@
         :std/iter
         :std/net/url)
 
-(def max-line-length 8192)
-(def max-headers 64)
+(def max-status-line-length 256)
+(def max-request-line-length 1024)
+(def max-headers-length 32768)
 
 (defrule (@int char)
   (@eval (char->integer char)))
@@ -63,15 +64,28 @@
   (write-string! writer proto)
   (write-newline! writer))
 
-(def (read-request-line! (reader : BufferedReader))
-  (TODO read-request-line!))
+(def (read-request-line! (reader : BufferedReader)
+                         (count : :box))
+  => :values ; method target proto
+  (match (string-split (read-line! reader count) #\space)
+    ([method target proto]
+     (values method target proto))))
 
-(def (write-status-line! (writer : BufferedWriter) . args)
-  (TODO write-status-line!))
+(def (write-status-line! (writer : BufferedWriter)
+                         (proto  : :string)
+                         (status : :fixnum)
+                         (text   : :string))
+  (write-string! writer proto)
+  (write-space! writer)
+  (write-string! writer (number->string status))
+  (write-space! writer)
+  (write-string! writer text)
+  (write-newline! writer))
 
-(def (read-status-line! (reader : BufferedReader))
+(def (read-status-line! (reader : BufferedReader)
+                        (count  : :box))
   => :values
-  (let* ((line   (read-line! reader))
+  (let* ((line   (read-line! reader count))
          (space1 (string-index line #\space))
          (space2 (and space1
                       (string-index line #\space (fx1+ space1))))
@@ -83,68 +97,73 @@
                       line: line))
     (values status line)))
 
-(def (read-line! (reader : BufferedReader) (count 0 : :fixnum))
+(def (read-line! (reader : BufferedReader) (count : :box))
   => :string
-  (let loop ((chars [] :- :list) (count count :- :fixnum))
+  (let loop ((chars [] :- :list))
     => :string
     (let (next (reader.read-u8))
       (cond
        ((eof-object? next)
         (raise-premature-end-of-input read-status-line!))
+       ((fx<= (unbox count) 0)
+        (raise-io-error read-line! "maximum length exceeded"))
        ((eq? next (@int #\return))
         (consume-next-token! reader (@int #\newline))
         (list->string (reverse! chars)))
-       ((fx< count max-line-length)
-        (loop (cons (integer->char next)
-                    chars)
-              (fx+ count 1)))
        (else
-        (raise-io-error read-status-line! "maximum line length exceeded" chars: count))))))
+        (set! (box count)
+          (fx1- (unbox count)))
+        (loop (cons (integer->char next)
+                    chars)))))))
 
-(def (read-headers! (reader : BufferedReader))
+(def (read-headers! (reader : BufferedReader) (count : :box))
   => :list
-  (let loop ((result [] :- :list) (count 0 :- :fixnum))
+  (let loop ((result [] :- :list))
     => :list
-    (let (next (read-header! reader))
+    (let (next (read-header! reader count))
       (if next
-        (if (fx< count max-headers)
-          (loop (cons next result) (fx+ count 1))
-          (raise-io-error read-headers! "too many headers"))
+        (loop (cons next result))
         (reverse! result)))))
 
-(def (read-header! (reader : BufferedReader))
+(def (read-header! (reader : BufferedReader) (count : :box))
   (let loop ((chars [] :- :list)
-             (count 0  :- :fixnum)
              (upcase? #t))
     (let (next (reader.read-u8))
       (cond
        ((eof-object? next)
         (raise-premature-end-of-input read-header!))
+       ((fx<= (unbox count) 0)
+        (raise-io-error read-line! "maximum length exceeded"))
        ((eq? next (@int #\return))
+        (set! (box count)
+          (fx- (unbox count) 2))
         (if (null? chars)
           (begin
             (consume-next-token! reader (@int #\newline))
             #f)
           (raise-io-error read-header! "incomplete header"
                           (list->string (reverse! chars)))))
-       ((fx> count max-line-length)
-        (raise-io-error read-header! "maximum line length exceeded"))
        ((eq? next (@int #\:))
+        (set! (box count)
+          (fx- (unbox count) 1))
         (if (null? chars)
           (raise-io-error read-header! "empty header")
           (let* ((key (list->string (reverse! chars)))
+                 (_ (consume-next-token! reader (@int #\space)))
                  (val (read-line! reader count)))
             (cons key val))))
        ((eq? next (@int #\-))
+        (set! (box count)
+          (fx- (unbox count) 1))
         (let (char (##integer->char next))
           (loop (cons char chars)
-                (fx+ count 1)
                 #t)))
        (else
+        (set! (box count)
+          (fx- (unbox count) 1))
         (let* ((char (##integer->char next))
                (char (if upcase? (char-upcase char) char)))
           (loop (cons char chars)
-                (fx+ count 1)
                 #f)))))))
 
 (def (write-headers! (writer : BufferedWriter) (headers : :list))

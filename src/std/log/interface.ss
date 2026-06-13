@@ -1,23 +1,22 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; logging abstractions
-(import :std/time
-        :std/misc/alist)
+(import :std/time/precise
+        :std/list/walist)
 (export #t)
 
 ;; log records
 (defstruct Record
-  ((ts     : Time)
+  ((ts     : CoarseTime)
    (level  : :fixnum)
-   (source : :symbol)
+   (source : :string)
    (msg    : :string)
    (data   : PureAList))
-  final: #t
-  transparent: #t)
+  final: #t)
 
 ;; logger interface
 (interface Logger
-  (name)                         => :symbol
+  (name)                         => :string
   (level)                        => :fixnum
   (set-level! (level : :fixnum)) => :void
   (log (obj : Record))           => :void)
@@ -29,17 +28,29 @@
 
 ;; logger base class
 (defstruct BasicLogger
-  ((name  :- :symbol)
+  ((name  :- :string)
    (level :- :fixnum)))
 
 (defmethod {name BasicLogger}
   &BasicLogger-name
   interface: Logger)
 
-(defmethod {level BasicLoger}
+(defmethod {level BasicLogger}
   &BasicLogger-level
   interface: Logger)
 
 (defmethod {set-level! BasicLogger}
   &BasicLogger-level-set!
   interface: Logger)
+
+;; log directory
+(def current-log-directory
+  (make-parameter #f))
+
+(def (log-directory)
+  => :string
+  (cond
+   ((current-log-directory)
+    => (cut : <> :string))
+   (else
+    (path-expand "log" (gerbil-path)))))

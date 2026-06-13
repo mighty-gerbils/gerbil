@@ -100,7 +100,7 @@
                                         compression: compression)
                    : Writer)
       (writer.write data)
-      (__bio-output-buffer-detach! writer))
+      (buffer-detach! writer))
     (get-memory-output-u8vector output-buffer)))
 
 ;; same compression algorithm as compress (LZ77) but different

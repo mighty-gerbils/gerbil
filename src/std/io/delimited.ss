@@ -5,7 +5,9 @@
         :std/interface
         ./interface
         ./bio/types
-        ./bio/delimited)
+        ./bio/delimited
+        ./bio/buffer
+        ./bio/cache)
 (export delimit-reader
         delimit-buffered-reader)
 (declare (not safe))
@@ -47,5 +49,20 @@
     (self.reader.close))
   interface: Closer)
 
+(defmethod {detach! delimited-reader}
+  (lambda (self)
+    ;; if we still have remaining bytes, we have to skip
+    ;; them before detaching
+    (when (> self.remaining 0)
+      (let (buffer (buffer-cache.get (min self.remaining default-buffer-size)))
+        (while (> self.remaining 0)
+          (let (rd (self.reader.read buffer 0 (min self.remaining (u8vector-length buffer))))
+            (when (fx= rd 0)
+              (raise-premature-end-of-input delimited-reader-detach!))
+            (set! self.remaining (- self.remaining rd))))
+        (buffer-cache.put! buffer))))
+  interface: DetachableBuffer)
+
 (@implement Closer delimited-reader)
 (@implement Reader delimited-reader)
+(@implement DetachableBuffer delimited-reader)

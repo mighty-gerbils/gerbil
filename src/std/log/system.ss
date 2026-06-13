@@ -4,7 +4,6 @@
 (import :gerbil/runtime/thread
         :std/hash-table
         :std/error
-        :std/time
         ./interface
         ./level
         ./macros
@@ -22,17 +21,29 @@
 
 (def __system
   (delay-atomic
-   (SystemLogger
-    mx:      (make-mutex 'logger)
-    thread:  #f
-    level:   (default-log-level)
-    sources: (make-hash-table-eq)
-    sinks:   (make-hash-table-eq))))
+   (begin
+     (force std/log/level#__default-log-levels!)
+     (let* ((sys
+             (SystemLogger
+              mx:      (make-mutex 'logger)
+              thread:  #f
+              level:   (default-log-level)
+              sources: (make-hash-table)
+              sinks:   (make-hash-table)))
+            (thread
+             (spawn-thread (cut with-exception-stack-trace
+                                (cut system-logger-thread sys))
+                           '/system/log
+                           (system-thread-group))))
+       (set! (SystemLogger-thread sys)
+         thread)
+       ;; TODO log unhandled actor exceptions
+       sys))))
 
 (def (system-logger) => SystemLogger
   (:- (force __system) SystemLogger))
 
-(def (get-user-logger (name : :symbol)
+(def (get-user-logger (name : :string)
                       (new  : :procedure))
   => Logger
   (using (sys (system-logger) :- SystemLogger)
@@ -44,43 +55,15 @@
           (hash-put! sys.sources name logger)
           logger))))))
 
-(def (start-system-logger!
-      sinks: (sinks [console-log-sink] : :list)
-      level: (level (default-log-level) : :fixnum))
-  (using (sys (system-logger) :- SystemLogger)
-    (do-with-lock sys.mx
-      (unless sys.thread
-        (force __default-log-levels!)
-        (for-each
-          (lambda (make-sink)
-            (__add-system-sink/lock! (make-sink)))
-          sinks)
-        (set! sys.level level)
-        (set! sys.thread
-          (spawn-thread (cut system-logger-thread sys)
-                        'system/log))))))
-
-(def (stop-system-logger!)
-  (using (sys (system-logger) :- SystemLogger)
-    (do-with-lock sys.mx
-      (when sys.thread
-        (thread-send sys.thread !STOP!)
-        (unwind-protect
-          (thread-join! sys.thread)
-          (set! sys.thread #f))))))
-
 (def (add-system-sink! (sink : LogSink))
-  (do-with-lock sys.mx
-    (__add-system-sink/lock! sink)))
-
-(def (__add-system-sink/lock! (sink : LogSink))
   (using (sys (system-logger) :- SystemLogger)
-    (let (name (sink.name))
-      (when (hash-key? sys.sinks name)
-        (raise-context-error add-system-sink! "duplicate sink" sink))
-      (hash-put! sys.sinks name sink)
-      (when sys.thread
-        (thread-send sys.thread (!UPDATE:add-sink sink))))))
+    (do-with-lock sys.mx
+      (using (sys (system-logger) :- SystemLogger)
+        (let (name (sink.name))
+          (when (hash-key? sys.sinks name)
+            (raise-context-error add-system-sink! "duplicate sink" sink))
+          (hash-put! sys.sinks name sink)
+          (thread-send sys.thread (!UPDATE:add-sink sink)))))))
 
 ;; dynamic log options
 (def (set-system-log-level! (level : :fixnum))
@@ -89,25 +72,24 @@
       (let (current sys.level)
         (unless (fx= current level)
           (set! sys.level level)
-          (when sys.thread
-            (thread-send sys.thread (!UPDATE:set-system-level level))))))))
+          (thread-send sys.thread (!UPDATE:set-system-level level)))))))
 
 (def (system-log-lovel) => :fixnum
   (using (sys (system-logger) :- SystemLogger)
-    (do-with-lock sys.mx sys.level)))
+    (:- (do-with-lock sys.mx sys.level) :fixnum)))
 
-(def (set-subsystem-log-level! (name  : :symbol)
-                               (level : :fixnum))
+(def (set-source-log-level! (source : :string)
+                            (level  : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
     (do-with-lock sys.mx
       (cond
-       ((hash-get sys.sources name)
+       ((hash-get sys.sources source)
         => (lambda ((log :- Logger))
              (log.set-level! level)))
        (else
-        (raise-context-error set-subsystem-log-level! "unknown subsystem" name))))))
+        (raise-context-error set-subsystem-log-level! "unknown subsystem" source))))))
 
-(def (set-sink-log-level! (sink  : :symbol)
+(def (set-sink-log-level! (sink  : :string)
                           (level : :fixnum))
   (using (sys (system-logger) :- SystemLogger)
     (do-with-lock sys.mx
@@ -118,7 +100,7 @@
        (else
         (raise-context-error set-sink-log-level! "unknown sink" sink))))))
 
-(def (current-log-subsystems) => :list
+(def (current-log-sources) => :list
   (using (sys (system-logger) :- SystemLogger)
     (do-with-lock sys.mx :- :list
       (hash-keys sys.sources))))
@@ -137,26 +119,27 @@
     (mutex-unlock! sys.mx)
     (let/cc exit
       (using (console (console-log-sink) :- LogSink)
-        (deflogger-macros console system/log current-time-coarse)
-        (console.debug "starting system logger")
+        (deflogger-macros console "/system/log")
+        (console.info "starting system logger")
         (while #t
           (let (msg (thread-receive))
             (cond
              ((Record? msg)
-              (when (fx<= msg.level level)
-                (cond
-                 ((hash-get sources msg.source)
-                  => (lambda ((source :- Logger))
-                       (when (fx<= msg.level (source.level))
-                         (hash-for-each
-                             (lambda (name (sink :- LogSink))
-                               (when (fx<= msg.level (sink.level))
-                                 (sink.log msg)))
-                           sinks))))
-                 (else
-                  (console.warn "unknown record source" source: msg.source)))))
-             ((!STOP how)
-              (console.debug "stopping system logger")
+              (using (msg : Record)
+                (when (fx<= msg.level level)
+                  (cond
+                   ((hash-get sources msg.source)
+                    => (lambda ((source :- Logger))
+                         (when (fx<= msg.level (source.level))
+                           (hash-for-each
+                            (lambda (name (sink :- LogSink))
+                              (when (fx<= msg.level (sink.level))
+                                (sink.log msg)))
+                            sinks))))
+                   (else
+                    (console.warn "unknown record source" source: msg.source))))))
+             ((!STOP? msg)
+              (console.info "stopping system logger")
               (hash-for-each
                   (lambda (name (sink :- LogSink))
                     (try (sink.stop!)
@@ -164,15 +147,15 @@
                            (console.error "failed to stop log sink"
                                           sink: (sink.name) error: e))))
                 sinks)
-              (exit how))
-             ((!Update? msg)
+              (exit (!STOP-how msg)))
+             ((!UPDATE? msg)
               (match msg
-                ((!Update:add-sink sink)
-                 (with-lock sys.mx
+                ((!UPDATE:add-sink sink)
+                 (do-with-lock sys.mx
                    (using (sink :- LogSink)
                      (hash-put! sinks (sink.name) sink))))
                 ((!UPDATE:set-system-level system-level)
-                 (with-lock sys.mx
+                 (do-with-lock sys.mx
                    (set! level system-level)))
                 (else
                  (console.warn "unexpected system update message" message: msg))))

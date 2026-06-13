@@ -44,6 +44,8 @@ namespace: gxc
 ;;; compilation method application
 (def* compile-e
   ((stx)
+   (when __DEBUG-COMPILE
+     (displayln "@compile " (syntax->datum stx)))
    (let (self (current-compile-method))
      (cond
       ((method-ref self (stx-car-e stx))
@@ -51,6 +53,8 @@ namespace: gxc
       (else
        (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
   ((self stx)
+   (when __DEBUG-COMPILE
+     (displayln "@compile " (syntax->datum stx)))
    (cond
     ((method-ref self (stx-car-e stx))
      => (lambda (method) (declare (not safe)) (with-context stx (method self stx))))

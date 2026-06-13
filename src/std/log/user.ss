@@ -1,24 +1,33 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; user loggeers
-(import ./interface
+(import :std/interface
+        ./interface
         ./level
         ./macros
-        ./system
-        (for-syntax :std/stxutil))
+        ./system)
 (export #t)
 
 (defsyntax (deflogger stx)
+  (def (option? key)
+    (memq (stx-e key)
+          '(name: level: decorate:)))
+  (def (options? body)
+    (stx-plist? body option?))
+  (def (get-option opt options default)
+    (or (stx-getq opt options)
+        default))
+
   (syntax-case stx ()
     ((_ id options ...)
-     (identifier? #'id)
-     (let (opts (parse-options stx #'(options ...) '(name: level: time: decorate:)))
-       (with-syntax* ((name      (pgetq name:  opts #'id))
-                      (level     (pgetq level: opts #'(user-log-level 'name)))
-                      (get-time  (pgetq time:  opts 'current-time-coarse))
+     (and (identifier? #'id)
+          (options? #'(options ...)))
+     (let (opts #'(options ...))
+       (with-syntax* ((name      (get-option name:  opts #'id))
+                      (level     (get-option level: opts #'(user-log-level 'name)))
                       (make-logger
                        (cond
-                        ((pgetq decorate: opts)
+                        ((get-option decorate: opts #f)
                          => (lambda (decoration)
                               (syntax-case decoration ()
                                 ((base decorator)
@@ -26,48 +35,51 @@
                                 (_ (raise-syntax-error #f "invalid decoration" stx decoration)))))
                         (else
                          #'(get-logger 'name level)))))
-         #'(begin
-             (def id make-logger)
-             (deflogger-macros id name get-time)))))))
+         (with-identifiers ((id.level #'id #'id ".level")
+                            (id.log   #'id #'id ".log"))
+           #'(begin
+               (def id make-logger)
+               (defrule (id.level)
+                 (Logger-level id))
+               (defrule (id.log arg (... ...))
+                 (Logger-log id arg (... ...)))
+               (deflogger-macros id name))))))))
 
 (defstruct (UserLogger BasicLogger)
-  ((system    :- :thread)))
+  ((system   :- :thread)))
 
 (defstruct UserLoggerDecorator
   ((base     ::- Logger)
    (decorate :-  :procedure)))
 
-(def (get-logger (subsystem : :symbol) (level : :fixnum))
+(def (get-logger (source : :string) (level : :fixnum))
   => Logger
   (get-user-logger
-   subsystem
+   source
    (lambda ((system-thread :- :thread))
      (Logger
-      (UserLogger subsystem level system-thread)))))
+      (UserLogger source level system-thread)))))
 
 (def (decorate-logger (base : Logger) (decorator : :procedure))
   => Logger
   (Logger
    (UserLoggerDecorator base decorator)))
 
-(defmethod {log UserLogger}
-  (lambda (self record)
-    (thread-send self.system record))
-  interface: Logger)
-
-(defmethod {log UserLoggerDecorator}
-  (lambda (self record)
-    (self.base.log (self.decorate record)))
-  interface: Logger)
-
-(defmethod {name UserLoggerDecorator}
-  (lambda (self) (self.base.name))
-  interface: Logger)
-
-(defmethod {level UserLoggerDecorator}
-  (lambda (self) (self.base.level))
-  interface: Logger)
-
-(defmethod {set-level! UserLoggerDecorator}
-  (lambda (self level) (self.base.set-level! level))
-  interface: Logger)
+(implement Logger
+  (UserLogger
+   (log
+    (lambda (self record)
+      (thread-send self.system record))))
+  (UserLoggerDecorator
+   (log
+    (lambda (self record)
+      (self.base.log (self.decorate record))))
+   (name
+    (lambda (self)
+      (self.base.name)))
+   (level
+    (lambda (self)
+      (self.base.level)))
+   (set-level!
+    (lambda (self level)
+      (self.base.set-level! level)))))

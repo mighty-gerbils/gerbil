@@ -4,7 +4,7 @@
 (import :std/error)
 (export #t)
 
-(def (compress-gz (file : :string)) => :string
+(def (compress-gzip (file : :string)) => :string
   (let* ((cmd    (string-append "gzip " file))
          (result (shell-command cmd #t)))
     (unless (fxzero? (car result))

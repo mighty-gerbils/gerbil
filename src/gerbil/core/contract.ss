@@ -762,7 +762,7 @@ package: gerbil/core
                           (else
                            (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))
                     (else object)))))
@@ -810,21 +810,21 @@ package: gerbil/core
                              #'(mutator (check-nil! object) value)
                              #'(mutator object value))))
                         ((!class-slot-type type part)
-                         => (lambda (type)
-                              (let (type (resolve-type stx type))
+                         => (lambda (next-type)
+                              (let (next-type (resolve-type stx next-type))
                                 (with-syntax ((object
                                                (if nil-check?
                                                  `(check-nil! ,object)
                                                  object))
                                               (accessor (get-slot-accessor stx type part)))
-                                  (loop rest type
+                                  (loop rest next-type
                                           #'(accessor object)
                                           (!class-slot-checked-mutator-contract? type part)
                                           #f)))))
                         (else
                          (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))))))
           (else

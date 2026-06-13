@@ -1,5 +1,5 @@
-(import :std/mime/struct :std/srfi/13)
-(export #t (import: :std/mime/struct))
+(import ./struct)
+(export #t)
 
 (def list-mime-types (cut hash->list mime-types))
 (def list-mime-exensions (cut hash->list mime-extensions))

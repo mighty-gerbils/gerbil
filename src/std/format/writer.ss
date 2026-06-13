@@ -234,9 +234,9 @@
   (write-ratnum
    (lambda (self writer num ctx)
      (do-write (wr 0)
-       (writer.write-integer (##ratnum-numerator num) ctx)
+       (ctx.methods.write-integer writer (##ratnum-numerator num) ctx)
        (writer.write-slash)
-       (writer.write-integer (##ratnum-denominator num) ctx)
+       (ctx.methods.write-integer writer (##ratnum-denominator num) ctx)
        wr)))
   (write-cpxnum
    (lambda (self writer num ctx)

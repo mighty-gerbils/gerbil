@@ -93,9 +93,17 @@
 (def (bio-delimited-close (delim : delimited-input-buffer))
   => :void
   (unless delim.closed?
-    (set! delim.closed? #f)
+    (set! delim.closed? #t)
     (set! delim.remaining 0)
     (__bio-input-buffer-close delim.input)))
+
+(def (bio-delimited-detach! (delim : delimited-input-buffer))
+  (unless delim.closed?
+    (when (> delim.remaining 0)
+      (bio-delimited-skip delim delim.remaining))
+    (set! delim.closed? #t)
+    (set! delim.remaining 0)
+    (set! delim.input #f)))
 
 (implement
   (Closer
@@ -113,7 +121,10 @@
     (available __bio-delimited-available)
     (skip      __bio-delimited-skip)
     (put-back  __bio-delimited-put-back)
-    (delimit   __bio-delimited-delimit-input))))
+    (delimit   __bio-delimited-delimit-input)))
+  (DetachableBuffer
+   (delimited-input-buffer
+    (detach! __bio-delimited-detach!))))
 
 (def (bio-delimit-input (bio : basic-input-buffer)
                         (limit :~ nonnegative-integer? :- :integer))

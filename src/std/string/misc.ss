@@ -2,6 +2,7 @@
 ;;;; String utilities
 
 (export
+  string-trim
   string-split-prefix
   string-trim-prefix
   string-split-suffix
@@ -18,6 +19,24 @@
 
 (import :std/error
         :std/iter)
+
+(def (string-trim (str : :string))
+  => :string
+  (let (len (string-length str))
+    (let loop ((left 0 :- :fixnum))
+      => :string
+      (if (fx< left len)
+        (if (char-whitespace? (##string-ref str left))
+          (loop (fx+ left 1))
+          (let loop ((right len :- :fixnum))
+            => :string
+            (let (right-i (fx- right 1))
+              (if (fx< left right-i)
+                (if (char-whitespace? (##string-ref str right-i))
+                  (loop right-i)
+                  (substring str left right))
+                ""))))
+        ""))))
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.

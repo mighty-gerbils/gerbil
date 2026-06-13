@@ -2,78 +2,77 @@
 ;;; © vyzo
 ;;; file system rotating loger
 (import :std/error
+        :std/interface
         :std/io
-        :std/time
-        :std/misc/queue
+        :std/time/precise
+        :std/struct/queue
+        :std/os/fcntl
         ./interface
         ./proto
+        ./level
         ./format
         ./compress)
-(export #t)
+(export (struct-out LogRotateOpt)
+        new-log-rotate-sink)
 
 (defclass LogRotateOpt
-  ((dir      : :string    := (log-directory)) ; log directory
+  ((name     : :string    := "/app/filesystem")
+   (level    : :fixnum    := INFO)
+   (dir      : :string    := (log-directory)) ; log directory
    (file     : :string    := "gerbil.log")    ; log base file name
    (size     : :integer   := (expt 2 22))     ; log file size rotation trigger
    (backlog  : :integer   := (expt 2 24))     ; aggregate backlog size
-   (flush    : :flonum    := 0.01)            ; log flush interval, seconds
-   (compress : :procedure := compress-gz)     ; file compressor procedure lambda (path) => path
-   (write    : :procedure := log-record)      ; record write procedure: lambda (BufferedWriter Record) => :fixnum
+   (flush    : :flonum    := 0.1)             ; log flush interval, seconds
+   (compress : :procedure := compress-gzip)   ; file compressor procedure lambda (path) => path
+   (write    : :procedure := format-log-line) ; record write procedure: lambda (BufferedWriter Record) => :fixnum
    (accept   : :procedure := accept-all)      ; record filter procedure: lambda (Record) => :boolean
    )
   final: #t)
 
 (defclass (LogRotateSink BasicLogger)
-  ((opt      :- LogRotateOpts)
-   (mx       :- :mutex)
+  ((opt      :- LogRotateOpt)
    (thread   :- :thread)
    (path     :- :string)
    (size     :- :fixnum)
    (backlog  :- :fixnum)
-   (backlogq :- queue)
+   (backlogq :- Queue)
    (file     :- Writer)
    (buffer   :- BufferedWriter))
   final: #t)
 
-(def (make-log-rotate-sink (opt : LogRotateOpt := (LogRotateOpt)))
+(def (new-log-rotate-sink (opt : LogRotateOpt := (LogRotateOpt)))
   => LogSink
   (LogSink
    (LogRotateSink
-    opt: opt
-    mx: (make-mutex 'log-rotate))))
+    name: opt.name
+    level: opt.level
+    opt: opt)))
 
 (def (accept-all _) #t)
 
 (defmethod {start! LogRotateSink}
   (lambda (self)
-    (do-with-lock self.mx
-      (unless self.thread
-        {self.__start}
-        (set! self.thread
-          (spawn-thread (lambda () {self.__background})
-                        'system/log/rotate)))))
+    (unless self.thread
+      {self.__start}
+      (set! self.thread
+        (spawn-thread (lambda () {self.__background})
+                      'system/log/rotate))))
   interface: LogSink)
 
 (defmethod {stop! LogRotateSink}
   (lambda (self)
-    (do-with-lock self.mx
-      (when self.thread
-        (thread-send self.thread !STOP!)
-        {self.__close}
-        (unwind-protect
-          (thread-join! self.thread)
-          (set! self.thread #f)))))
+    (when self.thread
+      (thread-send self.thread !STOP!))
+    (unwind-protect
+      (thread-join! self.thread)
+      (set! self.thread #f)))
   interface: LogSink)
 
 (defmethod {log LogRotateSink}
   (lambda (self record)
-    (do-with-lock self.mx
-      (when self.thread
-        (when (self.accept record)
-          (let (wr (self.write self.buffer record))
-            (set! self.size (+ self.size wr))
-            (when (> self.size self.opts.size)
-              {self.__rotate}))))))
+    (when self.thread
+      (when (self.opt.accept record)
+        (thread-send self.thread record))))
   interface: Logger)
 
 (defmethod {__start LogRotateSink}
@@ -86,25 +85,26 @@
            (files  (directory-files self.opt.dir))
            (files  (filter-map
                     (lambda (f)
-                      (and (string-prefix? prefix f)
-                           (cons f (file-info f))))
+                      (let (f (path-expand f self.opt.dir))
+                        (and (string-prefix? prefix f)
+                             (cons f (file-info f)))))
                     files))
            (files (list-sort
                    (lambda ((a :- :pair) (b :- :pair))
                      (let ((tma (file-info-creation-time (cdr a)))
                            (tmb (file-info-creation-time (cdr b))))
                        (fl< (time->seconds tma)
-                            (time->seconds tmb)))))
-                  files))
+                            (time->seconds tmb))))
+                   files)))
       (for-each
-        (lambda ((p :- pair))n
+        (lambda ((p :- :pair))
           (let ((file (car p))
                 (size (file-info-size (cdr p))))
             (set! self.backlog (+ self.backlog size))
             (enqueue! self.backlogq (cons file size ))))
         files)
     ;; prepare the output file
-    {self.__prepare}))
+    {self.__prepare})))
 
 (defmethod {__prepare LogRotateSink}
   (lambda (self)
@@ -128,10 +128,10 @@
 (defmethod {__rotate LogRotateSink}
   (lambda (self)
     {self.__close}
-    (let* ((next-file       (path-with-timestamp self.file))
-           (_               (move-file self.file next-file))
+    (let* ((next-file       (path-with-timestamp self.path))
+           (_               (move-file self.path next-file))
            (compressed-file (self.opt.compress next-file))
-           (compressed-size (file-info-size (file-info compressed)))
+           (compressed-size (file-info-size (file-info compressed-file)))
            (backlog         (+ compressed-size self.backlog)))
       ;; remove the file if the compressor didn't
       (when (file-exists? next-file)
@@ -140,7 +140,7 @@
       (enqueue! self.backlogq (cons compressed-file compressed-size))
       (let loop ((backlog backlog))
         (if (and (> backlog self.opt.backlog)
-                 (non-queue-empty? self.backlogq))
+                 (non-empty-queue? self.backlogq))
           (with ([file . size] (dequeue! self.backlogq))
             (delete-file file)
             (loop (- backlog size)))
@@ -161,13 +161,21 @@
       (while #t
         (let (next (thread-receive self.opt.flush #f))
           (match next
+            ((? Record? record)
+             (let (wr (self.opt.write self.buffer record))
+               (set! self.size (+ self.size wr))
+               (when (> self.size self.opt.size)
+                 {self.__rotate})))
             (#f
-             (do-with-lock self.mx
-               (self.buffer.flush)))
+             (self.buffer.flush))
             ((!STOP)
+             {self.__close}
              (exit 'STOP))
             (else
              (void))))))))
 
-(def (path-with-timestamp path)
-  (string-append path "~" (time->string (current-time-coarse))))
+(@implement Logger LogRotateSink)
+(@implement LogSink LogRotateSink)
+
+(def (path-with-timestamp (path : :string))
+  (string-append path "~" (number->string (CoarseTime-seconds (current-time-coarse)))))

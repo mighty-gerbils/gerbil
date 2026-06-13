@@ -9,6 +9,10 @@ namespace: gxc
         "../expander")
 (export #t)
 
+(def __DEBUG-COMPILE
+  (and (string? __DEBUG)
+       (string-contains __DEBUG "compilation")))
+
 (defsyntax (ast-case stx)
   (macro-expand-syntax-case stx 'stx-eq? 'stx-e 'quote))
 

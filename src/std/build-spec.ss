@@ -96,6 +96,7 @@
     "io/util"
     "io/counter"
     "io/delimited"
+    "io/detachable"
     "io/dummy"
     "io/socket/types"
     "io/socket/sockaddr"
@@ -131,6 +132,7 @@
     "format/io"
     "format/format"
     "format/api"
+    "format"
 
     (gxc: "crypto/libcrypto"
           "-cc-options" ,(append-options (cppflags "libcrypto" "") "-Wno-discarded-qualifiers" "-Wno-deprecated-declarations" "-Wno-implicit-function-declaration")
@@ -181,6 +183,36 @@
     "net/http/client"
     "net/request"
 
+    "log/interface"
+    "log/level"
+    "log/proto"
+    "log/macros"
+    "log/console"
+    "log/system"
+    "log/user"
+    "log/format"
+    "log/default"
+    "log/rotate"
+    "log/compress"
+    "log/api"
+    "log"
+
+    "net/mime/struct"
+    "net/mime/types"
+    "net/mime/file"
+
+    "net/http/server/interface"
+    "net/http/server/status"
+    "net/http/server/handlers/empty"
+    "net/http/server/handlers/file"
+    "net/http/server/handlers/directory"
+    "net/http/server/handlers/closure"
+    "net/http/server/mux/static"
+    "net/http/server/request"
+    "net/http/server/server"
+    "net/http/server/api"
+    "net/http/server"
+
     ;; TODO
 
     ;; "encoding/json/env"
@@ -188,17 +220,6 @@
     ;; "encoding/json/writer"
     ;; "encoding/json/reader"
 
-    ;; "log/interface"
-    ;; "log/level"
-    ;; "log/proto"
-    ;; "log/system"
-    ;; "log/macros"
-    ;; "log/user"
-    ;; "log/default"
-    ;; "log/format"
-    ;; "log/console"
-    ;; "log/rotate"
-    ;; "log/compress"
 
     ))
 

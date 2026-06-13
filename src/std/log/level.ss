@@ -1,8 +1,20 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; predefined log levels
-(import :std/alist)
-(export #t)
+(import :std/iter
+        :std/list/walist)
+(export CRITICAL
+        ERROR
+        WARN
+        INFO
+        DEBUG
+        VERBOSE
+        string->log-level
+        log-level->string
+        parse-log-level-string
+        set-default-log-levels!
+        default-log-level
+        user-log-level)
 
 ;; predefined log levels
 (def CRITICAL -1)
@@ -20,6 +32,12 @@
    ("INFO" INFO)
    ("DEBUG" DEBUG)
    ("VERBOSE" VERBOSE)
+   ("critical" CRITICAL)
+   ("error" ERROR)
+   ("warn" WARN)
+   ("info" INFO)
+   ("debug" DEBUG)
+   ("verbose" VERBOSE)
    (CRITICAL CRITICAL)
    (ERROR ERROR)
    (WARN WARN)
@@ -27,8 +45,10 @@
    (DEBUG DEBUG)
    (VERBOSE VERBOSE)))
 
-(def (string->log-level (str : :string)) => :fixnum
-  (:- (hash-ref __level-map str VERBOSE) :fixnum))
+(def (string->log-level (str : :string)
+                        (default VERBOSE : :fixnum))
+  => :fixnum
+  (:- (hash-ref __level-map str default) :fixnum))
 
 (def __level-vector
   (vector
@@ -41,75 +61,65 @@
 
 (def (log-level->string (level : :fixnum)) => :string
   (cond
-   ((fx< CRITICAL) "CRITICAL")
-   ((fx> VERBOSE) "VERBOSE")
+   ((fx< level CRITICAL) "CRITICAL")
+   ((fx> level VERBOSE)  "VERBOSE")
    (else
     (let ()
       (declare (not safe))
       (:- (vector-ref __level-vector (fx1+ level)) :string)))))
 
 (def __default-level   0)
-(def __user-sources    (hash-eq))
+(def __user-sources    (hash))
 (def __user-subsystems (wanullq))
 
-;; level string format
-;; <default>(:<system>((/<system>*)/[*]):<level>)*
-(def (__init-log-levels! (lvl : string))
-  (def (set-default! level)
-    (cond
-     ((hash-get __level_map level)
-      => (cut set! __default_log-level <>))))
-  (def (set-user! source level)
-    (let (level (hash-ref __level_map level __default-level))
-      (if (string-suffix? "/*" source)
+;; log level initialization string format
+;; <level>*(,<system>:<level>)*
+(def (parse-log-level-string (str : :string))
+  => :values
+  (match (string-split str #\,)
+    ([level . sources]
+     (values
+      (hash-ref __level-map level __default-level)
+      (map (lambda (spec)
+             (match (string-split spec #\:)
+               ([source level]
+                (cons source
+                      (hash-ref __level-map level __default-level)))))
+           sources)))))
+
+(def (init-log-levels! (levels : :string))
+  (let ((values default sources)
+        (parse-log-level-string levels))
+    (set! __default-level (: default :fixnum))
+    (for ([src . level] sources)
+      (if (string-suffix? "/*" src)
         (set! __user-subsystems
           (wacons __user-subsystems
-                  (substring source 0 (fx1- (string-length source)))
+                  (substring src 0 (fx1- (string-length src)))
                   level))
-        (hash-put! __user-sources
-                   (string->symbol source)
-                   level))))
-  (cond
-   ((string-index lvl #\:)
-    => (lambda (sep)
-         (set-default! (substring lvl sep (string-length lvl)))
-         (let loop ((start (fx1+ sep)))
-           (cond
-            ((string-index lvl #\: start)
-             => (lambda (sep)
-                  (let* ((source (substring lvl start sep))
-                         (start  (fx1+ sep)))
-                    (cond
-                     ((string-index lvl #\: start)
-                      => (lambda (sep)
-                           (let* ((level (substring lvl start sep))
-                                  (start (fx1+ sep)))
-                             (set-user! source level)
-                             (cond
-                              ((string-index lvl #\: start)
-                               => (lambda (sep) (loop (fx+ sep 1))))))))))))))))
-   (else
-    (set-default! lvl)))
+        (hash-put! __user-sources src level)))))
 
 (def __default-log-levels!
   (delay-atomic
-   (let (lvl (getenv "GERBIL_LOG_LEVEL" #f))
-     (when lvl
-       (__init-log-levels! lvl)))))
+   (let (levels (getenv "GERBIL_LOG_LEVEL" #f))
+     (when levels
+       (init-log-levels! levels)))))
 
-(def (set-default-log-levels! (lvl : string)) => void
+;; set the application default log levels
+;; should only be called at initialization
+(def (set-default-log-levels! (levels : :string))
+  => :void
   (force __default-log-levels!)
-  (__init-logl-evels! lvl))
+  (init-log-levels! levels))
 
 (def (default-log-level) => :fixnum
   (force __default-log-levels!)
-  __default-log-level)
+  __default-level)
 
-(def (user-log-level (source : :symbol)) => :fixnum
+(def (user-log-level (source : :string)) => :fixnum
   (force __default-log-levels!)
-  (let (source-str (symbol->string source))
-    (:- (cond
-         ((hash-get __user-log-levels source))
-         ((wagetf __user-log-subsystems (cut string-prefix? <> source-str)))
-         (else __default-log-level))
-        :fixnum)))
+  (:- (cond
+       ((hash-get __user-sources source))
+       ((wagetf __user-subsystems (cut string-prefix? <> source)))
+       (else __default-level))
+      :fixnum))

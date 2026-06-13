@@ -40,6 +40,7 @@
   wakey?
   waref
   waget
+  wagetf
   waput
   waput!
   waremove
@@ -51,9 +52,9 @@
 (defstruct (ConcreteAList AList) ((alist :- :list))
   transparent: #t)
 
-(defstruct (PureAList ConcreteAList AList) ()
+(defstruct (PureAList ConcreteAList) ()
   transparent: #t)
-(defstruct (MutAList ConcreteAList AList) ()
+(defstruct (MutAList ConcreteAList) ()
   transparent: #t)
 
 (defstruct (WAList PureAList) ()
@@ -80,7 +81,9 @@
 (interface AListOps
   (wrap) => :procedure
   (test) => :procedure
-  (assoc k) => :t)
+  (assoc k) => :t
+  (assf (f : :procedure)) => :t
+  )
 
 (interface PureAListOps
   (cons k v) => PureAList)
@@ -98,6 +101,9 @@
 
 (defcall-interface-method AListOps assoc
   (__wa-assoc obj k))
+
+(defcall-interface-method AListOps assf
+  (__wa-assf obj proc))
 
 (defcall-interface-method PureAListOps cons
   (__wa-cons obj k v)
@@ -140,7 +146,8 @@
 (defrules collect-alist ()
   ((_) [])
   ((_ k v . rest)
-   (cons (cons k v) (collect-alist . rest))))
+   (cons (cons k v) (collect-alist . rest)))
+  (_ (syntax-error "not a key value list")))
 
 (defcollect wacollect   __walist)
 (defcollect wacollectq  __walistq)
@@ -188,6 +195,10 @@
   ;; => Maybe :pair
   (__wa-assoc wa k))
 
+(def (wassf (wa : AList) (proc : :procedure))
+  ;; => Maybe :pair
+  (__wa-assf wa proc))
+
 (def (wakey? (w : ConcreteAList) k) => :boolean
   (if (wassoc w k) #t #f))
 
@@ -198,6 +209,11 @@
 
 (def (waget (w : ConcreteAList) k)
   (waref w k #f))
+
+(def (wagetf (w : ConcreteAList) (proc : :procedure) (default #f))
+  (cond
+   ((wassf w proc) => ##cdr)
+   (else default)))
 
 (def (waput (w : PureAList) k v) => PureAList
   (: (let* ((op-test (__wa-test w))
@@ -270,32 +286,68 @@
               (else (void))))))
       w)))
 
+(defmethod {assf ConcreteAList}
+  (lambda (self proc)
+       (let loop ((rest self.alist))
+         (match rest
+           ([hd . rest]
+            (with ([k . v] hd)
+              (if (proc k)
+                hd
+                (loop rest))))
+           (else #f))))
+  interface: AListOps)
+
 (implement
   (AListOps
    (WAList
-    (wrap  (lambda (self) __walist))
-    (test  (lambda (self) equal?))
-    (assoc (lambda (self k) (assoc k self.alist))))
+    (wrap
+     (lambda (self) make-WAList))
+    (test
+     (lambda (self) equal?))
+    (assoc
+     (lambda (self k)
+       (assoc k self.alist))))
    (WAListq
-    (wrap  (lambda (self) __walistq))
-    (test  (lambda (self) eq?))
-    (assoc (lambda (self k) (assq k self.alist))))
+    (wrap
+     (lambda (self) make-WAListq))
+    (test
+     (lambda (self) eq?))
+    (assoc
+     (lambda (self k)
+       (assq k self.alist))))
    (WAListv
-    (wrap  (lambda (self) __walistv))
-    (test  (lambda (self) eqv?))
-    (assoc (lambda (self k) (assv k self.alist))))
+    (wrap
+     (lambda (self) make-WAListv))
+    (test
+     (lambda (self) eqv?))
+    (assoc
+     (lambda (self k)
+       (assv k self.alist))))
    (MutWAList
-    (wrap  (lambda (self) __walist!))
-    (test  (lambda (self) equal?))
-    (assoc (lambda (self k) (assoc k self.alist))))
+    (wrap
+     (lambda (self) make-MutWAList))
+    (test
+     (lambda (self) equal?))
+    (assoc
+     (lambda (self k)
+       (assoc k self.alist))))
    (MutWAListq
-    (wrap  (lambda (self) __walistq!))
-    (test  (lambda (self) eq?))
-    (assoc (lambda (self k) (assq k self.alist))))
+    (wrap
+     (lambda (self) make-MutWAListq))
+    (test
+     (lambda (self) eq?))
+    (assoc
+     (lambda (self k)
+       (assq k self.alist))))
    (MutWAListv
-    (wrap  (lambda (self) __walistv!))
-    (test  (lambda (self) eqv?))
-    (assoc (lambda (self k) (assv k self.alist)))))
+    (wrap
+     (lambda (self) make-MutWAListv))
+    (test
+     (lambda (self) eqv?))
+    (assoc
+     (lambda (self k)
+       (assv k self.alist)))))
   (PureAListOps
    (WAList
     (cons  (lambda (self k v) (WAList (cons (cons k v) self.alist)))))
