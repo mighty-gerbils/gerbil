@@ -47,18 +47,24 @@
   => :void
   (TODO save-capability-context!))
 
-(def public-key-cache-ttl 120)
+(def public-key-cache-ttl 1200)
 (defmethod {__pubk capability-context}
   (lambda (self (did :- :string))
     (cond
      ((do-with-lock self.mx
-        (alet (entry (self.public-keys.ref did #f))
-          (car entry))))
+        (self.public-keys.ref did #f))
+      => (lambda (entry)
+           (let (now  (current-time-coarse))
+             (set! (cdr entry)
+               (+ (CoarseTime-seconds now)
+                  public-key-cache-ttl)))
+           (car entry)))
      (else
       (let* ((pubk (did->public-key did))
              (now  (current-time-coarse))
-             (entry (cons pubk (+ (CoarseTime-seconds now)
-                                  public-key-cache-ttl))))
+             (entry (cons pubk
+                          (+ (CoarseTime-seconds now)
+                             public-key-cache-ttl))))
         (do-with-lock self.mx
           (self.public-keys.set! did entry))
         pubk)))))
