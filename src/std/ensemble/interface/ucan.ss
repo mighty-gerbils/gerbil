@@ -58,7 +58,7 @@
   ;; - the token must be anchored either at a root anchor
   ;;   or extend a trust anchor in the chain
   (verify (token : Token)
-          (subject :? :string))
+          (subject :? :string := #f))
   => @VerificationResult
 
   ;; list issued unexpired tokens that have been remembered
@@ -71,34 +71,34 @@
   ;; output anchors are used to chain tokens for output
   ;; operations e.g. sending a message or opening a stream
   (add-output-anchor! (token : Token)
-                      (subject :? :string))
+                      (subject :? :string := #f))
   => :void
 
   ;; remove an output trust anchor
   (remove-output-anchor! (token : Token)
-                         (subject :? :string))
+                         (subject :? :string := #f))
   => :void
 
   ;; list output trust anchors
   (list-output-anchors (filter : :procedure)
-                       (subject :? :string))
+                       (subject :? :string := #f))
   => :list
 
   ;; adds an input trust anchor for input tokens
   ;; an input anchor confers partial trust for some audience
   ;; and specific capabilities
   (add-input-anchor! (token : Token)
-                     (subject :? :string))
+                     (subject :? :string := #f))
   => :void
 
   ;; removes an input trust anchor
   (remove-input-anchor! (token : Token)
-                        (subject :? :string))
+                        (subject :? :string := #f))
   => :void
 
   ;; lists the input trust anchors
   (list-input-anchors (filter : :procedure)
-                      (subject :? :string))
+                      (subject :? :string := #f))
   => :list
 
   ;; adds a root anchor.

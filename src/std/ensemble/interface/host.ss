@@ -8,6 +8,9 @@
         ./actor)
 (export #t)
 
+(deftype @Host Host)
+(deftype @Network Network)
+
 ;; context for security operations
 (interface (SecurityContext Closer)
   ;; the capability context
@@ -40,6 +43,10 @@
   (security-context)
   => SecurityContext
 
+  ;; the actor host
+  (host)
+  => @Host
+
   ;; send a signd message
   (send-message! (msg : Message))
   => :void
@@ -67,19 +74,19 @@
   (receive-broadcast! (ctx : ActorContext) (msg : BroadcastMessage))
   => :void
   ;; invoked when an actor is registered
-  (on-register! (actor : Handle))
+  (on-register! (ctx : ActorContext) (actor : Handle))
   => :void
 
   ;; invoked when an actor is unregistered
-  (on-unregister! (actor : Handle))
+  (on-unregister! (ctx : ActorContext) (actor : Handle))
   => :void
   )
 
 ;; low level data streams
 (interface (Stream NetworkTimeout Closer)
-  ;; the name of local host
+  ;; the local host
   (host)
-  => :string
+  => @Host
 
   ;; the name of the peer
   (peer)
@@ -89,7 +96,7 @@
   (proto)
   => :string
 
-  ;; the stream's auth token
+  ;; the stream's ucan auth token
   (auth)
   => Token
 
@@ -109,11 +116,11 @@
   => :void
 
   ;; invoked when the stream handler is registered
-  (on-register! (proto : :string))
+  (on-register! (host : @Host) (proto : :string))
   => :void
 
   ;; invoked when the stream handler is unregistered
-  (on-unregister! (proto : :string))
+  (on-unregister! (host : @Host) (proto : :string))
   => :void
   )
 
@@ -123,11 +130,18 @@
   (receive! (msg : BroadcastMessage))
   => :void
 
-  ;; invoked when a group is joined
-  (on-join! (group : :string))
+  ;; invoked when a group is subscribed
+  (on-subscribe! (net   : @Network)
+                 (group : :string)
+                 (subscription-token : :t))
+  => :void
 
-  ;; invoked when a group is left
-  (on-leave! (group : :string)))
+  ;; invoked when a group is unsubscribed
+  (on-unsubscribe! (net   : @Network)
+                   (group : :string)
+                   (subscription-token : :t))
+  => :void
+  )
 
 ;; the network abstraction
 (interface (Network Closer)
@@ -136,9 +150,9 @@
   => :list
 
   ;; connect to a peer in address
-  ;; returns the peer
-  (connect! (peer :? :string)
-            (addr :  Address))
+  ;; returns the peer host name
+  (connect! (addr :  Address)
+            (peer :? :string := #f))
   => :string
 
   ;; current network peers
@@ -168,9 +182,16 @@
 
   ;; subscribe to receive messages in a broadcast group
   ;; automatically joins if the group hasn't been joined
-  ;; already
+  ;; already.
+  ;; returns a subsciption opaque token that can be
+  ;; used to unsubscribe
   (subscribe! (group : :string)
               (handler : BroadcastHandler))
+  => :t
+
+  ;; unsubscribe from a previous subscription
+  (unsubscribe! (subscription-token : :t))
+  => :void
 
   ;; the currently joined broadcast groups
   (groups)
@@ -208,7 +229,7 @@
   ;; and optionally a specific actor subject (a did)
   (open-stream (peer  : :string)
                (proto : :string)
-               (subject :? :string))
+               (subject :? :string := #f))
   => Stream
 
   ;; register a stream handler for a protocol
