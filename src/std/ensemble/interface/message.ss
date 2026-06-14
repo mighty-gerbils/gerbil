@@ -10,28 +10,27 @@
    (path : :string))  ; the path of the actor in the actor space
   final: #t)
 
-(defstruct Message
+(defstruct UnicastMessageHead
   ((source    : Handle)      ; source actor
-   (dest      : Handle)      ; recipient actor
-   (auth      : :list)       ; UCAN authorization tokens for the message
-   (method    : :string)     ; the method invoked by the message
-   (body      : :u8vector)   ; the message body
-   (expire    : :integer)    ; expiration of the message in UNIX seconds
-   (options   : :list)       ; message options
-   (nonce     :- :u8vector)  ; message nonce
-   (signature :- :u8vector)) ; signature by the source identity
+   (dest      : Handle)))      ; recipient actor
+
+(defstruct BroadcastMessageHead
+  ((source    : Handle)      ; source actor
+   (dest      : :string)))   ; destination group
+
+(defclass MessageBody
+  ((method    : :string)      ; the method invoked by the message
+   (body      : :u8vector)    ; the message body
+   (expire    : :integer)     ; expiration of the message in UNIX seconds
+   (options   : :list)        ; message options
+   (auth      : :list)        ; UCAN authorization tokens for the message
+   (nonce     :- :u8vector)   ; message nonce
+   (signature :- :u8vector))) ; message signature
+
+(defclass (Message MessageBody UnicastMessageHead) ()
   final: #t)
 
-(defstruct BroadcastMessage
-  ((source    : Handle)      ; source actor
-   (dest      : :string)     ; destination group
-   (auth      : :list)       ; UCAN authorization tokens for the message
-   (method    : :string)     ; the method invoked by the message
-   (body      : :u8vector)   ; the message body
-   (expire    : :integer)    ; expiration of the message in UNIX seconds
-   (options   : :list)       ; message options
-   (nonce     : :u8vector)   ; message nonce
-   (signature : :u8vector))  ; signature by the source identity
+(defclass (BroadcastMessage MessageBody BroadcastMessageHead) ()
   final: #t)
 
 (defstruct MessageOpt ())
