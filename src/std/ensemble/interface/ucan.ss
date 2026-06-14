@@ -52,13 +52,14 @@
   (sign! (token : Token))
   => :void
 
-  ;; verifies a token
+  ;; verifies a token for a subject
   ;; - all signatures in the chain must be valid
   ;; - no part of the chain must have expired
   ;; - capabilities in the chain can only be narrowed
   ;; - the token must be anchored either at a root anchor
   ;;   or extend a trust anchor in the chain
-  (verify (token : Token))
+  (verify (token : Token)
+          (subject : :string))
   => @VerificationResult
 
   ;; list issued unexpired tokens that have been remembered
@@ -70,29 +71,35 @@
   ;; adds an output trust anchor for rooting output tokens
   ;; output anchors are used to chain tokens for output
   ;; operations e.g. sending a message or opening a stream
-  (add-output-anchor! (token : Token))
+  (add-output-anchor! (token : Token)
+                      (subject :? :string))
   => :void
 
   ;; remove an output trust anchor
-  (remove-output-anchor! (token : Token))
+  (remove-output-anchor! (token : Token)
+                         (subject :? :string))
   => :void
 
   ;; list output trust anchors
-  (list-output-anchors (filter : :procedure))
+  (list-output-anchors (filter : :procedure)
+                       (subject :? :string))
   => :list
 
   ;; adds an input trust anchor for input tokens
   ;; an input anchor confers partial trust for some audience
   ;; and specific capabilities
-  (add-input-anchor! (token : Token))
+  (add-input-anchor! (token : Token)
+                     (subject :? :string))
   => :void
 
   ;; removes an input trust anchor
-  (remove-input-anchor! (token : Token))
+  (remove-input-anchor! (token : Token)
+                        (subject :? :string))
   => :void
 
   ;; lists the input trust anchors
-  (list-input-anchors (filter : :procedure))
+  (list-input-anchors (filter : :procedure)
+                      (subject :? :string))
   => :list
 
   ;; adds a root anchor.
@@ -131,6 +138,8 @@
 
 (def !SignatureVerificationError
   (VerificationError "signature verification failed"))
+(def !DelegationVerificationError
+  (VerificationError "delegation verification failed"))
 (def !ExpirationVerificationError
   (VerificationError "expiration verification failed"))
 (def !IssuerVerificationError

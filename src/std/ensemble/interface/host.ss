@@ -10,6 +10,10 @@
 
 ;; context for security operations
 (interface (SecurityContext Closer)
+  ;; the actor to which this security context pertains
+  (actor)
+  => Actor
+
   ;; the capability context
   (capability-context)
   => CapabilityContext
@@ -31,6 +35,7 @@
 
 ;; context for actor operations
 (interface (ActorContext Closer)
+  ;; the actor which this context pertains to
   (actor)
   => Actor
 

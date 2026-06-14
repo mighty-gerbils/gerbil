@@ -33,8 +33,10 @@
      private-keys:   (make-hash-table-string)
      public-keys:    (make-hash-table-string)
      roots:          (make-hash-table-string)
-     input-anchors:  (make-hash-table-eq)
-     output-anchors: (make-hash-table-eq)
+     root-input-anchors:  (make-hash-table-eq)
+     root-output-anchors: (make-hash-table-eq)
+     subject-input-anchors:  (make-hash-table-string)
+     subject-output-anchors: (make-hash-table-string)
      tokens:         (make-hash-table-eq)))))
 
 (def (capability-context-init! (ctx : capability-context))
@@ -70,16 +72,26 @@
       (raise-bad-argument get-private-key  "unknown principal" did)))))
 
 (defmethod {__filter capability-context}
-  (lambda (self (ht :- HashTable) (filter :- :procedure))
+  (lambda (self (root    :- HashTable)
+           (subject :- HashTable)
+           (filter  :- :procedure))
     (do-with-lock self.mx
       (let (now (current-time-coarse))
-        (for/fold (r []) (token (in-hash-keys ht) :- Token)
+        (def (fold (token :- Token) r)
           (cond
            ((token-expired? token now)
             r)
            ((filter token)
             (cons token r))
-           (else r)))))))
+           (else r)))
+
+        (let (result
+              (for/fold (r []) (token (in-hash-keys root))
+                (fold token r)))
+          (if subject
+            (for/fold (r result) (token (in-hash-keys subject))
+              (fold token r))
+            result))))))
 
 (defmethod {__roots capability-context}
   (lambda (self)
@@ -122,7 +134,7 @@
            (self.tokens.set! token token.expire))
          token))))
     (verify
-     (lambda (self token)
+     (lambda (self token subject)
        (: (let/cc return
             ;; verify the token first
             (let (result
@@ -131,54 +143,92 @@
                                   {self.__pubk issuer})))
               (unless (!OK? result)
                 (return result)))
-            ;; verify it is rooted in one of our roots or input anchors
+            ;; verify it is rooted in the subject
+            ;; or in one of our roots or input anchors
+            (when (token-rooted-at? token subject)
+                (return !OK))
             (for (root {self.__roots})
               (when (token-rooted-at? token root)
                 (return !OK)))
-            (for (anchor {self.__filter self.input-anchors (lambda (t) #t)})
+            (for (anchor
+                  {self.__filter self.root-input-anchors
+                                 (self.subject-input-anchors.ref subject #f)
+                                 (lambda (t) #t)})
               (when (token-anchored-at? token anchor)
                 (return !OK)))
             !AnchorVerificationError)
           VerificationResult)))
     (list-tokens
      (lambda (self filter)
-       (:- {self.__filter self.tokens filter}
+       (:- {self.__filter self.tokens #f filter}
            :list)))
     (add-output-anchor!
-     (lambda (self token)
+     (lambda (self token subject)
        (let (result (verify-token token
                                   (lambda (issuer)
                                     {self.__pubk issuer})))
          (unless (!OK? result)
            (raise-bad-argument sign-token! "invalid token"
                                (VerificationError-reason result))))
-       (do-with-lock self.mx
-         (self.output-anchors.set! token #t))))
+       (if subject
+         (do-with-lock self.mx
+           (let (subject-anchors (self.subject-output-anchors.ref subject #f))
+             (unless subject-anchors
+               (set! subject-anchors (make-hash-table-eq))
+               (self.subject-output-anchors.set! subject subject-anchors))
+             (using (subject-anchors :- HashTable)
+               (subject-anchors.set! token #t)))
+         (do-with-lock self.mx
+           (self.root-output-anchors.set! token #t))))))
     (remove-output-anchor!
-     (lambda (self token)
-       (do-with-lock self.mx
-         (self.output-anchors.delete! token))))
+     (lambda (self token subject)
+       (if subject
+         (do-with-lock self.mx
+           (let (subject-anchors (self.subject-output-anchors.ref subject #f))
+             (when subject-anchors
+               (using (subject-anchors :- HashTable)
+                 (subject-anchors.delete! token)))))
+         (do-with-lock self.mx
+           (self.root-output-anchors.delete! token)))))
     (list-output-anchors
-     (lambda (self filter)
-       (:- {self.__filter self.output-anchors filter}
+     (lambda (self filter subject)
+       (:- {self.__filter self.root-output-anchors
+                          (and subject (self.subject-output-anchors.ref subject #f))
+                          filter}
            :list)))
     (add-input-anchor!
-     (lambda (self token)
+     (lambda (self token subject)
        (let (result (verify-token token
                                   (lambda (issuer)
                                     {self.__pubk issuer})))
          (unless (!OK? result)
            (raise-bad-argument sign-token! "invalid token"
                                (VerificationError-reason result))))
-       (do-with-lock self.mx
-         (self.input-anchors.set! token #t))))
+       (if subject
+         (do-with-lock self.mx
+           (let (subject-anchors (self.subject-input-anchors.ref subject #f))
+             (unless subject-anchors
+               (set! subject-anchors (make-hash-table-eq))
+               (self.subject-input-anchors.set! subject subject-anchors))
+             (using (subject-anchors :- HashTable)
+               (subject-anchors.set! token #t)))
+         (do-with-lock self.mx
+           (self.root-input-anchors.set! token #t))))))
     (remove-input-anchor!
-     (lambda (self token)
-       (do-with-lock self.mx
-         (self.input-anchors.delete! token))))
+     (lambda (self token subject)
+       (if subject
+         (do-with-lock self.mx
+           (let (subject-anchors (self.subject-input-anchors.ref subject #f))
+             (when subject-anchors
+               (using (subject-anchors :- HashTable)
+                 (subject-anchors.delete! token)))))
+         (do-with-lock self.mx
+           (self.root-input-anchors.delete! token)))))
     (list-input-anchors
-     (lambda (self filter)
-       (:- {self.__filter self.input-anchors filter}
+     (lambda (self filter subject)
+       (:- {self.__filter self.root-input-anchors
+                          (and subject (self.subject-input-anchors.ref subject #f))
+                          filter}
            :list)))
     (add-root!
      (lambda (self did)

@@ -16,8 +16,10 @@
    (private-keys   :- HashTable) ; did string -> PrivKey
    (public-keys    :- HashTable) ; did string -> [PubKey . integer]
    (roots          :- HashTable) ; did string set
-   (input-anchors  :- HashTable) ; token set
-   (output-anchors :- HashTable) ; token set
+   (root-input-anchors  :- HashTable) ; token set
+   (root-output-anchors :- HashTable) ; token set
+   (subject-input-anchors  :- HashTable) ; did string -> token set
+   (subject-output-anchors :- HashTable) ; did string -> token set
    (tokens         :- HashTable) ; token set
    )
   final: #t

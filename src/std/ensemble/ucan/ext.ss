@@ -110,8 +110,8 @@
                       (equal? t.audience issuer))
                   (expiration-before? expire t.expire)
                   (capability-includes? t.method method)
-                  (capability-includes? t.group group)))))
-
+                  (capability-includes? t.group group)))
+           issuer))
          (tokens
           (map (lambda ((t :- Token))
                  (Token type
@@ -182,13 +182,3 @@
 (defcap-ext (revoke! ctx (token : Token))
   => Token
   (TODO revoke!))
-
-;; list all input anchours
-(defcap-ext (list-all-input-anchors ctx)
-  => :list
-  (ctx.list-input-anchors (lambda (t) #t)))
-
-;; list all output anchors
-(defcap-ext (list-all-output-anchors ctx)
-  => :list
-  (ctx.list-output-anchors (lambda (t) #t)))
