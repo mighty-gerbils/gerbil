@@ -31,8 +31,8 @@
                     (duration :  :integer))
   => Token
   (let* ((now (current-time-coarse))
-         (nbf (CoarseTime-seconds now))
-         (expire (+ nbf duration))
+         (now-sec (CoarseTime-seconds now))
+         (expire (+ now-sec duration))
          (token
           (Token type
                  issuer
@@ -40,7 +40,6 @@
                  method
                  group
                  []
-                 nbf
                  expire
                  #f
                  #f #f)))
@@ -67,8 +66,8 @@
   (unless (capability-includes? t.group group)
     (raise-bad-argument delegate! "token does not include group capability" t group))
   (let* ((now (current-time-coarse))
-         (nbf (CoarseTime-seconds now))
-         (expire (+ nbf duration))
+         (now-sec (CoarseTime-seconds now))
+         (expire (+ now-sec duration))
          (token
           (Token type
                  issuer
@@ -76,7 +75,6 @@
                  method
                  group
                  []
-                 (max t.nbf nbf)
                  (cond
                   ((fx= t.expire 0)
                    expire)
@@ -101,8 +99,8 @@
                       (duration : :integer))
   => :list
   (let* ((now (current-time-coarse))
-         (nbf (CoarseTime-seconds now))
-         (expire (+ nbf duration))
+         (now-sec (CoarseTime-seconds now))
+         (expire (+ now-sec duration))
          (anchors
           (ctx.list-output-anchors
            (lambda ((t :- Token))
@@ -120,7 +118,6 @@
                         method
                         group
                         []
-                        (max t.nbf nbf)
                         (cond
                          ((fx= t.expire 0)
                           expire)
@@ -139,7 +136,6 @@
                  method
                  group
                  []
-                 nbf
                  expire
                  #f
                  #f #f)

@@ -17,7 +17,6 @@
    (method     :  :string)     ; the method capability granted
    (group      :  :string)     ; the broadcast group
    (args       :  :list)       ; optional list of arguments as a keyword-value plist; used only in revocation
-   (nbf        :  :integer)    ; token validity begin time in UNIX seconds; 0 means no begin validity
    (expire     :  :integer)    ; token expiration time in UNIX seconds; 0 means no expiration
    (chain      :? @Token)      ; the next token in the chain, if any
    (nonce      :- :u8vector)   ; the token nonce

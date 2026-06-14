@@ -142,13 +142,14 @@
 (def (token-anchored-at? (token  : Token)
                          (anchor : Token))
   => :boolean
-  (let loop ((token token :- Token))
-    => :boolean
-    (cond
-     ((and (equal? token.issuer anchor.issuer)
-           (equal? token.audience anchor.audience)
-           (capability-includes? anchor.method token.method)
-           (capability-includes? anchor.group token.group))
-      #t)
-     (token.chain => loop)
-     (else #f))))
+  (and (expiration-before? token.expire anchor.expire)
+       (let loop ((token token :- Token))
+         => :boolean
+         (cond
+          ((and (equal? token.issuer anchor.issuer)
+                (equal? token.audience anchor.audience)
+                (capability-includes? anchor.method token.method)
+                (capability-includes? anchor.group token.group))
+           #t)
+          (token.chain => loop)
+          (else #f)))))
