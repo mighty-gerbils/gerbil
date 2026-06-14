@@ -308,6 +308,9 @@
                 defcall-actor
                 defcall-interface-method
                 implement
+                do-with-lock
+                do-with-read-lock
+                do-with-write-lock
                 )
               'scheme-indent-function 'defun)
   )
