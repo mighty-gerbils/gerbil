@@ -10,10 +10,6 @@
 
 ;; context for security operations
 (interface (SecurityContext Closer)
-  ;; the actor to which this security context pertains
-  (actor)
-  => Actor
-
   ;; the capability context
   (capability-context)
   => CapabilityContext
@@ -29,26 +25,27 @@
 
   ;; verify a broadcast message and capabilities
   (verify-broadcast-message (msg    : BroadcastMessage)
-                            (method : :string))
+                            (method : :string)
+                            (group  : :string))
   => VerificationResult
   )
 
 ;; context for actor operations
 (interface (ActorContext Closer)
   ;; the actor which this context pertains to
-  (actor)
-  => Actor
+  (handle)
+  => Handle
 
   ;; the security context
-  (security)
+  (security-context)
   => SecurityContext
 
-  ;; send a message; if the message is unsigned it will be signed
-  (send! (msg : Message))
+  ;; send a signd message
+  (send-message! (msg : Message))
   => :void
 
-  ;; broadcast a message; if the message is unsigned it will be signed.
-  (broadcast! (msg : BroadcastMessage))
+  ;; broadcast a signed message
+  (broadcast-message! (msg : BroadcastMessage))
   => :void
 
   ;; join a broadcast group
@@ -60,18 +57,21 @@
   => :void
   )
 
-;; actor message handling
+;; low level actor handler
 (interface (ActorHandler Closer)
-  ;; reveive a message
+    ;; reveive a message
   (receive! (ctx : ActorContext) (msg : Message))
   => :void
 
   ;; receive a broadcast message
   (receive-broadcast! (ctx : ActorContext) (msg : BroadcastMessage))
   => :void
+  ;; invoked when an actor is registered
+  (on-register! (actor : Handle))
+  => :void
 
-  ;; invoked when the actor is unregistered
-  (unregister! (actor : Actor))
+  ;; invoked when an actor is unregistered
+  (on-unregister! (actor : Handle))
   => :void
   )
 
@@ -89,6 +89,10 @@
   (proto)
   => :string
 
+  ;; the stream's auth token
+  (auth)
+  => Token
+
   ;; the stream data reader
   (reader)
   => Reader
@@ -104,15 +108,31 @@
   (handle-stream! (stream : Stream))
   => :void
 
+  ;; invoked when the stream handler is registered
+  (on-register! (proto : :string))
+  => :void
+
   ;; invoked when the stream handler is unregistered
-  (unregister! (proto : :string))
+  (on-unregister! (proto : :string))
   => :void
   )
 
+;; broadcast handlers
+(interface (BroadcastHandler Closer)
+  ;; receive a broadcast message
+  (receive! (msg : BroadcastMessage))
+  => :void
+
+  ;; invoked when a group is joined
+  (on-join! (group : :string))
+
+  ;; invoked when a group is left
+  (on-leave! (group : :string)))
+
 ;; the network abstraction
 (interface (Network Closer)
-  ;; resolve a path to a list of addresses
-  (resolve (path : :string))
+  ;; resolve a host to a list of addresses
+  (resolve (host : :string))
   => :list
 
   ;; connect to a peer in address
@@ -146,7 +166,13 @@
   (leave! (group : :string))
   => :void
 
-  ;; the current broadcast groups
+  ;; subscribe to receive messages in a broadcast group
+  ;; automatically joins if the group hasn't been joined
+  ;; already
+  (subscribe! (group : :string)
+              (handler : BroadcastHandler))
+
+  ;; the currently joined broadcast groups
   (groups)
   => :list
   )
@@ -161,22 +187,28 @@
   (network)
   => Network
 
-  ;; the actor context
-  (actor-context)
+  ;; retrieve a registered actor's context
+  (actor-context (path : :string))
   => ActorContext
 
   ;; register an actor in the host
-  (register-actor! (actor : Actor)
+  (register-actor! (path : :string)
                    (handler : ActorHandler))
-  => :void
+  => Handle
 
   ;; unregister an actor from the host
-  (unregister-actor! (actor : Actor))
+  (unregister-actor! (path : :string))
   => :void
 
+  ;; list registered actors
+  (list)
+  => :list
+
   ;; open a stream to a peer for a particular protocol
+  ;; and optionally a specific actor subject (a did)
   (open-stream (peer  : :string)
-               (proto : :string))
+               (proto : :string)
+               (subject :? :string))
   => Stream
 
   ;; register a stream handler for a protocol
