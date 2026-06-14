@@ -145,14 +145,15 @@
                 (return result)))
             ;; verify it is rooted in the subject
             ;; or in one of our roots or input anchors
-            (when (token-rooted-at? token subject)
-                (return !OK))
+            (when subject
+              (when (token-rooted-at? token subject)
+                (return !OK)))
             (for (root {self.__roots})
               (when (token-rooted-at? token root)
                 (return !OK)))
             (for (anchor
                   {self.__filter self.root-input-anchors
-                                 (self.subject-input-anchors.ref subject #f)
+                                 (and subject (self.subject-input-anchors.ref subject #f))
                                  (lambda (t) #t)})
               (when (token-anchored-at? token anchor)
                 (return !OK)))

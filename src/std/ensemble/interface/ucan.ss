@@ -58,7 +58,7 @@
   ;; - the token must be anchored either at a root anchor
   ;;   or extend a trust anchor in the chain
   (verify (token : Token)
-          (subject : :string))
+          (subject :? :string))
   => @VerificationResult
 
   ;; list issued unexpired tokens that have been remembered
