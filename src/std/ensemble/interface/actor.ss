@@ -16,7 +16,7 @@
    (auth      : :list)       ; UCAN authorization tokens for the message
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
-   (epxire    : :integer)    ; expiration of the message in UNIX seconds
+   (expire    : :integer)    ; expiration of the message in UNIX seconds
    (options   : :list)       ; message options
    (nonce     :- :u8vector)  ; message nonce
    (signature :- :u8vector)) ; signature by the source identity
@@ -28,7 +28,7 @@
    (group     : :string)     ; destination group
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
-   (epxire    : :integer)    ; expiration of the message in UNIX seconds
+   (expire    : :integer)    ; expiration of the message in UNIX seconds
    (options   : :list)       ; message options
    (nonce     : :u8vector)   ; message nonce
    (signature : :u8vector))  ; signature by the source identity
