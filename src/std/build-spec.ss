@@ -235,8 +235,9 @@
     "db"
 
     "ensemble/interface/ucan"
-    "ensemble/interface/actor"
+    "ensemble/interface/actor-base"
     "ensemble/interface/host"
+    "ensemble/interface/actor"
     "ensemble/interface"
 
     "encoding/multibase"
@@ -248,6 +249,8 @@
     "ensemble/ucan/serde"
     "ensemble/ucan/context"
     "ensemble/ucan/ext"
+
+    "ensemble/actor/macros"
 
     ))
 
