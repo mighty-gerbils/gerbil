@@ -48,8 +48,8 @@
                           (let (result (verify-token-signature next get-public-key))
                             (if (!OK? result)
                               (if next.chain
-                                (loop next.issuer
-                                      next.chain
+                                (loop next.chain
+                                      next.issuer
                                       next.method
                                       next.group
                                       next.expire)
