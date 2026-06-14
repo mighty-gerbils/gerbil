@@ -7,7 +7,15 @@
         ./base)
 (export #t)
 
-(interface (Socket Closer)
+(interface NetworkTimeout
+  ;; input timeout
+  (set-input-timeout! (timeo : IOTimeout))
+  => :void
+  ;; output timeout
+  (set-output-timeout! (timeo : IOTimeout))
+  => :void)
+
+(interface (Socket NetworkTimeout Closer)
   ;; the sockert's domain; AF_INET, AF_INET6, AF_LOCAL, etc ...
   (domain) => :fixnum
   ;; the socket's address
@@ -21,12 +29,7 @@
   (setsockopt (opt : SockOpt)
               (arg  :  :t))
   => :void
-  ;; input timeout
-  (set-input-timeout! (timeo : IOTimeout))
-  => :void
-  ;; output timeout
-  (set-output-timeout! (timeo : IOTimeout))
-  => :void)
+  )
 
 (interface (ClientSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr

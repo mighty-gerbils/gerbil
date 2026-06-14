@@ -3,6 +3,7 @@
 ;;; ensemble host interface
 (import :std/io
         :std/net/address
+        :std/time/timeout
         ./ucan
         ./actor)
 (export #t)
@@ -30,6 +31,9 @@
 
 ;; context for actor operations
 (interface (ActorContext Closer)
+  (actor)
+  => Actor
+
   ;; the security context
   (security)
   => SecurityContext
@@ -67,13 +71,13 @@
   )
 
 ;; low level data streams
-(interface (Stream Closer)
-  ;; the path of the local host
-  (path)
+(interface (Stream NetworkTimeout Closer)
+  ;; the name of local host
+  (host)
   => :string
 
-  ;; the path of the peer
-  (peer-path)
+  ;; the name of the peer
+  (peer)
   => :string
 
   ;; the protocol of the stream
@@ -144,8 +148,8 @@
 
 ;; the ensemble host
 (interface (Host Closer)
-  ;; the path of the host in the ensemble space
-  (path)
+  ;; the name of the host in the ensemble space
+  (name)
   => :string
 
   ;; the host's network interface

@@ -149,6 +149,12 @@
    (basic-socket
     (close
      __basic-socket-close)))
+  (NetworkTimeout
+   (basic-socket
+    (set-input-timeout!
+     __basic-socket-set-input-timeout!)
+    (set-output-timeout!
+     __basic-socket-set-output-timeout!)))
   (Socket
    (basic-socket
     (domain
@@ -161,11 +167,7 @@
     (getsockopt
      __basic-socket-getsockopt)
     (setsockopt
-     __basic-socket-setsockopt)
-    (set-input-timeout!
-     __basic-socket-set-input-timeout!)
-    (set-output-timeout!
-     __basic-socket-set-output-timeout!)))
+     __basic-socket-setsockopt)))
   (ClientSocket
    (basic-client-socket
     (recv

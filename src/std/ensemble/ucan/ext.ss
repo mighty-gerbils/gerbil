@@ -100,16 +100,18 @@
                       (group    : :string)
                       (duration : :integer))
   => :list
-  (let* ((anchors
+  (let* ((now (current-time-coarse))
+         (nbf (CoarseTime-seconds now))
+         (expire (+ nbf duration))
+         (anchors
           (ctx.list-output-anchors
            (lambda ((t :- Token))
              (and (or (equal? t.audience "*")
                       (equal? t.audience issuer))
+                  (expiration-before? expire t.expire)
                   (capability-includes? t.method method)
                   (capability-includes? t.group group)))))
-         (now (current-time-coarse))
-         (nbf (CoarseTime-seconds now))
-         (expire (+ nbf duration))
+
          (tokens
           (map (lambda ((t :- Token))
                  (Token type

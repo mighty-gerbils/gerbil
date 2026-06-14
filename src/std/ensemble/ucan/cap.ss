@@ -22,9 +22,43 @@
                   #\/)))))
 
 (def (verify-token (token : Token)
-                         (get-public-key : :procedure))
+                   (get-public-key : :procedure))
   => VerificationResult
-  (TODO verify-token))
+  (let (now (current-time-coarse))
+    (if (token-expired? token now)
+      !TokenExpiredVerificationError
+      (let (result (verify-token-signature token get-public-key))
+        (if (!OK? result)
+          (if token.chain
+            (let loop ((next   token.chain  :- Token)
+                       (issuer token.issuer :- :string)
+                       (method token.method :- :string)
+                       (group  token.group  :- :string)
+                       (expire token.expire :- :integer))
+              => VerificationResult
+              (if (or (equal? next.audience issuer)
+                      (equal? next.audience "*"))
+                (if (token-expired? next now)
+                  !TokenExpiredVerificationError
+                  (if (expiration-before? next.expire expire)
+                    !ExpirationVerificationError
+                    (if (capability-includes? next.method method)
+                      (if (capability-includes? next.group group)
+                        (let (result (verify-token-signature next get-public-key))
+                          (if (!OK? result)
+                            (if next.chain
+                              (loop next.issuer
+                                    next.chain
+                                    next.method
+                                    next.group
+                                    next.expire)
+                              !OK)
+                            result))
+                        !CapabilityVerificationError)
+                      !CapabilityVerificationError)))
+                !IssuerVerificationError))
+            !OK)
+          result)))))
 
 (def (verify-token-signature (token : Token)
                              (get-public-key : :procedure))
@@ -68,17 +102,51 @@
          (sig   (digest-sign! privk data)))
     (set! token.signature sig)))
 
+;; true if the token has an expiration time before now
+;; in seconds
 (def (token-expired? (token : Token)
                      (now   : CoarseTime := (current-time-coarse)))
-  (TODO token-expired?))
+  (and (not (fx= token.expire 0))
+       (< token.expire (CoarseTime-seconds now))))
 
+(def (expiration-before? (left  : :integer)
+                         (right : :integer))
+  => :boolean
+  (cond
+   ((fx= right 0)
+    #t)
+   ((fx= left 0)
+    #f)
+   (else
+    (<= left right))))
 
+;; roots are absolute trust anchors.
+;; returns true if the token has the root as an issuer,
+;; either immediate or at its chain
 (def (token-rooted-at? (token : Token)
                        (did   : :string))
   => :boolean
-  (TODO is-token-rooted-at?))
+  (let loop ((token token :- Token))
+    => :boolean
+    (cond
+     ((equal? token.issuer did))
+     (token.chain => loop)
+     (else #f))))
 
+;; anchors confer partial trust for some capability.
+;; true if the token or its chain has the anchor's
+;; issuer and audience with the proper narrowing
+;; of capabilities.
 (def (token-anchored-at? (token  : Token)
                          (anchor : Token))
   => :boolean
-  (TODO is-token-anchored-at?))
+  (let loop ((token token :- Token))
+    => :boolean
+    (cond
+     ((and (equal? token.issuer anchor.issuer)
+           (equal? token.audience anchor.audience)
+           (capability-includes? anchor.method token.method)
+           (capability-includes? anchor.group token.group))
+      #t)
+     (token.chain => loop)
+     (else #f))))

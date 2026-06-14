@@ -68,6 +68,8 @@
   ;; trust management
 
   ;; adds an output trust anchor for rooting output tokens
+  ;; output anchors are used to chain tokens for output
+  ;; operations e.g. sending a message or opening a stream
   (add-output-anchor! (token : Token))
   => :void
 
@@ -80,6 +82,8 @@
   => :list
 
   ;; adds an input trust anchor for input tokens
+  ;; an input anchor confers partial trust for some audience
+  ;; and specific capabilities
   (add-input-anchor! (token : Token))
   => :void
 
@@ -127,5 +131,13 @@
 
 (def !SignatureVerificationError
   (VerificationError "signature verification failed"))
+(def !ExpirationVerificationError
+  (VerificationError "expiration verification failed"))
+(def !IssuerVerificationError
+  (VerificationError "issuer verification failed"))
+(def !CapabilityVerificationError
+  (VerificationError "capability verification failed"))
 (def !AnchorVerificationError
   (VerificationError "anchor verification failed"))
+(def !TokenExpiredVerificationError
+  (VerificationError "token expired"))
