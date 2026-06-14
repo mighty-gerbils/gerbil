@@ -159,7 +159,6 @@
          (implement MetaConstructor
            (klass (new (lambda (nil iklass anchor hint)
                          (ObjectBuilder
-
                           (builder iklass anchor hint)))))
            ...)))))
 

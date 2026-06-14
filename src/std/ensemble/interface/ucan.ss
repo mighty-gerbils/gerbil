@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble ucan interfaces
-(import :std/crypto/pkey)
+(import :std/crypto/pkey
+        :std/io)
 (export #t)
 
 (deftype @Token Token)
@@ -12,8 +13,10 @@
 (defstruct Token
   ((type       :  :fixnum)     ; the type of the token
    (issuer     :  :string)     ; the issuing principal did
-   (subject    :  :string)     ; the recipient did or * for any recipient.
+   (audience   :  :string)     ; the recipient did or * for any recipient.
    (method     :  :string)     ; the method capability granted
+   (group      :  :string)     ; the broadcast group
+   (args       :  :list)       ; optional list of arguments as a keyword-value plist; used only in revocation
    (nbf        :  :integer)    ; token validity begin time in UNIX seconds; 0 means no begin validity
    (expire     :  :integer)    ; token expiration time in UNIX seconds; 0 means no expiration
    (chain      :? @Token)      ; the next token in the chain, if any
@@ -21,7 +24,7 @@
    (signature  :- :u8vector))  ; the token signature by the principal
   final: #t)
 
-(interface CapabilityContext
+(interface (CapabilityContext Closer)
   ;; key management
 
   ;; add a principal private key to the context, so that it can be used
@@ -76,10 +79,8 @@
   (list-output-anchors (filter : :procedure))
   => :list
 
-  ;; adds an input trust anchor for rooting input tokens
-  ;; the token is remembered until it expires or for duration if specified
-  (add-input-anchor! (token : Token)
-                     (duration :? :fixnum := #f))
+  ;; adds an input trust anchor for input tokens
+  (add-input-anchor! (token : Token))
   => :void
 
   ;; removes an input trust anchor
@@ -117,7 +118,14 @@
 (defstruct VerificationResult ())
 (defstruct (VerificationOK VerificationResult) ())
 (defstruct (VerificationError VerificationResult)
-  ((reason : :string)
-   (detail : :t)))
+  ((reason : :string)))
 
-(def !OK (VerificationOK))
+(def !OK
+  (VerificationOK))
+(def (!OK? result)
+  (eq? result !OK))
+
+(def !SignatureVerificationError
+  (VerificationError "signature verification failed"))
+(def !AnchorVerificationError
+  (VerificationError "anchor verification failed"))

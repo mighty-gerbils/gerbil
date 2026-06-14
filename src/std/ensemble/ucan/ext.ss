@@ -20,13 +20,14 @@
     (ctx.add-principal! pkey)))
 
 ;; generate a root token of type, granting capabilities from
-;; issuer to subject for method and sign it/remember it
+;; issuer to audience for method and sign it/remember it
 (defcap-ext (grant! ctx
                     (type     :~ (one-of DELEGATE INVOKE BROADCAST)
                               :- :fixnum)
                     (issuer   :  :string)
-                    (subject  :  :string)
+                    (audience :  :string)
                     (method   :  :string)
+                    (group    :  :string)
                     (duration :  :integer))
   => Token
   (let* ((now (current-time-coarse))
@@ -35,8 +36,10 @@
          (token
           (Token type
                  issuer
-                 subject
+                 audience
                  method
+                 group
+                 []
                  nbf
                  expire
                  #f
@@ -49,19 +52,30 @@
                        (t        : Token)
                        (type     :~ (one-of DELEGATE INVOKE BROADCAST)
                                  :- :fixnum)
-                       (subject  : :string)
+                       (issuer   : :string)
+                       (audience : :string)
                        (method   : :string)
+                       (group    : :string)
                        (duration : :integer))
   (unless (fx= t.type DELEGATE)
     (raise-bad-argument delegate! "token does not allow delegation" t))
+  (unless (or (equal? t.audience "*")
+              (equal? t.audience issuer))
+    (raise-bad-argument delegate! "token audience does not allow delegation to issuer" t issuer))
+  (unless (capability-includes? t.method method)
+    (raise-bad-argument delegate! "token does not include method capability" t method))
+  (unless (capability-includes? t.group group)
+    (raise-bad-argument delegate! "token does not include group capability" t group))
   (let* ((now (current-time-coarse))
          (nbf (CoarseTime-seconds now))
          (expire (+ nbf duration))
          (token
           (Token type
-                 t.subject
-                 subject
+                 issuer
+                 audience
                  method
+                 group
+                 []
                  (max t.nbf nbf)
                  (cond
                   ((fx= t.expire 0)
@@ -75,21 +89,24 @@
     token))
 
 ;; generate a list of output tokens of type from an issuer
-;; to a subject for method, chained in appropriate output anchors
+;; to a audience for method, chained in appropriate output anchors
 ;; and sign it/remember it
 (defcap-ext (provide! ctx
                       (type     :~ (one-of DELEGATE INVOKE BROADCAST)
                                 :- :fixnum)
                       (issuer   : :string)
-                      (subject  : :string)
+                      (audience : :string)
                       (method   : :string)
+                      (group    : :string)
                       (duration : :integer))
   => :list
   (let* ((anchors
           (ctx.list-output-anchors
            (lambda ((t :- Token))
-             (and (equal? t.subject issuer)
-                  (capability-includes? t.method method)))))
+             (and (or (equal? t.audience "*")
+                      (equal? t.audience issuer))
+                  (capability-includes? t.method method)
+                  (capability-includes? t.group group)))))
          (now (current-time-coarse))
          (nbf (CoarseTime-seconds now))
          (expire (+ nbf duration))
@@ -97,8 +114,10 @@
           (map (lambda ((t :- Token))
                  (Token type
                         issuer
-                        subject
+                        audience
                         method
+                        group
+                        []
                         (max t.nbf nbf)
                         (cond
                          ((fx= t.expire 0)
@@ -114,8 +133,10 @@
           ;; grant
           (cons (Token type
                  issuer
-                 subject
+                 audience
                  method
+                 group
+                 []
                  nbf
                  expire
                  #f
@@ -125,34 +146,47 @@
               tokens)
     tokens))
 
-;; provide tokens delegating capabilities from issuer to subject
+;; provide tokens delegating capabilities from issuer to audience
 (defcap-ext (provide-delegate! ctx
                                (issuer   : :string)
-                               (subject  : :string)
+                               (audience : :string)
                                (method   : :string)
+                               (group    : :string)
                                (duration : :integer))
   => :list
-  (ctx.provide! DELEGATE issuer subject method duration))
+  (ctx.provide! DELEGATE issuer audience method group duration))
 
-;; provide tokens granting invoke capabilities from issuer to subject
+;; provide tokens granting invoke capabilities from issuer to audience
 (defcap-ext (provide-invoke! ctx
                              (issuer   : :string)
-                             (subject  : :string)
+                             (audience : :string)
                              (method   : :string)
+                             (group    : :string)
                              (duration : :integer))
   => :list
-  (ctx.provide! INVOKE issuer subject method duration))
+  (ctx.provide! INVOKE issuer audience method group duration))
 
-;; provide tokens granting broadcast capabilities from issuer to subject
+;; provide tokens granting broadcast capabilities from issuer to audience
 (defcap-ext (provide-broadcast! ctx
                                 (issuer   :  :string)
-                                (subject  :  :string)
+                                (audience  :  :string)
                                 (method   :  :string)
+                                (group    : :string)
                                 (duration :  :integer))
   => :list
-  (ctx.provide! BROADCAST issuer subject method duration))
+  (ctx.provide! BROADCAST issuer audience method group duration))
 
 ;; revoke a token
 (defcap-ext (revoke! ctx (token : Token))
   => Token
   (TODO revoke!))
+
+;; list all input anchours
+(defcap-ext (list-all-input-anchors ctx)
+  => :list
+  (ctx.list-input-anchors (lambda (t) #t)))
+
+;; list all output anchors
+(defcap-ext (list-all-output-anchors ctx)
+  => :list
+  (ctx.list-output-anchors (lambda (t) #t)))

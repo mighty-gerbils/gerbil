@@ -8,7 +8,7 @@
 (export #t)
 
 ;; context for security operations
-(interface SecurityContext
+(interface (SecurityContext Closer)
   ;; the capability context
   (capability-context)
   => CapabilityContext
@@ -29,7 +29,7 @@
   )
 
 ;; context for actor operations
-(interface ActorContext
+(interface (ActorContext Closer)
   ;; the security context
   (security)
   => SecurityContext
@@ -52,7 +52,7 @@
   )
 
 ;; actor message handling
-(interface ActorHandler
+(interface (ActorHandler Closer)
   ;; reveive a message
   (receive! (ctx : ActorContext) (msg : Message))
   => :void
@@ -67,7 +67,7 @@
   )
 
 ;; low level data streams
-(interface Stream
+(interface (Stream Closer)
   ;; the path of the local host
   (path)
   => :string
@@ -87,14 +87,10 @@
   ;; the stream data writer
   (writer)
   => Writer
-
-  ;; close the stream
-  (close)
-  => :void
   )
 
 ;; incoming stream handlers
-(interface StreamHandler
+(interface (StreamHandler Closer)
   ;; handle an incoming stream
   (handle-stream! (stream : Stream))
   => :void
@@ -105,7 +101,7 @@
   )
 
 ;; the network abstraction
-(interface Network
+(interface (Network Closer)
   ;; resolve a path to a list of addresses
   (resolve (path : :string))
   => :list
@@ -147,7 +143,7 @@
   )
 
 ;; the ensemble host
-(interface Host
+(interface (Host Closer)
   ;; the path of the host in the ensemble space
   (path)
   => :string
@@ -181,9 +177,5 @@
 
   ;; unregister a stream handler
   (unregister-stream-handler! (proto : :string))
-  => :void
-
-  ;; shutdown the host
-  (shutdown!)
   => :void
   )

@@ -239,7 +239,14 @@
     "ensemble/interface/host"
     "ensemble/interface"
 
+    "encoding/multibase"
+    "encoding/base58"
+
     "ensemble/ucan/cap"
+    "ensemble/ucan/did"
+    "ensemble/ucan/type"
+    "ensemble/ucan/serde"
+    "ensemble/ucan/context"
     "ensemble/ucan/ext"
 
     ))
