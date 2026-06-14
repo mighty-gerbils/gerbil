@@ -5,7 +5,7 @@
         :std/net/address
         :std/time/timeout
         ./ucan
-        ./actor-base)
+        ./message)
 (export #t)
 
 (deftype @Host Host)

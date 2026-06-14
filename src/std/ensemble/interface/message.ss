@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble actor interface
+;;; ensemble actor messages
 (import ./ucan)
 (export #t)
 
@@ -12,7 +12,7 @@
 
 (defstruct Message
   ((source    : Handle)      ; source actor
-   (recipient : Handle)      ; recipient actor
+   (dest      : Handle)      ; recipient actor
    (auth      : :list)       ; UCAN authorization tokens for the message
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
@@ -24,8 +24,8 @@
 
 (defstruct BroadcastMessage
   ((source    : Handle)      ; source actor
+   (dest      : :string)     ; destination group
    (auth      : :list)       ; UCAN authorization tokens for the message
-   (group     : :string)     ; destination group
    (method    : :string)     ; the method invoked by the message
    (body      : :u8vector)   ; the message body
    (expire    : :integer)    ; expiration of the message in UNIX seconds

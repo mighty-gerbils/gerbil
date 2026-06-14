@@ -235,7 +235,7 @@
     "db"
 
     "ensemble/interface/ucan"
-    "ensemble/interface/actor-base"
+    "ensemble/interface/message"
     "ensemble/interface/host"
     "ensemble/interface/actor"
     "ensemble/interface"

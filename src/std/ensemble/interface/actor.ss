@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; ensemble actor implementation interface
 (import :std/sync/channel
-        ./actor-base
+        ./message
         ./host)
 (export #t)
 
