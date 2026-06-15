@@ -130,4 +130,7 @@
                              (method : :string))
   => :void
 
+  ;; emit a notification to monitors
+  (emit! (notification : :t))
+  => :void
   )

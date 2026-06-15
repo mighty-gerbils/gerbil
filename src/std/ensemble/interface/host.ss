@@ -4,6 +4,7 @@
 (import :std/io
         :std/net/address
         :std/time/timeout
+        :std/sync/channel
         ./ucan
         ./message)
 (export #t)
@@ -47,6 +48,10 @@
   ;; returns a list of Handles
   (list (host :? :string := #f))
   => :list
+
+  ;; receive notifications about the lifecycle of an actor
+  (notify! (actor : Handle))
+  => Channel
   )
 
 ;; context for actor operations
@@ -81,6 +86,10 @@
 
   ;; leave a broadcast group
   (leave! (group : :string))
+  => :void
+
+  ;; emit a notification to monitors
+  (emit! (notification : :t))
   => :void
   )
 
@@ -216,6 +225,10 @@
   ;; the currently joined broadcast groups
   (groups)
   => :list
+
+  ;; receive notifications about network changes and operations
+  (notify!)
+  => Channel
   )
 
 ;; the ensemble host
@@ -260,4 +273,8 @@
   ;; unregister a stream handler
   (unregister-stream-handler! (proto : :string))
   => :void
+
+  ;; receive notifications about changes in the host
+  (notify!)
+  => Channel
   )
