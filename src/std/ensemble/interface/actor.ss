@@ -21,13 +21,17 @@
   )
 
 (interface Actor
-  ;; the actor for this engine
+  ;; the handle for this actor
   (handle)
   => Handle
 
   ;; the low level actor context
   (context)
   => ActorContext
+
+  ;; the actor space
+  (space)
+  => ActorSpace
 
   ;; send a message
   (send! (dest   : Handle)

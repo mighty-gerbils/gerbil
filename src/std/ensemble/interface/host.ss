@@ -33,11 +33,31 @@
   => VerificationResult
   )
 
+;; the actor space
+(interface ActorSpace
+  ;; resolve an actor by name in a host
+  ;; if the host is #f then the actor is resolved
+  ;; in the local host
+  (resolve (name : :string)
+           (host :? :string := #f))
+  => Handle
+
+  ;; list actors in a host
+  ;; if the host is #f it lists actors in the local host
+  ;; returns a list of Handles
+  (list (host :? :string := #f))
+  => :list
+  )
+
 ;; context for actor operations
 (interface (ActorContext Closer)
   ;; the actor which this context pertains to
   (handle)
   => Handle
+
+  ;; the actor space
+  (actor-space)
+  => ActorSpace
 
   ;; the security context
   (security-context)
@@ -66,7 +86,7 @@
 
 ;; low level actor handler
 (interface (ActorHandler Closer)
-    ;; reveive a message
+  ;; receive a message
   (receive! (ctx : ActorContext) (msg : Message))
   => :void
 
@@ -208,22 +228,22 @@
   (network)
   => Network
 
+  ;; the ensemble's actor space
+  (actor-space)
+  => ActorSpace
+
   ;; retrieve a registered actor's context
-  (actor-context (path : :string))
+  (actor-context (name : :string))
   => ActorContext
 
   ;; register an actor in the host
-  (register-actor! (path : :string)
+  (register-actor! (name : :string)
                    (handler : ActorHandler))
   => Handle
 
   ;; unregister an actor from the host
-  (unregister-actor! (path : :string))
+  (unregister-actor! (name : :string))
   => :void
-
-  ;; list registered actors
-  (list)
-  => :list
 
   ;; open a stream to a peer for a particular protocol
   ;; and optionally a specific actor subject (a did)

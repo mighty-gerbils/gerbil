@@ -7,7 +7,7 @@
 (defstruct Handle
   ((did  : :string)   ; the DID of the actor
    (host : :string)   ; the path of the host in the ensemble space
-   (path : :string))  ; the path of the actor in the actor space
+   (name : :string))  ; the path of the actor in the actor space
   final: #t)
 
 (defstruct UnicastMessageHead
