@@ -132,7 +132,7 @@
             (##u8vector-set! u8-buffer j next)
             (loop (fx+ i 1) (fx+ j 1)))))
 
-        (utf8->string buffer 0 j)))))
+        (utf8->string u8-buffer 0 j)))))
 
 (def uri-space-decoding
   (make-uri-encoding-table "" '((#\+ . #\space))))
