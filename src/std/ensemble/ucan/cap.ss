@@ -36,29 +36,28 @@
                        (group  token.group  :- :string)
                        (expire token.expire :- :integer))
               => VerificationResult
-              (if (fx= next.type DELEGATE)
-                (if (or (equal? next.audience issuer)
-                        (equal? next.audience "*"))
+              (if (not (fx= next.type DELEGATE))
+                !DelegationVerificationError
+                (if (not (or (equal? next.audience issuer)
+                             (equal? next.audience "*")))
+                  !IssuerVerificationError
                   (if (token-expired? next now)
                     !TokenExpiredVerificationError
                     (if (expiration-before? next.expire expire)
                       !ExpirationVerificationError
-                      (if (capability-includes? next.method method)
-                        (if (capability-includes? next.group group)
-                          (let (result (verify-token-signature next get-public-key))
-                            (if (!OK? result)
-                              (if next.chain
-                                (loop next.chain
-                                      next.issuer
-                                      next.method
-                                      next.group
-                                      next.expire)
-                                !OK)
-                              result))
-                          !CapabilityVerificationError)
-                        !CapabilityVerificationError)))
-                  !IssuerVerificationError)
-                !DelegationVerificationError))
+                      (if (not (and (capability-includes? next.method method)
+                                    (capability-includes? next.group group)))
+                        !CapabilityVerificationError
+                        (let (result (verify-token-signature next get-public-key))
+                          (if (!OK? result)
+                            (if next.chain
+                              (loop next.chain
+                                    next.issuer
+                                    next.method
+                                    next.group
+                                    next.expire)
+                              !OK)
+                            result))))))))
             !OK)
           result)))))
 
