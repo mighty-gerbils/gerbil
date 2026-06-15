@@ -37,5 +37,5 @@
        ((fx= code DID-KEY-ED25519)
         (bytes->ed25519-public-key bytes))
        (else
-        (raise-contract-violation did->public-key "unknwon key type" code))))
+        (raise-contract-violation did->public-key "unknown key type" code))))
     (raise-bad-argument did->public-key "unknown did type" did)))
