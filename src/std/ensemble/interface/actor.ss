@@ -14,9 +14,11 @@
   (handle-message! (actor : @Actor)
                    (msg   : Message))
   => :void
+  )
 
-  (handle-broadcast! (actor : @Actor)
-                     (msg   : BroadcastMessage))
+(interface BroadcastMessageHandler
+  (handle-message! (actor : @Actor)
+                   (msg   : BroadcastMessage))
   => :void
   )
 
@@ -119,7 +121,7 @@
   ;; in add-message-handler! above
   (add-broadcast-handler! (group   : :string)
                           (method  : :string)
-                          (handler : MessageHandler)
+                          (handler : BroadcastMessageHandler)
                           ttl:      (ttl       : :fixnum := 0)
                           one-shot: (one-shot? : :boolean := #f)
                           replace:  (replace?  : :boolean := #f))
