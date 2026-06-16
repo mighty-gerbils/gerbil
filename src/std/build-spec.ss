@@ -251,6 +251,7 @@
     "ensemble/ucan/ext"
 
     "ensemble/actor/macros"
+    "ensemble/actor/actor"
 
     ))
 

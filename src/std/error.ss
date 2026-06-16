@@ -36,7 +36,8 @@
         call-with-exit-on-error
         with-exit-on-error
         ignore-errors
-        report-errors)
+        report-errors
+        exception->string)
 
 ;; utility macro for definint error classes
 (defsyntax (deferror-class stx)
@@ -414,3 +415,7 @@
     (lambda () expr rest ...)))
   ((_ expr rest ...)
    (report-errors => #!void expr rest ...)))
+
+(def (exception->string e)
+  => :string
+  (call-with-output-string "" (cut display-exception e <>)))

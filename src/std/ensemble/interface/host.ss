@@ -22,15 +22,18 @@
   (sign-message! (msg : Message))
   => :void
 
+  ;; sign a broadcast message
+  (sign-broadcast-message! (msg : BroadcastMessage))
+  => :void
+
   ;; verify a message signature and capabilities
-  (verify-message (msg    : Message)
-                  (method : :string))
+  (verify-message (msg     : Message)
+                  (subject : :string))
   => VerificationResult
 
   ;; verify a broadcast message and capabilities
-  (verify-broadcast-message (msg    : BroadcastMessage)
-                            (method : :string)
-                            (group  : :string))
+  (verify-broadcast-message (msg     : BroadcastMessage)
+                            (subject : :string))
   => VerificationResult
   )
 
@@ -56,10 +59,6 @@
 
 ;; context for actor operations
 (interface (ActorContext Closer)
-  ;; the actor which this context pertains to
-  (handle)
-  => Handle
-
   ;; the actor space
   (actor-space)
   => ActorSpace
@@ -96,18 +95,24 @@
 ;; low level actor handler
 (interface (ActorHandler Closer)
   ;; receive a message
-  (receive! (ctx : ActorContext) (msg : Message))
+  (receive! (ctx : ActorContext)
+            (msg : Message))
   => :void
 
   ;; receive a broadcast message
-  (receive-broadcast! (ctx : ActorContext) (msg : BroadcastMessage))
+  (receive-broadcast! (ctx : ActorContext)
+                      (msg : BroadcastMessage))
   => :void
+
   ;; invoked when an actor is registered
-  (on-register! (ctx : ActorContext) (actor : Handle))
+  (on-register! (ctx   : ActorContext)
+                (actor : Handle)
+                (emit  : Channel))
   => :void
 
   ;; invoked when an actor is unregistered
-  (on-unregister! (ctx : ActorContext) (actor : Handle))
+  (on-unregister! (ctx   : ActorContext)
+                  (actor : Handle))
   => :void
   )
 

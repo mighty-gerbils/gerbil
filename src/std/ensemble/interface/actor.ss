@@ -28,14 +28,14 @@
   => Handle
 
   ;; the low level actor context
-  (context)
+  (actor-context)
   => ActorContext
 
   ;; the actor space
-  (space)
+  (actor-space)
   => ActorSpace
 
-  ;; send a message
+  ;; send a one way message
   (send! (dest   : Handle)
          (method : :string)
          (msg    : :t)
@@ -51,8 +51,8 @@
   => Message
 
   ;; reply to a message
-  (send-reply! (replyto : Message)
-               (msg     : :t))
+  (reply! (replyto : Message)
+          (msg     : :t))
   => :void
 
   ;; reply to a message with a nested invocation
@@ -77,11 +77,22 @@
 
   ;; broadcast an invocation with a temporary replyto method,
   ;; receiving the reply messages in the returned channel
-  (broadcast-invoke! (dest    : :string)
-                     (method  : :string)
-                     (msg     : :t)
-                     (ttl     : :fixnum := default-message-ttl))
+  (broadcast-invoke! (dest    :  :string)
+                     (method  :  :string)
+                     (msg     :  :t)
+                     (ttl     :  :fixnum := default-message-ttl)
+                     (limit   :? :fixnum := #f))
   => Channel
+
+  ;; reply to a broadcast message
+  (broadcast-reply! (replyto : BroadcastMessage)
+                    (msg     : :t))
+  => :void
+
+  ;; invoke a reply to a broadcast message
+  (broadcast-invoke-reply! (replyto : BroadcastMessage)
+                           (msg     : :t))
+  => Message
 
   ;; broadcast a message receiving replies in replyto
   (broadcast-with-replyto! (dest    : :string)
@@ -89,12 +100,6 @@
                            (replyto : :string)
                            (msg     : :t)
                            (ttl     : :fixnum := default-message-ttl))
-  => :void
-
-
-  ;; reply to a broadcast message
-  (broadcast-reply! (to  : Message)
-                    (msg : :t))
   => :void
 
   ;; add a handler for a method
@@ -107,32 +112,26 @@
   ;; only exists
   (add-message-handler! (method    : :string)
                         (handler   : MessageHandler)
-                        ttl:      (ttl       : :fixnum := 0)
-                        one-shot: (one-shot? : :boolean := #f)
-                        replace:  (replace?  : :boolean := #f))
-  => :void
-
-  ;; remove a message handler
-  (remove-message-handler! (method : :string))
+                        (expire    :  :integer := 0)
+                        (one-shot? :  :boolean := #f))
   => :void
 
   ;; add a message handler for a broadcast group
   ;; ttl, one-shot, and replace have the same semantics as
   ;; in add-message-handler! above
-  (add-broadcast-handler! (group   : :string)
-                          (method  : :string)
-                          (handler : BroadcastMessageHandler)
-                          ttl:      (ttl       : :fixnum := 0)
-                          one-shot: (one-shot? : :boolean := #f)
-                          replace:  (replace?  : :boolean := #f))
-  => :void
-
-  ;; remove a broadcast message handler
-  (remove-broadcast-handler! (group  : :string)
-                             (method : :string))
+  (add-broadcast-handler! (group     : :string)
+                          (method    : :string)
+                          (handler   : BroadcastMessageHandler)
+                          (expire    : :fixnum := 0)
+                          (one-shot? : :boolean := #f))
   => :void
 
   ;; emit a notification to monitors
   (emit! (notification : :t))
+  => :void
+
+  ;; add a close thunk to be executed when the actor
+  ;; is closed
+  (add-close-thunk! (thunk : :procedure))
   => :void
   )

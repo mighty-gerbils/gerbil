@@ -107,8 +107,7 @@
    (set! self.running #t)
    (catch (e)
      (syslog.error "unhandled exception in start"
-                     exception: (call-with-output-string ""
-                                  (cut display-exception e <>)))
+                     exception: (exception->string e))
      (ignore-errors (do-server-stop! self))
      (raise e))))
 
@@ -187,8 +186,7 @@
        (unregister!))
      (catch (e)
        (syslog.error "unhandled exception in listener"
-                     exception: (call-with-output-string ""
-                                  (cut display-exception e <>)))
+                     exception: (exception->string e))
        (unregister!)))))
 
 (def (server-handler (self : http-server) (sock : StreamSocket))

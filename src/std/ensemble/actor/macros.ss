@@ -68,16 +68,16 @@
 ;; (implement-protocol Map::proto my-map-implementation
 ;;  constructor: Map::my-map-implementation
 ;;  methods:
-;;  get:  (lambda (self key) body ...)
-;;  put!: (lambda (self key value) body ...))
+;;  get:  (lambda (self actor msg body) expr rest ...)
+;;  put!: (lambda (self actor msg body) expr rest ...))
 ;;
 ;; expansion:
 ;; (def (Map::my-map-implementation::get
-;;        (@actor   ::- Actor)
-;;        (@message :-  Message)
-;;        (self     :-  my-map-implementation)
-;;        (key      :- :string))
-;;   body ...)
+;;        (self    ::-  my-map-implementation)
+;;        (actor   ::- Actor)
+;;        (message ::-  Message)
+;;        (body    ::-  Map.get)
+;;   expr rest ...)
 ;; (def Map::my-map-implementation::put! ...)
 ;;
 ;; (defstruct my-map-implementation::handler::Map::get ((object : may-map-implementation)))
@@ -88,10 +88,8 @@
 ;;    (handle-message!
 ;;     (lambda (self actor msg)
 ;;       (using (body (unmarshal msg.body) : Map.get)
-;;         (actor.send-reply! msg
-;;           (Map::my-map-implementation::get
-;;              actor msg self.object body.key)))))
-;;     ...)
+;;         (Map::my-map-implementation::get
+;;            actor msg self.object body.key))))
 ;;   (Map::my-map-implementation::put! ...))
 ;;
 ;; (def (Map::my-map-implementation (actor : Actor)
@@ -100,9 +98,8 @@
 ;;   (actor.add-message-handler! ...)
 ;;   ...)
 ;;
-;; note that if you dont want to use an inline lambda for a method
-;; in the macro body, you can simply specify its name but you
-;; need to account for the two prefix arguments from the handler.
+;; note that you are responsible for sending replies and orchestrating
+;; the interaction inside the method implementation
 ;;
 (defsyntax-case implement-protocol ()
   )

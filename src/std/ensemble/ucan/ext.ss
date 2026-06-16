@@ -28,12 +28,9 @@
                     (audience :  :string)
                     (method   :  :string)
                     (group    :  :string)
-                    (duration :  :integer))
+                    (expire   :  :integer))
   => Token
-  (let* ((now (current-time-coarse))
-         (now-sec (CoarseTime-seconds now))
-         (expire (+ now-sec duration))
-         (token
+  (let* ((token
           (Token type
                  issuer
                  audience
@@ -55,7 +52,7 @@
                        (audience : :string)
                        (method   : :string)
                        (group    : :string)
-                       (duration : :integer))
+                       (expire   : :integer))
   (unless (fx= t.type DELEGATE)
     (raise-bad-argument delegate! "token does not allow delegation" t))
   (unless (or (equal? t.audience "*")
@@ -65,11 +62,78 @@
     (raise-bad-argument delegate! "token does not include method capability" t method))
   (unless (capability-includes? t.group group)
     (raise-bad-argument delegate! "token does not include group capability" t group))
-  (let* ((now (current-time-coarse))
-         (now-sec (CoarseTime-seconds now))
-         (expire (+ now-sec duration))
-         (token
+  (let* ((token
           (Token type
+                 issuer
+                 audience
+                 method
+                 group
+                 []
+                 (cond
+                  ((fx= t.expire 0)
+                   expire)
+                  ((fx= expire 0)
+                   t.expire)
+                  (else
+                   (min t.expire expire)))
+                 t #f #f)))
+    (ctx.sign! token)
+    token))
+
+;; invoke from a token as chain root
+(defcap-ext (invoke! ctx
+                     (t        : Token)
+                     (issuer   : :string)
+                     (audience : :string)
+                     (method   : :string)
+                     (group    : :string)
+                     (expire   : :integer))
+  (unless (fx= t.type DELEGATE)
+    (raise-bad-argument invoke! "token does not allow delegation" t))
+  (unless (or (equal? t.audience "*")
+              (equal? t.audience issuer))
+    (raise-bad-argument invoke! "token audience does not allow delegation to issuer" t issuer))
+  (unless (capability-includes? t.method method)
+    (raise-bad-argument invoke! "token does not include method capability" t method))
+  (unless (capability-includes? t.group group)
+    (raise-bad-argument invoke! "token does not include group capability" t group))
+  (let* ((token
+          (Token INVOKE
+                 issuer
+                 audience
+                 method
+                 group
+                 []
+                 (cond
+                  ((fx= t.expire 0)
+                   expire)
+                  ((fx= expire 0)
+                   t.expire)
+                  (else
+                   (min t.expire expire)))
+                 t #f #f)))
+    (ctx.sign! token)
+    token))
+
+;; broadcast from a token as chain root
+(defcap-ext (broadcast! ctx
+                        (t        : Token)
+                        (issuer   : :string)
+                        (audience : :string)
+                        (method   : :string)
+                        (group    : :string)
+                        (expire   : :integer))
+  (unless (fx= t.type DELEGATE)
+    (raise-bad-argument broadcast! "token does not allow delegation" t))
+  (unless (or (equal? t.audience "*")
+              (equal? t.audience issuer))
+    (raise-bad-argument broadcast! "token audience does not allow delegation to issuer" t issuer))
+  (unless (capability-includes? t.method method)
+    (raise-bad-argument broadcast! "token does not include method capability" t method))
+  (unless (capability-includes? t.group group)
+    (raise-bad-argument broadcast! "token does not include group capability" t group))
+  (let* ((token
+          (Token BROADCAST
                  issuer
                  audience
                  method
@@ -96,12 +160,9 @@
                       (audience : :string)
                       (method   : :string)
                       (group    : :string)
-                      (duration : :integer))
+                      (expire   : :integer))
   => :list
-  (let* ((now (current-time-coarse))
-         (now-sec (CoarseTime-seconds now))
-         (expire (+ now-sec duration))
-         (anchors
+  (let* ((anchors
           (ctx.list-output-anchors
            (lambda ((t :- Token))
              (and (or (equal? t.audience "*")
@@ -150,9 +211,9 @@
                                (audience : :string)
                                (method   : :string)
                                (group    : :string)
-                               (duration : :integer))
+                               (expire   : :integer))
   => :list
-  (ctx.provide! DELEGATE issuer audience method group duration))
+  (ctx.provide! DELEGATE issuer audience method group expire))
 
 ;; provide tokens granting invoke capabilities from issuer to audience
 (defcap-ext (provide-invoke! ctx
@@ -160,19 +221,18 @@
                              (audience : :string)
                              (method   : :string)
                              (group    : :string)
-                             (duration : :integer))
+                             (expire   : :integer))
   => :list
-  (ctx.provide! INVOKE issuer audience method group duration))
+  (ctx.provide! INVOKE issuer audience method group expire))
 
 ;; provide tokens granting broadcast capabilities from issuer to audience
 (defcap-ext (provide-broadcast! ctx
-                                (issuer   :  :string)
-                                (audience  :  :string)
-                                (method   :  :string)
+                                (issuer   : :string)
+                                (method   : :string)
                                 (group    : :string)
-                                (duration :  :integer))
+                                (expire   : :integer))
   => :list
-  (ctx.provide! BROADCAST issuer audience method group duration))
+  (ctx.provide! BROADCAST issuer "*" method group expire))
 
 ;; revoke a token
 (defcap-ext (revoke! ctx (token : Token))
