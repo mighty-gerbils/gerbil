@@ -292,6 +292,7 @@
                 with-identifier
                 with-identifiers
                 do-write
+                spawn/name
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
