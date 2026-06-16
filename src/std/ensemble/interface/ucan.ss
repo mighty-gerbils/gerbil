@@ -46,8 +46,6 @@
 
   ;; signs a token, provided the principal is one of
   ;; of the private keys in the context.
-  ;; the token is remembered until it expires in order to
-  ;; be able to revoke it later
   (sign! (token : Token))
   => :void
 
@@ -60,6 +58,10 @@
   (verify (token : Token)
           (subject :? :string := #f))
   => @VerificationResult
+
+  ;; save a (longer lived) token for future revocation
+  (save-token! (token : Token))
+  => :void
 
   ;; list issued unexpired tokens that have been remembered
   (list-tokens (filter : :procedure))

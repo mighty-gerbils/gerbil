@@ -136,8 +136,6 @@
                         {self.__privk issuer})
                       (lambda (issuer)
                         {self.__pubk issuer}))
-         (do-with-lock self.mx
-           (self.tokens.set! token token.expire))
          token))))
     (verify
      (lambda (self token subject)
@@ -165,6 +163,10 @@
                 (return !OK)))
             !AnchorVerificationError)
           VerificationResult)))
+    (save-token!
+     (lambda (self token)
+       (do-with-lock self.mx
+         (self.tokens.set! token token.expire))))
     (list-tokens
      (lambda (self filter)
        (:- {self.__filter self.tokens #f filter}
@@ -185,8 +187,8 @@
                (self.subject-output-anchors.set! subject subject-anchors))
              (using (subject-anchors :- HashTable)
                (subject-anchors.set! token #t)))
-         (do-with-lock self.mx
-           (self.root-output-anchors.set! token #t))))))
+           (do-with-lock self.mx
+             (self.root-output-anchors.set! token #t))))))
     (remove-output-anchor!
      (lambda (self token subject)
        (if subject
@@ -219,8 +221,8 @@
                (self.subject-input-anchors.set! subject subject-anchors))
              (using (subject-anchors :- HashTable)
                (subject-anchors.set! token #t)))
-         (do-with-lock self.mx
-           (self.root-input-anchors.set! token #t))))))
+           (do-with-lock self.mx
+             (self.root-input-anchors.set! token #t))))))
     (remove-input-anchor!
      (lambda (self token subject)
        (if subject
