@@ -219,14 +219,16 @@
     "net/http/server/api"
     "net/http/server"
 
-    ;; TODO
-
-    ;; "encoding/json/env"
-    ;; "encoding/json/io"
-    ;; "encoding/json/writer"
-    ;; "encoding/json/reader"
-
-
+    "db/interface"
+    "db/db"
+    "db/query"
+    ,@(if config-enable-sqlite
+        `((gxc: "db/sqlite-driver"
+                "-cc-options" ,(cppflags "sqlite3" "")
+                "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
+          "db/sqlite")
+        '())
+    "db"
     ))
 
 #;(def (build-spec . _)

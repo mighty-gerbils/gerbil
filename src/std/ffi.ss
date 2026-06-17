@@ -277,8 +277,7 @@ END-C
 
 (defsyntax-case def-C-type ()
   ((_ name c-type)
-   (and (identifier? #'name)
-        (stx-string? #'c-type))
+   (identifier? #'name)
    #'(begin-foreign (c-define-type name c-type)))
   ((_ name)
    (identifier? #'name)
