@@ -348,52 +348,52 @@ else
       "boot-gxi")
          build_boot_gxi || die
          ;;
-       "stage0")
+      "stage0")
          build_stage0 || die
          ;;
-       "stage1")
+      "stage1")
          build_stage1 || die
          ;;
-       "stage1-bach")
+      "stage1-bach")
          build_stage1_bach || die
          ;;
-       "stage1-noopt")
+      "stage1-noopt")
          GERBIL_NOOPT=t build_stage1 || die
          ;;
-       "stage1-debug")
+      "stage1-debug")
          debug_stage1
          ;;
-       "stage1-debug-bach")
+      "stage1-debug-bach")
          debug_stage1_bach
          ;;
-       "stdlib")
+      "stdlib")
          build_stdlib || die
          ;;
-       "stdlib-debug")
+      "stdlib-debug")
          debug_stdlib || die
          ;;
-       "libgerbil")
+      "libgerbil")
          build_libgerbil || die
          ;;
-       "lang")
+      "lang")
          build_lang || die
          ;;
-       "tools")
+      "tools")
          build_tools || die
          ;;
-       "tags")
+      "tags")
          build_tags || die
          ;;
-       "doc")
+      "doc")
          build_doc || die
          ;;
-       "env")
-           exec "$@"
-        ;;
-       "test")
-           exec gerbil "$@"
-        ;;
-       *)
+      "env")
+         exec "$@"
+         ;;
+      "test")
+         exec gerbil "$@"
+         ;;
+      *)
          feedback_err "Unknown command."
          feedback_err \
            "Correct usage: ./build.sh [prepare|gambit|boot-gxi|stage0|stage1|stdlib|libgerbil|lang|r7rs-large|srfi|tools|tags]"

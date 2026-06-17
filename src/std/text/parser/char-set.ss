@@ -5,18 +5,14 @@
 
 (export #t)
 
-(import
-  :gerbil/gambit
-  :std/sugar)
-
 ;; Codepoints assume Unicode encoding
 
 (defrule (def-codepoint (name x y ...) body ...)
-  (with-id name ((codepoint-fun "codepoint-" #'name)
-                 (char-fun "char-" #'name))
+  (with-id ((codepoint-fun name "codepoint-" name)
+            (char-fun name "char-" name))
     (begin
-      (def (codepoint-fun x y ...) (declare (fixnum)) body ...)
-      (def (char-fun x y ...) (and (char? x) (codepoint-fun (char->integer x) y ...))))))
+      (def (codepoint-fun (x : :fixnum) y ...) => :boolean (declare (fixnum)) body ...)
+      (def (char-fun x y ...) => :boolean (and (char? x) (codepoint-fun (char->integer x) y ...))))))
 
 ;; : Codepoint -> Bool
 (def-codepoint (ascii? c)
@@ -95,7 +91,7 @@
 
 ;; Assume ASCII, base 2 to 36
 ;; : Codepoint ?(IntegerRange min: 2 max: 36) -> (OrFalse (IntegerRange min: 0 max: 35))
-(def (codepoint-ascii-digit c (base 10))
+(def (codepoint-ascii-digit c (base : :fixnum := 10))
   (let (found (lambda (d) (and (< d base) d)))
     (cond
      ((<= 48 c 57) (found (- c 48))) ;; ASCII 0-9
@@ -103,14 +99,14 @@
      ((<= 97 c 122) (found (- c 87))) ;; ASCII a-z
      (else #f))))
 
-;; : Any -> (OrFalse (IntegerRange min: 0 max: 35))
-(def (char-ascii-digit c (base 10))
+;; : Any Fixnum -> (OrFalse (IntegerRange min: 0 max: 35))
+(def (char-ascii-digit c (base : :fixnum := 10))
   (and (char? c) (codepoint-ascii-digit (char->integer c) base)))
 
 ;; What character (we assume ASCII) for the given digit in the given base (up to 36)?
 ;; Return #f if N isn't a digit number that has a corresponding character in the given base.
 ;; : Integer (Optional Integer 10) (Optional Bool #f) -> (Or Char #f)
-(def (digit-char n (base 10) (upper-case? #f))
+(def (digit-char n (base : :fixnum := 10) (upper-case? : :boolean := #f))
   (and (exact-integer? n) (exact-integer? base)
        (<= 2 base 36) (< -1 n base)
        (integer->char (+ n (cond
@@ -120,5 +116,5 @@
 
 ;; Is the result from read-char or peek-char from a Port or Reader a line terminator?
 ;; : Any -> Bool
-(def (char-eol? x)
+(def (char-eol? x) => :boolean
   (or (eqv? x #\newline) (eqv? x #\return) (eof-object? x)))

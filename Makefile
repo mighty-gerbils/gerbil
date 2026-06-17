@@ -1,39 +1,47 @@
 all: build
 
+BUILD=GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh
+
 build:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh
+	$(BUILD)
 
 install:
 	DESTDIR="$(DESTDIR)" ./install.sh
 
 boot:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh prepare
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh gambit
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh boot-gxi
+	$(BUILD) prepare
+	$(BUILD) gambit
+	$(BUILD) boot-gxi
 
 stage0:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stage0
+	$(BUILD) stage0
 
 stage1:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stage1
+	$(BUILD) stage1
 
 stdlib:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh stdlib
+	$(BUILD) stdlib
 
 libgerbil:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh libgerbil
+	$(BUILD) libgerbil
 
 tools:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh tools
+	$(BUILD) tools
 
 rebootstrap:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env ./bootstrap.sh
+	$(BUILD) env ./bootstrap.sh
+
+rebootstrap-from-scratch:
+	$(MAKE) boot-clean stage0
+	GERBIL_NOOPT=t $(MAKE) mostly-clean stage1
+	$(MAKE) rebootstrap
+	$(MAKE) boot-clean stage0 stage1
 
 repl:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env gxi
+	$(BUILD) env gxi
 
 bash:
-	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh env bash
+	$(BUILD) env bash
 
 check:
 	./build.sh env gxtest ./...

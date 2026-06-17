@@ -70,7 +70,8 @@ package: gerbil/core
           (c4-linearize [] lst
                         get-precedence-list: interface-identifier->precedence-list
                         struct: false
-                        eq: free-identifier=?))
+                        eq: free-identifier=?
+                        get-name: stx-e))
       linearized))
 
   (def (interface-info-method-signature info method)
@@ -691,7 +692,7 @@ package: gerbil/core
                                           (!class-slot-checked-method-contract? type part)
                                           #f))))
                             (else
-                             (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
+                             (raise-syntax-error #f "unresolved dotted reference value; unknown type for slot" stx #'id part)))))
                         ((interface-info? type)
                          (if (null? rest)
                            (with-syntax ((object
@@ -822,9 +823,9 @@ package: gerbil/core
                                           (!class-slot-checked-mutator-contract? type part)
                                           #f)))))
                         (else
-                         (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part))))
+                         (raise-syntax-error #f "unresolved dotted setter; unknown type for slot" stx #'id part))))
                       ((interface-info? type)
-                       (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id))
+                       (raise-syntax-error #f "illegal dotted setter; interface has no slots" stx #'id))
                       (else
                        (raise-syntax-error #f "unexpected type" stx type))))))))
           (else
@@ -874,7 +875,8 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value klass-id)))
-                            eq: free-identifier=?))
+                            eq: free-identifier=?
+                            get-name: stx-e))
              (precedence-list
               (cond
                ((memq (!class-type-id klass) '(t object class))
@@ -2613,7 +2615,7 @@ package: gerbil/core
                (method-name (stx-e method-id))
                (method-sig  (interface-info-method-signature info method-name)))
           (unless method-sig
-            (raise-syntax-error #f "uknown interface method" stx #'Interface method-id))
+            (raise-syntax-error #f "unknown interface method" stx #'Interface method-id))
           (with-syntax ((interface-method-name
                          (generate-interface-method-name info method-id))
                         (method-implementation
@@ -3241,7 +3243,8 @@ package: gerbil/core
                             struct:
                             (lambda (klass-id)
                               (!class-type-struct? (syntax-local-value/context klass-id)))
-                            eq: free-identifier=?))
+                            eq: free-identifier=?
+                            get-name: stx-e))
              (base-fields
               (if base-struct
                 (let (klass (syntax-local-value base-struct))

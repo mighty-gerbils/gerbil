@@ -40,38 +40,38 @@
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
-(def (string-trim-prefix prefix string)
+(def (string-trim-prefix (prefix : :string) (string : :string)) => :string
   (if (string-prefix? prefix string)
     (string-drop string (string-length prefix))
     string))
 
-(def (string-drop (s : :string) (count : :fixnum))
+(def (string-drop (s : :string) (count : :fixnum)) => :string
   (substring s count (string-length s)))
 
 ;; Split a string based on the given prefix, if present.
 ;; Return two values:
 ;; - the trimmed string,
 ;; - the prefix (eq? to the argument) if found, or an empty string if not found
-(def (string-split-prefix prefix string)
+(def (string-split-prefix (prefix : :string) (string : :string)) => :values
   (let ((trimmed (string-trim-prefix prefix string)))
     (if (eq? trimmed string) (values string "") (values trimmed prefix))))
 
 
 ;; If the string ends with given suffix, return the beginning of the string up to the suffix.
 ;; Otherwise, return the entire string. NB: Only remove the suffix once.
-(def (string-trim-suffix suffix string)
+(def (string-trim-suffix (suffix : :string) (string : :string)) => :string
   (if (string-suffix? suffix string)
     (string-drop-right string (string-length suffix))
     string))
 
-(def (string-drop-right (s : :string) (count : :fixnum))
+(def (string-drop-right (s : :string) (count : :fixnum)) => :string
   (substring s 0 (fx- (string-length s) count)))
 
 ;; Split a string based on the given suffix, if present.
 ;; Return two values:
 ;; - the trimmed string,
 ;; - the suffix (eq? to the argument) if found, or an empty string if not found
-(def (string-split-suffix suffix string)
+(def (string-split-suffix (suffix : :string) (string : :string)) => :values
   (let ((trimmed (string-trim-suffix suffix string)))
     (if (eq? trimmed string) (values string "") (values trimmed suffix))))
 
@@ -90,7 +90,7 @@
 ;; NB: This function will only remove one end-of-line marker,
 ;; like the shell when processing $(subprocess output) or perl's chomp.
 ;; Use (string-trim-right string (char-set #\return #\newline)) to remove all of them.
-(def (string-trim-eol string)
+(def (string-trim-eol (string : :string)) => :string
   (defrules try ()
     ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
                         (if (eq? trimmed string) fallback trimmed))))
@@ -101,7 +101,7 @@
 ;; Return two values:
 ;; - the trimmed string
 ;; - the eol marker found, or the empty string if not found
-(def (string-split-eol string)
+(def (string-split-eol (string : :string)) => :values
   (defrules try ()
     ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
                         (if (eq? trimmed string) fallback (values trimmed eol)))))
@@ -111,7 +111,7 @@
 ;; string-subst helper which handles the case that the argument 'old' is an empty string.
 ;;   new    non-empty
 ;;   count  non-zero, number of replacements (-1 means no limit)
-(def (subst-helper-empty-old str new count)
+(def (subst-helper-empty-old (str : :string) (new : :string) (count : :fixnum)) => :string
   (declare (fixnum))
   (def len-str (string-length str))
   (if (= count 1)
@@ -144,7 +144,7 @@
 ;;   old    non-empty
 ;;   new    can be empty
 ;;   count  non-zero, number of replacements (-1 means no limit)
-(def (subst-helper-nonempty-old str old new count)
+(def (subst-helper-nonempty-old (str : :string) (old : :string) (new : :string) (count : :fixnum)) => :string
   (declare (fixnum))
   (def len-str (string-length str))
   (def size-old (1- (string-length old)))
@@ -184,7 +184,7 @@
 ;; Example:
 ;;  (string-subst "abc" "b" "_") => "a_c"
 ;;  (string-subst "abc" "" "_")  => "_a_b_c_"
-(def (string-subst str old new count: (count #f))
+(def (string-subst (str : :string) (old : :string) (new : :string) count: (count :? :fixnum := #f)) => :string
   (declare (fixnum))
   (unless (or (not count) (fixnum? count))
     (raise-bad-argument string-subst "fixnum or #f: count" count))
@@ -211,7 +211,7 @@
 ;;
 ;; Example:
 ;;  (string-whitespace? " \n\r \t") => #t
-(def (string-whitespace? s)
+(def (string-whitespace? (s : :string)) => :boolean
   (string-every char-whitespace? s))
 
 (def (string-every (pred : :procedure) (s : :string)) => :boolean
@@ -224,7 +224,7 @@
             #f))
         #t))))
 
-(def (random-word-char)
+(def (random-word-char) => :char
   (declare (not safe) (fixnum))
   (def n (random-integer 63))
   (integer->char
@@ -240,7 +240,7 @@
 ;;
 ;; Example:
 ;;  (random-string) => "5CfMyYd2Ob"
-(def (random-string (len 10))
+(def (random-string (len : :fixnum := 10)) => :string
   (declare (not safe) (fixnum))
   (unless (fixnum? len)
     (raise-bad-argument random-string "fixnum" len))
@@ -290,12 +290,12 @@
 
 ;; Like CL SUBSTITUTE-IF but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char-if
-      string newchar predicate
-      start: (start #f)
-      end: (end #f)
-      from-end: (from-end? #f)
-      count: (count #f)
-      in-place: (in-place? #f))
+      (string : :string) (newchar : :char) (predicate : :procedure)
+      start: (start :? :fixnum := #f)
+      end: (end :? :fixnum := #f)
+      from-end: (from-end? : :boolean := #f)
+      count: (count :? :fixnum := #f)
+      in-place: (in-place? : :boolean := #f)) => :string
   (unless start (set! start 0))
   (unless end (set! end (string-length string)))
   (def s (if in-place? string (string-copy string)))
@@ -316,25 +316,25 @@
 
 ;; Like CL SUBSTITUTE but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char
-      string newchar oldchar
-      test: (test #f)
-      test-not: (test-not #f)
-      key: (key #f)
-      start: (start #f)
-      end: (end #f)
-      from-end: (from-end? #f)
-      count: (count #f)
-      in-place: (in-place? #f))
+      (string : :string) (newchar : :char) (oldchar : :char)
+      test: (test :? :procedure := #f)
+      test-not: (test-not :? :procedure := #f)
+      key: (key :? :procedure := #f)
+      start: (start :? :fixnum := #f)
+      end: (end :? :fixnum := #f)
+      from-end: (from-end? : :boolean := #f)
+      count: (count :? :fixnum := #f)
+      in-place: (in-place? : :boolean := #f)) => :string
   (let* ((key (or key identity))
          (predicate
           (cond
            (test (lambda (x) (test oldchar (key x))))
            (test-not (lambda (x) (not (test-not oldchar (key x)))))
-           (key (lambda (x) (equal? oldchar (key x))))
+           (key (lambda (x) (eqv? oldchar (key x))))
            (else (cut eqv? oldchar <>)))))
     (string-substitute-char-if
      string newchar predicate
      start: start end: end count: count from-end: from-end? in-place: in-place?)))
 
-(def (as-string<? x y)
+(def (as-string<? x y) => :boolean
   (string<? (as-string x) (as-string y)))

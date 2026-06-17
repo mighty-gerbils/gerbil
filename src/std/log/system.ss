@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; system logger
 (import :gerbil/runtime/thread
-        :std/hash-table
+        :std/hash/types
         :std/error
         ./interface
         ./level

@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © fare, vyzo
 ;;; Utility functions and accessors for multiple values
-(import ./sugar)
-
 (export (rename: first-value% first-value)
         (rename: second-value% second-value)
         (rename: nth-value% nth-value)

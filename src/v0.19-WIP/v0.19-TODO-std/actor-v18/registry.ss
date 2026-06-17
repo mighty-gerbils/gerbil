@@ -5,7 +5,7 @@
         :std/sugar
         :std/iter
         :std/sort
-        :std/hash-table
+        :std/hash/types
         :std/misc/symbol
         ./logger
         ./message

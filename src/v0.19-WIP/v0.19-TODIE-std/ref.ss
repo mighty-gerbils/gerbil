@@ -4,7 +4,7 @@
 
 
 (import :std/generic
-        :std/hash-table)
+        :std/hash/types)
 
 (export ref ~ :ref
         ref-set! ~-set! :set!)

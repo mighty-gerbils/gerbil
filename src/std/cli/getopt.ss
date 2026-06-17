@@ -3,7 +3,7 @@
 ;;; Command-line option and command argument parsing
 (import :std/error
         :std/iter
-        :std/hash
+        :std/hash/misc
         :std/list/list
         :std/string/misc
         :std/list/list-builder)

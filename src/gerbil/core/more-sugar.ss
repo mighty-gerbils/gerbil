@@ -36,7 +36,26 @@ package: gerbil/core
        (core-apply-expander (syntax-local-e #'setq-id) stx))
       ((_ id expr)
        (identifier? #'id)
-       #'(%#set! id expr)))))
+       #'(%#set! id expr))))
+
+  (def (stx-re-source stx src)
+    (if (identifier? stx) stx (stx-wrap-source (syntax-e stx) (stx-source src))))
+
+  (def (stx-substitute subs stx (id=? bound-identifier=?))
+    ;; subs: alist of (old-id . new-id), comparing with bound-identifier=?
+    (let recur ((stx stx))
+      (cond
+       ((identifier? stx)
+        (cond
+         ((assoc stx subs id=?) => cdr)
+         (else stx)))
+       ((stx-pair? stx)
+        (stx-re-source (cons (recur (stx-car stx)) (recur (stx-cdr stx))) stx))
+       ((stx-vector? stx)
+        (stx-re-source (vector-map recur (syntax-e stx)) stx))
+       ((stx-box? stx)
+        (stx-re-source (box (recur (unbox (syntax-e stx)))) stx))
+       (else stx)))))
 
 (defsyntax (set! stx)
   (expand-set! stx))
@@ -207,3 +226,28 @@ package: gerbil/core
        (when (current-expander-compiling?)
          (eval-syntax #'expr))
        #'(void)))))
+
+(defsyntax (with-id stx)
+  (syntax-case stx ()
+    ((_ (clause ...) body ...)
+     (let ((subs
+            (map
+             (lambda (clause)
+               (syntax-case clause (quote unquote quasiquote)
+                 ((fresh-id (quote local-id))
+                  (and (identifier? #'fresh-id)
+                       (identifier? #'local-id))
+                  (cons #'fresh-id (syntax-local-temp (stx-e #'local-id))))
+                 ((fresh-id (quasiquote local-id))
+                  (and (identifier? #'fresh-id)
+                       (identifier? #'local-id))
+                  (cons #'fresh-id (genident 'local-id)))
+                 ((fresh-id (unquote local-id))
+                  (and (identifier? #'fresh-id)
+                       (identifier? #'local-id))
+                  (cons #'fresh-id (syntax-local-introduce #'local-id)))
+                 ((fresh-id ctx-id component components ...)
+                  (identifier? #'fresh-id)
+                  (cons #'fresh-id (stx-identifier #'ctx-id #'(component components ...))))))
+	     (syntax->list #'(clause ...)))))
+       (stx-substitute subs #'(begin body ...))))))

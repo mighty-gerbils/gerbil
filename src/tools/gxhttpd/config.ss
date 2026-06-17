@@ -7,7 +7,7 @@
         :std/serde/deserialize
         :std/log
         :std/io
-        :std/hash
+        :std/hash/misc
         :std/interface)
 (export #t)
 

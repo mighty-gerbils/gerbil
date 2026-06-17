@@ -29,6 +29,7 @@ namespace: #f
   (delete! key) => :void
   (for-each (proc : :procedure)) => :void
   (copy) => @HashTable
+  (new (size-hint :? :fixnum := #f)) => @HashTable
   (clear!) => :void
   (length) => :fixnum)
 
@@ -46,6 +47,7 @@ namespace: #f
 (bind-method! __table::t 'HashTable::for-each raw-table-for-each)
 (bind-method! __table::t 'HashTable::length &raw-table-count)
 (bind-method! __table::t 'HashTable::copy raw-table-copy)
+(bind-method! __table::t 'HashTable::new raw-table-new)
 (bind-method! __table::t 'HashTable::clear! raw-table-clear!)
 
 (bind-method! __gc-table::t 'HashTable::ref gc-table-ref)
@@ -55,6 +57,7 @@ namespace: #f
 (bind-method! __gc-table::t 'HashTable::for-each gc-table-for-each)
 (bind-method! __gc-table::t 'HashTable::length gc-table-length)
 (bind-method! __gc-table::t 'HashTable::copy gc-table-copy)
+(bind-method! __gc-table::t 'HashTable::new gc-table-new)
 (bind-method! __gc-table::t 'HashTable::clear! gc-table-clear!)
 
 (def (gambit-table-update! table key update default)
@@ -74,6 +77,7 @@ namespace: #f
 (bind-method! (macro-type-table) 'HashTable::for-each gambit-table-for-each)
 (bind-method! (macro-type-table) 'HashTable::length table-length)
 (bind-method! (macro-type-table) 'HashTable::copy table-copy)
+(bind-method! (macro-type-table) 'HashTable::new table-new)
 (bind-method! (macro-type-table) 'HashTable::clear! gambit-table-clear!)
 
 ;; immediate hash-table class; reifies the raw-table type
@@ -200,6 +204,7 @@ namespace: #f
 (bind-method! hash-table::t 'HashTable::for-each raw-table-for-each)
 (bind-method! hash-table::t 'HashTable::length &raw-table-count)
 (bind-method! hash-table::t 'HashTable::copy raw-table-copy)
+(bind-method! hash-table::t 'HashTable::new raw-table-new)
 (bind-method! hash-table::t 'HashTable::clear! raw-table-clear!)
 
 (bind-method! eq-hash-table::t 'HashTable::ref eq-table-ref)
@@ -234,6 +239,7 @@ namespace: #f
 (bind-method! gc-hash-table::t 'HashTable::for-each gc-table-for-each)
 (bind-method! gc-hash-table::t 'HashTable::length gc-table-length)
 (bind-method! gc-hash-table::t 'HashTable::copy gc-table-copy)
+(bind-method! gc-hash-table::t 'HashTable::new gc-table-new)
 (bind-method! gc-hash-table::t 'HashTable::clear! gc-table-clear!)
 
 ;; HashTable interface methods
@@ -300,6 +306,8 @@ namespace: #f
   &Locker-read-unlock!
   HashTable)
 
+(deflocked-hash-method (new size-hint) &Locker-read-lock! &HashTable-new &Locker-read-unlock! HashTable)
+
 (deflocked-hash-method (clear!)
   &Locker-write-lock!
   &HashTable-clear!
@@ -356,6 +364,8 @@ namespace: #f
 (defchecked-hash-method (copy self)
   void
   &HashTable-copy)
+
+(defchecked-hash-method (new self size-hint) void &HashTable-new)
 
 (defchecked-hash-method (clear! self)
   void
@@ -615,6 +625,8 @@ namespace: #f
 (defhash-method (hash-copy h)
   => HashTable
   (h.copy))
+
+(defhash-method (hash-new h) => HashTable (h.new))
 
 (defhash-method (hash-clear! h)
   (h.clear!))

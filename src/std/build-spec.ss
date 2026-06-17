@@ -45,12 +45,17 @@
     "test/unit"
     "test"
 
-    "hash"
+    "values"
+
+    "hash/types"
+    "hash/misc"
+
     "string/misc"
 
     "cli/getopt"
 
     "text/pregexp"
+    "text/parser/char-set"
 
     "cache"
     "sync/rwlock"
@@ -110,7 +115,6 @@
     "io/api"
     "io"
 
-    "hash-table"
     "serde/interface"
     "serde/util"
     "serde/scan"

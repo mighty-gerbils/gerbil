@@ -1,8 +1,7 @@
 (export values-test)
 
 (import :std/test
-        :std/values
-        :std/sugar)
+        :std/values)
 
 (def values-test
   (test-suite "test :std/values"

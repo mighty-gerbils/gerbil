@@ -1169,6 +1169,7 @@ package: gerbil/core
     system-version-string
     table->list
     table-copy
+    table-new
     table-for-each
     table-length
     table-merge
@@ -1543,6 +1544,7 @@ package: gerbil/core
 
     ;; :gerbil/runtime/c3
     c4-linearize
+    c4-linearize*
 
     ;; :gerbil/runtime/mop
     class-type
@@ -1821,6 +1823,7 @@ package: gerbil/core
     hash-keys
     hash-values
     hash-copy
+    hash-new
     hash-merge
     hash-merge-right
     hash-merge!

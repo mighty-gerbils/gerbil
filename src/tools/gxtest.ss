@@ -4,7 +4,7 @@
 (import :gerbil/expander
         :std/cli/getopt
         :std/iter
-        :std/hash
+        :std/hash/misc
         :std/text/pregexp
         :std/test/base
         ./env)

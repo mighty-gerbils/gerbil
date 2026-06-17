@@ -1,18 +1,18 @@
 (import :std/test
         :std/iter
         :gerbil/runtime/table)
-(export raw-table-test gc-table-test)
+(export raw-table-test gc-table-test table-test)
 
 (def raw-table-test
   (test-suite "raw-table"
     (test-case "basic ops"
       (let (h (make-raw-table #f eq-hash eq?))
         (for ((k '(a b c d e f g))
-              (v (in-naturals)))
+              (v (in-integers)))
           (raw-table-set! h k v)
           (check (raw-table-ref h k #f) => v))
         (for ((k '(a b c d e f g))
-              (v (in-naturals)))
+              (v (in-integers)))
           (check (raw-table-ref h k #f) => v))
         (for (k '(a b c d e f g))
           (raw-table-delete! h k)
@@ -52,11 +52,11 @@
     (test-case "basic ops"
       (let (h (make-gc-table #f))
         (for ((k '(a b c d e f g))
-              (v (in-naturals)))
+              (v (in-integers)))
           (gc-table-set! h k v)
           (check (gc-table-ref h k #f) => v))
         (for ((k '(a b c d e f g))
-              (v (in-naturals)))
+              (v (in-integers)))
           (check (gc-table-ref h k #f) => v))
         (for (k '(a b c d e f g))
           (gc-table-delete! h k)
@@ -90,3 +90,23 @@
           (gc-table-set! h x x))
         (for (x (iota 200))
           (check (gc-table-ref h x #f) => x))))))
+
+(def table-test ;; gambit tables
+  (test-suite "table" ;; gambit tables
+    (test-case "basic ops"
+      (let (h (make-table))
+        (for ((k '(a b c d e f g))
+              (v (in-integers)))
+          (table-set! h k v)
+          (check (table-ref h k #f) => v))
+        (for ((k '(a b c d e f g))
+              (v (in-integers)))
+          (check (table-ref h k #f) => v))
+        (let (hh (table-new h))
+          (check (table-ref hh 'a #f) => #f)
+          (table-set! hh 'a 10)
+          (check (table-ref hh 'a #f) => 10)
+          (check (table-ref h 'a #f) => 0))
+        (for (k '(a b c d e f g))
+          (table-set! h k)
+          (check (table-ref h k #f) => #f))))))

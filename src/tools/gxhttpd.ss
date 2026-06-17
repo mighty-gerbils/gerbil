@@ -3,7 +3,7 @@
 ;;; The Gerbil HTTP Daemon
 ;;;
 (import :std/cli/getopt
-        :std/hash
+        :std/hash/misc
         :std/log
         ./env
         ./gxhttpd/opt

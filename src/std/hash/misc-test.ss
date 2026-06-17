@@ -1,14 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; © fare
-;;; :std/misc/hash test
+;;; :std/hash/misc test
 
-(import ./hash
-        :std/misc/repr
-        :std/sugar
+(import ./misc
         :std/test)
+
 (export hash-test)
 (def hash-test
-  (test-suite "test :std/misc/hash"
+  (test-suite "test :std/hash/misc"
     (test-case "hash-empty?"
       (check (hash-empty? (hash (1 "a") (2 "b") (3 "c"))) => #f)
       (check (hash-empty? (hash (a 1))) => #f)
@@ -113,7 +112,7 @@
       (check (hash-get h "a") => 1)
       (set! (hash-ref h "b") 2)
       (check (hash-get h "b") => 2)
-      (defrules post-increment! () ((p x) (p x 1)) ((p x y ...) (begin0 x (set! x (+ x y ...)))))
+      (defrules post-increment! () ((_ x) (_ x 1)) ((_ x y ...) (begin0 x (set! x (+ x y ...)))))
       (check (post-increment! (hash-ref h "a") 10) => 1)
       (check (post-increment! (hash-ref h "a" 0)) => 11)
       (check (post-increment! (hash-ref h "c" 0)) => 0)

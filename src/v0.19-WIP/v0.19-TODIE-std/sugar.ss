@@ -3,7 +3,7 @@
 ;;; some standard sugar
 
 (import :std/error
-        :std/hash-table)
+        :std/hash/types)
 (export
   ignore-errors
   with-destroy

@@ -151,11 +151,20 @@ namespace: #f
   (let (new-tab (##structure-copy tab))
     (set! (&raw-table-table new-tab)
       (vector-copy (&raw-table-table tab)))
+    (set! (&raw-table-lock new-tab)
+      (and (&raw-table-lock tab) (__make-inline-lock)))
     new-tab))
 
 (def (raw-table-copy/lock tab)
   (do-raw-table-lock tab
     (raw-table-copy tab)))
+
+(def (raw-table-new tab (size-hint #f))
+  (make-raw-table size-hint
+                  (&raw-table-hash tab)
+                  (&raw-table-test tab)
+                  (&raw-table-seed tab)
+                  (and (&raw-table-lock tab) (__make-inline-lock))))
 
 (def (raw-table-clear! tab)
   (vector-fill! (&raw-table-table tab) (macro-unused-obj))
@@ -611,15 +620,25 @@ namespace: #f
   (do-gc-table-lock tab
     (gc-table-for-each tab proc)))
 
+(def (table-new tab (size-hint #f))
+  (unless (table? tab)
+    (error "table-new: expected table" tab))
+  (def loads (macro-table-loads tab))
+  (make-table
+   size: (or size-hint 16)
+   init: (macro-table-init tab)
+   weak-keys: (fx< 0 (fxand (macro-table-flags tab) (macro-gc-hash-table-flag-weak-keys)))
+   weak-values: (fx< 0 (fxand (macro-table-flags tab) (macro-gc-hash-table-flag-weak-vals)))
+   test: (macro-table-test tab)
+   hash: (macro-table-hash tab)
+   min-load: (##f64vector-ref loads 0)
+   max-load: (##f64vector-ref loads 2)))
+
+(def (gc-table-new tab (size-hint #f))
+  (##structure (##structure-type tab) (table-new (&gc-table-gcht tab) size-hint) #f))
+
 (def (gc-table-copy tab)
-  (let* ((gcht (__gc-table-e tab))
-         (new-table
-          (__gc-table-new
-           (macro-gc-hash-table-count gcht)
-           (macro-gc-hash-table-flags gcht)))
-         (result
-          (##structure (##structure-type tab)
-                       new-table #f)))
+  (let ((result (gc-table-new tab (macro-gc-hash-table-count (__gc-table-e tab)))))
     (gc-table-for-each tab (lambda (k v) (gc-table-set! result k v)))
     result))
 

@@ -4,6 +4,7 @@ namespace: gxc
 
 (%#begin (%#import :gerbil/core/expander :gerbil/expander)
          (%#export #t)
+         (%#define-runtime __DEBUG-COMPILE gxc#__DEBUG-COMPILE)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/base~1")))

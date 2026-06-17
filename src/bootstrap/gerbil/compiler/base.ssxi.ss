@@ -3,6 +3,9 @@ package: gerbil/compiler
 
 (begin
   (declare-type
+   gxc#__DEBUG-COMPILE
+   (optimizer-resolve-class '(typedecl gxc#__DEBUG-COMPILE) 'boolean::t))
+  (declare-type
    gxc#current-compile-symbol-table
    (optimizer-resolve-class
     '(typedecl gxc#current-compile-symbol-table)
