@@ -46,6 +46,9 @@ namespace: gxc
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-resolve-type rator-id)))
        (cond
+        ((hash-get special-procedure-optimizers rator-id)
+         => (lambda (optimize)
+              (optimize self stx)))
         ((or (not rator-type)
              (eq? (!type-id rator-type) 't))
          (xform-call% self stx))
@@ -145,6 +148,40 @@ namespace: gxc
          (xform-call% self stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))))
+
+(def (optimize-special-cast self stx)
+  (ast-case stx (%#ref)
+    ((_ _ (%#ref descriptor) object)
+     (let* ((descriptor-id (identifier-symbol #'descriptor))
+            (descriptor-type (optimizer-resolve-type descriptor-id))
+            (object-type (apply-basic-expression-type #'object)))
+       (cond
+        ((not (!interface? descriptor-type))
+         (raise-compile-error "illegal cast; not an interface type" stx descriptor-type))
+        ((and object-type
+              (eq? (!type-id descriptor-type) (!type-id object-type)))
+         ;; eliminate the cast
+         (compile-e self #'object))
+        (else
+         (xform-wrap-source
+          ['%#call-unchecked
+           '(%#ref cast)
+           #'(%#ref descriptor)
+           (compile-e self #'object)]
+          stx)))))
+    ((_ _ descriptor object)
+     (xform-wrap-source
+      ['%#call-unchecked
+       '(%#ref cast)
+       (compile-e self #'descriptor)
+       (compile-e self #'object)]
+      stx))
+    (_
+     (raise-compile-error "illegal cast; arity mismatch" stx))))
+
+(def special-procedure-optimizers
+  (hash-eq
+   (cast optimize-special-cast)))
 
 (defmethod {optimize-call !procedure}
   (lambda (self ctx stx args)
