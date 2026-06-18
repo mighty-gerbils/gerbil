@@ -46,18 +46,14 @@ package: gerbil/core
      unchecked-implementation-macros))
 
   (defmethod {apply-macro-expander interface-info}
-    (with-syntax ((cast (quote-syntax cast))
-                  (immediate-instance-of? (quote-syntax immediate-instance-of?)))
+    (with-syntax ((cast (quote-syntax cast)))
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
-           (with-syntax ((klass (!runtime-type-descriptor self))
-                         (descriptor (interface-info-interface-descriptor self)))
-             #'(let ($obj obj)
-                 (begin-annotation (@type klass)
-                   (if (immediate-instance-of? klass $obj)
-                     $obj
-                     (cast descriptor $obj))))))
+           (with-syntax ((descriptor (interface-info-interface-descriptor self))
+                         (klass      (!runtime-type-descriptor self)))
+             #'(begin-annotation (@type klass)
+                 (cast descriptor obj))))
           (_ (identifier? stx)
              (with-syntax ((descriptor (interface-info-interface-descriptor self)))
                #'descriptor))))))
