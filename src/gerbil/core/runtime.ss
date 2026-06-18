@@ -1589,7 +1589,6 @@ package: gerbil/core
     make-class-slot-mutator
     make-class-slot-unchecked-accessor
     make-class-slot-unchecked-mutator
-    immediate-instance-of?
     direct-instance?
     struct-instance?
     class-instance?
