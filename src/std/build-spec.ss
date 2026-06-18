@@ -47,8 +47,8 @@
 
     "values"
 
-    "hash/types"
     "hash/misc"
+    "hash/types"
 
     "string/misc"
 
@@ -236,8 +236,8 @@
 
     "ensemble/interface/ucan"
     "ensemble/interface/message"
-    "ensemble/interface/host"
     "ensemble/interface/actor"
+    "ensemble/interface/host"
     "ensemble/interface"
 
     "encoding/multibase"
