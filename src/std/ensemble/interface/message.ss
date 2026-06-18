@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble actor messages
-(import ./ucan)
+(import :std/io/interface
+        ./ucan)
 (export #t)
 
 (defstruct Handle
@@ -18,7 +19,7 @@
 
 (defstruct UnicastMessageHead
   ((source    : Handle)      ; source actor
-   (dest      : Handle)))      ; recipient actor
+   (dest      : Handle)))    ; recipient actor
 
 (defstruct BroadcastMessageHead
   ((source    : Handle)      ; source actor
@@ -38,3 +39,28 @@
 
 (defclass (BroadcastMessage MessageBody BroadcastMessageHead) ()
   final: #t)
+
+;; context for security operations
+(interface (SecurityContext Closer)
+  ;; the capability context
+  (capability-context)
+  => CapabilityContext
+
+  ;; sign a message
+  (sign-message! (msg : Message))
+  => :void
+
+  ;; sign a broadcast message
+  (sign-broadcast-message! (msg : BroadcastMessage))
+  => :void
+
+  ;; verify a message signature and capabilities
+  (verify-message (msg     : Message)
+                  (subject : :string))
+  => VerificationResult
+
+  ;; verify a broadcast message and capabilities
+  (verify-broadcast-message (msg     : BroadcastMessage)
+                            (subject : :string))
+  => VerificationResult
+  )

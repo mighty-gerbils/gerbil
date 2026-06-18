@@ -3,121 +3,25 @@
 ;;; ensemble host interface
 (import :std/io
         :std/net/address
+        :std/net/ssl
         :std/time/timeout
         :std/sync/channel
         ./ucan
-        ./message)
+        ./message
+        ./actor)
 (export #t)
 
 (deftype @Host Host)
 (deftype @Network Network)
+(deftype @Broadcast Broadcast)
+(deftype @Connection Connection)
+(deftype @Stream Stream)
 
-;; context for security operations
-(interface (SecurityContext Closer)
-  ;; the capability context
-  (capability-context)
-  => CapabilityContext
+;; the current host
+(def current-host
+  (make-parameter #f))
 
-  ;; sign a message
-  (sign-message! (msg : Message))
-  => :void
-
-  ;; sign a broadcast message
-  (sign-broadcast-message! (msg : BroadcastMessage))
-  => :void
-
-  ;; verify a message signature and capabilities
-  (verify-message (msg     : Message)
-                  (subject : :string))
-  => VerificationResult
-
-  ;; verify a broadcast message and capabilities
-  (verify-broadcast-message (msg     : BroadcastMessage)
-                            (subject : :string))
-  => VerificationResult
-  )
-
-;; the actor space
-(interface ActorSpace
-  ;; resolve an actor by name in a host
-  ;; if the host is #f then the actor is resolved
-  ;; in the local host
-  (resolve (name : :string)
-           (host :? :string := #f))
-  => Handle
-
-  ;; list actors in a host
-  ;; if the host is #f it lists actors in the local host
-  ;; returns a list of Handles
-  (list (host :? :string := #f))
-  => :list
-
-  ;; receive notifications about the lifecycle of an actor
-  (notify! (actor : Handle))
-  => Channel
-  )
-
-;; context for actor operations
-(interface (ActorContext Closer)
-  ;; the actor space
-  (actor-space)
-  => ActorSpace
-
-  ;; the security context
-  (security-context)
-  => SecurityContext
-
-  ;; the actor host
-  (host)
-  => @Host
-
-  ;; send a signd message
-  (send! (msg : Message))
-  => :void
-
-  ;; broadcast a signed message
-  (broadcast! (msg : BroadcastMessage))
-  => :void
-
-  ;; join a broadcast group
-  (join! (group : :string))
-  => :void
-
-  ;; leave a broadcast group
-  (leave! (group : :string))
-  => :void
-  )
-
-;; low level actor handler
-(interface (ActorHandler Closer)
-  ;; receive a message
-  (receive! (ctx : ActorContext)
-            (msg : Message))
-  => :void
-
-  ;; receive a broadcast message
-  (receive-broadcast! (ctx : ActorContext)
-                      (msg : BroadcastMessage))
-  => :void
-
-  ;; invoked when an actor is registered
-  (on-register! (ctx   : ActorContext)
-                (actor : Handle)
-                (emit  : Channel))
-  => :void
-
-  ;; invoked when an actor is unregistered
-  (on-unregister! (ctx   : ActorContext)
-                  (actor : Handle))
-  => :void
-  )
-
-;; low level data streams
-(interface (Stream NetworkTimeout Closer)
-  ;; the local host
-  (host)
-  => @Host
-
+(interface Peer
   ;; the name of the peer
   (peer-name)
   => :string
@@ -126,9 +30,36 @@
   (peer-did)
   => :string
 
-  ;; the stream's ucan auth token
-  (auth)
-  => Token
+  ;; the address of the peer
+  (peer-address)
+  => Address
+  )
+
+;; network connections
+(interface (Connection Peer Closer)
+  ;; the address of the connection
+  (address)
+  => Address
+
+  ;; the connection direction
+  ;; DIRECTION-IN (1) or DIRECTION-OUT (2)
+  (direction)
+  => :fixnum
+
+  ;; opens an outbound stream
+  (open! (proto : :string))
+  => @Stream
+
+  ;; accepts the next stream
+  (accept!)
+  => @stream
+  )
+
+;; low level data streams
+(interface (Stream NetworkTimeout Closer)
+  ;; the connection of the stream
+  (connection)
+  => Connection
 
   ;; the protocol of the stream
   (proto)
@@ -165,48 +96,18 @@
   => :void
 
   ;; invoked when a group is subscribed
-  (on-subscribe! (net   : @Network)
+  (on-subscribe! (bcast : @Broadcast)
                  (group : :string)
                  (subscription-token : :t))
   => :void
 
   ;; invoked when a group is unsubscribed
-  (on-unsubscribe! (net   : @Network)
-                   (group : :string)
-                   (subscription-token : :t))
+  (on-unsubscribe! (group : :string))
   => :void
   )
 
-;; the network abstraction
-(interface (Network Closer)
-  ;; resolve a host to a list of addresses
-  (resolve (host : :string))
-  => :list
-
-  ;; connect to a peer in address
-  ;; returns the peer host name
-  (connect! (addr :  Address)
-            (peer :? :string := #f))
-  => :string
-
-  ;; current network peers
-  ;; returns an alist of peer - did
-  (peers)
-  => :list
-
-  ;; current network connections
-  ;; returns an alist of peer - address
-  (connections)
-  => :list
-
-  ;; listen to an address
-  (listen! (addr : Address))
-  => :void
-
-  ;; retrieve the host's listening addresses
-  (addresses)
-  => :list
-
+;; broadcast system abstraction
+(interface (Broadcast Closer)
   ;; join a broadcast group
   (join! (group : :string))
   => :void
@@ -232,7 +133,48 @@
   (groups)
   => :list
 
-  ;; receive notifications about network changes and operations
+  ;; receive notifications about broadcast changes
+  (notify!)
+  => Channel
+  )
+
+;; the network abstraction
+(interface (Network Closer)
+  ;; resolve a host to a list of addresses
+  (resolve (host : :string))
+  => :list
+
+  ;; connect to a peer in address
+  (connect! (peer : :string)
+            (addr :  Address))
+  => Connection
+
+  ;; current network peers
+  ;; returns an alist of peer - did
+  (peers)
+  => :list
+
+  ;; current network connections
+  ;; returns a list of Connection
+  (connections)
+  => :list
+
+  ;; listen to an InetAddress
+  ;; returns a channel to receive connections
+  (listen-inet! (addr : InetAddress)
+                (tls-context :~ SSL_CTX? :- :foreign))
+  => Channel
+
+  ;; listen to UNIX address
+  ;; returns a channel to receive connections
+  (listen-local! (add : UnixAddress))
+  => Channel
+
+  ;; retrieve the host's listening addresses
+  (addresses)
+  => :list
+
+  ;; receive notifications about network changes
   (notify!)
   => Channel
   )
@@ -251,12 +193,16 @@
   (network)
   => Network
 
+  ;; the host's broadcast interface
+  (broadcast)
+  => Broadcast
+
   ;; the ensemble's actor space
   (actor-space)
   => ActorSpace
 
-  ;; retrieve a registered actor's context
-  (actor-context (name : :string))
+  ;; the actor context
+  (actor-context)
   => ActorContext
 
   ;; register an actor in the host

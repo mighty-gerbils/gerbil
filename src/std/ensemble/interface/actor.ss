@@ -1,14 +1,85 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble actor implementation interface
-(import :std/sync/channel
-        ./message
-        ./host)
+(import :std/io/interface
+        :std/sync/channel
+        ./message)
 (export #t)
 
 (def default-message-ttl 5)
 
 (deftype @Actor Actor)
+
+;; the actor space
+(interface ActorSpace
+  ;; resolve an actor by name in a host
+  ;; if the host is #f then the actor is resolved
+  ;; in the local host
+  (resolve (name : :string)
+           (host :? :string := #f))
+  => Handle
+
+  ;; list actors in a host
+  ;; if the host is #f it lists actors in the local host
+  ;; returns a list of Handles
+  (list (host :? :string := #f))
+  => :list
+
+  ;; receive notifications about the lifecycle of an actor
+  (notify! (actor : Handle))
+  => Channel
+  )
+
+;; context for actor operations
+(interface (ActorContext Closer)
+  ;; the actor space
+  (actor-space)
+  => ActorSpace
+
+  ;; the security context
+  (security-context)
+  => SecurityContext
+
+  ;; send a signd message
+  (send! (msg : Message))
+  => :void
+
+  ;; broadcast a signed message
+  (broadcast! (msg : BroadcastMessage))
+  => :void
+
+  ;; join a broadcast group
+  (join! (group : :string))
+  => :void
+
+  ;; leave a broadcast group
+  (leave! (group : :string))
+  => :void
+  )
+
+;; low level actor handler
+(interface (ActorHandler Closer)
+  ;; receive a message
+  (receive! (ctx : ActorContext)
+            (msg : Message))
+  => :void
+
+  ;; receive a broadcast message
+  (receive-broadcast! (ctx : ActorContext)
+                      (msg : BroadcastMessage))
+  => :void
+
+  ;; invoked when an actor is registered
+  (on-register! (ctx   : ActorContext)
+                (actor : Handle)
+                (emit  : Channel))
+  => :void
+
+  ;; invoked when an actor is unregistered
+  (on-unregister! (ctx   : ActorContext)
+                  (actor : Handle))
+  => :void
+  )
 
 (interface MessageHandler
   (handle-message! (actor : @Actor)
