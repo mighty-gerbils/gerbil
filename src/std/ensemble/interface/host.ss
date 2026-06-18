@@ -59,10 +59,6 @@
 
 ;; context for actor operations
 (interface (ActorContext Closer)
-  ;; the actor's handle
-  (handle)
-  => Handle
-
   ;; the actor space
   (actor-space)
   => ActorSpace
@@ -89,10 +85,6 @@
 
   ;; leave a broadcast group
   (leave! (group : :string))
-  => :void
-
-  ;; emit a notification to monitors
-  (emit! (notification : :t))
   => :void
   )
 
