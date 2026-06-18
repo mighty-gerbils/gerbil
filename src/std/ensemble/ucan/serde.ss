@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ucan serde mechanisms
-(import :std/error)
-(export #t)
+(import :std/serde/interface
+        :std/serde/deserialize
+        ../interface)
 
-;; TODO token untaint
+(defobject-untaint Token)

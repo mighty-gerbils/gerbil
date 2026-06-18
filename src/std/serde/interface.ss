@@ -256,6 +256,91 @@
   ;; to validate and reconstruct missing state
   (untaint! (seen : HashTable)) => :void)
 
+;; defines a suitable untaint! method according to class slot contracts
+(defsyntax-case defobject-untaint ()
+  ((_ klass)
+   (syntax-local-class-type-info? #'klass)
+   (with-syntax (((slot ...)
+                  (map car (!class-type-accessors (syntax-local-value #'klass)))))
+     (with-identifier (untaint! ,untaint!)
+       #'(defmethod {untaint! klass}
+           (lambda (self seen)
+             (untaint-slot! klass slot self seen)
+             ...)
+           interface: ObjectDeserializer
+           )))))
+
+(defsyntax-case untaint-slot! ()
+  ((_ klass slot self seen)
+   (syntax-local-class-type-info? #'klass)
+   (let* ((info
+           (syntax-local-value #' klass))
+          (slot-symbol
+           (stx-e #'slot))
+          (getf
+           (agetq slot-symbol (!class-type-unchecked-accessors info)))
+          (contracts
+           (!class-type-slot-contracts info))
+          (contract
+           (and contracts
+                (cond
+                 ((agetq slot-symbol contracts)
+                  => syntax-local-introduce)
+                 (else #f))))
+          (contract-predicate
+           (and contract
+                (syntax-case contract (:~)
+                  ((:~ pred . rest)
+                   #'pred)
+                  (_ #f))))
+          (contract-maybe
+           (and contract
+                (not contract-predicate)
+                (syntax-case contract (:?)
+                  ((:? . rest) #t)
+                  (_ #f))))
+          (types
+           (!class-type-slot-types info))
+          (type
+           (and types
+                (cond
+                 ((agetq slot-symbol types)
+                  => (lambda (t)
+                       (resolve-type stx (syntax-local-introduce t))))
+                 (else #f))))
+          (type-predicate
+           (and type
+                (cond
+                 ((class-type-info? type)
+                  (!class-type-predicate type))
+                 ((interface-info? type)
+                  (interface-info-instance-predicate type))
+                 (else
+                  (raise-syntax-error #f "unexpected slot type" stx #'slot type))))))
+
+     (with-identifier (untaint! ,untaint!)
+       (cond
+        ((not getf)
+         (raise-syntax-error #f "no accessor for slot" stx #'slot))
+        ((or contract-predicate type-predicate)
+         => (lambda (predicate)
+              (with-syntax* ((getf getf)
+                             (predicate predicate)
+                             (predicate
+                              (if contract-maybe
+                                #'(? (or not predicate))
+                                #'predicate)))
+                #'(let (value (getf self))
+                    (if (predicate value)
+                      (untaint! value seen)
+                      (raise-contract-violation untaint-slot! "slot value does not specify contract predicate"
+                                                slot: 'slot
+                                                value: value
+                                                predicate: 'predicate))))))
+        (else
+         (with-syntax ((getf getf))
+           #'(untaint! (getf self) seen))))))))
+
 (deferror-class (ParseError IOError) () parse-error?)
 
 (defraise/context (raise-parse-error where message irritants ...)

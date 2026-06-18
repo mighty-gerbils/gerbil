@@ -8,10 +8,20 @@
 (deftype @Token Token)
 (deftype @VerificationResult VerificationResult)
 
+;; token types
+(def DELEGATE  0)
+(def INVOKE    1)
+(def BROADCAST 2)
+(def REVOKE    3)
+
+(defrule (token-type? o)
+  (and (fixnum? o)
+       (one-of ,DELEGATE ,INVOKE ,BROADCAST ,REVOKE)))
+
 ;; UCAN Capability tokens
 ;; see https://github.com/ucan-wg/spec
 (defstruct Token
-  ((type       :  :fixnum)     ; the type of the token
+  ((type       :~ token-type? :- :fixnum) ; the type of the token
    (issuer     :  :string)     ; the issuing principal did
    (audience   :  :string)     ; the recipient did or * for any recipient.
    (method     :  :string)     ; the method capability granted
@@ -119,12 +129,6 @@
   (list-roots)
   => :list
   )
-
-;; token types
-(def DELEGATE  0)
-(def INVOKE    1)
-(def BROADCAST 2)
-(def REVOKE    3)
 
 ;; verification results
 (defstruct VerificationResult ())
