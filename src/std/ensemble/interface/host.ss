@@ -52,7 +52,7 @@
 
   ;; accepts the next stream
   (accept!)
-  => @stream
+  => @Stream
   )
 
 ;; low level data streams
