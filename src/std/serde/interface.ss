@@ -324,13 +324,18 @@
          (raise-syntax-error #f "no accessor for slot" stx #'slot))
         ((or contract-predicate type-predicate)
          => (lambda (predicate)
-              (with-syntax* ((getf getf)
+              (with-syntax* ((t::t (core-quote-syntax 't::t))
+                             (getf getf)
                              (predicate predicate)
                              (predicate
                               (if contract-maybe
                                 #'(? (or not predicate))
                                 #'predicate)))
-                #'(let (value (getf self))
+                #'(let (value
+                        ;; prevent the compiler from assuming
+                        ;; the return type of the accessor
+                        (begin-annotation (@type t::t)
+                          (getf self)))
                     (if (predicate value)
                       (untaint! value seen)
                       (raise-contract-violation untaint-slot! "slot value does not specify contract predicate"
