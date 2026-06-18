@@ -22,7 +22,7 @@
 ;; generate a root token of type, granting capabilities from
 ;; issuer to audience for method and sign it/remember it
 (defcap-ext (grant! ctx
-                    (type     :~ (one-of DELEGATE INVOKE BROADCAST)
+                    (type     :~ (one-of ,DELEGATE ,INVOKE ,BROADCAST)
                               :- :fixnum)
                     (issuer   :  :string)
                     (audience :  :string)
@@ -46,7 +46,7 @@
 ;; delegate from a token as chain root
 (defcap-ext (delegate! ctx
                        (t        : Token)
-                       (type     :~ (one-of DELEGATE INVOKE BROADCAST)
+                       (type     :~ (one-of ,DELEGATE ,INVOKE ,BROADCAST)
                                  :- :fixnum)
                        (issuer   : :string)
                        (audience : :string)
@@ -154,7 +154,7 @@
 ;; to a audience for method, chained in appropriate output anchors
 ;; and sign it/remember it
 (defcap-ext (provide! ctx
-                      (type     :~ (one-of DELEGATE INVOKE BROADCAST)
+                      (type     :~ (one-of ,DELEGATE ,INVOKE ,BROADCAST)
                                 :- :fixnum)
                       (issuer   : :string)
                       (audience : :string)

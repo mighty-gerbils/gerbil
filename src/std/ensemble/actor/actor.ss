@@ -89,7 +89,7 @@
   (receive!
    (lambda (self ctx msg)
      (let (result (self.security.verify-message msg self.handle.did))
-       (if (!OK? result)
+       (if (!VerificationOK? result)
          (do-with-lock self.mx
            (cond
             ((fx>= (self.active.length) self.limit)
@@ -117,7 +117,7 @@
  (receive-broadcast!
   (lambda (self ctx msg)
     (let (result (self.security.verify-broadcast-message msg self.handle.did))
-      (if (!OK? result)
+      (if (!VerificationOK? result)
         (do-with-lock self.mx
           (cond
            ((fx>= (self.active.length) self.limit)
@@ -210,7 +210,7 @@
               expire: expire
               auth:   auth)))
        (self.security.sign-message! msg)
-       (self.ctx.send-message! msg))))
+       (self.ctx.send! msg))))
   (invoke!
    (lambda (self dest method body ttl)
      (check! invoke! self)
@@ -253,7 +253,7 @@
          (self.reactors.set!
           reply-method
           (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send-message! msg)
+       (self.ctx.send! msg)
        (: (completion-wait! completion)
           Message))))
   (reply!
@@ -277,7 +277,7 @@
               expire:  replyto-msg.expire
               auth:    [token])))
        (self.security.sign-message! msg)
-       (self.ctx.send-message! msg))))
+       (self.ctx.send! msg))))
   (invoke-reply!
    (lambda (self replyto-msg body)
      (check! invoke-reply! self)
@@ -321,7 +321,7 @@
          (self.reactors.set!
           reply-method
           (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send-message! msg)
+       (self.ctx.send! msg)
        (: (completion-wait! completion)
           Message))))
   (send-with-replyto!
@@ -358,7 +358,7 @@
               replyto: replyto
               auth:    auth)))
        (self.security.sign-message! msg)
-       (self.ctx.send-message! msg))))
+       (self.ctx.send! msg))))
   (broadcast!
    (lambda (self dest method body ttl)
      (check! broadcast! self)
@@ -379,7 +379,7 @@
               expire: expire
               auth:   auth)))
        (self.security.sign-broadcast-message! msg)
-       (self.ctx.broadcast-message! msg))))
+       (self.ctx.broadcast! msg))))
   (broadcast-invoke!
    (lambda (self dest method body ttl limit)
      (check! broadcast-invoke! self)
@@ -421,7 +421,7 @@
          (self.reactors.set!
           reply-method
           (new-broadcast-reply-reactor self reply-method channel expire limit)))
-       (self.ctx.broadcast-message! msg)
+       (self.ctx.broadcast! msg)
        channel)))
   (broadcast-reply!
    (lambda (self replyto-msg body)
@@ -444,7 +444,7 @@
               expire:  replyto-msg.expire
               auth:    [token])))
        (self.security.sign-message! msg)
-       (self.ctx.send-message! msg))))
+       (self.ctx.send! msg))))
   (broadcast-invoke-reply!
    (lambda (self replyto-msg body)
      (check! broadcast-invoke-reply! self)
@@ -488,7 +488,7 @@
          (self.reactors.set!
           reply-method
           (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send-message! msg)
+       (self.ctx.send! msg)
        (: (completion-wait! completion)
           Message))))
   (broadcast-with-replyto!
@@ -524,7 +524,7 @@
               replyto: replyto
               auth:    auth)))
        (self.security.sign-broadcast-message! msg)
-       (self.ctx.broadcast-message! msg))))
+       (self.ctx.broadcast! msg))))
   (add-message-handler!
    (lambda (self method handler expire one-shot)
      (do-with-lock self.mx

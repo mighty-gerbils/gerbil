@@ -136,10 +136,10 @@
 (defstruct (VerificationError VerificationResult)
   ((reason : :string)))
 
-(def !OK
+(def !VerificationOK
   (VerificationOK))
-(def (!OK? result)
-  (eq? result !OK))
+(def (!VerificationOK? result)
+  (eq? result !VerificationOK))
 
 (def !SignatureVerificationError
   (VerificationError "signature verification failed"))

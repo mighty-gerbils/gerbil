@@ -42,19 +42,19 @@
             (let (result
                   (verify-token token
                                 (cut __db-get-public-key self <>)))
-              (unless (!OK? result)
+              (unless (!VerificationOK? result)
                 (return result)))
             ;; verify it is rooted in the subject
             ;; or in one of our roots or input anchors
             (when subject
               (when (token-rooted-at? token subject)
-                (return !OK)))
+                (return !VerificationOK)))
             (for (root (db-get-roots self))
               (when (token-rooted-at? token root)
-                (return !OK)))
+                (return !VerificationOK)))
             (for (anchor (db-get-subject-input-anchors self subject))
               (when (token-anchored-at? token anchor)
-                (return !OK)))
+                (return !VerificationOK)))
             !AnchorVerificationError)
           VerificationResult)))
     (save-token! __db-put-issued-token!)
@@ -63,7 +63,7 @@
      (lambda (self token subject)
        (let (result (verify-token token
                                   (cut __db-get-public-key self <>)))
-         (unless (!OK? result)
+         (unless (!VerificationOK? result)
            (raise-bad-argument sign-token! "invalid token"
                                (VerificationError-reason result))))
        (if subject
@@ -90,7 +90,7 @@
      (lambda (self token subject)
        (let (result (verify-token token
                                   (cut __db-get-public-key self <>)))
-         (unless (!OK? result)
+         (unless (!VerificationOK? result)
            (raise-bad-argument sign-token! "invalid token"
                                (VerificationError-reason result))))
        (if subject

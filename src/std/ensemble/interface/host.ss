@@ -59,6 +59,10 @@
 
 ;; context for actor operations
 (interface (ActorContext Closer)
+  ;; the actor's handle
+  (handle)
+  => Handle
+
   ;; the actor space
   (actor-space)
   => ActorSpace
@@ -72,11 +76,11 @@
   => @Host
 
   ;; send a signd message
-  (send-message! (msg : Message))
+  (send! (msg : Message))
   => :void
 
   ;; broadcast a signed message
-  (broadcast-message! (msg : BroadcastMessage))
+  (broadcast! (msg : BroadcastMessage))
   => :void
 
   ;; join a broadcast group
@@ -123,16 +127,20 @@
   => @Host
 
   ;; the name of the peer
-  (peer)
+  (peer-name)
   => :string
 
-  ;; the protocol of the stream
-  (proto)
+  ;; the did of the peer
+  (peer-did)
   => :string
 
   ;; the stream's ucan auth token
   (auth)
   => Token
+
+  ;; the protocol of the stream
+  (proto)
+  => :string
 
   ;; the stream data reader
   (reader)
@@ -190,11 +198,12 @@
   => :string
 
   ;; current network peers
+  ;; returns an alist of peer - did
   (peers)
   => :list
 
   ;; current network connections
-  ;; returns an alist of peer address
+  ;; returns an alist of peer - address
   (connections)
   => :list
 
@@ -242,6 +251,10 @@
   (name)
   => :string
 
+  ;; the did of the host, as contained in the TLS certificate
+  (did)
+  => :string
+
   ;; the host's network interface
   (network)
   => Network
@@ -266,13 +279,14 @@
   ;; open a stream to a peer for a particular protocol
   ;; and optionally a specific actor subject (a did)
   (open-stream (peer  : :string)
-               (proto : :string)
-               (subject :? :string := #f))
+               (proto : :string))
   => Stream
 
   ;; register a stream handler for a protocol
-  (register-stream-handler! (proto : :string)
-                            (handler : StreamHandler))
+  (register-stream-handler! (proto     : :string)
+                            (handler   : StreamHandler)
+                            (expire    : :integer := 0)
+                            (one-shot? : :boolean := #f))
   => :void
 
   ;; unregister a stream handler

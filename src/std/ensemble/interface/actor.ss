@@ -122,7 +122,7 @@
   (add-broadcast-handler! (group     : :string)
                           (method    : :string)
                           (handler   : BroadcastMessageHandler)
-                          (expire    : :fixnum := 0)
+                          (expire    : :integer := 0)
                           (one-shot? : :boolean := #f))
   => :void
 

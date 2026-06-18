@@ -28,7 +28,7 @@
     (if (token-expired? token now)
       !TokenExpiredVerificationError
       (let (result (verify-token-signature token get-public-key))
-        (if (!OK? result)
+        (if (!VerificationOK? result)
           (if token.chain
             (let loop ((next   token.chain  :- Token)
                        (issuer token.issuer :- :string)
@@ -49,16 +49,16 @@
                                     (capability-includes? next.group group)))
                         !CapabilityVerificationError
                         (let (result (verify-token-signature next get-public-key))
-                          (if (!OK? result)
+                          (if (!VerificationOK? result)
                             (if next.chain
                               (loop next.chain
                                     next.issuer
                                     next.method
                                     next.group
                                     next.expire)
-                              !OK)
+                              !VerificationOK)
                             result))))))))
-            !OK)
+            !VerificationOK)
           result)))))
 
 (def (verify-token-signature (token : Token)
@@ -70,7 +70,7 @@
          (data (marshal token))
          (_    (set! token.signature sig)))
     (if (digest-verify! pubk data sig)
-      !OK
+      !VerificationOK
       !SignatureVerificationError)))
 
 (def nonce-length 16)
@@ -80,7 +80,7 @@
   (when token.chain
     ;; verify the chain
     (let (result (verify-token token.chain get-public-key))
-      (unless (!OK? result)
+      (unless (!VerificationOK? result)
         (raise-bad-argument sign-token! "invalid token chain"
                             (VerificationError-reason result))))
     ;; check expiration
