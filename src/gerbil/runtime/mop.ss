@@ -805,6 +805,13 @@ namespace: #f
   (:- (##structure-instance-of? obj (##type-id klass))
       :boolean))
 
+(declare-inline struct-instance?
+  (ast-rules (%#call)
+    ((%#call _ klass obj)
+     (%#call (%#ref ##structure-instance-of?)
+             obj
+             (%#call (%#ref ##type-id) klass)))))
+
 (def (class-instance? (klass : :class) obj)
   => :boolean
   (let (type (class-of obj))
