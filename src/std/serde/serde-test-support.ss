@@ -23,11 +23,11 @@
 
 (implement ObjectDeserializer
   (A
-   (validate!
+   (untaint!
     (lambda (self path)
-      (validate! self.b path))))
+      (untaint! self.b path))))
   (B
-   (validate!
+   (untaint!
     (lambda (self path)
       (when self.x
 	(error "expected x to be #f"))

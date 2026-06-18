@@ -219,7 +219,7 @@
   ;; - invokes deserialize! on the resulting object for validation
   ;;   and state reconciliation where appropriate
   ;; - returns the final deserialized object; the top anchor
-  ;;   also invokes validate! which ensures the object state
+  ;;   also invokes untaint! which ensures the object state
   ;;   is recursively fully reconstructoed.
   (resolve! (ctx : ReadContext))
   => :t)
@@ -252,9 +252,9 @@
   ;; the method if responsible for resolving anchors inside the object
   (resolve! (ctx : ReadContext)) => :void
 
-  ;; validate! is called after the serde stream has been fully deserialized
+  ;; untaint! is called after the serde stream has been fully deserialized
   ;; to validate and reconstruct missing state
-  (validate! (seen : HashTable)) => :void)
+  (untaint! (seen : HashTable)) => :void)
 
 (deferror-class (ParseError IOError) () parse-error?)
 

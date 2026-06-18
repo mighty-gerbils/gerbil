@@ -72,10 +72,10 @@
        (self.resolved?
         self.object)
        (else
-        (set! self.object (resolve! self.object ctx))
-        (validate! self.object (hash-eq))
-        (set! self.resolved? #t)
-        self.object)))))
+	(set! self.object (resolve! self.object ctx))
+	(untaint! self.object (hash-eq))
+	(set! self.resolved? #t)
+	self.object)))))
   (TempAnchor
    (set!
        (lambda (self obj)
@@ -337,51 +337,52 @@
   (let (len (v-len vec))
     (let loop ((i start :- :fixnum))
       (when (fx< i len)
-        (validate! (v-ref vec i) seen)
+        (untaint! (v-ref vec i) seen)
         (loop (fx+ i 1))))))
+
 
 (implement ObjectDeserializer
   (class
    (resolve!  void)
-   (validate! void))
+   (untaint! void))
   (interface-instance
    (resolve!
     (lambda (self ctx)
       (set! self.object (resolve! self.object ctx))
       self))
-   (validate!
+   (untaint!
     (lambda (self seen)
-      (validate! self.object seen))))
+      (untaint! self.object seen))))
   (HashTable
    (resolve!
     (lambda (self ctx)
       (self.for-each
        (lambda (k v)
-         (self.set! (resolve! k ctx) (resolve! v ctx))))))
-   (validate!
+	 (self.set! (resolve! k ctx) (resolve! v ctx))))))
+   (untaint!
     (lambda (self seen)
       (self.for-each
        (lambda (k v)
-         (validate! k seen)
-         (validate! v seen))))))
+	 (untaint! k seen)
+	 (untaint! v seen))))))
   ;; builtins
   (:pair
    (resolve!
     (lambda (self ctx)
       (set! (car self) (resolve! (car self) ctx))
       (set! (cdr self) (resolve! (cdr self) ctx))))
-   (validate!
+   (untaint!
     (lambda (self seen)
-      (validate! (car self) seen)
-      (validate! (cdr self) seen))))
+      (untaint! (car self) seen)
+      (untaint! (cdr self) seen))))
   (:vector
    (resolve!
     (lambda (self ctx)
       (do-vector-resolve self ctx 0
-                         ##vector-length
-                         ##vector-ref
-                         ##vector-set!)))
-   (validate!
+			 ##vector-length
+			 ##vector-ref
+			 ##vector-set!)))
+   (untaint!
     (lambda (self seen)
       (do-vector-validate self seen 0
                           ##vector-length
@@ -390,10 +391,10 @@
    (resolve!
     (lambda (self ctx)
       (do-vector-resolve self ctx 0
-                         ##values-length
-                         ##values-ref
-                         ##values-set!)))
-   (validate!
+			 ##values-length
+			 ##values-ref
+			 ##values-set!)))
+   (untaint!
     (lambda (self seen)
       (do-vector-validate self seen 0
                           ##values-length
@@ -402,17 +403,17 @@
    (resolve!
     (lambda (self ctx)
       (set! (box self) (resolve! (unbox self) ctx))))
-   (validate!
+   (untaint!
     (lambda (self seen)
-      (validate! (unbox self) seen))))
+      (untaint! (unbox self) seen))))
   (:structure
    (resolve!
     (lambda (self ctx)
       (do-vector-resolve self ctx 1
-                         ##structure-length
-                         unchecked-field-ref
-                         unchecked-field-set!)))
-   (validate!
+			 ##structure-length
+			 unchecked-field-ref
+			 unchecked-field-set!)))
+   (untaint!
     (lambda (self seen)
       (do-vector-validate self seen 1
                           ##structure-length
@@ -425,12 +426,12 @@
 (defsyntax-case defatomic-deserializers ()
   ((_ klass ...)
    (with-syntax ((resolve!  (syntax-local-introduce 'resolve!))
-                 (validate! (syntax-local-introduce 'validate!)))
+		 (untaint! (syntax-local-introduce 'untaint!)))
      #'(implement ObjectDeserializer
-         (klass
-          (resolve!  void)
-          (validate! void))
-         ...))))
+	 (klass
+	  (resolve!  void)
+	  (untaint! void))
+	 ...))))
 
 (defatomic-deserializers
   :atom
@@ -479,8 +480,8 @@
   (__object-resolve! obj ctx)
   :- :void)
 
-(defcall-interface-method ObjectDeserializer validate!
-  (__object-validate! obj seen)
+(defcall-interface-method ObjectDeserializer untaint!
+  (__object-untaint! obj seen)
   :- :void)
 
 ;; deserializer implementation should call these
@@ -492,10 +493,10 @@
       (__object-resolve! obj ctx)
       obj)))
 
-(def (validate! obj (seen : HashTable))
+(def (untaint! obj (seen : HashTable))
   (unless (seen.ref obj #f)
     (seen.set! obj #t)
-    (__object-validate! obj seen)))
+    (__object-untaint! obj seen)))
 
 (def (resolve-object-slots! (obj : :object) (ctx : ReadContext))
   (let* ((klass (object-class obj))
