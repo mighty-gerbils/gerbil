@@ -24,10 +24,6 @@
   ;; returns a list of Handles
   (list (host :? :string := #f))
   => :list
-
-  ;; receive notifications about the lifecycle of an actor
-  (notify! (actor : Handle))
-  => Channel
   )
 
 ;; context for actor operations
@@ -47,18 +43,10 @@
   ;; broadcast a signed message
   (broadcast! (msg : BroadcastMessage))
   => :void
-
-  ;; join a broadcast group
-  (join! (group : :string))
-  => :void
-
-  ;; leave a broadcast group
-  (leave! (group : :string))
-  => :void
   )
 
 ;; low level actor handler
-(interface (ActorHandler Closer)
+(interface ActorHandler
   ;; receive a message
   (receive! (ctx : ActorContext)
             (msg : Message))
@@ -67,17 +55,6 @@
   ;; receive a broadcast message
   (receive-broadcast! (ctx : ActorContext)
                       (msg : BroadcastMessage))
-  => :void
-
-  ;; invoked when an actor is registered
-  (on-register! (ctx   : ActorContext)
-                (actor : Handle)
-                (emit  : Channel))
-  => :void
-
-  ;; invoked when an actor is unregistered
-  (on-unregister! (ctx   : ActorContext)
-                  (actor : Handle))
   => :void
   )
 

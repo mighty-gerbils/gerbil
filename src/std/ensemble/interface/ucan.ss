@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; ensemble ucan interfaces
 (import :std/crypto/pkey
+        :std/serde/interface
         :std/io)
 (export #t)
 
@@ -32,6 +33,8 @@
    (nonce      :- :u8vector)   ; the token nonce
    (signature  :- :u8vector))  ; the token signature by the principal
   final: #t)
+
+(defobject-untaint Token)
 
 (interface (CapabilityContext Closer)
   ;; key management

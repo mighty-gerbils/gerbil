@@ -6,10 +6,15 @@
         :std/net/ssl
         :std/time/timeout
         :std/sync/channel
+        (only-in :std/os/device
+                 DIRECTION-IN
+                 DIRECTION-OUT)
         ./ucan
         ./message
         ./actor)
-(export #t)
+(export #t
+        DIRECTION-IN
+        DIRECTION-OUT)
 
 (deftype @Host Host)
 (deftype @Network Network)
@@ -20,6 +25,30 @@
 ;; the current host
 (def current-host
   (make-parameter #f))
+
+;; incoming stream handlers
+(interface StreamHandler
+  (handle-stream! (stream : @Stream))
+  => :void
+
+  (close (stream : @Stream))
+  => :void
+  )
+
+;; incoming connection handler
+(interface ConnectionHandler
+  (handle-connection! (conn : @Connection))
+  => :void
+
+  (close (conn : @Connection))
+  => :void
+)
+
+;; broadcast handlers
+(interface BroadcastHandler
+  (receive! (msg : BroadcastMessage))
+  => :void
+  )
 
 (interface Peer
   ;; the name of the peer
@@ -41,28 +70,35 @@
   (address)
   => Address
 
-  ;; the connection direction
-  ;; DIRECTION-IN (1) or DIRECTION-OUT (2)
+  ;; the connection iniator direction
+  ;; DIRECTION-IN or DIRECTION-OUT
   (direction)
   => :fixnum
 
   ;; opens an outbound stream
-  (open! (proto : :string))
+  (open-stream! (proto : :string)
+                (auth  : Token))
   => @Stream
 
-  ;; accepts the next stream
-  (accept!)
-  => @Stream
+  ;; set the connection's incoming stream handler
+  ;; the stream handler is invoked every time a new
+  ;; stream is opened in this connection
+  (set-stream-handler! (handler : StreamHandler))
   )
 
 ;; low level data streams
 (interface (Stream NetworkTimeout Closer)
+  ;; the stream iniator direction
+  ;; DIRECTION-IN or DIRECTION-OUT
+  (direction)
+  => :fixnum
+
   ;; the connection of the stream
   (connection)
   => Connection
 
   ;; the protocol of the stream
-  (proto)
+  (protocol)
   => :string
 
   ;; the stream data reader
@@ -72,38 +108,6 @@
   ;; the stream data writer
   (writer)
   => Writer
-  )
-
-;; incoming stream handlers
-(interface (StreamHandler Closer)
-  ;; handle an incoming stream
-  (handle-stream! (stream : Stream))
-  => :void
-
-  ;; invoked when the stream handler is registered
-  (on-register! (host : @Host) (proto : :string))
-  => :void
-
-  ;; invoked when the stream handler is unregistered
-  (on-unregister! (host : @Host) (proto : :string))
-  => :void
-  )
-
-;; broadcast handlers
-(interface (BroadcastHandler Closer)
-  ;; receive a broadcast message
-  (receive! (msg : BroadcastMessage))
-  => :void
-
-  ;; invoked when a group is subscribed
-  (on-subscribe! (bcast : @Broadcast)
-                 (group : :string)
-                 (subscription-token : :t))
-  => :void
-
-  ;; invoked when a group is unsubscribed
-  (on-unsubscribe! (group : :string))
-  => :void
   )
 
 ;; broadcast system abstraction
@@ -132,23 +136,10 @@
   ;; the currently joined broadcast groups
   (groups)
   => :list
-
-  ;; receive notifications about broadcast changes
-  (notify!)
-  => Channel
   )
 
 ;; the network abstraction
 (interface (Network Closer)
-  ;; resolve a host to a list of addresses
-  (resolve (host : :string))
-  => :list
-
-  ;; connect to a peer in address
-  (connect! (peer : :string)
-            (addr :  Address))
-  => Connection
-
   ;; current network peers
   ;; returns an alist of peer - did
   (peers)
@@ -159,24 +150,49 @@
   (connections)
   => :list
 
-  ;; listen to an InetAddress
-  ;; returns a channel to receive connections
-  (listen-inet! (addr : InetAddress)
-                (tls-context :~ SSL_CTX? :- :foreign))
-  => Channel
-
-  ;; listen to UNIX address
-  ;; returns a channel to receive connections
-  (listen-local! (add : UnixAddress))
-  => Channel
-
-  ;; retrieve the host's listening addresses
+  ;; retrieve the network's listening addresses
   (addresses)
   => :list
 
-  ;; receive notifications about network changes
-  (notify!)
-  => Channel
+  ;; retrieve an existing connection to a peer, if any
+  (peer-connection (peer : :string))
+  => :t
+
+  ;; connect to an inet peer in address
+  (connect-inet! (peer        : :string)
+                 (addr        :  InetAddress)
+                 (tls-context :~ SSL_CTX? :- :foreign))
+  => Connection
+
+  ;; connect to a local peer in address
+  (connect-local! (peer : :string)
+                  (addr :  UnixAddress)
+                  (host : :string)
+                  (did  : :string))
+  => Connection
+
+  ;; listen to an InetAddress
+  (listen-inet! (addr        : InetAddress)
+                (tls-context :~ SSL_CTX? :- :foreign))
+  => :void
+
+  ;; listen to UNIX address
+  (listen-local! (addr    : UnixAddress)
+                 (host    : :string)
+                 (did     : :string))
+  => :void
+
+  ;; set the network's connection handler
+  ;; the connection handler is invoked every time a new
+  ;; connection is established.
+  (set-connection-handler! (handler : ConnectionHandler))
+  )
+
+;; network address resolver
+(interface (Resolver Closer)
+  ;; resolve a peer host to a list of addresses
+  (resolve (peer : :string))
+  => :list
   )
 
 ;; the ensemble host
@@ -192,6 +208,10 @@
   ;; the host's network interface
   (network)
   => Network
+
+  ;; the host's address resolver
+  (resolver)
+  => Resolver
 
   ;; the host's broadcast interface
   (broadcast)
@@ -215,23 +235,23 @@
   => :void
 
   ;; open a stream to a peer for a particular protocol
-  ;; and optionally a specific actor subject (a did)
-  (open-stream (peer  : :string)
-               (proto : :string))
+  (open-stream! (peer  : :string)
+                (proto : :string)
+                (auth  :? Token := #f))
   => Stream
 
   ;; register a stream handler for a protocol
-  (register-stream-handler! (proto     : :string)
-                            (handler   : StreamHandler)
-                            (expire    : :integer := 0)
-                            (one-shot? : :boolean := #f))
-  => :void
-
-  ;; unregister a stream handler
-  (unregister-stream-handler! (proto : :string))
+  (set-stream-handler! (proto     : :string)
+                       (handler   : StreamHandler)
+                       (expire    : :integer := 0)
+                       (one-shot? : :boolean := #f))
   => :void
 
   ;; receive notifications about changes in the host
   (notify!)
   => Channel
+
+  ;; emit a notification in the host notification bus
+  (emit! (notif : :t))
+  => :void
   )

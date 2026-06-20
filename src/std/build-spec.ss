@@ -245,7 +245,6 @@
 
     "ensemble/ucan/cap"
     "ensemble/ucan/did"
-    "ensemble/ucan/serde"
     "ensemble/ucan/db"
     "ensemble/ucan/context"
     "ensemble/ucan/ext"

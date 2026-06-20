@@ -15,8 +15,7 @@
         :std/encoding/hex
         :std/time/precise
         ../interface
-        ./did
-        ./serde)
+        ./did)
 (export #t)
 
 ;; max number of public keys to keep in the cache

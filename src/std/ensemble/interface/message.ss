@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; ensemble actor messages
 (import :std/io/interface
+        :std/serde/interface
         ./ucan)
 (export #t)
 
@@ -11,11 +12,15 @@
    (name : :string))  ; the path of the actor in the actor space
   final: #t)
 
+(defobject-untaint Handle)
+
 (defstruct ReplyTo
   ((actor  : Handle)        ; the actor to reply to
    (auth   : Token)         ; UCAN authorization for the reply
    (method : :string))      ; the method to invoke in the reply
   final: #t)
+
+(defobject-untaint ReplyTo)
 
 (defstruct UnicastMessageHead
   ((source    : Handle)      ; source actor
@@ -37,8 +42,12 @@
 (defclass (Message MessageBody UnicastMessageHead) ()
   final: #t)
 
+(defobject-untaint Message)
+
 (defclass (BroadcastMessage MessageBody BroadcastMessageHead) ()
   final: #t)
+
+(defobject-untaint BroadcastMessage)
 
 ;; context for security operations
 (interface (SecurityContext Closer)
@@ -55,12 +64,10 @@
   => :void
 
   ;; verify a message signature and capabilities
-  (verify-message (msg     : Message)
-                  (subject : :string))
+  (verify-message (msg : Message))
   => VerificationResult
 
   ;; verify a broadcast message and capabilities
-  (verify-broadcast-message (msg     : BroadcastMessage)
-                            (subject : :string))
+  (verify-broadcast-message (msg : BroadcastMessage))
   => VerificationResult
   )

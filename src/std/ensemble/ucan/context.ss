@@ -10,8 +10,7 @@
         ../interface/ucan
         ./db
         ./cap
-        ./did
-        ./serde)
+        ./did)
 (export new-capability-context)
 
 
