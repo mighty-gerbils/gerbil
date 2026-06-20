@@ -24,6 +24,8 @@
    (name : :string)
    ;; the host's did -- it must match the TLS certificate URI
    (did : :string)
+   ;; (optional) host to use as name resolver
+   (resolver :? :string)
    ;; network configuration
    (limits : NetworkLimits)
    ))

@@ -13,12 +13,14 @@
         ./actor-handler
         ./security-context
         ./actor-context
-        ./actor-space)
+        ./actor-space
+        ./resolver)
 (export #t)
 
 (defmethod {:init! basic-host}
   (lambda (self (cfg : BasicHostConfig))
     (set! self.mx              (make-mutex 'host))
+    (set! self.tgroup          (make-thread-group [host cfg.name])
     (set! self.name            cfg.name)
     (set! self.did             cfg.did)
     (set! self.limits          cfg.limits)
@@ -52,7 +54,7 @@
             (new-broadcast this))
            (_ (set! self.broadcast broadcast))
            (resolver
-            (new-resolver self))
+            (new-resolver self cfg.resolver))
            (_ (set! self.resolver resolver))
            (actor-space
             (new-actor-space self))

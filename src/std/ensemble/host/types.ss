@@ -1,12 +1,19 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble host types
-(import ../interface
-        ./db)
+(import :std/db
+        ../interface)
 (export #t)
+
+(defstruct host-db
+  ((mx : :mutex)
+   (db : DB))
+  final: #t)
 
 (defstruct basic-host
   ((this : Host)
+   ;; thread group for host threads
+   (tgroup : :thread-group)
    ;; access mutex for state
    (mx : :mutex)
    ;; has the host been closed?
@@ -52,19 +59,23 @@
   print: (name did)
   constructor: :init!)
 
-(defclass child-host-state
-  (;; children hosts
-   ;; name string -> ChildHostState
+(defstruct child-host-state
+  (;; list of relay addresses to announce in response to resolver queries
+   (announce : :list)
+   )
+  final: #t)
+
+(defstruct (server-host basic-host)
+  (;; list of addresses to announce in response to resolver queries
+   (announce : :list)
+   ;; host childer; name string -> child-host-state
    (children : HashTable)))
 
-(defstruct (basic-server-host basic-host)
-  ())
-
-(defstruct (inet-server-host basic-server-host child-host-state)
+(defstruct (inet-server-host server-host)
   ((cfg : InetServerHostConfig))
   final: #t)
 
-(defstruct (local-server-host basic-server-host child-host-state)
+(defstruct (local-server-host server-host)
   ((cfg : LocalServerHostConfig))
   final: #t)
 
@@ -107,4 +118,10 @@
 
 (defstruct actor-space
   ((host : basic-host))
+  final: #t)
+
+(defstruct host-resolver
+  ((host     : basic-host)
+   (resolver :? :string)
+   (actor    : Actor))
   final: #t)

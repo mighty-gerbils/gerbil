@@ -20,37 +20,20 @@
 ;;
 ;; example:
 ;; (defprotocol Map
-;;   constructor: new ; default interface constructor name is new
-;;   methods:
-;;   /myapp/map/get: (get (key : :string))
-;;   => :t
-;;   /myapp/map/put: (put! (key : :string) (value : :t))
-;;   => :void)
+;;   ("/myapp/map/get" (get (key : :string)))
+;;   ("/myapp/map/put" (put! (key : :string) (value : :t)))
 ;;
 ;; expansion:
 ;; (defsyntax Map::proto (protocol-info ...))
+;;
 ;; (defstruct Map.get ((key : :string)))
 ;; (defstruct Map.put! ((key : :string) (value : :t)))
-;; (interface Map
-;;   (get (key : :string)) => :t
-;;   (put! (key : :string) (value : :t)) => :void
-;; )
-;; (def (Map::new (ctx : ActorContext) (actor : Handle))
-;;  => Map
-;;  ...)
 ;;
-;; for broadcast protocols you specify the option broadcast: group-name
-;; e.g:
-;; (defprotocol Announce
-;;   broadcast: /mayapp/announce
-;;   constructor: new
-;;   methods:
-;;   /myapp/announce: (announce! (what : :t))
-;;   => !
-;;   ...)
+;; (defobject-untaint Map.get)
+;; (defobject-untaint Map.put!)
 ;;
-;; in return types above, a ! indicates a one way message expecting
-;; no reply (a fire and forget, unreliable message)
+;; (def Map::method::get "/myapp/map/get")
+;; (def Map::method::put! "/myapp/map/put")
 ;;
 (defsyntax-case defprotocol ()
   )
@@ -66,17 +49,15 @@
 ;;
 ;; ; implementation of the protocol
 ;; (implement-protocol Map::proto my-map-implementation
-;;  constructor: Map::my-map-implementation
-;;  methods:
-;;  get:  (lambda (self actor msg body) expr rest ...)
-;;  put!: (lambda (self actor msg body) expr rest ...))
+;;  (get  (lambda (self actor msg body) expr rest ...))
+;;  (put! (lambda (self actor msg body) expr rest ...)))
 ;;
 ;; expansion:
 ;; (def (Map::my-map-implementation::get
-;;        (self    ::-  my-map-implementation)
+;;        (self    ::- my-map-implementation)
 ;;        (actor   ::- Actor)
-;;        (message ::-  Message)
-;;        (body    ::-  Map.get)
+;;        (message ::- Message)
+;;        (body    ::- Map.get)
 ;;   expr rest ...)
 ;; (def Map::my-map-implementation::put! ...)
 ;;
@@ -89,17 +70,22 @@
 ;;     (lambda (self actor msg)
 ;;       (using (body (unmarshal msg.body) : Map.get)
 ;;         (Map::my-map-implementation::get
-;;            actor msg self.object body.key))))
-;;   (Map::my-map-implementation::put! ...))
+;;            self.object actor msg body)))))
+;;    ...)
 ;;
-;; (def (Map::my-map-implementation (actor : Actor)
-;;                                  (object : my-map-implementation))
+;; (def (my-map-implementation::implement::Map
+;;         (actor : Actor)
+;;         (object : my-map-implementation))
 ;;  => :void
 ;;   (actor.add-message-handler! ...)
 ;;   ...)
 ;;
-;; note that you are responsible for sending replies and orchestrating
-;; the interaction inside the method implementation
+;; for broadcast methods, you need to specify the broadcast group
+;; after the method implementation
 ;;
+;; (implement-protocol ...
+;;  (some-broadcast-method
+;;   method-impl
+;;   broadcast: group))
 (defsyntax-case implement-protocol ()
   )

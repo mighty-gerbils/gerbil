@@ -52,8 +52,9 @@
       (cond
        ((stream-handler-get-reactor self (stream.protocol))
         => (lambda ((reactor :- stream-reactor))
-             (spawn/name 'host/stream
-               (cut reactor.handler.handle-stream! stream))))
+             (spawn-actor
+              (cut reactor.handler.handle-stream! stream)
+              [] 'host/stream self.host.tgroup)))
        (else
         (using (conn (stream.connection) : Connection)
           (ignore-errors (stream.close))

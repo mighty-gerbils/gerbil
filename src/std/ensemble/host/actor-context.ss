@@ -16,8 +16,9 @@
                            (make-hash-table-string)
                            #f #f))
     (set! (actor-context-thread ctx)
-      (spawn/name 'actor/context
-        (cut actor-context-cleanup-thread ctx)))
+      (spawn-actor
+       (cut actor-context-cleanup-thread ctx)
+       [] 'actor/context self.host.tgroup))
   (ActorContext ctx)))
 
 (def stream-cache-ttl 300)
@@ -84,7 +85,10 @@
 (def (actor-context-send! (self : actor-context)
                           (msg  : Message))
   => :void
-  (let* ((blob (marshal msg))
+  (when (< msg.expire (coarse-time-now))
+    (raise-contract-violation actor-context-send! "message expired"
+                              message: msg))
+  (let* ((blob (marshal msg (marshal-context dag: #t)))
          (size (u8vector-length blob)))
 
     (when (fx> size self.host.limits.max-message-size)
@@ -113,15 +117,24 @@
              (raise e)
              (again))))))))
 
+(def (actor-context-broadcast! (self : actor-context)
+                               (msg  : BroadcastMessage)
+                               (loopback : :boolean))
+  => :void
+  (when (< msg.expire (coarse-time-now))
+    (raise-contract-violation actor-context-send! "message expired"
+                              message: msg))
+  (self.host.broadcast.broadcast! msg loopback))
+
 (def (actor-context-close (self : actor-context))
   (do-with-lock self.mx
     (unless self.closed?
       (set! self.closed? #t)
-    (thread-send self.thread 't)
-    (let (streams (hash-values self.streams))
-      (self.streams.clear!)
-      (for (c streams :- cached-stream)
-        (ignore-errors (c.stream.close))))))
+      (thread-send self.thread 't)
+      (let (streams (hash-values self.streams))
+        (self.streams.clear!)
+        (for (c streams :- cached-stream)
+          (ignore-errors (c.stream.close)))))))
 
 (implement Closer actor-context
   (close __actor-context-close))

@@ -41,7 +41,8 @@
   => :void
 
   ;; broadcast a signed message
-  (broadcast! (msg : BroadcastMessage))
+  (broadcast! (msg       : BroadcastMessage)
+              (loopback? : :boolean := #f))
   => :void
   )
 
@@ -71,6 +72,9 @@
   )
 
 (interface Actor
+  (register! (name : :string))
+  => Handle
+
   ;; the handle for this actor
   (handle)
   => Handle

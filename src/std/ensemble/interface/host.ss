@@ -5,6 +5,7 @@
         :std/net/address
         :std/net/ssl
         :std/time/timeout
+        :std/time/precise
         :std/sync/channel
         (only-in :std/os/device
                  DIRECTION-IN
@@ -25,6 +26,10 @@
 ;; the current host
 (def current-host
   (make-parameter #f))
+
+;; notification event base type
+(defstruct Event
+  ((ts : CoarseTime)))
 
 ;; incoming stream handlers
 (interface StreamHandler
@@ -112,6 +117,11 @@
 
 ;; broadcast system abstraction
 (interface (Broadcast Closer)
+  ;; broadcast a message
+  (broadcast! (msg       : BroadcastMessage)
+              (loopback? : :boolean := #f))
+  => :void
+
   ;; join a broadcast group
   (join! (group : :string))
   => :void
@@ -123,15 +133,12 @@
   ;; subscribe to receive messages in a broadcast group
   ;; automatically joins if the group hasn't been joined
   ;; already.
-  ;; returns a subsciption opaque token that can be
-  ;; used to unsubscribe
+  ;; returns a subsciption channel to which broadcast
+  ;; messages are emitted
+  ;; to unsubscribe, close the channl
   (subscribe! (group : :string)
               (handler : BroadcastHandler))
-  => :t
-
-  ;; unsubscribe from a previous subscription
-  (unsubscribe! (subscription-token : :t))
-  => :void
+  => Channel
 
   ;; the currently joined broadcast groups
   (groups)
@@ -230,10 +237,6 @@
                    (handler : ActorHandler))
   => Handle
 
-  ;; unregister an actor from the host
-  (unregister-actor! (name : :string))
-  => :void
-
   ;; open a stream to a peer for a particular protocol
   (open-stream! (peer  : :string)
                 (proto : :string)
@@ -248,10 +251,11 @@
   => :void
 
   ;; receive notifications about changes in the host
+  ;; returns a channel to receive Events
   (notify!)
   => Channel
 
   ;; emit a notification in the host notification bus
-  (emit! (notif : :t))
+  (emit! (evt : Event))
   => :void
   )

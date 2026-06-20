@@ -8,13 +8,9 @@
         :std/serde/unmarshal
         ../interface
         ./types)
-(export proto:/host/actor
-        new-host-actor-steram-handler)
+(export new-host-actor-steram-handler)
 
 (deflogger log name: "/ensemble/host/actor")
-
-(def proto:/host/actor
-  "/host/actor/v1.0")
 
 (def (new-host-actor-stream-handler (host : basic-host))
   => StreamHandler
@@ -52,8 +48,9 @@
                         => (lambda ((handler :- ActorHandler))
                              (set! self.host.actor-threads
                                (fx+ self.host.actor-threads 1))
-                             (spawn/name 'actor/dispatch
-                               (cut host-actor-dispatch-message self handler msg))))
+                             (spawn-actor
+                              (cut host-actor-dispatch-message self handler msg)
+                              [] 'actor/dispatch self.host.tgroup)))
                        (else
                         (log.warn "message for unknown actor; dropping message"
                                   peer:    (conn.peer-name)
