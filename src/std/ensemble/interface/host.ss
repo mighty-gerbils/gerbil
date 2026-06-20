@@ -133,12 +133,15 @@
   ;; subscribe to receive messages in a broadcast group
   ;; automatically joins if the group hasn't been joined
   ;; already.
-  ;; returns a subsciption channel to which broadcast
-  ;; messages are emitted
-  ;; to unsubscribe, close the channl
+  ;; returns an opaque subscription token that can
+  ;; be used to unsubscribe later.
   (subscribe! (group : :string)
               (handler : BroadcastHandler))
-  => Channel
+  => :t
+
+  ;; unsubscribe from a previously subscribed group
+  (usnsubscribe (t : :t))
+  => :void
 
   ;; the currently joined broadcast groups
   (groups)
