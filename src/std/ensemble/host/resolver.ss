@@ -19,7 +19,7 @@
    (resolve (host : :string)))
   )
 
-(implement-protocol HostResolver::protocol host-resolver
+(implement-protocol HostResolver host-resolver
   (lookup
    (lambda (self actor msg req)
      (host-resolver-add-addresses! self req.origin req.addrs)

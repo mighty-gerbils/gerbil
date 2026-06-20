@@ -38,7 +38,7 @@
              (try
               (let* ((msg (: (reader.deserialize (unmarshal-environment dag: #t))
                              Message))
-                     (result (self.host.security-context.verify-message nsg)))
+                     (result (self.host.security-context.verify-message msg)))
                 (if (!VerificationOK? result)
                   (do-with-lock self.host.mx
                     (if (fx< self.host.actor-threads

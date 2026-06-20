@@ -108,20 +108,36 @@
   ((host : basic-host))
   final: #t)
 
-(defstruct actor-context
-  ((host    : basic-host)
-   (mx      : :mutex)
-   (streams : HashTable)
-   (thread  : :thread)
-   (closed? : :boolean))
-  final: #t)
-
-(defstruct actor-space
-  ((host : basic-host))
-  final: #t)
-
 (defstruct host-resolver
   ((host     : basic-host)
    (resolver :? :string)
    (actor    : Actor))
+  final: #t)
+
+(defstruct stream-cache
+  ((host    : basic-host)
+   (proto   : :string)
+   (mx      : :mutex)
+   (closed? : :boolean)
+   (table   : HashTable)
+   (thread  : :thread))
+  constructor: :init!
+  final: #t)
+
+(defstruct cached-stream
+  ((steam     : Stream)
+   (mx        : :mutex)
+   (last-use  : :integer))
+  final: #t)
+
+(defstruct actor-context
+  ((host    : basic-host)
+   (streams : stream-cache))
+  final: #t)
+
+(defstruct actor-space
+  ((host : basic-host)
+   (streams : stream-cache)
+   (mx      : :mutex)
+   (closed? : :boolean))
   final: #t)

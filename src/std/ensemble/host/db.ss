@@ -11,6 +11,11 @@
   XXX)
 
 
+(def (db-get-host-addresses (self : host-db)
+                            (host : :string))
+  => :list
+  XXX)
+
 (def (db-add-host-addresses! (self  : host-db)
                              (host  : :string)
                              (addrs : :list)
