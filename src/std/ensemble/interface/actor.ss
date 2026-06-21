@@ -52,11 +52,6 @@
   (receive! (ctx : ActorContext)
             (msg : Message))
   => :void
-
-  ;; receive a broadcast message
-  (receive-broadcast! (ctx : ActorContext)
-                      (msg : BroadcastMessage))
-  => :void
   )
 
 (interface MessageHandler
@@ -72,18 +67,13 @@
   )
 
 (interface Actor
-  (register! (name : :string))
-  => Handle
-
   ;; the handle for this actor
   (handle)
   => Handle
 
-  ;; the low level actor context
   (actor-context)
   => ActorContext
 
-  ;; the actor space
   (actor-space)
   => ActorSpace
 
@@ -178,12 +168,8 @@
                           (one-shot? : :boolean := #f))
   => :void
 
-  ;; emit a notification to monitors
-  (emit! (notification : :t))
-  => :void
-
   ;; add a close thunk to be executed when the actor
   ;; is closed
-  (add-close-thunk! (thunk : :procedure))
+  (on-close (thunk : :procedure))
   => :void
   )

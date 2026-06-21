@@ -13,13 +13,18 @@
    (max-actor-threads   : :fixnum))
   final: #t)
 
+(defclass BroadcastLimits
+  ((max-handler-threads : :fixnum))
+  final: #t)
+
 (defclass NetworkLimits
   ((max-message-size    : :fixnum))
   final: #t)
 
 (defclass Limits
-  ((host    : HostLimits)
-   (network : NetworkLimits))
+  ((host      : HostLimits)
+   (broadcast : BroadcastLimits)
+   (network   : NetworkLimits))
   final: #t)
 
 ;; basic host configuration

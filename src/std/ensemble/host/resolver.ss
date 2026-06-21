@@ -45,10 +45,9 @@
   => Resolver
   (let (resolver (host-resolver host remote-resolver #f))
     (set! resolver.actor
-      (new-actor host.this))
+      (new-actor host.this actor:/host/resolver))
     (host-resolver::implement::HostResolver
      resolver.actor resolver)
-    (resolver.actor.register! actor:/host/resolver)
     (Resolver resolver)))
 
 (def (host-resolver-add-addresses! (self : host-resolver)

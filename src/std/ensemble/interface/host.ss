@@ -240,6 +240,10 @@
                    (handler : ActorHandler))
   => Handle
 
+  ;; unregister an actor
+  (unregister-actor! (handle : Handle))
+  => :void
+
   ;; connect to a host
   (connect! (host : :string))
   => Connection

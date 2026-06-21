@@ -11,190 +11,94 @@
         :std/sync/channel
         :std/sync/completion
         ../interface
-        ../ucan/ext)
+        ../ucan/ext
+        ./types
+        ./reactor
+        ./util)
 (export new-actor)
-
-(def default-max-active-reactors 1024)
 
 (deflogger log name: "/ensemble/actor")
 
-(defclass basic-actor
-  ((this           : Actor)
-   (ctx            : ActorContext)
-   (security       : SecurityContext)
-   (capability     : CapabilityContext)
-   (handle         : Handle)
-   (emit           : Channel)
-   (limit          : :fixnum)
-   (mx             : :mutex)
-   (registered?    : :boolean)
-   (reactors       : HashTable) ; method string -> UnicastReactor
-   (bcast-reactors : HashTable) ; method string -> BroadcastReactor
-   (groups         : HashTable) ; group string set
-   (active         : HashTable) ; active reactors; thread -> method
-   (on-close       : :list)     ; on close thunks; list of thunk
-   (next-reply     : :integer)) ; next reply counter
-  transparent: #f
-  print: (handle)
-  final: #t
-  constructor: :init!)
-
 (defmethod {:init! basic-actor}
-  (lambda (self limit)
-    (set! self.limit limit)
-    (set! self.mx    (make-mutex 'actor))
-    (set! self.reactors       (make-hash-table-string))
-    (set! self.bcast-reactors (make-hash-table-string))
-    (set! self.groups         (make-hash-table-string))
-    (set! self.active         (make-hash-table-eq))
-    (set! self.on-close   [])
-    (set! self.next-reply 0)))
+  (lambda (self)
+    (set! self.mx              (make-mutex 'actor))
+    (set! self.react-unicast   (unicast-reaction))
+    (set! self.react-broadcast (broadcast-reaction))
+    (set! self.groups          (make-hash-table-string))
+    (set! self.on-close        [])
+    (set! self.next-reply      0)))
 
-(defclass Reactor
-  ((method   : :string)
-   (expire   : :integer)
-   (one-shot : :boolean)))
-
-(defclass (UnicastReactor Reactor)
-  ((handler : MessageHandler))
-  final: #t)
-
-(defclass (BroadcastReactor Reactor)
-  ((handler : BroadcastMessageHandler)
-   (group   : :string))
-  final: #t)
-
-(def (new-actor (limit : :fixnum := default-max-active-reactors))
+(def (new-actor (host : Host) (name : :string))
   => Actor
-  (let* ((actor (basic-actor limit))
-         (this (Actor actor)))
-    (set! (basic-actor-this actor) this)
-    this))
+  (using (actor (basic-actor) : basic-actor)
+    (let (this (Actor actor))
+      (set! actor.this this)
+      (set! actor.host host)
+      (set! actor.context    (host.actor-context))
+      (set! actor.space      (actor.context.actor-space))
+      (set! actor.security   (actor.context.security-context))
+      (set! actor.capability (actor.security.capability-context))
+      (set! actor.handle
+        (host.register-actor! name (ActorHandler actor)))
+      this)))
 
 (implement Closer basic-actor
   (close
    (lambda (self)
-     (let (on-close
-           (reverse!
-            (do-with-lock self.mx
-              (begin0 self.on-close
-                (set! self.on-close [])))))
-       (for (thunk (in-list on-close) :- :procedure)
+     (let ((values on-close subs)
+           (do-with-lock self.mx
+             (begin0 (values self.on-close (hash-values self.groups))
+               (set! self.on-close [])
+               (self.groups.clear!))))
+       (self.host.unregister-actor! self.handle)
+       (for (sub subs)
+         (self.broadcast.unsubscribe! sub))
+       (for (thunk (in-list (reverse! on-close)) :- :procedure)
          (try (thunk)
               (catch (e)
                 (log.warn "unhandled exception in on-close thunk"
-                          exception: (exception->string e)))))))))
+                          exception: (exception->string e)))))
+       (reaction-close self.react-unicast)
+       (reaction-close self.react-broadcast)))))
 
 (implement ActorHandler basic-actor
   (receive!
    (lambda (self ctx msg)
-     (let (result (self.security.verify-message msg self.handle.did))
-       (if (!VerificationOK? result)
-         (do-with-lock self.mx
-           (cond
-            ((fx>= (self.active.length) self.limit)
-             (log.warn "active reactor limit exceeded; dropping message"
-                       actor:   self.handle.name
-                       message: msg))
-            ((self.reactors.ref msg.method #f)
-             => (lambda ((reactor :- UnicastReactor))
-                  (let (thread
-                        (spawn-reactor
-                         self msg
-                         (cut reactor.handler.handle-message! self.this msg)))
-                    (self.active.set! thread msg.method)
-                    (when reactor.one-shot
-                      (self.reactors.delete! msg.method)))))
-            (else
-             (log.debug "no reactor for method"
-                        actor:   self.handle.name
-                        message: msg
-                        method:  msg.method))))
-         (log.warn "message verification failed"
-                   actor:   self.handle.name
-                   message: msg
-                   reason:  (VerificationError-reason result))))))
- (receive-broadcast!
-  (lambda (self ctx msg)
-    (let (result (self.security.verify-broadcast-message msg self.handle.did))
-      (if (!VerificationOK? result)
-        (do-with-lock self.mx
-          (cond
-           ((fx>= (self.active.length) self.limit)
-            (log.warn "active reactor limit exceeded; dropping message"
-                      actor:   self.handle.name
-                      message: msg))
-           ((self.bcast-reactors.ref msg.method #f)
-            => (lambda ((reactor :- BroadcastReactor))
-                 (if (equal? reactor.group msg.dest)
-                   (let (thread
-                         (spawn-reactor
-                          self msg
-                          (cut reactor.handler.handle-message! self.this msg)))
-                     (self.active.set! thread msg.method)
-                     (when reactor.one-shot
-                       (self.bcast-reactors.delete! msg.method)))
-                   (log.warn "broadcast reactor group mismatch"
-                             actor:    self.handle.name
-                             message:  msg
-                             method:   msg.method
-                             group:    msg.dest
-                             expected: reactor.group))))
-           (else
-            (log.debug "no reactor for method"
-                       actor:   self.handle.name
-                       message: msg
-                       method:  msg.method))))
-        (log.warn "message verification failed"
+     (cond
+      ((unicast-reactor-get self.react-unicast msg.method)
+       => (lambda ((handler :- MessageHandler))
+            (handler.handle-message! self.this msg)))
+      (else
+       (log.debug "no reactor for method"
                   actor:   self.handle.name
                   message: msg
-                  reaseon: (VerificationError-reason result))))))
-  (on-register!
-   (lambda (self ctx handle emit)
-     (do-with-lock self.mx
-       (when self.registered?
-         (raise-contract-violation on-register! "actor is already registered" "unregistered actor"))
-       (set! self.ctx ctx)
-       (set! self.security (ctx.security-context))
-       (set! self.capability (SecurityContext-capability-context self.security))
-       (set! self.handle handle)
-       (set! self.emit emit)
-       (set! self.registered? #t))))
-  (on-unregister!
-   (lambda (self ctx handle)
-     (do-with-lock self.mx
-       (set! self.registered? #f)
-       (for (group (in-hash-keys (self.groups)) :- :string)
-         (self.ctx.leave! group))
-       (self.groups.clear!)))))
+                  method:  msg.method))))))
 
-(defrule (check! where self)
-  (unless (basic-actor-registered? self)
-    (raise-contract-violation where "actor is not registered" "registered actor")))
+(implement BroadcastHandler basic-actor
+  (receive!
+   (lambda (self msg)
+     (cond
+      ((broadcast-reactor-get self.react-broadcast msg.method msg.group)
+       => (lambda ((handler :- BroadcastMessageHandler))
+            (handler.handle-message! self.this msg)))
+      (else
+       (log.debug "no broadcast reactor for method"
+                  actor:   self.handle.name
+                  message: msg
+                  method:  msg.method))))))
 
 (defrule (check-replyto! where replyto-msg)
   (unless (MessageBody-replyto replyto-msg)
     (raise-contract-violation where "message not expecting reply" "message with replyto" replyto-msg)))
 
 (implement Actor basic-actor
-  (handle
-   (lambda (self)
-     (check! handle self)
-     self.handle))
-  (actor-context
-   (lambda (self)
-     (check! context self)
-     self.ctx))
-  (actor-space
-   (lambda (self)
-     (check! space self)
-     (self.ctx.actor-space)))
+  (handle        &basic-actor-handle)
+  (actor-context &basic-actor-context)
+  (actor-space   &basic-actor-space)
   (send!
    (lambda (self dest method body ttl)
-     (check! send! self)
-     (let* ((body (marshal body))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+     (let* ((body (marshal-body body))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
               self.handle.did
@@ -210,15 +114,13 @@
               expire: expire
               auth:   auth)))
        (self.security.sign-message! msg)
-       (self.ctx.send! msg))))
+       (self.context.send! msg))))
   (invoke!
    (lambda (self dest method body ttl)
-     (check! invoke! self)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (reply-method
              (next-reply-method! self))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
               self.handle.did
@@ -249,18 +151,17 @@
             (completion
              (Completion method)))
        (self.security.sign-message! msg)
-       (do-with-lock self.mx
-         (self.reactors.set!
-          reply-method
-          (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send! msg)
+       (unicast-reactor-set-reply! self.react-unicast
+                                   reply-method
+                                   completion
+                                   expire)
+       (self.context.send! msg)
        (: (completion-wait! completion)
           Message))))
   (reply!
    (lambda (self replyto-msg body)
-     (check! send-reply! self)
      (check-replyto! send-reply! replyto-msg)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
@@ -277,12 +178,11 @@
               expire:  replyto-msg.expire
               auth:    [token])))
        (self.security.sign-message! msg)
-       (self.ctx.send! msg))))
+       (self.context.send! msg))))
   (invoke-reply!
    (lambda (self replyto-msg body)
-     (check! invoke-reply! self)
      (check-replyto! invoke-reply! replyto-msg)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (reply-method
              (next-reply-method! self))
             (expire replyto-msg.expire)
@@ -317,19 +217,17 @@
             (completion
              (Completion replyto-msg.replyto.method)))
        (self.security.sign-message! msg)
-       (do-with-lock self.mx
-         (self.reactors.set!
-          reply-method
-          (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send! msg)
+       (unicast-reactor-set-reply! self.react-unicast
+                                   reply-method
+                                   completion
+                                   expire)
+       (self.context.send! msg)
        (: (completion-wait! completion)
           Message))))
   (send-with-replyto!
    (lambda (self dest method reply-method body ttl)
-     (check! invoke! self)
-     (let* ((body (marshal body))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+     (let* ((body (marshal-body body))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-invoke!
               self.handle.did
@@ -358,13 +256,11 @@
               replyto: replyto
               auth:    auth)))
        (self.security.sign-message! msg)
-       (self.ctx.send! msg))))
+       (self.context.send! msg))))
   (broadcast!
    (lambda (self dest method body ttl)
-     (check! broadcast! self)
-     (let* ((body (marshal body))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+     (let* ((body (marshal-body body))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
               self.handle.did
@@ -379,15 +275,13 @@
               expire: expire
               auth:   auth)))
        (self.security.sign-broadcast-message! msg)
-       (self.ctx.broadcast! msg))))
+       (self.context.broadcast! msg))))
   (broadcast-invoke!
    (lambda (self dest method body ttl limit)
-     (check! broadcast-invoke! self)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (reply-method
              (next-reply-method! self))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
               self.handle.did
@@ -417,17 +311,16 @@
             (channel
              (make-channel method)))
        (self.security.sign-broadcast-message! msg)
-       (do-with-lock self.mx
-         (self.reactors.set!
-          reply-method
-          (new-broadcast-reply-reactor self reply-method channel expire limit)))
-       (self.ctx.broadcast! msg)
+       (unicast-reactor-set-broadcast-reply! self.react-unicast
+                                             reply-method
+                                             channel limit
+                                             expire)
+       (self.context.broadcast! msg)
        channel)))
   (broadcast-reply!
    (lambda (self replyto-msg body)
-     (check! send-reply! self)
      (check-replyto! broadcast-reply! replyto-msg)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (token
              (self.capability.invoke!
               replyto-msg.replyto.auth
@@ -444,12 +337,11 @@
               expire:  replyto-msg.expire
               auth:    [token])))
        (self.security.sign-message! msg)
-       (self.ctx.send! msg))))
+       (self.context.send! msg))))
   (broadcast-invoke-reply!
    (lambda (self replyto-msg body)
-     (check! broadcast-invoke-reply! self)
      (check-replyto! invoke-reply! replyto-msg)
-     (let* ((body (marshal body))
+     (let* ((body (marshal-body body))
             (reply-method
              (next-reply-method! self))
             (expire replyto-msg.expire)
@@ -484,19 +376,17 @@
             (completion
              (Completion replyto-msg.replyto.method)))
        (self.security.sign-message! msg)
-       (do-with-lock self.mx
-         (self.reactors.set!
-          reply-method
-          (new-reply-reactor self reply-method completion expire)))
-       (self.ctx.send! msg)
+       (unicast-reactor-set-reply! self.react-unicast
+                                   reply-method
+                                   completion
+                                   expire)
+       (self.context.send! msg)
        (: (completion-wait! completion)
           Message))))
   (broadcast-with-replyto!
    (lambda (self dest method reply-method body ttl)
-     (check! boarcast-with-replyto! self)
-     (let* ((body (marshal body))
-            (expire (+ (CoarseTime-seconds (current-time-coarse))
-                       ttl))
+     (let* ((body (marshal-body body))
+            (expire (message-expire ttl))
             (auth
              (self.capability.provide-broadcast!
               self.handle.did
@@ -524,42 +414,28 @@
               replyto: replyto
               auth:    auth)))
        (self.security.sign-broadcast-message! msg)
-       (self.ctx.broadcast! msg))))
+       (self.context.broadcast! msg))))
   (add-message-handler!
    (lambda (self method handler expire one-shot)
-     (do-with-lock self.mx
-       (self.reactors.set!
-        method
-        (new-message-reactor self method handler
-                             expire one-shot)))))
+     (unicast-reactor-set! self.react-unicast
+                           method handler
+                           expire one-shot)))
   (add-broadcast-handler!
    (lambda (self group method handler expire one-shot)
      (do-with-lock self.mx
-       (unless (self.groups.ref group #f)
-         (self.ctx.join! group)
-         (self.groups.set! group #t))
-       (self.bcast-reactors.set!
-        method
-        (new-broadcast-reactor self method group handler
-                               expire one-shot)))))
-  (emit!
-   (lambda (self notif)
-     (check! emit! self)
-     (unless (channel-try-put self.emit notif)
-       (raise-io-error emit! "notification channel full" notif))))
-  (add-close-thunk!
+       (broadcast-reactor-set! self.react-broadcast
+                               method group handler
+                               expire one-shot)
+       (do-with-lock self.mx
+         (unless (self.groups.ref group #f)
+           (let (sub (self.broadcast.subscribe! group
+                                                (BroadcastHandler self)))
+             (self.groups.set! group sub)))))))
+  (on-close
    (lambda (self thunk)
      (do-with-lock self.mx
        (set! self.on-close (cons thunk self.on-close))))))
 
-(def (next-reply-method! (self : basic-actor))
-  => :string
-  (let (next-reply
-        (do-with-lock self.mx
-          (let (next self.next-reply)
-            (set! self.next-reply (+ next 1))
-            next)))
-    (string-append "/tmp/reply/" (number->string next-reply))))
 
 (def (new-reply-reactor (self       : basic-actor)
                         (method     : :string)

@@ -53,8 +53,6 @@
              (cond
               ((not (eq? token.type INVOKE))
                (loop rest))
-              ((not (<= msg.expire token.expire))
-               (loop rest))
               ((not (equal? token.issuer msg.source.did))
                (loop rest))
               ((not (equal? token.audience msg.dest.did))
@@ -87,8 +85,6 @@
            (using (token : Token)
              (cond
               ((not (eq? token.type BROADCAST))
-               (loop rest))
-              ((not (<= msg.expire token.expire))
                (loop rest))
               ((not (equal? token.issuer msg.source.did))
                (loop rest))
