@@ -114,6 +114,11 @@
    (actor    : Actor))
   final: #t)
 
+(defstruct actor-space
+  ((host : basic-host)
+   (actor : Actor))
+  final: #t)
+
 (defstruct stream-cache
   ((host    : basic-host)
    (proto   : :string)
@@ -133,11 +138,4 @@
 (defstruct actor-context
   ((host    : basic-host)
    (streams : stream-cache))
-  final: #t)
-
-(defstruct actor-space
-  ((host : basic-host)
-   (streams : stream-cache)
-   (mx      : :mutex)
-   (closed? : :boolean))
   final: #t)

@@ -240,6 +240,10 @@
                    (handler : ActorHandler))
   => Handle
 
+  ;; connect to a host
+  (connect! (host : :string))
+  => Connection
+
   ;; open a stream to a peer for a particular protocol
   (open-stream! (peer  : :string)
                 (proto : :string)

@@ -11,10 +11,12 @@
 (def resolver-address-ttl 3600)
 
 (defprotocol HostResolver
+  ;; broadcast lookup a host
   ("/host/resolver/lookup"
    (lookup (host   : :string) ; host for which addresses are requested
            (origin : :string) ; origin host for the request
            (addrs  : :list)))  ; list of addresses of origin host
+  ;; unicast resolve a host
   ("/host/resolver/resolve"
    (resolve (host : :string)))
   )
@@ -34,17 +36,19 @@
    broadcast: group:/host/resolver)
   (resolve
    (lambda (self actor msg req)
-     (actor.reply! msg (host-resolver-resolve self req.host))))
+     (actor.reply! msg
+                   (with-actor-error
+                    (host-resolver-resolve self req.host)))))
   )
 
-(def (new-resolver (host : basic-host) (remote-resolver :? Handle))
+(def (new-resolver (host : basic-host) (remote-resolver :? :string))
   => Resolver
   (let (resolver (host-resolver host remote-resolver #f))
     (set! resolver.actor
       (new-actor host.this))
     (host-resolver::implement::HostResolver
      resolver.actor resolver)
-    (self.actor.register! actor:/host/resolver)
+    (resolver.actor.register! actor:/host/resolver)
     (Resolver resolver)))
 
 (def (host-resolver-add-addresses! (self : host-resolver)

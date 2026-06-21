@@ -2,13 +2,11 @@
 ;;; © vyzo
 ;;; ensemble host stream cache
 (import :std/time/precise
-        ./types)
+        ./types
+        ./util)
 (export #t)
 
 (def stream-cache-ttl 300)
-
-(def (coarse-time-now)
-  (CoarseTime-seconds (current-time-coarse)))
 
 (defmethod {:init! stream-cache}
   (lambda (self (host : basic-host) (proto : :string) name)

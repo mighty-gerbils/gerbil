@@ -3,9 +3,9 @@
 ;;; ensemble host actor context
 (import :std/error
         :std/interface
-        :std/time/precise
         ../interface
         ./types
+        ./util
         ./stream-cache)
 (export new-actor-context)
 
