@@ -45,6 +45,10 @@
   (add-principal! (priv : PrivKey))
   => :string
 
+  ;; retrieves the private key of a principal
+  (get-principal (did : :string))
+  => PrivKey
+
   ;; lists the principal dids
   (list-principals)
   => :list
@@ -158,3 +162,7 @@
   (VerificationError "anchor verification failed"))
 (def !TokenExpiredVerificationError
   (VerificationError "token expired"))
+(def !MessageExpiredVerificationError
+  (VerificationError "message expired"))
+(def !NoTokenForMessageVerificationError
+  (VerificationError "no verifiable token for message"))

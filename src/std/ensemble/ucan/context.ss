@@ -27,6 +27,7 @@
   (CapabilityContext
    (capability-db
     (add-principal!  __db-add-private-key!)
+    (get-principal   __db-get-private-key)
     (list-principals __db-list-private-keys)
     (public-key      __db-get-public-key)
     (sign!

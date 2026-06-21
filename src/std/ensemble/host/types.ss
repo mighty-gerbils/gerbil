@@ -105,7 +105,8 @@
   final: #t)
 
 (defstruct security-context
-  ((host : basic-host))
+  ((host : basic-host)
+   (cap  : CapabilityContext))
   final: #t)
 
 (defstruct host-resolver
