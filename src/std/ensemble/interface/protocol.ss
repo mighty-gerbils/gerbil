@@ -31,12 +31,36 @@
        (catch (e)
          (!Error e))))
 
+(defrules with-actor-reply (: :~)
+  ((macro expr : klass)
+   (let (result expr)
+     (if (not (!Error? result))
+       (: result klass)
+       (raise-actor-error macro result))))
+  ((macro expr :~ pred)
+   (let (result expr)
+     (if (not (!Error? result))
+       (if (pred result)
+         result
+         (raise-contract-violation macro "unexpected macro reply"
+                                   'pred result))
+       (raise-actor-error macro result))))
+  ((macro expr :~ pred sigil klass)
+   (let (result expr)
+     (if (not (!Error? result))
+       (if (pred result)
+         (sigil result klass)
+         (raise-contract-violation macro "unexpected macro reply"
+                                   'pred result))
+       (raise-actor-error macro result)))))
+
+
+
 (def proto:/host/actor
   "/host/actor/v1.0")
 
 (def group:/host/resolver
   "/host/resolver/v1.0")
-
 (def actor:/host/resolver
   "/host/resolver/v1.0")
 

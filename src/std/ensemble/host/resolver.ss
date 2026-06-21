@@ -55,8 +55,7 @@
                                    (peer : :string)
                                    (addrs : :list))
   => :void
-  (db-add-host-addresses! self.host.db peer addrs resolver-address-ttl)
-  )
+  (db-add-host-addresses! self.host.db peer addrs resolver-address-ttl))
 
 (def (host-resolver-resolve (self : host-resolver)
                             (peer : :string))
@@ -66,24 +65,36 @@
      ((not (null? known))
       known)
      (self.resolver
-      (let (resolver
-            (self.host.actor-space.resolve actor:/host/resolver
-                                           self.resolver))
-        (: (self.actor.invoke! resolver
-                               HostResolver::method::resolve
-                               (HostResolver.resolve peer))
-           :list)))
+      (let* ((resolver
+              (self.host.actor-space.resolve actor:/host/resolver
+                                             self.resolver))
+             (result
+              (with-actor-reply
+               (self.actor.invoke! resolver
+                                   HostResolver::method::resolve
+                                   (HostResolver.resolve peer))
+               :~ (list-of Address?)
+               :- :list)))
+        (host-resolver-add-addresses! self peer result)
+        result))
      ((server-host? self.host)
       (using (host self.host : server-host)
-        (let (chan (self.actor.broadcast-invoke!
-                    group:/host/resolver
-                    HostResolver::method::lookup
-                    (HostResolver.lookup peer
-                                         host.name
-                                         host.announce)))
-          (: (channel-get chan) :list))))
+        (let* ((chan (self.actor.broadcast-invoke!
+                      group:/host/resolver
+                      HostResolver::method::lookup
+                      (HostResolver.lookup peer
+                                           host.name
+                                           host.announce)))
+               (result
+                (reverse!
+                 (for/fold (r []) (lst chan)
+                   (if ((list-of Address?) lst)
+                     (foldl cons r lst)
+                     r)))))
+          (host-resolver-add-addresses! self peer result)
+          result)))
      (else
-      (raise-contract-violation host-resolver-resolve "cannot resolve address; no resolver" peer: peer)))))
+      (raise-contract-violation host-resolver-resolve "client cannot resolve address; no resolver" peer: peer)))))
 
 (implement Closer host-resolver
   (close   void))
