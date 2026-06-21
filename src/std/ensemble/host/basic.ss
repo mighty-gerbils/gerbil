@@ -51,7 +51,7 @@
             (new-network this))
            (_ (set! self.network network))
            (broadcast
-            (new-broadcast this))
+            (new-broadcast this cfg.limits.network))
            (_ (set! self.broadcast broadcast))
            (resolver
             (new-resolver self cfg.resolver))

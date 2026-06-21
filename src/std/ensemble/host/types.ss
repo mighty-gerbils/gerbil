@@ -48,7 +48,7 @@
    ;; a list of channels
    (monitors : :list)
    ;; active stats for limits
-   (limits          : NetworkLimits)
+   (limits          : Limits)
    (connections-in  : :fixnum)
    (connections-out : :fixnum)
    (steams-in       : :fixnum)

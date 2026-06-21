@@ -26,7 +26,7 @@
   (let* ((blob (marshal msg (marshal-context dag: #t)))
          (size (u8vector-length blob)))
 
-    (when (fx> size self.host.limits.max-message-size)
+    (when (fx> size self.host.limits.network.max-message-size)
       (raise-contract-violation actor-context-send! "message too large"
                                 message: msg))
 

@@ -27,7 +27,7 @@
                    : BufferedReader))
      (while #t
        (let (size (reader.read-varuint))
-         (if (fx> size self.host.limits.max-message-size)
+         (if (fx> size self.host.limits.network.max-message-size)
            (begin
              (log.warn "skipping oversize message"
                        protocol: (stream.protocol)
@@ -42,7 +42,7 @@
                 (if (!VerificationOK? result)
                   (do-with-lock self.host.mx
                     (if (fx< self.host.actor-threads
-                             self.host.limits.max-actor-threads)
+                             self.host.limits.host.max-actor-threads)
                       (cond
                        ((self.host.actors.ref (Message-dest msg) #f)
                         => (lambda ((handler :- ActorHandler))
@@ -88,7 +88,7 @@
    (finally
     (do-with-lock self.host.mx
       (set! self.host.actor-threads
-        (fx+ self.host.actor-threads 1))))))
+        (fx- self.host.actor-threads 1))))))
 
 (implement
   (Closer

@@ -3,16 +3,24 @@
 ;;; ensemble host configuration
 (export #t)
 
-;;; configuration mixin classes
+;;; configuration classes
 
-(defstruct NetworkLimits
+(defclass HostLimits
   ((max-connections-in  : :fixnum)
    (max-connections-out : :fixnum)
    (max-streams-in      : :fixnum)
    (max-streams-out     : :fixnum)
-   (max-actor-threads   : :fixnum)
-   (max-message-size    : :fixnum)
-   ))
+   (max-actor-threads   : :fixnum))
+  final: #t)
+
+(defclass NetworkLimits
+  ((max-message-size    : :fixnum))
+  final: #t)
+
+(defclass Limits
+  ((host    : HostLimits)
+   (network : NetworkLimits))
+  final: #t)
 
 ;; basic host configuration
 (defclass BasicHostConfig
@@ -27,7 +35,7 @@
    ;; (optional) host to use as name resolver
    (resolver :? :string)
    ;; network configuration
-   (limits : NetworkLimits)
+   (limits : Limits)
    ))
 
 ;; inet hosts
