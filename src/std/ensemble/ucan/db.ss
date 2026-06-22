@@ -54,7 +54,10 @@
    (subject-input-anchors :- HashTable)
    ;; per subject output anchors
    ;; did string -> list
-   (subject-output-anchors :- HashTable))
+   (subject-output-anchors :- HashTable)
+   ;; prepared statements
+   (statements : StatementCache)
+   )
   transparent: #f
   final: #t
   constructor: :init!)
@@ -73,6 +76,8 @@
                 32))
       (set! self.mx
         (make-mutex 'ucan/db))
+      (set! self.statements
+        (StatementCache))
       (set! self.private-keys
         (make-hash-table-string))
       (set! self.public-keys
@@ -80,9 +85,11 @@
       (set! self.roots
         (DB-query db sql-select-roots []))
       (set! self.root-input-anchors
-        (map unmarshal (DB-query db sql-select-root-input-anchors [now])))
+        (map unmarshal (DB-query db sql-select-root-input-anchors
+                                 [now])))
       (set! self.root-output-anchors
-        (map unmarshal (DB-query db sql-select-root-output-anchors [now])))
+        (map unmarshal (DB-query db sql-select-root-output-anchors
+                                 [now])))
       (set! self.subject-input-anchors
         (make-hash-table-string))
       (set! self.subject-output-anchors
@@ -95,9 +102,10 @@
   => :void
   (do-with-lock self.mx
     (unless self.closed?
+      (set! self.closed? #t)
+      (statement-cache-close self.statements)
       (self.db.close)
-      (thread-send self.cleanup-thread 't)
-      (set! self.closed? #t)))
+      (thread-send self.cleanup-thread 't)))
   (thread-join! self.cleanup-thread))
 
 (def (filter-tokens now lst)
@@ -111,15 +119,15 @@
     (unless (thread-receive db-cleanup-interval #f)
       (do-with-lock self.mx
         (let (now (CoarseTime-seconds (current-time-coarse)))
-          (self.db.exec! sql-cleanup-root-input-anchors [now])
+          (db-exec! db sql-cleanup-root-input-anchors [now])
           (set! self.root-input-anchors
             (filter-tokens now self.root-input-anchors))
-          (self.db.exec! sql-cleanup-root-output-anchors [now])
+          (db-exec! self sql-cleanup-root-output-anchors [now])
           (set! self.root-output-anchors
             (filter-tokens now self.root-output-anchors))
-          (self.db.exec! sql-cleanup-subject-input-anchors [now])
+          (db-exec! self sql-cleanup-subject-input-anchors [now])
           (self.subject-input-anchors.clear!)
-          (self.db.exec! sql-cleanup-subject-output-anchors [now])
+          (db-exec! self sql-cleanup-subject-output-anchors [now])
           (self.subject-output-anchors.clear!)))
       (loop))))
 
@@ -130,7 +138,9 @@
    ((do-with-lock self.mx :- PrivKey
       (self.private-keys.ref did #f)))
    (else
-    (let* ((result (self.db.query sql-select-principal [did]))
+    (let* ((result (do-with-lock self.mx
+                     (db-query self sql-select-principal
+                               [did])))
            (_ (when (null? result)
                 (raise-contract-violation db-get-private-key "unknown principal" did)))
            (blob (car result))
@@ -145,14 +155,17 @@
   (let* ((did (private-key->did privk))
          (blob (encrypt-privkey self.secret-key did privk)))
     (do-with-lock self.mx
-      (when (null? (self.db.query sql-select-principal [did]))
-        (self.db.exec! sql-insert-principal [did blob]))
+      (when (null? (db-query self sql-select-principal
+                             [did]))
+        (db-exec! self sql-insert-principal
+                  [did blob]))
       (self.private-keys.set! did privk))
     did))
 
 (def (db-list-private-keys (self  : capability-db))
   (do-with-lock self.mx
-    (self.db.query sql-select-principal-dids [])))
+    (db-query self sql-select-principal-dids
+              [])))
 
 (def (decrypt-privkey (secret-key : :u8vector)
                       (did        : :string)
@@ -201,7 +214,7 @@
   => :void
   (do-with-lock self.mx
     (unless (member did self.roots)
-      (self.db.exec! sql-insert-root [did])
+      (db-exec! self sql-insert-root [did])
       (set! self.roots (cons did self.roots)))))
 
 (def (db-remove-root! (self : capability-db)
@@ -209,7 +222,7 @@
   => :void
   (do-with-lock self.mx
     (when (member did self.roots)
-      (self.db.exec! sql-delete-root [did])
+      (db-exec! self sql-delete-root [did])
       (set! self.roots (remove1 did self.roots)))))
 
 (def (db-get-root-input-anchors (self : capability-db))
@@ -225,7 +238,7 @@
     (unless (member token self.root-input-anchors)
       (let* ((blob (marshal token))
              (tid  (hex-encode (sha256 blob))))
-        (self.db.exec! sql-insert-root-input-anchor [tid blob token.expire])
+        (db-exec! self sql-insert-root-input-anchor [tid blob token.expire])
         (set! self.root-input-anchors
           (cons token self.root-input-anchors))))))
 
@@ -236,7 +249,7 @@
     (when (member token self.root-input-anchors)
       (let* ((blob (marshal token))
              (tid  (hex-encode (sha256 blob))))
-        (self.db.exec! sql-delete-root-input-anchor [tid])
+        (db-exec! self sql-delete-root-input-anchor [tid])
         (set! self.root-input-anchors
           (remove1 token self.root-input-anchors))))))
 
@@ -253,7 +266,7 @@
     (unless (member token self.root-output-anchors)
       (let* ((blob (marshal token))
              (tid  (hex-encode (sha256 blob))))
-        (self.db.exec! sql-insert-root-output-anchor [tid blob token.expire])
+        (db-exec! self sql-insert-root-output-anchor [tid blob token.expire])
         (set! self.root-output-anchors
           (cons token self.root-output-anchors))))))
 
@@ -264,7 +277,7 @@
     (when (member token self.root-output-anchors)
       (let* ((blob (marshal token))
              (tid  (hex-encode (sha256 blob))))
-        (self.db.exec! sql-delete-root-output-anchor [tid])
+        (db-exec! self sql-delete-root-output-anchor [tid])
         (set! self.root-output-anchors
           (remove1 token self.root-output-anchors))))))
 
@@ -279,8 +292,8 @@
        (else
         (let (tokens
               (map unmarshal
-                   (self.db.query sql-select-subject-input-anchors
-                                  [subject now])))
+                   (db-query self sql-select-subject-input-anchors
+                             [subject now])))
           (self.subject-input-anchors.set! subject tokens)
           tokens))))))
 
@@ -291,8 +304,9 @@
   (let* ((blob (marshal token))
          (tid  (hex-encode (sha256 blob))))
     (do-with-lock self.mx
-      (when (null? (self.db.query sql-select-subject-input-anchor [subject tid]))
-        (self.db.exec! sql-insert-subject-input-anchor
+      (when (null? (db-query self sql-select-subject-input-anchor
+                             [subject tid]))
+        (db-exec! self sql-insert-subject-input-anchor
                        [subject tid blob token.expire])
         (cond
          ((self.subject-input-anchors.ref subject #f)
@@ -308,7 +322,7 @@
   (let* ((blob (marshal token))
          (tid  (hex-encode (sha256 blob))))
     (do-with-lock self.mx
-      (self.db.exec! sql-delete-subject-input-anchor
+      (db-exec! self sql-delete-subject-input-anchor
                      [subject tid])
       (cond
        ((self.subject-input-anchors.ref subject #f)
@@ -328,8 +342,8 @@
        (else
         (let (tokens
               (map unmarshal
-                   (self.db.query sql-select-subject-output-anchors
-                                  [subject now])))
+                   (db-query self sql-select-subject-output-anchors
+                             [subject now])))
           (self.subject-output-anchors.set! subject tokens)
           tokens))))))
 
@@ -340,8 +354,9 @@
   (let* ((blob (marshal token))
          (tid  (hex-encode (sha256 blob))))
     (do-with-lock self.mx
-      (when (null? (self.db.query sql-select-subject-output-anchor [subject tid]))
-        (self.db.exec! sql-insert-subject-output-anchor
+      (when (null? (db-query self sql-select-subject-output-anchor
+                             [subject tid]))
+        (db-exec! self sql-insert-subject-output-anchor
                        [subject tid blob token.expire])
         (cond
          ((self.subject-output-anchors.ref subject #f)
@@ -357,7 +372,7 @@
   (let* ((blob (marshal token))
          (tid  (hex-encode (sha256 blob))))
     (do-with-lock self.mx
-      (self.db.exec! sql-delete-subject-output-anchor
+      (db-exec! self sql-delete-subject-output-anchor
                      [subject tid])
       (cond
        ((self.subject-output-anchors.ref subject #f)
@@ -371,13 +386,38 @@
   (let* ((blob (marshal token))
          (tid  (hex-encode (sha256 blob))))
     (do-with-lock self.mx
-      (self.db.exec! sql-insert-issued-token
+      (db-exec! self sql-insert-issued-token
                      [tid blob token.expire]))))
 
 (def (db-list-issued-tokens (self : capability-db))
   (map unmarshal
        (do-with-lock self.mx
-         (self.db.query sql-select-all-issued-tokens []))))
+         (db-query self sql-select-all-issued-tokens
+                   []))))
+
+(def (db-get-statement (self : capability-db)
+                       (sql  : :string))
+  => Statement
+  (statement-cache-get self.statements sql))
+
+(def (db-exec! (self : capability-db)
+               (sql  : :string)
+               (args : :list))
+  => :void
+  (using (stmt (db-get-statement self sql) : Statement)
+    (unless (null? args)
+      (stmt.bind! args))
+    (stmt.exec!)))
+
+(def (db-query (self : capability-db)
+               (sql  : :string)
+               (args : :list))
+  => :list
+  (using (stmt (db-get-statement self sql) : Statement)
+    (unless (null? args)
+      (stmt.bind! args))
+    (for/collect (r (stmt.query)) r)))
+
 
 ;;; SQL stuffs
 (def sql-schema #<<END-SQL

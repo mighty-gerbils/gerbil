@@ -3,6 +3,8 @@
 ;;; ensemble interfaces
 (import ./interface/ucan
         ./interface/message
+        ./interface/network
+        ./interface/address
         ./interface/host
         ./interface/actor
         ./interface/protocol
@@ -10,8 +12,10 @@
         )
 (export (import: ./interface/ucan
                  ./interface/message
-                 ./interface/host
                  ./interface/actor
+                 ./interface/network
+                 ./interface/address
+                 ./interface/host
                  ./interface/protocol
                  ./interface/event
                  ))

@@ -54,12 +54,12 @@
                                    (peer : :string)
                                    (addrs : :list))
   => :void
-  (db-add-host-addresses! self.host.db peer addrs resolver-address-ttl))
+  (host-db-add-host-addresses! self.host.db peer addrs resolver-address-ttl))
 
 (def (host-resolver-resolve (self : host-resolver)
                             (peer : :string))
   => :list
-  (let (known (db-get-host-addresses self.host.db peer))
+  (let (known (host-db-get-host-addresses self.host.db peer))
     (cond
      ((not (null? known))
       known)

@@ -77,6 +77,7 @@
     "os/sockaddr"
     (gxc: "os/socket" "-cc-options" "-D _GNU_SOURCE")
     "os/sockopt"
+    "os/hostname"
 
     "io/interface/base"
     "io/interface/bio"
@@ -225,6 +226,7 @@
 
     "db/interface"
     "db/db"
+    "db/cache"
     "db/query"
     ,@(if config-enable-sqlite
         `((gxc: "db/sqlite-driver"
@@ -234,14 +236,18 @@
         '())
     "db"
 
+    "encoding/multibase"
+    "encoding/base58"
+
     "ensemble/interface/ucan"
     "ensemble/interface/message"
     "ensemble/interface/actor"
+    "ensemble/interface/network"
+    "ensemble/interface/address"
     "ensemble/interface/host"
+    "ensemble/interface/protocol"
+    "ensemble/interface/event"
     "ensemble/interface"
-
-    "encoding/multibase"
-    "encoding/base58"
 
     "ensemble/ucan/cap"
     "ensemble/ucan/did"
@@ -249,8 +255,31 @@
     "ensemble/ucan/context"
     "ensemble/ucan/ext"
 
+    "ensemble/actor/types"
+    "ensemble/actor/util"
     "ensemble/actor/macros"
+    "ensemble/actor/reactor"
     "ensemble/actor/actor"
+
+    "ensemble/config"
+
+    "ensemble/network"
+
+    "ensemble/broadcast"
+
+    "ensemble/host/types"
+    "ensemble/host/util"
+    "ensemble/host/db"
+    "ensemble/host/bus"
+    "ensemble/host/actor-context"
+    "ensemble/host/actor-handler"
+    "ensemble/host/actor-space"
+    "ensemble/host/conn-handler"
+    "ensemble/host/resolver"
+    "ensemble/host/security-context"
+    "ensemble/host/stream-handler"
+    "ensemble/host/stream-cache"
+    "ensemble/host/basic"
 
     ))
 

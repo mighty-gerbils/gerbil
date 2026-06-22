@@ -7,11 +7,16 @@
 
 (defstruct host-db
   ((mx : :mutex)
-   (db : DB))
+   (db : DB)
+   (statements : StatementCache)
+   (thread : :thread)
+   (closed? : :boolean))
+  constructor: :init!
   final: #t)
 
 (defclass event-bus
-  ()
+  ((mx : :mutex)
+   (channels : :list))
   final: #t)
 
 (defstruct basic-host
@@ -50,6 +55,8 @@
    (reactors : HashTable)
    ;; bus for event notifications
    (bus : event-bus)
+   ;; tls context for inet hosts
+   (tls-context :? :foreign)
    ;; active stats for limits
    (limits          : Limits)
    (connections-in  : :fixnum)
