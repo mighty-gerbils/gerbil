@@ -236,7 +236,7 @@
 
 ;; canonical address format:
 ;; domain:<address-string>
-(def __domain-table
+(def domain-table
   (hash
    ("ip4"   __string->ip4-address)
    ("ip6"   __string->ip6-address)
@@ -253,7 +253,7 @@
             (let* ((domain (substring addr 0 x))
                    (body (substring addr (fx1+ x) (string-length addr))))
               (cond
-               ((hash-get __domain-table domain)
+               ((hash-get domain-table domain)
                 => (cut <> body))
                (else
                 (raise-bad-argument string->address "unknown domain" addr))))))
