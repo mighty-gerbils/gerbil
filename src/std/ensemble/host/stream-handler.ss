@@ -71,9 +71,10 @@
     (cond
      ((self.host.reactors.ref proto #f)
       => (lambda ((reactor :- stream-reactor))
-           (when (and reactor.one-shot
-                      reactor.thread)
-             (thread-send reactor.thread 't))
+           (when reactor.one-shot
+             (when reactor.thread
+               (thread-send reactor.thread 't))
+             (self.host.reactors.delete! proto))
            reactor))
      (else #f))))
 

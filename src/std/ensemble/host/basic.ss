@@ -6,8 +6,11 @@
         :std/io/interface
         ../interface
         ../ucan/context
+        ../config
+        ../network
+        ../broadcast
         ./db
-        ./type
+        ./types
         ./reactor
         ./conn-handler
         ./actor-handler
@@ -67,36 +70,61 @@
       (basic-host-set-stream-handler!
        self proto:/host/actor
        (new-host-actor-stream-handler self)
-       0 #f))))
+       0 #f)))))
 
 (def (basic-host-close (host : basic-host))
   => :void
-  (do-with-lock self.mx
-    (unless self.closed?
-      (report-errors (self.actor-context.close))
-      (report-errors (self.actor-space.close))
-      (report-errors (self.resolver.close))
-      (report-errors (self.broadcast.close))
-      (report-errors (self.network.close))
-      (report-errors (self.security-context.close))
-      (report-errors (self.capability-context.close))
-      (report-errors (host-db-close self.db))
-      (let (actors (hash-values self.actors))
-        (hash-clear! self.actors)
-        (for (actor actors :- ActorHandler)
-          (ignore-errors (actor.close))))
-      (let (reactors (hash-values self.stream-reactors))
-        (hash-clear! self.stream-reactors)
-        (for (reactor reactors :- stream-reactor)
-          (when reactor.thread
-            (thread-send reactor.thread 't))
-          (ignore-errors (reactor.handler.close))))
-      (set! self.closed? #t))))
+  (let ((values actors reactors)
+        (do-with-lock self.mx
+          (if self.closed?
+            (values [] [])
+            (let ((actors (hash-values self.actors))
+                  (reactors (hash-values self.reactors)))
+              (hash-clear! self.actors)
+              (hash-clear! self.stream-reactors)
+              (report-errors (self.actor-context.close))
+              (report-errors (self.actor-space.close))
+              (report-errors (self.resolver.close))
+              (report-errors (self.broadcast.close))
+              (report-errors (self.network.close))
+              (report-errors (self.security-context.close))
+              (report-errors (self.capability-context.close))
+              (report-errors (host-db-close self.db))
+              (values actors reactors)))))
+    (for (actor actors :- ActorHandler)
+      (ignore-errors (actor.close)))
+    (for (reactor reactors :- stream-reactor)
+      (ignore-errors (stream-reactor-close reactor)))))
 
 (def (basic-host-set-stream-handler! (self     : basic-host)
+                                     (proto    : :string)
                                      (handler  : StreamHandler)
                                      (expire   : :integer)
                                      (one-shot : :boolean))
   => :void
-  XXX
-  )
+  (do-with-lock self.mx
+    (cond
+     ((self.reactors.ref proto #f)
+      (raise-contract-violation set-stream-handler! "stream handler already exists" proto: proto))
+     (else
+      (using (reactor (stream-reactor handler:  handler
+                                      proto:    proto
+                                      one-shot: one-shot)
+                      : stream-reactor)
+        (when (> expire 0)
+          (set! reactor.thread
+            (spawn stream-reactor-expire self proto reactor expire)))
+        (self.reactors.set! proto reactor))))))
+
+(def (stream-reactor-expire (self     : basic-host)
+                            (proto    : :string)
+                            (reactor  : stream-reactor)
+                            (expire   : :integer))
+  => :void
+  (unless (thread-receive (seconds->time expire) #f)
+    (do-with-lock self.mx
+      (when (eq? (self.reactors.ref proto #f) reactor)
+        (self.reactors.delete! proto)))))
+
+(implement Closer basic-host
+  (close __basic-host-close))

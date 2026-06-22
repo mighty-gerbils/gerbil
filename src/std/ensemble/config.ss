@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble host configuration
+;;; ensemble configuration
 (export #t)
 
 ;;; configuration classes

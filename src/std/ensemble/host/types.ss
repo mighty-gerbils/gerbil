@@ -10,6 +10,10 @@
    (db : DB))
   final: #t)
 
+(defclass event-bus
+  ()
+  final: #t)
+
 (defstruct basic-host
   ((this : Host)
    ;; thread group for host threads
@@ -41,12 +45,11 @@
    ;; the actor table
    ;; handle -> ActorHandler
    (actors : HashTable)
-   ;; the stream handler table
-   ;; proto -> StreamReactor
+   ;; the stream reactor table
+   ;; proto string -> steam-reactor
    (reactors : HashTable)
-   ;; notification monitors
-   ;; a list of channels
-   (monitors : :list)
+   ;; bus for event notifications
+   (bus : event-bus)
    ;; active stats for limits
    (limits          : Limits)
    (connections-in  : :fixnum)
@@ -100,8 +103,11 @@
   ((host   : basic-host))
   final: #t)
 
-(defstruct stream-reactor
-  ()
+(defclass stream-reactor
+  ((handler  : StreamHandler)
+   (proto    : :string)
+   (one-shot : :boolean)
+   (thread   :? :thread))
   final: #t)
 
 (defstruct security-context

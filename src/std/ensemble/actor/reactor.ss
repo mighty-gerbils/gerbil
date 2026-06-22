@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; ensemble host stream reactors
+;;; ensemble actor stream reactors
 (import :std/error
         :std/sync/completion
         :std/sync/channel
@@ -43,17 +43,19 @@
                     one-shot: one-shot
                     handler: handler))
         (when (> expire 0)
-          (let (thread (spawn reactor-expire self method expire))
+          (let (thread (spawn reactor-expire self method r expire))
             (set! (reactor-thread r) thread)))
         (hash-put! (reaction-table self) method r))))))
 
 (def (reactor-expire (self   : reaction)
                      (method : :string)
+                     (r      : reactor)
                      (expire : :integer))
   => :void
   (unless (thread-receive (seconds->time expire) #f)
     (do-with-lock self.mx
-      (self.table.delete! method))))
+      (when (eq? (self.table.ref method #f) r)
+        (self.table.delete! method)))))
 
 (def (unicast-reactor-get (self   : unicast-reaction)
                           (method : :string))

@@ -5,13 +5,13 @@
         ./interface/message
         ./interface/host
         ./interface/actor
-        ./interface/event
         ./interface/protocol
+        ./interface/event
         )
 (export (import: ./interface/ucan
                  ./interface/message
                  ./interface/host
                  ./interface/actor
-                 ./interface/event
                  ./interface/protocol
+                 ./interface/event
                  ))

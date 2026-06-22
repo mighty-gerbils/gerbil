@@ -55,7 +55,7 @@
        (raise-actor-error macro result)))))
 
 
-
+;; host protocols
 (def proto:/host/actor
   "/host/actor/v1.0")
 
