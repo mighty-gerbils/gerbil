@@ -66,9 +66,11 @@
   (cond
    ((string-index str #\!)
     => (lambda (i)
+         (let ((id (substring str 0 i))
+               (path (substring str (fx1+ i) (string-length str))))
          (LocalAddress
-          (UnixAddress (substring str (fx1+ i) (string-length str)))
-          (substring str 0 i))))
+          (UnixAddress path)
+          (if (string-empty? id) (hostid) id)))))
    (else
     (raise-bad-argument string->local-address "malformed relay address"
                         str))))
