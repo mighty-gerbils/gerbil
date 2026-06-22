@@ -58,7 +58,7 @@
             (new-security-context self))
            (_ (set! self.security-context security-ctx))
            (network
-            (new-network this))
+            (new-network this cfg.limits.network))
            (_ (set! self.network network))
            (broadcast
             (new-broadcast this cfg.limits.broadcast cfg.limits.network))

@@ -70,7 +70,7 @@
                (path (substring str (fx1+ i) (string-length str))))
          (LocalAddress
           (UnixAddress path)
-          (if (string-empty? id) (hostid) id)))))
+          (if (string-empty? id) (hostid) id))))
    (else
     (raise-bad-argument string->local-address "malformed relay address"
                         str))))

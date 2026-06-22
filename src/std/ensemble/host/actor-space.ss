@@ -23,8 +23,7 @@
   (let (as (actor-space host #f))
     (set! as.actor
       (new-actor host.this actor:/host/space))
-    (actor-space::implement::ActorResolver
-     as.actor as)
+    (ActorResolver::actor-space as.actor as)
   (ActorSpace as)))
 
 (def (actor-space-resolve (self : actor-space)
