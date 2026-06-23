@@ -308,7 +308,7 @@
                 define-values-syntaxes
                 defcall-actor
                 defcall-interface-method
-                implement
+                implement implement-protocol
                 do-with-lock
                 do-with-read-lock
                 do-with-write-lock
