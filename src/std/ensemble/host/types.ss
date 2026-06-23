@@ -2,6 +2,8 @@
 ;;; © vyzo
 ;;; ensemble host types
 (import :std/db
+        :std/net/address
+        :std/net/ssl
         ../interface
         ../config)
 (export #t)
@@ -58,7 +60,7 @@
    ;; bus for event notifications
    (bus : event-bus)
    ;; tls context for inet hosts
-   (tls-context :? :foreign)
+   (tls-context :~ (? (or not SSL_CTX?)) :- :foreign)
    ;; active stats for limits
    (limits          : Limits)
    (connections-in  : :fixnum)
@@ -71,32 +73,24 @@
   print: (name did)
   constructor: :init!)
 
-(defstruct child-host-state
-  (;; list of relay addresses to announce in response to resolver queries
-   (announce : :list)
-   )
-  final: #t)
-
 (defstruct (server-host basic-host)
   (;; list of addresses to announce in response to resolver queries
-   (announce : :list)
-   ;; host childer; name string -> child-host-state
-   (children : HashTable)))
+   (announce :~ (list-of? Address?) :- :list)))
 
 (defstruct (inet-server-host server-host)
-  ((cfg : InetServerHostConfig))
+  ()
   final: #t)
 
 (defstruct (local-server-host server-host)
-  ((cfg : LocalServerHostConfig))
+  ()
   final: #t)
 
 (defstruct (inet-client-host basic-host)
-  ((cfg : InetClientHostConfig))
+  ()
   final: #t)
 
 (defstruct (local-client-host basic-host)
-  ((cfg : LocalClientHostConfig))
+  ()
   final: #t)
 
 (defstruct host-connection-handler

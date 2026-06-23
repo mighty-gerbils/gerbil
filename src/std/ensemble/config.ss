@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; ensemble configuration
+(import :std/net/address)
 (export #t)
 
 ;;; configuration classes
@@ -50,36 +51,32 @@
    ))
 
 ;; server hosts
-(defclass ServerHostConfig
-  (;; the host's listen addresses; string form
-   (listen : :list)
-   ;; the host announce addresses; string form
-   (announce : :list)
+(defclass (ServerHostConfig BasicHostConfig)
+  (;; the host's listen addresses
+   (listen :~ (list-of? Address?) :- :list)
+   ;; the host announce addresses
+   (announce :~ (list-of? Address?) :- :list)
    ))
 
 ;; parent hosts
 (defstruct ParentHostConfig
   (;; parent server name
    (name : :string)
-   ;; parent server did
-   (did  : :string)
-   ;; parent unix address
-   (address : :string)))
+   ;; parent address
+   (address : Address)))
 
 ;;; the server configuration taxonomy
 
 ;; an inet accessible server host
 (defclass (InetServerHostConfig
-           BasicHostConfig
-           InetHostConfig
-           ServerHostConfig)
+           ServerHostConfig
+           InetHostConfig)
   ()
   final: #t)
 
 ;; a local server, accessible locally through unix
 ;; or optionally a parent host proxy
 (defclass (LocalServerHostConfig
-           BasicHostConfig
            ServerHostConfig)
   ((parent :? ParentHostConfig))
   final: #t)

@@ -32,12 +32,8 @@
      (host-resolver-add-addresses! self req.origin req.addrs)
      (when (server-host? self.host)
        (using (host self.host : server-host)
-         (cond
-          ((equal? req.host host.name)
-           (actor.broadcast-reply! msg host.announce))
-          ((host.children.ref req.host #f)
-           => (lambda ((state :- child-host-state))
-                (actor.broadcast-reply! msg state.announce)))))))
+         (when (equal? req.host host.name)
+           (actor.broadcast-reply! msg host.announce)))))
    broadcast: group:/host/resolver)
   (resolve
    (lambda (self actor msg req)

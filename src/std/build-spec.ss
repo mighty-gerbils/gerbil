@@ -282,7 +282,9 @@
     "ensemble/host/stream-handler"
     "ensemble/host/stream-cache"
     "ensemble/host/basic"
+    "ensemble/host/server"
 
+    "ensemble/tls/context"
     ))
 
 #;(def (build-spec . _)
