@@ -40,7 +40,10 @@ namespace: #f
   (let (tgroup (make-thread-group name))
     (spawn-actor f args name tgroup)))
 
-(def (spawn-actor f args name tgroup)
+(def (spawn-actor (f      : :procedure)
+                  (args   : :list)
+                  (name   : :t)
+                  (tgroup :? :thread-group))
   => :thread
   (let* ((thunk (if (null? args) f (cut apply f args)))
          (thunk (cut with-exception-stack-trace thunk))
