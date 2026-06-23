@@ -2460,10 +2460,9 @@ package: gerbil/core
        (identifier? #'id)
        #'(def id expr))))
 
-  (defsyntax-case definline ()
+  (defsyntax-case definline (=>)
     ((_ (proc . signature) => return body rest ...)
      (and (identifier? #'proc)
-          (is-signature? #'signature)
           (syntax-local-runtime-type-info? #'return))
      (with-identifier (macro #'proc "@" #'proc)
        (with-syntax ((in        (signature-arguments-in #'signature))
